@@ -2,1361 +2,263 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00591C282D8
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 11:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA61C282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 13:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5FC221852
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 11:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EDAD20855
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 13:39:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="w+PSYujK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730631AbfA3Lll (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 06:41:41 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:34980 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728720AbfA3Llk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 06:41:40 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UBdUHn010041;
-        Wed, 30 Jan 2019 05:41:31 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2q8nu7w80r-1;
-        Wed, 30 Jan 2019 05:41:30 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id E91A9611E125;
-        Wed, 30 Jan 2019 05:41:29 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 30 Jan 2019
- 11:41:29 +0000
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0UBfSEt009240; Wed,
- 30 Jan 2019 11:41:29 GMT
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linus.walleij@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v7 6/6] pinctrl: lochnagar: Add support for the Cirrus Logic Lochnagar
-Date:   Wed, 30 Jan 2019 11:41:28 +0000
-Message-ID: <20190130114128.21083-6-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190130114128.21083-1-ckeepax@opensource.cirrus.com>
-References: <20190130114128.21083-1-ckeepax@opensource.cirrus.com>
+        id S1731171AbfA3NjV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 08:39:21 -0500
+Received: from mail-eopbgr130073.outbound.protection.outlook.com ([40.107.13.73]:48467
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729193AbfA3NjU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Jan 2019 08:39:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWnIF/proLAu2dNjVakTmoOs/RV62NbFopF2IgCw1I0=;
+ b=w+PSYujK16/dAXDmTRvYdwA6hqHEIBbUg5tlLvc1I3KHgLWZ9kMWG6KBKVjebhh/jltcM5jS66by385DVxhVnQIOnaKWi3NxLjG53td0uqcjh9sA7mkjl6g9yGJMi5Lc1FSfGXveflmPIo5JAhZjH/l3bWZUQpuMakkqo3XWZjA=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5844.eurprd04.prod.outlook.com (20.178.118.217) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Wed, 30 Jan 2019 13:39:15 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::bd44:e001:ab8d:1c51]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::bd44:e001:ab8d:1c51%2]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 13:39:15 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Subject: [PATCH 1/1] clk: imx: scu: add set parent support
+Thread-Topic: [PATCH 1/1] clk: imx: scu: add set parent support
+Thread-Index: AQHUuKEx5wW/zvLIHEGxAAYc3mdDGQ==
+Date:   Wed, 30 Jan 2019 13:39:15 +0000
+Message-ID: <1548855205-12249-1-git-send-email-aisheng.dong@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0055.apcprd04.prod.outlook.com
+ (2603:1096:202:14::23) To AM0PR04MB4211.eurprd04.prod.outlook.com
+ (2603:10a6:208:66::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5844;6:jgx4P7yYLpgxZClNhGRPqlWSH6Lr/0oQV3E+lJ83ShMHRTYOh6XyS4AqaEklLJ9Q2ZHb62ABpxuNk59o0grccS4t11n3KwCLOFQxA+x7VgPtNNP0l7xXrRspTtz4astXE1RCyvuRv+IvcOu+OP0YdGiVLho01h4ZSW5/vbkYPgwedmWl9xSvtQjjN5liRXH4uEeOwaGPJ+oC2BEFILcP7i/TYW/9tLnAOiSAle3QPyqzTBmZJniqL2Msj8A8aMELk9FEHDl8nN7/zkWS0ByQ5++dKIIeTnEdKLNiwY0CZcjqKhVGpVEvT5u+kz/6j5ukWW/X28ISiKIpxGlD9dUZiC0KNrNmOc0wP+ESEy5RKBU4okiMGfxhTZ1j0lQ1R/Slj19SOXILqh2YI5euDwLqkSaTS1j+FeVlsCzNUL7/nS0iZ/VkiSuSkOdWURzpcPcddSXOi4Ik6mELnzuw+BJjig==;5:LBbHbazbaXkVC+kJoCX0ZQIEaiooc1U7A5rF0P+Nqi4bpMctlWu7aDIu78x66/E9jwYgI2nQb5P3N6SoHezCUSwcPv9uQApjP6XRYKYRjdB9y07NzeksloJ5sSCs2/1KsS72KvmuToOzX3qnDhf8ztU7TrtoDptm7VnVd8MajY4110rW0rj1kPuhoT6YXs4+QLmSXEIeLupvOefM5oApZg==;7:iP9tb3plb2G/LC2l7UvE4q35hjeqy/jU6/czaiaOFsjrSlmnO+ov99DtHEwYlOJzJbvW3879Es4ECvLW73AQYfdLoZTeYa4jKbyr9drKoy+9GoFsIlZMrFTv83eyFKxO+HREi+ehXiIUhZlUdixOVA==
+x-ms-office365-filtering-correlation-id: 551cf0d0-cdbc-4503-696f-08d686b853b9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5844;
+x-ms-traffictypediagnostic: AM0PR04MB5844:
+x-microsoft-antispam-prvs: <AM0PR04MB584442762381F650B54E2B1C80900@AM0PR04MB5844.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(366004)(136003)(346002)(199004)(189003)(8676002)(6506007)(81166006)(8936002)(53936002)(6916009)(2351001)(305945005)(81156014)(4326008)(7736002)(44832011)(68736007)(26005)(2616005)(71200400001)(186003)(486006)(386003)(50226002)(478600001)(476003)(25786009)(71190400001)(6436002)(6512007)(52116002)(14454004)(102836004)(54906003)(99286004)(3846002)(316002)(6486002)(105586002)(5640700003)(106356001)(2501003)(36756003)(14444005)(97736004)(86362001)(256004)(2906002)(6116002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5844;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +qjkxK9TGF/H8dNylvFvuWRYiWF72AM+VGvlJL2LKYVCkM2VDuX16/PVA8SQjzSmDcxL0EKLPUfR8FIPbHrC4uwvXNpCFr8cx6oEReJZs5cVFQ+H9/qsH8WFac1YHO1j3QD4MZlTOU/EhBUq93k9aCX2mNQTbKsj9XOmf1wRFJ/rq/eB7EIgGI6HOTT2b6AxvhYh5sCPmqhO28w+WQ85t/BG/vP0dcSNj9IxVZHFkLXLU5P7LQtDXAQL0Grxt3jllwVUU6hqwlGvblrAcJ4aFK++43zb8SFkWEczWhdExRWgdfTMd7isvLeGpGh4Z6B9pVB2MKd6ANktqdXxSNQ7IRiOr9JZRR77RIAM0JpfadNnjvIyvNAajY9gd+27U4jHxlC0hRQwMNuGwAt1hOmDdywcbUwrWV9e4/pqLlVnY6Q=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1901300094
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 551cf0d0-cdbc-4503-696f-08d686b853b9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 13:39:12.6327
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5844
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Lochnagar is an evaluation and development board for Cirrus
-Logic Smart CODEC and Amp devices. It allows the connection of
-most Cirrus Logic devices on mini-cards, as well as allowing
-connection of various application processor systems to provide a
-full evaluation platform. This driver supports the board
-controller chip on the Lochnagar board.
+Add clk scu set parents support.
 
-Lochnagar provides many pins which can generally be used for an
-audio function such as an AIF or a PDM interface, but also as
-GPIOs.
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
+ drivers/clk/imx/clk-scu.c | 87 +++++++++++++++++++++++++++++++++++++++++++=
+++--
+ drivers/clk/imx/clk-scu.h | 16 ++++++++-
+ 2 files changed, 100 insertions(+), 3 deletions(-)
 
-No changes since v6.
-
-Thanks,
-Charles
-
- drivers/pinctrl/cirrus/Kconfig             |   10 +
- drivers/pinctrl/cirrus/Makefile            |    2 +
- drivers/pinctrl/cirrus/pinctrl-lochnagar.c | 1236 ++++++++++++++++++++++++++++
- 3 files changed, 1248 insertions(+)
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.c
-
-diff --git a/drivers/pinctrl/cirrus/Kconfig b/drivers/pinctrl/cirrus/Kconfig
-index 27013e5949bc1..74af07e251741 100644
---- a/drivers/pinctrl/cirrus/Kconfig
-+++ b/drivers/pinctrl/cirrus/Kconfig
-@@ -1,3 +1,13 @@
-+config PINCTRL_LOCHNAGAR
-+	tristate "Cirrus Logic Lochnagar pinctrl driver"
-+	depends on MFD_LOCHNAGAR
-+	select PINMUX
-+	select PINCONF
-+	select GENERIC_PINCONF
-+	help
-+	  This driver supports configuring the GPIO and other pin configuration
-+	  of the Cirrus Logic Lochnagar audio development board.
-+
- # This is all selected by the Madera MFD driver Kconfig options
- config PINCTRL_MADERA
- 	tristate
-diff --git a/drivers/pinctrl/cirrus/Makefile b/drivers/pinctrl/cirrus/Makefile
-index 6e4938cde9e30..20baebf438f62 100644
---- a/drivers/pinctrl/cirrus/Makefile
-+++ b/drivers/pinctrl/cirrus/Makefile
-@@ -1,4 +1,6 @@
- # Cirrus Logic pinctrl drivers
-+obj-$(CONFIG_PINCTRL_LOCHNAGAR)	+= pinctrl-lochnagar.o
-+
- pinctrl-madera-objs		:= pinctrl-madera-core.o
- ifeq ($(CONFIG_PINCTRL_CS47L35),y)
- pinctrl-madera-objs		+= pinctrl-cs47l35.o
-diff --git a/drivers/pinctrl/cirrus/pinctrl-lochnagar.c b/drivers/pinctrl/cirrus/pinctrl-lochnagar.c
-new file mode 100644
-index 0000000000000..129142bcef824
---- /dev/null
-+++ b/drivers/pinctrl/cirrus/pinctrl-lochnagar.c
-@@ -0,0 +1,1236 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Lochnagar pin and GPIO control
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 7ccf7ed..3c13c41 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -66,6 +66,41 @@ struct imx_sc_msg_get_clock_rate {
+ };
+=20
+ /*
++ * struct imx_sc_msg_get_clock_parent - clock get parent protocol
++ * @hdr: SCU protocol header
++ * @req: get parent request protocol
++ * @resp: get parent response protocol
 + *
-+ * Copyright (c) 2017-2018 Cirrus Logic, Inc. and
-+ *                         Cirrus Logic International Semiconductor Ltd.
-+ *
-+ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ * This structure describes the SCU protocol of clock get parent
 + */
-+
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+
-+#include <linux/mfd/lochnagar.h>
-+#include <linux/mfd/lochnagar1_regs.h>
-+#include <linux/mfd/lochnagar2_regs.h>
-+
-+#include <dt-bindings/pinctrl/lochnagar.h>
-+
-+#include "../pinctrl-utils.h"
-+
-+#define LN2_NUM_GPIO_CHANNELS	16
-+
-+#define LN_CDC_AIF1_STR		"codec-aif1"
-+#define LN_CDC_AIF2_STR		"codec-aif2"
-+#define LN_CDC_AIF3_STR		"codec-aif3"
-+#define LN_DSP_AIF1_STR		"dsp-aif1"
-+#define LN_DSP_AIF2_STR		"dsp-aif2"
-+#define LN_PSIA1_STR		"psia1"
-+#define LN_PSIA2_STR		"psia2"
-+#define LN_GF_AIF1_STR		"gf-aif1"
-+#define LN_GF_AIF2_STR		"gf-aif2"
-+#define LN_GF_AIF3_STR		"gf-aif3"
-+#define LN_GF_AIF4_STR		"gf-aif4"
-+#define LN_SPDIF_AIF_STR	"spdif-aif"
-+#define LN_USB_AIF1_STR		"usb-aif1"
-+#define LN_USB_AIF2_STR		"usb-aif2"
-+#define LN_ADAT_AIF_STR		"adat-aif"
-+#define LN_SOUNDCARD_AIF_STR	"soundcard-aif"
-+
-+#define LN_PIN_GPIO(REV, ID, NAME, REG, SHIFT, INVERT) \
-+static const struct lochnagar_pin lochnagar##REV##_##ID##_pin = { \
-+	.name = NAME, .type = LN_PTYPE_GPIO, .reg = LOCHNAGAR##REV##_##REG, \
-+	.shift = LOCHNAGAR##REV##_##SHIFT##_SHIFT, .invert = INVERT, \
-+}
-+
-+#define LN_PIN_SAIF(REV, ID, NAME) \
-+static const struct lochnagar_pin lochnagar##REV##_##ID##_pin = \
-+	{ .name = NAME, .type = LN_PTYPE_AIF, }
-+
-+#define LN_PIN_AIF(REV, ID) \
-+	LN_PIN_SAIF(REV, ID##_BCLK,  LN_##ID##_STR"-bclk"); \
-+	LN_PIN_SAIF(REV, ID##_LRCLK, LN_##ID##_STR"-lrclk"); \
-+	LN_PIN_SAIF(REV, ID##_RXDAT, LN_##ID##_STR"-rxdat"); \
-+	LN_PIN_SAIF(REV, ID##_TXDAT, LN_##ID##_STR"-txdat")
-+
-+#define LN1_PIN_GPIO(ID, NAME, REG, SHIFT, INVERT) \
-+	LN_PIN_GPIO(1, ID, NAME, REG, SHIFT, INVERT)
-+
-+#define LN1_PIN_MUX(ID, NAME) \
-+static const struct lochnagar_pin lochnagar1_##ID##_pin = \
-+	{ .name = NAME, .type = LN_PTYPE_MUX, .reg = LOCHNAGAR1_##ID, }
-+
-+#define LN1_PIN_AIF(ID) LN_PIN_AIF(1, ID)
-+
-+#define LN2_PIN_GPIO(ID, NAME, REG, SHIFT, INVERT) \
-+	LN_PIN_GPIO(2, ID, NAME, REG, SHIFT, INVERT)
-+
-+#define LN2_PIN_MUX(ID, NAME) \
-+static const struct lochnagar_pin lochnagar2_##ID##_pin = \
-+	{ .name = NAME, .type = LN_PTYPE_MUX, .reg = LOCHNAGAR2_GPIO_##ID, }
-+
-+#define LN2_PIN_AIF(ID) LN_PIN_AIF(2, ID)
-+
-+#define LN2_PIN_GAI(ID) \
-+	LN2_PIN_MUX(ID##_BCLK,  LN_##ID##_STR"-bclk"); \
-+	LN2_PIN_MUX(ID##_LRCLK, LN_##ID##_STR"-lrclk"); \
-+	LN2_PIN_MUX(ID##_RXDAT, LN_##ID##_STR"-rxdat"); \
-+	LN2_PIN_MUX(ID##_TXDAT, LN_##ID##_STR"-txdat")
-+
-+#define LN_PIN(REV, ID) [LOCHNAGAR##REV##_PIN_##ID] = { \
-+	.number = LOCHNAGAR##REV##_PIN_##ID, \
-+	.name = lochnagar##REV##_##ID##_pin.name, \
-+	.drv_data = (void *)&lochnagar##REV##_##ID##_pin, \
-+}
-+
-+#define LN1_PIN(ID) LN_PIN(1, ID)
-+#define LN2_PIN(ID) LN_PIN(2, ID)
-+
-+#define LN_PINS(REV, ID) \
-+	LN_PIN(REV, ID##_BCLK), LN_PIN(REV, ID##_LRCLK), \
-+	LN_PIN(REV, ID##_RXDAT), LN_PIN(REV, ID##_TXDAT)
-+
-+#define LN1_PINS(ID) LN_PINS(1, ID)
-+#define LN2_PINS(ID) LN_PINS(2, ID)
-+
-+enum {
-+	LOCHNAGAR1_PIN_GF_GPIO2 = LOCHNAGAR1_PIN_NUM_GPIOS,
-+	LOCHNAGAR1_PIN_GF_GPIO3,
-+	LOCHNAGAR1_PIN_GF_GPIO7,
-+	LOCHNAGAR1_PIN_LED1,
-+	LOCHNAGAR1_PIN_LED2,
-+	LOCHNAGAR1_PIN_CDC_AIF1_BCLK,
-+	LOCHNAGAR1_PIN_CDC_AIF1_LRCLK,
-+	LOCHNAGAR1_PIN_CDC_AIF1_RXDAT,
-+	LOCHNAGAR1_PIN_CDC_AIF1_TXDAT,
-+	LOCHNAGAR1_PIN_CDC_AIF2_BCLK,
-+	LOCHNAGAR1_PIN_CDC_AIF2_LRCLK,
-+	LOCHNAGAR1_PIN_CDC_AIF2_RXDAT,
-+	LOCHNAGAR1_PIN_CDC_AIF2_TXDAT,
-+	LOCHNAGAR1_PIN_CDC_AIF3_BCLK,
-+	LOCHNAGAR1_PIN_CDC_AIF3_LRCLK,
-+	LOCHNAGAR1_PIN_CDC_AIF3_RXDAT,
-+	LOCHNAGAR1_PIN_CDC_AIF3_TXDAT,
-+	LOCHNAGAR1_PIN_DSP_AIF1_BCLK,
-+	LOCHNAGAR1_PIN_DSP_AIF1_LRCLK,
-+	LOCHNAGAR1_PIN_DSP_AIF1_RXDAT,
-+	LOCHNAGAR1_PIN_DSP_AIF1_TXDAT,
-+	LOCHNAGAR1_PIN_DSP_AIF2_BCLK,
-+	LOCHNAGAR1_PIN_DSP_AIF2_LRCLK,
-+	LOCHNAGAR1_PIN_DSP_AIF2_RXDAT,
-+	LOCHNAGAR1_PIN_DSP_AIF2_TXDAT,
-+	LOCHNAGAR1_PIN_PSIA1_BCLK,
-+	LOCHNAGAR1_PIN_PSIA1_LRCLK,
-+	LOCHNAGAR1_PIN_PSIA1_RXDAT,
-+	LOCHNAGAR1_PIN_PSIA1_TXDAT,
-+	LOCHNAGAR1_PIN_PSIA2_BCLK,
-+	LOCHNAGAR1_PIN_PSIA2_LRCLK,
-+	LOCHNAGAR1_PIN_PSIA2_RXDAT,
-+	LOCHNAGAR1_PIN_PSIA2_TXDAT,
-+	LOCHNAGAR1_PIN_SPDIF_AIF_BCLK,
-+	LOCHNAGAR1_PIN_SPDIF_AIF_LRCLK,
-+	LOCHNAGAR1_PIN_SPDIF_AIF_RXDAT,
-+	LOCHNAGAR1_PIN_SPDIF_AIF_TXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF3_BCLK,
-+	LOCHNAGAR1_PIN_GF_AIF3_RXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF3_LRCLK,
-+	LOCHNAGAR1_PIN_GF_AIF3_TXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF4_BCLK,
-+	LOCHNAGAR1_PIN_GF_AIF4_RXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF4_LRCLK,
-+	LOCHNAGAR1_PIN_GF_AIF4_TXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF1_BCLK,
-+	LOCHNAGAR1_PIN_GF_AIF1_RXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF1_LRCLK,
-+	LOCHNAGAR1_PIN_GF_AIF1_TXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF2_BCLK,
-+	LOCHNAGAR1_PIN_GF_AIF2_RXDAT,
-+	LOCHNAGAR1_PIN_GF_AIF2_LRCLK,
-+	LOCHNAGAR1_PIN_GF_AIF2_TXDAT,
-+
-+	LOCHNAGAR2_PIN_SPDIF_AIF_BCLK = LOCHNAGAR2_PIN_NUM_GPIOS,
-+	LOCHNAGAR2_PIN_SPDIF_AIF_LRCLK,
-+	LOCHNAGAR2_PIN_SPDIF_AIF_RXDAT,
-+	LOCHNAGAR2_PIN_SPDIF_AIF_TXDAT,
-+	LOCHNAGAR2_PIN_USB_AIF1_BCLK,
-+	LOCHNAGAR2_PIN_USB_AIF1_LRCLK,
-+	LOCHNAGAR2_PIN_USB_AIF1_RXDAT,
-+	LOCHNAGAR2_PIN_USB_AIF1_TXDAT,
-+	LOCHNAGAR2_PIN_USB_AIF2_BCLK,
-+	LOCHNAGAR2_PIN_USB_AIF2_LRCLK,
-+	LOCHNAGAR2_PIN_USB_AIF2_RXDAT,
-+	LOCHNAGAR2_PIN_USB_AIF2_TXDAT,
-+	LOCHNAGAR2_PIN_ADAT_AIF_BCLK,
-+	LOCHNAGAR2_PIN_ADAT_AIF_LRCLK,
-+	LOCHNAGAR2_PIN_ADAT_AIF_RXDAT,
-+	LOCHNAGAR2_PIN_ADAT_AIF_TXDAT,
-+	LOCHNAGAR2_PIN_SOUNDCARD_AIF_BCLK,
-+	LOCHNAGAR2_PIN_SOUNDCARD_AIF_LRCLK,
-+	LOCHNAGAR2_PIN_SOUNDCARD_AIF_RXDAT,
-+	LOCHNAGAR2_PIN_SOUNDCARD_AIF_TXDAT,
++struct imx_sc_msg_get_clock_parent {
++	struct imx_sc_rpc_msg hdr;
++	union {
++		struct req_get_clock_parent {
++			__le16 resource;
++			u8 clk;
++		} __packed req;
++		struct resp_get_clock_parent {
++			u8 parent;
++		} resp;
++	} data;
 +};
 +
-+enum lochnagar_pin_type {
-+	LN_PTYPE_GPIO,
-+	LN_PTYPE_MUX,
-+	LN_PTYPE_AIF,
-+	LN_PTYPE_COUNT,
-+};
++/*
++ * struct imx_sc_msg_set_clock_parent - clock set parent protocol
++ * @hdr: SCU protocol header
++ * @req: set parent request protocol
++ *
++ * This structure describes the SCU protocol of clock set parent
++ */
++struct imx_sc_msg_set_clock_parent {
++	struct imx_sc_rpc_msg hdr;
++	__le16 resource;
++	u8 clk;
++	u8 parent;
++} __packed;
 +
-+struct lochnagar_pin {
-+	const char name[20];
-+
-+	enum lochnagar_pin_type type;
-+
-+	unsigned int reg;
-+	int shift;
-+	bool invert;
-+};
-+
-+LN1_PIN_GPIO(CDC_RESET,    "codec-reset",    RST,      CDC_RESET,    1);
-+LN1_PIN_GPIO(DSP_RESET,    "dsp-reset",      RST,      DSP_RESET,    1);
-+LN1_PIN_GPIO(CDC_CIF1MODE, "codec-cif1mode", I2C_CTRL, CDC_CIF_MODE, 0);
-+LN1_PIN_MUX(GF_GPIO2,      "gf-gpio2");
-+LN1_PIN_MUX(GF_GPIO3,      "gf-gpio3");
-+LN1_PIN_MUX(GF_GPIO7,      "gf-gpio7");
-+LN1_PIN_MUX(LED1,          "led1");
-+LN1_PIN_MUX(LED2,          "led2");
-+LN1_PIN_AIF(CDC_AIF1);
-+LN1_PIN_AIF(CDC_AIF2);
-+LN1_PIN_AIF(CDC_AIF3);
-+LN1_PIN_AIF(DSP_AIF1);
-+LN1_PIN_AIF(DSP_AIF2);
-+LN1_PIN_AIF(PSIA1);
-+LN1_PIN_AIF(PSIA2);
-+LN1_PIN_AIF(SPDIF_AIF);
-+LN1_PIN_AIF(GF_AIF1);
-+LN1_PIN_AIF(GF_AIF2);
-+LN1_PIN_AIF(GF_AIF3);
-+LN1_PIN_AIF(GF_AIF4);
-+
-+LN2_PIN_GPIO(CDC_RESET,    "codec-reset",    MINICARD_RESETS, CDC_RESET,     1);
-+LN2_PIN_GPIO(DSP_RESET,    "dsp-reset",      MINICARD_RESETS, DSP_RESET,     1);
-+LN2_PIN_GPIO(CDC_CIF1MODE, "codec-cif1mode", COMMS_CTRL4,     CDC_CIF1MODE,  0);
-+LN2_PIN_GPIO(CDC_LDOENA,   "codec-ldoena",   POWER_CTRL,      PWR_ENA,       0);
-+LN2_PIN_GPIO(SPDIF_HWMODE, "spdif-hwmode",   SPDIF_CTRL,      SPDIF_HWMODE,  0);
-+LN2_PIN_GPIO(SPDIF_RESET,  "spdif-reset",    SPDIF_CTRL,      SPDIF_RESET,   1);
-+LN2_PIN_MUX(FPGA_GPIO1,    "fgpa-gpio1");
-+LN2_PIN_MUX(FPGA_GPIO2,    "fgpa-gpio2");
-+LN2_PIN_MUX(FPGA_GPIO3,    "fgpa-gpio3");
-+LN2_PIN_MUX(FPGA_GPIO4,    "fgpa-gpio4");
-+LN2_PIN_MUX(FPGA_GPIO5,    "fgpa-gpio5");
-+LN2_PIN_MUX(FPGA_GPIO6,    "fgpa-gpio6");
-+LN2_PIN_MUX(CDC_GPIO1,     "codec-gpio1");
-+LN2_PIN_MUX(CDC_GPIO2,     "codec-gpio2");
-+LN2_PIN_MUX(CDC_GPIO3,     "codec-gpio3");
-+LN2_PIN_MUX(CDC_GPIO4,     "codec-gpio4");
-+LN2_PIN_MUX(CDC_GPIO5,     "codec-gpio5");
-+LN2_PIN_MUX(CDC_GPIO6,     "codec-gpio6");
-+LN2_PIN_MUX(CDC_GPIO7,     "codec-gpio7");
-+LN2_PIN_MUX(CDC_GPIO8,     "codec-gpio8");
-+LN2_PIN_MUX(DSP_GPIO1,     "dsp-gpio1");
-+LN2_PIN_MUX(DSP_GPIO2,     "dsp-gpio2");
-+LN2_PIN_MUX(DSP_GPIO3,     "dsp-gpio3");
-+LN2_PIN_MUX(DSP_GPIO4,     "dsp-gpio4");
-+LN2_PIN_MUX(DSP_GPIO5,     "dsp-gpio5");
-+LN2_PIN_MUX(DSP_GPIO6,     "dsp-gpio6");
-+LN2_PIN_MUX(GF_GPIO2,      "gf-gpio2");
-+LN2_PIN_MUX(GF_GPIO3,      "gf-gpio3");
-+LN2_PIN_MUX(GF_GPIO7,      "gf-gpio7");
-+LN2_PIN_MUX(DSP_UART1_RX,  "dsp-uart1-rx");
-+LN2_PIN_MUX(DSP_UART1_TX,  "dsp-uart1-tx");
-+LN2_PIN_MUX(DSP_UART2_RX,  "dsp-uart2-rx");
-+LN2_PIN_MUX(DSP_UART2_TX,  "dsp-uart2-tx");
-+LN2_PIN_MUX(GF_UART2_RX,   "gf-uart2-rx");
-+LN2_PIN_MUX(GF_UART2_TX,   "gf-uart2-tx");
-+LN2_PIN_MUX(USB_UART_RX,   "usb-uart-rx");
-+LN2_PIN_MUX(CDC_PDMCLK1,   "codec-pdmclk1");
-+LN2_PIN_MUX(CDC_PDMDAT1,   "codec-pdmdat1");
-+LN2_PIN_MUX(CDC_PDMCLK2,   "codec-pdmclk2");
-+LN2_PIN_MUX(CDC_PDMDAT2,   "codec-pdmdat2");
-+LN2_PIN_MUX(CDC_DMICCLK1,  "codec-dmicclk1");
-+LN2_PIN_MUX(CDC_DMICDAT1,  "codec-dmicdat1");
-+LN2_PIN_MUX(CDC_DMICCLK2,  "codec-dmicclk2");
-+LN2_PIN_MUX(CDC_DMICDAT2,  "codec-dmicdat2");
-+LN2_PIN_MUX(CDC_DMICCLK3,  "codec-dmicclk3");
-+LN2_PIN_MUX(CDC_DMICDAT3,  "codec-dmicdat3");
-+LN2_PIN_MUX(CDC_DMICCLK4,  "codec-dmicclk4");
-+LN2_PIN_MUX(CDC_DMICDAT4,  "codec-dmicdat4");
-+LN2_PIN_MUX(DSP_DMICCLK1,  "dsp-dmicclk1");
-+LN2_PIN_MUX(DSP_DMICDAT1,  "dsp-dmicdat1");
-+LN2_PIN_MUX(DSP_DMICCLK2,  "dsp-dmicclk2");
-+LN2_PIN_MUX(DSP_DMICDAT2,  "dsp-dmicdat2");
-+LN2_PIN_MUX(I2C2_SCL,      "i2c2-scl");
-+LN2_PIN_MUX(I2C2_SDA,      "i2c2-sda");
-+LN2_PIN_MUX(I2C3_SCL,      "i2c3-scl");
-+LN2_PIN_MUX(I2C3_SDA,      "i2c3-sda");
-+LN2_PIN_MUX(I2C4_SCL,      "i2c4-scl");
-+LN2_PIN_MUX(I2C4_SDA,      "i2c4-sda");
-+LN2_PIN_MUX(DSP_STANDBY,   "dsp-standby");
-+LN2_PIN_MUX(CDC_MCLK1,     "codec-mclk1");
-+LN2_PIN_MUX(CDC_MCLK2,     "codec-mclk2");
-+LN2_PIN_MUX(DSP_CLKIN,     "dsp-clkin");
-+LN2_PIN_MUX(PSIA1_MCLK,    "psia1-mclk");
-+LN2_PIN_MUX(PSIA2_MCLK,    "psia2-mclk");
-+LN2_PIN_MUX(GF_GPIO1,      "gf-gpio1");
-+LN2_PIN_MUX(GF_GPIO5,      "gf-gpio5");
-+LN2_PIN_MUX(DSP_GPIO20,    "dsp-gpio20");
-+LN2_PIN_GAI(CDC_AIF1);
-+LN2_PIN_GAI(CDC_AIF2);
-+LN2_PIN_GAI(CDC_AIF3);
-+LN2_PIN_GAI(DSP_AIF1);
-+LN2_PIN_GAI(DSP_AIF2);
-+LN2_PIN_GAI(PSIA1);
-+LN2_PIN_GAI(PSIA2);
-+LN2_PIN_GAI(GF_AIF1);
-+LN2_PIN_GAI(GF_AIF2);
-+LN2_PIN_GAI(GF_AIF3);
-+LN2_PIN_GAI(GF_AIF4);
-+LN2_PIN_AIF(SPDIF_AIF);
-+LN2_PIN_AIF(USB_AIF1);
-+LN2_PIN_AIF(USB_AIF2);
-+LN2_PIN_AIF(ADAT_AIF);
-+LN2_PIN_AIF(SOUNDCARD_AIF);
-+
-+static const struct pinctrl_pin_desc lochnagar1_pins[] = {
-+	LN1_PIN(CDC_RESET),      LN1_PIN(DSP_RESET),    LN1_PIN(CDC_CIF1MODE),
-+	LN1_PIN(GF_GPIO2),       LN1_PIN(GF_GPIO3),     LN1_PIN(GF_GPIO7),
-+	LN1_PIN(LED1),           LN1_PIN(LED2),
-+	LN1_PINS(CDC_AIF1),      LN1_PINS(CDC_AIF2),    LN1_PINS(CDC_AIF3),
-+	LN1_PINS(DSP_AIF1),      LN1_PINS(DSP_AIF2),
-+	LN1_PINS(PSIA1),         LN1_PINS(PSIA2),
-+	LN1_PINS(SPDIF_AIF),
-+	LN1_PINS(GF_AIF1),       LN1_PINS(GF_AIF2),
-+	LN1_PINS(GF_AIF3),       LN1_PINS(GF_AIF4),
-+};
-+
-+static const struct pinctrl_pin_desc lochnagar2_pins[] = {
-+	LN2_PIN(CDC_RESET),      LN2_PIN(DSP_RESET),    LN2_PIN(CDC_CIF1MODE),
-+	LN2_PIN(CDC_LDOENA),
-+	LN2_PIN(SPDIF_HWMODE),   LN2_PIN(SPDIF_RESET),
-+	LN2_PIN(FPGA_GPIO1),     LN2_PIN(FPGA_GPIO2),   LN2_PIN(FPGA_GPIO3),
-+	LN2_PIN(FPGA_GPIO4),     LN2_PIN(FPGA_GPIO5),   LN2_PIN(FPGA_GPIO6),
-+	LN2_PIN(CDC_GPIO1),      LN2_PIN(CDC_GPIO2),    LN2_PIN(CDC_GPIO3),
-+	LN2_PIN(CDC_GPIO4),      LN2_PIN(CDC_GPIO5),    LN2_PIN(CDC_GPIO6),
-+	LN2_PIN(CDC_GPIO7),      LN2_PIN(CDC_GPIO8),
-+	LN2_PIN(DSP_GPIO1),      LN2_PIN(DSP_GPIO2),    LN2_PIN(DSP_GPIO3),
-+	LN2_PIN(DSP_GPIO4),      LN2_PIN(DSP_GPIO5),    LN2_PIN(DSP_GPIO6),
-+	LN2_PIN(DSP_GPIO20),
-+	LN2_PIN(GF_GPIO1),       LN2_PIN(GF_GPIO2),     LN2_PIN(GF_GPIO3),
-+	LN2_PIN(GF_GPIO5),       LN2_PIN(GF_GPIO7),
-+	LN2_PINS(CDC_AIF1),      LN2_PINS(CDC_AIF2),    LN2_PINS(CDC_AIF3),
-+	LN2_PINS(DSP_AIF1),      LN2_PINS(DSP_AIF2),
-+	LN2_PINS(PSIA1),         LN2_PINS(PSIA2),
-+	LN2_PINS(GF_AIF1),       LN2_PINS(GF_AIF2),
-+	LN2_PINS(GF_AIF3),       LN2_PINS(GF_AIF4),
-+	LN2_PIN(DSP_UART1_RX),   LN2_PIN(DSP_UART1_TX),
-+	LN2_PIN(DSP_UART2_RX),   LN2_PIN(DSP_UART2_TX),
-+	LN2_PIN(GF_UART2_RX),    LN2_PIN(GF_UART2_TX),
-+	LN2_PIN(USB_UART_RX),
-+	LN2_PIN(CDC_PDMCLK1),    LN2_PIN(CDC_PDMDAT1),
-+	LN2_PIN(CDC_PDMCLK2),    LN2_PIN(CDC_PDMDAT2),
-+	LN2_PIN(CDC_DMICCLK1),   LN2_PIN(CDC_DMICDAT1),
-+	LN2_PIN(CDC_DMICCLK2),   LN2_PIN(CDC_DMICDAT2),
-+	LN2_PIN(CDC_DMICCLK3),   LN2_PIN(CDC_DMICDAT3),
-+	LN2_PIN(CDC_DMICCLK4),   LN2_PIN(CDC_DMICDAT4),
-+	LN2_PIN(DSP_DMICCLK1),   LN2_PIN(DSP_DMICDAT1),
-+	LN2_PIN(DSP_DMICCLK2),   LN2_PIN(DSP_DMICDAT2),
-+	LN2_PIN(I2C2_SCL),       LN2_PIN(I2C2_SDA),
-+	LN2_PIN(I2C3_SCL),       LN2_PIN(I2C3_SDA),
-+	LN2_PIN(I2C4_SCL),       LN2_PIN(I2C4_SDA),
-+	LN2_PIN(DSP_STANDBY),
-+	LN2_PIN(CDC_MCLK1),      LN2_PIN(CDC_MCLK2),
-+	LN2_PIN(DSP_CLKIN),
-+	LN2_PIN(PSIA1_MCLK),     LN2_PIN(PSIA2_MCLK),
-+	LN2_PINS(SPDIF_AIF),
-+	LN2_PINS(USB_AIF1),      LN2_PINS(USB_AIF2),
-+	LN2_PINS(ADAT_AIF),
-+	LN2_PINS(SOUNDCARD_AIF),
-+};
-+
-+#define LN_AIF_PINS(REV, ID) \
-+	LOCHNAGAR##REV##_PIN_##ID##_BCLK, \
-+	LOCHNAGAR##REV##_PIN_##ID##_LRCLK, \
-+	LOCHNAGAR##REV##_PIN_##ID##_TXDAT, \
-+	LOCHNAGAR##REV##_PIN_##ID##_RXDAT,
-+
-+#define LN1_AIF(ID, CTRL) \
-+static const struct lochnagar_aif lochnagar1_##ID##_aif = { \
-+	.name = LN_##ID##_STR, \
-+	.pins = { LN_AIF_PINS(1, ID) }, \
-+	.src_reg = LOCHNAGAR1_##ID##_SEL, \
-+	.src_mask = LOCHNAGAR1_SRC_MASK, \
-+	.ctrl_reg = LOCHNAGAR1_##CTRL, \
-+	.ena_mask = LOCHNAGAR1_##ID##_ENA_MASK, \
-+	.master_mask = LOCHNAGAR1_##ID##_LRCLK_DIR_MASK | \
-+		       LOCHNAGAR1_##ID##_BCLK_DIR_MASK, \
-+}
-+
-+#define LN2_AIF(ID) \
-+static const struct lochnagar_aif lochnagar2_##ID##_aif = { \
-+	.name = LN_##ID##_STR, \
-+	.pins = { LN_AIF_PINS(2, ID) }, \
-+	.src_reg = LOCHNAGAR2_##ID##_CTRL,  \
-+	.src_mask = LOCHNAGAR2_AIF_SRC_MASK, \
-+	.ctrl_reg = LOCHNAGAR2_##ID##_CTRL, \
-+	.ena_mask = LOCHNAGAR2_AIF_ENA_MASK, \
-+	.master_mask = LOCHNAGAR2_AIF_LRCLK_DIR_MASK | \
-+		       LOCHNAGAR2_AIF_BCLK_DIR_MASK, \
-+}
-+
-+struct lochnagar_aif {
-+	const char name[16];
-+
-+	unsigned int pins[4];
-+
-+	u16 src_reg;
-+	u16 src_mask;
-+
-+	u16 ctrl_reg;
-+	u16 ena_mask;
-+	u16 master_mask;
-+};
-+
-+LN1_AIF(CDC_AIF1,      CDC_AIF_CTRL1);
-+LN1_AIF(CDC_AIF2,      CDC_AIF_CTRL1);
-+LN1_AIF(CDC_AIF3,      CDC_AIF_CTRL2);
-+LN1_AIF(DSP_AIF1,      DSP_AIF);
-+LN1_AIF(DSP_AIF2,      DSP_AIF);
-+LN1_AIF(PSIA1,         PSIA_AIF);
-+LN1_AIF(PSIA2,         PSIA_AIF);
-+LN1_AIF(GF_AIF1,       GF_AIF1);
-+LN1_AIF(GF_AIF2,       GF_AIF2);
-+LN1_AIF(GF_AIF3,       GF_AIF1);
-+LN1_AIF(GF_AIF4,       GF_AIF2);
-+LN1_AIF(SPDIF_AIF,     EXT_AIF_CTRL);
-+
-+LN2_AIF(CDC_AIF1);
-+LN2_AIF(CDC_AIF2);
-+LN2_AIF(CDC_AIF3);
-+LN2_AIF(DSP_AIF1);
-+LN2_AIF(DSP_AIF2);
-+LN2_AIF(PSIA1);
-+LN2_AIF(PSIA2);
-+LN2_AIF(GF_AIF1);
-+LN2_AIF(GF_AIF2);
-+LN2_AIF(GF_AIF3);
-+LN2_AIF(GF_AIF4);
-+LN2_AIF(SPDIF_AIF);
-+LN2_AIF(USB_AIF1);
-+LN2_AIF(USB_AIF2);
-+LN2_AIF(ADAT_AIF);
-+LN2_AIF(SOUNDCARD_AIF);
-+
-+#define LN2_OP_AIF	0x00
-+#define LN2_OP_GPIO	0xFE
-+
-+#define LN_FUNC(NAME, TYPE, OP) \
-+	{ .name = NAME, .type = LN_FTYPE_##TYPE, .op = OP }
-+
-+#define LN_FUNC_PIN(REV, ID, OP) \
-+	LN_FUNC(lochnagar##REV##_##ID##_pin.name, PIN, OP)
-+
-+#define LN1_FUNC_PIN(ID, OP) LN_FUNC_PIN(1, ID, OP)
-+#define LN2_FUNC_PIN(ID, OP) LN_FUNC_PIN(2, ID, OP)
-+
-+#define LN_FUNC_AIF(REV, ID, OP) \
-+	LN_FUNC(lochnagar##REV##_##ID##_aif.name, AIF, OP)
-+
-+#define LN1_FUNC_AIF(ID, OP) LN_FUNC_AIF(1, ID, OP)
-+#define LN2_FUNC_AIF(ID, OP) LN_FUNC_AIF(2, ID, OP)
-+
-+#define LN2_FUNC_GAI(ID, OP, BOP, LROP, RXOP, TXOP) \
-+	LN2_FUNC_AIF(ID, OP), \
-+	LN_FUNC(lochnagar2_##ID##_BCLK_pin.name, PIN, BOP), \
-+	LN_FUNC(lochnagar2_##ID##_LRCLK_pin.name, PIN, LROP), \
-+	LN_FUNC(lochnagar2_##ID##_RXDAT_pin.name, PIN, RXOP), \
-+	LN_FUNC(lochnagar2_##ID##_TXDAT_pin.name, PIN, TXOP)
-+
-+enum lochnagar_func_type {
-+	LN_FTYPE_PIN,
-+	LN_FTYPE_AIF,
-+	LN_FTYPE_COUNT,
-+};
-+
-+struct lochnagar_func {
-+	const char * const name;
-+
-+	enum lochnagar_func_type type;
-+
-+	u8 op;
-+};
-+
-+static const struct lochnagar_func lochnagar1_funcs[] = {
-+	LN_FUNC("dsp-gpio1",       PIN, 0x01),
-+	LN_FUNC("dsp-gpio2",       PIN, 0x02),
-+	LN_FUNC("dsp-gpio3",       PIN, 0x03),
-+	LN_FUNC("codec-gpio1",     PIN, 0x04),
-+	LN_FUNC("codec-gpio2",     PIN, 0x05),
-+	LN_FUNC("codec-gpio3",     PIN, 0x06),
-+	LN_FUNC("codec-gpio4",     PIN, 0x07),
-+	LN_FUNC("codec-gpio5",     PIN, 0x08),
-+	LN_FUNC("codec-gpio6",     PIN, 0x09),
-+	LN_FUNC("codec-gpio7",     PIN, 0x0A),
-+	LN_FUNC("codec-gpio8",     PIN, 0x0B),
-+	LN1_FUNC_PIN(GF_GPIO2,          0x0C),
-+	LN1_FUNC_PIN(GF_GPIO3,          0x0D),
-+	LN1_FUNC_PIN(GF_GPIO7,          0x0E),
-+
-+	LN1_FUNC_AIF(SPDIF_AIF,         0x01),
-+	LN1_FUNC_AIF(PSIA1,             0x02),
-+	LN1_FUNC_AIF(PSIA2,             0x03),
-+	LN1_FUNC_AIF(CDC_AIF1,          0x04),
-+	LN1_FUNC_AIF(CDC_AIF2,          0x05),
-+	LN1_FUNC_AIF(CDC_AIF3,          0x06),
-+	LN1_FUNC_AIF(DSP_AIF1,          0x07),
-+	LN1_FUNC_AIF(DSP_AIF2,          0x08),
-+	LN1_FUNC_AIF(GF_AIF3,           0x09),
-+	LN1_FUNC_AIF(GF_AIF4,           0x0A),
-+	LN1_FUNC_AIF(GF_AIF1,           0x0B),
-+	LN1_FUNC_AIF(GF_AIF2,           0x0C),
-+};
-+
-+static const struct lochnagar_func lochnagar2_funcs[] = {
-+	LN_FUNC("aif",             PIN, LN2_OP_AIF),
-+	LN2_FUNC_PIN(FPGA_GPIO1,        0x01),
-+	LN2_FUNC_PIN(FPGA_GPIO2,        0x02),
-+	LN2_FUNC_PIN(FPGA_GPIO3,        0x03),
-+	LN2_FUNC_PIN(FPGA_GPIO4,        0x04),
-+	LN2_FUNC_PIN(FPGA_GPIO5,        0x05),
-+	LN2_FUNC_PIN(FPGA_GPIO6,        0x06),
-+	LN2_FUNC_PIN(CDC_GPIO1,         0x07),
-+	LN2_FUNC_PIN(CDC_GPIO2,         0x08),
-+	LN2_FUNC_PIN(CDC_GPIO3,         0x09),
-+	LN2_FUNC_PIN(CDC_GPIO4,         0x0A),
-+	LN2_FUNC_PIN(CDC_GPIO5,         0x0B),
-+	LN2_FUNC_PIN(CDC_GPIO6,         0x0C),
-+	LN2_FUNC_PIN(CDC_GPIO7,         0x0D),
-+	LN2_FUNC_PIN(CDC_GPIO8,         0x0E),
-+	LN2_FUNC_PIN(DSP_GPIO1,         0x0F),
-+	LN2_FUNC_PIN(DSP_GPIO2,         0x10),
-+	LN2_FUNC_PIN(DSP_GPIO3,         0x11),
-+	LN2_FUNC_PIN(DSP_GPIO4,         0x12),
-+	LN2_FUNC_PIN(DSP_GPIO5,         0x13),
-+	LN2_FUNC_PIN(DSP_GPIO6,         0x14),
-+	LN2_FUNC_PIN(GF_GPIO2,          0x15),
-+	LN2_FUNC_PIN(GF_GPIO3,          0x16),
-+	LN2_FUNC_PIN(GF_GPIO7,          0x17),
-+	LN2_FUNC_PIN(GF_GPIO1,          0x18),
-+	LN2_FUNC_PIN(GF_GPIO5,          0x19),
-+	LN2_FUNC_PIN(DSP_GPIO20,        0x1A),
-+	LN_FUNC("codec-clkout",    PIN, 0x20),
-+	LN_FUNC("dsp-clkout",      PIN, 0x21),
-+	LN_FUNC("pmic-32k",        PIN, 0x22),
-+	LN_FUNC("spdif-clkout",    PIN, 0x23),
-+	LN_FUNC("clk-12m288",      PIN, 0x24),
-+	LN_FUNC("clk-11m2986",     PIN, 0x25),
-+	LN_FUNC("clk-24m576",      PIN, 0x26),
-+	LN_FUNC("clk-22m5792",     PIN, 0x27),
-+	LN_FUNC("xmos-mclk",       PIN, 0x29),
-+	LN_FUNC("gf-clkout1",      PIN, 0x2A),
-+	LN_FUNC("gf-mclk1",        PIN, 0x2B),
-+	LN_FUNC("gf-mclk3",        PIN, 0x2C),
-+	LN_FUNC("gf-mclk2",        PIN, 0x2D),
-+	LN_FUNC("gf-clkout2",      PIN, 0x2E),
-+	LN2_FUNC_PIN(CDC_MCLK1,         0x2F),
-+	LN2_FUNC_PIN(CDC_MCLK2,         0x30),
-+	LN2_FUNC_PIN(DSP_CLKIN,         0x31),
-+	LN2_FUNC_PIN(PSIA1_MCLK,        0x32),
-+	LN2_FUNC_PIN(PSIA2_MCLK,        0x33),
-+	LN_FUNC("spdif-mclk",      PIN, 0x34),
-+	LN_FUNC("codec-irq",       PIN, 0x42),
-+	LN2_FUNC_PIN(CDC_RESET,         0x43),
-+	LN2_FUNC_PIN(DSP_RESET,         0x44),
-+	LN_FUNC("dsp-irq",         PIN, 0x45),
-+	LN2_FUNC_PIN(DSP_STANDBY,       0x46),
-+	LN2_FUNC_PIN(CDC_PDMCLK1,       0x90),
-+	LN2_FUNC_PIN(CDC_PDMDAT1,       0x91),
-+	LN2_FUNC_PIN(CDC_PDMCLK2,       0x92),
-+	LN2_FUNC_PIN(CDC_PDMDAT2,       0x93),
-+	LN2_FUNC_PIN(CDC_DMICCLK1,      0xA0),
-+	LN2_FUNC_PIN(CDC_DMICDAT1,      0xA1),
-+	LN2_FUNC_PIN(CDC_DMICCLK2,      0xA2),
-+	LN2_FUNC_PIN(CDC_DMICDAT2,      0xA3),
-+	LN2_FUNC_PIN(CDC_DMICCLK3,      0xA4),
-+	LN2_FUNC_PIN(CDC_DMICDAT3,      0xA5),
-+	LN2_FUNC_PIN(CDC_DMICCLK4,      0xA6),
-+	LN2_FUNC_PIN(CDC_DMICDAT4,      0xA7),
-+	LN2_FUNC_PIN(DSP_DMICCLK1,      0xA8),
-+	LN2_FUNC_PIN(DSP_DMICDAT1,      0xA9),
-+	LN2_FUNC_PIN(DSP_DMICCLK2,      0xAA),
-+	LN2_FUNC_PIN(DSP_DMICDAT2,      0xAB),
-+	LN2_FUNC_PIN(DSP_UART1_RX,      0xC0),
-+	LN2_FUNC_PIN(DSP_UART1_TX,      0xC1),
-+	LN2_FUNC_PIN(DSP_UART2_RX,      0xC2),
-+	LN2_FUNC_PIN(DSP_UART2_TX,      0xC3),
-+	LN2_FUNC_PIN(GF_UART2_RX,       0xC4),
-+	LN2_FUNC_PIN(GF_UART2_TX,       0xC5),
-+	LN2_FUNC_PIN(USB_UART_RX,       0xC6),
-+	LN_FUNC("usb-uart-tx",     PIN, 0xC7),
-+	LN2_FUNC_PIN(I2C2_SCL,          0xE0),
-+	LN2_FUNC_PIN(I2C2_SDA,          0xE1),
-+	LN2_FUNC_PIN(I2C3_SCL,          0xE2),
-+	LN2_FUNC_PIN(I2C3_SDA,          0xE3),
-+	LN2_FUNC_PIN(I2C4_SCL,          0xE4),
-+	LN2_FUNC_PIN(I2C4_SDA,          0xE5),
-+	LN_FUNC("gpio",            PIN, LN2_OP_GPIO),
-+
-+	LN2_FUNC_AIF(SPDIF_AIF,         0x01),
-+	LN2_FUNC_GAI(PSIA1,             0x02, 0x50, 0x51, 0x52, 0x53),
-+	LN2_FUNC_GAI(PSIA2,             0x03, 0x54, 0x55, 0x56, 0x57),
-+	LN2_FUNC_GAI(CDC_AIF1,          0x04, 0x59, 0x5B, 0x5A, 0x58),
-+	LN2_FUNC_GAI(CDC_AIF2,          0x05, 0x5D, 0x5F, 0x5E, 0x5C),
-+	LN2_FUNC_GAI(CDC_AIF3,          0x06, 0x61, 0x62, 0x63, 0x60),
-+	LN2_FUNC_GAI(DSP_AIF1,          0x07, 0x65, 0x67, 0x66, 0x64),
-+	LN2_FUNC_GAI(DSP_AIF2,          0x08, 0x69, 0x6B, 0x6A, 0x68),
-+	LN2_FUNC_GAI(GF_AIF3,           0x09, 0x6D, 0x6F, 0x6C, 0x6E),
-+	LN2_FUNC_GAI(GF_AIF4,           0x0A, 0x71, 0x73, 0x70, 0x72),
-+	LN2_FUNC_GAI(GF_AIF1,           0x0B, 0x75, 0x77, 0x74, 0x76),
-+	LN2_FUNC_GAI(GF_AIF2,           0x0C, 0x79, 0x7B, 0x78, 0x7A),
-+	LN2_FUNC_AIF(USB_AIF1,          0x0D),
-+	LN2_FUNC_AIF(USB_AIF2,          0x0E),
-+	LN2_FUNC_AIF(ADAT_AIF,          0x0F),
-+	LN2_FUNC_AIF(SOUNDCARD_AIF,     0x10),
-+};
-+
-+#define LN_GROUP_PIN(REV, ID) { \
-+	.name = lochnagar##REV##_##ID##_pin.name, \
-+	.type = LN_FTYPE_PIN, \
-+	.pins = &lochnagar##REV##_pins[LOCHNAGAR##REV##_PIN_##ID].number, \
-+	.npins = 1, \
-+	.priv = &lochnagar##REV##_pins[LOCHNAGAR##REV##_PIN_##ID], \
-+}
-+
-+#define LN_GROUP_AIF(REV, ID) { \
-+	.name = lochnagar##REV##_##ID##_aif.name, \
-+	.type = LN_FTYPE_AIF, \
-+	.pins = lochnagar##REV##_##ID##_aif.pins, \
-+	.npins = ARRAY_SIZE(lochnagar##REV##_##ID##_aif.pins), \
-+	.priv = &lochnagar##REV##_##ID##_aif, \
-+}
-+
-+#define LN1_GROUP_PIN(ID) LN_GROUP_PIN(1, ID)
-+#define LN2_GROUP_PIN(ID) LN_GROUP_PIN(2, ID)
-+
-+#define LN1_GROUP_AIF(ID) LN_GROUP_AIF(1, ID)
-+#define LN2_GROUP_AIF(ID) LN_GROUP_AIF(2, ID)
-+
-+#define LN2_GROUP_GAI(ID) \
-+	LN2_GROUP_AIF(ID), \
-+	LN2_GROUP_PIN(ID##_BCLK), LN2_GROUP_PIN(ID##_LRCLK), \
-+	LN2_GROUP_PIN(ID##_RXDAT), LN2_GROUP_PIN(ID##_TXDAT)
-+
-+struct lochnagar_group {
-+	const char * const name;
-+
-+	enum lochnagar_func_type type;
-+
-+	const unsigned int *pins;
-+	unsigned int npins;
-+
-+	const void *priv;
-+};
-+
-+static const struct lochnagar_group lochnagar1_groups[] = {
-+	LN1_GROUP_PIN(GF_GPIO2),       LN1_GROUP_PIN(GF_GPIO3),
-+	LN1_GROUP_PIN(GF_GPIO7),
-+	LN1_GROUP_PIN(LED1),           LN1_GROUP_PIN(LED2),
-+	LN1_GROUP_AIF(CDC_AIF1),       LN1_GROUP_AIF(CDC_AIF2),
-+	LN1_GROUP_AIF(CDC_AIF3),
-+	LN1_GROUP_AIF(DSP_AIF1),       LN1_GROUP_AIF(DSP_AIF2),
-+	LN1_GROUP_AIF(PSIA1),          LN1_GROUP_AIF(PSIA2),
-+	LN1_GROUP_AIF(GF_AIF1),        LN1_GROUP_AIF(GF_AIF2),
-+	LN1_GROUP_AIF(GF_AIF3),        LN1_GROUP_AIF(GF_AIF4),
-+	LN1_GROUP_AIF(SPDIF_AIF),
-+};
-+
-+static const struct lochnagar_group lochnagar2_groups[] = {
-+	LN2_GROUP_PIN(FPGA_GPIO1),     LN2_GROUP_PIN(FPGA_GPIO2),
-+	LN2_GROUP_PIN(FPGA_GPIO3),     LN2_GROUP_PIN(FPGA_GPIO4),
-+	LN2_GROUP_PIN(FPGA_GPIO5),     LN2_GROUP_PIN(FPGA_GPIO6),
-+	LN2_GROUP_PIN(CDC_GPIO1),      LN2_GROUP_PIN(CDC_GPIO2),
-+	LN2_GROUP_PIN(CDC_GPIO3),      LN2_GROUP_PIN(CDC_GPIO4),
-+	LN2_GROUP_PIN(CDC_GPIO5),      LN2_GROUP_PIN(CDC_GPIO6),
-+	LN2_GROUP_PIN(CDC_GPIO7),      LN2_GROUP_PIN(CDC_GPIO8),
-+	LN2_GROUP_PIN(DSP_GPIO1),      LN2_GROUP_PIN(DSP_GPIO2),
-+	LN2_GROUP_PIN(DSP_GPIO3),      LN2_GROUP_PIN(DSP_GPIO4),
-+	LN2_GROUP_PIN(DSP_GPIO5),      LN2_GROUP_PIN(DSP_GPIO6),
-+	LN2_GROUP_PIN(DSP_GPIO20),
-+	LN2_GROUP_PIN(GF_GPIO1),
-+	LN2_GROUP_PIN(GF_GPIO2),       LN2_GROUP_PIN(GF_GPIO5),
-+	LN2_GROUP_PIN(GF_GPIO3),       LN2_GROUP_PIN(GF_GPIO7),
-+	LN2_GROUP_PIN(DSP_UART1_RX),   LN2_GROUP_PIN(DSP_UART1_TX),
-+	LN2_GROUP_PIN(DSP_UART2_RX),   LN2_GROUP_PIN(DSP_UART2_TX),
-+	LN2_GROUP_PIN(GF_UART2_RX),    LN2_GROUP_PIN(GF_UART2_TX),
-+	LN2_GROUP_PIN(USB_UART_RX),
-+	LN2_GROUP_PIN(CDC_PDMCLK1),    LN2_GROUP_PIN(CDC_PDMDAT1),
-+	LN2_GROUP_PIN(CDC_PDMCLK2),    LN2_GROUP_PIN(CDC_PDMDAT2),
-+	LN2_GROUP_PIN(CDC_DMICCLK1),   LN2_GROUP_PIN(CDC_DMICDAT1),
-+	LN2_GROUP_PIN(CDC_DMICCLK2),   LN2_GROUP_PIN(CDC_DMICDAT2),
-+	LN2_GROUP_PIN(CDC_DMICCLK3),   LN2_GROUP_PIN(CDC_DMICDAT3),
-+	LN2_GROUP_PIN(CDC_DMICCLK4),   LN2_GROUP_PIN(CDC_DMICDAT4),
-+	LN2_GROUP_PIN(DSP_DMICCLK1),   LN2_GROUP_PIN(DSP_DMICDAT1),
-+	LN2_GROUP_PIN(DSP_DMICCLK2),   LN2_GROUP_PIN(DSP_DMICDAT2),
-+	LN2_GROUP_PIN(I2C2_SCL),       LN2_GROUP_PIN(I2C2_SDA),
-+	LN2_GROUP_PIN(I2C3_SCL),       LN2_GROUP_PIN(I2C3_SDA),
-+	LN2_GROUP_PIN(I2C4_SCL),       LN2_GROUP_PIN(I2C4_SDA),
-+	LN2_GROUP_PIN(DSP_STANDBY),
-+	LN2_GROUP_PIN(CDC_MCLK1),      LN2_GROUP_PIN(CDC_MCLK2),
-+	LN2_GROUP_PIN(DSP_CLKIN),
-+	LN2_GROUP_PIN(PSIA1_MCLK),     LN2_GROUP_PIN(PSIA2_MCLK),
-+	LN2_GROUP_GAI(CDC_AIF1),       LN2_GROUP_GAI(CDC_AIF2),
-+	LN2_GROUP_GAI(CDC_AIF3),
-+	LN2_GROUP_GAI(DSP_AIF1),       LN2_GROUP_GAI(DSP_AIF2),
-+	LN2_GROUP_GAI(PSIA1),          LN2_GROUP_GAI(PSIA2),
-+	LN2_GROUP_GAI(GF_AIF1),        LN2_GROUP_GAI(GF_AIF2),
-+	LN2_GROUP_GAI(GF_AIF3),        LN2_GROUP_GAI(GF_AIF4),
-+	LN2_GROUP_AIF(SPDIF_AIF),
-+	LN2_GROUP_AIF(USB_AIF1),       LN2_GROUP_AIF(USB_AIF2),
-+	LN2_GROUP_AIF(ADAT_AIF),
-+	LN2_GROUP_AIF(SOUNDCARD_AIF),
-+};
-+
-+struct lochnagar_func_groups {
-+	const char **groups;
-+	unsigned int ngroups;
-+};
-+
-+struct lochnagar_pin_priv {
-+	struct lochnagar *lochnagar;
-+	struct device *dev;
-+
-+	const struct lochnagar_func *funcs;
-+	unsigned int nfuncs;
-+
-+	const struct pinctrl_pin_desc *pins;
-+	unsigned int npins;
-+
-+	const struct lochnagar_group *groups;
-+	unsigned int ngroups;
-+
-+	struct lochnagar_func_groups func_groups[LN_FTYPE_COUNT];
-+
-+	struct gpio_chip gpio_chip;
-+};
-+
-+static int lochnagar_get_groups_count(struct pinctrl_dev *pctldev)
++/*
+  * struct imx_sc_msg_req_clock_enable - clock gate protocol
+  * @hdr: SCU protocol header
+  * @resource: clock resource to gate
+@@ -173,6 +208,49 @@ static int clk_scu_set_rate(struct clk_hw *hw, unsigne=
+d long rate,
+ 	return imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
+ }
+=20
++static u8 clk_scu_get_parent(struct clk_hw *hw)
 +{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return priv->ngroups;
-+}
-+
-+static const char *lochnagar_get_group_name(struct pinctrl_dev *pctldev,
-+					    unsigned int group_idx)
-+{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return priv->groups[group_idx].name;
-+}
-+
-+static int lochnagar_get_group_pins(struct pinctrl_dev *pctldev,
-+				    unsigned int group_idx,
-+				    const unsigned int **pins,
-+				    unsigned int *num_pins)
-+{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*pins = priv->groups[group_idx].pins;
-+	*num_pins = priv->groups[group_idx].npins;
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops lochnagar_pin_group_ops = {
-+	.get_groups_count = lochnagar_get_groups_count,
-+	.get_group_name = lochnagar_get_group_name,
-+	.get_group_pins = lochnagar_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
-+	.dt_free_map = pinctrl_utils_free_map,
-+};
-+
-+static int lochnagar_get_funcs_count(struct pinctrl_dev *pctldev)
-+{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return priv->nfuncs;
-+}
-+
-+static const char *lochnagar_get_func_name(struct pinctrl_dev *pctldev,
-+					   unsigned int func_idx)
-+{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return priv->funcs[func_idx].name;
-+}
-+
-+static int lochnagar_get_func_groups(struct pinctrl_dev *pctldev,
-+				     unsigned int func_idx,
-+				     const char * const **groups,
-+				     unsigned int * const num_groups)
-+{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+	int func_type;
-+
-+	func_type = priv->funcs[func_idx].type;
-+
-+	*groups = priv->func_groups[func_type].groups;
-+	*num_groups = priv->func_groups[func_type].ngroups;
-+
-+	return 0;
-+}
-+
-+static int lochnagar2_get_gpio_chan(struct lochnagar_pin_priv *priv,
-+				    unsigned int op)
-+{
-+	struct regmap *regmap = priv->lochnagar->regmap;
-+	unsigned int val;
-+	int free = -1;
-+	int i, ret;
-+
-+	for (i = 0; i < LN2_NUM_GPIO_CHANNELS; i++) {
-+		ret = regmap_read(regmap, LOCHNAGAR2_GPIO_CHANNEL1 + i, &val);
-+		if (ret)
-+			return ret;
-+
-+		val &= LOCHNAGAR2_GPIO_CHANNEL_SRC_MASK;
-+
-+		if (val == op)
-+			return i + 1;
-+
-+		if (free < 0 && !val)
-+			free = i;
-+	}
-+
-+	if (free >= 0) {
-+		ret = regmap_update_bits(regmap,
-+					 LOCHNAGAR2_GPIO_CHANNEL1 + free,
-+					 LOCHNAGAR2_GPIO_CHANNEL_SRC_MASK, op);
-+		if (ret)
-+			return ret;
-+
-+		free++;
-+
-+		dev_dbg(priv->dev, "Set channel %d to 0x%x\n", free, op);
-+
-+		return free;
-+	}
-+
-+	return -ENOSPC;
-+}
-+
-+static int lochnagar_pin_set_mux(struct lochnagar_pin_priv *priv,
-+				 const struct lochnagar_pin *pin,
-+				 unsigned int op)
-+{
++	struct clk_scu *clk =3D to_clk_scu(hw);
++	struct imx_sc_msg_get_clock_parent msg;
++	struct imx_sc_rpc_msg *hdr =3D &msg.hdr;
 +	int ret;
 +
-+	switch (priv->lochnagar->type) {
-+	case LOCHNAGAR1:
-+		break;
-+	default:
-+		ret = lochnagar2_get_gpio_chan(priv, op);
-+		if (ret < 0) {
-+			dev_err(priv->dev, "Failed to get channel for %s: %d\n",
-+				pin->name, ret);
-+			return ret;
-+		}
++	hdr->ver =3D IMX_SC_RPC_VERSION;
++	hdr->svc =3D IMX_SC_RPC_SVC_PM;
++	hdr->func =3D IMX_SC_PM_FUNC_GET_CLOCK_PARENT;
++	hdr->size =3D 2;
 +
-+		op = ret;
-+		break;
-+	}
++	msg.data.req.resource =3D cpu_to_le16(clk->rsrc_id);
++	msg.data.req.clk =3D clk->clk_type;
 +
-+	dev_dbg(priv->dev, "Set pin %s to 0x%x\n", pin->name, op);
-+
-+	ret = regmap_write(priv->lochnagar->regmap, pin->reg, op);
-+	if (ret)
-+		dev_err(priv->dev, "Failed to set %s mux: %d\n",
-+			pin->name, ret);
-+
-+	return 0;
-+}
-+
-+static int lochnagar_aif_set_mux(struct lochnagar_pin_priv *priv,
-+				 const struct lochnagar_group *group,
-+				 unsigned int op)
-+{
-+	struct regmap *regmap = priv->lochnagar->regmap;
-+	const struct lochnagar_aif *aif = group->priv;
-+	const struct lochnagar_pin *pin;
-+	int i, ret;
-+
-+	ret = regmap_update_bits(regmap, aif->src_reg, aif->src_mask, op);
++	ret =3D imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
 +	if (ret) {
-+		dev_err(priv->dev, "Failed to set %s source: %d\n",
-+			group->name, ret);
-+		return ret;
-+	}
-+
-+	ret = regmap_update_bits(regmap, aif->ctrl_reg,
-+				 aif->ena_mask, aif->ena_mask);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to set %s enable: %d\n",
-+			group->name, ret);
-+		return ret;
-+	}
-+
-+	for (i = 0; i < group->npins; i++) {
-+		pin = priv->pins[group->pins[i]].drv_data;
-+
-+		if (pin->type != LN_PTYPE_MUX)
-+			continue;
-+
-+		dev_dbg(priv->dev, "Set pin %s to AIF\n", pin->name);
-+
-+		ret = regmap_update_bits(regmap, pin->reg,
-+					 LOCHNAGAR2_GPIO_SRC_MASK,
-+					 LN2_OP_AIF);
-+		if (ret) {
-+			dev_err(priv->dev, "Failed to set %s to AIF: %d\n",
-+				pin->name, ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int lochnagar_set_mux(struct pinctrl_dev *pctldev,
-+			     unsigned int func_idx, unsigned int group_idx)
-+{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+	const struct lochnagar_func *func = &priv->funcs[func_idx];
-+	const struct lochnagar_group *group = &priv->groups[group_idx];
-+	const struct lochnagar_pin *pin;
-+
-+	switch (func->type) {
-+	case LN_FTYPE_AIF:
-+		dev_dbg(priv->dev, "Set group %s to %s\n",
-+			group->name, func->name);
-+
-+		return lochnagar_aif_set_mux(priv, group, func->op);
-+	case LN_FTYPE_PIN:
-+		pin = priv->pins[*group->pins].drv_data;
-+
-+		dev_dbg(priv->dev, "Set pin %s to %s\n", pin->name, func->name);
-+
-+		return lochnagar_pin_set_mux(priv, pin, func->op);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int lochnagar_gpio_request(struct pinctrl_dev *pctldev,
-+				  struct pinctrl_gpio_range *range,
-+				  unsigned int offset)
-+{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+	struct lochnagar *lochnagar = priv->lochnagar;
-+	const struct lochnagar_pin *pin = priv->pins[offset].drv_data;
-+	int ret;
-+
-+	dev_dbg(priv->dev, "Requesting GPIO %s\n", pin->name);
-+
-+	if (lochnagar->type == LOCHNAGAR1 || pin->type != LN_PTYPE_MUX)
++		pr_err("%s: failed to get clock parent %d\n",
++		       clk_hw_get_name(hw), ret);
 +		return 0;
-+
-+	ret = lochnagar2_get_gpio_chan(priv, LN2_OP_GPIO);
-+	if (ret < 0) {
-+		dev_err(priv->dev, "Failed to get low channel: %d\n", ret);
-+		return ret;
 +	}
 +
-+	ret = lochnagar2_get_gpio_chan(priv, LN2_OP_GPIO | 0x1);
-+	if (ret < 0) {
-+		dev_err(priv->dev, "Failed to get high channel: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
++	return le32_to_cpu(msg.data.resp.parent);
 +}
 +
-+static int lochnagar_gpio_set_direction(struct pinctrl_dev *pctldev,
-+					struct pinctrl_gpio_range *range,
-+					unsigned int offset,
-+					bool input)
++static int clk_scu_set_parent(struct clk_hw *hw, u8 index)
 +{
-+	/* The GPIOs only support output */
-+	if (input)
-+		return -EINVAL;
++	struct clk_scu *clk =3D to_clk_scu(hw);
++	struct imx_sc_msg_set_clock_parent msg;
++	struct imx_sc_rpc_msg *hdr =3D &msg.hdr;
 +
-+	return 0;
++	hdr->ver =3D IMX_SC_RPC_VERSION;
++	hdr->svc =3D IMX_SC_RPC_SVC_PM;
++	hdr->func =3D IMX_SC_PM_FUNC_SET_CLOCK_PARENT;
++	hdr->size =3D 2;
++
++	msg.resource =3D cpu_to_le16(clk->rsrc_id);
++	msg.clk =3D clk->clk_type;
++	msg.parent =3D index;
++
++	return imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
 +}
 +
-+static const struct pinmux_ops lochnagar_pin_mux_ops = {
-+	.get_functions_count = lochnagar_get_funcs_count,
-+	.get_function_name = lochnagar_get_func_name,
-+	.get_function_groups = lochnagar_get_func_groups,
-+	.set_mux = lochnagar_set_mux,
+ static int sc_pm_clock_enable(struct imx_sc_ipc *ipc, u16 resource,
+ 			      u8 clk, bool enable, bool autog)
+ {
+@@ -228,11 +306,14 @@ static const struct clk_ops clk_scu_ops =3D {
+ 	.recalc_rate =3D clk_scu_recalc_rate,
+ 	.round_rate =3D clk_scu_round_rate,
+ 	.set_rate =3D clk_scu_set_rate,
++	.get_parent =3D clk_scu_get_parent,
++	.set_parent =3D clk_scu_set_parent,
+ 	.prepare =3D clk_scu_prepare,
+ 	.unprepare =3D clk_scu_unprepare,
+ };
+=20
+-struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id, u8 clk_type)
++struct clk_hw *__imx_clk_scu(const char *name, const char * const *parents=
+,
++			     int num_parents, u32 rsrc_id, u8 clk_type)
+ {
+ 	struct clk_init_data init;
+ 	struct clk_scu *clk;
+@@ -248,7 +329,9 @@ struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_i=
+d, u8 clk_type)
+=20
+ 	init.name =3D name;
+ 	init.ops =3D &clk_scu_ops;
+-	init.num_parents =3D 0;
++	init.parent_names =3D parents;
++	init.num_parents =3D num_parents;
 +
-+	.gpio_request_enable = lochnagar_gpio_request,
-+	.gpio_set_direction = lochnagar_gpio_set_direction,
+ 	/*
+ 	 * Note on MX8, the clocks are tightly coupled with power domain
+ 	 * that once the power domain is off, the clock status may be
+diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
+index 52c1746..2bcfaf0 100644
+--- a/drivers/clk/imx/clk-scu.h
++++ b/drivers/clk/imx/clk-scu.h
+@@ -10,7 +10,21 @@
+ #include <linux/firmware/imx/sci.h>
+=20
+ int imx_clk_scu_init(void);
+-struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id, u8 clk_type);
 +
-+	.strict = true,
-+};
++struct clk_hw *__imx_clk_scu(const char *name, const char * const *parents=
+,
++			     int num_parents, u32 rsrc_id, u8 clk_type);
 +
-+static int lochnagar_aif_set_master(struct lochnagar_pin_priv *priv,
-+				    unsigned int group_idx, bool master)
++static inline struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id,
++					 u8 clk_type)
 +{
-+	struct regmap *regmap = priv->lochnagar->regmap;
-+	const struct lochnagar_group *group = &priv->groups[group_idx];
-+	const struct lochnagar_aif *aif = group->priv;
-+	unsigned int val = 0;
-+	int ret;
-+
-+	if (group->type != LN_FTYPE_AIF)
-+		return -EINVAL;
-+
-+	if (!master)
-+		val = aif->master_mask;
-+
-+	dev_dbg(priv->dev, "Set AIF %s to %s\n",
-+		group->name, master ? "master" : "slave");
-+
-+	ret = regmap_update_bits(regmap, aif->ctrl_reg, aif->master_mask, val);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to set %s mode: %d\n",
-+			group->name, ret);
-+		return ret;
-+	}
-+
-+	return 0;
++	return __imx_clk_scu(name, NULL, 0, rsrc_id, clk_type);
 +}
 +
-+static int lochnagar_conf_group_set(struct pinctrl_dev *pctldev,
-+				    unsigned int group_idx,
-+				    unsigned long *configs,
-+				    unsigned int num_configs)
++static inline struct clk_hw *imx_clk_scu2(const char *name, const char * c=
+onst *parents,
++					  int num_parents, u32 rsrc_id, u8 clk_type)
 +{
-+	struct lochnagar_pin_priv *priv = pinctrl_dev_get_drvdata(pctldev);
-+	int i, ret;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		unsigned int param = pinconf_to_config_param(*configs);
-+
-+		switch (param) {
-+		case PIN_CONFIG_OUTPUT_ENABLE:
-+			ret = lochnagar_aif_set_master(priv, group_idx, true);
-+			if (ret)
-+				return ret;
-+			break;
-+		case PIN_CONFIG_INPUT_ENABLE:
-+			ret = lochnagar_aif_set_master(priv, group_idx, false);
-+			if (ret)
-+				return ret;
-+			break;
-+		default:
-+			return -ENOTSUPP;
-+		}
-+
-+		configs++;
-+	}
-+
-+	return 0;
++	return __imx_clk_scu(name, parents, num_parents, rsrc_id, clk_type);
 +}
-+
-+static const struct pinconf_ops lochnagar_pin_conf_ops = {
-+	.pin_config_group_set = lochnagar_conf_group_set,
-+};
-+
-+static const struct pinctrl_desc lochnagar_pin_desc = {
-+	.name = "lochnagar-pinctrl",
-+	.owner = THIS_MODULE,
-+
-+	.pctlops = &lochnagar_pin_group_ops,
-+	.pmxops = &lochnagar_pin_mux_ops,
-+	.confops = &lochnagar_pin_conf_ops,
-+};
-+
-+static void lochnagar_gpio_set(struct gpio_chip *chip,
-+			       unsigned int offset, int value)
-+{
-+	struct lochnagar_pin_priv *priv = gpiochip_get_data(chip);
-+	struct lochnagar *lochnagar = priv->lochnagar;
-+	const struct lochnagar_pin *pin = priv->pins[offset].drv_data;
-+	int ret;
-+
-+	value = !!value;
-+
-+	dev_dbg(priv->dev, "Set GPIO %s to %s\n",
-+		pin->name, value ? "high" : "low");
-+
-+	switch (pin->type) {
-+	case LN_PTYPE_MUX:
-+		value |= LN2_OP_GPIO;
-+
-+		ret = lochnagar_pin_set_mux(priv, pin, value);
-+		break;
-+	case LN_PTYPE_GPIO:
-+		if (pin->invert)
-+			value = !value;
-+
-+		ret = regmap_update_bits(lochnagar->regmap, pin->reg,
-+					 BIT(pin->shift), value << pin->shift);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	if (ret < 0)
-+		dev_err(chip->parent, "Failed to set %s value: %d\n",
-+			pin->name, ret);
-+}
-+
-+static int lochnagar_gpio_direction_out(struct gpio_chip *chip,
-+					unsigned int offset, int value)
-+{
-+	lochnagar_gpio_set(chip, offset, value);
-+
-+	return pinctrl_gpio_direction_output(chip->base + offset);
-+}
-+
-+static int lochnagar_fill_func_groups(struct lochnagar_pin_priv *priv)
-+{
-+	struct lochnagar_func_groups *funcs;
-+	int i;
-+
-+	for (i = 0; i < priv->ngroups; i++)
-+		priv->func_groups[priv->groups[i].type].ngroups++;
-+
-+	for (i = 0; i < LN_FTYPE_COUNT; i++) {
-+		funcs = &priv->func_groups[i];
-+
-+		if (!funcs->ngroups)
-+			continue;
-+
-+		funcs->groups = devm_kcalloc(priv->dev, funcs->ngroups,
-+					     sizeof(*funcs->groups),
-+					     GFP_KERNEL);
-+		if (!funcs->groups)
-+			return -ENOMEM;
-+
-+		funcs->ngroups = 0;
-+	}
-+
-+	for (i = 0; i < priv->ngroups; i++) {
-+		funcs = &priv->func_groups[priv->groups[i].type];
-+
-+		funcs->groups[funcs->ngroups++] = priv->groups[i].name;
-+	}
-+
-+	return 0;
-+}
-+
-+static int lochnagar_pin_probe(struct platform_device *pdev)
-+{
-+	struct lochnagar *lochnagar = dev_get_drvdata(pdev->dev.parent);
-+	struct lochnagar_pin_priv *priv;
-+	struct pinctrl_desc *desc;
-+	struct pinctrl_dev *pctl;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	priv->lochnagar = lochnagar;
-+
-+	desc = devm_kzalloc(dev, sizeof(*desc), GFP_KERNEL);
-+	if (!desc)
-+		return -ENOMEM;
-+
-+	*desc = lochnagar_pin_desc;
-+
-+	priv->gpio_chip.label = dev_name(dev);
-+	priv->gpio_chip.request = gpiochip_generic_request;
-+	priv->gpio_chip.free = gpiochip_generic_free;
-+	priv->gpio_chip.direction_output = lochnagar_gpio_direction_out;
-+	priv->gpio_chip.set = lochnagar_gpio_set;
-+	priv->gpio_chip.can_sleep = true;
-+	priv->gpio_chip.parent = dev;
-+	priv->gpio_chip.base = -1;
-+#ifdef CONFIG_OF_GPIO
-+	priv->gpio_chip.of_node = dev->of_node;
-+#endif
-+
-+	switch (lochnagar->type) {
-+	case LOCHNAGAR1:
-+		priv->funcs = lochnagar1_funcs;
-+		priv->nfuncs = ARRAY_SIZE(lochnagar1_funcs);
-+		priv->pins = lochnagar1_pins;
-+		priv->npins = ARRAY_SIZE(lochnagar1_pins);
-+		priv->groups = lochnagar1_groups;
-+		priv->ngroups = ARRAY_SIZE(lochnagar1_groups);
-+
-+		priv->gpio_chip.ngpio = LOCHNAGAR1_PIN_NUM_GPIOS;
-+		break;
-+	case LOCHNAGAR2:
-+		priv->funcs = lochnagar2_funcs;
-+		priv->nfuncs = ARRAY_SIZE(lochnagar2_funcs);
-+		priv->pins = lochnagar2_pins;
-+		priv->npins = ARRAY_SIZE(lochnagar2_pins);
-+		priv->groups = lochnagar2_groups;
-+		priv->ngroups = ARRAY_SIZE(lochnagar2_groups);
-+
-+		priv->gpio_chip.ngpio = LOCHNAGAR2_PIN_NUM_GPIOS;
-+		break;
-+	default:
-+		dev_err(dev, "Unknown Lochnagar type: %d\n", lochnagar->type);
-+		return -EINVAL;
-+	}
-+
-+	ret = lochnagar_fill_func_groups(priv);
-+	if (ret < 0)
-+		return ret;
-+
-+	desc->pins = priv->pins;
-+	desc->npins = priv->npins;
-+
-+	pctl = devm_pinctrl_register(dev, desc, priv);
-+	if (IS_ERR(pctl)) {
-+		ret = PTR_ERR(pctl);
-+		dev_err(priv->dev, "Failed to register pinctrl: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = devm_gpiochip_add_data(dev, &priv->gpio_chip, priv);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register gpiochip: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id lochnagar_of_match[] = {
-+	{ .compatible = "cirrus,lochnagar-pinctrl" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, lochnagar_of_match);
-+
-+static struct platform_driver lochnagar_pin_driver = {
-+	.driver = {
-+		.name = "lochnagar-pinctrl",
-+		.of_match_table = of_match_ptr(lochnagar_of_match),
-+	},
-+
-+	.probe = lochnagar_pin_probe,
-+};
-+module_platform_driver(lochnagar_pin_driver);
-+
-+MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
-+MODULE_DESCRIPTION("Pinctrl driver for Cirrus Logic Lochnagar Board");
-+MODULE_LICENSE("GPL v2");
--- 
-2.11.0
+=20
+ struct clk_hw *imx_clk_lpcg_scu(const char *name, const char *parent_name,
+ 				unsigned long flags, void __iomem *reg,
+--=20
+2.7.4
 
