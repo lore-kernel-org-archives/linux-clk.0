@@ -2,110 +2,100 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51ABFC282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 19:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A40C282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 19:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 233D62086C
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 19:21:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGqaOnhS"
+	by mail.kernel.org (Postfix) with ESMTP id D22D72086C
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 19:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548876262;
+	bh=sgTHidybVzN2pa2WK0R7PtQJqzx1uIjcOw/HxdS2gxI=;
+	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
+	b=KFgZ8ra4e7R4v26taYoCPbDUjWpd6Puh8raJNxtgVc0qSU+kPtgHEsRH9Zv/u+Ju8
+	 L696Pc+daDVOvD7K7lnRWFekmCvl1Jhfx4Ki0BW6KvpErucSsKMXhAcDdecWXsRnxN
+	 wQ83X47gj8WB02r4KDNEE24rNVcG+VxyKVwzcMZ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387509AbfA3TVU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:21:20 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44916 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387448AbfA3TVU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 14:21:20 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n32so771208qte.11
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jan 2019 11:21:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Mk61zDWO2rvng3ldRiuYr9AGIieZwSLJylIjdFkyVUk=;
-        b=EGqaOnhSGpp1MlChw7SgI7j/RK0eaCHvVySBt8KQZgq9Z1hK5IslH0NddJEbV/+rjf
-         6AbrkvGCrsGF1NS3D4xhc7jfZGHfYbexmyekApWpTNl1BzFwNnKOR0JUrNoIzjnlq1NX
-         rX4NPlCF1mwbc5+YckE/E5XccuVn00Vi+dD0yFaIfMAwufMdurog2qNS28uOPRwdnXdq
-         uTwKqnsOO5IzjKxkCE7uso2pGgqiVZ0JV9UzR738vE6n4JLI7EbH4MJjm3cTTwoEj0tG
-         CCVR8EVUWYbJ8PrCXo14Y7x+Q6QPiqauk2pSycdD0mVDyKy67vUmlZtuvU4LMhJVeJgs
-         1Vcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Mk61zDWO2rvng3ldRiuYr9AGIieZwSLJylIjdFkyVUk=;
-        b=AuKdmdEnmxcDyeo3MHJ7I4OJLP339HhJzW6sjwYtHypMRMEo/lSZrrGeF81bBd8lZu
-         WMrcUirldV5bBzeEWHQ6JXqcbDuykphosVSo/T4XnyRILTArmKPqPwlRGQVmofOpcBPh
-         D7N6abnsWSbuTBJJGYVZ23D84kYErIrbI7TcA8xixfBzUaz8+1lBohgQsq4X/8trdHdh
-         hVNl5vmvAIterIzZmqmI83gj1FBjPbI4a3f8kAn5oAYHEkNgdH9T06WDijmsm0/3Fq10
-         N8nQQaGmR/zFaBVSjSRPgWLhNTQAWNBuUSgUgCBASUYCtkRjV3luhZJtHuLJqXoM5zjz
-         CNmQ==
-X-Gm-Message-State: AJcUukcTtLup37t3k3bTz3Chjh6A3QPGt9FdGFJcSrLWBeQkHRb/Y902
-        qqZIfIx3lFxWhTKBxnkZM4I=
-X-Google-Smtp-Source: ALg8bN7LibS16BiFY7knoDAJcdbQjGjmEDdhOXa8n5XGevRvSnYoYz2Wbv2qUmCftEYv4384xjagkQ==
-X-Received: by 2002:a0c:95e8:: with SMTP id t37mr29847126qvt.163.1548876079085;
-        Wed, 30 Jan 2019 11:21:19 -0800 (PST)
-Received: from fabio-Latitude-E5450.nxp.com ([2804:14c:482:a73::1])
-        by smtp.gmail.com with ESMTPSA id u4sm1775456qkk.51.2019.01.30.11.21.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 11:21:18 -0800 (PST)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     sboyd@kernel.org
-Cc:     shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rogerio.silva@nxp.com, Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH] clk: imx8mq: Fix the CLKO2 source select list
-Date:   Wed, 30 Jan 2019 17:21:02 -0200
-Message-Id: <20190130192102.7065-1-festevam@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S2387615AbfA3TYQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 14:24:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387606AbfA3TYP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:24:15 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB4E62086C;
+        Wed, 30 Jan 2019 19:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548876254;
+        bh=sgTHidybVzN2pa2WK0R7PtQJqzx1uIjcOw/HxdS2gxI=;
+        h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
+        b=AJCXgUXBC4yGLvne2Xilu1IbFiDIgzmQtypDt2WvBQQawSNUfhb1dtzAYJXTt46Gs
+         A4uDnPxaFSAo9IgDvEGb1ANKVaG+C4q6xravPSpy+LDXPIBB8AnnHYckwVLpuacbwq
+         GUdBx2X32eiQH9q5dJ04Xo6/MC8jJr2YG6Oa4lSQ=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 7/7] arm64: dts: qcom: qcs404: Add PCIe related nodes
+From:   Stephen Boyd <sboyd@kernel.org>
+Message-ID: <154887625299.169292.6293540451460425008@swboyd.mtv.corp.google.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        David Brown <david.brown@linaro.org>,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+References: <20190125234509.26419-1-bjorn.andersson@linaro.org> <20190125234509.26419-8-bjorn.andersson@linaro.org>
+User-Agent: alot/0.8
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+In-Reply-To: <20190125234509.26419-8-bjorn.andersson@linaro.org>
+Date:   Wed, 30 Jan 2019 11:24:12 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The CLKO2 clock source select list is the following as per the i.MX8M
-Reference Manual:
+Quoting Bjorn Andersson (2019-01-25 15:45:09)
+> @@ -771,6 +788,56 @@
+>                                 status =3D "disabled";
+>                         };
+>                 };
+> +
+> +               pcie: pci@10000000 {
+> +                       compatible =3D "qcom,pcie-qcs404", "snps,dw-pcie";
+> +                       reg =3D  <0x10000000 0xf1d
 
-000 - 25M_REF_CLK
-001 - SYSTEM_PLL2_DIV5
-010 - SYSTEM_PLL1_DIV2
-011 - SYSTEM_PLL2_DIV6
-100 - SYSTEM_PLL3_CLK
-101 - AUDIO_PLL1_CLK
-110 - VIDEO_PLL1_CLK
-111 - 32K_REF_CLK
+Nitpick: Can you format these like <0x10000000 0xf1d>, <0x10000f20 0xa8>, e=
+tc?
 
-However, in imx8mq_clko2_sels[] only the first four entries are correct.
+> +                               0x10000f20 0xa8
+> +                               0x07780000 0x2000
+> +                               0x10001000 0x2000>;
+> +                       reg-names =3D "dbi", "elbi", "parf", "config";
+> +                       device_type =3D "pci";
+> +                       linux,pci-domain =3D <0>;
+> +                       bus-range =3D <0x00 0xff>;
+> +                       num-lanes =3D <1>;
+> +                       #address-cells =3D <3>;
+> +                       #size-cells =3D <2>;
+> +
+> +                       ranges =3D <0x81000000 0 0          0x10003000 0 =
+0x00010000   /* I/O */
 
-Fix it by adding the missing "sys3_pll2_out" entry in order to match
-the description from the manual.
+Same for this one? It's nice to know what the size of the cells are.
 
-Fixes: b80522040cd3f ("clk: imx: Add clock driver for i.MX8MQ CCM")
-Reported-by: Rogerio Pimentel <rogerio.silva@nxp.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
----
- drivers/clk/imx/clk-imx8mq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 398ab0bcd9de..63001bc891d4 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -264,8 +264,8 @@ static const char * const imx8mq_ecspi3_sels[] = {"osc_25m", "sys2_pll_200m", "s
- 					   "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_out", };
- static const char * const imx8mq_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
- 
--static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_400m", "sys2_pll_166m", "audio_pll1_out",
--					 "video_pll1_out", "ckil", };
-+static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_400m", "sys2_pll_166m",
-+					  "sys3_pll2_out", "audio_pll1_out", "video_pll1_out", "ckil", };
- 
- static struct clk_onecell_data clk_data;
- 
--- 
-2.17.1
-
+> +                                 0x82000000 0 0x10013000 0x10013000 0 0x=
+007ed000>; /* memory */
+> +
