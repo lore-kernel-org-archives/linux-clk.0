@@ -1,80 +1,127 @@
-Return-Path: <SRS0=lEqg=QF=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50161C169C4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 22:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872ADC169C4
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 00:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 195A320870
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 22:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548801850;
-	bh=sXupBd+kt8SPDHbQLKnpDGftJVp7wFIWoGb62mUl1OQ=;
-	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=Swdouo4gWSh2uTqOoRpzLVgWyIuTz5AAxmivmhd2kvg8NvuTVBUnyMfXCogEdqMRa
-	 U3MmcpOR4sa8BtfZPGzUNqDh3Xo/TFuSzkKYNtBk9W63apAroge8SAUgNy5n0FYSZJ
-	 G63e2pDoc3zkA+o4dkZoabLjEv7/pbthR8PdgEPQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5BC2620881
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 00:25:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbfA2WoJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:44:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727332AbfA2WoJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:44:09 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B1962147A;
-        Tue, 29 Jan 2019 22:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548801778;
-        bh=sXupBd+kt8SPDHbQLKnpDGftJVp7wFIWoGb62mUl1OQ=;
-        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=r2izNZAK/P/SqZs1TG3szKHr71MIbbpJQF2hV26geVsIKEX2caS4lrbFpTfrHYv+0
-         qW90V9uS/Skode1lfcipK5BTh1Xqb2x0z6IVqYvLhXNNcqF54UkHhPN5zA3MW2TnLR
-         2EQlDH1baSxYzc0ACugi4bPlTsCfKRL40ehfa/RE=
-Content-Type: text/plain; charset="utf-8"
+        id S1727185AbfA3AZP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 19:25:15 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:56894 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727148AbfA3AZO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jan 2019 19:25:14 -0500
+Received: from pps.filterd (m0134420.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0U0OH9i025702;
+        Wed, 30 Jan 2019 00:24:22 GMT
+Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2qb17mr195-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Jan 2019 00:24:22 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 957DEEE;
+        Wed, 30 Jan 2019 00:24:07 +0000 (UTC)
+Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id AD1F637;
+        Wed, 30 Jan 2019 00:24:04 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 17:24:04 -0700
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Message-ID: <20190130002404.GA19729@anatevka>
+Reply-To: Jerry.Hoemann@hpe.com
+References: <20190125110536.GA29321@localhost.localdomain>
+ <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+ <20190128202656.GA17466@anatevka>
+ <20190129070103.GA2551@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-qcs404: Add cfg_offset for blsp1_uart3 clock
-References: <20190128115359.30039-1-vkoul@kernel.org> <20190128115359.30039-2-vkoul@kernel.org>
-User-Agent: alot/0.8
-Cc:     Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Shawn Guo <shawn.guo@linaro.org>, Vinod Koul <vkoul@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190128115359.30039-2-vkoul@kernel.org>
-Message-ID: <154880177752.136743.5878273892342836134@swboyd.mtv.corp.google.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>
-Date:   Tue, 29 Jan 2019 14:42:57 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129070103.GA2551@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_19:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=986 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901300000
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-01-28 03:53:59)
-> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> index 64da032bb9ed..493e055299b4 100644
-> --- a/drivers/clk/qcom/gcc-qcs404.c
-> +++ b/drivers/clk/qcom/gcc-qcs404.c
-> @@ -678,6 +678,7 @@ static struct clk_rcg2 blsp1_uart3_apps_clk_src =3D {
->         .cmd_rcgr =3D 0x4014,
->         .mnd_width =3D 16,
->         .hid_width =3D 5,
-> +       .cfg_off =3D 0x20,
+On Tue, Jan 29, 2019 at 09:01:03AM +0200, Matti Vaittinen wrote:
+> On Mon, Jan 28, 2019 at 01:26:56PM -0700, Jerry Hoemann wrote:
+> > On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
+> > > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
+> > > > +static int bd70528_set_wake(struct bd70528 *bd70528,
+> > > > +			    int enable, int *old_state)
+> > > > +{
+> > > > +	int ret;
+> > > > +	unsigned int ctrl_reg;
+> > > > +
+> > > > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	if (old_state) {
+> > > > +		if (ctrl_reg & BD70528_MASK_WAKE_EN)
+> > > > +			*old_state |= BD70528_WAKE_STATE_BIT;
+> > > > +		else
+> > > > +			*old_state &= ~BD70528_WAKE_STATE_BIT;
+> > > > +
+> > > > +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
+> > > > +			return 0;
+> > > 
+> > > I think
+> > > 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+> > > would be much better readable. Even if not, there are way too many ()
+> > > in the above conditional.
+> > > 
+> > 
+> > The substitution is not equivalent to original.  I think you mean:
+> > 
+> >  		if (!!enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+> 
+> Thanks Jerry! Good catch! I originally wanted that all non-zero values
+> of 'enable' would be 'true'. So maybe I just use the original approach
+> but get rid of extra parenthesis which were pointed out by Guenter.
+> 
+> 		if (!enable == !(*old_state & BD70528_WAKE_STATE_BIT))
+> should do it just fine, right?
+> 
 
-And it's one single clk! None of the other blsp clks have this problem?
+The use of "!!" to turn an int into one of two Boolean values (0 | 1)
+is used extensively in Linux and as such might make the intent of
+the code a bit clearer which I take as checking to see the states
+match.
 
->         .parent_map =3D gcc_parent_map_0,
->         .freq_tbl =3D ftbl_blsp1_uart0_apps_clk_src,
->         .clkr.hw.init =3D &(struct clk_init_data){
+But, I will defer to you and Guenter on the question.
+
+-- 
+
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
