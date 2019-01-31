@@ -1,91 +1,113 @@
-Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=eU8d=QH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B62C282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 23:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35718C282D7
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 00:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC322081B
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 23:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEF772087F
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 00:21:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6A61lSq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cb4dQDda"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbfA3XzS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:55:18 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44458 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfA3XzS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 18:55:18 -0500
-Received: by mail-oi1-f194.google.com with SMTP id m6so1206063oig.11
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jan 2019 15:55:18 -0800 (PST)
+        id S1726198AbfAaAVJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 19:21:09 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42389 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfAaAVJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 19:21:09 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 68so896595qke.9
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jan 2019 16:21:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t4Hzl0WnumLfehaM8ySLdsmrRbbatl3xeeXUQDRSUHg=;
-        b=i6A61lSqDFJ9Qm1oQGFFoZvqJNXpDsB/xyq6pKqhkI9+1L3AuJTKRdq0TKiqkiSPQW
-         Qo3FYw82f1tqc2qPnvLdtNuXQjR5pXlC5ffWRA2Oe75l4gLPzmOsLYrcQ7tyKraGcbJq
-         0nhYBfBBQovKbS3iLvsMcVldvNnZoW53gzBfstxz9602pSQj+UOuPNa7epb2sp6kHGRl
-         x1sD36io2J2+JrrMZJUGn+2l2W+q4MB5WHtHKmZFGudceBrdK2NqXDg9w4HtiDkMsxZ6
-         NQ5bjKx7urlb59qPY+aqMqMXnfczV7QeSCgTgbXO9WdJot946RnBpXgpmmwQrCIOu1+G
-         /TxQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=z6jbomTcGNYr8GK31Y5viWPelpWwK53klWRjBO3VrHY=;
+        b=Cb4dQDdaEJBrnLTS3PrZ14YUxgByS2UfC40XUHIDrk/3xwXWmHKolhETkWWHkKYdyg
+         KgJIIzInsLsRwVLHMmFUR6+4a3CGXuNP2UJdtDi5yJt3QXAwZxCl+uodBHf8e9L6wGEq
+         oPObjiHdvvvVgxk02EVtXD4SqkXCU1vTlbrMqwELVY2zyfSUXRnoorfRcrgV7R09nw/+
+         F8GhXxR+umErkXR19jvKccHrnGNUrXfC2JuESXE6JiVrkRcLlYu1EPCUaVyfoqoA3NGa
+         w+o9Yu1uGzyDrULGI6yVtKOfzpMvP6eV9BW05nOjy+r6z9EArI/C9XNMOQyGMatS5v6b
+         RDLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t4Hzl0WnumLfehaM8ySLdsmrRbbatl3xeeXUQDRSUHg=;
-        b=U8y208oP1TMEd7NwMWttY/4Ioko7qm6AIHHfkeT9pF4o02qhdth+mS4r7tRn49Nl6A
-         cnhi756rkBGzWdzDgTXSapUWSubXa2jkZ6k3H0l1U/RDVVrA5b6+yttzUWN3voli+9dA
-         MlkrXRLU+DDow1ShEsGV6y9pC6850Ibh/YuYb/+9btRWQ83pvViDJc3ndQbXQ/1tT0xN
-         +niFzXHnX4LdHGCjM9WGxkwqdF9k0t/LhkRe0Gz48pyUwKW2uwsbkcnho3jop8WrPD1Z
-         uF0XT/5k56nr+tClb1aswAAcA0pb4SC+YNiwLavcpNmxY9JCfktQGDEjx5W9ucmpP1qB
-         lg9Q==
-X-Gm-Message-State: AJcUukfDUipkljFNjmwcIuSUGoEewHwKsuDNfA1/r7WJVLuZ5voNjI/X
-        eJZJJEh1156ftybe4qUq46iLwHb0rTD+DhKcDrcJudamYDE=
-X-Google-Smtp-Source: AHgI3IY6OiuRAnVEbsBQL5dFZqovDdRsxmu9eHRz4Gfm5PXMvkwSn2jCH+lxErvOAinha0IwyqD/b5kapwDiNC3w1p8=
-X-Received: by 2002:aca:ac04:: with SMTP id v4mr14037099oie.342.1548892517783;
- Wed, 30 Jan 2019 15:55:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20190130201725.18961-1-ccaione@baylibre.com> <CAOMZO5AU8y1mf1DCMcJ6Y_AN_rP47jx1uVhj9pLRtgL6P70ksw@mail.gmail.com>
-In-Reply-To: <CAOMZO5AU8y1mf1DCMcJ6Y_AN_rP47jx1uVhj9pLRtgL6P70ksw@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=z6jbomTcGNYr8GK31Y5viWPelpWwK53klWRjBO3VrHY=;
+        b=FsrpqqZ8fcEcG9cu/6+Dxcx03b9tv5uVAMETSivoa5fkLzlBwHUBfurc620Xr7ec+D
+         Rtm2WFZKotCCDDZmjZUow03PpphP3XmEa6gx+W6Lg4ytHaHpzLfa4WYRyWxxJ27KbYQ4
+         +7vVm5V5yguHjrR1iiLdfenyfMEEgu9KDvVLGVcvoTluJe4qpqRlwoFrdn+Px08FuwGH
+         McUroPkzseTNNJ6lxNWrtzKzJY5nYhlBo7psSsgWW6RxWGRnswftJzXjtQX/9JpPRW9D
+         fnexeUgLavv9icQCVWWhx4AAAcjL3fSB7sIad3932e/HqF69TbygWaDTPNOoKEbORfCs
+         hEHQ==
+X-Gm-Message-State: AJcUukfnCCVOwQD0A4ddI2ASzRgbiSrOeC2lihK/47XcAM8yA20q+h2A
+        DjO4OnFZaRYqNsZ9W4oZgOE=
+X-Google-Smtp-Source: ALg8bN7g5tSHIRSapnBEWxjNyAViqqmc++eYHEr5PmNl0SR+Ychbqq26zdGeeVwCer/KY49LGHsDvQ==
+X-Received: by 2002:a37:a391:: with SMTP id m139mr28963124qke.11.1548894067897;
+        Wed, 30 Jan 2019 16:21:07 -0800 (PST)
+Received: from fabio-Latitude-E5450.nxp.com ([2804:14c:482:a73::1])
+        by smtp.gmail.com with ESMTPSA id p42sm3366676qte.8.2019.01.30.16.21.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 16:21:07 -0800 (PST)
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 30 Jan 2019 21:55:05 -0200
-Message-ID: <CAOMZO5Bs5sBniOtDgc2br9i+eA7CcR7T2K7KACY7STVdkeBHsA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx8mq: Add missing M4 clocks
-To:     Carlo Caione <ccaione@baylibre.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     sboyd@kernel.org
+Cc:     shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] clk: imx8mq: Add support for the CLKO1 clock
+Date:   Wed, 30 Jan 2019 22:20:56 -0200
+Message-Id: <20190131002056.12024-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 8:46 PM Fabio Estevam <festevam@gmail.com> wrote:
->
-> On Wed, Jan 30, 2019 at 6:17 PM Carlo Caione <ccaione@baylibre.com> wrote:
-> >
-> > The clocks list is missing the clocks for the the M4 core.
->
-> There is a repeated "the" in this phrase.
->
-> > Signed-off-by: Carlo Caione <ccaione@baylibre.com>
->
-> Reviewed-by: Fabio Esteva, <festevam@gmail.com>
+Add the entry for the CLKO1 clock.
 
-I meant this instead ;-) :
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ drivers/clk/imx/clk-imx8mq.c             | 3 +++
+ include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 63001bc891d4..a2f8a8d3585c 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -264,6 +264,8 @@ static const char * const imx8mq_ecspi3_sels[] = {"osc_25m", "sys2_pll_200m", "s
+ 					   "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_out", };
+ static const char * const imx8mq_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
+ 
++static const char * const imx8mq_clko1_sels[] = {"osc_25m", "sys1_pll_800m", "osc_27m", "sys1_pll_200m",
++					  "audio_pll2_out", "sys2_pll_500m", "vpu_pll_out", "sys1_pll_80m", };
+ static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_400m", "sys2_pll_166m",
+ 					  "sys3_pll2_out", "audio_pll1_out", "video_pll1_out", "ckil", };
+ 
+@@ -479,6 +481,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+ 	clks[IMX8MQ_CLK_GPT1] = imx8m_clk_composite("gpt1", imx8mq_gpt1_sels, base + 0xb580);
+ 	clks[IMX8MQ_CLK_WDOG] = imx8m_clk_composite("wdog", imx8mq_wdog_sels, base + 0xb900);
+ 	clks[IMX8MQ_CLK_WRCLK] = imx8m_clk_composite("wrclk", imx8mq_wrclk_sels, base + 0xb980);
++	clks[IMX8MQ_CLK_CLKO1] = imx8m_clk_composite("clko1", imx8mq_clko1_sels, base + 0xba00);
+ 	clks[IMX8MQ_CLK_CLKO2] = imx8m_clk_composite("clko2", imx8mq_clko2_sels, base + 0xba80);
+ 	clks[IMX8MQ_CLK_DSI_CORE] = imx8m_clk_composite("dsi_core", imx8mq_dsi_core_sels, base + 0xbb00);
+ 	clks[IMX8MQ_CLK_DSI_PHY_REF] = imx8m_clk_composite("dsi_phy_ref", imx8mq_dsi_phy_sels, base + 0xbb80);
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
+index 04f7ac345984..74f80b26f679 100644
+--- a/include/dt-bindings/clock/imx8mq-clock.h
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -391,5 +391,7 @@
+ 
+ #define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	267
+ 
+-#define IMX8MQ_CLK_END				268
++#define IMX8MQ_CLK_CLKO1			268
++
++#define IMX8MQ_CLK_END				269
+ #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
+-- 
+2.17.1
+
