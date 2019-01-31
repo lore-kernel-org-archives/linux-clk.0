@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203B1C282D9
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 09:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B985C282C7
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 09:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9B2218D3
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 09:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB042218D3
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 09:40:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="eKxVlS5t"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="nTsJKy5Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730742AbfAaJke (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:40:34 -0500
+        id S1731635AbfAaJkg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Jan 2019 04:40:36 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:59173 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729232AbfAaJke (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 04:40:34 -0500
+        with ESMTP id S1729232AbfAaJkg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 04:40:36 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1BB8B25BEE3;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 31DDD25BEE5;
         Thu, 31 Jan 2019 20:40:25 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548927625; bh=6ehSh/qIHsVXBSM3aBJ3qx/+md3TG4zUP5FyQHutXjc=;
+        t=1548927625; bh=KYDSCAZZXFwvUMWiCGJH5u477U5QBYZyDDYnVi4sSd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eKxVlS5tm2SUKR9u1fzpB5lg0QmCVuDfqe8uSyBXBD/Q9NvS0Czl2XnfZCaVGG8TS
-         Rk/aSfTwFObqfhkaFKKMprTEZ0520FoNGHI034WgHt0pX51lIZ7jePK1XyuX0zAzUB
-         fhLeyZeRdNjm+pLpFRuRiBaV6Csw70j3DYyNgRWA=
+        b=nTsJKy5QBU75Qjm5hVdCY1Xu8LGrmQdqvMRCiFs3loJ8haxHZAet4RZsiuPF2r3oh
+         YKQvT9gYoXLpd9D/A9Cl8viehBAnNdoZrM06D2+Fij7VQ7F1mMt/yNvBI9d0w2/hRr
+         aunKcltT9gSEwnlt7zogKmRCDK/0XsP5ND05svU4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 3D0E1940480; Thu, 31 Jan 2019 10:40:23 +0100 (CET)
+        id 4D97E940796; Thu, 31 Jan 2019 10:40:23 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 3/5] clk: renesas: rcar-gen3: Support Z and Z2 clocks with high frequency parents
-Date:   Thu, 31 Jan 2019 10:40:19 +0100
-Message-Id: <20190131094021.3092-4-horms+renesas@verge.net.au>
+Subject: [PATCH v3 4/5] clk: renesas: r8a77990: Add Z2 clock
+Date:   Thu, 31 Jan 2019 10:40:20 +0100
+Message-Id: <20190131094021.3092-5-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190131094021.3092-1-horms+renesas@verge.net.au>
 References: <20190131094021.3092-1-horms+renesas@verge.net.au>
@@ -50,47 +51,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Support Z and Z2 clocks with parent frequencies greater than
-UINT32_MAX Hz (~4.29GHz).
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit numerator and 32bit
-denominator. This leads to truncation of the numerator, which is the Z or
-Z2 parent clock frequency in HZ, on platforms where frequency of that clock
-is greater than UINT32_MAX Hz.
+Adds support for R-Car E3 (r8a77990) Z2 clock.
 
-To resolve this problem the DIV_ROUND_CLOSEST() macro, which accepts the
-prevailing types of the numerator and denominator, is used. In this case
-the type of the numerator is unsigned long long (64 bit) and the type of
-the denominator is unsigned long (64bit on 64bit platforms and 32bit on
-32bit platforms). This allows parents whose frequency is greater than
-UINT32_MAX Hz on 64bit platforms.
-
-This appears to be sufficient as this driver is only intended for use
-on 64bit systems. And in particular, the motivation for this change is
-to allow a 4.8GHz clock on the R-Car Gen3 E3 (r8a77990) SoC which is
-a 64bit platform.
-
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[simon: reworked changelog; rebased]
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v2: New patch
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+v3: [Simon Horman]
+- Pass new offset parameter
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 6b146c2cf6a3..236a7d9d94bd 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -120,8 +120,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned int i;
- 	u32 val, kick;
- 
--	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * zclk->fixed_div,
--				     parent_rate);
-+	mult = DIV_ROUND_CLOSEST(rate * 32ULL * zclk->fixed_div, parent_rate);
- 	mult = clamp(mult, 1U, 32U);
- 
- 	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+v2: [Simon Horman]
+- Initialise as programmable clock
+
+v1: [Simon Horman]
+- Initialise as fixed clock
+
+v0: [Takeshi Kihara]
+- Initialise as programmable clock
+---
+ drivers/clk/renesas/r8a77990-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+index 9a278c75c918..072e4bde6fff 100644
+--- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -81,6 +81,7 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("za2",       R8A77990_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+ 	DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
++	DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
+ 	DEF_FIXED("ztr",       R8A77990_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A77990_CLK_ZT,    CLK_PLL1,       4, 1),
+ 	DEF_FIXED("zx",        R8A77990_CLK_ZX,    CLK_PLL1,       3, 1),
 -- 
 2.11.0
 
