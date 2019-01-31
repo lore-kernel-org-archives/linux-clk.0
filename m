@@ -2,150 +2,233 @@ Return-Path: <SRS0=eU8d=QH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5663C169C4
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 07:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CC1C169C4
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 08:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F55C20881
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 07:33:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="V0EEzeEU"
+	by mail.kernel.org (Postfix) with ESMTP id 225BC20870
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 08:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbfAaHdX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:33:23 -0500
-Received: from mail-eopbgr30083.outbound.protection.outlook.com ([40.107.3.83]:39316
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725880AbfAaHdW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:33:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iNxwZZSrUIaJr+erOSLN/Q9PaXYNVysAlewc4V70i0k=;
- b=V0EEzeEUku+G7XYD9725DvSTPaK6rrxNQAK9nFDT3AZXTRqQAApsey9n3KyVlbBSYQtcbcfY4q2P3i70JCvEm2IPQU9OGJtAA3SyLfjScHjTwnR03D+I4OWkMyVWsN22P6jbgg6YMwX74StgMpNMxypKv4Pwk1iGVoXk1s6xPRY=
-Received: from VI1PR04MB5008.eurprd04.prod.outlook.com (20.177.49.225) by
- VI1PR04MB5344.eurprd04.prod.outlook.com (52.134.123.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Thu, 31 Jan 2019 07:33:18 +0000
-Received: from VI1PR04MB5008.eurprd04.prod.outlook.com
- ([fe80::2d2c:455a:16e9:cd4f]) by VI1PR04MB5008.eurprd04.prod.outlook.com
- ([fe80::2d2c:455a:16e9:cd4f%2]) with mapi id 15.20.1558.025; Thu, 31 Jan 2019
- 07:33:18 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: imx8mq: Add support for the CLKO1 clock
-Thread-Topic: [PATCH] clk: imx8mq: Add support for the CLKO1 clock
-Thread-Index: AQHUuPrfJwsyV+Y/+E+X0mJVuu2CrKXI/ICA
-Date:   Thu, 31 Jan 2019 07:33:18 +0000
-Message-ID: <20190131073317.zk746ynrse2dbps5@fsr-ub1664-175>
-References: <20190131002056.12024-1-festevam@gmail.com>
-In-Reply-To: <20190131002056.12024-1-festevam@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5344;6:fRza+YPmZ61ZdaDtvViRg6kuDa2yMzr4zN4NzLyvHhHpG9Y5yefMG7+j8sBN+DEE3hvIVXgBZy3eMI7FcjPeGywubPexUTp4y3X0AzqXUw1s57YG7B7Yk7eU2uqiDVj5JCHH3GDaEVXzpuFQtzt9TI9HBtqiCbVLg9uC/WygV/YH420hbY/KkXnUud/2CodnYQP3g+Cy7UO40rn7JuNuGIxvl3Lm4WKIUhJiZ4ZkJsqAOYJspepi+ffHHEAnHIUawsNJvPSaEWLz5tI0qkkYyonp1sNu6nVnFps6+vP6FiRLRKYssy4hQQelEBIWiKhUVwkDBtutUsrBRHN+Ij2kJ6GU3rpLdcw5j94tUyL6iTJ3Mw/3CANSNJHEWWxN9oAiOtnE4b4WChqVqpWfBJOYFu42Vyne7oPfGK5BtnAgPjEUquTx0Gowizr9mN3xWcDpmGk0NBkFG0HjzHatojuS9w==;5:kZxy8nq0fvwLMYZFMUG9+XexGxKzZmxWbK3r6c4GS+U1EMWAyj5BFsFUgxw/sFhbPRU1nI+IxEr7/qELOQHMxrBnDg18giRAN8+tQYBmiT0Kvewy+b7sAoChLD5UtoV8wIostAAn2EqYezHd6lHvQ9hFNn+kftwUnfjL4tew03IROVp0ej1/Ocaw1wQcaz/6DY8bDhOrv5GLdHACkWb/oQ==;7:ztsdl/ZY3kBwuZlzn7aMfiI1FDVb8J3kDCYkpVBTz+MHDtizFwGzIQMQXJJ7+HSGD6Z+01iGcQ7+TPd09shkZhkuY8Z52vN+U0w1f5QKqgsbl97dP1ISu11V2KXI12ukqYmBh4F17F08Q0O2Bynswg==
-x-ms-office365-filtering-correlation-id: 4a167f8c-3180-4a22-9853-08d6874e5ed0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5344;
-x-ms-traffictypediagnostic: VI1PR04MB5344:
-x-microsoft-antispam-prvs: <VI1PR04MB53442EDAF152B70519452697F6910@VI1PR04MB5344.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(376002)(346002)(136003)(366004)(39860400002)(189003)(199004)(6246003)(4326008)(76176011)(11346002)(26005)(33716001)(54906003)(33896004)(53936002)(186003)(316002)(39060400002)(1411001)(229853002)(446003)(106356001)(86362001)(105586002)(6436002)(102836004)(476003)(66066001)(53546011)(6486002)(25786009)(6506007)(14454004)(8676002)(256004)(81166006)(486006)(81156014)(14444005)(3846002)(305945005)(97736004)(6916009)(6116002)(44832011)(2906002)(68736007)(1076003)(478600001)(99286004)(6512007)(9686003)(71190400001)(71200400001)(8936002)(7736002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5344;H:VI1PR04MB5008.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Fa3fUoz6zUj+7m/y6dd66kIle7dFngOQGE96z4sQkD8waBatjfRd1PmC2Rp+MRJoe23f5+Ahf2Mf7k6QjQ8JdlW8/wc0Chkg84ky9fPxHsqZOFvqvzbAX8gvu8MGyQD2h1qWGKQluAF+4rD77VIMXc4tzARoZI7N+XzcEvue9oUVV9hyRiGBikJ+4DOpk7SzkWwzoEXYOr8+FAK8aaDDAjR8P/GVdCUqWkUE+Fi5gJ1OeSrkKO2ylhbbyq1AULY9agsN/LOErrcfIgw4b1GgSLrsUABCKeTTLhT5JLBfElJQO9pIqfC4zUSjMQkcXuhKDt9/yTNLN61EXtKE3qZl64uyvNo7WYF3Uq9ZkT/OdYPJZlRqqVvycBWb+PvDKHblmLA1vhEp9lKQeUzm1tS6eR9MStc7B9bxtM6Pr8tG2JI=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1C9CA31C7190A545BC8BB4CAF551DC8D@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1731575AbfAaIac (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Jan 2019 03:30:32 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34386 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725855AbfAaIac (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 03:30:32 -0500
+X-UUID: 4065f1a1996e4b90a3a905abd93e9050-20190131
+X-UUID: 4065f1a1996e4b90a3a905abd93e9050-20190131
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <zhiyong.tao@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1817860604; Thu, 31 Jan 2019 16:30:26 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs08n2.mediatek.inc
+ (172.21.101.56) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 16:30:24 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 31 Jan 2019 16:30:22 +0800
+Message-ID: <1548923422.4739.10.camel@mhfsdcap03>
+Subject: Re: [PATCH v6 5/6] dt-bindings: pinctrl: mt8183: add binding
+ document
+From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Erin Lo <erin.lo@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <mars.cheng@mediatek.com>,
+        <eddie.huang@mediatek.com>, <linux-clk@vger.kernel.org>
+Date:   Thu, 31 Jan 2019 16:30:22 +0800
+In-Reply-To: <20190130161714.GA24352@bogus>
+References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+         <1548317240-44682-6-git-send-email-erin.lo@mediatek.com>
+         <20190130161714.GA24352@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a167f8c-3180-4a22-9853-08d6874e5ed0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 07:33:18.6181
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5344
+X-TM-SNTS-SMTP: 0EB05CC0D78A45BC48B2B633DF2DCCA6FA80D1672525544E6236E08BF9CC55232000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-01-30 22:20:56, Fabio Estevam wrote:
-> Add the entry for the CLKO1 clock.
->=20
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
-> ---
->  drivers/clk/imx/clk-imx8mq.c             | 3 +++
->  include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
->  2 files changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> index 63001bc891d4..a2f8a8d3585c 100644
-> --- a/drivers/clk/imx/clk-imx8mq.c
-> +++ b/drivers/clk/imx/clk-imx8mq.c
-> @@ -264,6 +264,8 @@ static const char * const imx8mq_ecspi3_sels[] =3D {"=
-osc_25m", "sys2_pll_200m", "s
->  					   "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_o=
-ut", };
->  static const char * const imx8mq_dram_core_sels[] =3D {"dram_pll_out", "=
-dram_alt_root", };
-> =20
-> +static const char * const imx8mq_clko1_sels[] =3D {"osc_25m", "sys1_pll_=
-800m", "osc_27m", "sys1_pll_200m",
-> +					  "audio_pll2_out", "sys2_pll_500m", "vpu_pll_out", "sys1_pll_80m",=
- };
->  static const char * const imx8mq_clko2_sels[] =3D {"osc_25m", "sys2_pll_=
-200m", "sys1_pll_400m", "sys2_pll_166m",
->  					  "sys3_pll2_out", "audio_pll1_out", "video_pll1_out", "ckil", };
-> =20
-> @@ -479,6 +481,7 @@ static int imx8mq_clocks_probe(struct platform_device=
- *pdev)
->  	clks[IMX8MQ_CLK_GPT1] =3D imx8m_clk_composite("gpt1", imx8mq_gpt1_sels,=
- base + 0xb580);
->  	clks[IMX8MQ_CLK_WDOG] =3D imx8m_clk_composite("wdog", imx8mq_wdog_sels,=
- base + 0xb900);
->  	clks[IMX8MQ_CLK_WRCLK] =3D imx8m_clk_composite("wrclk", imx8mq_wrclk_se=
-ls, base + 0xb980);
-> +	clks[IMX8MQ_CLK_CLKO1] =3D imx8m_clk_composite("clko1", imx8mq_clko1_se=
-ls, base + 0xba00);
->  	clks[IMX8MQ_CLK_CLKO2] =3D imx8m_clk_composite("clko2", imx8mq_clko2_se=
-ls, base + 0xba80);
->  	clks[IMX8MQ_CLK_DSI_CORE] =3D imx8m_clk_composite("dsi_core", imx8mq_ds=
-i_core_sels, base + 0xbb00);
->  	clks[IMX8MQ_CLK_DSI_PHY_REF] =3D imx8m_clk_composite("dsi_phy_ref", imx=
-8mq_dsi_phy_sels, base + 0xbb80);
-> diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindin=
-gs/clock/imx8mq-clock.h
-> index 04f7ac345984..74f80b26f679 100644
-> --- a/include/dt-bindings/clock/imx8mq-clock.h
-> +++ b/include/dt-bindings/clock/imx8mq-clock.h
-> @@ -391,5 +391,7 @@
-> =20
->  #define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	267
-> =20
-> -#define IMX8MQ_CLK_END				268
-> +#define IMX8MQ_CLK_CLKO1			268
-> +
-> +#define IMX8MQ_CLK_END				269
->  #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
-> --=20
-> 2.17.1
->=20
+On Wed, 2019-01-30 at 10:17 -0600, Rob Herring wrote:
+> On Thu, Jan 24, 2019 at 04:07:19PM +0800, Erin Lo wrote:
+> > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > 
+> > The commit adds mt8183 compatible node in binding document.
+> > 
+> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 115 +++++++++++++++++++++
+> >  1 file changed, 115 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > new file mode 100644
+> > index 0000000..364e673
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > @@ -0,0 +1,115 @@
+> > +* Mediatek MT8183 Pin Controller
+> > +
+> > +The Mediatek's Pin controller is used to control SoC pins.
+> > +
+> > +Required properties:
+> > +- compatible: value should be one of the following.
+> > +	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
+> > +- gpio-controller : Marks the device node as a gpio controller.
+> > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
+> > +  binding is used, the amount of cells must be specified as 2. See the below
+> > +  mentioned gpio binding representation for description of particular cells.
+> > +- gpio-ranges : gpio valid number range.
+> > +- reg: physicall address base for gpio base registers. There are nine
+> > +  physicall address base in mt8183. They are 0x10005000, 0x11F20000,
+> 
+> Still have a typo in 'physicall'
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>=
+==>sorry, we will change it in next version.
+> 
+> > +  0x11E80000, 0x11E70000, 0x11E90000, 0x11D30000, 0x11D20000, 0x11C50000,
+> > +  0x11F30000.
+> 
+> You don't need to list the address values. Only how many and what each 
+> one is.
+==>ok, because every base address don't have the detailed name. We will
+remove the address values list and change it like this:
+- reg: physical address base for gpio base registers. There are nine
+  physical address base in mt8183.
+> 
+> > +
+> > +	Eg: <&pio 6 0>
+> > +	<[phandle of the gpio controller node]
+> > +	[line number within the gpio controller]
+> > +	[flags]>
+> > +
+> > +	Values for gpio specifier:
+> > +	- Line number: is a value between 0 to 202.
+> > +	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
+> > +            Only the following flags are supported:
+> > +            0 - GPIO_ACTIVE_HIGH
+> > +            1 - GPIO_ACTIVE_LOW
+> > +
+> > +Optional properties:
+> > +- reg-names: gpio base register names. There are nine gpio base register
+> > +  names in mt8183. They are "iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4",
+> > +  "iocfg5", "iocfg6", "iocfg7", "iocfg8".
+> 
+> As I said before, these names aren't useful. There's already 
+> inheritently an index with 'reg'.
+> 
+> Unless some are optional and can be sparsely populated.
+
+==> Do you mean that we can remove Optional properties the reg-names
+description?
+> 
+> > +- interrupt-controller: Marks the device node as an interrupt controller
+> > +- #interrupt-cells: Should be two.
+> > +- interrupts : The interrupt outputs from the controller.
+> > +
+> > +Please refer to pinctrl-bindings.txt in this directory for details of the
+> > +common pinctrl bindings used by client devices.
+> > +
+> > +Subnode format
+> > +A pinctrl node should contain at least one subnodes representing the
+> > +pinctrl groups available on the machine. Each subnode will list the
+> > +pins it needs, and how they should be configured, with regard to muxer
+> > +configuration, pullups, drive strength, input enable/disable and input schmitt.
+> > +
+> > +    node {
+> > +	pinmux = <PIN_NUMBER_PINMUX>;
+> > +	GENERIC_PINCONFIG;
+> > +    };
+> > +
+> > +Required properties:
+> > +- pinmux: integer array, represents gpio pin number and mux setting.
+> > +    Supported pin number and mux varies for different SoCs, and are defined
+> > +    as macros in boot/dts/<soc>-pinfunc.h directly.
+> > +
+> > +Optional properties:
+> > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
+> > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
+> > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
+> > +
+> > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
+> > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
+> > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
+> > +    it support arguments for those special pins.
+> > +
+> > +    When config drive-strength, it can support some arguments, such as
+> > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
+> > +
+> > +Examples:
+> > +
+> > +#include "mt8183-pinfunc.h"
+> > +
+> > +...
+> > +{
+> > +	pio: pinctrl@10005000 {
+> > +		compatible = "mediatek,mt8183-pinctrl";
+> > +		reg = <0 0x10005000 0 0x1000>,
+> > +		      <0 0x11F20000 0 0x1000>,
+> > +		      <0 0x11E80000 0 0x1000>,
+> > +		      <0 0x11E70000 0 0x1000>,
+> > +		      <0 0x11E90000 0 0x1000>,
+> > +		      <0 0x11D30000 0 0x1000>,
+> > +		      <0 0x11D20000 0 0x1000>,
+> > +		      <0 0x11C50000 0 0x1000>,
+> > +		      <0 0x11F30000 0 0x1000>;
+> 
+> Use lowercase hex.
+
+==> we will change it in the next version.
+> 
+> > +		reg-names = "iocfg0", "iocfg1", "iocfg2",
+> > +			    "iocfg3", "iocfg4", "iocfg5",
+> > +			    "iocfg6", "iocfg7", "iocfg8";
+> > +		gpio-controller;
+> > +		#gpio-cells = <2>;
+> > +		gpio-ranges = <&pio 0 0 192>;
+> > +		interrupt-controller;
+> > +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+> > +		interrupt-parent = <&gic>;
+> > +		#interrupt-cells = <2>;
+> > +
+> > +		i2c0_pins_a: i2c0 {
+> > +			pins1 {
+> > +				pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
+> > +					 <PINMUX_GPIO49__FUNC_SDA5>;
+> > +				mediatek,pull-up-adv = <11>;
+> > +			};
+> > +		};
+> > +
+> > +		i2c1_pins_a: i2c1 {
+> > +			pins {
+> > +				pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
+> > +					 <PINMUX_GPIO51__FUNC_SDA3>;
+> > +				mediatek,pull-down-adv = <10>;
+> > +			};
+> > +		};
+> > +		...
+> > +	};
+> > +};
+> > -- 
+> > 1.9.1
+> > 
+
+
