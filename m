@@ -2,120 +2,129 @@ Return-Path: <SRS0=eU8d=QH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA624C169C4
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 04:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF09CC169C4
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 06:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75B5820833
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 04:21:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ID4MQap5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fnlakalu"
+	by mail.kernel.org (Postfix) with ESMTP id 8FA4D2087F
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 06:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfAaEVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 23:21:50 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53920 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfAaEVu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 23:21:50 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B503F6060A; Thu, 31 Jan 2019 04:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548908508;
-        bh=qxcsN9MK8rmsU1FaomWHr3Yq25d6yLE/xAvCdnbz8d4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ID4MQap5fYKstO9DMaYruPTIB5B4o3ojh2r0++oE/eb0fpIoMeVipo7q2O8vEXA80
-         H5hjkvsG2JQidGbaeIF3ViMElqTwctpejiWW6Z/NlVu4OkQQw+3CAaDNEKNrG0pHrR
-         NOQ3EuxR0OYJpbC8Dj1iV4AUtDelzGO92zQQUWkE=
-Received: from [10.79.129.198] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 02801602CB;
-        Thu, 31 Jan 2019 04:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548908507;
-        bh=qxcsN9MK8rmsU1FaomWHr3Yq25d6yLE/xAvCdnbz8d4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fnlakalu104GpxU1bryqTz9GUnNauif2d2eu3fITJQ3xpor/QLPZd7A9shQMfMdYL
-         f5A3F58Jr0ZAYfiuOv6WUT7qMbRSm1egh8ZpVLA7w35flx6DWVLVig/bEyhBsVyiY4
-         A0aaK//Q3f88o5xbafDRB3nX5Ds5wtEGSbsJAU+E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 02801602CB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [RESEND PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-References: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <afcb4d79-9888-3c48-bdc2-1475d93c860b@codeaurora.org>
-Date:   Thu, 31 Jan 2019 09:51:42 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1728573AbfAaGk6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Jan 2019 01:40:58 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41464 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfAaGk5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 01:40:57 -0500
+Received: by mail-lf1-f66.google.com with SMTP id c16so1443202lfj.8;
+        Wed, 30 Jan 2019 22:40:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lGDb4pkEcCZN6uey1BsMGWCSOOTu/LeMIlzvAljy6eQ=;
+        b=DIjHBr45v8j2wknhWEzmkj6nWHOqHOlVUOUW9cusp3n2gKXp915gVncdMFMP6n8XhH
+         4jV5JJ+kM4mbOwYPt8ci9BisRUBdGIs+kxCNGwHjw+j8B85mz8hW4vzikTt/+KHC+ErG
+         4X3OPeuP1gUw566FMtAoACnN665LgyrvMxz0WWad8U4KQ9ILI/Tl2GImTF932tL3Yeu6
+         LHSdLexLrfsDyDFT3TyjXLo2n+Sh1IO91PcWom/loMjPMpW3Dod6uer1AyWCgt7DFBVr
+         zy5owTQcjipHygJPXyTRIdaUIBs4QM0OZ149jPTtqy1zI6WuJx+/XUnBhGDZ8w1f6OxL
+         6xGg==
+X-Gm-Message-State: AJcUukccfErRAOxPj0X9xmeC2e9LsxwkGEq6AFQR/m1PFZXHs1zLQKPj
+        +n6WMN9bPM8LbgxwBCWy/OU=
+X-Google-Smtp-Source: ALg8bN4eQsL6JP4CC5Iwu+nX2gwKq4Dli/jc1TM7dOP4sfWmQ8gUn2hZbWjjF+kchUNZu4HZHADKlw==
+X-Received: by 2002:a19:26ce:: with SMTP id m197mr25913108lfm.23.1548916854578;
+        Wed, 30 Jan 2019 22:40:54 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id t18sm647469lft.93.2019.01.30.22.40.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 22:40:53 -0800 (PST)
+Date:   Thu, 31 Jan 2019 08:40:51 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
+        mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v3 06/10] devicetree: bindings: Document first ROHM
+ BD70528 bindings
+Message-ID: <20190131064050.GC23791@localhost.localdomain>
+References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+ <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190130185344.GA14789@bogus>
 MIME-Version: 1.0
-In-Reply-To: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130185344.GA14789@bogus>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/30/2019 10:01 PM, Marc Gonzalez wrote:
-> Add MSM8998 Resource Power Manager Clock Controller DT node.
-> 
-> Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> ---
-> Detach this patch from UFS series
-> Resend because SMTP server was blacklisted.
-> ---
->   arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> index a6d66cf77403..6f4f4b79853b 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> @@ -3,6 +3,7 @@
->   
->   #include <dt-bindings/interrupt-controller/arm-gic.h>
->   #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-> +#include <dt-bindings/clock/qcom,rpmcc.h>
->   #include <dt-bindings/gpio/gpio.h>
->   
->   / {
-> @@ -266,6 +267,11 @@
->   		rpm_requests: rpm-requests {
->   			compatible = "qcom,rpm-msm8998";
->   			qcom,glink-channels = "rpm_requests";
-> +
-> +			rpmcc: clock-controller {
-> +				compatible = "qcom,rpmcc-msm8998", "qcom,rpmcc";
-> +				#clock-cells = <1>;
-> +			};
->   		};
->   	};
->   
-> 
+Hello Rob,
 
-Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Thanks for taking the carefull look once again =)
+
+On Wed, Jan 30, 2019 at 12:53:44PM -0600, Rob Herring wrote:
+> On Wed, Jan 30, 2019 at 11:09:55AM +0200, Matti Vaittinen wrote:
+> > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> > drivers) and 4 GPIO pins which can be configured for I/O or
+> > as interrupt sources withe configurable trigger levels.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
+
+snip
+
+> > + - interrupt-parent	: Phandle to the parent interrupt controller.
+> 
+> Don't document this. It is implied and could be in a parent node.
+
+Allright. I'll remove this then.
+
+> > + - clock-frequency	: Should be 32768
+> 
+> Forget to drop this?
+
+Well spotted. The rate should come from parent clock. I'll drop this
+too.
+
+> > +Example:
+> > +/* external oscillator */
+> > +osc: oscillator {
+> > +	compatible = "fixed-clock";
+> > +	#clock-cells = <1>;
+> > +	clock-frequency  = <32768>;
+> > +	clock-output-names = "osc";
+> > +};
+> > +
+> > +pmic: bd70528@4b {
+> 
+> pmic@4b
+> 
+> Node names should be generic.
+
+Ok. I will change this.
+
+Br,
+	Matti
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
