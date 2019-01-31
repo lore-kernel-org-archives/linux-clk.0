@@ -2,97 +2,109 @@ Return-Path: <SRS0=eU8d=QH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8450EC169C4
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 13:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F75C169C4
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 15:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61101218FC
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 13:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED51320863
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 15:22:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="manm5sRd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733072AbfAaNY7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:24:59 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43924 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbfAaNY6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 08:24:58 -0500
-Received: by mail-lf1-f66.google.com with SMTP id x201so1000237lff.10;
-        Thu, 31 Jan 2019 05:24:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e1Bd1cCVqTtCOw27nTYpAu2mxybnfDj+re/fe+Iiy0g=;
-        b=ME5eEY6nCZC2oPejOU4yDsYSJCxawItY4vnpOinPdu62rWytQ5mUBztKap4MojBHyg
-         9VV0tv99pTPqCS7o9A/QfLgqvw7ukhLdfffB17DMMPET/DsxT53Ts/w+biuZlP5aws/w
-         73xXJ/6OlcSuE7T+IH4LF54/KRHs/LTOBQrrWgj0rZ3Mr1UMuaF42Spqi6vToIVMJ+Fv
-         4mEdq2zZG0QtIFSXPFf20t/e32t1apW2kVyQapzRztPVlescxKYRgTZAQ5ivX4XNg4/z
-         xbnzA7NiTj/4HQiiavVfDGu7FCeYirrZTAKZ8KQvabIJu6tRZue3omYn6jlyuAaacXnL
-         bB0A==
-X-Gm-Message-State: AJcUukd8YsNUSeZ5Zsy8YpQEnEWoceeY8zni6s/cZwI6FaOQP1s1yWar
-        qgRfa/7WYYc47RADFhlersI=
-X-Google-Smtp-Source: ALg8bN4efzqtBk1zd7HtH/kCne6U5aCoxdZyUXqayOQqlVDcECcmH/i/TG1Cqmbq+QuGZ7JWafBieA==
-X-Received: by 2002:a19:e601:: with SMTP id d1mr29038753lfh.71.1548941096383;
-        Thu, 31 Jan 2019 05:24:56 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id a2-v6sm803332lji.13.2019.01.31.05.24.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 05:24:55 -0800 (PST)
-Date:   Thu, 31 Jan 2019 15:24:52 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, corbet@lwn.net, cw00.choi@samsung.com,
+        id S1727829AbfAaPW2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Jan 2019 10:22:28 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:44270 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727189AbfAaPW2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 10:22:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zaBpfNpCVdbDPQFRwA5YLYdox6i8UN3HO+0zKBeusJw=; b=manm5sRdTUmqmYzLO4KE4wbfs
+        UIWUUs6BSBGgCPQQ8T6A93Spc3DLq2D7FmddwkW9ooykd9ez0PMI8uoRFcd8yCcxGgGLrDo0wM7lH
+        s1rdaodAo8alVMCnC5pMfHhuTN3igsx50mW9CcptFzEBM0svk9WroELEA8cDFWOalj3fs=;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36850)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gpEAD-00081T-Fg; Thu, 31 Jan 2019 15:22:01 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1gpE9z-0000xP-LS; Thu, 31 Jan 2019 15:21:47 +0000
+Date:   Thu, 31 Jan 2019 15:21:47 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, corbet@lwn.net, cw00.choi@samsung.com,
         krzk@kernel.org, b.zolnierkie@samsung.com, mturquette@baylibre.com,
-        sboyd@kernel.org, linux@armlinux.org.uk, pombredanne@nexb.com,
-        sre@kernel.org, vkoul@kernel.org, linux@roeck-us.net, pavel@ucw.cz,
+        sboyd@kernel.org, pombredanne@nexb.com, sre@kernel.org,
+        vkoul@kernel.org, linux@roeck-us.net, pavel@ucw.cz,
         sjhuang@iluvatar.ai, andrew.smirnov@gmail.com,
         djkurtz@chromium.org, akshu.agrawal@amd.com,
         rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v7 0/3] clk: clkdev add managed lookup registrations
-Message-ID: <20190131132452.GD23791@localhost.localdomain>
+Message-ID: <20190131152147.tzxabhyhlyy2rwhy@e5254000004ec.dyn.armlinux.org.uk>
 References: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190131132452.GD23791@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190131132452.GD23791@localhost.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello All,
-
-On Fri, Dec 07, 2018 at 01:09:00PM +0200, Matti Vaittinen wrote:
-> Series adds managed clkdev lookup interfaces and cleans few drivers
+On Thu, Jan 31, 2019 at 03:24:52PM +0200, Matti Vaittinen wrote:
+> Hello All,
 > 
-> Few clk drivers appear to be leaking clkdev lookup registrations at
-> driver remove. The patch series adds devm versions of lookup
-> registrations and cleans up few drivers. Driver clean-up patches have
-> not been tested as I lack the HW. All testing and comments if
-> driver/device removal is even possible for changed drivers is highly
-> appreciated. If removal is not possible I will gladly drop the patches
-> from series - although leaking lookups may serve as bad example for new
-> developers =)
+> On Fri, Dec 07, 2018 at 01:09:00PM +0200, Matti Vaittinen wrote:
+> > Series adds managed clkdev lookup interfaces and cleans few drivers
+> > 
+> > Few clk drivers appear to be leaking clkdev lookup registrations at
+> > driver remove. The patch series adds devm versions of lookup
+> > registrations and cleans up few drivers. Driver clean-up patches have
+> > not been tested as I lack the HW. All testing and comments if
+> > driver/device removal is even possible for changed drivers is highly
+> > appreciated. If removal is not possible I will gladly drop the patches
+> > from series - although leaking lookups may serve as bad example for new
+> > developers =)
+> > 
+> > Changed drivers are:
+> > clk-max77686 and clk-st
+> > 
+> > Please note that the patch #2 requires this change to work correctly:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
 > 
-> Changed drivers are:
-> clk-max77686 and clk-st
-> 
-> Please note that the patch #2 requires this change to work correctly:
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
+> I guess the dependency mentioned abowe is already in (most) of the
+> trees. (I can't say for sure as I don't know what is the correct tree
+> for clkdev - is it linux-arm.git as Russel is maintaining clkdev?
 
-I guess the dependency mentioned abowe is already in (most) of the
-trees. (I can't say for sure as I don't know what is the correct tree
-for clkdev - is it linux-arm.git as Russel is maintaining clkdev? If
-yes, then the commit 05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
-"clk: of-provider: look at parent if registered device has no
-provider info" seems to be sitting in maser branch).
+Yes, I'm supposed to be maintaining clkdev, but I'm busy with other
+stuff (such as reorganising my network, helping people with SFP issues,
+I'm supposed to be replying to Arend over a brcmfmac issue that has been
+on-going since Christmas which I haven't yet been able to doing the next
+test...)
 
-So should I rebase this series to some other tree and resend? Or is this
-something that is not wanted?
+> If yes, then the commit 05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
+> "clk: of-provider: look at parent if registered device has no
+> provider info" seems to be sitting in maser branch).
 
-Br,
-	Matti Vaittinen
+It's there because it's part of the mainline kernel and has been
+since v5.0-rc1.  So, if you depend on that commit, basing off
+v5.0-rc1 is probably sane, unless there's something else that
+conflicts.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
