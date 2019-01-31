@@ -2,169 +2,245 @@ Return-Path: <SRS0=eU8d=QH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2846C282D9
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 11:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 546E3C4151A
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 12:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4259218DA
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 11:01:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="l6l127Ta"
+	by mail.kernel.org (Postfix) with ESMTP id 339C521917
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Jan 2019 12:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfAaLBv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:01:51 -0500
-Received: from mail-eopbgr1400098.outbound.protection.outlook.com ([40.107.140.98]:25349
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726221AbfAaLBv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:01:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LvxZZOMIB0tdKPjE72x2XvR4Lu6XO0EbjSAKlE7qOv8=;
- b=l6l127TaQJ7tKGez6U/syG8iZI12K1cMHpV+f9Kpp/FiIOrVWl/S5VtepyXsPdqYUF5rdErVQ66qosQi/KGYcs3lrF5iqT8S/3EAhRV10p26+CP6tvn4SsbotdW0SVJt3hLjeTJUExTvQb23PzQSUqw8+V0NU66NSOnMAqKtF10=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1PR01MB1529.jpnprd01.prod.outlook.com (52.133.161.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17; Thu, 31 Jan 2019 11:01:46 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e%3]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
- 11:01:46 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH/RFT v3 5/5] clk: renesas: r8a774c0: Add Z2 clock
-Thread-Topic: [PATCH/RFT v3 5/5] clk: renesas: r8a774c0: Add Z2 clock
-Thread-Index: AQHUuUkELwv5d4vX3USmXnneqE4bfaXJNPWA
-Date:   Thu, 31 Jan 2019 11:01:45 +0000
-Message-ID: <TY1PR01MB1770EB487AACF48B1B4E3689C0910@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <20190131094021.3092-1-horms+renesas@verge.net.au>
- <20190131094021.3092-6-horms+renesas@verge.net.au>
-In-Reply-To: <20190131094021.3092-6-horms+renesas@verge.net.au>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1529;20:wQQC+5p9rdCwKs/IT7H2PXg4rt0oSJCyiNaTGNz84MU0HzTK0rP3DjLGrd1Om3k2cm2IWpLrpGqYNepbgDKa7LPR0JHdpsdDZ0B7oiO0NrcOo5/2lPJBVntwi9zbIV0twzbYI10GybRwKbzRMXyFIpjlcW8WdS9cQsVeDnxsWAE=
-x-ms-office365-filtering-correlation-id: 01712ca4-9317-4b1a-58ba-08d6876b7dba
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1529;
-x-ms-traffictypediagnostic: TY1PR01MB1529:
-x-microsoft-antispam-prvs: <TY1PR01MB15291259E6AC38EA8E23BEF6C0910@TY1PR01MB1529.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(39850400004)(366004)(396003)(199004)(189003)(7736002)(305945005)(229853002)(14454004)(39060400002)(11346002)(66066001)(71190400001)(25786009)(486006)(476003)(446003)(4326008)(71200400001)(106356001)(478600001)(44832011)(99286004)(55016002)(6116002)(105586002)(110136005)(3846002)(81156014)(81166006)(26005)(53936002)(76176011)(316002)(9686003)(74316002)(186003)(6246003)(6506007)(54906003)(8676002)(53546011)(97736004)(256004)(86362001)(107886003)(7696005)(2906002)(102836004)(6436002)(33656002)(68736007)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1529;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GCwr4ZtlMbrp8dfIdHhQbRJ7xNPskLckv61oas7uxXJ/Can2305YHLdLNs9P9P+/SksUFyHWiG7mD2cegb+0PzGj/qMm9+MROxgX06EK1cX6zblQVBtPMOs/FggdpzsXcKDDFYqGMrfGGQMOVN65Apm3NLjtK/7NBPtzg/nGiIr3OR/KsLYsGSJkIeb8/HUA6uM8NF2PMpRxpwAewuAaK4m2IWpDkgfwXMFNA6TxyXwdh/6HjDIuKMU+ujVqvl18zzSbfEbczgaAfkWoX7ep5ALt8O6QGBxLxkOJ7x4R4z9sS8wdyWMo4pD9hNCDau69EicM+QFwGljuULiB9pWOBBy7aOD0P0So+sUoB7cmQcCqOM0I11Ckz7tkuvnfSB08bCfvd5lJDjNva6J+1x1cog9TsSeJUWrNGDCRqhwkQMk=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1732308AbfAaMCE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Jan 2019 07:02:04 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39968 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726153AbfAaMCC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 07:02:02 -0500
+Received: by mail-lj1-f194.google.com with SMTP id n18-v6so2426455lji.7;
+        Thu, 31 Jan 2019 04:01:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=aktuEXmFpPt3GpRO2hx65cug47tIjguGhEFTyNmPzyY=;
+        b=AMAZtDUQwncdSDthjyZ+ydzRpBNk0UFAdnV5Ki7r23JgR8zTgHN67emJVAhGkW5TXS
+         DrGyPz5z9vGQaLuRPViigaKZDByqHIA778aKIjU7lNOXVqlNJkRq5lXEWSax0DH4WZpi
+         jCKY/uJ3k5QVtzhX5DAFg7yRe68eL3R14CgNWW6t7adVt6GV6Oy++K3wBbFaKDSwTwbY
+         jPk3DDp7i2H0adD8dpIiLqIt0IIX8URedOkIDG5xLwY0bmmXSRlYjhr0cJ+1DQcSRT6g
+         /18Pu77q69UQH/s452QWqspR6uuG52vWCfyN0ODtdT531hb4NyYZOrf3tb+1HRrK88W/
+         UdzQ==
+X-Gm-Message-State: AJcUukc3KerdmfflbUXQryt8yoqxZ07t+3RL5VE0evpVGEtmg5ker5vs
+        fDoAplq5OJ6Swo5WpSzM8Yg=
+X-Google-Smtp-Source: ALg8bN4Jxa00FrEELL8yPOt0YITxtc1MSU6FzWLBohxq8DTqANGglrzxRZwVFWGiAg+1P31e7Py3kw==
+X-Received: by 2002:a2e:2f15:: with SMTP id v21-v6mr27380030ljv.56.1548936118183;
+        Thu, 31 Jan 2019 04:01:58 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q128-v6sm748661ljq.14.2019.01.31.04.01.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 04:01:57 -0800 (PST)
+Date:   Thu, 31 Jan 2019 14:01:44 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [RFC PATCH v4 00/10] support ROHM BD70528 PMIC
+Message-ID: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01712ca4-9317-4b1a-58ba-08d6876b7dba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 11:01:45.8137
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1529
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Simon,
+Patch series introducing support for ROHM BD70528 PMIC
 
-I get the same results for the RZ/G2E on EK874:
+Please note that patch 1 breaks compilation without patches 2 and 3
 
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
-800000 1000000 1200000
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/=
-clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/=
-clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z2/clk_rate:975000000
-# echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/=
-clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:800000
-/sys/kernel/debug/clk/z2/clk_rate:787500000
-# echo 1200000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/=
-clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
+ROHM BD70528 is a programmable Power Management IC for battery
+powered 'ultra low power' systems like the pre-announced NXP
+i.MX7 ULP. This patch series introduces support for the PMIC.
 
-> From: Simon Horman <horms+renesas@verge.net.au>
-> Sent: 31 January 2019 09:40
-> Subject: [PATCH/RFT v3 5/5] clk: renesas: r8a774c0: Add Z2 clock
->
-> Adds support for R-Car RZ/G2E (r8a774c0) Z2 clock.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+I send this a RFC now as I would like to receive comments from
+Lee, Mark and Stephen regarding splitting the existing
+include/linux/mfd/bd718x7.h into ROHM generic and chip specific
+portions. Benefit is that for example the clk sub-driver does
+not need to be aware of chip specific structure(s) (struct
+bd718x7 and struct bd70528) as it only needs to derefernce the
+generic struct rohm_regmap_dev. Thus same clk subdriver can
+support both the bd718x7 and bd70528 as long as MFD driver
+data has this generic structure in the beginning of allocated
+data. But knowing the bd718x7 driver is already in upstream,
+it might be good if this change went through single tree, right?
 
-Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+RTC block of the bd70528 can support 'wake' irq which wakes PMIC
+from standby state. Wake irq's can be armed to wake up system up
+to 24 hours from arming. bd70528 can also generate alarm interrupts
+which can be armed to occur years after triggering. The RTC driver
+does always arm both the waker and alarm irqs and does not utilize
+longer period of alarm interrupts. All the RTC timers are limited
+to occur within the next 24 hours. Any suggestions on more elegant
+timer support are welcome =)
 
-> ---
-> v3: New patch
-> ---
->  drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesa=
-s/r8a774c0-cpg-mssr.c
-> index 10b96895d452..24634ca94f69 100644
-> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> @@ -79,6 +79,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] _=
-_initconst =3D {
->  /* Core Clock Outputs */
->  DEF_FIXED("za2",       R8A774C0_CLK_ZA2,   CLK_PLL0D24,    1, 1),
->  DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
-> +DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4=
-, 8),
->  DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
->  DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
->  DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
-> --
-> 2.11.0
+GPIO portion of bd70528 driver adds I/O support for driving GPIO
+pins or reading the state. The interrupt functionality is provided
+by regmap-irq. Current GPIO driver is not aware of whether the pin(s)
+are used for I/O or interrupts and it is up-to driver user to
+ensure there is no misconfiguration or "double use".
 
-Cheers,
-Fab
+Currently only MFD core, clk, RTC, regulator and GPIO portions are
+somehow tested. The RFC series also include initial power-supply
+and watchdog patches in order to provide better overview on chip
+and to collect initial feedback. Reset and ADC are not supported by
+this series.
+
+Changelog v4:
+patches 1,2,3,4,5,10 are unchanged from v3
+DT-binding fixes suggested by Rob Herring:
+- drop interrupt-parent
+- drop clock-frequency
+- change pmic node name to a generic one
+RTC:
+- enable RTC block's irqs before registering rtc
+GPIO fixes after initial testing:
+- fix getting GPIO value when direction is output
+POWER:
+- Add ASCII art intended to clarify the charger HW state machine
+
+Changelog v3:
+patches 1,2,3,4,5,6,7,8 and 10 are unchanged from v2
+RTC fixups suggested by Guenter Roeck:
+- create bd70528_set_time_locked function in order to simplify
+  error handling and to make mutex lock/unlock path more obvious
+- don't ignore errors on bd70528_set_time_locked
+- simplify bd70528_read_alarm enabled condition setting
+- add __packed to structs where members are mapped to HW registers
+- remove unnecessary brackets from enable condition in set_wake
+RTC: fixups suggested by Alessandro Belloni
+- don't use deprecated devm_rtc_device_register
+- add alarm_irq_enable callback
+- add range_min and range_max
+WDT:
+- add regmap and mutex pointers to WDT data so that they can be accessed
+  without dereferencing the parent data
+- remove parent data pointer from WDT data
+- embed struct watchdog_device into WDT data in order to avoid double
+  allocation.
+GPIO:
+- remove unused header as pointed by Linus Walleij
+POWER:
+- do not copy the whole MFD data (especially the mutex to avoid
+  all possibilities of accidentally using the copy of a mutex)
+
+Changelog v2: Mainly feedback from Guenter Roeck:
+- patches 1, 2, 3, 4, 5, 9 are unchanged.
+- mfd: own mutex for each bd70528 instance - embed in struct bd70528
+- watchdog: do not copy parent device data
+- watchdog: fix deadlock caused by double locked mutex
+- watchdog: set initial timeouts and WDT parent information
+- watchdog: remove unnecessary ping function from ops
+- watchdog: and the comment regarding it
+- watchdog: allocate watchdog struct in order to allow multiple WDG
+  instances
+- rtc: bd70528 fix the order of mutex unlock and re-enabling RTC based
+  timers
+- rtc: fix the irq mask register address
+- power: fix the irq mask register address
+- regulator/regmap-irq: Drop the patches 1, 8 and 9 from original series
+  as those were already applied by Mark 
+
+Patch 1:
+	split the bd718x7.h to generic and chip specific portions.
+	(breaks compilation without patch 2 and 3)
+Patch 2:
+	adapt bd718x7.h changes to bd718x7 regulator driver
+Patch 3:
+	adapt bd718x7.h changes to bd718x7 clk driver
+Patch 4:
+	add MFD core support for bd70528
+Patch 5:
+	support bd70528 clk using bd718x7 clk driver
+Patch 6:
+	document DT bindings for BD70528
+Patch 7:
+	support BD70528 GPIO block
+Patch 8:
+	support BD70528 RTC
+Patch 9:
+	support BD70528 battery charger
+Patch 10:
+	support BD70528 watchdog
+
+This patch series is based on Mark's regulator/for-next branch
+
+---
+
+Matti Vaittinen (10):
+  mfd: bd718x7.h split to ROHM common and bd718x7 specific parts
+  regulator: bd718x7 use chip specific and generic data structs
+  clk: bd718x7: use chip specific and generic data structs
+  mfd: bd70528: Support ROHM bd70528 PMIC - core
+  clk: bd718x7: Support ROHM BD70528 clk block
+  devicetree: bindings: Document first ROHM BD70528 bindings
+  gpio: Initial support for ROHM bd70528 GPIO block
+  rtc: bd70528: Initial support for ROHM bd70528 RTC
+  power: supply: Initial support for ROHM BD70528 PMIC charger block
+  watchdog: bd70528: Initial support for ROHM BD70528 watchdog block
+
+ .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 102 +++
+ drivers/clk/Kconfig                                |   6 +-
+ drivers/clk/clk-bd718x7.c                          |  25 +-
+ drivers/gpio/Kconfig                               |  11 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-bd70528.c                        | 228 +++++++
+ drivers/mfd/Kconfig                                |  17 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/rohm-bd70528.c                         | 410 ++++++++++++
+ drivers/mfd/rohm-bd718x7.c                         |  23 +-
+ drivers/power/supply/Kconfig                       |   9 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/bd70528-charger.c             | 738 +++++++++++++++++++++
+ drivers/regulator/bd718x7-regulator.c              |  22 +-
+ drivers/rtc/Kconfig                                |   8 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-bd70528.c                          | 500 ++++++++++++++
+ drivers/watchdog/Kconfig                           |  12 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/bd70528_wdt.c                     | 187 ++++++
+ include/linux/mfd/rohm-bd70528.h                   | 392 +++++++++++
+ include/linux/mfd/rohm-bd718x7.h                   |  22 +-
+ include/linux/mfd/rohm-generic.h                   |  20 +
+ 23 files changed, 2692 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+ create mode 100644 drivers/gpio/gpio-bd70528.c
+ create mode 100644 drivers/mfd/rohm-bd70528.c
+ create mode 100644 drivers/power/supply/bd70528-charger.c
+ create mode 100644 drivers/rtc/rtc-bd70528.c
+ create mode 100644 drivers/watchdog/bd70528_wdt.c
+ create mode 100644 include/linux/mfd/rohm-bd70528.h
+ create mode 100644 include/linux/mfd/rohm-generic.h
+
+-- 
+2.14.3
 
 
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
