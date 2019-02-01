@@ -2,139 +2,200 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A96F0C282D8
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 08:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A769C282DA
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 08:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 828B920869
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 08:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3D4321726
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 08:44:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qiLvC6aE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbfBAIkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:40:47 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41020 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbfBAIkr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 03:40:47 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c16so4413232lfj.8;
-        Fri, 01 Feb 2019 00:40:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g8Nn8cm8MH4bDwP0jLK8AviReQWhxX4FZpgV/LsFZsY=;
-        b=Rwu4uvtKCf7SPAlAZuDh8GlxoKM7f7qB3xhKxVeluulE635jScOwfu7SGuP7yBNYBK
-         CaiCVobrIToO1PC6ih6/9158vGpLLN3noSTD7My8cruXaNJEe1MH8XU8IVzPhtoA51mi
-         Qm/+LhqE+4dtfh+VxGxt9gLRpmPsCjdyaKeTPtjWSu6qNZgWaGRUTYWAgRpWlxcaJ2js
-         bBSKKMN+5ZmHixtFMptv/1km/ZGtc2PJRY5qipfO7fcfJooXOd+nVZNq/2VxKke5pBAY
-         hlsuMVUiXYsFhY8xznlpVT47wAofSk2AH4ybCrYDRmza3L7ywbRZUQHasUOeBW0n9jRt
-         GdLQ==
-X-Gm-Message-State: AJcUukfZGjxUimQMKdWyNMnHyFVplDbb0qGVPJzc21U4v9HmqVzkd7FD
-        7x/MZTaV/USPNuYzg3yUBgI=
-X-Google-Smtp-Source: ALg8bN6Nmz3lHJ3DhKu3nfxwFSM037ts91UOX9a13vuzSYgmR/ABG3bePWR9SNQOS/MbFSRajryeow==
-X-Received: by 2002:a19:ced3:: with SMTP id e202mr31727905lfg.13.1549010444341;
-        Fri, 01 Feb 2019 00:40:44 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id y23-v6sm1177586ljk.95.2019.02.01.00.40.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 00:40:43 -0800 (PST)
-Date:   Fri, 1 Feb 2019 10:40:40 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        mazziesaccount@gmail.com, corbet@lwn.net, cw00.choi@samsung.com,
-        krzk@kernel.org, b.zolnierkie@samsung.com, mturquette@baylibre.com,
-        pombredanne@nexb.com, sre@kernel.org, vkoul@kernel.org,
-        linux@roeck-us.net, pavel@ucw.cz, sjhuang@iluvatar.ai,
-        andrew.smirnov@gmail.com, djkurtz@chromium.org,
-        akshu.agrawal@amd.com, rafael.j.wysocki@intel.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 0/3] clk: clkdev add managed lookup registrations
-Message-ID: <20190201084040.GE23791@localhost.localdomain>
-References: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
- <20190131132452.GD23791@localhost.localdomain>
- <20190131152147.tzxabhyhlyy2rwhy@e5254000004ec.dyn.armlinux.org.uk>
- <154896351763.169292.2557542540041822337@swboyd.mtv.corp.google.com>
+        id S1726685AbfBAIoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 03:44:24 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:15994 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbfBAIoX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 03:44:23 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190201084419epoutp044e13f5ff6e7465dafb3a6c8da7868761~-MPz0QSuV2705627056epoutp04x
+        for <linux-clk@vger.kernel.org>; Fri,  1 Feb 2019 08:44:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190201084419epoutp044e13f5ff6e7465dafb3a6c8da7868761~-MPz0QSuV2705627056epoutp04x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549010659;
+        bh=ZhVPXQJDOYPfOvRAQbEOsJtAluOWxGuxTxMUeSiN9r4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=qiLvC6aEcMxxmFRVBccmPIaxFbm/qcLEmGrHpMTcKKY5BcBCYv0SGf3dlYjRe8Uua
+         Om7t7iRfUref25eCx7u+Hl7YoUP6ad+s34kIiw03Or0Vn62slV/O7r0wrQLrMTnMPP
+         Lg2lmIGNJgg+M/j6j1dPhSmMWqFB1afCLN5VuUtI=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.155]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190201084415epcas1p3491fc42304671bef4dbf2d26eab31a71~-MPvWkBeq1970119701epcas1p3P;
+        Fri,  1 Feb 2019 08:44:15 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F0.46.04074.ED6045C5; Fri,  1 Feb 2019 17:44:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190201084414epcas1p3f302302313e90b13966aca98289aadd1~-MPu6Ma3o2143721437epcas1p3H;
+        Fri,  1 Feb 2019 08:44:14 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190201084414epsmtrp1c90129596bafeba042d9ab70ae8b09d4~-MPu4qcKu3138631386epsmtrp1i;
+        Fri,  1 Feb 2019 08:44:14 +0000 (GMT)
+X-AuditID: b6c32a35-27fff70000000fea-3e-5c5406de1515
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        41.7C.03971.ED6045C5; Fri,  1 Feb 2019 17:44:14 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190201084414epsmtip2eec3b5cddd11d74f61de0ffbf62bc084~-MPumtpms2316023160epsmtip2H;
+        Fri,  1 Feb 2019 08:44:14 +0000 (GMT)
+Subject: Re: [PATCH v3 3/8] clk: samsung: add BPLL rate table for Exynos
+ 5422 SoC
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <d5b8d165-564e-b776-77de-31a069118067@samsung.com>
+Date:   Fri, 1 Feb 2019 17:44:14 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154896351763.169292.2557542540041822337@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1548924594-19084-4-git-send-email-l.luba@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCJsWRmVeSWpSXmKPExsWy7bCmge49tpAYg9uLbCw2zljPajH/yDlW
+        i/7Hr5ktzp/fwG5xtukNu8WtBhmLTY+vsVp87LnHanF51xw2i8+9RxgtZpzfx2Sx9shddouL
+        p1wtbjeuYLM4/Kad1eLftY0sDgIe72+0sntsWtXJ5rF5Sb3HwXd7mDz6tqxi9Pi8SS6ALSrb
+        JiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoaiWFssSc
+        UqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFCdsbs
+        JWsZCx5LVry8F9PAeFi0i5GTQ0LAROLgpIfsXYxcHEICOxglFs9+ywThfGKU2NB8GCrzjVGi
+        98p6dpiWc3++MYLYQgJ7GSX+Pq2EKHrPKNE8tw+sSFggWGLusZtsIAkRgeWMEvum3mUEcZgF
+        9jJJLLrRA9bOJqAlsf/FDTYQm19AUeLqj8dgcV4BO4kn7b/B4iwCKhKXFs8FmyoqECFxuPcd
+        VI2gxMmZT1hAbE4Bb4mXuyA2MwuIS9x6Mp8JwpaXaN46mxni7H3sEte250DYLhJPPv+CekdY
+        4tXxLVC2lMTL/jYou1pi5ckjYB9ICHQwSmzZf4EVImEssX/pZKAFHEALNCXW79KH2MUn8e5r
+        DytIWEKAV6KjTQiiWlni8oO7TBC2pMTi9k42CNtDYtLcSWwTGBVnIflmFpIPZiH5YBbCsgWM
+        LKsYxVILinPTU4sNCwyRY3sTIzhFa5nuYJxyzucQowAHoxIP74ZfQTFCrIllxZW5hxglOJiV
+        RHhns4TECPGmJFZWpRblxxeV5qQWH2I0BQb2RGYp0eR8YP7IK4k3NDUyNja2MDE0MzU0VBLn
+        Xe/gHCMkkJ5YkpqdmlqQWgTTx8TBKdXAmLO0f8WGPxGne75urRX+wfnurtn+9WLzPXaLLM+9
+        N0u6Vfl7pPHJZGnZ8vcZB791Tcw8aOv75FaTjMxKpc5d+T4WWz9Xz9+z6JKeqNyxY2cemV6c
+        UXST07zeOplzlpqNc5vIiZbpaQ8+TPERSV7mxp902eltn5+du3TtSvbVE84lqKdY/szbqcRS
+        nJFoqMVcVJwIAKl6majnAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsWy7bCSvO49tpAYg/enpS02zljPajH/yDlW
+        i/7Hr5ktzp/fwG5xtukNu8WtBhmLTY+vsVp87LnHanF51xw2i8+9RxgtZpzfx2Sx9shddouL
+        p1wtbjeuYLM4/Kad1eLftY0sDgIe72+0sntsWtXJ5rF5Sb3HwXd7mDz6tqxi9Pi8SS6ALYrL
+        JiU1J7MstUjfLoErY/aStYwFjyUrXt6LaWA8LNrFyMkhIWAice7PN8YuRi4OIYHdjBJfO2ex
+        QiQkJaZdPMrcxcgBZAtLHD5cDBIWEnjLKLG9lQPEFhYIlvjS+g6sV0RgOaPE3L9LWUAcZoG9
+        TBITei6zQky9zyjxZ99TRpAWNgEtif0vbrCB2PwCihJXfzwGi/MK2Ek8af8NFmcRUJG4tHgu
+        O4gtKhAh8fHpPiaIGkGJkzOfsIDYnALeEi939YHVMAuoS/yZd4kZwhaXuPVkPhOELS/RvHU2
+        8wRG4VlI2mchaZmFpGUWkpYFjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCo1VL
+        cwfj5SXxhxgFOBiVeHg3/AqKEWJNLCuuzD3EKMHBrCTCO5slJEaINyWxsiq1KD++qDQntfgQ
+        ozQHi5I479O8Y5FCAumJJanZqakFqUUwWSYOTqkGRnG7rZ/r+d849G/pbfq/sO50yXKdW2tb
+        ax01jy6W8l3w6kGz/GWHOdsvfQo//9hZ+8vDm4e2Zmxd/vHGWasc86MTjn/l4zzOqqP6mut5
+        XMk03QU+bLpyv5+YZXXNc2eqXyqV/ffJx9RLWgs7Eic//n/Y20z4/rLHzxf/tE7qYyj4LxcR
+        92n2/m9KLMUZiYZazEXFiQBEQO800gIAAA==
+X-CMS-MailID: 20190201084414epcas1p3f302302313e90b13966aca98289aadd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190131085007eucas1p2f16107042b8ce5638811840618bcf017
+References: <1548924594-19084-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190131085007eucas1p2f16107042b8ce5638811840618bcf017@eucas1p2.samsung.com>
+        <1548924594-19084-4-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:38:37AM -0800, Stephen Boyd wrote:
-> Quoting Russell King - ARM Linux admin (2019-01-31 07:21:47)
-> > On Thu, Jan 31, 2019 at 03:24:52PM +0200, Matti Vaittinen wrote:
-> > > Hello All,
-> > > 
-> > > On Fri, Dec 07, 2018 at 01:09:00PM +0200, Matti Vaittinen wrote:
-> > > > Series adds managed clkdev lookup interfaces and cleans few drivers
-> > > > 
-> > > > Few clk drivers appear to be leaking clkdev lookup registrations at
-> > > > driver remove. The patch series adds devm versions of lookup
-> > > > registrations and cleans up few drivers. Driver clean-up patches have
-> > > > not been tested as I lack the HW. All testing and comments if
-> > > > driver/device removal is even possible for changed drivers is highly
-> > > > appreciated. If removal is not possible I will gladly drop the patches
-> > > > from series - although leaking lookups may serve as bad example for new
-> > > > developers =)
-> > > > 
-> > > > Changed drivers are:
-> > > > clk-max77686 and clk-st
-> > > > 
-> > > > Please note that the patch #2 requires this change to work correctly:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
-> > > 
-> > > I guess the dependency mentioned abowe is already in (most) of the
-> > > trees. (I can't say for sure as I don't know what is the correct tree
-> > > for clkdev - is it linux-arm.git as Russel is maintaining clkdev?
-> > 
-> > Yes, I'm supposed to be maintaining clkdev, but I'm busy with other
-> > stuff (such as reorganising my network, helping people with SFP issues,
-> > I'm supposed to be replying to Arend over a brcmfmac issue that has been
-> > on-going since Christmas which I haven't yet been able to doing the next
-> > test...)
-> > 
-> > > If yes, then the commit 05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
-> > > "clk: of-provider: look at parent if registered device has no
-> > > provider info" seems to be sitting in maser branch).
-> > 
-> > It's there because it's part of the mainline kernel and has been
-> > since v5.0-rc1.  So, if you depend on that commit, basing off
-> > v5.0-rc1 is probably sane, unless there's something else that
-> > conflicts.
-> > 
+Hi,
+
+On 19. 1. 31. 오후 5:49, Lukasz Luba wrote:
+> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
+> Controller frequencies for driver's DRAM timings.
 > 
-> I can pick up the patches in the clk tree. Clk drivers will be the users
-> so it's probably simplest to merge the clkdev patch in clk tree and then
-> consumers can be updated at the same time in a patch stack on top of
-> that.
+> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> CC: Chanwoo Choi <cw00.choi@samsung.com>
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Stephen Boyd <sboyd@kernel.org>
+> CC: Kukjin Kim <kgene@kernel.org>
+> CC: Krzysztof Kozlowski <krzk@kernel.org>
+> CC: linux-samsung-soc@vger.kernel.org
+> CC: linux-clk@vger.kernel.org
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-kernel@vger.kernel.org
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 3e87421..8bf9579 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1325,6 +1325,19 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
+>  	PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+>  };
+>  
+> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+> +	PLL_35XX_RATE(24 * MHZ, 933000000, 311, 4, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
+> +	PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
+> +	PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+> +	PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+> +	PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+> +	PLL_35XX_RATE(24 * MHZ, 138000000, 184, 2, 4),
 
-This sounds good to me if it is Ok to Russel. Please just let me know if
-you want me to rebase (to clk-next?) and resend the series.
+Except for 825Mhz, I can't find the target frequency
+on Exynos5422 TRM document. Usually, Exynos TRM specified
+the supported stable clocks. It means that undefined clocks
+are not stable as I knew. Where do you find them?
 
-> Otherwise, if I can get a stable branch/tag to pile the clk driver
-> patches on I can apply them that way and then the clkdev patch can go
-> via Russell.
+When I calculated the PLL frequency with PMS value, it is correct.
+But, just we need to check the reference of undefined clocks on TRM
+in order to guarantee the stable operation.
 
-I can for sure go with this approach as well if it has some advantages
-to you. Again, please just let me know if I should resend series and if
-I should use something else but clk-next as a base.
+Remove 933/138Mhz because exynos5433-dmc.c doesn't use 933Mhz and 138Mhz
+and also Exynos5422 TRM doesn't define 933/138Mhz on pll table.
 
-Br,
-	Matti Vaittinen
+> +};
+> +
+>  static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>  	PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
+>  	PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
+> @@ -1467,7 +1480,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> -		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> +		exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
+
+Exynos5422 used the same PLL table for apll, kpll, bpll and so on.
+You don't need to make the separate pll table. Just add new entries
+to exynos5420_pll2550x_24mhz_tbl table.
+
+>  	}
+>  
+>  	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
+> 
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
