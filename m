@@ -2,55 +2,55 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F84C282D8
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12E6C282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439EE20855
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:47:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FBBF20855
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:47:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="h8baJeh8"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TFDss/Rb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbfBAPrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:47:21 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42203 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728291AbfBAPmz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:42:55 -0500
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so6158790lja.9
-        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:42:54 -0800 (PST)
+        id S1729564AbfBAPrY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 10:47:24 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38940 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbfBAPmy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:42:54 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n18so5375729lfh.6
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:42:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TH0lXAyrlRomYAB02Yycn9wsztLPFIbpq6Vqme/PXxg=;
-        b=h8baJeh8eqxrIVootpLq2OYoRrmsbDASLzW6ZqrWxBZSKlWAQh7NWC0OVPOuqCu8mB
-         MWEfYfZw1kebF0iHaX90L4thZQPmL58v592JE2OJ7qGXB/uAShdRezQsfWtRVRBqPp4j
-         zACYt6d2b3yNL8oHExk3pfBTTduVNG8/CaW7I=
+        bh=TFKtwWbXDyUWT8qfJQdNKmTE4M3/0ezirQXsds5l2UY=;
+        b=TFDss/RbpOFlaY0pWWUTNxWwScvM6xjusFKv0iPtef7zFK/kvLYAlgDybWbhac398K
+         fSO9j4Q92zuJCwOI0Bf2W4fgV2Ru6//VyG8oEMG+cr3hml2NaPvTD4x/Sbd2YhDxcSQt
+         YYqXzbcdn3lxNnXm0Ezdev5F1ZXUBfEZWAQw0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TH0lXAyrlRomYAB02Yycn9wsztLPFIbpq6Vqme/PXxg=;
-        b=W01OlVy038n6uBeF3STwcVW2PgMF4HPEDW32K7bTJpXXUhSNqvihmn1Cg0+ZtmO4Sf
-         mL0A6dh3UxZcu3Mq7YNRb+IyJRrQCEzVCkKQjdpNSWCEPNF4HyOrmg+ZJfos/9KS+on8
-         4Fqq91d+1MjMC2Z1KgZfjWgq6NltYolI8NPZCsD0CR1cEOFdpXN/jV4Bf8FLoFtZZse9
-         MGbfLD/fifPLKOFiKtIBM6R1gSStZr+1w+GK4UW+dxx+IciG8F3pHpG32XFBBFd7NgWm
-         TFYZSGzsFD/GJoJPZ4Ncu/JFC9l8B64WQUKBmaHjONHWavdtjox7frh6vdz0KMTiD/uJ
-         GTng==
-X-Gm-Message-State: AJcUukeCdLZ8v3Ns8BPPBDmwI5a4uUJL6P//XbKlL8DoCSpQWt8qFxnl
-        78EnwjGKB8waPtzCGXCi4HlxBA==
-X-Google-Smtp-Source: ALg8bN5UdmzEooJr/VOlZo7l7VOObC/P0rkzz7HNwWOblM5sif7MlFRwx/aytTeQBHAxsLn/zfJv6g==
-X-Received: by 2002:a2e:3803:: with SMTP id f3-v6mr32242287lja.169.1549035773896;
-        Fri, 01 Feb 2019 07:42:53 -0800 (PST)
+        bh=TFKtwWbXDyUWT8qfJQdNKmTE4M3/0ezirQXsds5l2UY=;
+        b=AVeK2Qcql/CImLJwb6tBfNx1aGH+ReoOUaqUsNrjV4trZ/nhFMYwyHBOcEtmoCrG/+
+         bOhWZKQl6p89NixYBL170hFWAcXaZMzClMTXnu3qw0aAtRIwDT7dJPHqkFTjNdkJ+/P+
+         K0m9n6bdyetkFeID0FoOj9nf6tCEPW328Pk73+ajhcJ52ACfPd7nQK9UXekpQSzdb9X+
+         qXNBlkkuHQmnOcbJpMlb5p6RDn0hPQlxWBX9waXBTIyBavGvHRnw+k3Er80umvnRo6Tn
+         j3PPsHBeZswFVS8I4pReJXPugAS5FOLgi9FtelB5/wDmjoUFUQpP5zykhUxA6lUKXC1m
+         oMIw==
+X-Gm-Message-State: AHQUAuaeB0j1GM5NQ7m+GBv6g0nTrNGvvuloFeeg/8TlI8yyg72YJFzP
+        uvkqr3JBx+cq+LwweO8rapqXVg==
+X-Google-Smtp-Source: AHgI3IZ0Z2Ru8GyS56Z09JmdGKrORyR6EsHkGG9PJJ1Tsacbdb7LlqphoL23RjCgnvd1ilES3r1KVA==
+X-Received: by 2002:ac2:4254:: with SMTP id m20mr354627lfl.131.1549035772005;
+        Fri, 01 Feb 2019 07:42:52 -0800 (PST)
 Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.42.52
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.42.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:42:53 -0800 (PST)
+        Fri, 01 Feb 2019 07:42:51 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v7 05/23] drm/sun4i: tcon: Export get tcon0 routine
-Date:   Fri,  1 Feb 2019 21:12:14 +0530
-Message-Id: <20190201154232.10505-6-jagan@amarulasolutions.com>
+Subject: [PATCH v7 04/23] drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
+Date:   Fri,  1 Feb 2019 21:12:13 +0530
+Message-Id: <20190201154232.10505-5-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
 References: <20190201154232.10505-1-jagan@amarulasolutions.com>
@@ -77,53 +77,79 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sometimes tcon attributes like tcon divider, clock rate etc are needed
-in interface drivers like DSI. So for such cases interface driver must
-probe the respective tcon and get the attributes.
+Allwinner MIPI DSI drq has enable mode bit and set bits.
+1) drq for non-burst, with front porch less than 20 would need to
+   set both enable mode bit and set bits.
+2) drq for non-burst, with front porch greater or equal to 20 would
+   not require to do any drq bit setup.
+3) drq for burst mode, would only need to set enable mode bit.
 
-Since tcon0 probe is already available, via sun4i_get_tcon0 function,
-export the same instead of probing tcon explicitly.
+This patch simplifies existing drq code by grouping into
+sun6i_dsi_get_drq and support all video modes.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 3 ++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 39 ++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 0420f5c978b9..3da75a0c5c5d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -221,7 +221,7 @@ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
-  * are located in TCON0. This helper returns a pointer to TCON0's
-  * sun4i_tcon structure, or NULL if not found.
-  */
--static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
-+struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 0f02bcc997a5..16a86d35dc5a 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -354,6 +354,28 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+ 		     SUN6I_DSI_INST_JUMP_CFG_NUM(1));
+ };
+ 
++static int sun6i_dsi_get_drq(struct sun6i_dsi *dsi,
++			      struct drm_display_mode *mode)
++{
++	struct mipi_dsi_device *device = dsi->device;
++
++	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
++		return SUN6I_DSI_TCON_DRQ_ENABLE_MODE;
++
++	if ((mode->hsync_start - mode->hdisplay) > 20) {
++		/* Maaaaaagic */
++		u16 drq = (mode->hsync_start - mode->hdisplay) - 20;
++
++		drq *= mipi_dsi_pixel_format_to_bpp(device->format);
++		drq /= 32;
++
++		return (SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
++			SUN6I_DSI_TCON_DRQ_SET(drq));
++	}
++
++	return 0;
++}
++
+ static u16 sun6i_dsi_setup_inst_delay(struct sun6i_dsi *dsi,
+ 				      struct drm_display_mode *mode)
  {
- 	struct sun4i_drv *drv = drm->dev_private;
- 	struct sun4i_tcon *tcon;
-@@ -235,6 +235,7 @@ static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
- 
- 	return NULL;
+@@ -381,21 +403,8 @@ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+ 				  struct drm_display_mode *mode)
+ {
+-	struct mipi_dsi_device *device = dsi->device;
+-	u32 val = 0;
+-
+-	if ((mode->hsync_end - mode->hdisplay) > 20) {
+-		/* Maaaaaagic */
+-		u16 drq = (mode->hsync_end - mode->hdisplay) - 20;
+-
+-		drq *= mipi_dsi_pixel_format_to_bpp(device->format);
+-		drq /= 32;
+-
+-		val = (SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
+-		       SUN6I_DSI_TCON_DRQ_SET(drq));
+-	}
+-
+-	regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG, val);
++	regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG,
++		     sun6i_dsi_get_drq(dsi, mode));
  }
-+EXPORT_SYMBOL(sun4i_get_tcon0);
  
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
- 			const struct drm_encoder *encoder)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index b5214d71610f..a52696db14a5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -274,6 +274,7 @@ struct sun4i_tcon {
- struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node);
- struct drm_panel *sun4i_tcon_find_panel(struct device_node *node);
- 
-+struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm);
- void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
- void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
- 			 const struct drm_encoder *encoder,
+ static void sun6i_dsi_setup_inst_loop(struct sun6i_dsi *dsi,
 -- 
 2.18.0.321.gffc6fa0e3
 
