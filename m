@@ -2,80 +2,151 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0781C282D8
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 11:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DF9C4151A
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB6BE21904
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 11:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6889218F0
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCz5E6SW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfBALRp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:17:45 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:39790 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbfBALRp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:17:45 -0500
-Received: from [88.128.81.210] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gpWpK-00016f-Sv; Fri, 01 Feb 2019 12:17:42 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 5.1
-Date:   Fri, 01 Feb 2019 12:17:47 +0100
-Message-ID: <48408534.cOKhDiQbmB@phil>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1725807AbfBAMcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 07:32:52 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36080 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbfBAMct (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 07:32:49 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f23so5321046edb.3;
+        Fri, 01 Feb 2019 04:32:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=mfx8EngpD21F4beHFI4xnlcyVYLWy3PUGs790NCYd/k=;
+        b=gCz5E6SWpg5ROaHec2f+peOAT4i5hMwL2a/A5uflM6xGh5XlzG74/qBxJEzkbpK/bh
+         yBunrUM9GPysUE2hXjiBFglv1LaP6zbudawQ6lPfl2ACnE5oTp1yS4t+Lc9oBbTDIYZq
+         OoNgVCrXIPU1zz4jTurmieGnSdiYCdnAG5QniN2Ufa5RmGm/UJjkrrSy8K63vRLPmdV0
+         hmd5US6Mcnrx6VEfORR8NUj71o4p5sW0VdhmwH0oQFS6hKoQtmOFNynqXd9fTohPpwkG
+         x8T4KAu/vtLVMZAM0c1vkkOse/5DfjA79YxwO+StlzERDyXKZKrLFjJg/j0ispqNZqrQ
+         Bkgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=mfx8EngpD21F4beHFI4xnlcyVYLWy3PUGs790NCYd/k=;
+        b=Iuk/SN7aFnrRcj62eLr2HhwTJJ/UOsOl8vYdfLmtTyVMJJn/z08TzJCbmGEci2/Ee6
+         wncuvFzI7hTzF5s9bLZp8tNS+aVC6Ayq7cg72gmcFKDCaI1V81WzTE4W29cU8f3lQcgq
+         knqhujSoxOR8scv9aTYlP9qkvYDdhfePCuihpGnUXozFNhNTxUO5I895lRzqyZFIWYHi
+         EPha0dznu+h234hDyvbH24odx8whtZo8wdJQnPRPmIB0LxZxF3AJOIb8Hgodm8vFh56Z
+         lKlAgy41/g90JNh3+e8tYqc5WGf9Ks4e7lJ0/kUdCtqq2p2ZvtkKhAaHPasGKc0HaNov
+         EHcg==
+X-Gm-Message-State: AJcUukfyhreia7C39+M4w5ve3wBbUJw8mnVDb97g03BRCHEzXnFHXWlS
+        UqikUPId9noTpo0JdxZ9CFY=
+X-Google-Smtp-Source: ALg8bN6bAk2/kdTEEUEmQ5FKhX+c/OHqI4ZSEhFW/F1mKvzw3hnQ5hctz3KmYnK9gdfAXyc7SyJocQ==
+X-Received: by 2002:a17:906:914a:: with SMTP id y10mr35335385ejw.124.1549024366907;
+        Fri, 01 Feb 2019 04:32:46 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id v6sm1221472eja.51.2019.02.01.04.32.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 04:32:46 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] dt-bindings: display: rockchip: add document for rk3066 hdmi
+Date:   Fri,  1 Feb 2019 13:32:35 +0100
+Message-Id: <20190201123235.1693-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181229133318.18128-1-jbx6244@gmail.com>
+References: <20181229133318.18128-1-jbx6244@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+This patch adds a binding that describes the HDMI controller for
+rk3066.
 
-looks I can re-use my introduction from 4.20 and 5.0 - no big changes
-again this time.
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../display/rockchip/rk3066_hdmi-rockchip.txt      | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
 
-A rate_parent flag and some fixup for the fractional part of a PLL
-
-So please pull.
-
-
-Thanks
-Heiko
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.1-rockchip-clk1
-
-for you to fetch changes up to 491b00ff699356a8dab10eb517a1b44205514c9e:
-
-  clk: rockchip: add CLK_SET_RATE_PARENT for rk3066 lcdc dclks (2019-01-07 09:17:15 +0100)
-
-----------------------------------------------------------------
-Fix for PLL rate calculation on rk3328 and SET_RATE_PARENT flag
-for the display clock on rk3066.
-
-----------------------------------------------------------------
-Finley Xiao (1):
-      clk: rockchip: add CLK_SET_RATE_PARENT for rk3066 lcdc dclks
-
-Katsuhiro Suzuki (1):
-      clk: rockchip: fix frac settings of GPLL clock for rk3328
-
- drivers/clk/rockchip/clk-rk3188.c |  4 ++--
- drivers/clk/rockchip/clk-rk3328.c | 12 ++++++------
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
+new file mode 100644
+index 000000000..6a8f3754f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
+@@ -0,0 +1,60 @@
++Rockchip specific extensions for rk3066 HDMI
++============================================
++
++Required properties:
++- compatible:
++	"rockchip,rk3066-hdmi";
++- reg:
++	Physical base address and length of the controller's registers.
++- clocks, clock-names:
++	Phandle to HDMI controller clock, name should be "hclk".
++- interrupts:
++	HDMI interrupt number.
++- power-domains:
++	Phandle to the RK3066_PD_VIO power domain.
++- rockchip,grf:
++	This soc uses GRF regs to switch the HDMI TX input between vop0 and vop1.
++- ports:
++	Contains one port node with two endpoints, numbered 0 and 1,
++	connected respectively to vop0 and vop1.
++- pinctrl-0, pinctrl-name:
++	Switch the iomux for the HPD/I2C pins to HDMI function.
++
++Example:
++	hdmi: hdmi@10116000 {
++		compatible = "rockchip,rk3066-hdmi";
++		reg = <0x10116000 0x2000>;
++		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru HCLK_HDMI>;
++		clock-names = "hclk";
++		power-domains = <&power RK3066_PD_VIO>;
++		rockchip,grf = <&grf>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmii2c_xfer>, <&hdmi_hpd>;
++		status = "disabled";
++
++		hdmi_in: port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			hdmi_in_vop0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&vop0_out_hdmi>;
++			};
++			hdmi_in_vop1: endpoint@1 {
++				reg = <1>;
++				remote-endpoint = <&vop1_out_hdmi>;
++			};
++		};
++	};
++
++&pinctrl {
++		hdmi {
++			hdmi_hpd: hdmi-hpd {
++				rockchip,pins = <0 RK_PA0 1 &pcfg_pull_default>;
++			};
++			hdmii2c_xfer: hdmii2c-xfer {
++				rockchip,pins = <0 RK_PA1 1 &pcfg_pull_none>,
++						<0 RK_PA2 1 &pcfg_pull_none>;
++			};
++		};
++};
+-- 
+2.11.0
 
