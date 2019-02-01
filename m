@@ -2,144 +2,142 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F134C282D8
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC35CC282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0FC218AF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:39:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9534420855
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:42:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gI5zPETk"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="FwxziL6Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730669AbfBAPjM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:39:12 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57810 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728373AbfBAPjK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:39:10 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190201153908euoutp02a06fca2b44b8c3de2fccb2e96b3caaec~-R5-XYMJZ1318113181euoutp02x
-        for <linux-clk@vger.kernel.org>; Fri,  1 Feb 2019 15:39:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190201153908euoutp02a06fca2b44b8c3de2fccb2e96b3caaec~-R5-XYMJZ1318113181euoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549035548;
-        bh=VGhHyPF1047MvkCjYIo15AWEEKXPt5o2e46SQSi0o5I=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=gI5zPETkHD2gChw1mc8GYPe0VlA/AQnYOLt/nrZ9WgFukI1OdNovzci9zE40ZvV8g
-         wII5GULDTr2S6w3zOcBoCZD6KJFCmUQZx3DFHEYk+oZ4SUtgfBrquuUNBsfANHuSeF
-         kotq4gOuDukDBbqecpXaW+0T8Bef2wAQs7wK4LPo=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190201153907eucas1p14a0f699f70610326ce8828a2691f75a3~-R5_UP9eY0988209882eucas1p1l;
-        Fri,  1 Feb 2019 15:39:07 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 47.FD.04441.B18645C5; Fri,  1
-        Feb 2019 15:39:07 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190201153906eucas1p16f92079f811811cc233637191db0ab52~-R59j4jgO0185901859eucas1p1G;
-        Fri,  1 Feb 2019 15:39:06 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190201153906eusmtrp170ee991cd789c69e377ed9fd37e2876e~-R59UzOUS1041510415eusmtrp1E;
-        Fri,  1 Feb 2019 15:39:06 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-16-5c54681b4919
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id FF.93.04284.A18645C5; Fri,  1
-        Feb 2019 15:39:06 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190201153905eusmtip17c29c1b12d3749c6ef6b718ae3f3575c~-R58rBrLy2092020920eusmtip1Y;
-        Fri,  1 Feb 2019 15:39:05 +0000 (GMT)
-Subject: Re: [PATCH v3 3/8] clk: samsung: add BPLL rate table for Exynos
- 5422 SoC
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        myungjoo.ham@samsung.com,
+        id S1726721AbfBAPms (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 10:42:48 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34557 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfBAPms (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:42:48 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u89-v6so6228517lje.1
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:42:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=cX9BCqEMHQCHAsrFYobLewx1bc2r/y4XH0JrehpkNwQ=;
+        b=FwxziL6YDddDrG61jfPHgvFaJd87cBPOW3CRbYGHFBfDrM1oRDhq4vhEY1PJJ/UYyJ
+         bkPn8082W9QCvBDVGV5vOfvJ5Er9NngoWGLfoyUd2Lp5VPWw2fWm8X0SORDRauRjEpsp
+         YUDKEyrN0SHFzni0QlMzJilLjLpgN2FCd/v4s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cX9BCqEMHQCHAsrFYobLewx1bc2r/y4XH0JrehpkNwQ=;
+        b=q50xXsx3XiMdCdoDpOS1LUmXOLKjeQQY84tLX75tEISDF04q7qM27oSRr/qxsQhM58
+         BIXHhwLB34Cy+TfF6rYPSdyDFEJsQJiH6YUwCMmYcLN9JxMK7BJMVkiWWvfoJkBgGpS5
+         4rb4M9hGzV7H7n1xsapH7KI6kHjBNlW8YcVu7KwI46aiHVEXRhT3AIrZL9pefe72B8XV
+         G7Y3jenvyq74eMP6sr0fdeTnq+zctyvguorMEmjSUjkcoQlPNaQ3v7Cum6j2xhZhZ5Cw
+         irjRatn7hunbWnvYIXYYCVJBpfrRAApyt44LIPaSijYjm4YiURN7V46jk7TD79x9ZUE9
+         znLA==
+X-Gm-Message-State: AJcUuke6yoKwSNVMpkolhfOfgCwt9XxalpyyJOESjLxSxsnONwLH0jr0
+        ZdP/eb5cJ43AW35eUXUFDrKW0g==
+X-Google-Smtp-Source: ALg8bN6kVB2Bdfh3cgksQB9MNbY1YwvZ83JikXHWf0FItNqeYebHwStbdzp+0p0qdcqDmysVQ2dxag==
+X-Received: by 2002:a2e:4c0a:: with SMTP id z10-v6mr31858340lja.85.1549035765991;
+        Fri, 01 Feb 2019 07:42:45 -0800 (PST)
+Received: from localhost.localdomain ([217.76.202.68])
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.42.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 07:42:45 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <7c28d817-84bd-c88e-de84-801fd97645ec@partner.samsung.com>
-Date:   Fri, 1 Feb 2019 16:39:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v7 01/23] drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction delay
+Date:   Fri,  1 Feb 2019 21:12:10 +0530
+Message-Id: <20190201154232.10505-2-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
+References: <20190201154232.10505-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <08850f80-0cc1-8e0d-6a8a-286a750d3a8c@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzHfe/3eDd3fl3Rh+xsh01MHsp8jR6Yh9tsrcg8tfHDT1Fd3E+h
-        mNI8dLooSV1xaVk5ok5LMkzXal3TFVN5XKZhOC1pxjz165fpv9fn8/48vD/ffVlC205NYncZ
-        9wkmIx+vp1VkbdP3ttl+sVHRc61N43B1wQ0Kd319R2FbYxuFT7/5SGC3u4rBD49+YrDjTSeF
-        +7NeUfhxfTGNByyNCBe47ylwZeNLBne4VuDn6RU0dn46QeHfndVkGGfo6z7GGBz2TNpws+yI
-        IbvGjgwDDl0EtUm1ZIcQvytZMM0J2aqKtTS9oPecpg/k3LbTachDmhHLAhcEg26dGalYLVeB
-        oLy/W2FGyqHgK4K2HC9ZGEDQ8TadlgSpwXGnkJKFcgRppX9IOfAgyO06RUlV3txauND0dLjD
-        h1sP6X02JDHBlRDg+jZHWk1zAVBn3yul1dxKaHelD28muWlw/UoeIfF4bgM4LZ+RXOMFLYW9
-        pMRKLhTKB6pJeaQvPOu1KWSeArc8xYTkB7jvDFTm/aJk18sh11LEyOwNH5prRngytJ7NImUW
-        4eFJ+8iVh+BES91IzWJwNndQkmeC84cb9UP2maH0UrgbJr+hBro9XrIBDeTWnifktBpOHtfK
-        I2ZATVa7QuYJUH4tnzmD9NZRZ1lHnWIddYr1/9YSRNqRr5AkJsQI4jyjsD9A5BPEJGNMwPbE
-        BAca+metv5u/1KHBR9saEMci/Vh11Y810VqKTxYPJjQgYAm9j1rcHBWtVe/gD6YIpsQtpqR4
-        QWxAfiyp91WnjunZrOVi+H1CnCDsEUz/VAWrnJSG5loLJqIpH2nlz5B1zv44T9n1lI3+dIh7
-        Z15k6+WY8AyNcPVsyoMf4bt7LCULrMsuZmef0zVn2pJnrV5ElS48dzj4daU5pyo4tSd/emrU
-        rOD9PpqJKc73gfrGNpYPPJNZ3Bcxv+g+yUS6XFND2YygQd0q1WTmWculjNoGdy+Ln+hJMZaf
-        N5Mwifxfwe7+DmMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsVy+t/xu7pSGSExBguXS1lsnLGe1eL6l+es
-        FvOPnGO16H/8mtni/PkN7BZnm96wW2x6fI3V4mPPPVaLy7vmsFl87j3CaDHj/D4mi7VH7rJb
-        XDzlanG7cQWbxeE37awW/65tZHEQ8Hh/o5XdY9OqTjaPzUvqPfq2rGL0+LxJLoA1Ss+mKL+0
-        JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS+j99gdtoJ+toqJ
-        O1exNTC+Zeli5OSQEDCR2LR7JmsXIxeHkMBSRol/Tz8zQSTEJCbt284OYQtL/LnWxQZR9JpR
-        YtqpJawgCWGBYIkvre8YQWwRgXCJj5/bmECKmAUWMEv82vCMEaKjjVni+vRm5i5GDg42AT2J
-        HasKQRp4BdwkLpxqBNvGIqAisW7lFGYQW1QgQuLj031MEDWCEidnPgE7lVPAXmL5541gNrOA
-        mcS8zQ+ZIWxxiVtP5jNB2PIS29/OYZ7AKDQLSfssJC2zkLTMQtKygJFlFaNIamlxbnpusaFe
-        cWJucWleul5yfu4mRmA0bzv2c/MOxksbgw8xCnAwKvHwbvgVFCPEmlhWXJl7iFGCg1lJhLc4
-        OiRGiDclsbIqtSg/vqg0J7X4EKMp0HMTmaVEk/OBiSavJN7Q1NDcwtLQ3Njc2MxCSZz3vEFl
-        lJBAemJJanZqakFqEUwfEwenVAOj0orvL6/d7itaE7X/4vf28NbVP3e41JzwbNXh2VD4UPBo
-        U7ew9bKZuh1cucJfEtguCsVFLmrIYj262ORgaUC9jenVA836Lh82/3pmtehCREVs07+/Fd9i
-        4q631FX1P8qRNTrROeecgmOi/osLb/auc+mX1D15ZV+fTNaMDQxb+J81LUpcJf9YiaU4I9FQ
-        i7moOBEAgNL6APwCAAA=
-X-CMS-MailID: 20190201153906eucas1p16f92079f811811cc233637191db0ab52
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190131085007eucas1p2f16107042b8ce5638811840618bcf017
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190131085007eucas1p2f16107042b8ce5638811840618bcf017
-References: <1548924594-19084-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190131085007eucas1p2f16107042b8ce5638811840618bcf017@eucas1p2.samsung.com>
-        <1548924594-19084-4-git-send-email-l.luba@partner.samsung.com>
-        <d5b8d165-564e-b776-77de-31a069118067@samsung.com>
-        <0ca15b4c-ddaa-1be5-35be-e76b008b28a8@partner.samsung.com>
-        <08850f80-0cc1-8e0d-6a8a-286a750d3a8c@samsung.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sylwester,
+Loop N1 instruction delay varies between burst and non-burst video modes.
 
-On 2/1/19 3:19 PM, Sylwester Nawrocki wrote:
-> On 2/1/19 14:56, Lukasz Luba wrote:
->>> Exynos5422 used the same PLL table for apll, kpll, bpll and so on.
->>> You don't need to make the separate pll table. Just add new entries
->>> to exynos5420_pll2550x_24mhz_tbl table.
->> OK, I will extend the exynos5420_pll2550x_24mhz_tbl table.
->>
->> In v4 patch set, it will be fixed.
-> 
-> I would prefer to keep the rate table separate for BPLL, until correctness
-> of new rates introduced in the patch and their applicability to the other PLLs
-> is confirmed by the hardware team and verified in tests.
-Good point, I share the same opinion. So, this new table for BPLL will stay.
-Do you agree Chanwoo?
-The BPLL is only used only by DMC.
+1) for burst mode panels it is computed based on the panel pixel clock
+   along with horizontal sync and porch timings.
+2) for non-burst mode panels, it is same as existing (50 - 1)
 
-Regards,
-Lukasz
-> 
+Reference code is available in BSP (from linux-sunxi
+drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+
+dsi_dev[sel]->dsi_inst_loop_num.bits.loop_n1=
+(panel->lcd_ht-panel->lcd_x)*(150)/(panel->lcd_dclk_freq*8) - 50;
+=> (((mode->htotal - mode->hdisplay) * 150) /
+     ((mode->clock / 1000) * 8)) - 50;
+
+This patch add loop N1 computation for burst mode by simplifying
+existing code to support all possible modes.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Tested-by: Merlijn Wajer <merlijn@wizzup.org>
+---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index e3b34a345546..a5fcee750bee 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -354,6 +354,24 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+ 		     SUN6I_DSI_INST_JUMP_CFG_NUM(1));
+ };
+ 
++static u16 sun6i_dsi_setup_inst_delay(struct sun6i_dsi *dsi,
++				      struct drm_display_mode *mode)
++{
++	struct mipi_dsi_device *device = dsi->device;
++	u32 hsync_porch, dclk;
++	u16 delay;
++
++	hsync_porch = (mode->htotal - mode->hdisplay);
++	dclk = (mode->clock / 1000);
++
++	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
++		delay = ((hsync_porch * 150) / (dclk * 8)) - 50;
++	else
++		delay = 50 - 1;
++
++	return delay;
++}
++
+ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+ 					   struct drm_display_mode *mode)
+ {
+@@ -383,7 +401,7 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+ static void sun6i_dsi_setup_inst_loop(struct sun6i_dsi *dsi,
+ 				      struct drm_display_mode *mode)
+ {
+-	u16 delay = 50 - 1;
++	u16 delay = sun6i_dsi_setup_inst_delay(dsi, mode);
+ 
+ 	regmap_write(dsi->regs, SUN6I_DSI_INST_LOOP_NUM_REG(0),
+ 		     SUN6I_DSI_INST_LOOP_NUM_N0(50 - 1) |
+-- 
+2.18.0.321.gffc6fa0e3
+
