@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E56C282D8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF9AC282DB
 	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 515C020855
+	by mail.kernel.org (Postfix) with ESMTP id 8F72520855
 	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PStDuglL"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="n9ixxPdA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbfBAPnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:43:19 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33020 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730770AbfBAPnS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:18 -0500
-Received: by mail-lf1-f66.google.com with SMTP id i26so5421635lfc.0
-        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:43:16 -0800 (PST)
+        id S1730773AbfBAPnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 10:43:16 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33566 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730414AbfBAPnQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:16 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v1-v6so6218252ljd.0
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:43:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9PxoL5qRhhi9/8I/MxsRIxkuMzLQLSJqsW5+iDKE8rA=;
-        b=PStDuglLVi/EynWNiR1InZlzEGZ5OYkU5HFWgq5QoplmJTL4O34KrVjfcj4OOUPqad
-         77Y6uoG42LSMSlWxaINvHygDh/ObRuI9PEnd3cJr1yHAdY5aaVCiFhwslEVpx296eUsD
-         31mgZtYyYp6r22ptAJoGTiXLjsSghgc39vI9Q=
+        bh=F1gStgTkjk6tlJJTMM1N5dKth21S5Be68oRPAzV2+nA=;
+        b=n9ixxPdApi8UuB1AQqAGMEY9pdrNlRpfeuMUYW57T5ST2Z+yKssUlv66PFgx13N6xg
+         eaX2GSalvY9KhqJWiBQSuBRxAfCAfWTcF1PaQsjoH8UKUnTE+S3/2i5f5Xdg1K3t0wWR
+         QP9IlCVjErmqroMITEmXXVez6bBUR3UEM3NRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9PxoL5qRhhi9/8I/MxsRIxkuMzLQLSJqsW5+iDKE8rA=;
-        b=cazuRUHT5Sw+UP2uqNsDypVgGaffbLi3dm9/jegIMiWlzO+FbDAGLZ2i8CUoLiLCSv
-         4VDbyXeEqYjDMUDixlSuAupvEvcaEkTRw3Vw2nLE07kRi9eSLhjo+If8C3y6MX8noPB9
-         dF/SEspXpPvOM8LvXofDMwOho7vNOgNjYcCcsCfrmGqnTmdMCmrghJbFyf8to3v6rBSZ
-         SZqAbrMNCos61+pKCwFx9hGii3q1HJcKtxELCeLU93l5yhm9K9mWKgmVFR50jeAY/ehL
-         PWB4OXWknk+xAaymATVw9ZkEyXHWwRBIssCuwWgZ5i9N4RYPJEyBIqRe973HeNOFnT1L
-         GV+A==
-X-Gm-Message-State: AJcUukc8YB9LO7LFC/6et5K6C5FSAkmtLenA24xB2N0G5Z2uv7KeSPW/
-        V//0KWsBosglabOBx9i+MA1AxQ==
-X-Google-Smtp-Source: ALg8bN5I0y263rz3wbLQE+wVgVuLqZfYA9ozcouGzvSa3ePZ+MbpnFCFk4o/2h1mZ1TCk7wIq26/qw==
-X-Received: by 2002:a19:910d:: with SMTP id t13mr30525083lfd.98.1549035795951;
-        Fri, 01 Feb 2019 07:43:15 -0800 (PST)
+        bh=F1gStgTkjk6tlJJTMM1N5dKth21S5Be68oRPAzV2+nA=;
+        b=JcRwyDLqdgzpBMW8psW0bq5YTWCnIoCpkIvxhnb6Q2+icp8TCTqNkuNP1YUk9aLOfD
+         nM7IGVNYtZpBPoiDzZ8q0Ex+K/Uah/rCIafJelAJSa5VuCOEJddXsGpz0e7RFQdjhbEf
+         wMKMhfYTFvk0JY1SXlfrO+zLzaBGnNVn3svFROrK620l0l2lv+jrqiHU3Mlx0sZktP1g
+         ZKyxmejGoIOWQGHN5RUpxYNlgQPMgamIVpM4q3f3F58OR4+MUGwCMwjsxz2fM8wu/r1y
+         bxqqOzi6U+uFYaYbYaO9zVFJb7NQzbXSTv/Rcvg1J/LG2DRzFlx/z/boGDoEWbycdkZQ
+         MqHg==
+X-Gm-Message-State: AJcUukd9fyuqL4IjIloYsZqFL+WzYLb8aqovbFVLy3tbBE93zdkiYzK1
+        U3z/IqiWu6PQmJ0c5j5ih2qCPmeHfc9Lj4xt
+X-Google-Smtp-Source: ALg8bN5jd+gqm3EcT4dz5zpwlEiLl+nt4W4qPpnoXcRR46dD9NrUl0Gf8gPpVsaNSzhzwU/nfUkLRA==
+X-Received: by 2002:a2e:8007:: with SMTP id j7-v6mr32273423ljg.50.1549035794201;
+        Fri, 01 Feb 2019 07:43:14 -0800 (PST)
 Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.14
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:43:15 -0800 (PST)
+        Fri, 01 Feb 2019 07:43:13 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [DO NOT MERGE][PATCH v7 18/23] arm64: allwinner: a64: pine64-lts: Enable Feiyang FY07024DI26A30-D DSI panel
-Date:   Fri,  1 Feb 2019 21:12:27 +0530
-Message-Id: <20190201154232.10505-19-jagan@amarulasolutions.com>
+Subject: [PATCH v7 17/23] arm64: dts: allwinner: a64: Add MIPI DSI pipeline
+Date:   Fri,  1 Feb 2019 21:12:26 +0530
+Message-Id: <20190201154232.10505-18-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
 References: <20190201154232.10505-1-jagan@amarulasolutions.com>
@@ -77,75 +77,83 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Feiyang FY07024DI26A30-D MIPI_DSI panel is desiged to attach with
-DSI connector on pine64 boards, enable the same for pine64 LTS.
+Add MIPI DSI pipeline for Allwinner A64.
 
-DSI panel connected via board DSI port with,
-- DC1SW as AVDD supply
-- DLDO2 as DVDD supply
-- DLDO1 as VCC-DSI supply
-- PD24 gpio for reset pin
-- PH10 gpio for backlight enable pin
+- dsi node, with A64 compatible since it doesn't support
+  DSI_SCLK gating unlike A33
+- dphy node, with A64 compatible with A33 fallback since
+  DPHY on A64 and A33 is similar
+- finally, attach the dsi_in to tcon0 for complete MIPI DSI
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- .../dts/allwinner/sun50i-a64-pine64-lts.dts   | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts
-index 72d6961dc312..341b1c035604 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts
-@@ -5,9 +5,48 @@
-  */
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 6e5a608f56f2..f221c50e7fd4 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -359,6 +359,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon0_out_dsi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&dsi_in_tcon0>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -936,6 +942,45 @@
+ 			status = "disabled";
+ 		};
  
- #include "sun50i-a64-sopine-baseboard.dts"
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "Pine64 LTS";
- 	compatible = "pine64,pine64-lts", "allwinner,sun50i-r18",
- 		     "allwinner,sun50i-a64";
++		dsi: dsi@1ca0000 {
++			compatible = "allwinner,sun50i-a64-mipi-dsi";
++			reg = <0x01ca0000 0x1000>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_MIPI_DSI>;
++			clock-names = "bus";
++			resets = <&ccu RST_BUS_MIPI_DSI>;
++			phys = <&dphy>;
++			phy-names = "dphy";
++			status = "disabled";
 +
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <8>;
-+		enable-gpios = <&pio 7 10 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PH10 */
-+	};
-+};
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+&de {
-+	status = "okay";
-+};
++				port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
 +
-+&dphy {
-+	status = "okay";
-+};
++					dsi_in_tcon0: endpoint {
++						remote-endpoint = <&tcon0_out_dsi>;
++					};
++				};
++			};
++		};
 +
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;		/* VCC3V3-DSI */
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
++		dphy: d-phy@1ca1000 {
++			compatible = "allwinner,sun50i-a64-mipi-dphy",
++				     "allwinner,sun6i-a31-mipi-dphy";
++			reg = <0x01ca1000 0x1000>;
++			clocks = <&ccu CLK_BUS_MIPI_DSI>,
++				 <&ccu CLK_DSI_DPHY>;
++			clock-names = "bus", "mod";
++			resets = <&ccu RST_BUS_MIPI_DSI>;
++			status = "disabled";
++			#phy-cells = <0>;
++		};
 +
-+	panel@0 {
-+		compatible = "feiyang,fy07024di26a30d";
-+		reg = <0>;
-+		avdd-supply = <&reg_dc1sw>;	/* VCC-LCD */
-+		dvdd-supply = <&reg_dldo2>;	/* VCC-MIPI */
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
-+&r_pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&r_pwm_pin>;
-+	status = "okay";
- };
+ 		csi: csi@1cb0000 {
+ 			compatible = "allwinner,sun50i-a64-csi";
+ 			reg = <0x01cb0000 0x1000>;
 -- 
 2.18.0.321.gffc6fa0e3
 
