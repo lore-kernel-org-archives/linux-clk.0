@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0B3C282D8
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85C0C282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B552218EA
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9995720855
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="M1VoXvE1"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qKd0pOO1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729683AbfBAPnh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:43:37 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34599 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730829AbfBAPn0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u89-v6so6230291lje.1
-        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:43:25 -0800 (PST)
+        id S1730819AbfBAPnX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 10:43:23 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33027 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730798AbfBAPnX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:23 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i26so5421815lfc.0
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:43:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=87uAT10+TXiQ8RUQObJ13rsTWKA95oUQQrz1NYnUkkc=;
-        b=M1VoXvE1Szk5NA7GJTJMsRcCil+0rnZt7ypHyOVEdwDVa4dZSQ+kppG5DCm4N0JTOE
-         GT62Ww17WS3ODFsfZmD48Jz54ZXKIU3Kse/Ckp2XT1JRwZtGhS5ltyuC9bMky2+s35ei
-         /GjtCGUkPWOp4cXCDJ3h5p5wDVeHg0LndW2LM=
+        bh=HCfeblJM295xUwYmq1O4nQM6M/sp8O5EDl8sZwLE19Y=;
+        b=qKd0pOO1oF0w8l1IMfWaCR2fawNphvOas8WKCq+ZLZVOaYSkCePChiHs6VGFVjbe1C
+         4Vwq28URvc0aMxMYpVmoGCMMcitMw4MyuoWazMfLMuQT99vc4+ABS+0z+tsM8aCgC0uj
+         Nhj6ujIu8F/BWtatYLx1nUYXTQwieF0Gp6kjA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=87uAT10+TXiQ8RUQObJ13rsTWKA95oUQQrz1NYnUkkc=;
-        b=GPWCpBrTVDHBOgnrNfukFUurhZOjJzY1drt8Vru8wUsQgZB0Ju4tTNHjZq21SDs5NM
-         3jK7SeTQ0IA6+hKhK1mrJ56s7JseOS176I9E90h/nchUW73LfFZSmMv9JVzB4FDf/kUe
-         EHT6WWN44t4mb6MMfxk8z5cjiJ1JZlNuV5TSetz3OFTMmu9VdnQbl/DPZfjRD85VoOTl
-         dXlhWuPJi26dEczeDddaFYSJqGk5UvIr7maucklU6wo57Z0i0vIqpDAlfIx6c5Q5Ully
-         td+0KNJW8Cqh0DQv1IDmSQr5l8NTRTErM5m2T59LRQ1GyJf/Mrvr+HcTyksxO5RV5rht
-         8PZg==
-X-Gm-Message-State: AJcUukeONm7bgMAiSYjjhGMfN0u/GqtuHBlIqs/XPQdZ6/w/IOTLZw+H
-        GDskpl3lBZsaQhnOQ2elgwAshA==
-X-Google-Smtp-Source: ALg8bN4Q3v+ELltV8yrXXTQiDUCRBw/HFQzvbq5ATN7sdZy1/CP4lI5ssgFWBSQmOj1gE+dKktvsug==
-X-Received: by 2002:a2e:5dd9:: with SMTP id v86-v6mr31776125lje.86.1549035804241;
-        Fri, 01 Feb 2019 07:43:24 -0800 (PST)
+        bh=HCfeblJM295xUwYmq1O4nQM6M/sp8O5EDl8sZwLE19Y=;
+        b=dtJ9lnivrFRrAQGP9FEWHNmY2R0yl1GPqbKmxTN3wdtJbz+hPpWcv9dc2AqwWEbEGl
+         a+YVSQLX0W3nMMBSJYn8WXCJK2/uez/Cy6ivyvsz2JDjvX298kA6p6aQozzYw0zD7FkQ
+         tiMx4piuhjieOz7kBeNPtOQOZAsSVJsxYJk+zUyR0gyCnouvKF9TH56eVzrWClD2x5YS
+         TvUdzKx1foYT/ZpJ0v2b5yZ6u6++0bldHM0NkT9GjQ/6QTZ4axdwpcgGn6DPau/2SeDc
+         ISNqrez2AGMrAV3hqkvfxZX6ZnvCGtJzcbrmqplPKQPJ2eBU5Dq79DdfxIXntWc9nMKT
+         lXeA==
+X-Gm-Message-State: AJcUukf03GRNl4s3sMKB2I72AWZA7hZVRGkoZAv8BkZ7df7bsmvJXy2C
+        +V2KI1mm01zp2Oc8dVDcxw979g==
+X-Google-Smtp-Source: ALg8bN5fouNEgg+ckpry4ROI75OI8fDKR31hyP0zwcZIEdl1kD/XHcwX9BYyTIJK+o0XGbyOAyV1hQ==
+X-Received: by 2002:a19:d381:: with SMTP id k123mr30788667lfg.101.1549035800895;
+        Fri, 01 Feb 2019 07:43:20 -0800 (PST)
 Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.22
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:43:23 -0800 (PST)
+        Fri, 01 Feb 2019 07:43:20 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v7 23/23] arm64: dts: allwinner: a64-amarula-relic: Add Techstar TS8550B MIPI-DSI panel
-Date:   Fri,  1 Feb 2019 21:12:32 +0530
-Message-Id: <20190201154232.10505-24-jagan@amarulasolutions.com>
+Subject: [PATCH v7 21/23] drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
+Date:   Fri,  1 Feb 2019 21:12:30 +0530
+Message-Id: <20190201154232.10505-22-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
 References: <20190201154232.10505-1-jagan@amarulasolutions.com>
@@ -77,92 +77,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Amarula A64-Relic board by default bound with Techstar TS8550B
-MIPI-DSI panel, add support for it.
+Current driver is calculating hbp maximum value by subtracting
+hsync_start with hdisplay which is front porch value, but the
+hbp refers to back porch.
 
-DSI panel connected via board DSI port with,
-- DLDO2 as VCC supply
-- DLDO2 as IOVCC supply
-- DLDO1 as VCC-DSI supply
-- PD24 gpio for reset pin
-- PD23 gpio for backlight enable pin
+Back porch value is calculating by subtracting htotal with
+hsync_end as per drm_mode timings, and BSP code from BPI-M64-bsp
+is eventually following the same.
+
+BPI-M64-bsp is computing hbp as
+(in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
+=> (panel->lcd_hbp - timmings->hor_sync_time)
+=> (timmings->hor_back_porch + timmings->hor_sync_time -
+    timmings->hor_sync_time)
+=> timmings->hor_back_porch
+=> mode->htotal - mode->hsync_end
+
+So, update the MIPI-DSI hbp value accordingly.
+
+Tested on 2-lane, 4-lane DSI LCD panels.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- .../allwinner/sun50i-a64-amarula-relic.dts    | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index df0de0772d6b..a5a0a650b589 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -9,6 +9,7 @@
- #include "sun50i-a64.dtsi"
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 09569938c20d..780b1906c661 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -579,7 +579,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	 */
+ #define HBP_PACKET_OVERHEAD	6
+ 	hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
+-		  (mode->hsync_start - mode->hdisplay) * Bpp - HBP_PACKET_OVERHEAD);
++		  (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
  
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "Amarula A64-Relic";
-@@ -18,6 +19,14 @@
- 		serial0 = &uart0;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <2>;
-+		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD23 */
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -83,6 +92,30 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "techstar,ts8550b", "sitronix,st7701";
-+		reg = <0>;
-+		VCC-supply = <&reg_dldo2>;
-+		IOVCC-supply = <&reg_dldo2>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -160,6 +193,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
+ 	/*
+ 	 * The frontporch is set using a blanking packet (4 bytes +
 -- 
 2.18.0.321.gffc6fa0e3
 
