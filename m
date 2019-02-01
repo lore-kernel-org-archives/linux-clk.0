@@ -2,151 +2,102 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DF9C4151A
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B6DC4151A
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 12:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6889218F0
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93984218AF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 12:58:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCz5E6SW"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OIF/Hknd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725807AbfBAMcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:32:52 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36080 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728355AbfBAMct (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 07:32:49 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f23so5321046edb.3;
-        Fri, 01 Feb 2019 04:32:47 -0800 (PST)
+        id S1730318AbfBAM6w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 07:58:52 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39282 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730297AbfBAM6w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 07:58:52 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y8so6089953wmi.4
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 04:58:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mfx8EngpD21F4beHFI4xnlcyVYLWy3PUGs790NCYd/k=;
-        b=gCz5E6SWpg5ROaHec2f+peOAT4i5hMwL2a/A5uflM6xGh5XlzG74/qBxJEzkbpK/bh
-         yBunrUM9GPysUE2hXjiBFglv1LaP6zbudawQ6lPfl2ACnE5oTp1yS4t+Lc9oBbTDIYZq
-         OoNgVCrXIPU1zz4jTurmieGnSdiYCdnAG5QniN2Ufa5RmGm/UJjkrrSy8K63vRLPmdV0
-         hmd5US6Mcnrx6VEfORR8NUj71o4p5sW0VdhmwH0oQFS6hKoQtmOFNynqXd9fTohPpwkG
-         x8T4KAu/vtLVMZAM0c1vkkOse/5DfjA79YxwO+StlzERDyXKZKrLFjJg/j0ispqNZqrQ
-         Bkgg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Cl+T+BPNCxXXA5ox3kofUWAwnqL2Ija54XfDMQkeCfA=;
+        b=OIF/HkndosfayBf1nS22cv3hPfxo4/iHwLmHRfTfEdad4fKGYaNoLAP05RuKV8sawy
+         l8BmIocCsSWIh4YvijyUDEOxdTX8JxDdiQ6WXCWPeyW60l6LHtaWIqIuCSYTluhp5Vdi
+         w+iNU7zstBcs0Ydo88DEzRdolGMbqLzky20tQImE0NRIwcvQh02+U7+Dr3FKrbYk8OCn
+         ltX/XPEvsChhnATbPITSJy8HrynDjlqzVIzpDCJNAFztyTaOdlNIFThd+t8IZ/9izX3K
+         a3M/VQd7O+6DMp7v5E+GorNrKFvFkGKSfg7flACC5VCrHkQVSfIeErwxUHlWCL8xy7sG
+         q1lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=mfx8EngpD21F4beHFI4xnlcyVYLWy3PUGs790NCYd/k=;
-        b=Iuk/SN7aFnrRcj62eLr2HhwTJJ/UOsOl8vYdfLmtTyVMJJn/z08TzJCbmGEci2/Ee6
-         wncuvFzI7hTzF5s9bLZp8tNS+aVC6Ayq7cg72gmcFKDCaI1V81WzTE4W29cU8f3lQcgq
-         knqhujSoxOR8scv9aTYlP9qkvYDdhfePCuihpGnUXozFNhNTxUO5I895lRzqyZFIWYHi
-         EPha0dznu+h234hDyvbH24odx8whtZo8wdJQnPRPmIB0LxZxF3AJOIb8Hgodm8vFh56Z
-         lKlAgy41/g90JNh3+e8tYqc5WGf9Ks4e7lJ0/kUdCtqq2p2ZvtkKhAaHPasGKc0HaNov
-         EHcg==
-X-Gm-Message-State: AJcUukfyhreia7C39+M4w5ve3wBbUJw8mnVDb97g03BRCHEzXnFHXWlS
-        UqikUPId9noTpo0JdxZ9CFY=
-X-Google-Smtp-Source: ALg8bN6bAk2/kdTEEUEmQ5FKhX+c/OHqI4ZSEhFW/F1mKvzw3hnQ5hctz3KmYnK9gdfAXyc7SyJocQ==
-X-Received: by 2002:a17:906:914a:: with SMTP id y10mr35335385ejw.124.1549024366907;
-        Fri, 01 Feb 2019 04:32:46 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id v6sm1221472eja.51.2019.02.01.04.32.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 04:32:46 -0800 (PST)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] dt-bindings: display: rockchip: add document for rk3066 hdmi
-Date:   Fri,  1 Feb 2019 13:32:35 +0100
-Message-Id: <20190201123235.1693-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181229133318.18128-1-jbx6244@gmail.com>
-References: <20181229133318.18128-1-jbx6244@gmail.com>
+         :references:mime-version:content-transfer-encoding;
+        bh=Cl+T+BPNCxXXA5ox3kofUWAwnqL2Ija54XfDMQkeCfA=;
+        b=IvaFV70t3V4Zuj6CFGpdvDFHz4qGbYpNir+mBGog/73gwFZWykWiA9aGNtbe3rBvY2
+         unndQ+imG3vt+blOkU4E/3mF5O1hPijYCwt5AGEiceq0U4DJj326m0Z6my8ZlKbS55Ew
+         dFVczXRrIR12dlInO089h42GALMCf7VSFZuzBUmogeZJv8Sh0tspDxJplygZNXZlvyIm
+         g5coN0sN7p81sXo63v8cDP6IHO6fQDG89kiUf7AP/Gga17R9WK6hUtCz6pakjOUfdhKT
+         E1C44DO4dFnIk443WSUxV/DFwReqF1s0zEEQcLExgSvaFnAU2Ts4OIquuIRLWN+iEXv1
+         ryPA==
+X-Gm-Message-State: AHQUAuYoAxAVvBCvV70pnap6dX7xj+uG5zEUJWkcTY/jNclf9fbJ/JyF
+        ZjRU7DHQSW5lAHWcgNIfSpZvbg==
+X-Google-Smtp-Source: AHgI3IYl82796Wmyzg4/NZIdiQZCBvp12XuiMBRUrSPIp0Qb7hiUqCkI/ySIWWP6JZLsY5uLR3GL8A==
+X-Received: by 2002:a1c:19c2:: with SMTP id 185mr2460560wmz.8.1549025929982;
+        Fri, 01 Feb 2019 04:58:49 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id w16sm8709750wrp.1.2019.02.01.04.58.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 04:58:49 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/4] clk: meson: use CONFIG_ARCH_MESON to enter meson clk directory
+Date:   Fri,  1 Feb 2019 13:58:39 +0100
+Message-Id: <20190201125841.26785-3-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190201125841.26785-1-jbrunet@baylibre.com>
+References: <20190201125841.26785-1-jbrunet@baylibre.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds a binding that describes the HDMI controller for
-rk3066.
+Use CONFIG_ARCH_MESON to let make enter the meson clock directory.
+As part of a rework, CONFIG_COMMON_CLK_AMLOGIC is about to be removed.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../display/rockchip/rk3066_hdmi-rockchip.txt      | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
+ drivers/clk/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
-new file mode 100644
-index 000000000..6a8f3754f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
-@@ -0,0 +1,60 @@
-+Rockchip specific extensions for rk3066 HDMI
-+============================================
-+
-+Required properties:
-+- compatible:
-+	"rockchip,rk3066-hdmi";
-+- reg:
-+	Physical base address and length of the controller's registers.
-+- clocks, clock-names:
-+	Phandle to HDMI controller clock, name should be "hclk".
-+- interrupts:
-+	HDMI interrupt number.
-+- power-domains:
-+	Phandle to the RK3066_PD_VIO power domain.
-+- rockchip,grf:
-+	This soc uses GRF regs to switch the HDMI TX input between vop0 and vop1.
-+- ports:
-+	Contains one port node with two endpoints, numbered 0 and 1,
-+	connected respectively to vop0 and vop1.
-+- pinctrl-0, pinctrl-name:
-+	Switch the iomux for the HPD/I2C pins to HDMI function.
-+
-+Example:
-+	hdmi: hdmi@10116000 {
-+		compatible = "rockchip,rk3066-hdmi";
-+		reg = <0x10116000 0x2000>;
-+		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru HCLK_HDMI>;
-+		clock-names = "hclk";
-+		power-domains = <&power RK3066_PD_VIO>;
-+		rockchip,grf = <&grf>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hdmii2c_xfer>, <&hdmi_hpd>;
-+		status = "disabled";
-+
-+		hdmi_in: port {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			hdmi_in_vop0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&vop0_out_hdmi>;
-+			};
-+			hdmi_in_vop1: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint = <&vop1_out_hdmi>;
-+			};
-+		};
-+	};
-+
-+&pinctrl {
-+		hdmi {
-+			hdmi_hpd: hdmi-hpd {
-+				rockchip,pins = <0 RK_PA0 1 &pcfg_pull_default>;
-+			};
-+			hdmii2c_xfer: hdmii2c-xfer {
-+				rockchip,pins = <0 RK_PA1 1 &pcfg_pull_none>,
-+						<0 RK_PA2 1 &pcfg_pull_none>;
-+			};
-+		};
-+};
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 8a9440a97500..8d780c4390f1 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -78,7 +78,7 @@ obj-$(CONFIG_ARCH_K3)			+= keystone/
+ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
+ obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
+ obj-y					+= mediatek/
+-obj-$(CONFIG_COMMON_CLK_AMLOGIC)	+= meson/
++obj-$(CONFIG_ARCH_MESON)		+= meson/
+ obj-$(CONFIG_MACH_PIC32)		+= microchip/
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_MMP)			+= mmp/
 -- 
-2.11.0
+2.20.1
 
