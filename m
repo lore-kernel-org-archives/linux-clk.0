@@ -2,89 +2,110 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E47C282DB
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B0CC282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F5921726
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4384F2086C
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="d0Rqitjp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfBAPtE convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:49:04 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:51933 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbfBAPtD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:49:03 -0500
-X-Originating-IP: 90.88.147.226
-Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 2B9C52000E;
-        Fri,  1 Feb 2019 15:48:58 +0000 (UTC)
-Date:   Fri, 1 Feb 2019 16:48:58 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
+        id S1726172AbfBAPv4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 10:51:56 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38792 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbfBAPvz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:51:55 -0500
+Received: by mail-it1-f193.google.com with SMTP id z20so10403677itc.3
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:51:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0QFjyQzPSYzw+9+y4qZ/LyQWmOtJ5IEIvYW5d38ofMs=;
+        b=d0RqitjpPh0bfgADVQiUErX7Oq0fAVi7hGNyJginAoNMR5mUyrf68ASSNQN7udEOib
+         18vCmO/si2kLX3HGaP2XijLSJqdQ1pQgDLrgZdme0pTfQK7zQ60IJ2FzUDEr/voEEOzC
+         E/HGtJelMdNvHlcqBENqfoRogdUp9lQzIKh3g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0QFjyQzPSYzw+9+y4qZ/LyQWmOtJ5IEIvYW5d38ofMs=;
+        b=E0xhQbH2pJn7y9UHfK7XWVB5++iky7V5CxT+fQfFQQb2KTs5PwTkEXFJPgi0fkhlJW
+         xXkOj8kA5JK5+RGCmUusb0YMXbD3n5pngAW/HjioA3LbtYK7VvgQMmP/gGwb8ExNKRPG
+         8vDbVWm/d/WjHH1GYnIIgLZyF2Jw7wpyniSIc1jvbDDVhAo341YNlWkW4ggqsAt4opWY
+         J9FKOp8xD/dmP54or5nhI5YIEXoysG+m3uae6faVDnyTUfROmrK+vLlyo1UuV4PAaylV
+         bZOXNaPREdJdzckqjc5++2e9CvK7ZPHl026pGF7X0dkZpqQoD7EVXkhQX7Xr8FyJebYm
+         fepA==
+X-Gm-Message-State: AHQUAuYpE2RBQdbWzRQOPrgnAbVjCNuCRKOIPIdtcjBM8h52nuU18E4i
+        MhqIy+L2yydb3m9UsCBDq3oIv+OrPy2HqCd3nYV3yw==
+X-Google-Smtp-Source: AHgI3Iax7m0R3CTnvGhVwQ5NsgaAl+q8ict/I+2M4JaBHhb2jqQQ/mfTJSZi2Vq4cox+x8pAU/3DB/2MXwmBw3pKong=
+X-Received: by 2002:a24:385:: with SMTP id e127mr1748296ite.32.1549036314638;
+ Fri, 01 Feb 2019 07:51:54 -0800 (PST)
+MIME-Version: 1.0
+References: <20190201154232.10505-1-jagan@amarulasolutions.com> <20190201154858.z6xqdaxccxya2wqr@flea>
+In-Reply-To: <20190201154858.z6xqdaxccxya2wqr@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 1 Feb 2019 21:21:43 +0530
+Message-ID: <CAMty3ZABvrb+Eu8D7uiGvBALRetnphsRg-RennRSNH5-_q-9bw@mail.gmail.com>
+Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
         Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
-Message-ID: <20190201154858.z6xqdaxccxya2wqr@flea>
-References: <20190201154232.10505-1-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+        linux-amarula@amarulasolutions.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 09:12:09PM +0530, Jagan Teki wrote:
-> Here is next version changes for Allwinner A64 MIPI-DSI support
-> 
-> This series grouped the changes like previous version[1] with different
-> sets to support three different panels types that can fit into the DSI
-> controller.
-> 
-> set:1, for 4-lane, burst mode support
-> - patch 0001: 0009, DSI controller changes that support burst mode.
-> 
-> set:2, for A64 DSI support
-> - patch 0010: tcon dclk divider computation based on A64 BSP. 
-> - patch 0011: 0017, Allwinner A64 DSI controller changes.
-> 
-> set:3, enable 4-lane burst mode panel:
-> - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
->   burst mode panel on Pine64-LTS
-> 
-> set:4, enable 4-lane video mode panel:
-> - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
-> - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211 
->   panel on Bananapi M64
-> 
-> set:5, enable 2-lane video mode panel:
-> - patch 0021, 0022: DSI hfp and hbp timings fixes
-> - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
+On Fri, Feb 1, 2019 at 9:19 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Fri, Feb 01, 2019 at 09:12:09PM +0530, Jagan Teki wrote:
+> > Here is next version changes for Allwinner A64 MIPI-DSI support
+> >
+> > This series grouped the changes like previous version[1] with different
+> > sets to support three different panels types that can fit into the DSI
+> > controller.
+> >
+> > set:1, for 4-lane, burst mode support
+> > - patch 0001: 0009, DSI controller changes that support burst mode.
+> >
+> > set:2, for A64 DSI support
+> > - patch 0010: tcon dclk divider computation based on A64 BSP.
+> > - patch 0011: 0017, Allwinner A64 DSI controller changes.
+> >
+> > set:3, enable 4-lane burst mode panel:
+> > - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
+> >   burst mode panel on Pine64-LTS
+> >
+> > set:4, enable 4-lane video mode panel:
+> > - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
+> > - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211
+> >   panel on Bananapi M64
+> >
+> > set:5, enable 2-lane video mode panel:
+> > - patch 0021, 0022: DSI hfp and hbp timings fixes
+> > - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
+>
+> You do realise that pushing through a series while the previous
+> version's discussion hasn't settled yet will not get you anywhere,
+> right?
 
-You do realise that pushing through a series while the previous
-version's discussion hasn't settled yet will not get you anywhere,
-right?
-
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Except the clock, I made few changes with your previous comments. Yes
+we can still under clock discussion page, no issues on that. just to
+group the remaining patches to finalize if any issues on those.
