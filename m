@@ -2,149 +2,149 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 158C6C169C4
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 02:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3F6C282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 03:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED8A20863
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 02:49:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="E4aHoFW9"
+	by mail.kernel.org (Postfix) with ESMTP id 2DBEA20863
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 03:33:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbfBACto (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Jan 2019 21:49:44 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:8197 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbfBACto (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 21:49:44 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c53b3c80001>; Thu, 31 Jan 2019 18:49:44 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 31 Jan 2019 18:49:42 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 31 Jan 2019 18:49:42 -0800
-Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
- 2019 02:49:40 +0000
-Subject: Re: [PATCH V4 00/20] Tegra210 DFLL support
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20190104030702.8684-1-josephl@nvidia.com>
- <20190125134617.GE22565@ulmo>
- <0a7abeee-1b78-4f90-e94f-43c19eddb9b1@nvidia.com>
- <20190128075442.GA18124@ulmo>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <a2cf3ccd-658a-e004-1e66-d4f9cf1026f1@nvidia.com>
-Date:   Fri, 1 Feb 2019 10:49:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726060AbfBADdt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Jan 2019 22:33:49 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56500 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725807AbfBADdt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Jan 2019 22:33:49 -0500
+X-UUID: e35ebed60db54c878dd4f21e738472ea-20190201
+X-UUID: e35ebed60db54c878dd4f21e738472ea-20190201
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <erin.lo@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1728458795; Fri, 01 Feb 2019 11:33:40 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 1 Feb 2019 11:33:38 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 1 Feb 2019 11:33:38 +0800
+Message-ID: <1548992018.11367.8.camel@mtksdaap41>
+Subject: Re: [PATCH v6 6/6] arm64: dts: Add Mediatek SoC MT8183 and
+ evaluation board dts and Makefile
+From:   Erin Lo <erin.lo@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>, Ben Ho <Ben.Ho@mediatek.com>,
+        "Mars Cheng" <mars.cheng@mediatek.com>,
+        Mengqi Zhang <Mengqi.Zhang@mediatek.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>
+Date:   Fri, 1 Feb 2019 11:33:38 +0800
+In-Reply-To: <CAL_JsqL1vQCgbb2yLL2E4KTDZve1vus5bDX75HGiOu14X26q7w@mail.gmail.com>
+References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+         <1548317240-44682-7-git-send-email-erin.lo@mediatek.com>
+         <20190130162204.GA1521@bogus> <1548902050.23230.4.camel@mtksdaap41>
+         <CAL_JsqL1vQCgbb2yLL2E4KTDZve1vus5bDX75HGiOu14X26q7w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20190128075442.GA18124@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548989385; bh=/FBDcfoeMx/+oM04WRXhXoapZLNfebKUcVEPlQV7+gU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=E4aHoFW9rShupo4AeqJ3XIaDQKtgvhIEFR1ddGp9CDOG4BmW6rnYNlUz0kJx7Eg44
-         2lb3uInpk5PuAgztJbPDLt144B+oTXE3Zt3dNv6DGnAYYNGGLszJJnlm3RAwiNiRyo
-         DfYxIGEyFpa3yTjwN/mvxJC0MLnPnDKcaMdUOfXYNfj3clgM3ZdmhkyIGItSoH5Evo
-         VrjfJt5sGlge+7Bx/ZrkQPsCsp2cEj1kp+zsfmbjN8bfrYscALO03C0PDtYoW8MXB7
-         MXFG7Ck1y7PJnW5qNs7Byx+Omd71+6Le2j6S5J1paetK0qQ1bPbQ2WQyAP5Qr1i6ib
-         gRh4ooRnyrHiw==
+X-TM-SNTS-SMTP: 083C5F58D12382DC0DD598BD74E31E35297D080F200B466F0EC0D906B431AEB42000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/28/19 3:54 PM, Thierry Reding wrote:
-> On Mon, Jan 28, 2019 at 09:43:00AM +0800, Joseph Lo wrote:
->> On 1/25/19 9:46 PM, Thierry Reding wrote:
->>> On Fri, Jan 04, 2019 at 11:06:42AM +0800, Joseph Lo wrote:
->>>> This series introduces support for the DFLL as a CPU clock source
->>>> on Tegra210. As Jetson TX1 uses a PWM controlled regulator IC which
->>>> is driven directly by the DFLLs PWM output, we also introduce support
->>>> for PWM regulators next to I2C controlled regulators. The DFLL output
->>>> frequency is directly controlled by the regulator voltage. The registers
->>>> for controlling the PWM are part of the DFLL IP block, so there's no
->>>> separate linux regulator object involved because the regulator IC only
->>>> supplies the rail powering the CPUs. It doesn't have any other controls.
-[snip]
->>> Joseph,
->>>
->>> can you detail the dependencies between the various patches. From a
->>> brief look the CPU frequency driver changes are completely separate
->>> bits and it should be possible to apply them to the cpufreq tree.
->>>
->>> The clock changes also seem independent of the rest.
->>>
->>> Are there any dependencies at all that we need to be mindful about?
->>> Or can individual maintainers just pick up the subseries directly?
->>>
->>
->> Yes, no dependence with each other. We can apply them separately.
->> Please let me know if I need to inform cpufreq or clk maintainer to pick
->> them up.
+On Thu, 2019-01-31 at 15:10 -0600, Rob Herring wrote:
+> On Wed, Jan 30, 2019 at 8:34 PM Erin Lo <erin.lo@mediatek.com> wrote:
+> >
+> > On Wed, 2019-01-30 at 10:22 -0600, Rob Herring wrote:
+> > > On Thu, Jan 24, 2019 at 04:07:20PM +0800, Erin Lo wrote:
+> > > > From: Ben Ho <Ben.Ho@mediatek.com>
+> > > >
+> > > > Add basic chip support for Mediatek 8183, include
+> > > > pinctrl file, uart node with correct uart clocks, pwrap device
+> > > >
+> > > > Add clock controller nodes, include topckgen, infracfg,
+> > > > apmixedsys and subsystem.
+> > > >
+> > > > Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
+> > > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > > > Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> > > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > > > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> > > > Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
+> > > > Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+> > > > Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+> > > > ---
+> > >
+> > >
+> > > > +   sysirq: intpol-controller@c530a80 {
+> > >
+> > > interrupt-controller@...
+> >
+> > I will modify it in next version.
+> > >
+> > >
+> > > Place all the MMIO peripherals under one or more simple-bus nodes.
+> > >
+> > > Rob
+> > >
+> >
+> > Do you mean need to add simple-bus like this?
 > 
-> Rafael,
-> 
-> the three CPU frequency patches in this series were acked by Viresh
-> already, but unfortunately you don't seem to be Cc'ed on these. Are
-> you okay with me picking these up into the Tegra tree and send you
-> a pull request in a couple of days? That way we can get the whole
-> set tested a bit in linux-next. If you'd prefer to pick these up in
-> the PM tree, here are the corresponding patchwork links:
-> 
-> 	https://patchwork.kernel.org/patch/10747943/
-> 	https://patchwork.kernel.org/patch/10747947/
-> 	https://patchwork.kernel.org/patch/10747953/
-> 
-> I'll go and give my Acked-by on these patches if the latter is the
-> way you prefer.
-> 
-> 
-> Stephen, Mike,
-> 
-> the same applies for clk patches. Stephen's acked all of them and I
-> think all of the series is good to go. How about if I pick up these
-> up in the Tegra tree and let this all cook in linux-next for a week
-> or so and then send you a pull request with these? Stephen already
-> picked up a couple of fixes for clk/tegra, but I don't think any of
-> those would conflict with this series.
-> 
-> All of that said, Joseph confirmed that there are no dependencies
-> between these subsystem subseries, so if you'd prefer to pick up the
-> patches into your respective trees, I have no objections to that.
-> 
-> Thierry
-> 
+> Yes.
 
-Hi Rafael, Stephen,
+We remove soc because Matthias suggested it in former MTK SoC maybe in
+2015 year.
 
-Gental ping. Please let Thierry know if the cpufreq and DFLL clock 
-related changes can go through Tegra tree.
+We will add it back by your comment.
 
-I know Rafael did say [1] it's okay to go through Tegra tree in earlier 
-comment.
+Thank you. 
 
-Thanks,
-Joseph
+Best Regards,
+Erin
+> 
+> >
+> > +   soc: soc {
+> > +                #address-cells = <0x1>;
+> > +                #size-cells = <0x1>;
+> > +                ranges = <0 0 0 0xffffffff>;
+> > +                compatible = "simple-bus";
+> >
+> >                 soc_data: soc_data@08000000 {
+> >                         compatible = "mediatek,mt8183-efuse",
+> >                                      "mediatek,efuse";
+> >                         reg = <0 0x08000000 0 0x0010>;
+> >                         #address-cells = <1>;
+> >                         #size-cells = <1>;
+> >                         status = "disabled";
+> >                 };
+> >
+> >                 gic: interrupt-controller@0c000000 {
+> >                         compatible = "arm,gic-v3";
+> >                         #interrupt-cells = <4>;
+> >
+> > Best Regards,
+> > Erin
+> >
+> > > _______________________________________________
+> > > Linux-mediatek mailing list
+> > > Linux-mediatek@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> >
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-[1]: http://patchwork.ozlabs.org/patch/1015181/
+
