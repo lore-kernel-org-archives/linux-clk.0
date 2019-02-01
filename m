@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54153C282DB
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E56C282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E0A20855
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 515C020855
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JobGz/n5"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PStDuglL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbfBAPnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:43:20 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42231 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730778AbfBAPnU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:20 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so6159956lja.9
-        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:43:18 -0800 (PST)
+        id S1730780AbfBAPnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 10:43:19 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33020 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730770AbfBAPnS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:18 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i26so5421635lfc.0
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:43:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SlZdSxfBuDHFfxIddevdjQVhgEUV7gSx1dHVPI1InaA=;
-        b=JobGz/n5O2PIfNMLcOY4LXUWKgthtj/6/kt6rgaBt7ceZJuH1doHiSi8Sxlx1qkAxE
-         eYatjXNsn6RYSGBG3tqbyHdDNGAqu0rz8nJbY7elVAG5xYFBmu2LXYF1KQFX/XRjaocd
-         CjgCFQmwmUxiDlbMNg2S8He1oShBKfyaKYKNo=
+        bh=9PxoL5qRhhi9/8I/MxsRIxkuMzLQLSJqsW5+iDKE8rA=;
+        b=PStDuglLVi/EynWNiR1InZlzEGZ5OYkU5HFWgq5QoplmJTL4O34KrVjfcj4OOUPqad
+         77Y6uoG42LSMSlWxaINvHygDh/ObRuI9PEnd3cJr1yHAdY5aaVCiFhwslEVpx296eUsD
+         31mgZtYyYp6r22ptAJoGTiXLjsSghgc39vI9Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SlZdSxfBuDHFfxIddevdjQVhgEUV7gSx1dHVPI1InaA=;
-        b=bRckbztl8HOwGgUWt+B4dA1a2xusfUAoASvd5vloLRrVy8gkD7c4ZWa70/gqifb2+T
-         yUDLS7/wJPTd11j3d+YeYqow/cuUtZfToUxjIXS28RvLO6Oun9ZlwKMLqb65ptA4ng91
-         xc+IoOOrQkBkT+DZ7ouPb5cLiko6ckooDWD8EKiBwCXAG7oyTRaKqErZ01Cl+lh0Isj1
-         5WHV00ZOxrv1y2cX22uINVw/I/YFxeUASgjNPsXC7uv+QfbXUkOKRptXhMQljC2lkZ3p
-         cC8AGj6Jh88tzLwS2EAC4OqOBMIL/GiStC1FvumZbHW2wZiXwLzAKi6LinIPxgmDziXp
-         yjhw==
-X-Gm-Message-State: AJcUukdJcG8EBXciM5YazuZ+ZcEef5TUuYjOl8WqtwN2u+43PtuhiOLI
-        pq3s/73+0IKz+19Rwn1sTFGoMQ==
-X-Google-Smtp-Source: ALg8bN7mYsorlikrfb8l+3cpdMLiswSisF1oFLlmJ0ydWjBcb4QtmAd6YG6o2C4/DXjHq4rlRbe7cw==
-X-Received: by 2002:a2e:4299:: with SMTP id h25-v6mr32297109ljf.5.1549035797544;
-        Fri, 01 Feb 2019 07:43:17 -0800 (PST)
+        bh=9PxoL5qRhhi9/8I/MxsRIxkuMzLQLSJqsW5+iDKE8rA=;
+        b=cazuRUHT5Sw+UP2uqNsDypVgGaffbLi3dm9/jegIMiWlzO+FbDAGLZ2i8CUoLiLCSv
+         4VDbyXeEqYjDMUDixlSuAupvEvcaEkTRw3Vw2nLE07kRi9eSLhjo+If8C3y6MX8noPB9
+         dF/SEspXpPvOM8LvXofDMwOho7vNOgNjYcCcsCfrmGqnTmdMCmrghJbFyf8to3v6rBSZ
+         SZqAbrMNCos61+pKCwFx9hGii3q1HJcKtxELCeLU93l5yhm9K9mWKgmVFR50jeAY/ehL
+         PWB4OXWknk+xAaymATVw9ZkEyXHWwRBIssCuwWgZ5i9N4RYPJEyBIqRe973HeNOFnT1L
+         GV+A==
+X-Gm-Message-State: AJcUukc8YB9LO7LFC/6et5K6C5FSAkmtLenA24xB2N0G5Z2uv7KeSPW/
+        V//0KWsBosglabOBx9i+MA1AxQ==
+X-Google-Smtp-Source: ALg8bN5I0y263rz3wbLQE+wVgVuLqZfYA9ozcouGzvSa3ePZ+MbpnFCFk4o/2h1mZ1TCk7wIq26/qw==
+X-Received: by 2002:a19:910d:: with SMTP id t13mr30525083lfd.98.1549035795951;
+        Fri, 01 Feb 2019 07:43:15 -0800 (PST)
 Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.16
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:43:16 -0800 (PST)
+        Fri, 01 Feb 2019 07:43:15 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v7 19/23] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param transfer
-Date:   Fri,  1 Feb 2019 21:12:28 +0530
-Message-Id: <20190201154232.10505-20-jagan@amarulasolutions.com>
+Subject: [DO NOT MERGE][PATCH v7 18/23] arm64: allwinner: a64: pine64-lts: Enable Feiyang FY07024DI26A30-D DSI panel
+Date:   Fri,  1 Feb 2019 21:12:27 +0530
+Message-Id: <20190201154232.10505-19-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
 References: <20190201154232.10505-1-jagan@amarulasolutions.com>
@@ -77,29 +77,75 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Short transfer write support for DCS and Generic transfer types
-share similar way to process command sequence in DSI block so
-add generic write 2 param transfer type macro so-that the panels
-which are requesting similar transfer type may process properly.
+Feiyang FY07024DI26A30-D MIPI_DSI panel is desiged to attach with
+DSI connector on pine64 boards, enable the same for pine64 LTS.
+
+DSI panel connected via board DSI port with,
+- DC1SW as AVDD supply
+- DLDO2 as DVDD supply
+- DLDO1 as VCC-DSI supply
+- PD24 gpio for reset pin
+- PH10 gpio for backlight enable pin
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../dts/allwinner/sun50i-a64-pine64-lts.dts   | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index a0697d78b915..09569938c20d 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -984,6 +984,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
- 	switch (msg->type) {
- 	case MIPI_DSI_DCS_SHORT_WRITE:
- 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
-+	case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
- 		ret = sun6i_dsi_dcs_write_short(dsi, msg);
- 		break;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts
+index 72d6961dc312..341b1c035604 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-lts.dts
+@@ -5,9 +5,48 @@
+  */
  
+ #include "sun50i-a64-sopine-baseboard.dts"
++#include <dt-bindings/pwm/pwm.h>
+ 
+ / {
+ 	model = "Pine64 LTS";
+ 	compatible = "pine64,pine64-lts", "allwinner,sun50i-r18",
+ 		     "allwinner,sun50i-a64";
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
++		brightness-levels = <1 2 4 8 16 32 64 128 512>;
++		default-brightness-level = <8>;
++		enable-gpios = <&pio 7 10 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PH10 */
++	};
++};
++
++&de {
++	status = "okay";
++};
++
++&dphy {
++	status = "okay";
++};
++
++&dsi {
++	vcc-dsi-supply = <&reg_dldo1>;		/* VCC3V3-DSI */
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	panel@0 {
++		compatible = "feiyang,fy07024di26a30d";
++		reg = <0>;
++		avdd-supply = <&reg_dc1sw>;	/* VCC-LCD */
++		dvdd-supply = <&reg_dldo2>;	/* VCC-MIPI */
++		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
++		backlight = <&backlight>;
++	};
++};
++
++&r_pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&r_pwm_pin>;
++	status = "okay";
+ };
 -- 
 2.18.0.321.gffc6fa0e3
 
