@@ -2,116 +2,68 @@ Return-Path: <SRS0=rfa6=QI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C14CC282DA
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 07:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8413BC282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 07:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2BA20869
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 07:10:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 549B620857
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 07:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549005039;
-	bh=WFJwjM35Z8hCBcykzxSycLeR/qKBeOFjMr2sY0fUMhM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Grq6Is+IGUt0dgfSSKSwr6Vse/HlQgWtF0FobPEdCiMLlhWCgxB8NhHgq4wMSXJ+4
-	 VX0cFv0iTp7qlCvb2pGtSO79cBdnx8zVor2s1Cxvjlf8opQ/pBz37IDQCVFYGeysXy
-	 9cpDcO8QpgDqnq6yEfOsk9CLKJLXKOTdjBgpA7e8=
+	s=default; t=1549005911;
+	bh=sloB0MbAtN2UuWrj4CHZ+8Rd3mvuxuQ7LN3hAeH/Ru4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=ni/wUdzgu3ffAZzyieduabkFjmaZkNPdgpC84jvtFglK1LPibu6yZduhoeiGqFn8v
+	 Vbb2YoIX5YMRQxMVTqLlOQPRwvWC7NViHAznhsQgMROtbmVu3Kc1ZNeko8JdMrlak1
+	 D3VedxHp5N3xDbcLvjD0NJYeF185SIyK+IvG4EXk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbfBAHKj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:10:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51736 "EHLO mail.kernel.org"
+        id S1725957AbfBAHZF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 02:25:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbfBAHKi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:10:38 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E85E920869;
-        Fri,  1 Feb 2019 07:10:37 +0000 (UTC)
+        id S1727204AbfBAHZE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:25:04 -0500
+Subject: Re: [GIT PULL] clk fixes for v5.0-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549005038;
-        bh=WFJwjM35Z8hCBcykzxSycLeR/qKBeOFjMr2sY0fUMhM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QYSl67ngUPXqoeHrUyNc9TmSob5ykmLsUfHouY3bLbPZq3vvExi2Oye7NdLmW0giC
-         sy0sPGpuDZ6IRZ1TspYCHdRvmuQ9MxqRmsIOjZnE1z3SG38Ul61hQLwtU5N+Zj0dRj
-         AH3/nZmsIsycgL3vurs/Rb8DME6fK5m/69UA9Pv8=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        s=default; t=1549005904;
+        bh=sloB0MbAtN2UuWrj4CHZ+8Rd3mvuxuQ7LN3hAeH/Ru4=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=Acz65Yi6itYZj/uknhDRi2kcMAnLkEIe+iJcGaC5FmHOazJoUvHIaiZJMbsBrxrH3
+         3zKKllmEPbd9SZmlaPf9sbdyNSrsDFM2ch+cSH3iitadR4mpyn03h7h2zuI6ytCiEh
+         +IaB2blCuZ7GM0F3KHZo3SsNnxclGQseE/gQxxNQ=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190201071037.215136-1-sboyd@kernel.org>
+References: <20190201071037.215136-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190201071037.215136-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 9ff1a3b4912528f853048ccd9757ba6a2cc75557
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5b4746a031992d3b788b7e5280d949b8ab6d32d0
+Message-Id: <154900590421.3378.4631791592988989259.pr-tracker-bot@kernel.org>
+Date:   Fri, 01 Feb 2019 07:25:04 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.0-rc4
-Date:   Thu, 31 Jan 2019 23:10:37 -0800
-Message-Id: <20190201071037.215136-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit b488517b28a47d16b228ce8dcf07f5cb8e5b3dc5:
+The pull request you sent on Thu, 31 Jan 2019 23:10:37 -0800:
 
-  clk: socfpga: stratix10: fix naming convention for the fixed-clocks (2019-01-15 12:58:38 -0800)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5b4746a031992d3b788b7e5280d949b8ab6d32d0
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 9ff1a3b4912528f853048ccd9757ba6a2cc75557:
-
-  clk: qcom: gcc: Use active only source for CPUSS clocks (2019-01-24 11:41:48 -0800)
-
-----------------------------------------------------------------
-Mostly driver fixes, but there's a core framework fix in here too.
-
- - Revert the commits that introduce clk management for the SP
-   clk on MMP2 SoCs (used for OLPC). Turns out it wasn't a good
-   idea and there isn't any need to manage this clk, it just causes
-   more headaches.
-
- - A performance regression that went unnoticed for many years where
-   we would traverse the entire clk tree looking for a clk by name
-   when we already have the pointer to said clk that we're looking
-   for
-
- - A parent linkage fix for the qcom SDM845 clk driver
-
- - An i.MX clk driver rate miscalculation fix where order of operations
-   were messed up
-
- - One error handling fix from the static checkers
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      clk: imx: Fix fractional clock set rate computation
-
-Dan Carpenter (1):
-      clk: ti: Fix error handling in ti_clk_parse_divider_data()
-
-Derek Basehore (1):
-      clk: Remove global clk traversal on fetch parent index
-
-Lubomir Rintel (3):
-      Revert "Input: olpc_apsp - enable the SP clock"
-      Revert "clk: mmp2: add SP clock"
-      Revert "dt-bindings: marvell,mmp2: Add clock id for the SP clock"
-
-Taniya Das (1):
-      clk: qcom: gcc: Use active only source for CPUSS clocks
-
- Documentation/devicetree/bindings/serio/olpc,ap-sp.txt |  4 ----
- drivers/clk/clk.c                                      | 14 ++++++++++++--
- drivers/clk/imx/clk-frac-pll.c                         |  5 +++--
- drivers/clk/mmp/clk-of-mmp2.c                          |  4 ----
- drivers/clk/qcom/gcc-sdm845.c                          | 14 ++++++++++----
- drivers/clk/ti/divider.c                               | 11 ++++++++++-
- drivers/input/serio/olpc_apsp.c                        | 14 --------------
- include/dt-bindings/clock/marvell,mmp2.h               |  1 -
- 8 files changed, 35 insertions(+), 32 deletions(-)
+Thank you!
 
 -- 
-Sent by a computer through tubes
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
