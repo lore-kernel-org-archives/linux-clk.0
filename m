@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69820C282D8
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E87E4C282D8
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F2420855
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B908E218FD
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="T9xbKLou"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="L5Yb0b0J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfBAPnG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:43:06 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33006 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbfBAPnG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:06 -0500
-Received: by mail-lf1-f66.google.com with SMTP id i26so5421150lfc.0
-        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:43:04 -0800 (PST)
+        id S1730505AbfBAPnF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Feb 2019 10:43:05 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37406 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728794AbfBAPnB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 10:43:01 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n23so38254lfl.4
+        for <linux-clk@vger.kernel.org>; Fri, 01 Feb 2019 07:42:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LwL9AwGWtKYUFgkk+kHgF189NcSW5g0gFHkQNio/TBM=;
-        b=T9xbKLou+YYzTb7vsInTFQ4hJHJKIgaD6jdrOH/x7BqslOkfMjcR80XTmg5zuTRnbH
-         J379SJC1zUanC/pjMN1iSliblVoSm5UcZRiouZ9eDOGbt1SjF5LSd4f4Oj681beyenSb
-         XpAnZoqJb/w5NkTjk0Z5e0Clfcn9p1iJB8nOo=
+        bh=84THfXXcgvHcJWr1/uOYg32V3kLlV4Ule+FUJsuojRc=;
+        b=L5Yb0b0JI9GGktwopEnSvepURroFbEHVxRtM15IoDKL1JhwJG3ZBwGQgJ2sh3Rw5TA
+         iDnws8KdDnCZMRbe+mXF69inQx7rAj9LpRRoXCzEOHZ8qyoDBHVXGo5T0GGAVuQsJbx/
+         kCmLrxPE+erOMMqggrGIWCRrZH6tHpGsSk1N4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LwL9AwGWtKYUFgkk+kHgF189NcSW5g0gFHkQNio/TBM=;
-        b=W5+UMCGhQus4cZpiz60guCmCUEvy5j2mubCNTrm//Se5QODD8WsyRNC3SWj5IImj9v
-         Qp4q6yzsbCW5VXJoSn0yzEn29oo8Ec4VmzbuJuer3ghtWWK8ET6oIX3zMEfndEqUw/MT
-         CpbTXWwb/SkRqJp5o3deSD91P33zMU5ScJPNAZBaJLp4V457KSbaYm7oEkX4FvOgokZX
-         uYDogWBAV+lT924vGb7HyEVQyP7tcohxkSSt/1PY6UOwR6w/NH/5UncHKUcCr1fWOP5P
-         cPF5ifR0B0+YcNspUDaHRuyfFOnKSBo/I5yk2uXq4MPVI00esutDSvTlF7wzoIwg0dr1
-         l4lw==
-X-Gm-Message-State: AJcUukdPKcbKq6LZrzA73NtWPTg26um8+F3oCY8HP56tnf5dnpc76Y5W
-        WhfqoM+w8SL7WjKnJvK1n5FNpQ==
-X-Google-Smtp-Source: ALg8bN7W0afO2/5f8oyYpC6gy6IJMm1inSnlPS3TXUKEJJL4w7yiydvNGX5mlUum3341zT/+a7DOFw==
-X-Received: by 2002:ac2:42c5:: with SMTP id n5mr22488995lfl.115.1549035784118;
-        Fri, 01 Feb 2019 07:43:04 -0800 (PST)
+        bh=84THfXXcgvHcJWr1/uOYg32V3kLlV4Ule+FUJsuojRc=;
+        b=QAnVnYB3ivEaz1dN5J/4JsV4tsdfztUA/rI31gqoVSIULZIjciKNOxTvo5cjigr5g2
+         93t9XuZNqCcDWzoqXDgEf2QlkE4Ig8uImQFT+o47HHNBtGSdnyVrHimKipqWpcBoYlzh
+         /8jxVvSRGO2BTptYvUNskvcobSJOgVpm1ySLQ0PfStH3gXBgJqE/bnWvqEF22yp9keqn
+         3njmZUJA6LCqAWYSBnWg7WKfCZjx7rBOumWKINpWyqUKtn1CL+VPfdHozxHFv6Y487Um
+         WpwYa9yTSLOdLbPmVeaxnUhVlvUJoHh8Q3JkSwnZIXhuvwudt1BC6WqQHmF4S+pegTek
+         yvaA==
+X-Gm-Message-State: AJcUukcl3IkNQiByuBK/NJ3qQaXorSkszugM5486XcXVuvnAk+jwjGEr
+        atDN36iZlwMGAhFwkLy9vjDFmw==
+X-Google-Smtp-Source: ALg8bN7eWAS4XWIfCIU/GKq6nDCT+Mcco6ruQsm5PRsdG39i7pjM42SH4WVYRmLXcxOYg7dqPiZlSw==
+X-Received: by 2002:a19:db82:: with SMTP id t2mr30736640lfi.130.1549035779099;
+        Fri, 01 Feb 2019 07:42:59 -0800 (PST)
 Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.02
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.42.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:43:03 -0800 (PST)
+        Fri, 01 Feb 2019 07:42:58 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v7 11/23] dt-bindings: sun6i-dsi: Add VCC-DSI supply property
-Date:   Fri,  1 Feb 2019 21:12:20 +0530
-Message-Id: <20190201154232.10505-12-jagan@amarulasolutions.com>
+Subject: [PATCH v7 08/23] drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
+Date:   Fri,  1 Feb 2019 21:12:17 +0530
+Message-Id: <20190201154232.10505-9-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
 References: <20190201154232.10505-1-jagan@amarulasolutions.com>
@@ -77,32 +77,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allwinner MIPI DSI controllers are supplied with SoC DSI
-power rails via VCC-DSI pin.
+The burst mode panels with 4-lane would require to enable trail bits
+in DSI basic control register.
 
-Some board still work without supplying this but give more
-faith on datasheet and hardware schematics and document this
-supply property in required property list.
+So, enable 2byte trail and trail_env for 4-lane burst mode devices.
+
+Allwinner A64 BSP should also relie on same setup for enabling trail
+bit in DSI controller.
+
+Reference code avialable in BSP (from linux-sunxi/
+drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+
+if (panel->lcd_dsi_lane == 4)
+{
+   dsi_dev[sel]->dsi_basic_ctl.bits.trail_inv = 0xc;
+   dsi_dev[sel]->dsi_basic_ctl.bits.trail_fill     = 1;
+}
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-index 6a6cf5de08b0..1cc40663b7a2 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-@@ -21,6 +21,7 @@ Required properties:
-   - phys: phandle to the D-PHY
-   - phy-names: must be "dphy"
-   - resets: phandle to the reset controller driving the encoder
-+  - vcc-dsi-supply: the VCC-DSI power supply of the DSI encoder
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 46ad142e66e8..a2ad9fa7f8d5 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -33,6 +33,8 @@
+ #define SUN6I_DSI_CTL_EN			BIT(0)
  
-   - ports: A ports node with endpoint definitions as defined in
-     Documentation/devicetree/bindings/media/video-interfaces.txt. The
+ #define SUN6I_DSI_BASIC_CTL_REG		0x00c
++#define SUN6I_DSI_BASIC_CTL_TRAIL_INV(n)	(((n) & 0xf) << 4)
++#define SUN6I_DSI_BASIC_CTL_TRAIL_FILL		BIT(3)
+ #define SUN6I_DSI_BASIC_CTL_HBP_DIS		BIT(2)
+ #define SUN6I_DSI_BASIC_CTL_HSA_HSE_DIS		BIT(1)
+ #define SUN6I_DSI_BASIC_CTL_VIDEO_BURST		BIT(0)
+@@ -464,6 +466,10 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+ 	/* enable burst mode */
+ 	regmap_read(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, &val);
+ 	val |= SUN6I_DSI_BASIC_CTL_VIDEO_BURST;
++	if (device->lanes == 4) {
++		val |= SUN6I_DSI_BASIC_CTL_TRAIL_INV(0xc);
++		val |= SUN6I_DSI_BASIC_CTL_TRAIL_FILL;
++	}
+ 	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, val);
+ }
+ 
 -- 
 2.18.0.321.gffc6fa0e3
 
