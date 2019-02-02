@@ -2,191 +2,118 @@ Return-Path: <SRS0=iRVG=QJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FD0C282D8
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 00:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B68C282D7
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 15:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF9B21479
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 00:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A5720857
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 15:26:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UIHkcKYP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P4bLU5cw"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Duvekuw4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Duvekuw4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbfBBAF6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Feb 2019 19:05:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46178 "EHLO
+        id S1727563AbfBBP0j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Feb 2019 10:26:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37082 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfBBAF6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Feb 2019 19:05:58 -0500
+        with ESMTP id S1726617AbfBBP0j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Feb 2019 10:26:39 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CAB816047C; Sat,  2 Feb 2019 00:05:56 +0000 (UTC)
+        id 8131D60860; Sat,  2 Feb 2019 15:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549065956;
-        bh=6Pyzj/XoYH40zrlt347z3+ZeABa5iaGgC3epqFVDeTQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UIHkcKYPfFpCS6tiV8ypREmvopRQlEgDcwEKhRGkUq7ItgdPVuuWBKL/kNhGm3DZS
-         OFAP0aGIafTjkUiE0e3P9t/JEGkqGNO1GaeFhp2lc85DWb8Xa3VlDPOQFyODgsaPiL
-         9unOltoD4NIc0eNov2lWOIwovu7WkrL/gwOAVQ30=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D8CB56047C;
-        Sat,  2 Feb 2019 00:05:55 +0000 (UTC)
+        s=default; t=1549121197;
+        bh=2u6ngmO6YQnL4xNUttDae0c7qMgpkghdOxqozMui138=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Duvekuw4A3qmo5XmItwAAKziewQxq45B45t6/V1DsN7dvDggtyH8+waL0l1KHU6t7
+         uR0wHa1CMFgQCg4bUf6jJ+pDbDNi+COKRuTzacUOYHE94xvAc09tIbHT49naWu3i+o
+         J3xwde/3J5BuhmLcLB0jG3c7VMJzlBHWmSu7nmd0=
+Received: from govinds-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: govinds@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D434D60351;
+        Sat,  2 Feb 2019 15:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549065955;
-        bh=6Pyzj/XoYH40zrlt347z3+ZeABa5iaGgC3epqFVDeTQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=P4bLU5cwejfBg6cYahhecltb9iECZUa4lV28a1urekhyTPjO5YE7GCkHbtSgcZdpJ
-         hxX3KpB+h+dCf4HQRM98ntL8Xijwv/p/Kd5cviSLOIFD4SCOoDjEDFeVSxBi8fyt0w
-         AsJ0DiceziyYllVbDT18cjPHCJhoEuU6KYAVpQdY=
+        s=default; t=1549121197;
+        bh=2u6ngmO6YQnL4xNUttDae0c7qMgpkghdOxqozMui138=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Duvekuw4A3qmo5XmItwAAKziewQxq45B45t6/V1DsN7dvDggtyH8+waL0l1KHU6t7
+         uR0wHa1CMFgQCg4bUf6jJ+pDbDNi+COKRuTzacUOYHE94xvAc09tIbHT49naWu3i+o
+         J3xwde/3J5BuhmLcLB0jG3c7VMJzlBHWmSu7nmd0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D434D60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=govinds@codeaurora.org
+From:   Govind Singh <govinds@codeaurora.org>
+To:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v4 0/8] Add non PAS wcss Q6 support for QCS404
+Date:   Sat,  2 Feb 2019 20:56:18 +0530
+Message-Id: <20190202152626.1006-1-govinds@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 01 Feb 2019 16:05:55 -0800
-From:   chandanu@codeaurora.org
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port
- clocks
-In-Reply-To: <154083859263.98144.15690571729193618604@swboyd.mtv.corp.google.com>
-References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
- <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
- <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
- <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
- <9c359e26-3708-14b6-f22a-fb529446d325@codeaurora.org>
- <154083859263.98144.15690571729193618604@swboyd.mtv.corp.google.com>
-Message-ID: <c7440ea58b65150ed333bf6bba2d30c3@codeaurora.org>
-X-Sender: chandanu@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-Hello Stephen,
-
-On 2018-10-29 11:43, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-10-28 03:34:55)
->> Hello Stephen,
->> 
->> On 2018-10-19 16:04, Taniya Das wrote:
->> > Hello Stephen,
->> >
-
-/snip
-
->> >>> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
->> >>> +       .cmd_rcgr = 0x2154,
->> >>> +       .mnd_width = 0,
->> >>> +       .hid_width = 5,
->> >>> +       .parent_map = disp_cc_parent_map_1,
->> >>> +       .freq_tbl = ftbl_disp_cc_mdss_dp_crypto_clk_src,
->> >>> +       .clkr.hw.init = &(struct clk_init_data){
->> >>> +               .name = "disp_cc_mdss_dp_crypto_clk_src",
->> >>> +               .parent_names = disp_cc_parent_names_1,
->> >>> +               .num_parents = 4,
->> >>> +               .flags = CLK_GET_RATE_NOCACHE,
->> >>
->> >> Why?
->> >>
->> >>> +               .ops = &clk_rcg2_ops,
->> >>> +       },
->> >>> +};
->> >>> +
->> >>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] = {
->> >>> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->> >>> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->> >>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->> >>> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->> >>
->> >> Are these in kHz? They really look like it and that's bad. Why do we
->> >> need them at all? Just to make sure the display driver picks these
->> >> exact
->> >> frequencies? It seems like we could just pass whatever number comes in
->> >> up to the parent and see what it can do.
->> >>
->> >
->> > Let me check back the reason we had to make this change.
->> 
->> We will need this flag since we reset/power-down the PLL every time we
->> disconnect/connect the DP cable or during suspend/resume. Only with 
->> this
->> flag, the calls to the PLL driver are properly called.
-> 
-> What does this mean? I wanted to know about the weird frequencies 
-> listed
-> above, and why it can't be done without a frequency table and direct
-> rates passed up to the parent.
-> 
-
-/snip
+Add non PAS(Peripheral Authentication System) WCSS remoteproc
+driver support and wcss clock/reset controls for QCS404 SOC.
+Add WCSS q6 bootup and shutdown sequence handled from
+Application Processor SubSystem(APSS).
 
 
->> >>
->> >>> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk = {
->> >>> +       .halt_reg = 0x2044,
->> >>> +       .halt_check = BRANCH_HALT,
->> >>> +       .clkr = {
->> >>> +               .enable_reg = 0x2044,
->> >>> +               .enable_mask = BIT(0),
->> >>> +               .hw.init = &(struct clk_init_data){
->> >>> +                       .name = "disp_cc_mdss_dp_link_intf_clk",
->> >>> +                       .parent_names = (const char *[]){
->> >>> +                               "disp_cc_mdss_dp_link_clk_src",
->> >>> +                       },
->> >>> +                       .num_parents = 1,
->> >>> +                       .flags = CLK_GET_RATE_NOCACHE,
->> >>
->> >> Why?
->> >>
->> >
->> > It was a requirement, but let me get back on this too.
->> >
->> I had a discussion with the Display Port teams and below is the 
->> requirement,
->> 
->> This flag is required since we reset/power-down the PLL every time 
->> they
->> disconnect/connect the DP cable or during suspend/resume.
->> Only with this flag, the calls to the PLL driver properly.
-> 
-> Ok. So that explains the get rate nocache flag. Can you please add a
-> comment that explains that these clk registers here are lost across
-> suspend/resume of the display device? It really sounds like these
-> display clks are inside of the display power domain and thus they lose
-> their state across the display power domain power down. It would be
-> better if we could properly implement suspend/restore for these clk
-> registers across suspend/resume of the display device so that we don't
-> need this nocache flag and the display code can work together with the
-> clk code here to restore the frequency to the clk.
+Changes since v3:
+ dt binding cleanup.
+ Fixed remoteproc recovery.
+ Added remoteproc dump support.
+ wcsscc cleanup/refactoring.
+
+Changes since v2:
+ Removed unused properties.
+ Refactored code to have common logic b/w ipq8074 and QCS404, wherever possible.
+ Added compatible example.
+ Removed wcss-protected bool.
+
+Changes since v1:
+  Corrected clock names as per comments in v1 patch.
 
 
-We already handle the suspend/restore for these clk registers
-in Dp PLL domain. Without the "NOCACHE_FLAG", and if we are requesting 
-the same clock rate
-for any of the clocks, the set_rate call never reaches the DP PLL Ops.
+Govind Singh (8):
+  dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
+  clk: qcom: Add WCSS gcc clock control for QCS404
+  dt-bindings: clock: qcom: Introduce QCOM WCSS Q6DSP clock bindings
+  clk: qcom: Add WCSS Q6DSP clock controller for QCS404
+  remoteproc: qcom: wcss: populate hardcoded param using driver data
+  dt-binding: remoteproc: Add QTI WCSS PIL bindings
+  remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
+  remoteproc: qcom: wcss: explicitly request exclusive reset control
 
-I am not clear on what you are suggesting for removing the 
-"NOCACHE_FLAG" for
-the DisplayPort clocks. Are you suggesting design changes in DP PLL 
-driver or in dispcc-driver?
-Can you please provide more details?
+ .../devicetree/bindings/clock/qcom,wcsscc.txt |  26 +
+ .../bindings/remoteproc/qcom,q6v5.txt         |  61 ++
+ drivers/clk/qcom/Kconfig                      |   8 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/common.c                     |  20 +
+ drivers/clk/qcom/common.h                     |   3 +-
+ drivers/clk/qcom/gcc-qcs404.c                 |  37 +-
+ drivers/clk/qcom/lpasscc-sdm845.c             |  23 +-
+ drivers/clk/qcom/wcsscc-qcs404.c              | 282 +++++++++
+ drivers/remoteproc/qcom_q6v5_wcss.c           | 587 ++++++++++++++++--
+ include/dt-bindings/clock/qcom,gcc-qcs404.h   |   3 +
+ include/dt-bindings/clock/qcom,wcss-qcs404.h  |  25 +
+ 12 files changed, 1013 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
+ create mode 100644 drivers/clk/qcom/wcsscc-qcs404.c
+ create mode 100644 include/dt-bindings/clock/qcom,wcss-qcs404.h
 
-thanks
-Chandan
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> 
-> Is it really the case that the rcg here is always selecting a 
-> particular
-> PLL and doing a div-1? Because that is very simple then to just write
-> that setting again on genpd restore.
