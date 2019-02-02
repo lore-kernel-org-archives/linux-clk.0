@@ -2,115 +2,148 @@ Return-Path: <SRS0=iRVG=QJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9F2C282D7
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 15:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E5DC282D7
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 16:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE6D2084A
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 15:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE88420857
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 16:48:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="m2Nl8SXM"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QrMmENJR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfBBPwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Feb 2019 10:52:23 -0500
-Received: from plaes.org ([188.166.43.21]:35760 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727474AbfBBPwX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 2 Feb 2019 10:52:23 -0500
-Received: from localhost (unknown [IPv6:2001:bb8:4008:ff:21a:64ff:fe97:f62])
-        by plaes.org (Postfix) with ESMTPSA id 0279A4003E;
-        Sat,  2 Feb 2019 15:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1549122741; bh=isQ1PNLGngLF+hkA36+pToonDFuNYA8D+QXexEq6xD8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=m2Nl8SXMmVIiKz7p3W6cwLNNd+8uW9K3I1SyBY8lKgWj3Kvs3Q/Ixf3MstQuugfTU
-         6CDzAcPxT/EKK8I5j+hOnYaY0FZKxsTaxs+YhavKZuAh5pcgJIWqzjqO3r4kemtCtd
-         +KO4JUOs2IRrKgb97DphZYdPxryiLEOwt+rexboSHnozXZudSAdfzc8ShpVtKzaX+d
-         LRCPfVkPF8qfXGhu3sdtUVcE524Os1DVPysM1xkFEmtm1UX0qXiVBLTtoY735sMJ/N
-         pA7LhRjqdm4q+TABcLqqyHHliQ/2dd+GhSskzvJdqXMJNgWtmtkbXZY7q2hh5sb+dn
-         E7VoRzWBcFSOA==
-From:   Priit Laes <plaes@plaes.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1725828AbfBBQsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Feb 2019 11:48:04 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55601 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbfBBQsD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Feb 2019 11:48:03 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y139so9050701wmc.5
+        for <linux-clk@vger.kernel.org>; Sat, 02 Feb 2019 08:48:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=/E5cseiCf2VM6go13DtJ3Cj3nH7FX5EvWBwvS1pknUI=;
+        b=QrMmENJRGEIBYdxjRsjbis576AVFShyezLUjyCSc53smhH/C0DAqCHF7siuJmpY8+7
+         mqrSE3WDbyiZx6DSI3N9KccNY5woGuibjrsIWv8c3FdDD5iY1xTrfv4Ls4+yDyc05OjV
+         1ruETTQnChwgPZF9AOEqi9KDNdG7YRnKnKrr7RHWCnGxysXn/gnIMgetNzEbFu/YaUnp
+         Qjb9Gh2GQ+CEOpDjXe/2ff4DHY3shXDyE5xKXH/rdVrcUq/VRNIJu0zQzCRlluBPEwuP
+         RX8QlQfhKGnUEpdJ0i+uSrGfCcQdMnGz6Rsxjkf0QNLBy32eLjHmgsLkG+8t13vxEiaV
+         iVbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-transfer-encoding;
+        bh=/E5cseiCf2VM6go13DtJ3Cj3nH7FX5EvWBwvS1pknUI=;
+        b=paZQBGy5rwKslA+5PYVcaFVd0iaSrqAbT0PxQqrUbfF3xes3srw9Fcpv75Keb/ND77
+         FS4TdqMOUGsPh0WyYZZnLhqutxwXZ+pf5rzjuqf/3+0Z0zvb9uK6ec34QwrTMa6oRqYv
+         o+gphh3KyPjFn1/7IMnH9u6rH2g+iwQj6C2jUuqy2e0lclXyoAppwUk5oKp5G0a97yEr
+         83UsoD5gKZ61sSU38RRD1aRsSUHt9gUpOMboVzNaOyc0xXsZm0ec/JPfUtQUhxjkWDCF
+         JYtiTzklVNxgagN1goSLnhm7LsgOpXspH2Dsm+rk5J+Bs42enqVHiLQ+LWfPNrqyWwrJ
+         ZfBw==
+X-Gm-Message-State: AHQUAuZ2J1YvRwFQXbXIyvEzS1MoRmnxOTiLboz+hM/SfvnFUoWMXyBz
+        C5B2GXM+nEpZvweCnvmXlsK/1Q==
+X-Google-Smtp-Source: AHgI3Ib3J5KjmLUBVR6Z/IE1P7jTdJKc1XMJyuL8ut3ezKO14F7qT7W9I/gad4AzcctVmoKIhPRKOA==
+X-Received: by 2002:a1c:7706:: with SMTP id t6mr6529365wmi.57.1549126081536;
+        Sat, 02 Feb 2019 08:48:01 -0800 (PST)
+Received: from Armstrongs-MacBook-Pro.local ([151.216.141.110])
+        by smtp.gmail.com with ESMTPSA id 202sm9071110wmt.8.2019.02.02.08.48.00
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 02 Feb 2019 08:48:00 -0800 (PST)
+Message-ID: <5C55C9BE.9080404@baylibre.com>
+Date:   Sat, 02 Feb 2019 17:47:58 +0100
+From:   Neil Armstrong <narmstrong@baylibre.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
+MIME-Version: 1.0
+To:     Jerome Brunet <jbrunet@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Priit Laes <plaes@plaes.org>
-Subject: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for mmc2 clock
-Date:   Sat,  2 Feb 2019 17:52:09 +0200
-Message-Id: <20190202155209.31617-1-plaes@plaes.org>
-X-Mailer: git-send-email 2.11.0
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/4] clk: meson: rework drivers dependencies
+References: <20190201125841.26785-1-jbrunet@baylibre.com>
+In-Reply-To: <20190201125841.26785-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Recent patch of improving MP clock rate calculations by taking
-into account whether adjusting parent rate is allowed, have
-unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
-boards which fail with following error:
+Hi,
 
-[snip]
-EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-sunxi-mmc 1c11000.mmc: data error, sending stop command
-sunxi-mmc 1c11000.mmc: send stop command failed
-[/snip]
+Le 01/02/2019 13:58, Jerome Brunet a écrit :
+> The goal of this patchset to clean-up the dependencies between
+> the controllers and the different clock drivers provided in the meson
+> directory. The expected result is that each controllers can pick the
+> the clock drivers they need, without necessarily pulling everything.
+> 
+> This is becoming important as we are adding more and more controllers
+> to support new amlogic SoC.
+> 
+> Patch 1 and 2 are out of the meson directory but have been acked by
+> Stephen.
+> 
+> Changes since v1 [0]:
+>  * Squashed patch 4 to 14
+>  * Sort Makefile alphanumerically
+> 
+> [0]: https://lkml.kernel.org/r/20190128180430.28689-1-jbrunet@baylibre.com
+> 
+> Jerome Brunet (4):
+>   clk: export some clk_hw function symbols for module drivers
+>   clk: meson: use CONFIG_ARCH_MESON to enter meson clk directory
+>   clk: meson: axg-audio does not require syscon
+>   clk: meson: rework and clean drivers dependencies
+> 
+>  drivers/clk/Makefile                          |   2 +-
+>  drivers/clk/clk.c                             |   3 +
+>  drivers/clk/meson/Kconfig                     |  84 +++++++---
+>  drivers/clk/meson/Makefile                    |  27 ++--
+>  drivers/clk/meson/axg-aoclk.c                 |   4 +-
+>  drivers/clk/meson/axg-audio.c                 |   5 +-
+>  drivers/clk/meson/axg.c                       |   5 +-
+>  drivers/clk/meson/clk-dualdiv.c               |  10 +-
+>  drivers/clk/meson/clk-dualdiv.h               |  33 ++++
+>  drivers/clk/meson/clk-input.c                 |   7 +-
+>  drivers/clk/meson/clk-input.h                 |  19 +++
+>  drivers/clk/meson/clk-mpll.c                  |  12 +-
+>  drivers/clk/meson/clk-mpll.h                  |  30 ++++
+>  drivers/clk/meson/clk-phase.c                 |  75 ++++++++-
+>  drivers/clk/meson/clk-phase.h                 |  26 ++++
+>  drivers/clk/meson/clk-pll.c                   |  13 +-
+>  drivers/clk/meson/clk-pll.h                   |  43 ++++++
+>  drivers/clk/meson/clk-regmap.c                |   5 +
+>  drivers/clk/meson/clk-regmap.h                |  15 ++
+>  drivers/clk/meson/clk-triphase.c              |  68 --------
+>  drivers/clk/meson/clkc.h                      | 146 ------------------
+>  drivers/clk/meson/gxbb-aoclk.c                |   4 +-
+>  drivers/clk/meson/gxbb.c                      |   5 +-
+>  drivers/clk/meson/meson-aoclk.c               |   2 +
+>  drivers/clk/meson/meson-aoclk.h               |   5 +-
+>  drivers/clk/meson/meson8b.c                   |   3 +-
+>  drivers/clk/meson/parm.h                      |  46 ++++++
+>  drivers/clk/meson/sclk-div.c                  |  10 +-
+>  .../clk/meson/{clkc-audio.h => sclk-div.h}    |  16 +-
+>  drivers/clk/meson/vid-pll-div.c               |  10 +-
+>  drivers/clk/meson/vid-pll-div.h               |  20 +++
+>  31 files changed, 470 insertions(+), 283 deletions(-)
+>  create mode 100644 drivers/clk/meson/clk-dualdiv.h
+>  create mode 100644 drivers/clk/meson/clk-input.h
+>  create mode 100644 drivers/clk/meson/clk-mpll.h
+>  create mode 100644 drivers/clk/meson/clk-phase.h
+>  create mode 100644 drivers/clk/meson/clk-pll.h
+>  delete mode 100644 drivers/clk/meson/clk-triphase.c
+>  delete mode 100644 drivers/clk/meson/clkc.h
+>  create mode 100644 drivers/clk/meson/parm.h
+>  rename drivers/clk/meson/{clkc-audio.h => sclk-div.h} (54%)
+>  create mode 100644 drivers/clk/meson/vid-pll-div.h
+> 
 
-Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
-clock rate with following parents:
-[snip]
-pll-ddr-base        2  2        0   768000000 0     0  50000
-   pll-ddr-other    1  1        0   768000000 0     0  50000
-      mmc2          0  0        0    51200000 0     0  50000
-[/snip]
+Applied to next/drivers for Linux 5.1-rc1
 
-Now, after the improvements, requested and settled rate are both
-520MHz, but as mmc2 clock cannot adjust parent rate, the situation
-ends up like this:
-[snip]
-pll-periph-base     3  3        0  1200000000 0     0  50000
-   pll-periph       6  6        0   600000000 0     0  50000
-      mmc2          3  3        0    50000000 0     0  50000
-[/snip]
-
-With this patch (allowing mmc2 to set parent rate), we end up with
-working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
-[snip]
-pll-periph-base     3  3        0   312000000 0     0  50000
-   mbus             1  1        0    78000000 0     0  50000
-   pll-periph-sata  1  1        0    26000000 0     0  50000
-      sata          1  1        0    26000000 0     0  50000
-   pll-periph       5  5        0   156000000 0     0  50000
-      mmc2          0  0        0    52000000 0     0  50000
-      mmc0          0  0        0    39000000 0     0  50000
-[/snip]
-
-Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when allowed")
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-index 129ebd2588fd..605e13b4ef90 100644
---- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-@@ -498,7 +498,7 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents, 0x090,
- 				  16, 2,	/* P */
- 				  24, 2,	/* mux */
- 				  BIT(31),	/* gate */
--				  0);
-+				  CLK_SET_RATE_PARENT);
- 
- /* MMC output and sample clocks are not present on A10 */
- static SUNXI_CCU_PHASE(mmc2_output_clk, "mmc2_output", "mmc2",
--- 
-2.11.0
-
+Neil
