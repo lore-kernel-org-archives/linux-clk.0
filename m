@@ -1,169 +1,205 @@
-Return-Path: <SRS0=iRVG=QJ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=IJxv=QK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8C1C282D7
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 17:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 723D2C169C4
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Feb 2019 07:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7D620856
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Feb 2019 17:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E31F2083B
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Feb 2019 07:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Qlip9jCJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eW2ZpxtX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfBBRFY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Feb 2019 12:05:24 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37385 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbfBBRFY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Feb 2019 12:05:24 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g67so9233731wmd.2
-        for <linux-clk@vger.kernel.org>; Sat, 02 Feb 2019 09:05:23 -0800 (PST)
+        id S1725891AbfBCHyr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Feb 2019 02:54:47 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33253 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbfBCHyr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Feb 2019 02:54:47 -0500
+Received: by mail-qt1-f196.google.com with SMTP id l11so12475571qtp.0;
+        Sat, 02 Feb 2019 23:54:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-transfer-encoding;
-        bh=1IqL4YH7JRK6UqQ4jzCJZZjsOuQR5UOkILRC9TNDD6Y=;
-        b=Qlip9jCJpYOSk7slxaN+KL7agD3/IAQCgTOU3KDGTIaNhXxqprd57EP8sNvYuwxZc2
-         ryXq86fq2GlgbG+GXqNws1nRcTA3rOc8XZGgHJ4n5PYjlOlzFXQltcxJzyKSMxVk/KbV
-         fLnLvIAJlazNR3H8httcGVrqhISbj7teZnCU5uRf9L6dG2pzlf+zI9lN3xW/wlyl/9Hw
-         t/63wMT5Qg+es4EgNRL6ed+pQ9hIuATOGY0IIZLJ1hP1a0XvHKC3nshYMiHcwLgSasqN
-         ViSLqsm2Xvgn2IGrUCKD24GZHbyhvogf6hFsrGOljZG+AYKNBBzjYD5Sgpq1/yuFlZWV
-         o3lA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=BSnmeNvE3EBhH2SfbdbcYylaib6DqHpMf3vu6r4CZqc=;
+        b=eW2ZpxtXpeL0dNqBqV7T9P3rj0Jr0ySMM8IyBtnRNfCAmV0FHPBXmJKiVUhRr6c7Ek
+         5FLvIRS1mPrUFGNUJudBTkWCAb2BNyPBqY1Z3bqNYECtv/uYnrbpEwe+egAy//YLW+89
+         1iAdSv3L0cw+C740nL0PqHJWpzKVyrjH3GRfFVPCKnMP4NiqdQtoxDksMaBNPv9Xk6OS
+         amoO3Jbh2w2YPueGnRJa2EQYtW4Sb2eCsuRToDzixFcgrEXqnC9936Ud+Ev7admKd+c+
+         VHk24NLymfTLr5tTwZEIk71wGZXhzcCr9EokcMcuzF0wdKGnhRhogrLsbLttm8RJrBu/
+         dlrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-transfer-encoding;
-        bh=1IqL4YH7JRK6UqQ4jzCJZZjsOuQR5UOkILRC9TNDD6Y=;
-        b=nWancokVcHIn3y04oDNhTiRBOdt11NH0Wf42IDPbzuSFVTzJqHExxGBUPwj0zxZ21f
-         SgkFjPmUqopxBjo6jaOWpGkr97mhEGzC2g+9B5xB8F+2e8tus8uFYq4Q3tb/UfsHOTIl
-         1z4xeIAwmJiBy4A77B+q1FCNLU16VWZvIC5yKOicyXVUjUDK1Ri9VzDEalMfnVyruK4x
-         VDoEl4YXFs2g+8E/xgxrrp4zGuxACWnGkncOv8VCPMITNT3lLKV8t2oLWyVJCvHGEG2o
-         8xq55SpqVhGZL12HgzIdGbII78gNQWcZQuFPUlQzrF0jRMx7KlCQBJ7otjA8RrCXzodR
-         K1sw==
-X-Gm-Message-State: AHQUAuYFvXsb/rjzQk47jr+2huHWh8a7kbYd6IOsw0vbel5/JoudtOd3
-        IQi3A74GrWM4Zk57+KV6nMKNuA==
-X-Google-Smtp-Source: AHgI3Ia9CCQAbf5xrzvNuyXB59dZY/GA1c2gME42bNFXpfH6sUICZwxdrKURnR7zeQlDbPslonrANw==
-X-Received: by 2002:a1c:8054:: with SMTP id b81mr6645486wmd.65.1549127122309;
-        Sat, 02 Feb 2019 09:05:22 -0800 (PST)
-Received: from Armstrongs-MacBook-Pro.local ([151.216.141.110])
-        by smtp.gmail.com with ESMTPSA id t18sm3645527wmt.35.2019.02.02.09.05.19
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 02 Feb 2019 09:05:20 -0800 (PST)
-Message-ID: <5C55CDCE.9030502@baylibre.com>
-Date:   Sat, 02 Feb 2019 18:05:18 +0100
-From:   Neil Armstrong <narmstrong@baylibre.com>
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=BSnmeNvE3EBhH2SfbdbcYylaib6DqHpMf3vu6r4CZqc=;
+        b=XkqHA/cwb7/vkyU/fboFqIodkzWwfKPl+2Xtvt4PH2rpuzIKpSTmXZvDF64e1zN57v
+         6G2NBQqOI8OHy6jAq9rL/oE1Nf6lIX0Ng3adXVHWonMKKbKCLsZfqz1bAcTlP0uSopGH
+         gEQ2qO6to9J4lljXJN1MsV5zQhDSV3w8oVrBVBrbnk6J20v8HDTqhTp2SOtUXGgrHUGC
+         C/MCOhjo8w/mszHBLu0W5a29t/jHEop3iMuvMvUfXJHpgKNH6yQ50N0CaSSVOLTv8Vgt
+         fuGUUWtg3rFUryj0Py8vQ1wbup4ou0wcoCRr63R5E8hcy3WfOEUhRd0altQUgvrLjaHA
+         0B4A==
+X-Gm-Message-State: AJcUukdwFYflH34EEzwneycsIYZaY3+FWwqNnefigIV49GMZnwHSSneI
+        GJ6IGaZslj7ozXrYLgKZXqtAhKorOvDCT3InYFg=
+X-Google-Smtp-Source: ALg8bN6TGRGK9yUSn/KtlbJaLCxO8NxFh6bnJMO0CSftNvbm5YZSkYi/73xup7Ku8vai1TkQ9hzA+bISKdSoMOpKTUE=
+X-Received: by 2002:ac8:1617:: with SMTP id p23mr45983910qtj.239.1549180485631;
+ Sat, 02 Feb 2019 23:54:45 -0800 (PST)
 MIME-Version: 1.0
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
-Subject: Re: [PATCH v6 0/4] clk: meson-g12a: Add EE clock controller driver
-References: <20190201145345.6795-1-jbrunet@baylibre.com>
-In-Reply-To: <20190201145345.6795-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
+References: <1548924594-19084-1-git-send-email-l.luba@partner.samsung.com>
+ <CGME20190131085007eucas1p2f16107042b8ce5638811840618bcf017@eucas1p2.samsung.com>
+ <1548924594-19084-4-git-send-email-l.luba@partner.samsung.com>
+ <d5b8d165-564e-b776-77de-31a069118067@samsung.com> <0ca15b4c-ddaa-1be5-35be-e76b008b28a8@partner.samsung.com>
+In-Reply-To: <0ca15b4c-ddaa-1be5-35be-e76b008b28a8@partner.samsung.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Sun, 3 Feb 2019 16:54:09 +0900
+Message-ID: <CAGTfZH05zn_FiNt3zSHZJfspvo4RXWPrAtWLUq5xsqKoB3qxBA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] clk: samsung: add BPLL rate table for Exynos 5422 SoC
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Lukasz,
 
-Le 01/02/2019 15:53, Jerome Brunet a écrit :
-> This purpose of this patchset is to the main clock controller of the
-> g12a SoC family
-> 
-> This patchset depends on the recent rework the meson clock directory [7].
-> 
-> Changes since v5 [6]:
->  * use clock input driver until something better comes along in CCF
->  * fix pll fractional param size
->  * fix broken gp0 and hifi pll param (<55)
->  * add hdmi pll
->  * fix fdiv2p5
->  * add mpll_50m
->  * fix mpll clock tree (missing fix 2 divider)
->  * add missing sdio clocks
->  * add vpu clocks
->  * add some RO clock gates
->  * rabase on clk-meson tree
-> 
-> Changes since v4 [5]:
->  * add bypass clock "g12a_ee_core" from DT
->  * fix Kconfig description
->  * change g12a_mpll0_div/g12a_mpll1_div/g12a_mpll2_div/g12a_mpll3_div
->    clock's parent name as fixed_pll_dco
->  * drop CLK_SET_RATE_PARENT flag for pll clock
->  * drop CLK_GET_RATE_NOCACHE flag for pll_dco clock
->  * delete usless note
->  * enable G12A clock driver
-> 
-> Changes since v3 [4]:
->  * add fixed clocks clk_regmap definition
-> 
-> Changes since v2 [2]:
->  * fix fixed clock descriptions
->  * fix alignment
->  * add enable bit for plls base on [3] patches
->  * add fixed clock gate bit
-> 
-> Changes since v1 [1]:
->  * fix typo of 'Everything'.
->  * change the word 'AmLogic' to 'Amlogic'
->  * squash patch 1 and 2.
->  * delete usless message of "Trying obsolete regs".
->  * delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
->  * rebase on top of the "next/drivers" branch, and add g12a clock patch.
->  * add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
->    g12a_sd_emmc_c_clk0_sel.
-> 
-> [1]: https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
-> [2]: https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
-> [3]: https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
-> [4]: https://lkml.kernel.org/r/1533890858-113020-1-git-send-email-jian.hu@amlogic.com
-> [5]: https://lkml.kernel.org/r/1541511349-121152-1-git-send-email-jian.hu@amlogic.com
-> [6]: https://lkml.kernel.org/r/1543498917-98605-1-git-send-email-jian.hu@amlogic.com
-> [7]: https://lkml.kernel.org/r/20190201125841.26785-1-jbrunet@baylibre.com
-> 
-> Jerome Brunet (2):
->   clk: meson: pll: update driver for the g12a
->   clk: meson: factorise meson64 peripheral clock controller drivers
-> 
-> Jian Hu (2):
->   dt-bindings: clk: meson: add g12a periph clock controller bindings
->   clk: meson: g12a: add peripheral clock controller
-> 
->  .../bindings/clock/amlogic,gxbb-clkc.txt      |    1 +
->  drivers/clk/meson/Kconfig                     |   21 +-
->  drivers/clk/meson/Makefile                    |    2 +
->  drivers/clk/meson/axg.c                       |   59 +-
->  drivers/clk/meson/clk-pll.c                   |  203 +-
->  drivers/clk/meson/clk-pll.h                   |   10 +-
->  drivers/clk/meson/clk-regmap.h                |    9 +-
->  drivers/clk/meson/g12a.c                      | 2359 +++++++++++++++++
->  drivers/clk/meson/g12a.h                      |  175 ++
->  drivers/clk/meson/gxbb.c                      |  272 +-
->  drivers/clk/meson/meson-eeclk.c               |   63 +
->  drivers/clk/meson/meson-eeclk.h               |   25 +
->  include/dt-bindings/clock/g12a-clkc.h         |  135 +
->  13 files changed, 3147 insertions(+), 187 deletions(-)
->  create mode 100644 drivers/clk/meson/g12a.c
->  create mode 100644 drivers/clk/meson/g12a.h
->  create mode 100644 drivers/clk/meson/meson-eeclk.c
->  create mode 100644 drivers/clk/meson/meson-eeclk.h
->  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
-> 
+2019=EB=85=84 2=EC=9B=94 1=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 11:22, L=
+ukasz Luba <l.luba@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
+=B1:
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+>
+> Hi Chanwoo,
+>
+> On 2/1/19 9:44 AM, Chanwoo Choi wrote:
+> > Hi,
+> >
+> > On 19. 1. 31. =EC=98=A4=ED=9B=84 5:49, Lukasz Luba wrote:
+> >> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memo=
+ry
+> >> Controller frequencies for driver's DRAM timings.
+> >>
+> >> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> CC: Chanwoo Choi <cw00.choi@samsung.com>
+> >> CC: Michael Turquette <mturquette@baylibre.com>
+> >> CC: Stephen Boyd <sboyd@kernel.org>
+> >> CC: Kukjin Kim <kgene@kernel.org>
+> >> CC: Krzysztof Kozlowski <krzk@kernel.org>
+> >> CC: linux-samsung-soc@vger.kernel.org
+> >> CC: linux-clk@vger.kernel.org
+> >> CC: linux-arm-kernel@lists.infradead.org
+> >> CC: linux-kernel@vger.kernel.org
+> >> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> >> ---
+> >>   drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++++++++-
+> >>   1 file changed, 14 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsun=
+g/clk-exynos5420.c
+> >> index 3e87421..8bf9579 100644
+> >> --- a/drivers/clk/samsung/clk-exynos5420.c
+> >> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> >> @@ -1325,6 +1325,19 @@ static const struct samsung_pll_rate_table exyn=
+os5420_pll2550x_24mhz_tbl[] __ini
+> >>      PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+> >>   };
+> >>
+> >> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table=
+[] =3D {
+> >> +    PLL_35XX_RATE(24 * MHZ, 933000000, 311, 4, 1),
+> >> +    PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
+> >> +    PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
+> >> +    PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
+> >> +    PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
+> >> +    PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
+> >> +    PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+> >> +    PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+> >> +    PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+> >> +    PLL_35XX_RATE(24 * MHZ, 138000000, 184, 2, 4),
+> >
+> > Except for 825Mhz, I can't find the target frequency
+> > on Exynos5422 TRM document. Usually, Exynos TRM specified
+> > the supported stable clocks. It means that undefined clocks
+> > are not stable as I knew. Where do you find them?
+> >
+> > When I calculated the PLL frequency with PMS value, it is correct.
+> > But, just we need to check the reference of undefined clocks on TRM
+> > in order to guarantee the stable operation.
+> They values live in vendor code for Android.
+> I have tested the DMC & DDR with these ratios in stress scenarios
+> for a few days and it was stable.
 
-I'm applying these to next/drivers for Linux 5.1-rc1, is it necessary to
-have a tag for the headers ?
+If possible, please share the url of original vendor code.
 
-Neil
+>
+> >
+> > Remove 933/138Mhz because exynos5433-dmc.c doesn't use 933Mhz and 138Mh=
+z
+> > and also Exynos5422 TRM doesn't define 933/138Mhz on pll table.
+> OK, I will remove them.
+> >
+> >> +};
+> >> +
+> >>   static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl=
+[] =3D {
+> >>      PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
+> >>      PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
+> >> @@ -1467,7 +1480,7 @@ static void __init exynos5x_clk_init(struct devi=
+ce_node *np,
+> >>              exynos5x_plls[apll].rate_table =3D exynos5420_pll2550x_24=
+mhz_tbl;
+> >>              exynos5x_plls[epll].rate_table =3D exynos5420_epll_24mhz_=
+tbl;
+> >>              exynos5x_plls[kpll].rate_table =3D exynos5420_pll2550x_24=
+mhz_tbl;
+> >> -            exynos5x_plls[bpll].rate_table =3D exynos5420_pll2550x_24=
+mhz_tbl;
+> >> +            exynos5x_plls[bpll].rate_table =3D exynos5422_bpll_rate_t=
+able;
+> >
+> > Exynos5422 used the same PLL table for apll, kpll, bpll and so on.
+> > You don't need to make the separate pll table. Just add new entries
+> > to exynos5420_pll2550x_24mhz_tbl table.
+> OK, I will extend the exynos5420_pll2550x_24mhz_tbl table.
+>
+> In v4 patch set, it will be fixed.
+>
+> Regards,
+> Lukasz
+> >
+> >>      }
+> >>
+> >>      samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_=
+plls),
+> >>
+> >
+
+
+
+--
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
