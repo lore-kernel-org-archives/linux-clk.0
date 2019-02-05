@@ -2,137 +2,138 @@ Return-Path: <SRS0=JsB9=QM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0AAC282CB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 11:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A4CC282CB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 13:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22ADB207E0
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 11:18:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G37rBXGY"
+	by mail.kernel.org (Postfix) with ESMTP id 5C0E3207E0
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 13:44:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbfBELSx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:18:53 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:56508 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbfBELSx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 06:18:53 -0500
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190205111851epoutp0149a4413bbaa8ab2e2542ba15df8f427a~Ac73XhQZp1094510945epoutp01H;
-        Tue,  5 Feb 2019 11:18:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190205111851epoutp0149a4413bbaa8ab2e2542ba15df8f427a~Ac73XhQZp1094510945epoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549365531;
-        bh=IjPnEV2G3shoExWrS67epO84lD3+Rn//t7WEvoXafMs=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=G37rBXGYaLXj9Hx2U2dSCDVY5J8aALS/Z2++W3uX6wsmDY40zoy7eCmFN1EAWi6jd
-         zYgLpbJo44GunGesJMO3Kl0E4z8b91g6ar+2I9HXTBm81soz0qOQrID+MXeMvz+8/B
-         /N62yu0XVhLatIcEE0JN5qkTGUbOURR2mSESS3Jg=
-Received: from epsmges2p4.samsung.com (unknown [182.195.42.72]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190205111849epcas2p3bdd9cb3b6abaeae93513a73806b82fdf~Ac72STvwd1185211852epcas2p3K;
-        Tue,  5 Feb 2019 11:18:49 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F3.BB.04093.911795C5; Tue,  5 Feb 2019 20:18:49 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20190205111849epcas2p4346fb8152fcbbbe799f4bc44b3eb39f7~Ac72I2FDA0812308123epcas2p4n;
-        Tue,  5 Feb 2019 11:18:49 +0000 (GMT)
-X-AuditID: b6c32a48-173ff70000000ffd-76-5c597119a74c
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        08.D4.03689.911795C5; Tue,  5 Feb 2019 20:18:49 +0900 (KST)
-Received: from [106.116.147.40] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PMG00GJDA3A6T70@mmp1.samsung.com>; Tue, 05 Feb 2019 20:18:49 +0900 (KST)
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for 5.1
-Message-id: <a6278eec-efec-7c70-42df-9adf1ef1c63b@samsung.com>
-Date:   Tue, 05 Feb 2019 12:18:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Content-language: en-GB
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsWy7bCmma5kYWSMwdcGY4uNM9azWlz/8pzV
-        4mPPPVaLi6dcLf5d28jiwOrx/kYru8emVZ1sHn1bVjF6fN4kF8ASxWWTkpqTWZZapG+XwJXx
-        9eMU5oKvXBUnv4U1MP7i6GLk4JAQMJHYNN+pi5GLQ0hgB6PE7G37mCCc74wSndf7mLsYOcGK
-        Hv99zgaR2M0oMevNMhYI5z6jxOHj71hAqkQEgiTu9K8Fq2IW6GSUeLF6ChtIgk3AUKL3aB8j
-        iC0soC9xb+MndhCbV8BO4sDZC0wgNouAqkT3jrNg60QFIiQO975jhKgRlPgx+R7YAmYBTYkX
-        XyZB2eISx+7fZISw5SU2r3kLdeoCNonmVckQv7lIdBzNgQhLSzxbtZERwq6W2LW9mxnkTgmB
-        DkaJlgvboXqtgZ65yAoxk0+i4/Bfdog5vBIdbUIQJR4Sr3YcASsREoiV2LN/EfsERulZSC6d
-        heTSWUgunYXk0gWMLKsYxVILinPTU4uNCkz0ihNzi0vz0vWS83M3MYIjXctjB+OBcz6HGAU4
-        GJV4eH+YRMQIsSaWFVfmHmKU4GBWEuE95RsZI8SbklhZlVqUH19UmpNafIhRmoNFSZz3ofTc
-        aCGB9MSS1OzU1ILUIpgsEwenVAMjW3v7skDu5+q3966Y0+TyTtN9/0ct18uNbkcUWJZsN3A9
-        viA+RK/b6EqO/FmGVjbHkzfnHlfOf2HsoR6m4pf6/YrPRAv3vNXLtS1zTpVPZas1u1gpKK9Z
-        WdmktHGuU7L1u8nzj/5ue1s8L8LO4pRWz16zOfeVy6Nfxnz1nVh+4egj/Yi1ES+VWIozEg21
-        mIuKEwFy21l28AIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsVy+t9jAV3JwsgYg89TNSw2zljPanH9y3NW
-        i48991gtLp5ytfh3bSOLA6vH+xut7B6bVnWyefRtWcXo8XmTXABLFJdNSmpOZllqkb5dAlfG
-        149TmAu+clWc/BbWwPiLo4uRk0NCwETi8d/nbCC2kMBORomdXSZdjFxA9kNGiTP/+plAEiIC
-        ARIvp61lB0kwC3QySuxu+csIkmATMJToPdoHZgsL6Evc2/iJHcTmFbCTOHD2Algzi4CqRPeO
-        s8wgtqhAhMTHp/uYIGoEJX5MvsfSxcgBNFRdYsqUXJAws4C4xLH7NxkhbHmJzWveMk9g5JuF
-        pGMWQscsJB2zkHQsYGRZxSiZWlCcm55bbFRglJdarlecmFtcmpeul5yfu4kRGLDbDmv172B8
-        vCT+EKMAB6MSD+8Pk4gYIdbEsuLK3EOMEhzMSiK8p3wjY4R4UxIrq1KL8uOLSnNSiw8xSnOw
-        KInz8ucfixQSSE8sSc1OTS1ILYLJMnFwSjUwMnSU67E66LfOMf4Ry3do3/MNu6vcdjaJHHNZ
-        OI1pV8Y05dl5f89H2KuJmz1d4MnebbXZ0zz5/+Iy9juqBb+7D2/kuBf5x9PY9nX7rKTn2yP+
-        7Hwhd2/5ip63Ej+5Js29W196Ky6o8hvrZq2890tVO2bNfhhrcHpR8l3pD/ocpWv5/NnufO/+
-        psRSnJFoqMVcVJwIAPuYjkZUAgAA
-X-CMS-MailID: 20190205111849epcas2p4346fb8152fcbbbe799f4bc44b3eb39f7
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190205111849epcas2p4346fb8152fcbbbe799f4bc44b3eb39f7
-References: <CGME20190205111849epcas2p4346fb8152fcbbbe799f4bc44b3eb39f7@epcas2p4.samsung.com>
+        id S1726484AbfBENoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Feb 2019 08:44:20 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40549 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfBENoT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 08:44:19 -0500
+Received: by mail-ed1-f65.google.com with SMTP id g22so2864641edr.7;
+        Tue, 05 Feb 2019 05:44:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UzQZRFs25qWZAsAYEW0SYoGEoO/nV18H65SPSBaC+Lg=;
+        b=q2cUU42wTjBBeS52mlIKNdJR3Mm2RGo82LtvqgV14Ne2YeocLbnA6zDuxs1efqTN5u
+         XorcPodWmWETLqqZmBlnBsKLMag39BHJIznSKfQXFDYTirX//P/Olq3RY5d1G3Gw+5HK
+         onZjScV78O75fNZyHUTEUj/ibo60YuMSkHcMLo1hen+t5i9m/8cgczjHACiI20nnGAAf
+         zR+Dx0WtQZRr1K0qU+jeOaINiL67hNZg5M9DZLIGz3bwDD+9J+mPd2PN8NpGR96HOxAM
+         c/O4eNdrSNX2DKdJXqHD3rNadVN3gy91Ng3HPJKHrqNE7ZluupgDXztHvKTesUnijMHC
+         BKDg==
+X-Gm-Message-State: AHQUAuaqOqi0kjL9LKEDDs7e3h+R6dNsxvoICVBslgfy01Zz7PgE8p3L
+        m+dbQQATc5jKCTfu7nPaKwSAjiattWA=
+X-Google-Smtp-Source: AHgI3IbwDZ3aKY2morlIV/L1jPIeigRod/kM4BpuT69HQ76KJ1BcfiW9wCuz2ryTEKjDLMXkybS5sg==
+X-Received: by 2002:a50:9665:: with SMTP id y92mr3918195eda.282.1549374257270;
+        Tue, 05 Feb 2019 05:44:17 -0800 (PST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
+        by smtp.gmail.com with ESMTPSA id x47sm5195179eda.91.2019.02.05.05.44.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 05:44:16 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id p4so3657838wrt.7;
+        Tue, 05 Feb 2019 05:44:16 -0800 (PST)
+X-Received: by 2002:adf:891a:: with SMTP id s26mr3732163wrs.44.1549374256271;
+ Tue, 05 Feb 2019 05:44:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20190202155209.31617-1-plaes@plaes.org> <20190205094529.t7je4ozzu2b4ornc@flea>
+In-Reply-To: <20190205094529.t7je4ozzu2b4ornc@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 5 Feb 2019 21:44:02 +0800
+X-Gmail-Original-Message-ID: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+Message-ID: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Priit Laes <plaes@plaes.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Feb 5, 2019 at 5:45 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
+> > Recent patch of improving MP clock rate calculations by taking
+> > into account whether adjusting parent rate is allowed, have
+> > unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
+> > boards which fail with following error:
+> >
+> > [snip]
+> > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
+> > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
+> > sunxi-mmc 1c11000.mmc: data error, sending stop command
+> > sunxi-mmc 1c11000.mmc: send stop command failed
+> > [/snip]
+> >
+> > Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
+> > clock rate with following parents:
 
-Hi Stephen, Mike,
+You mean 52 and 51.2 MHz.
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+> > [snip]
+> > pll-ddr-base        2  2        0   768000000 0     0  50000
+> >    pll-ddr-other    1  1        0   768000000 0     0  50000
+> >       mmc2          0  0        0    51200000 0     0  50000
+> > [/snip]
+> >
+> > Now, after the improvements, requested and settled rate are both
+> > 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
+> > ends up like this:
+> > [snip]
+> > pll-periph-base     3  3        0  1200000000 0     0  50000
+> >    pll-periph       6  6        0   600000000 0     0  50000
+> >       mmc2          3  3        0    50000000 0     0  50000
+> > [/snip]
+> >
+> > With this patch (allowing mmc2 to set parent rate), we end up with
+> > working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
+> > [snip]
+> > pll-periph-base     3  3        0   312000000 0     0  50000
+> >    mbus             1  1        0    78000000 0     0  50000
+> >    pll-periph-sata  1  1        0    26000000 0     0  50000
+> >       sata          1  1        0    26000000 0     0  50000
+> >    pll-periph       5  5        0   156000000 0     0  50000
+> >       mmc2          0  0        0    52000000 0     0  50000
+> >       mmc0          0  0        0    39000000 0     0  50000
+> > [/snip]
+> >
+> > Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when allowed")
+> > Signed-off-by: Priit Laes <plaes@plaes.org>
+>
+> Applied, thanks!
+> Maxime
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+I'm concerned for other users of the PLL-PERIPH clock. AFAIK
+all of them, except the HRTIMER, expect the clock rate to stay
+the same and not change underneath them. And SATA expects it to
+be at 600 MHz, as the datasheet says. And while it may not directly
+apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
+reduced rate of 50 MHz just fine.
 
-are available in the Git repository at:
+In the commit in question, clocks without CLK_SET_RATE_PARENT
+should be using the old code (now in the if conditional block),
+i.e. the behavior should not have changed.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v5.1-samsung
+I don't think this actually "fixes" whatever bug was introduced,
+but only papers over the issue, and possible introduces further
+issues for other users.
 
-for you to fetch changes up to 81faa30df9b6e9088ea5ca488860616192e7b763:
-
-  clk: samsung: exynos5433: Add selected IMEM clocks (2019-02-01 14:36:47 +0100)
-
-----------------------------------------------------------------
-clk/samsung updates for 5.1
-
-Exynos5433 clock driver update adding support for selected clocks
-of the IMEM CMU required for the cryptographic subsystem (SlimSS).
-
-----------------------------------------------------------------
-Kamil Konieczny (5):
-      clk: samsung: dt-bindings: Add Exynos5433 IMEM CMU clock IDs
-      clk: samsung: exynos5433: Fix definition of CLK_ACLK_IMEM_{200, 266} clocks
-      clk: samsung: exynos5433: Fix name typo in sssx
-      clk: samsung: dt-bindings: Document Exynos5433 IMEM CMU
-      clk: samsung: exynos5433: Add selected IMEM clocks
-
- .../devicetree/bindings/clock/exynos5433-clock.txt  | 23 +++++++++++++
- drivers/clk/samsung/clk-exynos5433.c                | 38 ++++++++++++++++++++--
- include/dt-bindings/clock/exynos5433.h              |  8 ++++-
- 3 files changed, 65 insertions(+), 4 deletions(-)
-
-
--- 
-Regards,
-Sylwester
+Regards
+ChenYu
