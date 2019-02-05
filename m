@@ -3,54 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2D7C282CB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BC0C282D7
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF65F2080F
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DDA420844
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:28:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbfBEJ10 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:27:26 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41183 "EHLO
+        id S1726098AbfBEJ2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Feb 2019 04:28:10 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46882 "EHLO
         mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEJ10 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 04:27:26 -0500
-Received: by mail-vs1-f66.google.com with SMTP id t17so1717728vsc.8;
-        Tue, 05 Feb 2019 01:27:26 -0800 (PST)
+        with ESMTP id S1725898AbfBEJ2K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 04:28:10 -0500
+Received: by mail-vs1-f66.google.com with SMTP id n10so1689249vso.13;
+        Tue, 05 Feb 2019 01:28:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SFBrO/g436PyuazNFlVh9SjsTUxYLhiNA4degGEg0Pc=;
-        b=jb3QhsbdPBmsdRNOb4ve8ANMK2GLDvDHzU/joGRZKxwWIYeKOpYG27ZXIPF5aVVaiE
-         38u0psOTzEXK7FBJi90Fdp7a9rWAmDRzg8jm1VCshQkrZgj3+JVze4BQY4bY6E/sLSJ4
-         aqmtbDtS8/d+bjTidjufAH8OKbrlvsNhzLFNDJ7HZu4614ftZpjGNletOTz3iA3tGWAK
-         rqC8V+Kx+Jg3Kte1vnstLKGHce7D4cXVs6V70dT8RbxjoPiIWJRtIxiCQOL2uBd67TVP
-         5IlVdLei39DEvh8w0zul3kGFCd404X6uvyAqX0fmsRbmMb/jwetaIOaG+q2O8siiiEGg
-         8IHA==
-X-Gm-Message-State: AHQUAuahF6sk+c8tvleWX7nT5jZZzhIGH5oZvzxQp+5AL4RRcDM7yHNg
-        LQkAnAPoncTyHQiBAiIM8Ma02e1hgf9WaYUotESiOQc+
-X-Google-Smtp-Source: AHgI3IaYI1fsoTJTR8/SSBBgNjsJ7KGOJPaDSOa7mVnZ3KrhnAgMz5dGoVTJTMrs4Pnx5ulymTcekJxKrUn1oMqP1yE=
-X-Received: by 2002:a67:b60d:: with SMTP id d13mr1644431vsm.152.1549358845557;
- Tue, 05 Feb 2019 01:27:25 -0800 (PST)
+        bh=iQH+FPH6qAFHiY7B63f6L/FQlQWWmK/1P0mACkaaIg4=;
+        b=awGN6qbu3yEjo83LGg68n+P/lsykEkjf5seeGDwbp3oNtyS9TuvDyTjA7tfTT7oHFT
+         26nVl/si/kri9UT/mFZoJWLw+vjvjqx/bWr8PIAzxN5i8P0uYPcE7SGl2j9MxEM8lkF9
+         20Olwcb7JfY88ge7c6fqvE56LG4hlRkLMkknim5pmzSnt4wMNE/t7j9t7PK5CgfMDXl0
+         pdi20kF3slEH3EWFq4bbsyjD2OwQqgO/M4pzo7g5IXoVainlJkpE1bFT8cG3rHMMqdfV
+         ulfA8Xz46ZRBCc+de8zhU1DkWPY9TWQntm7bHilg0p7Oq7mzjGMy+cwtItcGTPVquRR6
+         wciw==
+X-Gm-Message-State: AHQUAuaPkn6TDWeYBG3/jXZMYBfJ7W3yrqkkGd4y0n0Ubgi3snlQEk3d
+        safPY2AsO5aKM80zcpPgcuDzk9Spog7gqfTfRoY=
+X-Google-Smtp-Source: AHgI3IZliUG2H2XEAiDqlErF6eHLy/v74F/6iAFMQVSVsmSYs/bihHj6KZFfwK1/3y8hm2/iA4bIStC3lqAy0M8//Ho=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr1614256vsj.11.1549358889564;
+ Tue, 05 Feb 2019 01:28:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20190131094021.3092-1-horms+renesas@verge.net.au> <20190131094021.3092-5-horms+renesas@verge.net.au>
-In-Reply-To: <20190131094021.3092-5-horms+renesas@verge.net.au>
+References: <20190131094021.3092-1-horms+renesas@verge.net.au> <20190131094021.3092-6-horms+renesas@verge.net.au>
+In-Reply-To: <20190131094021.3092-6-horms+renesas@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 5 Feb 2019 10:27:14 +0100
-Message-ID: <CAMuHMdXTcywH8UjnJcZr-Pff4eSkQG8KrHqyYtXCyVKoJp=nHQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] clk: renesas: r8a77990: Add Z2 clock
+Date:   Tue, 5 Feb 2019 10:27:57 +0100
+Message-ID: <CAMuHMdVSFz332a+dvoACJ9ROhxs0-Mwcnhx2hK-Jcz-kGdaqTQ@mail.gmail.com>
+Subject: Re: [PATCH/RFT v3 5/5] clk: renesas: r8a774c0: Add Z2 clock
 To:     Simon Horman <horms+renesas@verge.net.au>
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+        Biju Das <biju.das@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -59,12 +58,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, Jan 31, 2019 at 10:40 AM Simon Horman
 <horms+renesas@verge.net.au> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Adds support for R-Car RZ/G2E (r8a774c0) Z2 clock.
 >
-> Adds support for R-Car E3 (r8a77990) Z2 clock.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [simon: reworked changelog; rebased]
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
