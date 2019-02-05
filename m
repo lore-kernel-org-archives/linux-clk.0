@@ -4,81 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FFFC282CC
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42790C282CC
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B30232184D
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F6C9217F9
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:32:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549405742;
-	bh=6WHkd1+UkKwPg7U2XsHUH+zvzu5O/W+hf3bYnca/eo8=;
+	s=default; t=1549405929;
+	bh=wOvcA1CxjKZ6PmqOzv5o/xpdorhXhJKm4qvjhIcPK5w=;
 	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
-	b=Bjm3DZ7blgDWUOrB/HMexMjv168Xj91idxi0CRyLNYk8KWeOp8A4XjDNH28HoBGke
-	 A9hu31uwdBDW0ot6U8cKMyUew4ZbwbQHuC800XvNIn6TBiAwKxgv3ihDEN+wxHA0a9
-	 Kv7LzDiBkH5/BmyXGHnfNZ0EaruECrklAHhFIsPw=
+	b=VxSLP/2zhPLqNW8ZNiRkiE0+wrESK+XR2JPTsf2fxexgrHdroZZ8SifBwWSuLhKlp
+	 3z6IeUmyYnX2E1EgmuqLvS347xpeGxqLGShpzPDmkDj7WZV1nkY+ZO36Fz/wYwcwcj
+	 WCrBF22GinAYnrF82IAkIW+XO0cPEk7wXF1sjGdU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbfBEW3C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:29:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38000 "EHLO mail.kernel.org"
+        id S1726868AbfBEWcD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Feb 2019 17:32:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729364AbfBEW3C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:29:02 -0500
+        id S1726606AbfBEWcD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:32:03 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 934E02077B;
-        Tue,  5 Feb 2019 22:29:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1117F2077B;
+        Tue,  5 Feb 2019 22:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549405741;
-        bh=6WHkd1+UkKwPg7U2XsHUH+zvzu5O/W+hf3bYnca/eo8=;
+        s=default; t=1549405922;
+        bh=wOvcA1CxjKZ6PmqOzv5o/xpdorhXhJKm4qvjhIcPK5w=;
         h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
-        b=VUGCvQfWJ/HziulJGaKFh2GPkmaVoBfXLxKewKXu49Ciu3SlAnDZwHimrtaV51t/1
-         6abUMQFihWxlmtyDl/xBDuG/FvBFCMSWiPkaiP3uhZm16OaWBExFD26RFJz5u7Ocog
-         ebZCQnIFRFiQ/Y5ce3aO8Ifqq/GlKnI7Exjd7nK0=
+        b=1afT2NK/N9YwZXNohXM+mjjGybRKi0oPh3jNgDA9wb3p+k9Kq5GYj9iTVPoXBg7Sk
+         bwOBXUTVSXl1yOejt+lTr6WYaWyIRrmPvUMMxvu1lYY4qG7x2OIV1n3k6iH3dfA2P4
+         JRW88q8cPFetzrdGLGHWMhxsF9xMPEXxmoK/PTlg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: imx8mq: Fix the CLKO2 source select list
+Subject: Re: [PATCH v1 1/4] clk: qcom: smd: Add XO clock for MSM8998
 From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154940574088.169292.15304825462770873584@swboyd.mtv.corp.google.com>
-Cc:     shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rogerio.silva@nxp.com, Fabio Estevam <festevam@gmail.com>
-References: <20190130192102.7065-1-festevam@gmail.com>
+Message-ID: <154940592132.169292.15811923452101983358@swboyd.mtv.corp.google.com>
+Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        georgi.djakov@linaro.org
+References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org> <1548866144-30265-1-git-send-email-jhugo@codeaurora.org> <154940408967.169292.15276398799323074789@swboyd.mtv.corp.google.com> <6e62a49a-fdb1-a087-fe83-e86aed969ae7@codeaurora.org>
 User-Agent: alot/0.8
-To:     Fabio Estevam <festevam@gmail.com>
-In-Reply-To: <20190130192102.7065-1-festevam@gmail.com>
-Date:   Tue, 05 Feb 2019 14:29:00 -0800
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com
+In-Reply-To: <6e62a49a-fdb1-a087-fe83-e86aed969ae7@codeaurora.org>
+Date:   Tue, 05 Feb 2019 14:32:01 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Fabio Estevam (2019-01-30 11:21:02)
-> The CLKO2 clock source select list is the following as per the i.MX8M
-> Reference Manual:
+Quoting Jeffrey Hugo (2019-02-05 14:15:16)
+> On 2/5/2019 3:01 PM, Stephen Boyd wrote:
+> > Quoting Jeffrey Hugo (2019-01-30 08:35:44)
+> >> The XO clock generally feeds into other clock controllers as the parent
+> >> for a lot of clock generators.
+> >>
+> >> Fixes: 6131dc81211c (clk: qcom: smd: Add support for MSM8998 rpm clock=
+s)
+> >> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> >=20
+> > We've historically left out the XO clk because it causes problems where
+> > the XO vote goes away during late init because nobody references it from
+> > the rest of the clk tree and also because RPM defers probe of the system
+> > and then the console blows up when it gets a clk that can't change rate.
+> > See commit 54823af9cd52 ("clk: qcom: Always add factor clock for xo
+> > clocks") for some more info on why we removed all the workarounds and
+> > stuff around here too.
+> >=20
+> > So are you sure this is OK to do?
+> >  =20
+> >=20
 >=20
-> 000 - 25M_REF_CLK
-> 001 - SYSTEM_PLL2_DIV5
-> 010 - SYSTEM_PLL1_DIV2
-> 011 - SYSTEM_PLL2_DIV6
-> 100 - SYSTEM_PLL3_CLK
-> 101 - AUDIO_PLL1_CLK
-> 110 - VIDEO_PLL1_CLK
-> 111 - 32K_REF_CLK
+> So, I've got pretty much everything as modules, and I haven't seen any=20
+> issues.  However let me take a look at the commit you point out and see.
 >=20
-> However, in imx8mq_clko2_sels[] only the first four entries are correct.
->=20
-> Fix it by adding the missing "sys3_pll2_out" entry in order to match
-> the description from the manual.
->=20
-> Fixes: b80522040cd3f ("clk: imx: Add clock driver for i.MX8MQ CCM")
-> Reported-by: Rogerio Pimentel <rogerio.silva@nxp.com>
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
-> ---
 
-Do I need to fast track this into v5.0 final? Or this is a non-critical
-fix for something that isn't used right now?
+Is the name of the clk "xo_clk_src"? That isn't the name that we were
+expecting the XO clk from RPM to be called. You might have to look back
+at the history of the rpm clk driver on the list and see when Georgi
+dropped the XO clk from it and if there was anything wrong with that. I
+can't recall if this was discussed on the list or if he just told me in
+some hallway conversation at Connect.
 
