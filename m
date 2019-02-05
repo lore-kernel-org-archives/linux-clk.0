@@ -2,114 +2,96 @@ Return-Path: <SRS0=JsB9=QM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05975C282CB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFBBC282CB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF423217F9
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5CC9217F9
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549404964;
-	bh=umpQPksptIkOehMreOlU/V5d6V4wOERTvvCniVu/IH0=;
+	s=default; t=1549405004;
+	bh=zjjFjM8sR4vK4rxNHikRhBp4Th88nUBzeXV9dOrgbU4=;
 	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
-	b=glt0Wlfs8FAzwKf1q/OkZA7sqrOhU9QTymEaEV6NSpFmzH0ceyd0MVa9GJac2GLXZ
-	 /YmSRoY7Xo8GUNKUf9MccuL4xX0fXAxt0KgYvjjPsDKjebFYLMZe/+8czx5TzJy8VR
-	 V4eImo0HoPAtZc2IMdtxZzkqJXGgPRlrqeTHzliY=
+	b=lnxqEt6Qevp9H0sMzTDD9HF0rC1pFHW4tL595ob0KeRsTajDETrR7RRLykIUkBkya
+	 IMYQhANtEFLwjMNJiG47102H18vUmr2jET1pYeM0hdT+dHxtc5AoUKOdTI3j/NvM78
+	 sXQUSRgbHT5iCmovAy3ukj1zWV+85SfAvUsRdWFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbfBEWQE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:16:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60738 "EHLO mail.kernel.org"
+        id S1727469AbfBEWQn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Feb 2019 17:16:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726742AbfBEWQE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:16:04 -0500
+        id S1726742AbfBEWQn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:16:43 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BAFF20823;
-        Tue,  5 Feb 2019 22:16:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B40420823;
+        Tue,  5 Feb 2019 22:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549404963;
-        bh=umpQPksptIkOehMreOlU/V5d6V4wOERTvvCniVu/IH0=;
+        s=default; t=1549405002;
+        bh=zjjFjM8sR4vK4rxNHikRhBp4Th88nUBzeXV9dOrgbU4=;
         h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
-        b=fHpwgn1kOYFXyRd7g/acRnekadp+MshVAaVzAFGpgOmHj7JRoixFHhtshJ2esF4UX
-         yIZ5ZF093htnRA61zrvQSgifMrEvhcmpe8qWbTMSsatYdX9KFVzfINqlIPE8d9opRT
-         vWakjWimk9TpxzeUBi02Wsbq60fE4RFEwfdmwDN0=
+        b=mxwgMEvQ9BQstkBKMhxI06bru9GK1wH/pJPzMlkkiJ63y5w30gLQa/WMe0t2aefFB
+         Ch95o9PmIqS8fKZACwDE13NginLK9b4QHhnumPKhZ0tGL7gHs7HoveitUxkpFOlzDj
+         2vjAJxRUrg1QthF1wy6P8snWpm4Uhhs25EAsNub8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: Add support for the MSM8998 mmcc
+Subject: Re: [PATCH v1 3/4] clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154940496255.169292.11279175475668034167@swboyd.mtv.corp.google.com>
+Message-ID: <154940500172.169292.7462110370898212066@swboyd.mtv.corp.google.com>
 Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org> <1548866159-30304-1-git-send-email-jhugo@codeaurora.org> <154940414347.169292.9150834270087697417@swboyd.mtv.corp.google.com> <ba5d7855-9dd2-5a99-ae8c-a7fce125ca25@codeaurora.org>
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org> <1548866171-30341-1-git-send-email-jhugo@codeaurora.org> <154940436246.169292.7591382350282828249@swboyd.mtv.corp.google.com> <54750df0-245c-74ab-2a33-ce1588f3e38e@codeaurora.org>
 User-Agent: alot/0.8
 To:     Jeffrey Hugo <jhugo@codeaurora.org>, bjorn.andersson@linaro.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-In-Reply-To: <ba5d7855-9dd2-5a99-ae8c-a7fce125ca25@codeaurora.org>
-Date:   Tue, 05 Feb 2019 14:16:02 -0800
+        mturquette@baylibre.com
+In-Reply-To: <54750df0-245c-74ab-2a33-ce1588f3e38e@codeaurora.org>
+Date:   Tue, 05 Feb 2019 14:16:41 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-02-05 14:08:43)
-> On 2/5/2019 3:02 PM, Stephen Boyd wrote:
-> > Quoting Jeffrey Hugo (2019-01-30 08:35:59)
-> >> Document the multimedia clock controller found on MSM8998
-> >>
-> >> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> >> ---
-> >>   Documentation/devicetree/bindings/clock/qcom,mmcc.txt | 7 +++++++
-> >>   1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt b/D=
-ocumentation/devicetree/bindings/clock/qcom,mmcc.txt
-> >> index 8b0f784..ae85bca 100644
-> >> --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
-> >> +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
-> >> @@ -10,11 +10,18 @@ Required properties :
-> >>                          "qcom,mmcc-msm8960"
-> >>                          "qcom,mmcc-msm8974"
-> >>                          "qcom,mmcc-msm8996"
-> >> +                       "qcom,mmcc-msm8998"
-> >>  =20
-> >>   - reg : shall contain base register location and length
-> >>   - #clock-cells : shall contain 1
-> >>   - #reset-cells : shall contain 1
-> >>  =20
-> >> +For MSM8998 only:
-> >> +       - clocks: a list of phandles and clock-specifier pairs,
-> >> +                 one for each entry in clock-names.
-> >> +       - clock-names: "xo" for the xo clock,
-> >> +                      "gpll0" for the global pll 0 clock.
+Quoting Jeffrey Hugo (2019-02-05 14:12:00)
+> On 2/5/2019 3:06 PM, Stephen Boyd wrote:
+> > Quoting Jeffrey Hugo (2019-01-30 08:36:11)
+> > [..]
+> >> +};
+> >> +MODULE_DEVICE_TABLE(of, mmcc_msm8998_match_table);
+> >> +
+> >> +static int mmcc_msm8998_probe(struct platform_device *pdev)
+> >> +{
+> >> +       struct device *dev =3D &pdev->dev;
+> >> +       int i, ret;
+> >> +       struct regmap *regmap;
+> >> +       struct clk *c;
+> >> +
+> >> +       c =3D devm_clk_get(dev, "xo");
+> >> +       if (!IS_ERR(c))
+> >> +               dummy_xo_init.parent_names =3D
+> >> +                                       (const char *[]){__clk_get_nam=
+e(c)};
+> >> +       else
+> >> +               return PTR_ERR(c);
+> >> +
+> >> +       c =3D devm_clk_get(dev, "gpll0");
+> >> +       if (!IS_ERR(c))
+> >> +               dummy_gpll0_init.parent_names =3D
+> >> +                                       (const char *[]){__clk_get_nam=
+e(c)};
+> >> +       else
+> >> +               return PTR_ERR(c);
 > >=20
-> > Wouldn't the DSI plls also be listed here? And anything else that is
-> > external to this clock controller?
-> >=20
+> > Urgh, my parent mapping series can't come be merged fast enough it
+> > seems!
 >=20
-> We can't get the DSI plls from DT as far as I am aware (upstream).  That =
-
-> is why I mentioned in the cover letter we need to rely on the global=20
-> namespace.
-
-Why not? Because the DSI PLL isn't a clk provider? Or it doesn't have
-#clock-cells? Please try to use the DSI PLLs from DT or at least specify
-them in the binding as optional clocks that may not matter if DSI is not
-enabled for example.
-
->=20
-> Also, the DSI plls, etc present a chicken and egg situation, as the plls =
-
-> require mmcc, and mmcc requires the plls.  I forsee an unsolvable=20
-> EPROBE_DEFER issue.
+> Sorry, I'm not familiar with the context.  Something I should incorporate?
 >=20
 
-We've "solved" that problem with orphan clks and the clk parent rewrite
-series. Maybe you can try it out to help flush out any bugs lurking
-there.
+https://lkml.kernel.org/r/20190129061021.94775-1-sboyd@kernel.org
