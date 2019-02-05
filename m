@@ -2,138 +2,106 @@ Return-Path: <SRS0=JsB9=QM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A4CC282CB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 13:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385B0C4151A
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 14:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0E3207E0
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 13:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 080AA217F9
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 14:36:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="XJwc746Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfBENoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:44:20 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40549 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBENoT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 08:44:19 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so2864641edr.7;
-        Tue, 05 Feb 2019 05:44:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UzQZRFs25qWZAsAYEW0SYoGEoO/nV18H65SPSBaC+Lg=;
-        b=q2cUU42wTjBBeS52mlIKNdJR3Mm2RGo82LtvqgV14Ne2YeocLbnA6zDuxs1efqTN5u
-         XorcPodWmWETLqqZmBlnBsKLMag39BHJIznSKfQXFDYTirX//P/Olq3RY5d1G3Gw+5HK
-         onZjScV78O75fNZyHUTEUj/ibo60YuMSkHcMLo1hen+t5i9m/8cgczjHACiI20nnGAAf
-         zR+Dx0WtQZRr1K0qU+jeOaINiL67hNZg5M9DZLIGz3bwDD+9J+mPd2PN8NpGR96HOxAM
-         c/O4eNdrSNX2DKdJXqHD3rNadVN3gy91Ng3HPJKHrqNE7ZluupgDXztHvKTesUnijMHC
-         BKDg==
-X-Gm-Message-State: AHQUAuaqOqi0kjL9LKEDDs7e3h+R6dNsxvoICVBslgfy01Zz7PgE8p3L
-        m+dbQQATc5jKCTfu7nPaKwSAjiattWA=
-X-Google-Smtp-Source: AHgI3IbwDZ3aKY2morlIV/L1jPIeigRod/kM4BpuT69HQ76KJ1BcfiW9wCuz2ryTEKjDLMXkybS5sg==
-X-Received: by 2002:a50:9665:: with SMTP id y92mr3918195eda.282.1549374257270;
-        Tue, 05 Feb 2019 05:44:17 -0800 (PST)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id x47sm5195179eda.91.2019.02.05.05.44.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 05:44:16 -0800 (PST)
-Received: by mail-wr1-f50.google.com with SMTP id p4so3657838wrt.7;
-        Tue, 05 Feb 2019 05:44:16 -0800 (PST)
-X-Received: by 2002:adf:891a:: with SMTP id s26mr3732163wrs.44.1549374256271;
- Tue, 05 Feb 2019 05:44:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20190202155209.31617-1-plaes@plaes.org> <20190205094529.t7je4ozzu2b4ornc@flea>
-In-Reply-To: <20190205094529.t7je4ozzu2b4ornc@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 5 Feb 2019 21:44:02 +0800
-X-Gmail-Original-Message-ID: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
-Message-ID: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
- mmc2 clock
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Priit Laes <plaes@plaes.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        id S1729217AbfBEOgD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Feb 2019 09:36:03 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:51526 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728644AbfBEOgD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 09:36:03 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2876E25B7E9;
+        Wed,  6 Feb 2019 01:36:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1549377361; bh=3GXU09+dcu9fNLwKAefaSAYPnPUaCOS29V9g7tj6YE4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XJwc746Y8/Bi7tbKIBgHODdy5hOJi5q4LGodBchOuym5D8XBEGtCKsfv3Euv4VKmz
+         Uhe+nhE3H3UozvDSM9gkA/j1/onTKxIhEILvxiBX95MRKF0TanhcqTbkV9VisoHk92
+         Uf60qXNSv0urzCQDLYCPPm9XPU4O2gcuoBML9vKI=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 46F53940486; Tue,  5 Feb 2019 15:35:59 +0100 (CET)
+Date:   Tue, 5 Feb 2019 15:35:59 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Content-Type: text/plain; charset="UTF-8"
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v3 2/5] clk: renesas: rcar-gen3: Parameterise Z and Z2
+ clock offset
+Message-ID: <20190205143558.jhfy2atkcml7t5fd@verge.net.au>
+References: <20190131094021.3092-1-horms+renesas@verge.net.au>
+ <20190131094021.3092-3-horms+renesas@verge.net.au>
+ <CAMuHMdXsQ_e3=9q8EJVcK3L5BSNGQDux4tGe+sxLJPgFFVEtZQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXsQ_e3=9q8EJVcK3L5BSNGQDux4tGe+sxLJPgFFVEtZQ@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 5:45 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
-> > Recent patch of improving MP clock rate calculations by taking
-> > into account whether adjusting parent rate is allowed, have
-> > unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
-> > boards which fail with following error:
+On Tue, Feb 05, 2019 at 11:48:06AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Jan 31, 2019 at 10:40 AM Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Parameterise the offset of control bits within the FRQCRC register
+> > for Z and Z2 clocks.
 > >
-> > [snip]
-> > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-> > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-> > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > sunxi-mmc 1c11000.mmc: send stop command failed
-> > [/snip]
+> > This is in preparation for supporting the Z2 clock on the R-Car E3
+> > (r8a77990) SoC which uses a different offset for control bits to
+> > other, already, supported SoCs.
 > >
-> > Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
-> > clock rate with following parents:
-
-You mean 52 and 51.2 MHz.
-
-> > [snip]
-> > pll-ddr-base        2  2        0   768000000 0     0  50000
-> >    pll-ddr-other    1  1        0   768000000 0     0  50000
-> >       mmc2          0  0        0    51200000 0     0  50000
-> > [/snip]
+> > This mechanism should be extendable to other clocks, such as ZG,
+> > f.e. by adding the number of control bits as a parameter to
+> > cpg_z_clk_register().
 > >
-> > Now, after the improvements, requested and settled rate are both
-> > 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
-> > ends up like this:
-> > [snip]
-> > pll-periph-base     3  3        0  1200000000 0     0  50000
-> >    pll-periph       6  6        0   600000000 0     0  50000
-> >       mmc2          3  3        0    50000000 0     0  50000
-> > [/snip]
+> > As suggested by Geert Uytterhoeven.
 > >
-> > With this patch (allowing mmc2 to set parent rate), we end up with
-> > working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
-> > [snip]
-> > pll-periph-base     3  3        0   312000000 0     0  50000
-> >    mbus             1  1        0    78000000 0     0  50000
-> >    pll-periph-sata  1  1        0    26000000 0     0  50000
-> >       sata          1  1        0    26000000 0     0  50000
-> >    pll-periph       5  5        0   156000000 0     0  50000
-> >       mmc2          0  0        0    52000000 0     0  50000
-> >       mmc0          0  0        0    39000000 0     0  50000
-> > [/snip]
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> 
+> > @@ -568,14 +566,9 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+> >                 break;
 > >
-> > Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when allowed")
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
->
-> Applied, thanks!
-> Maxime
+> >         case CLK_TYPE_GEN3_Z:
+> > -               return cpg_z_clk_register(core->name, __clk_get_name(parent),
+> > -                                         base, CPG_FRQCRC_ZFC_MASK,
+> > -                                         core->div);
+> > -
+> >         case CLK_TYPE_GEN3_Z2:
+> >                 return cpg_z_clk_register(core->name, __clk_get_name(parent),
+> > -                                         base, CPG_FRQCRC_Z2FC_MASK,
+> > -                                         core->div);
+> > +                                         base, core->div, core->offset);
+> 
+> CLK_TYPE_GEN3_Z and CLK_TYPE_GEN3_Z2 are now the same type.
+> Perhaps they can be merged completely, and be absorbed into the
+> DEF_GEN3_Z() macro?
+> Or not, depending on how ZG support will be added...
 
-I'm concerned for other users of the PLL-PERIPH clock. AFAIK
-all of them, except the HRTIMER, expect the clock rate to stay
-the same and not change underneath them. And SATA expects it to
-be at 600 MHz, as the datasheet says. And while it may not directly
-apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
-reduced rate of 50 MHz just fine.
+Strange, I did have them merged locally and I think that is the right thing
+to do, but some how this version got posted. I think that if they
+subsequently need to be re-split then so be it. But lets not jump
+to conclusions.
 
-In the commit in question, clocks without CLK_SET_RATE_PARENT
-should be using the old code (now in the if conditional block),
-i.e. the behavior should not have changed.
-
-I don't think this actually "fixes" whatever bug was introduced,
-but only papers over the issue, and possible introduces further
-issues for other users.
-
-Regards
-ChenYu
+I'll plan on posting v4 unless you object.
