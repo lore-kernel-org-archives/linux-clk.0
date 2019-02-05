@@ -2,96 +2,123 @@ Return-Path: <SRS0=JsB9=QM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA98FC4151A
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D7EC282CB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C2822175B
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCBC920821
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 09:58:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfBEJaZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:30:25 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46387 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbfBEJaZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 04:30:25 -0500
-Received: by mail-ua1-f65.google.com with SMTP id v24so884337uap.13;
-        Tue, 05 Feb 2019 01:30:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8oORcRbFauZKF4z73t6MSzllV6Ekq2Xjm3pH+EVV3C0=;
-        b=TnzX/E3/ZedMdIjv7ns1TqJTpqC2a27frSN6vcOGn4d5oJ0Maubc2auxrQMYn+CqIi
-         olHPryJzl0WlD5gVGnqri6KZNnu7eAKl6HnuA1DtZSD5/Gm5Yp7I5WxG3uu3voDIxCdc
-         sK76jn2bpyfOYkzAeXHsa4gYmeSe9mzJma6r5CI95HYoxHbZIvtT3SLeGCJVBhMFsqie
-         kHpcAWcqhkkEcHh1GGtFflN//DRXuqpK004dQR0p91CVKeyXImfhRayc+hb8I9VzPUk5
-         GDb8U9kPi6DHEgiZEwlgE2wMDCSi+FyPprT4m6r2kPQiC9GXhnPRmE29/sQmdGqHZ6ma
-         /FLw==
-X-Gm-Message-State: AHQUAub5xXQM8H2WfSZd1EUH6ocmMaO7f971g7smOGYwGLOKNxksCZ1Q
-        adSahnXLTPBbhJtvKPwiRql2Vp9NWJBH10yRNs8=
-X-Google-Smtp-Source: AHgI3IbiOtAAEc4YuP0ZMtxrpbdfXXQxd4zSfFHYgzBZYzfPYGHCdkr9ov+TJnDjpXWH6ElOybJrgQkGmwHC3cj71oI=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr1467578ual.20.1549359024530;
- Tue, 05 Feb 2019 01:30:24 -0800 (PST)
+        id S1728686AbfBEJ6U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Feb 2019 04:58:20 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:53202 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfBEJ6U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Feb 2019 04:58:20 -0500
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id C84523A1E96;
+        Tue,  5 Feb 2019 10:45:32 +0100 (CET)
+X-Originating-IP: 90.88.147.226
+Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id DFCF0FF80B;
+        Tue,  5 Feb 2019 09:45:29 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 10:45:29 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190205094529.t7je4ozzu2b4ornc@flea>
+References: <20190202155209.31617-1-plaes@plaes.org>
 MIME-Version: 1.0
-References: <20190131094021.3092-1-horms+renesas@verge.net.au>
-In-Reply-To: <20190131094021.3092-1-horms+renesas@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 5 Feb 2019 10:30:13 +0100
-Message-ID: <CAMuHMdW+hTQKQvnLfsoNQRM5g=NbZaSGzvr3xczQjd58TVBuDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] clk: renesas: r8a77990: Add Z2 clock
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eqrr4j6aqz3xqscg"
+Content-Disposition: inline
+In-Reply-To: <20190202155209.31617-1-plaes@plaes.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Simon,
 
-On Thu, Jan 31, 2019 at 10:40 AM Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> this series adds the R-Car E3 (r8a77990) Z2 clock as a clock
-> with both a fixed and variable divisor with a parent of PLL0.
->
-> In order to do so this series:
->
-> 1. Parameterise Z and Z2 clock fixed divisor in shared Gen-3 CPG
->    driver code to allow fixed divisors other than 2 - the E3 Z2
->    clock has a fixed divisor of 4
->
-> 2. Parameterise offset of Z and Z2 clock controll bits -
->    the offsets on E3 differ to other R-Car Gen 3 SoCs
->
-> 3. Support Z and Z2 clocks with high frequency parents.
->    The parent of the E3 Z2 clock, PLL0, is 4.8GHz and thus
->    when expressed in HZ must be treated as a 64bit value.
->
-> 4. Actually add the E3 Z2 clock
->
-> As a follow-up, as per reading the documentation, the RZ/G2E (r8a774c0)
-> Z2 clock is added.
+--eqrr4j6aqz3xqscg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, this looks good to me.
-Before queuing in clk-renesas-v5.1, to allow more testing, I'm importing
-this into a topic branch, to be included in today's renesas-drivers release.
+On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
+> Recent patch of improving MP clock rate calculations by taking
+> into account whether adjusting parent rate is allowed, have
+> unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
+> boards which fail with following error:
+>=20
+> [snip]
+> EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
+> EXT4-fs (mmcblk1p4): write access will be enabled during recovery
+> sunxi-mmc 1c11000.mmc: data error, sending stop command
+> sunxi-mmc 1c11000.mmc: send stop command failed
+> [/snip]
+>=20
+> Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
+> clock rate with following parents:
+> [snip]
+> pll-ddr-base        2  2        0   768000000 0     0  50000
+>    pll-ddr-other    1  1        0   768000000 0     0  50000
+>       mmc2          0  0        0    51200000 0     0  50000
+> [/snip]
+>=20
+> Now, after the improvements, requested and settled rate are both
+> 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
+> ends up like this:
+> [snip]
+> pll-periph-base     3  3        0  1200000000 0     0  50000
+>    pll-periph       6  6        0   600000000 0     0  50000
+>       mmc2          3  3        0    50000000 0     0  50000
+> [/snip]
+>=20
+> With this patch (allowing mmc2 to set parent rate), we end up with
+> working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
+> [snip]
+> pll-periph-base     3  3        0   312000000 0     0  50000
+>    mbus             1  1        0    78000000 0     0  50000
+>    pll-periph-sata  1  1        0    26000000 0     0  50000
+>       sata          1  1        0    26000000 0     0  50000
+>    pll-periph       5  5        0   156000000 0     0  50000
+>       mmc2          0  0        0    52000000 0     0  50000
+>       mmc0          0  0        0    39000000 0     0  50000
+> [/snip]
+>=20
+> Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when all=
+owed")
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 
-Gr{oetje,eeting}s,
+Applied, thanks!
+Maxime
 
-                        Geert
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--eqrr4j6aqz3xqscg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFlbOQAKCRDj7w1vZxhR
+xaRYAQC0WLNx/9ga8vQdJsVGLopmekwrngsA7dsqJWdwuT6Y2QEA1g9aSZKzSpQL
+Gfc8ryx3K2r9net+Ehu/S9GU8vpXfQ8=
+=1aqM
+-----END PGP SIGNATURE-----
+
+--eqrr4j6aqz3xqscg--
