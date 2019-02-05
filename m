@@ -6,92 +6,94 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFBBC282CB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE80C282CB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5CC9217F9
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49D6C217F9
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Feb 2019 22:18:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549405004;
-	bh=zjjFjM8sR4vK4rxNHikRhBp4Th88nUBzeXV9dOrgbU4=;
+	s=default; t=1549405103;
+	bh=1KxpbNDUtd9p0XTakha1cU6vHm25z1i9tDxWJUMCw7c=;
 	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
-	b=lnxqEt6Qevp9H0sMzTDD9HF0rC1pFHW4tL595ob0KeRsTajDETrR7RRLykIUkBkya
-	 IMYQhANtEFLwjMNJiG47102H18vUmr2jET1pYeM0hdT+dHxtc5AoUKOdTI3j/NvM78
-	 sXQUSRgbHT5iCmovAy3ukj1zWV+85SfAvUsRdWFM=
+	b=T/CBUK7m5VCxw68yiQmAj2c7hfAPiynpToZHP/fxNm4TkcLH/AlFAES1DfGEMMi5n
+	 fk60z3vh5u58KIt7dlHNAtuMLnFPg4eBNBEisy5Cn0e04EV1u3dNgw6DUG6xb1pvC3
+	 E+d9F8fV2QrIUu62eV5lR0D4y0vxbzSCgMtiIF1w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfBEWQn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:16:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60968 "EHLO mail.kernel.org"
+        id S1729364AbfBEWSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Feb 2019 17:18:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726742AbfBEWQn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:16:43 -0500
+        id S1726742AbfBEWSW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:18:22 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B40420823;
-        Tue,  5 Feb 2019 22:16:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AD1620823;
+        Tue,  5 Feb 2019 22:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549405002;
-        bh=zjjFjM8sR4vK4rxNHikRhBp4Th88nUBzeXV9dOrgbU4=;
+        s=default; t=1549405102;
+        bh=1KxpbNDUtd9p0XTakha1cU6vHm25z1i9tDxWJUMCw7c=;
         h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
-        b=mxwgMEvQ9BQstkBKMhxI06bru9GK1wH/pJPzMlkkiJ63y5w30gLQa/WMe0t2aefFB
-         Ch95o9PmIqS8fKZACwDE13NginLK9b4QHhnumPKhZ0tGL7gHs7HoveitUxkpFOlzDj
-         2vjAJxRUrg1QthF1wy6P8snWpm4Uhhs25EAsNub8=
+        b=oyFrFIcjMJYaAxzblv5l42Ewz9cWQvg6oEI2bptKXchFWFQCpUblc+uLViq4T3g+m
+         3P+M0u3c6VkENXBTac+6SwKXxgtjOrtm1tuNlTOBleL9ol1BPl3gLnLfvbb8aaXaPl
+         7dy9LFyEhAmmqtyt94msYQhGfs4WNHosJ6bS0uQE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 3/4] clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+Subject: Re: [PATCH 2/2] clk: meson: Add G12A AO Clock + Reset Controller
 From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154940500172.169292.7462110370898212066@swboyd.mtv.corp.google.com>
-Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org> <1548866171-30341-1-git-send-email-jhugo@codeaurora.org> <154940436246.169292.7591382350282828249@swboyd.mtv.corp.google.com> <54750df0-245c-74ab-2a33-ce1588f3e38e@codeaurora.org>
+Message-ID: <154940510132.169292.12584338453129084603@swboyd.mtv.corp.google.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190204091331.9298-1-narmstrong@baylibre.com> <20190204091331.9298-3-narmstrong@baylibre.com>
 User-Agent: alot/0.8
-To:     Jeffrey Hugo <jhugo@codeaurora.org>, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com
-In-Reply-To: <54750df0-245c-74ab-2a33-ce1588f3e38e@codeaurora.org>
-Date:   Tue, 05 Feb 2019 14:16:41 -0800
+To:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com
+In-Reply-To: <20190204091331.9298-3-narmstrong@baylibre.com>
+Date:   Tue, 05 Feb 2019 14:18:21 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-02-05 14:12:00)
-> On 2/5/2019 3:06 PM, Stephen Boyd wrote:
-> > Quoting Jeffrey Hugo (2019-01-30 08:36:11)
-> > [..]
-> >> +};
-> >> +MODULE_DEVICE_TABLE(of, mmcc_msm8998_match_table);
-> >> +
-> >> +static int mmcc_msm8998_probe(struct platform_device *pdev)
-> >> +{
-> >> +       struct device *dev =3D &pdev->dev;
-> >> +       int i, ret;
-> >> +       struct regmap *regmap;
-> >> +       struct clk *c;
-> >> +
-> >> +       c =3D devm_clk_get(dev, "xo");
-> >> +       if (!IS_ERR(c))
-> >> +               dummy_xo_init.parent_names =3D
-> >> +                                       (const char *[]){__clk_get_nam=
-e(c)};
-> >> +       else
-> >> +               return PTR_ERR(c);
-> >> +
-> >> +       c =3D devm_clk_get(dev, "gpll0");
-> >> +       if (!IS_ERR(c))
-> >> +               dummy_gpll0_init.parent_names =3D
-> >> +                                       (const char *[]){__clk_get_nam=
-e(c)};
-> >> +       else
-> >> +               return PTR_ERR(c);
-> >=20
-> > Urgh, my parent mapping series can't come be merged fast enough it
-> > seems!
->=20
-> Sorry, I'm not familiar with the context.  Something I should incorporate?
->=20
+Quoting Neil Armstrong (2019-02-04 01:13:30)
+> + * Register offsets from the data sheet must be multiplied by 4.
+> + */
+> +#define AO_RTI_STATUS_REG3     0x0C
+> +#define AO_RTI_PWR_CNTL_REG0   0x10
+> +#define AO_RTI_GEN_CNTL_REG0   0x40
+> +#define AO_CLK_GATE0           0x4c
+> +#define AO_CLK_GATE0_SP                0x50
+> +#define AO_OSCIN_CNTL          0x58
+> +#define AO_CEC_CLK_CNTL_REG0   0x74
+> +#define AO_CEC_CLK_CNTL_REG1   0x78
+> +#define AO_SAR_CLK             0x90
+> +#define AO_RTC_ALT_CLK_CNTL0   0x94
+> +#define AO_RTC_ALT_CLK_CNTL1   0x98
+> +
+> +#define AXG_AO_GATE(_name, _reg, _bit)                                 \
+> +static struct clk_regmap g12a_aoclk_##_name =3D {                       =
+         \
+> +       .data =3D &(struct clk_regmap_gate_data) {                       =
+ \
+> +               .offset =3D (_reg),                                      =
+ \
+> +               .bit_idx =3D (_bit),                                     =
+ \
+> +       },                                                              \
+> +       .hw.init =3D &(struct clk_init_data) {                           =
+ \
+> +               .name =3D  "g12a_ao_" #_name,                            =
+ \
+> +               .ops =3D &clk_regmap_gate_ops,                           =
+ \
+> +               .parent_names =3D (const char *[]){ IN_PREFIX "mpeg-clk" =
+}, \
+> +               .num_parents =3D 1,                                      =
+ \
+> +               .flags =3D CLK_IGNORE_UNUSED,                            =
+ \
 
-https://lkml.kernel.org/r/20190129061021.94775-1-sboyd@kernel.org
+Can you please add a comment explaining why CLK_IGNORE_UNUSED is here?
+It will help future readers know what's going on with this special flag.
+
