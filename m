@@ -2,79 +2,160 @@ Return-Path: <SRS0=eFQB=QN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7EEC169C4
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 19:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C30CBC169C4
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 19:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A9392083B
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 19:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B4F320B1F
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 19:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549481001;
-	bh=t4pXXUM8i1eMc+Ukhb5rLWTOVP8ef3Qps1Xp4FjUkcI=;
+	s=default; t=1549482011;
+	bh=XopYzYf3s1Zy0ZBiBCEL0/QigrtYkhisrvuFBbSdzG8=;
 	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=wVvzyUoDMQkuD29OLzf8V8RPOM/qYnDq/g60uzlP6cSdRHkfg5mAHxQ74YCv/iHTN
-	 8cpWS/efFkrgaSUEDoB4/6SN/dGSeWLSMcK2Vt4YZuCJ+W9GmEnwXCdRYJtHEiklq6
-	 kF7RClpwBMa+X51WYy5vC5Fx0c8v9jvCib2NrmPw=
+	b=kLU5JXD7eaTPfX2c3ZF0FS2ZJKP+SrLC7tcZy7uZSox1+VLaBj6BGoDo4sysx6LUc
+	 fpPUhWIK8RV+I3oKFg1e/zqAmt9ZU4/stmL7eJohRxCEIzNayRB5UKoes4PlIH7OkE
+	 sQORl2GgfaBZ3sH5STHDICdK1IquWDMFuu9l3KrU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbfBFTXU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Feb 2019 14:23:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56484 "EHLO mail.kernel.org"
+        id S1726480AbfBFTkL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Feb 2019 14:40:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726480AbfBFTXU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Feb 2019 14:23:20 -0500
+        id S1726549AbfBFTkL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 6 Feb 2019 14:40:11 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1FCB2083B;
-        Wed,  6 Feb 2019 19:23:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 965A12080D;
+        Wed,  6 Feb 2019 19:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549481000;
-        bh=t4pXXUM8i1eMc+Ukhb5rLWTOVP8ef3Qps1Xp4FjUkcI=;
+        s=default; t=1549482009;
+        bh=XopYzYf3s1Zy0ZBiBCEL0/QigrtYkhisrvuFBbSdzG8=;
         h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=s8VsjekO8OdbCumOSMTaKarNsen3xOt12QTYT3u8RYQLjOgnejUWq2wxBJhAac6Ij
-         PfpuKDEOSCbct/od+bGdKveWvBRgV3arMReqkFz2NatVbBzZFpUrUVmGFcbHD9ACId
-         pVv2m3wIfwsP2K/UeKmZ+ybhQaMtSoiJdGYE8TIQ=
+        b=dCbjH+X+tGQ8v/v5Vcgm8mY8bOmgVDL83jTqX6b0vApkIwUmi+LkQ9ScYqJZFaP0z
+         MM1ffw5o+eLE3kyLzX3SLEi2xTDijbTCIsdDdhleP1o8/3NstQs124xaop7uyZRUTz
+         nflV+3jtIkgSkqkFIHJ6ACkEKD7A6IbldTcLc4tg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Yizhuo <yzhai003@ucr.edu>
-In-Reply-To: <20190127051012.5928-1-yzhai003@ucr.edu>
-User-Agent: alot/0.8
-Subject: Re: [PATCH] clk: gemini: Variable "val" in function gemini_clk_probe() could be uninitialized
-Message-ID: <154948099918.115909.13787183177670759883@swboyd.mtv.corp.google.com>
-References: <20190127051012.5928-1-yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        linux-clk@vger.kernel.org
+In-Reply-To: <20190130235022.21949-1-katsuhiro@katsuster.net>
+User-Agent: alot/0.8
+Subject: Re: [PATCH] clk: fractional-divider: check parent rate only for general approximation
+Message-ID: <154948200879.115909.2117234752247335645@swboyd.mtv.corp.google.com>
+References: <20190130235022.21949-1-katsuhiro@katsuster.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Heiko Stuebner <heiko@sntech.de>
 From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 06 Feb 2019 11:23:19 -0800
+Date:   Wed, 06 Feb 2019 11:40:08 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yizhuo (2019-01-26 21:10:12)
-> In function gemini_clk_probe(), local variable "val" could
-> be uninitialized if function regmap_read() returns -EINVAL.
-> However, it will be used as index in the later context, which
-> could potentially be unsafe.
++Heiko because it mentions Rockchip
 
-Ok. How did you find this? Any pointers?
+Quoting Katsuhiro Suzuki (2019-01-30 15:50:22)
+> Custom approximation of fractional-divider may not need parent clock
+> rate checking. For example Rockchip SoCs work fine using grand parent
+> clock rate even if target rate is greater than parent.
+>=20
+> This patch removes parent clock rate check from custom approximation.
+>=20
+> For detailied example, clock tree of Rockchip I2S audio hardware.
+
+s/detailied/detailed/
+
+>   - A i2s1_div is integer divider can divide input clock 1/1 ~ 1/16.
+>     Initialize divider value is 1.
+
+s/Initialize/Initial/
+
+>   - A i2s1_frac is fractional divider can divide input to x/y, x and
+>     y are 16bit integer.
+>   - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
+>=20
+> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
+> GPLL --> |          | ,--------------'    |          |
+>                       `--> i2s1_frac ---> |          |
+>=20
+> Clock mux system try to choose suitable one from i2s1_div and
+> i2s1_frac for master clock (MCLK) of I2S1.
+>=20
+> Bad scenario as follows:
+>   - Try to set MCLK to 8.192MHz (32kHz audio replay)
+>     Candidate setting is
+>     - i2s1_div : GPLL / 60           =3D 8.192MHz
+>     i2s1_div is same as target clock rate, so mux choose this.
+>     i2s1_div output rate is changed 491.52MHz -> 8.192MHz
+>=20
+>   - After that try to set to 11.2896MHz (44.1kHz audio replay)
+>     Candidate settings are
+>     - i2s1_div : CPLL / 107 =3D 11.214945MHz
+>     - i2s1_frac: i2s1_div   =3D 8.192MHz
+>       This is because clk_fd_round_rate() thinks target rate
+>       (11.2896MHz) is higher than parent rate (i2s1_div =3D 8.192MHz)
+>       and returns parent clock rate.
+>     Clock mux system choose i2s1_div, but this clock rate is not
+>     acceptable for I2S driver, so users cannot replay audio.
+>=20
+> Expected behavior is:
+>   - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
+>     Candidate settings are
+>     - i2s1_div : CPLL / 107          =3D 11.214945MHz
+>     - i2s1_frac: i2s1_div * 147/6400 =3D 11.2896MHz
+>                  (change i2s1_div to GPLL / 1 =3D 491.52MHz)
+>       If apply this commit, clk_fd_round_rate() calls custom
+>       approximate function of Rockchip even if target rate is higher
+>       than parent. Custom function changes both grand parent
+>       (i2s1_div) and parent (i2s_frac) settings at same time.
+
+Can you indicate what that function is? Is this merged upstream or
+something you're developing now?
+
+>     Clock mux system can choose i2s1_frac and audio works fine.
+
+I think this last paragraph from "If apply this commit" can be
+unindented from the expected behavior section.
 
 >=20
-> Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 > ---
->  drivers/clk/clk-gemini.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+>  drivers/clk/clk-fractional-divider.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fract=
+ional-divider.c
+> index 545dceec0bbf..b0fc5509e0ff 100644
+> --- a/drivers/clk/clk-fractional-divider.c
+> +++ b/drivers/clk/clk-fractional-divider.c
+> @@ -79,13 +79,17 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsi=
+gned long rate,
+>         unsigned long m, n;
+>         u64 ret;
+> =20
+> -       if (!rate || rate >=3D *parent_rate)
+> +       if (!rate)
+>                 return *parent_rate;
 
-There are other locations in this file where 'val' is used even if
-regmap_read() fails. For example gemini_pci_recalc_rate() does this. Can
-you fix all the callers in this file? Presumably nobody cares that this
-API could fail in this driver because it's a thin wrapper around mmio
-read that never fails. Maybe we could have a comment instead that this
-is the case and then ignore this patch entirely.
+Ok. I think it would be clearer if we had
+
+	unsigned long flags =3D clk_hw_get_flags()
+
+	if (!rate ||
+	    !(flags & CLK_SET_PARENT_RATE) && rate >=3D *parent_rate)
+
+indicating that the parent of the clk isn't expected to change rate so
+we can only achieve that much frequency. Plus some sort of comment to
+this effect would be helpful too.
+
+We could also introduce macros to check clk flags. Then it would read
+nicer:
+
+	if (!rate || clk_hw_can_set_parent_rate(hw) && rate >=3D ...)
 
