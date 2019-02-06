@@ -2,145 +2,150 @@ Return-Path: <SRS0=eFQB=QN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AE1C282CB
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 00:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C02C169C4
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 09:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBC2E2183E
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 00:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549411315;
-	bh=d4s9m47ttib8AaQP/NtDKNrQif884QXSKDeRZNtqkEs=;
-	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
-	b=LO0y3AjurHiYD76xQz8NxXpR31ozlt+xKA2XEXgw1AALebpBW/QjMuVSoFWMiYc4S
-	 wVhjl2VqKBq5dPbQ56Igdph1B+RjraAFsCTCNUpkgq6e7gFJBJADUAeUq0WS99uOt8
-	 2/3BTdYVL2bXpq4zSHBSS+Fvmjae11b3+tD57528=
+	by mail.kernel.org (Postfix) with ESMTP id D26AC2175B
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Feb 2019 09:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbfBFABy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Feb 2019 19:01:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbfBFABy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Feb 2019 19:01:54 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B81E5217F9;
-        Wed,  6 Feb 2019 00:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549411312;
-        bh=d4s9m47ttib8AaQP/NtDKNrQif884QXSKDeRZNtqkEs=;
-        h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
-        b=2EM4b5xW/uzLtgFAswfNgugrvgOAwdNZU6NjJ9M+5tBnVzffbEG5TDog8hQ0fT+Nv
-         R9tmdjBQ+VfkbHIoU5uWPTLein4dZIMRk6lbJ+tVYf5SeadUSZobJSGxm5L8njGqFl
-         Vwkx4RTK0lK8p29/wZsGinMhblE0gE41t7mmX7Zw=
-Content-Type: text/plain; charset="utf-8"
+        id S1726804AbfBFJUG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Feb 2019 04:20:06 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56255 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfBFJUG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Feb 2019 04:20:06 -0500
+X-Originating-IP: 90.88.22.177
+Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id BC586240075;
+        Wed,  6 Feb 2019 09:20:00 +0000 (UTC)
+Date:   Wed, 6 Feb 2019 10:20:00 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Priit Laes <plaes@plaes.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190206092000.f46nsn4fw2n4crub@flea>
+References: <20190202155209.31617-1-plaes@plaes.org>
+ <20190205094529.t7je4ozzu2b4ornc@flea>
+ <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154941131193.169292.7500057932043013834@swboyd.mtv.corp.google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com> <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com> <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com> <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com> <97c2375f41fe7dabc4d71f66c9808912eb0ce611.camel@baylibre.com>
-User-Agent: alot/0.8
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <97c2375f41fe7dabc4d71f66c9808912eb0ce611.camel@baylibre.com>
-Date:   Tue, 05 Feb 2019 16:01:51 -0800
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sl7pkaf3p7ikf3a2"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-01-31 10:40:07)
-> On Wed, 2019-01-30 at 13:30 -0800, Stephen Boyd wrote:
-> > > With this quirk, CCF is making an assumption that might be wrong.
-> > >=20
-> > > The quirk is very easy put in the get_parent() callback of the said
-> > > driver, or
-> > > even better, don't provide the callback if it should not be called.
-> > >=20
-> > > I understand the need for a cautious approach. It seems I'm only one =
-with
-> > > that
-> > > issue right now and since I have a work around, there is no rush. But=
- we
-> > > must
-> > > have plan to make it right.
-> > >=20
-> > > To be clear, I'm not against your new API but I don't think it should=
- be a
-> > > reason to keep a broken behavior the framework.
-> > >=20
-> >=20
-> > So do you think you can use this new clk_op and ignore the problems with
-> > the .get_parent clk op? Putting effort into fixing the .get_parent
-> > design isn't very useful from my perspective. There's more than just the
-> > problem that we don't call it when .num_parents is 1. There's the
-> > inability to return errors without doing weird things to return an index
-> > out of range and there isn't any way for us to really know if the clk is
-> > an orphan or not. If we can migrate all drivers to use the new clk op
-> > then we can fix these problems too, and deprecate and eventually remove
-> > the broken by design .get_parent clk op API.
->=20
-> Stephen, I have nothing against your new API, I'm sure it will solve many
-> issues
->=20
-> I'm also quite sure that, like round_rate() and determine_rate(), migrati=
-ng to
-> the new API won't happen overnight. We are likely to still see get_parent=
-()
-> for a while. I don't understand why we would keep something wrong when it=
- is
-> that easy to fix.
->=20
-> I have spent quite sometime debugging this weird behavior of CCF, I'd pre=
-fer
-> if it can avoided for others.
->=20
-> Yes, fixing the case I reported does not solves all the problem you have
-> mentionned. Keeping this bug does not help either, AFAICT.
->=20
-> The fact is that get_parent() already return out of bound values on some
-> occasion, and we already have to deal with this when converting the index=
- to
-> parent clk_hw pointer. Doing it in the same way when num_parent =3D=3D 1 =
-does not
-> change anything.
->=20
-> I really don't understand why you insist on keeping this special case for
-> num_parent =3D=3D 1, when we know it is not coherent.
->=20
-> Considering, that I already proposed the fix, what is the effort here ?
-> If it is fixing the driver that rely this weird thing, I'd be happy to do=
- it.
->=20
->=20
 
-Ok. I'm happy to merge your patch to always call the .get_parent clk op
-when num_parents > 0, but please fix all the drivers and analyze all the
-implementations of .get_parent to make sure that they aren't broken by
-the change in behavior. Furthermore, please add a debug/warning message
-into the code when .get_parent returns a number outside of the range of
-[0, num_parents) so that they can be converted to use .get_parent_hw
-instead. Ideally there wouldn't be anything returning a parent index
-outside the range of possible parents from .get_parent because this
-analysis of drivers would find those implementations and migrate them to
-.get_parent_hw instead.
+--sl7pkaf3p7ikf3a2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In parallel, I'd like to convert all drivers to use .get_parent_hw
-instead of .get_parent and then remove the .get_parent clk op right
-away. I'll start a sweep of the users of clk_hw_get_parent_by_index() (I
-see 50 calls in the tree right now) and see if I can convert them to
-handle errors returned from that API, probably by just continuing and
-ignoring errors. I'll start doing the same conversion for .round_rate
-and .determine_rate so that we can get rid of that duplicate clk op as
-well. Hopefully that's a mostly mechanical conversion.
+On Tue, Feb 05, 2019 at 09:44:02PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Feb 5, 2019 at 5:45 PM Maxime Ripard <maxime.ripard@bootlin.com> =
+wrote:
+> >
+> > On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
+> > > Recent patch of improving MP clock rate calculations by taking
+> > > into account whether adjusting parent rate is allowed, have
+> > > unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
+> > > boards which fail with following error:
+> > >
+> > > [snip]
+> > > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
+> > > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
+> > > sunxi-mmc 1c11000.mmc: data error, sending stop command
+> > > sunxi-mmc 1c11000.mmc: send stop command failed
+> > > [/snip]
+> > >
+> > > Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
+> > > clock rate with following parents:
+>=20
+> You mean 52 and 51.2 MHz.
+>=20
+> > > [snip]
+> > > pll-ddr-base        2  2        0   768000000 0     0  50000
+> > >    pll-ddr-other    1  1        0   768000000 0     0  50000
+> > >       mmc2          0  0        0    51200000 0     0  50000
+> > > [/snip]
+> > >
+> > > Now, after the improvements, requested and settled rate are both
+> > > 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
+> > > ends up like this:
+> > > [snip]
+> > > pll-periph-base     3  3        0  1200000000 0     0  50000
+> > >    pll-periph       6  6        0   600000000 0     0  50000
+> > >       mmc2          3  3        0    50000000 0     0  50000
+> > > [/snip]
+> > >
+> > > With this patch (allowing mmc2 to set parent rate), we end up with
+> > > working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
+> > > [snip]
+> > > pll-periph-base     3  3        0   312000000 0     0  50000
+> > >    mbus             1  1        0    78000000 0     0  50000
+> > >    pll-periph-sata  1  1        0    26000000 0     0  50000
+> > >       sata          1  1        0    26000000 0     0  50000
+> > >    pll-periph       5  5        0   156000000 0     0  50000
+> > >       mmc2          0  0        0    52000000 0     0  50000
+> > >       mmc0          0  0        0    39000000 0     0  50000
+> > > [/snip]
+> > >
+> > > Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when=
+ allowed")
+> > > Signed-off-by: Priit Laes <plaes@plaes.org>
+> >
+> > Applied, thanks!
+> > Maxime
+>=20
+> I'm concerned for other users of the PLL-PERIPH clock. AFAIK
+> all of them, except the HRTIMER, expect the clock rate to stay
+> the same and not change underneath them. And SATA expects it to
+> be at 600 MHz, as the datasheet says. And while it may not directly
+> apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
+> reduced rate of 50 MHz just fine.
+>=20
+> In the commit in question, clocks without CLK_SET_RATE_PARENT
+> should be using the old code (now in the if conditional block),
+> i.e. the behavior should not have changed.
+>=20
+> I don't think this actually "fixes" whatever bug was introduced,
+> but only papers over the issue, and possible introduces further
+> issues for other users.
 
-For now I'll move this patch to the end of this series so that it
-doesn't hold things up otherwise.
+You're right, I've overlooked that it was pll-periph being
+affected. I've dropped it for now.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--sl7pkaf3p7ikf3a2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFqmvwAKCRDj7w1vZxhR
+xSw7AQDHxqxuEw37JOpF6w0RMseJfomBli6NRTUeA+PWrP5ymAD+KJFoB88BMXPP
+9BMD/2yvAg8+f+AtitKtK8nYtlhzVgM=
+=Hlbo
+-----END PGP SIGNATURE-----
+
+--sl7pkaf3p7ikf3a2--
