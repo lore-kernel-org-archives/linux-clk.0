@@ -2,134 +2,140 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C99C282C2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983C2C282C4
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4381421872
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3417xV9"
+	by mail.kernel.org (Postfix) with ESMTP id 6693221872
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbfBGPmc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:42:32 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37538 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfBGPmc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 10:42:32 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so104101plr.4;
-        Thu, 07 Feb 2019 07:42:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NIgsqiuQR28DVR70vS/tR7cqO2gKsSLJxdOnp0Nf0dg=;
-        b=h3417xV9nJRVKTGENqUROxdGpMPdwb4oZiIiJsujek4PMRDVtghhyD8VVgLODyfytN
-         oDg+OB+gqmr92oNlQjtjjOlk2ySWEGo4cyD/H6rU8EH8FenTQQF+bIQ1fcJLsCyi+YZl
-         qXxdiDm9mvwiXeHlFzqFBUW7PP+A4wuAC+9dNQr7WUfcVc9l0pf+Cey8BmiSeDA143lQ
-         pkeU8UpPAKT2O//+OqW7IWgkUW3uqUDhULdZUFxQu7KHpjHa7FP131oP+aaQsRJs/Xoc
-         wLauU0+l1YQsklC/7lwRpqGiL4KaNoxZV3k1py7CiD/rVZ3Y+ts4SurntkU480nbhQb5
-         acTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NIgsqiuQR28DVR70vS/tR7cqO2gKsSLJxdOnp0Nf0dg=;
-        b=RhThiEqkwsiN6PGOOrKyufRrZn9IEHVQFq2035sJUHztIn/9FMofGTKK8sllWiPhv2
-         3KuVLffSAh5ZrN36GmAMCk8ihOU09TklfK/AC/ICZ8mYdwwKjHQ1TJ+/jJxdoJpUmkz9
-         495KDm6roDWhCBmiXgMOy/git5fUiVCIG2yVE3JJF4S+iojV8qvKBQ1JEGrmTx5k1yUB
-         g27vXQ1oXgQMkVKUOoPxvHCE8w2/tAIWQ7k3OBOgmqs2ip9SmQmn+WX4AFV/hIzt925e
-         XrQJiwJEcxY0DkxQdAaq5UNlX8gAmzYVTOuMAX1DaSBMiamBT4tnsS6/X/nNfEQaE711
-         8r/g==
-X-Gm-Message-State: AHQUAuaxCbIbVonhenNaxo74dvnIndFFW1/OgOcrbSAio1vIJhPMuNVj
-        r8Ix6lTcbDg47wgsMFFOUJE=
-X-Google-Smtp-Source: AHgI3IbicIP2yZbeFS7vGVKcZD3eNkaLdqvKjCk8gW7D89GUHUyn97SDf16i6XfIN2pgJBN0SgK7MQ==
-X-Received: by 2002:a17:902:9691:: with SMTP id n17mr17534229plp.9.1549554151522;
-        Thu, 07 Feb 2019 07:42:31 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e2sm13088357pga.92.2019.02.07.07.42.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 07:42:30 -0800 (PST)
-Date:   Thu, 7 Feb 2019 07:42:29 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] devicetree: bindings: Document first ROHM BD70528
- bindings
-Message-ID: <20190207154229.GA19277@roeck-us.net>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <52b17ed2599b21f4b93665ac689113ce3f8816b7.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <20190207140418.GH20638@dell>
- <20190207153600.GA1920@localhost.localdomain>
+        id S1726989AbfBGPrT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 10:47:19 -0500
+Received: from foss.arm.com ([217.140.101.70]:39168 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726979AbfBGPrT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:47:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E50CA78;
+        Thu,  7 Feb 2019 07:47:18 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F3E83F719;
+        Thu,  7 Feb 2019 07:47:06 -0800 (PST)
+Subject: Re: [PATCH v6 1/6] irqchip/mtk-sysirq: support 4 interrupt parameters
+ for sysirq
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Erin Lo <erin.lo@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     devicetree@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
+        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
+        linux-clk@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>
+References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+ <1548317240-44682-2-git-send-email-erin.lo@mediatek.com>
+ <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
+Date:   Thu, 7 Feb 2019 15:47:05 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207153600.GA1920@localhost.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 05:36:00PM +0200, Matti Vaittinen wrote:
-> Hello Lee,
+On 07/02/2019 15:20, Matthias Brugger wrote:
 > 
-> Thanks for the reviews!
 > 
-> On Thu, Feb 07, 2019 at 02:04:18PM +0000, Lee Jones wrote:
-> > On Thu, 07 Feb 2019, Matti Vaittinen wrote:
-> > 
-> > > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> > > drivers) and 4 GPIO pins which can be configured for I/O or
-> > > as interrupt sources withe configurable trigger levels.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > > ---
-> > >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 102 +++++++++++++++++++++
-> > >  1 file changed, 102 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > new file mode 100644
-> > > index 000000000000..f80be7e40184
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > @@ -0,0 +1,102 @@
-> > > +* ROHM BD70528 Power Management Integrated Circuit bindings
-> > > +
-> > > +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
-> > 
-> > What's an Iq?
+> On 24/01/2019 09:07, Erin Lo wrote:
+>> From: Seiya Wang <seiya.wang@mediatek.com>
+>>
+>> To support partitioned PPIs, 4 interrupt parameters should be valid
+>> for sysirq.
+>>
+>> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+>> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+>> ---
+>>  drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
+>> index 90aaf19..282736a 100644
+>> --- a/drivers/irqchip/irq-mtk-sysirq.c
+>> +++ b/drivers/irqchip/irq-mtk-sysirq.c
+>> @@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
+>>  				       unsigned int *type)
+>>  {
+>>  	if (is_of_node(fwspec->fwnode)) {
+>> -		if (fwspec->param_count != 3)
+>> +		if (fwspec->param_count != 3 && fwspec->param_count != 4)
 > 
-> http://www.ti.com/lit/an/slyt412/slyt412.pdf
-> Iq is an abbreviation of quiescet current. Do you think it's worth
-> writing the whole words instead of an abbreviation?
-> 
-https://acronyms.thefreedictionary.com/IQ lists 23 definitions.
-This one is not listed. Yes, I think it would be beneficial to use
-the whole word.
+> Where is this 4th parameter used?
 
-Guenter
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt#n14
 
-> Thanks for the rest of the corrections, I'll fix them in next version.
-> 
-> Br,
-> 	Matti Vaittinen
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
