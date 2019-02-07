@@ -2,204 +2,671 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABFEC282C2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95658C282C4
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 14:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB5B2146E
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5160621908
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 14:01:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="GJ3Uv9d3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKolw5pP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbfBGNgu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:36:50 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:55626 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbfBGNgR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 08:36:17 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 3B64B25B820;
-        Fri,  8 Feb 2019 00:36:10 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549546570; bh=jrAl81PfZ4N7CmIMAvweWzBna86wN+qQ7SMB6mPwwbk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GJ3Uv9d3ueMPvLJ/akp5WL2uqhX6h7U6VCaiOCU7Zb9MmlOMievIKON04BJxr3d+B
-         2XgbxhU7rWFZmxOspCoB8FmP3oLG6ezxYDo427RIxUd6RlmKQgMKa7piO1jTHVP3Ew
-         7gbuxHqBDUmry/9LTixpVj1nKvTvQYjkJvVRPHE4=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 6CCCC9402EE; Thu,  7 Feb 2019 14:36:07 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 2/5] clk: renesas: rcar-gen3: Parameterise Z and Z2 clock offset
-Date:   Thu,  7 Feb 2019 14:35:47 +0100
-Message-Id: <20190207133550.13967-3-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190207133550.13967-1-horms+renesas@verge.net.au>
-References: <20190207133550.13967-1-horms+renesas@verge.net.au>
+        id S1727151AbfBGOBA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 09:01:00 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35423 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbfBGOBA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 09:01:00 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z18so10911530wrh.2
+        for <linux-clk@vger.kernel.org>; Thu, 07 Feb 2019 06:00:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Tg7tPXf42si89yYu1C19H2DIUnk2xWCH+9FGuF+gtBw=;
+        b=KKolw5pPgQDPXSsB5/8WTZEckWRJVnFpEKRbUt4Ow1oLd6KPiRNRp5FRxv7ZpEWexh
+         q3/qlPdZL9GWnUbz1UD7pUSXiD8+HP5yveqrnrBzmu4CXwUev61ThgntekkGEVnQHXw7
+         gXjWj35unPSYKEqLrEO9Ekghv4m5Dl5ulN/pN7WHWMoVopsDbMOYAvDsP3U2Z7+XCzJc
+         pOOH0B0NMASpxE9kJDkcZhwwv2VAzfqFxsnyx7Nj9cLSsBgLNnkUl5OJUsjrSQEnpDGI
+         YHltvVwJWeccTNgQtN0qnC6zYUJF/1EJEfvAPo5DDH8noxxPryZP5f0FPuAB0SDGxz9c
+         QHdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Tg7tPXf42si89yYu1C19H2DIUnk2xWCH+9FGuF+gtBw=;
+        b=XrL9B9FkfSEXH2SdPWSl3lfMT7I7IdMeJ/B/HMia8ExRYml8liMoYAKyBFpVJvZFKm
+         KRnsg7oXo4GYbeNoYRteMHR8ypJ807ZyJ9nZRU8318qcTDVwpF4g4A4on4Oe8eOO/Ksl
+         J70T6ehb8ytygPqglF1pdl412TT0avUCIjP6sE4SrFI3duqKLty4abF7iFZlqqLOYJgO
+         zc9H5a6d2BKCDUowfjPkF8Eu2YZQ1QaXpFFO5iav1N/WfHsz2nc6GqgDS7imGOEJrPl6
+         l7wPHZgnfPD6eyKNggKdLIXdo4+yJtCj/BgVX5oESi0UyEyOkQQHAgZxsVILMFEjmi/y
+         w8ZQ==
+X-Gm-Message-State: AHQUAuYWdE1SZi57B5Wo0bxhJPPS2Cb36ninEBMo0u4YQ8XaW0sZxdLm
+        gC8GHu4dQV8c2sHL4CX1/5MP3w==
+X-Google-Smtp-Source: AHgI3IbfkHVkUZ0yYzyvcw6vLXrmEYwfHeZzZgFBhSPQ6X0sTn4mN2uq7rqfOcnCJAb5G7wo3BKAkg==
+X-Received: by 2002:a5d:4dc8:: with SMTP id f8mr12810621wru.45.1549548056763;
+        Thu, 07 Feb 2019 06:00:56 -0800 (PST)
+Received: from dell ([2.27.35.171])
+        by smtp.gmail.com with ESMTPSA id y20sm34507203wra.51.2019.02.07.06.00.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 06:00:55 -0800 (PST)
+Date:   Thu, 7 Feb 2019 14:00:53 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v8 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
+Message-ID: <20190207140053.GG20638@dell>
+References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Parameterise the offset of control bits within the FRQCRC register
-for Z and Z2 clocks.
+On Thu, 07 Feb 2019, Matti Vaittinen wrote:
 
-This is in preparation for supporting the Z2 clock on the R-Car E3
-(r8a77990) SoC which uses a different offset for control bits to
-other, already, supported SoCs.
+> ROHM BD70528MWV is an ultra-low quiescent current general
+> purpose single-chip power management IC for battery-powered
+> portable devices.
+> 
+> Add MFD core which enables chip access for following subdevices:
+> 	- regulators/LED drivers
+> 	- battery-charger
+> 	- gpios
+> 	- 32.768kHz clk
+> 	- RTC
+> 	- watchdog
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/mfd/Kconfig              |  17 ++
+>  drivers/mfd/Makefile             |   1 +
+>  drivers/mfd/rohm-bd70528.c       | 410 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/rohm-bd70528.h | 392 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 820 insertions(+)
+>  create mode 100644 drivers/mfd/rohm-bd70528.c
+>  create mode 100644 include/linux/mfd/rohm-bd70528.h
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index f461460a2aeb..f1a0574cebb1 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1847,6 +1847,23 @@ config MFD_ROHM_BD718XX
+>  	  NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
+>  	  and emergency shut down as well as 32,768KHz clock output.
+>  
+> +config MFD_ROHM_BD70528
+> +	tristate "ROHM BD70528 Power Management IC"
+> +	depends on I2C=y
+> +	depends on OF
+> +	select REGMAP_I2C
+> +	select REGMAP_IRQ
+> +	select MFD_CORE
+> +	help
+> +	  Select this option to get support for the ROHM BD70528 Power
+> +	  Management IC. BD71837 is general purpose single-chip power
+> +	  management IC for battery-powered portable devices. It contains
+> +	  3 ultra-low current consumption buck converters, 3 LDOs and 2 LED
+> +	  Drivers. Also included are 4 GPIOs, a real-time clock (RTC), a 32kHz
+> +	  crystal oscillator, high-accuracy VREF for use with an external ADC,
+> +	  10 bits SAR ADC for battery temperature monitor and 1S battery
+> +	  charger.
+> +
+>  config MFD_STM32_LPTIMER
+>  	tristate "Support for STM32 Low-Power Timer"
+>  	depends on (ARCH_STM32 && OF) || COMPILE_TEST
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 12980a4ad460..fc9b1408e39b 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -241,4 +241,5 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+>  obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
+>  obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
+>  obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
+> +obj-$(CONFIG_MFD_ROHM_BD70528)	+= rohm-bd70528.o
+>  
+> diff --git a/drivers/mfd/rohm-bd70528.c b/drivers/mfd/rohm-bd70528.c
+> new file mode 100644
+> index 000000000000..580164addeeb
+> --- /dev/null
+> +++ b/drivers/mfd/rohm-bd70528.c
+> @@ -0,0 +1,410 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +//
+> +// Copyright (C) 2018 ROHM Semiconductors
 
-This mechanism should be extendable to other clocks, such as ZG,
-f.e. by adding the number of control bits as a parameter to
-cpg_z_clk_register().
+This needs updating.
 
-As suggested by Geert Uytterhoeven.
+> +// ROHM BD70528 PMIC driver
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/rohm-bd70528.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/types.h>
+> +
+> +#define BD70528_INT_RES(_reg, _name)		\
+> +	{					\
+> +		.start = (_reg),		\
+> +		.end = (_reg),			\
+> +		.name = (_name),		\
+> +		.flags = IORESOURCE_IRQ,	\
+> +	}
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3: New patch
----
- drivers/clk/renesas/r8a774a1-cpg-mssr.c |  4 ++--
- drivers/clk/renesas/r8a7795-cpg-mssr.c  |  4 ++--
- drivers/clk/renesas/r8a7796-cpg-mssr.c  |  4 ++--
- drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 +-
- drivers/clk/renesas/rcar-gen3-cpg.c     | 15 ++++-----------
- drivers/clk/renesas/rcar-gen3-cpg.h     |  4 ++--
- 6 files changed, 13 insertions(+), 20 deletions(-)
+I think you're looking for DEFINE_RES_IRQ_NAMED()
 
-diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-index 103253bee055..8f6a182bea27 100644
---- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-@@ -71,8 +71,8 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
- 	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
- 
- 	/* Core Clock Outputs */
--	DEF_GEN3_Z("z",		R8A774A1_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0, 2),
--	DEF_GEN3_Z("z2",	R8A774A1_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2),
-+	DEF_GEN3_Z("z",		R8A774A1_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
-+	DEF_GEN3_Z("z2",	R8A774A1_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2, 0),
- 	DEF_FIXED("ztr",        R8A774A1_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A774A1_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A774A1_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index d4cf1c91533e..d09c0abb032d 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -74,8 +74,8 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
- 
- 	/* Core Clock Outputs */
--	DEF_GEN3_Z("z",         R8A7795_CLK_Z,	   CLK_TYPE_GEN3_Z,  CLK_PLL0, 2),
--	DEF_GEN3_Z("z2",        R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2),
-+	DEF_GEN3_Z("z",         R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
-+	DEF_GEN3_Z("z2",        R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2, 0),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 77254f2b4519..7efd0311dcbd 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -74,8 +74,8 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
- 
- 	/* Core Clock Outputs */
--	DEF_GEN3_Z("z",         R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2),
--	DEF_GEN3_Z("z2",        R8A7796_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2),
-+	DEF_GEN3_Z("z",         R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
-+	DEF_GEN3_Z("z2",        R8A7796_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2, 0),
- 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index f8f73558c1ec..fefa26a1a797 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -71,7 +71,7 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
- 	DEF_GEN3_OSC(".r",	CLK_RINT,		CLK_EXTAL,	32),
- 
- 	/* Core Clock Outputs */
--	DEF_GEN3_Z("z",		R8A77965_CLK_Z,		CLK_TYPE_GEN3_Z,  CLK_PLL0, 2),
-+	DEF_GEN3_Z("z",		R8A77965_CLK_Z,		CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
- 	DEF_FIXED("ztr",	R8A77965_CLK_ZTR,	CLK_PLL1_DIV2,	6, 1),
- 	DEF_FIXED("ztrd2",	R8A77965_CLK_ZTRD2,	CLK_PLL1_DIV2,	12, 1),
- 	DEF_FIXED("zt",		R8A77965_CLK_ZT,	CLK_PLL1_DIV2,	4, 1),
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 5923028064a5..6b146c2cf6a3 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -73,8 +73,6 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
- #define CPG_FRQCRB			0x00000004
- #define CPG_FRQCRB_KICK			BIT(31)
- #define CPG_FRQCRC			0x000000e0
--#define CPG_FRQCRC_ZFC_MASK		GENMASK(12, 8)
--#define CPG_FRQCRC_Z2FC_MASK		GENMASK(4, 0)
- 
- struct cpg_z_clk {
- 	struct clk_hw hw;
-@@ -169,8 +167,8 @@ static const struct clk_ops cpg_z_clk_ops = {
- static struct clk * __init cpg_z_clk_register(const char *name,
- 					      const char *parent_name,
- 					      void __iomem *reg,
--					      unsigned long mask,
--					      unsigned int div)
-+					      unsigned int div,
-+					      unsigned int offset)
- {
- 	struct clk_init_data init;
- 	struct cpg_z_clk *zclk;
-@@ -189,7 +187,7 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- 	zclk->reg = reg + CPG_FRQCRC;
- 	zclk->kick_reg = reg + CPG_FRQCRB;
- 	zclk->hw.init = &init;
--	zclk->mask = mask;
-+	zclk->mask = GENMASK(offset + 4, offset);
- 	zclk->fixed_div = div; /* PLLVCO x 1/div x SYS-CPU divider */
- 
- 	clk = clk_register(NULL, &zclk->hw);
-@@ -568,14 +566,9 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		break;
- 
- 	case CLK_TYPE_GEN3_Z:
--		return cpg_z_clk_register(core->name, __clk_get_name(parent),
--					  base, CPG_FRQCRC_ZFC_MASK,
--					  core->div);
--
- 	case CLK_TYPE_GEN3_Z2:
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
--					  base, CPG_FRQCRC_Z2FC_MASK,
--					  core->div);
-+					  base, core->div, core->offset);
- 
- 	case CLK_TYPE_GEN3_OSC:
- 		/*
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 60038e245e8b..13f1f7e6fb34 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -49,8 +49,8 @@ enum rcar_gen3_clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,	\
- 		 (_parent0) << 16 | (_parent1),	.div = (_div0) << 16 | (_div1))
- 
--#define DEF_GEN3_Z(_name, _id, _type, _parent, _div)	\
--	DEF_BASE(_name, _id, _type, _parent, .div = _div)
-+#define DEF_GEN3_Z(_name, _id, _type, _parent, _div, _offset)	\
-+	DEF_BASE(_name, _id, _type, _parent, .div = _div, .offset = _offset)
- 
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
+> +static const struct resource rtc_irqs[] = {
+> +	BD70528_INT_RES(BD70528_INT_RTC_ALARM, "bd70528-rtc-alm"),
+> +	BD70528_INT_RES(BD70528_INT_ELPS_TIM, "bd70528-elapsed-timer"),
+> +};
+> +
+> +static const struct resource charger_irqs[] = {
+> +	BD70528_INT_RES(BD70528_INT_BAT_OV_RES, "bd70528-bat-ov-res"),
+> +	BD70528_INT_RES(BD70528_INT_BAT_OV_DET, "bd70528-bat-ov-det"),
+> +	BD70528_INT_RES(BD70528_INT_DBAT_DET, "bd70528-bat-dead"),
+> +	BD70528_INT_RES(BD70528_INT_BATTSD_COLD_RES, "bd70528-bat-warmed"),
+> +	BD70528_INT_RES(BD70528_INT_BATTSD_COLD_DET, "bd70528-bat-cold"),
+> +	BD70528_INT_RES(BD70528_INT_BATTSD_HOT_RES, "bd70528-bat-cooled"),
+> +	BD70528_INT_RES(BD70528_INT_BATTSD_HOT_DET, "bd70528-bat-hot"),
+> +	BD70528_INT_RES(BD70528_INT_CHG_TSD, "bd70528-chg-tshd"),
+> +	BD70528_INT_RES(BD70528_INT_BAT_RMV, "bd70528-bat-removed"),
+> +	BD70528_INT_RES(BD70528_INT_BAT_DET, "bd70528-bat-detected"),
+> +	BD70528_INT_RES(BD70528_INT_DCIN2_OV_RES, "bd70528-dcin2-ov-res"),
+> +	BD70528_INT_RES(BD70528_INT_DCIN2_OV_DET, "bd70528-dcin2-ov-det"),
+> +	BD70528_INT_RES(BD70528_INT_DCIN2_RMV, "bd70528-dcin2-removed"),
+> +	BD70528_INT_RES(BD70528_INT_DCIN2_DET, "bd70528-dcin2-detected"),
+> +	BD70528_INT_RES(BD70528_INT_DCIN1_RMV, "bd70528-dcin1-removed"),
+> +	BD70528_INT_RES(BD70528_INT_DCIN1_DET, "bd70528-dcin1-detected"),
+> +};
+> +
+> +static struct mfd_cell bd70528_mfd_cells[] = {
+> +	{ .name = "bd70528-pmic", },
+> +	{ .name = "bd70528-gpio", },
+> +	/*
+> +	 * We use BD71837 driver to drive the clk block. Only differences to
+> +	 * BD70528 clock gate are the register address and mask.
+> +	 */
+> +	{ .name = "bd718xx-clk", },
+> +	{ .name = "bd70528-wdt", },
+> +	{
+> +		.name = "bd70528-power",
+> +		.resources = &charger_irqs[0],
+
+Why not just, 'charger_irqs'?
+
+> +		.num_resources = ARRAY_SIZE(charger_irqs),
+
+> +	},
+> +	{
+
+These should be on the same line.
+
+> +		.name = "bd70528-rtc",
+> +		.resources = &rtc_irqs[0],
+
+As above.
+
+> +		.num_resources = ARRAY_SIZE(rtc_irqs),
+> +	},
+> +};
+> +
+> +static const struct regmap_range volatile_ranges[] = {
+> +	/* IRQ regs */
+> +	{
+> +		.range_min = BD70528_REG_INT_MAIN,
+> +		.range_max = BD70528_REG_INT_OP_FAIL,
+> +	},
+> +	/* RTC regs */
+> +	{
+> +		.range_min = BD70528_REG_RTC_COUNT_H,
+> +		.range_max = BD70528_REG_RTC_ALM_REPEAT,
+> +	},
+> +	/*
+> +	 * WDT control reg is special. Magic values must be
+> +	 * written to it in order to change the control. Should
+> +	 * not be cached.
+> +	 */
+> +	{
+> +		.range_min = BD70528_REG_WDT_CTRL,
+> +		.range_max = BD70528_REG_WDT_CTRL,
+> +	},
+> +	/*
+> +	 * bd70528 contains also few other registers which require
+
+"BD70528"
+
+I don't think this means what you think it does.
+
+I think you want to say "also contains a few".
+
+> +	 * magic sequence to be written in order to update the value.
+
+"sequences"
+
+> +	 * At least SHIPMODE, HWRESET, WARMRESET,and STANDBY
+> +	 */
+> +	{
+> +		.range_min = BD70528_REG_SHIPMODE,
+> +		.range_max = BD70528_REG_STANDBY,
+> +	},
+> +};
+> +
+> +static const struct regmap_access_table volatile_regs = {
+> +	.yes_ranges = &volatile_ranges[0],
+> +	.n_yes_ranges = ARRAY_SIZE(volatile_ranges),
+> +};
+> +
+> +static struct regmap_config bd70528_regmap = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.volatile_table = &volatile_regs,
+> +	.max_register = BD70528_MAX_REGISTER,
+> +	.cache_type = REGCACHE_RBTREE,
+> +};
+
+'\n' here.
+
+> +/* bit [0] - Shutdown register */
+> +unsigned int bit0_offsets[] = {0};
+> +/* bit [1] - Power failure register */
+> +unsigned int bit1_offsets[] = {1};
+> +/* bit [2] - VR FAULT register */
+> +unsigned int bit2_offsets[] = {2};
+> +/* bit [3] - PMU register interrupts */
+> +unsigned int bit3_offsets[] = {3};
+> +/* bit [4] - Charger 1 and Charger 2 registers */
+> +unsigned int bit4_offsets[] = {4, 5};
+> +/* bit [5] - RTC register */
+> +unsigned int bit5_offsets[] = {6};
+> +/* bit [6] - GPIO register */
+> +unsigned int bit6_offsets[] = {7};
+> +/* bit [7] - Invalid operation register */
+> +unsigned int bit7_offsets[] = {8};
+
+What on earth is this?
+
+> +static struct regmap_irq_sub_irq_map bd70528_sub_irq_offsets[] = {
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit3_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit4_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit5_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit6_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
+> +};
+
+This looks totally hairy.  What is it mean to look like?
+
+> +static struct regmap_irq irqs[] = {
+> +	REGMAP_IRQ_REG(BD70528_INT_LONGPUSH, 0, BD70528_INT_LONGPUSH_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_WDT, 0, BD70528_INT_WDT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_HWRESET, 0, BD70528_INT_HWRESET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_RSTB_FAULT, 0, BD70528_INT_RSTB_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_VBAT_UVLO, 0, BD70528_INT_VBAT_UVLO_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_TSD, 0, BD70528_INT_TSD_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_RSTIN, 0, BD70528_INT_RSTIN_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FAULT, 1,
+> +		       BD70528_INT_BUCK1_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FAULT, 1,
+> +		       BD70528_INT_BUCK2_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK3_FAULT, 1,
+> +		       BD70528_INT_BUCK3_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LDO1_FAULT, 1, BD70528_INT_LDO1_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LDO2_FAULT, 1, BD70528_INT_LDO2_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LDO3_FAULT, 1, BD70528_INT_LDO3_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LED1_FAULT, 1, BD70528_INT_LED1_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LED2_FAULT, 1, BD70528_INT_LED2_FAULT_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK1_OCP, 2, BD70528_INT_BUCK1_OCP_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK2_OCP, 2, BD70528_INT_BUCK2_OCP_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK3_OCP, 2, BD70528_INT_BUCK3_OCP_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LED1_OCP, 2, BD70528_INT_LED1_OCP_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LED2_OCP, 2, BD70528_INT_LED2_OCP_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FULLON, 2,
+> +		       BD70528_INT_BUCK1_FULLON_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FULLON, 2,
+> +		       BD70528_INT_BUCK2_FULLON_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_SHORTPUSH, 3, BD70528_INT_SHORTPUSH_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_AUTO_WAKEUP, 3,
+> +		       BD70528_INT_AUTO_WAKEUP_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_STATE_CHANGE, 3,
+> +		       BD70528_INT_STATE_CHANGE_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_RES, 4, BD70528_INT_BAT_OV_RES_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_DET, 4, BD70528_INT_BAT_OV_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_DBAT_DET, 4, BD70528_INT_DBAT_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_RES, 4,
+> +		       BD70528_INT_BATTSD_COLD_RES_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_DET, 4,
+> +		       BD70528_INT_BATTSD_COLD_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_RES, 4,
+> +		       BD70528_INT_BATTSD_HOT_RES_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_DET, 4,
+> +		       BD70528_INT_BATTSD_HOT_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_CHG_TSD, 4, BD70528_INT_CHG_TSD_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BAT_RMV, 5, BD70528_INT_BAT_RMV_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BAT_DET, 5, BD70528_INT_BAT_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_RES, 5,
+> +		       BD70528_INT_DCIN2_OV_RES_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_DET, 5,
+> +		       BD70528_INT_DCIN2_OV_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_DCIN2_RMV, 5, BD70528_INT_DCIN2_RMV_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_DCIN2_DET, 5, BD70528_INT_DCIN2_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_DCIN1_RMV, 5, BD70528_INT_DCIN1_RMV_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_DCIN1_DET, 5, BD70528_INT_DCIN1_DET_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_RTC_ALARM, 6, BD70528_INT_RTC_ALARM_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_ELPS_TIM, 6, BD70528_INT_ELPS_TIM_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_GPIO0, 7, BD70528_INT_GPIO0_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_GPIO1, 7, BD70528_INT_GPIO1_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_GPIO2, 7, BD70528_INT_GPIO2_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_GPIO3, 7, BD70528_INT_GPIO3_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK1_DVS_OPFAIL, 8,
+> +		       BD70528_INT_BUCK1_DVS_OPFAIL_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK2_DVS_OPFAIL, 8,
+> +		       BD70528_INT_BUCK2_DVS_OPFAIL_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_BUCK3_DVS_OPFAIL, 8,
+> +		       BD70528_INT_BUCK3_DVS_OPFAIL_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LED1_VOLT_OPFAIL, 8,
+> +		       BD70528_INT_LED1_VOLT_OPFAIL_MASK),
+> +	REGMAP_IRQ_REG(BD70528_INT_LED2_VOLT_OPFAIL, 8,
+> +		       BD70528_INT_LED2_VOLT_OPFAIL_MASK),
+> +};
+> +
+> +static struct regmap_irq_chip bd70528_irq_chip = {
+> +	.name = "bd70528_irq",
+> +	.main_status = BD70528_REG_INT_MAIN,
+> +	.irqs = &irqs[0],
+> +	.num_irqs = ARRAY_SIZE(irqs),
+> +	.status_base = BD70528_REG_INT_SHDN,
+> +	.mask_base = BD70528_REG_INT_SHDN_MASK,
+> +	.ack_base = BD70528_REG_INT_SHDN,
+> +	.type_base = BD70528_REG_GPIO1_IN,
+> +	.init_ack_masked = true,
+> +	.num_regs = 9,
+> +	.num_main_regs = 1,
+> +	.num_type_reg = 4,
+> +	.sub_reg_offsets = &bd70528_sub_irq_offsets[0],
+> +	.num_main_status_bits = 8,
+> +	.irq_reg_stride = 1,
+> +};
+> +
+> +#define WD_CTRL_MAGIC1 0x55
+> +#define WD_CTRL_MAGIC2 0xAA
+> +
+> +static int bd70528_wdt_set(struct bd70528 *bd70528, int enable, int *old_state)
+> +{
+> +	int ret, i;
+> +	unsigned int tmp;
+> +	u8 wd_ctrl_arr[3] = { WD_CTRL_MAGIC1, WD_CTRL_MAGIC2, 0 };
+> +	u8 *wd_ctrl = &wd_ctrl_arr[2];
+> +
+> +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &tmp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*wd_ctrl = (u8)tmp;
+> +
+> +	if (old_state) {
+> +		if (*wd_ctrl & BD70528_MASK_WDT_EN)
+> +			*old_state |= BD70528_WDT_STATE_BIT;
+> +		else
+> +			*old_state &= ~BD70528_WDT_STATE_BIT;
+> +		if ((!enable) == (!(*old_state & BD70528_WDT_STATE_BIT)))
+> +			return 0;
+> +	}
+> +
+> +	if (enable) {
+> +		if (*wd_ctrl & BD70528_MASK_WDT_EN)
+> +			return 0;
+> +		*wd_ctrl |= BD70528_MASK_WDT_EN;
+> +	} else {
+> +		if (*wd_ctrl & BD70528_MASK_WDT_EN)
+> +			*wd_ctrl &= ~BD70528_MASK_WDT_EN;
+> +		else
+> +			return 0;
+> +	}
+> +
+> +	for (i = 0; i < 3; i++) {
+> +		ret = regmap_write(bd70528->chip.regmap, BD70528_REG_WDT_CTRL,
+> +				   wd_ctrl_arr[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &tmp);
+> +	if ((tmp & BD70528_MASK_WDT_EN) != (*wd_ctrl & BD70528_MASK_WDT_EN)) {
+> +		dev_err(bd70528->chip.dev,
+> +			"Watchdog ctrl mismatch (hw) 0x%x (set) 0x%x\n",
+> +			tmp, *wd_ctrl);
+> +		ret = -EIO;
+> +	}
+> +
+> +	return ret;
+> +}
+
+Shouldn't this be one in the WDT driver?
+
+> +static int bd70528_i2c_probe(struct i2c_client *i2c,
+> +			    const struct i2c_device_id *id)
+> +{
+> +	struct bd70528 *bd70528;
+> +	struct regmap_irq_chip_data *irq_data;
+> +	int ret, i;
+> +	struct mutex *rtc_mutex;
+> +
+> +	if (!i2c->irq) {
+> +		dev_err(&i2c->dev, "No IRQ configured\n");
+> +		return -EINVAL;
+> +	}
+
+'\n' here.
+
+> +	bd70528 = devm_kzalloc(&i2c->dev, sizeof(*bd70528), GFP_KERNEL);
+> +
+
+Remove this line.
+
+> +	if (!bd70528)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&bd70528->rtc_timer_lock);
+
+Shouldn't this in the RTC driver?
+
+> +	dev_set_drvdata(&i2c->dev, bd70528);
+
+'\n' here.
+
+> +	bd70528->chip.chip_type = ROHM_CHIP_TYPE_BD70528;
+> +	bd70528->wdt_set = bd70528_wdt_set;
+
+Why?
+
+> +	bd70528->chip.regmap = devm_regmap_init_i2c(i2c, &bd70528_regmap);
+> +	if (IS_ERR(bd70528->chip.regmap)) {
+> +		dev_err(&i2c->dev, "regmap initialization failed\n");
+> +		return PTR_ERR(bd70528->chip.regmap);
+> +	}
+> +
+> +	/*
+> +	 * Disallow type setting for all IRQs by default as
+> +	 *  most of them do not support setting type.
+> +	 */
+> +	for (i = 0; i < ARRAY_SIZE(irqs); i++)
+> +		irqs[i].type.types_supported = 0;
+> +
+> +	irqs[BD70528_INT_GPIO0].type.type_reg_offset = 0;
+> +	irqs[BD70528_INT_GPIO0].type.type_rising_val = 0x20;
+> +	irqs[BD70528_INT_GPIO0].type.type_falling_val = 0x10;
+> +	irqs[BD70528_INT_GPIO0].type.type_level_high_val = 0x40;
+> +	irqs[BD70528_INT_GPIO0].type.type_level_low_val = 0x50;
+> +	irqs[BD70528_INT_GPIO0].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> +	irqs[BD70528_INT_GPIO1].type.type_reg_offset = 2;
+> +	irqs[BD70528_INT_GPIO1].type.type_rising_val = 0x20;
+> +	irqs[BD70528_INT_GPIO1].type.type_falling_val = 0x10;
+> +	irqs[BD70528_INT_GPIO1].type.type_level_high_val = 0x40;
+> +	irqs[BD70528_INT_GPIO1].type.type_level_low_val = 0x50;
+> +	irqs[BD70528_INT_GPIO1].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> +	irqs[BD70528_INT_GPIO2].type.type_reg_offset = 4;
+> +	irqs[BD70528_INT_GPIO2].type.type_rising_val = 0x20;
+> +	irqs[BD70528_INT_GPIO2].type.type_falling_val = 0x10;
+> +	irqs[BD70528_INT_GPIO2].type.type_level_high_val = 0x40;
+> +	irqs[BD70528_INT_GPIO2].type.type_level_low_val = 0x50;
+> +	irqs[BD70528_INT_GPIO2].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> +	irqs[BD70528_INT_GPIO3].type.type_reg_offset = 6;
+> +	irqs[BD70528_INT_GPIO3].type.type_rising_val = 0x20;
+> +	irqs[BD70528_INT_GPIO3].type.type_falling_val = 0x10;
+> +	irqs[BD70528_INT_GPIO3].type.type_level_high_val = 0x40;
+> +	irqs[BD70528_INT_GPIO3].type.type_level_low_val = 0x50;
+> +	irqs[BD70528_INT_GPIO3].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+
+Could you please explain:
+
+a) what you're doing here
+b) why you don't mass assign them
+    - seeing as most of the data is identical.
+
+> +	ret = devm_regmap_add_irq_chip(&i2c->dev, bd70528->chip.regmap,
+> +				       i2c->irq, IRQF_ONESHOT, 0,
+> +				       &bd70528_irq_chip, &irq_data);
+> +	if (ret) {
+> +		dev_err(&i2c->dev, "Failed to add irq_chip\n");
+> +		return ret;
+> +	}
+
+'\n' here.
+
+> +	dev_dbg(&i2c->dev, "Registered %d irqs for chip\n",
+> +			bd70528_irq_chip.num_irqs);
+
+Is this really required/useful?
+
+> +	/*
+> +	 * BD70528 irq controller is not touching the main mask register.
+
+"IRQ"
+
+> +	 * So enable the GPIO block interrupts at main level. We can just
+> +	 * leave them enabled as irq-controller should disable irqs
+
+"the IRQ controller"
+"IRQs"
+
+> +	 * from sub-registers when IRQ is disabled or freed.
+> +	 */
+> +	ret = regmap_update_bits(bd70528->chip.regmap,
+> +				 BD70528_REG_INT_MAIN_MASK,
+> +				 BD70528_INT_GPIO_MASK, 0);
+> +
+> +	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+> +				   bd70528_mfd_cells,
+> +				   ARRAY_SIZE(bd70528_mfd_cells), NULL, 0,
+> +				   regmap_irq_get_domain(irq_data));
+> +	if (ret)
+> +		dev_err(&i2c->dev, "Failed to create subdevices\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id bd70528_of_match[] = {
+> +	{
+> +		.compatible = "rohm,bd70528",
+> +	},
+
+This can be placed on a single line.
+
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, bd70528_of_match);
+> +
+> +static struct i2c_driver bd70528_drv = {
+> +	.driver = {
+> +		.name = "rohm-bd70528",
+> +		.of_match_table = bd70528_of_match,
+> +	},
+> +	.probe = &bd70528_i2c_probe,
+> +};
+> +
+> +static int __init bd70528_init(void)
+> +{
+> +	return i2c_add_driver(&bd70528_drv);
+> +}
+> +subsys_initcall(bd70528_init);
+
+Does it need to be initialised this early?
+
+> +static void __exit bd70528_exit(void)
+> +{
+> +	i2c_del_driver(&bd70528_drv);
+> +}
+> +module_exit(bd70528_exit);
+> +
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +MODULE_DESCRIPTION("ROHM BD70528 Power Management IC driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mfd/rohm-bd70528.h b/include/linux/mfd/rohm-bd70528.h
+> new file mode 100644
+> index 000000000000..576b672870b7
+> --- /dev/null
+> +++ b/include/linux/mfd/rohm-bd70528.h
+> @@ -0,0 +1,392 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* Copyright (C) 2018 ROHM Semiconductors */
+> +
+> +#ifndef __LINUX_MFD_BD70528_H__
+> +#define __LINUX_MFD_BD70528_H__
+> +
+> +#include <linux/device.h>
+> +#include <linux/mfd/rohm-generic.h>
+> +#include <linux/regmap.h>
+> +
+> +struct bd70528 {
+> +	/*
+> +	 * Please keep this as the first member here as some
+> +	 * drivers (clk) supporting more than one chip may only know this
+> +	 * generic struct 'struct rohm_regmap_dev' and assume it is
+> +	 * the first chunk of parent device's private data.
+> +	 */
+> +	struct rohm_regmap_dev chip;
+> +	/* wdt_set must be called rtc_timer_lock held */
+
+This doesn't make sense.
+
+[...]
+
 -- 
-2.11.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
