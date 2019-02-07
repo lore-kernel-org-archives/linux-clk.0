@@ -2,234 +2,124 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2BEC282CC
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 14:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF63FC282C2
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 398EA2190C
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 14:04:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t0kIL7DZ"
+	by mail.kernel.org (Postfix) with ESMTP id 93BD621904
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:06:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfBGOEX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:04:23 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44932 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbfBGOEX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 09:04:23 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v16so9805784wrn.11
-        for <linux-clk@vger.kernel.org>; Thu, 07 Feb 2019 06:04:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=NnkYkY79hk+jvPvsN3Y+qhBvp39+aQqXIYNmpPifzYg=;
-        b=t0kIL7DZ1GbOPDlyDvMOtQLIex+0qFztfSjTsvR6lZBkcw2ekZLPzYWcu74GCCr0tH
-         9dIozVUFrx68hsVdmZM4h7LqDMEt7o2wWk/LBmGcjJnL8Ee64mKBtkaUU70SoMzkCydv
-         YyE8K8SJlvsRRHQ1yQtURvpTKCnV7ryByzFNJPfFMXKdVcMzIzpnGudTZklXLpTu9Agb
-         P0kJwyW5ml10zE0jqC3Ed/Nsq4kpPOkQjOTvl7J+Rawhrlq1c4zE6u1by7Z/VjSStFjG
-         zbYrYDljvZPZToypPZhDGEqrOMITMMJFrDvQwYJVr+2t4w/zIoksfkN6kVJW/8mZaXWl
-         Re2A==
+        id S1726379AbfBGPGN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 10:06:13 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:39210 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfBGPGN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 10:06:13 -0500
+Received: by mail-vk1-f195.google.com with SMTP id f206so37182vke.6;
+        Thu, 07 Feb 2019 07:06:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NnkYkY79hk+jvPvsN3Y+qhBvp39+aQqXIYNmpPifzYg=;
-        b=o3MFbCmC3M0wDNmhiT8GCm95/Q4wJeheENP6NbYnJOQ143T/bBa2MuIxmi0Z7s/mF3
-         gdFbggGLghlj6QV0TeAeDqbIZ4eXm56CBKyHHNCN/RT1WWMzIqVxOxGxzfS2ADsrEw4p
-         6wJILEuk/jm7n2auY2Pq55L04my/5z4aHqYwdpBlynnrD31R+QGyRWVek3xKbLF4olG+
-         8bLubSQwoTeRNx2nyVUMvQyW485KHyIOxPNfkNM8tbJ3jw4IEGA/6mxgJ9vWqKUjy56i
-         SwYOst/16wQAUidlgRQSOFh0mk1ygn2Nhrqdvb1D1rDzHx6ZuuXyypD2LiEiclCQEpEI
-         TArg==
-X-Gm-Message-State: AHQUAuY3Mi+7o3szH5WU1/iBPDonrO2SQtxQRxqpksPqwP8pmPYN0k7/
-        WIdCD6AjRCAk+/yR8rKaJ4JR3A==
-X-Google-Smtp-Source: AHgI3IbEyfIM3qljzk86aDIDDKYiiJdIvfHaHYDpkfaMY07ofR4qnUP0NA640vr7YDIxMgZZclIYdQ==
-X-Received: by 2002:adf:a78a:: with SMTP id j10mr12623003wrc.191.1549548260651;
-        Thu, 07 Feb 2019 06:04:20 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id v7sm8900322wru.73.2019.02.07.06.04.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 06:04:19 -0800 (PST)
-Date:   Thu, 7 Feb 2019 14:04:18 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] devicetree: bindings: Document first ROHM BD70528
- bindings
-Message-ID: <20190207140418.GH20638@dell>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <52b17ed2599b21f4b93665ac689113ce3f8816b7.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bRxqLmSiVMVfTFow+KTqyKL7tJcuX/SG1WPQvuQHrSk=;
+        b=RzrX6ljHroasnAN/7P83sjy5QqoBIoCGUlAJWuvuZP2/fGPajNxhWtipFcdWJVDXdB
+         rttQoru/IG1vjkAxDOWw+rtP5ojhud4/JPxDQXObMERNRj2WaYUacaUoai2WOJGUjqzw
+         +3P6uM/2UMEYinQO5rxInJ30dVp6PVoQbd97EnzY8RiJR2gVJiVU9cHHYibBeTwzGDaq
+         kAJpXYjLae2DcQ3AtoUtXDmeCVLp3ApHedMmhCkttDG+gVdKo1eMv+GwqiXk6jkxqGxc
+         Ex5AmjKAXgFbGr4KdRIC2O7qLJr/KrSZc2tIDt4cGFd5LlgFNZ+czGn0PmxW9hlyXmzc
+         oUYQ==
+X-Gm-Message-State: AHQUAuawsonqkGj7qR56dwmNzxe7/3dTjBcBocG5xbyD8+QCUa3fZcDC
+        jXz89GX+DXYiSYfPDC1CxErSGy3TpCgobJBMLxQ=
+X-Google-Smtp-Source: AHgI3IY67Fsz+ha+/WL4Zi7wnLLDw+Mt1S3Q99JHFeY2aWFJksNpoQ+8Rm7975dqI8z0emmkiruCvMUZLJNHakKBWqM=
+X-Received: by 2002:a1f:8614:: with SMTP id i20mr3388951vkd.74.1549551971404;
+ Thu, 07 Feb 2019 07:06:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <52b17ed2599b21f4b93665ac689113ce3f8816b7.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190207133550.13967-1-horms+renesas@verge.net.au> <20190207133550.13967-4-horms+renesas@verge.net.au>
+In-Reply-To: <20190207133550.13967-4-horms+renesas@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 7 Feb 2019 16:05:58 +0100
+Message-ID: <CAMuHMdUMeGEnkVDvVk=NZMrnNXDUxDOgcqfORf+My8jkCza3SA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] clk: renesas: rcar-gen3: Support Z and Z2 clocks
+ with high frequency parents
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 07 Feb 2019, Matti Vaittinen wrote:
+Hi Simon,
 
-> Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> drivers) and 4 GPIO pins which can be configured for I/O or
-> as interrupt sources withe configurable trigger levels.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On Thu, Feb 7, 2019 at 2:36 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> Support Z and Z2 clocks with parent frequencies greater than UINT32_MAX Hz
+> (~4.29GHz).
+>
+> The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
+> divisor. This leads to truncation of the dividend, which is the Z or Z2
+
+truncation of the divisor.
+
+> parent clock frequency in HZ, on platforms where frequency of that clock is
+> greater than UINT32_MAX Hz.
+>
+> To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which an
+
+which takes an
+
+> unsigned 32bit dividend and divisor, is introduced.
+
+64-bit
+
+> An earlier version of this patch made use of the existing
+> DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
+> dividend and divisor. However, this does not compile on 32bit systems, such
+> as i386 and mips, when called with the types used at this callsite, an
+> unsigned long long dividend and unsigned long divisor.
+
+Thanks for fixing this!
+
+> This work is in preparation for supporting the Z2 cloco on the R-Car Gen3
+> E3 (r8a77990) SoC which has a 4.8GHz parent clock.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 > ---
->  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 102 +++++++++++++++++++++
->  1 file changed, 102 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> new file mode 100644
-> index 000000000000..f80be7e40184
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> @@ -0,0 +1,102 @@
-> +* ROHM BD70528 Power Management Integrated Circuit bindings
-> +
-> +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
+> v4: Add and use DIV64_U64_ROUND_CLOSEST
+>
+> v2: New patch
+> ---
+>  drivers/clk/renesas/rcar-gen3-cpg.c |  4 ++--
+>  include/linux/math64.h              | 13 +++++++++++++
 
-What's an Iq?
+While I have no issue taking this change through the clk-renesas tree if
+Andrew provides his Acked-by, I think the introduction of
+DIV64_U64_ROUND_CLOSEST() should be a separate patch.
 
-> +for battery-powered portable devices. The IC integrates 3 ultra-low current
-> +consumption buck converters, 3 LDOs and 2 LED Drivers. Also included are 4
-> +GPIOs, a real-time clock (RTC), a 32kHz clock gate, high-accuracy VREF
-> +for use with an external ADC, flexible dual-input power path, 10 bits SAR ADC
+However, given commit 68600f623d69da42 ("mm: don't miss the last page
+because of round-off error") added both DIV64_U64_ROUND_UP() and its
+user under mm/, there's precedence for not splitting it off...
 
-"bit"
+Gr{oetje,eeting}s,
 
-> +for battery temperature monitor and 1S battery charger with scalable charge
-> +currents.
-> +
-> +Required properties:
-> + - compatible		: Should be "rohm,bd70528"
-> + - reg			: I2C slave address.
-> + - interrupts		: The interrupt line the device is connected to.
-> + - interrupt-controller	: To indicate bd70528 acts as an interrupt controller.
-
-"BS70528"
-
-> + - #interrupt-cells	: Should be 2. usage is compliant to the 2 cells
-
-"Usage"
-
-> +			  variant of ../interrupt-controller/interrupts.txt
-> + - gpio-controller	: To indicate bd70528 acts as a gpio controller.
-
-"BD*"
-
-"GPIO"
-
-> + - #gpio-cells		: Should be 2. The first cell is the pin number and
-> +			  the second cell is used to specify flags. See
-> +			  ../gpio/gpio.txt for more information.
-> + - #clock-cells		: Should be 0.
-> + - regulators:		: List of child nodes that specify the regulators.
-> +			  Please see ../regulator/rohm,bd70528-regulator.txt
-> +
-> +Optional properties:
-> + - clock-output-names	: Should contain name for output clock.
-> +
-> +Example:
-> +/* external oscillator */
-> +osc: oscillator {
-> +	compatible = "fixed-clock";
-> +	#clock-cells = <1>;
-> +	clock-frequency  = <32768>;
-> +	clock-output-names = "osc";
-> +};
-> +
-> +pmic: pmic@4b {
-> +	compatible = "rohm,bd70528";
-> +	reg = <0x4b>;
-> +	interrupt-parent = <&gpio1>;
-> +	interrupts = <29 GPIO_ACTIVE_LOW>;
-> +	clocks = <&osc 0>;
-> +	#clock-cells = <0>;
-> +	clock-output-names = "bd70528-32k-out";
-> +	#gpio-cells = <2>;
-> +	gpio-controller;
-> +	interrupt-controller;
-> +	#interrupt-cells = <2>;
-> +
-> +	regulators {
-> +		buck1: BUCK1 {
-> +			regulator-name = "buck1";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <3400000>;
-> +			regulator-boot-on;
-> +			regulator-ramp-delay = <125>;
-> +		};
-> +		buck2: BUCK2 {
-> +			regulator-name = "buck2";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-boot-on;
-> +			regulator-ramp-delay = <125>;
-> +		};
-> +		buck3: BUCK3 {
-> +			regulator-name = "buck3";
-> +			regulator-min-microvolt = <800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-boot-on;
-> +			regulator-ramp-delay = <250>;
-> +		};
-> +		ldo1: LDO1 {
-> +			regulator-name = "ldo1";
-> +			regulator-min-microvolt = <1650000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-boot-on;
-> +		};
-> +		ldo2: LDO2 {
-> +			regulator-name = "ldo2";
-> +			regulator-min-microvolt = <1650000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		ldo3: LDO3 {
-> +			regulator-name = "ldo3";
-> +			regulator-min-microvolt = <1650000>;
-> +			regulator-max-microvolt = <3300000>;
-> +		};
-> +		led_ldo1: LED_LDO1 {
-> +			regulator-name = "led_ldo1";
-> +			regulator-min-microvolt = <200000>;
-> +			regulator-max-microvolt = <300000>;
-> +		};
-> +		led_ldo2: LED_LDO2 {
-> +			regulator-name = "led_ldo2";
-> +			regulator-min-microvolt = <200000>;
-> +			regulator-max-microvolt = <300000>;
-> +		};
-> +	};
-> +};
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
