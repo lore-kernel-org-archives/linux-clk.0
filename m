@@ -4,29 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983C2C282C4
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4A3C282C4
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6693221872
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:47:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB5D521904
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfBGPrT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:47:19 -0500
-Received: from foss.arm.com ([217.140.101.70]:39168 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726979AbfBGPrT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:47:19 -0500
+        id S1726774AbfBGPwk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 10:52:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39274 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfBGPwj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:52:39 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E50CA78;
-        Thu,  7 Feb 2019 07:47:18 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30673A78;
+        Thu,  7 Feb 2019 07:52:39 -0800 (PST)
 Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F3E83F719;
-        Thu,  7 Feb 2019 07:47:06 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CD9C3F719;
+        Thu,  7 Feb 2019 07:52:32 -0800 (PST)
 Subject: Re: [PATCH v6 1/6] irqchip/mtk-sysirq: support 4 interrupt parameters
  for sysirq
+From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Erin Lo <erin.lo@mediatek.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -45,7 +46,7 @@ Cc:     devicetree@vger.kernel.org,
 References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
  <1548317240-44682-2-git-send-email-erin.lo@mediatek.com>
  <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
+ <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
  mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
@@ -90,12 +91,12 @@ Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
  hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
  yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
 Organization: ARM Ltd
-Message-ID: <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
-Date:   Thu, 7 Feb 2019 15:47:05 +0000
+Message-ID: <c0187acf-bd8c-2d41-d84d-d35fc63b2beb@arm.com>
+Date:   Thu, 7 Feb 2019 15:52:27 +0000
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
+In-Reply-To: <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -104,35 +105,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/02/2019 15:20, Matthias Brugger wrote:
-> 
-> 
-> On 24/01/2019 09:07, Erin Lo wrote:
->> From: Seiya Wang <seiya.wang@mediatek.com>
+On 07/02/2019 15:47, Marc Zyngier wrote:
+> On 07/02/2019 15:20, Matthias Brugger wrote:
 >>
->> To support partitioned PPIs, 4 interrupt parameters should be valid
->> for sysirq.
 >>
->> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
->> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
->> ---
->>  drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> On 24/01/2019 09:07, Erin Lo wrote:
+>>> From: Seiya Wang <seiya.wang@mediatek.com>
+>>>
+>>> To support partitioned PPIs, 4 interrupt parameters should be valid
+>>> for sysirq.
+>>>
+>>> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+>>> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+>>> ---
+>>>  drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
+>>> index 90aaf19..282736a 100644
+>>> --- a/drivers/irqchip/irq-mtk-sysirq.c
+>>> +++ b/drivers/irqchip/irq-mtk-sysirq.c
+>>> @@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
+>>>  				       unsigned int *type)
+>>>  {
+>>>  	if (is_of_node(fwspec->fwnode)) {
+>>> -		if (fwspec->param_count != 3)
+>>> +		if (fwspec->param_count != 3 && fwspec->param_count != 4)
 >>
->> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
->> index 90aaf19..282736a 100644
->> --- a/drivers/irqchip/irq-mtk-sysirq.c
->> +++ b/drivers/irqchip/irq-mtk-sysirq.c
->> @@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
->>  				       unsigned int *type)
->>  {
->>  	if (is_of_node(fwspec->fwnode)) {
->> -		if (fwspec->param_count != 3)
->> +		if (fwspec->param_count != 3 && fwspec->param_count != 4)
+>> Where is this 4th parameter used?
 > 
-> Where is this 4th parameter used?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt#n14
+Sorry, I fired Send way too early.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt#n14
+What I wanted to add is that it is not clear to me why this change would
+be required here, as this driver only supports SPIs. It could be fixed
+by just relaxing the binding itself.
 
 Thanks,
 
