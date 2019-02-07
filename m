@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EA2C282C2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2236C282C4
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88E9A20821
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADA832175B
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 15:20:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Suv9OtHb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYu1gTBl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfBGPPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:15:25 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43395 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfBGPPY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 10:15:24 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so53052pfk.10;
-        Thu, 07 Feb 2019 07:15:23 -0800 (PST)
+        id S1726654AbfBGPU2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 10:20:28 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40448 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfBGPU2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 10:20:28 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so63708pgp.7;
+        Thu, 07 Feb 2019 07:20:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DuUQEcFnmbksczQ20zFMoTkYRklmXMtwtSj5IieR9dA=;
-        b=Suv9OtHbZH8t1vuPePXNGcsLIuEvrXQhqAAFwLzKmrjgncMgw8xCwV2dg1tYtwHGRw
-         dERQFHM4uo5/WqVAjJz7VlyuBGwhliyWoN4IeF1Ngs4hpVLgYlW05uO/F/yFqGUIBApE
-         +r5mLI28km6SZ2oAVCXmNdj48f3+eONWe/g+7ajSNTJw7hda1WIvSY9P/MNGmLGT7ucf
-         7BGj2gw/8tPFSzE7yR1hP2cxjfAiXxic+iL2VPKvlJZx+1MJQH6OSctSVqrVT5o2vGQ3
-         ZhDtAyXsIiYE4nvqB8/92D1p6GFujQAeKrtm8QeXALOGhPve5lBONRKb2jFRNAMUQRUS
-         gPxQ==
+        bh=mkeP8XuMZfU2GVskVcLSVDM0tDqHSTmlxrAZ9VDlyrg=;
+        b=iYu1gTBlpoQXWP3kJJktSc7JOTvLDgEGe5AuILNJRNfxdggmdEk9rotFnqkS9HOfHF
+         qVpyxTaUIOHYr1Yfkj2cyQB0vqwiHm83I4mWxfbKcsvGJk+CpK/B/YSpBOXUsmzTPaNJ
+         w2VfiXcsTmihqbT3y8vxfikSz8xei+Gk6G+U10njnNQc94RFRrDdVz3U/EZ3j1E112sn
+         m+/QybgYGpvZenYn1JpbCoEt6rKFrAsvQ5wy3YFjET8pIunZgyegv4kGiyZ9o/gS+gqD
+         MCtOzOfkZBCaNu+KL2WZDVFpq43CaqNw1LgBAbxNu60XQhPM5s2MHpJl/EYKsa5krigZ
+         nn0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=DuUQEcFnmbksczQ20zFMoTkYRklmXMtwtSj5IieR9dA=;
-        b=oAJ1h/k9Pa2DSpmAm/MhMZkk+q5eUB76JCVA4bDRfY5C+B70LjGOrW3A21FwU9KfJD
-         ijTRyzSu/tHik4ibvkKDQAFneNAQDOXdQ2/syhNEl3MSVcoSRAHmIRD0ygeZ4IshI/Vr
-         1kxc7mswLrKsqbJp7orlUAOg98zpC0IUksHIeBxr6h3H/8uprxQEdrdbIDc8eHXDev6Q
-         5txMTAaFZje/Me6NC+ApPl3ps7xB4XIliZM1LL7TaywF0M+ffyS8JTg5sI9ybkFVdbcb
-         qOrwRjcRsFror0IOPV9cNwkGoCflcdxL7PwCioV5O0cqlTJDLXp1MYo2YyyG8DogvdWk
-         VMIA==
-X-Gm-Message-State: AHQUAuYBMdNiMW1x65oBp+zBpHg0SiH8Yvk0iqx//SAidQt1kNBZcSEp
-        4E7BHwJU/YZOomNNaaNqWg/UeLR3k29x4w==
-X-Google-Smtp-Source: AHgI3Ia6wGGy+Lf6DEwS6aQ6VAyfUQqLmvrcEQoeanto4hmVOsICphilPaT29omkJDRQEtiNmrMuBw==
-X-Received: by 2002:a63:5207:: with SMTP id g7mr15416275pgb.253.1549552522704;
-        Thu, 07 Feb 2019 07:15:22 -0800 (PST)
+        bh=mkeP8XuMZfU2GVskVcLSVDM0tDqHSTmlxrAZ9VDlyrg=;
+        b=l2gPoyKQ8U8XZE18ouCFztKCPptjC/wwjnEB18ixqVSTX2Cm33sF6DzEzVlZ00/dkd
+         jj8DfiWNQ0JEKuMsMLt2XkObTtc05f5QVDPhMItMZVzIURvCxqyagSrcEWk+Bn48hF+1
+         LpHsesR5ou/pMxd+te5XLyxxXDoVVcOgy8AnnIk+Y7Iw0UJta8GyEg+T0S5w0KVtjIE7
+         Rt9ogJ1jDgfperKPeTvXj7Pl3qbSbTON4kkndZSw0HRNPYxya5W1CkTyljfFE5Cv1kDL
+         oDhVr+sWjDS/uaLiNslP0jXzfcuKLbNUKQijoO5HMpdQ3aiiDN6fMmA/ounQj/xDv0GD
+         EpRA==
+X-Gm-Message-State: AHQUAuZe1H2+rzJI74ZovM2ZwFRoznbIkEI9FF8uJ9FI2Ek6k+vjblvp
+        N/QktZwMQIvniynFF6hJUU8=
+X-Google-Smtp-Source: AHgI3IaEesTrDbAm3e0YCKFqofB82RP8kKvch57dVd9c4aakKRMy83tcUgHg18NDwtJ/azn0qrsibw==
+X-Received: by 2002:a63:f816:: with SMTP id n22mr1840062pgh.146.1549552827257;
+        Thu, 07 Feb 2019 07:20:27 -0800 (PST)
 Received: from ziggy.stardust ([62.31.71.171])
-        by smtp.gmail.com with ESMTPSA id b85sm9641195pfm.0.2019.02.07.07.15.18
+        by smtp.gmail.com with ESMTPSA id m67sm14072331pfb.25.2019.02.07.07.20.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 07:15:21 -0800 (PST)
-Subject: Re: [PATCH v6 2/6] dt-bindings: arm: Add bindings for Mediatek MT8183
- SoC Platform
+        Thu, 07 Feb 2019 07:20:26 -0800 (PST)
+Subject: Re: [PATCH v6 1/6] irqchip/mtk-sysirq: support 4 interrupt parameters
+ for sysirq
 To:     Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -71,9 +71,9 @@ Cc:     devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
         mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org
+        linux-clk@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>
 References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
- <1548317240-44682-3-git-send-email-erin.lo@mediatek.com>
+ <1548317240-44682-2-git-send-email-erin.lo@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -169,12 +169,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <4ece8d53-e803-97d3-6f5e-5c3002a31cf1@gmail.com>
-Date:   Thu, 7 Feb 2019 16:15:16 +0100
+Message-ID: <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
+Date:   Thu, 7 Feb 2019 16:20:21 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <1548317240-44682-3-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1548317240-44682-2-git-send-email-erin.lo@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -186,37 +186,43 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 24/01/2019 09:07, Erin Lo wrote:
-> This adds dt-binding documentation of cpu for Mediatek MT8183.
+> From: Seiya Wang <seiya.wang@mediatek.com>
 > 
+> To support partitioned PPIs, 4 interrupt parameters should be valid
+> for sysirq.
+> 
+> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
 > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
+> index 90aaf19..282736a 100644
+> --- a/drivers/irqchip/irq-mtk-sysirq.c
+> +++ b/drivers/irqchip/irq-mtk-sysirq.c
+> @@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
+>  				       unsigned int *type)
+>  {
+>  	if (is_of_node(fwspec->fwnode)) {
+> -		if (fwspec->param_count != 3)
+> +		if (fwspec->param_count != 3 && fwspec->param_count != 4)
 
-pushed to v5.0-next/dts64
+Where is this 4th parameter used?
 
-Thanks,
+Regards,
 Matthias
 
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
-> index 8f260e5..f6d6ed3 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek.txt
-> @@ -20,6 +20,7 @@ compatible: Must contain one of
->     "mediatek,mt8127"
->     "mediatek,mt8135"
->     "mediatek,mt8173"
-> +   "mediatek,mt8183"
+>  			return -EINVAL;
 >  
+>  		/* No PPI should point to this domain */
+> @@ -104,7 +104,7 @@ static int mtk_sysirq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+>  	struct irq_fwspec *fwspec = arg;
+>  	struct irq_fwspec gic_fwspec = *fwspec;
 >  
->  Supported boards:
-> @@ -77,3 +78,6 @@ Supported boards:
->  - MTK mt8173 tablet EVB:
->      Required root node properties:
->        - compatible = "mediatek,mt8173-evb", "mediatek,mt8173";
-> +- Evaluation board for MT8183:
-> +    Required root node properties:
-> +      - compatible = "mediatek,mt8183-evb", "mediatek,mt8183";
+> -	if (fwspec->param_count != 3)
+> +	if (fwspec->param_count != 3 && fwspec->param_count != 4)
+>  		return -EINVAL;
+>  
+>  	/* sysirq doesn't support PPI */
 > 
