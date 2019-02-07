@@ -2,105 +2,123 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAEBC282C2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 10:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5E3C282CC
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 11:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A526C21872
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 10:51:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AF7921872
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 11:41:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xPhkRuDx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfBGKvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:51:13 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:56674 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726186AbfBGKvM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 05:51:12 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17AhGRa014680;
-        Thu, 7 Feb 2019 04:51:05 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2qfp68t4wm-1;
-        Thu, 07 Feb 2019 04:51:05 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 2FF35611C8A7;
-        Thu,  7 Feb 2019 04:51:05 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 7 Feb 2019
- 10:51:04 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x17Ap4AW024283; Thu,
- 7 Feb 2019 10:51:04 GMT
-Date:   Thu, 7 Feb 2019 10:51:04 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linus.walleij@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 6/6] pinctrl: lochnagar: Add support for the Cirrus
- Logic Lochnagar
-Message-ID: <20190207105104.GB6336@imbe.wolfsonmicro.main>
-References: <20190130114128.21083-1-ckeepax@opensource.cirrus.com>
- <20190130114128.21083-6-ckeepax@opensource.cirrus.com>
+        id S1726748AbfBGLlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 06:41:08 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36060 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfBGLlH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 06:41:07 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p6so6326537wmc.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 Feb 2019 03:41:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=CjnvclVyKeLBTw1SQbK4p0yaTy2NU4lox4zdRpAQ4MY=;
+        b=xPhkRuDxRZs9kMkzugyDMMCiA88+9vP82WGmqzDAOd8PaQypsyv+qp+qIV9kpfsElc
+         WPAur3i/Bqgbfjg4BlfdCI7AvcBZ83JfHUgUKOAn+q4aZIzOUExEuXHAh0xGmcbRBoJT
+         hOuZT+fijBYxlWWCeJNZdCzGCALJ0SNaT4kCw4evlnwehR4ma/cA0QD9iEX3o25aOJ63
+         Ou6B5++f5aux6qP30pDu6dOLUU6ogdvddu7oSC2KPL56xYVaVFkAJb//uRpM7E5RA0VJ
+         BFRPeWctSTPu3jMxvPcLXzagfFWQU2v+nT46kZqAjsL3avWhsF3y8Uv2KFCvY1L6iKck
+         MMPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=CjnvclVyKeLBTw1SQbK4p0yaTy2NU4lox4zdRpAQ4MY=;
+        b=YicH422BjD/dLJ6mB1bgZl56vMK7CqlamOp2mMooRVXfi2b0+S3mxSg+RxA0mira/H
+         TTVenmeVKwKSIvs58PELR8l2VqZLnGBFYnOVYHe2CypLAAOm9OXbyePdMuRxlykIHg+m
+         urTTUOnnYBbXqMibIYHl1hoQJFwTZSLbwJGcE8VSqhO5zBbJBu1XlLA86fbWa29tXBZy
+         AYR9/24bOf44ftDCkLbgE24h0PBQQKFKNoneG1j6SKoGOioTYpSLxbVhL5+zDFOqzPEx
+         LhsWVgxI/9+9vl9eTOqdn8mI6GCqyBpAoeeS+yEQ4zs09qcSR32Fk/m5sj9pbocRrB6w
+         XVlg==
+X-Gm-Message-State: AHQUAuaxU1hf3yjJStyzL9OJlfGF/2DnDwNKDu1VyOJp+Ah848/xJVmz
+        +T9gzi2D9xrpZGmJX/Dkj82QMw==
+X-Google-Smtp-Source: AHgI3IbrwSRDDzIAMqfkz0BdySTvQrzRe4tzFZhjEbeopuT0V9slkyeC+zQO7Yc7j2MwJa01GKk0Vw==
+X-Received: by 2002:a1c:2686:: with SMTP id m128mr6801157wmm.52.1549539665724;
+        Thu, 07 Feb 2019 03:41:05 -0800 (PST)
+Received: from dell ([2.27.35.171])
+        by smtp.gmail.com with ESMTPSA id s3sm15678284wmj.23.2019.02.07.03.41.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 03:41:05 -0800 (PST)
+Date:   Thu, 7 Feb 2019 11:41:03 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v8 1/8] mfd: regulator: clk: split rohm-bd718x7.h
+Message-ID: <20190207114103.GF20638@dell>
+References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <58a56ac25564baa221d471e878a3e4f5d9081f36.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190130114128.21083-6-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902070085
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <58a56ac25564baa221d471e878a3e4f5d9081f36.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 11:41:28AM +0000, Charles Keepax wrote:
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board.
+On Thu, 07 Feb 2019, Matti Vaittinen wrote:
+
+> Split the bd718x7.h to ROHM common and bd718x7 specific parts
+> so that we do not need to add same things in every new ROHM
+> PMIC header. Please note that this change requires changes also
+> in bd718x7 sub-device drivers for regulators and clk.
 > 
-> Lochnagar provides many pins which can generally be used for an
-> audio function such as an AIF or a PDM interface, but also as
-> GPIOs.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 > 
-> No changes since v6.
+> Please note that I maintained the acks from Mark and Stephen even
+> though this is a squash of 3 commits and both Mark and Stephen had
+> only acked one of the patches. (The patch which touched their area
+> clk for Stephen, regulators for Mark). I interpreted their acks as
+> 'the split is in general Ok and portion I am interested in is fine'
+> and thus maintained the acks. Please let me know if this is not Ok.
 > 
-> Thanks,
-> Charles
-> 
->  drivers/pinctrl/cirrus/Kconfig             |   10 +
->  drivers/pinctrl/cirrus/Makefile            |    2 +
->  drivers/pinctrl/cirrus/pinctrl-lochnagar.c | 1236 ++++++++++++++++++++++++++++
->  3 files changed, 1248 insertions(+)
->  create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.c
-> 
-> +LN2_PIN_MUX(FPGA_GPIO1,    "fgpa-gpio1");
-> +LN2_PIN_MUX(FPGA_GPIO2,    "fgpa-gpio2");
-> +LN2_PIN_MUX(FPGA_GPIO3,    "fgpa-gpio3");
-> +LN2_PIN_MUX(FPGA_GPIO4,    "fgpa-gpio4");
-> +LN2_PIN_MUX(FPGA_GPIO5,    "fgpa-gpio5");
-> +LN2_PIN_MUX(FPGA_GPIO6,    "fgpa-gpio6");
+>  drivers/clk/clk-bd718x7.c             |  6 +++---
+>  drivers/mfd/rohm-bd718x7.c            | 23 ++++++++++++-----------
+>  drivers/regulator/bd718x7-regulator.c | 24 ++++++++++++------------
+>  include/linux/mfd/rohm-bd718x7.h      | 22 ++++++++--------------
+>  include/linux/mfd/rohm-generic.h      | 20 ++++++++++++++++++++
+>  5 files changed, 55 insertions(+), 40 deletions(-)
+>  create mode 100644 include/linux/mfd/rohm-generic.h
 
-Apologies for this late spot but there is typo here, these should
-of course read fpga not fgpa. I will resend, going to start
-sending the sub drivers separately now, since Lee has merged the
-MFD cut down on the email traffic for everyone a little.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-Thanks,
-Charles
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
