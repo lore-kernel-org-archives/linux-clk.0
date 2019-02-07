@@ -2,130 +2,136 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A20C282C2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 07:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F21C282C2
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 09:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984282081B
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 07:50:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B15DA218B0
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 09:00:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gsmqsGP8"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E2SZTPx/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfBGHuR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 02:50:17 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40875 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbfBGHuR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 02:50:17 -0500
-Received: by mail-wm1-f67.google.com with SMTP id q21so5546875wmc.5
-        for <linux-clk@vger.kernel.org>; Wed, 06 Feb 2019 23:50:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=mKEu9O1n6B6PRYxAJTgnoP1xDI5OxjIQtAFWlZuuxZE=;
-        b=gsmqsGP8OUW0BLrE5sLONvJsFa8P60EigPscEMSNTRlvZueTUlMlXkox3KRywqpXK8
-         t7DQZPBYRKRzAYSGFSjpR6wrPE+1yfI8dT5H7G/jrIvoUKZJxpMBT9byATbWZ/rV8IsD
-         8lBIfircshq50yqtEy6krph/Ts/opaK9kOQFEodoJz7oWpXyeJsjRh0V/+49I0dfTQuA
-         Kr4rnSTNdUpHUDIeUNEQDAMVfa9X+FhmzfHvA+S1jfYSDJjBR/FlEYTuKOQPNpFKlxuU
-         RbHsWn2FcPdeTyiHXONzrkY/PjWWERcZVi1e7K/o330b+SqD7QnoS7OKCzDR2ndo0jQg
-         C7hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=mKEu9O1n6B6PRYxAJTgnoP1xDI5OxjIQtAFWlZuuxZE=;
-        b=qC1sSypyjF4+eFlqjgG5BwpXY89iTCRme0HJN0wDml6ke4D+1Aox23narug+DSzDMv
-         PuOh/poVI0GjntyzU0HrHfFrCcdBoAAo24rXMYxpVitQIZNxfY1phtB9SXXPY0UzrWzg
-         5Evk2slCVYN22JZIvgLlZp9z0todlYlp8UF9ofL59SCBab41dZwTl7Q3C9Nq+NYtvNoK
-         j+uNn/bSLKo0BolQGoBSM9IdIGqOJrMi6oyCmrACDwIqVMSPGpIpCaFUhT9yHtE0NdYh
-         fggptSFQsjy5ZAdiQ6m1CcoDPhubVYlven3FUcu4KHqzLZ6T38XGaaotZxFBo05O3h9z
-         bKXg==
-X-Gm-Message-State: AHQUAubtZbbq2iWS/Dbh3RcDSkHTSBCKiVZRMdKF/qBh+wXizjq3/ooN
-        0Dmz98h8BPYOzC8TJBJn3iXsDA==
-X-Google-Smtp-Source: AHgI3IZvnh1zPRE0209V7wjkHJgy2lfGEDslcKMHexYDyDqjR1vvO990im61C9BR3l5NcRcogfBaSg==
-X-Received: by 2002:a1c:2003:: with SMTP id g3mr6048970wmg.32.1549525814537;
-        Wed, 06 Feb 2019 23:50:14 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id c129sm17062168wma.48.2019.02.06.23.50.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 23:50:13 -0800 (PST)
-Date:   Thu, 7 Feb 2019 07:50:11 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        patches@opensource.cirrus.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 4/6] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20190207075011.GC4672@dell>
-References: <20190130114128.21083-1-ckeepax@opensource.cirrus.com>
- <20190130114128.21083-4-ckeepax@opensource.cirrus.com>
+        id S1726691AbfBGJAV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 04:00:21 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:37406 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfBGJAU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 04:00:20 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17909N7064509;
+        Thu, 7 Feb 2019 03:00:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549530009;
+        bh=kbe4CEQgtDkF7N6OJLnSI5lU9ue/nEXutdaEd7XiHWk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=E2SZTPx/o+cU5q0LVcj9Bc4IBDI3VNDUYTxD75JLRR3AHsvTjNt/KestehB3Ye3Q2
+         tAq2tj9sAsfpPXDYhEBj7qjzN1Kk/kTs2TArVFjfBo2JFA5nUV05AEYy7UZETXg1mZ
+         LreKiwPMwHEAKgfMPpV+hm8yHYBysTSM4kEVxTtM=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17909el106679
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Feb 2019 03:00:09 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
+ Feb 2019 03:00:07 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 7 Feb 2019 03:00:07 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17902FY003375;
+        Thu, 7 Feb 2019 03:00:03 -0600
+Subject: Re: [PATCH 1/3] dt-bindings: clock: ti,sci-clk: Add support for
+ parsing clock info from DT
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
+CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1546954223-9738-1-git-send-email-t-kristo@ti.com>
+ <1546954223-9738-2-git-send-email-t-kristo@ti.com>
+ <20190121210449.GB7851@bogus> <7ce7bd25-b5c4-f99d-fda6-0f21376f2204@ti.com>
+ <ab8707fb-e632-5be9-9fdb-4b1fb3cb26ba@ti.com>
+ <154947523891.74891.8214442349263473281@swboyd.mtv.corp.google.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <2a22b7f4-8ac4-184e-6c69-f324488614ee@ti.com>
+Date:   Thu, 7 Feb 2019 10:59:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190130114128.21083-4-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <154947523891.74891.8214442349263473281@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 30 Jan 2019, Charles Keepax wrote:
+On 06/02/2019 19:47, Stephen Boyd wrote:
+> Quoting Tero Kristo (2019-02-05 00:25:40)
+>> On 22/01/2019 09:33, Tero Kristo wrote:
+>>> On 21/01/2019 23:04, Rob Herring wrote:
+>>>> At first, I thought this was an either/or thing. Use firmware or use DT,
+>>>> but it is really only get the clocks used in the DT from firmware.
+>>>>
+>>>> Why wouldn't you just always do that? I can think of 3 cases:
+>>>> reparenting, debug and overlays. This breaks reparenting and overlays,
+>>>> right? Debug could be handled with some userspace trigger to get all the
+>>>> clocks.
+>>>
+>>> Re-parenting this does not break, as the scan still checks every
+>>> possible parent of a clock scanned. Overlays are broken for sure, as we
+>>> don't know which overlays we would be applying, and what clocks would be
+>>> in them. Debug is kind of broken as we only scan a small portion of the
+>>> clocks.
+>>>
+>>>>
+>>>> Why scan any of the clocks up front? Why not just create the clocks on
+>>>> demand? If an unknown clock id is requested, then create the clock and
+>>>> query the firmware at that point. That would avoid the DT scan too.
+>>>> Maybe there's some issues in the clk framework preventing that, but
+>>>> that's not really a DT problem.
+>>>
+>>> The very initial version I did a couple of years back, did scan the
+>>> clocks based on need, and registered them dynamically. Stephen shot down
+>>> this based on the assessment that there might be locking issues with the
+>>> common clock framework with this approach leading into potential
+>>> deadlock situations.
+> 
+> It's an interesting idea to limit the scope of clks that are registered
+> to only the leaf and whatever up to the root of the tree is involved in
+> the working set of the kernel.
+> 
+>>
+>> So Rob, what is the final call on this binding? Ack/NAK? If NAK, shall I
+>> implement a kernel cmdline param to select the parsing method or what is
+>> preferred? Doing it build time with a simple Kconfig seems too limiting.
+>>
+> 
+> Is the problem a performance problem where probing the firmware for all
+> the clks is costly and time intensive?
 
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board. Audio system topology,
-> clocking and power can all be controlled through the Lochnagar
-> controller chip, allowing the device under test to be used in
-> a variety of possible use cases.
-> 
-> As the Lochnagar is a fairly complex device this MFD driver
-> allows the drivers for the various features to be bound
-> in. Initially clocking, regulator and pinctrl will be added as
-> these are necessary to configure the system. But in time at least
-> audio and voltage/current monitoring will also be added.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
-> 
-> Changes since v6:
->  - Added a couple of register that will be needed by hardware
->    monitor patches that will be send in the near future.
-> 
-> Thanks,
-> Charles
-> 
->  MAINTAINERS                         |  17 ++
->  drivers/mfd/Kconfig                 |   8 +
->  drivers/mfd/Makefile                |   2 +
->  drivers/mfd/lochnagar-i2c.c         | 398 ++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/lochnagar.h       |  55 +++++
->  include/linux/mfd/lochnagar1_regs.h | 157 ++++++++++++++
->  include/linux/mfd/lochnagar2_regs.h | 291 ++++++++++++++++++++++++++
->  7 files changed, 928 insertions(+)
->  create mode 100644 drivers/mfd/lochnagar-i2c.c
->  create mode 100644 include/linux/mfd/lochnagar.h
->  create mode 100644 include/linux/mfd/lochnagar1_regs.h
->  create mode 100644 include/linux/mfd/lochnagar2_regs.h
+Yes this is pretty expensive, as there can be quite a large amount of 
+clocks on a SoC, and each clock must be probed separately.
 
-Looks quite suitable now.  Thanks for sticking with it.
+> So instead of doing that we're
+> describing some of the details in DT? Why can't we describe the clk tree
+> in C code with some data structure that indicates parent child linkages?
+> This is how every other SoC is doing this so far.
 
-Applied, thanks.
+We can obviously do that also, however it is "neat" that we can probe 
+the available clocks from the device, and don't need to hardcode 
+anything kernel side... and neither maintain the clock data. If we want 
+to go the hardcoded way, I can create tools to autogenerate the kernel 
+side clock data from the clock dump of a running system though, and use 
+the built-in clock data if it is available, retaining the existing probe 
+method basically for new devices.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
