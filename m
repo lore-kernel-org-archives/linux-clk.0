@@ -2,328 +2,111 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F555C282C2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 07:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D25EC282C2
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 07:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE8A218B0
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 07:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A9A7218FE
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 07:49:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fkNP5IcF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfBGHm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 02:42:59 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41622 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfBGHm7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 02:42:59 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j1-v6so4493389lja.8;
-        Wed, 06 Feb 2019 23:42:55 -0800 (PST)
+        id S1726499AbfBGHtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 02:49:41 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37916 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfBGHtk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 02:49:40 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so10390572wrw.5
+        for <linux-clk@vger.kernel.org>; Wed, 06 Feb 2019 23:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=0pfKzUpDQVqES+Uvo3kyq8TjX3Vj3ewKdOYxlQKxmek=;
+        b=fkNP5IcFMh5Yf+vx6olYNVzD9h4zlL3ZAjC0g8DJZ58qQtYgsTaMz/W9o3pNi5W1Jq
+         o+/IOANKHh3J8gQtUIUwAWTFLds1dJHsUCtQm5GcBGGqudgOR7oGWxEhy3RU0YOG3q/0
+         qrDOuhxDB6plYQdp4zOOB8/RsihRKc6DnXv0c+Ki5qs5G9ihT79atDNFOYLECI8tEps3
+         HpZnMJRu32hhgv/ulX7qqqDqbAZfDvdLQLcQwnW1jLkNWvZaQ2dJZxCm1RLZvxjaSuN8
+         ujgO3D2ORO8FrFSq00i9zwKf4rlvX32YZ/1vg/jK/llmPoD3F2nS22Q8S53nj8uSQIjO
+         Lruw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Cdfzsd0lfaYFpnOHOm3YBAoRP1hkzyheifCgij5hiUs=;
-        b=Va0LGFuWjRM3xPfOwhEvVZmA5Po4GqFYaIxkQniLnTnIalkbnA/AKfJRmvNXbEfA6B
-         c2OtqzfBxitrUNUxcARaBTh84rq2HaiFW1zKr4j4xLGv0UKVW59M+HIeK82cKuQ4x2H8
-         lRnsBRwzwbKKFbNX3FJWEQoP8ptz2VCb8nRmd3P4JEJZx3GbKp8Rd2+l9mjFJWRa2o4u
-         7TgbIHAkXUCXU/u/KHMCvkBwfcikUkf+sCKMrniQyE7Kk2ep3LP36E/f/i/p2AD6YScL
-         7GQpIuFFaYYShvNZnhUxA/fJSy6wilw95Ix7XRWGQOEWafzlEfZhmlwgFQGNiNNTlu7d
-         Al0Q==
-X-Gm-Message-State: AHQUAua6rw8H85NxzdWF577eJNEJoWAtRxnCbbcl+E0sHH/loCaYDQGP
-        mFJc31gf8oGkaBzu6gQIQSY=
-X-Google-Smtp-Source: AHgI3IbrV1o2hlmW8ViApwDogvUhaik4+w/4Jr8XFivH8hNzfyWSXhGfEVtx01EcXivwHEZppOxSOA==
-X-Received: by 2002:a2e:83d7:: with SMTP id s23-v6mr8965803ljh.139.1549525374990;
-        Wed, 06 Feb 2019 23:42:54 -0800 (PST)
-Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
-        by smtp.gmail.com with ESMTPSA id m21sm4743426lfl.97.2019.02.06.23.42.52
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=0pfKzUpDQVqES+Uvo3kyq8TjX3Vj3ewKdOYxlQKxmek=;
+        b=ge/IStedcDT7ZbBcC2f88XeXzLIC5k7UHf1NMTFBBzJSUHjLmwJlqNojy/3ro8vLow
+         RBVe8Eys9NRWMsVdxJ5PYrfk7JlvG3yNpo2uCdMX/wgChvxMdd7juh7NA1SGZR3cWdEX
+         ibWY4/WsT1KbL0oohY0T4n0V9EWcRptjBwn3MFNmgsmfEjgn8kMDvPc5wPwk9LDEzzEU
+         VvCKSElFENcB44Va0rM+lnQf7YVFosi7K4XvNZB+9JybYiG7N33AclHqqnjexQ4r1fik
+         Bu3Ok4/Gj6NrwxzuUaJHg2iT+XxPenx2gHmQV3Aqe1BmJfo2o3JPSXY1Y2kCMnq48AAG
+         nWcg==
+X-Gm-Message-State: AHQUAuax/n5WzjiVuXPZlcTJBVgQIl+VDPaD9gdWcNXZg0zN96kDNHE1
+        JaLx9kEl/ipdL+wHkvhY/HXy5A==
+X-Google-Smtp-Source: AHgI3IYLofiwCB9Z3bbRXBIVvTpkpgo3yqZ7H9uQPj9Z82X5aQSqYkkaQZaEEY2p+S684JomsZ7H8A==
+X-Received: by 2002:adf:ba94:: with SMTP id p20mr10972778wrg.62.1549525778785;
+        Wed, 06 Feb 2019 23:49:38 -0800 (PST)
+Received: from dell ([2.27.35.171])
+        by smtp.gmail.com with ESMTPSA id w13sm15744154wmf.5.2019.02.06.23.49.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 23:42:54 -0800 (PST)
-Date:   Thu, 7 Feb 2019 09:42:11 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Matti Vaittinen <mazziesaccount@gmail.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wed, 06 Feb 2019 23:49:38 -0800 (PST)
+Date:   Thu, 7 Feb 2019 07:49:36 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linus.walleij@linaro.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH v8 8/8] watchdog: bd70528: Initial support for ROHM BD70528
- watchdog block
-Message-ID: <8805bf8c4d9cb9e2ec4f1e1181fd6b099f7d1bba.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+        patches@opensource.cirrus.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 1/6] mfd: lochnagar: Add initial binding documentation
+Message-ID: <20190207074936.GB4672@dell>
+References: <20190130114128.21083-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190130114128.21083-1-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Initial support for watchdog block included in ROHM BD70528
-power management IC.
+On Wed, 30 Jan 2019, Charles Keepax wrote:
 
-Configurations for low power states are still to be checked.
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform. This driver supports the board
+> controller chip on the Lochnagar board.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
+> 
+> Changes since v6:
+>  - Correct regulator bindings to match already merged regulator code
+> 
+> Thanks,
+> Charles
+> 
+>  .../devicetree/bindings/mfd/cirrus,lochnagar.txt   |  68 +++++++++++
+>  include/dt-bindings/clk/lochnagar.h                |  26 ++++
+>  include/dt-bindings/pinctrl/lochnagar.h            | 132 +++++++++++++++++++++
+>  3 files changed, 226 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
+>  create mode 100644 include/dt-bindings/clk/lochnagar.h
+>  create mode 100644 include/dt-bindings/pinctrl/lochnagar.h
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/watchdog/Kconfig       |  12 +++
- drivers/watchdog/Makefile      |   1 +
- drivers/watchdog/bd70528_wdt.c | 190 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 203 insertions(+)
- create mode 100644 drivers/watchdog/bd70528_wdt.c
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 57f017d74a97..f30e3a3e886e 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
- 	  watchdog. Be aware that governors might affect the watchdog because it
- 	  is purely software, e.g. the panic governor will stall it!
- 
-+config BD70528_WATCHDOG
-+	tristate "ROHM BD70528 PMIC Watchdog"
-+	depends on MFD_ROHM_BD70528
-+	select WATCHDOG_CORE
-+	help
-+	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
-+	  cause system reset.
-+
-+	  Say Y here to include support for the ROHM BD70528 watchdog.
-+	  Alternatively say M to compile the driver as a module,
-+	  which will be called bd70528_wdt.
-+
- config DA9052_WATCHDOG
- 	tristate "Dialog DA9052 Watchdog"
- 	depends on PMIC_DA9052 || COMPILE_TEST
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index a0917ef28e07..1ce87a3b1172 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
- obj-$(CONFIG_XEN_WDT) += xen_wdt.o
- 
- # Architecture Independent
-+obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
- obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
- obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
- obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
-diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
-new file mode 100644
-index 000000000000..cab802ddde06
---- /dev/null
-+++ b/drivers/watchdog/bd70528_wdt.c
-@@ -0,0 +1,190 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// ROHM BD70528MWV watchdog driver
-+
-+#include <linux/bcd.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/watchdog.h>
-+
-+/*
-+ * Max time we can set is 1 hour, 59 minutes and 59 seconds
-+ * and Minimum time is 1 second
-+ */
-+#define WDT_MAX_MS	((2 * 60 * 60 - 1) * 1000)
-+#define WDT_MIN_MS	1000
-+#define DEFAULT_TIMEOUT	60
-+
-+struct wdtbd70528 {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct mutex *rtc_lock;
-+	struct watchdog_device wdt;
-+};
-+
-+static int bd70528_wdt_set_locked(struct wdtbd70528 *w, int enable)
-+{
-+	struct bd70528 *bd70528;
-+
-+	bd70528 = container_of(w->rtc_lock, struct bd70528, rtc_timer_lock);
-+	return bd70528->wdt_set(bd70528, enable, NULL);
-+}
-+
-+static int bd70528_wdt_set(struct wdtbd70528 *w, int enable)
-+{
-+	int ret;
-+
-+	mutex_lock(w->rtc_lock);
-+	ret = bd70528_wdt_set_locked(w, enable);
-+	mutex_unlock(w->rtc_lock);
-+
-+	return ret;
-+}
-+
-+static int bd70528_wdt_start(struct watchdog_device *wdt)
-+{
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	dev_dbg(w->dev, "WDT ping...\n");
-+	return bd70528_wdt_set(w, 1);
-+}
-+
-+static int bd70528_wdt_stop(struct watchdog_device *wdt)
-+{
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	dev_dbg(w->dev, "WDT stopping...\n");
-+	return bd70528_wdt_set(w, 0);
-+}
-+
-+static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
-+				    unsigned int timeout)
-+{
-+	unsigned int hours;
-+	unsigned int minutes;
-+	unsigned int seconds;
-+	int ret;
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	seconds = timeout;
-+	hours = timeout / (60 * 60);
-+	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
-+	if (hours)
-+		seconds -= (60 * 60);
-+	minutes = seconds / 60;
-+	seconds = seconds % 60;
-+
-+	mutex_lock(w->rtc_lock);
-+
-+	ret = bd70528_wdt_set_locked(w, 0);
-+	if (ret)
-+		goto out_unlock;
-+
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_HOUR,
-+				 BD70528_MASK_WDT_HOUR, hours);
-+	if (ret) {
-+		dev_err(w->dev, "Failed to set WDT hours\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_MINUTE,
-+				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
-+	if (ret) {
-+		dev_err(w->dev, "Failed to set WDT minutes\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_SEC,
-+				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
-+	if (ret)
-+		dev_err(w->dev, "Failed to set WDT seconds\n");
-+	else
-+		dev_dbg(w->dev, "WDT tmo set to %u\n", timeout);
-+
-+out_en_unlock:
-+	ret = bd70528_wdt_set_locked(w, 1);
-+out_unlock:
-+	mutex_unlock(w->rtc_lock);
-+
-+	return ret;
-+}
-+
-+static const struct watchdog_info bd70528_wdt_info = {
-+	.identity = "bd70528-wdt",
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-+};
-+
-+static const struct watchdog_ops bd70528_wdt_ops = {
-+	.start		= bd70528_wdt_start,
-+	.stop		= bd70528_wdt_stop,
-+	.set_timeout	= bd70528_wdt_set_timeout,
-+};
-+
-+static int bd70528_wdt_probe(struct platform_device *pdev)
-+{
-+	struct bd70528 *bd70528;
-+	struct wdtbd70528 *w;
-+	int ret;
-+	unsigned int reg;
-+
-+	bd70528 = dev_get_drvdata(pdev->dev.parent);
-+	if (!bd70528) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
-+	if (!w)
-+		return -ENOMEM;
-+
-+	w->regmap = bd70528->chip.regmap;
-+	w->rtc_lock = &bd70528->rtc_timer_lock;
-+	w->dev = &pdev->dev;
-+
-+	w->wdt.info = &bd70528_wdt_info;
-+	w->wdt.ops =  &bd70528_wdt_ops;
-+	w->wdt.min_hw_heartbeat_ms = WDT_MIN_MS;
-+	w->wdt.max_hw_heartbeat_ms = WDT_MAX_MS;
-+	w->wdt.parent = pdev->dev.parent;
-+	w->wdt.timeout = DEFAULT_TIMEOUT;
-+	watchdog_set_drvdata(&w->wdt, w);
-+	watchdog_init_timeout(&w->wdt, 0, pdev->dev.parent);
-+
-+	ret = bd70528_wdt_set_timeout(&w->wdt, w->wdt.timeout);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
-+		return ret;
-+	}
-+
-+	mutex_lock(w->rtc_lock);
-+	ret = regmap_read(w->regmap, BD70528_REG_WDT_CTRL, &reg);
-+	mutex_unlock(w->rtc_lock);
-+
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get the watchdog state\n");
-+		return ret;
-+	}
-+	if (reg & BD70528_MASK_WDT_EN) {
-+		dev_dbg(&pdev->dev, "watchdog was running during probe\n");
-+		set_bit(WDOG_HW_RUNNING, &w->wdt.status);
-+	}
-+
-+	ret = devm_watchdog_register_device(&pdev->dev, &w->wdt);
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "watchdog registration failed: %d\n", ret);
-+
-+	return ret;
-+}
-+static struct platform_driver bd70528_wdt = {
-+	.driver = {
-+		.name = "bd70528-wdt"
-+	},
-+	.probe = bd70528_wdt_probe,
-+};
-+
-+module_platform_driver(bd70528_wdt);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 watchdog driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
-
+Applied, thanks.
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
