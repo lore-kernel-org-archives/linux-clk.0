@@ -2,129 +2,192 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD28C282C4
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 16:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740B4C282C4
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 20:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E592175B
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 16:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DAD62080F
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 20:11:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="sFzt0pva"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfBGQeU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:34:20 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34085 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfBGQeU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 11:34:20 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so378315lfc.1;
-        Thu, 07 Feb 2019 08:34:18 -0800 (PST)
+        id S1727398AbfBGUKz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 15:10:55 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43362 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbfBGUKz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 15:10:55 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r2so1194240wrv.10
+        for <linux-clk@vger.kernel.org>; Thu, 07 Feb 2019 12:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=Ck/ivAOI6YZb4ffmZBEVM0UCgiu1gNXYgsW0Qt7/Rms=;
+        b=sFzt0pvanDFTGj4jnduJ9ugaudGws+XUzChJhp1JoJHy23W95TdCCQb7V7BnK2VXaZ
+         DvYH7ZiLTvnXmO0uLGA3qW+2m7MCvThnvRMoUHWfu9eZ3UVafBbU2c36+Kv0EgquMmer
+         C/TT8rNcnQvCgX5MFqzLw5BKkZSURfa8XFLuicReYga64+FWdkbGm0XKPfkdjcMiTR2U
+         9+1JNUNZPfNd/moB3DszZpdjTDdaupgPVZJKkhJMxUvh3a3q2UmwguiKTPooHDRT4DH+
+         9v9oWIlV030MCwgThjuNPb6k+e9IsdNpdEQuLmKe7hFENKmlYaU5kFu28pG69WPbikKr
+         ceuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zhw+EJtPyFh0Bm+C9xNNPBirtOcjmn2ydehujSyIxQY=;
-        b=MBtv/MYd3eqLiGKvaweft1CTP1nWd1iZIiddqQ4wJpX14a3ewb706k82WkXdPZx+vc
-         zKNmdIzOxDsQNux6cIXVeTus6We8EtzvgkLmIiUtS27l6w++RAo7trLKhzdmTW9I+X0c
-         +YTa6jiJzsBDpgZvZ4ABrKnSI8t/Z7Ghzr+7C8/8oEB5yt+oCEBh8zC54HIuUVMOjGUJ
-         GdmxnSCHh2mMOsmAPm2V7sNiUEzfQn+52VrDJmWZziehmMdS4bt+qxiBjKn/H38AYcN8
-         L4u9t1I8Dszfa1EO20IQ1rTfvhuPXurN6eFcpFQXDnUKtg6Typ63Ke54Wh41Rn7YMzSl
-         RxeA==
-X-Gm-Message-State: AHQUAuam8H3/9i0N/868e2OloogByOxe5HsA8impvH4IEhFy4YxXouX2
-        x5pSI4E6LunWxaUc14BJC2Y=
-X-Google-Smtp-Source: AHgI3IakxAEtEonwcB5IOpSpbFYIyv2i+u97ueRzcavsM07SFWpRNWLP3RJxIWf3QZi6a6iavCF8Pg==
-X-Received: by 2002:a19:9508:: with SMTP id x8mr10477645lfd.112.1549557257462;
-        Thu, 07 Feb 2019 08:34:17 -0800 (PST)
-Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm4408714lje.73.2019.02.07.08.34.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 08:34:16 -0800 (PST)
-Date:   Thu, 7 Feb 2019 18:33:42 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] devicetree: bindings: Document first ROHM BD70528
- bindings
-Message-ID: <20190207163342.GC1920@localhost.localdomain>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <52b17ed2599b21f4b93665ac689113ce3f8816b7.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <20190207140418.GH20638@dell>
- <20190207153600.GA1920@localhost.localdomain>
- <20190207154229.GA19277@roeck-us.net>
+        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-transfer-encoding;
+        bh=Ck/ivAOI6YZb4ffmZBEVM0UCgiu1gNXYgsW0Qt7/Rms=;
+        b=A7QWm0P1GiXyamsHAyFrWG6/PcD85EB4L+9R3whsrzwQzjOd9DFDwm0nltE/bc23mW
+         q07VciRN4/z5uw/ScQC9zv7sFwxbcI0XdjLc0Ej2XJRObSbAGtNq+XkjmW9sA/S+yiVa
+         cB6wm7L3uT/HViNpxfy0XO5GKCYc085BRgtCQVAwPOgxq7T8oeTtE5lhCM8o46T/UBN3
+         TVGX8T9iiZrTzKptPC89U2QQrIr+SWAiJVeyRU1CjTXXG3I8M+vzOdzSBGRxwNUQ78H2
+         wg02W+QyWr290cIl3xH2K+finlU014u0ecJft3NNXDnRNdSne+QmMJUD01mtcdlmCAM+
+         gjRA==
+X-Gm-Message-State: AHQUAuaDhgLq/3kwY5EN4APo3kps54oW69oVZthhgMqj8UjjMMnY5B22
+        B3AzL3hpwEL6QgwalGDYThGa9w==
+X-Google-Smtp-Source: AHgI3IZYQqgnqtTsRkvfKurjqv9pgAuxMfR8VAb+RAFqRGCPqUsQCM+FVtobKQXDw9jTbMAlJapfIQ==
+X-Received: by 2002:adf:c982:: with SMTP id f2mr8576140wrh.98.1549570252297;
+        Thu, 07 Feb 2019 12:10:52 -0800 (PST)
+Received: from Armstrongs-MacBook-Pro.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id a15sm12008922wrx.58.2019.02.07.12.10.51
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 07 Feb 2019 12:10:51 -0800 (PST)
+Message-ID: <5C5C90CA.8050409@baylibre.com>
+Date:   Thu, 07 Feb 2019 21:10:50 +0100
+From:   Neil Armstrong <narmstrong@baylibre.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207154229.GA19277@roeck-us.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+To:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org
+CC:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clk: add G12A AO Clock and Reset Bindings
+References: <20190204091331.9298-1-narmstrong@baylibre.com>      <20190204091331.9298-2-narmstrong@baylibre.com> <2f03298e4d1ca0aa08d683d6db14bc194607b974.camel@baylibre.com>
+In-Reply-To: <2f03298e4d1ca0aa08d683d6db14bc194607b974.camel@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 07:42:29AM -0800, Guenter Roeck wrote:
-> On Thu, Feb 07, 2019 at 05:36:00PM +0200, Matti Vaittinen wrote:
-> > Hello Lee,
-> > 
-> > Thanks for the reviews!
-> > 
-> > On Thu, Feb 07, 2019 at 02:04:18PM +0000, Lee Jones wrote:
-> > > On Thu, 07 Feb 2019, Matti Vaittinen wrote:
-> > > 
-> > > > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> > > > drivers) and 4 GPIO pins which can be configured for I/O or
-> > > > as interrupt sources withe configurable trigger levels.
-> > > > 
-> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > > > ---
-> > > >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 102 +++++++++++++++++++++
-> > > >  1 file changed, 102 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > > new file mode 100644
-> > > > index 000000000000..f80be7e40184
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > > @@ -0,0 +1,102 @@
-> > > > +* ROHM BD70528 Power Management Integrated Circuit bindings
-> > > > +
-> > > > +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
-> > > 
-> > > What's an Iq?
-> > 
-> > http://www.ti.com/lit/an/slyt412/slyt412.pdf
-> > Iq is an abbreviation of quiescet current. Do you think it's worth
-> > writing the whole words instead of an abbreviation?
-> > 
-> https://acronyms.thefreedictionary.com/IQ lists 23 definitions.
-> This one is not listed. Yes, I think it would be beneficial to use
-> the whole word.
 
-Allright. I'll change that too =)
 
-Br,
-	Matti Vaittinen
+Le 07/02/2019 16:10, Jerome Brunet a écrit :
+> On Mon, 2019-02-04 at 10:13 +0100, Neil Armstrong wrote:
+>> Add bindings for the Amlogic G12A AO Clock and Reset controllers.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |  1 +
+>>  include/dt-bindings/clock/g12a-aoclkc.h       | 43 +++++++++++++++++++
+>>  include/dt-bindings/reset/g12a-aoclkc.h       | 18 ++++++++
+>>  3 files changed, 62 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
+>>  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt 
+>> b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+>> index 79511d7bb321..c41f0be5d438 100644
+>> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+>> @@ -10,6 +10,7 @@ Required Properties:
+>>  	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
+>>  	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
+>>  	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
+>> +	- G12A (S905X2, S905D2, S905Y2) : "amlogic,meson-g12a-aoclkc"
+>>  	followed by the common "amlogic,meson-gx-aoclkc"
+>>  - clocks: list of clock phandle, one for each entry clock-names.
+>>  - clock-names: should contain the following:
+>> diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-
+>> bindings/clock/g12a-aoclkc.h
+>> new file mode 100644
+>> index 000000000000..997aca16c94f
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/g12a-aoclkc.h
+>> @@ -0,0 +1,43 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+>> +/*
+>> + * Copyright (c) 2016 BayLibre, SAS
+>> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+>> + */
+>> +
+>> +#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
+>> +#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
+>> +
+>> +#define CLKID_AO_AHB		0
+>> +#define CLKID_AO_IR_IN		1
+>> +#define CLKID_AO_I2C_M0		2
+>> +#define CLKID_AO_I2C_S0		3
+>> +#define CLKID_AO_UART		4
+>> +#define CLKID_AO_PROD_I2C	5
+>> +#define CLKID_AO_UART2		6
+>> +#define CLKID_AO_IR_OUT		7
+>> +#define CLKID_AO_SAR_ADC	8
+>> +#define CLKID_AO_MAILBOX	9
+>> +#define CLKID_AO_M3		10
+>> +#define CLKID_AO_AHB_SRAM	11
+>> +#define CLKID_AO_RTI		12
+>> +#define CLKID_AO_M4_FCLK	13
+>> +#define CLKID_AO_M4_HCLK	14
+>> +#define CLKID_AO_CLK81		15
+>> +#define CLKID_AO_SAR_ADC_SEL	16
+>> +#define CLKID_AO_SAR_ADC_DIV	17
+> 
+> Do we need to export the internal part of these composite clock ?
+> I know the other AO controller do it but it would be nice to avoid it, like
+> for the EE controllers ... unless there is good reason of course.
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+Historically, we exposed everything for the AO controller,
+we can follow the same scheme as the EE controller starting
+from this one.
+There is no strong reason to expose everything...
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+I'll res-pin a v2 with both issues fixed.
+
+> 
+> Same for the others below.
+> 
+>> +#define CLKID_AO_SAR_ADC_CLK	18
+>> +#define CLKID_AO_CTS_OSCIN	19
+>> +#define CLKID_AO_32K_PRE	20
+>> +#define CLKID_AO_32K_DIV	21
+>> +#define CLKID_AO_32K_SEL	22
+>> +#define CLKID_AO_32K		23
+>> +#define CLKID_AO_CEC_PRE	24
+>> +#define CLKID_AO_CEC_DIV	25
+>> +#define CLKID_AO_CEC_SEL	26
+>> +#define CLKID_AO_CEC		27
+>> +#define CLKID_AO_CTS_RTC_OSCIN	28
+>> +
+>> +#endif
+>> diff --git a/include/dt-bindings/reset/g12a-aoclkc.h b/include/dt-
+>> bindings/reset/g12a-aoclkc.h
+>> new file mode 100644
+>> index 000000000000..bd2e2337135c
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/g12a-aoclkc.h
+>> @@ -0,0 +1,18 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+>> +/*
+>> + * Copyright (c) 2016 BayLibre, SAS
+>> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+>> + */
+>> +
+>> +#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_G12A_AOCLK
+>> +#define DT_BINDINGS_RESET_AMLOGIC_MESON_G12A_AOCLK
+>> +
+>> +#define RESET_AO_IR_IN		0
+>> +#define RESET_AO_UART		1
+>> +#define RESET_AO_I2C_M		2
+>> +#define RESET_AO_I2C_S		3
+>> +#define RESET_AO_SAR_ADC	4
+>> +#define RESET_AO_UART2		5
+>> +#define RESET_AO_IR_OUT		6
+>> +
+>> +#endif
+> 
+> 
