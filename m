@@ -2,70 +2,64 @@ Return-Path: <SRS0=APof=QO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0968C282C2
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 13:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C94DC282C2
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 13:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 827DD21904
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 13:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38ED02175B
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Feb 2019 13:23:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KL1wv0AE"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="TfzqPD/p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfBGNG5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:06:57 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33287 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbfBGNG4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 08:06:56 -0500
-Received: by mail-wr1-f65.google.com with SMTP id a16so11515834wrv.0
-        for <linux-clk@vger.kernel.org>; Thu, 07 Feb 2019 05:06:54 -0800 (PST)
+        id S1726876AbfBGNXx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Feb 2019 08:23:53 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:45158 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfBGNXx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Feb 2019 08:23:53 -0500
+Received: by mail-wr1-f47.google.com with SMTP id q15so11474799wro.12
+        for <linux-clk@vger.kernel.org>; Thu, 07 Feb 2019 05:23:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=B0zTQ15P7Bd5RQCXJirxvYKNT1qa1KsdthP0kLsLFfU=;
-        b=KL1wv0AEWpRmMUD5Xd95fBxqeV2dRemRPVfW9DInvu3SN0PPrEUnozFwFUVrmnAKBN
-         BUd5g+s6Lb8aqGY2SE4TSG/nXeP7GlSWnq0WofHlrJEE4u16R2+DKYlCc+KQ/qstvmfM
-         vSfAeERqJW2y1s+1J76cUZHSC43DjruvYvTX5Z4XiQWvIjn/pMOsj2hEdsn3Vtc5IC7K
-         5n8gYsqIbS/7mKkat+2FikWPDO5ZfeWfAxBmx+pu0R/Hx4m7dHel3T6dEEaleayh4CBh
-         ekoKYwAbmXHHmvE1rOPZn3dpuourlmhsnspnXEbiWul0sJKg3IfLl77v+idgpt3IUmSS
-         p+Ag==
+        h=from:subject:to:cc:openpgp:autocrypt:organization:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=bcyPyotbUDuv4bfeRvZ7+OPbaOd1twKCCuoweNM1QrU=;
+        b=TfzqPD/pWuO2fgsXeficOb5vf1VEV9pZK9g75Mzar3tWK7bTUvQGOZWewabwOefcft
+         Us9vRJSywkY5Z7w4tnlar4G3o7SzQpDV2+JhoUO1Hct6/u8djQKMYygSdkoDyd+FsmOl
+         UL9ElHLMI4f8PjhGaHKQUHBVo11YT9kmjRr0vnP+WH2KdjqiSjigs5R4rTPUwwFSUBMv
+         VzGUqi2CJmADdYogVXvpZLn624QHlhtVJTQoZm0+uV/tn6xfzZbSCreTwim6ARqBcpVN
+         HhfZ9uDveDWJC4mb2YZyJBMw4u3jGT7wXsBLcSoxm2moTWFBTW2SdRQZewtN71axaXz0
+         1oEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
+        h=x-gm-message-state:from:subject:to:cc:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version
          :content-language:content-transfer-encoding;
-        bh=B0zTQ15P7Bd5RQCXJirxvYKNT1qa1KsdthP0kLsLFfU=;
-        b=GKZGahUez4tu5t9iKkr4v60MSQIsyT3yvQ/ZzpvfvR4PZbAp0nhx67OD646l9+YzkQ
-         MKrzFFT42qzcqfkoh8I9xA4P6XdODdhm9dOYkIHj0GIHiQIL1ZRqJVFViUW1qKjGGXzI
-         fkuRRh5VRX8Jy8rzxBWLK5rRZsmpREjHRt2h2ZhderhS5iY3BngI/hX3aGHKHclQOs/5
-         3VFrIfWPGorwVJ0nHQ2Nup1QFoTY4dYLf94bfFtQEQe6IJTYZsbxMziUphYyrHBgLaS9
-         klm0W/bpSz51YO2sPJzAjTy4D4I7NQt0H/F7RkV9B4G06u8HZStSEEnbirD8zlhAUxyH
-         7cjA==
-X-Gm-Message-State: AHQUAuaEmoYlnHRNffbk+Yy8PwkT5MCdlROPcHuMyVFncQsvrO5sXdwG
-        332CU36LrDrkLsRODLvznvZ3gbsB6/Ua0A==
-X-Google-Smtp-Source: AHgI3IaufuwsNvZXH9XiQDfcMmdyBB19pR9BS5jASdh80Ae6HQlFKSyDnO+F6SlOyFNizslbF65K9Q==
-X-Received: by 2002:a5d:5111:: with SMTP id s17mr11892324wrt.43.1549544813980;
-        Thu, 07 Feb 2019 05:06:53 -0800 (PST)
+        bh=bcyPyotbUDuv4bfeRvZ7+OPbaOd1twKCCuoweNM1QrU=;
+        b=WiQXMJTaY487skqGmcCopwu90rI2KGEpGItjesw/ygHxpJ8UdGXNt1G1qJnfP9mPBp
+         ugFykRSGnzvOwX8hK1Gw7OK56zktI4CSK1hsWwrBxHwYKI3M0PrmWTogdIYy7ceYDkm8
+         qisJnhRSk0P6qbeUlP9jUOfynKc5PxUPsfBB7cOAcXkANDaNutqNFKm+sdcpiA6KIyww
+         FmfyS0Z062C77zstgqdN0RMhVLgg4z0jDvOj1jZdgEyP4+Fkj5Kwmsa0D2we679dXief
+         j5he4mS7UadtGrICnyrELb5vYY60fuCpuzsafReKZhQz1i82+U9IgUxBMqpLxKEwrvh+
+         4TAA==
+X-Gm-Message-State: AHQUAuaJWfBhoofRVFwRbFNYnN8WoZuaFDFFn5QwzynYcgVluLtFtCoE
+        SNlBkt4aa9k7rmrkzsbmQdc+VA==
+X-Google-Smtp-Source: AHgI3IZU+ckAoM8iWp0KO1lk1o4LPvCBOA/b/OVgKyrqDezOa7LqiMsiLT9aGpkNEZjOZiC4xrcKBA==
+X-Received: by 2002:adf:d146:: with SMTP id b6mr12495203wri.156.1549545830451;
+        Thu, 07 Feb 2019 05:23:50 -0800 (PST)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t5sm15537453wmg.43.2019.02.07.05.06.52
+        by smtp.gmail.com with ESMTPSA id x3sm33097696wrd.19.2019.02.07.05.23.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 05:06:53 -0800 (PST)
-Subject: Re: [PATCH v6 0/4] clk: meson-g12a: Add EE clock controller driver
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
-References: <20190201145345.6795-1-jbrunet@baylibre.com>
- <5C55CDCE.9030502@baylibre.com> <7hbm3ogshf.fsf@baylibre.com>
+        Thu, 07 Feb 2019 05:23:49 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
+Subject: [GIT PULL] clk: meson: updates for v5.1
+To:     sboyd@kernel.org, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -117,44 +111,132 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <00f67ab3-93a9-9663-586f-e50e69a20902@baylibre.com>
-Date:   Thu, 7 Feb 2019 14:06:52 +0100
+Message-ID: <1c894e44-de4b-aef8-d3a3-f371bf2d2f68@baylibre.com>
+Date:   Thu, 7 Feb 2019 14:23:49 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <7hbm3ogshf.fsf@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/02/2019 04:58, Kevin Hilman wrote:
-> Neil Armstrong <narmstrong@baylibre.com> writes:
-> 
->> Le 01/02/2019 15:53, Jerome Brunet a écrit :
->>> This purpose of this patchset is to the main clock controller of the
->>> g12a SoC family
->>>
->>> This patchset depends on the recent rework the meson clock directory [7].
-> 
-> [...]
-> 
->> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->>
->> I'm applying these to next/drivers for Linux 5.1-rc1, is it necessary to
->> have a tag for the headers ?
-> 
-> Only if we have some users that we want to merge in the v5.1 cycle
-> (which I haven't seen yet.)
+Dear clock maintainers,
 
-Same, we will wait for next cycle then.
+Below is a request to pull updates for Amlogic clocks.
 
+It covers essentially refactoring AXG and GXBB drivers to easily add
+support for 32k AO clock support and G12A clock controller.
+It also fixes Mali GPU clocks for Meson8 SoCs.
+
+Thanks,
 Neil
 
-> 
-> Kevin
-> 
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/tags/meson-clk-5.1
+
+for you to fetch changes up to 6682bd4d443fad802e11a0a39332025cdfbf5108:
+
+  clk: meson: factorise meson64 peripheral clock controller drivers (2019-02-04 09:52:11 +0100)
+
+----------------------------------------------------------------
+- add 32k clock generation for AXG
+- add support for the Mali GPU clocks for Meson8
+- claim input clocks through DT for AXG and GXBB
+- rework drivers dependencies among meson clock drivers
+- add G12A EE clock controller driver
+
+----------------------------------------------------------------
+Jerome Brunet (14):
+      dt-bindings: clk: meson: add ao slow clock path ids
+      clk: meson: clean-up clock registration
+      clk: meson: add dual divider clock driver
+      clk: meson: gxbb-ao: replace cec-32k with the dual divider
+      clk: meson: axg-ao: add 32k generation subtree
+      clk: meson: gxbb: claim clock controller input clock from DT
+      clk: meson: axg: claim clock controller input clock from DT
+      clk: meson: ao-clkc: claim clock controller input clocks from DT
+      clk: export some clk_hw function symbols for module drivers
+      clk: meson: use CONFIG_ARCH_MESON to enter meson clk directory
+      clk: meson: axg-audio does not require syscon
+      clk: meson: rework and clean drivers dependencies
+      clk: meson: pll: update driver for the g12a
+      clk: meson: factorise meson64 peripheral clock controller drivers
+
+Jian Hu (2):
+      dt-bindings: clk: meson: add g12a periph clock controller bindings
+      clk: meson: g12a: add peripheral clock controller
+
+Martin Blumenstingl (2):
+      clk: meson: meson8b: use a separate clock table for Meson8
+      clk: meson: meson8b: add the GPU clock tree
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
+ drivers/clk/Makefile                               |    2 +-
+ drivers/clk/clk.c                                  |    3 +
+ drivers/clk/meson/Kconfig                          |   99 +-
+ drivers/clk/meson/Makefile                         |   29 +-
+ drivers/clk/meson/axg-aoclk.c                      |  193 +-
+ drivers/clk/meson/axg-aoclk.h                      |   13 +-
+ drivers/clk/meson/axg-audio.c                      |    5 +-
+ drivers/clk/meson/axg.c                            |   69 +-
+ drivers/clk/meson/clk-dualdiv.c                    |  138 ++
+ drivers/clk/meson/clk-dualdiv.h                    |   33 +
+ drivers/clk/meson/clk-input.c                      |    7 +-
+ drivers/clk/meson/clk-input.h                      |   19 +
+ drivers/clk/meson/clk-mpll.c                       |   12 +-
+ drivers/clk/meson/clk-mpll.h                       |   30 +
+ drivers/clk/meson/clk-phase.c                      |   75 +-
+ drivers/clk/meson/clk-phase.h                      |   26 +
+ drivers/clk/meson/clk-pll.c                        |  216 +-
+ drivers/clk/meson/clk-pll.h                        |   49 +
+ drivers/clk/meson/clk-regmap.c                     |    5 +
+ drivers/clk/meson/clk-regmap.h                     |   20 +
+ drivers/clk/meson/clk-triphase.c                   |   68 -
+ drivers/clk/meson/clkc.h                           |  127 --
+ drivers/clk/meson/g12a.c                           | 2359 ++++++++++++++++++++
+ drivers/clk/meson/g12a.h                           |  175 ++
+ drivers/clk/meson/gxbb-aoclk-32k.c                 |  193 --
+ drivers/clk/meson/gxbb-aoclk.c                     |  268 ++-
+ drivers/clk/meson/gxbb-aoclk.h                     |   20 +-
+ drivers/clk/meson/gxbb.c                           |  296 ++-
+ drivers/clk/meson/meson-aoclk.c                    |   54 +-
+ drivers/clk/meson/meson-aoclk.h                    |   13 +-
+ drivers/clk/meson/meson-eeclk.c                    |   63 +
+ drivers/clk/meson/meson-eeclk.h                    |   25 +
+ drivers/clk/meson/meson8b.c                        |  352 ++-
+ drivers/clk/meson/meson8b.h                        |    9 +-
+ drivers/clk/meson/parm.h                           |   46 +
+ drivers/clk/meson/sclk-div.c                       |   10 +-
+ drivers/clk/meson/{clkc-audio.h => sclk-div.h}     |   16 +-
+ drivers/clk/meson/vid-pll-div.c                    |   10 +-
+ drivers/clk/meson/vid-pll-div.h                    |   20 +
+ include/dt-bindings/clock/axg-aoclkc.h             |    7 +-
+ include/dt-bindings/clock/g12a-clkc.h              |  135 ++
+ include/dt-bindings/clock/gxbb-aoclkc.h            |    7 +
+ 43 files changed, 4572 insertions(+), 745 deletions(-)
+ create mode 100644 drivers/clk/meson/clk-dualdiv.c
+ create mode 100644 drivers/clk/meson/clk-dualdiv.h
+ create mode 100644 drivers/clk/meson/clk-input.h
+ create mode 100644 drivers/clk/meson/clk-mpll.h
+ create mode 100644 drivers/clk/meson/clk-phase.h
+ create mode 100644 drivers/clk/meson/clk-pll.h
+ delete mode 100644 drivers/clk/meson/clk-triphase.c
+ delete mode 100644 drivers/clk/meson/clkc.h
+ create mode 100644 drivers/clk/meson/g12a.c
+ create mode 100644 drivers/clk/meson/g12a.h
+ delete mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
+ create mode 100644 drivers/clk/meson/meson-eeclk.c
+ create mode 100644 drivers/clk/meson/meson-eeclk.h
+ create mode 100644 drivers/clk/meson/parm.h
+ rename drivers/clk/meson/{clkc-audio.h => sclk-div.h} (54%)
+ create mode 100644 drivers/clk/meson/vid-pll-div.h
+ create mode 100644 include/dt-bindings/clock/g12a-clkc.h
