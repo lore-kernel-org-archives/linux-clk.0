@@ -2,261 +2,100 @@ Return-Path: <SRS0=4isi=QP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 315EFC169C4
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 07:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0337C282CB
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 10:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 005BC21924
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 07:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94D32080A
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 10:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfBHHb1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:31:27 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35489 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfBHHb1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Feb 2019 02:31:27 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l142so1834702lfe.2;
-        Thu, 07 Feb 2019 23:31:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dCI+cWk2Vz+eKiqVnf1uxFpRbcciilTSy0eGn3j0LVE=;
-        b=gg3EyyzULMrMyymGYcH5nTh1nsWN+b9xeKAr0iN+z7MFVo0lTV2KWwshB13i6u/Ehf
-         O3ElezGf0K9F3GBtByj0yM8tx1O1br49lQ6fTnLxN26b/SLopKbI//uLDPDtmJdKtPrl
-         5qTStOsvVDOtE153/oTH6+VX4mfB5Kl1nrM2lZUxLqhH22qjM8ij3WMqd0f01mLWrwoe
-         cDeyKazHiw4UoqrAcPlRPrRj6tcljVrEnXIeYehlQ6oXGBoqj16YvqdTKtnUXU0b8Vxy
-         CTj85d+P+DovtSXQenOAUrgGZt9VMaV99t1jLFCGDSaRg8yLUKkhy2WU5keqGjMPybag
-         ggZw==
-X-Gm-Message-State: AHQUAub7ovGJl6ssyQ6CwdEMlW6KCKmVNaviE0dn5mCdbo2cSPh1hYmZ
-        3SOHWLdcUtFIlRomxxR88jo=
-X-Google-Smtp-Source: AHgI3Ib9Xrp/fUdBHZ5qP9ajB9IMkRByAEkGIBxWOWe8f2n5EczcvNWlKUe67m88xOoWjNTBtHjEKQ==
-X-Received: by 2002:a19:59c2:: with SMTP id n185mr12345194lfb.118.1549611083044;
-        Thu, 07 Feb 2019 23:31:23 -0800 (PST)
-Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
-        by smtp.gmail.com with ESMTPSA id d5sm210200lfi.65.2019.02.07.23.31.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 23:31:22 -0800 (PST)
-Date:   Fri, 8 Feb 2019 09:30:42 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Message-ID: <20190208073042.GA3012@localhost.localdomain>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <20190207140053.GG20638@dell>
+        id S1726068AbfBHKme (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Feb 2019 05:42:34 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35385 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfBHKmd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Feb 2019 05:42:33 -0500
+X-Originating-IP: 90.88.22.177
+Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 459C51C0005;
+        Fri,  8 Feb 2019 10:42:31 +0000 (UTC)
+Date:   Fri, 8 Feb 2019 11:42:30 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock changes for 5.1
+Message-ID: <20190208104230.zn4sn7z4idge4gmh@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dv2ngskktc2vmjjw"
 Content-Disposition: inline
-In-Reply-To: <20190207140053.GG20638@dell>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Again Lee,
 
-After a good night sleep few things came to my mind =)
+--dv2ngskktc2vmjjw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 07, 2019 at 02:00:53PM +0000, Lee Jones wrote:
-> On Thu, 07 Feb 2019, Matti Vaittinen wrote:
-> 
-> > +
-> > +static struct mfd_cell bd70528_mfd_cells[] = {
-> > +	{ .name = "bd70528-pmic", },
-> > +	{ .name = "bd70528-gpio", },
-> > +	/*
-> > +	 * We use BD71837 driver to drive the clk block. Only differences to
-> > +	 * BD70528 clock gate are the register address and mask.
-> > +	 */
-> > +	{ .name = "bd718xx-clk", },
-> > +	{ .name = "bd70528-wdt", },
-> > +	{
-> > +		.name = "bd70528-power",
-> > +		.resources = &charger_irqs[0],
-> > +		.num_resources = ARRAY_SIZE(charger_irqs),
-> > +	},
-> > +	{
-> 
-> These should be on the same line.
+Hi Mike, Stephen,
 
-I know I said 'Ok' yesterday. And I can change the styling to what ever
-suits you - but I am not entirely sure what you mean by this? Do you
-mean that the brackets should be on same line? After a quick look to
-few other MFD devices it seems to be common convention to have these on
-separate lines - and such style is used also at other locations
-throughout this file. 
+Please pull the following PR for the next merge window.
 
-> > +static const struct regmap_access_table volatile_regs = {
-> > +	.yes_ranges = &volatile_ranges[0],
-> > +	.n_yes_ranges = ARRAY_SIZE(volatile_ranges),
-> > +};
-> > +
-> > +static struct regmap_config bd70528_regmap = {
-> > +	.reg_bits = 8,
-> > +	.val_bits = 8,
-> > +	.volatile_table = &volatile_regs,
-> > +	.max_register = BD70528_MAX_REGISTER,
-> > +	.cache_type = REGCACHE_RBTREE,
-> > +};
-> 
-> '\n' here.
-> 
-> > +/* bit [0] - Shutdown register */
-> > +unsigned int bit0_offsets[] = {0};
-> > +/* bit [1] - Power failure register */
-> > +unsigned int bit1_offsets[] = {1};
-> > +/* bit [2] - VR FAULT register */
-> > +unsigned int bit2_offsets[] = {2};
-> > +/* bit [3] - PMU register interrupts */
-> > +unsigned int bit3_offsets[] = {3};
-> > +/* bit [4] - Charger 1 and Charger 2 registers */
-> > +unsigned int bit4_offsets[] = {4, 5};
-> > +/* bit [5] - RTC register */
-> > +unsigned int bit5_offsets[] = {6};
-> > +/* bit [6] - GPIO register */
-> > +unsigned int bit6_offsets[] = {7};
-> > +/* bit [7] - Invalid operation register */
-> > +unsigned int bit7_offsets[] = {8};
-> 
-> What on earth is this?
+Thanks!
+Maxime
 
-Would this comment help:
-/*
- * Mapping of main IRQ register bits to sub irq register offsets so
- * that we can access corect sub IRQ registers based on bits that
- * are set in main IRQ register.
- */
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-/* bit [0] - Shutdown register */
-unsigned int bit0_offsets[] = {0};
-/* bit [1] - Power failure register */
-unsigned int bit1_offsets[] = {1};
-/* bit [2] - VR FAULT register */
-unsigned int bit2_offsets[] = {2};
-/* bit [3] - PMU register interrupts */
-unsigned int bit3_offsets[] = {3};
-/* bit [4] - Charger 1 and Charger 2 registers */
-unsigned int bit4_offsets[] = {4, 5};
-/* bit [5] - RTC register */
-unsigned int bit5_offsets[] = {6};
-/* bit [6] - GPIO register */
-unsigned int bit6_offsets[] = {7};
-/* bit [7] - Invalid operation register */
-unsigned int bit7_offsets[] = {8};
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-> > +static int bd70528_wdt_set(struct bd70528 *bd70528, int enable, int *old_state)
-> > +{
-[..]
-> > +}
-> 
-> Shouldn't this be one in the WDT driver?
+are available in the Git repository at:
 
-Maybe I should explain it like this:
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
+i-clk-for-5.1
 
-/*
- * Both the WDT and RTC drivers need to be able to control WDT. WDT uses
- * RTC for timeouts and setting the RTC may trigger watchdog. Thus the
- * RTC must disable the WDT when RTC time is set. We provide WDT disabling
- * code from the MFD parent as we don't want to make direct dependency
- * between RTC and WDT. Some may want to use only WDT or only RTC.
- */
+for you to fetch changes up to 108a459ef4cd17a28711d81092044e597b5c7618:
 
-#define WD_CTRL_MAGIC1 0x55
-#define WD_CTRL_MAGIC2 0xAA
+  clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when ungating it (2019-01-=
+25 10:43:44 +0100)
 
-static int bd70528_wdt_set(struct bd70528 *bd70528, int enable, int *old_state)
-{
+----------------------------------------------------------------
+Allwinner clock changes for 5.1
 
-> > +	/*
-> > +	 * Disallow type setting for all IRQs by default as
-> > +	 *  most of them do not support setting type.
-> > +	 */
-> > +	for (i = 0; i < ARRAY_SIZE(irqs); i++)
-> > +		irqs[i].type.types_supported = 0;
-> > +
-> > +	irqs[BD70528_INT_GPIO0].type.type_reg_offset = 0;
-> > +	irqs[BD70528_INT_GPIO0].type.type_rising_val = 0x20;
-> > +	irqs[BD70528_INT_GPIO0].type.type_falling_val = 0x10;
-> > +	irqs[BD70528_INT_GPIO0].type.type_level_high_val = 0x40;
-> > +	irqs[BD70528_INT_GPIO0].type.type_level_low_val = 0x50;
-> > +	irqs[BD70528_INT_GPIO0].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-> > +	irqs[BD70528_INT_GPIO1].type.type_reg_offset = 2;
-> > +	irqs[BD70528_INT_GPIO1].type.type_rising_val = 0x20;
-> > +	irqs[BD70528_INT_GPIO1].type.type_falling_val = 0x10;
-> > +	irqs[BD70528_INT_GPIO1].type.type_level_high_val = 0x40;
-> > +	irqs[BD70528_INT_GPIO1].type.type_level_low_val = 0x50;
-> > +	irqs[BD70528_INT_GPIO1].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-> > +	irqs[BD70528_INT_GPIO2].type.type_reg_offset = 4;
-> > +	irqs[BD70528_INT_GPIO2].type.type_rising_val = 0x20;
-> > +	irqs[BD70528_INT_GPIO2].type.type_falling_val = 0x10;
-> > +	irqs[BD70528_INT_GPIO2].type.type_level_high_val = 0x40;
-> > +	irqs[BD70528_INT_GPIO2].type.type_level_low_val = 0x50;
-> > +	irqs[BD70528_INT_GPIO2].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-> > +	irqs[BD70528_INT_GPIO3].type.type_reg_offset = 6;
-> > +	irqs[BD70528_INT_GPIO3].type.type_rising_val = 0x20;
-> > +	irqs[BD70528_INT_GPIO3].type.type_falling_val = 0x10;
-> > +	irqs[BD70528_INT_GPIO3].type.type_level_high_val = 0x40;
-> > +	irqs[BD70528_INT_GPIO3].type.type_level_low_val = 0x50;
-> > +	irqs[BD70528_INT_GPIO3].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-> 
-> Could you please explain:
-> 
-> a) what you're doing here
-> b) why you don't mass assign them
->     - seeing as most of the data is identical.
+Just a single non-urgent fix for the PLL-MIPI on the A23
 
-I am not sure this is what you meant by mass assignment? Something like
-below?
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when ungating it
 
-I think this makes the code slightly more confusing yet much shorter.
-What would you say? Is this what you had in mind?
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-        /*
-         * Set IRQ typesetting information for GPIO pins 0 - 3
-         */
-        for (i = 0; i < 4; i++) {
-                struct regmap_irq_type *type;
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-                type = &irqs[BD70528_INT_GPIO0 + i].type;
-                type->type_reg_offset = 2 * i;
-                type-<type_rising_val = 0x20;
-                type->type_falling_val = 0x10;
-                type->type_level_high_val = 0x40;
-                type->type_level_low_val = 0x50;
-                type->types_supported = (IRQ_TYPE_EDGE_BOTH |
-                                IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-        }
+--dv2ngskktc2vmjjw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Br,
-	Matti Vaittinen
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXF1dFgAKCRDj7w1vZxhR
+xfpbAP9DdAXaWLQCLTfkMGp2dHyai/7FuujXYlvI8WCFP4/5IwD/cb7o3/NhPuAA
+93XNfMxt7iz5IlvxMy7ZTFrpEVd3nwM=
+=AYcw
+-----END PGP SIGNATURE-----
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+--dv2ngskktc2vmjjw--
