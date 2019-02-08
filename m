@@ -2,103 +2,232 @@ Return-Path: <SRS0=4isi=QP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7794BC169C4
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 10:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660D2C169C4
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 10:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E90721919
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 10:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F2A206A3
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 10:57:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iK1+kJGk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbfBHKpX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Feb 2019 05:45:23 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54365 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfBHKpW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Feb 2019 05:45:22 -0500
-X-Originating-IP: 90.88.22.177
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 743F4E0007;
-        Fri,  8 Feb 2019 10:45:20 +0000 (UTC)
-Date:   Fri, 8 Feb 2019 11:45:19 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clock fixes for 5.0
-Message-ID: <20190208104519.2ix2ujxrpmhqrwlf@flea>
+        id S1727747AbfBHK5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Feb 2019 05:57:49 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44630 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbfBHK5t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Feb 2019 05:57:49 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v16so3032665wrn.11
+        for <linux-clk@vger.kernel.org>; Fri, 08 Feb 2019 02:57:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=W47bbTh6o9Yws6Hl6mzMoRtX36k2CVuI8Yvz2iSr9q0=;
+        b=iK1+kJGk3dsg88FlfyhsNxfekbqV5eIa1WCkCsw3fMdrD1IaHxJU76I6xc+aPIP56i
+         zB5c/E66yApHblki83G8jgMKywpJerAOfhNNrxnOdqmkogiFrDCnLmZPypBc7OIzbukT
+         mIjpv24PewR+z9kmZbIJrXzXTOYwqv1v3olWn9547enVRqh4Ry1tDQzupLreobRXKQmv
+         FWebumFSC4ZAzX1Wfe93HhoImVdbKfbuzSi87zPE9RzXCFwVqHuq1R4309yLhOPeWicE
+         gArFPRwD9KgkRb433ov66VqEYHxwYdKupHVptmkcdRAdgkXAXcWIHzE9McPiFbZcRgu/
+         kPkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=W47bbTh6o9Yws6Hl6mzMoRtX36k2CVuI8Yvz2iSr9q0=;
+        b=ERhhn5IiypIcgMMRe/l8GDceRz8dBf6C15ZGeDw/EMNPGq6OBEqzywyZlg5NYNh0IB
+         boqpoPDoLuJXS991xPJFY8rajfEGL6yBgWHoY+MIsX1el+9X/RO2mFZzDjiCqWvFXH9M
+         uVa/c7hED8+qPs2krilcEhLQ4qCS0PovCFcWYWyaAqlJawxb/RO1x1IT75+K+mJ/RWRt
+         W6kSvsxfee4qFqjXxDiDuWba5Lj5RtUK8h+wR89X/Vd08Vs1s551ZE6Ok9wMZ0qdhXEP
+         yjwHwR878o4BjXNg5sUwRj0MyyzClCy6Gcg5Zb7M6OROXfg7BwcL//ANb5VQg0f7n7lP
+         kE6A==
+X-Gm-Message-State: AHQUAuaQYBQZuOKo9ltP6YPa+AoFWGKTg/IwgJ796Hs/sgoTfUR2vIX/
+        XcQB1L/QejGcUjUloAhV/xvoRQ==
+X-Google-Smtp-Source: AHgI3IasWk7rNzqk4EurdoT9iqiLURJx1MIBwS3akPsiY4atwav1S5DfPqKga3b0Cbw7W8upv5WASA==
+X-Received: by 2002:adf:e98e:: with SMTP id h14mr16397609wrm.115.1549623466809;
+        Fri, 08 Feb 2019 02:57:46 -0800 (PST)
+Received: from dell ([2.27.35.171])
+        by smtp.gmail.com with ESMTPSA id g25sm1720738wmh.25.2019.02.08.02.57.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 02:57:45 -0800 (PST)
+Date:   Fri, 8 Feb 2019 10:57:43 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v8 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
+Message-ID: <20190208105743.GI20638@dell>
+References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190207140053.GG20638@dell>
+ <20190207162807.GB1920@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="julhqle2jly444cf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190207162807.GB1920@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Mark,
 
---julhqle2jly444cf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Something for you:
 
-Hi Mike, Stephen,
+> > > +/* bit [0] - Shutdown register */
+> > > +unsigned int bit0_offsets[] = {0};
+> > > +/* bit [1] - Power failure register */
+> > > +unsigned int bit1_offsets[] = {1};
+> > > +/* bit [2] - VR FAULT register */
+> > > +unsigned int bit2_offsets[] = {2};
+> > > +/* bit [3] - PMU register interrupts */
+> > > +unsigned int bit3_offsets[] = {3};
+> > > +/* bit [4] - Charger 1 and Charger 2 registers */
+> > > +unsigned int bit4_offsets[] = {4, 5};
+> > > +/* bit [5] - RTC register */
+> > > +unsigned int bit5_offsets[] = {6};
+> > > +/* bit [6] - GPIO register */
+> > > +unsigned int bit6_offsets[] = {7};
+> > > +/* bit [7] - Invalid operation register */
+> > > +unsigned int bit7_offsets[] = {8};
+> > 
+> > What on earth is this?
+> 
+> That's the mapping from main IRQ register bits to sub IRQ registers. The
+> RFC version 1 had the patch which brough main irq register support. But
+> good that you asked as I missed the fact that this commit is now only at
+> the regmap tree - and this one depends on that.
+>  
+> > > +static struct regmap_irq_sub_irq_map bd70528_sub_irq_offsets[] = {
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit3_offsets),
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit4_offsets),
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit5_offsets),
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit6_offsets),
+> > > +	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
+> > > +};
+> > 
+> > This looks totally hairy.  What is it mean to look like?
+> 
+> Yes. Sorry. As explained above - this requires commit from regmap tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/commit/include/linux/regmap.h?h=for-next&id=66fb181d6f824f7695417e8c19560c5b57dc8c2d
 
-Please pull the following PR for the current release.
+Mark, is this how this should be implemented?
 
-Thanks!
-Maxime
+The global arrays are hideous!
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+> > Shouldn't this be one in the WDT driver?
+> 
+> This is needed by both RTC and WDT drivers as RTC driver must stop the
+> WDT when it sets RTC. WDT HW is using RTC counter and might trigger
+> timeout/reset when RTC is set. Options are to dublicate the
+> enable/disable to both drivers or to export a function or share a
+> function pointer. I didn't want dublication or dependency between RTC
+> and WDT drivers. Thus I thought that MFD is best place for this code as
+> both RTC and WDT require it anyways. Perhaps this should be commented
+> here?
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+I think an exported function with comments would be better.
 
-are available in the Git repository at:
+[...]
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
-i-clk-fixes-for-5.0
+> > > +	irqs[BD70528_INT_GPIO3].type.type_reg_offset = 6;
+> > > +	irqs[BD70528_INT_GPIO3].type.type_rising_val = 0x20;
+> > > +	irqs[BD70528_INT_GPIO3].type.type_falling_val = 0x10;
+> > > +	irqs[BD70528_INT_GPIO3].type.type_level_high_val = 0x40;
+> > > +	irqs[BD70528_INT_GPIO3].type.type_level_low_val = 0x50;
+> > > +	irqs[BD70528_INT_GPIO3].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> > > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> > 
+> > Could you please explain:
+> > 
+> > a) what you're doing here
+> 
+> Regmap-irq gained support for type-setting. On bd70528 the type setting
+> makes sense only for GPIO interrupts - so we must not populate type
+> setting information for the rest of the IRQs. The macro REGMAP_IRQ_REG
+> is nice and makes the irq struct initialization cleaner. Thus it is used.
+> It does not allow populating the type information - hence we do it here.
+> 
+> I can change this if you think some other way would be cleaner?
 
-for you to fetch changes up to ee0b27a3a4da0b0ed2318aa092f8856896e9450b:
+It's pretty fugly.  Can the REGMAP_IRQ_REG be expanded upon?
 
-  clk: sunxi: A31: Fix wrong AHB gate number (2019-01-28 09:26:32 +0100)
+> > b) why you don't mass assign them
+> >     - seeing as most of the data is identical.
+> 
+> Maybe I am a bit slow today - but I don't know how the 'mass assignment'
+> should be done?
 
-----------------------------------------------------------------
-Allwinner clock fixes for 5.0
+Something like (completely untested):
 
-Two fixes for clock indices, one for the A31 and one for the V3s.
+unsigned int type_reg_offset_inc = 0;
+for (i = BD70528_INT_GPIO0; i <=  BD70528_INT_GPIO3; i++) {
+	irqs[i].type.type_reg_offset     = type_reg_offset_inc;
+	irqs[i].type.type_rising_val     = 0x20;
+	irqs[i].type.type_falling_val    = 0x10;
+	irqs[i].type.type_level_high_val = 0x40;
+	irqs[i].type.type_level_low_val  = 0x50;
+	irqs[i].type.types_supported =
+		(IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+	type_reg_offset_inc += 2;
+}
 
-----------------------------------------------------------------
-Andre Przywara (1):
-      clk: sunxi: A31: Fix wrong AHB gate number
+It's still fugly though.
 
-Paul Kocialkowski (1):
-      clk: sunxi-ng: v3s: Fix TCON reset de-assert bit
+If we can do this via MACROs, it would be better.
 
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 4 ++--
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+[...]
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > > +subsys_initcall(bd70528_init);
+> > 
+> > Does it need to be initialised this early?
+> 
+> I think it may be required on some board(s). Is it a problem? I guess I
+> can change this for my purposes but guess it may become a problem later.
 
---julhqle2jly444cf
-Content-Type: application/pgp-signature; name="signature.asc"
+If you do this normally, you can use MACROs (see other drivers) and
+remove the boilerplate init code you have here.
 
------BEGIN PGP SIGNATURE-----
+> > > +struct bd70528 {
+> > > +	/*
+> > > +	 * Please keep this as the first member here as some
+> > > +	 * drivers (clk) supporting more than one chip may only know this
+> > > +	 * generic struct 'struct rohm_regmap_dev' and assume it is
+> > > +	 * the first chunk of parent device's private data.
+> > > +	 */
+> > > +	struct rohm_regmap_dev chip;
+> > > +	/* wdt_set must be called rtc_timer_lock held */
+> > 
+> > This doesn't make sense.
+> 
+> Umm.. The comment does not make sense? Maybe I can explain it further.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXF1dvwAKCRDj7w1vZxhR
-xf16AQDglGUIK+zcZuYFIH4hLeUtnt+Y2wI/DWWnAtbFWQzsawD/Uct9NbHVu2w1
-ck+Snf71+i6WKJHw4lkADHSOoCxOGw4=
-=68jY
------END PGP SIGNATURE-----
+"wdt_set must be called when the rtc_timer_lock is held"
 
---julhqle2jly444cf--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
