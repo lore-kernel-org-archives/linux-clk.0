@@ -2,249 +2,143 @@ Return-Path: <SRS0=4isi=QP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750BAC169C4
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 14:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0CCC169C4
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 15:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34D942075C
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 14:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E79C2086C
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Feb 2019 15:53:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIDw0l7w"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="FgnxrpOt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbfBHOue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:50:34 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40501 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbfBHOue (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Feb 2019 09:50:34 -0500
-Received: by mail-lj1-f193.google.com with SMTP id z25-v6so3202337ljk.7
-        for <linux-clk@vger.kernel.org>; Fri, 08 Feb 2019 06:50:32 -0800 (PST)
+        id S1727343AbfBHPxv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Feb 2019 10:53:51 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:11909 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727190AbfBHPxv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Feb 2019 10:53:51 -0500
+X-IronPort-AV: E=Sophos;i="5.58,348,1544511600"; 
+   d="scan'208";a="26002642"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Feb 2019 08:53:50 -0700
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 8 Feb 2019 08:53:49 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6y6kQl9GCBehhUPm/krJdMDnib11mcotObtoaGQnZkI=;
-        b=oIDw0l7wxeTot+6FmGxANf6Lc9+3bIKQWPGGGpnA5PS29jfSsfE3OTkxH1tjsnBZeB
-         YTmVEoNNrsKNeAZ46lk7i68X3kEQrVWgeR5Gl0Dvi7aiCJaWJz/2efM3Qrpt9PVDZrT2
-         I20xGSP1ATeS/RaGSIQBRKfRib8bTm/k/WFQiPg/LnhmlbvWXYYoMxS5SJDcYyXW9aZ3
-         DPhSOmm7i/bUDWpS8CQmKY76kaO1DuvtL4M7XbKS8kNYzf/rHEbJqVpNEV9RC0lbcBNT
-         KAdx3RJ1mKREIJjIrHGYkBj5uwLjyzMNDyORhX8sWY5XC6wopsP30Uw913kBGriW8S/O
-         bv8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6y6kQl9GCBehhUPm/krJdMDnib11mcotObtoaGQnZkI=;
-        b=UNrSojBM/kHTdNS/JkkGwVhmotyNyV0q9d+kv91NXxotsHiGsa67uh1qQXUL27Tt8C
-         PR9PtbZtalLuKMl5ZFaHXbvd5PC5c35Oy6Z7hbhnY3WevgkTD7bTXrVULAPQ8A6YMyUt
-         a6767R7E9wYPV7sEskrPTvseWiGHAygfmsA9aIpE6drByK+pctPQDwQ2odhAUWuh0i8Z
-         44sF+22ThFtd4jjnoNSMebv+uHYkkXkCuivIndMsqh3IzIaKjUW4KAUcbEGfvtYYFJwq
-         JA0iehO+yIrCbNGs6FqGjgkmGma5cGvEsqoufXxUpmr3zvUaSaYZi0hQ1euNBOHlA/sL
-         QYIA==
-X-Gm-Message-State: AHQUAuYtjTK8JUnOj1iau6RIAU9uOGVqnBKIM72YKg7wBucWQxdbzSs6
-        rLTXQ76EwlkyO3Xp3M5d/UPMjA==
-X-Google-Smtp-Source: AHgI3Iag7eBVQbYf4Kg4qOo10hKVO3UTgsEK3C0q8RrQRsUrBn/rnZh9cQcMB6nf/mMr/yU235R8Lg==
-X-Received: by 2002:a2e:9956:: with SMTP id r22-v6mr10340090ljj.120.1549637431693;
-        Fri, 08 Feb 2019 06:50:31 -0800 (PST)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id d23sm404512lfc.11.2019.02.08.06.50.30
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 08 Feb 2019 06:50:30 -0800 (PST)
-Date:   Fri, 8 Feb 2019 15:50:28 +0100
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        David Brown <david.brown@linaro.org>,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 7/7] arm64: dts: qcom: qcs404: Add PCIe related nodes
-Message-ID: <20190208145028.GD773@centauri.lan>
-References: <20190125234509.26419-1-bjorn.andersson@linaro.org>
- <20190125234509.26419-8-bjorn.andersson@linaro.org>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZfUX/BKxKKp+KuUcrHEUdLhz45z2XCFya2ivk0Mtmfg=;
+ b=FgnxrpOt1KG11OUJSoXOwspGPSBLJVdFRFdsUEe7fJNe6ETC8FtMVjJjXE8yhA/V5NygK58ZJzr1UfVv+bw0lGjGUcBpO6xKHg1wJaDf8ZFGz8uixlJPokO2Us6rDFOmcyXXGqqHVq+lmB4OYD0wpJ3ivW9dNppKviRZwI4qq+0=
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
+ MWHPR11MB1247.namprd11.prod.outlook.com (10.169.236.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Fri, 8 Feb 2019 15:53:47 +0000
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::b92e:f982:af32:2887]) by MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::b92e:f982:af32:2887%5]) with mapi id 15.20.1580.019; Fri, 8 Feb 2019
+ 15:53:47 +0000
+From:   <Nicolas.Ferre@microchip.com>
+To:     <alexandre.belloni@bootlin.com>, <sboyd@kernel.org>
+CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: at91: fix masterck name
+Thread-Topic: [PATCH] clk: at91: fix masterck name
+Thread-Index: AQHUv7x/dAWxQXybc0i6K8XkGPakkqXWDXGA
+Date:   Fri, 8 Feb 2019 15:53:47 +0000
+Message-ID: <db6b542f-add1-af4c-e3f1-ce293042f375@microchip.com>
+References: <20190208144059.29861-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <20190208144059.29861-1-alexandre.belloni@bootlin.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0442.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:e::22) To MWHPR11MB1662.namprd11.prod.outlook.com
+ (2603:10b6:301:e::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Nicolas.Ferre@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [195.6.168.232]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR11MB1247;6:NQXazG1vRiUS8YmPueohkpGlcyuLBrF/AqrpSPKeFO5XC/KSTgeHcPmnFvPBcouoAgpbzZXew7Oppzsev+dLnC4DflHodc5rOMLydO2QY5X6KG0svSHagLhRG5oClhz5vmJ/7q9HEDJf56d814bBLzrLoqsmEWDQ3jkCQAm+QVfk9xp9JkUENKfYNc4QMwRLlwjf3ZO8iAXEUd7jk295WyRBBIP4MoFB7ALZ/PtQl7AnnhLJcl2tblQzhlCq23OOf+F+TjpIJ+7tq/nEiaoLjl0PcE9RxsRNticNOk0yZVOMzegPbgn1Qdn23Ngj/Ld6v/ChLwyeUMtdyVMBYzwUPvMBmK8CLceUgw3bdsTKlbI2pcYVzWM/zckbbujkrXOOLeRdnaOCMbMjOoQy55EfULse26NmY9mjjLQ+nVrwzYAkNNz464m90VrBCv1LFgT/vaMZx3tH7I40312rzSD0zQ==;5:rmb0Nr1GDydrPp9pJ4qlTi7ngPatBnpGA31WYrn3djKJ3o+JTEGbBY6Fl3pMTvB+XwiLGH5yuyTsNeclgLAPMCkN6ed+GbzWv1SjArQQsUVtSDDE5dkoYZcvGZGxXk5Ow90w6BREKW2i7swiCS2kFXBOjrYGJJ5BSvjJUYJx7bdbd9CHBErFUVwYG/KnU1xzmZfAGacpE7XoY48aIa5I4g==;7:7APSFt6P+3smqd4AScxcPpO5s+NQOSWPeqdTYhr3xDc9uIngk5dRvpG0cNNQZN14sd/nEa9utn8OjWossEanvShbrAk2TOExDjKn3NARKAvntySF/E29COx3xXgYmTsPsAsT8bQ1k/iQrPgTXHD3Tg==
+x-ms-office365-filtering-correlation-id: 605c7a5e-3450-48c2-a63d-08d68ddd9c2f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1247;
+x-ms-traffictypediagnostic: MWHPR11MB1247:
+x-microsoft-antispam-prvs: <MWHPR11MB1247F6F244B925ED29DA8E18E0690@MWHPR11MB1247.namprd11.prod.outlook.com>
+x-forefront-prvs: 094213BFEA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(376002)(346002)(136003)(189003)(199004)(97736004)(106356001)(476003)(105586002)(486006)(53936002)(6512007)(6246003)(26005)(2616005)(86362001)(6486002)(4326008)(6436002)(11346002)(446003)(31686004)(14454004)(31696002)(25786009)(36756003)(14444005)(53546011)(66066001)(99286004)(229853002)(71200400001)(71190400001)(54906003)(316002)(102836004)(72206003)(76176011)(3846002)(110136005)(52116002)(6506007)(6116002)(256004)(8936002)(305945005)(478600001)(8676002)(81156014)(81166006)(186003)(68736007)(2906002)(7736002)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1247;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 8NK2O1V2Hgax9CVlvZUIqN6HvvN923ZRz3cPit8N7qpi0X58kbDD1t2YIp8Xlhoybdq8qTqVVAcN/SQc1n8SbYnLBR93r2tkS0U5gSf8avTu2utVW5B/Rg99ee3mgo2Q9hRGVrsaAeUxD69iNL5wYGtbwwx6qdMNP0gIhIaYqvTT78K36B4da5w3K6e8jCdQ/TAildo6Q76Gc/dV/xmmevJ7NyM2hg1cxJFM7WG9KvjzxqobUY4RN4U/wKj+0R7EFEK24ARxgQleCowakNJphLUndxr/Yk27ZmZI82PDzfjp/9QR4BlHEbVYnUzx1ML8g7nEKD4WoDVs0wzL2c2RON0PjWaS5ENxBOqdVLJAkq2FpalPUetpaSORfVRGOPs3UCEPQVTzes/7CBirvoaRPZluoYzPV6A1G2PO1ye35xk=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2E1277669F1FE342A03D64FA37C336CB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125234509.26419-8-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 605c7a5e-3450-48c2-a63d-08d68ddd9c2f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 15:53:45.0607
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1247
+X-OriginatorOrg: microchip.com
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 03:45:09PM -0800, Bjorn Andersson wrote:
-> The QCS404 has a PCIe2 PHY and a Qualcomm PCIe controller, add these to
-> the platform dtsi and enable them for the EVB with the perst gpio
-> and analog supplies defined.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 25 +++++++++
->  arch/arm64/boot/dts/qcom/qcs404.dtsi     | 67 ++++++++++++++++++++++++
->  2 files changed, 92 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> index 50b3589c7f15..579ddaf4f5fa 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> @@ -21,6 +21,22 @@
->  	};
->  };
->  
-> +&pcie {
-> +	status = "ok";
-> +
-> +	perst-gpio = <&tlmm 43 GPIO_ACTIVE_LOW>;
-> +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&perst_state>;
-> +};
-> +
-> +&pcie_phy {
-> +	status = "ok";
-> +
-> +	vdda-vp-supply = <&vreg_l3_1p05>;
-> +	vdda-vph-supply = <&vreg_l5_1p8>;
-> +};
-> +
->  &remoteproc_adsp {
->  	status = "ok";
->  };
-> @@ -137,6 +153,15 @@
->  };
->  
->  &tlmm {
-> +	perst_state: perst {
-> +		pins = "gpio43";
-> +		function = "gpio";
-> +
-> +		drive-strength = <2>;
-> +		bias-disable;
-> +		output-low;
-> +	};
-> +
->  	sdc1_on: sdc1-on {
->  		clk {
->  			pins = "sdc1_clk";
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> index 76699435c8bd..7b219865ba7e 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -3,6 +3,7 @@
->  
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/qcom,gcc-qcs404.h>
-> +#include <dt-bindings/gpio/gpio.h>
->  
->  / {
->  	interrupt-parent = <&intc>;
-> @@ -377,6 +378,7 @@
->  			compatible = "qcom,gcc-qcs404";
->  			reg = <0x01800000 0x80000>;
->  			#clock-cells = <1>;
-> +			#reset-cells = <1>;
->  
->  			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
->  			assigned-clock-rates = <19200000>;
-> @@ -405,6 +407,21 @@
->  			#interrupt-cells = <4>;
->  		};
->  
-> +		pcie_phy: phy@7786000 {
-> +			compatible = "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy";
-> +			reg = <0x07786000 0xb8>;
-> +
-> +			clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
-> +			resets = <&gcc GCC_PCIEPHY_0_PHY_BCR>,
-> +				 <&gcc GCC_PCIE_0_PIPE_ARES>;
-> +			reset-names = "phy", "pipe";
-> +
-> +			clock-output-names = "pcie_0_pipe_clk";
-> +			#phy-cells = <0>;
-> +
-> +			status = "disabled";
-> +		};
-> +
->  		sdcc1: sdcc@7804000 {
->  			compatible = "qcom,sdhci-msm-v5";
->  			reg = <0x07804000 0x1000>, <0x7805000 0x1000>;
-> @@ -771,6 +788,56 @@
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		pcie: pci@10000000 {
-> +			compatible = "qcom,pcie-qcs404", "snps,dw-pcie";
-> +			reg =  <0x10000000 0xf1d
-> +				0x10000f20 0xa8
-> +				0x07780000 0x2000
-> +				0x10001000 0x2000>;
-> +			reg-names = "dbi", "elbi", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <0>;
-
-Since we only have single PCIe controller,
-I don't think we need to specify a pci-domain.
-
-With that:
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
-
-
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <1>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			ranges = <0x81000000 0 0          0x10003000 0 0x00010000   /* I/O */
-> +				  0x82000000 0 0x10013000 0x10013000 0 0x007ed000>; /* memory */
-> +
-> +			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi";
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-> +					<0 0 0 2 &intc GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-> +					<0 0 0 3 &intc GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-> +					<0 0 0 4 &intc GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-> +			clocks = <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
-> +				 <&gcc GCC_PCIE_0_AUX_CLK>,
-> +				 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
-> +				 <&gcc GCC_PCIE_0_SLV_AXI_CLK>;
-> +			clock-names = "iface", "aux", "master_bus", "slave_bus";
-> +
-> +			resets = <&gcc GCC_PCIE_0_AXI_MASTER_ARES>,
-> +				 <&gcc GCC_PCIE_0_AXI_SLAVE_ARES>,
-> +				 <&gcc GCC_PCIE_0_AXI_MASTER_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE_0_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE_0_BCR>,
-> +				 <&gcc GCC_PCIE_0_AHB_ARES>;
-> +			reset-names = "axi_m",
-> +				      "axi_s",
-> +				      "axi_m_sticky",
-> +				      "pipe_sticky",
-> +				      "pwr",
-> +				      "ahb";
-> +
-> +			phys = <&pcie_phy>;
-> +			phy-names = "pciephy";
-> +
-> +			status = "disabled";
-> +		};
->  	};
->  
->  	timer {
-> -- 
-> 2.18.0
-> 
+T24gMDgvMDIvMjAxOSBhdCAxNTo0MCwgQWxleGFuZHJlIEJlbGxvbmkgd3JvdGU6DQo+IFRoZSBt
+YXN0ZXIgY2xvY2sgaXMgYWN0dWFsbHkgbmFtZWQgbWFzdGVyY2sgZWFybGllciBpbiB0aGUgZHJp
+dmVyLiBIYXZpbmcNCj4gIm1jayIgaW4gdGhlIHBhcmVudCBsaXN0IG1lYW5zIHRoYXQgaXQgY2Fu
+IG5ldmVyIGJlIHNlbGVjdGVkLg0KPiANCj4gRml4ZXM6IDFlYWJkYzJmOWRkOCAoImNsazogYXQ5
+MTogYWRkIGF0OTFzYW05eDUgUE1DcyBkcml2ZXIiKQ0KPiBGaXhlczogYTIwMzgwNzdkZTlhICgi
+Y2xrOiBhdDkxOiBhZGQgc2FtYTVkMiBQTUMgZHJpdmVyIikNCj4gRml4ZXM6IDA4NGI2OTZiYjUw
+OSAoImNsazogYXQ5MTogYWRkIHNhbWE1ZDQgcG1jIGRyaXZlciIpDQo+IA0KPiBTaWduZWQtb2Zm
+LWJ5OiBBbGV4YW5kcmUgQmVsbG9uaSA8YWxleGFuZHJlLmJlbGxvbmlAYm9vdGxpbi5jb20+DQoN
+CkFja2VkLWJ5OiBOaWNvbGFzIEZlcnJlIDxuaWNvbGFzLmZlcnJlQG1pY3JvY2hpcC5jb20+DQoN
+Cj4gLS0tDQo+ICAgZHJpdmVycy9jbGsvYXQ5MS9hdDkxc2FtOXg1LmMgfCAyICstDQo+ICAgZHJp
+dmVycy9jbGsvYXQ5MS9zYW1hNWQyLmMgICAgfCA0ICsrLS0NCj4gICBkcml2ZXJzL2Nsay9hdDkx
+L3NhbWE1ZDQuYyAgICB8IDIgKy0NCj4gICAzIGZpbGVzIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
+KSwgNCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9hdDkxL2F0
+OTFzYW05eDUuYyBiL2RyaXZlcnMvY2xrL2F0OTEvYXQ5MXNhbTl4NS5jDQo+IGluZGV4IDJmZTIy
+NWE2OTdkZi4uZDU1YTE1MWNiN2Y1IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay9hdDkxL2F0
+OTFzYW05eDUuYw0KPiArKysgYi9kcml2ZXJzL2Nsay9hdDkxL2F0OTFzYW05eDUuYw0KPiBAQCAt
+MjEwLDcgKzIxMCw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBhdDkxc2FtOXg1X3BtY19zZXR1cChz
+dHJ1Y3QgZGV2aWNlX25vZGUgKm5wLA0KPiAgIAlwYXJlbnRfbmFtZXNbMV0gPSAibWFpbmNrIjsN
+Cj4gICAJcGFyZW50X25hbWVzWzJdID0gInBsbGFkaXZjayI7DQo+ICAgCXBhcmVudF9uYW1lc1sz
+XSA9ICJ1dG1pY2siOw0KPiAtCXBhcmVudF9uYW1lc1s0XSA9ICJtY2siOw0KPiArCXBhcmVudF9u
+YW1lc1s0XSA9ICJtYXN0ZXJjayI7DQo+ICAgCWZvciAoaSA9IDA7IGkgPCAyOyBpKyspIHsNCj4g
+ICAJCWNoYXIgbmFtZVs2XTsNCj4gICANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2F0OTEv
+c2FtYTVkMi5jIGIvZHJpdmVycy9jbGsvYXQ5MS9zYW1hNWQyLmMNCj4gaW5kZXggZDY5YWQ5NmZl
+OTg4Li5jZDBlZjcyNzRmZGIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL2F0OTEvc2FtYTVk
+Mi5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvc2FtYTVkMi5jDQo+IEBAIC0yNDAsNyArMjQw
+LDcgQEAgc3RhdGljIHZvaWQgX19pbml0IHNhbWE1ZDJfcG1jX3NldHVwKHN0cnVjdCBkZXZpY2Vf
+bm9kZSAqbnApDQo+ICAgCXBhcmVudF9uYW1lc1sxXSA9ICJtYWluY2siOw0KPiAgIAlwYXJlbnRf
+bmFtZXNbMl0gPSAicGxsYWRpdmNrIjsNCj4gICAJcGFyZW50X25hbWVzWzNdID0gInV0bWljayI7
+DQo+IC0JcGFyZW50X25hbWVzWzRdID0gIm1jayI7DQo+ICsJcGFyZW50X25hbWVzWzRdID0gIm1h
+c3RlcmNrIjsNCj4gICAJZm9yIChpID0gMDsgaSA8IDM7IGkrKykgew0KPiAgIAkJY2hhciBuYW1l
+WzZdOw0KPiAgIA0KPiBAQCAtMjkxLDcgKzI5MSw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzYW1h
+NWQyX3BtY19zZXR1cChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQ0KPiAgIAlwYXJlbnRfbmFtZXNb
+MV0gPSAibWFpbmNrIjsNCj4gICAJcGFyZW50X25hbWVzWzJdID0gInBsbGFkaXZjayI7DQo+ICAg
+CXBhcmVudF9uYW1lc1szXSA9ICJ1dG1pY2siOw0KPiAtCXBhcmVudF9uYW1lc1s0XSA9ICJtY2si
+Ow0KPiArCXBhcmVudF9uYW1lc1s0XSA9ICJtYXN0ZXJjayI7DQo+ICAgCXBhcmVudF9uYW1lc1s1
+XSA9ICJhdWRpb3BsbF9wbWNjayI7DQo+ICAgCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHNh
+bWE1ZDJfZ2NrKTsgaSsrKSB7DQo+ICAgCQlodyA9IGF0OTFfY2xrX3JlZ2lzdGVyX2dlbmVyYXRl
+ZChyZWdtYXAsICZwbWNfcGNyX2xvY2ssDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9hdDkx
+L3NhbWE1ZDQuYyBiL2RyaXZlcnMvY2xrL2F0OTEvc2FtYTVkNC5jDQo+IGluZGV4IGUzNThiZTdm
+NmM4ZC4uYjY0NWE5ZDU5Y2RiIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay9hdDkxL3NhbWE1
+ZDQuYw0KPiArKysgYi9kcml2ZXJzL2Nsay9hdDkxL3NhbWE1ZDQuYw0KPiBAQCAtMjA3LDcgKzIw
+Nyw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzYW1hNWQ0X3BtY19zZXR1cChzdHJ1Y3QgZGV2aWNl
+X25vZGUgKm5wKQ0KPiAgIAlwYXJlbnRfbmFtZXNbMV0gPSAibWFpbmNrIjsNCj4gICAJcGFyZW50
+X25hbWVzWzJdID0gInBsbGFkaXZjayI7DQo+ICAgCXBhcmVudF9uYW1lc1szXSA9ICJ1dG1pY2si
+Ow0KPiAtCXBhcmVudF9uYW1lc1s0XSA9ICJtY2siOw0KPiArCXBhcmVudF9uYW1lc1s0XSA9ICJt
+YXN0ZXJjayI7DQo+ICAgCWZvciAoaSA9IDA7IGkgPCAzOyBpKyspIHsNCj4gICAJCWNoYXIgbmFt
+ZVs2XTsNCj4gICANCj4gDQoNCg0KLS0gDQpOaWNvbGFzIEZlcnJlDQo=
