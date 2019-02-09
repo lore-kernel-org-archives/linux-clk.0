@@ -2,117 +2,115 @@ Return-Path: <SRS0=pb9R=QQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3BAC282CB
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 17:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F02C282CB
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9702073D
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 17:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D746920643
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYQGDJKI"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="OHmSmIqL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbfBIRPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Feb 2019 12:15:33 -0500
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:43634 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbfBIRPd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Feb 2019 12:15:33 -0500
-Received: by mail-ot1-f49.google.com with SMTP id a11so11081496otr.10;
-        Sat, 09 Feb 2019 09:15:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9qChTi8SMBRLveg4fnNK/KJaekdRnZ4Y1/Qtmevu4po=;
-        b=iYQGDJKIi6yDRqyzS8+OE/Kuyehsr0k9FGiuwPrhae7zCTglVdwQpBj49ixSZiIGUN
-         2+6uq0/zR2rcklOcD/UGJdt21qSxl5Wyob4hz+84XgnWLoUTTxRQSnyUGaMouqXozo6l
-         jZCoBcl90BOpNTdh4+4RwehQgX/5H20i47bfcmizyi0ZbvF0zAqV7U7MVKIFV95W8wdC
-         uq3roS1P9PLuB7v4CIJFuVfPlaZpyhq/XTl7p6fU9YoQIv87WKYaIsWeVAnQhB/R8B04
-         WRgQaN5iYFNNMKJ2SRonwQWJtjn7rvR/UYsgawYksQCH78QFo4bbKAfoc0RcebpBqyMz
-         rB/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9qChTi8SMBRLveg4fnNK/KJaekdRnZ4Y1/Qtmevu4po=;
-        b=jbvS7zQkpKh1AZ3Nyyh0kniymgSOWjNq7iCTvD5Sat2gENYTBTuAOPoAWQxybhHTNW
-         TtygdvL264Ua0z0q9pnP779wBzmcbF6ZAxFZk+u6MC58hNAg/ZApP9lFtHpRi5CpG/gR
-         Vz3b5Il7lOlZI3QyxpIukI7T8jhGmPnzP4U1LUcFRDeL0wcTqzTpB4LN8XlYCzkNdM61
-         CyC83aJZbKq7Mq/85p9mVNGeftv5pvVgU6NdQyNi9UeumZZwbtcK8zbENuXyusaBRo0f
-         66FVS9frsv29T5kHACZiGBt3KcKD+TUDtmHSd/Jqinwpzp+tWr4NaFUqODhrbYRQ8spP
-         QQrg==
-X-Gm-Message-State: AHQUAuYn2/fB1ZMnMGAGIq92YPXFUuxdkQNb8aSR8Bcn5chVl68g/uCv
-        KrI52ZwuQ8Ahce7xe6LWxP0C5ZqlVOFkwPMwHRw=
-X-Google-Smtp-Source: AHgI3IaA970Ri472vY8MkUlG+2VTHxFxWhi9aTOtj7gH6nRmvJHl6WmbPWb4qjoave8CTBhtaeq3oXA0p56R+2NcVMI=
-X-Received: by 2002:a9d:77d4:: with SMTP id w20mr11361589otl.196.1549732532189;
- Sat, 09 Feb 2019 09:15:32 -0800 (PST)
+        id S1727875AbfBISyE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Feb 2019 13:54:04 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:40540 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbfBISyC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Feb 2019 13:54:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0eU1k6dX8J0XmRThAkqgj7y8wKku6XnImH23mgoaowU=; b=OHmSmIqLhaj7FAhSftbeHTf7u
+        zDzRphDm/wTnspAFcatAYM6hPLxRwKCPGlTXtaK55nSyCP2aexvr+TyNK/S+r2LMyOYNu/i3/8MF4
+        dRTgOUD6HImQLOZmMk7MB1pW7/RCcBGFkoqOM8LZBsw21oJYnaY/T1cX42kkKwgAXzzIQ=;
+Received: from pd9e2f9b9.dip0.t-ipconnect.de ([217.226.249.185] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gsXlA-00068z-L6; Sat, 09 Feb 2019 19:53:52 +0100
+Date:   Sat, 9 Feb 2019 19:53:39 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, letux-kernel@openphoenux.org
+Subject: Re: [PATCH v3 0/3] mach-omap2: handle autoidle denial
+Message-ID: <20190209195105.74bb9085@aktux>
+In-Reply-To: <20190121195803.GH5544@atomide.com>
+References: <20190116220429.9136-1-andreas@kemnade.info>
+        <20190121195803.GH5544@atomide.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190207225211.GA17552@latitude> <CAOMZO5BH1Su=tKD8vV8+-i_0a_4fNDQKbk0q6DX5TZWYezeH9Q@mail.gmail.com>
- <20190209162449.GB2061@latitude>
-In-Reply-To: <20190209162449.GB2061@latitude>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sat, 9 Feb 2019 15:15:20 -0200
-Message-ID: <CAOMZO5DrtgQzjY7_9SCM_NKbKPxQyHBQNN+pmUPrqtFkARPdUg@mail.gmail.com>
-Subject: Re: sdhci-esdhc-imx/v5.0-rc5: i.MX50 system hangs when "per" clock is disabled
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/65=PCPS8TYCcaoYbPhBie0B"; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Feb 9, 2019 at 2:25 PM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
->
-> On Thu, Feb 07, 2019 at 10:50:28PM -0200, Fabio Estevam wrote:
-> > On Thu, Feb 7, 2019 at 8:52 PM Jonathan Neusch=C3=A4fer
-> [...]
-> > > I tried to compare the CCM's clocks between i.MX50 and i.MX53, but
-> > > unfortunately, the i.MX50 reference manual doesn't have the table cal=
-led
-> > > "Output clocks from CCM".
-> >
-> > Please check Table 5-10. CCM_CCGR3 Gated Clock Mapping to Target
-> > Module from the MX50 Referene Manual.
->
-> Ok, the tables show:
->
-> For i.MX50:
-> [1:0] 0 ipg_clk_root    eSDHCv2_1
+--Sig_/65=PCPS8TYCcaoYbPhBie0B
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-and it also shows that ahb_clk_root is controlled by these same bits.
+On Mon, 21 Jan 2019 11:58:03 -0800
+Tony Lindgren <tony@atomide.com> wrote:
 
-That's why I added the ahb entry in my suggestion.
+> * Andreas Kemnade <andreas@kemnade.info> [190116 14:04]:
+> > On the gta04 with a dm3730 omap_hdq does not work properly when the
+> > device enters lower power states. Idling uart1 and 2 is enough
+> > to show up that problem, if there are no other things enabled.
+> > Further research reveals that hdq iclk must not be turned off during
+> > transfers, also according to the TRM. That fact is also correctly descr=
+ibed
+> > in the flags but the code to handle that is incomplete.
+> >=20
+> > To handle multiple users of a single ick, autoidle is disabled
+> > when a user of that ick requires that (has the OCPIF_SWSUP_IDLE))
+> >=20
+> > Changes v3:
+> > - replace CLK_IS_BASIC
+> >=20
+> > Changes v2:
+> > - uses spinlocks instead of mutexes
+> > - invert counter logic
+> > - check whether clock type is basic =20
+>=20
+> For this series it's best to merge it all via the
+> clock tree along with the related clock patches:
+>=20
+> Acked-by: Tony Lindgren <tony@atomide.com>
+>=20
+hmm, this is stalled. Have I missed any new objections?
 
-> [3:2] 1 esdhc1_clk_root eSDHCv2_1
->
-> For i.MX53:
-> 1=E2=80=930 CG0 esdhc1_ipg_hclk: affects ipg_clk and hclk inputs of ESDEH=
-C-1 (esdhc1_clk_enable)
-> 3=E2=80=932 CG1 esdhc1_perclk:   affects ipg_clk_perclk   input  of ESDEH=
-C-1 (esdhc1_serial_clk_enable)
->
-> Table 18-3 (Output clocks from CCM) in the iMX53RM shows that
-> ESDHCv2-1's ipg_clk_perclk is esdhc1_clk_root, so the clock structure
-> does seem to be the same here, between i.MX50 and i.MX53=E2=80=A6
+Regards,
+Andreas
 
-That's correct. The esdhc clocks seem to differ.
+--Sig_/65=PCPS8TYCcaoYbPhBie0B
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlxfIbMACgkQfb1qx03i
+kyTzzA/+OHsIwacb/G1qQhvkuTCOcU9XvIV82zhtLWKSzN/JCUJCTcYHaRzC1sHq
+6SkA7Tyc9fDeXrpgZFhI62C0eIuIYjkZ/894LxJkkKrJvEepezJbpU7FWaHohJSe
+vqWUUnjvh5ElSt+/4cjk2xukWiET0P2PwRvkZPLMEeFNr2n1z7zBqsbjG3tfuHln
+IgstegDhHVUj/m1h8wI76V9cbAOavlH9pU5eG5qd5fa+fg1QYUlYlKRUkohWYczJ
+mF7P1GXpEFoFTr+QNIcOTSWXXPrbt4iKfDfNn16oRCpApFs8RCYZw7zpB1T7PEEu
+uOApIJm8sntuSmA8+JLEwNcDZOD8ZbJu8f/3Le6nH47qe20ViiecptQmcxYFR4CJ
+AE96FYpVk0BPZNu52r4IUsdTv/l//tH5okj06VmkwB59ovICpGFAICMwlIOl6Wn6
+eOV+F2c/C+07aRTbQ2sYaHOuwxn1xOKaWg5+NfbIL3BYT1VgdHF4woWfapzhsO6w
+2rNwMH6e65/X00oNirC2e3ykP8FAcQZQKRXWPGBOT0ypjdbYfsBGk7Ojs6HIFk0W
+h8/uAOJbnGlMTLO+eN+4+3Wfdsmbc9K1Knl3tQHg8T8gXgaehpyuNvAj+iaFFXXr
+tpiokpKPJUC/ZQ1+bAzZHraVRqJ3EhK+tvbbp0bMm6aV6TKnyWc=
+=uXmU
+-----END PGP SIGNATURE-----
+
+--Sig_/65=PCPS8TYCcaoYbPhBie0B--
