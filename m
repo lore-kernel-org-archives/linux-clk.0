@@ -2,30 +2,64 @@ Return-Path: <SRS0=pb9R=QQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F172C282CB
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 16:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3BAC282CB
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 17:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E9521919
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 16:25:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F9702073D
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Feb 2019 17:15:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYQGDJKI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfBIQZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Feb 2019 11:25:20 -0500
-Received: from mout.gmx.net ([212.227.15.18]:44819 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727012AbfBIQZT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 9 Feb 2019 11:25:19 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MexaL-1gUUMk3a7l-00Oblv; Sat, 09
- Feb 2019 17:24:52 +0100
-Date:   Sat, 9 Feb 2019 17:24:49 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        id S1727407AbfBIRPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Feb 2019 12:15:33 -0500
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:43634 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbfBIRPd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Feb 2019 12:15:33 -0500
+Received: by mail-ot1-f49.google.com with SMTP id a11so11081496otr.10;
+        Sat, 09 Feb 2019 09:15:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9qChTi8SMBRLveg4fnNK/KJaekdRnZ4Y1/Qtmevu4po=;
+        b=iYQGDJKIi6yDRqyzS8+OE/Kuyehsr0k9FGiuwPrhae7zCTglVdwQpBj49ixSZiIGUN
+         2+6uq0/zR2rcklOcD/UGJdt21qSxl5Wyob4hz+84XgnWLoUTTxRQSnyUGaMouqXozo6l
+         jZCoBcl90BOpNTdh4+4RwehQgX/5H20i47bfcmizyi0ZbvF0zAqV7U7MVKIFV95W8wdC
+         uq3roS1P9PLuB7v4CIJFuVfPlaZpyhq/XTl7p6fU9YoQIv87WKYaIsWeVAnQhB/R8B04
+         WRgQaN5iYFNNMKJ2SRonwQWJtjn7rvR/UYsgawYksQCH78QFo4bbKAfoc0RcebpBqyMz
+         rB/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9qChTi8SMBRLveg4fnNK/KJaekdRnZ4Y1/Qtmevu4po=;
+        b=jbvS7zQkpKh1AZ3Nyyh0kniymgSOWjNq7iCTvD5Sat2gENYTBTuAOPoAWQxybhHTNW
+         TtygdvL264Ua0z0q9pnP779wBzmcbF6ZAxFZk+u6MC58hNAg/ZApP9lFtHpRi5CpG/gR
+         Vz3b5Il7lOlZI3QyxpIukI7T8jhGmPnzP4U1LUcFRDeL0wcTqzTpB4LN8XlYCzkNdM61
+         CyC83aJZbKq7Mq/85p9mVNGeftv5pvVgU6NdQyNi9UeumZZwbtcK8zbENuXyusaBRo0f
+         66FVS9frsv29T5kHACZiGBt3KcKD+TUDtmHSd/Jqinwpzp+tWr4NaFUqODhrbYRQ8spP
+         QQrg==
+X-Gm-Message-State: AHQUAuYn2/fB1ZMnMGAGIq92YPXFUuxdkQNb8aSR8Bcn5chVl68g/uCv
+        KrI52ZwuQ8Ahce7xe6LWxP0C5ZqlVOFkwPMwHRw=
+X-Google-Smtp-Source: AHgI3IaA970Ri472vY8MkUlG+2VTHxFxWhi9aTOtj7gH6nRmvJHl6WmbPWb4qjoave8CTBhtaeq3oXA0p56R+2NcVMI=
+X-Received: by 2002:a9d:77d4:: with SMTP id w20mr11361589otl.196.1549732532189;
+ Sat, 09 Feb 2019 09:15:32 -0800 (PST)
+MIME-Version: 1.0
+References: <20190207225211.GA17552@latitude> <CAOMZO5BH1Su=tKD8vV8+-i_0a_4fNDQKbk0q6DX5TZWYezeH9Q@mail.gmail.com>
+ <20190209162449.GB2061@latitude>
+In-Reply-To: <20190209162449.GB2061@latitude>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Sat, 9 Feb 2019 15:15:20 -0200
+Message-ID: <CAOMZO5DrtgQzjY7_9SCM_NKbKPxQyHBQNN+pmUPrqtFkARPdUg@mail.gmail.com>
+Subject: Re: sdhci-esdhc-imx/v5.0-rc5: i.MX50 system hangs when "per" clock is disabled
+To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
         linux-mmc <linux-mmc@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
@@ -39,117 +73,46 @@ Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
         Michael Turquette <mturquette@baylibre.com>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: sdhci-esdhc-imx/v5.0-rc5: i.MX50 system hangs when "per" clock
- is disabled
-Message-ID: <20190209162449.GB2061@latitude>
-References: <20190207225211.GA17552@latitude>
- <CAOMZO5BH1Su=tKD8vV8+-i_0a_4fNDQKbk0q6DX5TZWYezeH9Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5BH1Su=tKD8vV8+-i_0a_4fNDQKbk0q6DX5TZWYezeH9Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:L4kPKEpMuxN8aBEbU5KwSiUdaaxSB6OC8L2m0BNA8rng1b30JcH
- 8QfFXQfuY9+TDj3FmEZ2o05lN88mr8qZpsxfWIeo6qydiZ54+yQb1v04rwvpHeocLl7ca7a
- /oCSe7OQpUynukPNAg0dAFnhMtW/d/Hfc0I7Tut2EsXmFSUjTSsF3rJ4oeK2SjcHsZwea5Z
- qqJs2eiOYifys/PeDftQg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Dpiui8vaG0A=:Kc4n5gwv8Y8eFSHgWwqwmv
- lDWTHlMsbLqQwwcZ6CUM2sBlAbF8PK0p74KGl2EGj3SHXrhneO6ivzUEFAykpdKC0sgxv6fbZ
- nnf35kr9Q0Deqg7YVEjU6UVwAglz4Dxfim0kWVW9rlJaDBmu+klndoY40pJK5P+o2UgrQIm9t
- hPGGoMKHTuJmEKQXsRj6tslnBXYPXHiBc+NrROl0ELEotJMsDSIY7//OEkwRu33WCKfOd7JFM
- qJ0hkBF4BgOaxQ+hg4szQChjqDQxzg/8w4fjzwxoyqVeWRMA4WWZrHCwmA0GFqtnLekKaA+CG
- zwxnN3NRbwUSIj51G5T3REJWyzH/X+ygkzdv/dk2Q9hPQXF4NaPDq3aJDV7LSzcexSmBWAsY7
- LapBJNLXCz38Okx+RlYZjVGAKsDlZIb9R8gLhCqd9n0phuWKbfxbkFuZjCnbkix4Wdshi41/I
- WE9ygV+4tiX7+DzoEHWsAHTHheDZpmPhP3n6Y0bYwrhkAKlY1rpDaQH6PcmqkfoexyH27h7VW
- DrJg/oRJGE5vMoMe+KZ3nTUlHG0yd1vcQ+WulaZ45+ofo2a0i9GB+iNJ1mliw1gfI3tcwhyjC
- aHJxSBbOt5jHvYLVh/9vLO1gglw8m7DS3puOcmhm8i7ljmpca37n/LTmzA9Gn6Mny0tKH3Wxt
- 6LeWRkWB2i9AtwcfS/+PSKxSJWVx513g7eXuflo1DxWmfSYD/rwi0G4IHnjqBUEt8NOwlNWad
- 4XaTYi4wOhLjSvNYPXjde1T4/vu1+hoLBZmW7wSfKCWbINPePojG2mbmh6j0hBuCScZhGoYRv
- 1wQrEnG/cyReFEa5t4LqwtYP5Xk+UkCoh1Dn4yxQIH+LXX2cTJOIpCYQXNNO+T7o7DsFIlHai
- 0yNqa/PQFs2Z+RdegzWrNgZrL6WOhTj3ZFFKPwv9YN1vXtb595ROIqMD35bb2l
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, Feb 9, 2019 at 2:25 PM Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
+>
+> On Thu, Feb 07, 2019 at 10:50:28PM -0200, Fabio Estevam wrote:
+> > On Thu, Feb 7, 2019 at 8:52 PM Jonathan Neusch=C3=A4fer
+> [...]
+> > > I tried to compare the CCM's clocks between i.MX50 and i.MX53, but
+> > > unfortunately, the i.MX50 reference manual doesn't have the table cal=
+led
+> > > "Output clocks from CCM".
+> >
+> > Please check Table 5-10. CCM_CCGR3 Gated Clock Mapping to Target
+> > Module from the MX50 Referene Manual.
+>
+> Ok, the tables show:
+>
+> For i.MX50:
+> [1:0] 0 ipg_clk_root    eSDHCv2_1
 
---neYutvxvOLaeuPCA
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+and it also shows that ahb_clk_root is controlled by these same bits.
 
-On Thu, Feb 07, 2019 at 10:50:28PM -0200, Fabio Estevam wrote:
-> On Thu, Feb 7, 2019 at 8:52 PM Jonathan Neusch=C3=A4fer
-[...]
-> > I tried to compare the CCM's clocks between i.MX50 and i.MX53, but
-> > unfortunately, the i.MX50 reference manual doesn't have the table called
-> > "Output clocks from CCM".
->=20
-> Please check Table 5-10. CCM_CCGR3 Gated Clock Mapping to Target
-> Module from the MX50 Referene Manual.
+That's why I added the ahb entry in my suggestion.
 
-Ok, the tables show:
+> [3:2] 1 esdhc1_clk_root eSDHCv2_1
+>
+> For i.MX53:
+> 1=E2=80=930 CG0 esdhc1_ipg_hclk: affects ipg_clk and hclk inputs of ESDEH=
+C-1 (esdhc1_clk_enable)
+> 3=E2=80=932 CG1 esdhc1_perclk:   affects ipg_clk_perclk   input  of ESDEH=
+C-1 (esdhc1_serial_clk_enable)
+>
+> Table 18-3 (Output clocks from CCM) in the iMX53RM shows that
+> ESDHCv2-1's ipg_clk_perclk is esdhc1_clk_root, so the clock structure
+> does seem to be the same here, between i.MX50 and i.MX53=E2=80=A6
 
-For i.MX50:
-[1:0] 0 ipg_clk_root    eSDHCv2_1
-[3:2] 1 esdhc1_clk_root eSDHCv2_1
-
-For i.MX53:
-1=E2=80=930 CG0 esdhc1_ipg_hclk: affects ipg_clk and hclk inputs of ESDEHC-=
-1 (esdhc1_clk_enable)
-3=E2=80=932 CG1 esdhc1_perclk:   affects ipg_clk_perclk   input  of ESDEHC-=
-1 (esdhc1_serial_clk_enable)
-
-Table 18-3 (Output clocks from CCM) in the iMX53RM shows that
-ESDHCv2-1's ipg_clk_perclk is esdhc1_clk_root, so the clock structure
-does seem to be the same here, between i.MX50 and i.MX53=E2=80=A6
-
-(The reason why I looked at i.MX53 is that there are several i.MX53
-boards in tree, so it appears to be well tested under mainline Linux)
-
-
-> Does the change below help?
->=20
-> --- a/arch/arm/boot/dts/imx50.dtsi
-> +++ b/arch/arm/boot/dts/imx50.dtsi
-> @@ -102,7 +102,7 @@
->                                         reg =3D <0x50004000 0x4000>;
->                                         interrupts =3D <1>;
->                                         clocks =3D <&clks IMX5_CLK_ESDHC1=
-_IPG_GATE>,
-> -                                                <&clks IMX5_CLK_DUMMY>,
-> +                                                <&clks IMX5_CLK_ESDHC1_I=
-PG_GATE>,
->                                                  <&clks IMX5_CLK_ESDHC1_P=
-ER_GATE>;
->                                         clock-names =3D "ipg", "ahb", "pe=
-r";
-
-Unfortunately, this doesn't help.
-
-
-Thanks,
-Jonathan Neusch=C3=A4fer
-
---neYutvxvOLaeuPCA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlxe/skACgkQCDBEmo7z
-X9u2ohAAvLuVCy5ZxTQDN0CXlBDu1D7PpvjueQHOOrySP3dRUCnU+ClFXGmp7PSH
-ijXwP///CybSSTos9kfOKMqkyMauddznp13b+Gn0G0dankm8eAptjAoMV2puW6HY
-XbF3T+2ISbUWZDZCzaJxw29VsKjxLDcP6x1DDTIeNqVMwta9Bi3tIUIhwRDvxrAw
-UFsHmM2kyLqiAbjtMTHXKMtcK/QydZ1fZnv/tHZTZeeomAowNc5vxgnjINETb/PD
-mVRr9ZALblq+Z4vgLwIIAomcQyEU+kdJv3ebpR1q4J0oxkIceWl12+W9k1EUlLEN
-T4BUdxHEQ2kplvYFw1eoTLYK0P+HNoAdLlPUpzBxWo/Srxc8hnS61vs5IGIGzFAm
-qt1ZbVm95N5j6tgzmVefCClYdl389ReYyfKl6R0g/YKYhh9nSZvPfEFY5vWZB0pq
-msPMq95W7ivkMM43hydHqT2IHdl+CGeAcP8ldEBFoQUX8FHmbYnepHbL0ZgvgLTN
-dtFhHj6xvzfa8CxFMX8QUYen1bSYWc+/9Nxfrq8S9BZJs9mw7yHqKrdu1YYssKok
-f414MXSOjUIKV0Wjqhyn+CsAp/vD7/efrwl7+aayIfCjVGP+NYvgJ0a4vxvM0J5o
-dRLQL/r5Wn4l+IE73KjjNb+BtsKBnn2KvSOLdMT1lX4KNDp7Ti8=
-=hKLs
------END PGP SIGNATURE-----
-
---neYutvxvOLaeuPCA--
+That's correct. The esdhc clocks seem to differ.
