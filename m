@@ -2,360 +2,117 @@ Return-Path: <SRS0=QJXt=QR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0758AC282D7
-	for <linux-clk@archiver.kernel.org>; Sun, 10 Feb 2019 20:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F73C282C2
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Feb 2019 21:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C679B21736
-	for <linux-clk@archiver.kernel.org>; Sun, 10 Feb 2019 20:14:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UuXAH/C8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XxlAIFcw"
+	by mail.kernel.org (Postfix) with ESMTP id D178A2146F
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Feb 2019 21:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbfBJUOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:14:22 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39028 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfBJUOV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Feb 2019 15:14:21 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F0180605FC; Sun, 10 Feb 2019 20:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549829660;
-        bh=ikKJEH4RmBXZ2bJy9ZyrbKW9RnEG3zsXDA9QBc0+Udo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UuXAH/C8YYH6y9U2E+TUWUnx5tTexE7MoBAMXbPLT7fkGmOotas5T5iRrWzc1YW9/
-         EC+G+M1kPgMhLjHZULU/Evrm1nyxnCRynvHViWfvfEbiF3ksUHI5RMiXMBmXsUqwTA
-         QXxTqtLw1nCWF51scntO1vdCpFSZOuILrKveuXWk=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BDD5760274;
-        Sun, 10 Feb 2019 20:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549829658;
-        bh=ikKJEH4RmBXZ2bJy9ZyrbKW9RnEG3zsXDA9QBc0+Udo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XxlAIFcwjdTnpF1wUrFLv3F6fMLVjTI3ZU8TxxyxVYD87bGZ1wOGHWKrrogSiAtM5
-         pKHr7YX0PdHA9yU09iQWnE4Y3HsaQ/FV2/zYNAvCI/nKhxugk0oqeSIvuWja5oLvFE
-         4+oUSg9kfdriwPyHI2SqGCIAlSrCpvWt2QBgO4Dk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDD5760274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v1] clk: qcom: Make common clk_hw registrations
-Date:   Sun, 10 Feb 2019 13:14:05 -0700
-Message-Id: <1549829645-24400-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1726005AbfBJVck (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 10 Feb 2019 16:32:40 -0500
+Received: from mout.gmx.net ([212.227.17.21]:45287 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725971AbfBJVck (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 10 Feb 2019 16:32:40 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LnkiR-1haVrt3pap-00huCc; Sun, 10
+ Feb 2019 22:32:23 +0100
+Date:   Sun, 10 Feb 2019 22:32:21 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: sdhci-esdhc-imx/v5.0-rc5: i.MX50 system hangs when "per" clock
+ is disabled
+Message-ID: <20190210213221.GC2061@latitude>
+References: <20190207225211.GA17552@latitude>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
+Content-Disposition: inline
+In-Reply-To: <20190207225211.GA17552@latitude>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:XAXp9iHbCJQ7mYPC77Hpt85Bjyy367hPYeA+Kn1H0ZN+F868zxh
+ 7uhalFxjTqpXyBtZIZx/HDtdiWWjh930KrB6USs7vHY3XyijCCVwERMpoBv69iLgj0JhZc1
+ qwJGeWaIiMJJ7CCYi4S5DsKZdJz2cKrA/Wl8OxFL4UnMehI05w6aFffPNQExdO/jgk7XQ/A
+ XiPCbiqvRuZdWJ+u0TfFg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mb9FXcvWVqI=:ABlsysEuGfRSqVP/X8VtVM
+ 2svwLi4pIlwOOSy9/uurp1HqoLl1cphCG31W/cUHh0eGfo6VkR21wFWOqNhA4eYOmiAGNZ+Mo
+ 4kLiJDwr1r+xr7bBK4tKT4UyLFp/ppEPVnVLqYvt99+5wGT2iQ5Akk90kxj2JefZD0TlWZ68a
+ w2yKmA0IPnd9VToSRW8FN/sgSlNHSijiZuh5Mdh0W1gI/Ldgkf+mhc4+5Nr6I83s3gClTAP36
+ R4mZPYjBDvasMJKFM7b6BWf2n6rA9FT94ayfTldGCmyGNUtwruksa/PXVvW4XUr7j9q046/Uu
+ Ju6gUTdaB7/qFn9j1BIQo1zaB8bgdoZhz46uKSvl3xjPHvf6Ekk+demJWMojSj5JQb0Pi55/Y
+ /cnAhmucZ/5ZngSL5VkiDiH3r53MSepKSnbQRvqG2bXWVga+Kr5Y6muE5DwDf9rm5y3UM3+uj
+ P10pGqLXZTtLXwY5nAqEW7CyCcCNyuplNavnFc3ikMWBeBKo3/tcL7ymn+DinlQV5TIqzip6W
+ TEfJ2yXChtNchZkGMwRyJtJTB5qaXG0pCSDoDLcqIE7LLBttbTqt6uI3CfJa3tFhNhooZR5ZT
+ qaKBvLoY4LV5qEFYdvdIUcAn+TuNdBkX7+qnwxYJA3EvAyHP0l4PPn2tChmq9cNLy7ytU88zF
+ eKVOpZuXHs2VYF1PkypNEsRMF9m2dKKntdBBKzb63afTH1PiZ+OcUFdSfT3SQUPxrUFf/2qRn
+ YqoNs9l0lwPCrCwbOFkHvDdynedObf3q4WFaR4zDsaHVjBvkLhCYolmhkjwhmiPE0ya2L6CC5
+ YPsgPR37Gp2pjIkF0oi+Y6SpAnC6Q3Rziv7ZNAtdbDsKYk9Q8BZ5cLswxAwiBrgCEzFV51+0Y
+ VyUawdkAyuggmTZCYpqLz08GS3Hb5cJRczR+fmZ2tIyMg4ti8ECfiUQ0YMA9TT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Several clock controller drivers define a list of clk_hw devices, and then
-register those devices in probe() before using common code to process the
-rest of initialization.  Extend the common code to accept a list of clk_hw
-devices to process, thus eliminating many duplicate implementations.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- drivers/clk/qcom/common.c       |  8 ++++++++
- drivers/clk/qcom/common.h       |  2 ++
- drivers/clk/qcom/gcc-ipq8074.c  | 10 ++--------
- drivers/clk/qcom/gcc-mdm9615.c  | 11 ++---------
- drivers/clk/qcom/gcc-msm8996.c  | 10 ++--------
- drivers/clk/qcom/gcc-msm8998.c  | 10 ++++++----
- drivers/clk/qcom/gcc-qcs404.c   |  9 ++-------
- drivers/clk/qcom/gcc-sdm660.c   | 11 +++--------
- drivers/clk/qcom/mmcc-msm8996.c | 10 ++--------
- 9 files changed, 29 insertions(+), 52 deletions(-)
+--/e2eDi0V/xtL+Mc8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 0a48ed5..a6b2f861 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -231,6 +231,8 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 	struct gdsc_desc *scd;
- 	size_t num_clks = desc->num_clks;
- 	struct clk_regmap **rclks = desc->clks;
-+	size_t num_clk_hws = desc->num_clk_hws;
-+	struct clk_hw **clk_hws = desc->clk_hws;
- 
- 	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
- 	if (!cc)
-@@ -269,6 +271,12 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 
- 	qcom_cc_drop_protected(dev, cc);
- 
-+	for (i = 0; i < num_clk_hws; i++) {
-+		ret = devm_clk_hw_register(dev, clk_hws[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	for (i = 0; i < num_clks; i++) {
- 		if (!rclks[i])
- 			continue;
-diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-index 4aa33ee..1e2a8bd 100644
---- a/drivers/clk/qcom/common.h
-+++ b/drivers/clk/qcom/common.h
-@@ -27,6 +27,8 @@ struct qcom_cc_desc {
- 	size_t num_resets;
- 	struct gdsc **gdscs;
- 	size_t num_gdscs;
-+	struct clk_hw **clk_hws;
-+	size_t num_clk_hws;
- };
- 
- /**
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 505c626..0e32892 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4715,18 +4715,12 @@ enum {
- 	.num_clks = ARRAY_SIZE(gcc_ipq8074_clks),
- 	.resets = gcc_ipq8074_resets,
- 	.num_resets = ARRAY_SIZE(gcc_ipq8074_resets),
-+	.clk_hws = gcc_ipq8074_hws,
-+	.num_clk_hws = ARRAY_SIZE(gcc_ipq8074_hws),
- };
- 
- static int gcc_ipq8074_probe(struct platform_device *pdev)
- {
--	int ret, i;
--
--	for (i = 0; i < ARRAY_SIZE(gcc_ipq8074_hws); i++) {
--		ret = devm_clk_hw_register(&pdev->dev, gcc_ipq8074_hws[i]);
--		if (ret)
--			return ret;
--	}
--
- 	return qcom_cc_probe(pdev, &gcc_ipq8074_desc);
- }
- 
-diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
-index 849046f..8c6d931 100644
---- a/drivers/clk/qcom/gcc-mdm9615.c
-+++ b/drivers/clk/qcom/gcc-mdm9615.c
-@@ -1702,6 +1702,8 @@ enum {
- 	.num_clks = ARRAY_SIZE(gcc_mdm9615_clks),
- 	.resets = gcc_mdm9615_resets,
- 	.num_resets = ARRAY_SIZE(gcc_mdm9615_resets),
-+	.clk_hws = gcc_mdm9615_hws,
-+	.num_clk_hws = ARRAY_SIZE(gcc_mdm9615_hws),
- };
- 
- static const struct of_device_id gcc_mdm9615_match_table[] = {
-@@ -1712,21 +1714,12 @@ enum {
- 
- static int gcc_mdm9615_probe(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
- 	struct regmap *regmap;
--	int ret;
--	int i;
- 
- 	regmap = qcom_cc_map(pdev, &gcc_mdm9615_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
--	for (i = 0; i < ARRAY_SIZE(gcc_mdm9615_hws); i++) {
--		ret = devm_clk_hw_register(dev, gcc_mdm9615_hws[i]);
--		if (ret)
--			return ret;
--	}
--
- 	return qcom_cc_really_probe(pdev, &gcc_mdm9615_desc, regmap);
- }
- 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 9d13617..4632b92 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -3656,6 +3656,8 @@ enum {
- 	.num_resets = ARRAY_SIZE(gcc_msm8996_resets),
- 	.gdscs = gcc_msm8996_gdscs,
- 	.num_gdscs = ARRAY_SIZE(gcc_msm8996_gdscs),
-+	.clk_hws = gcc_msm8996_hws,
-+	.num_clk_hws = ARRAY_SIZE(gcc_msm8996_hws),
- };
- 
- static const struct of_device_id gcc_msm8996_match_table[] = {
-@@ -3666,8 +3668,6 @@ enum {
- 
- static int gcc_msm8996_probe(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
--	int i, ret;
- 	struct regmap *regmap;
- 
- 	regmap = qcom_cc_map(pdev, &gcc_msm8996_desc);
-@@ -3680,12 +3680,6 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
- 	 */
- 	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
- 
--	for (i = 0; i < ARRAY_SIZE(gcc_msm8996_hws); i++) {
--		ret = devm_clk_hw_register(dev, gcc_msm8996_hws[i]);
--		if (ret)
--			return ret;
--	}
--
- 	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
- }
- 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index 3cbabbb..c240fba 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2959,6 +2959,10 @@ enum {
- 	.fast_io	= true,
- };
- 
-+static struct clk_hw *gcc_msm8998_hws[] = {
-+	&xo.hw,
-+};
-+
- static const struct qcom_cc_desc gcc_msm8998_desc = {
- 	.config = &gcc_msm8998_regmap_config,
- 	.clks = gcc_msm8998_clocks,
-@@ -2967,6 +2971,8 @@ enum {
- 	.num_resets = ARRAY_SIZE(gcc_msm8998_resets),
- 	.gdscs = gcc_msm8998_gdscs,
- 	.num_gdscs = ARRAY_SIZE(gcc_msm8998_gdscs),
-+	.clk_hws = gcc_msm8998_hws,
-+	.num_clk_hws = ARRAY_SIZE(gcc_msm8998_hws),
- };
- 
- static int gcc_msm8998_probe(struct platform_device *pdev)
-@@ -2986,10 +2992,6 @@ static int gcc_msm8998_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = devm_clk_hw_register(&pdev->dev, &xo.hw);
--	if (ret)
--		return ret;
--
- 	return qcom_cc_really_probe(pdev, &gcc_msm8998_desc, regmap);
- }
- 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index 64da032..a7b2fe0 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2692,6 +2692,8 @@ enum {
- 	.num_clks = ARRAY_SIZE(gcc_qcs404_clocks),
- 	.resets = gcc_qcs404_resets,
- 	.num_resets = ARRAY_SIZE(gcc_qcs404_resets),
-+	.clk_hws = gcc_qcs404_hws,
-+	.num_clk_hws = ARRAY_SIZE(gcc_qcs404_hws),
- };
- 
- static const struct of_device_id gcc_qcs404_match_table[] = {
-@@ -2703,7 +2705,6 @@ enum {
- static int gcc_qcs404_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
--	int ret, i;
- 
- 	regmap = qcom_cc_map(pdev, &gcc_qcs404_desc);
- 	if (IS_ERR(regmap))
-@@ -2711,12 +2712,6 @@ static int gcc_qcs404_probe(struct platform_device *pdev)
- 
- 	clk_alpha_pll_configure(&gpll3_out_main, regmap, &gpll3_config);
- 
--	for (i = 0; i < ARRAY_SIZE(gcc_qcs404_hws); i++) {
--		ret = devm_clk_hw_register(&pdev->dev, gcc_qcs404_hws[i]);
--		if (ret)
--			return ret;
--	}
--
- 	return qcom_cc_really_probe(pdev, &gcc_qcs404_desc, regmap);
- }
- 
-diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
-index ba239ea..8827db2 100644
---- a/drivers/clk/qcom/gcc-sdm660.c
-+++ b/drivers/clk/qcom/gcc-sdm660.c
-@@ -2420,6 +2420,8 @@ enum {
- 	.num_resets = ARRAY_SIZE(gcc_sdm660_resets),
- 	.gdscs = gcc_sdm660_gdscs,
- 	.num_gdscs = ARRAY_SIZE(gcc_sdm660_gdscs),
-+	.clk_hws = gcc_sdm660_hws,
-+	.num_clk_hws = ARRAY_SIZE(gcc_sdm660_hws),
- };
- 
- static const struct of_device_id gcc_sdm660_match_table[] = {
-@@ -2431,7 +2433,7 @@ enum {
- 
- static int gcc_sdm660_probe(struct platform_device *pdev)
- {
--	int i, ret;
-+	int ret;
- 	struct regmap *regmap;
- 
- 	regmap = qcom_cc_map(pdev, &gcc_sdm660_desc);
-@@ -2446,13 +2448,6 @@ static int gcc_sdm660_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	/* Register the hws */
--	for (i = 0; i < ARRAY_SIZE(gcc_sdm660_hws); i++) {
--		ret = devm_clk_hw_register(&pdev->dev, gcc_sdm660_hws[i]);
--		if (ret)
--			return ret;
--	}
--
- 	return qcom_cc_really_probe(pdev, &gcc_sdm660_desc, regmap);
- }
- 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 7d4ee10..7235510 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -3347,6 +3347,8 @@ enum {
- 	.num_resets = ARRAY_SIZE(mmcc_msm8996_resets),
- 	.gdscs = mmcc_msm8996_gdscs,
- 	.num_gdscs = ARRAY_SIZE(mmcc_msm8996_gdscs),
-+	.clk_hws = mmcc_msm8996_hws,
-+	.num_clk_hws = ARRAY_SIZE(mmcc_msm8996_hws),
- };
- 
- static const struct of_device_id mmcc_msm8996_match_table[] = {
-@@ -3357,8 +3359,6 @@ enum {
- 
- static int mmcc_msm8996_probe(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
--	int i, ret;
- 	struct regmap *regmap;
- 
- 	regmap = qcom_cc_map(pdev, &mmcc_msm8996_desc);
-@@ -3370,12 +3370,6 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
- 	/* Disable the NoC FSM for mmss_mmagic_cfg_ahb_clk */
- 	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
- 
--	for (i = 0; i < ARRAY_SIZE(mmcc_msm8996_hws); i++) {
--		ret = devm_clk_hw_register(dev, mmcc_msm8996_hws[i]);
--		if (ret)
--			return ret;
--	}
--
- 	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
- }
- 
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+On Thu, Feb 07, 2019 at 11:52:11PM +0100, Jonathan Neusch=C3=A4fer wrote:
+> However, as soon as the mmc driver (sdhci-esdhc-imx.c) disables clk_per
+> in sdhci_esdhc_runtime_suspend[2], the whole system locks up in some way.
 
+I've traced clk prepare/unprepare/enable/disable calls and got this
+right before it hangs:
+
+[    1.280981] sdhci_esdhc_runtime_suspend: unprepare clk_per
+[    1.283356] clk_core_unprepare esdhc1_per_gate
+[    1.285191] clk_core_unprepare esdhc_a_podf
+[    1.286881] clk_core_unprepare esdhc_a_pred
+[    1.288568] clk_core_unprepare esdhc_a_sel
+[    1.290220] clk_core_unprepare pll2_sw
+
+I suspect that there is a dependency on pll2_sw that is not represented
+in the imx5 clock driver. I'm comparing it to the Reference Manual now.
+
+
+Thanks,
+Jonathan Neusch=C3=A4fer
+
+--/e2eDi0V/xtL+Mc8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlxgmF0ACgkQCDBEmo7z
+X9sINBAApuuzxXq9D6VZLxr0ABlrqGVUN9QMdqizhS4PcNi97B4Ax5J1dDGCXaJN
+U1J1GwA9WQgC3/khCiP04XAc1qp6/2KkobDFl/IjBNPZRcBS/qeBemePKhAWH9Jh
+ICqYCbKZCkxpcLD8zFpY4XtzC16fdk5CTeXEJLjb83JcWY+p8KBkLGCl0SQyJuJ5
+pHS79Cgw1RhGYS4zF3a8AO8o4Llccl1PdshUlXNOZ4rFS3Ep68A03cBoWI+PWuhU
+auF0HmYufLhajjeaDFaMv9uzBSM5vylxIsEtKJzxLChgOP5sAwIMGFxyo1sDAab5
+A6GovivJ/jtQpK/mVSoHqazyt1226c0LXV2Sg6erImmCUkAzcHPAzRPeRJqqCt0Y
+IUaLY7jWPQSUMmh+XjMuGUuDuJbuTetb/1TJBK94aAzndMn12fojEDRtOgtvpW3d
+KaZKj2tk/250uC6q+GvQClF7iZEadl7bmu/QQfEpfMU61qH7IOmw7wrGFueQLelu
+HDX+GRpoe0qsYdYtFOmsYYj5ocyLRgF/F8ycEyK9Ea+WOr76JS2+ycDkSit8uxcl
+JiAHh3xMGQz7Mt0sTMdChfg5ee6ruxanfB/SzSeurpBmg4fmdCJmt7JYZbwC3NBI
+CfjjX/RM10JpwYk4YVxxekG/ZOP+jO9JDIgHWZTIFkHt6oat234=
+=Ejgh
+-----END PGP SIGNATURE-----
+
+--/e2eDi0V/xtL+Mc8--
