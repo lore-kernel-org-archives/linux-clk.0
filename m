@@ -2,299 +2,825 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AD1C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 10:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1949C169C4
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 10:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E7F8214DA
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 10:35:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NVf5yZTO"
+	by mail.kernel.org (Postfix) with ESMTP id 7C08620838
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 10:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfBKKfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:35:04 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:64308 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfBKKfE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 05:35:04 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190211103502epoutp026854ce7748736554b4691dc969484822~CSNUsb5fW3088430884epoutp02_
-        for <linux-clk@vger.kernel.org>; Mon, 11 Feb 2019 10:35:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190211103502epoutp026854ce7748736554b4691dc969484822~CSNUsb5fW3088430884epoutp02_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549881302;
-        bh=kvJT524Acja0/UcdtDWaZ04nkAJMpL0CGUrN0Y/rid8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=NVf5yZTOoFQe6/1M9AmFo7FLc173ISEKqpGMDeF59Nhkvhg/VxOJ9qZ7CbrWz4Sql
-         F1lCYjeZ+zNsj+zNx83ZXlHXpy04vS8An1GKCSzYFTL5vMsUlmDVjVVAN+v+Ew8vdE
-         hzgR8YvPteG/zIyHhd4121SbiLn36Z4cSqalZtj0=
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.156]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190211103459epcas1p3faf7108b710ebbdbb7a59038a1980847~CSNSX5j6M2023720237epcas1p3P;
-        Mon, 11 Feb 2019 10:34:59 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D1.1D.04069.3DF416C5; Mon, 11 Feb 2019 19:34:59 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190211103459epcas1p3904fadb55b588dcceb5bc0248a1dce60~CSNR9WRYW2023020230epcas1p3R;
-        Mon, 11 Feb 2019 10:34:59 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190211103459epsmtrp262c15a03e9dad3de4a684c3c2988611b~CSNR5zRi00604906049epsmtrp2A;
-        Mon, 11 Feb 2019 10:34:59 +0000 (GMT)
-X-AuditID: b6c32a37-989ff70000000fe5-62-5c614fd34ce8
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4E.9C.03971.2DF416C5; Mon, 11 Feb 2019 19:34:59 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190211103458epsmtip161de85e79249ea9616f4c0a737de038b~CSNRoOEQS2986329863epsmtip1R;
-        Mon, 11 Feb 2019 10:34:58 +0000 (GMT)
-Subject: Re: [PATCH v3 3/8] clk: samsung: add BPLL rate table for Exynos
- 5422 SoC
-To:     Lukasz Luba <l.luba@partner.samsung.com>, cwchoi00@gmail.com
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <790ea13b-7a44-2452-a6b2-51102e60c290@samsung.com>
-Date:   Mon, 11 Feb 2019 19:34:58 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <59a5e9bc-a5de-9f98-5710-4cd48cb5b239@partner.samsung.com>
-Content-Language: en-US
+        id S1726147AbfBKKzJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 05:55:09 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60493 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfBKKzI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 05:55:08 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gt9Ep-0005qV-UE; Mon, 11 Feb 2019 11:54:59 +0100
+Message-ID: <1549882498.2546.1.camel@pengutronix.de>
+Subject: Re: [PATCH] clk: imx: Refactor entire sccg pll clk
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 11 Feb 2019 11:54:58 +0100
+In-Reply-To: <1548772392-14170-1-git-send-email-abel.vesa@nxp.com>
+References: <1548772392-14170-1-git-send-email-abel.vesa@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLJsWRmVeSWpSXmKPExsWy7bCmru5l/8QYg9XvVS02zljPavHsqLbF
-        /CPnWC36H79mtjh/fgO7xdmmN+wWtxpkLDY9vsZq8bHnHqvF5V1z2Cw+9x5htJhxfh+Txdoj
-        d9ktLp5ytbjduILN4vCbdlaLf9c2sjgIery/0crusXPWXXaPTas62Tw2L6n3OPhuD5NH35ZV
-        jB6fN8kFsEdl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6
-        ZeYAna+kUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKbAs0CtOzC0uzUvXS87PtTI0
-        MDAyBSpMyM74cHMFa8FF/Yrmb4vZGxhPqHYxcnBICJhILPlU3sXIxSEksINRYt6KLcwQzidG
-        iUmHLzJBON8YJc739zDCdHSs8YWI72WUWPOqAaroPaPEwmXNQEWcHMICwRJzj91kA7FFBBwk
-        dt58yQhSxCwwnVWi+fpeFpAEm4CWxP4XN8CK+AUUJa7+eAzWzCtgJ/Gn/Q1YDYuAqsSCWc1g
-        tqhAhMTh3ndQNYISJ2c+AYtzCrhLzNv/iBnEZhYQl7j1ZD4ThC0v0bx1Ntg/EgKH2CVeL/0E
-        ViQh4CIxs+8fC4QtLPHq+BZ2CFtK4vO7vWwQdrXEypNH2CCaOxgltuy/wAqRMJbYv3QyEygs
-        mAU0Jdbv0odYxifx7msPKySIeCU62oQgqpUlLj+4ywRhS0osbu+EGu8hMWnuJLYJjIqzkLwz
-        C8kLs5C8MAth2QJGllWMYqkFxbnpqcWGBcbIsb2JEZy0tcx3MG4453OIUYCDUYmH90NiQowQ
-        a2JZcWXuIUYJDmYlEd5Q38QYId6UxMqq1KL8+KLSnNTiQ4ymwNCeyCwlmpwPzCh5JfGGpkbG
-        xsYWJoZmpoaGSuK86x2cY4QE0hNLUrNTUwtSi2D6mDg4pRoYO44FNrhz7V+Q5qnLUNT4TNLn
-        tJT/tVcnd7F8PePSXy+0s3mK9Z/VhS4bpiht999SzeQ9ebtU3FbRpuN7E85q7BSdtulzhccM
-        /fzae9tf33Z+u9fhjWD2Svvq59knNwYYxO8/U/xZkWcyL6Me673zNxdKnr5n9NdwxYwjD7bs
-        2/FvUeCKzym6UkosxRmJhlrMRcWJAKuT2mzwAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWy7bCSnO5l/8QYg2uLmC02zljPavHsqLbF
-        /CPnWC36H79mtjh/fgO7xdmmN+wWtxpkLDY9vsZq8bHnHqvF5V1z2Cw+9x5htJhxfh+Txdoj
-        d9ktLp5ytbjduILN4vCbdlaLf9c2sjgIery/0crusXPWXXaPTas62Tw2L6n3OPhuD5NH35ZV
-        jB6fN8kFsEdx2aSk5mSWpRbp2yVwZXy4uYK14KJ+RfO3xewNjCdUuxg5OCQETCQ61vh2MXJy
-        CAnsZpQ4voMHxJYQkJSYdvEoM0SJsMThw8VdjFxAJW8ZJWbdWMUOUiMsECzxpfUdI4gtIuAg
-        sfPmSzCbWWAuq8S1M7UQDVeZJT59XA7WwCagJbH/xQ02EJtfQFHi6o/HYA28AnYSf9rfsIDY
-        LAKqEgtmNYPZogIREh+f7mOCqBGUODnzCVicU8BdYt7+R8wQy9Ql/sy7BGWLS9x6Mp8JwpaX
-        aN46m3kCo/AsJO2zkLTMQtIyC0nLAkaWVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsY
-        wbGrpbmD8fKS+EOMAhyMSjy8HxITYoRYE8uKK3MPMUpwMCuJ8Ib6JsYI8aYkVlalFuXHF5Xm
-        pBYfYpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwNgswCY+8aK0T8+qr3lSb+epXNNs
-        /rmrdsLOE8d9zdZsLGIVrNwSmG3hHpuQdPz01AVbdt60uPjr/2aLkI/K3fELr2gd0y/U8XIq
-        WRzqvv7PF1Zrhs/bp7xI2HFh4tHF0p6Gu1ztSqSb4+7PnV0Rf+3wpCWqbXMKs3xYN0xY1P/l
-        99UrjVf8JBmVWIozEg21mIuKEwGc9ccJ2QIAAA==
-X-CMS-MailID: 20190211103459epcas1p3904fadb55b588dcceb5bc0248a1dce60
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190131085007eucas1p2f16107042b8ce5638811840618bcf017
-References: <1548924594-19084-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190131085007eucas1p2f16107042b8ce5638811840618bcf017@eucas1p2.samsung.com>
-        <1548924594-19084-4-git-send-email-l.luba@partner.samsung.com>
-        <d5b8d165-564e-b776-77de-31a069118067@samsung.com>
-        <0ca15b4c-ddaa-1be5-35be-e76b008b28a8@partner.samsung.com>
-        <CAGTfZH05zn_FiNt3zSHZJfspvo4RXWPrAtWLUq5xsqKoB3qxBA@mail.gmail.com>
-        <59a5e9bc-a5de-9f98-5710-4cd48cb5b239@partner.samsung.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lukasz,
+Am Dienstag, den 29.01.2019, 14:33 +0000 schrieb Abel Vesa:
+> Make the entire combination of plls to be one single clock. The parents used
+> for bypasses are specified each as an index in the parents list.
+> The determine_rate does a lookup throughout all the possible combinations
+> for all the divs and returns the best possible 'setup' which in turn is used
+> by set_rate later to set up all the divs and bypasses.
 
-On 19. 2. 11. 오후 7:21, Lukasz Luba wrote:
-> Hi Chanwoo,
+I can't claim to have reviewed the change, but I've tested it in my
+setup and I like it quite a lot, as it simplifies the clock setup.
+
+Tested-by: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
+
+Regards,
+Lucas
+
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx8mq.c   |  58 ++---
+>  drivers/clk/imx/clk-sccg-pll.c | 514 ++++++++++++++++++++++++++++++++---------
+>  drivers/clk/imx/clk.h          |   9 +-
+>  3 files changed, 423 insertions(+), 158 deletions(-)
 > 
-> On 2/3/19 8:54 AM, Chanwoo Choi wrote:
->> Hi Lukasz,
->>
->> 2019년 2월 1일 (금) 오후 11:22, Lukasz Luba <l.luba@partner.samsung.com>님이 작성:
->>
->>>
->>> Hi Chanwoo,
->>>
->>> On 2/1/19 9:44 AM, Chanwoo Choi wrote:
->>>> Hi,
->>>>
->>>> On 19. 1. 31. 오후 5:49, Lukasz Luba wrote:
->>>>> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
->>>>> Controller frequencies for driver's DRAM timings.
->>>>>
->>>>> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>>>> CC: Chanwoo Choi <cw00.choi@samsung.com>
->>>>> CC: Michael Turquette <mturquette@baylibre.com>
->>>>> CC: Stephen Boyd <sboyd@kernel.org>
->>>>> CC: Kukjin Kim <kgene@kernel.org>
->>>>> CC: Krzysztof Kozlowski <krzk@kernel.org>
->>>>> CC: linux-samsung-soc@vger.kernel.org
->>>>> CC: linux-clk@vger.kernel.org
->>>>> CC: linux-arm-kernel@lists.infradead.org
->>>>> CC: linux-kernel@vger.kernel.org
->>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>>> ---
->>>>>    drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++++++++-
->>>>>    1 file changed, 14 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->>>>> index 3e87421..8bf9579 100644
->>>>> --- a/drivers/clk/samsung/clk-exynos5420.c
->>>>> +++ b/drivers/clk/samsung/clk-exynos5420.c
->>>>> @@ -1325,6 +1325,19 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
->>>>>       PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
->>>>>    };
->>>>>
->>>>> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
->>>>> +    PLL_35XX_RATE(24 * MHZ, 933000000, 311, 4, 1),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
->>>>> +    PLL_35XX_RATE(24 * MHZ, 138000000, 184, 2, 4),
->>>>
->>>> Except for 825Mhz, I can't find the target frequency
->>>> on Exynos5422 TRM document. Usually, Exynos TRM specified
->>>> the supported stable clocks. It means that undefined clocks
->>>> are not stable as I knew. Where do you find them?
->>>>
->>>> When I calculated the PLL frequency with PMS value, it is correct.
->>>> But, just we need to check the reference of undefined clocks on TRM
->>>> in order to guarantee the stable operation.
->>> They values live in vendor code for Android.
->>> I have tested the DMC & DDR with these ratios in stress scenarios
->>> for a few days and it was stable.
->>
->> If possible, please share the url of original vendor code.
-> Here is the vendor code for the BPLL values:
-> https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y-android/drivers/clk/samsung/clk-exynos5422.c#L2026
-
-Thanks for sharing.
-
-bpll_rate_table has two different supported frequency
-according to exynos5422 revision as following:
-But, this patch only has only one frequency set
-for CONFIG_SOC_EXYNOS5422_REV_0.
-
-Could you guarantee that all Exynos5422-based Odroid-xu3 board
-has CONFIG_SOC_EXYNOS5422_REV_0 ersion? If not guaranteed,
-some board might be fault because of using the unsupported
-frequencies.
-
-It is dangerous and unstable to use the unsupported frequencies to SoC.
-
-struct samsung_pll_rate_table bpll_rate_table[] = {
-	/* rate		p	m	s	k */
-#ifdef CONFIG_SOC_EXYNOS5422_REV_0
-	{ 933000000U,   4,  311,    1,  0},
-	{ 925000000U,   4,  307,    1,  0},
-	{ 825000000U,   4,  275,    1,  0},
-	{ 728000000U,   3,  182,    1,  0},
-	{ 633000000U,   4,  211,    1,  0},
-	{ 543000000U,   2,  181,    2,  0},
-	{ 413000000U,   6,  413,    2,  0},
-	{ 275000000U,   3,  275,    3,  0},
-	{ 206000000U,   3,  206,    3,  0},
-	{ 165000000U,   2,  110,    3,  0},
-	{ 138000000U,   2,  184,    4,  0},
-#else
-	{ 933000000U,   4,  311,    1,  0},
-	{ 800000000U,   3,  200,    1,  0},
-	{ 733000000U,   2,  122,    1,  0},
-	{ 667000000U,   2,  111,    1,  0},
-	{ 533000000U,   3,  266,    2,  0},
-	{ 400000000U,   3,  200,    2,  0},
-	{ 266000000U,   3,  266,    3,  0},
-	{ 200000000U,   3,  200,    3,  0},
-	{ 160000000U,   3,  160,    3,  0},
-#endif
-};
-
-
-> 
-> Regards,
-> Lukasz
->>
->>>
->>>>
->>>> Remove 933/138Mhz because exynos5433-dmc.c doesn't use 933Mhz and 138Mhz
->>>> and also Exynos5422 TRM doesn't define 933/138Mhz on pll table.
->>> OK, I will remove them.
->>>>
->>>>> +};
->>>>> +
->>>>>    static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
->>>>>       PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
->>>>>       PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
->>>>> @@ -1467,7 +1480,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
->>>>>               exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->>>>>               exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
->>>>>               exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->>>>> -            exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->>>>> +            exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
->>>>
->>>> Exynos5422 used the same PLL table for apll, kpll, bpll and so on.
->>>> You don't need to make the separate pll table. Just add new entries
->>>> to exynos5420_pll2550x_24mhz_tbl table.
->>> OK, I will extend the exynos5420_pll2550x_24mhz_tbl table.
->>>
->>> In v4 patch set, it will be fixed.
->>>
->>> Regards,
->>> Lukasz
->>>>
->>>>>       }
->>>>>
->>>>>       samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
->>>>>
->>>>
->>
->>
->>
->> --
->> Best Regards,
->> Chanwoo Choi
->> Samsung Electronics
->>
->>
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> index 398ab0b..7326dce 100644
+> --- a/drivers/clk/imx/clk-imx8mq.c
+> +++ b/drivers/clk/imx/clk-imx8mq.c
+> @@ -34,15 +34,10 @@ static const char * const audio_pll1_bypass_sels[] = {"audio_pll1", "audio_pll1_
+>  static const char * const audio_pll2_bypass_sels[] = {"audio_pll2", "audio_pll2_ref_sel", };
+>  static const char * const video_pll1_bypass_sels[] = {"video_pll1", "video_pll1_ref_sel", };
+>  
+> -static const char * const sys1_pll1_out_sels[] = {"sys1_pll1", "sys1_pll1_ref_sel", };
+> -static const char * const sys2_pll1_out_sels[] = {"sys2_pll1", "sys1_pll1_ref_sel", };
+> -static const char * const sys3_pll1_out_sels[] = {"sys3_pll1", "sys3_pll1_ref_sel", };
+> -static const char * const dram_pll1_out_sels[] = {"dram_pll1", "dram_pll1_ref_sel", };
+> -
+> -static const char * const sys1_pll2_out_sels[] = {"sys1_pll2_div", "sys1_pll1_ref_sel", };
+> -static const char * const sys2_pll2_out_sels[] = {"sys2_pll2_div", "sys2_pll1_ref_sel", };
+> -static const char * const sys3_pll2_out_sels[] = {"sys3_pll2_div", "sys2_pll1_ref_sel", };
+> -static const char * const dram_pll2_out_sels[] = {"dram_pll2_div", "dram_pll1_ref_sel", };
+> +static const char * const sys1_pll_out_sels[] = {"sys1_pll1_ref_sel", };
+> +static const char * const sys2_pll_out_sels[] = {"sys1_pll1_ref_sel", "sys2_pll1_ref_sel", };
+> +static const char * const sys3_pll_out_sels[] = {"sys3_pll1_ref_sel", "sys2_pll1_ref_sel", };
+> +static const char * const dram_pll_out_sels[] = {"dram_pll1_ref_sel", };
+>  
+>  /* CCM ROOT */
+>  static const char * const imx8mq_a53_sels[] = {"osc_25m", "arm_pll_out", "sys2_pll_500m", "sys2_pll_1000m",
+> @@ -308,10 +303,6 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+> >  	clks[IMX8MQ_AUDIO_PLL1_REF_DIV] = imx_clk_divider("audio_pll1_ref_div", "audio_pll1_ref_sel", base + 0x0, 5, 6);
+> >  	clks[IMX8MQ_AUDIO_PLL2_REF_DIV] = imx_clk_divider("audio_pll2_ref_div", "audio_pll2_ref_sel", base + 0x8, 5, 6);
+> >  	clks[IMX8MQ_VIDEO_PLL1_REF_DIV] = imx_clk_divider("video_pll1_ref_div", "video_pll1_ref_sel", base + 0x10, 5, 6);
+> > > -	clks[IMX8MQ_SYS1_PLL1_REF_DIV]	= imx_clk_divider("sys1_pll1_ref_div", "sys1_pll1_ref_sel", base + 0x38, 25, 3);
+> > > -	clks[IMX8MQ_SYS2_PLL1_REF_DIV]	= imx_clk_divider("sys2_pll1_ref_div", "sys2_pll1_ref_sel", base + 0x44, 25, 3);
+> > > -	clks[IMX8MQ_SYS3_PLL1_REF_DIV]	= imx_clk_divider("sys3_pll1_ref_div", "sys3_pll1_ref_sel", base + 0x50, 25, 3);
+> > > -	clks[IMX8MQ_DRAM_PLL1_REF_DIV]	= imx_clk_divider("dram_pll1_ref_div", "dram_pll1_ref_sel", base + 0x68, 25, 3);
+>  
+> >  	clks[IMX8MQ_ARM_PLL] = imx_clk_frac_pll("arm_pll", "arm_pll_ref_div", base + 0x28);
+> >  	clks[IMX8MQ_GPU_PLL] = imx_clk_frac_pll("gpu_pll", "gpu_pll_ref_div", base + 0x18);
+> @@ -319,25 +310,6 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+> >  	clks[IMX8MQ_AUDIO_PLL1] = imx_clk_frac_pll("audio_pll1", "audio_pll1_ref_div", base + 0x0);
+> >  	clks[IMX8MQ_AUDIO_PLL2] = imx_clk_frac_pll("audio_pll2", "audio_pll2_ref_div", base + 0x8);
+> >  	clks[IMX8MQ_VIDEO_PLL1] = imx_clk_frac_pll("video_pll1", "video_pll1_ref_div", base + 0x10);
+> > -	clks[IMX8MQ_SYS1_PLL1] = imx_clk_sccg_pll("sys1_pll1", "sys1_pll1_ref_div", base + 0x30, SCCG_PLL1);
+> > -	clks[IMX8MQ_SYS2_PLL1] = imx_clk_sccg_pll("sys2_pll1", "sys2_pll1_ref_div", base + 0x3c, SCCG_PLL1);
+> > -	clks[IMX8MQ_SYS3_PLL1] = imx_clk_sccg_pll("sys3_pll1", "sys3_pll1_ref_div", base + 0x48, SCCG_PLL1);
+> > -	clks[IMX8MQ_DRAM_PLL1] = imx_clk_sccg_pll("dram_pll1", "dram_pll1_ref_div", base + 0x60, SCCG_PLL1);
+> -
+> > -	clks[IMX8MQ_SYS1_PLL2] = imx_clk_sccg_pll("sys1_pll2", "sys1_pll1_out_div", base + 0x30, SCCG_PLL2);
+> > -	clks[IMX8MQ_SYS2_PLL2] = imx_clk_sccg_pll("sys2_pll2", "sys2_pll1_out_div", base + 0x3c, SCCG_PLL2);
+> > -	clks[IMX8MQ_SYS3_PLL2] = imx_clk_sccg_pll("sys3_pll2", "sys3_pll1_out_div", base + 0x48, SCCG_PLL2);
+> > -	clks[IMX8MQ_DRAM_PLL2] = imx_clk_sccg_pll("dram_pll2", "dram_pll1_out_div", base + 0x60, SCCG_PLL2);
+> -
+> > -	/* PLL divs */
+> > -	clks[IMX8MQ_SYS1_PLL1_OUT_DIV] = imx_clk_divider("sys1_pll1_out_div", "sys1_pll1_out", base + 0x38, 19, 6);
+> > -	clks[IMX8MQ_SYS2_PLL1_OUT_DIV] = imx_clk_divider("sys2_pll1_out_div", "sys2_pll1_out", base + 0x44, 19, 6);
+> > -	clks[IMX8MQ_SYS3_PLL1_OUT_DIV] = imx_clk_divider("sys3_pll1_out_div", "sys3_pll1_out", base + 0x50, 19, 6);
+> > -	clks[IMX8MQ_DRAM_PLL1_OUT_DIV] = imx_clk_divider("dram_pll1_out_div", "dram_pll1_out", base + 0x68, 19, 6);
+> > -	clks[IMX8MQ_SYS1_PLL2_DIV] = imx_clk_divider("sys1_pll2_div", "sys1_pll2", base + 0x38, 1, 6);
+> > -	clks[IMX8MQ_SYS2_PLL2_DIV] = imx_clk_divider("sys2_pll2_div", "sys2_pll2", base + 0x44, 1, 6);
+> > -	clks[IMX8MQ_SYS3_PLL2_DIV] = imx_clk_divider("sys3_pll2_div", "sys3_pll2", base + 0x50, 1, 6);
+> > -	clks[IMX8MQ_DRAM_PLL2_DIV] = imx_clk_divider("dram_pll2_div", "dram_pll2", base + 0x68, 1, 6);
+>  
+> >  	/* PLL bypass out */
+> >  	clks[IMX8MQ_ARM_PLL_BYPASS] = imx_clk_mux("arm_pll_bypass", base + 0x28, 14, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels));
+> @@ -347,14 +319,12 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+> >  	clks[IMX8MQ_AUDIO_PLL2_BYPASS] = imx_clk_mux("audio_pll2_bypass", base + 0x8, 14, 1, audio_pll2_bypass_sels, ARRAY_SIZE(audio_pll2_bypass_sels));
+> >  	clks[IMX8MQ_VIDEO_PLL1_BYPASS] = imx_clk_mux("video_pll1_bypass", base + 0x10, 14, 1, video_pll1_bypass_sels, ARRAY_SIZE(video_pll1_bypass_sels));
+>  
+> > -	clks[IMX8MQ_SYS1_PLL1_OUT] = imx_clk_mux("sys1_pll1_out", base + 0x30, 5, 1, sys1_pll1_out_sels, ARRAY_SIZE(sys1_pll1_out_sels));
+> > -	clks[IMX8MQ_SYS2_PLL1_OUT] = imx_clk_mux("sys2_pll1_out", base + 0x3c, 5, 1, sys2_pll1_out_sels, ARRAY_SIZE(sys2_pll1_out_sels));
+> > -	clks[IMX8MQ_SYS3_PLL1_OUT] = imx_clk_mux("sys3_pll1_out", base + 0x48, 5, 1, sys3_pll1_out_sels, ARRAY_SIZE(sys3_pll1_out_sels));
+> > -	clks[IMX8MQ_DRAM_PLL1_OUT] = imx_clk_mux("dram_pll1_out", base + 0x60, 5, 1, dram_pll1_out_sels, ARRAY_SIZE(dram_pll1_out_sels));
+> > -	clks[IMX8MQ_SYS1_PLL2_OUT] = imx_clk_mux("sys1_pll2_out", base + 0x30, 4, 1, sys1_pll2_out_sels, ARRAY_SIZE(sys1_pll2_out_sels));
+> > -	clks[IMX8MQ_SYS2_PLL2_OUT] = imx_clk_mux("sys2_pll2_out", base + 0x3c, 4, 1, sys2_pll2_out_sels, ARRAY_SIZE(sys2_pll2_out_sels));
+> > -	clks[IMX8MQ_SYS3_PLL2_OUT] = imx_clk_mux("sys3_pll2_out", base + 0x48, 4, 1, sys3_pll2_out_sels, ARRAY_SIZE(sys3_pll2_out_sels));
+> > -	clks[IMX8MQ_DRAM_PLL2_OUT] = imx_clk_mux("dram_pll2_out", base + 0x60, 4, 1, dram_pll2_out_sels, ARRAY_SIZE(dram_pll2_out_sels));
+> > +	/* unbypass all the plls */
+> > +	clk_set_parent(clks[IMX8MQ_GPU_PLL_BYPASS], clks[IMX8MQ_GPU_PLL]);
+> > +	clk_set_parent(clks[IMX8MQ_VPU_PLL_BYPASS], clks[IMX8MQ_VPU_PLL]);
+> > +	clk_set_parent(clks[IMX8MQ_AUDIO_PLL1_BYPASS], clks[IMX8MQ_AUDIO_PLL1]);
+> > +	clk_set_parent(clks[IMX8MQ_AUDIO_PLL2_BYPASS], clks[IMX8MQ_AUDIO_PLL2]);
+> > +	clk_set_parent(clks[IMX8MQ_VIDEO_PLL1_BYPASS], clks[IMX8MQ_VIDEO_PLL1]);
+>  
+> >  	/* PLL OUT GATE */
+> >  	clks[IMX8MQ_ARM_PLL_OUT] = imx_clk_gate("arm_pll_out", "arm_pll_bypass", base + 0x28, 21);
+> @@ -363,11 +333,11 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+> >  	clks[IMX8MQ_AUDIO_PLL1_OUT] = imx_clk_gate("audio_pll1_out", "audio_pll1_bypass", base + 0x0, 21);
+> >  	clks[IMX8MQ_AUDIO_PLL2_OUT] = imx_clk_gate("audio_pll2_out", "audio_pll2_bypass", base + 0x8, 21);
+> >  	clks[IMX8MQ_VIDEO_PLL1_OUT] = imx_clk_gate("video_pll1_out", "video_pll1_bypass", base + 0x10, 21);
+> > -	clks[IMX8MQ_SYS1_PLL_OUT] = imx_clk_gate("sys1_pll_out", "sys1_pll2_out", base + 0x30, 9);
+> > -	clks[IMX8MQ_SYS2_PLL_OUT] = imx_clk_gate("sys2_pll_out", "sys2_pll2_out", base + 0x3c, 9);
+> > -	clks[IMX8MQ_SYS3_PLL_OUT] = imx_clk_gate("sys3_pll_out", "sys3_pll2_out", base + 0x48, 9);
+> > -	clks[IMX8MQ_DRAM_PLL_OUT] = imx_clk_gate("dram_pll_out", "dram_pll2_out", base + 0x60, 9);
+>  
+> > +	clks[IMX8MQ_SYS1_PLL_OUT] = imx_clk_sccg_pll("sys1_pll_out", sys1_pll_out_sels, ARRAY_SIZE(sys1_pll_out_sels), 0, 0, 0, base + 0x30, CLK_IS_CRITICAL);
+> > +	clks[IMX8MQ_SYS2_PLL_OUT] = imx_clk_sccg_pll("sys2_pll_out", sys2_pll_out_sels, ARRAY_SIZE(sys2_pll_out_sels), 0, 0, 1, base + 0x3c, CLK_IS_CRITICAL);
+> > +	clks[IMX8MQ_SYS3_PLL_OUT] = imx_clk_sccg_pll("sys3_pll_out", sys3_pll_out_sels, ARRAY_SIZE(sys3_pll_out_sels), 0, 0, 1, base + 0x48, CLK_IS_CRITICAL);
+> > +	clks[IMX8MQ_DRAM_PLL_OUT] = imx_clk_sccg_pll("dram_pll_out", dram_pll_out_sels, ARRAY_SIZE(dram_pll_out_sels), 0, 0, 0, base + 0x60, CLK_IS_CRITICAL);
+> >  	/* SYS PLL fixed output */
+> >  	clks[IMX8MQ_SYS1_PLL_40M] = imx_clk_fixed_factor("sys1_pll_40m", "sys1_pll_out", 1, 20);
+> >  	clks[IMX8MQ_SYS1_PLL_80M] = imx_clk_fixed_factor("sys1_pll_80m", "sys1_pll_out", 1, 10);
+> diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
+> index ee7752b..f480af3 100644
+> --- a/drivers/clk/imx/clk-sccg-pll.c
+> +++ b/drivers/clk/imx/clk-sccg-pll.c
+> @@ -25,87 +25,292 @@
+> >  #define PLL_DIVF2_MASK		GENMASK(12, 7)
+> >  #define PLL_DIVR1_MASK		GENMASK(27, 25)
+> >  #define PLL_DIVR2_MASK		GENMASK(24, 19)
+> +#define PLL_DIVQ_MASK           GENMASK(6, 1)
+> >  #define PLL_REF_MASK		GENMASK(2, 0)
+>  
+> >  #define PLL_LOCK_MASK		BIT(31)
+> >  #define PLL_PD_MASK		BIT(7)
+>  
+> > -#define OSC_25M			25000000
+> > -#define OSC_27M			27000000
+> +/* These are the specification limits for the SSCG PLL */
+> > +#define PLL_REF_MIN_FREQ		25000000
+> > +#define PLL_REF_MAX_FREQ		235000000
+>  
+> > -#define PLL_SCCG_LOCK_TIMEOUT	70
+> > +#define PLL_STAGE1_MIN_FREQ		1600000000
+> > +#define PLL_STAGE1_MAX_FREQ		2400000000
+> +
+> > +#define PLL_STAGE1_REF_MIN_FREQ		25000000
+> > +#define PLL_STAGE1_REF_MAX_FREQ		54000000
+> +
+> > +#define PLL_STAGE2_MIN_FREQ		1200000000
+> > +#define PLL_STAGE2_MAX_FREQ		2400000000
+> +
+> > +#define PLL_STAGE2_REF_MIN_FREQ		54000000
+> > +#define PLL_STAGE2_REF_MAX_FREQ		75000000
+> +
+> > +#define PLL_OUT_MIN_FREQ		20000000
+> > +#define PLL_OUT_MAX_FREQ		1200000000
+> +
+> > +#define PLL_DIVR1_MAX			7
+> > +#define PLL_DIVR2_MAX			63
+> > +#define PLL_DIVF1_MAX			63
+> > +#define PLL_DIVF2_MAX			63
+> > +#define PLL_DIVQ_MAX			63
+> +
+> > +#define PLL_BYPASS_NONE			0x0
+> > +#define PLL_BYPASS1			0x2
+> > +#define PLL_BYPASS2			0x1
+> +
+> +#define SSCG_PLL_BYPASS1_MASK           BIT(5)
+> +#define SSCG_PLL_BYPASS2_MASK           BIT(4)
+> > +#define SSCG_PLL_BYPASS_MASK		GENMASK(5, 4)
+> +
+> > +#define PLL_SCCG_LOCK_TIMEOUT		70
+> +
+> +struct clk_sccg_pll_setup {
+> > +	int divr1, divf1;
+> > +	int divr2, divf2;
+> > +	int divq;
+> > +	int bypass;
+> +
+> > +	unsigned long vco1;
+> > +	unsigned long vco2;
+> > +	unsigned long fout;
+> > +	unsigned long ref;
+> > +	unsigned long ref_div1;
+> > +	unsigned long ref_div2;
+> > +	unsigned long fout_request;
+> > +	int fout_error;
+> +};
+>  
+>  struct clk_sccg_pll {
+> > >  	struct clk_hw	hw;
+> > > -	void __iomem	*base;
+> > +	const struct clk_ops  ops;
+> +
+> > +	void __iomem *base;
+> +
+> > +	struct clk_sccg_pll_setup setup;
+> +
+> > +	u8 parent;
+> > +	u8 bypass1;
+> > +	u8 bypass2;
+>  };
+>  
+>  #define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
+>  
+> -static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
+> +static int clk_sccg_pll_wait_lock(struct clk_sccg_pll *pll)
+>  {
+> >  	u32 val;
+>  
+> > -	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
+> > -					PLL_SCCG_LOCK_TIMEOUT);
+> > +	val = readl_relaxed(pll->base + PLL_CFG0);
+> +
+> > +	/* don't wait for lock if all plls are bypassed */
+> > +	if (!(val & SSCG_PLL_BYPASS2_MASK))
+> > +		return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK,
+> > +						0, PLL_SCCG_LOCK_TIMEOUT);
+> +
+> > +	return 0;
+>  }
+>  
+> -static int clk_pll1_is_prepared(struct clk_hw *hw)
+> +static int clk_sccg_pll2_check_match(struct clk_sccg_pll_setup *setup,
+> > +					struct clk_sccg_pll_setup *temp_setup)
+>  {
+> > -	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > -	u32 val;
+> > +	int new_diff = temp_setup->fout - temp_setup->fout_request;
+> > +	int diff = temp_setup->fout_error;
+>  
+> > -	val = readl_relaxed(pll->base + PLL_CFG0);
+> > -	return (val & PLL_PD_MASK) ? 0 : 1;
+> > +	if (abs(diff) > abs(new_diff)) {
+> > +		temp_setup->fout_error = new_diff;
+> > +		memcpy(setup, temp_setup, sizeof(struct clk_sccg_pll_setup));
+> +
+> > +		if (temp_setup->fout_request == temp_setup->fout)
+> > +			return 0;
+> > +	}
+> > +	return -1;
+>  }
+>  
+> -static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
+> > -					 unsigned long parent_rate)
+> +static int clk_sccg_divq_lookup(struct clk_sccg_pll_setup *setup,
+> > +				struct clk_sccg_pll_setup *temp_setup)
+>  {
+> > -	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > -	u32 val, divf;
+> > +	int ret = -EINVAL;
+> +
+> > +	for (temp_setup->divq = 0; temp_setup->divq <= PLL_DIVQ_MAX;
+> > +	     temp_setup->divq++) {
+> > +		temp_setup->vco2 = temp_setup->vco1;
+> > +		do_div(temp_setup->vco2, temp_setup->divr2 + 1);
+> > +		temp_setup->vco2 *= 2;
+> > +		temp_setup->vco2 *= temp_setup->divf2 + 1;
+> > +		if (temp_setup->vco2 >= PLL_STAGE2_MIN_FREQ &&
+> > +				temp_setup->vco2 <= PLL_STAGE2_MAX_FREQ) {
+> > +			temp_setup->fout = temp_setup->vco2;
+> > +			do_div(temp_setup->fout, 2 * (temp_setup->divq + 1));
+> +
+> > +			ret = clk_sccg_pll2_check_match(setup, temp_setup);
+> > +			if (!ret) {
+> > +				temp_setup->bypass = PLL_BYPASS1;
+> > +				return ret;
+> > +			}
+> > +		}
+> > +	}
+>  
+> > -	val = readl_relaxed(pll->base + PLL_CFG2);
+> > -	divf = FIELD_GET(PLL_DIVF1_MASK, val);
+> > +	return ret;
+> +}
+> +
+> +static int clk_sccg_divf2_lookup(struct clk_sccg_pll_setup *setup,
+> > +					struct clk_sccg_pll_setup *temp_setup)
+> +{
+> > +	int ret = -EINVAL;
+> +
+> > +	for (temp_setup->divf2 = 0; temp_setup->divf2 <= PLL_DIVF2_MAX;
+> > +	     temp_setup->divf2++) {
+> > +		ret = clk_sccg_divq_lookup(setup, temp_setup);
+> > +		if (!ret)
+> > +			return ret;
+> > +	}
+>  
+> > -	return parent_rate * 2 * (divf + 1);
+> > +	return ret;
+>  }
+>  
+> -static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
+> > -			       unsigned long *prate)
+> +static int clk_sccg_divr2_lookup(struct clk_sccg_pll_setup *setup,
+> > +				struct clk_sccg_pll_setup *temp_setup)
+>  {
+> > -	unsigned long parent_rate = *prate;
+> > -	u32 div;
+> > +	int ret = -EINVAL;
+> +
+> > +	for (temp_setup->divr2 = 0; temp_setup->divr2 <= PLL_DIVR2_MAX;
+> > +	     temp_setup->divr2++) {
+> > +		temp_setup->ref_div2 = temp_setup->vco1;
+> > +		do_div(temp_setup->ref_div2, temp_setup->divr2 + 1);
+> > +		if (temp_setup->ref_div2 >= PLL_STAGE2_REF_MIN_FREQ &&
+> > +		    temp_setup->ref_div2 <= PLL_STAGE2_REF_MAX_FREQ) {
+> > +			ret = clk_sccg_divf2_lookup(setup, temp_setup);
+> > +			if (!ret)
+> > +				return ret;
+> > +		}
+> > +	}
+> +
+> > +	return ret;
+> +}
+> +
+> +static int clk_sccg_pll2_find_setup(struct clk_sccg_pll_setup *setup,
+> > +					struct clk_sccg_pll_setup *temp_setup,
+> > +					long ref)
+> +{
+> +
+> > +	int ret = -EINVAL;
+>  
+> > -	if (!parent_rate)
+> > -		return 0;
+> > +	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
+> > +		return ret;
+>  
+> > -	div = rate / (parent_rate * 2);
+> > +	temp_setup->vco1 = ref;
+>  
+> > -	return parent_rate * div * 2;
+> > +	ret = clk_sccg_divr2_lookup(setup, temp_setup);
+> > +	return ret;
+>  }
+>  
+> -static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
+> > -			    unsigned long parent_rate)
+> +static int clk_sccg_divf1_lookup(struct clk_sccg_pll_setup *setup,
+> > +				struct clk_sccg_pll_setup *temp_setup)
+>  {
+> > -	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > -	u32 val;
+> > -	u32 divf;
+> > +	int ret = -EINVAL;
+>  
+> > -	if (!parent_rate)
+> > -		return -EINVAL;
+> > +	for (temp_setup->divf1 = 0; temp_setup->divf1 <= PLL_DIVF1_MAX;
+> > +	     temp_setup->divf1++) {
+> > +		long vco1 = temp_setup->ref;
+>  
+> > -	divf = rate / (parent_rate * 2);
+> > +		do_div(vco1, temp_setup->divr1 + 1);
+> > +		vco1 *= 2;
+> > +		vco1 *= temp_setup->divf1 + 1;
+>  
+> > -	val = readl_relaxed(pll->base + PLL_CFG2);
+> > -	val &= ~PLL_DIVF1_MASK;
+> > -	val |= FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
+> > -	writel_relaxed(val, pll->base + PLL_CFG2);
+> > +		ret = clk_sccg_pll2_find_setup(setup, temp_setup, vco1);
+> > +		if (!ret) {
+> > +			temp_setup->bypass = PLL_BYPASS_NONE;
+> > +			return ret;
+> > +		}
+> > +	}
+> +
+> > +	return ret;
+> +}
+> +
+> +static int clk_sccg_divr1_lookup(struct clk_sccg_pll_setup *setup,
+> > +				struct clk_sccg_pll_setup *temp_setup)
+> +{
+> > +	int ret = -EINVAL;
+> +
+> > +	for (temp_setup->divr1 = 0; temp_setup->divr1 <= PLL_DIVR1_MAX;
+> > +	     temp_setup->divr1++) {
+> > +		temp_setup->ref_div1 = temp_setup->ref;
+> > +		do_div(temp_setup->ref_div1, temp_setup->divr1 + 1);
+> > +		if (temp_setup->ref_div1 >= PLL_STAGE1_REF_MIN_FREQ &&
+> > +		    temp_setup->ref_div1 <= PLL_STAGE1_REF_MAX_FREQ) {
+> > +			ret = clk_sccg_divf1_lookup(setup, temp_setup);
+> > +			if (!ret)
+> > +				return ret;
+> > +		}
+> > +	}
+> +
+> > +	return ret;
+> +}
+> +
+> +static int clk_sccg_pll1_find_setup(struct clk_sccg_pll_setup *setup,
+> > +					struct clk_sccg_pll_setup *temp_setup,
+> > +					long ref)
+> +{
+> +
+> > +	int ret = -EINVAL;
+> +
+> > +	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
+> > +		return ret;
+> +
+> > +	temp_setup->ref = ref;
+> +
+> > +	ret = clk_sccg_divr1_lookup(setup, temp_setup);
+> +
+> > +	return ret;
+> +}
+> +
+> +static int clk_sccg_pll_find_setup(struct clk_sccg_pll_setup *setup,
+> > +					unsigned long prate,
+> > +					unsigned long rate, int try_bypass)
+> +{
+> > +	struct clk_sccg_pll_setup temp_setup;
+> > +	int ret = -EINVAL;
+> +
+> > +	memset(&temp_setup, 0, sizeof(struct clk_sccg_pll_setup));
+> > +	memset(setup, 0, sizeof(struct clk_sccg_pll_setup));
+> +
+> > +	temp_setup.fout_error = PLL_OUT_MAX_FREQ;
+> > +	temp_setup.fout_request = rate;
+>  
+> > -	return clk_pll_wait_lock(pll);
+> > +	switch (try_bypass) {
+> +
+> > +	case PLL_BYPASS2:
+> > +		if (prate == rate) {
+> > +			setup->bypass = PLL_BYPASS2;
+> > +			setup->fout = rate;
+> > +			ret = 0;
+> > +		}
+> > +		break;
+> +
+> > +	case PLL_BYPASS1:
+> > +		ret = clk_sccg_pll2_find_setup(setup, &temp_setup, prate);
+> > +		break;
+> +
+> > +	case PLL_BYPASS_NONE:
+> > +		ret = clk_sccg_pll1_find_setup(setup, &temp_setup, prate);
+> > +		break;
+> > +	}
+> +
+> > +	return ret;
+> +}
+> +
+> +
+> +static int clk_sccg_pll_is_prepared(struct clk_hw *hw)
+> +{
+> > +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +
+> > +	u32 val = readl_relaxed(pll->base + PLL_CFG0);
+> +
+> > +	return (val & PLL_PD_MASK) ? 0 : 1;
+>  }
+>  
+> -static int clk_pll1_prepare(struct clk_hw *hw)
+> +static int clk_sccg_pll_prepare(struct clk_hw *hw)
+>  {
+> >  	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> >  	u32 val;
+> @@ -114,10 +319,10 @@ static int clk_pll1_prepare(struct clk_hw *hw)
+> >  	val &= ~PLL_PD_MASK;
+> >  	writel_relaxed(val, pll->base + PLL_CFG0);
+>  
+> > -	return clk_pll_wait_lock(pll);
+> > +	return clk_sccg_pll_wait_lock(pll);
+>  }
+>  
+> -static void clk_pll1_unprepare(struct clk_hw *hw)
+> +static void clk_sccg_pll_unprepare(struct clk_hw *hw)
+>  {
+> >  	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> >  	u32 val;
+> @@ -125,121 +330,208 @@ static void clk_pll1_unprepare(struct clk_hw *hw)
+> >  	val = readl_relaxed(pll->base + PLL_CFG0);
+> >  	val |= PLL_PD_MASK;
+> >  	writel_relaxed(val, pll->base + PLL_CFG0);
+> -
+>  }
+>  
+> -static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
+> +static unsigned long clk_sccg_pll_recalc_rate(struct clk_hw *hw,
+> >  					 unsigned long parent_rate)
+>  {
+> >  	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > -	u32 val, ref, divr1, divf1, divr2, divf2;
+> > +	u32 val, divr1, divf1, divr2, divf2, divq;
+> >  	u64 temp64;
+>  
+> > -	val = readl_relaxed(pll->base + PLL_CFG0);
+> > -	switch (FIELD_GET(PLL_REF_MASK, val)) {
+> > -	case 0:
+> > -		ref = OSC_25M;
+> > -		break;
+> > -	case 1:
+> > -		ref = OSC_27M;
+> > -		break;
+> > -	default:
+> > -		ref = OSC_25M;
+> > -		break;
+> > -	}
+> -
+> >  	val = readl_relaxed(pll->base + PLL_CFG2);
+> >  	divr1 = FIELD_GET(PLL_DIVR1_MASK, val);
+> >  	divr2 = FIELD_GET(PLL_DIVR2_MASK, val);
+> >  	divf1 = FIELD_GET(PLL_DIVF1_MASK, val);
+> >  	divf2 = FIELD_GET(PLL_DIVF2_MASK, val);
+> > +	divq = FIELD_GET(PLL_DIVQ_MASK, val);
+> +
+> > +	temp64 = parent_rate;
+> +
+> > +	val = clk_readl(pll->base + PLL_CFG0);
+> > +	if (val & SSCG_PLL_BYPASS2_MASK) {
+> > +		temp64 = parent_rate;
+> > +	} else if (val & SSCG_PLL_BYPASS1_MASK) {
+> > +		temp64 *= divf2;
+> > +		do_div(temp64, (divr2 + 1) * (divq + 1));
+> > +	} else {
+> > +		temp64 *= 2;
+> > +		temp64 *= (divf1 + 1) * (divf2 + 1);
+> > +		do_div(temp64, (divr1 + 1) * (divr2 + 1) * (divq + 1));
+> > +	}
+> +
+> > +	return (unsigned long)temp64;
+> +}
+>  
+> > -	temp64 = ref * 2;
+> > -	temp64 *= (divf1 + 1) * (divf2 + 1);
+> +static int clk_sccg_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +			    unsigned long parent_rate)
+> +{
+> > +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > +	struct clk_sccg_pll_setup *setup = &pll->setup;
+> > +	u32 val;
+>  
+> > -	do_div(temp64, (divr1 + 1) * (divr2 + 1));
+> > +	/* set bypass here too since the parent might be the same */
+> > +	val = clk_readl(pll->base + PLL_CFG0);
+> > +	val &= ~SSCG_PLL_BYPASS_MASK;
+> > +	val |= FIELD_PREP(SSCG_PLL_BYPASS_MASK, setup->bypass);
+> > +	clk_writel(val, pll->base + PLL_CFG0);
+>  
+> > -	return temp64;
+> > +	val = readl_relaxed(pll->base + PLL_CFG2);
+> > +	val &= ~(PLL_DIVF1_MASK | PLL_DIVF2_MASK);
+> > +	val &= ~(PLL_DIVR1_MASK | PLL_DIVR2_MASK | PLL_DIVQ_MASK);
+> > +	val |= FIELD_PREP(PLL_DIVF1_MASK, setup->divf1);
+> > +	val |= FIELD_PREP(PLL_DIVF2_MASK, setup->divf2);
+> > +	val |= FIELD_PREP(PLL_DIVR1_MASK, setup->divr1);
+> > +	val |= FIELD_PREP(PLL_DIVR2_MASK, setup->divr2);
+> > +	val |= FIELD_PREP(PLL_DIVQ_MASK, setup->divq);
+> > +	writel_relaxed(val, pll->base + PLL_CFG2);
+> +
+> > +	return clk_sccg_pll_wait_lock(pll);
+>  }
+>  
+> -static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
+> > -			       unsigned long *prate)
+> +static u8 clk_sccg_pll_get_parent(struct clk_hw *hw)
+>  {
+> > -	u32 div;
+> > -	unsigned long parent_rate = *prate;
+> > +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > +	u32 val;
+> > +	u8 ret = pll->parent;
+> +
+> > +	val = clk_readl(pll->base + PLL_CFG0);
+> > +	if (val & SSCG_PLL_BYPASS2_MASK)
+> > +		ret = pll->bypass2;
+> > +	else if (val & SSCG_PLL_BYPASS1_MASK)
+> > +		ret = pll->bypass1;
+> > +	return ret;
+> +}
+>  
+> > -	if (!parent_rate)
+> > -		return 0;
+> +static int clk_sccg_pll_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> > +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > +	u32 val;
+>  
+> > -	div = rate / parent_rate;
+> > +	val = clk_readl(pll->base + PLL_CFG0);
+> > +	val &= ~SSCG_PLL_BYPASS_MASK;
+> > +	val |= FIELD_PREP(SSCG_PLL_BYPASS_MASK, pll->setup.bypass);
+> > +	clk_writel(val, pll->base + PLL_CFG0);
+>  
+> > -	return parent_rate * div;
+> > +	return clk_sccg_pll_wait_lock(pll);
+>  }
+>  
+> -static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
+> > -			    unsigned long parent_rate)
+> +static int __clk_sccg_pll_determine_rate(struct clk_hw *hw,
+> > +					struct clk_rate_request *req,
+> > +					unsigned long min,
+> > +					unsigned long max,
+> > +					unsigned long rate,
+> > +					int bypass)
+>  {
+> > -	u32 val;
+> > -	u32 divf;
+> >  	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > +	struct clk_sccg_pll_setup *setup = &pll->setup;
+> > +	struct clk_hw *parent_hw = NULL;
+> > +	int bypass_parent_index;
+> > +	int ret = -EINVAL;
+>  
+> > -	if (!parent_rate)
+> > -		return -EINVAL;
+> > +	req->max_rate = max;
+> > +	req->min_rate = min;
+>  
+> > -	divf = rate / parent_rate;
+> > +	switch (bypass) {
+> > +	case PLL_BYPASS2:
+> > +		bypass_parent_index = pll->bypass2;
+> > +		break;
+> > +	case PLL_BYPASS1:
+> > +		bypass_parent_index = pll->bypass1;
+> > +		break;
+> > +	default:
+> > +		bypass_parent_index = pll->parent;
+> > +		break;
+> > +	}
+>  
+> > -	val = readl_relaxed(pll->base + PLL_CFG2);
+> > -	val &= ~PLL_DIVF2_MASK;
+> > -	val |= FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
+> > -	writel_relaxed(val, pll->base + PLL_CFG2);
+> > +	parent_hw = clk_hw_get_parent_by_index(hw, bypass_parent_index);
+> > +	ret = __clk_determine_rate(parent_hw, req);
+> > +	if (!ret) {
+> > +		ret = clk_sccg_pll_find_setup(setup, req->rate,
+> > +						rate, bypass);
+> > +	}
+>  
+> > -	return clk_pll_wait_lock(pll);
+> > +	req->best_parent_hw = parent_hw;
+> > +	req->best_parent_rate = req->rate;
+> > +	req->rate = setup->fout;
+> +
+> > +	return ret;
+>  }
+>  
+> -static const struct clk_ops clk_sccg_pll1_ops = {
+> > > -	.is_prepared	= clk_pll1_is_prepared,
+> > > -	.recalc_rate	= clk_pll1_recalc_rate,
+> > > -	.round_rate	= clk_pll1_round_rate,
+> > > -	.set_rate	= clk_pll1_set_rate,
+> -};
+> +static int clk_sccg_pll_determine_rate(struct clk_hw *hw,
+> > +				       struct clk_rate_request *req)
+> +{
+> > +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > +	struct clk_sccg_pll_setup *setup = &pll->setup;
+> > +	unsigned long rate = req->rate;
+> > +	unsigned long min = req->min_rate;
+> > +	unsigned long max = req->max_rate;
+> > +	int ret = -EINVAL;
+> +
+> > +	if (rate < PLL_OUT_MIN_FREQ || rate > PLL_OUT_MAX_FREQ)
+> > +		return ret;
+> +
+> > +	ret = __clk_sccg_pll_determine_rate(hw, req, req->rate, req->rate,
+> > +						rate, PLL_BYPASS2);
+> > +	if (!ret)
+> > +		return ret;
+> +
+> > +	ret = __clk_sccg_pll_determine_rate(hw, req, PLL_STAGE1_REF_MIN_FREQ,
+> > +						PLL_STAGE1_REF_MAX_FREQ, rate,
+> > +						PLL_BYPASS1);
+> > +	if (!ret)
+> > +		return ret;
+> +
+> > +	ret = __clk_sccg_pll_determine_rate(hw, req, PLL_REF_MIN_FREQ,
+> > +						PLL_REF_MAX_FREQ, rate,
+> > +						PLL_BYPASS_NONE);
+> > +	if (!ret)
+> > +		return ret;
+> +
+> > +	if (setup->fout >= min && setup->fout <= max)
+> > +		ret = 0;
+> +
+> > +	return ret;
+> +}
+>  
+> -static const struct clk_ops clk_sccg_pll2_ops = {
+> > > -	.prepare	= clk_pll1_prepare,
+> > > -	.unprepare	= clk_pll1_unprepare,
+> > > -	.recalc_rate	= clk_pll2_recalc_rate,
+> > > -	.round_rate	= clk_pll2_round_rate,
+> > > -	.set_rate	= clk_pll2_set_rate,
+> +static const struct clk_ops clk_sccg_pll_ops = {
+> > > +	.prepare	= clk_sccg_pll_prepare,
+> > > +	.unprepare	= clk_sccg_pll_unprepare,
+> > > +	.is_prepared	= clk_sccg_pll_is_prepared,
+> > > +	.recalc_rate	= clk_sccg_pll_recalc_rate,
+> > > +	.set_rate	= clk_sccg_pll_set_rate,
+> > > +	.set_parent	= clk_sccg_pll_set_parent,
+> > > +	.get_parent	= clk_sccg_pll_get_parent,
+> > > +	.determine_rate	= clk_sccg_pll_determine_rate,
+>  };
+>  
+>  struct clk *imx_clk_sccg_pll(const char *name,
+> > -				const char *parent_name,
+> > +				const char * const *parent_names,
+> > +				u8 num_parents,
+> > +				u8 parent, u8 bypass1, u8 bypass2,
+> >  				void __iomem *base,
+> > -				enum imx_sccg_pll_type pll_type)
+> > +				unsigned long flags)
+>  {
+> >  	struct clk_sccg_pll *pll;
+> >  	struct clk_init_data init;
+> >  	struct clk_hw *hw;
+> >  	int ret;
+>  
+> > -	switch (pll_type) {
+> > -	case SCCG_PLL1:
+> > -		init.ops = &clk_sccg_pll1_ops;
+> > -		break;
+> > -	case SCCG_PLL2:
+> > -		init.ops = &clk_sccg_pll2_ops;
+> > -		break;
+> > -	default:
+> > -		return ERR_PTR(-EINVAL);
+> > -	}
+> -
+> >  	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+> >  	if (!pll)
+> >  		return ERR_PTR(-ENOMEM);
+>  
+> > +	pll->parent = parent;
+> > +	pll->bypass1 = bypass1;
+> > +	pll->bypass2 = bypass2;
+> +
+> > +	pll->base = base;
+> >  	init.name = name;
+> > -	init.flags = 0;
+> > -	init.parent_names = &parent_name;
+> > -	init.num_parents = 1;
+> > +	init.ops = &clk_sccg_pll_ops;
+> +
+> > +	init.flags = flags;
+> > +	init.parent_names = parent_names;
+> > +	init.num_parents = num_parents;
+>  
+> >  	pll->base = base;
+> >  	pll->hw.init = &init;
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 2e442d8..dc7ee99 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -36,9 +36,12 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+>  struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+> >  			     void __iomem *base);
+>  
+> -struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
+> > -			     void __iomem *base,
+> > -			     enum imx_sccg_pll_type pll_type);
+> +struct clk *imx_clk_sccg_pll(const char *name,
+> > +				const char * const *parent_names,
+> > +				u8 num_parents,
+> > +				u8 parent, u8 bypass1, u8 bypass2,
+> > +				void __iomem *base,
+> > +				unsigned long flags);
+>  
+>  enum imx_pllv3_type {
+> >  	IMX_PLLV3_GENERIC,
