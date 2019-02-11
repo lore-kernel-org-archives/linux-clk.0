@@ -2,134 +2,96 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E31C282D7
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D72B5C169C4
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DCBF222A5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A931221855
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731640AbfBKPeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:34:07 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:53417 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388389AbfBKPeG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 10:34:06 -0500
-X-Originating-IP: 90.88.22.177
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 973E11C0013;
-        Mon, 11 Feb 2019 15:34:02 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 16:34:02 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Priit Laes <plaes@plaes.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
- mmc2 clock
-Message-ID: <20190211153402.s5qij5idvhbtsw2y@flea>
-References: <20190202155209.31617-1-plaes@plaes.org>
- <20190205094529.t7je4ozzu2b4ornc@flea>
- <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
- <20190206092000.f46nsn4fw2n4crub@flea>
- <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
- <20190206155227.wbkzvsdgykir4wn5@flea>
- <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
+        id S1732922AbfBKPou (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 10:44:50 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46639 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732766AbfBKPou (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 10:44:50 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n10so6474684vso.13;
+        Mon, 11 Feb 2019 07:44:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PPZgkIAjB4Z4Na98Ahql3kzmPMGHUQYFtXacLoG4tAI=;
+        b=P+yuFaSRW6U+O2BXBBh/pQn7zJt/jUPpfSLl2U3q4BYVbzd6/PMjfDd4xe7Gxdmwop
+         mToDHC4q/YIy7spEvO/Fzcl7VrpnV8qpeHBx6hDYTAT2CdXrO2Orh/H2tZwz4FuVzc7u
+         qJfT5mQ2hPplhFQfMs2kEa7J/Az9hYGsYbqwbYqB0B9ehNMbO0DwF5MQuNelrtx4RRrF
+         doipbJ497Ab/Vgmm9MpVaihdK2hr7QyDx9lA4qAtAp9VByYfpGHDLCMOxMgdi6kKCVBY
+         hxTAAUuP+mZDLX2HP3BGYom0ERVyviS1w8Qe/4sycExrghhtJ2lFRh6EXlxUjEc6fS5p
+         Cg5g==
+X-Gm-Message-State: AHQUAubU0JnaTgRhLWnajW1clc31qNLB0kzEABwwgi9TqKtxM+vvh1mI
+        kj4f5xXeIl5dRJuyeD3q0Fgj/HnEKRG66O6CEGE=
+X-Google-Smtp-Source: AHgI3IZPLHNfc3VZVtnwi9qj2yAmA80JFYtLpyN3wd3kz9t3ZQT5A0Q7hnz9hr/JVOmr1Qhv8S+s2nyCk0cgaU5KdAY=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr13222764vsi.96.1549899888964;
+ Mon, 11 Feb 2019 07:44:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wbna365u3tl67kxz"
-Content-Disposition: inline
-In-Reply-To: <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
-User-Agent: NeoMutt/20180716
+References: <20190211135858.23635-1-horms+renesas@verge.net.au>
+ <20190211135858.23635-4-horms+renesas@verge.net.au> <0b9e3ba7-2b84-7621-78f9-9b22cb4f2bd6@cogentembedded.com>
+In-Reply-To: <0b9e3ba7-2b84-7621-78f9-9b22cb4f2bd6@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Feb 2019 16:44:37 +0100
+Message-ID: <CAMuHMdV_tcsOZCBRWxbRwdfBeeh1-MJSNqw4U6YLnjOznLUQnA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] math64: New DIV64_U64_ROUND_CLOSEST helper
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Feb 11, 2019 at 4:22 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 02/11/2019 04:58 PM, Simon Horman wrote:
+> > Provide DIV64_U64_ROUND_CLOSEST helper which performs division rounded to
+> > the closes integer using an unsigned 64bit dividend and divisor.
+>
+>    Closest?
+>
+> > This will be used in a follow-up patch to allow calculation of clock
+> > divisors with high frequency parents in the R-Car Gen3 CPG MSSR driver
+> > where ovefolow occurs if either the dividend or divisor is 32bit.
 
---wbna365u3tl67kxz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+overflow
 
-On Mon, Feb 11, 2019 at 02:35:52PM +0000, Priit Laes wrote:
-> On Wed, Feb 06, 2019 at 04:52:27PM +0100, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Wed, Feb 06, 2019 at 10:03:09AM +0000, Priit Laes wrote:
-> > > > > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
-> > > > > all of them, except the HRTIMER, expect the clock rate to stay
-> > > > > the same and not change underneath them. And SATA expects it to
-> > > > > be at 600 MHz, as the datasheet says. And while it may not direct=
-ly
-> > > > > apply to the LIME2, eMMC on newer SoCs / boards run at the slight=
-ly
-> > > > > reduced rate of 50 MHz just fine.
-> > > > >=20
-> > > > > In the commit in question, clocks without CLK_SET_RATE_PARENT
-> > > > > should be using the old code (now in the if conditional block),
-> > > > > i.e. the behavior should not have changed.
-> > > > >=20
-> > > > > I don't think this actually "fixes" whatever bug was introduced,
-> > > > > but only papers over the issue, and possible introduces further
-> > > > > issues for other users.
-> > > >=20
-> > > > You're right, I've overlooked that it was pll-periph being
-> > > > affected. I've dropped it for now.
-> > >=20
-> > > Any ideas what could be done. I currently have no time to debug it,
-> > > but it affects existing systems.
-> >=20
-> > I can't find what would change with that commit either if the flag
-> > isn't set, so looking at the register state before and after that
-> > commit would help I guess?
->=20
-> Register dump without the patch:
->=20
-> $ busybox devmem 0x01c20090
-> 0x0250030E
->=20
-> pll-ddr-base     2 2 0   768000000          0     0  50000
->    pll-ddr-other 1 1 0   768000000          0     0  50000
->       mmc2       3 3 0    51200000          0     0  50000
->=20
-> Register dump with patch applied, booted from mmc0 and after mounting emm=
-c:
->=20
-> $ busybox devmem 0x01c20090
-> 0x8140020B
->=20
-> pll-periph-base  3 3 0  1200000000          0     0  50000
->    pll-periph    6 6 0   600000000          0     0  50000
->       mmc2       3 3 0    50000000          0     0  50000
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-I meant the whole Clock controller, ideally a diff between the two
-states would be great.
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Maxime
+Note that I can fix the above while applying to my clk-renesas branch.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Andrew: an Acked-by would be appreciated.
+Thanks!
 
---wbna365u3tl67kxz
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGGV6gAKCRDj7w1vZxhR
-xSb0AQD60HG8McEgeqDKFTSbYkbsOD8CLdNxRxAkFYF53Ne4OAD+Ml7PXxYFoTB5
-cofsj/UmY7nxosZX0nApMceCtLp4Kwg=
-=ryVE
------END PGP SIGNATURE-----
 
---wbna365u3tl67kxz--
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
