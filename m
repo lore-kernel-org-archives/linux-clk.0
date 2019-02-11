@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FC0C169C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F116C282D7
 	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 14:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA2AA222B0
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 13:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46890222B0
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 14:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="earFURLv"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="OO+4k0y5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbfBKN7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:59:54 -0500
+        id S1728269AbfBKN72 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 08:59:28 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:34766 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfBKN72 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 08:59:28 -0500
+        with ESMTP id S1726041AbfBKN7Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 08:59:25 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id E6E6C25BEE4;
-        Tue, 12 Feb 2019 00:59:15 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id B421A25BEE2;
+        Tue, 12 Feb 2019 00:59:13 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549893556; bh=xy/DsGoVL+xUPYMGQWM/UsHXr4QQhhvf7uWcroCqeIo=;
+        t=1549893554; bh=4Wt8YgIK6tvMWR7ftlSnQU4JQjmsI43dIhNg/wYW9gQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=earFURLvUOUPK+D2kOlQwiInP3YfFVL4m5xuABaPMP5iWgj0YQCxNr4pSxIJEruxC
-         c4oSMDiXy2Xpn+kFvSOhP0apFsvynymeM6w4hP5DOCGpngVY19KMmFQu3lzqtVgLrm
-         eChugXROGc5PNpQ5iMWESNwuU9ajnnqFM5td7Cys=
+        b=OO+4k0y59vvKnBb3Ynur832nLt+feqXLUrt5s7/tvbJ+YOsKG2LX/Wxb0/F/7aLLD
+         uRtn0D026TmjaAa8hjfW/hbefwb/DGVRqnocJvhRBe5aZvScHCc37tAEsU3S3TkFBK
+         pWvwtOcvUVA9Q4XQr4xdygImPO5LR7iPdDPjDvXo=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id D869B9408B1; Mon, 11 Feb 2019 14:59:11 +0100 (CET)
+        id B16519404AC; Mon, 11 Feb 2019 14:59:11 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
@@ -40,11 +40,10 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 5/6] clk: renesas: r8a77990: Add Z2 clock
-Date:   Mon, 11 Feb 2019 14:58:57 +0100
-Message-Id: <20190211135858.23635-6-horms+renesas@verge.net.au>
+Subject: [PATCH v5 3/6] math64: New DIV64_U64_ROUND_CLOSEST helper
+Date:   Mon, 11 Feb 2019 14:58:55 +0100
+Message-Id: <20190211135858.23635-4-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190211135858.23635-1-horms+renesas@verge.net.au>
 References: <20190211135858.23635-1-horms+renesas@verge.net.au>
@@ -53,42 +52,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Provide DIV64_U64_ROUND_CLOSEST helper which performs division rounded to
+the closes integer using an unsigned 64bit dividend and divisor.
 
-Adds support for R-Car E3 (r8a77990) Z2 clock.
+This will be used in a follow-up patch to allow calculation of clock
+divisors with high frequency parents in the R-Car Gen3 CPG MSSR driver
+where ovefolow occurs if either the dividend or divisor is 32bit.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[simon: reworked changelog; rebased]
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v3: [Simon Horman]
-- Pass new offset parameter
-
-v2: [Simon Horman]
-- Initialise as programmable clock
-
-v1: [Simon Horman]
-- Initialise as fixed clock
-
-v0: [Takeshi Kihara]
-- Initialise as programmable clock
+v5: New separate patch to add DIV64_U64_ROUND_CLOSEST
 ---
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/math64.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-index 9a278c75c918..072e4bde6fff 100644
---- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-@@ -81,6 +81,7 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
- 	/* Core Clock Outputs */
- 	DEF_FIXED("za2",       R8A77990_CLK_ZA2,   CLK_PLL0D24,    1, 1),
- 	DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
-+	DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
- 	DEF_FIXED("ztr",       R8A77990_CLK_ZTR,   CLK_PLL1,       6, 1),
- 	DEF_FIXED("zt",        R8A77990_CLK_ZT,    CLK_PLL1,       4, 1),
- 	DEF_FIXED("zx",        R8A77990_CLK_ZX,    CLK_PLL1,       3, 1),
+diff --git a/include/linux/math64.h b/include/linux/math64.h
+index bb2c84afb80c..65bef21cdddb 100644
+--- a/include/linux/math64.h
++++ b/include/linux/math64.h
+@@ -284,4 +284,17 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
+ #define DIV64_U64_ROUND_UP(ll, d)	\
+ 	({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
+ 
++/**
++ * DIV64_U64_ROUND_CLOSEST - unsigned 64bit divide with 64bit divisor rounded to nearest integer
++ * @dividend: unsigned 64bit dividend
++ * @divisor: unsigned 64bit divisor
++ *
++ * Divide unsigned 64bit dividend by unsigned 64bit divisor
++ * and round to closest integer.
++ *
++ * Return: dividend / divisor rounded to nearest integer
++ */
++#define DIV64_U64_ROUND_CLOSEST(dividend, divisor)	\
++	({ u64 _tmp = (divisor); div64_u64((dividend) + _tmp / 2, _tmp); })
++
+ #endif /* _LINUX_MATH64_H */
 -- 
 2.11.0
 
