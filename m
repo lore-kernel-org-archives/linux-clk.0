@@ -2,110 +2,121 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A21C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93708C169C4
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B47D21855
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DF7321B18
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="UcWzavtC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729215AbfBKPv6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:51:58 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:34597 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729204AbfBKPv4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 10:51:56 -0500
-X-Originating-IP: 90.88.22.177
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6DEBE1C000E;
-        Mon, 11 Feb 2019 15:51:53 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 16:51:52 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 6/7] ARM: dts: suniv: Add pinmux for SPI0 and SPI1 of
- F1C100s
-Message-ID: <20190211155152.gnocoojqa27fmeay@flea>
-References: <cover.1549875778.git.mesihkilinc@gmail.com>
- <37f573797e18fc22f8f78d0a62550b6d5e460a8d.1549875778.git.mesihkilinc@gmail.com>
+        id S1731144AbfBKOf4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 09:35:56 -0500
+Received: from plaes.org ([188.166.43.21]:45486 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731113AbfBKOf4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:56 -0500
+Received: from plaes.org (localhost [127.0.0.1])
+        by plaes.org (Postfix) with ESMTPSA id C02C9412CA;
+        Mon, 11 Feb 2019 14:35:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1549895753; bh=8Gi4omit073u81WaoF9zvkqRCS3LXU7oUSEGO5wyFVg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UcWzavtCei5KDgJWdYUmJqg3iM+kJGgqI6RL1LfSuXi7HxH8x92/YtcE/TFpRV/vd
+         OXTkEpfGw0zTjOOhXn26nTz88366xRfx/duaJqI5JvIA6oDOpPckgIU4P3dDRu3uN4
+         l9z2yNsJdbOCz1Hrle7EwdowWHV6rNEPpa+KU1XNhHWubpo5LKKYZhK7ZPpF4LFvEp
+         dXlObLMkJjG1EudRgdcaFUugj+GukUBJQ8cYeGpYhXF5b8vf7dhXZtywiCn+KupPB5
+         ku36ilStHzdIwhC5RzuoXiDBk0fiXEaiuIYZA3G36e8i53XSBp8x9scneTReEAt+ta
+         IP0ydVUHZEYrA==
+Date:   Mon, 11 Feb 2019 14:35:52 +0000
+From:   Priit Laes <plaes@plaes.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
+References: <20190202155209.31617-1-plaes@plaes.org>
+ <20190205094529.t7je4ozzu2b4ornc@flea>
+ <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+ <20190206092000.f46nsn4fw2n4crub@flea>
+ <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
+ <20190206155227.wbkzvsdgykir4wn5@flea>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zkkgxlj3vb7km2v6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37f573797e18fc22f8f78d0a62550b6d5e460a8d.1549875778.git.mesihkilinc@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190206155227.wbkzvsdgykir4wn5@flea>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Feb 06, 2019 at 04:52:27PM +0100, Maxime Ripard wrote:
+> Hi,
+> 
+> On Wed, Feb 06, 2019 at 10:03:09AM +0000, Priit Laes wrote:
+> > > > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
+> > > > all of them, except the HRTIMER, expect the clock rate to stay
+> > > > the same and not change underneath them. And SATA expects it to
+> > > > be at 600 MHz, as the datasheet says. And while it may not directly
+> > > > apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
+> > > > reduced rate of 50 MHz just fine.
+> > > > 
+> > > > In the commit in question, clocks without CLK_SET_RATE_PARENT
+> > > > should be using the old code (now in the if conditional block),
+> > > > i.e. the behavior should not have changed.
+> > > > 
+> > > > I don't think this actually "fixes" whatever bug was introduced,
+> > > > but only papers over the issue, and possible introduces further
+> > > > issues for other users.
+> > > 
+> > > You're right, I've overlooked that it was pll-periph being
+> > > affected. I've dropped it for now.
+> > 
+> > Any ideas what could be done. I currently have no time to debug it,
+> > but it affects existing systems.
+> 
+> I can't find what would change with that commit either if the flag
+> isn't set, so looking at the register state before and after that
+> commit would help I guess?
 
---zkkgxlj3vb7km2v6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Register dump without the patch:
 
-On Mon, Feb 11, 2019 at 12:21:12PM +0300, Mesih Kilinc wrote:
-> PC0~PC4 is pin group for SPI0. PA0~PA4 is pin group for SPI1.
-> Add device tree nodes for this groups.
->=20
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> ---
->  arch/arm/boot/dts/suniv-f1c100s.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/sun=
-iv-f1c100s.dtsi
-> index 1b332d9..a92a411 100644
-> --- a/arch/arm/boot/dts/suniv-f1c100s.dtsi
-> +++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-> @@ -96,6 +96,16 @@
->  				pins =3D "PE0", "PE1";
->  				function =3D "uart0";
->  			};
-> +
-> +			spi0_pc_pins: spi0-pc-pins {
-> +				pins =3D "PC0", "PC1", "PC2", "PC3";
-> +				function =3D "spi0";
-> +			};
-> +
-> +			spi1_pa_pins: spi1-pa-pins {
-> +				pins =3D "PA0", "PA1", "PA2", "PA3";
-> +				function =3D "spi1";
-> +			};
+$ busybox devmem 0x01c20090
+0x0250030E
 
-Are they the only options for the muxing of the SPI pins? if so, you'd
-need to remove the pin bank, and to set the pinctrl-0 and
-pinctrl-names in the DTSI.
+pll-ddr-base     2 2 0   768000000          0     0  50000
+   pll-ddr-other 1 1 0   768000000          0     0  50000
+      mmc2       3 3 0    51200000          0     0  50000
 
-We also move the CS pin out in a separate group to accomodate devices
-that use a GPIO instead.
+Register dump with patch applied, booted from mmc0 and after mounting emmc:
 
-Maxime
+$ busybox devmem 0x01c20090
+0x8140020B
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+pll-periph-base  3 3 0  1200000000          0     0  50000
+   pll-periph    6 6 0   600000000          0     0  50000
+      mmc2       3 3 0    50000000          0     0  50000
 
---zkkgxlj3vb7km2v6
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGGaGAAKCRDj7w1vZxhR
-xQ7OAP4khQgOjuMy0Pt4C5+nZbUJzc1AUk4H+bPNMiSaCTyTWgEAzvbAUWtcbIUM
-EoODht2ZsP3V/ygf5ZbbXKbOU6Sl3Q4=
-=yQWo
------END PGP SIGNATURE-----
+> 
+> Maxime
+> 
+> -- 
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
---zkkgxlj3vb7km2v6--
+
