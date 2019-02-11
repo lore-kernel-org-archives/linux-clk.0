@@ -2,93 +2,138 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB819C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 07:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E3FC282CC
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 08:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEFEF2084D
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 07:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549870817;
-	bh=Ledhq4vfy+28Vy2ZO4XGF0xdR84uxJUp/3eZNbAY2nQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zHpWiJv4v1737OSQ3LG8pGs+Y14SzrXuBlXU+3e7gAPHzQiPjbY+VhRTDFqdRAHCO
-	 udYcNqtYK8vdnn0WMSBkX1mH2g2blNFYa0z40IguuHnRhESCMvyXpsrHcum+S2h09H
-	 aGOsqoOfvxAOqpSyK10us5Hj6AI0gyONiXexUlWc=
+	by mail.kernel.org (Postfix) with ESMTP id 8B78020823
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 08:50:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725931AbfBKHkR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 02:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57440 "EHLO mail.kernel.org"
+        id S1727103AbfBKIup (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 03:50:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:44062 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfBKHkR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Feb 2019 02:40:17 -0500
-Received: from localhost.localdomain (unknown [117.99.91.83])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6428B2084D;
-        Mon, 11 Feb 2019 07:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549870816;
-        bh=Ledhq4vfy+28Vy2ZO4XGF0xdR84uxJUp/3eZNbAY2nQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KV5FfCtm8Q4yBbLVr1URQ0hzLQu2baqVeOSIEwp9igPQeUwhXOf+HdSlbmHWxXEke
-         RbD8+un4yQURrHBqDwuUHDpQ9HvGm5Fn9XRcudnNkMDyfPbdTo0tgt3cFkZ+Ohy3mO
-         FlHxwR7IBy+svsVozjpDkesHFcG6EUgXO3swXhNk=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Shawn Guo <shawn.guo@linaro.org>, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v2 3/3] clk: qcom: gcc-qcs404: Add cfg_offset for blsp1_uart3 clock
-Date:   Mon, 11 Feb 2019 13:09:28 +0530
-Message-Id: <20190211073928.20456-3-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211073928.20456-1-vkoul@kernel.org>
-References: <20190211073928.20456-1-vkoul@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726358AbfBKIup (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:50:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8FD480D;
+        Mon, 11 Feb 2019 00:50:44 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF2233F575;
+        Mon, 11 Feb 2019 00:50:36 -0800 (PST)
+Date:   Mon, 11 Feb 2019 08:50:27 +0000
+Message-ID: <868symu2ss.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Seiya Wang <seiya.wang@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Erin Lo <erin.lo@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <mars.cheng@mediatek.com>,
+        <eddie.huang@mediatek.com>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v6 1/6] irqchip/mtk-sysirq: support 4 interrupt parameters for sysirq
+In-Reply-To: <1549866929.22817.20.camel@mtksdccf07>
+References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+        <1548317240-44682-2-git-send-email-erin.lo@mediatek.com>
+        <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
+        <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
+        <c0187acf-bd8c-2d41-d84d-d35fc63b2beb@arm.com>
+        <1549866929.22817.20.camel@mtksdccf07>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+On Mon, 11 Feb 2019 06:35:29 +0000,
+Seiya Wang <seiya.wang@mediatek.com> wrote:
+> 
+> On Thu, 2019-02-07 at 15:52 +0000, Marc Zyngier wrote:
+> > On 07/02/2019 15:47, Marc Zyngier wrote:
+> > > On 07/02/2019 15:20, Matthias Brugger wrote:
+> > >>
+> > >>
+> > >> On 24/01/2019 09:07, Erin Lo wrote:
+> > >>> From: Seiya Wang <seiya.wang@mediatek.com>
+> > >>>
+> > >>> To support partitioned PPIs, 4 interrupt parameters should be valid
+> > >>> for sysirq.
+> > >>>
+> > >>> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> > >>> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > >>> ---
+> > >>>  drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
+> > >>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >>>
+> > >>> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
+> > >>> index 90aaf19..282736a 100644
+> > >>> --- a/drivers/irqchip/irq-mtk-sysirq.c
+> > >>> +++ b/drivers/irqchip/irq-mtk-sysirq.c
+> > >>> @@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
+> > >>>  				       unsigned int *type)
+> > >>>  {
+> > >>>  	if (is_of_node(fwspec->fwnode)) {
+> > >>> -		if (fwspec->param_count != 3)
+> > >>> +		if (fwspec->param_count != 3 && fwspec->param_count != 4)
+> > >>
+> > >> Where is this 4th parameter used?
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt#n14
+> > Sorry, I fired Send way too early.
+> > 
+> > What I wanted to add is that it is not clear to me why this change would
+> > be required here, as this driver only supports SPIs. It could be fixed
+> > by just relaxing the binding itself.
+> > 
+> > Thanks,
+> > 
+> > 	M.
+> 
+> Do you mean that we should change #interrupt-cells back to 3 for sysirq
+> and remove the 4th parameters of every spi interrupts in mt8183.dtsi
+> (i.e. 3 parameters for spi, 4 for ppi) such that we can discard this
+> patch?
 
-The CFG/M/N/D registers are at an offset of 0x20 from the CMD register
-only for blsp1_uart3 clock, so add it for uart3 only.
+It is more subtle than that:
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
-Changes in v2:
-	Update changelog to indicate that uart3 alone suffers from this
+- PPIs must have the affinity parameter in their int-spec (since you
+  need that for the PMU)
 
- drivers/clk/qcom/gcc-qcs404.c | 1 +
- 1 file changed, 1 insertion(+)
+- SPIs that are directly routed to the GIC must also have the affinity
+  parameter (although set to zero).
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index a7b2fe0fe505..5a62f64ada93 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -678,6 +678,7 @@ static struct clk_rcg2 blsp1_uart3_apps_clk_src = {
- 	.cmd_rcgr = 0x4014,
- 	.mnd_width = 16,
- 	.hid_width = 5,
-+	.cfg_off = 0x20,
- 	.parent_map = gcc_parent_map_0,
- 	.freq_tbl = ftbl_blsp1_uart0_apps_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
+- SPIs that are routed via the sysirq block (or any other) can use the
+  3 parameter variant, as they are not resolved in the context of the
+  GIC, but in that of the sysirq.
+
+But in short, yes. You should be able to drop this patch altogether.
+
+> If yes, we may need some time to verify the change before resending the
+> patch.
+
+That's absolutely fine.
+
+Thanks,
+
+	M.
+
 -- 
-2.20.1
-
+Jazz is not dead, it just smell funny.
