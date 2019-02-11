@@ -2,121 +2,179 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93708C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DE3C169C4
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF7321B18
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B21120700
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="UcWzavtC"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rc5VpAZ5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JjHjZpGc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731144AbfBKOf4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:56 -0500
-Received: from plaes.org ([188.166.43.21]:45486 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731113AbfBKOf4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:35:56 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id C02C9412CA;
-        Mon, 11 Feb 2019 14:35:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1549895753; bh=8Gi4omit073u81WaoF9zvkqRCS3LXU7oUSEGO5wyFVg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UcWzavtCei5KDgJWdYUmJqg3iM+kJGgqI6RL1LfSuXi7HxH8x92/YtcE/TFpRV/vd
-         OXTkEpfGw0zTjOOhXn26nTz88366xRfx/duaJqI5JvIA6oDOpPckgIU4P3dDRu3uN4
-         l9z2yNsJdbOCz1Hrle7EwdowWHV6rNEPpa+KU1XNhHWubpo5LKKYZhK7ZPpF4LFvEp
-         dXlObLMkJjG1EudRgdcaFUugj+GukUBJQ8cYeGpYhXF5b8vf7dhXZtywiCn+KupPB5
-         ku36ilStHzdIwhC5RzuoXiDBk0fiXEaiuIYZA3G36e8i53XSBp8x9scneTReEAt+ta
-         IP0ydVUHZEYrA==
-Date:   Mon, 11 Feb 2019 14:35:52 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
- mmc2 clock
-Message-ID: <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
-References: <20190202155209.31617-1-plaes@plaes.org>
- <20190205094529.t7je4ozzu2b4ornc@flea>
- <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
- <20190206092000.f46nsn4fw2n4crub@flea>
- <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
- <20190206155227.wbkzvsdgykir4wn5@flea>
+        id S1729666AbfBKQJH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 11:09:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50544 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729425AbfBKQJG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 11:09:06 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5EA6F6109B; Mon, 11 Feb 2019 16:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549901344;
+        bh=BIpqkAFvht1bC6kR8JT6ResgeGOXjjDO504/d3d+Y9Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Rc5VpAZ5rmRDaij4J0hiUgbfnQgrS493Jp/c8CpgBE3Cf17yfHD68n8zMX+TglYCa
+         u/B/18pNbjKAJuZeOpJ+NbTv0fja2u+p4zn26I4OlwZpkwMopWDfoL+xYp7/tR58RD
+         J5KI3kuwhznPQSPY1DYcxeuHmAl73jO+JBSi9XoA=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1292610DC;
+        Mon, 11 Feb 2019 16:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549901342;
+        bh=BIpqkAFvht1bC6kR8JT6ResgeGOXjjDO504/d3d+Y9Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JjHjZpGc7A8W2LpaXJkPPILwaZ/xsNx1U22FEPN7FMGOSIY+q+0+Se2Upqd62pT2G
+         xWdcqy/SQx4De+PUW2g6YyA5rAGuN9MSzIAWs4Sa1wsS/JIKxQFSb4vr5iRrqgjKuf
+         BK7ZOPTjD9YlkAgvV7nnwZ21vF6I3CGyp66oWO8s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1292610DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+References: <20190129061021.94775-1-sboyd@kernel.org>
+ <20190129061021.94775-3-sboyd@kernel.org>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
+Date:   Mon, 11 Feb 2019 09:09:00 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206155227.wbkzvsdgykir4wn5@flea>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190129061021.94775-3-sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:52:27PM +0100, Maxime Ripard wrote:
-> Hi,
+On 1/28/2019 11:10 PM, Stephen Boyd wrote:
+> The clk_ops::get_parent function is limited in ability to return errors
+> because it returns a u8. A "workaround" to return an error is to return
+> a number >= the number of parents of a clk. This will in turn cause the
+> framework to "orphan" the clk and make the parent of the clk NULL. This
+> isn't really correct, because if an error occurs while reading the
+> parents of a clk we should fail the clk registration, instead of
+> orphaning the clk and waiting for the clk to appear later.
 > 
-> On Wed, Feb 06, 2019 at 10:03:09AM +0000, Priit Laes wrote:
-> > > > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
-> > > > all of them, except the HRTIMER, expect the clock rate to stay
-> > > > the same and not change underneath them. And SATA expects it to
-> > > > be at 600 MHz, as the datasheet says. And while it may not directly
-> > > > apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
-> > > > reduced rate of 50 MHz just fine.
-> > > > 
-> > > > In the commit in question, clocks without CLK_SET_RATE_PARENT
-> > > > should be using the old code (now in the if conditional block),
-> > > > i.e. the behavior should not have changed.
-> > > > 
-> > > > I don't think this actually "fixes" whatever bug was introduced,
-> > > > but only papers over the issue, and possible introduces further
-> > > > issues for other users.
-> > > 
-> > > You're right, I've overlooked that it was pll-periph being
-> > > affected. I've dropped it for now.
-> > 
-> > Any ideas what could be done. I currently have no time to debug it,
-> > but it affects existing systems.
+> We really need to have three different return values from the get_parent
+> clk op. Something valid for a clk that exists, something invalid for a
+> clk that doesn't exist and never will exist or can't be determined
+> because the register operation to read the parent failed, and something
+> for a clk that doesn't exist because the framework doesn't know about
+> what it is. Introduce a new clk_op that can express all of this by
+> returning a pointer to the clk_hw of the parent. It's expected that clk
+> provider drivers will return a valid pointer when the parent is
+> findable, an error pointer like EPROBE_DEFER if their parent provider
+> hasn't probed yet but is valid, a NULL pointer if they can't find the
+> clk but index is valid, and an error pointer with an appropriate error
+> code otherwise.
 > 
-> I can't find what would change with that commit either if the flag
-> isn't set, so looking at the register state before and after that
-> commit would help I guess?
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-Register dump without the patch:
+<snip>
 
-$ busybox devmem 0x01c20090
-0x0250030E
+> +static int clk_init_parent(struct clk_core *core)
+> +{
+> +	core->parent = __clk_init_parent(core, true);
+> +	if (IS_ERR(core->parent))
+> +		return PTR_ERR(core->parent);
+> +
+> +	/*
+> +	 * Populate core->parent if parent has already been clk_core_init'd. If
+> +	 * parent has not yet been clk_core_init'd then place clk in the orphan
+> +	 * list.  If clk doesn't have any parents then place it in the root
+> +	 * clk list.
+> +	 *
+> +	 * Every time a new clk is clk_init'd then we walk the list of orphan
+> +	 * clocks and re-parent any that are children of the clock currently
+> +	 * being clk_init'd.
+> +	 */
+> +	if (core->parent) {
+> +		hlist_add_head(&core->child_node,
+> +				&core->parent->children);
+> +		core->orphan = core->parent->orphan;
+> +	} else if (!core->num_parents) {
+> +		hlist_add_head(&core->child_node, &clk_root_list);
+> +		core->orphan = false;
+> +	} else {
+> +		hlist_add_head(&core->child_node, &clk_orphan_list);
 
-pll-ddr-base     2 2 0   768000000          0     0  50000
-   pll-ddr-other 1 1 0   768000000          0     0  50000
-      mmc2       3 3 0    51200000          0     0  50000
+Missing "core->orphan = true;"?
+The snippet below had that line.  Its not clear why it appears to be 
+dropped here.
 
-Register dump with patch applied, booted from mmc0 and after mounting emmc:
+> +	}
+> +
+> +	return 0;
+> +}
 
-$ busybox devmem 0x01c20090
-0x8140020B
+<snip>
 
-pll-periph-base  3 3 0  1200000000          0     0  50000
-   pll-periph    6 6 0   600000000          0     0  50000
-      mmc2       3 3 0    50000000          0     0  50000
+> @@ -3073,29 +3143,9 @@ static int __clk_core_init(struct clk_core *core)
+>   				"%s: invalid NULL in %s's .parent_names\n",
+>   				__func__, core->name);
+>   
+> -	core->parent = __clk_init_parent(core);
+> -
+> -	/*
+> -	 * Populate core->parent if parent has already been clk_core_init'd. If
+> -	 * parent has not yet been clk_core_init'd then place clk in the orphan
+> -	 * list.  If clk doesn't have any parents then place it in the root
+> -	 * clk list.
+> -	 *
+> -	 * Every time a new clk is clk_init'd then we walk the list of orphan
+> -	 * clocks and re-parent any that are children of the clock currently
+> -	 * being clk_init'd.
+> -	 */
+> -	if (core->parent) {
+> -		hlist_add_head(&core->child_node,
+> -				&core->parent->children);
+> -		core->orphan = core->parent->orphan;
+> -	} else if (!core->num_parents) {
+> -		hlist_add_head(&core->child_node, &clk_root_list);
+> -		core->orphan = false;
+> -	} else {
+> -		hlist_add_head(&core->child_node, &clk_orphan_list);
+> -		core->orphan = true;
+> -	}
+> +	ret = clk_init_parent(core);
+> +	if (ret)
+> +		goto out;
+>   
+>   	/*
+>   	 * optional platform-specific magic
 
 
-
-> 
-> Maxime
-> 
-> -- 
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
-
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
