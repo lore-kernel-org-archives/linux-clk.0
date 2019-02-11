@@ -2,119 +2,80 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC33C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B683C282CE
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 13:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C84222B0
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BFAF222B0
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 13:59:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="YdyfOzQR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfBKN6W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:58:22 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:46847 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfBKN6W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 08:58:22 -0500
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id A3792100018;
-        Mon, 11 Feb 2019 13:58:19 +0000 (UTC)
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH] clk: clk-gpio: add support for sleeping GPIOs in gpio-gate-clk
-Date:   Mon, 11 Feb 2019 14:58:18 +0100
-Message-Id: <20190211135818.10518-1-thomas.petazzoni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726041AbfBKN7c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 08:59:32 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:34766 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728312AbfBKN7b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 08:59:31 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E85BC25BEE5;
+        Tue, 12 Feb 2019 00:59:15 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1549893556; bh=yFX6KmdU35CAIDBP1IV9ZVOnGkQjhxvM824RijvRTws=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YdyfOzQRnInbpdCoW3STF2C4usFXNL5bsPHSp0STvUAnClFRcOQti/uBdBwLqwnxU
+         n6VxTTNpnRU/JpuSVRoRviuQK30VD54VvHUgvGFz8oY0f/nPi3t8vGJUr4NRXxiogd
+         Iv8k3cSpIhnFlcFIQ5RMWjsfG96lvrou8e4FIxAw=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id ECF6F940BBC; Mon, 11 Feb 2019 14:59:11 +0100 (CET)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 6/6] clk: renesas: r8a774c0: Add Z2 clock
+Date:   Mon, 11 Feb 2019 14:58:58 +0100
+Message-Id: <20190211135858.23635-7-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190211135858.23635-1-horms+renesas@verge.net.au>
+References: <20190211135858.23635-1-horms+renesas@verge.net.au>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The current implementation of gpio-gate-clk enables/disables the clock
-using the GPIO in the ->enable() and ->disable() clock callbacks. This
-requires the GPIO to be configurable in atomic contexts. While it is
-the case for most memory-mapped GPIO controllers, it is not the case
-for GPIO expanders on I2C or SPI.
+Adds support for R-Car RZ/G2E (r8a774c0) Z2 clock.
 
-This commit extends the gpio-gate-clk to check whether the GPIO calls
-require sleeping or not. If sleeping is not required, the current
-implementation based on ->enable()/->disable() is kept. However, if
-sleeping is needed, we instead implement the logic in the ->prepare()
-and ->unprepare() hooks. Thanks to this, a gate clock connected to a
-GPIO on a GPIO expander can be controlled with the existing driver.
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk-gpio.c | 39 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+v3: New patch
+---
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 6a43ce420492..f5d481713c7d 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -61,6 +61,35 @@ const struct clk_ops clk_gpio_gate_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_gpio_gate_ops);
- 
-+static int clk_sleeping_gpio_gate_prepare(struct clk_hw *hw)
-+{
-+	struct clk_gpio *clk = to_clk_gpio(hw);
-+
-+	gpiod_set_value_cansleep(clk->gpiod, 1);
-+
-+	return 0;
-+}
-+
-+static void clk_sleeping_gpio_gate_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_gpio *clk = to_clk_gpio(hw);
-+
-+	gpiod_set_value_cansleep(clk->gpiod, 0);
-+}
-+
-+static int clk_sleeping_gpio_gate_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_gpio *clk = to_clk_gpio(hw);
-+
-+	return gpiod_get_value_cansleep(clk->gpiod);
-+}
-+
-+const struct clk_ops clk_sleeping_gpio_gate_ops = {
-+	.prepare = clk_sleeping_gpio_gate_prepare,
-+	.unprepare = clk_sleeping_gpio_gate_unprepare,
-+	.is_prepared = clk_sleeping_gpio_gate_is_prepared,
-+};
-+
- /**
-  * DOC: basic clock multiplexer which can be controlled with a gpio output
-  * Traits of this clock:
-@@ -147,10 +176,16 @@ struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, struct gpio_desc *gpiod,
- 		unsigned long flags)
- {
-+	const struct clk_ops *ops;
-+
-+	if (gpiod_cansleep(gpiod))
-+		ops = &clk_sleeping_gpio_gate_ops;
-+	else
-+		ops = &clk_gpio_gate_ops;
-+
- 	return clk_register_gpio(dev, name,
- 			(parent_name ? &parent_name : NULL),
--			(parent_name ? 1 : 0), gpiod, flags,
--			&clk_gpio_gate_ops);
-+			(parent_name ? 1 : 0), gpiod, flags, ops);
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
- 
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index 10b96895d452..24634ca94f69 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -79,6 +79,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("za2",       R8A774C0_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+ 	DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
++	DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
+ 	DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
+ 	DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
 -- 
-2.20.1
+2.11.0
 
