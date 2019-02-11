@@ -2,96 +2,110 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D72B5C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A21C169C4
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A931221855
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B47D21855
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 15:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732922AbfBKPou (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:44:50 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46639 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732766AbfBKPou (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 10:44:50 -0500
-Received: by mail-vs1-f65.google.com with SMTP id n10so6474684vso.13;
-        Mon, 11 Feb 2019 07:44:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PPZgkIAjB4Z4Na98Ahql3kzmPMGHUQYFtXacLoG4tAI=;
-        b=P+yuFaSRW6U+O2BXBBh/pQn7zJt/jUPpfSLl2U3q4BYVbzd6/PMjfDd4xe7Gxdmwop
-         mToDHC4q/YIy7spEvO/Fzcl7VrpnV8qpeHBx6hDYTAT2CdXrO2Orh/H2tZwz4FuVzc7u
-         qJfT5mQ2hPplhFQfMs2kEa7J/Az9hYGsYbqwbYqB0B9ehNMbO0DwF5MQuNelrtx4RRrF
-         doipbJ497Ab/Vgmm9MpVaihdK2hr7QyDx9lA4qAtAp9VByYfpGHDLCMOxMgdi6kKCVBY
-         hxTAAUuP+mZDLX2HP3BGYom0ERVyviS1w8Qe/4sycExrghhtJ2lFRh6EXlxUjEc6fS5p
-         Cg5g==
-X-Gm-Message-State: AHQUAubU0JnaTgRhLWnajW1clc31qNLB0kzEABwwgi9TqKtxM+vvh1mI
-        kj4f5xXeIl5dRJuyeD3q0Fgj/HnEKRG66O6CEGE=
-X-Google-Smtp-Source: AHgI3IZPLHNfc3VZVtnwi9qj2yAmA80JFYtLpyN3wd3kz9t3ZQT5A0Q7hnz9hr/JVOmr1Qhv8S+s2nyCk0cgaU5KdAY=
-X-Received: by 2002:a67:3885:: with SMTP id n5mr13222764vsi.96.1549899888964;
- Mon, 11 Feb 2019 07:44:48 -0800 (PST)
+        id S1729215AbfBKPv6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 10:51:58 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:34597 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729204AbfBKPv4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 10:51:56 -0500
+X-Originating-IP: 90.88.22.177
+Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6DEBE1C000E;
+        Mon, 11 Feb 2019 15:51:53 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 16:51:52 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 6/7] ARM: dts: suniv: Add pinmux for SPI0 and SPI1 of
+ F1C100s
+Message-ID: <20190211155152.gnocoojqa27fmeay@flea>
+References: <cover.1549875778.git.mesihkilinc@gmail.com>
+ <37f573797e18fc22f8f78d0a62550b6d5e460a8d.1549875778.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
-References: <20190211135858.23635-1-horms+renesas@verge.net.au>
- <20190211135858.23635-4-horms+renesas@verge.net.au> <0b9e3ba7-2b84-7621-78f9-9b22cb4f2bd6@cogentembedded.com>
-In-Reply-To: <0b9e3ba7-2b84-7621-78f9-9b22cb4f2bd6@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Feb 2019 16:44:37 +0100
-Message-ID: <CAMuHMdV_tcsOZCBRWxbRwdfBeeh1-MJSNqw4U6YLnjOznLUQnA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/6] math64: New DIV64_U64_ROUND_CLOSEST helper
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zkkgxlj3vb7km2v6"
+Content-Disposition: inline
+In-Reply-To: <37f573797e18fc22f8f78d0a62550b6d5e460a8d.1549875778.git.mesihkilinc@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 4:22 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 02/11/2019 04:58 PM, Simon Horman wrote:
-> > Provide DIV64_U64_ROUND_CLOSEST helper which performs division rounded to
-> > the closes integer using an unsigned 64bit dividend and divisor.
->
->    Closest?
->
-> > This will be used in a follow-up patch to allow calculation of clock
-> > divisors with high frequency parents in the R-Car Gen3 CPG MSSR driver
-> > where ovefolow occurs if either the dividend or divisor is 32bit.
 
-overflow
+--zkkgxlj3vb7km2v6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+On Mon, Feb 11, 2019 at 12:21:12PM +0300, Mesih Kilinc wrote:
+> PC0~PC4 is pin group for SPI0. PA0~PA4 is pin group for SPI1.
+> Add device tree nodes for this groups.
+>=20
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> ---
+>  arch/arm/boot/dts/suniv-f1c100s.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/sun=
+iv-f1c100s.dtsi
+> index 1b332d9..a92a411 100644
+> --- a/arch/arm/boot/dts/suniv-f1c100s.dtsi
+> +++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+> @@ -96,6 +96,16 @@
+>  				pins =3D "PE0", "PE1";
+>  				function =3D "uart0";
+>  			};
+> +
+> +			spi0_pc_pins: spi0-pc-pins {
+> +				pins =3D "PC0", "PC1", "PC2", "PC3";
+> +				function =3D "spi0";
+> +			};
+> +
+> +			spi1_pa_pins: spi1-pa-pins {
+> +				pins =3D "PA0", "PA1", "PA2", "PA3";
+> +				function =3D "spi1";
+> +			};
 
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Are they the only options for the muxing of the SPI pins? if so, you'd
+need to remove the pin bank, and to set the pinctrl-0 and
+pinctrl-names in the DTSI.
 
-Note that I can fix the above while applying to my clk-renesas branch.
+We also move the CS pin out in a separate group to accomodate devices
+that use a GPIO instead.
 
-Andrew: an Acked-by would be appreciated.
-Thanks!
+Maxime
 
-Gr{oetje,eeting}s,
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-                        Geert
+--zkkgxlj3vb7km2v6
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGGaGAAKCRDj7w1vZxhR
+xQ7OAP4khQgOjuMy0Pt4C5+nZbUJzc1AUk4H+bPNMiSaCTyTWgEAzvbAUWtcbIUM
+EoODht2ZsP3V/ygf5ZbbXKbOU6Sl3Q4=
+=yQWo
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--zkkgxlj3vb7km2v6--
