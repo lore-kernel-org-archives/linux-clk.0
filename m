@@ -2,118 +2,146 @@ Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF80C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 18:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0542C169C4
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 22:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B83721B25
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 18:57:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NRZW4Smx";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="L7FB5rjf"
+	by mail.kernel.org (Postfix) with ESMTP id 7950C2075D
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 22:59:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733151AbfBKS56 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:57:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44908 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730827AbfBKS56 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 13:57:58 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8670060234; Mon, 11 Feb 2019 18:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549911477;
-        bh=JvGYztoXLvuVElAAlq9woBWMPegyKGnIGFKVWvfZY7g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NRZW4SmxauL7ZNW52dUT1C6UX8TUlaGnPbqiMr+4fwLqZLZaUKnXWdqYtgZIolYj2
-         UUJpFsI6VGmQT0MYlRPucWPRdaRFi1oRhx7XMF5hA9Y925I+K1relbxl2VxS9Txis8
-         vA075uwRK3igsm99FgNOBcXSerwGRG+07Rqw++us=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1A0B160234;
-        Mon, 11 Feb 2019 18:57:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549911476;
-        bh=JvGYztoXLvuVElAAlq9woBWMPegyKGnIGFKVWvfZY7g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=L7FB5rjfEpHpNS/zmqQ+4gN4uznZr6hHijoh3f1ZlGtDSUdGYEtb9lcsnTExI99xv
-         PMLEibiHyTdMS3QXp4EzKshBTzRT3kJn0ltRUGnPVkCFskLnauPU1FDQq4kbCVCsYk
-         2NAI22toe5lRM3/alr628HNqBt7ak1AzIK9+ugAc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A0B160234
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     bjorn.andersson@linaro.org, georgi.djakov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v1] clk: Probe defer clk_get() on orphans
-Date:   Mon, 11 Feb 2019 11:57:47 -0700
-Message-Id: <1549911467-2465-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1727300AbfBKW7N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 17:59:13 -0500
+Received: from muru.com ([72.249.23.125]:38146 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727206AbfBKW7N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:59:13 -0500
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 102D480BF;
+        Mon, 11 Feb 2019 22:59:21 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>
+Cc:     linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+        Misael Lopez Cruz <misael.lopez@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: [PATCH] clk: clk-twl6040: Fix imprecise external abort for pdmclk
+Date:   Mon, 11 Feb 2019 14:59:07 -0800
+Message-Id: <20190211225907.38511-1-tony@atomide.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If a parent to a clock comes from outside that clock's provider, the parent
-may not be present at the time the clock is registered (ie the parent comes
-from another driver that has not yet probed).  The clock can still be
-registered, and a reference to it obtained, however that clock may not be
-fully functional - ie get_rate might return an invalid value.
+I noticed that modprobe clk-twl6040 can fail after a cold boot with:
+abe_cm:clk:0010:0: failed to enable
+...
+Unhandled fault: imprecise external abort (0x1406) at 0xbe896b20
 
-This has been a problem that has resulted in the UART console breaking on
-some Qualcomm SoCs, as the UART baud rate is based on a clock that is the
-child of XO.  Due to the large chain of dependencies, its possible that the
-RPM has not provided XO by the time that the UART driver probes, gets the
-baud rate clock, and calls get_rate - which returns 0 and results in a bad
-configuration.
+WARNING: CPU: 1 PID: 29 at drivers/clk/clk.c:828 clk_core_disable_lock+0x18/0x24
+...
+(clk_core_disable_lock) from [<c0123534>] (_disable_clocks+0x18/0x90)
+(_disable_clocks) from [<c0124040>] (_idle+0x17c/0x244)
+(_idle) from [<c0125ad4>] (omap_hwmod_idle+0x24/0x44)
+(omap_hwmod_idle) from [<c053a038>] (sysc_runtime_suspend+0x48/0x108)
+(sysc_runtime_suspend) from [<c06084c4>] (__rpm_callback+0x144/0x1d8)
+(__rpm_callback) from [<c0608578>] (rpm_callback+0x20/0x80)
+(rpm_callback) from [<c0607034>] (rpm_suspend+0x120/0x694)
+(rpm_suspend) from [<c0607a78>] (__pm_runtime_idle+0x60/0x84)
+(__pm_runtime_idle) from [<c053aaf0>] (sysc_probe+0x874/0xf2c)
+(sysc_probe) from [<c05fecd4>] (platform_drv_probe+0x48/0x98)
 
-An orphan clock is a clock that is missing a parent or some other ancestor.
-Since the parent is defined, we can assume that it is expected to appear at
-some point in a properly configured system (all bets are off if a required
-driver is not compiled, etc), and it is unlikely that the clock can be
-properly consumed during the time the clock is an orphan.  Therefore,
-return EPROBE_DEFER for orphan clocks so that consumers wait until the
-parent chain is established, and proper clock operation can occur.
+After searching around for a similar issue, I came across an earlier fix
+that never got merged upstream in the Android tree for glass-omap-xrr02.
+There is patch "MFD: twl6040-codec: Implement PDMCLK cold temp errata"
+by Misael Lopez Cruz <misael.lopez@ti.com>.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Based on my observations, this fix is also needed when cold booting
+devices, and not just for deeper idle modes. Since we now have a clock
+driver for pdmclk, let's fix the issue in twl6040_pdmclk_prepare().
+
+Cc: Misael Lopez Cruz <misael.lopez@ti.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
+ drivers/clk/clk-twl6040.c | 53 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 51 insertions(+), 2 deletions(-)
 
-This is based upon the "Rewrite clk parent handling" series at [1], and assumes
-that the suspected missing line commented on at [2] is added.
-
-The idea for this solution came from [3] and [4].
-
-[1] https://lore.kernel.org/lkml/20190129061021.94775-1-sboyd@kernel.org/T/#u
-[2] https://lkml.org/lkml/2019/2/11/1634
-[3] https://lkml.org/lkml/2019/2/6/382
-[4] https://lkml.org/lkml/2015/12/27/209
-
- drivers/clk/clk.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 34e9524ea25d..cf71e0614282 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3405,6 +3405,10 @@ struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
- 		return ERR_CAST(hw);
+diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
+--- a/drivers/clk/clk-twl6040.c
++++ b/drivers/clk/clk-twl6040.c
+@@ -41,6 +41,43 @@ static int twl6040_pdmclk_is_prepared(struct clk_hw *hw)
+ 	return pdmclk->enabled;
+ }
  
- 	core = hw->core;
++static int twl6040_pdmclk_reset_one_clock(struct twl6040_pdmclk *pdmclk,
++					  unsigned int reg)
++{
++	const u8 reset_mask = TWL6040_HPLLRST;	/* Same for HPPLL and LPPLL */
++	int ret;
 +
-+	if (core->orphan)
-+		return ERR_PTR(-EPROBE_DEFER);
++	ret = twl6040_set_bits(pdmclk->twl6040, reg, reset_mask);
++	if (ret < 0)
++		return ret;
 +
- 	clk = alloc_clk(core, dev_id, con_id);
- 	if (IS_ERR(clk))
- 		return clk;
++	ret = twl6040_clear_bits(pdmclk->twl6040, reg, reset_mask);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++/*
++ * TWL6040A2 Phoenix Audio IC erratum #6: "PDM Clock Generation Issue At
++ * Cold Temperature". This affects cold boot and deeper idle states it
++ * seems. The workaround consists of resetting HPPLL and LPPLL.
++ */
++static int twl6040_pdmclk_quirk_reset_clocks(struct twl6040_pdmclk *pdmclk)
++{
++	int ret;
++
++	ret = twl6040_pdmclk_reset_one_clock(pdmclk, TWL6040_REG_HPPLLCTL);
++	if (ret)
++		return ret;
++
++	ret = twl6040_pdmclk_reset_one_clock(pdmclk, TWL6040_REG_LPPLLCTL);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int twl6040_pdmclk_prepare(struct clk_hw *hw)
+ {
+ 	struct twl6040_pdmclk *pdmclk = container_of(hw, struct twl6040_pdmclk,
+@@ -48,8 +85,20 @@ static int twl6040_pdmclk_prepare(struct clk_hw *hw)
+ 	int ret;
+ 
+ 	ret = twl6040_power(pdmclk->twl6040, 1);
+-	if (!ret)
+-		pdmclk->enabled = 1;
++	if (ret)
++		return ret;
++
++	ret = twl6040_pdmclk_quirk_reset_clocks(pdmclk);
++	if (ret)
++		goto out_err;
++
++	pdmclk->enabled = 1;
++
++	return 0;
++
++out_err:
++	dev_err(pdmclk->dev, "%s: error %i\n", __func__, ret);
++	twl6040_power(pdmclk->twl6040, 0);
+ 
+ 	return ret;
+ }
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+2.20.1
