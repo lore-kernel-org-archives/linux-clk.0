@@ -1,147 +1,182 @@
-Return-Path: <SRS0=QcJy=QS=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=E6RW=QT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0542C169C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 22:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1D0C169C4
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 00:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7950C2075D
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Feb 2019 22:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B40B420855
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 00:37:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CF0zNtDG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfBKW7N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:59:13 -0500
-Received: from muru.com ([72.249.23.125]:38146 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727206AbfBKW7N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:59:13 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 102D480BF;
-        Mon, 11 Feb 2019 22:59:21 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>
-Cc:     linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-        Misael Lopez Cruz <misael.lopez@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH] clk: clk-twl6040: Fix imprecise external abort for pdmclk
-Date:   Mon, 11 Feb 2019 14:59:07 -0800
-Message-Id: <20190211225907.38511-1-tony@atomide.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728034AbfBLAh4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Feb 2019 19:37:56 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:44712 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbfBLAh4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Feb 2019 19:37:56 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190212003753epoutp03acaa572247c8e55f4afce536dda83d53~CdtPQ513o2932529325epoutp03_
+        for <linux-clk@vger.kernel.org>; Tue, 12 Feb 2019 00:37:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190212003753epoutp03acaa572247c8e55f4afce536dda83d53~CdtPQ513o2932529325epoutp03_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549931873;
+        bh=4XyHo45SpGrPV4PNliVSZO2CBEjWJuMP1/jvNTHdPOw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=CF0zNtDGyRCO9mbbo7x1fzpUUfvbcS/wzYLCYE7KaKXfxiVcWTwwGCA70D2KJqp5t
+         In3SioMX73XgtonHd8lbDtXI9nTdyCUkIoYcu8Eh5CRinySSw+bTcEybP1mpKdKr02
+         cKFo2csj1kxzS7S6LDgsOAw2eQ0rDjzGFRojzb6I=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190212003750epcas1p465f654daff14b9020dbfb318c231dfb7~CdtMEXXs61031010310epcas1p4k;
+        Tue, 12 Feb 2019 00:37:50 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        35.82.04288.E55126C5; Tue, 12 Feb 2019 09:37:50 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190212003749epcas1p41338a6c7d612d741a179e9c8ba4351dc~CdtLYd2_W1031110311epcas1p4h;
+        Tue, 12 Feb 2019 00:37:49 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190212003749epsmtrp2e690cdb78975c9377a33ecaa72f00f28~CdtLXOEu60267402674epsmtrp2N;
+        Tue, 12 Feb 2019 00:37:49 +0000 (GMT)
+X-AuditID: b6c32a38-bf7ff700000010c0-c8-5c62155ef16e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8D.AA.03601.D55126C5; Tue, 12 Feb 2019 09:37:49 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190212003749epsmtip29ab10159ce3295f6e36e54b567f5c0d2~CdtLLpEoH1392213922epsmtip2X;
+        Tue, 12 Feb 2019 00:37:49 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch
+ fall-through
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <effba950-8fcf-2d96-827d-25d20ae60f1d@samsung.com>
+Date:   Tue, 12 Feb 2019 09:37:49 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190211181531.GA3238@embeddedor>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBJsWRmVeSWpSXmKPExsWy7bCmrm6caFKMwfTdkhZb96hanOnOteh/
+        /JrZ4vz5DewWmx5fY7X42HOP1eLyrjlsFjPO72OyuHjK1eLwm3ZWi3/XNrJYrNr1h9GBx+P9
+        jVZ2j9kNF1k81h1U9dg56y67x6ZVnWwem5fUe/RtWcXo8XmTXABHVLZNRmpiSmqRQmpecn5K
+        Zl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtClSgpliTmlQKGAxOJiJX07m6L8
+        0pJUhYz84hJbpdSClJwCywK94sTc4tK8dL3k/FwrQwMDI1OgwoTsjGtnQgt+CVRs2uPRwPiX
+        t4uRk0NCwETi1Icmli5GLg4hgR2MEocmP2aHcD4xSqw4dpMVwvnGKLFw025GmJZXizYzQST2
+        Mkp8ebwdquU9o8SzZeuAWjg4hAX8JZ4/ZwaJiwjMY5K4MHsx2ChmgdWMEhM23WMHGcUmoCWx
+        /8UNNhCbX0BR4uqPx2AreAXsJHb23GYFsVkEVCU2LPvFDGKLCkRIHO59B1UjKHFy5hMWEJtT
+        QF/iwvp3YPXMAuISt57MZ4Kw5SWat84Gu0JCYBW7xPZPj5ghfnCReHPzBTuELSzx6vgWKFtK
+        4vO7vWwQdrXEypNH2CCaOxgltuy/wAqRMJbYv3QyE8ibzAKaEut36UMs45N497UH7HsJAV6J
+        jjYhiGplicsP7jJB2JISi9s7ocZ7SKz9c4NlAqPiLCTvzELywiwkL8xCWLaAkWUVo1hqQXFu
+        emqxYYEJcmxvYgSnYi2LHYx7zvkcYhTgYFTi4VXITYwRYk0sK67MPcQowcGsJMJrIJwUI8Sb
+        klhZlVqUH19UmpNafIjRFBjaE5mlRJPzgXkiryTe0NTI2NjYwsTQzNTQUEmcd72Dc4yQQHpi
+        SWp2ampBahFMHxMHp1QDY2X21o1fkv1fzJGdfJ7D4boT6+2p5rb3812KMhn38B4WXXNNtNr9
+        sv+VlQ6vtFmqv8wwyRf9sJD9osrK70dV7Jol8tm2mk/2fu+e+T7akt/7dUT717dvOX56K6w9
+        2bbpUdbx4Mxl6nt9goSMz0yI95/ZuEzaymX1VaYXyR4HJOS9N+zUbebhUGIpzkg01GIuKk4E
+        ABF2UJnbAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCSvG6saFKMwY9XahZb96hanOnOteh/
+        /JrZ4vz5DewWmx5fY7X42HOP1eLyrjlsFjPO72OyuHjK1eLwm3ZWi3/XNrJYrNr1h9GBx+P9
+        jVZ2j9kNF1k81h1U9dg56y67x6ZVnWwem5fUe/RtWcXo8XmTXABHFJdNSmpOZllqkb5dAlfG
+        tTOhBb8EKjbt8Whg/MvbxcjJISFgIvFq0WamLkYuDiGB3YwSWx58ZoJISEpMu3iUuYuRA8gW
+        ljh8uBii5i2jxI7ZDxhBaoQFfCWW3lnCApIQEVjAJLHlRwsziMMssJpRYsPBDywQLU2MEl/e
+        TWMBaWET0JLY/+IGG4jNL6AocfXHY7BRvAJ2Ejt7brOC2CwCqhIblv1iBrFFBSIkPj7dxwRR
+        IyhxcuYTsDmcAvoSF9a/A6tnFlCX+DPvEjOELS5x68l8JghbXqJ562zmCYzCs5C0z0LSMgtJ
+        yywkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgRHpZbWDsYTJ+IPMQpwMCrx
+        8CrkJsYIsSaWFVfmHmKU4GBWEuE1EE6KEeJNSaysSi3Kjy8qzUktPsQozcGiJM4rn38sUkgg
+        PbEkNTs1tSC1CCbLxMEp1cDoG2MRuV9S5+PptTs2czFvF09a957jbXK2YdZj45KwK+ahl/59
+        Cvqz+pva6fgysR2ee7aw/dgfUGIUsZQ/IfFpyW0X7sdv4i84PVDx2Myy8/Dhjzm/a1IYLj+1
+        ktbXWfJUiW9nucxaE/67Iq4/l90RuGLet/qHYOCT3R1dRzO6o3eumyB07ct5JZbijERDLeai
+        4kQAztz8GcYCAAA=
+X-CMS-MailID: 20190212003749epcas1p41338a6c7d612d741a179e9c8ba4351dc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190211181544epcas4p1d899221776a647a5bdf21372304bf0d7
+References: <CGME20190211181544epcas4p1d899221776a647a5bdf21372304bf0d7@epcas4p1.samsung.com>
+        <20190211181531.GA3238@embeddedor>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I noticed that modprobe clk-twl6040 can fail after a cold boot with:
-abe_cm:clk:0010:0: failed to enable
-...
-Unhandled fault: imprecise external abort (0x1406) at 0xbe896b20
+Hi Gustavo,
 
-WARNING: CPU: 1 PID: 29 at drivers/clk/clk.c:828 clk_core_disable_lock+0x18/0x24
-...
-(clk_core_disable_lock) from [<c0123534>] (_disable_clocks+0x18/0x90)
-(_disable_clocks) from [<c0124040>] (_idle+0x17c/0x244)
-(_idle) from [<c0125ad4>] (omap_hwmod_idle+0x24/0x44)
-(omap_hwmod_idle) from [<c053a038>] (sysc_runtime_suspend+0x48/0x108)
-(sysc_runtime_suspend) from [<c06084c4>] (__rpm_callback+0x144/0x1d8)
-(__rpm_callback) from [<c0608578>] (rpm_callback+0x20/0x80)
-(rpm_callback) from [<c0607034>] (rpm_suspend+0x120/0x694)
-(rpm_suspend) from [<c0607a78>] (__pm_runtime_idle+0x60/0x84)
-(__pm_runtime_idle) from [<c053aaf0>] (sysc_probe+0x874/0xf2c)
-(sysc_probe) from [<c05fecd4>] (platform_drv_probe+0x48/0x98)
+On 19. 2. 12. 오전 3:15, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warnings:
+> 
+> drivers/clk/samsung/clk-s3c2443.c: In function ‘s3c2443_common_clk_init’:
+> drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    samsung_clk_register_alias(ctx, s3c2450_aliases,
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>      ARRAY_SIZE(s3c2450_aliases));
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
+>   case S3C2416:
+>   ^~~~
+> 
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> Notice that, in this particular case,  the code comment is modified
+> in accordance with what GCC is expecting to find.
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
 
-After searching around for a similar issue, I came across an earlier fix
-that never got merged upstream in the Android tree for glass-omap-xrr02.
-There is patch "MFD: twl6040-codec: Implement PDMCLK cold temp errata"
-by Misael Lopez Cruz <misael.lopez@ti.com>.
+Except for level 5 of -Wimplicit-fallthrough,
+level 4 is more strict to show the warnings.
+Why don't you support level 4 for -Wimplicit-fallthrough?
+I think that you want to fix for -Wimplicit-fallthrough warning,
+you better to support level 4. What do you think?
 
-Based on my observations, this fix is also needed when cold booting
-devices, and not just for deeper idle modes. Since we now have a clock
-driver for pdmclk, let's fix the issue in twl6040_pdmclk_prepare().
 
-Cc: Misael Lopez Cruz <misael.lopez@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/clk/clk-twl6040.c | 53 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 51 insertions(+), 2 deletions(-)
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2443.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index 884067e4f1a1..f38f0e24e3b6 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -389,7 +389,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+>  				ARRAY_SIZE(s3c2450_gates));
+>  		samsung_clk_register_alias(ctx, s3c2450_aliases,
+>  				ARRAY_SIZE(s3c2450_aliases));
+> -		/* fall through, as s3c2450 extends the s3c2416 clocks */
+> +		/* fall through - as s3c2450 extends the s3c2416 clocks */
+>  	case S3C2416:
+>  		samsung_clk_register_div(ctx, s3c2416_dividers,
+>  				ARRAY_SIZE(s3c2416_dividers));
+> 
 
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -41,6 +41,43 @@ static int twl6040_pdmclk_is_prepared(struct clk_hw *hw)
- 	return pdmclk->enabled;
- }
- 
-+static int twl6040_pdmclk_reset_one_clock(struct twl6040_pdmclk *pdmclk,
-+					  unsigned int reg)
-+{
-+	const u8 reset_mask = TWL6040_HPLLRST;	/* Same for HPPLL and LPPLL */
-+	int ret;
-+
-+	ret = twl6040_set_bits(pdmclk->twl6040, reg, reset_mask);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = twl6040_clear_bits(pdmclk->twl6040, reg, reset_mask);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/*
-+ * TWL6040A2 Phoenix Audio IC erratum #6: "PDM Clock Generation Issue At
-+ * Cold Temperature". This affects cold boot and deeper idle states it
-+ * seems. The workaround consists of resetting HPPLL and LPPLL.
-+ */
-+static int twl6040_pdmclk_quirk_reset_clocks(struct twl6040_pdmclk *pdmclk)
-+{
-+	int ret;
-+
-+	ret = twl6040_pdmclk_reset_one_clock(pdmclk, TWL6040_REG_HPPLLCTL);
-+	if (ret)
-+		return ret;
-+
-+	ret = twl6040_pdmclk_reset_one_clock(pdmclk, TWL6040_REG_LPPLLCTL);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int twl6040_pdmclk_prepare(struct clk_hw *hw)
- {
- 	struct twl6040_pdmclk *pdmclk = container_of(hw, struct twl6040_pdmclk,
-@@ -48,8 +85,20 @@ static int twl6040_pdmclk_prepare(struct clk_hw *hw)
- 	int ret;
- 
- 	ret = twl6040_power(pdmclk->twl6040, 1);
--	if (!ret)
--		pdmclk->enabled = 1;
-+	if (ret)
-+		return ret;
-+
-+	ret = twl6040_pdmclk_quirk_reset_clocks(pdmclk);
-+	if (ret)
-+		goto out_err;
-+
-+	pdmclk->enabled = 1;
-+
-+	return 0;
-+
-+out_err:
-+	dev_err(pdmclk->dev, "%s: error %i\n", __func__, ret);
-+	twl6040_power(pdmclk->twl6040, 0);
- 
- 	return ret;
- }
+
 -- 
-2.20.1
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
