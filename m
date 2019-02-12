@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C50C282CE
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0706C282CE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F636222C5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A4D222C4
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 17:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549993887;
-	bh=ZZhDk/cs5E7cdc6G2U0UHD3UnGmDAktYf+dZuZUYFY8=;
+	s=default; t=1549993895;
+	bh=NyxhR5dXXzyoh4cqtUxYRU9DEg1XlBZLgGW29D8rAYg=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SvkRM0igilp31It896CDDaoccYwo2QG/t3YN3RKyGlgXMNvJeAhvv1YxiVtKFnVwb
-	 3fHTuP39ordhRuRomYIPihWWEtfNVFtVR4nInU+3ElI5qLdAAU/FoUC62oTtXQseyp
-	 y0VQ3sPIPEWIYxmfFLP38pc6byV001OfrvPS2IbU=
+	b=qXNeCc3nGHNod8ByjvSfNH5GjzYwbP27K588u1rPdvpHDYSaHrMp62L4FWV+wM7A2
+	 AXAOT3N1MbrBkWNp3e+Drt0KNh9EG25DUmKXPWRWLs/uxtW+fukr9CvuF/spwfTRP4
+	 f/j5UHT9Ir2LEmWoeOu3lEEn8kho0fmbjF/rhepM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbfBLRvJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Feb 2019 12:51:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55454 "EHLO mail.kernel.org"
+        id S1728683AbfBLRv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Feb 2019 12:51:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728438AbfBLRvI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Feb 2019 12:51:08 -0500
+        id S1728462AbfBLRvF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Feb 2019 12:51:05 -0500
 Received: from localhost.localdomain (unknown [194.230.155.153])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E43DC222C5;
-        Tue, 12 Feb 2019 17:51:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A5FB222C4;
+        Tue, 12 Feb 2019 17:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549993868;
-        bh=ZZhDk/cs5E7cdc6G2U0UHD3UnGmDAktYf+dZuZUYFY8=;
+        s=default; t=1549993864;
+        bh=NyxhR5dXXzyoh4cqtUxYRU9DEg1XlBZLgGW29D8rAYg=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=0SlodYO/uTt6kRaV4K3cr6E0Q3+zhWYT/xh1i/+/KcEcG2/z0MDq2Xbqa5lzsC6Ah
-         3+ApPx8aamQdu02lB6QdIs4NYKXSNNl+kpzVgtWPPOyqwdnskkjHulGkw017BY/f5v
-         woQ6J1XyckiD2B3kVm6A1aY+yTUzkdnBsPexLbXg=
+        b=PLsKNffXY8xzKrWg74tBL+OiUxN1G0dk0i41czphoNzEENImPHwkx2Rr9QExZcZ+C
+         4duOcPE2wEPZeJTOJQEET8/LaRhrj4DFeXqor8v0xiJXBQa3E9+duEcP6ZhgJK4DyC
+         FjjxKuzt9mMDpm9VK4cCvp0OFgfapnjn9KNcXBGw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 2/4] dt-bindings: clock: exynos: Add ADC clock ID to Exynos5410
-Date:   Tue, 12 Feb 2019 18:50:50 +0100
-Message-Id: <20190212175052.6310-3-krzk@kernel.org>
+Subject: [PATCH 1/4] dt-bindings: clock: exynos: Put CLK_UART3 in order
+Date:   Tue, 12 Feb 2019 18:50:49 +0100
+Message-Id: <20190212175052.6310-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190212175052.6310-1-krzk@kernel.org>
 References: <20190212175052.6310-1-krzk@kernel.org>
@@ -61,24 +61,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add ID for TSADC clock to Exynos5410.  Choose the same value of ID as in
-Exynos5420 to make it simpler/compatible in future (although clock
-driver code is not shared).
+Order the CLK_UART3 by ID.  No change in functionality.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- include/dt-bindings/clock/exynos5410.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/clock/exynos5410.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 5b911ede0534..86c2ad56c5ef 100644
+index f179eabbcdb7..5b911ede0534 100644
 --- a/include/dt-bindings/clock/exynos5410.h
 +++ b/include/dt-bindings/clock/exynos5410.h
-@@ -45,6 +45,7 @@
+@@ -36,6 +36,7 @@
+ #define CLK_UART0		257
+ #define CLK_UART1		258
+ #define CLK_UART2		259
++#define CLK_UART3		260
+ #define CLK_I2C0		261
+ #define CLK_I2C1		262
+ #define CLK_I2C2		263
+@@ -44,7 +45,6 @@
  #define CLK_USI1		266
  #define CLK_USI2		267
  #define CLK_USI3		268
-+#define CLK_TSADC		270
+-#define CLK_UART3		260
  #define CLK_PWM			279
  #define CLK_MCT			315
  #define CLK_WDT			316
