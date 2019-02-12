@@ -2,166 +2,174 @@ Return-Path: <SRS0=E6RW=QT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6383C282C4
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 09:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6D7C282C4
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 09:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EABA2077B
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 09:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C997120821
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 09:45:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="Y66Oa5RF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfBLJjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Feb 2019 04:39:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41474 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbfBLJjW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Feb 2019 04:39:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e27so1454117lfj.8;
-        Tue, 12 Feb 2019 01:39:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=IYzTZa8cMrYHVdAvDdmKbju5m8+XCJc2uxdGTPkEE9c=;
-        b=V/yZ/+cxnBDMLJpg5InreWGWAV7/GyLPLpUUantZNCv+t+wxVqbGEH4rtM7xZq9Sqn
-         lZOUK9Vkhrtfk5T8ba8YQFxP0FfjRj5GliRCcpf8wnRY6NiPSv43UH4/eCkuNUcnfFXc
-         Upn7axSypF8nmVwRwgH+oFPyYtAkP7pCGHz/g9YQtrde2wna+tdSRaJzhLEIaeD5Nf5H
-         62IqEvjFesGAMf5VvhzE34CiBcvLSiI3W0jaJ33kZ5nuE5KVsceFfce0Njg2SQ5UStOW
-         eNvIXyaHZgJWUdk9261SredwQ53Gem7mc3fIbd5AFB17RtnvZAcofUnLlm3z0sWuK4PC
-         iseQ==
-X-Gm-Message-State: AHQUAuZ4n3b6zpUxqyTEGXSrb9BcosqrKaxdPd46nrKEJeaggsFa4FD7
-        0pe409m2VWjZMPLMxYkQvFf7c5vT
-X-Google-Smtp-Source: AHgI3IaB/hrmn5dbNT2bh9vbY8McYTMyFn7sJ7vPahR0Mq3C55IPyOWXQBeQYvhDVS/rgfhA4S1B2g==
-X-Received: by 2002:a19:2794:: with SMTP id n142mr1790046lfn.77.1549964359414;
-        Tue, 12 Feb 2019 01:39:19 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id p14sm2829049lfk.16.2019.02.12.01.39.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 01:39:18 -0800 (PST)
-Date:   Tue, 12 Feb 2019 11:37:59 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Message-ID: <20190212093759.GA12247@localhost.localdomain>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <20190207140053.GG20638@dell>
- <20190207162807.GB1920@localhost.localdomain>
- <20190208105743.GI20638@dell>
- <20190208124111.GB3012@localhost.localdomain>
- <20190212091723.GZ20638@dell>
+        id S1727331AbfBLJpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Feb 2019 04:45:50 -0500
+Received: from plaes.org ([188.166.43.21]:49010 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726238AbfBLJpu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Feb 2019 04:45:50 -0500
+Received: from plaes.org (localhost [127.0.0.1])
+        by plaes.org (Postfix) with ESMTPSA id 663D64022E;
+        Tue, 12 Feb 2019 09:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1549964747; bh=W25nCZmEIHwGCTrzOhdBgd7ZEShM1fhel195A9NUUJ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y66Oa5RFVOQQLEpwHktWNOQofRWVwvVlE4yIXl0jLqHj+CrSy6KH+C36goAXDu3+H
+         3hDCzZbdv1x+SzKdULFgOOcO+7j8Kd3O+NB1369dHVx4E5Nhd5af1ON2g9hTKCmi0N
+         5Cxc5sWq5pxAoEWdtFIINuXTzTYSH1fWVaFevRV9IgGCPyPoCXnWaDV1XzsrgUn8K3
+         ngBcxdfJnvh0CKSh7P2rSlnae0PYccxX/C9h5KDfbuV3GqYi283omzQECukJLIyGpf
+         oeQ+0pnI5n8pS39PuSNUsDvh0Xxhlqax4PFnR1Inl0ldeOaFfiAOtRUq4+CXfS4xK2
+         qgSmS4YawBs3g==
+Date:   Tue, 12 Feb 2019 09:45:46 +0000
+From:   Priit Laes <plaes@plaes.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190212094546.n2w7pffytzdgpx3e@plaes.org>
+References: <20190202155209.31617-1-plaes@plaes.org>
+ <20190205094529.t7je4ozzu2b4ornc@flea>
+ <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+ <20190206092000.f46nsn4fw2n4crub@flea>
+ <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
+ <20190206155227.wbkzvsdgykir4wn5@flea>
+ <20190211143552.2uqx6yy53dyv5lbl@plaes.org>
+ <20190211153402.s5qij5idvhbtsw2y@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190212091723.GZ20638@dell>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190211153402.s5qij5idvhbtsw2y@flea>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks Again Lee,
-
-On Tue, Feb 12, 2019 at 09:17:23AM +0000, Lee Jones wrote:
-> On Fri, 08 Feb 2019, Matti Vaittinen wrote:
-> 
-> > > I think an exported function with comments would be better.
-> > So do you mean you would prefer exported function over the pointer from
-> Yes please.  Call-back pointers for non-subsystem level actions are a
-> bit messy IMHO.
-
-That's fine. I'll go with exported function then =)
-
-> > case it just hides the meaning of values we are passing as arguments.
-> > With raw assignment we at least have some idea what the 0x40 or 0x20 are
-> > referring to =)
-> 
-> Well I do agree with your last comment.
-> 
-> Maybe doing the following would help with the ugliness (i.e. the shear
-> number of chars):
-> 
->  unsigned int type_reg_offset_inc = 0;
->  for (i = BD70528_INT_GPIO0; i <=  BD70528_INT_GPIO3; i++) {
->         <blar> *t = irqs[i].type;
->         t->type_reg_offset     = type_reg_offset_inc;
->  	t->type_rising_val     = 0x20;
->  	t->type_falling_val    = 0x10;
->  	t->type_level_high_val = 0x40;
->  	t->type_level_low_val  = 0x50;
->  	t->types_supported =
->  		(IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
->  	type_reg_offset_inc += 2;
->  }
-
-I'll go with this for next version.
-
-> > > > > > +	/* wdt_set must be called rtc_timer_lock held */
-> > > > > 
-> > > > > This doesn't make sense.
-> > > > 
-> > > > Umm.. The comment does not make sense? Maybe I can explain it further.
+On Mon, Feb 11, 2019 at 04:34:02PM +0100, Maxime Ripard wrote:
+> On Mon, Feb 11, 2019 at 02:35:52PM +0000, Priit Laes wrote:
+> > On Wed, Feb 06, 2019 at 04:52:27PM +0100, Maxime Ripard wrote:
+> > > Hi,
 > > > 
-> > > "wdt_set must be called when the rtc_timer_lock is held"
+> > > On Wed, Feb 06, 2019 at 10:03:09AM +0000, Priit Laes wrote:
+> > > > > > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
+> > > > > > all of them, except the HRTIMER, expect the clock rate to stay
+> > > > > > the same and not change underneath them. And SATA expects it to
+> > > > > > be at 600 MHz, as the datasheet says. And while it may not directly
+> > > > > > apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
+> > > > > > reduced rate of 50 MHz just fine.
+> > > > > > 
+> > > > > > In the commit in question, clocks without CLK_SET_RATE_PARENT
+> > > > > > should be using the old code (now in the if conditional block),
+> > > > > > i.e. the behavior should not have changed.
+> > > > > > 
+> > > > > > I don't think this actually "fixes" whatever bug was introduced,
+> > > > > > but only papers over the issue, and possible introduces further
+> > > > > > issues for other users.
+> > > > > 
+> > > > > You're right, I've overlooked that it was pll-periph being
+> > > > > affected. I've dropped it for now.
+> > > > 
+> > > > Any ideas what could be done. I currently have no time to debug it,
+> > > > but it affects existing systems.
+> > > 
+> > > I can't find what would change with that commit either if the flag
+> > > isn't set, so looking at the register state before and after that
+> > > commit would help I guess?
 > > 
-> > Yes. I wanted to say that who-ever is calling the wdt_set function
-> > below, should have locked the rtc_timer_lock mutex (last in this
-> > struct). The function does not do locking inside because we want the RTC
-> > to be able to perform:
+> > Register dump without the patch:
 > > 
-> > lock
-> > disable wdt (store original state)
-> > set RTC
-> > return wdt original state
-> > unlock
+> > $ busybox devmem 0x01c20090
+> > 0x0250030E
 > > 
-> > Locking is needed so that we can exclude the watchdog enabling or
-> > disabling the WDT timer between moments when RTC is getting the original
-> > WDT state and re-turning back the old state. Without the lock we have a
-> > risk that WDT-driver enables or disables the timer when RTC is being
-> > set, and RTC overwrites the watchdog driver changes when writing back
-> > the old state. I hope this makes sense now... Any suggestions how to
-> > explain this nicely in english?
+> > pll-ddr-base     2 2 0   768000000          0     0  50000
+> >    pll-ddr-other 1 1 0   768000000          0     0  50000
+> >       mmc2       3 3 0    51200000          0     0  50000
+> > 
+> > Register dump with patch applied, booted from mmc0 and after mounting emmc:
+> > 
+> > $ busybox devmem 0x01c20090
+> > 0x8140020B
+> > 
+> > pll-periph-base  3 3 0  1200000000          0     0  50000
+> >    pll-periph    6 6 0   600000000          0     0  50000
+> >       mmc2       3 3 0    50000000          0     0  50000
 > 
-> I think I did already:
-> 
->  "wdt_set must be called when the rtc_timer_lock is held"
-> 
-> Actually, this is a little ambiguous.  A better sentence could read:
-> 
->  "rtc_timer_lock must be taken before calling wdt_set()"
+> I meant the whole Clock controller, ideally a diff between the two
+> states would be great.
 
-Sure. I'll ruthlessy plagiarize that sentence. (And as I am not at all
-sure if "ruthlessy plagiarize" actually means what I think it does -
-I tried to say that I'll take your suggestion and use it :] )
+I have uploaded the raw files here:
+https://gist.github.com/plaes/3465386d8aa55fa70fd3997310719828
 
-Once again, thanks for the help =)
+The test scenario is following:
 
-Br,
-	Matti
+1) Boot via FEL (u-boot + zImage + boot.scr) and load root fs from
+sd-card / mmc0
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+2) ssh into machine and dump register space
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+- no-patch-before-mount.dump
+- no-patch-post-mount.dump
+
+3) Attempt to mount emmc / mmc2 and dump ccu register space
+- with-patch-before-mount.dump
+- with-patch-post-mount.dump
+
+
+Firstly, I noticed that first 0x200 bits are mirrored:
+0x1c20000 = 0x1c20200
+0x1c20004 = 0x1c20204
+...
+01xc201fc = 0x1c203fc
+
+And here come the diffs:
+
+a) Diff before mount vs patch / reverted patch:
+
+mmc2:
+  -0x1c20090: 0x0250030E
+  +0x1c20090: 0x0140020B
+unk1: (mirrored ahb?, this one's flaky due to mmc runtime suspend)
+  -0x1c20260: 0x1200C17F
+  +0x1c20260: 0x1200C07F
+unk2: (mirrored mmc2?)
+  -0x1c20290: 0x0250030E
+  +0x1c20290: 0x0140020B
+
+b) Diff post-mount vs patch / reverted patch:
+
+ahb (this one's flaky, possibly due to runtime suspend for mmc):
+  -0x1c20060: 0x1200C07F or 0x1200C17F
+  +0x1c20060: 0x1200C47F
+mmc2:
+  -0x1c20090: 0x0250030E
+  +0x1c20090: 0x8140020B
+unk1:
+  -0x1c20260: 0x1200C07F
+  +0x1c20260: 0x1200C47F
+unk3:
+  -0x1c20288: 0x8140030B
+  +0x1c20288: 0x0140030B
+unk2: (mirrored mmc2?)
+  -0x1c20290: 0x0250030E
+  +0x1c20290: 0x8140020B
+
+
