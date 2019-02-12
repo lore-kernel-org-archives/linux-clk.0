@@ -2,69 +2,66 @@ Return-Path: <SRS0=E6RW=QT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1C1C282C4
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6738CC282CA
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBFC620842
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37EB120842
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Feb 2019 16:29:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="BDCr7HLa"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EYNMnV5s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731099AbfBLQ3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:29:04 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44060 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731081AbfBLQ3E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Feb 2019 11:29:04 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v16so3333033wrn.11
-        for <linux-clk@vger.kernel.org>; Tue, 12 Feb 2019 08:29:03 -0800 (PST)
+        id S1731082AbfBLQ3D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Feb 2019 11:29:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33062 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729633AbfBLQ3D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Feb 2019 11:29:03 -0500
+Received: by mail-wr1-f67.google.com with SMTP id i12so3414008wrw.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 Feb 2019 08:29:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=b17QC1yK688ZWb10QT74DyiITU1l1NF57mYQWB4mILg=;
-        b=BDCr7HLaHSqb428CRXZ/Z9TcOnEG95cpoVfxWv8J25RgsnhRbyTYrc+3Gqvue2yt5o
-         OtjNL4O3IqninjuwGjxt3T8jQTSCATXqRPIoXTeuIBgCzGHFDZueLdHGdHeASD9P1gQb
-         p9wLKnWshLm5O8OONHhdJphcHA69/mZmCqnIGbopu5RySfaTH9sF5J+pzMyb/yulX3Yo
-         5d30M66PMQaflm/RHMM3CDl7PeN5GmsTu0fVm8jM5xEzA1EU5KCIV9dpSNVm+EBwNG6/
-         9kJTCd3yucJayEP57E9yBSKPYqo0xwXmjasszjfDgbg2PfRTry8Utl+QT+iy1JqzL6W+
-         29fg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c4mSsCon6GBdcpXgNWgQbQrrv5VNk+/N3Jshnb+5ts0=;
+        b=EYNMnV5sNrocF3iwg2e/cigLaHz3u46sUAY2IMLd1kQVCvsVlT6E1M+TCyeRlzi1Ee
+         OGPR82Olaayvqjshmjzf8ljY+Be0a8XlYfZ2ELHT8r3VXpz+Ba7WLEzi8YYoyG8rmuz2
+         e+tJHdsBUwZ3b69w5lYtBDDWorao1ykUkIo0llc0QrvEzXs5fnsQ+rbD1jO7sMdLyfQa
+         U1gBOpgpGerIn/P3REMsGP8CWFBFDSzH/hGtWW6Scs56p8ROIcK4ZYlLp46O3oObx8pK
+         b2Zr9YbGy0iMfmor00avHsafnOTazaf7om+PG91NshuDn3x6gfr+bbwpiwKRuOA/0DCQ
+         szwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=b17QC1yK688ZWb10QT74DyiITU1l1NF57mYQWB4mILg=;
-        b=pWRQwvnryXPRxFmH9QxEmH452iey26AdbDP7LoD2v8m+WO21ov5WFUZuZVNV/N4Cm5
-         G4FFlN+aqcZRpBLTvEBmW2f+eApGqf0q/iwwdTQaN87sBEF1b0hd7cI/2zXSuOLzwLKw
-         przCyi6yRfE4aJI3Qi053yjkbgWM/lq+ia4tBGK4IhMoZBLrAKJMh97zc0i0rTOcBHgF
-         RcJ0E2EaWzwD/kuIKKyTSP9UylaKlC6GXmhlDr+neV4uz8pEdsMTk495f58LSxZY61SK
-         xUg1JfeL/HPVwJqwElfxbduLO4Te12HNLWYfkthJeTBkG1qfCPhpipl0xJrzbtkOxGXy
-         0G3Q==
-X-Gm-Message-State: AHQUAubZr59qoMl+XkiNMloTZs679xrpNhsdZtMOPXbhAxcs8EysHI5e
-        Eva8mqPc5tlxZ2u2xUL5/u+gAg==
-X-Google-Smtp-Source: AHgI3IY8s6GmdUBtOUQFfSkBuVkNgpDYcmzMLfGgo/WKJn9PPQyGz1Cr8YNYgitIJ2HzRlcK6Sit8Q==
-X-Received: by 2002:adf:91a7:: with SMTP id 36mr3352120wri.77.1549988942155;
-        Tue, 12 Feb 2019 08:29:02 -0800 (PST)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id z1sm7800876wrw.28.2019.02.12.08.29.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c4mSsCon6GBdcpXgNWgQbQrrv5VNk+/N3Jshnb+5ts0=;
+        b=tBQy1CgQXRFMLGpzUNBhMF24S0jiHXXrQqyU6zAjq1zk6kaamBjfOvNJbP8X7F5NcT
+         pV2Pzd2unlQUEHV7g9FonOQOSmXvk2EGeTMNWrwSOrluUAh9IoaJNlM3KPjNgf5xH1hN
+         4nxEWWyNYx5KYo1GZ1BzjgbHBRVvJWEX+qRG6y74OiAlJkG+dJm7pjruAUjAPH9/T9MM
+         bDf8RTYL6IuVJwyAvNHIIBXcJPzvlf2/GIN4Kh5YLzMnTxm+SP2/2F59cS3qKwCrwP7v
+         KzdEFBYH5GFPsEbrbOTTZuElonPu4IBWMv4n7MLnV9H7jy1UnDUObxfhrNd5cH8MUXoZ
+         hX8Q==
+X-Gm-Message-State: AHQUAuamN6ol4PyoenSQqfgKrJD2xa0Zx9lqUG0DU8daUknlV1RMeiGB
+        /yETwTvB8DMrGtUu4JhHfXFggQ==
+X-Google-Smtp-Source: AHgI3IaQ2zjXoLynNNuxjOAdM0y1ZygLbnhTGP/eGVeg5u2m9LLrFped1p8aXSRHPDTmLhkLU8B9Jw==
+X-Received: by 2002:adf:8068:: with SMTP id 95mr3563270wrk.181.1549988941394;
         Tue, 12 Feb 2019 08:29:01 -0800 (PST)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id z1sm7800876wrw.28.2019.02.12.08.29.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 12 Feb 2019 08:29:00 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, devicetree@vger.kernel.org
+To:     jbrunet@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: clk: add G12A AO Clock and Reset Bindings
-Date:   Tue, 12 Feb 2019 17:28:58 +0100
-Message-Id: <20190212162859.20743-2-narmstrong@baylibre.com>
+Subject: [PATCH v2 0/2] clk: meson: Add G12A AO Clock + Reset Controller
+Date:   Tue, 12 Feb 2019 17:28:57 +0100
+Message-Id: <20190212162859.20743-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190212162859.20743-1-narmstrong@baylibre.com>
-References: <20190212162859.20743-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -72,93 +69,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings for the Amlogic G12A AO Clock and Reset controllers.
+This patchset add support for the Amlogic G12A SoC family Always-On
+clock and reset controller.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../bindings/clock/amlogic,gxbb-aoclkc.txt    |  1 +
- include/dt-bindings/clock/g12a-aoclkc.h       | 34 +++++++++++++++++++
- include/dt-bindings/reset/g12a-aoclkc.h       | 18 ++++++++++
- 3 files changed, 53 insertions(+)
+This adds support for clocks on the Always-On domain like :
+- Always-On UARTS & I2C Controllers
+- CEC Controllers
+- SARADC source and bus clock
+- Infrared Decoder/Encoder bus clock
+- USB 32K reference clock
+
+This also adds resets lines for :
+- Always-On UARTS & I2C Controllers
+- SARADC, Infrared Decoder/Encoder
+
+This patchset depends on the ("clk: meson: rework drivers dependencies")
+from Jerome Brunet at [1].
+
+Changes from v1 at [2]:
+- Moved unused bindings ID out of the dt-bindings header
+- Added comment about CLK_IGNORE_UNUSED
+
+[1] https://lkml.kernel.org/r/20190201125841.26785-1-jbrunet@baylibre.com
+[2] https://lkml.kernel.org/r/20190204091331.9298-1-narmstrong@baylibre.com
+
+Neil Armstrong (2):
+  dt-bindings: clk: add G12A AO Clock and Reset Bindings
+  clk: meson: Add G12A AO Clock + Reset Controller
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+ drivers/clk/meson/Kconfig                     |   2 +
+ drivers/clk/meson/Makefile                    |   2 +-
+ drivers/clk/meson/g12a-aoclk.c                | 454 ++++++++++++++++++
+ drivers/clk/meson/g12a-aoclk.h                |  34 ++
+ include/dt-bindings/clock/g12a-aoclkc.h       |  34 ++
+ include/dt-bindings/reset/g12a-aoclkc.h       |  18 +
+ 7 files changed, 544 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/meson/g12a-aoclk.c
+ create mode 100644 drivers/clk/meson/g12a-aoclk.h
  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index 79511d7bb321..c41f0be5d438 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -10,6 +10,7 @@ Required Properties:
- 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
- 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
- 	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
-+	- G12A (S905X2, S905D2, S905Y2) : "amlogic,meson-g12a-aoclkc"
- 	followed by the common "amlogic,meson-gx-aoclkc"
- - clocks: list of clock phandle, one for each entry clock-names.
- - clock-names: should contain the following:
-diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-bindings/clock/g12a-aoclkc.h
-new file mode 100644
-index 000000000000..8db01ffbeb06
---- /dev/null
-+++ b/include/dt-bindings/clock/g12a-aoclkc.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
-+
-+#define CLKID_AO_AHB		0
-+#define CLKID_AO_IR_IN		1
-+#define CLKID_AO_I2C_M0		2
-+#define CLKID_AO_I2C_S0		3
-+#define CLKID_AO_UART		4
-+#define CLKID_AO_PROD_I2C	5
-+#define CLKID_AO_UART2		6
-+#define CLKID_AO_IR_OUT		7
-+#define CLKID_AO_SAR_ADC	8
-+#define CLKID_AO_MAILBOX	9
-+#define CLKID_AO_M3		10
-+#define CLKID_AO_AHB_SRAM	11
-+#define CLKID_AO_RTI		12
-+#define CLKID_AO_M4_FCLK	13
-+#define CLKID_AO_M4_HCLK	14
-+#define CLKID_AO_CLK81		15
-+#define CLKID_AO_SAR_ADC_CLK	18
-+#define CLKID_AO_32K		23
-+#define CLKID_AO_CEC		27
-+#define CLKID_AO_CTS_RTC_OSCIN	28
-+
-+#endif
-diff --git a/include/dt-bindings/reset/g12a-aoclkc.h b/include/dt-bindings/reset/g12a-aoclkc.h
-new file mode 100644
-index 000000000000..bd2e2337135c
---- /dev/null
-+++ b/include/dt-bindings/reset/g12a-aoclkc.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_G12A_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_G12A_AOCLK
-+
-+#define RESET_AO_IR_IN		0
-+#define RESET_AO_UART		1
-+#define RESET_AO_I2C_M		2
-+#define RESET_AO_I2C_S		3
-+#define RESET_AO_SAR_ADC	4
-+#define RESET_AO_UART2		5
-+#define RESET_AO_IR_OUT		6
-+
-+#endif
 -- 
 2.20.1
 
