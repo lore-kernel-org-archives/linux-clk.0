@@ -2,109 +2,158 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A378C282C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFE8C282C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44225222C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C323222BA
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jcwHCmRO"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Cizw0xtO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbfBMJc1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:32:27 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55325 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfBMJc1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:32:27 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r17so1623709wmh.5
-        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:32:26 -0800 (PST)
+        id S1732524AbfBMJ7B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 04:59:01 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36586 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbfBMJ7B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:59:01 -0500
+Received: by mail-wr1-f66.google.com with SMTP id o17so1756661wrw.3
+        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:59:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=umkFh3sTag7wcOVtRbwb7GAQcTXPyffr2EM4OfV+U/Q=;
-        b=jcwHCmROVMEEkmR8QkE/h55GGYneRqjiGp5ldd0OUlncaNDXqYLOSSMw2CRkvxDaC8
-         8eF89m0174a3JU1Y+/qaWzfdPFq/n3t0k8W1DTrJLw747vIa32BkYaMs85BOdjm7VpLC
-         zEpwvhVFhtEw8tcRibk4XfW5ev4Z7FEDgz+WA+pZoHxbVH0b4/4c+bVvP8rofEm6QRje
-         FyowH+OqUTXup4wDUXjT+tezhCeJzkEYY1od8l6rZm8B6FmnzHiB9T9FQE7T+3JBV3kC
-         Q3+Uc2SJfCNYIl5cHRg4Z5qfCvEEmFotSLrsOqML+p0eRL5HYOhKRlqJfKnrkfdVmQta
-         n/oQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cTVgMV4QN/O1VM1NLUgFFlyBDlQnQrXLeyqpgio8zrY=;
+        b=Cizw0xtOihKs5jdEPG671F9h5Q28JsSdgKfgLpEe1KZkcMhya3OViJAHAhztxklVes
+         YcD+j0uGl0Abe7ASFnYhyPWB97FZrP0W8WbhO7HFc2A5rB6XtF/txUQSTn59Q4dgeGpg
+         AEcFCzhQEsGEBRAnxn7KcAdsI1GJmzp0+eu4NBzq3itNeLmGLAVQWmRSjQxm0uLAiV0+
+         8hLsFiatl3HnaY0wpAYKnkjcePUn2AgeLueOVI3McHAjjmnL5im0EJLrcCxBdSey85dn
+         tJ+ypfJrQISv35VeDgfzQJjvAB5cwkJ2N59ZZ6WWUDeSusMt0AH57Xqnn0jR0kQO7maz
+         OtVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=umkFh3sTag7wcOVtRbwb7GAQcTXPyffr2EM4OfV+U/Q=;
-        b=r8mJsVdDyFF+my/0lbfj5AeEiTbz7y4q+pHf+oIj3vYaeottL3w2+lx+ov0UzEAgp+
-         uJAoT1dEevfC1Ox3s6pCUvGnfBpeoPciLijduoIfMRFMdGyjd/+vSkoUXkFdnTMsxXcO
-         +Qbc+aOExKgAfuUScgEH7E1jKEmqao/BOCrvxIHrzDYrzpdvVrgfFTeUZdM6joNA/ODC
-         OvJOXMiubDCT7l4DxbT3tud67QmdWuAmsqrkoF0442hutMKDzyzDxRz6P2VfByiofe+c
-         8tGkxnc/R9iIP+qEIriokpGmJPFV/NvvUZ+tsqC+ByZLjNp823os8M4fhsTFjwFpPSyv
-         SFPQ==
-X-Gm-Message-State: AHQUAuZaKpoj0QTe0CX0L49Vg1oX3HX0berWBJkf3eNcNEt+/YKXhNkV
-        oNcsfoR7+0BJEhqp6231taDWeyB51p8=
-X-Google-Smtp-Source: AHgI3IY0Tme/033Av9FLl5/k2u50Y94eEnG2p30A1X1++j0jq//zsx0AuXlEoj1vb8dcpaYZTellbQ==
-X-Received: by 2002:a1c:4e08:: with SMTP id g8mr2464252wmh.46.1550050345629;
-        Wed, 13 Feb 2019 01:32:25 -0800 (PST)
-Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y20sm32630100wra.51.2019.02.13.01.32.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 13 Feb 2019 01:32:24 -0800 (PST)
-Message-ID: <121ae6212cd555bc784af675d63f6b190c0bee10.camel@baylibre.com>
-Subject: Re: [PATCH 7/9] clk: Allow parents to be specified without string
- names
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cTVgMV4QN/O1VM1NLUgFFlyBDlQnQrXLeyqpgio8zrY=;
+        b=WS8dqKXdGyfKkjIGrmHnvYeS5+dIhG1/D4N2f9Jy/XRtHlyFum2fj9uIk4m+auk/0l
+         KWynIj0peJKYLlHJhlQOxJjpG8bSJFfNkGIUbxlivji3TdIsLhTKvH4F9xYoE4imVa+X
+         3JXf0obcnp+sbqqIlChfTV+CYuhRB8ktXBln2lnvfe/0RsX4DqeJMKtIbP/o3E4WI3V7
+         /PoaHFmfa0Fxne2URrxCtbnUEadJY2Z9LKdxEWuD6cU39sHV6bzz9WHe2b0QkMfOoYyT
+         pfemBZ1eSTWTkI8+BoD7zD6gRAXW7ZaQSuOisRq1jKfdRtEZYdHxj6Ll6DcxvBhMwFPn
+         rbyg==
+X-Gm-Message-State: AHQUAuYkLXj4nQn3irZTPhDNZdBnsciW8cmn88Wr22BLD4Dhs1qxb8NY
+        6DuJb+qAEqu4o5MCMNRrI6y8RQ==
+X-Google-Smtp-Source: AHgI3IaLLNDjLhSH2mNv/pSNiss75mv4YTJlPuylODIHgSKJqE9uCLBuBgdrl6w9J20IByguEfVPYg==
+X-Received: by 2002:adf:a4c9:: with SMTP id h9mr1888592wrb.254.1550051939768;
+        Wed, 13 Feb 2019 01:58:59 -0800 (PST)
+Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id k23sm2839467wmj.32.2019.02.13.01.58.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 01:58:59 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Date:   Wed, 13 Feb 2019 10:32:23 +0100
-In-Reply-To: <154878820913.136743.9860407353339842831@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org>
-         <20190129061021.94775-8-sboyd@kernel.org>
-         <2f88e7fb1788f68f7b97d9806d56f9271663bdfc.camel@baylibre.com>
-         <154878820913.136743.9860407353339842831@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Maxime Jourdan <mjourdan@baylibre.com>
+Subject: [PATCH] dt-bindings: clock: axg-audio: unexpose controller inputs
+Date:   Wed, 13 Feb 2019 10:58:35 +0100
+Message-Id: <20190213095835.17448-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2019-01-29 at 10:56 -0800, Stephen Boyd wrote:
-> > > +/**
-> > > + * struct clk_parent_data - clk parent information
-> > > + * @hw: parent clk_hw pointer (used for clk providers with internal
-> > > clks)
-> > > + * @name: parent name local to provider registering clk
-> > > + * @fallback: globally unique parent name (used as a fallback)
-> > > + */
-> > > +struct clk_parent_data {
-> > > +     struct clk_hw   *hw;
-> > > +     const char      *name;
-> > > +     const char      *fallback;
+Remove the bindings ID of the clock input of the controller. These
+clocks are purely internal to the controller, exposing them was a
+mistake. Actually, these should not even be in the provider and have
+IDs to begin with.
 
-One last nitpick about this structure, because I did not figure it out at
-first.
+Unexpose these IDs before:
+ * someone starts using them (even if there no valid reason to do so)
+ * the actual clocks are removed. The fact that they exist is just the
+   result of an ugly hack. This will be resolved in CCF when we can
+   reference DT directly in parent table.
 
-'fallback' is what we known as 'name' in CCF so far.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg-audio.h              | 20 ++++++++++++++++++++
+ include/dt-bindings/clock/axg-audio-clkc.h | 20 --------------------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
-What do you think about renaming 'fallback' to 'name' and 'name' to something
-more obvious, like 'of_name' or 'fw_name' or something else ?
-
-> > 
-> > If I understand correctly, .name and .fallback will be ignored if hw is
-> > provided ? Maybe this should be documented somehow ?
-> 
-> Sure. I'll add some documentation to the long portion of the kernel-doc
-> here describing priority order.
-
-Anyway, with this patch, I should be able to remove a lot of (ugly) code I
-have been writting lately. I'll be happy to test it when you have a v2 ready.
+diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
+index 7191b39c9d65..644f0b0fddf2 100644
+--- a/drivers/clk/meson/axg-audio.h
++++ b/drivers/clk/meson/axg-audio.h
+@@ -60,6 +60,26 @@
+ #define AUD_CLKID_MST5			6
+ #define AUD_CLKID_MST6			7
+ #define AUD_CLKID_MST7			8
++#define AUD_CLKID_SLV_SCLK0		9
++#define AUD_CLKID_SLV_SCLK1		10
++#define AUD_CLKID_SLV_SCLK2		11
++#define AUD_CLKID_SLV_SCLK3		12
++#define AUD_CLKID_SLV_SCLK4		13
++#define AUD_CLKID_SLV_SCLK5		14
++#define AUD_CLKID_SLV_SCLK6		15
++#define AUD_CLKID_SLV_SCLK7		16
++#define AUD_CLKID_SLV_SCLK8		17
++#define AUD_CLKID_SLV_SCLK9		18
++#define AUD_CLKID_SLV_LRCLK0		19
++#define AUD_CLKID_SLV_LRCLK1		20
++#define AUD_CLKID_SLV_LRCLK2		21
++#define AUD_CLKID_SLV_LRCLK3		22
++#define AUD_CLKID_SLV_LRCLK4		23
++#define AUD_CLKID_SLV_LRCLK5		24
++#define AUD_CLKID_SLV_LRCLK6		25
++#define AUD_CLKID_SLV_LRCLK7		26
++#define AUD_CLKID_SLV_LRCLK8		27
++#define AUD_CLKID_SLV_LRCLK9		28
+ #define AUD_CLKID_MST_A_MCLK_SEL	59
+ #define AUD_CLKID_MST_B_MCLK_SEL	60
+ #define AUD_CLKID_MST_C_MCLK_SEL	61
+diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
+index fd9c362099d9..eafb0de8466b 100644
+--- a/include/dt-bindings/clock/axg-audio-clkc.h
++++ b/include/dt-bindings/clock/axg-audio-clkc.h
+@@ -7,26 +7,6 @@
+ #ifndef __AXG_AUDIO_CLKC_BINDINGS_H
+ #define __AXG_AUDIO_CLKC_BINDINGS_H
+ 
+-#define AUD_CLKID_SLV_SCLK0		9
+-#define AUD_CLKID_SLV_SCLK1		10
+-#define AUD_CLKID_SLV_SCLK2		11
+-#define AUD_CLKID_SLV_SCLK3		12
+-#define AUD_CLKID_SLV_SCLK4		13
+-#define AUD_CLKID_SLV_SCLK5		14
+-#define AUD_CLKID_SLV_SCLK6		15
+-#define AUD_CLKID_SLV_SCLK7		16
+-#define AUD_CLKID_SLV_SCLK8		17
+-#define AUD_CLKID_SLV_SCLK9		18
+-#define AUD_CLKID_SLV_LRCLK0		19
+-#define AUD_CLKID_SLV_LRCLK1		20
+-#define AUD_CLKID_SLV_LRCLK2		21
+-#define AUD_CLKID_SLV_LRCLK3		22
+-#define AUD_CLKID_SLV_LRCLK4		23
+-#define AUD_CLKID_SLV_LRCLK5		24
+-#define AUD_CLKID_SLV_LRCLK6		25
+-#define AUD_CLKID_SLV_LRCLK7		26
+-#define AUD_CLKID_SLV_LRCLK8		27
+-#define AUD_CLKID_SLV_LRCLK9		28
+ #define AUD_CLKID_DDR_ARB		29
+ #define AUD_CLKID_PDM			30
+ #define AUD_CLKID_TDMIN_A		31
+-- 
+2.20.1
 
