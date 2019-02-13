@@ -2,71 +2,119 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AAEC282C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159F0C282C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1DD2075C
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAF0A2083B
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:14:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550077788;
-	bh=zLgtUmUW10DVXZeanZL8BHYBbRtGzPuWhu+4tmVWzaM=;
+	s=default; t=1550078064;
+	bh=o45AkmZPc7WsoEj8sr1V/Y30S0WSYywOZiHs1ICTHBY=;
 	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=cndQJuWLv9syCyG/UbwbRVLfbNKA2DRtM0qsTAfCGhcKwlQM/DlQuL3Pm+fbowTkr
-	 ODC6WLkCHIofvOqkPVbdNrUnpSvfl3TfmK/pVblptW8dyFMhvw2MF/NZjmxyLCi6P3
-	 2BMUAOclWeuVHtIqVCfagS3Tz2c65HwRsK5/AJlg=
+	b=BMqPUaiJUMgPGmRQXBTSQdvn5+h3gXZocpr+JaA6EaRVRc/Lx2K9adoIQd6ZDHN0R
+	 TTDlScXUktVnIoJaackfpr3BwMS6m00749T6Exq6A5WTbyWK4foRF2Ir9H/8TvzdpY
+	 QQYcEpPAuOfyzT4Od5ca3VJgkNK6ep8ZmrG8eS5k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391723AbfBMRJl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:09:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47352 "EHLO mail.kernel.org"
+        id S2388902AbfBMROY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 12:14:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391657AbfBMRJl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:09:41 -0500
+        id S1729760AbfBMROY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:14:24 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F7A32070B;
-        Wed, 13 Feb 2019 17:09:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60ED120821;
+        Wed, 13 Feb 2019 17:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550077780;
-        bh=zLgtUmUW10DVXZeanZL8BHYBbRtGzPuWhu+4tmVWzaM=;
+        s=default; t=1550078063;
+        bh=o45AkmZPc7WsoEj8sr1V/Y30S0WSYywOZiHs1ICTHBY=;
         h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=dsQXE6Gb7jeH54YIpX6GG9p/W3Z/RhnFDG0jMHhD4La//sj4Ci86/9bABiiLm6BYM
-         RPRjvACu2JxmY0u5FZo3m5i1zjzWdmPlwppe1oC1xb9aRiAj1lqbF7/uP5IsWJmGnM
-         Rw4C+Wt69mYsrle7nnFQxDqYijwF2f7u0rL3MZ/w=
+        b=LmtamxuT9jiIIAXCM081Bqc4MecnuvxG6wgq6XJwOLyZaTv6eVvkVYjlpKSfFWZlM
+         brSHzlw80cfQAsRuQlqRQnKxTLoyc/i3WRj0z7bctcln6HRtxz6ViqtQk6rqZXWbEt
+         vNZEhZoyETdHzxTeJsJ+7h6s+DXN7V+EO46knIYc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com,
-        matthias.bgg@kernel.org, mturquette@baylibre.com
-In-Reply-To: <9db1f94f-7edd-73a1-fb09-9499c5f8cfcb@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+In-Reply-To: <20190211135818.10518-1-thomas.petazzoni@bootlin.com>
 User-Agent: alot/0.8
-Subject: Re: [PATCH v3 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
-Message-ID: <155007777974.115909.3599235649247866271@swboyd.mtv.corp.google.com>
-References: <20190108121208.2473-1-matthias.bgg@kernel.org> <20190108121208.2473-4-matthias.bgg@kernel.org> <9db1f94f-7edd-73a1-fb09-9499c5f8cfcb@gmail.com>
-Cc:     sean.wang@mediatek.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] clk: clk-gpio: add support for sleeping GPIOs in gpio-gate-clk
+Message-ID: <155007806256.115909.10137511038361789251@swboyd.mtv.corp.google.com>
+References: <20190211135818.10518-1-thomas.petazzoni@bootlin.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 13 Feb 2019 09:09:39 -0800
+Date:   Wed, 13 Feb 2019 09:14:22 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matthias Brugger (2019-02-08 05:39:02)
-> Steven, Mike, any comments on that?
+Quoting Thomas Petazzoni (2019-02-11 05:58:18)
+> The current implementation of gpio-gate-clk enables/disables the clock
+> using the GPIO in the ->enable() and ->disable() clock callbacks. This
+> requires the GPIO to be configurable in atomic contexts. While it is
+> the case for most memory-mapped GPIO controllers, it is not the case
+> for GPIO expanders on I2C or SPI.
+>=20
+> This commit extends the gpio-gate-clk to check whether the GPIO calls
+> require sleeping or not. If sleeping is not required, the current
+> implementation based on ->enable()/->disable() is kept. However, if
+> sleeping is needed, we instead implement the logic in the ->prepare()
+> and ->unprepare() hooks. Thanks to this, a gate clock connected to a
+> GPIO on a GPIO expander can be controlled with the existing driver.
+>=20
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 
-I was waiting for Mediatek to review. I thought I said that last time?
-I suppose if they're not going to review it I'll just throw it into
-clk-next and people can fix problems if they see them.
+Sounds like a good idea!
 
-Would you mind resending one more time with a comment in the code where
-CLK_IS_CRITICAL is used indicating why it's critical so that we know
-what's going on without having to dig into the git history?
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index 6a43ce420492..f5d481713c7d 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -61,6 +61,35 @@ const struct clk_ops clk_gpio_gate_ops =3D {
+>  };
+>  EXPORT_SYMBOL_GPL(clk_gpio_gate_ops);
+> =20
+> +static int clk_sleeping_gpio_gate_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_gpio *clk =3D to_clk_gpio(hw);
+> +
+> +       gpiod_set_value_cansleep(clk->gpiod, 1);
+> +
+> +       return 0;
+> +}
+> +
+> +static void clk_sleeping_gpio_gate_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_gpio *clk =3D to_clk_gpio(hw);
+> +
+> +       gpiod_set_value_cansleep(clk->gpiod, 0);
+> +}
+> +
+> +static int clk_sleeping_gpio_gate_is_prepared(struct clk_hw *hw)
+> +{
+> +       struct clk_gpio *clk =3D to_clk_gpio(hw);
+> +
+> +       return gpiod_get_value_cansleep(clk->gpiod);
+> +}
+> +
+> +const struct clk_ops clk_sleeping_gpio_gate_ops =3D {
 
+static?
+
+> +       .prepare =3D clk_sleeping_gpio_gate_prepare,
+> +       .unprepare =3D clk_sleeping_gpio_gate_unprepare,
+> +       .is_prepared =3D clk_sleeping_gpio_gate_is_prepared,
+> +};
+> +
+>  /**
+>   * DOC: basic clock multiplexer which can be controlled with a gpio outp=
+ut
+>   * Traits of this clock:
