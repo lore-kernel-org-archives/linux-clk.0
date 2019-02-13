@@ -2,185 +2,176 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91566C282C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05865C282CE
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57358222BE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:16:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE019222C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:19:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aEiNPADp"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qDQT8GFv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730918AbfBMJQY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:16:24 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39359 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728406AbfBMJQY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:16:24 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f16so1538638wmh.4
-        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:16:21 -0800 (PST)
+        id S2391280AbfBMJTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 04:19:35 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:38371 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391230AbfBMJTe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:19:34 -0500
+Received: by mail-it1-f194.google.com with SMTP id z20so4098414itc.3
+        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:19:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=+MSho6TGtRH71B7KMbmqjsXQobTe045SJKbrmRWSdpY=;
-        b=aEiNPADpwzjXYMgz2bfqSQSxCtheZ7g91ZKCmeIqkkgysa9jg2RJ1tKCPBuKTvzU6f
-         JOL8qMG0/hsJre4Hs+BiWAAXZYm1/8d39P4gmkvctZCqAsHScnDJy0iSwxi6MjWYedfc
-         SjC3mRKP56DsjZE6b/PnV716XgNKOWQoUQ242kTy6zD19hSUmvVA3ObEeGdTBSxqIyR4
-         1NcLU9o4ypnI9ftP4JekpIulQqIwH4FY4YA/Aink3LAaa4yhBCfyQoB5woe6NoZ8p5kR
-         w6wMKQbguPLfghKdmYLiy/nAlxgzmS9gizb/nOFDxZUSqN+TjqV/04MHRvu7Cefe5AZE
-         SqEA==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=suiqjiV/3v7/sXoqCHDymg+ph6X+23+FUiEu0DKo16Y=;
+        b=qDQT8GFvjnlkX1Ds44AYVi4ILsJvDPT03Iz6c8hPXzgLATXyAjviON6+vzvmgOZ3ap
+         ydKl6C+l8GmsVPW/EAHE2Inli6hVkZs0dHyF3/NvwPFj+sMMsq/E+VHL5jcBMOoM8Qzb
+         zgxZlFJsJ+8Tt5gJ94tSo1yJpqdqsdt4YHdO8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=+MSho6TGtRH71B7KMbmqjsXQobTe045SJKbrmRWSdpY=;
-        b=iAYNZhB7gJSzgevgr1kwwz4VaF7sA4NORKO8vS/7dAWBa1BXxehFJ8AtMV+eUqkpON
-         dkLQ9NA7mFxcvMdhS4Yugp7B9VHH7hvOJYnbhC3NQo+INP/8o92lSYmTcZj+NldTswrU
-         39H7Q31+sRgxV5Gxm/41WTJAW9xm5BW5VA8pztMTwgqlQMQPs3+3eDtR0mFL3wnjWRsE
-         tJgfueAQvGcMWuUzqG3vTczbsqLGsUiYD5BXyPjSp32xR+eQJkeBT1tCJ8DoqsxESkCG
-         oDPvEGSvaDyV7cQODCcu2qVKsAg9nLmeAZq7FMT8nKnC0oDG+xWbhtgMUyqhjfBs+4rO
-         Giyw==
-X-Gm-Message-State: AHQUAubCerNEWiIQ5vLADliCs2Uy8lBh8CQPDpbVdN0had4PoEPezGeF
-        DT7mWyo9oeGVpZyPe6D69A7/og==
-X-Google-Smtp-Source: AHgI3IZP2aQVPcbiaNbFOoDOvB7A6b6X5Gl6v9obvWpU8LN0rsL53QwwFDbSBr6Zrp3Jaj6yH7L2+w==
-X-Received: by 2002:a05:600c:2159:: with SMTP id v25mr338342wml.17.1550049381055;
-        Wed, 13 Feb 2019 01:16:21 -0800 (PST)
-Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f13sm1099408wmh.41.2019.02.13.01.16.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 13 Feb 2019 01:16:20 -0800 (PST)
-Message-ID: <9e86b95eb8c9e3c0454d3aeebac15e354298c815.camel@baylibre.com>
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Date:   Wed, 13 Feb 2019 10:16:18 +0100
-In-Reply-To: <154941131193.169292.7500057932043013834@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org>
-         <20190129061021.94775-3-sboyd@kernel.org>
-         <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com>
-         <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com>
-         <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com>
-         <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com>
-         <97c2375f41fe7dabc4d71f66c9808912eb0ce611.camel@baylibre.com>
-         <154941131193.169292.7500057932043013834@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=suiqjiV/3v7/sXoqCHDymg+ph6X+23+FUiEu0DKo16Y=;
+        b=bLCCb+UrMTIr+HLHEdQ2r8YpcQ3CdLLRbHpRc+y72Koe2f5GKWmiFYs4/u3BmOMboq
+         C/T8RSBr4fbRbMyAh6XxZJSWs2+zyC3rSh3qsV9AXCOU81xgp41gB6SSwJNE5JQ6Ao2N
+         E5u6sEc6ydPaEF7OcdaCirn/fRZ1rKbQSqKZ3q64XsyNKG56a+Aoe3bUnbnGeRwbM6ST
+         EeZdTYnc5IrIGpA+urinfZCfGFSnecR6myJsVqsjdoJxUvZCVPQt+YYc0z8emsJhrHrt
+         vsk22guW1nAI0iehY1LGJN30XBwhoZLrD0beorWRVUlGlarD9L5fqyitOZN3xGX8GMFg
+         vBrQ==
+X-Gm-Message-State: AHQUAuYpXexVhUl7fLaW1SwMma7gEgf30IFadgCFNo2oZ1hUSPBXTVxk
+        eumNvef7/BYBdzktv3YCrwfuZ9obub8kTeia0pDaBZjX21w5jA==
+X-Google-Smtp-Source: AHgI3IY0QB990fMWVki8Kr2ijwfqnVm0vmvmNzZT3ufy9FCTR4jzj674f5//NmA5xa03EpvAwigbj/gsJI1SKT05gUM=
+X-Received: by 2002:a24:6891:: with SMTP id v139mr1764177itb.107.1550049573146;
+ Wed, 13 Feb 2019 01:19:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20190201154232.10505-1-jagan@amarulasolutions.com>
+ <CAMty3ZBspvP=qZEK9vaowVq4f5W3Qx2qHkwcuAnCOOjV29=Y_Q@mail.gmail.com> <20190213090308.dlcwgcrhg264k2cu@flea>
+In-Reply-To: <20190213090308.dlcwgcrhg264k2cu@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 13 Feb 2019 14:49:21 +0530
+Message-ID: <CAMty3ZCSMRm-0suApB4Zb+kE1M2sWn3F7ugPBFWaL4ap7cJejQ@mail.gmail.com>
+Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2019-02-05 at 16:01 -0800, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2019-01-31 10:40:07)
-> > On Wed, 2019-01-30 at 13:30 -0800, Stephen Boyd wrote:
-> > > > With this quirk, CCF is making an assumption that might be wrong.
-> > > > 
-> > > > The quirk is very easy put in the get_parent() callback of the said
-> > > > driver, or
-> > > > even better, don't provide the callback if it should not be called.
-> > > > 
-> > > > I understand the need for a cautious approach. It seems I'm only one
-> > > > with
-> > > > that
-> > > > issue right now and since I have a work around, there is no rush. But
-> > > > we
-> > > > must
-> > > > have plan to make it right.
-> > > > 
-> > > > To be clear, I'm not against your new API but I don't think it should
-> > > > be a
-> > > > reason to keep a broken behavior the framework.
-> > > > 
-> > > 
-> > > So do you think you can use this new clk_op and ignore the problems with
-> > > the .get_parent clk op? Putting effort into fixing the .get_parent
-> > > design isn't very useful from my perspective. There's more than just the
-> > > problem that we don't call it when .num_parents is 1. There's the
-> > > inability to return errors without doing weird things to return an index
-> > > out of range and there isn't any way for us to really know if the clk is
-> > > an orphan or not. If we can migrate all drivers to use the new clk op
-> > > then we can fix these problems too, and deprecate and eventually remove
-> > > the broken by design .get_parent clk op API.
-> > 
-> > Stephen, I have nothing against your new API, I'm sure it will solve many
-> > issues
-> > 
-> > I'm also quite sure that, like round_rate() and determine_rate(),
-> > migrating to
-> > the new API won't happen overnight. We are likely to still see
-> > get_parent()
-> > for a while. I don't understand why we would keep something wrong when it
-> > is
-> > that easy to fix.
-> > 
-> > I have spent quite sometime debugging this weird behavior of CCF, I'd
-> > prefer
-> > if it can avoided for others.
-> > 
-> > Yes, fixing the case I reported does not solves all the problem you have
-> > mentionned. Keeping this bug does not help either, AFAICT.
-> > 
-> > The fact is that get_parent() already return out of bound values on some
-> > occasion, and we already have to deal with this when converting the index
-> > to
-> > parent clk_hw pointer. Doing it in the same way when num_parent == 1 does
-> > not
-> > change anything.
-> > 
-> > I really don't understand why you insist on keeping this special case for
-> > num_parent == 1, when we know it is not coherent.
-> > 
-> > Considering, that I already proposed the fix, what is the effort here ?
-> > If it is fixing the driver that rely this weird thing, I'd be happy to do
-> > it.
-> > 
-> > 
-> 
-> Ok. I'm happy to merge your patch to always call the .get_parent clk op
-> when num_parents > 0, but please fix all the drivers and analyze all the
-> implementations of .get_parent to make sure that they aren't broken by
-> the change in behavior. Furthermore, please add a debug/warning message
-> into the code when .get_parent returns a number outside of the range of
-> [0, num_parents) so that they can be converted to use .get_parent_hw
-> instead.
+On Wed, Feb 13, 2019 at 2:33 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Tue, Feb 12, 2019 at 03:16:02PM +0530, Jagan Teki wrote:
+> > On Fri, Feb 1, 2019 at 9:12 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > Here is next version changes for Allwinner A64 MIPI-DSI support
+> > >
+> > > This series grouped the changes like previous version[1] with different
+> > > sets to support three different panels types that can fit into the DSI
+> > > controller.
+> > >
+> > > set:1, for 4-lane, burst mode support
+> > > - patch 0001: 0009, DSI controller changes that support burst mode.
+> > >
+> > > set:2, for A64 DSI support
+> > > - patch 0010: tcon dclk divider computation based on A64 BSP.
+> > > - patch 0011: 0017, Allwinner A64 DSI controller changes.
+> > >
+> > > set:3, enable 4-lane burst mode panel:
+> > > - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
+> > >   burst mode panel on Pine64-LTS
+> > >
+> > > set:4, enable 4-lane video mode panel:
+> > > - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
+> > > - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211
+> > >   panel on Bananapi M64
+> > >
+> > > set:5, enable 2-lane video mode panel:
+> > > - patch 0021, 0022: DSI hfp and hbp timings fixes
+> > > - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
+> > >
+> > > Changes for v7:
+> > > - moved vcc-dsi binding to required filed.
+> > > - drop quotes on fallback dphy bindings.
+> > > - drop min_rate clock pll-mipi patches.
+> > > - introduce dclk divider computation as like A64 BSP.
+> > > - add A64 DSI quark patches.
+> > > - fixed A64 DSI pipeline.
+> > > - add proper commit messages.
+> > > - collect Merlijn Wajer Tested-by credits.
+> > > Changes for v6:
+> > > - dropped unneeded changes, patches
+> > > - fixed all burst mode patches as per previous version comments
+> > > - rebase on master
+> > > - update proper commit message
+> > > - dropped unneeded comments
+> > > - order the patches that make review easy
+> > > Changes for v5:
+> > > - collect Rob, Acked-by
+> > > - droped "Fix VBP size calculation" patch
+> > > - updated vblk timing calculation.
+> > > - droped techstar, bananapi dsi panel drivers which may require
+> > >   bridge or other setup. it's under discussion.
+> > > Changes for v4:
+> > > - droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
+> > >   nkm min, max rate patches
+> > > - create two patches for "Add Allwinner A64 MIPI DSI support"
+> > >   one for has_mod_clk quirk and other one for A64 support
+> > > - use existing driver code construct for hblk computation
+> > > - dropped "Increase hfp packet overhead" patch [2], though BSP added
+> > >   this but we have no issues as of now.
+> > >   (no issues on panel side w/o this change)
+> > > - create separate function for vblk computation
+> > > - enable vcc-dsi regulator in dsi_runtime_resume
+> > > - collect Rob, Acked-by
+> > > - update MAINTAINERS file for panel drivers
+> > > - cleanup commit messages
+> > > - fixed checkpatch warnings/errors
+> > >
+> > > [1] https://patchwork.kernel.org/cover/10779893/
+> > >
+> > > Any inputs?
+> > > Jagan.
+> > >
+> > > Jagan Teki (23):
+> > >   drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
+> > >     delay
+> > >   drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
+> > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
+> > >   drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
+> > >   drm/sun4i: tcon: Export get tcon0 routine
+> > >   drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
+> > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode
+> > >   drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
+> > >   drm/sun4i: sun6i_mipi_dsi: Enable HBP, HSA_HSE for burst mode
+> >
+> > Can you pick these burst changes which are generic to all SoCs. and
+> > reset will send once we decide the tcon clock.
+>
+> These patches don't implement what we discussed last week, and as I
+> told you already, most of them really need some work on the commit log
+> and their explanations.
 
-Fair enough.
+If I'm not wrong, we discussed about tcon_dclk (PLL_MIPI) last week
+[1] and these burst changes between 01/23 to 09/23 which are generic
+changes to DSI and not related to clock. Apart from that I made few
+changes on commit logs between the versions (which I was mentioned on
+the cover-letter patch). If any issues issues on commit message,
+please let me know so-that I can rework.
 
->  Ideally there wouldn't be anything returning a parent index
-> outside the range of possible parents from .get_parent because this
-> analysis of drivers would find those implementations and migrate them to
-> .get_parent_hw instead.
-> 
-> In parallel, I'd like to convert all drivers to use .get_parent_hw
-> instead of .get_parent and then remove the .get_parent clk op right
-> away. 
-
-Fine by me. Of course step #1 is not required if you get this is in before.
-As long as things are coherent, I'm happy :)
-
-> I'll start a sweep of the users of clk_hw_get_parent_by_index() (I
-> see 50 calls in the tree right now) and see if I can convert them to
-> handle errors returned from that API, probably by just continuing and
-> ignoring errors. I'll start doing the same conversion for .round_rate
-> and .determine_rate so that we can get rid of that duplicate clk op as
-> well. Hopefully that's a mostly mechanical conversion.
-
-This would be nice !
-
-> 
-> For now I'll move this patch to the end of this series so that it
-> doesn't hold things up otherwise.
-
-It could even be separate series ? with the migration you mentionned above ?
-
-
+[1] https://patchwork.kernel.org/patch/10780041/
