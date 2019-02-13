@@ -2,41 +2,41 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B82C282CA
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51939C282C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E28082190A
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 228EC2086C
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550080100;
-	bh=LoGu4ZFpYnInUrsS0hVTMhsGX33lNGrwKZApfVSsGoQ=;
+	s=default; t=1550080109;
+	bh=SS0vbOTs/1srZxpl61yK6HRHGQuJgvxT9uBD1u1g7g8=;
 	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=hVD4MzHojN4oPF18T9+9WDr9PFjwlaBR4875hn11Y40YzG1880Tj/U8CNA4F+iDUM
-	 SBQ4bZAVK8RRPbB2yR/cJlTO9znIRE6yUbq/CSJ7zLf9yX90/XCcSKuyD0tq8H61fw
-	 WrWy4Vlc/GDf/6AYCu1epZeMUAZD6sNxjc2zWtR4=
+	b=wT1M1Y2WArXVbZgcIANMfpqa4oTpYub1H2UFfjwJFA5tEaaqElPEPpkQ1HpJ7AqRf
+	 oBPI2Lo4sR84u2lgDXlzOPdBgVBZbW2nMav7yb2Ur8p42FYUzvSdFMVwe6dNV8jN+R
+	 dZOMVO1GjnJpGv+7EvmxF91oSttn2lDa3Jz1/e/U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404497AbfBMRsO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:48:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39872 "EHLO mail.kernel.org"
+        id S1730885AbfBMRs2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 12:48:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729082AbfBMRsN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:48:13 -0500
+        id S1728364AbfBMRs2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:48:28 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0DD82086C;
-        Wed, 13 Feb 2019 17:48:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3DF72190A;
+        Wed, 13 Feb 2019 17:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550080093;
-        bh=LoGu4ZFpYnInUrsS0hVTMhsGX33lNGrwKZApfVSsGoQ=;
+        s=default; t=1550080108;
+        bh=SS0vbOTs/1srZxpl61yK6HRHGQuJgvxT9uBD1u1g7g8=;
         h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=OZtVXEWthhNHNzk3YJ4HfieZLR7ZZmoreYaYOlnQx/uUCofvgJPajcFKISoAMcv7S
-         w5BWbL8clOEhf8ZmfCbNMAVgF989LF70mDAnjpLCw9cae+Oa1lxOJOhM0BDa734+Rx
-         rzjBTv5rI7vP2V1Wf3geijEcxn5TgA2jx8D/Ol1M=
+        b=2JL+8D5YIFLBvLVlrvXP6ViyyH7kpowtchdZKoC7pTaEX5l8ECKxZUuFOpphbZaJr
+         sa5V8yUdvisv4KUrnfIE0ZrFxyZMqIyfF2vW/OUWPLlWwms4Q5454+NBtcWmXSwejt
+         b31B1YZE/2o3che2nLgcPVsdZhsUAJxJQ4W09pEI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,45 +44,28 @@ To:     Alexandre Torgue <alexandre.torgue@st.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         gabriel.fernandez@st.com
-In-Reply-To: <20190212135154.2733-4-gabriel.fernandez@st.com>
+In-Reply-To: <20190212135154.2733-5-gabriel.fernandez@st.com>
 User-Agent: alot/0.8
-Subject: Re: [PATCH 3/7] clk: stm32mp1: set ck_csi as critical clock
-Message-ID: <155008009213.115909.12905657780692674136@swboyd.mtv.corp.google.com>
-References: <20190212135154.2733-1-gabriel.fernandez@st.com> <20190212135154.2733-4-gabriel.fernandez@st.com>
+Subject: Re: [PATCH 4/7] clk: stm32mp1: fix mcu divider table
+Message-ID: <155008010726.115909.10603966457383347348@swboyd.mtv.corp.google.com>
+References: <20190212135154.2733-1-gabriel.fernandez@st.com> <20190212135154.2733-5-gabriel.fernandez@st.com>
 Cc:     linux-clk@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Gabriel Fernandez <gabriel.fernandez@st.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 13 Feb 2019 09:48:12 -0800
+Date:   Wed, 13 Feb 2019 09:48:27 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting gabriel.fernandez@st.com (2019-02-12 05:51:50)
+Quoting gabriel.fernandez@st.com (2019-02-12 05:51:51)
 > From: Gabriel Fernandez <gabriel.fernandez@st.com>
 >=20
-> ck_csi is used for IO compensation so it should be
-> considered as "always-on" and kept on.
+> index 8: ck_mcuss divided by 256 (not 512)
 >=20
 > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  drivers/clk/clk-stm32mp1.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-> index e72079de83f4..5b30e4eeca2c 100644
-> --- a/drivers/clk/clk-stm32mp1.c
-> +++ b/drivers/clk/clk-stm32mp1.c
-> @@ -1661,7 +1661,8 @@ static const struct clock_config stm32mp1_clock_cfg=
-[] =3D {
-> =20
->         /*  External / Internal Oscillators */
->         GATE_MP1(CK_HSE, "ck_hse", "clk-hse", 0, RCC_OCENSETR, 8, 0),
-> -       GATE_MP1(CK_CSI, "ck_csi", "clk-csi", 0, RCC_OCENSETR, 4, 0),
-> +       GATE_MP1(CK_CSI, "ck_csi", "clk-csi", CLK_IS_CRITICAL,
 
-Please add a comment to the code indicating this so we know why critical
-is here without reading git history.
+Any Fixes tag?
 
