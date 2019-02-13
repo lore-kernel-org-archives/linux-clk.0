@@ -2,98 +2,85 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AFBC282C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B5FC282C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B90852086C
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:55:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550080542;
-	bh=mzOeovzamvkxdP8MQLu4eGQgRa6Mt95/laR5yOxjrMk=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=Og0PgkpXD9gPfgHPmIKK+y7/9zS9hMMUpYFtmx+72S5i9jYDY8S5FHh0Y3vIRI+fg
-	 j6j/WJA57v3VXHj7EX7r3qDGqW1MMAzaroIp7yfjNlGZq2/hiVcRAWFydxaMuGYZe6
-	 4jud0PHVhMoCYsk1DQ0DcZ2NK4wrtM8fRoWJjj64=
+	by mail.kernel.org (Postfix) with ESMTP id 423E1222C9
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 17:59:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404739AbfBMRzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:55:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46086 "EHLO mail.kernel.org"
+        id S2391667AbfBMR7P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 12:59:15 -0500
+Received: from muru.com ([72.249.23.125]:38650 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404737AbfBMRzg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:55:36 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 409E9222B1;
-        Wed, 13 Feb 2019 17:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550080535;
-        bh=mzOeovzamvkxdP8MQLu4eGQgRa6Mt95/laR5yOxjrMk=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=zZ/MEZ0F3A8vE6MMsaId4cTj5Yj9ImX5wdqW7RRBFuBArAVn9GwukZNJUgSCo6IwU
-         roQB3H3MumD8b9muXyYrKTWpqVsprWmsXCVWfRb4yv+ffsRp3Ic5PYhTfA2Oag92Aw
-         kyYrWT+aExW9Yl+A9FUr5CcMFcb9z8HnwO0nycYA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Sugaya Taichi <sugaya.taichi@socionext.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1549628823-31388-1-git-send-email-sugaya.taichi@socionext.com>
-User-Agent: alot/0.8
-Subject: Re: [PATCH v2 07/15] ndings: clock: milbeaut: add Milbeaut clock description
-Message-ID: <155008053444.115909.15767350529461671558@swboyd.mtv.corp.google.com>
-References: <1549628823-31388-1-git-send-email-sugaya.taichi@socionext.com>
+        id S1729522AbfBMR7O (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Feb 2019 12:59:14 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 6CBA280AE;
+        Wed, 13 Feb 2019 17:59:23 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 09:59:10 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 13 Feb 2019 09:55:34 -0800
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Misael Lopez Cruz <misael.lopez@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH] clk: clk-twl6040: Fix imprecise external abort for pdmclk
+Message-ID: <20190213175910.GY5720@atomide.com>
+References: <20190211225907.38511-1-tony@atomide.com>
+ <155008032870.115909.10773814001430389227@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155008032870.115909.10773814001430389227@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The subject seems to have been cut off? "ndings"?
+* Stephen Boyd <sboyd@kernel.org> [190213 17:52]:
+> Quoting Tony Lindgren (2019-02-11 14:59:07)
+> > I noticed that modprobe clk-twl6040 can fail after a cold boot with:
+> > abe_cm:clk:0010:0: failed to enable
+> > ...
+> > Unhandled fault: imprecise external abort (0x1406) at 0xbe896b20
+> > 
+> > WARNING: CPU: 1 PID: 29 at drivers/clk/clk.c:828 clk_core_disable_lock+0x18/0x24
+> > ...
+> > (clk_core_disable_lock) from [<c0123534>] (_disable_clocks+0x18/0x90)
+> > (_disable_clocks) from [<c0124040>] (_idle+0x17c/0x244)
+> > (_idle) from [<c0125ad4>] (omap_hwmod_idle+0x24/0x44)
+> > (omap_hwmod_idle) from [<c053a038>] (sysc_runtime_suspend+0x48/0x108)
+> > (sysc_runtime_suspend) from [<c06084c4>] (__rpm_callback+0x144/0x1d8)
+> > (__rpm_callback) from [<c0608578>] (rpm_callback+0x20/0x80)
+> > (rpm_callback) from [<c0607034>] (rpm_suspend+0x120/0x694)
+> > (rpm_suspend) from [<c0607a78>] (__pm_runtime_idle+0x60/0x84)
+> > (__pm_runtime_idle) from [<c053aaf0>] (sysc_probe+0x874/0xf2c)
+> > (sysc_probe) from [<c05fecd4>] (platform_drv_probe+0x48/0x98)
+> > 
+> > After searching around for a similar issue, I came across an earlier fix
+> > that never got merged upstream in the Android tree for glass-omap-xrr02.
+> > There is patch "MFD: twl6040-codec: Implement PDMCLK cold temp errata"
+> > by Misael Lopez Cruz <misael.lopez@ti.com>.
+> > 
+> > Based on my observations, this fix is also needed when cold booting
+> > devices, and not just for deeper idle modes. Since we now have a clock
+> > driver for pdmclk, let's fix the issue in twl6040_pdmclk_prepare().
+> > 
+> > Cc: Misael Lopez Cruz <misael.lopez@ti.com>
+> > Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> 
+> Should this be backported to stable trees?
 
-Quoting Sugaya Taichi (2019-02-08 04:27:03)
-> diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.txt b=
-/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
-> new file mode 100644
-> index 0000000..bcfc5df
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
-> @@ -0,0 +1,49 @@
-> +Milbeaut SoCs Clock Controller Binding
-> +----------------------------------------
-> +Milbeaut SoCs Clock controller is an integrated clock controller, which
-> +generates and supplies to all modules.
-> +
-> +This binding uses common clock bindings
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible: should be one of the following:
-> +    "socionext,milbeaut-m10v-ccu" - for M10V SoC
-> +- reg: shall contain base address and length of clock registers
-> +- #clock-cells: shall be 1
-> +- clocks: shall be an external clock
-> +
-> +Example: Clock controller node:
-> +
-> +       clk: m10v-clk-ctrl@1d021000 {
-> +               compatible =3D "socionext,milbeaut-m10v-clk-ccu";
+Yes please, I think that's a good idea.
 
-I thought there was some length limit on compatible string names. 32
-bytes? Just barely under!
+Regards,
 
+Tony
