@@ -2,175 +2,185 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FCDC282C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91566C282C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07EE7222BB
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:11:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57358222BE
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:16:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VDa332ju"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aEiNPADp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbfBMJLl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:11:41 -0500
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:40550 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728468AbfBMJLl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:11:41 -0500
-Received: by mail-wr1-f47.google.com with SMTP id q1so1575585wrp.7
-        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:11:39 -0800 (PST)
+        id S1730918AbfBMJQY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 04:16:24 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39359 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728406AbfBMJQY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:16:24 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f16so1538638wmh.4
+        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:16:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:openpgp:autocrypt:organization:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=L+P3gxUpaewcw9n39ZadRS8MkXSKzNofqtUDsGlWBZw=;
-        b=VDa332juxzdKw81P3+o7xp2dMUWKvuBaPKT52bcbh5imdL71tWjPYBeHAQzxjxXtFG
-         6E86JYKy9iDhxDiUFajk5p7zvlefvz66oUzR2g4FHFT6iBa9+vH5dsFfF5KCEK6qDND9
-         LqZ8X9EMA4AXrro08dE+Eb2SF+dCQ75Qc4r7/xQsuFJNEVhI7J7WmXvUApqjgMOnwdce
-         XuG94pV/dHq369Gi/YZzL8IXDtb0WQnl3G62j9rMRvkSMDgzxgDl0O2wYM194Q1MLon9
-         I3HowtXOskwkCgSpH/AFu+ladFa2LjYP4ywGjXOz3+hp0u+EVmw9jjoDfqNpB9OScB3G
-         j1Qw==
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=+MSho6TGtRH71B7KMbmqjsXQobTe045SJKbrmRWSdpY=;
+        b=aEiNPADpwzjXYMgz2bfqSQSxCtheZ7g91ZKCmeIqkkgysa9jg2RJ1tKCPBuKTvzU6f
+         JOL8qMG0/hsJre4Hs+BiWAAXZYm1/8d39P4gmkvctZCqAsHScnDJy0iSwxi6MjWYedfc
+         SjC3mRKP56DsjZE6b/PnV716XgNKOWQoUQ242kTy6zD19hSUmvVA3ObEeGdTBSxqIyR4
+         1NcLU9o4ypnI9ftP4JekpIulQqIwH4FY4YA/Aink3LAaa4yhBCfyQoB5woe6NoZ8p5kR
+         w6wMKQbguPLfghKdmYLiy/nAlxgzmS9gizb/nOFDxZUSqN+TjqV/04MHRvu7Cefe5AZE
+         SqEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=L+P3gxUpaewcw9n39ZadRS8MkXSKzNofqtUDsGlWBZw=;
-        b=peCnjgAsm2gL1X5nHcXtQHQXEncRlJjGJ9eY/XoIiLzMgRjFNfeAgAEl+CDkAebBV8
-         X2raO5EUv+cHHphnBqPmrDs8ypTUJijaS6iTB7LQpbsRLce7sMHAcqUzjBgBgkA2U2AR
-         ZdGaVl3tk7YhbTzmwZKUvCan4UpHFQH4XnTPmkHunqMfeMYbEUJE8hhjPudCaLRwu9Qr
-         6n+G4zngMUIqZN4i6GoJ9RpNuYWG8ZvNque7qsUq/URGUy2mrsXmiUaJbJcXOnXXrDnN
-         s2m7yqvRqksvcRO+K7mejoDEaizs3wOJrRqYp7lJzKRe+uySBWaknRjiIqZK9XXgSfXI
-         kvbA==
-X-Gm-Message-State: AHQUAuZ54xI+7Bh39HCn2qKiV5mTKYWTqaSPNxHPFX5pcdYLnXUHAPy7
-        l6CmTwCDOedqSRmz6uQbTpnhvw==
-X-Google-Smtp-Source: AHgI3IaN0aStakC2EiIEqdsB3eTGuNn7SIjtD6ivsLleZDo/kOGgh4GHksL3sNexZRSDpJvXsIBnbQ==
-X-Received: by 2002:adf:b741:: with SMTP id n1mr6043489wre.287.1550049099000;
-        Wed, 13 Feb 2019 01:11:39 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id q9sm4464256wmc.10.2019.02.13.01.11.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 01:11:38 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Subject: [GIT PULL] clk: meson: updates for v5.1 round2
-To:     sboyd@kernel.org, mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <e115449e-085c-8f82-b345-f610b5e735db@baylibre.com>
-Date:   Wed, 13 Feb 2019 10:11:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=+MSho6TGtRH71B7KMbmqjsXQobTe045SJKbrmRWSdpY=;
+        b=iAYNZhB7gJSzgevgr1kwwz4VaF7sA4NORKO8vS/7dAWBa1BXxehFJ8AtMV+eUqkpON
+         dkLQ9NA7mFxcvMdhS4Yugp7B9VHH7hvOJYnbhC3NQo+INP/8o92lSYmTcZj+NldTswrU
+         39H7Q31+sRgxV5Gxm/41WTJAW9xm5BW5VA8pztMTwgqlQMQPs3+3eDtR0mFL3wnjWRsE
+         tJgfueAQvGcMWuUzqG3vTczbsqLGsUiYD5BXyPjSp32xR+eQJkeBT1tCJ8DoqsxESkCG
+         oDPvEGSvaDyV7cQODCcu2qVKsAg9nLmeAZq7FMT8nKnC0oDG+xWbhtgMUyqhjfBs+4rO
+         Giyw==
+X-Gm-Message-State: AHQUAubCerNEWiIQ5vLADliCs2Uy8lBh8CQPDpbVdN0had4PoEPezGeF
+        DT7mWyo9oeGVpZyPe6D69A7/og==
+X-Google-Smtp-Source: AHgI3IZP2aQVPcbiaNbFOoDOvB7A6b6X5Gl6v9obvWpU8LN0rsL53QwwFDbSBr6Zrp3Jaj6yH7L2+w==
+X-Received: by 2002:a05:600c:2159:: with SMTP id v25mr338342wml.17.1550049381055;
+        Wed, 13 Feb 2019 01:16:21 -0800 (PST)
+Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id f13sm1099408wmh.41.2019.02.13.01.16.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 13 Feb 2019 01:16:20 -0800 (PST)
+Message-ID: <9e86b95eb8c9e3c0454d3aeebac15e354298c815.camel@baylibre.com>
+Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>
+Date:   Wed, 13 Feb 2019 10:16:18 +0100
+In-Reply-To: <154941131193.169292.7500057932043013834@swboyd.mtv.corp.google.com>
+References: <20190129061021.94775-1-sboyd@kernel.org>
+         <20190129061021.94775-3-sboyd@kernel.org>
+         <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com>
+         <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com>
+         <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com>
+         <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com>
+         <97c2375f41fe7dabc4d71f66c9808912eb0ce611.camel@baylibre.com>
+         <154941131193.169292.7500057932043013834@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear clock maintainers,
+On Tue, 2019-02-05 at 16:01 -0800, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2019-01-31 10:40:07)
+> > On Wed, 2019-01-30 at 13:30 -0800, Stephen Boyd wrote:
+> > > > With this quirk, CCF is making an assumption that might be wrong.
+> > > > 
+> > > > The quirk is very easy put in the get_parent() callback of the said
+> > > > driver, or
+> > > > even better, don't provide the callback if it should not be called.
+> > > > 
+> > > > I understand the need for a cautious approach. It seems I'm only one
+> > > > with
+> > > > that
+> > > > issue right now and since I have a work around, there is no rush. But
+> > > > we
+> > > > must
+> > > > have plan to make it right.
+> > > > 
+> > > > To be clear, I'm not against your new API but I don't think it should
+> > > > be a
+> > > > reason to keep a broken behavior the framework.
+> > > > 
+> > > 
+> > > So do you think you can use this new clk_op and ignore the problems with
+> > > the .get_parent clk op? Putting effort into fixing the .get_parent
+> > > design isn't very useful from my perspective. There's more than just the
+> > > problem that we don't call it when .num_parents is 1. There's the
+> > > inability to return errors without doing weird things to return an index
+> > > out of range and there isn't any way for us to really know if the clk is
+> > > an orphan or not. If we can migrate all drivers to use the new clk op
+> > > then we can fix these problems too, and deprecate and eventually remove
+> > > the broken by design .get_parent clk op API.
+> > 
+> > Stephen, I have nothing against your new API, I'm sure it will solve many
+> > issues
+> > 
+> > I'm also quite sure that, like round_rate() and determine_rate(),
+> > migrating to
+> > the new API won't happen overnight. We are likely to still see
+> > get_parent()
+> > for a while. I don't understand why we would keep something wrong when it
+> > is
+> > that easy to fix.
+> > 
+> > I have spent quite sometime debugging this weird behavior of CCF, I'd
+> > prefer
+> > if it can avoided for others.
+> > 
+> > Yes, fixing the case I reported does not solves all the problem you have
+> > mentionned. Keeping this bug does not help either, AFAICT.
+> > 
+> > The fact is that get_parent() already return out of bound values on some
+> > occasion, and we already have to deal with this when converting the index
+> > to
+> > parent clk_hw pointer. Doing it in the same way when num_parent == 1 does
+> > not
+> > change anything.
+> > 
+> > I really don't understand why you insist on keeping this special case for
+> > num_parent == 1, when we know it is not coherent.
+> > 
+> > Considering, that I already proposed the fix, what is the effort here ?
+> > If it is fixing the driver that rely this weird thing, I'd be happy to do
+> > it.
+> > 
+> > 
+> 
+> Ok. I'm happy to merge your patch to always call the .get_parent clk op
+> when num_parents > 0, but please fix all the drivers and analyze all the
+> implementations of .get_parent to make sure that they aren't broken by
+> the change in behavior. Furthermore, please add a debug/warning message
+> into the code when .get_parent returns a number outside of the range of
+> [0, num_parents) so that they can be converted to use .get_parent_hw
+> instead.
 
-Below is a request to pull updates for Amlogic clocks for 5.1, round 2.
+Fair enough.
 
-It adds the G12A Always-On clock controller and a simple typo fix
-for a clock name on Meson8.
+>  Ideally there wouldn't be anything returning a parent index
+> outside the range of possible parents from .get_parent because this
+> analysis of drivers would find those implementations and migrate them to
+> .get_parent_hw instead.
+> 
+> In parallel, I'd like to convert all drivers to use .get_parent_hw
+> instead of .get_parent and then remove the .get_parent clk op right
+> away. 
 
-Thanks,
-Neil
+Fine by me. Of course step #1 is not required if you get this is in before.
+As long as things are coherent, I'm happy :)
 
-The following changes since commit 6682bd4d443fad802e11a0a39332025cdfbf5108:
+> I'll start a sweep of the users of clk_hw_get_parent_by_index() (I
+> see 50 calls in the tree right now) and see if I can convert them to
+> handle errors returned from that API, probably by just continuing and
+> ignoring errors. I'll start doing the same conversion for .round_rate
+> and .determine_rate so that we can get rid of that duplicate clk op as
+> well. Hopefully that's a mostly mechanical conversion.
 
-  clk: meson: factorise meson64 peripheral clock controller drivers (2019-02-04 09:52:11 +0100)
+This would be nice !
 
-are available in the Git repository at:
+> 
+> For now I'll move this patch to the end of this series so that it
+> doesn't hold things up otherwise.
 
-  git://github.com/BayLibre/clk-meson.git tags/meson-clk-5.1-2
+It could even be separate series ? with the migration you mentionned above ?
 
-for you to fetch changes up to c5f09e6bd8a7537beef8ee53cd161a06b04de271:
 
-  clk: meson: meson8b: fix the naming of the APB clocks (2019-02-13 09:51:09 +0100)
-
-----------------------------------------------------------------
-- Add G12A Always-On Clock Controller
-- Fix Meson8 APB clock ID name
-
-----------------------------------------------------------------
-Martin Blumenstingl (2):
-      dt-bindings: clock: meson8b: add APB clock definition
-      clk: meson: meson8b: fix the naming of the APB clocks
-
-Neil Armstrong (2):
-      dt-bindings: clk: add G12A AO Clock and Reset Bindings
-      clk: meson: Add G12A AO Clock + Reset Controller
-
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
- drivers/clk/meson/Kconfig                          |   2 +
- drivers/clk/meson/Makefile                         |   2 +-
- drivers/clk/meson/g12a-aoclk.c                     | 454 +++++++++++++++++++++
- drivers/clk/meson/g12a-aoclk.h                     |  34 ++
- drivers/clk/meson/meson8b.c                        |  26 +-
- drivers/clk/meson/meson8b.h                        |   2 +-
- include/dt-bindings/clock/g12a-aoclkc.h            |  34 ++
- include/dt-bindings/clock/meson8b-clkc.h           |   1 +
- include/dt-bindings/reset/g12a-aoclkc.h            |  18 +
- 10 files changed, 559 insertions(+), 15 deletions(-)
- create mode 100644 drivers/clk/meson/g12a-aoclk.c
- create mode 100644 drivers/clk/meson/g12a-aoclk.h
- create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
- create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
