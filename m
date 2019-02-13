@@ -4,63 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C2BC282C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C07C282CA
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCABF222BB
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:00:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6080C222BB
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 09:00:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vTx+7WRm"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HPPT7vjl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388743AbfBMJAl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:00:41 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34615 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388574AbfBMJAk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:00:40 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y185so1350084wmd.1
-        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:00:39 -0800 (PST)
+        id S2389334AbfBMJAv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 04:00:51 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37295 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389130AbfBMJAv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 04:00:51 -0500
+Received: by mail-wm1-f68.google.com with SMTP id x10so1484282wmg.2
+        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 01:00:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=i6eF9degw0aTd+4/dVJSO1fMB/yLMvBoJbOjltxcH7k=;
-        b=vTx+7WRm/6gvhKb4qUbZPcnEq4JOM0D4gC3suHkbVGgBYY/SxVNlPR5ouxYJi4DKfZ
-         /0KHpt32GG2nKJiVF9EJC1FKiI4ydM7HucJHFi5t0bv9XymUq5y3r4p0bLfD+udKbhtK
-         BxJESvE5RioHwSkScQlcktCg6e9neT74hWMU5aLD5oB4UMyyC27VUhg8MMO8JiaY33De
-         HgOsP483wuOUm++WKZqu2SDDhZu17AnRuZSm7fUTEbC9VSWJ+tZkZrv9eNB/+075jPXi
-         qcQIebs8dVAt/WwRqSs3JVi2N7uaGtO6M2taAMoqhviF3lBxfAMOz6psqiQEkvn15KXL
-         mYzA==
+        bh=1XQZ/VjQrY+aMh72K1PfMUQ0MhDPMW3XRCQoy/ywj6w=;
+        b=HPPT7vjlAZNLk7wzhfQiccsS+JSi6P7zFmUNOHdhtqjQJ1x5pDVnMV3Lnc2LDcjUK+
+         nbckdcSiMcyncdw7w5e+5oR1F9HtNiMu0jskwOcvkLpJHAgpKshE+s5ixDPbZHAjntLM
+         7EnL4UyDy98NvKY5N+6HeXxgJoynAZa8wGnO4jv2SNspm2txWGF4+sMt1YWDRq6GuSVs
+         lAlguytEEe0+FtqeQIDDxY41kbKrd3hr6cY1LglP48/k/rT3bFMOBDKhPSLk74BvRr1E
+         VUXlYVGi3jqc+xnfPV6JbrhT7EFABemdOEzL6/t70GEwWPS3sj4YgH4AJSIWnX4eB026
+         k8Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=i6eF9degw0aTd+4/dVJSO1fMB/yLMvBoJbOjltxcH7k=;
-        b=mVp741CecyQouPI8Bz+OFt2Y7pbjfB35Tq5EQiGR10ZqcYzjjuPEFJpmsEbl02tJWb
-         eahEu3cSFzuetCfwNnhrAy84M9B9Th9Qv6u9Pjb+7WO0KgTyIBxwKtBOmieDMzEP2zEA
-         NVa7fNS4vYkJ4BuCgCQO4blWGHDj2/uF8dfyq/Yx+0Bi2JyF6ADzKGZLC2WwWcpMESD7
-         jSfKRtb4nDoXXqMpQY9f2sz9kWnnog58SJZ4vuMvhBN9/dNppjscdWvGc8P+99DT21XJ
-         nHX7sGa1i6LZJiXDSwJhLwN1/hGwgcTvKYG7YJ10u/4bUK52YgP1BwOF3uxkWEYBZkj7
-         mOxw==
-X-Gm-Message-State: AHQUAuax+bXZsIhPbJ7DC7HZT6XZhy0NwG/3qlh2dJ0ggl1TQdcn2dJ8
-        oA4Om1+9JuHZZq1JK6mSCQIahQ==
-X-Google-Smtp-Source: AHgI3Ia/KHLt062kojIKsrw5vz5nUDjBQGD+cxiRdsrg/kU8ZSGCkWHZhRxscU5GQyZ3qX786cLAkw==
-X-Received: by 2002:a1c:a885:: with SMTP id r127mr2594453wme.74.1550048438497;
-        Wed, 13 Feb 2019 01:00:38 -0800 (PST)
+        bh=1XQZ/VjQrY+aMh72K1PfMUQ0MhDPMW3XRCQoy/ywj6w=;
+        b=r2HdeJjskiqWKR3RxXMULkRN6oWUvXkYN06Jmu3Ilg7Jn9CKe1SvDVUF+ZKa4zWHBr
+         fyXTHVeknBLeLrl0s9h7UlGVX4+VIslyiz2uU/2xSQDKf75E4X9TVAPkC8XQ46rlGTtT
+         83EqTIjpq5gQXNmgchrRhDR/SQkHC5NYyAQX82jjWPCUpvyMdP8TjMQnoF16w8JlIhB0
+         WPbeJOGWNXrCzmF8ZhyURa8BJTEQtPMzTTefEkbdlAW1l+rpA37D53lL2IWjwrS7Ilne
+         uS7n2dBfvEPWYx2HTysKU95c9kkBqSD4jDJUdwdDJfOG3Lxqwocy14SDRRCBoJ4QPZts
+         nhZA==
+X-Gm-Message-State: AHQUAuYGvxNR0qQ+HLOZjsxejJtxEkwwzbnoE6BxxtgQ5iuCfGjfXD0W
+        Na/0NEJ40WW+Yzr2C5LWbTfdtg==
+X-Google-Smtp-Source: AHgI3IbweqEWGRXZarmGba97uYiVkSqWwP3h1Pv1bws2Vc5SbdZlYVupOOXOWhlRJEEojW6kgZrmJw==
+X-Received: by 2002:a7b:c396:: with SMTP id s22mr2604180wmj.100.1550048448141;
+        Wed, 13 Feb 2019 01:00:48 -0800 (PST)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o2sm7966176wmo.33.2019.02.13.01.00.34
+        by smtp.gmail.com with ESMTPSA id b14sm27320448wrx.36.2019.02.13.01.00.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 01:00:37 -0800 (PST)
-Subject: Re: [PATCH v2 0/2] clk: meson: Add G12A AO Clock + Reset Controller
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190212162859.20743-1-narmstrong@baylibre.com>
- <98eaeaca26bc83db1a8d1f1362b56e3a32073bb3.camel@baylibre.com>
+        Wed, 13 Feb 2019 01:00:47 -0800 (PST)
+Subject: Re: [RESEND PATCH v2 0/2] clk: meson8b: fix typo "ABP" -> "APB"
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        mark.rutland@arm.com
+References: <20190210222603.6404-1-martin.blumenstingl@googlemail.com>
+ <fc50a3a7f1efc8d2f6054a944848897ed8baf536.camel@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -113,12 +117,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <4585c4e6-1d43-ac1a-48ae-24b931fe7614@baylibre.com>
-Date:   Wed, 13 Feb 2019 10:00:25 +0100
+Message-ID: <de075384-8a64-b77f-6ae1-5fe174998d18@baylibre.com>
+Date:   Wed, 13 Feb 2019 10:00:47 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <98eaeaca26bc83db1a8d1f1362b56e3a32073bb3.camel@baylibre.com>
+In-Reply-To: <fc50a3a7f1efc8d2f6054a944848897ed8baf536.camel@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,53 +131,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/02/2019 09:38, Jerome Brunet wrote:
-> On Tue, 2019-02-12 at 17:28 +0100, Neil Armstrong wrote:
->> This patchset add support for the Amlogic G12A SoC family Always-On
->> clock and reset controller.
+On 13/02/2019 09:40, Jerome Brunet wrote:
+> On Sun, 2019-02-10 at 23:26 +0100, Martin Blumenstingl wrote:
+>> It turns out that I'm not good at spelling "APB". Unfortunately an ABP
+>> (instead of APB) typo snug into two clocks in v5.0.
 >>
->> This adds support for clocks on the Always-On domain like :
->> - Always-On UARTS & I2C Controllers
->> - CEC Controllers
->> - SARADC source and bus clock
->> - Infrared Decoder/Encoder bus clock
->> - USB 32K reference clock
+>> Currently there are no users of that clock yet, so fix it now
+>> before it's too late (meaning before it's used by <something>).
 >>
->> This also adds resets lines for :
->> - Always-On UARTS & I2C Controllers
->> - SARADC, Infrared Decoder/Encoder
+>> I decided to go the "normal" route where we can have separate
+>> branches for the dt-bindings and the drivers in the clk-meson
+>> repo. This means:
+>> - new (typo-free) clock #define
+>> - change the clock controller to use the new #define
+>> - (next development cycle) drop the old #define
 >>
->> This patchset depends on the ("clk: meson: rework drivers dependencies")
->> from Jerome Brunet at [1].
+>> resend - changes since v2 at [1]:
+>> - include the device-tree maintainers / mailing list
 >>
->> Changes from v1 at [2]:
->> - Moved unused bindings ID out of the dt-bindings header
->> - Added comment about CLK_IGNORE_UNUSED
+>> Changes since v1 at [0]:
+>> - split into a dt-bindings and clock controller driver patch
 >>
->> [1] https://lkml.kernel.org/r/20190201125841.26785-1-jbrunet@baylibre.com
->> [2] https://lkml.kernel.org/r/20190204091331.9298-1-narmstrong@baylibre.com
 >>
->> Neil Armstrong (2):
->>   dt-bindings: clk: add G12A AO Clock and Reset Bindings
->>   clk: meson: Add G12A AO Clock + Reset Controller
+>> [0] https://patchwork.kernel.org/cover/10742001/
+>> [1] https://patchwork.kernel.org/cover/10772199/
+>>
+>>
+>> Martin Blumenstingl (2):
+>>   dt-bindings: clock: meson8b: add APB clock definition
+>>   clk: meson: meson8b: fix the naming of the APB clocks
+>>
+>>  drivers/clk/meson/meson8b.c              | 26 ++++++++++++------------
+>>  drivers/clk/meson/meson8b.h              |  2 +-
+>>  include/dt-bindings/clock/meson8b-clkc.h |  1 +
+>>  3 files changed, 15 insertions(+), 14 deletions(-)
+>>
 > 
 > Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
->>
->>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
->>  drivers/clk/meson/Kconfig                     |   2 +
->>  drivers/clk/meson/Makefile                    |   2 +-
->>  drivers/clk/meson/g12a-aoclk.c                | 454 ++++++++++++++++++
->>  drivers/clk/meson/g12a-aoclk.h                |  34 ++
->>  include/dt-bindings/clock/g12a-aoclkc.h       |  34 ++
->>  include/dt-bindings/reset/g12a-aoclkc.h       |  18 +
->>  7 files changed, 544 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/clk/meson/g12a-aoclk.c
->>  create mode 100644 drivers/clk/meson/g12a-aoclk.h
->>  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
->>  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
->>
-> 
 > 
 
 Applied to next/drivers for Linux 5.1-rc1
