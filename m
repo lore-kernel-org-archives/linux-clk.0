@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F301DC282CA
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 19:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036DAC282CA
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 19:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C045B222D1
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 19:05:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4850222D2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 19:05:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XAG7OWEG"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eH9Q5oCq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392165AbfBMTFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 14:05:20 -0500
+        id S2391454AbfBMTF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 14:05:26 -0500
 Received: from mail-eopbgr70070.outbound.protection.outlook.com ([40.107.7.70]:5779
         "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388403AbfBMTFT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Feb 2019 14:05:19 -0500
+        id S2388403AbfBMTF0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Feb 2019 14:05:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1VdX3XCQQYS73cg+xTxB4qDqOUN6b4Kn+v3omrf9h3Y=;
- b=XAG7OWEG/Z4iWYoSee1P5TpAiul5iCu159maGNt4DZBntkQYHHYhTiGV2VcK7PQOsB2urvlbg0OzwoFO0qiTPVwWj0FUZJEvi4bNSdYvclz4gfjNFBrHFsJdP+KHZY655shE31cZJWQEmSqrPUetO338jUXmRBhwBkS4vk6Wi5Y=
+ bh=w189ljzm0VaqugtVo9tpZPHp05AlfHj0Dcxzoa0eJr0=;
+ b=eH9Q5oCq+airz8iKbJ3BkcSFSK20XhEBWq6Ck0UHQpck8BK+rrk4AZ6giT2gJlmATZ1X6LQz1MfhmVOZk7ZHJXLQUmeHoadZ6mSJpCcSAmE5CRr6ruQxs1qI6G70n7sxpjd9RiaNx14P0ZYofiX+qpPsq6rC2XhMhUb3ZOZIAZg=
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
  AM0PR04MB4515.eurprd04.prod.outlook.com (52.135.148.153) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Wed, 13 Feb 2019 19:05:12 +0000
+ 15.20.1622.16; Wed, 13 Feb 2019 19:05:16 +0000
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
- 19:05:12 +0000
+ 19:05:16 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -50,11 +50,13 @@ CC:     dl-linux-imx <linux-imx@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [RFC 1/5] clk: imx: imx8mq: Fix the rate propagation for arm pll
-Thread-Topic: [RFC 1/5] clk: imx: imx8mq: Fix the rate propagation for arm pll
-Thread-Index: AQHUw88Lx/34yAmb5k+9Wv1v0WwQCQ==
-Date:   Wed, 13 Feb 2019 19:05:12 +0000
-Message-ID: <1550084693-9797-2-git-send-email-abel.vesa@nxp.com>
+Subject: [RFC 4/5] arm64: dts: imx8mq: Add the clocks and the latencies for
+ the A53 cores
+Thread-Topic: [RFC 4/5] arm64: dts: imx8mq: Add the clocks and the latencies
+ for the A53 cores
+Thread-Index: AQHUw88Oy8jEtYT5Hki/orEOIclb6A==
+Date:   Wed, 13 Feb 2019 19:05:16 +0000
+Message-ID: <1550084693-9797-5-git-send-email-abel.vesa@nxp.com>
 References: <1550084693-9797-1-git-send-email-abel.vesa@nxp.com>
 In-Reply-To: <1550084693-9797-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
@@ -70,47 +72,47 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.7.4
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1d0c03d7-6585-4249-6d04-08d691e62e1f
+x-ms-office365-filtering-correlation-id: def1328f-cf01-4140-3ac1-08d691e630b1
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4515;
 x-ms-traffictypediagnostic: AM0PR04MB4515:
 x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB4515;23:ZUCDnGzxtslazZ+zfGJCaHN9KebZpCCxDzmrlK0?=
- =?iso-8859-1?Q?G6SVmE8y5/l1ADsYIB9gXGL7t8AWHCDXF2kfcrI4t8c5UZ33IHtCu003fu?=
- =?iso-8859-1?Q?Pwtrpegxym6oIPJ9/XAXUjOce9j8+9XI9ckVaLupZ2s9JmMxD6XkVr4o/f?=
- =?iso-8859-1?Q?+fVtRu7Ok3Bkr70mM2IdFLEjjDRonjphbydJ+U6rCqPaJftBzaSmbNiHR6?=
- =?iso-8859-1?Q?h0GqvMCpTaeprhK4/EqjuYHRlyMIp9kA8+GMhrmLu1G81rPj/r9z60DzaY?=
- =?iso-8859-1?Q?V7KTc7eILN5q8O81EiWzkVlUoOMV4HgtaMiE78jRAQQCN2zxhGtnTsQhu9?=
- =?iso-8859-1?Q?WN64V7yNtuoA8DpICA1LVn5b/oEvXv5Cud4fZsLXbUeYCysIkJf/wffHf0?=
- =?iso-8859-1?Q?Ssy0zbYmTmc+iQT2tP8oCaTxk13fsP4pXSjsfp1kXej3rNk+I02WQt0cy3?=
- =?iso-8859-1?Q?yvNNpCHYrKAhTfBv/qQdq/UZV57WXAHcH1X80ia1leCdY14zKgGS3WIQPS?=
- =?iso-8859-1?Q?sbuRAAfu1Adju9DUmfhBEjku038q2njriAmnL8sECE/ypiFjuhz6my3edr?=
- =?iso-8859-1?Q?k70v49lgACNayiPwe35Xs//deY023EN1Jv1bXJ7uds+8kGL26wnt9uJasN?=
- =?iso-8859-1?Q?X9WCzlm6MKLYjLLFXqYm+FOUWzhr4cjP2JKB6iKUMz7dP1FqICax3cojtQ?=
- =?iso-8859-1?Q?JP50wTd0oh+ZFODMm3pMRTDBp1srxIGrrYm9VbkYYu7nBRVAccXS5ZxJwg?=
- =?iso-8859-1?Q?8pmt3wodYf1HydXYnqheLQxEZNs2P5eodRJbWU7+HTfvcMCI4ft0wZKlKM?=
- =?iso-8859-1?Q?pDo5o1y+6pMecIrbqR5OBqCyiOEgP3WJZkNf+j9lTgo8qxUt/0ZF8EyYgq?=
- =?iso-8859-1?Q?4JrKOz2hH/euBO18N/VkTs3mCvxVYeRw4TLUTRidr9C0ATVvBJYId0cPQZ?=
- =?iso-8859-1?Q?5Ff61K9WyMIMaceQnLlO+nWXlA4JI3FVSbJpFaSssf876EeylwEjwJ7Aii?=
- =?iso-8859-1?Q?JIiCmdlFJ294Ws7t3fS54CchlnNktLU1ClOein82QG68c5LdJ4GrmhktpA?=
- =?iso-8859-1?Q?iKQC4N/gpdIlLJr1qSW84wZ3xSQ5pwjNLyDpbxlwpNfEOauLs7inl1h+zo?=
- =?iso-8859-1?Q?zo64wMf6yvr6EbjQV7iKarr+WlXB99Vo3Z3HHDtBs7MtNAnNAVeliButal?=
- =?iso-8859-1?Q?M+5Iyf4lfhblKQT82aw2EKfJXhGnXxPbHIe22OXgha+KBDWgcV9vUcut+W?=
- =?iso-8859-1?Q?2P6UnzCSdmJv4KDxAmbeRuvSa9ESH4Be3QLvBvrGlE8Ow5R8lDgk6XV6Iu?=
- =?iso-8859-1?Q?x4BC9802NTT42Mfwvx+Crz/?=
-x-microsoft-antispam-prvs: <AM0PR04MB451564C4BBA74EFC6D0CD28DF6660@AM0PR04MB4515.eurprd04.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB4515;23:hbCO6OASkZTxkdaZQqTMSr7iMsuKqmLYBGbPrGS?=
+ =?iso-8859-1?Q?BE+bcVP73f5nzew1tUgzqnD65DNaZxooyKgU1fIsD6bmCsF+KCVoDYoWF9?=
+ =?iso-8859-1?Q?uDlbmBdSf2ijoJwLj+2muYdLvuO0U6MtNsvhm/q4AkJwvpoLm+kZ3jG7by?=
+ =?iso-8859-1?Q?bcGiAQnTgZg3AaxcEpdy3vyCBqPxkVBJ9m5H+q6kOAxhiocPraN+eTnJv+?=
+ =?iso-8859-1?Q?xApnP73BXTt0I4xTS0dHEVKDDI2EpuXyc78kHWPFWGnnsl4DVdN1upTNx+?=
+ =?iso-8859-1?Q?itQ28Xs3WKK3y5IhtasPh7ZIRgYvAU2cCNrDggHyPL3fOx1AZ7U0JXBVH/?=
+ =?iso-8859-1?Q?M6vkzcntfruJq7nSc+KbL+6SsAx8r2C5xjlODV8+c90y0QpXe0DOz+oCm7?=
+ =?iso-8859-1?Q?IFJeggznmcHA0/jQIEaOvCnYjejT13xuBEuCdcAWzxRbuK44+IZyFEwbZU?=
+ =?iso-8859-1?Q?f38vyJ8smEp0YtI/6sLxVAq73bb5KWYv0RwsohA+4Tu7gt3J3JQ4Bh2ckT?=
+ =?iso-8859-1?Q?ZxfuTmdud+gmhnqBnfYRXNKOiZHe5CKGYVJhJgY2pmgUbI/6vvTA7UpO2g?=
+ =?iso-8859-1?Q?TxdeXV0cjfatRDRkpUFsT/3XVUgdGvYWkR857OkOxRWfyN4cUpKvcyC+4s?=
+ =?iso-8859-1?Q?dVTofLFUrJ1IbFYtBPyRrROqNLCHuwsZC4KSmIEd+1EnmbK+FsxoFyFEvb?=
+ =?iso-8859-1?Q?Ha3vBp/R9LESoQ3+Qm6DH9tvfceCKqaoQYpUJW2WQa5CYnUwDbpCdPtyv9?=
+ =?iso-8859-1?Q?ISzy0L634IgEuw5JyOkUwwLICn3KYVuUqIdrumTt647kbSCRxVHxJgu8kB?=
+ =?iso-8859-1?Q?TAv1zxG8uW/rVUOd213s29Fvmskb2W7MVRmumE6XtoMyvT/FKws+RQhI2r?=
+ =?iso-8859-1?Q?H3FunKY8kBbeWHhkQs+unhvoNmPRMkFcH1uGh2JIotu0lju8X/o7HAn3CR?=
+ =?iso-8859-1?Q?9TKm+4JWYcJPceGyDXqMMMXhQ8fE4m3iBhFgNMeb7jagCRdW1NeekgbF/M?=
+ =?iso-8859-1?Q?xa42Wasz9IB15QXqomtacGnhzyytsTyrUGH4K4EcnRFxiWNoIW5iFey8o2?=
+ =?iso-8859-1?Q?kQO0pYQ6/mqlgxRqlIG3r2nfMWLO76rxQ62OEhzeIeiCZAIgWmZwFub+SN?=
+ =?iso-8859-1?Q?XCEWqwQ8paTVHTrzampKmDlqgGKp3WvLD7hGelaHbkXjmAccqFz18HC32t?=
+ =?iso-8859-1?Q?z2I1IHpQg6sPHHypLQAAa1i6H79JvXOzGyHnm00Enlh5jqbHYo/mJvjgM9?=
+ =?iso-8859-1?Q?DBol1VTdaXVSuuxfvZfGqbELWk1q7vgOwNnguDQAuDyKQ34rdNVkwgOBQ9?=
+ =?iso-8859-1?Q?OQ=3D?=
+x-microsoft-antispam-prvs: <AM0PR04MB4515A45BE44CEB4611C000D2F6660@AM0PR04MB4515.eurprd04.prod.outlook.com>
 x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(136003)(366004)(199004)(189003)(4326008)(52116002)(2906002)(6636002)(3846002)(6116002)(99286004)(106356001)(105586002)(7736002)(305945005)(25786009)(97736004)(14454004)(66066001)(53936002)(8676002)(81156014)(81166006)(68736007)(36756003)(8936002)(478600001)(6486002)(6436002)(6512007)(50226002)(110136005)(54906003)(316002)(486006)(186003)(2616005)(476003)(14444005)(256004)(26005)(102836004)(11346002)(446003)(71200400001)(71190400001)(7416002)(6506007)(76176011)(86362001)(386003)(44832011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4515;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(136003)(366004)(199004)(189003)(4326008)(52116002)(2906002)(6636002)(3846002)(6116002)(99286004)(106356001)(105586002)(7736002)(305945005)(25786009)(97736004)(14454004)(66066001)(53936002)(8676002)(81156014)(81166006)(68736007)(36756003)(8936002)(478600001)(6486002)(6436002)(6512007)(50226002)(110136005)(54906003)(316002)(486006)(186003)(2616005)(476003)(256004)(26005)(102836004)(11346002)(446003)(71200400001)(71190400001)(7416002)(6506007)(76176011)(86362001)(386003)(44832011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4515;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vwi6uj9bNxifdLmqh19BimaNcnEaOSScqHu/dv2qIWLisGFKqbS3wGz0bMUp1fg7v84ThWer5gCCMhrv0Nd0ybHo5Ib2Xk8m7xrzmi91wddqoAWu+RMgO7qXgbB6SZmosuPMaaRZwpl1Qwq2lchEwW6A/JrmW7/K56Ko+IyYDQ/QAh4w1jyzI2G9NR+9JkXFuanJweGG/9ntIz/Odm6nyiQt0rU1kKL+yapY9zPhFjQnglZwESh0CE410j04CjRCYPM1zVpdP892DMGWQO9nvg5CYeDkAxgH9/VKn/rmjRNZIqyXZGjmbmOxj8FwTWnEXxQj7Jos1sV3mggLHzcNZ1eShG09P8pHbzVdFxwjiSA95LFyDc4QgvXjR4Dc3T7W9QlmPv5BCvzm5CubWgwtWgXkVnBLB1AYE1/Q8aDZKXU=
+x-microsoft-antispam-message-info: SWR63O7TzqYtMk0CndDvs33B49uc2SJGZy/5l26dYsq8WaN+uzJttmL7GJeJjOxYKr6O/jjKZkhVCIbit9g0BBX8M/toVvPPKWUm96Enmop9ew5eeLAsUv0ulgMuD8ken/x5gv1nyP92PvXMbP4Z11bEblxzutgJz7WNYB3Dra39J/UM0kxmScbPnV6pegXsF0Iszd47wtNH7MMB8R8frVmbdiddo8knooJYiwxGpAdKgvsPbBmJQpIF9mUTHUOPDBZe//tosnoYO9rSDPc+tnk/vbJEtWtRGDMVcqF2QNcJ3nVYNLb++lRkqClIaR+zPita5hoVNqvDrUxzHGkEn+0jExqdmK5lvOtPXClMouaps/zRgexsi7ZsnykFoktwT/lDfv6AOcFUzrLaojWtzvWbSPGG31GMr2CguZqf3ds=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d0c03d7-6585-4249-6d04-08d691e62e1f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 19:05:11.4876
+X-MS-Exchange-CrossTenant-Network-Message-Id: def1328f-cf01-4140-3ac1-08d691e630b1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 19:05:15.8005
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -121,36 +123,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The arm pll bypass needs to propagate the rate upwards
-in order for the cpufreq to work.
+The clocks and their latencies will be used by cpufreq-dt.
 
-Fixes: b80522040cd3f ("clk: imx: Add clock driver for i.MX8MQ CCM")
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 398ab0b..57499ed 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -340,7 +340,7 @@ static int imx8mq_clocks_probe(struct platform_device *=
-pdev)
- 	clks[IMX8MQ_DRAM_PLL2_DIV] =3D imx_clk_divider("dram_pll2_div", "dram_pll=
-2", base + 0x68, 1, 6);
-=20
- 	/* PLL bypass out */
--	clks[IMX8MQ_ARM_PLL_BYPASS] =3D imx_clk_mux("arm_pll_bypass", base + 0x28=
-, 14, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels));
-+	clks[IMX8MQ_ARM_PLL_BYPASS] =3D imx_clk_mux_flags("arm_pll_bypass", base =
-+ 0x28, 14, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels), CLK_SE=
-T_RATE_PARENT);
- 	clks[IMX8MQ_GPU_PLL_BYPASS] =3D imx_clk_mux("gpu_pll_bypass", base + 0x18=
-, 14, 1, gpu_pll_bypass_sels, ARRAY_SIZE(gpu_pll_bypass_sels));
- 	clks[IMX8MQ_VPU_PLL_BYPASS] =3D imx_clk_mux("vpu_pll_bypass", base + 0x20=
-, 14, 1, vpu_pll_bypass_sels, ARRAY_SIZE(vpu_pll_bypass_sels));
- 	clks[IMX8MQ_AUDIO_PLL1_BYPASS] =3D imx_clk_mux("audio_pll1_bypass", base =
-+ 0x0, 14, 1, audio_pll1_bypass_sels, ARRAY_SIZE(audio_pll1_bypass_sels));
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
+s/freescale/imx8mq.dtsi
+index 9155bd4..1a89062 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -87,6 +87,8 @@
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a53";
+ 			reg =3D <0x0>;
++			clock-latency =3D <61036>; /* two CLK32 periods */
++			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+ 			enable-method =3D "psci";
+ 			next-level-cache =3D <&A53_L2>;
+ 		};
+@@ -95,6 +97,8 @@
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a53";
+ 			reg =3D <0x1>;
++			clock-latency =3D <61036>; /* two CLK32 periods */
++			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+ 			enable-method =3D "psci";
+ 			next-level-cache =3D <&A53_L2>;
+ 		};
+@@ -103,6 +107,8 @@
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a53";
+ 			reg =3D <0x2>;
++			clock-latency =3D <61036>; /* two CLK32 periods */
++			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+ 			enable-method =3D "psci";
+ 			next-level-cache =3D <&A53_L2>;
+ 		};
+@@ -111,6 +117,8 @@
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a53";
+ 			reg =3D <0x3>;
++			clock-latency =3D <61036>; /* two CLK32 periods */
++			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+ 			enable-method =3D "psci";
+ 			next-level-cache =3D <&A53_L2>;
+ 		};
 --=20
 2.7.4
 
