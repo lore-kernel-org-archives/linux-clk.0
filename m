@@ -2,154 +2,186 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141F4C282CE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 07:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9782C282C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 07:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCAC121904
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 07:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB49222C9
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 07:17:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tie8DOsI"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z1r/sALf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfBMHLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:11:46 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:45024 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388894AbfBMHLp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 02:11:45 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190213071142epoutp028d19b3c0298a2952447b61292386bf78~C2uXKVS832791127911epoutp02h
-        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 07:11:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190213071142epoutp028d19b3c0298a2952447b61292386bf78~C2uXKVS832791127911epoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550041902;
-        bh=UYX5CL3ikrIiJpVBODpawcG6tfyGJF61Sn7qomYc8yI=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=tie8DOsIG69L0+mJ9UU9WO8C8XdkckAiTUVGhuLJO5pyn4ofJP4kGCW+TUXnJe/w5
-         1zY6ADh4ND/q0gRaDrqUv5H5XdPauiUX7/B0+puBrDr1ibWkrsd4R9T7aXNAeFnMzB
-         quy5jPu7Ey3lR1AG3iVVwCk/+5RPZQslxAvdkqrQ=
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.157]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190213071139epcas1p479d800ad1f9042a035c2c693df22ec57~C2uUUA34P1382713827epcas1p4g;
-        Wed, 13 Feb 2019 07:11:39 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1E.69.04069.B23C36C5; Wed, 13 Feb 2019 16:11:39 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190213071138epcas1p1682f47f1d1be2992b9f4926cbce48f36~C2uT_8s522944429444epcas1p1r;
-        Wed, 13 Feb 2019 07:11:38 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190213071138epsmtrp1888692f949566593bb38251ea2894ac5~C2uT9FfhT2844428444epsmtrp1M;
-        Wed, 13 Feb 2019 07:11:38 +0000 (GMT)
-X-AuditID: b6c32a37-989ff70000000fe5-74-5c63c32b5304
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AC.C4.03971.A23C36C5; Wed, 13 Feb 2019 16:11:38 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190213071138epsmtip2b65ad37527c3f1ea5dddf99a326b9b01~C2uTnueLB0685606856epsmtip2n;
-        Wed, 13 Feb 2019 07:11:38 +0000 (GMT)
-Subject: Re: [PATCH 3/4] clk: samsung: exynos5410: Add gate clock for ADC
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+        id S2389451AbfBMHRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 02:17:18 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32776 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389433AbfBMHRS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 02:17:18 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so761691pfb.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 Feb 2019 23:17:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fmsNk25rpIeO4ovxEfXhNjKT/5GjvGK1/IoISY4jjrg=;
+        b=Z1r/sALf69MEWRMfc/woAbUd+UHb8BVFXbPhCvHHdXfPFZ13eiyEO+G1JD0ep3UxgP
+         7bUSuJ/mmld4IS2VFHnrxj/jzlS8iAydNhJbipABQeJ+K1MHRU/xpuN/avJ0fQ6C1OBE
+         3iNtaXXxmstSEobpCoXeuKXZl5fsRi/qqQhtUBYN1pyQ99Iw30XlnsXd+rkpxdof4zGc
+         nvYqqdRcvvYd6Y3rUcseH4+gqGtkRlL3wRhX8ZCkcu0la9+rZjSva6A1S5CkXS0J3txD
+         OAWwpxW1wuhQxpzLYIQGIeJ/rzWMZTDT4ZZlQeI1m34QFav+32YFr6Z8uYHd6g2RDsPR
+         0jXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fmsNk25rpIeO4ovxEfXhNjKT/5GjvGK1/IoISY4jjrg=;
+        b=KLJM6LaU9wjtbJyWKdVR7L1X1V3PITJfWwBr3oscxODojmXg+2ScgrJgj1INWxCMCi
+         DTQJJHf/h4HY4Eo6akGy0pcgtytoxwLUSghPz45mob3meRM+vx4LCiFvAWAtsnASBF6c
+         HyH6lwjnfAld59AxsPJY5141Un1EgN5DeJRzYdhSqglTCf/QnaZBxOiRMZv3Z/RAKFYl
+         ZvNmUTk0yV/qLiTdYzbzcZ8eV6/K52ayDs5HxStOBiIyUHA7zElaiI+apWSI0v87gorW
+         DmoybKW8eRricefESjQ8CJS/I0wDpQJEzaKkf2LeBPVsinQ/SFKIoHGynW6FiXXk8ADl
+         9YMg==
+X-Gm-Message-State: AHQUAuY/8SJQ0d58Gs7n1+E1aTrGGjkTxXiWy6V6i8q62WIvyINZ9UMt
+        ZxYPWVhF6uOs0FWItyTiEPZeAmAYdug=
+X-Google-Smtp-Source: AHgI3IbGs0b1EI5Q9ll26l773Fp1G4dlHcoMNMh7XEgN9dx9Ap6mFygiAqibaFwsPmwwhoNjXYjgGg==
+X-Received: by 2002:a62:569b:: with SMTP id h27mr8066681pfj.163.1550042236369;
+        Tue, 12 Feb 2019 23:17:16 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l19sm27511958pfi.71.2019.02.12.23.17.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 23:17:15 -0800 (PST)
+Date:   Tue, 12 Feb 2019 23:17:13 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <c75f4582-18e4-f123-382d-e50626b650c8@samsung.com>
-Date:   Wed, 13 Feb 2019 16:11:38 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass
+ clocks
+Message-ID: <20190213071713.GI31919@minitux>
+References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20190212175052.6310-4-krzk@kernel.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmvq724eQYg747nBbzj5xjteh//JrZ
-        4vz5DewWmx5fY7X42HOP1eLyrjlsFjPO72OyWHr9IpPFxVOuFq17j7BbHH7Tzmrx79pGFotV
-        u/4wOvB6rJm3htHj/Y1Wdo+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWwR2XbZKQmpqQWKaTm
-        JeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gAdq6RQlphTChQKSCwuVtK3
-        synKLy1JVcjILy6xVUotSMkpsCzQK07MLS7NS9dLzs+1MjQwMDIFKkzIzmh5upit4B1Hxfrd
-        bg2Mm9i7GDk5JARMJLrPLmbuYuTiEBLYwSjRuX0yWEJI4BOjxKV/lhCJb4wSHyd3w3VcWPCK
-        ESKxl1Hi+aVLbBDOe0aJrsVHWEGqhAU8JdrvnQCbKyJwk1niwOR+NpAEm4CWxP4XN8BsfgFF
-        ias/HjOC2LwCdhKbLv5k6mLk4GARUJU43mkAEhYViJA43PsOqkRQ4uTMJywgNifQFV3TLjOB
-        2MwC4hK3nsyHsuUlmrfOBtsrITCPXeLSoSYmiLNdJJr73rBA2MISr45vgXpHSuJlfxuUXS2x
-        8uQRNojmDkaJLfsvsEIkjCX2L50MdhyzgKbE+l36EMv4JN597WEFCUsI8Ep0tAlBVCtLXH5w
-        F2qtpMTi9k42CNtDonf5V0ZI8G5klOj/4jqBUWEWktdmIXlnFpJ3ZiEsXsDIsopRLLWgODc9
-        tdiwwBg5sjcxgtOxlvkOxg3nfA4xCnAwKvHwrjiaFCPEmlhWXJl7iFGCg1lJhDd+Y3KMEG9K
-        YmVValF+fFFpTmrxIUZTYMBPZJYSTc4H5oq8knhDUyNjY2MLE0MzU0NDJXHe9Q7OMUIC6Ykl
-        qdmpqQWpRTB9TBycUg2ME65LdvauF/S2f54av3drualaq+Irbb8NnN5Nrofvnj16JsX+2uVU
-        xo+KUQyM8XOaz2f2+wmrfHE8GtJ1U23+h4yPCZsrbG5cd389kz/l14HznHsV9+iuyGcUjFro
-        8tkv+dqve3N2/LkmXHK1tmd+vEfJLN/7+Q4LNueW7a5csYHddHe818NwJZbijERDLeai4kQA
-        x97/It0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSvK7W4eQYgxfPNS3mHznHatH/+DWz
-        xfnzG9gtNj2+xmrxseceq8XlXXPYLGac38dksfT6RSaLi6dcLVr3HmG3OPymndXi37WNLBar
-        dv1hdOD1WDNvDaPH+xut7B47Z91l99i0qpPNY/OSeo++LasYPT5vkgtgj+KySUnNySxLLdK3
-        S+DKaHm6mK3gHUfF+t1uDYyb2LsYOTkkBEwkLix4xQhiCwnsZpRY06YDEZeUmHbxKHMXIweQ
-        LSxx+HBxFyMXUMlbRokl12+xgtQIC3hKtN87wQySEBG4zSyx9FUbO0TVRkaJbV9usYFUsQlo
-        Sex/cQPM5hdQlLj64zHYNl4BO4lNF38ygWxgEVCVON5pABIWFYiQ+Ph0HxNEiaDEyZlPWEBs
-        TqBDu6ZdBoszC6hL/Jl3iRnCFpe49WQ+VFxeonnrbOYJjEKzkLTPQtIyC0nLLCQtCxhZVjFK
-        phYU56bnFhsWGOallusVJ+YWl+al6yXn525iBMefluYOxstL4g8xCnAwKvHwrjiaFCPEmlhW
-        XJl7iFGCg1lJhDd+Y3KMEG9KYmVValF+fFFpTmrxIUZpDhYlcd6neccihQTSE0tSs1NTC1KL
-        YLJMHJxSDYwt/1PO319zweyV1tbpyyaohZ532usgMeWk7GS9isJb29ZMVJq9XOPWSsb8fzaB
-        715GHZ03/6z+o464WzPuxt36v71ur7Ks1YG5C8vsPcPPPm1ZUv2md91ckQXzfLL5/z4+6LvH
-        4PSy1kK+m188/7/jSdX9fGVnsBLvUQtTkd6vYUaroqQ2WJ7PV2Ipzkg01GIuKk4EABcR2Hy7
-        AgAA
-X-CMS-MailID: 20190213071138epcas1p1682f47f1d1be2992b9f4926cbce48f36
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190212175212epcas5p4ff5ed8b2264956844e14d5e6ca03eac6
-References: <20190212175052.6310-1-krzk@kernel.org>
-        <CGME20190212175212epcas5p4ff5ed8b2264956844e14d5e6ca03eac6@epcas5p4.samsung.com>
-        <20190212175052.6310-4-krzk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu 20 Dec 03:46 PST 2018, Taniya Das wrote:
 
-On 19. 2. 13. 오전 2:50, Krzysztof Kozlowski wrote:
-> Add the gate clock for ADC block on Exynos5410.
+> The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
+> before accessing them and that was the reason to mark the gcc lpass clocks
+> as critical.
+
+I have the same problem with the TuringCC in QCS404, that in order to
+disable the unused clocks GCC_CDSP_CFG_AHB_CLK must be on. But rather
+than marking either side as critical or ignore-unused I think a better
+solution is to describe this dependency by using the fact that the clock
+framework wraps any accesses in pm_runtime_get()/put() calls. So we can
+use this to link the clock controller to some resources that needs to be
+turned on whenever we communicate with it.
+
+> But in the case where the lpass subsystem would require a
+> restart, toggling the lpass reset would from HW clear the SW enable bits
+> of the GCC lpass clocks. Thus the next time bringing up the lpass subsystem
+> out of reset would fail.
+
+Are you saying that when we toggle AOSS_CC_LPASS_RESTART the enable bit
+is cleared on all these clocks and we might get out of sync between the
+clock framework and the hardware?
+
+Can you please elaborate a little bit on this? Afaict in the remoteproc
+driver at least, we first disable the clock then we issue the reset.
+
+Regards,
+Bjorn
+
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Allow the lpass clock driver to enable/disable the gcc lpass clocks and
+> mark the lpass clocks not be accessed during late_init if no client vote.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->  drivers/clk/samsung/clk-exynos5410.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/qcom/gcc-sdm845.c     | 2 --
+>  drivers/clk/qcom/lpasscc-sdm845.c | 5 +++++
+>  2 files changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-> index 0a0b09591e6f..b2da2c8fa0c7 100644
-> --- a/drivers/clk/samsung/clk-exynos5410.c
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> @@ -209,6 +209,7 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
->  	GATE(CLK_USI1, "usi1", "aclk66", GATE_IP_PERIC, 11, 0, 0),
->  	GATE(CLK_USI2, "usi2", "aclk66", GATE_IP_PERIC, 12, 0, 0),
->  	GATE(CLK_USI3, "usi3", "aclk66", GATE_IP_PERIC, 13, 0, 0),
-> +	GATE(CLK_TSADC, "tsadc", "aclk66", GATE_IP_PERIC, 15, 0, 0),
->  	GATE(CLK_PWM, "pwm", "aclk66", GATE_IP_PERIC, 24, 0, 0),
->  
->  	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index c782e62..8365c97 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -3163,7 +3163,6 @@ enum {
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "gcc_lpass_q6_axi_clk",
+> -			.flags = CLK_IS_CRITICAL,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> @@ -3177,7 +3176,6 @@ enum {
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "gcc_lpass_sway_clk",
+> -			.flags = CLK_IS_CRITICAL,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+> index e246b99..1acc741 100644
+> --- a/drivers/clk/qcom/lpasscc-sdm845.c
+> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+> @@ -22,6 +22,7 @@
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "lpass_q6ss_ahbm_aon_clk",
+> +			.flags = CLK_IGNORE_UNUSED,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> @@ -35,6 +36,7 @@
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "lpass_q6ss_ahbs_aon_clk",
+> +			.flags = CLK_IGNORE_UNUSED,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> @@ -49,6 +51,7 @@
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "lpass_qdsp6ss_core_clk",
+> +			.flags = CLK_IGNORE_UNUSED,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> @@ -63,6 +66,7 @@
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "lpass_qdsp6ss_xo_clk",
+> +			.flags = CLK_IGNORE_UNUSED,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> @@ -77,6 +81,7 @@
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "lpass_qdsp6ss_sleep_clk",
+> +			.flags = CLK_IGNORE_UNUSED,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
 > 
-
-I checked it on Exynos5410 TRM. Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
