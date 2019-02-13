@@ -2,186 +2,119 @@ Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9782C282C2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 07:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CB1C282C2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 08:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB49222C9
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 07:17:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1681A20700
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 08:38:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z1r/sALf"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XYJLElqV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389451AbfBMHRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:17:18 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32776 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389433AbfBMHRS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 02:17:18 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c123so761691pfb.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 Feb 2019 23:17:17 -0800 (PST)
+        id S2389427AbfBMIi5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 03:38:57 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55092 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389356AbfBMIi5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 03:38:57 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a62so1456732wmh.4
+        for <linux-clk@vger.kernel.org>; Wed, 13 Feb 2019 00:38:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fmsNk25rpIeO4ovxEfXhNjKT/5GjvGK1/IoISY4jjrg=;
-        b=Z1r/sALf69MEWRMfc/woAbUd+UHb8BVFXbPhCvHHdXfPFZ13eiyEO+G1JD0ep3UxgP
-         7bUSuJ/mmld4IS2VFHnrxj/jzlS8iAydNhJbipABQeJ+K1MHRU/xpuN/avJ0fQ6C1OBE
-         3iNtaXXxmstSEobpCoXeuKXZl5fsRi/qqQhtUBYN1pyQ99Iw30XlnsXd+rkpxdof4zGc
-         nvYqqdRcvvYd6Y3rUcseH4+gqGtkRlL3wRhX8ZCkcu0la9+rZjSva6A1S5CkXS0J3txD
-         OAWwpxW1wuhQxpzLYIQGIeJ/rzWMZTDT4ZZlQeI1m34QFav+32YFr6Z8uYHd6g2RDsPR
-         0jXg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=zYPxwD3KaOIMYFSe9JlfKDwbgdzNPJqs8i8EAHw3GRI=;
+        b=XYJLElqVy8VQFvf52aNhx5HtzGexhS3IDntGrRaZgHf+urtk0shv8h3OzWsXWacOtq
+         SfS2giUxQEu0Zc42qeNMxkZzMny66vkKrY9ng45RzLjW1xbp7G1ABDz5h87Nz3qyiRQR
+         HnrhnR2VmtbNLX36z4TLJu88Nfgod91voNUFO0LltSKvoQ5AD/dViQwTndHFmAnqmcUa
+         ChWdwyOGO14SSfAU0nGw+D1Eck68L3TfAtb5PiggJ2rMZxvLHMHtmA1QMOC3D9Di/yIE
+         kvrgHm27lp9L9l4HMeIflqfDQxIcfl7YHPtsDZeJxbbvzxUDvyO0WmKoAcZRyTveBRsG
+         is5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fmsNk25rpIeO4ovxEfXhNjKT/5GjvGK1/IoISY4jjrg=;
-        b=KLJM6LaU9wjtbJyWKdVR7L1X1V3PITJfWwBr3oscxODojmXg+2ScgrJgj1INWxCMCi
-         DTQJJHf/h4HY4Eo6akGy0pcgtytoxwLUSghPz45mob3meRM+vx4LCiFvAWAtsnASBF6c
-         HyH6lwjnfAld59AxsPJY5141Un1EgN5DeJRzYdhSqglTCf/QnaZBxOiRMZv3Z/RAKFYl
-         ZvNmUTk0yV/qLiTdYzbzcZ8eV6/K52ayDs5HxStOBiIyUHA7zElaiI+apWSI0v87gorW
-         DmoybKW8eRricefESjQ8CJS/I0wDpQJEzaKkf2LeBPVsinQ/SFKIoHGynW6FiXXk8ADl
-         9YMg==
-X-Gm-Message-State: AHQUAuY/8SJQ0d58Gs7n1+E1aTrGGjkTxXiWy6V6i8q62WIvyINZ9UMt
-        ZxYPWVhF6uOs0FWItyTiEPZeAmAYdug=
-X-Google-Smtp-Source: AHgI3IbGs0b1EI5Q9ll26l773Fp1G4dlHcoMNMh7XEgN9dx9Ap6mFygiAqibaFwsPmwwhoNjXYjgGg==
-X-Received: by 2002:a62:569b:: with SMTP id h27mr8066681pfj.163.1550042236369;
-        Tue, 12 Feb 2019 23:17:16 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l19sm27511958pfi.71.2019.02.12.23.17.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Feb 2019 23:17:15 -0800 (PST)
-Date:   Tue, 12 Feb 2019 23:17:13 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass
- clocks
-Message-ID: <20190213071713.GI31919@minitux>
-References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=zYPxwD3KaOIMYFSe9JlfKDwbgdzNPJqs8i8EAHw3GRI=;
+        b=GL6tu0K6XN6+6SIMg2FrZJfqWHbFi8Goqkasb86jlJT3ZPkRnHqX60kzufNlrCPssw
+         yXgcBV9v3hZEAbp/rz9VthZ8QqDU5WaKL6zF9m6QKvCer2858eai+FD4VWQKv9205lZh
+         uiO9xHSwXsU+jiu3L4fMxr4y+qWjsKhUsX6lB2L2Gfffkap/dQTymuUFApvz4m8YIgAd
+         r1f3gGU9OLRf7TgZ0hA+rG/TZpDHR7Nsw3FCOjCGdcMHV6eQYEAFKYZWm0aktiFVNZ1E
+         nGmN0Gs/wh3P55ju8hSnpXHM1e7c7R50VcRuzLaMaFpb6P1RCrCFYNBLIHIg9aPtUfJF
+         B5Xw==
+X-Gm-Message-State: AHQUAuabC8XXkeE3HFDywI/8EnUi0m6nchYSdYuVGB1XU2BF47JnM16R
+        oSiGzwYjOxt2D0EwT1/0LW7xbg==
+X-Google-Smtp-Source: AHgI3IbDETGS5T9Qe1wD6lousIHYmIbj/GWqPRmQwncCH/7oQdwkT4kZ/2HczP1Rd6/XpL/H0syYLw==
+X-Received: by 2002:a1c:23c4:: with SMTP id j187mr2267610wmj.13.1550047134662;
+        Wed, 13 Feb 2019 00:38:54 -0800 (PST)
+Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id z3sm10337785wmi.32.2019.02.13.00.38.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 13 Feb 2019 00:38:53 -0800 (PST)
+Message-ID: <98eaeaca26bc83db1a8d1f1362b56e3a32073bb3.camel@baylibre.com>
+Subject: Re: [PATCH v2 0/2] clk: meson: Add G12A AO Clock + Reset Controller
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Wed, 13 Feb 2019 09:38:53 +0100
+In-Reply-To: <20190212162859.20743-1-narmstrong@baylibre.com>
+References: <20190212162859.20743-1-narmstrong@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 20 Dec 03:46 PST 2018, Taniya Das wrote:
+On Tue, 2019-02-12 at 17:28 +0100, Neil Armstrong wrote:
+> This patchset add support for the Amlogic G12A SoC family Always-On
+> clock and reset controller.
+> 
+> This adds support for clocks on the Always-On domain like :
+> - Always-On UARTS & I2C Controllers
+> - CEC Controllers
+> - SARADC source and bus clock
+> - Infrared Decoder/Encoder bus clock
+> - USB 32K reference clock
+> 
+> This also adds resets lines for :
+> - Always-On UARTS & I2C Controllers
+> - SARADC, Infrared Decoder/Encoder
+> 
+> This patchset depends on the ("clk: meson: rework drivers dependencies")
+> from Jerome Brunet at [1].
+> 
+> Changes from v1 at [2]:
+> - Moved unused bindings ID out of the dt-bindings header
+> - Added comment about CLK_IGNORE_UNUSED
+> 
+> [1] https://lkml.kernel.org/r/20190201125841.26785-1-jbrunet@baylibre.com
+> [2] https://lkml.kernel.org/r/20190204091331.9298-1-narmstrong@baylibre.com
+> 
+> Neil Armstrong (2):
+>   dt-bindings: clk: add G12A AO Clock and Reset Bindings
+>   clk: meson: Add G12A AO Clock + Reset Controller
 
-> The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
-> before accessing them and that was the reason to mark the gcc lpass clocks
-> as critical.
-
-I have the same problem with the TuringCC in QCS404, that in order to
-disable the unused clocks GCC_CDSP_CFG_AHB_CLK must be on. But rather
-than marking either side as critical or ignore-unused I think a better
-solution is to describe this dependency by using the fact that the clock
-framework wraps any accesses in pm_runtime_get()/put() calls. So we can
-use this to link the clock controller to some resources that needs to be
-turned on whenever we communicate with it.
-
-> But in the case where the lpass subsystem would require a
-> restart, toggling the lpass reset would from HW clear the SW enable bits
-> of the GCC lpass clocks. Thus the next time bringing up the lpass subsystem
-> out of reset would fail.
-
-Are you saying that when we toggle AOSS_CC_LPASS_RESTART the enable bit
-is cleared on all these clocks and we might get out of sync between the
-clock framework and the hardware?
-
-Can you please elaborate a little bit on this? Afaict in the remoteproc
-driver at least, we first disable the clock then we issue the reset.
-
-Regards,
-Bjorn
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
 > 
-> Allow the lpass clock driver to enable/disable the gcc lpass clocks and
-> mark the lpass clocks not be accessed during late_init if no client vote.
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+>  drivers/clk/meson/Kconfig                     |   2 +
+>  drivers/clk/meson/Makefile                    |   2 +-
+>  drivers/clk/meson/g12a-aoclk.c                | 454 ++++++++++++++++++
+>  drivers/clk/meson/g12a-aoclk.h                |  34 ++
+>  include/dt-bindings/clock/g12a-aoclkc.h       |  34 ++
+>  include/dt-bindings/reset/g12a-aoclkc.h       |  18 +
+>  7 files changed, 544 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/meson/g12a-aoclk.c
+>  create mode 100644 drivers/clk/meson/g12a-aoclk.h
+>  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
+>  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/gcc-sdm845.c     | 2 --
->  drivers/clk/qcom/lpasscc-sdm845.c | 5 +++++
->  2 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index c782e62..8365c97 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -3163,7 +3163,6 @@ enum {
->  		.enable_mask = BIT(0),
->  		.hw.init = &(struct clk_init_data){
->  			.name = "gcc_lpass_q6_axi_clk",
-> -			.flags = CLK_IS_CRITICAL,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> @@ -3177,7 +3176,6 @@ enum {
->  		.enable_mask = BIT(0),
->  		.hw.init = &(struct clk_init_data){
->  			.name = "gcc_lpass_sway_clk",
-> -			.flags = CLK_IS_CRITICAL,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
-> index e246b99..1acc741 100644
-> --- a/drivers/clk/qcom/lpasscc-sdm845.c
-> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
-> @@ -22,6 +22,7 @@
->  		.enable_mask = BIT(0),
->  		.hw.init = &(struct clk_init_data){
->  			.name = "lpass_q6ss_ahbm_aon_clk",
-> +			.flags = CLK_IGNORE_UNUSED,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> @@ -35,6 +36,7 @@
->  		.enable_mask = BIT(0),
->  		.hw.init = &(struct clk_init_data){
->  			.name = "lpass_q6ss_ahbs_aon_clk",
-> +			.flags = CLK_IGNORE_UNUSED,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> @@ -49,6 +51,7 @@
->  		.enable_mask = BIT(0),
->  		.hw.init = &(struct clk_init_data){
->  			.name = "lpass_qdsp6ss_core_clk",
-> +			.flags = CLK_IGNORE_UNUSED,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> @@ -63,6 +66,7 @@
->  		.enable_mask = BIT(0),
->  		.hw.init = &(struct clk_init_data){
->  			.name = "lpass_qdsp6ss_xo_clk",
-> +			.flags = CLK_IGNORE_UNUSED,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> @@ -77,6 +81,7 @@
->  		.enable_mask = BIT(0),
->  		.hw.init = &(struct clk_init_data){
->  			.name = "lpass_qdsp6ss_sleep_clk",
-> +			.flags = CLK_IGNORE_UNUSED,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
-> 
+
+
