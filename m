@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4500C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BF7C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA15222DB
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C89222DA
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:53:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502323AbfBNPv5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:51:57 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33429 "EHLO
+        id S2502353AbfBNPxC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 10:53:02 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41649 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388168AbfBNPv4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 10:51:56 -0500
+        with ESMTP id S2502350AbfBNPxA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 10:53:00 -0500
 Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
         by metis.ext.pengutronix.de with esmtp (Exim 4.89)
         (envelope-from <l.stach@pengutronix.de>)
-        id 1guJIg-0004RD-Sd; Thu, 14 Feb 2019 16:51:46 +0100
-Message-ID: <1550159506.2546.42.camel@pengutronix.de>
-Subject: Re: [RFC 2/5] dt-bindings: imx8mq-clock: Add the missing ARM clock
+        id 1guJJi-0004Yu-7n; Thu, 14 Feb 2019 16:52:50 +0100
+Message-ID: <1550159569.2546.43.camel@pengutronix.de>
+Subject: Re: [RFC 3/5] clk: imx8mq: Add the missing ARM clock
 From:   Lucas Stach <l.stach@pengutronix.de>
 To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -39,10 +39,10 @@ Cc:     dl-linux-imx <linux-imx@nxp.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Date:   Thu, 14 Feb 2019 16:51:46 +0100
-In-Reply-To: <1550084693-9797-3-git-send-email-abel.vesa@nxp.com>
+Date:   Thu, 14 Feb 2019 16:52:49 +0100
+In-Reply-To: <1550084693-9797-4-git-send-email-abel.vesa@nxp.com>
 References: <1550084693-9797-1-git-send-email-abel.vesa@nxp.com>
-         <1550084693-9797-3-git-send-email-abel.vesa@nxp.com>
+         <1550084693-9797-4-git-send-email-abel.vesa@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
@@ -57,27 +57,31 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Am Mittwoch, den 13.02.2019, 19:05 +0000 schrieb Abel Vesa:
-> Add the missing ARM clock which will be used by cpufreq
+> Add the ARM clock as imx_clk_cpu type.
+> Will be used by cpufreq.
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
 Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
 > ---
->  include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/clk/imx/clk-imx8mq.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-
-> bindings/clock/imx8mq-clock.h
-> index 04f7ac3..47c790c 100644
-> --- a/include/dt-bindings/clock/imx8mq-clock.h
-> +++ b/include/dt-bindings/clock/imx8mq-clock.h
-> @@ -391,5 +391,7 @@
+> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> index 57499ed..8a283cb 100644
+> --- a/drivers/clk/imx/clk-imx8mq.c
+> +++ b/drivers/clk/imx/clk-imx8mq.c
+> @@ -558,6 +558,12 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+>  	clks[IMX8MQ_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc_25m", 1, 8);
+>  	clks[IMX8MQ_CLK_DRAM_ALT_ROOT] = imx_clk_fixed_factor("dram_alt_root", "dram_alt", 1, 4);
 >  
->  #define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	267
->  
-> -#define IMX8MQ_CLK_END				268
-> +#define IMX8MQ_CLK_ARM				268
+> +	clks[IMX8MQ_CLK_ARM] = imx_clk_cpu("arm", "arm_a53_div",
+> +					   clks[IMX8MQ_CLK_A53_DIV],
+> +					   clks[IMX8MQ_CLK_A53_SRC],
+> +					   clks[IMX8MQ_ARM_PLL_OUT],
+> +					   clks[IMX8MQ_SYS1_PLL_800M]);
 > +
-> +#define IMX8MQ_CLK_END				269
->  #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
+>  	for (i = 0; i < IMX8MQ_CLK_END; i++)
+>  		if (IS_ERR(clks[i]))
+>  			pr_err("i.MX8mq clk %u register failed with %ld\n",
