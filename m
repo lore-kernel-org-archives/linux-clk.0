@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CF3C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966B5C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0427222DF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65978222DF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550161956;
-	bh=es46TivW9Kpxp/jDOK1Lil3w0c11Tvpf4AabeEtZPO4=;
+	s=default; t=1550161969;
+	bh=m77rE7/wMUd1pn8crd6Ug8AEy5PbTKoRD6tBjs4D088=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=mjmSKIobdjFvirT5C6j+izPHohFHmM0jh5Zbxi++tfi4gLtpsoHBHFllBd9+FLFdS
-	 y7+uX4xT9I0J9cNuF/b0y3UO+oZMaUUsGsxhN9tvIs4c872MuqVd7ix41XRm5AJY72
-	 uwyR6yqbYiQd24qBDn2i34+Y63Vz9JHpAPlJs7Fk=
+	b=YWdSdkEP2+IvqPDxgF+v7W15IDo9juwdSuPy34Ou7YfREhrd1HnMdyWmATL98ZW6Z
+	 IZiIoLlECf78v+2xrCPX3MpbR5m8T5FdfjrN0NTUY+nROSuTaZN0lPkIo+HPGI2DU9
+	 wS+0S7jVhZUCFINlqp6G00Gyjo15YekbKBhChgLM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730572AbfBNQcg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:32:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36502 "EHLO mail.kernel.org"
+        id S2407989AbfBNQcs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 11:32:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728867AbfBNQcg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:32:36 -0500
+        id S2405161AbfBNQcs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:32:48 -0500
 Received: from ziggy.de (unknown [37.223.146.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A637222DA;
-        Thu, 14 Feb 2019 16:32:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68C56222DA;
+        Thu, 14 Feb 2019 16:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550161955;
-        bh=es46TivW9Kpxp/jDOK1Lil3w0c11Tvpf4AabeEtZPO4=;
+        s=default; t=1550161967;
+        bh=m77rE7/wMUd1pn8crd6Ug8AEy5PbTKoRD6tBjs4D088=;
         h=From:To:Cc:Subject:Date:From;
-        b=ZkGopDZrRtdv7IYtksHgIvCdA9juJGcDX7uNQ+8Mm6VXScZkCq88sEk7zLHDQf2nG
-         2DBJh3JQa6QAC/Jb3IyVgtF9/NXcbgCiJroyuI8amcREsHC067GYxjWF5FRXwRpvMk
-         rIpLwxxc/5Ii+1m+ZGTHxc2oGUfkq6sjWkmWOSKw=
+        b=MPtecKHYHkXnHw4qVA2WnXh/V8ahPRHPR5KVs8d77X0dhofI+H6S7YWsvUFcseVHX
+         Fb7tkXAfjKNNdje21jRFx4Ol/aLkOuw7ZuGASOJ0gvxOrSsaM36fJfX5nb3Pop82c3
+         tDVQdpV84ssBnw4Ee816Aslgk+PVvPF9pqYDF5nI=
 From:   matthias.bgg@kernel.org
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
@@ -44,9 +44,9 @@ Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 2/3] clk: mediatek: Add flags to mtk_gate
-Date:   Thu, 14 Feb 2019 17:32:30 +0100
-Message-Id: <20190214163230.26203-1-matthias.bgg@kernel.org>
+Subject: [PATCH v4 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
+Date:   Thu, 14 Feb 2019 17:32:42 +0100
+Message-Id: <20190214163242.26259-1-matthias.bgg@kernel.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -57,78 +57,131 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Jasper Mattsson <jasu@njomotys.info>
 
-This is required to mark gates as CLK_IS_CRITICAL.
+Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
+for MT6797. This causes memory corruption when the system is
+booted without clk_ignore_unused.
+This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
+and infra_dramc_b_f26m as CLK_IS_CRITICAL.
 
 Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-Acked-by: Mars Cheng <mars.cheng@mediatek.com>
 Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- drivers/clk/mediatek/clk-gate.c | 4 +++-
- drivers/clk/mediatek/clk-gate.h | 3 ++-
- drivers/clk/mediatek/clk-mtk.c  | 2 +-
- drivers/clk/mediatek/clk-mtk.h  | 1 +
- 4 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/clk/mediatek/clk-mt6797.c | 68 +++++++++++++++++++------------
+ 1 file changed, 43 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 934bf0e45e26..9628d4e7690b 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -157,7 +157,8 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops)
-+		const struct clk_ops *ops,
-+		unsigned long flags)
- {
- 	struct mtk_clk_gate *cg;
- 	struct clk *clk;
-@@ -172,6 +173,7 @@ struct clk *mtk_clk_register_gate(
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
- 	init.ops = ops;
-+	init.flags = flags;
- 
- 	cg->regmap = regmap;
- 	cg->set_ofs = set_ofs;
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index 72ef89b3ad7b..9f766dfe1d57 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -47,6 +47,7 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops);
-+		const struct clk_ops *ops,
-+		unsigned long flags);
- 
- #endif /* __DRV_CLK_GATE_H */
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 9c0ae4278a94..ef410413bb0b 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -130,7 +130,7 @@ int mtk_clk_register_gates(struct device_node *node,
- 				gate->regs->set_ofs,
- 				gate->regs->clr_ofs,
- 				gate->regs->sta_ofs,
--				gate->shift, gate->ops);
-+				gate->shift, gate->ops, gate->flags);
- 
- 		if (IS_ERR(clk)) {
- 			pr_err("Failed to register clk %s: %ld\n",
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index daab6ee94788..987ff2855249 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -162,6 +162,7 @@ struct mtk_gate {
- 	const struct mtk_gate_regs *regs;
- 	int shift;
- 	const struct clk_ops *ops;
-+	unsigned long flags;
+diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
+index 5702bc974ed9..c2b46b184b9a 100644
+--- a/drivers/clk/mediatek/clk-mt6797.c
++++ b/drivers/clk/mediatek/clk-mt6797.c
+@@ -324,6 +324,10 @@ static const char * const anc_md32_parents[] = {
+ 	"univpll_d5",
  };
  
- int mtk_clk_register_gates(struct device_node *node,
++/*
++ * Clock mux ddrphycfg is needed by the DRAM controller. We mark it as
++ * critical as otherwise the system will hang after boot.
++ */
+ static const struct mtk_composite top_muxes[] = {
+ 	MUX(CLK_TOP_MUX_ULPOSC_AXI_CK_MUX_PRE, "ulposc_axi_ck_mux_pre",
+ 	    ulposc_axi_ck_mux_pre_parents, 0x0040, 3, 1),
+@@ -331,8 +335,8 @@ static const struct mtk_composite top_muxes[] = {
+ 	    ulposc_axi_ck_mux_parents, 0x0040, 2, 1),
+ 	MUX(CLK_TOP_MUX_AXI, "axi_sel", axi_parents,
+ 	    0x0040, 0, 2),
+-	MUX(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
+-	    0x0040, 16, 2),
++	MUX_FLAGS(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
++		  0x0040, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	MUX(CLK_TOP_MUX_MM, "mm_sel", mm_parents,
+ 	    0x0040, 24, 2),
+ 	MUX_GATE(CLK_TOP_MUX_PWM, "pwm_sel", pwm_parents, 0x0050, 0, 3, 7),
+@@ -424,33 +428,45 @@ static const struct mtk_gate_regs infra2_cg_regs = {
+ 	.sta_ofs = 0x00b0,
+ };
+ 
+-#define GATE_ICG0(_id, _name, _parent, _shift) {	\
+-	.id = _id,					\
+-	.name = _name,					\
+-	.parent_name = _parent,				\
+-	.regs = &infra0_cg_regs,			\
+-	.shift = _shift,				\
+-	.ops = &mtk_clk_gate_ops_setclr,		\
++#define GATE_ICG0(_id, _name, _parent, _shift) {		\
++	.id = _id,						\
++	.name = _name,						\
++	.parent_name = _parent,					\
++	.regs = &infra0_cg_regs,				\
++	.shift = _shift,					\
++	.ops = &mtk_clk_gate_ops_setclr,			\
+ }
+ 
+-#define GATE_ICG1(_id, _name, _parent, _shift) {	\
+-	.id = _id,					\
+-	.name = _name,					\
+-	.parent_name = _parent,				\
+-	.regs = &infra1_cg_regs,			\
+-	.shift = _shift,				\
+-	.ops = &mtk_clk_gate_ops_setclr,		\
++#define GATE_ICG1(_id, _name, _parent, _shift)			\
++	GATE_ICG1_FLAGS(_id, _name, _parent, _shift, 0)
++
++#define GATE_ICG1_FLAGS(_id, _name, _parent, _shift, _flags) {	\
++	.id = _id,						\
++	.name = _name,						\
++	.parent_name = _parent,					\
++	.regs = &infra1_cg_regs,				\
++	.shift = _shift,					\
++	.ops = &mtk_clk_gate_ops_setclr,			\
++	.flags = _flags,					\
+ }
+ 
+-#define GATE_ICG2(_id, _name, _parent, _shift) {	\
+-	.id = _id,					\
+-	.name = _name,					\
+-	.parent_name = _parent,				\
+-	.regs = &infra2_cg_regs,			\
+-	.shift = _shift,				\
+-	.ops = &mtk_clk_gate_ops_setclr,		\
++#define GATE_ICG2(_id, _name, _parent, _shift)			\
++	GATE_ICG2_FLAGS(_id, _name, _parent, _shift, 0)
++
++#define GATE_ICG2_FLAGS(_id, _name, _parent, _shift, _flags) {	\
++	.id = _id,						\
++	.name = _name,						\
++	.parent_name = _parent,					\
++	.regs = &infra2_cg_regs,				\
++	.shift = _shift,					\
++	.ops = &mtk_clk_gate_ops_setclr,			\
++	.flags = _flags,					\
+ }
+ 
++/*
++ * Clock gates dramc and dramc_b are needed by the DRAM controller.
++ * We mark them as critical as otherwise the system will hang after boot.
++ */
+ static const struct mtk_gate infra_clks[] = {
+ 	GATE_ICG0(CLK_INFRA_PMIC_TMR, "infra_pmic_tmr", "ulposc", 0),
+ 	GATE_ICG0(CLK_INFRA_PMIC_AP, "infra_pmic_ap", "pmicspi_sel", 1),
+@@ -505,7 +521,8 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_ICG1(CLK_INFRA_CCIF_AP, "infra_ccif_ap", "axi_sel", 23),
+ 	GATE_ICG1(CLK_INFRA_AUDIO, "infra_audio", "axi_sel", 25),
+ 	GATE_ICG1(CLK_INFRA_CCIF_MD, "infra_ccif_md", "axi_sel", 26),
+-	GATE_ICG1(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m", "clk26m", 31),
++	GATE_ICG1_FLAGS(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m",
++			"clk26m", 31, CLK_IS_CRITICAL),
+ 	GATE_ICG2(CLK_INFRA_I2C4, "infra_i2c4", "axi_sel", 0),
+ 	GATE_ICG2(CLK_INFRA_I2C_APPM, "infra_i2c_appm", "axi_sel", 1),
+ 	GATE_ICG2(CLK_INFRA_I2C_GPUPM, "infra_i2c_gpupm", "axi_sel", 2),
+@@ -516,7 +533,8 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_ICG2(CLK_INFRA_I2C5, "infra_i2c5", "axi_sel", 7),
+ 	GATE_ICG2(CLK_INFRA_SYS_CIRQ, "infra_sys_cirq", "axi_sel", 8),
+ 	GATE_ICG2(CLK_INFRA_SPI1, "infra_spi1", "spi_sel", 10),
+-	GATE_ICG2(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m", "clk26m", 11),
++	GATE_ICG2_FLAGS(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m",
++			"clk26m", 11, CLK_IS_CRITICAL),
+ 	GATE_ICG2(CLK_INFRA_ANC_MD32, "infra_anc_md32", "anc_md32_sel", 12),
+ 	GATE_ICG2(CLK_INFRA_ANC_MD32_32K, "infra_anc_md32_32k", "clk26m", 13),
+ 	GATE_ICG2(CLK_INFRA_DVFS_SPM1, "infra_dvfs_spm1", "axi_sel", 15),
 -- 
 2.20.1
 
