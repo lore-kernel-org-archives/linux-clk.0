@@ -2,186 +2,184 @@ Return-Path: <SRS0=hHRo=QV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966B5C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1A7C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65978222DF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550161969;
-	bh=m77rE7/wMUd1pn8crd6Ug8AEy5PbTKoRD6tBjs4D088=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=YWdSdkEP2+IvqPDxgF+v7W15IDo9juwdSuPy34Ou7YfREhrd1HnMdyWmATL98ZW6Z
-	 IZiIoLlECf78v+2xrCPX3MpbR5m8T5FdfjrN0NTUY+nROSuTaZN0lPkIo+HPGI2DU9
-	 wS+0S7jVhZUCFINlqp6G00Gyjo15YekbKBhChgLM=
+	by mail.kernel.org (Postfix) with ESMTP id 5AB67222DD
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:41:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AZ2AEnRk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407989AbfBNQcs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:32:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405161AbfBNQcs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:32:48 -0500
-Received: from ziggy.de (unknown [37.223.146.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68C56222DA;
-        Thu, 14 Feb 2019 16:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550161967;
-        bh=m77rE7/wMUd1pn8crd6Ug8AEy5PbTKoRD6tBjs4D088=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MPtecKHYHkXnHw4qVA2WnXh/V8ahPRHPR5KVs8d77X0dhofI+H6S7YWsvUFcseVHX
-         Fb7tkXAfjKNNdje21jRFx4Ol/aLkOuw7ZuGASOJ0gvxOrSsaM36fJfX5nb3Pop82c3
-         tDVQdpV84ssBnw4Ee816Aslgk+PVvPF9pqYDF5nI=
-From:   matthias.bgg@kernel.org
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
-Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
-Date:   Thu, 14 Feb 2019 17:32:42 +0100
-Message-Id: <20190214163242.26259-1-matthias.bgg@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        id S2405027AbfBNQl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 11:41:56 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:53438 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405270AbfBNQl4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 11:41:56 -0500
+Received: by mail-it1-f196.google.com with SMTP id x131so15311512itc.3
+        for <linux-clk@vger.kernel.org>; Thu, 14 Feb 2019 08:41:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nZUgZrWLpNJNj0dPdhxN5UrwCAJjJPL6QeL3FNwHTLY=;
+        b=AZ2AEnRkD+RYeCzT0pMkFx9U2jKFM4QSzdFcUludDEOIUPYlzxjDaQYx66xU2nDDmK
+         MK1m3GMhYkSc/vR4BkVVnCXt2X8XDCR1zYAdwi59w1cmBQUg8b7nDS44JI9OT6UrdO2p
+         CIP/A8a+Yw5ZMLxsEcmz4PcX4Gojoo5OuhLWU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nZUgZrWLpNJNj0dPdhxN5UrwCAJjJPL6QeL3FNwHTLY=;
+        b=o9a2WPjBQaYA1Y7/revmPKQ0DT47m73XmCYI/l82upotn/7s9nvnBgm54apNclpt61
+         g2r9vvGQa5wGVlFRU1Bev3fei4eNQF/3/x0vU0lTq+zMDAiRD5Mu/RGU1AsvNm2QjzM3
+         u/M5z7McnZtfmf3odZGGS/3C/BJi/O4pN5A4PyjNMX4RWll9oK7Fl0kz7vDPJXk8aANQ
+         OIdL4PGM3h9Fxg+1qx9sjuSCJGzzg/4fz5As1QAeGUUUf34h5gV92SUz8ySTMhzU/miK
+         cjXJ4l9NJlFlhsNx4zF/khr/YFF2/1gT8XDf0q1yh3ISJkuAuRGc6s57k5dTo2tYwgvz
+         0v6g==
+X-Gm-Message-State: AHQUAuZvK+gT6XLuafFzmBM47+DNNM7bjasDtWFwmk0iKqLG9wQwsrMW
+        u+3PlHkSLEV9uUXg60Lijqzqw3QlTsB3065tewFa1Q==
+X-Google-Smtp-Source: AHgI3IYTDE5K36tVLwuWmVH6OGw3qvS591qoAx4NEc6sbufjXjMzCKSoHrTAxu3WdfuB5KXKey1VAR87bta/KI2izTk=
+X-Received: by 2002:a5d:97c8:: with SMTP id k8mr2930040ios.267.1550162515088;
+ Thu, 14 Feb 2019 08:41:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190201154232.10505-1-jagan@amarulasolutions.com>
+ <CAMty3ZBspvP=qZEK9vaowVq4f5W3Qx2qHkwcuAnCOOjV29=Y_Q@mail.gmail.com>
+ <20190213090308.dlcwgcrhg264k2cu@flea> <CAMty3ZCSMRm-0suApB4Zb+kE1M2sWn3F7ugPBFWaL4ap7cJejQ@mail.gmail.com>
+In-Reply-To: <CAMty3ZCSMRm-0suApB4Zb+kE1M2sWn3F7ugPBFWaL4ap7cJejQ@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 14 Feb 2019 22:11:43 +0530
+Message-ID: <CAMty3ZAUL8TWOec=VpJvBzPL1LE13XVMCWj6t-Gycmny38st_A@mail.gmail.com>
+Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jasper Mattsson <jasu@njomotys.info>
+On Wed, Feb 13, 2019 at 2:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Wed, Feb 13, 2019 at 2:33 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Tue, Feb 12, 2019 at 03:16:02PM +0530, Jagan Teki wrote:
+> > > On Fri, Feb 1, 2019 at 9:12 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > >
+> > > > Here is next version changes for Allwinner A64 MIPI-DSI support
+> > > >
+> > > > This series grouped the changes like previous version[1] with different
+> > > > sets to support three different panels types that can fit into the DSI
+> > > > controller.
+> > > >
+> > > > set:1, for 4-lane, burst mode support
+> > > > - patch 0001: 0009, DSI controller changes that support burst mode.
+> > > >
+> > > > set:2, for A64 DSI support
+> > > > - patch 0010: tcon dclk divider computation based on A64 BSP.
+> > > > - patch 0011: 0017, Allwinner A64 DSI controller changes.
+> > > >
+> > > > set:3, enable 4-lane burst mode panel:
+> > > > - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
+> > > >   burst mode panel on Pine64-LTS
+> > > >
+> > > > set:4, enable 4-lane video mode panel:
+> > > > - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
+> > > > - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211
+> > > >   panel on Bananapi M64
+> > > >
+> > > > set:5, enable 2-lane video mode panel:
+> > > > - patch 0021, 0022: DSI hfp and hbp timings fixes
+> > > > - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
+> > > >
+> > > > Changes for v7:
+> > > > - moved vcc-dsi binding to required filed.
+> > > > - drop quotes on fallback dphy bindings.
+> > > > - drop min_rate clock pll-mipi patches.
+> > > > - introduce dclk divider computation as like A64 BSP.
+> > > > - add A64 DSI quark patches.
+> > > > - fixed A64 DSI pipeline.
+> > > > - add proper commit messages.
+> > > > - collect Merlijn Wajer Tested-by credits.
+> > > > Changes for v6:
+> > > > - dropped unneeded changes, patches
+> > > > - fixed all burst mode patches as per previous version comments
+> > > > - rebase on master
+> > > > - update proper commit message
+> > > > - dropped unneeded comments
+> > > > - order the patches that make review easy
+> > > > Changes for v5:
+> > > > - collect Rob, Acked-by
+> > > > - droped "Fix VBP size calculation" patch
+> > > > - updated vblk timing calculation.
+> > > > - droped techstar, bananapi dsi panel drivers which may require
+> > > >   bridge or other setup. it's under discussion.
+> > > > Changes for v4:
+> > > > - droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
+> > > >   nkm min, max rate patches
+> > > > - create two patches for "Add Allwinner A64 MIPI DSI support"
+> > > >   one for has_mod_clk quirk and other one for A64 support
+> > > > - use existing driver code construct for hblk computation
+> > > > - dropped "Increase hfp packet overhead" patch [2], though BSP added
+> > > >   this but we have no issues as of now.
+> > > >   (no issues on panel side w/o this change)
+> > > > - create separate function for vblk computation
+> > > > - enable vcc-dsi regulator in dsi_runtime_resume
+> > > > - collect Rob, Acked-by
+> > > > - update MAINTAINERS file for panel drivers
+> > > > - cleanup commit messages
+> > > > - fixed checkpatch warnings/errors
+> > > >
+> > > > [1] https://patchwork.kernel.org/cover/10779893/
+> > > >
+> > > > Any inputs?
+> > > > Jagan.
+> > > >
+> > > > Jagan Teki (23):
+> > > >   drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
+> > > >     delay
+> > > >   drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
+> > > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
+> > > >   drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
+> > > >   drm/sun4i: tcon: Export get tcon0 routine
+> > > >   drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
+> > > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode
+> > > >   drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
+> > > >   drm/sun4i: sun6i_mipi_dsi: Enable HBP, HSA_HSE for burst mode
+> > >
+> > > Can you pick these burst changes which are generic to all SoCs. and
+> > > reset will send once we decide the tcon clock.
+> >
+> > These patches don't implement what we discussed last week, and as I
+> > told you already, most of them really need some work on the commit log
+> > and their explanations.
+>
+> If I'm not wrong, we discussed about tcon_dclk (PLL_MIPI) last week
+> [1] and these burst changes between 01/23 to 09/23 which are generic
+> changes to DSI and not related to clock. Apart from that I made few
+> changes on commit logs between the versions (which I was mentioned on
+> the cover-letter patch). If any issues issues on commit message,
+> please let me know so-that I can rework.
 
-Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
-for MT6797. This causes memory corruption when the system is
-booted without clk_ignore_unused.
-This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
-and infra_dramc_b_f26m as CLK_IS_CRITICAL.
-
-Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/clk/mediatek/clk-mt6797.c | 68 +++++++++++++++++++------------
- 1 file changed, 43 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
-index 5702bc974ed9..c2b46b184b9a 100644
---- a/drivers/clk/mediatek/clk-mt6797.c
-+++ b/drivers/clk/mediatek/clk-mt6797.c
-@@ -324,6 +324,10 @@ static const char * const anc_md32_parents[] = {
- 	"univpll_d5",
- };
- 
-+/*
-+ * Clock mux ddrphycfg is needed by the DRAM controller. We mark it as
-+ * critical as otherwise the system will hang after boot.
-+ */
- static const struct mtk_composite top_muxes[] = {
- 	MUX(CLK_TOP_MUX_ULPOSC_AXI_CK_MUX_PRE, "ulposc_axi_ck_mux_pre",
- 	    ulposc_axi_ck_mux_pre_parents, 0x0040, 3, 1),
-@@ -331,8 +335,8 @@ static const struct mtk_composite top_muxes[] = {
- 	    ulposc_axi_ck_mux_parents, 0x0040, 2, 1),
- 	MUX(CLK_TOP_MUX_AXI, "axi_sel", axi_parents,
- 	    0x0040, 0, 2),
--	MUX(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
--	    0x0040, 16, 2),
-+	MUX_FLAGS(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
-+		  0x0040, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
- 	MUX(CLK_TOP_MUX_MM, "mm_sel", mm_parents,
- 	    0x0040, 24, 2),
- 	MUX_GATE(CLK_TOP_MUX_PWM, "pwm_sel", pwm_parents, 0x0050, 0, 3, 7),
-@@ -424,33 +428,45 @@ static const struct mtk_gate_regs infra2_cg_regs = {
- 	.sta_ofs = 0x00b0,
- };
- 
--#define GATE_ICG0(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra0_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG0(_id, _name, _parent, _shift) {		\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra0_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
- }
- 
--#define GATE_ICG1(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra1_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG1(_id, _name, _parent, _shift)			\
-+	GATE_ICG1_FLAGS(_id, _name, _parent, _shift, 0)
-+
-+#define GATE_ICG1_FLAGS(_id, _name, _parent, _shift, _flags) {	\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra1_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
-+	.flags = _flags,					\
- }
- 
--#define GATE_ICG2(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra2_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG2(_id, _name, _parent, _shift)			\
-+	GATE_ICG2_FLAGS(_id, _name, _parent, _shift, 0)
-+
-+#define GATE_ICG2_FLAGS(_id, _name, _parent, _shift, _flags) {	\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra2_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
-+	.flags = _flags,					\
- }
- 
-+/*
-+ * Clock gates dramc and dramc_b are needed by the DRAM controller.
-+ * We mark them as critical as otherwise the system will hang after boot.
-+ */
- static const struct mtk_gate infra_clks[] = {
- 	GATE_ICG0(CLK_INFRA_PMIC_TMR, "infra_pmic_tmr", "ulposc", 0),
- 	GATE_ICG0(CLK_INFRA_PMIC_AP, "infra_pmic_ap", "pmicspi_sel", 1),
-@@ -505,7 +521,8 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_ICG1(CLK_INFRA_CCIF_AP, "infra_ccif_ap", "axi_sel", 23),
- 	GATE_ICG1(CLK_INFRA_AUDIO, "infra_audio", "axi_sel", 25),
- 	GATE_ICG1(CLK_INFRA_CCIF_MD, "infra_ccif_md", "axi_sel", 26),
--	GATE_ICG1(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m", "clk26m", 31),
-+	GATE_ICG1_FLAGS(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m",
-+			"clk26m", 31, CLK_IS_CRITICAL),
- 	GATE_ICG2(CLK_INFRA_I2C4, "infra_i2c4", "axi_sel", 0),
- 	GATE_ICG2(CLK_INFRA_I2C_APPM, "infra_i2c_appm", "axi_sel", 1),
- 	GATE_ICG2(CLK_INFRA_I2C_GPUPM, "infra_i2c_gpupm", "axi_sel", 2),
-@@ -516,7 +533,8 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_ICG2(CLK_INFRA_I2C5, "infra_i2c5", "axi_sel", 7),
- 	GATE_ICG2(CLK_INFRA_SYS_CIRQ, "infra_sys_cirq", "axi_sel", 8),
- 	GATE_ICG2(CLK_INFRA_SPI1, "infra_spi1", "spi_sel", 10),
--	GATE_ICG2(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m", "clk26m", 11),
-+	GATE_ICG2_FLAGS(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m",
-+			"clk26m", 11, CLK_IS_CRITICAL),
- 	GATE_ICG2(CLK_INFRA_ANC_MD32, "infra_anc_md32", "anc_md32_sel", 12),
- 	GATE_ICG2(CLK_INFRA_ANC_MD32_32K, "infra_anc_md32_32k", "clk26m", 13),
- 	GATE_ICG2(CLK_INFRA_DVFS_SPM1, "infra_dvfs_spm1", "axi_sel", 15),
--- 
-2.20.1
-
+Look like the same discussion rounding since from months. In fact I
+have grouped all changes by 'sets of patches' in this series which I
+was thinking of having more feasibility to review and merge, but seems
+like it ended-up fusing which patches are more prior and which are
+fixes. So, let me send it by breaking into different series based on
+the issues and generic changes.
