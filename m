@@ -2,184 +2,252 @@ Return-Path: <SRS0=hHRo=QV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1A7C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29C7C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 17:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB67222DD
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 16:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98531222DA
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 17:18:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AZ2AEnRk"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Zmosh46x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405027AbfBNQl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:41:56 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53438 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405270AbfBNQl4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 11:41:56 -0500
-Received: by mail-it1-f196.google.com with SMTP id x131so15311512itc.3
-        for <linux-clk@vger.kernel.org>; Thu, 14 Feb 2019 08:41:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nZUgZrWLpNJNj0dPdhxN5UrwCAJjJPL6QeL3FNwHTLY=;
-        b=AZ2AEnRkD+RYeCzT0pMkFx9U2jKFM4QSzdFcUludDEOIUPYlzxjDaQYx66xU2nDDmK
-         MK1m3GMhYkSc/vR4BkVVnCXt2X8XDCR1zYAdwi59w1cmBQUg8b7nDS44JI9OT6UrdO2p
-         CIP/A8a+Yw5ZMLxsEcmz4PcX4Gojoo5OuhLWU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nZUgZrWLpNJNj0dPdhxN5UrwCAJjJPL6QeL3FNwHTLY=;
-        b=o9a2WPjBQaYA1Y7/revmPKQ0DT47m73XmCYI/l82upotn/7s9nvnBgm54apNclpt61
-         g2r9vvGQa5wGVlFRU1Bev3fei4eNQF/3/x0vU0lTq+zMDAiRD5Mu/RGU1AsvNm2QjzM3
-         u/M5z7McnZtfmf3odZGGS/3C/BJi/O4pN5A4PyjNMX4RWll9oK7Fl0kz7vDPJXk8aANQ
-         OIdL4PGM3h9Fxg+1qx9sjuSCJGzzg/4fz5As1QAeGUUUf34h5gV92SUz8ySTMhzU/miK
-         cjXJ4l9NJlFlhsNx4zF/khr/YFF2/1gT8XDf0q1yh3ISJkuAuRGc6s57k5dTo2tYwgvz
-         0v6g==
-X-Gm-Message-State: AHQUAuZvK+gT6XLuafFzmBM47+DNNM7bjasDtWFwmk0iKqLG9wQwsrMW
-        u+3PlHkSLEV9uUXg60Lijqzqw3QlTsB3065tewFa1Q==
-X-Google-Smtp-Source: AHgI3IYTDE5K36tVLwuWmVH6OGw3qvS591qoAx4NEc6sbufjXjMzCKSoHrTAxu3WdfuB5KXKey1VAR87bta/KI2izTk=
-X-Received: by 2002:a5d:97c8:: with SMTP id k8mr2930040ios.267.1550162515088;
- Thu, 14 Feb 2019 08:41:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20190201154232.10505-1-jagan@amarulasolutions.com>
- <CAMty3ZBspvP=qZEK9vaowVq4f5W3Qx2qHkwcuAnCOOjV29=Y_Q@mail.gmail.com>
- <20190213090308.dlcwgcrhg264k2cu@flea> <CAMty3ZCSMRm-0suApB4Zb+kE1M2sWn3F7ugPBFWaL4ap7cJejQ@mail.gmail.com>
-In-Reply-To: <CAMty3ZCSMRm-0suApB4Zb+kE1M2sWn3F7ugPBFWaL4ap7cJejQ@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 14 Feb 2019 22:11:43 +0530
-Message-ID: <CAMty3ZAUL8TWOec=VpJvBzPL1LE13XVMCWj6t-Gycmny38st_A@mail.gmail.com>
-Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1730699AbfBNRSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 12:18:13 -0500
+Received: from mail-eopbgr150081.outbound.protection.outlook.com ([40.107.15.81]:13568
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726160AbfBNRSN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Feb 2019 12:18:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fMoE6g7ZSe5j9iSFXU39Nf/NW33w+ZydDAAtUVN/whY=;
+ b=Zmosh46x+UWVGB99q3isf1Fucy5InNDknwdgAyC94kZ6jsqV4zHIUGJJ2+UcJZitIMlbedKePX0DsJW8b4GNmsirqz5sDoU5DBKpfKxBhCt+KM9kjMFA+ZSsiWEZOv/E7PXNTBHQyl59/HlmNky7Ldui5IHFvX+wp2JUXiYITxc=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB4833.eurprd04.prod.outlook.com (20.176.215.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Thu, 14 Feb 2019 17:18:07 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
+ 17:18:07 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+CC:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mike Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Angus Ainslie <angus.ainslie@puri.sm>,
+        Anson Huang <anson.huang@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [RFC 5/5] arm64: dts: imx8mq: Add the opp table and the
+ cpu-supply nodes
+Thread-Topic: [RFC 5/5] arm64: dts: imx8mq: Add the opp table and the
+ cpu-supply nodes
+Thread-Index: AQHUw88PEadq5tNj9UipD3QjqB4ZgKXfcmUAgAAYfAA=
+Date:   Thu, 14 Feb 2019 17:18:07 +0000
+Message-ID: <20190214171806.kufhw7ouguxt5jhq@fsr-ub1664-175>
+References: <1550084693-9797-1-git-send-email-abel.vesa@nxp.com>
+ <1550084693-9797-6-git-send-email-abel.vesa@nxp.com>
+ <1550159428.2546.40.camel@pengutronix.de>
+In-Reply-To: <1550159428.2546.40.camel@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f57d5699-ce87-4ce9-1d5c-08d692a062ee
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4833;
+x-ms-traffictypediagnostic: AM0PR04MB4833:
+x-ms-exchange-purlcount: 1
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB4833;23:QSqPiYb0TNS/oz4rRID9bKHAG6H08Desq2HmExk?=
+ =?iso-8859-1?Q?9gHZ/f/wwda1wznrHsSh3NGt5xxh2oybgybuRmZcZHWr1yw0i6vlJitsFR?=
+ =?iso-8859-1?Q?8ysVc2hY3cd9lPmu7hUv+e23fXwblFZpUvisYjPZuMXkGL+FIPLdhwf5JI?=
+ =?iso-8859-1?Q?HL5xkwCjt+uxH0x4xmAThyPfT81K4njy6WJ0vD7Na4Cb+vC3JOmWYUY64L?=
+ =?iso-8859-1?Q?AwBBKnA7Ph2OQHelMaHRSUlrfmBte6Xnsh5p2o/A1xuXcmP7+uDoCxM+0Y?=
+ =?iso-8859-1?Q?jtBszX0O+Xd5hfo51mZCp6RVfRo2iN/L1u83bS6iQwE6hDTKBGYUBy8vRa?=
+ =?iso-8859-1?Q?arDoXM3HnYt8FNIeVE3o7lt/20eL4sMEexyR+muKMB/mE0T7+lWtNvtDfs?=
+ =?iso-8859-1?Q?xIG/bQxpAcxJJE73d20t/MbQgzL8FTC8FESTRlZDLwE8J2OQySo2MayaSi?=
+ =?iso-8859-1?Q?SZ59Pfq+J03+39PgKyCSf0ovitfJ13TSKbXmvE2QoKSqtpaAOGQ+F5H7h3?=
+ =?iso-8859-1?Q?fdWFVrPwBFgkbrZBDLfWqqPhWoAGt8hcd7yHX/qP96fAi0SRfMf1buo7x0?=
+ =?iso-8859-1?Q?4E2v/aAPuse+qPbD1Buex/5PFyU7pgQev/kcUPvZTvxqgVn6kqIEDO/WFl?=
+ =?iso-8859-1?Q?H5nXAL5ABzJUutrU0hwXVpuIXCbcbsqe6ZjoY25i1RbOF1sXGLY8Wm37Ss?=
+ =?iso-8859-1?Q?yVLKY67AZEvlXCOhry+GUdNg/98+QasgY5TMdMjdCcgXs7v2Oyz8CB0RZf?=
+ =?iso-8859-1?Q?3CeTTXSML5MFMkAQeOjuHAF079XIuPlprD6mjhcAbEHQLR6UFRF6W0MOrH?=
+ =?iso-8859-1?Q?/EKysqzMFYajkykxlCUdQ6+sFJ3lICwp6FfbRcf5/pLT1nqMgp4LO0+XYX?=
+ =?iso-8859-1?Q?itgBO6gY++K75yr0nx7idIQN8RxJ9lGRHCSgGPK8I/w5WzYL+X1ieOkLYS?=
+ =?iso-8859-1?Q?q4aCdURLqsQcxfMLI1oDiW6GuNnE7OyROdoSPg0uV+3ou+U0nQrVPzHvA4?=
+ =?iso-8859-1?Q?E7RgYhulnXn9MLFU9mg3aiyo9FYEojG0MEKChD1Z8ed0FTzq08PVZIWiEZ?=
+ =?iso-8859-1?Q?HnCtoME5H32xJeXWpVcTxEOGaCNfVEvUUu896I4so/JJ1tNKGqYXthRMiZ?=
+ =?iso-8859-1?Q?FCh4qv4A+gr4sSs4yyfzJzfupSeZZ07BAFDmTOqTwhFg/c9IrjdUafazSo?=
+ =?iso-8859-1?Q?7yxuKDUp/bqHd0KmHxrKqqvwP9ct3J9eHmztkQQamw5UkNyhi7nPuXGMEj?=
+ =?iso-8859-1?Q?w/AQZHlZLmBBDAURFc9ykL2M76e8kTihyvuzthK27M3IsVyglxFdtbjcyt?=
+ =?iso-8859-1?Q?Cm04Db+6mJOggtJl5hvoGXwz3S3CAW18sWl5xnNEMRLQuz7SBUFyTnc56P?=
+ =?iso-8859-1?Q?hdCWplV4/TQ4lIDDxdntQbNe7V+YXW25iy8hf0tRt0g5M4mqXzo1CmSkiN?=
+ =?iso-8859-1?Q?XbDceToBwj1s+4=3D?=
+x-microsoft-antispam-prvs: <AM0PR04MB48337108969E1D8044F7A1C0F6670@AM0PR04MB4833.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09480768F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(6436002)(4326008)(53936002)(25786009)(71190400001)(6306002)(33716001)(68736007)(6512007)(478600001)(9686003)(71200400001)(6246003)(2906002)(14454004)(66066001)(106356001)(105586002)(966005)(6486002)(1076003)(229853002)(14444005)(99286004)(8936002)(97736004)(8676002)(33896004)(7416002)(76176011)(81156014)(6916009)(81166006)(186003)(11346002)(446003)(486006)(6346003)(44832011)(476003)(26005)(6506007)(7736002)(54906003)(305945005)(316002)(102836004)(256004)(86362001)(6116002)(53546011)(3846002)(32563001)(357404004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4833;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pLcMExRfcIA1dxLtX8qSn/oFvzHxQug2V9YUvRDxa8zGBaywB1iW1tjPoo3h21eh4N46FtPKlWK2g9yVdbwa+oU+VTh53Pf1S2347HPhkmLD+G0ObPBr55WeDYzu4L1wGE1hIaKChkyOzr9c0kuHwVKs6/kt3g0gQmX3dcngZx+Io+z0qN055R+KZoshAUyuM+LaoobN58abXoLw8pwspflpMMlHxZTWJr9JfnPTN/BoWwBRR5VgJDNImGTKWXs3jlDbhSiMuBOKDNFi16t87TlkLqXc9qyFmkUONUC1XMHHuDkRBYiuQCvs+IhD22VdrZkMlDv1W8rQzg9h4MqYa/oeTsRjwxngcpSftH4t3b/3VYFwq77p9DOhCA1pLljsJAMzBDXsLlmsJgneN7xh5/Ee4ve29tNNv0y4vUwcSIA=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <C59E0F6826FFEB43AD5E013C932B78C0@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f57d5699-ce87-4ce9-1d5c-08d692a062ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 17:18:07.0828
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4833
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 2:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Wed, Feb 13, 2019 at 2:33 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Tue, Feb 12, 2019 at 03:16:02PM +0530, Jagan Teki wrote:
-> > > On Fri, Feb 1, 2019 at 9:12 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > >
-> > > > Here is next version changes for Allwinner A64 MIPI-DSI support
-> > > >
-> > > > This series grouped the changes like previous version[1] with different
-> > > > sets to support three different panels types that can fit into the DSI
-> > > > controller.
-> > > >
-> > > > set:1, for 4-lane, burst mode support
-> > > > - patch 0001: 0009, DSI controller changes that support burst mode.
-> > > >
-> > > > set:2, for A64 DSI support
-> > > > - patch 0010: tcon dclk divider computation based on A64 BSP.
-> > > > - patch 0011: 0017, Allwinner A64 DSI controller changes.
-> > > >
-> > > > set:3, enable 4-lane burst mode panel:
-> > > > - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
-> > > >   burst mode panel on Pine64-LTS
-> > > >
-> > > > set:4, enable 4-lane video mode panel:
-> > > > - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
-> > > > - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211
-> > > >   panel on Bananapi M64
-> > > >
-> > > > set:5, enable 2-lane video mode panel:
-> > > > - patch 0021, 0022: DSI hfp and hbp timings fixes
-> > > > - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
-> > > >
-> > > > Changes for v7:
-> > > > - moved vcc-dsi binding to required filed.
-> > > > - drop quotes on fallback dphy bindings.
-> > > > - drop min_rate clock pll-mipi patches.
-> > > > - introduce dclk divider computation as like A64 BSP.
-> > > > - add A64 DSI quark patches.
-> > > > - fixed A64 DSI pipeline.
-> > > > - add proper commit messages.
-> > > > - collect Merlijn Wajer Tested-by credits.
-> > > > Changes for v6:
-> > > > - dropped unneeded changes, patches
-> > > > - fixed all burst mode patches as per previous version comments
-> > > > - rebase on master
-> > > > - update proper commit message
-> > > > - dropped unneeded comments
-> > > > - order the patches that make review easy
-> > > > Changes for v5:
-> > > > - collect Rob, Acked-by
-> > > > - droped "Fix VBP size calculation" patch
-> > > > - updated vblk timing calculation.
-> > > > - droped techstar, bananapi dsi panel drivers which may require
-> > > >   bridge or other setup. it's under discussion.
-> > > > Changes for v4:
-> > > > - droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
-> > > >   nkm min, max rate patches
-> > > > - create two patches for "Add Allwinner A64 MIPI DSI support"
-> > > >   one for has_mod_clk quirk and other one for A64 support
-> > > > - use existing driver code construct for hblk computation
-> > > > - dropped "Increase hfp packet overhead" patch [2], though BSP added
-> > > >   this but we have no issues as of now.
-> > > >   (no issues on panel side w/o this change)
-> > > > - create separate function for vblk computation
-> > > > - enable vcc-dsi regulator in dsi_runtime_resume
-> > > > - collect Rob, Acked-by
-> > > > - update MAINTAINERS file for panel drivers
-> > > > - cleanup commit messages
-> > > > - fixed checkpatch warnings/errors
-> > > >
-> > > > [1] https://patchwork.kernel.org/cover/10779893/
-> > > >
-> > > > Any inputs?
-> > > > Jagan.
-> > > >
-> > > > Jagan Teki (23):
-> > > >   drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
-> > > >     delay
-> > > >   drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
-> > > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
-> > > >   drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
-> > > >   drm/sun4i: tcon: Export get tcon0 routine
-> > > >   drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
-> > > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode
-> > > >   drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
-> > > >   drm/sun4i: sun6i_mipi_dsi: Enable HBP, HSA_HSE for burst mode
-> > >
-> > > Can you pick these burst changes which are generic to all SoCs. and
-> > > reset will send once we decide the tcon clock.
-> >
-> > These patches don't implement what we discussed last week, and as I
-> > told you already, most of them really need some work on the commit log
-> > and their explanations.
->
-> If I'm not wrong, we discussed about tcon_dclk (PLL_MIPI) last week
-> [1] and these burst changes between 01/23 to 09/23 which are generic
-> changes to DSI and not related to clock. Apart from that I made few
-> changes on commit logs between the versions (which I was mentioned on
-> the cover-letter patch). If any issues issues on commit message,
-> please let me know so-that I can rework.
+On 19-02-14 16:50:28, Lucas Stach wrote:
+> Hi Abel
+>=20
+> Am Mittwoch, den 13.02.2019, 19:05 +0000 schrieb Abel Vesa:
+> > Add the opp table containing only non over drive opps.
+> > Also add the cpu-supply nodes for the A53 cores in the EVK board.
+> >=20
+> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > ---
+> > =A0arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 17 +++++++++++++++++
+> > =A0arch/arm64/boot/dts/freescale/imx8mq.dtsi=A0=A0=A0=A0| 23 ++++++++++=
++++++++++++++
+> > =A02 files changed, 40 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > index 54737bf..114359e 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > @@ -31,6 +31,23 @@
+> > =A0		gpio =3D <&gpio2 19 GPIO_ACTIVE_HIGH>;
+> > =A0		enable-active-high;
+> > =A0	};
+> > +
+> > +};
+> > +
+> > +&A53_0 {
+> > +	cpu-supply =3D <&sw1a_reg>;
+> > +};
+> > +
+> > +&A53_1 {
+> > +	cpu-supply =3D <&sw1a_reg>;
+> > +};
+> > +
+> > +&A53_2 {
+> > +	cpu-supply =3D <&sw1a_reg>;
+> > +};
+> > +
+> > +&A53_3 {
+> > +	cpu-supply =3D <&sw1a_reg>;
+> > =A0};
+>=20
+> This should be a separate patch.
+>=20
 
-Look like the same discussion rounding since from months. In fact I
-have grouped all changes by 'sets of patches' in this series which I
-was thinking of having more feasibility to review and merge, but seems
-like it ended-up fusing which patches are more prior and which are
-fixes. So, let me send it by breaking into different series based on
-the issues and generic changes.
+OK, will send as separate patches in the next version.
+
+> And AFAICS this is wrong, sw1a on the MX8M-EVK is the GPU supply, the
+> CPU is supplied by a dedicated switcher that is controlled via a GPIO.
+>=20
+
+Hmm, I think you're right. At least this is what the following document say=
+s.
+
+https://www.mouser.com/ds/2/302/IMX8MDQLQEVKHUG-1280333.pdf
+
+So I guess this means there will not be any cpu-supply properties.=20
+
+Thanks,
+Abel
+
+> Regards,
+> Lucas
+>=20
+> > =A0&fec1 {
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> > b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> > index 1a89062..89b2d5f 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> > @@ -91,6 +91,7 @@
+> > =A0			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+> > =A0			enable-method =3D "psci";
+> > =A0			next-level-cache =3D <&A53_L2>;
+> > +			operating-points-v2 =3D <&a53_0_opp_table>;
+> > =A0		};
+> > =A0
+> > =A0		A53_1: cpu@1 {
+> > @@ -101,6 +102,7 @@
+> > =A0			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+> > =A0			enable-method =3D "psci";
+> > =A0			next-level-cache =3D <&A53_L2>;
+> > +			operating-points-v2 =3D <&a53_0_opp_table>;
+> > =A0		};
+> > =A0
+> > =A0		A53_2: cpu@2 {
+> > @@ -111,6 +113,7 @@
+> > =A0			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+> > =A0			enable-method =3D "psci";
+> > =A0			next-level-cache =3D <&A53_L2>;
+> > +			operating-points-v2 =3D <&a53_0_opp_table>;
+> > =A0		};
+> > =A0
+> > =A0		A53_3: cpu@3 {
+> > @@ -121,6 +124,7 @@
+> > =A0			clocks =3D <&clk IMX8MQ_CLK_ARM>;
+> > =A0			enable-method =3D "psci";
+> > =A0			next-level-cache =3D <&A53_L2>;
+> > +			operating-points-v2 =3D <&a53_0_opp_table>;
+> > =A0		};
+> > =A0
+> > =A0		A53_L2: l2-cache0 {
+> > @@ -666,6 +670,25 @@
+> > =A0			status =3D "disabled";
+> > =A0		};
+> > =A0
+> > +
+> > +		a53_0_opp_table: opp-table {
+> > +			compatible =3D "operating-points-v2";
+> > +			opp-shared;
+> > +
+> > +			opp-800000000 {
+> > +				opp-hz =3D /bits/ 64 <800000000>;
+> > +				opp-microvolt =3D <900000>;
+> > +				clock-latency-ns =3D <150000>;
+> > +			};
+> > +
+> > +			opp-1000000000 {
+> > +				opp-hz =3D /bits/ 64 <1000000000>;
+> > +				opp-microvolt =3D <900000>;
+> > +				clock-latency-ns =3D <150000>;
+> > +				opp-suspend;
+> > +			};
+> > +		};
+> > +
+> > =A0		gic: interrupt-controller@38800000 {
+> > =A0			compatible =3D "arm,gic-v3";
+> > =A0			reg =3D <0x38800000 0x10000>,	/* GIC
+> > Dist */=
