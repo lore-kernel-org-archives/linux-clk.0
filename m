@@ -2,163 +2,174 @@ Return-Path: <SRS0=hHRo=QV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFA0C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 08:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B47C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 08:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D279821920
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 08:29:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300202229F
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 08:34:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ndzx3w67"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbfBNI3I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:29:08 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33273 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfBNI3I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 03:29:08 -0500
-Received: by mail-lf1-f65.google.com with SMTP id q12so3927631lfm.0;
-        Thu, 14 Feb 2019 00:29:05 -0800 (PST)
+        id S2394684AbfBNIeX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 03:34:23 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43411 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394685AbfBNIeX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 03:34:23 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so2684037pgk.10
+        for <linux-clk@vger.kernel.org>; Thu, 14 Feb 2019 00:34:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bpd8PA3u3JrSVmuhmsHW2bxdpcyCmZx0PS6GlvD0wGA=;
+        b=Ndzx3w67x7NWqoTwPDLzFK/8piJRNsTTOBDhdiKTA4T5wGgcaf0c07P26qOtXV4UrC
+         76JcFtP4+/0bTTMaJsQppoTUJK94tfFsyw+EKdP/mjXSyxQCKrRa9IRNYDvLdbzKU36E
+         OPHfyjz6S4QzNCeGKkKlbc/WlENEoLoexoVe2aCZa+WNEn4KDs3+ad3t42qoC5cnJRPF
+         JfWY25cnwTg8ULl1MOSDshtKeQcPbesyPcIXNrKNh9KocvDY9b5nR3mg3wVRTdiZhk43
+         pUpJNAJZxR1rwe8ekq6hRYanPcMz8INM4zmABpdoz1TpzCpe2olFkCYJvxr3PDun3FpH
+         tj4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l3iPjx8/UulQY/uFgVYx/0xPLNC8wW7LuIjtNQrjzbA=;
-        b=qKBtKSzWGcmw0HcWqhB/ZBFP69KZeCqZAKgEpO6KgyK4vWZJ1L9R6n3OWNZOrOGppx
-         dbNtR1gyXuEuNbZhhvRsbWzzsN/PTaU86+Tbyk3DW7csmKPozfaOWu/yY6w0k+3hPMSb
-         mZwAJLYMlpmY8Vo+/MMwTPEvnpnjakfPAmaixyvKhIyRmLosTpzQLUwh0KBmwRuQe4AC
-         XIpD+EcTFQdSYdC9/lhp1nwMjI2zx9SwEezGgwK5ilnLSFVkHHGl2/5U0g70qsdqLMfz
-         TWdQo4slNL1Oq1ACPASncMUOkezOvYYU+ZkvAgvgxBW00OOEl0xih8giVPH2yDVGeBi1
-         m8pw==
-X-Gm-Message-State: AHQUAuZOqn2bAYzwlfu79sfTawxfkPjKuR8tQFdrtnMgswXQOBDKWT8s
-        mGsq0kBb16qtrMz4HIBcNYk=
-X-Google-Smtp-Source: AHgI3Ib5E6CfTUEUsUuHzYD/Fci7mf30jTD0K5kMjZvuyKajQ927KSa+qo15OUXlDP6Lcjl1/J4w8Q==
-X-Received: by 2002:a19:a211:: with SMTP id l17mr1477474lfe.144.1550132944800;
-        Thu, 14 Feb 2019 00:29:04 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id y17-v6sm302082lja.94.2019.02.14.00.29.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 00:29:03 -0800 (PST)
-Date:   Thu, 14 Feb 2019 10:29:01 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        bh=bpd8PA3u3JrSVmuhmsHW2bxdpcyCmZx0PS6GlvD0wGA=;
+        b=PqbrkESCUiRjzLWlhpUgOdBgcAyp6Fc+tqz/q+DkAoi0XXeszdcNGPxHNDQmn9yzI8
+         K3VObLEW97ddY3uGFeW3cAsg1yfp5XqtutDmR7sALd3iNtkE0BAaoyVybtrs29poeoAn
+         ZKcWTez5EoCYWW72UVrsYHh3Zu+yJKUeeqs1BazeuC26B/hw4MyrnfstAkV3LbgGJa2x
+         uW0l2zbz/lLYc0eKtw2si6jf+0pje7bgGckRlZpMm1D+XIf0hhvcjang3LWF1EgjaBNf
+         qD8UDnrQc7rnExOiBcBCQLafIVZDc1hWttaAq3QmcUmkVzJXasmluwQcjR9eXgpIaVYU
+         HS+w==
+X-Gm-Message-State: AHQUAua6uIbbYrVoZLgAz8yRHr82lXSiH7AgIsItj5jioUIL9SbSbss4
+        rAsC0w/rS+beePIuhb8hv8k+3g==
+X-Google-Smtp-Source: AHgI3IbVmCDf7+SMTXCPLQ5MmQj3W6jsZDsBvTmZvZ/Ip1kbcT7u+IRJSuILIjHyEGtMiQcY9ptF+g==
+X-Received: by 2002:a63:516:: with SMTP id 22mr2525276pgf.353.1550133262179;
+        Thu, 14 Feb 2019 00:34:22 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id d16sm1789033pgj.21.2019.02.14.00.34.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 00:34:21 -0800 (PST)
+Date:   Thu, 14 Feb 2019 14:04:19 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-rtc@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        bogdan-petru.chircu-mare@nxp.com
-Subject: Re: [PATCH v9 5/8] gpio: Initial support for ROHM bd70528 GPIO block
-Message-ID: <20190214082901.GG12247@localhost.localdomain>
-References: <cover.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
- <8334d6064575249e871e88aa6057b134795232e3.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
- <CACRpkdYqSyWGSy6OKukE_SQWi1r0uOQD91JwpqUgrbJq28gbUQ@mail.gmail.com>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V5 1/2] arm64: dts: freescale: imx8qxp: add cpu opp table
+Message-ID: <20190214083419.slnuolyy5xhz4szy@vireshk-i7>
+References: <1550131046-2069-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYqSyWGSy6OKukE_SQWi1r0uOQD91JwpqUgrbJq28gbUQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1550131046-2069-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks a bunch Linus,
-
-On Thu, Feb 14, 2019 at 09:00:33AM +0100, Linus Walleij wrote:
-> On Wed, Feb 13, 2019 at 2:34 PM Matti Vaittinen
-> <matti.vaittinen@fi.rohmeurope.com> wrote:
+On 14-02-19, 08:02, Anson Huang wrote:
+> Add i.MX8QXP CPU opp table to support cpufreq.
 > 
-> > ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
-> > controlled by GPIO framework.
-> >
-> > IRQs are handled by regmap-irq and GPIO driver is not
-> > aware of the irq usage.
-> >
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> Changes since V4:
+> 	- remove redundant clock-latency property in A35_0;
+> 	- add #cooling-cells for all A35 core.
+> ---
+>  arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
 > 
-> (...)
-> 
-> Just spotted this:
-> 
-> > +#include <linux/gpio/driver.h>
-> > +#include <linux/gpio.h>
-> 
-> A driver should only need <linux/gpio/driver.h>
-> the <linux/gpio.h> should not be used at all in new code,
-> it is a legacy header.
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> index 4021f25..fad1259 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> @@ -34,6 +34,9 @@
+>  			reg = <0x0 0x0>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			clocks = <&clk IMX_A35_CLK>;
 
-Allright. I'll do v10 and drop the header. Thanks for pointing this out
+As I said in my previous email, mentioning clocks is important too for
+other CPUs.
 
-> > +static int bd70528_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
-> > +                                  unsigned long config)
-> > +{
-> > +       struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-> > +
-> > +       switch (pinconf_to_config_param(config)) {
-> > +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-> > +               return regmap_update_bits(bdgpio->chip.regmap,
-> > +                                         GPIO_OUT_REG(offset),
-> > +                                         BD70528_GPIO_DRIVE_MASK,
-> > +                                         BD70528_GPIO_OPEN_DRAIN);
-> > +               break;
-> > +       case PIN_CONFIG_DRIVE_PUSH_PULL:
-> > +               return regmap_update_bits(bdgpio->chip.regmap,
-> > +                                         GPIO_OUT_REG(offset),
-> > +                                         BD70528_GPIO_DRIVE_MASK,
-> > +                                         BD70528_GPIO_PUSH_PULL);
-> > +               break;
-> > +       case PIN_CONFIG_INPUT_DEBOUNCE:
-> > +               return bd70528_set_debounce(bdgpio, offset,
-> > +                                           pinconf_to_config_argument(config));
-> > +               break;
-> > +       default:
-> > +               break;
-> > +       }
-> > +       return -ENOTSUPP;
-> > +}
-> 
-> BTW I just merged code from Thomas Petazzoni that make it possible to
-> also support pull-up and pull-down from GPIO here if you want to enable
-> it.
-
-Thanks for heads up Linus! I'll check it out although I don't want to
-add up more changes in this series... But my initial feeling is that
-this will deserve another patch (set) when initial support for BD70528
-is available. (This answer is not locked, it may be I will fit the
-change in this series if I am not buried under other duties ;] )
-
-Br,
-	Matti Vaittinen
-
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_1: cpu@1 {
+> @@ -42,6 +45,8 @@
+>  			reg = <0x0 0x1>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_2: cpu@2 {
+> @@ -50,6 +55,8 @@
+>  			reg = <0x0 0x2>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_3: cpu@3 {
+> @@ -58,6 +65,8 @@
+>  			reg = <0x0 0x3>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_L2: l2-cache0 {
+> @@ -65,6 +74,24 @@
+>  		};
+>  	};
+>  
+> +	a35_0_opp_table: opp-table {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp-900000000 {
+> +			opp-hz = /bits/ 64 <900000000>;
+> +			opp-microvolt = <1000000>;
+> +			clock-latency-ns = <150000>;
+> +		};
+> +
+> +		opp-1200000000 {
+> +			opp-hz = /bits/ 64 <1200000000>;
+> +			opp-microvolt = <1100000>;
+> +			clock-latency-ns = <150000>;
+> +			opp-suspend;
+> +		};
+> +	};
+> +
+>  	gic: interrupt-controller@51a00000 {
+>  		compatible = "arm,gic-v3";
+>  		reg = <0x0 0x51a00000 0 0x10000>, /* GIC Dist */
+> -- 
+> 2.7.4
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+viresh
