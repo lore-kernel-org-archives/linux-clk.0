@@ -6,25 +6,24 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C67C10F04
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26BAC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C6B218FF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:50:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70BC8222DB
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437062AbfBNPul (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:50:41 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38599 "EHLO
+        id S2502287AbfBNPvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 10:51:45 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57523 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728761AbfBNPul (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 10:50:41 -0500
+        with ESMTP id S2502307AbfBNPvp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 10:51:45 -0500
 Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
         by metis.ext.pengutronix.de with esmtp (Exim 4.89)
         (envelope-from <l.stach@pengutronix.de>)
-        id 1guJHR-00048B-AM; Thu, 14 Feb 2019 16:50:29 +0100
-Message-ID: <1550159428.2546.40.camel@pengutronix.de>
-Subject: Re: [RFC 5/5] arm64: dts: imx8mq: Add the opp table and the
- cpu-supply nodes
+        id 1guJIP-0004OL-Et; Thu, 14 Feb 2019 16:51:29 +0100
+Message-ID: <1550159489.2546.41.camel@pengutronix.de>
+Subject: Re: [RFC 1/5] clk: imx: imx8mq: Fix the rate propagation for arm pll
 From:   Lucas Stach <l.stach@pengutronix.de>
 To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -40,10 +39,10 @@ Cc:     dl-linux-imx <linux-imx@nxp.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Date:   Thu, 14 Feb 2019 16:50:28 +0100
-In-Reply-To: <1550084693-9797-6-git-send-email-abel.vesa@nxp.com>
+Date:   Thu, 14 Feb 2019 16:51:29 +0100
+In-Reply-To: <1550084693-9797-2-git-send-email-abel.vesa@nxp.com>
 References: <1550084693-9797-1-git-send-email-abel.vesa@nxp.com>
-         <1550084693-9797-6-git-send-email-abel.vesa@nxp.com>
+         <1550084693-9797-2-git-send-email-abel.vesa@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
@@ -57,116 +56,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Abel
-
 Am Mittwoch, den 13.02.2019, 19:05 +0000 schrieb Abel Vesa:
-> Add the opp table containing only non over drive opps.
-> Also add the cpu-supply nodes for the A53 cores in the EVK board.
+> The arm pll bypass needs to propagate the rate upwards
+> in order for the cpufreq to work.
 > 
+> Fixes: b80522040cd3f ("clk: imx: Add clock driver for i.MX8MQ CCM")
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+
 > ---
->  arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 17 +++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi    | 23 +++++++++++++++++++++++
->  2 files changed, 40 insertions(+)
+>  drivers/clk/imx/clk-imx8mq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> index 54737bf..114359e 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> @@ -31,6 +31,23 @@
->  		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
->  		enable-active-high;
->  	};
-> +
-> +};
-> +
-> +&A53_0 {
-> +	cpu-supply = <&sw1a_reg>;
-> +};
-> +
-> +&A53_1 {
-> +	cpu-supply = <&sw1a_reg>;
-> +};
-> +
-> +&A53_2 {
-> +	cpu-supply = <&sw1a_reg>;
-> +};
-> +
-> +&A53_3 {
-> +	cpu-supply = <&sw1a_reg>;
->  };
-
-This should be a separate patch.
-
-And AFAICS this is wrong, sw1a on the MX8M-EVK is the GPU supply, the
-CPU is supplied by a dedicated switcher that is controlled via a GPIO.
-
-Regards,
-Lucas
-
->  &fec1 {
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> index 1a89062..89b2d5f 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> @@ -91,6 +91,7 @@
->  			clocks = <&clk IMX8MQ_CLK_ARM>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> +			operating-points-v2 = <&a53_0_opp_table>;
->  		};
+> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> index 398ab0b..57499ed 100644
+> --- a/drivers/clk/imx/clk-imx8mq.c
+> +++ b/drivers/clk/imx/clk-imx8mq.c
+> @@ -340,7 +340,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+>  	clks[IMX8MQ_DRAM_PLL2_DIV] = imx_clk_divider("dram_pll2_div", "dram_pll2", base + 0x68, 1, 6);
 >  
->  		A53_1: cpu@1 {
-> @@ -101,6 +102,7 @@
->  			clocks = <&clk IMX8MQ_CLK_ARM>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> +			operating-points-v2 = <&a53_0_opp_table>;
->  		};
->  
->  		A53_2: cpu@2 {
-> @@ -111,6 +113,7 @@
->  			clocks = <&clk IMX8MQ_CLK_ARM>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> +			operating-points-v2 = <&a53_0_opp_table>;
->  		};
->  
->  		A53_3: cpu@3 {
-> @@ -121,6 +124,7 @@
->  			clocks = <&clk IMX8MQ_CLK_ARM>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> +			operating-points-v2 = <&a53_0_opp_table>;
->  		};
->  
->  		A53_L2: l2-cache0 {
-> @@ -666,6 +670,25 @@
->  			status = "disabled";
->  		};
->  
-> +
-> +		a53_0_opp_table: opp-table {
-> +			compatible = "operating-points-v2";
-> +			opp-shared;
-> +
-> +			opp-800000000 {
-> +				opp-hz = /bits/ 64 <800000000>;
-> +				opp-microvolt = <900000>;
-> +				clock-latency-ns = <150000>;
-> +			};
-> +
-> +			opp-1000000000 {
-> +				opp-hz = /bits/ 64 <1000000000>;
-> +				opp-microvolt = <900000>;
-> +				clock-latency-ns = <150000>;
-> +				opp-suspend;
-> +			};
-> +		};
-> +
->  		gic: interrupt-controller@38800000 {
->  			compatible = "arm,gic-v3";
->  			reg = <0x38800000 0x10000>,	/* GIC
-> Dist */
+>  	/* PLL bypass out */
+> -	clks[IMX8MQ_ARM_PLL_BYPASS] = imx_clk_mux("arm_pll_bypass", base + 0x28, 14, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels));
+> +	clks[IMX8MQ_ARM_PLL_BYPASS] = imx_clk_mux_flags("arm_pll_bypass", base + 0x28, 14, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels), CLK_SET_RATE_PARENT);
+>  	clks[IMX8MQ_GPU_PLL_BYPASS] = imx_clk_mux("gpu_pll_bypass", base + 0x18, 14, 1, gpu_pll_bypass_sels, ARRAY_SIZE(gpu_pll_bypass_sels));
+>  	clks[IMX8MQ_VPU_PLL_BYPASS] = imx_clk_mux("vpu_pll_bypass", base + 0x20, 14, 1, vpu_pll_bypass_sels, ARRAY_SIZE(vpu_pll_bypass_sels));
+>  	clks[IMX8MQ_AUDIO_PLL1_BYPASS] = imx_clk_mux("audio_pll1_bypass", base + 0x0, 14, 1, audio_pll1_bypass_sels, ARRAY_SIZE(audio_pll1_bypass_sels));
