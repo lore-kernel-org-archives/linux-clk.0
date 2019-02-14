@@ -4,44 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D7CC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FF0C10F04
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84625222DA
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2293222DA
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 15:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="FoMA7bVj"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="D6q0Xez5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393429AbfBNPy5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:54:57 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:18105 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388239AbfBNPy5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 10:54:57 -0500
+        id S1728875AbfBNPys (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 10:54:48 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:17444 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502368AbfBNPyr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 10:54:47 -0500
 X-IronPort-AV: E=Sophos;i="5.58,369,1544511600"; 
-   d="scan'208";a="26565218"
+   d="scan'208";a="23863290"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Feb 2019 08:54:54 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 14 Feb 2019 08:54:44 -0700
 Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 14 Feb 2019 08:54:53 -0700
+ email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Thu, 14 Feb 2019 08:54:44 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector1-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UxvJskMUc7UwZVt/Jk3ZV4jjrDzNjlcr8v5Nx7uxB+4=;
- b=FoMA7bVjnA5B3JnCXUEYz3i/YxI8vj+EznBMaV9DvB6NBlRuGBw4Oj4UT0rVeYe3yTwE3+MNZzoDJR8y2cICIezlWTMqAht8yjyWy60KnJVB3K0AHXGSP+zV8kJx1OoShFL6aHOJws+q2uamNDgdrGrLx+8g8M9S9bHuX9efHsI=
+ bh=65BVjeIEXzp2/+wrCys8o6UEdbRcpqbRkkZky+uuU+M=;
+ b=D6q0Xez5g8d2UQD/cS5Q2pXJ0NYgCkWA55C5ljKbcEpnJq5TsHxC5FzBWiR3etQwYXNCKG3R30tYA5g2M0VrRE996uSw7TYhHvZ6Nx3/xZ1jtNRQVglvayOO5KSbwRXP7URh8bIRJloJM+9k4blHg1zOT+I8VhpfEqM/lN6rWqU=
 Received: from MWHPR11MB1920.namprd11.prod.outlook.com (10.175.54.19) by
  MWHPR11MB1472.namprd11.prod.outlook.com (10.172.53.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.21; Thu, 14 Feb 2019 15:54:52 +0000
+ 15.20.1601.21; Thu, 14 Feb 2019 15:54:42 +0000
 Received: from MWHPR11MB1920.namprd11.prod.outlook.com
  ([fe80::d917:8496:9d53:1f55]) by MWHPR11MB1920.namprd11.prod.outlook.com
  ([fe80::d917:8496:9d53:1f55%9]) with mapi id 15.20.1622.016; Thu, 14 Feb 2019
- 15:54:52 +0000
+ 15:54:42 +0000
 From:   <Claudiu.Beznea@microchip.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -51,13 +51,11 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <Claudiu.Beznea@microchip.com>
-Subject: [PATCH 5/8] ARM: at91: pm: add support for per SoC wakeup source
- configuration
-Thread-Topic: [PATCH 5/8] ARM: at91: pm: add support for per SoC wakeup source
- configuration
-Thread-Index: AQHUxH2fcSUQrSNGs0mRnpHh/9aZYg==
-Date:   Thu, 14 Feb 2019 15:54:51 +0000
-Message-ID: <1550159642-26878-6-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH 3/8] ARM: at91: pm: initial PM support for SAM9X60
+Thread-Topic: [PATCH 3/8] ARM: at91: pm: initial PM support for SAM9X60
+Thread-Index: AQHUxH2ZASldydEtRkacJovuHMJ48Q==
+Date:   Thu, 14 Feb 2019 15:54:41 +0000
+Message-ID: <1550159642-26878-4-git-send-email-claudiu.beznea@microchip.com>
 References: <1550159642-26878-1-git-send-email-claudiu.beznea@microchip.com>
 In-Reply-To: <1550159642-26878-1-git-send-email-claudiu.beznea@microchip.com>
 Accept-Language: en-US
@@ -73,44 +71,44 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.7.4
 x-originating-ip: [213.233.85.122]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 91008001-3219-4b52-f84e-08d69294c148
+x-ms-office365-filtering-correlation-id: bda45bed-ce51-46d9-d80f-08d69294bb55
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1472;
 x-ms-traffictypediagnostic: MWHPR11MB1472:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR11MB1472;23:Vn7/dUe3+6tI/xO87R7g52pkmH45U1ZcNKMsmS1?=
- =?iso-8859-1?Q?zM+MNFlBgjtqbTBg12/IaLNvI8xpQXbXsjYbCxj5SvB4n9EcC6b0jdf6M7?=
- =?iso-8859-1?Q?B1ZBldNbbCLjtUYf4ovukVbsGVRvIcMuqJlHIfAI9GL1U1bkKJ3Blabzjj?=
- =?iso-8859-1?Q?iwr4zl8V/k2SgtfRZE9oK9xdkEX5CTkmvo56k+oHDgcc1U45iUpe0WGxXl?=
- =?iso-8859-1?Q?SoboW5uF/4l+DRfL/0HQ1cT8PBX9oEiTy8wyedHM4QfxJkRubMePvZfdDb?=
- =?iso-8859-1?Q?3b56+YlfNRCWor64Wx093t5LbUdxPxz2muHtgH/hrZWXum9nLPTs1kdmOa?=
- =?iso-8859-1?Q?e47ArZUD9JOABTUoonLaGIZ7UnDJPbFTgFHSezkZVRq3yUuxF/AWr5teH3?=
- =?iso-8859-1?Q?nD23VQkhKbB1zeuEF+75RRn70Frw6Jfl5/FErML59le/3PMzuww8cu+MHk?=
- =?iso-8859-1?Q?tMXVAWz42R6iRGV4JZcqvOTU7gfrMSg2UwBp9uICAOAeHd0kHpOZXxgNI4?=
- =?iso-8859-1?Q?QGNv7fmiAmlJIAA1HuHQgLikYki8h6QKCG/H19DIBftstF7Ap3bcsvCTup?=
- =?iso-8859-1?Q?WLqfDJ3I6Ee3XosnfBhaZ/RAhFgGjaURa/A5Q4QNZHafkK3ZMzZhvEyPZX?=
- =?iso-8859-1?Q?XzL2FnyiAvyNgxhXxGqgvg/Xzl3J08N6vZIIKc9gS73IrM6aXGgmJwcb6Y?=
- =?iso-8859-1?Q?4slHUCb6ajdippUamwYgRSDgkBf7sQiNyHiIj8hq1hEl+hMCN/vUU3iTSY?=
- =?iso-8859-1?Q?OqxDKYwZURl+UtLzsZjxYdXoFRcAqrWu+N8hc41t/f/uQxfsRGkZTJWBpj?=
- =?iso-8859-1?Q?mIwk1TTl18FJjMUGTgwmdzYDE1Kpw2q5xola1y4z8D5CQU5Y5FsIdk+Qbr?=
- =?iso-8859-1?Q?D7RZmVDGyVKZcYz48QZP82v7dM4FyLyLDMZQ9nWGgA0u+OKY25bPoxeAwq?=
- =?iso-8859-1?Q?nb3+5vgEYNOa+fQTmtLMeEdA0X6NGfL3bIO31Z9eDpdPiNw83aHa8iMM+l?=
- =?iso-8859-1?Q?IMjVhHW4D5SWkHeOwdxj/OMWMtF1Ll67HfS0iUod4tnhLvcSJG4SlOp4UI?=
- =?iso-8859-1?Q?wIoRoquPp4Nyb0OLMzRFkz0cCG/W33NIbe2yCdKrrwAPoceeRGhTlnyBcq?=
- =?iso-8859-1?Q?+OSp9ctaiJSy/NcBPeFKEWoKYMjYCo/tPS3ypj3/tTX9CDO1/ZshP+gnXn?=
- =?iso-8859-1?Q?iWsmNoYG2qGcMnwUS5Nc4dUk0TqP/MNmXw5UEBmgobS8wlgj4vZYrtwPIp?=
- =?iso-8859-1?Q?QKCdfQFIbtCA3zNt0U1qQeexQ2upEAlFpxkpYvvLoVmzVBMl2bHrS/1AHv?=
- =?iso-8859-1?Q?bd+v+gP2ptM28hQwHqL7wDb?=
-x-microsoft-antispam-prvs: <MWHPR11MB147253F25208C63C2DB70F8187670@MWHPR11MB1472.namprd11.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR11MB1472;23:EwpdkFC7RMGpXMdtvUJTvhSuHV6Ef7t88KZZTtD?=
+ =?iso-8859-1?Q?gId1UJ7YBNb2FIOQdmrr1xqgbXxT6+6p3M3jEb2tSFVBwgILfFxwwCfVDD?=
+ =?iso-8859-1?Q?cGPJxHu+zu21/hyGxMSLKGAESWbo+xLvKQEgNbfGE6J54YvTv5PR5eIEGp?=
+ =?iso-8859-1?Q?PzaBBz/MobIXMJs0+oYobkd/Nm16EIfZsuxvnvQ7vB+FWSdfZtDE7Z3XqD?=
+ =?iso-8859-1?Q?4paUBeMbtQn9/rBOJDbzc0ko+NnVO/lIy47f//yy60X8JsCoWqjX6Acf/t?=
+ =?iso-8859-1?Q?hka6xNRoWy9XMVXrozKQ+SgMPa+k044z4t105bsIpclumy/8oCVu+sVFdM?=
+ =?iso-8859-1?Q?H2Ey1k7nUfniHkKH0ZBeqLB3MT6KloFicjBq8rG9PG919fzurHw1leGj5F?=
+ =?iso-8859-1?Q?O3HTrMkEDOKuHzZL1NakDiMxpDZL1QBK9Zxekhm9oJjp4SEvmkNEnVsW51?=
+ =?iso-8859-1?Q?8E1+GFksqKyUtnc71msA/ayk194g73dk2d7hRyBbEz/135TOBcxHUSSPod?=
+ =?iso-8859-1?Q?0P0t3qYQZGgMPFOOlKwDJjgV6O6ynZBDeit2wddk/SA6uBuOyp8ugFpd2P?=
+ =?iso-8859-1?Q?6qf3itYrsY0gN2SpfB0EcYIY94Fd3/lIqqO84T1AVyDcSwAlJ0TD4aLZZj?=
+ =?iso-8859-1?Q?NaQBmWoIznTL8DjK6yrpuP2wF+Nnj1LrWlJpXEN9so4CZ6mC+yb5ZN7KbD?=
+ =?iso-8859-1?Q?mlzjIcm4Ijv1qgzxTN1tjfitESbmZ+ImgdVyBAD/wuNLqdepG6jXnKcQh0?=
+ =?iso-8859-1?Q?X7VNtCr8XTGuXAy0cwo3CyVzmCZKzhE2zChdl9Kn9Zom8gJpxKKCs4Igyb?=
+ =?iso-8859-1?Q?nKNbk+ubmjErCnottHIkRkqFuWD/pAs6XoGvciVtdeTwPPQcCGFp6YTJw+?=
+ =?iso-8859-1?Q?HJ4OxLpu4eVZBYU/dsaeGdCcHwdOSv1tBHmEL+p3YkjTeaky90a0bYZKDK?=
+ =?iso-8859-1?Q?S0g4V56EgZSWVtsaqNTon0ygwz3UkQRDTmNgANB+vVZXEJLNugs08s+Vmc?=
+ =?iso-8859-1?Q?bLqzeeWwMR3xxA6mY15q5XXlsXF9oUZjnywM3bGgAKAkEnlanKaRcn47ZW?=
+ =?iso-8859-1?Q?6jnFMpGcez8GhoB61ro+Off9beGwuvVJ+/pBEwsQtRFHAF2TfAKTkPlEaM?=
+ =?iso-8859-1?Q?NBo3qN6a0jdjSfUVe8gX6kVBjkCLL4GGCcbXqE5jRhc6HVZuDJSULJ/JzS?=
+ =?iso-8859-1?Q?wJrzf4VfaxNh+9xUUkKrh2OTMEDeLCnzzyYLjrJA/D2Q4fyue873oLlIsW?=
+ =?iso-8859-1?Q?kA+5HNj1iM1yJ5x8M0wWGafLu6ehkRsEI09fO3LL0b7JuAvWCTninbV2NQ?=
+ =?iso-8859-1?Q?iXseswcLJiVW6L64DCCAteh?=
+x-microsoft-antispam-prvs: <MWHPR11MB147231C51FC85383D26DE2A987670@MWHPR11MB1472.namprd11.prod.outlook.com>
 x-forefront-prvs: 09480768F8
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(366004)(136003)(39860400002)(189003)(199004)(50226002)(478600001)(52116002)(2501003)(110136005)(25786009)(316002)(66066001)(8936002)(2906002)(8676002)(72206003)(68736007)(4326008)(54906003)(76176011)(81166006)(99286004)(6512007)(256004)(81156014)(305945005)(7736002)(6486002)(6436002)(26005)(186003)(6506007)(476003)(106356001)(105586002)(7416002)(14454004)(446003)(6116002)(102836004)(386003)(11346002)(97736004)(2201001)(71190400001)(107886003)(71200400001)(3846002)(86362001)(53936002)(2616005)(36756003)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1472;H:MWHPR11MB1920.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uoqtuH0EC7+3uTKbEyv98LLU4bdirm9XpiLbAr9BZIRt+Luo6ppHLbzaa/wF752iEtdysur2sQHFIU0D5xtZQlMGYrIzgkf+52UXY6xGVQ027qr1QQ0LzWgwZcqBbfoYu9+pMX2jjKjiru2DtVQFrSdB5EeVCx6otCw2+1jrbjMNxrUzRw+VM+Yo3Y0SDQFBE4IvovbnUkky02rVSFO29p85I1/QynUN6OGZ/FX6xRWV56T484PEFS0dUwpSz/iNxcJKiJgxL7sJmEgXOJmGRUYbHwJdMWZRE5/Mxim98ofJI72pcmVNIEnDUCZPHT8s/cQhZcnyG1Anc82NACJotG5n1xWacSqqsufoBo9qGZ88sYPUE9zN5xbrmvXnRC47IDKIw6XW2vQ0hVnJJyTby/gGShCkT87VESvGSIN26O4=
+x-microsoft-antispam-message-info: KS+iJFWR0OgDA0HJaOw64IK1cWxh5PkvRcfBfOoDA2wjrBP8XBrJYW6pdtDyhUmE9ep36PF4xWizndcv9CEdUiqbSS5MRV0P3GOqUKs8cdXQUflzsmqhh329v7w4n+oHK8IknH0xouKEDm/ON701mJVZmt/XAIBVK5rOMbGK3Z7CxkZko2jy5hVZ91y0PCsVb4HOu0ZNUAST/G6Il1K+X4h3zdAI4s48Y9tIf+r1Pbt02dgt5FF9PjIrfW28dSokhEOHYWRU/gWco1L01txSORSnHhKLlNfEtZw4cVKjN7zI8HHZTePFZTq69N3xAruWnbqbUgAGHVPd0n97hbxLIY/HXzDzypzez0d1/CoDXIjx8HmnXpd91ioW/SAbnpiiQW9rN6Eqv4dfNNduT7DQYaRF/Rlz5khuMpWq9tKNyE0=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91008001-3219-4b52-f84e-08d69294c148
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 15:54:47.3830
+X-MS-Exchange-CrossTenant-Network-Message-Id: bda45bed-ce51-46d9-d80f-08d69294bb55
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 15:54:37.4892
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -124,113 +122,91 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Add support for per SoC wakeup source configuration. In this way
-we could have per SoC wakeup sources, shutdown controller and power
-management controller configurations for ULP1 power management mode.
+Add initial PM support for SAM9X60. This include idle, WFI and ULP0.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- arch/arm/mach-at91/pm.c | 42 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 8 deletions(-)
+ arch/arm/mach-at91/at91sam9.c | 18 ++++++++++++++++++
+ arch/arm/mach-at91/generic.h  |  2 ++
+ arch/arm/mach-at91/pm.c       | 14 ++++++++++++++
+ 3 files changed, 34 insertions(+)
 
+diff --git a/arch/arm/mach-at91/at91sam9.c b/arch/arm/mach-at91/at91sam9.c
+index 3dbdef4d3cbf..c12563b09656 100644
+--- a/arch/arm/mach-at91/at91sam9.c
++++ b/arch/arm/mach-at91/at91sam9.c
+@@ -32,3 +32,21 @@ DT_MACHINE_START(at91sam_dt, "Atmel AT91SAM9")
+ 	.init_machine	=3D at91sam9_init,
+ 	.dt_compat	=3D at91_dt_board_compat,
+ MACHINE_END
++
++static void __init sam9x60_init(void)
++{
++	of_platform_default_populate(NULL, NULL, NULL);
++
++	sam9x60_pm_init();
++}
++
++static const char *const sam9x60_dt_board_compat[] __initconst =3D {
++	"microchip,sam9x60",
++	NULL
++};
++
++DT_MACHINE_START(sam9x60_dt, "Microchip SAM9X60")
++	/* Maintainer: Microchip */
++	.init_machine	=3D sam9x60_init,
++	.dt_compat	=3D sam9x60_dt_board_compat,
++MACHINE_END
+diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
+index e2bd17237964..72b45accfa0f 100644
+--- a/arch/arm/mach-at91/generic.h
++++ b/arch/arm/mach-at91/generic.h
+@@ -14,11 +14,13 @@
+ #ifdef CONFIG_PM
+ extern void __init at91rm9200_pm_init(void);
+ extern void __init at91sam9_pm_init(void);
++extern void __init sam9x60_pm_init(void);
+ extern void __init sama5_pm_init(void);
+ extern void __init sama5d2_pm_init(void);
+ #else
+ static inline void __init at91rm9200_pm_init(void) { }
+ static inline void __init at91sam9_pm_init(void) { }
++static inline void __init sam9x60_pm_init(void) { }
+ static inline void __init sama5_pm_init(void) { }
+ static inline void __init sama5d2_pm_init(void) { }
+ #endif
 diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index c83f78000ab3..27264caa4ec6 100644
+index ce2ff86968f6..e42db02eafe4 100644
 --- a/arch/arm/mach-at91/pm.c
 +++ b/arch/arm/mach-at91/pm.c
-@@ -40,6 +40,9 @@ extern void at91_pinctrl_gpio_resume(void);
- #endif
-=20
- struct at91_soc_pm {
-+	int (*config_shdwc_ws)(void __iomem *shdwc, u32 *mode, u32 *polarity);
-+	int (*config_pmc_ws)(void __iomem *pmc, u32 mode, u32 polarity);
-+	const struct of_device_id *ws_ids;
- 	struct at91_pm_data data;
- };
-=20
-@@ -122,7 +125,7 @@ static int at91_pm_config_ws(unsigned int pm_mode, bool=
- set)
- 	if (pm_mode !=3D AT91_PM_ULP1)
- 		return 0;
-=20
--	if (!soc_pm.data.pmc || !soc_pm.data.shdwc)
-+	if (!soc_pm.data.pmc || !soc_pm.data.shdwc || !soc_pm.ws_ids)
- 		return -EPERM;
-=20
- 	if (!set) {
-@@ -130,16 +133,14 @@ static int at91_pm_config_ws(unsigned int pm_mode, bo=
-ol set)
- 		return 0;
- 	}
-=20
--	/* SHDWC.WUIR */
--	val =3D readl(soc_pm.data.shdwc + 0x0c);
--	mode |=3D (val & 0x3ff);
--	polarity |=3D ((val >> 16) & 0x3ff);
-+	if (soc_pm.config_shdwc_ws)
-+		soc_pm.config_shdwc_ws(soc_pm.data.shdwc, &mode, &polarity);
-=20
- 	/* SHDWC.MR */
- 	val =3D readl(soc_pm.data.shdwc + 0x04);
-=20
- 	/* Loop through defined wakeup sources. */
--	for_each_matching_node_and_match(np, sama5d2_ws_ids, &match) {
-+	for_each_matching_node_and_match(np, soc_pm.ws_ids, &match) {
- 		pdev =3D of_find_device_by_node(np);
- 		if (!pdev)
- 			continue;
-@@ -161,8 +162,8 @@ static int at91_pm_config_ws(unsigned int pm_mode, bool=
- set)
- 	}
-=20
- 	if (mode) {
--		writel(mode, soc_pm.data.pmc + AT91_PMC_FSMR);
--		writel(polarity, soc_pm.data.pmc + AT91_PMC_FSPR);
-+		if (soc_pm.config_pmc_ws)
-+			soc_pm.config_pmc_ws(soc_pm.data.pmc, mode, polarity);
- 	} else {
- 		pr_err("AT91: PM: no ULP1 wakeup sources found!");
- 	}
-@@ -170,6 +171,27 @@ static int at91_pm_config_ws(unsigned int pm_mode, boo=
-l set)
- 	return mode ? 0 : -EPERM;
+@@ -518,6 +518,11 @@ static void at91rm9200_idle(void)
+ 	writel(AT91_PMC_PCK, soc_pm.data.pmc + AT91_PMC_SCDR);
  }
 =20
-+static int at91_sama5d2_config_shdwc_ws(void __iomem *shdwc, u32 *mode,
-+					u32 *polarity)
++static void at91sam9x60_idle(void)
 +{
-+	u32 val;
-+
-+	/* SHDWC.WUIR */
-+	val =3D readl(shdwc + 0x0c);
-+	*mode |=3D (val & 0x3ff);
-+	*polarity |=3D ((val >> 16) & 0x3ff);
-+
-+	return 0;
++	cpu_do_idle();
 +}
 +
-+static int at91_sama5d2_config_pmc_ws(void __iomem *pmc, u32 mode, u32 pol=
-arity)
-+{
-+	writel(mode, pmc + AT91_PMC_FSMR);
-+	writel(polarity, pmc + AT91_PMC_FSPR);
-+
-+	return 0;
-+}
-+
- /*
-  * Called after processes are frozen, but before we shutdown devices.
-  */
-@@ -796,6 +818,10 @@ void __init sama5d2_pm_init(void)
-=20
- 	at91_pm_modes_init();
- 	sama5_pm_init();
-+
-+	soc_pm.ws_ids =3D sama5d2_ws_ids;
-+	soc_pm.config_shdwc_ws =3D at91_sama5d2_config_shdwc_ws;
-+	soc_pm.config_pmc_ws =3D at91_sama5d2_config_pmc_ws;
+ static void at91sam9_idle(void)
+ {
+ 	writel(AT91_PMC_PCK, soc_pm.data.pmc + AT91_PMC_SCDR);
+@@ -754,6 +759,15 @@ void __init at91rm9200_pm_init(void)
+ 	at91_pm_init(at91rm9200_idle);
  }
 =20
- static int __init at91_pm_modes_select(char *str)
++void __init sam9x60_pm_init(void)
++{
++	if (!IS_ENABLED(CONFIG_SOC_AT91SAM9))
++		return;
++
++	at91_dt_ramc();
++	at91_pm_init(at91sam9x60_idle);
++}
++
+ void __init at91sam9_pm_init(void)
+ {
+ 	if (!IS_ENABLED(CONFIG_SOC_AT91SAM9))
 --=20
 2.7.4
 
