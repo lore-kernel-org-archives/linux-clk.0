@@ -1,89 +1,112 @@
-Return-Path: <SRS0=hoZU=QU=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=hHRo=QV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3714DC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 22:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E624C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 00:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED4D8222A4
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Feb 2019 22:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550098593;
-	bh=TXVcf/AA3SXMAATbrKZhIKgeSW+UzGxpyZpyXYNQu2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AGz27sm1i+faHWsCRZsvOzQXh5fTBQqaEpBkQlIP5ccajq/hzfCrECnN1aYlOljRI
-	 /TA0HwGMMhw6JkxI/Em0Z+sLB+RvI/K37Jy9YyphOc4SuUnzb5vJZqsUaj4hnJC5o6
-	 Q7pqN5sTgvwdoLgTTpN9WNnCrEF7qaCYD6FMF78M=
+	by mail.kernel.org (Postfix) with ESMTP id D2DA1222C9
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 00:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731962AbfBMW4c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:56:32 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35035 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfBMW4c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Feb 2019 17:56:32 -0500
-Received: by mail-ot1-f68.google.com with SMTP id z19so7329431otm.2;
-        Wed, 13 Feb 2019 14:56:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vQVi44PgRSAYv5hBFPyy2w812kRyMyidLpbONnrDqw8=;
-        b=GTg4lARswxzZfsj746Kvhd7JGs+IjMwELP5dxgKpmr2mv9lFmyWZLufqf1/JNNoZqj
-         OrPgfQ9VIEFdO/pZ7AQ6sOVGELt/cohuE9EcMoEy3AhpVg1i4pzRyYrvCZ93T7JLUwF1
-         fHDomqPkzqX0mih+WaeFPwBZO5ZNPdcoM0OWGj3iL2rbKCfe25RbXR5Iol4Nzad6UnLj
-         D1769LPvJjUQWre2ff0FPoU4tFcXTqtmv3qAfXne00+Wd/747rAmXhbFM37m0Lwg9GAx
-         5jRyZkK1dbKPmQ6B90NXZZ2GyVTvEjOBGkFkYBtJqr3oqq13Aj2fm2Nl3fQyzpzryO7b
-         X4xQ==
-X-Gm-Message-State: AHQUAuZ9fDudF9pbjLZ4qQG/mjqrx+KOlUVStyAXloyqGSmHxHB2jZ67
-        cL0EqRosgeGvZiFcrfIBEw==
-X-Google-Smtp-Source: AHgI3IZBurmdoM4/fjfYdeM+EyDBzLdKCTGeXC34JROVKO9so8UelbTw3FjfSDQo9aUZbEIiKC2gsA==
-X-Received: by 2002:aca:3dc5:: with SMTP id k188mr364901oia.108.1550098591354;
-        Wed, 13 Feb 2019 14:56:31 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c132sm259494oia.41.2019.02.13.14.56.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 14:56:30 -0800 (PST)
-Date:   Wed, 13 Feb 2019 16:56:30 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     linux-mips@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH v3 3/3] dt-bindings: clock: Add loongson-1 clock bindings
-Message-ID: <20190213225630.GA19462@bogus>
-References: <20190128152052.3047-1-jiaxun.yang@flygoat.com>
- <20190201063540.19636-1-jiaxun.yang@flygoat.com>
- <20190201063540.19636-4-jiaxun.yang@flygoat.com>
+        id S1727183AbfBNAnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Feb 2019 19:43:07 -0500
+Received: from mx.socionext.com ([202.248.49.38]:27884 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbfBNAnH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Feb 2019 19:43:07 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 14 Feb 2019 09:43:05 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 3E117180101;
+        Thu, 14 Feb 2019 09:43:05 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 14 Feb 2019 09:43:05 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id A38BE1A04E0;
+        Thu, 14 Feb 2019 09:43:04 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 81FD3121B6C;
+        Thu, 14 Feb 2019 09:43:04 +0900 (JST)
+Subject: Re: [PATCH v2 07/15] ndings: clock: milbeaut: add Milbeaut clock
+ description
+To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>
+References: <1549628823-31388-1-git-send-email-sugaya.taichi@socionext.com>
+ <155008053444.115909.15767350529461671558@swboyd.mtv.corp.google.com>
+ <155008127539.115909.8938099989804942@swboyd.mtv.corp.google.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <38afb1e0-2af9-0eb1-9d1b-4ff7273e25ab@socionext.com>
+Date:   Thu, 14 Feb 2019 09:43:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201063540.19636-4-jiaxun.yang@flygoat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <155008127539.115909.8938099989804942@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri,  1 Feb 2019 14:35:40 +0800, Jiaxun Yang wrote:
-> Loongson-1 is a series of MIPS MCUs.
-> This patch add the clock bindings for loongson-1b and
-> loongson-1c clock subsystem.
+Hi,
+
+On 2019/02/14 3:07, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2019-02-13 09:55:34)
+>> The subject seems to have been cut off? "ndings"?
+>>
+>> Quoting Sugaya Taichi (2019-02-08 04:27:03)
+>>> diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.txt b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
+>>> new file mode 100644
+>>> index 0000000..bcfc5df
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
+>>> @@ -0,0 +1,49 @@
+>>> +Milbeaut SoCs Clock Controller Binding
+>>> +----------------------------------------
+>>> +Milbeaut SoCs Clock controller is an integrated clock controller, which
+>>> +generates and supplies to all modules.
+>>> +
+>>> +This binding uses common clock bindings
+>>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>> +
+>>> +Required properties:
+>>> +- compatible: should be one of the following:
+>>> +    "socionext,milbeaut-m10v-ccu" - for M10V SoC
+>>> +- reg: shall contain base address and length of clock registers
+>>> +- #clock-cells: shall be 1
+>>> +- clocks: shall be an external clock
+>>> +
+>>> +Example: Clock controller node:
+>>> +
+>>> +       clk: m10v-clk-ctrl@1d021000 {
+>>> +               compatible = "socionext,milbeaut-m10v-clk-ccu";
+>>
+>> I thought there was some length limit on compatible string names. 32
+>> bytes? Just barely under!
+>>
 > 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  .../bindings/clock/loongson1-clock.txt          | 14 ++++++++++++++
->  include/dt-bindings/clock/ls1b-clock.h          | 17 +++++++++++++++++
->  include/dt-bindings/clock/ls1c-clock.h          | 14 ++++++++++++++
->  3 files changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/loongson1-clock.txt
->  create mode 100644 include/dt-bindings/clock/ls1b-clock.h
->  create mode 100644 include/dt-bindings/clock/ls1c-clock.h
+> Ah I'm wrong. Compatible is 128. Good.
+> 
+> Seems I was thinking of DT property names.
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Sorry confusing you.
+I accidently deleted "dt-bi" from subject when committing.
+I repair the string in the next version.
+
+Thanks,
+Sugaya Taichi
+
