@@ -4,35 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40671C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 10:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC51C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 10:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 171872229F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 10:41:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0238F2229F
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Feb 2019 10:41:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389031AbfBNKlD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:41:03 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41789 "EHLO
+        id S2438411AbfBNKlQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 05:41:16 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41845 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732914AbfBNKlD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 05:41:03 -0500
+        by vger.kernel.org with ESMTP id S2406638AbfBNKlP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Feb 2019 05:41:15 -0500
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EAa01r026777;
-        Thu, 14 Feb 2019 11:40:51 +0100
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EAexU1030617;
+        Thu, 14 Feb 2019 11:41:00 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qmwsujrje-1
+        by mx08-00178001.pphosted.com with ESMTP id 2qmwsujrjr-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 14 Feb 2019 11:40:51 +0100
+        Thu, 14 Feb 2019 11:41:00 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 21ABA3D;
-        Thu, 14 Feb 2019 10:40:51 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 59A6434;
+        Thu, 14 Feb 2019 10:40:55 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag4node2.st.com [10.75.127.11])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 03A314EB2;
-        Thu, 14 Feb 2019 10:40:51 +0000 (GMT)
-Received: from localhost (10.75.127.45) by SFHDAG4NODE2.st.com (10.75.127.11)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 14 Feb 2019 11:40:50
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 346C24EB1;
+        Thu, 14 Feb 2019 10:40:55 +0000 (GMT)
+Received: from localhost (10.75.127.47) by SFHDAG4NODE2.st.com (10.75.127.11)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 14 Feb 2019 11:40:54
  +0100
 From:   <gabriel.fernandez@st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -44,16 +44,16 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH v2 1/7] clk: stm32mp1: parent clocks update
-Date:   Thu, 14 Feb 2019 11:40:41 +0100
-Message-ID: <20190214104047.1173-2-gabriel.fernandez@st.com>
+Subject: [PATCH v2 6/7] clk: stm32mp1: remove unnecessary CLK_DIVIDER_ALLOW_ZERO flag
+Date:   Thu, 14 Feb 2019 11:40:46 +0100
+Message-ID: <20190214104047.1173-7-gabriel.fernandez@st.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190214104047.1173-1-gabriel.fernandez@st.com>
 References: <20190214104047.1173-1-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG4NODE2.st.com
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG4NODE2.st.com
  (10.75.127.11)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
  signatures=0
@@ -64,51 +64,33 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Fixes parent clock for axi, fdcan, sai and adc12 clocks.
+The divisor of ethptp_k and ck_hse_rtc clocks is: 'value register
+plus one'.
+Then CLK_DIVIDER_ALLOW_ZERO flag has no effect and is useless here.
 
-Fixes: e51d297e9a92 ("clk: stm32mp1: add Sub System clocks")
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/clk-stm32mp1.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/clk-stm32mp1.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 6a31f7f434ce..be2ed35977ca 100644
+index 8958bc11ff05..ca987632564e 100644
 --- a/drivers/clk/clk-stm32mp1.c
 +++ b/drivers/clk/clk-stm32mp1.c
-@@ -121,7 +121,7 @@ static const char * const cpu_src[] = {
- };
+@@ -1959,11 +1959,10 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 		  CLK_SET_RATE_NO_REPARENT,
+ 		  _NO_GATE,
+ 		  _MMUX(M_ETHCK),
+-		  _DIV(RCC_ETHCKSELR, 4, 4, CLK_DIVIDER_ALLOW_ZERO, NULL)),
++		  _DIV(RCC_ETHCKSELR, 4, 4, 0, NULL)),
  
- static const char * const axi_src[] = {
--	"ck_hsi", "ck_hse", "pll2_p", "pll3_p"
-+	"ck_hsi", "ck_hse", "pll2_p"
- };
+ 	/* RTC clock */
+-	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 7,
+-	    CLK_DIVIDER_ALLOW_ZERO),
++	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 7, 0),
  
- static const char * const per_src[] = {
-@@ -225,19 +225,19 @@ static const char * const usart6_src[] = {
- };
- 
- static const char * const fdcan_src[] = {
--	"ck_hse", "pll3_q", "pll4_q"
-+	"ck_hse", "pll3_q", "pll4_q", "pll4_r"
- };
- 
- static const char * const sai_src[] = {
--	"pll4_q", "pll3_q", "i2s_ckin", "ck_per"
-+	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "pll3_r"
- };
- 
- static const char * const sai2_src[] = {
--	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "spdif_ck_symb"
-+	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "spdif_ck_symb", "pll3_r"
- };
- 
- static const char * const adc12_src[] = {
--	"pll4_q", "ck_per"
-+	"pll4_r", "ck_per", "pll3_q"
- };
- 
- static const char * const dsi_src[] = {
+ 	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
+ 		   CLK_SET_RATE_PARENT,
 -- 
 2.17.0
 
