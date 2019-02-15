@@ -2,99 +2,125 @@ Return-Path: <SRS0=KID9=QW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BFEC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BD5C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BBD621B18
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:19:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 313A9222A1
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:29:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xt+S/E2l"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iFnPJz2x";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QRRNVvaV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbfBOTTu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:19:50 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:59900 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfBOTTu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 14:19:50 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1FJJjFw129695;
-        Fri, 15 Feb 2019 13:19:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550258385;
-        bh=d5KLYy1vUatCQhywNWRGMrvVU6sWcY+zsGl3O+PhULU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=xt+S/E2lsqI63WCClM1jgtvvWNZuQ02Du1BQ3+pRFc/WND3l/TlFvAj/LEY8kzW/o
-         1dmVBDwGX+gg2R83V74iJph1lQvV+n3z7Z9AfgjzYVo0MRmBmEsyaddV0U6wfOVa8P
-         H37cwWYQDebVuRrBj4ggNWs425oxTaHzXjGAtHD0=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1FJJjYZ093478
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Feb 2019 13:19:45 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 15
- Feb 2019 13:19:42 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 15 Feb 2019 13:19:42 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1FJJdlf003367;
-        Fri, 15 Feb 2019 13:19:41 -0600
-Subject: Re: [PATCH 0/4] clk: ti: get rid of CLK_IS_BASIC
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>,
-        Andreas Kemnade <andreas@kemnade.info>
-References: <1547543715-16467-1-git-send-email-t-kristo@ti.com>
- <20190115182021.GH5544@atomide.com>
- <b7571829-fb5e-c2be-59d1-b08d73bfca6d@ti.com>
- <20190121195856.GI5544@atomide.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <611d9c22-de8b-3913-4cc8-11c5e30b50a6@ti.com>
-Date:   Fri, 15 Feb 2019 21:19:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1730286AbfBOT3a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 14:29:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59056 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfBOT3a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 14:29:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1F66160740; Fri, 15 Feb 2019 19:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550258969;
+        bh=vC3nU2+7vIcRopeSLMrSbcjM6O+DDXSUpzvbzveJga4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iFnPJz2xHgPAfCYN8MkQH/lNSsQOxZr+phMHRNqW0A95R9E1B2oY0eJjRS3lJHlTy
+         +XiOW6mmsz46WfxO6Ph9GJN0tIoRxhmq0i7JYidStTDWxDxwNYGxRrKYhy/naoIVjd
+         UWNiSbx7IPMfM4Om80rkMCTEFTvYRBLIqor3K280=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4835360740;
+        Fri, 15 Feb 2019 19:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550258967;
+        bh=vC3nU2+7vIcRopeSLMrSbcjM6O+DDXSUpzvbzveJga4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QRRNVvaV0icUtH/94BZbB0gSAsRcS56lzSbRFakD9ObeZ5ggffDl+r73vJpHKrOhQ
+         bqb2fFBYMaCC9Be8Lw8CgdxOpjIJ3frADEuKVQf4mZ+UuqvFU01lsrrDdYY6ofDbDL
+         oHeVvBik89kxGY6Q5EwhWwjVSSXRljmUBYG78taM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4835360740
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+References: <20190129061021.94775-1-sboyd@kernel.org>
+ <20190129061021.94775-3-sboyd@kernel.org>
+ <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
+ <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <488f5033-c7a5-b49b-b973-c1415e533019@codeaurora.org>
+Date:   Fri, 15 Feb 2019 12:29:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190121195856.GI5544@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/01/2019 21:58, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [190115 18:32]:
->> On 15/01/2019 20:20, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [190115 09:15]:
->>>> Hi Stephen,
->>>>
->>>> As requested, this series gets rid of CLK_IS_BASIC flag usage from
->>>> TI clock drivers.
->>>>
->>>> Boot tested on am3/am4/am5/omap3/omap4 series of SoCs. Also, ran a quick
->>>> suspend/resume test on omap3/omap4/am5.
->>>
->>> Does this also fix the issue Andreas was fixing earlier
->>> or is this separate clean-up?
+On 2/15/2019 11:47 AM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-02-11 08:09:00)
+>> On 1/28/2019 11:10 PM, Stephen Boyd wrote:
 >>
->> The series from Andreas would be needed on top of this.
+>>> +static int clk_init_parent(struct clk_core *core)
+>>> +{
+>>> +     core->parent = __clk_init_parent(core, true);
+>>> +     if (IS_ERR(core->parent))
+>>> +             return PTR_ERR(core->parent);
+>>> +
+>>> +     /*
+>>> +      * Populate core->parent if parent has already been clk_core_init'd. If
+>>> +      * parent has not yet been clk_core_init'd then place clk in the orphan
+>>> +      * list.  If clk doesn't have any parents then place it in the root
+>>> +      * clk list.
+>>> +      *
+>>> +      * Every time a new clk is clk_init'd then we walk the list of orphan
+>>> +      * clocks and re-parent any that are children of the clock currently
+>>> +      * being clk_init'd.
+>>> +      */
+>>> +     if (core->parent) {
+>>> +             hlist_add_head(&core->child_node,
+>>> +                             &core->parent->children);
+>>> +             core->orphan = core->parent->orphan;
+>>> +     } else if (!core->num_parents) {
+>>> +             hlist_add_head(&core->child_node, &clk_root_list);
+>>> +             core->orphan = false;
+>>> +     } else {
+>>> +             hlist_add_head(&core->child_node, &clk_orphan_list);
+>>
+>> Missing "core->orphan = true;"?
+>> The snippet below had that line.  Its not clear why it appears to be
+>> dropped here.
+>>
 > 
-> OK so I acked Andreas' series, and here's an ack for
-> this series too:
-> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
+> Hmm. Weird. I think I may have been getting ahead of myself and moving
+> the orphan updating code into __clk_init_parent(). I can't remember why
+> though, so I guess I'll go all the way and move it all into
+> __clk_init_parent() now. Thanks for pointing it out.
 > 
 
-Queued up for 5.1, thanks.
+No problem.
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Just FYI, I've rebased the 8998 mmcc series on top of this, and as far 
+as I can tell, everything seems to be working great.
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
