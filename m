@@ -2,103 +2,136 @@ Return-Path: <SRS0=KID9=QW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FD3C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 18:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AF4C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65982222A1
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 18:47:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550256434;
-	bh=gC+EeGymE0az1ng07H/vLR7IfB3r3tQ8zEotPd3Gjbo=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=d3TlH1oEjKgpVnQzRvF+U1/8JaePboUYKwENeiR/Qv+6Ra6hew+/CEGamob4rxmcG
-	 XJPPmkD2yEXOwsgUpQgOsJhU8EV6PaTumLJcJJw4HJylriIzB/hNl4Gj02yrpNEKXw
-	 FVFD+hDJI9BuIe3vtzO3PqFn0nhXCnY7jzXRSD/M=
+	by mail.kernel.org (Postfix) with ESMTP id 807C921900
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:18:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FVDzK8O8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbfBOSrO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:47:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726891AbfBOSrN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:47:13 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCEF221929;
-        Fri, 15 Feb 2019 18:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550256432;
-        bh=gC+EeGymE0az1ng07H/vLR7IfB3r3tQ8zEotPd3Gjbo=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=IUeITKXWTH4E6j+4mrNzKLHZ+jHOYAEk52HVhGTB406byGGfycEavDkQB9xAX3vUu
-         OI48l75TvDqylfJJb0Lt6C1QsLIMzQlwwPuVAAuLY4570up1/ugPqRw82jhGWFobSR
-         weMpMX9N80FmwtiQ8gJ/zeR9TMEOxh1TkrCQZnLg=
-Content-Type: text/plain; charset="utf-8"
+        id S1728416AbfBOTSe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 14:18:34 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35416 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729030AbfBOTSe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 14:18:34 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1FJIQbm097065;
+        Fri, 15 Feb 2019 13:18:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550258306;
+        bh=BD3ZeppXGX39JsovemU/FaJt8tmEPC80zyOZa+7o16U=;
+        h=To:CC:From:Subject:Date;
+        b=FVDzK8O8ifzmcmaSBE19VbrFEs8mh/VsStkJCV6RgciqvgahUm+UopDAqsdcMJ9XH
+         pa+lNT9SsHFjTJMk938mc0Zbo6WQunl50Wpu87xgbHghxNWk+2slELoNuNKLqolld0
+         r2ixZ93j3Nn7egcafEGn+nljthL7xlrztlHRINkc=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1FJIQuU092365
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 15 Feb 2019 13:18:26 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 15
+ Feb 2019 13:18:24 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 15 Feb 2019 13:18:24 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1FJIL9q010857;
+        Fri, 15 Feb 2019 13:18:22 -0600
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC:     linux-clk <linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "tony@atomide.com" <tony@atomide.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+From:   Tero Kristo <t-kristo@ti.com>
+Subject: [GIT PULL] clk: ti: updates for v5.1
+Message-ID: <64201386-3f8d-6f0b-3e4a-447a78722a41@ti.com>
+Date:   Fri, 15 Feb 2019 21:18:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
-User-Agent: alot/0.8
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-Message-ID: <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 15 Feb 2019 10:47:11 -0800
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-02-11 08:09:00)
-> On 1/28/2019 11:10 PM, Stephen Boyd wrote:
->=20
-> > +static int clk_init_parent(struct clk_core *core)
-> > +{
-> > +     core->parent =3D __clk_init_parent(core, true);
-> > +     if (IS_ERR(core->parent))
-> > +             return PTR_ERR(core->parent);
-> > +
-> > +     /*
-> > +      * Populate core->parent if parent has already been clk_core_init=
-'d. If
-> > +      * parent has not yet been clk_core_init'd then place clk in the =
-orphan
-> > +      * list.  If clk doesn't have any parents then place it in the ro=
-ot
-> > +      * clk list.
-> > +      *
-> > +      * Every time a new clk is clk_init'd then we walk the list of or=
-phan
-> > +      * clocks and re-parent any that are children of the clock curren=
-tly
-> > +      * being clk_init'd.
-> > +      */
-> > +     if (core->parent) {
-> > +             hlist_add_head(&core->child_node,
-> > +                             &core->parent->children);
-> > +             core->orphan =3D core->parent->orphan;
-> > +     } else if (!core->num_parents) {
-> > +             hlist_add_head(&core->child_node, &clk_root_list);
-> > +             core->orphan =3D false;
-> > +     } else {
-> > +             hlist_add_head(&core->child_node, &clk_orphan_list);
->=20
-> Missing "core->orphan =3D true;"?
-> The snippet below had that line.  Its not clear why it appears to be=20
-> dropped here.
->=20
+Hi Stephen, Mike,
 
-Hmm. Weird. I think I may have been getting ahead of myself and moving
-the orphan updating code into __clk_init_parent(). I can't remember why
-though, so I guess I'll go all the way and move it all into
-__clk_init_parent() now. Thanks for pointing it out.
+Please pull these late TI clock driver changes towards v5.1 merge 
+window. Contains one patch against hwmod core, which has been acked by 
+the maintainer.
 
+Thanks, Tero
+
+---
+
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+
+   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
+tags/ti-clk-for-5.1
+
+for you to fetch changes up to 12af39cad78e9cb8172793ca5d7f369eb144578b:
+
+   ARM: OMAP2+: hwmod: disable ick autoidling when a hwmod requires that 
+(2019-02-15 16:48:11 +0200)
+
+----------------------------------------------------------------
+TI clock driver changes for v5.1 merge window.
+
+Contains the CLK_IS_BASIC flag cleanup, getting rid of the flag
+completely from TI clock driver.
+
+Also contains the autoidle clock support series from Andreas Kemnade,
+which is needed for handling the hdq clocks properly during low power
+states; at least on gta04 board.
+
+----------------------------------------------------------------
+Andreas Kemnade (3):
+       clk: ti: add a usecount for autoidle
+       clk: ti: check clock type before doing autoidle ops
+       ARM: OMAP2+: hwmod: disable ick autoidling when a hwmod requires that
+
+Tero Kristo (4):
+       clk: ti: move clk_hw_omap list handling under generic part of the 
+driver
+       clk: ti: add new API for checking if a provided clock is an OMAP 
+clock
+       clk: ti: remove usage of CLK_IS_BASIC
+       clk: ti: generalize the init sequence of clk_hw_omap clocks
+
+  arch/arm/mach-omap2/omap_hwmod.c |  16 +++++--
+  drivers/clk/ti/adpll.c           |   2 +-
+  drivers/clk/ti/apll.c            |   4 +-
+  drivers/clk/ti/autoidle.c        | 101 
+++++++++++++++++++++++++---------------
+  drivers/clk/ti/clk.c             |  72 ++++++++++++++++++++++++++++
+  drivers/clk/ti/clkctrl.c         |   2 +-
+  drivers/clk/ti/clock.h           |   5 +-
+  drivers/clk/ti/clockdomain.c     |   2 +-
+  drivers/clk/ti/divider.c         |   2 +-
+  drivers/clk/ti/dpll.c            |  11 ++---
+  drivers/clk/ti/dpll3xxx.c        |   2 +-
+  drivers/clk/ti/gate.c            |   2 +-
+  drivers/clk/ti/interface.c       |   4 +-
+  drivers/clk/ti/mux.c             |   2 +-
+  include/linux/clk/ti.h           |   1 +
+  15 files changed, 165 insertions(+), 63 deletions(-)
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
