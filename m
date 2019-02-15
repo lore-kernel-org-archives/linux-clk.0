@@ -2,93 +2,87 @@ Return-Path: <SRS0=KID9=QW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5527FC10F07
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 02:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4310C4360F
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0FA2192B
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 02:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198576;
-	bh=XX8gkTWfydJ2h2LV3tckAphKi35817hiwi8/g5LwD/U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tvvy7+0ofStO/KMOPs/34BMlzZ5Wnnalk0rQdCJ308cHh8vy08obfJ97RXGg2Voak
-	 LiM/5px7VQ7/FNYp/VIHcQi7hfVwkeWFnMITv2NHjlPB9boZNpvnou+Cg73woDgELm
-	 Jzid5CLFmnAVReKK1S6jaDjjDgDcqCLsPxy9Lznc=
+	by mail.kernel.org (Postfix) with ESMTP id AAF3620838
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbfBOCJI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:09:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49330 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731501AbfBOCJH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:07 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AAFA222A1;
-        Fri, 15 Feb 2019 02:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196547;
-        bh=XX8gkTWfydJ2h2LV3tckAphKi35817hiwi8/g5LwD/U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NPlXVMDGxp6gZcK5A+5KQdK3vLNCFHrfnuKAAD9MkQcAniv4N/BPl9mnDLBfznlmh
-         xPEBtFb+BFpI0CWitpgKRoN89PClMDtiScmnsJdSL0EUYamgQYQVqevc2WLuxZOydX
-         aTCX7Ly9AaK+wKPxJUMCilsQyUfU7ERmk+ur/XWk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 07/77] clk: tegra: dfll: Fix a potential Oop in remove()
-Date:   Thu, 14 Feb 2019 21:07:45 -0500
-Message-Id: <20190215020855.176727-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
-References: <20190215020855.176727-1-sashal@kernel.org>
+        id S1733064AbfBOGHP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 01:07:15 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:20431 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732976AbfBOGHM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 01:07:12 -0500
+X-UUID: b62f7833a4854b429062345e5f0680ee-20190215
+X-UUID: b62f7833a4854b429062345e5f0680ee-20190215
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <erin.lo@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1818908197; Fri, 15 Feb 2019 14:07:06 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 15 Feb 2019 14:07:02 +0800
+Received: from mtkslt303.mediatek.inc (10.21.14.116) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 15 Feb 2019 14:07:02 +0800
+From:   Erin Lo <erin.lo@mediatek.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC:     <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v7 2/6] dt-bindings: serial: Add compatible for Mediatek MT8183
+Date:   Fri, 15 Feb 2019 14:02:34 +0800
+Message-ID: <1550210558-30516-3-git-send-email-erin.lo@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
+References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+This adds dt-binding documentation of uart for Mediatek MT8183 SoC
+Platform.
 
-[ Upstream commit d39eca547f3ec67140a5d765a426eb157b978a59 ]
-
-If tegra_dfll_unregister() fails then "soc" is an error pointer.  We
-should just return instead of dereferencing it.
-
-Fixes: 1752c9ee23fb ("clk: tegra: dfll: Fix drvdata overwriting issue")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/serial/mtk-uart.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 269d3595758b..edc31bb56674 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -133,9 +133,11 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
+diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+index 742cb47..bcfb131 100644
+--- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
++++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+@@ -16,6 +16,7 @@ Required properties:
+   * "mediatek,mt8127-uart" for MT8127 compatible UARTS
+   * "mediatek,mt8135-uart" for MT8135 compatible UARTS
+   * "mediatek,mt8173-uart" for MT8173 compatible UARTS
++  * "mediatek,mt8183-uart", "mediatek,mt6577-uart" for MT8183 compatible UARTS
+   * "mediatek,mt6577-uart" for MT6577 and all of the above
  
- 	soc = tegra_dfll_unregister(pdev);
--	if (IS_ERR(soc))
-+	if (IS_ERR(soc)) {
- 		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
- 			PTR_ERR(soc));
-+		return PTR_ERR(soc);
-+	}
- 
- 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
- 
+ - reg: The base address of the UART register bank.
 -- 
-2.19.1
+1.9.1
 
