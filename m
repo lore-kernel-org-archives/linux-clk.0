@@ -2,64 +2,66 @@ Return-Path: <SRS0=KID9=QW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AF4C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01061C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 807C921900
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:18:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5CAF21B18
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 19:19:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FVDzK8O8"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rc+TAWv+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbfBOTSe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:18:34 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35416 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729030AbfBOTSe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 14:18:34 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1FJIQbm097065;
-        Fri, 15 Feb 2019 13:18:26 -0600
+        id S1726441AbfBOTTg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 14:19:36 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:47450 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfBOTTg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 14:19:36 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1FJJHkw000815;
+        Fri, 15 Feb 2019 13:19:17 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550258306;
-        bh=BD3ZeppXGX39JsovemU/FaJt8tmEPC80zyOZa+7o16U=;
-        h=To:CC:From:Subject:Date;
-        b=FVDzK8O8ifzmcmaSBE19VbrFEs8mh/VsStkJCV6RgciqvgahUm+UopDAqsdcMJ9XH
-         pa+lNT9SsHFjTJMk938mc0Zbo6WQunl50Wpu87xgbHghxNWk+2slELoNuNKLqolld0
-         r2ixZ93j3Nn7egcafEGn+nljthL7xlrztlHRINkc=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1FJIQuU092365
+        s=ti-com-17Q1; t=1550258357;
+        bh=TTB9+UpBcPw64jt3Ak3yB9DsSjg+ihJjBGgM7DmhxNo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=rc+TAWv+9wfjVByTYME+4eND8rDETSOiZFBBvQ3jQOczhLgL5UvIdx4qqiLqHKr71
+         y+0PJCGGBfgmTgiahcedwdIsz2GRzylW02uuiQMsfSQEEQTFCEseQSxpEajpOHroD9
+         2+zwFtCGa6jWSImISpeAxZbK7NKEHvSBm6nNovB0=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1FJJHlQ098938
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Feb 2019 13:18:26 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 15 Feb 2019 13:19:17 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 15
- Feb 2019 13:18:24 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ Feb 2019 13:19:16 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 15 Feb 2019 13:18:24 -0600
+ Fri, 15 Feb 2019 13:19:16 -0600
 Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1FJIL9q010857;
-        Fri, 15 Feb 2019 13:18:22 -0600
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC:     linux-clk <linux-clk@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>,
-        Andreas Kemnade <andreas@kemnade.info>
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1FJJCS5026922;
+        Fri, 15 Feb 2019 13:19:14 -0600
+Subject: Re: [PATCH v3 0/3] mach-omap2: handle autoidle denial
+To:     Andreas Kemnade <andreas@kemnade.info>,
+        Tony Lindgren <tony@atomide.com>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bcousson@baylibre.com>,
+        <paul@pwsan.com>, <letux-kernel@openphoenux.org>
+References: <20190116220429.9136-1-andreas@kemnade.info>
+ <20190121195803.GH5544@atomide.com> <20190209195105.74bb9085@aktux>
 From:   Tero Kristo <t-kristo@ti.com>
-Subject: [GIT PULL] clk: ti: updates for v5.1
-Message-ID: <64201386-3f8d-6f0b-3e4a-447a78722a41@ti.com>
-Date:   Fri, 15 Feb 2019 21:18:11 +0200
+Message-ID: <a3f9aa94-33c3-9f14-1656-5bee705b3537@ti.com>
+Date:   Fri, 15 Feb 2019 21:19:02 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190209195105.74bb9085@aktux>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -68,70 +70,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Mike,
+On 09/02/2019 20:53, Andreas Kemnade wrote:
+> On Mon, 21 Jan 2019 11:58:03 -0800
+> Tony Lindgren <tony@atomide.com> wrote:
+> 
+>> * Andreas Kemnade <andreas@kemnade.info> [190116 14:04]:
+>>> On the gta04 with a dm3730 omap_hdq does not work properly when the
+>>> device enters lower power states. Idling uart1 and 2 is enough
+>>> to show up that problem, if there are no other things enabled.
+>>> Further research reveals that hdq iclk must not be turned off during
+>>> transfers, also according to the TRM. That fact is also correctly described
+>>> in the flags but the code to handle that is incomplete.
+>>>
+>>> To handle multiple users of a single ick, autoidle is disabled
+>>> when a user of that ick requires that (has the OCPIF_SWSUP_IDLE))
+>>>
+>>> Changes v3:
+>>> - replace CLK_IS_BASIC
+>>>
+>>> Changes v2:
+>>> - uses spinlocks instead of mutexes
+>>> - invert counter logic
+>>> - check whether clock type is basic
+>>
+>> For this series it's best to merge it all via the
+>> clock tree along with the related clock patches:
+>>
+>> Acked-by: Tony Lindgren <tony@atomide.com>
+>>
+> hmm, this is stalled. Have I missed any new objections?
 
-Please pull these late TI clock driver changes towards v5.1 merge 
-window. Contains one patch against hwmod core, which has been acked by 
-the maintainer.
+Sorry, I've just been pretty busy as usual, queued up for 5.1 now, thanks.
 
-Thanks, Tero
-
----
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
-tags/ti-clk-for-5.1
-
-for you to fetch changes up to 12af39cad78e9cb8172793ca5d7f369eb144578b:
-
-   ARM: OMAP2+: hwmod: disable ick autoidling when a hwmod requires that 
-(2019-02-15 16:48:11 +0200)
-
-----------------------------------------------------------------
-TI clock driver changes for v5.1 merge window.
-
-Contains the CLK_IS_BASIC flag cleanup, getting rid of the flag
-completely from TI clock driver.
-
-Also contains the autoidle clock support series from Andreas Kemnade,
-which is needed for handling the hdq clocks properly during low power
-states; at least on gta04 board.
-
-----------------------------------------------------------------
-Andreas Kemnade (3):
-       clk: ti: add a usecount for autoidle
-       clk: ti: check clock type before doing autoidle ops
-       ARM: OMAP2+: hwmod: disable ick autoidling when a hwmod requires that
-
-Tero Kristo (4):
-       clk: ti: move clk_hw_omap list handling under generic part of the 
-driver
-       clk: ti: add new API for checking if a provided clock is an OMAP 
-clock
-       clk: ti: remove usage of CLK_IS_BASIC
-       clk: ti: generalize the init sequence of clk_hw_omap clocks
-
-  arch/arm/mach-omap2/omap_hwmod.c |  16 +++++--
-  drivers/clk/ti/adpll.c           |   2 +-
-  drivers/clk/ti/apll.c            |   4 +-
-  drivers/clk/ti/autoidle.c        | 101 
-++++++++++++++++++++++++---------------
-  drivers/clk/ti/clk.c             |  72 ++++++++++++++++++++++++++++
-  drivers/clk/ti/clkctrl.c         |   2 +-
-  drivers/clk/ti/clock.h           |   5 +-
-  drivers/clk/ti/clockdomain.c     |   2 +-
-  drivers/clk/ti/divider.c         |   2 +-
-  drivers/clk/ti/dpll.c            |  11 ++---
-  drivers/clk/ti/dpll3xxx.c        |   2 +-
-  drivers/clk/ti/gate.c            |   2 +-
-  drivers/clk/ti/interface.c       |   4 +-
-  drivers/clk/ti/mux.c             |   2 +-
-  include/linux/clk/ti.h           |   1 +
-  15 files changed, 165 insertions(+), 63 deletions(-)
+-Tero
 --
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
