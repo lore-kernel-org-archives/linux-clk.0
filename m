@@ -2,136 +2,147 @@ Return-Path: <SRS0=KID9=QW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D79C4360F
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EBCC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 17:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2484721924
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550250116;
-	bh=pp+wmEv3ANp/fDK4HXKIUnVQx1QFxRC3pyodGuUqlmU=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=xIylc4LDs5SREAajw894tAz1YJqqKO/S1sCD/OA4c0mNV4wVepgrrDRuV27WOtCYN
-	 8hpo+NhI/Tn8RYaZ/bFETe6gPdPbAhKMXEidsu2gXSJ2orUx3ZvVxH6jiN43519JKg
-	 y+Hku19t6U/w/rNTydEbtDjXgpRq+VCtpww3nzfs=
+	by mail.kernel.org (Postfix) with ESMTP id 785BA2064C
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 17:48:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hzn4XgNs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388988AbfBORBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:01:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbfBORBu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:01:50 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BF2C21924;
-        Fri, 15 Feb 2019 17:01:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550250109;
-        bh=pp+wmEv3ANp/fDK4HXKIUnVQx1QFxRC3pyodGuUqlmU=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=RF0EEMvQmDCsUkoxsDC8plKYznJyXMPNXzqs6Pid5tsmWNr8j+/KVCdvjlri/ZrK4
-         8U776fU1ew6ulhVbo9ph/KEBHGYhEa+qeMkDYKp98LvkWAjCCulX3Yvz4SQgLaUHSz
-         GI46s1eQ3787JVMyZ6ZFtJAymuUO6Z9QlDNXkNh8=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1730634AbfBORsx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 12:48:53 -0500
+Received: from mail-eopbgr130050.outbound.protection.outlook.com ([40.107.13.50]:41470
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726819AbfBORsv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:48:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5F5uIdSB82po2NrFHPV4NVNzPf/6iUiTr2LqxEnx2yg=;
+ b=hzn4XgNsGOJ4mM7Ek5C0VbLtj3/Y/lDnzAX+m4860wbuxL/0uDpGMucFx9xuDxEXHnrnFoJZJcJC0wjcSGDiILyXZ9nN4vYs02+hTs7/zUV5Rra8bv+4Ww1qz30BUqA14EHqZlVBl3rzqF916wvWrkxP3dNMMtvcui2s4tyrBfQ=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB5330.eurprd04.prod.outlook.com (52.134.93.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Fri, 15 Feb 2019 17:48:45 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
+ 17:48:45 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Angus Ainslie <angus.ainslie@puri.sm>,
+        Rob Herring <robh@kernel.org>
+CC:     Anson Huang <anson.huang@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v2 2/3] dt-bindings: imx8mq-clock: Add the missing ARM clock
+Thread-Topic: [PATCH v2 2/3] dt-bindings: imx8mq-clock: Add the missing ARM
+ clock
+Thread-Index: AQHUxVayhp29U+VyEkyX04qsEg/skw==
+Date:   Fri, 15 Feb 2019 17:48:45 +0000
+Message-ID: <1550252913-24532-3-git-send-email-abel.vesa@nxp.com>
+References: <1550252913-24532-1-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1550252913-24532-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR0502CA0009.eurprd05.prod.outlook.com
+ (2603:10a6:209:1::22) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ad16e2a9-7a4e-43ba-8d43-08d6936dd48d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5330;
+x-ms-traffictypediagnostic: AM0PR04MB5330:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB5330;23:ye3tlgApLYGJ++VV0xjj3Zt4bbicIp1sOqTkAXB?=
+ =?iso-8859-1?Q?ldLm1jF4/IwxoGWCECmi5NfcfMCWvqka781hEznSFjvphWPwYgGjm92nXj?=
+ =?iso-8859-1?Q?4zkT8kBr8ur7YXtCB5dl+Fnez2fv6yKC3WxBXCCu5vKoSyZ4TAUZaGmxkT?=
+ =?iso-8859-1?Q?sgV423ShbjNZQoR0F6D8kpEU1YyuHIGpo0vVvmCoFDtXQUGp7DvaKMsjA9?=
+ =?iso-8859-1?Q?Cu+01C/Q0vsYU5MbJ6WIyUNo1VA15JNdw2uUxovI7hoQ6dwAaKHv/SIk1p?=
+ =?iso-8859-1?Q?FIOJzYrb77VV/TpuiB3lwp4dlMpwaZSJ9dCjs2VTeA0n/MGfTFOEb2f2nX?=
+ =?iso-8859-1?Q?76ro1llFJOY7mMDQiB+KCyB3J4qXMs8+SU9EAJ6uF2WaxZRn/Zft0ayvp4?=
+ =?iso-8859-1?Q?GjfXdz+bb9s8pNoWMbKir46IZD1X0t/VuGbbbuQEuy1iqMzr47YFTwlqGd?=
+ =?iso-8859-1?Q?fYI+1EEsMyfKCPu9ByCcMDxW+zEGBmSZ/x72wkEnLr7NDJ6IGx4+oo5H58?=
+ =?iso-8859-1?Q?Nh/lsqxthukpTrlU6q8GRfXT4BIP/p9Zc7aQ+/GX3//hLTidfpwcV/Eo4r?=
+ =?iso-8859-1?Q?g5Vo8CKpFsLFIISK5FmRwGOgSvHJ3MAR7LMRTcgeCdQVqMSCtfFXrqqHnR?=
+ =?iso-8859-1?Q?c2wFDM+2ardk46j2oNAKs1b2VOoTzS1XcXj9AGr2MxipB+X9NglmBnQMrH?=
+ =?iso-8859-1?Q?Nph7NeavXi/ScMQdMXl5PZ2KGWtjQkS4w2RqGEuH2fKgBjiJqC9MuhaPFx?=
+ =?iso-8859-1?Q?N89BUGPZBUeJ6iRsK0Pc9oPe7XkSDCNC+k5cDJ9WpcTJHE1ihmXJZi/K3J?=
+ =?iso-8859-1?Q?wt+GRh2OC/CoBzFsWhYEOxm3Wic1hI5Bur2Jqly+a6S30/qx/lAG/nX2pD?=
+ =?iso-8859-1?Q?4dKhtPhc+btAuXdNbpK0pqUSAjCSWMD184e9p2jYVBm92a6lmtsIdORyx1?=
+ =?iso-8859-1?Q?QpSU+RvMdsBiiaEtgpt+gTTXOIjssPyRD2Tlws07g2fHoC5Q1bWTC0z0VN?=
+ =?iso-8859-1?Q?oA8CPs3AwofccER/wR7E/gsls7u6KoBRZsjXQ0FJMVKepw2rLu8VPn96Hk?=
+ =?iso-8859-1?Q?7T0qgw804qj54EN+oAOpAgAXUlyjD/KQZxgEcmxsxX4p9zVBpn7SYwODl2?=
+ =?iso-8859-1?Q?E8xilYVu5NcU/i5Lk+04ZD9SxPdGOxFDjFANjcOgMbWF9IDImNz9NvAgYR?=
+ =?iso-8859-1?Q?+nUYi0CwCTkdPTwUW3TId5MY0iRjtxyQ4DNNmuSbhb0BpiogilTVmlsgvq?=
+ =?iso-8859-1?Q?Gs1HRElU2v4WB7WRYcM86kwnS1BJ+iMHgyldr+e1favStdhFD7/NnbEwSw?=
+ =?iso-8859-1?Q?BU2nsPPi0ymJQcx3I70Lu8Q?=
+x-microsoft-antispam-prvs: <AM0PR04MB53301370168B83797E99999AF6600@AM0PR04MB5330.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09497C15EB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(346002)(396003)(376002)(199004)(189003)(6436002)(14454004)(6116002)(3846002)(97736004)(186003)(478600001)(476003)(110136005)(71200400001)(105586002)(106356001)(26005)(71190400001)(11346002)(68736007)(2616005)(86362001)(446003)(6486002)(50226002)(54906003)(316002)(44832011)(486006)(7416002)(99286004)(81166006)(81156014)(8676002)(53936002)(76176011)(8936002)(66066001)(386003)(6506007)(4326008)(36756003)(25786009)(52116002)(2906002)(305945005)(6512007)(256004)(14444005)(102836004)(4744005)(7736002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5330;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: y05WqEzVvoWhc/WIv9ucbwIDT0b2CjW7VURmAy7Ak8f+X0mx43EIfqWpPFqWMONuwD+jJIUVFODSmPVcxhKN4VfL+IjRnGQAc3KNsI4NTGpIlKuoJ/L5+ajLII43gsGYe5528EPSSn4ot8toiZzAQ/ibK9vSgrYhp1K7QdEw7ekkOqcM+8QXR+B7HTFMbYwYDhkkNPL2muRHEkLqSPjQlT0LaKUcy8E9U9u8Dr0s9D8OfG5QuDeVPPHlnoDtPhceGUqE3xadN6GLFrb/TkHRQAiWvrsTCeN45CAWBTm0MD0pp6kNhJSj6Jjz2HUfu1SCG+ASACXPujle2SjZCkSkA6Bks2gSTBuMLsPIPlGDUdY3m587QJVBfjEGxZTHcJ6h6VZM2oREJp03ZxbwWl3piAk4Nh2mY4LRS1ty7MMrQ8I=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <9e86b95eb8c9e3c0454d3aeebac15e354298c815.camel@baylibre.com>
-User-Agent: alot/0.8
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-Message-ID: <155025010824.115909.1113764424081649980@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com> <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com> <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com> <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com> <97c2375f41fe7dabc4d71f66c9808912eb0ce611.camel@baylibre.com> <154941131193.169292.7500057932043013834@swboyd.mtv.corp.google.com> <9e86b95eb8c9e3c0454d3aeebac15e354298c815.camel@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 15 Feb 2019 09:01:48 -0800
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad16e2a9-7a4e-43ba-8d43-08d6936dd48d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 17:48:44.0074
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5330
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-02-13 01:16:18)
-> On Tue, 2019-02-05 at 16:01 -0800, Stephen Boyd wrote:
-> > >=20
-> > > I really don't understand why you insist on keeping this special case=
- for
-> > > num_parent =3D=3D 1, when we know it is not coherent.
-> > >=20
-> > > Considering, that I already proposed the fix, what is the effort here=
- ?
-> > > If it is fixing the driver that rely this weird thing, I'd be happy t=
-o do
-> > > it.
-> > >=20
-> > >=20
-> >=20
-> > Ok. I'm happy to merge your patch to always call the .get_parent clk op
-> > when num_parents > 0, but please fix all the drivers and analyze all the
-> > implementations of .get_parent to make sure that they aren't broken by
-> > the change in behavior. Furthermore, please add a debug/warning message
-> > into the code when .get_parent returns a number outside of the range of
-> > [0, num_parents) so that they can be converted to use .get_parent_hw
-> > instead.
->=20
-> Fair enough.
->=20
-> >  Ideally there wouldn't be anything returning a parent index
-> > outside the range of possible parents from .get_parent because this
-> > analysis of drivers would find those implementations and migrate them to
-> > .get_parent_hw instead.
-> >=20
-> > In parallel, I'd like to convert all drivers to use .get_parent_hw
-> > instead of .get_parent and then remove the .get_parent clk op right
-> > away.=20
->=20
-> Fine by me. Of course step #1 is not required if you get this is in befor=
-e.
-> As long as things are coherent, I'm happy :)
+Add the missing ARM clock which will be used by cpufreq
 
-Ok. So does it mean you want everything to be converted over the
-.get_parent_hw and then all problems are solved? I think I can use
-Coccinelle to convert the callers to pass the index straight into
-clk_hw_get_parent_by_index(). I've also stacked a patch on top of this
-series to make that API accept a negative index so I can directly chain
-that call after the index is figured out.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
->=20
-> > I'll start a sweep of the users of clk_hw_get_parent_by_index() (I
-> > see 50 calls in the tree right now) and see if I can convert them to
-> > handle errors returned from that API, probably by just continuing and
-> > ignoring errors. I'll start doing the same conversion for .round_rate
-> > and .determine_rate so that we can get rid of that duplicate clk op as
-> > well. Hopefully that's a mostly mechanical conversion.
->=20
-> This would be nice !
-
-Great! This isn't as easy to script, but it looks like I'll be bombing
-the list with hundreds of patches soon.
-
->=20
-> >=20
-> > For now I'll move this patch to the end of this series so that it
-> > doesn't hold things up otherwise.
->=20
-> It could even be separate series ? with the migration you mentionned abov=
-e ?
->=20
-
-Yes that's fine to be a different series. I've reordered the patches now
-so this patch comes last and I've also fixed up all callers of
-clk_hw_get_parent_by_index() to handle the error case, with lots of
-checks for IS_ERR_OR_NULL(). I've also made that API return an error now
-and realized that this patch series needs to only do the fallback to the
-'fallback' string when there isn't a direct pointer and when the DT
-lookup fails with -ENOENT. We should assume that other errors mean that
-something is wrong and the lookup actually failed vs. it being a DT
-property that hasn't been implemented yet. Hopefully this is clearer
-when I repost this series.
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings=
+/clock/imx8mq-clock.h
+index 04f7ac3..47c790c 100644
+--- a/include/dt-bindings/clock/imx8mq-clock.h
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -391,5 +391,7 @@
+=20
+ #define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	267
+=20
+-#define IMX8MQ_CLK_END				268
++#define IMX8MQ_CLK_ARM				268
++
++#define IMX8MQ_CLK_END				269
+ #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
+--=20
+2.7.4
 
