@@ -2,74 +2,88 @@ Return-Path: <SRS0=KID9=QW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6DEC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 10:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F38EC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 13:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA50B21924
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 10:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C186F218AC
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 13:17:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="k+sQK83+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393896AbfBOKcu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:32:50 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:60684 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393317AbfBOKcu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:32:50 -0500
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1guanW-0000V3-43; Fri, 15 Feb 2019 11:32:46 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] Rockchip clock updates for 5.1
-Date:   Fri, 15 Feb 2019 11:32:45 +0100
-Message-ID: <2268273.zyHXOlfcUi@diego>
-In-Reply-To: <154940450309.169292.16565688865245958654@swboyd.mtv.corp.google.com>
-References: <48408534.cOKhDiQbmB@phil> <154940450309.169292.16565688865245958654@swboyd.mtv.corp.google.com>
+        id S1727524AbfBONRJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 08:17:09 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:50433 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfBONRJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 08:17:09 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 1C0B425AD7F;
+        Sat, 16 Feb 2019 00:17:07 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1550236627; bh=85IsyTkwGg6mvYiApzTyTvV48R93/8OwUvWYQD/8/2o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k+sQK83+HjVC4CsJ5UFfhByaVcHu35CYUmqukhftxrfdZnLpXnB74KW5XiOPdAPrX
+         2caInkraxop9gpcctXgVE+atftcwR9Poz9srCYmeWwNfJsIWab/57V39JEMBGQmG2I
+         Gh30qIqseCnPXv41BUwMVCO/uykGJI0ZfZX7OYTY=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 850929402D4; Fri, 15 Feb 2019 14:17:04 +0100 (CET)
+Date:   Fri, 15 Feb 2019 14:17:04 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] clk: renesas: r8a774c0: Add Z2 clock
+Message-ID: <20190215131658.hfpwkq2lxnwdjeln@verge.net.au>
+References: <20190211135858.23635-1-horms+renesas@verge.net.au>
+ <20190211135858.23635-7-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211135858.23635-7-horms+renesas@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Dienstag, 5. Februar 2019, 23:08:23 CET schrieb Stephen Boyd:
-> Quoting Heiko Stuebner (2019-02-01 03:17:47)
+On Mon, Feb 11, 2019 at 02:58:58PM +0100, Simon Horman wrote:
+> Adds support for R-Car RZ/G2E (r8a774c0) Z2 clock.
+
+R-Car should not appear on the line above.
+
 > 
-> > Hi Mike, Stephen,
-> > 
-> > looks I can re-use my introduction from 4.20 and 5.0 - no big changes
-> > again this time.
-> > 
-> > A rate_parent flag and some fixup for the fractional part of a PLL
-> > 
-> > So please pull.
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3: New patch
+> ---
+>  drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Thanks. Pulled into clk-next. If you like I can pick patches directly
-> from list if you send out a reviewed-by tag on the patches. I'm happy
-> either way.
-
-It's hard to determine that before each cycle :-) .
-
-The upside right now is, that handling clock-ids gets very easy.
-Shared branches between trees for dt-binding ids are not favored,
-instead the way to go seems to be doing numbers first and replacing
-them in the next cycle when the ids got merged.
-
-Right now I'm also in control of the shared id-branch, merging it myself
-into both clock and dts branches, which somehow seems to still be ok,
-and hence I save a bit of work :-D .
-
-But of course we can merge the real easy things directly into the clock
-tree ... I'll keep that in mind for the next clock patches.
-
-
-Heiko
-
-
+> diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> index 10b96895d452..24634ca94f69 100644
+> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> @@ -79,6 +79,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+>  	/* Core Clock Outputs */
+>  	DEF_FIXED("za2",       R8A774C0_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+>  	DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
+> +	DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
+>  	DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
+>  	DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
+>  	DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
+> -- 
+> 2.11.0
+> 
