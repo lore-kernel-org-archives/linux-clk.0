@@ -6,97 +6,111 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7D9C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 21:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5284C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 21:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B944E222DB
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 21:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B116222D7
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 21:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550265214;
-	bh=gq1vIpAQ5xhaJCbqZE7MY8qByqFbm3xYfjPjYDHgrOY=;
+	s=default; t=1550266166;
+	bh=UR08ykxIkKh0Vfj/fVGtLCw461Bc+tzNrBFf3QgA33s=;
 	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=u1E3v5XfAZzddX3N9QLEskvYwpOoXbNmQBkcDCEJWtTm0DcnNu5AHdvRjYFkF6e2B
-	 lTZvg2hIhiZeKz/KLtxk5dNkccEt3HbkUjz3CagpNpCOypMl3Xujbpe37csgJNJYE8
-	 sU/mf0hw4kNNaqqkSMx/wi6XVFzzNPGwG9kYAjoU=
+	b=sjP6mwA/D7YjH5V6A6gljw8ftk6AKI2LUtRznLrYazY09/KgL1Gkpk3nlP4iyjozP
+	 KoB+Bjwx9S9RA5PhKBYXBg9TTgHdSfj78q2mljqQ84rdLpOTjnFL7xlQ+0hTkym+Bb
+	 f1S9rYaUWhiJquXEpnfu+aPymIVwMMa3pizsWcZE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391845AbfBOVNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 16:13:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60506 "EHLO mail.kernel.org"
+        id S1730287AbfBOV30 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 16:29:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387600AbfBOVNd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Feb 2019 16:13:33 -0500
+        id S1728755AbfBOV3Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Feb 2019 16:29:25 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BE5121924;
-        Fri, 15 Feb 2019 21:13:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 471F6222BE;
+        Fri, 15 Feb 2019 21:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550265212;
-        bh=gq1vIpAQ5xhaJCbqZE7MY8qByqFbm3xYfjPjYDHgrOY=;
+        s=default; t=1550266165;
+        bh=UR08ykxIkKh0Vfj/fVGtLCw461Bc+tzNrBFf3QgA33s=;
         h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=AbJ5MivR1nRCYWcnke33d+NdocuoJ3tHCZmL5l+yPeiRVQ+idUUBst5/PToBnTVNZ
-         33dWebsuyrAs/tOKaBMbUvv4IboFf7/3VRNyBWKlpz5ewQRQqFIWN5ZYBkrC/1aHAO
-         P7V6bXGhNJA6OWAg1tALPPLl236vXV59Q6uYNQXs=
+        b=qhOvOvWRMRcsmaE5t8f0FlgIALa3sup2rb9Re5HuZMqX0k1XMEsy8Hq8FbOyxqC9P
+         eIYcuR3Wuo1Dt5Gxb/jdMP4cut5buK01/KBRi2hFvCFLdsO7qsZPNAJgalomvmicG6
+         v2nhU9T0QaSBQACCRXUYUUGgQS4Ez1zEnijIsM+8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
+To:     Jeffrey Hugo <jhugo@codeaurora.org>,
         Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <121ae6212cd555bc784af675d63f6b190c0bee10.camel@baylibre.com>
+In-Reply-To: <488f5033-c7a5-b49b-b973-c1415e533019@codeaurora.org>
 User-Agent: alot/0.8
-Subject: Re: [PATCH 7/9] clk: Allow parents to be specified without string names
-Message-ID: <155026521168.115909.10774224013908368981@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-8-sboyd@kernel.org> <2f88e7fb1788f68f7b97d9806d56f9271663bdfc.camel@baylibre.com> <154878820913.136743.9860407353339842831@swboyd.mtv.corp.google.com> <121ae6212cd555bc784af675d63f6b190c0bee10.camel@baylibre.com>
+Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
+Message-ID: <155026616459.115909.14315694127255521155@swboyd.mtv.corp.google.com>
+References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org> <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com> <488f5033-c7a5-b49b-b973-c1415e533019@codeaurora.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Russell King <linux@armlinux.org.uk>
 From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 15 Feb 2019 13:13:31 -0800
+Date:   Fri, 15 Feb 2019 13:29:24 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-02-13 01:32:23)
-> On Tue, 2019-01-29 at 10:56 -0800, Stephen Boyd wrote:
-> > > > +/**
-> > > > + * struct clk_parent_data - clk parent information
-> > > > + * @hw: parent clk_hw pointer (used for clk providers with internal
-> > > > clks)
-> > > > + * @name: parent name local to provider registering clk
-> > > > + * @fallback: globally unique parent name (used as a fallback)
-> > > > + */
-> > > > +struct clk_parent_data {
-> > > > +     struct clk_hw   *hw;
-> > > > +     const char      *name;
-> > > > +     const char      *fallback;
->=20
-> One last nitpick about this structure, because I did not figure it out at
-> first.
->=20
-> 'fallback' is what we known as 'name' in CCF so far.
->=20
-> What do you think about renaming 'fallback' to 'name' and 'name' to somet=
-hing
-> more obvious, like 'of_name' or 'fw_name' or something else ?
-
-Ok. I'm not super fond of assuming it's the DT specific, so maybe
-fw_name is good, or ext_name for external name? Or con_id to match
-clkdev?
-
->=20
-> > >=20
-> > > If I understand correctly, .name and .fallback will be ignored if hw =
-is
-> > > provided ? Maybe this should be documented somehow ?
+Quoting Jeffrey Hugo (2019-02-15 11:29:26)
+> On 2/15/2019 11:47 AM, Stephen Boyd wrote:
+> > Quoting Jeffrey Hugo (2019-02-11 08:09:00)
+> >> On 1/28/2019 11:10 PM, Stephen Boyd wrote:
+> >>
+> >>> +static int clk_init_parent(struct clk_core *core)
+> >>> +{
+> >>> +     core->parent =3D __clk_init_parent(core, true);
+> >>> +     if (IS_ERR(core->parent))
+> >>> +             return PTR_ERR(core->parent);
+> >>> +
+> >>> +     /*
+> >>> +      * Populate core->parent if parent has already been clk_core_in=
+it'd. If
+> >>> +      * parent has not yet been clk_core_init'd then place clk in th=
+e orphan
+> >>> +      * list.  If clk doesn't have any parents then place it in the =
+root
+> >>> +      * clk list.
+> >>> +      *
+> >>> +      * Every time a new clk is clk_init'd then we walk the list of =
+orphan
+> >>> +      * clocks and re-parent any that are children of the clock curr=
+ently
+> >>> +      * being clk_init'd.
+> >>> +      */
+> >>> +     if (core->parent) {
+> >>> +             hlist_add_head(&core->child_node,
+> >>> +                             &core->parent->children);
+> >>> +             core->orphan =3D core->parent->orphan;
+> >>> +     } else if (!core->num_parents) {
+> >>> +             hlist_add_head(&core->child_node, &clk_root_list);
+> >>> +             core->orphan =3D false;
+> >>> +     } else {
+> >>> +             hlist_add_head(&core->child_node, &clk_orphan_list);
+> >>
+> >> Missing "core->orphan =3D true;"?
+> >> The snippet below had that line.  Its not clear why it appears to be
+> >> dropped here.
+> >>
 > >=20
-> > Sure. I'll add some documentation to the long portion of the kernel-doc
-> > here describing priority order.
+> > Hmm. Weird. I think I may have been getting ahead of myself and moving
+> > the orphan updating code into __clk_init_parent(). I can't remember why
+> > though, so I guess I'll go all the way and move it all into
+> > __clk_init_parent() now. Thanks for pointing it out.
+> >=20
 >=20
-> Anyway, with this patch, I should be able to remove a lot of (ugly) code I
-> have been writting lately. I'll be happy to test it when you have a v2 re=
-ady.
+> No problem.
+>=20
+> Just FYI, I've rebased the 8998 mmcc series on top of this, and as far=20
+> as I can tell, everything seems to be working great.
 >=20
 
-Great!
+Cool. Are you using the new way to specify parents or have you
+maintained the previous design of using string names for parents?
 
