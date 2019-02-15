@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA10C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA32C10F02
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A3DC21B1C
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 799AC20838
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733131AbfBOGHk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 01:07:40 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56498 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733137AbfBOGHg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 01:07:36 -0500
-X-UUID: 12b37a7c3dcc4b26ae84fac6de050e57-20190215
-X-UUID: 12b37a7c3dcc4b26ae84fac6de050e57-20190215
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        id S1733187AbfBOGHZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 01:07:25 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:42748 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1733137AbfBOGHY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 01:07:24 -0500
+X-UUID: 74eecd456abf4ae8aa4fdeec908d36aa-20190215
+X-UUID: 74eecd456abf4ae8aa4fdeec908d36aa-20190215
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <erin.lo@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 96151995; Fri, 15 Feb 2019 14:07:19 +0800
+        with ESMTP id 536848455; Fri, 15 Feb 2019 14:07:13 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 15 Feb 2019 14:07:17 +0800
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 15 Feb 2019 14:07:11 +0800
 Received: from mtkslt303.mediatek.inc (10.21.14.116) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 15 Feb 2019 14:07:17 +0800
+ Transport; Fri, 15 Feb 2019 14:07:11 +0800
 From:   Erin Lo <erin.lo@mediatek.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -48,244 +48,154 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
         <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
-        <linux-clk@vger.kernel.org>,
-        Mengqi Zhang <Mengqi.Zhang@mediatek.com>
-Subject: [PATCH v7 6/6] arm64: dts: mt8183: add spi node
-Date:   Fri, 15 Feb 2019 14:02:38 +0800
-Message-ID: <1550210558-30516-7-git-send-email-erin.lo@mediatek.com>
+        <linux-clk@vger.kernel.org>, Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: [PATCH v7 3/6] dt-bindings: pinctrl: mt8183: add binding document
+Date:   Fri, 15 Feb 2019 14:02:35 +0800
+Message-ID: <1550210558-30516-4-git-send-email-erin.lo@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
 References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 894C1D067BA9C126933F4B32D09151AD7E9A2EF497CE74676FCDDDEBB794F61F2000:8
 X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add spi DTS node to the mt8183 and mt8183-evb.
+From: Zhiyong Tao <zhiyong.tao@mediatek.com>
 
-Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
+The commit adds mt8183 compatible node in binding document.
+
+Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts | 105 ++++++++++++++++++++++++++++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi    |  79 +++++++++++++++++++++
- 2 files changed, 184 insertions(+)
+ .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 115 +++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index 9b52559..b12c6ea 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -26,6 +26,111 @@
- 	};
- };
- 
-+&pio {
-+	spi_pins_0: spi0{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO85__FUNC_SPI0_MI>,
-+				 <PINMUX_GPIO86__FUNC_SPI0_CSB>,
-+				 <PINMUX_GPIO87__FUNC_SPI0_MO>,
-+				 <PINMUX_GPIO88__FUNC_SPI0_CLK>;
-+			bias-disable;
-+		};
-+	};
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+new file mode 100644
+index 0000000..364e673
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+@@ -0,0 +1,115 @@
++* Mediatek MT8183 Pin Controller
 +
-+	spi_pins_1: spi1{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO161__FUNC_SPI1_A_MI>,
-+				 <PINMUX_GPIO162__FUNC_SPI1_A_CSB>,
-+				 <PINMUX_GPIO163__FUNC_SPI1_A_MO>,
-+				 <PINMUX_GPIO164__FUNC_SPI1_A_CLK>;
-+			bias-disable;
-+		};
-+	};
++The Mediatek's Pin controller is used to control SoC pins.
 +
-+	spi_pins_2: spi2{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO0__FUNC_SPI2_CSB>,
-+				 <PINMUX_GPIO1__FUNC_SPI2_MO>,
-+				 <PINMUX_GPIO2__FUNC_SPI2_CLK>,
-+				 <PINMUX_GPIO94__FUNC_SPI2_MI>;
-+			bias-disable;
-+		};
-+	};
++Required properties:
++- compatible: value should be one of the following.
++	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
++- gpio-controller : Marks the device node as a gpio controller.
++- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
++  binding is used, the amount of cells must be specified as 2. See the below
++  mentioned gpio binding representation for description of particular cells.
++- gpio-ranges : gpio valid number range.
++- reg: physicall address base for gpio base registers. There are nine
++  physicall address base in mt8183. They are 0x10005000, 0x11F20000,
++  0x11E80000, 0x11E70000, 0x11E90000, 0x11D30000, 0x11D20000, 0x11C50000,
++  0x11F30000.
 +
-+	spi_pins_3: spi3{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO21__FUNC_SPI3_MI>,
-+				 <PINMUX_GPIO22__FUNC_SPI3_CSB>,
-+				 <PINMUX_GPIO23__FUNC_SPI3_MO>,
-+				 <PINMUX_GPIO24__FUNC_SPI3_CLK>;
-+			bias-disable;
-+		};
-+	};
++	Eg: <&pio 6 0>
++	<[phandle of the gpio controller node]
++	[line number within the gpio controller]
++	[flags]>
 +
-+	spi_pins_4: spi4{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO17__FUNC_SPI4_MI>,
-+				 <PINMUX_GPIO18__FUNC_SPI4_CSB>,
-+				 <PINMUX_GPIO19__FUNC_SPI4_MO>,
-+				 <PINMUX_GPIO20__FUNC_SPI4_CLK>;
-+			bias-disable;
-+		};
-+	};
++	Values for gpio specifier:
++	- Line number: is a value between 0 to 202.
++	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
++            Only the following flags are supported:
++            0 - GPIO_ACTIVE_HIGH
++            1 - GPIO_ACTIVE_LOW
 +
-+	spi_pins_5: spi5{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO13__FUNC_SPI5_MI>,
-+				 <PINMUX_GPIO14__FUNC_SPI5_CSB>,
-+				 <PINMUX_GPIO15__FUNC_SPI5_MO>,
-+				 <PINMUX_GPIO16__FUNC_SPI5_CLK>;
-+			bias-disable;
-+		};
-+	};
-+};
++Optional properties:
++- reg-names: gpio base register names. There are nine gpio base register
++  names in mt8183. They are "iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4",
++  "iocfg5", "iocfg6", "iocfg7", "iocfg8".
++- interrupt-controller: Marks the device node as an interrupt controller
++- #interrupt-cells: Should be two.
++- interrupts : The interrupt outputs from the controller.
 +
-+&spi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_0>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices.
 +
-+&spi1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_1>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
++Subnode format
++A pinctrl node should contain at least one subnodes representing the
++pinctrl groups available on the machine. Each subnode will list the
++pins it needs, and how they should be configured, with regard to muxer
++configuration, pullups, drive strength, input enable/disable and input schmitt.
 +
-+&spi2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_2>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
++    node {
++	pinmux = <PIN_NUMBER_PINMUX>;
++	GENERIC_PINCONFIG;
++    };
 +
-+&spi3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_3>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
++Required properties:
++- pinmux: integer array, represents gpio pin number and mux setting.
++    Supported pin number and mux varies for different SoCs, and are defined
++    as macros in boot/dts/<soc>-pinfunc.h directly.
 +
-+&spi4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_4>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
++Optional properties:
++- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
++    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
++    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
 +
-+&spi5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_5>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
++    Some special pins have extra pull up strength, there are R0 and R1 pull-up
++    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
++    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
++    it support arguments for those special pins.
 +
-+};
++    When config drive-strength, it can support some arguments, such as
++    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
 +
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 1bd1399..165b859 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
++Examples:
++
 +#include "mt8183-pinfunc.h"
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -267,6 +268,84 @@
- 			status = "disabled";
- 		};
- 
-+		spi0: spi@1100a000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x1100a000 0 0x1000>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI0>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
++
++...
++{
++	pio: pinctrl@10005000 {
++		compatible = "mediatek,mt8183-pinctrl";
++		reg = <0 0x10005000 0 0x1000>,
++		      <0 0x11F20000 0 0x1000>,
++		      <0 0x11E80000 0 0x1000>,
++		      <0 0x11E70000 0 0x1000>,
++		      <0 0x11E90000 0 0x1000>,
++		      <0 0x11D30000 0 0x1000>,
++		      <0 0x11D20000 0 0x1000>,
++		      <0 0x11C50000 0 0x1000>,
++		      <0 0x11F30000 0 0x1000>;
++		reg-names = "iocfg0", "iocfg1", "iocfg2",
++			    "iocfg3", "iocfg4", "iocfg5",
++			    "iocfg6", "iocfg7", "iocfg8";
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-ranges = <&pio 0 0 192>;
++		interrupt-controller;
++		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&gic>;
++		#interrupt-cells = <2>;
++
++		i2c0_pins_a: i2c0 {
++			pins1 {
++				pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
++					 <PINMUX_GPIO49__FUNC_SDA5>;
++				mediatek,pull-up-adv = <11>;
++			};
 +		};
 +
-+		spi1: spi@11010000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11010000 0 0x1000>;
-+			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI1>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
++		i2c1_pins_a: i2c1 {
++			pins {
++				pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
++					 <PINMUX_GPIO51__FUNC_SDA3>;
++				mediatek,pull-down-adv = <10>;
++			};
 +		};
-+
-+		spi2: spi@11012000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11012000 0 0x1000>;
-+			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI2>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi3: spi@11013000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11013000 0 0x1000>;
-+			interrupts = <GIC_SPI 130 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI3>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi4: spi@11018000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11018000 0 0x1000>;
-+			interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI4>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi5: spi@11019000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11019000 0 0x1000>;
-+			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI5>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
- 		audiosys: syscon@11220000 {
- 			compatible = "mediatek,mt8183-audiosys", "syscon";
- 			reg = <0 0x11220000 0 0x1000>;
++		...
++	};
++};
 -- 
 1.9.1
 
