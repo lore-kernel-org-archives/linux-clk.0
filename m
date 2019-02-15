@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D53C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D85C10F04
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BF6821927
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FCEF21927
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198098;
-	bh=8XUIlxSKIMBLJ1bbS2b+As4HwqZ1o/xAH4Ka+YOHEdU=;
+	s=default; t=1550198106;
+	bh=XX8gkTWfydJ2h2LV3tckAphKi35817hiwi8/g5LwD/U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YWNHFSc/vHppIvWc2KWFMzC/o4P/gtpbX8vCcRcRyG9AZMkM/efBMoI5Ok83Ox+Mv
-	 dc5uHu1D6eiJTuY2Vy9RhqgURvJqnk51wM3sz4UHvvC/rm8R2vJS8z/geKOm60ISdb
-	 JnKbgk1eHHcuDYeNBrgRK3lPWYUd0yfFnR90labc=
+	b=uN57LHX8LummJSDgCHa/SVNW7eBZpZvaj3jZAqR4X+14oyM7zFi0KhhdxzVVXcJ/Q
+	 ugXBmJDtOKCtZgJ87DyPT1OXqyDVOqmdKRKxyEES649KvtCAxkeUTlk1vPk/+RZzTi
+	 MGNMx9YjevcM8PpzqUxqoLwBOVElk590J5RGglgs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbfBOCe5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:34:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51568 "EHLO mail.kernel.org"
+        id S2390801AbfBOCLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Feb 2019 21:11:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390805AbfBOCLc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:32 -0500
+        id S2390794AbfBOCLb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 086B3206BA;
-        Fri, 15 Feb 2019 02:11:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF732222D4;
+        Fri, 15 Feb 2019 02:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196691;
-        bh=8XUIlxSKIMBLJ1bbS2b+As4HwqZ1o/xAH4Ka+YOHEdU=;
+        s=default; t=1550196690;
+        bh=XX8gkTWfydJ2h2LV3tckAphKi35817hiwi8/g5LwD/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YXF3hZ+R9B8wqgMCQjWzgR3GxIYz7pXncNlR0wOXYAART8WRdMDSaNRTbMbDKj1IO
-         kqJ3ijeC+UBpDtWJ1oEd7dUsEpJHyD2WRPX4r4m3U6ib27jx3XBg5Ls2YHD8BnFMOU
-         KiK13N4ziMWzjg4zXN85QlivQi1sUlwfvXH+SOM8=
+        b=pLDb1UuuMqNzNV1vdUQlFLgVr4ojm8T5O3fBDCd+Hkxjo6fBGVUYCQI2VY5w+YlSz
+         T0LksEaBe9VfVTpYWWsxjpftDpg+JZ/raBeAkmVTr2jZRaoSIbwBaDQfyprlSYi9Hl
+         4b1vsVaZL3ZUm/GEGOapyxv/OH/QN4/fwy1rFeAY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 06/65] clk: sysfs: fix invalid JSON in clk_dump
-Date:   Thu, 14 Feb 2019 21:10:22 -0500
-Message-Id: <20190215021121.177674-6-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 05/65] clk: tegra: dfll: Fix a potential Oop in remove()
+Date:   Thu, 14 Feb 2019 21:10:21 -0500
+Message-Id: <20190215021121.177674-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -56,33 +57,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c6e909972ef87aa2a479269f46b84126f99ec6db ]
+[ Upstream commit d39eca547f3ec67140a5d765a426eb157b978a59 ]
 
-Add a missing comma so that the output is valid JSON format again.
+If tegra_dfll_unregister() fails then "soc" is an error pointer.  We
+should just return instead of dereferencing it.
 
-Fixes: 9fba738a53dd ("clk: add duty cycle support")
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Fixes: 1752c9ee23fb ("clk: tegra: dfll: Fix drvdata overwriting issue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d31055ae6ec6..5413ffaf02e2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2687,7 +2687,7 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- 	seq_printf(s, "\"protect_count\": %d,", c->protect_count);
- 	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
- 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
--	seq_printf(s, "\"phase\": %d", clk_core_get_phase(c));
-+	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
- 	seq_printf(s, "\"duty_cycle\": %u",
- 		   clk_core_get_scaled_duty_cycle(c, 100000));
- }
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 269d3595758b..edc31bb56674 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -133,9 +133,11 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ 	struct tegra_dfll_soc_data *soc;
+ 
+ 	soc = tegra_dfll_unregister(pdev);
+-	if (IS_ERR(soc))
++	if (IS_ERR(soc)) {
+ 		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
+ 			PTR_ERR(soc));
++		return PTR_ERR(soc);
++	}
+ 
+ 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
+ 
 -- 
 2.19.1
 
