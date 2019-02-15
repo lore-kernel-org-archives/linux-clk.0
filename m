@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 316F8C4151A
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 09:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD0CC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 10:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E0421925
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 09:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F1921924
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Feb 2019 10:08:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4BH/m5P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZ5o2W1u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbfBOJfq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:35:46 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38093 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfBOJfp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 04:35:45 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h58so7393338edb.5;
-        Fri, 15 Feb 2019 01:35:42 -0800 (PST)
+        id S2387774AbfBOKIN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Feb 2019 05:08:13 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43092 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbfBOKIM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 05:08:12 -0500
+Received: by mail-ed1-f66.google.com with SMTP id m35so3520925ede.10;
+        Fri, 15 Feb 2019 02:08:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=iq+W/fdH5b6grOmOt00fFkDn4PLskjvtpDOXitHrDZY=;
-        b=f4BH/m5PzgmYi+Se1sTW+ApNo1Cx91qPdeSUY/epHo1kUVSrOpPdBJeUbReor7ZvWJ
-         kJRl2LV8M7HSmW2Hj2VNpdkSbkiB3qZJiOTQTp+6VuIJ4x/jssLFX0B2gcQh3GMxTdrj
-         5IrvTOg6JrjZvRyxGR8wJdWrNq8wVEmzf/foT/gYvHlOIlgW6F6xlp2uFH1/IASZT2nY
-         TkI3GFY68XxYn7ZTmnEd042+kYwSENBwH1XF0TrUpNPf7pRW0JsTvgSiK5IBDYYTgUFR
-         0J9STKSTcb4tBJWhF3dxAe8q+sjv+cv9o0NwCG/Xzq8104nUK8xTudaJffINkCZ2sDnN
-         UEyg==
+        bh=URro4eW/8LyfbYeI/chkNNjAkVg7lbBDqYa/PnqWhec=;
+        b=MZ5o2W1uVvzQ1gdQv3uhcCYYC7UNLp1IsU+kSqp0M1Ggr1GMZ/6qLQLt0i0I3s73+A
+         fyJld0YdATDk4elMQlAcBXjPWMaNl27Sz/dj6lCKJYkzSXXIEErGy/K7zimRhC40dJ+/
+         7nRAr5Yoqsoy6xUMlnWNZ2Mj9jaNgSvO51+oR7s9OQTucJGWnheNDL8X2JOUAd3k1vP4
+         hwAfGySB+gmD9zku+BXRgarrxWWukbFQj62E9CuwIxHNHo+sJqdQiLp1E/no5x6gT1wE
+         iEsFML+DQ2g+60e9IckTTLf5edCPoNsvbAWEwGRnuqVTbZ19LB3i5GBaxUuLaZIrKVQu
+         6PQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=iq+W/fdH5b6grOmOt00fFkDn4PLskjvtpDOXitHrDZY=;
-        b=W5d7uRA4zSQQBI2S35F1Ukqtq5a9VejtpOnyZ+xG+bCyMo6azaTMfD7waH8moeWTIx
-         d3EubH01p5jPkgor76/sFrChRCeuGOarlbjCMSQy8G5T1XYfrb1QymZzqdPupzA8P/j+
-         m3not/hiszYRZb8ZRh3tHZWM7BlJuub250DYR5n54R6YBIccxvI//BkSr7frQHeHdJzy
-         1lYN4QGSfu7dYFkLYhorn/92K9et1rNpH66P99qRW7OrBSX/OIvAQCknOvgwSMIHSas8
-         834ogZVf+aLxcnDtwFED/ya/7VYfqFo0tmQB6KHh44ZGsnlKyflSiOuqYPINinWyKYhv
-         5G4Q==
-X-Gm-Message-State: AHQUAuaj4zDvLnrEDb3sUxj/ycSl9WLrx7VabSdNaNE1tOnBIHSt342P
-        V60vmUSOr5d4349QyBZn5ic=
-X-Google-Smtp-Source: AHgI3IaQYcJGUKT/+EnFb7GUEo93i05FKV9TUGGnxcxLFh94KS6WcKg2XbzYJHRLUydz5JJgobmMBQ==
-X-Received: by 2002:a05:6402:3d2:: with SMTP id t18mr7054001edw.2.1550223341979;
-        Fri, 15 Feb 2019 01:35:41 -0800 (PST)
+        bh=URro4eW/8LyfbYeI/chkNNjAkVg7lbBDqYa/PnqWhec=;
+        b=HSduUgDXdDwpT25OlPmaEW8BBxQae4LgZSK/DLSRSELaaq/8EBpED1gqjAEmHCJ5q6
+         YnjWYyKD31/TDLAzXQ/XPghUZmnldQXrY6AxXhxBCq5wqJQwuy6++IDIHJdlSFucmdQn
+         XV/SFcK9eSbAX56WpJKY0X5rPnR2gFbWZDc5Exy3BPEBHPETjBdc60NvVo6B/uUk9OdS
+         VUnaIMBcjrOVJqOFvknM86iBLdG16IcxWvG6OOLthWwbXewo0k3ru2tye0Sw87/Hdq1G
+         +Jp35R41qs3h0n49iI5DFsA+ooirS66HYjwsE7hJFj2ndBLo4Any5ASAQ5kmy23GewnO
+         gMhw==
+X-Gm-Message-State: AHQUAuYXXo9wJKm+Ct9uBwyEMExzcfc/3BI4cwoeuCIGCnQrX2sGTDK1
+        maDLdkahh/DcenFoTCNVn/cU5DWNnBY=
+X-Google-Smtp-Source: AHgI3IZ9xRHZniahw08zB9L3qrZhCjFE6hwiE73rfRHtktnagZGGPFaVfquljucdOC8gFG4SDMk8ew==
+X-Received: by 2002:aa7:c6da:: with SMTP id b26mr6953459eds.258.1550225289294;
+        Fri, 15 Feb 2019 02:08:09 -0800 (PST)
 Received: from ziggy.stardust ([37.223.146.9])
-        by smtp.gmail.com with ESMTPSA id e9sm1361118edv.5.2019.02.15.01.35.40
+        by smtp.gmail.com with ESMTPSA id v10sm1124419ejj.55.2019.02.15.02.08.07
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 01:35:41 -0800 (PST)
-Subject: Re: [PATCH v7 3/6] dt-bindings: pinctrl: mt8183: add binding document
+        Fri, 15 Feb 2019 02:08:08 -0800 (PST)
+Subject: Re: [PATCH v7 1/6] dt-bindings: mtk-sysirq: Add compatible for
+ Mediatek MT8183
 To:     Erin Lo <erin.lo@mediatek.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -72,9 +73,9 @@ Cc:     devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
         mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
+        linux-clk@vger.kernel.org
 References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
- <1550210558-30516-4-git-send-email-erin.lo@mediatek.com>
+ <1550210558-30516-2-git-send-email-erin.lo@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -170,15 +171,15 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <2b221339-3933-2a25-ab60-d4d772d2873a@gmail.com>
-Date:   Fri, 15 Feb 2019 10:35:39 +0100
+Message-ID: <931a6082-e86c-1220-ac84-61fea5815e94@gmail.com>
+Date:   Fri, 15 Feb 2019 11:08:06 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <1550210558-30516-4-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1550210558-30516-2-git-send-email-erin.lo@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -187,156 +188,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 15/02/2019 07:02, Erin Lo wrote:
-> From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> This adds dt-binding documentation of SYSIRQ for Mediatek MT8183 SoC
+> Platform.
 > 
-> The commit adds mt8183 compatible node in binding document.
-> 
-> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 > ---
->  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 115 +++++++++++++++++++++
->  1 file changed, 115 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+
+now queued in v5.1-next/dts64
+
+>  .../devicetree/bindings/interrupt-controller/mediatek,sysirq.txt         | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> new file mode 100644
-> index 0000000..364e673
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> @@ -0,0 +1,115 @@
-> +* Mediatek MT8183 Pin Controller
-> +
-> +The Mediatek's Pin controller is used to control SoC pins.
-> +
-> +Required properties:
-> +- compatible: value should be one of the following.
-> +	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> +- gpio-controller : Marks the device node as a gpio controller.
-> +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> +  binding is used, the amount of cells must be specified as 2. See the below
-> +  mentioned gpio binding representation for description of particular cells.
-> +- gpio-ranges : gpio valid number range.
-> +- reg: physicall address base for gpio base registers. There are nine
-
-s/physicall/physical
-
-> +  physicall address base in mt8183. They are 0x10005000, 0x11F20000,
-> +  0x11E80000, 0x11E70000, 0x11E90000, 0x11D30000, 0x11D20000, 0x11C50000,
-> +  0x11F30000.
-> +
-> +	Eg: <&pio 6 0>
-> +	<[phandle of the gpio controller node]
-> +	[line number within the gpio controller]
-> +	[flags]>
-> +
-> +	Values for gpio specifier:
-> +	- Line number: is a value between 0 to 202.
-> +	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> +            Only the following flags are supported:
-> +            0 - GPIO_ACTIVE_HIGH
-> +            1 - GPIO_ACTIVE_LOW
-> +
-> +Optional properties:
-> +- reg-names: gpio base register names. There are nine gpio base register
-> +  names in mt8183. They are "iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4",
-> +  "iocfg5", "iocfg6", "iocfg7", "iocfg8".
-> +- interrupt-controller: Marks the device node as an interrupt controller
-> +- #interrupt-cells: Should be two.
-> +- interrupts : The interrupt outputs from the controller.
-
-we are missing interrupt-parent here.
-
-> +
-> +Please refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices.
-> +
-> +Subnode format
-> +A pinctrl node should contain at least one subnodes representing the
-> +pinctrl groups available on the machine. Each subnode will list the
-> +pins it needs, and how they should be configured, with regard to muxer
-> +configuration, pullups, drive strength, input enable/disable and input schmitt.
-> +
-> +    node {
-> +	pinmux = <PIN_NUMBER_PINMUX>;
-> +	GENERIC_PINCONFIG;
-> +    };
-> +
-> +Required properties:
-> +- pinmux: integer array, represents gpio pin number and mux setting.
-> +    Supported pin number and mux varies for different SoCs, and are defined
-> +    as macros in boot/dts/<soc>-pinfunc.h directly.
-> +
-> +Optional properties:
-> +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
-> +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
-> +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
-> +
-> +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
-> +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
-> +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
-> +    it support arguments for those special pins.
-
-I wonder if we should mention which this special pins are. A look at the driver
-told me that it is not possible to know that by reading the source code neither.
-Linus, what do you think?
-
-What about mediatek,tdsel and mediatek,rdsel? They are not supported?
-
-Wouldn't it make sense to have one binding description for paris and then just
-create SoC specifics bindings?
-
-> +
-> +    When config drive-strength, it can support some arguments, such as
-> +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
-
-It can support all drive strength defined in that header file, 2, 4, 6, 8, 10,
-12, 14, 16, 20, 24, 28 and 32 mA?
-
-> +
-> +Examples:
-> +
-> +#include "mt8183-pinfunc.h"
-> +
-> +...
-> +{
-> +	pio: pinctrl@10005000 {
-> +		compatible = "mediatek,mt8183-pinctrl";
-> +		reg = <0 0x10005000 0 0x1000>,
-> +		      <0 0x11F20000 0 0x1000>,
-> +		      <0 0x11E80000 0 0x1000>,
-> +		      <0 0x11E70000 0 0x1000>,
-> +		      <0 0x11E90000 0 0x1000>,
-> +		      <0 0x11D30000 0 0x1000>,
-> +		      <0 0x11D20000 0 0x1000>,
-> +		      <0 0x11C50000 0 0x1000>,
-> +		      <0 0x11F30000 0 0x1000>;
-> +		reg-names = "iocfg0", "iocfg1", "iocfg2",
-> +			    "iocfg3", "iocfg4", "iocfg5",
-> +			    "iocfg6", "iocfg7", "iocfg8";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		gpio-ranges = <&pio 0 0 192>;
-> +		interrupt-controller;
-> +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-parent = <&gic>;
-> +		#interrupt-cells = <2>;
-> +
-> +		i2c0_pins_a: i2c0 {
-> +			pins1 {
-> +				pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
-> +					 <PINMUX_GPIO49__FUNC_SDA5>;
-> +				mediatek,pull-up-adv = <11>;
-> +			};
-> +		};
-> +
-> +		i2c1_pins_a: i2c1 {
-> +			pins {
-> +				pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
-> +					 <PINMUX_GPIO51__FUNC_SDA3>;
-> +				mediatek,pull-down-adv = <10>;
-> +			};
-> +		};
-> +		...
-> +	};
-> +};
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> index 33a98eb..91aa9ab 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> @@ -5,6 +5,7 @@ interrupt.
+>  
+>  Required properties:
+>  - compatible: should be
+> +	"mediatek,mt8183-sysirq", "mediatek,mt6577-sysirq": for MT8183
+>  	"mediatek,mt8173-sysirq", "mediatek,mt6577-sysirq": for MT8173
+>  	"mediatek,mt8135-sysirq", "mediatek,mt6577-sysirq": for MT8135
+>  	"mediatek,mt8127-sysirq", "mediatek,mt6577-sysirq": for MT8127
 > 
