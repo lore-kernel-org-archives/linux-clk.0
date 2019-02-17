@@ -1,142 +1,115 @@
-Return-Path: <SRS0=MMCI=QX=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=bSbG=QY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A100AC4360F
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Feb 2019 04:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AB4C10F04
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Feb 2019 04:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D54F21917
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Feb 2019 04:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D07921B69
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Feb 2019 04:31:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCB/zVzF"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hAp4nz/J";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="U5Lc7tZP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394424AbfBPEPv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Feb 2019 23:15:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41734 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394417AbfBPEPv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Feb 2019 23:15:51 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so5811262pfi.8
-        for <linux-clk@vger.kernel.org>; Fri, 15 Feb 2019 20:15:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7zOY7rJcyPkYN02Whkr/mHU6wjS0SWfiF1kM+cR67EI=;
-        b=PCB/zVzFFC4VyesOFx7iBqctUvJ+ATC1wmof6jXHXtfOvtcQhapyvy2CMpc53gay5A
-         N4kFEfufpDM1jfxCITojOPRLnbS+TMvu4bQxyKubXSOWLyKdULMR0sDCAren53U6QEAx
-         re+yL4T7HgMdtpT0GZ6ph0YhQXOA0qYVIjo2sqdRhFwaG2WcfvdcyxYn0Hz//rOQ8BE1
-         yCsiZ5OeiPiF/na3uRGwNbtbBsQhGaz8E0ib+1IPo2cn1uB+R9QTNv3alywORlIaR0h/
-         iSDuV4CBq0XVjwyTE044vFYHsWwpoTo+1Tw79ICMxQOFXtOS7RZhtA08nGS3/FEqUSuZ
-         nMWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7zOY7rJcyPkYN02Whkr/mHU6wjS0SWfiF1kM+cR67EI=;
-        b=WyURiWQznvcPhrFlelpdo6ZAQA0oanpma13fV054UD0RbicjWjklboKqdcia+23wLO
-         JesR+RkEFFZiH4NCJoNFfx5qPJG/pzuA6GRkfGTo44UlAb9pjX5C/eVCQ8cee+YyHYIH
-         5M1Ms1jUhuBoOvuHtivs7L38xsXgwnkDz37dw6S4ylHo9VARVsAWZcZDX20TTIcxi5Vu
-         WvS0MBlhTaLZJXnxtVjBswekObnfXmjPvIX8wn+asie3uIs4UbZph+/5WZ7JMYqH99WA
-         gEem/fkvaG92Ipn70pchhylDJIFRqQuWJd7Des25J9uN3m6lJjc9/8xkkgCR+e9Uyfhc
-         xLXA==
-X-Gm-Message-State: AHQUAubbESNTJHuv8uHpDHwdCM9HuR+sOmKeA0Z14KIoYl4XXV08zPtc
-        eOc5sUxd+5P8teRxDHyqnuhN
-X-Google-Smtp-Source: AHgI3IYtahhOfevSDnucFXm0FKCMF6V5aYRvcR3TbNLUwibqRjkfeZDvRWPSVJgpX9yWoZcyoVpq4A==
-X-Received: by 2002:a62:444b:: with SMTP id r72mr13316658pfa.184.1550290550447;
-        Fri, 15 Feb 2019 20:15:50 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:6190:e85b:d8eb:c013:fd6d:7b1d])
-        by smtp.gmail.com with ESMTPSA id n75sm2889719pfb.39.2019.02.15.20.15.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 20:15:49 -0800 (PST)
-Date:   Sat, 16 Feb 2019 09:45:41 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     sboyd@kernel.org
-Cc:     mturquette@baylibre.com, afaerber@suse.de, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Add clock support for Actions Semi S500 SoC
-Message-ID: <20190216041541.GB3054@Mani-XPS-13-9360>
-References: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org>
- <20190201035343.GB4283@Mani-XPS-13-9360>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201035343.GB4283@Mani-XPS-13-9360>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1730959AbfBQEbk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Feb 2019 23:31:40 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41712 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbfBQEbk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Feb 2019 23:31:40 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 022966077A; Sun, 17 Feb 2019 04:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550377899;
+        bh=UbJ8UrSsqlj5y7Ik+kzW9PXxE+4Gz9rhjv3AR3igmGA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hAp4nz/JGjQdKSxCVGCTe2S0BZCdXEvlZpcOOu85ZydjHS7OSzkbxedotTxHJBx/o
+         ZU6I8uxBNoNW0LqLrHyQj0rVD9yAxkXUWmdPEO2I1hERnjTebLZAdc405St/xw8K6S
+         HQN7qeLCfMEddGnFWpOVv9UvumnZPZB0SEcQoVsg=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F14E060709;
+        Sun, 17 Feb 2019 04:31:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550377898;
+        bh=UbJ8UrSsqlj5y7Ik+kzW9PXxE+4Gz9rhjv3AR3igmGA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=U5Lc7tZP/pDj/tq+GJffTjIxGFLY/I1JklQP0JadJXV5xXBlUspV/clFVgUSPC9Ga
+         FOLfxSV4oDPmWtTBHD5nSisfgeHrC84XwL7Ay+lnMFFMpZfnJqGoJtaumbA6NZT4aH
+         w32o8hbkZXiUc/rNYDj/DxFFTYCAhhYqkBDn7mkk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F14E060709
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v2 0/4] MSM8998 Multimedia Clock Controller
+Date:   Sat, 16 Feb 2019 21:31:25 -0700
+Message-Id: <1550377885-10618-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+The multimedia clock controller (mmcc) is the main clock controller for
+the multimedia subsystem and is required to enable things like display and
+camera.
 
-On Fri, Feb 01, 2019 at 09:23:43AM +0530, Manivannan Sadhasivam wrote:
-> Hi Stephen,
-> 
-> On Tue, Jan 15, 2019 at 09:03:34AM +0530, Manivannan Sadhasivam wrote:
-> > Hello,
-> > 
-> > This patchset adds common clock support for Actions Semi S500 SoC of
-> > the Owl family SoCs. This series is based on the initial work done
-> > by Edgar Bernardi Righi. https://patchwork.kernel.org/cover/10587527/
-> > 
-> > Since there isn't any update from him for long time, I took the liberty
-> > to modify his patches, address review comments and send to list for review.
-> > 
-> > This series has been tested on Allo Sparky SBC.
-> > 
-> 
-> Can you please merge the clk patches so that I can take the DT bits through
-> Actions sub-tree?
-> 
+Based upon the "Rewrite clk parent handling" series [1] to simplify handling
+of the external clocks that feed into the MMCC.
 
-Any update on this patchset?
+Assumes the "orphan probe defer" change [2] so that exposing XO via the RPM is
+safe for the UART in case of late probe per review comments.
 
-Thanks,
-Mani
+Assumes the common clk_hw registration is in place from "Make common clk_hw
+registrations" [3]
 
-> Thanks,
-> Mani
-> 
-> > Thanks,
-> > Mani
-> > 
-> > Changes in v2:
-> > 
-> > * Incorporated review comments from Stephen for driver cleanup.
-> > 
-> > Edgar Bernardi Righi (1):
-> >   dt-bindings: clock: Add DT bindings for Actions Semi S500 CMU
-> > 
-> > Manivannan Sadhasivam (5):
-> >   clk: actions: Add configurable PLL delay
-> >   ARM: dts: Add CMU support for Actions Semi Owl S500 SoC
-> >   ARM: dts: Remove fake UART clock for S500 based SBCs
-> >   clk: actions: Add clock driver for S500 SoC
-> >   MAINTAINERS: Add linux-actions mailing list for Actions Semi
-> > 
-> >  .../bindings/clock/actions,owl-cmu.txt        |   7 +-
-> >  MAINTAINERS                                   |   1 +
-> >  arch/arm/boot/dts/owl-s500-cubieboard6.dts    |   7 -
-> >  .../arm/boot/dts/owl-s500-guitar-bb-rev-b.dts |   7 -
-> >  arch/arm/boot/dts/owl-s500-sparky.dts         |   7 -
-> >  arch/arm/boot/dts/owl-s500.dtsi               |  22 +
-> >  drivers/clk/actions/Kconfig                   |   5 +
-> >  drivers/clk/actions/Makefile                  |   1 +
-> >  drivers/clk/actions/owl-pll.c                 |   2 +-
-> >  drivers/clk/actions/owl-pll.h                 |  30 +-
-> >  drivers/clk/actions/owl-s500.c                | 525 ++++++++++++++++++
-> >  include/dt-bindings/clock/actions,s500-cmu.h  |  78 +++
-> >  12 files changed, 661 insertions(+), 31 deletions(-)
-> >  create mode 100644 drivers/clk/actions/owl-s500.c
-> >  create mode 100644 include/dt-bindings/clock/actions,s500-cmu.h
-> > 
-> > -- 
-> > 2.17.1
-> > 
+[1] https://lore.kernel.org/lkml/20190129061021.94775-1-sboyd@kernel.org/T/#u
+[2] https://lkml.org/lkml/2019/2/11/1895
+[3] https://lkml.org/lkml/2019/2/10/132
+
+v2:
+-Rebased on the "Rewrite clk parent handling" series and updated to the clk init
+mechanisms introduced there.
+-Marked XO clk as CLK_IGNORE_UNUSED to avoid the concern about the XO going away
+"incorrectly" during late init
+-Corrected the name of the XO clock to "xo"
+-Dropped the fake XO clock in GCC to prevent a namespace conflict
+-Fully enumerated the external clocks (DSI PLLs, etc) in the DT binding
+-Cleaned up the weird newlines in the added DT node
+-Added DT header file to msm8998 DT for future clients
+
+Jeffrey Hugo (4):
+  clk: qcom: smd: Add XO clock for MSM8998
+  dt-bindings: clock: Add support for the MSM8998 mmcc
+  clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+  arm64: dts: qcom: msm8998: Add mmcc node
+
+ .../devicetree/bindings/clock/qcom,mmcc.txt        |    7 +
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |   15 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-smd-rpm.c                     |    4 +
+ drivers/clk/qcom/mmcc-msm8998.c                    | 2937 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,mmcc-msm8998.h      |  210 ++
+ 7 files changed, 3183 insertions(+)
+ create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
+
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
