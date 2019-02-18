@@ -2,105 +2,107 @@ Return-Path: <SRS0=h55i=QZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E174C4360F
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6166AC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD0121736
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550485033;
-	bh=tDSa3P+fSylKnMCiEXnNmh9Gh3DjztB0EGX/Y8Y+AXw=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v5np9G5b3xX2IY3C46wNrczbnie7t/Do2RbyPBC5wnb2HVijrOa13AhvNV80AZ6BN
-	 L7FW5dAXKavt3k2G0wgMUiix2Jrl6FwGu+xk9k4OjYbcuHzK22nYjjaL4vpT8fKjG0
-	 SpiOBN65/lQ7X2wXBXYT1pPPMaeB0lQICTK/SJHc=
+	by mail.kernel.org (Postfix) with ESMTP id 36A932173C
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbfBRKRC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:17:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730054AbfBRKRB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:17:01 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAB2B2176F;
-        Mon, 18 Feb 2019 10:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550485020;
-        bh=tDSa3P+fSylKnMCiEXnNmh9Gh3DjztB0EGX/Y8Y+AXw=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=t/QI9NgYeHrNe80RfWP9E0h5AWb8+WLJO7QiI9n5bLbzCCn9lHyTt0vxcMJ0xTG4r
-         y3cOUlGSTCHjU/BTn0sEkxxtGEVLlBhlpe/SjGkrPMxc/nADDjrxe/QU1foI5YtKfN
-         0n+lTuh2sL/pLVHHzyWG9o8N/uNgPkU1NXwpDSdU=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        id S1728858AbfBRKRt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Feb 2019 05:17:49 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33567 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbfBRKRt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 05:17:49 -0500
+Received: by mail-qt1-f196.google.com with SMTP id z39so18605796qtz.0;
+        Mon, 18 Feb 2019 02:17:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+8Kgv8PlwJL5KkdyPdTYb24HeDNj6IXtvBZ6RD/ghcE=;
+        b=GlgcY0QHKzEbFn4C4krLI5t/xSfLro3l+eGviBAzw/XetcviUvuJVxTQYcXYlC6oPF
+         b9tpX1vfIOfUDEWmkfL2mf6IL7+bmRCg70zLF992G+p5fZ4c3+QK5MXonxMcDIRan4uv
+         617XOCqkuIOWGSOhIjvRazrG0z05GlW86Hsnls2S8252AOXkjjhbQR3sG9+AAi/eZaY+
+         OAX20h5fef1UmNBa7dFt79Hsd5IMBUUN8nZFIwyjs0GeEbQ/wtuYtiP1l66f+9LZ9w1q
+         fpRFdgZBXUWN6d3dco845AyozohGg0DWwW+altJd5yhcDIWb2CX4YUJhLKaLUhS7os4C
+         kSKQ==
+X-Gm-Message-State: AHQUAuYM6bbAS4NTv8QRZDGcBWzOe8KXYbX9/aGfur6T/gMsTPBzhzim
+        vTBLBROGuW/8I9rpTSwaMuNEQT9i3nC6Pdrq0mg=
+X-Google-Smtp-Source: AHgI3IZQ/Kw4WLXZbQOzM/KsrL/flUhSZV8pkxxYWTRzoa5OeFJ/8qziVGKyZCnSYs3TeMwNTl51ZjHy0aDHTTzpPZ0=
+X-Received: by 2002:ac8:445a:: with SMTP id m26mr17398822qtn.212.1550485068101;
+ Mon, 18 Feb 2019 02:17:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20190218070609.167535-1-weiyongjun1@huawei.com> <20190218083858.GA19363@ulmo>
+In-Reply-To: <20190218083858.GA19363@ulmo>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Feb 2019 11:17:31 +0100
+Message-ID: <CAK8P3a1DdyG5EHN-H_OeJWzh9-kJau6TZ54d1Cdco87ANgTa4A@mail.gmail.com>
+Subject: Re: [PATCH -next] clk: tegra: dfll: Make symbol 'tegra210_cpu_cvb_tables'
+ static
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     arm-soc <arm@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>,
+        "\\ Peter De Schrijver" <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: [RFC 3/4] clk: samsung: exynos5: Fix kfree() of const memory on setting driver_override
-Date:   Mon, 18 Feb 2019 11:15:59 +0100
-Message-Id: <1550484960-2392-4-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550484960-2392-1-git-send-email-krzk@kernel.org>
-References: <1550484960-2392-1-git-send-email-krzk@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Platform driver driver_override field should not be initialized from
-const memory because the core later kfree() it.  If driver_override is
-manually set later through sysfs, kfree() of old value leads to:
+On Mon, Feb 18, 2019 at 9:39 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Mon, Feb 18, 2019 at 07:06:09AM +0000, Wei Yongjun wrote:
+> > Fixes the following sparse warning:
+> >
+> > drivers/clk/tegra/clk-tegra124-dfll-fcpu.c:244:18: warning:
+> >  symbol 'tegra210_cpu_cvb_tables' was not declared. Should it be static?
+> >
+> > Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> ARM SoC maintainers,
+>
+> This fixes a sparse warning introduced in the tegra-for-5.1-clk pull
+> request that you pulled last week. Do you want me to send you another
+> pull request (perhaps give it a few more days in case other fixes are
+> going to show up) or would you rather apply this directly?
+>
+> In the latter case, here's a link to patchwork:
+>
+>         http://patchwork.ozlabs.org/patch/1043804/
+>
+> and this is:
+>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-    $ echo "new_value" > /sys/bus/platform/drivers/.../driver_override
+Applied to arm/drivers, thanks!
 
-    kernel BUG at ../mm/slub.c:3960!
-    Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-    ...
-    (kfree) from [<c058e8c0>] (platform_set_driver_override+0x84/0xac)
-    (platform_set_driver_override) from [<c058e908>] (driver_override_store+0x20/0x34)
-    (driver_override_store) from [<c031f778>] (kernfs_fop_write+0x100/0x1dc)
-    (kernfs_fop_write) from [<c0296de8>] (__vfs_write+0x2c/0x17c)
-    (__vfs_write) from [<c02970c4>] (vfs_write+0xa4/0x188)
-    (vfs_write) from [<c02972e8>] (ksys_write+0x4c/0xac)
-    (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+>
+> In the meantime, I'll go and improve my build scripts to run sparse as
+> well. I used to do that but then removed it again because it was so
+> noisy that it was impossible to filter out the Tegra-specific bits. I
+> wonder if I could do something like have the build scripts build the
+> branch base first, without sparse checking, and then fast-forward to the
+> branch head and build again with sparse checking enabled. That way I
+> should only be seeing the sparse results for code that was modified in
+> the branch.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos5-subcmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I should also restart my regular testing to find regressions, I'm
+currently not doing any regular builds but rely on the bots.
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index d07ef26bd052..880d92ad20e8 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -143,7 +143,7 @@ static int __init exynos5_clk_register_subcmu(struct device *parent,
- 		return -ENOMEM;
- 
- 	pdev->dev.parent = parent;
--	pdev->driver_override = "exynos5-subcmu";
-+	platform_set_driver_override(pdev, "exynos5-subcmu");
- 	platform_set_drvdata(pdev, (void *)info);
- 	of_genpd_add_device(&genpdspec, &pdev->dev);
- 	ret = platform_device_add(pdev);
--- 
-2.7.4
-
+      Arnd
