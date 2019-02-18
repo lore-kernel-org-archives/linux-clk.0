@@ -2,109 +2,90 @@ Return-Path: <SRS0=h55i=QZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4651C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 21:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC9BC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 22:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955B221738
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 21:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 758182146E
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 22:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730533AbfBRVUM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Feb 2019 16:20:12 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:49099 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729382AbfBRVUM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 16:20:12 -0500
-X-Originating-IP: 86.202.231.219
-Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E0EDC240005;
-        Mon, 18 Feb 2019 21:20:07 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 22:20:07 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
-        Ludovic.Desroches@microchip.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clk: at91: sckc: add support for SAM9X60
-Message-ID: <20190218212007.GW10129@piout.net>
-References: <1550146447-1441-1-git-send-email-claudiu.beznea@microchip.com>
- <1550146447-1441-3-git-send-email-claudiu.beznea@microchip.com>
+        id S1730984AbfBRWC1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Feb 2019 17:02:27 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46201 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729530AbfBRWC1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 17:02:27 -0500
+Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 352fb2c46b2eeb3c; Mon, 18 Feb 2019 23:02:23 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-acpi@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v1] clk: x86: Move clk-lpss.h to platform_data/x86
+Date:   Mon, 18 Feb 2019 23:00:59 +0100
+Message-ID: <3313613.aXZoxbyzyv@aspire.rjw.lan>
+In-Reply-To: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
+References: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550146447-1441-3-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/02/2019 12:14:32+0000, Claudiu.Beznea@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+On Monday, February 18, 2019 8:34:15 PM CET Andy Shevchenko wrote:
+> clk-lpss.h is solely x86 related header. Move it to correct folder.
 > 
-> Add support for SAM9X60.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+in case you want to take this through the platform-x86 tree.
+
 > ---
->  drivers/clk/at91/sckc.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+>  drivers/acpi/acpi_lpss.c                         | 2 +-
+>  drivers/clk/x86/clk-lpt.c                        | 2 +-
+>  include/linux/platform_data/{ => x86}/clk-lpss.h | 0
+>  3 files changed, 2 insertions(+), 2 deletions(-)
+>  rename include/linux/platform_data/{ => x86}/clk-lpss.h (100%)
 > 
-> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-> index b7163d3a2269..b3075c51d260 100644
-> --- a/drivers/clk/at91/sckc.c
-> +++ b/drivers/clk/at91/sckc.c
-> @@ -459,6 +459,36 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
->  CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
->  	       of_at91sam9x5_sckc_setup);
+> diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+> index 5f94c35d165f..1e2a10a06b9d 100644
+> --- a/drivers/acpi/acpi_lpss.c
+> +++ b/drivers/acpi/acpi_lpss.c
+> @@ -18,7 +18,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/platform_data/clk-lpss.h>
+> +#include <linux/platform_data/x86/clk-lpss.h>
+>  #include <linux/platform_data/x86/pmc_atom.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/pm_runtime.h>
+> diff --git a/drivers/clk/x86/clk-lpt.c b/drivers/clk/x86/clk-lpt.c
+> index 6b40eb89ae19..68bd3abaef2c 100644
+> --- a/drivers/clk/x86/clk-lpt.c
+> +++ b/drivers/clk/x86/clk-lpt.c
+> @@ -13,7 +13,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+> -#include <linux/platform_data/clk-lpss.h>
+> +#include <linux/platform_data/x86/clk-lpss.h>
+>  #include <linux/platform_device.h>
 >  
-> +static const struct clk_slow_offsets at91sam9x60_offsets = {
-> +	.cr_rcen = AT91_SCKC_OFFSET_INVALID,
-> +	.cr_osc32en = 1,
-> +	.cr_osc32byp = 2,
-> +	.cr_oscsel = 24,
-> +};
-> +
-> +static void __init of_at91sam9x60_sckc_setup(struct device_node *np)
-> +{
-> +	struct device_node *childnp;
-> +	void (*clk_setup)(struct device_node *np, void __iomem *io,
-> +			  const struct clk_slow_offsets *offsets);
-> +	const struct of_device_id *clk_id;
-> +	void __iomem *regbase = of_iomap(np, 0);
-> +
-> +	if (!regbase)
-> +		return;
-> +
-> +	for_each_child_of_node(np, childnp) {
-> +		clk_id = of_match_node(sckc_clk_ids, childnp);
-> +		if (!clk_id)
-> +			continue;
-> +		clk_setup = clk_id->data;
-> +		clk_setup(childnp, regbase, &at91sam9x60_offsets);
-> +	}
+>  static int lpt_clk_probe(struct platform_device *pdev)
+> diff --git a/include/linux/platform_data/clk-lpss.h b/include/linux/platform_data/x86/clk-lpss.h
+> similarity index 100%
+> rename from include/linux/platform_data/clk-lpss.h
+> rename to include/linux/platform_data/x86/clk-lpss.h
+> 
 
-You actually need to have new bindings. The sam9x60 registration should
-look more like the sama5d4 registration. I have a rework for the sam9x5
-sckc that I will send this week to have a proper binding (i.e: no
-children).
 
-However, there is a fundamental change in the sam9x60, previously, the
-sckc had only one output clock. the sam9x60 has both td_slck and
-md_slck. Both need to be accessible because they are input to the PMC.
-
-This means you will have to register the sckc with of_clk_hw_onecell_get
-as the get callback.
-
-We could still decide to do the same with sam9x5 even if it has only one
-output clock.
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
