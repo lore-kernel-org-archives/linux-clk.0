@@ -2,91 +2,84 @@ Return-Path: <SRS0=h55i=QZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50940C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 19:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3ACBC4360F
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 20:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0912177E
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 19:34:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2023217F9
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 20:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550520157;
+	bh=orUSa6PtfbVB3NxbIsqyOnIwtXZDXYvHEYrLUny6tKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LgwGyLQzDK8dzwODBrocAxNPiHAkQEZqFWq25fKkapOt58d/o3oG1OKddXeWD5O5P
+	 tBmloF/6STaIyB0z8agLr6G3LPC2dzdSMrHf6/7v/kZaDaXH0fHpZ7UU2AUQkRz82M
+	 jm4EKGSPMAQaYPmIi0jQqiCqfD4P8BXgp50G3WtI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfBRTeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:34:19 -0500
-Received: from mga04.intel.com ([192.55.52.120]:3948 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726941AbfBRTeT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:34:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 11:34:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,385,1544515200"; 
-   d="scan'208";a="147840171"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Feb 2019 11:34:16 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0BE9BBB; Mon, 18 Feb 2019 21:34:15 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] clk: x86: Move clk-lpss.h to platform_data/x86
-Date:   Mon, 18 Feb 2019 22:34:15 +0300
-Message-Id: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728159AbfBRUCh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Feb 2019 15:02:37 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38280 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbfBRUCg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 15:02:36 -0500
+Received: by mail-ot1-f65.google.com with SMTP id m1so30358867otf.5;
+        Mon, 18 Feb 2019 12:02:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9sN1PzQyGZWC4Lda8UzrAJ1dy21aR/IgJKNfZHpWfdU=;
+        b=pNYewGs8JbBd/ODZuGdpsbpbQpb/6u0CNhquw7ETVfxfJIGMYzc0yPud4LdR0Ag2Lb
+         TFMSk5IiY+jst8h85jHet8vlJj3+ZwtLh4Xmv3nzZNxPuijqIsT9kZUwL1ISE346NCNV
+         L1grRa5iLGoXYFxgN2fZr9Cv5xvNhNZsNeJHDEZt8Kh3Tf23GLAmwuntXETLHumS6aqk
+         a243Hho7RqViCiAqPqJZ/HIok4LHIybMFkcZEGF14EtbJ4Jr01yEobEeAkM2OUS8Esk6
+         9LA66eUNKw1kmN1iMHlxcGltX546CjfoUFb2jkdsD4YtQWaXjOjC77omHdrJGp5KvAsX
+         MsBg==
+X-Gm-Message-State: AHQUAuYzRNLECwX0b4DBv2xKeMuiBGfRW6R0HcEpqNiG9T4aokobfa3Q
+        fuuYO5nnlpwyqD/JpCqneDDKx7M=
+X-Google-Smtp-Source: AHgI3IbiyoqNf9hEcB4xNlZl6uUdFBC5ktBT4xQpgX4YFbENVetrJTXfqm7T4B8RQy43rLSHx7AWLw==
+X-Received: by 2002:aca:c7c2:: with SMTP id x185mr329197oif.25.1550520155890;
+        Mon, 18 Feb 2019 12:02:35 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d10sm2680085otl.69.2019.02.18.12.02.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 12:02:35 -0800 (PST)
+Date:   Mon, 18 Feb 2019 14:02:34 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: clk: add G12A AO Clock and Reset
+ Bindings
+Message-ID: <20190218200234.GA31723@bogus>
+References: <20190212162859.20743-1-narmstrong@baylibre.com>
+ <20190212162859.20743-2-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212162859.20743-2-narmstrong@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk-lpss.h is solely x86 related header. Move it to correct folder.
+On Tue, 12 Feb 2019 17:28:58 +0100, Neil Armstrong wrote:
+> Add bindings for the Amlogic G12A AO Clock and Reset controllers.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |  1 +
+>  include/dt-bindings/clock/g12a-aoclkc.h       | 34 +++++++++++++++++++
+>  include/dt-bindings/reset/g12a-aoclkc.h       | 18 ++++++++++
+>  3 files changed, 53 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
+>  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/acpi/acpi_lpss.c                         | 2 +-
- drivers/clk/x86/clk-lpt.c                        | 2 +-
- include/linux/platform_data/{ => x86}/clk-lpss.h | 0
- 3 files changed, 2 insertions(+), 2 deletions(-)
- rename include/linux/platform_data/{ => x86}/clk-lpss.h (100%)
-
-diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-index 5f94c35d165f..1e2a10a06b9d 100644
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -18,7 +18,7 @@
- #include <linux/mutex.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
--#include <linux/platform_data/clk-lpss.h>
-+#include <linux/platform_data/x86/clk-lpss.h>
- #include <linux/platform_data/x86/pmc_atom.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/clk/x86/clk-lpt.c b/drivers/clk/x86/clk-lpt.c
-index 6b40eb89ae19..68bd3abaef2c 100644
---- a/drivers/clk/x86/clk-lpt.c
-+++ b/drivers/clk/x86/clk-lpt.c
-@@ -13,7 +13,7 @@
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/module.h>
--#include <linux/platform_data/clk-lpss.h>
-+#include <linux/platform_data/x86/clk-lpss.h>
- #include <linux/platform_device.h>
- 
- static int lpt_clk_probe(struct platform_device *pdev)
-diff --git a/include/linux/platform_data/clk-lpss.h b/include/linux/platform_data/x86/clk-lpss.h
-similarity index 100%
-rename from include/linux/platform_data/clk-lpss.h
-rename to include/linux/platform_data/x86/clk-lpss.h
--- 
-2.20.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
