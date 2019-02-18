@@ -2,104 +2,91 @@ Return-Path: <SRS0=h55i=QZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAE8C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 16:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50940C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 19:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFFC217F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 16:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550507634;
-	bh=0q/kfWNKqGdkpY+YX5rZDiPKXLbEOK7j9UPuGWBuO3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HBD3J5/4GgoKUU0RKkaLCTaDmEzL40ArpXNjjz2Ou/9ZBtmO7gtc2C1nxSh5vvlev
-	 B1x4uLxUrNf2yAbMxnNrmJjPCChNCZAiSZAXD+UL1y3WSHDDE9ajAA0E8uYglslbRg
-	 VJkW42dY9UiEl3jzIMc8Eu3m+gMLXO+QKqDtq97Q=
+	by mail.kernel.org (Postfix) with ESMTP id 2D0912177E
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 19:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389623AbfBRQds (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:33:48 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38288 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732534AbfBRQdo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 11:33:44 -0500
-Received: by mail-ot1-f68.google.com with SMTP id m1so29272600otf.5;
-        Mon, 18 Feb 2019 08:33:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/3OTtw+XimbN3zuGxZJlMD8HX9wbXSnJdqnMGNSEaO0=;
-        b=XcO3FhMRzXSMMQ1Mv8N9XWGSJTiHNlx77PEQAL5H5S5FJx0/JIpqpJ6tMF66pCtaS8
-         M0rUDYtGS2tWTHn0ttBdtwGpv4jFfQcUCV1n/D6XtQC2xCudLZil+OxP53bHJGCkoaME
-         8TCZq2Mgpux5ptY/yFVaGrHQLtsXfCsmDwiK5URt0w9HjAVjSjrJgn6bbz7C7r0tlx0h
-         pYTaP4L4PQ3VkUgrhRXbEAq8SwQxfKvrRgHLcf3zq0+KAAqqVttEad1kGhkVPxDDvgLJ
-         TGBcxUAd6OGE2EwlVxwcpjY7SX0iIgRbbRJfYU30RTmKhvt4jd4giCbJHN4Lh9MaXkPv
-         Luqw==
-X-Gm-Message-State: AHQUAuYJvBV3jeXH06XnEoHwzEBNtvcR9sCquOrjRHXltqE9FhS/mevw
-        v8OA2G7NZkOMCoFnb/tc0AXF9Ss=
-X-Google-Smtp-Source: AHgI3Ia77PdVDQPtBsuUkPNc0UKt1rxr5mMlVLuVXmIc0fOQ927DI6NDVQ/XIZyfkht6kBngYUUVsw==
-X-Received: by 2002:a9d:22a4:: with SMTP id y33mr3595921ota.218.1550507623523;
-        Mon, 18 Feb 2019 08:33:43 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m84sm867636oig.49.2019.02.18.08.33.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 08:33:42 -0800 (PST)
-Date:   Mon, 18 Feb 2019 10:33:42 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Erin Lo <erin.lo@mediatek.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
-        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: Re: [PATCH v7 5/6] arm64: dts: mt8183: add pintcrl file
-Message-ID: <20190218163342.GA12014@bogus>
-References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
- <1550210558-30516-6-git-send-email-erin.lo@mediatek.com>
+        id S1727027AbfBRTeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Feb 2019 14:34:19 -0500
+Received: from mga04.intel.com ([192.55.52.120]:3948 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726941AbfBRTeT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Feb 2019 14:34:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 11:34:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,385,1544515200"; 
+   d="scan'208";a="147840171"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 18 Feb 2019 11:34:16 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 0BE9BBB; Mon, 18 Feb 2019 21:34:15 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] clk: x86: Move clk-lpss.h to platform_data/x86
+Date:   Mon, 18 Feb 2019 22:34:15 +0300
+Message-Id: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550210558-30516-6-git-send-email-erin.lo@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 02:02:37PM +0800, Erin Lo wrote:
-> This patch adds pinctrl file for mt8183.
-> 
-> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h | 1120 +++++++++++++++++++++++++
->  1 file changed, 1120 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h b/arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
-> new file mode 100644
-> index 0000000..768e41e
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
-> @@ -0,0 +1,1120 @@
-> +// SPDX-License-Identifier: GPL-2.0
+clk-lpss.h is solely x86 related header. Move it to correct folder.
 
-Run checkpatch. It will tell you that this should be /* */ comments.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/acpi/acpi_lpss.c                         | 2 +-
+ drivers/clk/x86/clk-lpt.c                        | 2 +-
+ include/linux/platform_data/{ => x86}/clk-lpss.h | 0
+ 3 files changed, 2 insertions(+), 2 deletions(-)
+ rename include/linux/platform_data/{ => x86}/clk-lpss.h (100%)
 
-Otherwise,
+diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+index 5f94c35d165f..1e2a10a06b9d 100644
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -18,7 +18,7 @@
+ #include <linux/mutex.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+-#include <linux/platform_data/clk-lpss.h>
++#include <linux/platform_data/x86/clk-lpss.h>
+ #include <linux/platform_data/x86/pmc_atom.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/clk/x86/clk-lpt.c b/drivers/clk/x86/clk-lpt.c
+index 6b40eb89ae19..68bd3abaef2c 100644
+--- a/drivers/clk/x86/clk-lpt.c
++++ b/drivers/clk/x86/clk-lpt.c
+@@ -13,7 +13,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
+-#include <linux/platform_data/clk-lpss.h>
++#include <linux/platform_data/x86/clk-lpss.h>
+ #include <linux/platform_device.h>
+ 
+ static int lpt_clk_probe(struct platform_device *pdev)
+diff --git a/include/linux/platform_data/clk-lpss.h b/include/linux/platform_data/x86/clk-lpss.h
+similarity index 100%
+rename from include/linux/platform_data/clk-lpss.h
+rename to include/linux/platform_data/x86/clk-lpss.h
+-- 
+2.20.1
 
-Reviewed-by: Rob Herring <robh@kernel.org>
