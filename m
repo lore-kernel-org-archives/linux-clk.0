@@ -2,123 +2,130 @@ Return-Path: <SRS0=h55i=QZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22328C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 11:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE49BC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 12:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50E82173C
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 11:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550488491;
-	bh=l8/9w6Kg/HHsnA8sN8sMtyT/9DJbnt7UQ+0dwdA0srs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=DCeiW3icdxZPpwLrAk0NIsQ6oFlNzJ6ns2kmK5LwDW112MgflcjzyBOC0u7jSKGGs
-	 JN0bw6EhXr17wTyY4TcVfer6sgEKOvaHbM0LbhwEs8NYkMxCI3Hi+pr36wev2/j/B2
-	 RZFGTfHDvmnSvUTW3f4d1Mj6IDbo7osCqWHJVhtk=
+	by mail.kernel.org (Postfix) with ESMTP id A6B0521773
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 12:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729737AbfBRLOo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Feb 2019 06:14:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbfBRLOo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Feb 2019 06:14:44 -0500
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE43121873;
-        Mon, 18 Feb 2019 11:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550488483;
-        bh=l8/9w6Kg/HHsnA8sN8sMtyT/9DJbnt7UQ+0dwdA0srs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HU0x6AtcWVoOlImdWayNlRcexgbQ0gIOtgEh5oUqYbP2vKp8OiBrstluSYsZS1aPY
-         oOALT4iY1810zG3xNYsZL4ysJByrbor7U50TEXsJrqL3rzTycv5oI7xAexDoAT1n82
-         vMK5jCmM2UYI2jVK+C++8oe0zKEtnk3H8l8ZAHR8=
-Received: by mail-lf1-f52.google.com with SMTP id v7so12010229lfd.2;
-        Mon, 18 Feb 2019 03:14:42 -0800 (PST)
-X-Gm-Message-State: AHQUAuaXFwtdlSn2+8OOadesJlF6qP0loSB37GVbuzuRCEJhfTqK1RGh
-        kMh8hqI6CZz2+CxRxhPQcb9QegmEAfq3BzA9jzQ=
-X-Google-Smtp-Source: AHgI3IYGbp2ThDqPrK0+LuwjhtPDUOImmT3j8Qojj2Dqt4lNUi8vf64u/CyDAOCL7Ui3jFkbOlffZuvWvxNpYWQAbes=
-X-Received: by 2002:a19:4948:: with SMTP id l8mr14548354lfj.156.1550488481012;
- Mon, 18 Feb 2019 03:14:41 -0800 (PST)
+        id S1730571AbfBRMVB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Feb 2019 07:21:01 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44126 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729713AbfBRMVA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 07:21:00 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so18830186qte.11;
+        Mon, 18 Feb 2019 04:20:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GtdHAxqUhnuyM/EBdJXTnZgqZt7coVP/9zTgLi4hYLc=;
+        b=L25Kiy5erjpNYYb8EZNKhAKow2tn7HETDcTfM8GafQhaizPK3142RREe3tXxRnQRkY
+         DXH3tb7DvfyO7BHhRovEXsElZQjADvcd9HR48bScOTg5Df6dvNyHV0mdYHKUr5ptelw+
+         29y1er7BJ3QJA5D+rQX3syVJ7gkXoxH4fho8mh95LeLuzqHSxKT+XkQDUnTI274Pzbe+
+         R8SdhI4FVvrl0VEkCM/2mtDI5uRsydZABM+wJMLp7CKAoYrxdRQdy5spdUeM0brTaImF
+         ZrhmUJJ/Bg/DCGCz3roUZfR3Yck2eNnC22UZIjmLyLW1jakHHyBnU3tyoG1A+Dl0ckBv
+         7qHg==
+X-Gm-Message-State: AHQUAuZ94bjECJ12MhxwdCsgjNiw7cja3MKyL8MfO5Bqshjwb/U0pDsf
+        RHjSWFgB6NdbLj5ducYp/p9guJhtbmv7rCiBI4M=
+X-Google-Smtp-Source: AHgI3IbPmfMKPiuYDvNuoy/KqNDakxv45mdQ6ShE9ZD55+wx/xPOcgvWXm6tMRjltLkvO7gXAdJX+v37uwlFstrCzxM=
+X-Received: by 2002:ac8:237b:: with SMTP id b56mr3806848qtb.343.1550492459208;
+ Mon, 18 Feb 2019 04:20:59 -0800 (PST)
 MIME-Version: 1.0
-References: <1550484960-2392-1-git-send-email-krzk@kernel.org> <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 18 Feb 2019 12:14:29 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
-Message-ID: <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
-Subject: Re: [RFC 0/4] clk/driver: platform: Fix kfree() of const memory on
- setting driver_override
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>,
+References: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Feb 2019 13:20:42 +0100
+Message-ID: <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/15] Add basic support for Socionext Milbeaut M10V SoC
+To:     Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc:     DTML <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-serial@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 18 Feb 2019 at 11:40, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Fri, Feb 8, 2019 at 1:24 PM Sugaya Taichi
+<sugaya.taichi@socionext.com> wrote:
 >
-> Hi Krzysztof,
+> Hi,
 >
-> On Mon, Feb 18, 2019 at 11:27 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > The problem
-> > ===========
-> > Several device types (platform, amba, spi etc.) provide a driver_override
-> > field.  On sysfs store or during device removal, they kfree() the
-> > existing value.
-> >
-> > However the users are unaware of this and set the driver_override like:
-> >
-> >         pdev->driver_override = "exynos5-subcmu";
-> >
-> > which obviously leads to error.
+> Here is the series of patches the initial support for SC2000(M10V) of
+> Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
+> source code.
 >
-> IMHO driver_override is not meant to be set by a driver, only from userspace,
-> for binding the device to vfio (is there another use case?).
+> SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
+> computer vision. It also features advanced functionalities such as 360-degree,
+> real-time spherical stitching with multi cameras, image stabilization for
+> without mechanical gimbals, and rolling shutter correction. More detail is
+> below:
+> https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
 >
-> >   clk: samsung: exynos5: Fix kfree() of const memory on setting
-> >     driver_override
-> >   slimbus: ngd: Fix kfree() of const memory on setting driver_override
+> Specifications for developers are below:
+>  - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
+>  - NEON support
+>  - DSP
+>  - GPU
+>  - MAX 3GB DDR3
+>  - Cortex-M0 for power control
+>  - NAND Flash Interface
+>  - SD UHS-I
+>  - SD UHS-II
+>  - SDIO
+>  - USB2.0 HOST / Device
+>  - USB3.0 HOST / Device
+>  - PCI express Gen2
+>  - Ethernet Engine
+>  - I2C
+>  - UART
+>  - SPI
+>  - PWM
 >
-> I see all users set override immediately after allocating a platform device.
-> Can't they just allocate a platform device using the override name instead?
-> What am I missing?
+> Support is quite minimal for now, since it only includes timer, clock,
+> pictrl and serial controller drivers, so we can only boot to userspace
+> through initramfs. Support for the other peripherals  will come eventually.
 
-For the clk-exynos5-subcmu.c case, driver registers several
-sub-devices. Each sub-devices is a clock controller associated with
-power domain. I guess the author wanted to have meaningful names of
-these sub-devices (DISP, CAM etc. like names of power domains),
-instead of just exynos5-subcmu.1, exynos5-subcmu.2 ...
+I've looked over the platform once more. Overall, it looks very good, and
+I'd still like to merge this for linux-5.1, but we are running out of time
+there. If you send the patches to soc@kernel.org quickly, we can try to
+still merge them in, but if anything goes wrong, it will have to wait until
+we start merging patches for 5.2, directly after 5.1 is out.
 
-If driver_override should not be used for such case, then I could
-replace it with what you said.
+I did not look at the device driver patches (clk, clocksource, pinctrl, serial)
+in much detail. If you have an Ack from the maintainers, feel free to
+include them in the series, otherwise let's merge the rest now and then
+you can send the updated patches for inclusion through the subsystem
+trees in 5.2.
 
-For the other uses of driver_override (drivers/rpmsg/rpmsg_internal.h
-and drivers/slimbus/qcom-ngd-ctrl.c) I don't know.
+I have sent a few comments. The only one that is really important
+here is the missing platform check in the suspend options. Please
+try to address most of the other commentsm, either by changing the
+code, or by explaining why your version is correct.
 
-Best regards,
-Krzysztof
+
+
+     Arnd
