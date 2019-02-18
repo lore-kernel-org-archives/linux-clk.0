@@ -4,82 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3ACBC4360F
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 20:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D756DC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 20:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2023217F9
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 20:02:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A5E217F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Feb 2019 20:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550520157;
-	bh=orUSa6PtfbVB3NxbIsqyOnIwtXZDXYvHEYrLUny6tKM=;
+	s=default; t=1550520297;
+	bh=E2X6O+YDjSc+lcai9OnPeZVP03lgquOnVRBJ5Y2rtGQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LgwGyLQzDK8dzwODBrocAxNPiHAkQEZqFWq25fKkapOt58d/o3oG1OKddXeWD5O5P
-	 tBmloF/6STaIyB0z8agLr6G3LPC2dzdSMrHf6/7v/kZaDaXH0fHpZ7UU2AUQkRz82M
-	 jm4EKGSPMAQaYPmIi0jQqiCqfD4P8BXgp50G3WtI=
+	b=Io7qTD71lHSF0gLTZn9StUyfLr8ADgWKeiWjbgnPkcrCH9NmAKJLhkwFXW5tV1MBq
+	 zrhrdukLlFQRDHrS275q+o1fR7EF0UCkkiX+QxKCB70b74unZQ3rGX6a9a5kLlj/SX
+	 eFDbiwYgIJ7uFkJ2eW5th9Is0o6KEtrfKyhZehxU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbfBRUCh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:02:37 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38280 "EHLO
+        id S1728183AbfBRUEw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Feb 2019 15:04:52 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46213 "EHLO
         mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbfBRUCg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 15:02:36 -0500
-Received: by mail-ot1-f65.google.com with SMTP id m1so30358867otf.5;
-        Mon, 18 Feb 2019 12:02:36 -0800 (PST)
+        with ESMTP id S1725308AbfBRUEw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 15:04:52 -0500
+Received: by mail-ot1-f65.google.com with SMTP id c18so8761564otl.13;
+        Mon, 18 Feb 2019 12:04:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9sN1PzQyGZWC4Lda8UzrAJ1dy21aR/IgJKNfZHpWfdU=;
-        b=pNYewGs8JbBd/ODZuGdpsbpbQpb/6u0CNhquw7ETVfxfJIGMYzc0yPud4LdR0Ag2Lb
-         TFMSk5IiY+jst8h85jHet8vlJj3+ZwtLh4Xmv3nzZNxPuijqIsT9kZUwL1ISE346NCNV
-         L1grRa5iLGoXYFxgN2fZr9Cv5xvNhNZsNeJHDEZt8Kh3Tf23GLAmwuntXETLHumS6aqk
-         a243Hho7RqViCiAqPqJZ/HIok4LHIybMFkcZEGF14EtbJ4Jr01yEobEeAkM2OUS8Esk6
-         9LA66eUNKw1kmN1iMHlxcGltX546CjfoUFb2jkdsD4YtQWaXjOjC77omHdrJGp5KvAsX
-         MsBg==
-X-Gm-Message-State: AHQUAuYzRNLECwX0b4DBv2xKeMuiBGfRW6R0HcEpqNiG9T4aokobfa3Q
-        fuuYO5nnlpwyqD/JpCqneDDKx7M=
-X-Google-Smtp-Source: AHgI3IbiyoqNf9hEcB4xNlZl6uUdFBC5ktBT4xQpgX4YFbENVetrJTXfqm7T4B8RQy43rLSHx7AWLw==
-X-Received: by 2002:aca:c7c2:: with SMTP id x185mr329197oif.25.1550520155890;
-        Mon, 18 Feb 2019 12:02:35 -0800 (PST)
+        bh=B+x2incSj0C+DkTX95+6ke3OKgtXf3toGQqasEk4wj0=;
+        b=hAdI4GRX8we5xVakhmKUeIcN2e2AeA4SwuTGYIwlQNdfdhzyvOA9kO6WfaY6vyB5Fh
+         S23Zi6x5mBqYTrl1zYZUB80ME0j+6Ut2fhtT99rAfWONA9NM5xUGhKJVp4afCgLjf8Y9
+         YT8VSQ71Y53xwryIMpOPM2oGB8wVbGAUL3l/gQqm9SLgrpSPk3miVZAWFSTQVN63BtGc
+         vOnqqiJR4B4ZNt9pU7UnzD3t9RgjAA+nZQ0kzuFoB/wiqH4HA21roppJipIHjQNSvDTG
+         wqAwtIjy0SBsD/RkITq0zre6cI8TydD25sDa8du76zX8LVoKGYFFhrK965OYqxfH4ACM
+         AulQ==
+X-Gm-Message-State: AHQUAuat4cQPNzg1gh4SZ90PEZnLR+wLHC/vJvAw1dfLfM4l3mVvSXEd
+        eavjuIgp9V6LaKHyjGT8Qg==
+X-Google-Smtp-Source: AHgI3IaeCnhJ+xDVtm0C4DG88T1M6FFfqfTSOqkVbUM6H7bpEzeTS8bkg0x3DQnpzVVrVUgjqvYdSw==
+X-Received: by 2002:aca:3506:: with SMTP id c6mr343700oia.65.1550520291652;
+        Mon, 18 Feb 2019 12:04:51 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d10sm2680085otl.69.2019.02.18.12.02.35
+        by smtp.gmail.com with ESMTPSA id 88sm2909281otx.57.2019.02.18.12.04.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 12:02:35 -0800 (PST)
-Date:   Mon, 18 Feb 2019 14:02:34 -0600
+        Mon, 18 Feb 2019 12:04:51 -0800 (PST)
+Date:   Mon, 18 Feb 2019 14:04:50 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clk: add G12A AO Clock and Reset
- Bindings
-Message-ID: <20190218200234.GA31723@bogus>
-References: <20190212162859.20743-1-narmstrong@baylibre.com>
- <20190212162859.20743-2-narmstrong@baylibre.com>
+To:     Claudiu.Beznea@microchip.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
+        alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Claudiu.Beznea@microchip.com
+Subject: Re: [PATCH v2 3/3] dt-bindings: clk: at91: add bindings for
+ SAM9X60's  slow clock controller
+Message-ID: <20190218200450.GA3545@bogus>
+References: <1550146447-1441-1-git-send-email-claudiu.beznea@microchip.com>
+ <1550146447-1441-4-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190212162859.20743-2-narmstrong@baylibre.com>
+In-Reply-To: <1550146447-1441-4-git-send-email-claudiu.beznea@microchip.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 12 Feb 2019 17:28:58 +0100, Neil Armstrong wrote:
-> Add bindings for the Amlogic G12A AO Clock and Reset controllers.
+On Thu, 14 Feb 2019 12:14:36 +0000, <Claudiu.Beznea@microchip.com> wrote:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Add bindings for SAM9X60's slow clock controller.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 > ---
->  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |  1 +
->  include/dt-bindings/clock/g12a-aoclkc.h       | 34 +++++++++++++++++++
->  include/dt-bindings/reset/g12a-aoclkc.h       | 18 ++++++++++
->  3 files changed, 53 insertions(+)
->  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
->  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
+>  Documentation/devicetree/bindings/clock/at91-clock.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
