@@ -2,220 +2,105 @@ Return-Path: <SRS0=Vpf0=Q2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F87C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A579C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586ED21773
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DC422173C
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:03:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyiEXisE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfBSCqM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Feb 2019 21:46:12 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:55323 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726413AbfBSCqM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Feb 2019 21:46:12 -0500
-X-UUID: b66e9a5f864d42d18f647a76ed5889f1-20190219
-X-UUID: b66e9a5f864d42d18f647a76ed5889f1-20190219
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <zhiyong.tao@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 641928010; Tue, 19 Feb 2019 10:46:00 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs08n1.mediatek.inc
- (172.21.101.55) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
- 2019 10:45:58 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 19 Feb 2019 10:45:57 +0800
-Message-ID: <1550544357.4739.32.camel@mhfsdcap03>
-Subject: Re: [PATCH v7 3/6] dt-bindings: pinctrl: mt8183: add binding
- document
-From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Erin Lo <erin.lo@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        id S1725787AbfBSGDu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 01:03:50 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37964 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbfBSGDu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 01:03:50 -0500
+Received: by mail-pf1-f194.google.com with SMTP id n125so2415991pfn.5
+        for <linux-clk@vger.kernel.org>; Mon, 18 Feb 2019 22:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=WAJkt5pKYVfaSlTbiQyzNhjMJz/17VQ97ZsS8VrSTns=;
+        b=SyiEXisEw8m2f8P4XliUEL1x1ifBMrLtI9hZ2DIjOSvalBWB9Ie/TsZTWmuNIDQzuf
+         3/rbzu2GUhPHJbPI1KeD572UQAGQHYWyqkgVhK+3+kfbGbaUoe4Yzs4CrUEE7az9sR6H
+         8gKTfnc1gCl0qpTu8UYKvpC0H+j/ulyfBtWYmyvwz9dyeH7xm6zPemqskg9aXfSxEoWo
+         O8P04nVn6lbncvtAzPfosFNLYvO8l9VlKa4y7SLX1SpFU3+8pDVpDvGLB6DCTFz9ysEN
+         KQ5GaicA9iRhgGLrjJQ4uuU/TKwppJOfTRniuVzuP8d09HPYAXMvCnPgly6NsIa5lu63
+         sj4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WAJkt5pKYVfaSlTbiQyzNhjMJz/17VQ97ZsS8VrSTns=;
+        b=YNXPNm5QxEQq8TGev0+wVA7v7sRYyRHUwmJo2A9iMoJTtC3YNXvIzJpPqdzrCWn4C2
+         HzI9MQw+xPy490cAHDlurQARC0oqsj+mdDH6Jh9zGn/PT7CS2dkfD8SJZ97FJTX3psLb
+         2LUhKnbl8xRVV6zpEdZVnFb5cKLChtvF+f/pXCu943YuDv9JWFSTiUVUnfDlaJ7CNrFT
+         QNgUOei3EVpSumkb2RkEZoZD/vQUtcfpC67OUOxd54tyod8yKbnHvami1uq7smjX1LVe
+         6YIJi4EbOSBE0R1MTEzpVWD1hTu3i5rdheo/sLp8OfdGAD4c9F8G5malEfLJ/4OdF/fh
+         zHcQ==
+X-Gm-Message-State: AHQUAubruyWUVpf6ckMpw4B1MlR+i3B5yldZbeLBX1s6bpulY5zOfHy7
+        xIg+nQPYnwCFIjN+xbGjgXZevQ==
+X-Google-Smtp-Source: AHgI3IZZA2BipuFrb5VuJRSHdSRZgQaYi2Gg6KmPRfE1ezlffV9/u5JJw8fOqUkkemGbOao6TvGitQ==
+X-Received: by 2002:a63:c04b:: with SMTP id z11mr22001661pgi.135.1550556229700;
+        Mon, 18 Feb 2019 22:03:49 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 22:03:48 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <mars.cheng@mediatek.com>,
-        <eddie.huang@mediatek.com>, <linux-clk@vger.kernel.org>
-Date:   Tue, 19 Feb 2019 10:45:57 +0800
-In-Reply-To: <20190218163211.GB2714@bogus>
-References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
-         <1550210558-30516-4-git-send-email-erin.lo@mediatek.com>
-         <20190218163211.GB2714@bogus>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/7] QCS404 PCIe PHY and controller
+Date:   Mon, 18 Feb 2019 22:04:00 -0800
+Message-Id: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2019-02-18 at 10:32 -0600, Rob Herring wrote:
-> On Fri, Feb 15, 2019 at 02:02:35PM +0800, Erin Lo wrote:
-> > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > 
-> > The commit adds mt8183 compatible node in binding document.
-> > 
-> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > ---
-> >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 115 +++++++++++++++++++++
-> >  1 file changed, 115 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > new file mode 100644
-> > index 0000000..364e673
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > @@ -0,0 +1,115 @@
-> > +* Mediatek MT8183 Pin Controller
-> > +
-> > +The Mediatek's Pin controller is used to control SoC pins.
-> > +
-> > +Required properties:
-> > +- compatible: value should be one of the following.
-> > +	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> > +- gpio-controller : Marks the device node as a gpio controller.
-> > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> > +  binding is used, the amount of cells must be specified as 2. See the below
-> > +  mentioned gpio binding representation for description of particular cells.
-> > +- gpio-ranges : gpio valid number range.
-> > +- reg: physicall address base for gpio base registers. There are nine
-> > +  physicall address base in mt8183. They are 0x10005000, 0x11F20000,
-> > +  0x11E80000, 0x11E70000, 0x11E90000, 0x11D30000, 0x11D20000, 0x11C50000,
-> > +  0x11F30000.
-> 
-> You don't need to list out each address, just what each address is. (Or 
-> just '9 GPIO base addresses'.)
+This series adds support for the PCIe controller and PHY found in the Qualcomm
+platform QCS404.
 
-==>ok, we will change it.
-> 
-> > +
-> > +	Eg: <&pio 6 0>
-> 
-> How is this an example of reg? Seems something is missing.
-> 
-> > +	<[phandle of the gpio controller node]
-> > +	[line number within the gpio controller]
-> > +	[flags]>
-> > +
-> > +	Values for gpio specifier:
-> > +	- Line number: is a value between 0 to 202.
-> > +	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> > +            Only the following flags are supported:
-> > +            0 - GPIO_ACTIVE_HIGH
-> > +            1 - GPIO_ACTIVE_LOW
-> > +
-> > +Optional properties:
-> > +- reg-names: gpio base register names. There are nine gpio base register
-> > +  names in mt8183. They are "iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4",
-> > +  "iocfg5", "iocfg6", "iocfg7", "iocfg8".
-> > +- interrupt-controller: Marks the device node as an interrupt controller
-> > +- #interrupt-cells: Should be two.
-> > +- interrupts : The interrupt outputs from the controller.
-> 
-> outputs? More than 1? If so, need to say what they are and the order.
-> 
-==> there is only use one interrupt in mt8183. we will change
-"interrupts" to "interrupt" in v8.
-> > +
-> > +Please refer to pinctrl-bindings.txt in this directory for details of the
-> > +common pinctrl bindings used by client devices.
-> > +
-> > +Subnode format
-> > +A pinctrl node should contain at least one subnodes representing the
-> > +pinctrl groups available on the machine. Each subnode will list the
-> > +pins it needs, and how they should be configured, with regard to muxer
-> > +configuration, pullups, drive strength, input enable/disable and input schmitt.
-> > +
-> > +    node {
-> > +	pinmux = <PIN_NUMBER_PINMUX>;
-> > +	GENERIC_PINCONFIG;
-> > +    };
-> > +
-> > +Required properties:
-> > +- pinmux: integer array, represents gpio pin number and mux setting.
-> > +    Supported pin number and mux varies for different SoCs, and are defined
-> > +    as macros in boot/dts/<soc>-pinfunc.h directly.
-> > +
-> > +Optional properties:
-> > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
-> > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
-> > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
-> > +
-> > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
-> > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
-> > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
-> > +    it support arguments for those special pins.
-> > +
-> > +    When config drive-strength, it can support some arguments, such as
-> > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
-> > +
-> > +Examples:
-> > +
-> > +#include "mt8183-pinfunc.h"
-> > +
-> > +...
-> > +{
-> > +	pio: pinctrl@10005000 {
-> > +		compatible = "mediatek,mt8183-pinctrl";
-> > +		reg = <0 0x10005000 0 0x1000>,
-> > +		      <0 0x11F20000 0 0x1000>,
-> > +		      <0 0x11E80000 0 0x1000>,
-> > +		      <0 0x11E70000 0 0x1000>,
-> > +		      <0 0x11E90000 0 0x1000>,
-> > +		      <0 0x11D30000 0 0x1000>,
-> > +		      <0 0x11D20000 0 0x1000>,
-> > +		      <0 0x11C50000 0 0x1000>,
-> > +		      <0 0x11F30000 0 0x1000>;
-> > +		reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > +			    "iocfg3", "iocfg4", "iocfg5",
-> > +			    "iocfg6", "iocfg7", "iocfg8";
-> > +		gpio-controller;
-> > +		#gpio-cells = <2>;
-> > +		gpio-ranges = <&pio 0 0 192>;
-> > +		interrupt-controller;
-> > +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> > +		interrupt-parent = <&gic>;
-> > +		#interrupt-cells = <2>;
-> > +
-> > +		i2c0_pins_a: i2c0 {
-> > +			pins1 {
-> > +				pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
-> > +					 <PINMUX_GPIO49__FUNC_SDA5>;
-> > +				mediatek,pull-up-adv = <11>;
-> > +			};
-> > +		};
-> > +
-> > +		i2c1_pins_a: i2c1 {
-> > +			pins {
-> > +				pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
-> > +					 <PINMUX_GPIO51__FUNC_SDA3>;
-> > +				mediatek,pull-down-adv = <10>;
-> > +			};
-> > +		};
-> > +		...
-> > +	};
-> > +};
-> > -- 
-> > 1.9.1
-> > 
+Bjorn Andersson (7):
+  clk: gcc-qcs404: Add PCIe resets
+  dt-bindings: phy: Add binding for Qualcomm PCIe2 PHY
+  phy: qcom: Add Qualcomm PCIe2 PHY driver
+  PCI: qcom: Use clk_bulk API for 2.4.0 controllers
+  dt-bindings: PCI: qcom: Add QCS404 to the binding
+  PCI: qcom: Add QCS404 PCIe controller support
+  arm64: dts: qcom: qcs404: Add PCIe related nodes
 
+ .../devicetree/bindings/pci/qcom,pcie.txt     |  25 +-
+ .../bindings/phy/qcom-pcie2-phy.txt           |  40 +++
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi      |  25 ++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  67 ++++
+ drivers/clk/qcom/gcc-qcs404.c                 |   7 +
+ drivers/pci/controller/dwc/pcie-qcom.c        | 108 +++---
+ drivers/phy/qualcomm/Kconfig                  |   8 +
+ drivers/phy/qualcomm/Makefile                 |   1 +
+ drivers/phy/qualcomm/phy-qcom-pcie2.c         | 331 ++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-qcs404.h   |   7 +
+ 10 files changed, 558 insertions(+), 61 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-pcie2.c
+
+-- 
+2.18.0
 
