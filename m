@@ -2,158 +2,69 @@ Return-Path: <SRS0=Vpf0=Q2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE73C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 15:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B41C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 16:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A35AF20818
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 15:22:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550589736;
-	bh=nWrp3hRt+m/nWI1jpFziRhc1dk8W/7e+eu+0/lLsSuk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=TriivMJqwLjZd7kY2Pmx/t07GcYN6lKXn1+iNISSAGZ/RRNj6wfj14jWOQR8Msps9
-	 Bs5DWbunvbQV92k6fFcBy8PeXbTG0tl4QseE4iP4XnJ5jUzHbrQKb47RN+E/lfBrge
-	 X2Egf5B/K4oOudkdVLqJnF3mPIgF4aoOGhiAcvfA=
+	by mail.kernel.org (Postfix) with ESMTP id ECA6321773
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 16:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbfBSPWL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:22:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbfBSPWL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:22:11 -0500
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8951821773;
-        Tue, 19 Feb 2019 15:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550589729;
-        bh=nWrp3hRt+m/nWI1jpFziRhc1dk8W/7e+eu+0/lLsSuk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fH2222xkFAwQphhNO87XJwKnDMy6hs/hiOYFc7un/JyK0Dng3BcSyJWLXskIl/1j/
-         Y/RRpjwvzhecmFG/3r+jJvbxHYegf8MR8ev73KRu6AQLwinJ94EFXkr/9nshp4E9va
-         u3t1+1esuPBWmd+wxQla7hyAkaNoKxz+h3yA/fyk=
-Received: by mail-qt1-f177.google.com with SMTP id d18so13455437qtg.12;
-        Tue, 19 Feb 2019 07:22:09 -0800 (PST)
-X-Gm-Message-State: AHQUAub+Dj/pZ2q/uMGABxsCX28kO/H/Qlsv7tDVpp33EEpIgW8RVnEE
-        bnoYLtmz5nZvJYPqSdYIJWVAAEmnddJcoo7Tdg==
-X-Google-Smtp-Source: AHgI3IZ8hSkfBrnjFm51aMPEPzA4H/4KOCD8rtwWi0pAdp5c6cvDqtwNDEyLJmh2A82Vjgpo1ZygklPp5RoOslsWz3Q=
-X-Received: by 2002:ac8:2f4e:: with SMTP id k14mr22638752qta.76.1550589728749;
- Tue, 19 Feb 2019 07:22:08 -0800 (PST)
+        id S1728201AbfBSQvT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 11:51:19 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:43993 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727566AbfBSQvT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 11:51:19 -0500
+X-Originating-IP: 90.53.137.203
+Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 9462E1C000F;
+        Tue, 19 Feb 2019 16:51:16 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] clk: at91: fix at91sam9x5 peripheral clock number
+Date:   Tue, 19 Feb 2019 17:51:14 +0100
+Message-Id: <20190219165114.2366-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
- <1550210558-30516-4-git-send-email-erin.lo@mediatek.com> <20190218163211.GB2714@bogus>
- <1550544357.4739.32.camel@mhfsdcap03>
-In-Reply-To: <1550544357.4739.32.camel@mhfsdcap03>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 19 Feb 2019 09:21:57 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKgp615eJZnSu6aogzLwubnBKdxdU8+19hj=hS1aOWefA@mail.gmail.com>
-Message-ID: <CAL_JsqKgp615eJZnSu6aogzLwubnBKdxdU8+19hj=hS1aOWefA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] dt-bindings: pinctrl: mt8183: add binding document
-To:     Zhiyong Tao <zhiyong.tao@mediatek.com>
-Cc:     Erin Lo <erin.lo@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 8:46 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
->
-> On Mon, 2019-02-18 at 10:32 -0600, Rob Herring wrote:
-> > On Fri, Feb 15, 2019 at 02:02:35PM +0800, Erin Lo wrote:
-> > > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > >
-> > > The commit adds mt8183 compatible node in binding document.
-> > >
-> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > ---
-> > >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 115 +++++++++++++++++++++
-> > >  1 file changed, 115 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > new file mode 100644
-> > > index 0000000..364e673
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > @@ -0,0 +1,115 @@
-> > > +* Mediatek MT8183 Pin Controller
-> > > +
-> > > +The Mediatek's Pin controller is used to control SoC pins.
-> > > +
-> > > +Required properties:
-> > > +- compatible: value should be one of the following.
-> > > +   "mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> > > +- gpio-controller : Marks the device node as a gpio controller.
-> > > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> > > +  binding is used, the amount of cells must be specified as 2. See the below
-> > > +  mentioned gpio binding representation for description of particular cells.
-> > > +- gpio-ranges : gpio valid number range.
-> > > +- reg: physicall address base for gpio base registers. There are nine
-> > > +  physicall address base in mt8183. They are 0x10005000, 0x11F20000,
-> > > +  0x11E80000, 0x11E70000, 0x11E90000, 0x11D30000, 0x11D20000, 0x11C50000,
-> > > +  0x11F30000.
-> >
-> > You don't need to list out each address, just what each address is. (Or
-> > just '9 GPIO base addresses'.)
->
-> ==>ok, we will change it.
-> >
-> > > +
-> > > +   Eg: <&pio 6 0>
-> >
-> > How is this an example of reg? Seems something is missing.
-> >
-> > > +   <[phandle of the gpio controller node]
-> > > +   [line number within the gpio controller]
-> > > +   [flags]>
-> > > +
-> > > +   Values for gpio specifier:
-> > > +   - Line number: is a value between 0 to 202.
-> > > +   - Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> > > +            Only the following flags are supported:
-> > > +            0 - GPIO_ACTIVE_HIGH
-> > > +            1 - GPIO_ACTIVE_LOW
-> > > +
-> > > +Optional properties:
-> > > +- reg-names: gpio base register names. There are nine gpio base register
-> > > +  names in mt8183. They are "iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4",
-> > > +  "iocfg5", "iocfg6", "iocfg7", "iocfg8".
-> > > +- interrupt-controller: Marks the device node as an interrupt controller
-> > > +- #interrupt-cells: Should be two.
-> > > +- interrupts : The interrupt outputs from the controller.
-> >
-> > outputs? More than 1? If so, need to say what they are and the order.
-> >
-> ==> there is only use one interrupt in mt8183. we will change
-> "interrupts" to "interrupt" in v8.
+nck() looks at the last id in an array and unfortunately,
+at91sam9x35_periphck has a sentinel, hence the id is 0 and the calculated
+number of peripheral clocks is 1 instead of a maximum of 31.
 
-No, 'interrupts' is always plural. The problem is 'outputs'.
+Fixes: 1eabdc2f9dd8 ("clk: at91: add at91sam9x5 PMCs driver")
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clk/at91/at91sam9x5.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Rob
+diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
+index 2fe225a697df..d37e7ed9eb90 100644
+--- a/drivers/clk/at91/at91sam9x5.c
++++ b/drivers/clk/at91/at91sam9x5.c
+@@ -144,8 +144,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+ 		return;
+ 
+ 	at91sam9x5_pmc = pmc_data_allocate(PMC_MAIN + 1,
+-					   nck(at91sam9x5_systemck),
+-					   nck(at91sam9x35_periphck), 0);
++					   nck(at91sam9x5_systemck), 31, 0);
+ 	if (!at91sam9x5_pmc)
+ 		return;
+ 
+-- 
+2.20.1
+
