@@ -7,68 +7,69 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCB7C10F03
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E920C10F00
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376D72075A
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 459E52075A
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="evBjV0Rv"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T6RjGrAv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfBSGEA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:04:00 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45352 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbfBSGEA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 01:04:00 -0500
-Received: by mail-pf1-f193.google.com with SMTP id v21so6693836pfm.12
-        for <linux-clk@vger.kernel.org>; Mon, 18 Feb 2019 22:04:00 -0800 (PST)
+        id S1726700AbfBSGEF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 01:04:05 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45501 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfBSGEC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 01:04:02 -0500
+Received: by mail-pl1-f194.google.com with SMTP id r14so9855887pls.12
+        for <linux-clk@vger.kernel.org>; Mon, 18 Feb 2019 22:04:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UHgZWVALJGh9VRwB+6Xb3H1nv3kTvbz3xid7mcSpBgQ=;
-        b=evBjV0Rvbu8ogFMch88cFZ1epBrCxrgc/xj8qB64C4DCnrzYMiBgwRBJ0rRe5YPpvv
-         Ktig9n+k/+vW7Xv9Sr3mP0fM0VHsJwBbvQE0ZqJOU6BTuwcFBAmJCwza+gcGfvWEHG/1
-         v1RDy81mptRcYcYjvWqPFbEcobxtNflkoI/N+cjAs6A3WphzQTcyXI6G7IKfKzczBCJs
-         ml8voGuBKYOTHVNWrcdCLKcwxmxx9GN0OG/EB9OLSqbJBb0pq7tAPLxxv/cRvOkW+H9j
-         iH71vn3GOzMbI+eewd1O1DL8W9U4ikivx8DLNvEJy419yLvAxdyOsV7Q/FtXzV2hoae2
-         WiKw==
+        bh=1E49ftReb7K8rzBeYHf8biDKYQclTixiO6Ek5uC1CsQ=;
+        b=T6RjGrAvsunviRXAet9y3UvlQjv3YJPiNxzmSQkWH0veCqNHY6Gk4ktIfXberaskZ1
+         iiAlYD8JUMvQJw6kt4zL2DHEcW4GyAfMGOAH8UkByIiGzOo/50CIzz6TWlBp36+BbuCv
+         QLIK369EvW4onecF+frafZK0XHSTVv8X34/1azG1h4PrHLmUgHY0a+AI5rURUnpVNC9A
+         yivWLfJ6IWZcK1BbtJuzuZIqVZ7kzsHosrr1yyaqCutpRZfAN3XRnEaqWGSHN2UeUEHe
+         4dLtl6+1rGsaADijvz59LOZvb1Vx+KrrH9L4QdD7i8c2P/Wm8VkhUJNd6/oPYKj25VAM
+         DcSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=UHgZWVALJGh9VRwB+6Xb3H1nv3kTvbz3xid7mcSpBgQ=;
-        b=JwKi14e8ZsHCpH9UgMuujM0+uUkIkQDlz9iwf298C9C90DT3y93TrwpfecJZ6yKmUw
-         3bsqjJh4eK5kGVdMIKYsNRsq2kgE0lapaU412X1d/c0CKeUETVsAS+lVLGzzOD4qzwpm
-         VO53dTmjgUBizUuYBEejCpU1KZNQuhdkmj8ckSFjWP58Lp+61TkEyi4moBHwHU9Xj5Yq
-         OQeJ9PQjDv6gJfenCC4D8+21KxiK8vWEH6tKhRVcoBKjTNZntroaptN1bLo2FHebF2f4
-         MN499AcnIi+yPCafFB17wMs58wMPfsbaQDdindmdacffJZr5ifcv5WpWdVhKy3QNhAe6
-         S5Ag==
-X-Gm-Message-State: AHQUAuaOAJv+cZ79Y2uCzrSL9EEpMsNwt4dzoUzDeHC97u7ZZtWgHXFD
-        OvaZn726o97nN+GQEYzkRnQfEg==
-X-Google-Smtp-Source: AHgI3IYzHkIQ/+qojAUcK6zDK74K6UfWz6pRAjlWNFOpsfQ9k3hvcOqNfOTHa++Oe0l4VueyfyGS3Q==
-X-Received: by 2002:a63:8f45:: with SMTP id r5mr22031360pgn.222.1550556239581;
-        Mon, 18 Feb 2019 22:03:59 -0800 (PST)
+        bh=1E49ftReb7K8rzBeYHf8biDKYQclTixiO6Ek5uC1CsQ=;
+        b=NNQlabOdo+X4VfwG2jeyQVgk2jG9xh34NksjItaIue8X34lhDZOjsaMMbff/S031Mx
+         vICfwL+/TXokKNQwo91OKsdbUokfeDQnCcrUW9JbWMvFJfCqUYNNw5FcM6Z9wBq+dtEO
+         t3EOwJvqKejPAz3GVp/RlnWtPccd0XOr8LnLHJr/DYr/yDB1xGtw6ZevUokIPc/wP4+o
+         pMYfAmQeYNZjVZZUgKXzxhbTQ73GAfhDdOk6/Jj7cx44IM4GpM/zf//Vn+DWmTGeFJyD
+         mgVnCQb+Ca8KPSsYUxDwHUzYfSYJgZuJAdKxVLKFqV+EVNh6z6loNjsPIWiS77LGsWdf
+         JcMg==
+X-Gm-Message-State: AHQUAubpLnCCfBQhnF7cGFirNV6TJ1cfmeSlzScRNM33569nvgd9OXgu
+        OFBwZTttZ0cRqa3mcycGH2G3cw==
+X-Google-Smtp-Source: AHgI3Ibdsh60DiY/jizkzW/JtlUS6i9j7OmQQ+Wtd6PNDO2mUhKbTEN6pTHoA88x803IkjOMmWsmnQ==
+X-Received: by 2002:a17:902:584:: with SMTP id f4mr30018103plf.28.1550556241091;
+        Mon, 18 Feb 2019 22:04:01 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.58
+        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 22:03:58 -0800 (PST)
+        Mon, 18 Feb 2019 22:04:00 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 6/7] PCI: qcom: Add QCS404 PCIe controller support
-Date:   Mon, 18 Feb 2019 22:04:06 -0800
-Message-Id: <20190219060407.15263-7-bjorn.andersson@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 7/7] arm64: dts: qcom: qcs404: Add PCIe related nodes
+Date:   Mon, 18 Feb 2019 22:04:07 -0800
+Message-Id: <20190219060407.15263-8-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190219060407.15263-1-bjorn.andersson@linaro.org>
 References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
@@ -77,138 +78,159 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The QCS404 platform contains a PCIe controller of version 2.4.0 and a
-Qualcomm PCIe2 PHY. The driver already supports version 2.4.0, for the
-IPQ4019, but this support touches clocks and resets related to the PHY
-as well, and there's no upstream driver for the PHY.
-
-On QCS404 we must initialize the PHY, so a separate PHY driver is
-implemented to take care of this and the controller driver is updated to
-not require the PHY related resources. This is done by relying on the
-fact that operations in both the clock and reset framework are nops when
-passed NULL, so we can isolate this change to only the get_resource
-function.
-
-For QCS404 we also need to enable the AHB (iface) clock, in order to
-access the register space of the controller, but as this is not part of
-the IPQ4019 DT binding this is only added for new users of the 2.4.0
-controller.
+The QCS404 has a PCIe2 PHY and a Qualcomm PCIe controller, add these to
+the platform dtsi and enable them for the EVB with the perst gpio
+and analog supplies defined.
 
 Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/pci/controller/dwc/pcie-qcom.c | 64 +++++++++++++++-----------
- 1 file changed, 38 insertions(+), 26 deletions(-)
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 25 +++++++++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi     | 67 ++++++++++++++++++++++++
+ 2 files changed, 92 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index b4d8bcf6eb77..3724ab5de956 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -113,7 +113,7 @@ struct qcom_pcie_resources_2_3_2 {
+diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+index 50b3589c7f15..579ddaf4f5fa 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+@@ -21,6 +21,22 @@
+ 	};
  };
  
- struct qcom_pcie_resources_2_4_0 {
--	struct clk_bulk_data clks[3];
-+	struct clk_bulk_data clks[4];
- 	int num_clks;
- 	struct reset_control *axi_m_reset;
- 	struct reset_control *axi_s_reset;
-@@ -637,13 +637,16 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
- 	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
- 	struct dw_pcie *pci = pcie->pci;
- 	struct device *dev = pci->dev;
-+	bool is_ipq = of_device_is_compatible(dev->of_node, "qcom,pcie-ipq4019");
- 	int ret;
- 
- 	res->clks[0].id = "aux";
- 	res->clks[1].id = "master_bus";
- 	res->clks[2].id = "slave_bus";
-+	res->clks[3].id = "iface";
- 
--	res->num_clks = 3;
-+	/* qcom,pcie-ipq4019 is defined without "iface" */
-+	res->num_clks = is_ipq ? 3 : 4;
- 
- 	ret = devm_clk_bulk_get(dev, res->num_clks, res->clks);
- 	if (ret < 0)
-@@ -657,27 +660,33 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
- 	if (IS_ERR(res->axi_s_reset))
- 		return PTR_ERR(res->axi_s_reset);
- 
--	res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
--	if (IS_ERR(res->pipe_reset))
--		return PTR_ERR(res->pipe_reset);
--
--	res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
--								 "axi_m_vmid");
--	if (IS_ERR(res->axi_m_vmid_reset))
--		return PTR_ERR(res->axi_m_vmid_reset);
--
--	res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
--								"axi_s_xpu");
--	if (IS_ERR(res->axi_s_xpu_reset))
--		return PTR_ERR(res->axi_s_xpu_reset);
--
--	res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
--	if (IS_ERR(res->parf_reset))
--		return PTR_ERR(res->parf_reset);
--
--	res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
--	if (IS_ERR(res->phy_reset))
--		return PTR_ERR(res->phy_reset);
-+	if (is_ipq) {
-+		/*
-+		 * These resources relates to the PHY or are secure clocks, but
-+		 * are controlled here for IPQ4019
-+		 */
-+		res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
-+		if (IS_ERR(res->pipe_reset))
-+			return PTR_ERR(res->pipe_reset);
++&pcie {
++	status = "ok";
 +
-+		res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
-+									 "axi_m_vmid");
-+		if (IS_ERR(res->axi_m_vmid_reset))
-+			return PTR_ERR(res->axi_m_vmid_reset);
++	perst-gpio = <&tlmm 43 GPIO_ACTIVE_LOW>;
 +
-+		res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
-+									"axi_s_xpu");
-+		if (IS_ERR(res->axi_s_xpu_reset))
-+			return PTR_ERR(res->axi_s_xpu_reset);
++	pinctrl-names = "default";
++	pinctrl-0 = <&perst_state>;
++};
 +
-+		res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
-+		if (IS_ERR(res->parf_reset))
-+			return PTR_ERR(res->parf_reset);
++&pcie_phy {
++	status = "ok";
 +
-+		res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
-+		if (IS_ERR(res->phy_reset))
-+			return PTR_ERR(res->phy_reset);
-+	}
- 
- 	res->axi_m_sticky_reset = devm_reset_control_get_exclusive(dev,
- 								   "axi_m_sticky");
-@@ -697,9 +706,11 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
- 	if (IS_ERR(res->ahb_reset))
- 		return PTR_ERR(res->ahb_reset);
- 
--	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
--	if (IS_ERR(res->phy_ahb_reset))
--		return PTR_ERR(res->phy_ahb_reset);
-+	if (is_ipq) {
-+		res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
-+		if (IS_ERR(res->phy_ahb_reset))
-+			return PTR_ERR(res->phy_ahb_reset);
-+	}
- 
- 	return 0;
- }
-@@ -1284,6 +1295,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-msm8996", .data = &ops_2_3_2 },
- 	{ .compatible = "qcom,pcie-ipq8074", .data = &ops_2_3_3 },
- 	{ .compatible = "qcom,pcie-ipq4019", .data = &ops_2_4_0 },
-+	{ .compatible = "qcom,pcie-qcs404", .data = &ops_2_4_0 },
- 	{ }
++	vdda-vp-supply = <&vreg_l3_1p05>;
++	vdda-vph-supply = <&vreg_l5_1p8>;
++};
++
+ &remoteproc_adsp {
+ 	status = "ok";
+ };
+@@ -137,6 +153,15 @@
  };
  
+ &tlmm {
++	perst_state: perst {
++		pins = "gpio43";
++		function = "gpio";
++
++		drive-strength = <2>;
++		bias-disable;
++		output-low;
++	};
++
+ 	sdc1_on: sdc1-on {
+ 		clk {
+ 			pins = "sdc1_clk";
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index e8fd26633d57..c1ba577fc1bc 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-qcs404.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -383,6 +384,7 @@
+ 			compatible = "qcom,gcc-qcs404";
+ 			reg = <0x01800000 0x80000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 
+ 			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
+ 			assigned-clock-rates = <19200000>;
+@@ -411,6 +413,21 @@
+ 			#interrupt-cells = <4>;
+ 		};
+ 
++		pcie_phy: phy@7786000 {
++			compatible = "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy";
++			reg = <0x07786000 0xb8>;
++
++			clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
++			resets = <&gcc GCC_PCIEPHY_0_PHY_BCR>,
++				 <&gcc GCC_PCIE_0_PIPE_ARES>;
++			reset-names = "phy", "pipe";
++
++			clock-output-names = "pcie_0_pipe_clk";
++			#phy-cells = <0>;
++
++			status = "disabled";
++		};
++
+ 		sdcc1: sdcc@7804000 {
+ 			compatible = "qcom,sdhci-msm-v5";
+ 			reg = <0x07804000 0x1000>, <0x7805000 0x1000>;
+@@ -777,6 +794,56 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		pcie: pci@10000000 {
++			compatible = "qcom,pcie-qcs404", "snps,dw-pcie";
++			reg =  <0x10000000 0xf1d>,
++			       <0x10000f20 0xa8>,
++			       <0x07780000 0x2000>,
++			       <0x10001000 0x2000>;
++			reg-names = "dbi", "elbi", "parf", "config";
++			device_type = "pci";
++			linux,pci-domain = <0>;
++			bus-range = <0x00 0xff>;
++			num-lanes = <1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			ranges = <0x81000000 0 0          0x10003000 0 0x00010000>, /* I/O */
++				 <0x82000000 0 0x10013000 0x10013000 0 0x007ed000>; /* memory */
++
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
++					<0 0 0 2 &intc GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
++					<0 0 0 3 &intc GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
++					<0 0 0 4 &intc GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
++			clocks = <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
++				 <&gcc GCC_PCIE_0_AUX_CLK>,
++				 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
++				 <&gcc GCC_PCIE_0_SLV_AXI_CLK>;
++			clock-names = "iface", "aux", "master_bus", "slave_bus";
++
++			resets = <&gcc GCC_PCIE_0_AXI_MASTER_ARES>,
++				 <&gcc GCC_PCIE_0_AXI_SLAVE_ARES>,
++				 <&gcc GCC_PCIE_0_AXI_MASTER_STICKY_ARES>,
++				 <&gcc GCC_PCIE_0_CORE_STICKY_ARES>,
++				 <&gcc GCC_PCIE_0_BCR>,
++				 <&gcc GCC_PCIE_0_AHB_ARES>;
++			reset-names = "axi_m",
++				      "axi_s",
++				      "axi_m_sticky",
++				      "pipe_sticky",
++				      "pwr",
++				      "ahb";
++
++			phys = <&pcie_phy>;
++			phy-names = "pciephy";
++
++			status = "disabled";
++		};
+ 	};
+ 
+ 	timer {
 -- 
 2.18.0
 
