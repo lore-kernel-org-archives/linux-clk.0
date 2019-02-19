@@ -2,128 +2,118 @@ Return-Path: <SRS0=Vpf0=Q2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A03C10F00
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9543FC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEFCA2173C
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F309217D9
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 06:45:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ANiDQy+k"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oSB4rS3y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725767AbfBSGDw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:03:52 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33482 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfBSGDw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 01:03:52 -0500
-Received: by mail-pg1-f195.google.com with SMTP id h11so7223607pgl.0
-        for <linux-clk@vger.kernel.org>; Mon, 18 Feb 2019 22:03:51 -0800 (PST)
+        id S1726470AbfBSGpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 01:45:14 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42454 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbfBSGpO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 01:45:14 -0500
+Received: by mail-pl1-f196.google.com with SMTP id s1so9920171plp.9
+        for <linux-clk@vger.kernel.org>; Mon, 18 Feb 2019 22:45:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GyjR1K+SCkiQJRz7sqZ/Dyo0n3Et48Yb+zUiZSu0/dQ=;
-        b=ANiDQy+khlnfvD/w1RKC5rOs+Q2wteA0b4ldJqmxAFgowdd/bphom+Cz+tWc2FUAwj
-         SM4t1zeZL5sK4TCY/qDKjyYxPd7Q80aTk75sjo2bkeY1B85g++OUiwYFv3GJIUK0JF76
-         Tw3fsaITrSP94oFVYgbXhaQ6U5S2UK1r/AUvRZMGn5ufrEPta1NcMnob6upo6i6pr4ud
-         5t4Ro4s12GPpjTwDYbg8sPHi/wLggL6Mrn5FXTsar3TEBznzfuN95ngIMWb7VQx8GzYe
-         ylLi/kYUXkSYupzA1OUzArx3jOR6YDcwxlU1H0TFykPwYmnicAOqN3lwoKdzoK0EznLx
-         /fKg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=itpuDKkmlqWwaN7MySgHi1mDfzaILm04M1h/LPOSKek=;
+        b=oSB4rS3yIhYL+nOm0XMUuKP8KR94HlenfGQnAmx+oCluGHJL/JJPFgY2E+tN5Thenu
+         YfmRs+ANHQxN1r+NxvzgIWZxq3Ke/BhUtCf7nRrbNEU4Qs4xVVr0mwOQT+xSVBodnpbb
+         YxZ/4krBtx82tGmk/1c52tuBjduAmYwla10dBoAsMOVd+QAu/JQGYAqLVk4+d7OINdG9
+         VvnYKK9FcYlQ0MJxhVzl6WsQEWKC3TnVutEWR0mZnCKKCVH8mGkrdkZYu7rrXV1Gmx7/
+         Yk2Vn2a7rcQjGdE94aShX6sqaU9pnnlLAjm9iz0t8CkA9gpTtP8KyiZXI2ArfBVh73nD
+         iD9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GyjR1K+SCkiQJRz7sqZ/Dyo0n3Et48Yb+zUiZSu0/dQ=;
-        b=qkdGOyn8RRIKGnKetj1nrwvcMUHgVx2AmUATDkQMRh4kgtxC8mSMPMb4SEF8IxaIQn
-         wR0Y5OE0WjEVirpAXOFnbIYkIrKvNM260Sb15aGbsA/KOMipJ56aKXgnlal3Nnb5//yB
-         luCwtBXoOV+0ykKuDrcUUtsTvQYgW2reQx0tNT042++9xfLRsg80cmiVc+w80MGUPfQM
-         oZMJoEPBY0o9PAJQRiAybOb4OfsVEeoTXvZ8BXzOE2XCQ9CprnM7pMAM4mmfVdjB25QQ
-         PMYoiwMZgMKp39GOgFMh12go7VLjbvZ4QuGaaTIjRgx2o6vUV7Z6yU32/oFYxKXtyMMr
-         3ADw==
-X-Gm-Message-State: AHQUAuYEgczgEa6fgDDdT830AjxXw1jbmljxblixDjN0g46HR3jXMYyb
-        wFU9hqum+W4mYWM3hIfq8zwveg==
-X-Google-Smtp-Source: AHgI3IYqMUM8xyL6zRq4Npy/+3U9kfU+r5bItEm8svJ14Et8uSwLZAjgbmTYQRjz92/hdmcS8lc7cg==
-X-Received: by 2002:a63:6506:: with SMTP id z6mr22343021pgb.334.1550556231327;
-        Mon, 18 Feb 2019 22:03:51 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 22:03:50 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=itpuDKkmlqWwaN7MySgHi1mDfzaILm04M1h/LPOSKek=;
+        b=ZIeRe0WsklqVauTHA34D7pn1Jrm4lZMvmBNBCanPkatMsWH3vNHoQT7VauiprW1g2L
+         av+AiaejbPBfbZ3ZfYFt/s9dcmsM/+8I4j6tOnB81OGLk1AamRBpAfgu0LweEqaDLq9i
+         PaTP10abrHkW2+AdPpyEayAhA22ggaOfXesG/fPTvxntWNYjjCdeYkaOOjcYiOPQo9qb
+         Mbfl5lqgkNgza2CY36JJgtxS3bTAb9BX+ynSNpLBdvsve+/hR0/vLVHzRnhHn3WbHXyX
+         vERbCVLkeR5Pa3nqovINdx5+aeeMXw3/7lLQO1aHyB4f4rKUxcYxR7qXFpcnFvIe1mn/
+         qzxg==
+X-Gm-Message-State: AHQUAuYDdCvpETk/HU1CELfCWuSq1mCGQvFo8YFNR7V4har2qFP1bDu3
+        02xgekinYmGLI+Nv9g99iSs2yA==
+X-Google-Smtp-Source: AHgI3IYhq75346Kk/axJYDaDqJynmVKnuBe+1meeTKx8AZWmYgBfG7CyVTnwkH3xK/AB/WV/+6MR5g==
+X-Received: by 2002:a17:902:9307:: with SMTP id bc7mr13998827plb.234.1550558713800;
+        Mon, 18 Feb 2019 22:45:13 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id b197sm25213600pga.89.2019.02.18.22.45.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 22:45:12 -0800 (PST)
+Date:   Mon, 18 Feb 2019 22:45:11 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 1/7] clk: gcc-qcs404: Add PCIe resets
-Date:   Mon, 18 Feb 2019 22:04:01 -0800
-Message-Id: <20190219060407.15263-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190219060407.15263-1-bjorn.andersson@linaro.org>
-References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+To:     Govind Singh <govinds@codeaurora.org>
+Cc:     linux-remoteproc@vger.kernel.org, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/8] dt-bindings: clock: qcom: Add QCOM WCSS GCC clock
+ bindings
+Message-ID: <20190219064511.GD13018@tuxbook-pro>
+References: <20190202152626.1006-1-govinds@codeaurora.org>
+ <20190202152626.1006-2-govinds@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190202152626.1006-2-govinds@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enabling PCIe requires several of the PCIe related resets from GCC, so
-add them all.
+On Sat 02 Feb 07:26 PST 2019, Govind Singh wrote:
 
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
- include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
- 2 files changed, 14 insertions(+)
+> Add device tree bindings for WiFi QDSP gcc clock controls found in
+> QCS404 soc.
+> 
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index 64da032bb9ed..5aed43923239 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2675,6 +2675,13 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
- 	[GCC_PCIE_0_PHY_BCR] = { 0x3e004 },
- 	[GCC_PCIE_0_LINK_DOWN_BCR] = { 0x3e038 },
- 	[GCC_PCIEPHY_0_PHY_BCR] = { 0x3e03c },
-+	[GCC_PCIE_0_AXI_MASTER_STICKY_ARES] = { 0x3e040, 6},
-+	[GCC_PCIE_0_AHB_ARES] = { 0x3e040, 5 },
-+	[GCC_PCIE_0_AXI_SLAVE_ARES] = { 0x3e040, 4 },
-+	[GCC_PCIE_0_AXI_MASTER_ARES] = { 0x3e040, 3 },
-+	[GCC_PCIE_0_CORE_STICKY_ARES] = { 0x3e040, 2 },
-+	[GCC_PCIE_0_SLEEP_ARES] = { 0x3e040, 1 },
-+	[GCC_PCIE_0_PIPE_ARES] = { 0x3e040, 0 },
- 	[GCC_EMAC_BCR] = { 0x4e000 },
- };
- 
-diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-index 6ceb55ed72c6..00ab0d77b38a 100644
---- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-+++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-@@ -161,5 +161,12 @@
- #define GCC_PCIE_0_LINK_DOWN_BCR			11
- #define GCC_PCIEPHY_0_PHY_BCR				12
- #define GCC_EMAC_BCR					13
-+#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES		14
-+#define GCC_PCIE_0_AHB_ARES				15
-+#define GCC_PCIE_0_AXI_SLAVE_ARES			16
-+#define GCC_PCIE_0_AXI_MASTER_ARES			17
-+#define GCC_PCIE_0_CORE_STICKY_ARES			18
-+#define GCC_PCIE_0_SLEEP_ARES				19
-+#define GCC_PCIE_0_PIPE_ARES				20
- 
- #endif
--- 
-2.18.0
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
+Regards,
+Bjorn
+
+> ---
+>  include/dt-bindings/clock/qcom,gcc-qcs404.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+> index 00ab0d77b38a..f5dfc1890870 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+> @@ -146,6 +146,8 @@
+>  #define GCC_MDP_TBU_CLK					138
+>  #define GCC_QDSS_DAP_CLK				139
+>  #define GCC_DCC_XO_CLK					140
+> +#define GCC_WCSS_Q6_AHB_CLK				141
+> +#define GCC_WCSS_Q6_AXIM_CLK				142
+>  
+>  #define GCC_GENI_IR_BCR					0
+>  #define GCC_USB_HS_BCR					1
+> @@ -168,5 +170,6 @@
+>  #define GCC_PCIE_0_CORE_STICKY_ARES			18
+>  #define GCC_PCIE_0_SLEEP_ARES				19
+>  #define GCC_PCIE_0_PIPE_ARES				20
+> +#define GCC_WDSP_RESTART				21
+>  
+>  #endif
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
