@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76715C10F00
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16741C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 433852147A
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E50132147A
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbfBSRDA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:03:00 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:60907 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbfBSRCM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 12:02:12 -0500
+        id S1729424AbfBSRCK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 12:02:10 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:50045 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbfBSRCJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 12:02:09 -0500
 X-Originating-IP: 90.53.137.203
 Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id BB48F2000D;
-        Tue, 19 Feb 2019 17:02:09 +0000 (UTC)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id CC8FB1BF20D;
+        Tue, 19 Feb 2019 17:02:05 +0000 (UTC)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -30,10 +30,11 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 3/7] clk: at91: sckc: handle different RC startup time
-Date:   Tue, 19 Feb 2019 18:01:56 +0100
-Message-Id: <20190219170200.3608-4-alexandre.belloni@bootlin.com>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 1/7] dt-bindings: clock: at91: new sckc bindings
+Date:   Tue, 19 Feb 2019 18:01:54 +0100
+Message-Id: <20190219170200.3608-2-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
 References: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
@@ -44,59 +45,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The sama5d3 slow RC oscillator as a different startup time than all the
-previous SoCs. Handle that using its own compatible.
+Remove the need for child nodes in the sckc binding to be able to remove
+dtc warnings and have a more modern binding.
 
+Also document optional properties.
+
+Cc: Rob Herring <robh@kernel.org>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/clk/at91/sckc.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/at91-clock.txt  | 30 ++++++++-----------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index 470aef586f57..e76b1d64e905 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -321,7 +321,8 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
- 	return hw;
- }
+diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+index e9f70fcdfe80..cb838c1c4bdd 100644
+--- a/Documentation/devicetree/bindings/clock/at91-clock.txt
++++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+@@ -8,29 +8,23 @@ Slow Clock controller:
  
--static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
-+static void __init at91sam9x5_sckc_register(struct device_node *np,
-+					    unsigned int rc_osc_startup_us)
- {
- 	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
- 	void __iomem *regbase = of_iomap(np, 0);
-@@ -334,7 +335,7 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
- 		return;
+ Required properties:
+ - compatible : shall be one of the following:
+-	"atmel,at91sam9x5-sckc" or
++	"atmel,at91sam9x5-sckc",
++	"atmel,sama5d3-sckc" or
+ 	"atmel,sama5d4-sckc":
+ 		at91 SCKC (Slow Clock Controller)
+-		This node contains the slow clock definitions.
+-
+-	"atmel,at91sam9x5-clk-slow-osc":
+-		at91 slow oscillator
+-
+-	"atmel,at91sam9x5-clk-slow-rc-osc":
+-		at91 internal slow RC oscillator
+-- reg : defines the IO memory reserved for the SCKC.
+-- #size-cells : shall be 0 (reg is used to encode clk id).
+-- #address-cells : shall be 1 (reg is used to encode clk id).
++- #clock-cells : shall be 0.
++- clocks : shall be the input parent clock phandle for the clock.
  
- 	hw = at91_clk_register_slow_rc_osc(regbase, parent_names[0], 32768,
--					   50000000, 75);
-+					   50000000, rc_osc_startup_us);
- 	if (IS_ERR(hw))
- 		return;
++Optional properties:
++- atmel,osc-bypass : boolean property. Set this when a clock signal is directly
++  provided on XIN.
  
-@@ -371,9 +372,21 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
- 	if (child)
- 		of_clk_add_hw_provider(child, of_clk_hw_simple_get, hw);
- }
-+
-+static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
-+{
-+	at91sam9x5_sckc_register(np, 75);
-+}
- CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
- 	       of_at91sam9x5_sckc_setup);
+ For example:
+-	sckc: sckc@fffffe50 {
+-		compatible = "atmel,sama5d3-pmc";
+-		reg = <0xfffffe50 0x4>
+-		#size-cells = <0>;
+-		#address-cells = <1>;
+-
+-		/* put at91 slow clocks here */
++	sckc@fffffe50 {
++		compatible = "atmel,at91sam9x5-sckc";
++		reg = <0xfffffe50 0x4>;
++		clocks = <&slow_xtal>;
++		#clock-cells = <0>;
+ 	};
  
-+static void __init of_sama5d3_sckc_setup(struct device_node *np)
-+{
-+	at91sam9x5_sckc_register(np, 500);
-+}
-+CLK_OF_DECLARE(sama5d3_clk_sckc, "atmel,sama5d3-sckc",
-+	       of_sama5d3_sckc_setup);
-+
- static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
+ Power Management Controller (PMC):
 -- 
 2.20.1
 
