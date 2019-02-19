@@ -2,152 +2,92 @@ Return-Path: <SRS0=Vpf0=Q2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9AFC10F00
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 07:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4DFC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 07:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8385217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 07:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FCDA21848
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 07:45:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bBK16VA8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfBSHiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Feb 2019 02:38:19 -0500
-Received: from mx.socionext.com ([202.248.49.38]:33502 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbfBSHiT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Feb 2019 02:38:19 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 19 Feb 2019 16:38:17 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 1D9726117D;
-        Tue, 19 Feb 2019 16:38:17 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 19 Feb 2019 16:38:17 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 7F4E740340;
-        Tue, 19 Feb 2019 16:38:16 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 5880F121B6C;
-        Tue, 19 Feb 2019 16:38:16 +0900 (JST)
-Subject: Re: [PATCH v2 00/15] Add basic support for Socionext Milbeaut M10V
- SoC
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-serial@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>
-References: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
- <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <26959ef6-bca0-fe51-fc24-9969913e9af4@socionext.com>
-Date:   Tue, 19 Feb 2019 16:38:15 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1725794AbfBSHpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 02:45:22 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45401 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfBSHpW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 02:45:22 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d18so12050616qtg.12
+        for <linux-clk@vger.kernel.org>; Mon, 18 Feb 2019 23:45:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=83zkhls34LKhR/sV0XpJZp242lbQBv8At8MLdvC6g/w=;
+        b=bBK16VA8uXAkhSMPxH9SnCW8evQPg5MYe40Ma66W5zMfPKJECSf+RxLQZ/f87io6Sz
+         dS8GW5IydsnSvEQwLsBGkYYx9z1t4gpxeBV35ypI2oW5jqJzXOpxLCXp9mOawGeOsfQZ
+         /rVEvd4TJm+dKieHi4PtW8G0TMnFOXZtQAG0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=83zkhls34LKhR/sV0XpJZp242lbQBv8At8MLdvC6g/w=;
+        b=tP7/fubNgf7NWoAMGXj0uidDBFCeP51jJ1Vsq7Z+/F7KSh01w6/BAWxD0eJ4CQFbqC
+         Abnf1pNWNe2Y1+HcrXEAeoCI1+UQtJDMilpOZIIyLSwRW+/I1w3uZOZ9a2RrXxzsYPWl
+         uupvm94xNPENgJCrvP9jxUhjw4fJdEeZdcKZSEmtw1pThLYEAzki4h+kcEKa6K/0A47a
+         TzzEPYBOLG1uTYkPU7hNog3TzaTg1nhJGQv1U0+0ec+bMNVhdii6Pim4Q6R+RKBltpao
+         N1cSpwahfMzu5KM8B5DUn819u26nECG0F7YXqatO+eqneV4RLZVitCPJwfn9oeVhQhGh
+         zaDQ==
+X-Gm-Message-State: AHQUAub9Z4YlsoY6Q+ZbL5vReX3RuAtKlKyyCRv036hXPgApfx89/8ph
+        9xoQeu76WfDJb3Bv+6qW4blKpF5PH+z2wiTNfO4P0g==
+X-Google-Smtp-Source: AHgI3IbhUkIE8jXOrnZJ8mXE8sF1ZTqJVqX5B6Vuv+mWKrJAj3MptxcPJYSJ4N/ttW2X/E3N+TX+X3ySdEKiRdbIIxQ=
+X-Received: by 2002:aed:253a:: with SMTP id v55mr22027441qtc.339.1550562321007;
+ Mon, 18 Feb 2019 23:45:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com> <1550210558-30516-6-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1550210558-30516-6-git-send-email-erin.lo@mediatek.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Tue, 19 Feb 2019 15:45:10 +0800
+Message-ID: <CANMq1KDzYSJSKXZJd=xuwP+uFrDY-jGO1Yt2koH7uD5hpJmjJw@mail.gmail.com>
+Subject: Re: [PATCH v7 5/6] arm64: dts: mt8183: add pintcrl file
+To:     Erin Lo <erin.lo@mediatek.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cheng Mars <mars.cheng@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        linux-clk@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Fri, Feb 15, 2019 at 2:07 PM Erin Lo <erin.lo@mediatek.com> wrote:
+> Subject: [PATCH v7 5/6] arm64: dts: mt8183: add pintcrl file
 
-Thank you for your comments.
+minor spelling mistake in the commit title: pinctrl
 
-On 2019/02/18 21:20, Arnd Bergmann wrote:
-> On Fri, Feb 8, 2019 at 1:24 PM Sugaya Taichi
-> <sugaya.taichi@socionext.com> wrote:
->>
->> Hi,
->>
->> Here is the series of patches the initial support for SC2000(M10V) of
->> Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
->> source code.
->>
->> SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
->> computer vision. It also features advanced functionalities such as 360-degree,
->> real-time spherical stitching with multi cameras, image stabilization for
->> without mechanical gimbals, and rolling shutter correction. More detail is
->> below:
->> https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
->>
->> Specifications for developers are below:
->>   - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
->>   - NEON support
->>   - DSP
->>   - GPU
->>   - MAX 3GB DDR3
->>   - Cortex-M0 for power control
->>   - NAND Flash Interface
->>   - SD UHS-I
->>   - SD UHS-II
->>   - SDIO
->>   - USB2.0 HOST / Device
->>   - USB3.0 HOST / Device
->>   - PCI express Gen2
->>   - Ethernet Engine
->>   - I2C
->>   - UART
->>   - SPI
->>   - PWM
->>
->> Support is quite minimal for now, since it only includes timer, clock,
->> pictrl and serial controller drivers, so we can only boot to userspace
->> through initramfs. Support for the other peripherals  will come eventually.
-> 
-> I've looked over the platform once more. Overall, it looks very good, and
-> I'd still like to merge this for linux-5.1, but we are running out of time
-> there. If you send the patches to soc@kernel.org quickly, we can try to
-> still merge them in, but if anything goes wrong, it will have to wait until
-> we start merging patches for 5.2, directly after 5.1 is out.
-> 
-
-I see.
-I do my best to make it.
-
-> I did not look at the device driver patches (clk, clocksource, pinctrl, serial)
-> in much detail. If you have an Ack from the maintainers, feel free to
-> include them in the series, otherwise let's merge the rest now and then
-> you can send the updated patches for inclusion through the subsystem
-> trees in 5.2.
-> 
-
-OK, I'll add the patches with "Acked" or "Reviewed" tag.
-
-> I have sent a few comments. The only one that is really important
-> here is the missing platform check in the suspend options. Please
-> try to address most of the other commentsm, either by changing the
-> code, or by explaining why your version is correct.
-> 
-
-Okay, try to address them.
-I send the next version as soon as possible.
-
-Thanks.
-Sugaya Taichi
-
-> 
-> 
->       Arnd
-> 
-
+>
+> This patch adds pinctrl file for mt8183.
+>
+> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> ---
