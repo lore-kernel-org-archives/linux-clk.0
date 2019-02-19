@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2ABC43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76715C10F00
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969A52147A
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 433852147A
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbfBSRCN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:02:13 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:50977 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfBSRCL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 12:02:11 -0500
+        id S1729632AbfBSRDA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 12:03:00 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:60907 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbfBSRCM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 12:02:12 -0500
 X-Originating-IP: 90.53.137.203
 Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id F0FC61BF217;
-        Tue, 19 Feb 2019 17:02:07 +0000 (UTC)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id BB48F2000D;
+        Tue, 19 Feb 2019 17:02:09 +0000 (UTC)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -31,9 +31,9 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/7] clk: at91: modernize sckc binding
-Date:   Tue, 19 Feb 2019 18:01:55 +0100
-Message-Id: <20190219170200.3608-3-alexandre.belloni@bootlin.com>
+Subject: [PATCH 3/7] clk: at91: sckc: handle different RC startup time
+Date:   Tue, 19 Feb 2019 18:01:56 +0100
+Message-Id: <20190219170200.3608-4-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
 References: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
@@ -44,180 +44,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove the need for child nodes in the sckc binding and register the whole
-sckc tree (3 clocks in total) from the sckc node.
-
-DT backward compatibility is kept by looking for properties in child nodes
-when they are not present in the sckc node.
+The sama5d3 slow RC oscillator as a different startup time than all the
+previous SoCs. Handle that using its own compatible.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/clk/at91/sckc.c | 125 ++++++++++++----------------------------
- 1 file changed, 36 insertions(+), 89 deletions(-)
+ drivers/clk/at91/sckc.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index ab6ecefc49ad..470aef586f57 100644
+index 470aef586f57..e76b1d64e905 100644
 --- a/drivers/clk/at91/sckc.c
 +++ b/drivers/clk/at91/sckc.c
-@@ -152,28 +152,6 @@ at91_clk_register_slow_osc(void __iomem *sckcr,
+@@ -321,7 +321,8 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
  	return hw;
  }
  
--static void __init
--of_at91sam9x5_clk_slow_osc_setup(struct device_node *np, void __iomem *sckcr)
--{
--	struct clk_hw *hw;
--	const char *parent_name;
--	const char *name = np->name;
--	u32 startup;
--	bool bypass;
--
--	parent_name = of_clk_get_parent_name(np, 0);
--	of_property_read_string(np, "clock-output-names", &name);
--	of_property_read_u32(np, "atmel,startup-time-usec", &startup);
--	bypass = of_property_read_bool(np, "atmel,osc-bypass");
--
--	hw = at91_clk_register_slow_osc(sckcr, name, parent_name, startup,
--					 bypass);
--	if (IS_ERR(hw))
--		return;
--
--	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
--}
--
- static unsigned long clk_slow_rc_osc_recalc_rate(struct clk_hw *hw,
- 						 unsigned long parent_rate)
+-static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
++static void __init at91sam9x5_sckc_register(struct device_node *np,
++					    unsigned int rc_osc_startup_us)
  {
-@@ -266,28 +244,6 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
- 	return hw;
- }
- 
--static void __init
--of_at91sam9x5_clk_slow_rc_osc_setup(struct device_node *np, void __iomem *sckcr)
--{
--	struct clk_hw *hw;
--	u32 frequency = 0;
--	u32 accuracy = 0;
--	u32 startup = 0;
--	const char *name = np->name;
--
--	of_property_read_string(np, "clock-output-names", &name);
--	of_property_read_u32(np, "clock-frequency", &frequency);
--	of_property_read_u32(np, "clock-accuracy", &accuracy);
--	of_property_read_u32(np, "atmel,startup-time-usec", &startup);
--
--	hw = at91_clk_register_slow_rc_osc(sckcr, name, frequency, accuracy,
--					    startup);
--	if (IS_ERR(hw))
--		return;
--
--	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
--}
--
- static int clk_sam9x5_slow_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_sam9x5_slow *slowck = to_clk_sam9x5_slow(hw);
-@@ -365,64 +321,55 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
- 	return hw;
- }
- 
--static void __init
--of_at91sam9x5_clk_slow_setup(struct device_node *np, void __iomem *sckcr)
-+static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
- {
-+	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
-+	void __iomem *regbase = of_iomap(np, 0);
-+	struct device_node *child = NULL;
-+	const char *xtal_name;
- 	struct clk_hw *hw;
--	const char *parent_names[2];
--	unsigned int num_parents;
--	const char *name = np->name;
-+	bool bypass;
- 
--	num_parents = of_clk_get_parent_count(np);
--	if (num_parents == 0 || num_parents > 2)
-+	if (!regbase)
+ 	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
+ 	void __iomem *regbase = of_iomap(np, 0);
+@@ -334,7 +335,7 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
  		return;
  
--	of_clk_parent_fill(np, parent_names, num_parents);
--
--	of_property_read_string(np, "clock-output-names", &name);
--
--	hw = at91_clk_register_sam9x5_slow(sckcr, name, parent_names,
--					    num_parents);
-+	hw = at91_clk_register_slow_rc_osc(regbase, parent_names[0], 32768,
-+					   50000000, 75);
+ 	hw = at91_clk_register_slow_rc_osc(regbase, parent_names[0], 32768,
+-					   50000000, 75);
++					   50000000, rc_osc_startup_us);
  	if (IS_ERR(hw))
  		return;
  
--	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
--}
-+	xtal_name = of_clk_get_parent_name(np, 0);
-+	if (!xtal_name) {
-+		/* DT backward compatibility */
-+		child = of_get_compatible_child(np, "atmel,at91sam9x5-clk-slow-osc");
-+		if (!child)
-+			return;
-+
-+		xtal_name = of_clk_get_parent_name(child, 0);
-+		bypass = of_property_read_bool(child, "atmel,osc-bypass");
-+
-+		child =  of_get_compatible_child(np, "atmel,at91sam9x5-clk-slow");
-+	} else {
-+		bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+	}
- 
--static const struct of_device_id sckc_clk_ids[] __initconst = {
--	/* Slow clock */
--	{
--		.compatible = "atmel,at91sam9x5-clk-slow-osc",
--		.data = of_at91sam9x5_clk_slow_osc_setup,
--	},
--	{
--		.compatible = "atmel,at91sam9x5-clk-slow-rc-osc",
--		.data = of_at91sam9x5_clk_slow_rc_osc_setup,
--	},
--	{
--		.compatible = "atmel,at91sam9x5-clk-slow",
--		.data = of_at91sam9x5_clk_slow_setup,
--	},
--	{ /*sentinel*/ }
--};
-+	if (!xtal_name)
-+		return;
- 
--static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
--{
--	struct device_node *childnp;
--	void (*clk_setup)(struct device_node *, void __iomem *);
--	const struct of_device_id *clk_id;
--	void __iomem *regbase = of_iomap(np, 0);
-+	hw = at91_clk_register_slow_osc(regbase, parent_names[1], xtal_name,
-+					1200000, bypass);
-+	if (IS_ERR(hw))
-+		return;
- 
--	if (!regbase)
-+	hw = at91_clk_register_sam9x5_slow(regbase, "slowck", parent_names, 2);
-+	if (IS_ERR(hw))
- 		return;
- 
--	for_each_child_of_node(np, childnp) {
--		clk_id = of_match_node(sckc_clk_ids, childnp);
--		if (!clk_id)
--			continue;
--		clk_setup = clk_id->data;
--		clk_setup(childnp, regbase);
--	}
-+	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
-+
-+	/* DT backward compatibility */
-+	if (child)
-+		of_clk_add_hw_provider(child, of_clk_hw_simple_get, hw);
+@@ -371,9 +372,21 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
+ 	if (child)
+ 		of_clk_add_hw_provider(child, of_clk_hw_simple_get, hw);
  }
++
++static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
++{
++	at91sam9x5_sckc_register(np, 75);
++}
  CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
  	       of_at91sam9x5_sckc_setup);
+ 
++static void __init of_sama5d3_sckc_setup(struct device_node *np)
++{
++	at91sam9x5_sckc_register(np, 500);
++}
++CLK_OF_DECLARE(sama5d3_clk_sckc, "atmel,sama5d3-sckc",
++	       of_sama5d3_sckc_setup);
++
+ static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
 -- 
 2.20.1
 
