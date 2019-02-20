@@ -3,126 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D11AC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 22:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4431BC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 22:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DDF920880
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 22:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550700110;
-	bh=b1V4X8VwoeogINSDrQvu6rQo79wgvQir/lEC/Oqv/ys=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=G6FfoZTHWu9qu5EMYlOjnDG/5yZPne8ZxpFeRlxKLP5W6uD07Rmhdz8DQ8l4lpHIU
-	 eV13+hdhciFrHe8tK4uyAmBFoUDE1EcX1sfO3xLhUEi8zfHYQYY6zRtgjy9ssH2yMx
-	 fud6vhduvNZvYqz9CenMiRE6g2TzNj5Q+bdt6Cgw=
+	by mail.kernel.org (Postfix) with ESMTP id 0B9C520859
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 22:26:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gsOTKs4h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfBTWBo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:01:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfBTWBo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:01:44 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D74FE2086C;
-        Wed, 20 Feb 2019 22:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550700103;
-        bh=b1V4X8VwoeogINSDrQvu6rQo79wgvQir/lEC/Oqv/ys=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=vnFq9iOxmiCkVYTOsgqNCTLHSQu2AiCJIHfYaPkmJUl1mP6IGrndGai/jIUvXsjYx
-         TH5XFVxz2zErxThADQf6TsCK/IjYan0QNoo9ketF8be69Kt4+2u4RVJ5P5nH3Ag9be
-         8UaJMIOD9OBcnPijkDp6BxjhOs6B2w7Eohxmzi1Y=
-Content-Type: text/plain; charset="utf-8"
+        id S1726126AbfBTW0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Feb 2019 17:26:34 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:33796 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfBTW0e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Feb 2019 17:26:34 -0500
+Received: by mail-vs1-f66.google.com with SMTP id e10so15033470vsp.1
+        for <linux-clk@vger.kernel.org>; Wed, 20 Feb 2019 14:26:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sDpL3gmbczax8ALdj7IVEn/cdMFCR2mdLaVqooKyfDU=;
+        b=gsOTKs4hDJpCcYxXFAhd3Mw19bPjFasvElf6Yd9ikqATCYiclmkqOMIuNsxSoWBTPs
+         cvv7KgIQk6dYFFcC6p6vp/e6zA3KSvygM6ZzD1xDWenkLj9Umc2pmNvwwnaR2e9iG5Eh
+         /zlPXUrpCbDsPF9sQP3jSKppTz0LqL6aRU0M0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sDpL3gmbczax8ALdj7IVEn/cdMFCR2mdLaVqooKyfDU=;
+        b=iuuboZgH3tUtWzKVhpPT9Wko/Uluma0OV0ZA6W9Kho2qsdNDqAyuzERjjx0uFGKwro
+         i4IoaD4fCNvpdptFLm4IC8OFy5bi364cyaE8jpggk0J0HasBdWvAjfPXkvKWS6bwL0rg
+         EAZamSBFMat0pUMYA8b95ax8EcHYk+jzukw9bJf9lyR1ItDTLd96qD3tl04VrEibi1KA
+         6Flv0DqkWdc+JhS6GdOqNIIkRQi9Rj1m/WU2TA8vDCAFkYp1Ede4+cCyuIIFI2psYmkd
+         E5DYZKmHS/ubZ09GMucxdLnwEZziR9fRmv0H/+q8noua5mW3Y2lhxa2ChvpjQc+ZDQfc
+         WUGw==
+X-Gm-Message-State: AHQUAuZ6YvHcqiKtTzLcnxCawextidz7zFT8jykQ1MBVtO12LDN6ErZs
+        7gKVpdpl9W3qXNRXBzT78Atlw9V5ouE=
+X-Google-Smtp-Source: AHgI3IaEAHfPn6pp3PS4fQE0OL2ykKZi+M+EXe0sUdw9a/ht6h7VWDxuW2g9E/x+UWLEtDjNn9Cg5A==
+X-Received: by 2002:a67:6f44:: with SMTP id k65mr18253130vsc.222.1550701592260;
+        Wed, 20 Feb 2019 14:26:32 -0800 (PST)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id l193sm7010763vka.19.2019.02.20.14.26.30
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 14:26:30 -0800 (PST)
+Received: by mail-vs1-f48.google.com with SMTP id h132so3206062vsd.5
+        for <linux-clk@vger.kernel.org>; Wed, 20 Feb 2019 14:26:30 -0800 (PST)
+X-Received: by 2002:a67:ec81:: with SMTP id h1mr19076075vsp.188.1550701589790;
+ Wed, 20 Feb 2019 14:26:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC 0/4] clk/driver: platform: Fix kfree() of const memory on setting driver_override
-Message-ID: <155070010208.77512.17397936280518534534@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <1550484960-2392-1-git-send-email-krzk@kernel.org> <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com> <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
+ <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com> <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
+In-Reply-To: <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Feb 2019 14:26:06 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+Message-ID: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kukjin Kim <kgene@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Date:   Wed, 20 Feb 2019 14:01:42 -0800
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2019-02-18 03:14:29)
-> On Mon, 18 Feb 2019 at 11:40, Geert Uytterhoeven <geert@linux-m68k.org> w=
-rote:
-> >
-> > Hi Krzysztof,
-> >
-> > On Mon, Feb 18, 2019 at 11:27 AM Krzysztof Kozlowski <krzk@kernel.org> =
-wrote:
-> > > The problem
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > Several device types (platform, amba, spi etc.) provide a driver_over=
-ride
-> > > field.  On sysfs store or during device removal, they kfree() the
-> > > existing value.
+On Fri, Feb 15, 2019 at 4:34 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Kees Cook (2019-02-12 10:57:05)
+> > On Mon, Feb 11, 2019 at 11:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > > >
-> > > However the users are unaware of this and set the driver_override lik=
-e:
-> > >
-> > >         pdev->driver_override =3D "exynos5-subcmu";
-> > >
-> > > which obviously leads to error.
+> > > It is just the GCC which has to be fixed not the code. You want to
+> > > adjust the code for specific version of GCC and what if GCC changes
+> > > its warning? For example GCC might require "fall through: "... or any
+> > > other syntax. Another point - what about clang's syntax?
 > >
-> > IMHO driver_override is not meant to be set by a driver, only from user=
-space,
-> > for binding the device to vfio (is there another use case?).
+> > -Wimplicit-fallthrough=3 is stricter and maps to -Wextra, hence its
+> > choice. GCC's levels were chosen based on the existing linters, static
+> > analyzers, etc. The patterns are unlikely to change (see the gcc
+> > man-page).
 > >
-> > >   clk: samsung: exynos5: Fix kfree() of const memory on setting
-> > >     driver_override
-> > >   slimbus: ngd: Fix kfree() of const memory on setting driver_override
+> > Clang doesn't recognize anything in C mode (hopefully this will be
+> > fixed in the future[1]).
 > >
-> > I see all users set override immediately after allocating a platform de=
-vice.
-> > Can't they just allocate a platform device using the override name inst=
-ead?
-> > What am I missing?
->=20
-> For the clk-exynos5-subcmu.c case, driver registers several
-> sub-devices. Each sub-devices is a clock controller associated with
-> power domain. I guess the author wanted to have meaningful names of
-> these sub-devices (DISP, CAM etc. like names of power domains),
-> instead of just exynos5-subcmu.1, exynos5-subcmu.2 ...
->=20
-> If driver_override should not be used for such case, then I could
-> replace it with what you said.
+> > As long as one of the compilers is able to check this, we'll avoid the
+> > bugs associated with this mis-pattern. Gustavo's efforts here have
+> > found kind of a lot of bugs, so I think it's worth a little churn to
+> > add these (and make minor adjustments to existing comments).
+>
+> Just curious, what compilation phase does this check run in? Could we
+> gain a macro like FALLTHRU or even lowercase 'fallthru' that expanded to
+> whatever the compiler wants to see and then there would only be "one
+> way" to do this?  It would alleviate the above concerns, but maybe I'm
+> rehashing something that's already been proposed and rejected.
 
-Looking at the introduction of the code into the platform bus makes it
-sound like it was all for vfio devices. If the clk driver doesn't need
-it for that purpose and can get by with more generic names then it seems
-best to avoid using it entirely. So can you do that and resend the first
-patch in this series too? Effectively splitting the clk parts from the
-larger issue of kfree()ing of const memory.
+When this got discussed a while back, the thinking was that since
+we're also dealing with static analyzers (e.g. Coverity) and IDEs that
+literally parse comments in the code, it was most sensible (at least
+for now, prior to there being a formal C "fall through" statement --
+there is for C++ but not yet for C), we'd stick to explicit comments.
+In theory, we will be able to do a tree-wide change to add the C
+statement once it exists.
 
+> Of course, I'm happy to merge any of these patches that tweak things so
+> no worries either way.
+
+Thanks! :)
+
+-- 
+Kees Cook
