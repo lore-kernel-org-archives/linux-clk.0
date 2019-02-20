@@ -2,128 +2,134 @@ Return-Path: <SRS0=cs+B=Q3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CF1C10F07
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 20:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B77DC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 20:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26EA42146E
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 20:39:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="nZj0RhzV"
+	by mail.kernel.org (Postfix) with ESMTP id 4B6E62146E
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 20:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550696187;
+	bh=i19Yd9t0tE1oyBSiiT8riqBloLBi5GvIMO+tNvl7dh0=;
+	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
+	b=vpip3JIBj+/BtJQ80aTrTCKydMToFDcPmy9Xdus03UK+Kfh9Q6ehJBZyQOxSSYPFf
+	 yzWFwwzjkTg5d4lV/d4aM+4AcMOStEtMpt+z4U8UPyNMeO0/QwXO88wD6ySYjQWDmZ
+	 AJErHP4WN3YJD77kkXAglkpHk0DqmCLA4ZV+57k8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbfBTUjV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:39:21 -0500
-Received: from mail-eopbgr1400127.outbound.protection.outlook.com ([40.107.140.127]:52601
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726003AbfBTUjV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:39:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yPeBHS8Ras+FqAFIDr0BUnI3SVNeSz5tH76xAXzFZ7k=;
- b=nZj0RhzVH6ECbReGG/NSj/5okqD8kTDSKaY50qwgrNTCVbDgE74HfRh7mS+XkrMSA290Qgput42hmXtxpzOFWJtXCoWu83yC8Rbpk6ShbR7qznJAoO0npfTqHKsgF/sdiYWQtpLsueheLZbUbBrqRvCzoBGuvC7OmtEfMI86Siw=
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB2589.jpnprd01.prod.outlook.com (20.177.102.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Wed, 20 Feb 2019 20:39:16 +0000
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::6c2e:174b:112c:cc5]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::6c2e:174b:112c:cc5%5]) with mapi id 15.20.1622.020; Wed, 20 Feb 2019
- 20:39:16 +0000
-From:   Chris Paterson <Chris.Paterson2@renesas.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
-Thread-Topic: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
-Thread-Index: AQHUyTaruNmrMMPHCEKccudxxky1oaXpJf9Q
-Date:   Wed, 20 Feb 2019 20:39:16 +0000
-Message-ID: <TYAPR01MB22854937F3B2CB0CC51EBA18B77D0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Paterson2@renesas.com; 
-x-originating-ip: [90.255.186.189]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2577da0b-d67e-460a-cd4f-08d697737b4a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2589;
-x-ms-traffictypediagnostic: TYAPR01MB2589:
-x-microsoft-exchange-diagnostics: 1;TYAPR01MB2589;20:7eBqJpSZNZh/yiUx+DdN1QeUFztsj5uebkx1333Iwi8KVLKHYKCsV5/NwKL0wfOsC8PycTsyjfQB3rOgSgkdp1hDgpV2jIxY7sSYHfIcxFok0XxHw3/3vO5KJnDTL7QwuoAgrbDfGBjooP2CKdyDs0ZgR5bPtAqA56hEFZtdpBg=
-x-microsoft-antispam-prvs: <TYAPR01MB2589837D1C2ED07FB151B5AFB77D0@TYAPR01MB2589.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 0954EE4910
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(366004)(396003)(39850400004)(199004)(189003)(55016002)(102836004)(446003)(71200400001)(11346002)(9686003)(186003)(14444005)(6246003)(66066001)(6506007)(256004)(99286004)(7736002)(305945005)(33656002)(53546011)(76176011)(97736004)(26005)(5660300002)(486006)(6116002)(3846002)(71190400001)(7696005)(6436002)(53936002)(229853002)(476003)(107886003)(110136005)(478600001)(316002)(54906003)(72206003)(86362001)(68736007)(4326008)(14454004)(105586002)(25786009)(74316002)(81166006)(106356001)(8936002)(8676002)(2906002)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2589;H:TYAPR01MB2285.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NYY/71clui2mjyPncWZNm/yZEDqWRzGRbtwpb19rpscN/C3KWz379B10vmzhK+8rCsJ5Zguik22kaCvWHy8W6xXHJAP/V8u0jPLym3GWv/F6Wse2zS1s1O31yEvg7EGue2F/1sOoZL2rBVSPljXFjctbSnme5dr7tPggGgEr28Id/bQRrVSm/0a1DGDqLzGdmgaYmAwGfIuJbw3SJOGSbzSXlxAF/JNwHsPp5es+DfRBsUwGzORZMyv4flurdsTtTS2LUYqzObbZISlVwi2i//yZZ0RV5D/k7MxiHE8KKZqNz98hlEWJ0MQhG+vmOEfTsaxt3A0jxI4QP2xtgQmYM/HiujxxWPWdRT0zWfpOR3euzJL2B/nYkwjf+/rUjsxz1Ju7B+OT4NAvesewEc/WbUfJJHjHQv8f5b/wHx7JCjs=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+        id S1726613AbfBTU41 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Feb 2019 15:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726003AbfBTU40 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Feb 2019 15:56:26 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65F1F2089F;
+        Wed, 20 Feb 2019 20:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550696185;
+        bh=i19Yd9t0tE1oyBSiiT8riqBloLBi5GvIMO+tNvl7dh0=;
+        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
+        b=LKBRAHo7onXu9aIkZmqrDVtw/bnpLf+T7Dorop5sTL2CIUqROn40D5i08vN0PNUba
+         AqVwXXENsLoS0IIoA9sep3P0NP4/SyFNFLb2ymfhmadeGqs4yvfQ2zdS5lVBD5E543
+         8h0tOHLzMVNQr7/XP6tLs04ZkH2LXtoM7haxcglY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2577da0b-d67e-460a-cd4f-08d697737b4a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2019 20:39:16.4326
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2589
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH V3 4/5] dt-bindings: imx8-clock: add a53 and a72 clock id
+Message-ID: <155069618457.77512.12216138806698646030@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+References: <1548335800-6438-1-git-send-email-aisheng.dong@nxp.com> <1548335800-6438-5-git-send-email-aisheng.dong@nxp.com> <20190213221818.GA13126@bogus> <AM6PR04MB4215A70B99715434A3770532807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <AM6PR04MB4215A70B99715434A3770532807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>, Rob Herring <robh@kernel.org>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Date:   Wed, 20 Feb 2019 12:56:24 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Sent: 20 February 2019 16:09
-> To: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>; Michael Turquette
-> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; linux-
-> renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; Simon Horman
-> <horms@verge.net.au>; Chris Paterson <Chris.Paterson2@renesas.com>;
-> Biju Das <biju.das@bp.renesas.com>
-> Subject: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
+Quoting Aisheng Dong (2019-02-19 23:07:46)
+> > From: Rob Herring [mailto:robh@kernel.org]
+> > Sent: Thursday, February 14, 2019 6:18 AM
+> > On Thu, Jan 24, 2019 at 01:22:45PM +0000, Aisheng Dong wrote:
+> > > Add a53 and a72 clock id, as there's still no users, we update
+> > > IMX_LSIO_MEM_CLK base to start from 6 to allow a53 and a72 clock id to
+> > > be continued with a35 clk.
+> > >
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Cc: devicetree@vger.kernel.org
+> > > Cc: Shawn Guo <shawnguo@kernel.org>
+> > > Cc: Sascha Hauer <kernel@pengutronix.de>
+> > > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > > ---
+> > > v1->v2:
+> > >  * change cpu clock to cpu cluster clock per Rob's suggestion
+> > > ---
+> > >  include/dt-bindings/clock/imx8-clock.h | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/include/dt-bindings/clock/imx8-clock.h
+> > > b/include/dt-bindings/clock/imx8-clock.h
+> > > index b149e63..dcce744 100644
+> > > --- a/include/dt-bindings/clock/imx8-clock.h
+> > > +++ b/include/dt-bindings/clock/imx8-clock.h
+> > > @@ -14,10 +14,12 @@
+> > >  /* CPU */
+> > >  #define IMX_A35_CLK                                        1
+> > >  #define IMX_CPU_CLUSTER_A35_CLK                            1
+> > > +#define IMX_CPU_CLUSTER_A53_CLK                            2
+> > > +#define IMX_CPU_CLUSTER_A72_CLK                            3
+> >=20
+> > I still don't get this. How many clock outputs does the clock controlle=
+r have for
+> > CPUs? If 3, then this is correct. If it's the same clock controller bit=
+s across
+> > different SoCs, then just name it something like IMX_CPU_CLUSTER_CLK and
+> > reuse the same ID.
+> >=20
 >=20
-> Enum LAST_DT_CORE_CLK needs updating as R8A774C0_CLK_CANFD
-> was recently added and it's the core clock with the highest
-> index.
+> For SCU firmware based platforms like mx8qxp/qm, the clocks are provided
+> by SCU firmware via SCU firmware call with unique IDs. So it's safe to us=
+e a common
+> Clock IDs file.
 >=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> But please ignore patch 3 and 4 first because we still met a few limitati=
+ons with
+> current approach due to the device availability may vary a bit across CPU=
+s and
+> Subsystems.
+>=20
+> We formerly planned to add all new IDs for each SS and dynamically check =
+availability
+> in driver. That can be done but that may involve a lot effort and may res=
+ult in more
+> changes In driver. Also hard to upstream device tree code due to dependen=
+cy on Clock IDs.
+>=20
+> To relief this situation, we want to move the clock definition into devic=
+e tree which
+> can fully decouple the dependency of Clock ID definition from device tree.
+> And no frequent changes required in clock driver.
+>=20
+> I will send a patch set to do it later.
+>=20
 
-> ---
->  drivers/clk/renesas/r8a774c0-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> index 4f3111b..48a578a 100644
-> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> @@ -22,7 +22,7 @@
->=20
->  enum clk_ids {
->  	/* Core Clock Outputs exported to DT */
-> -	LAST_DT_CORE_CLK =3D R8A774C0_CLK_CPEX,
-> +	LAST_DT_CORE_CLK =3D R8A774C0_CLK_CANFD,
->=20
->  	/* External Input Clocks */
->  	CLK_EXTAL,
-> --
-> 2.7.4
-
+Ok. I'll take this as a signal to drop these from the clk review queue.
+Thanks.
