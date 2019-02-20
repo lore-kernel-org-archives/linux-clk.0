@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574D1C10F00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 843C2C4151A
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22F022146F
+	by mail.kernel.org (Postfix) with ESMTP id 4FD4A2183E
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbfBTCy2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1730386AbfBTCy2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 19 Feb 2019 21:54:28 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:62030 "EHLO
+Received: from mailgw02.mediatek.com ([1.203.163.81]:37879 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730321AbfBTCy1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 21:54:27 -0500
-X-UUID: f042b27c668a494697ebb7d4618a4d8a-20190220
-X-UUID: f042b27c668a494697ebb7d4618a4d8a-20190220
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        with ESMTP id S1725916AbfBTCy0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 21:54:26 -0500
+X-UUID: d4488d6acecb4d74b328d92613ca95bb-20190220
+X-UUID: d4488d6acecb4d74b328d92613ca95bb-20190220
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
         (envelope-from <wangyan.wang@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1080677928; Wed, 20 Feb 2019 10:54:20 +0800
+        with ESMTP id 1802791568; Wed, 20 Feb 2019 10:54:15 +0800
 Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
  (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
- 2019 10:54:18 +0800
+ 2019 10:54:13 +0800
 Received: from mszsdaap41.mediatek.inc (10.16.6.141) by MTKCAS36.mediatek.inc
  (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 20 Feb 2019 10:54:17 +0800
+ Transport; Wed, 20 Feb 2019 10:54:12 +0800
 From:   wangyan wang <wangyan.wang@mediatek.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
@@ -46,9 +46,9 @@ CC:     wangyan wang <wangyan.wang@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH V5 6/8] clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
-Date:   Wed, 20 Feb 2019 10:53:55 +0800
-Message-ID: <20190220025357.7354-7-wangyan.wang@mediatek.com>
+Subject: [PATCH V5 4/8] drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+Date:   Wed, 20 Feb 2019 10:53:53 +0800
+Message-ID: <20190220025357.7354-5-wangyan.wang@mediatek.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20190220025357.7354-1-wangyan.wang@mediatek.com>
 References: <20190220025357.7354-1-wangyan.wang@mediatek.com>
@@ -62,30 +62,33 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: chunhui dai <chunhui.dai@mediatek.com>
 
-The MUX clock of dpi1_sel should select the closet clock for itself.
-We could add this flag to enable this function of MUX in CCF.
+Due to a clerical error,there is one zero less for 12800000.
+Fix it for 128000000.
 
+Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623")
+
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>
 ---
- drivers/clk/mediatek/clk-mt2701.c | 4 ++--
+ drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index ab6ab07f53e6..905a2316f6a7 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -535,8 +535,8 @@ static const struct mtk_composite top_muxes[] = {
- 		0x0080, 8, 2, 15),
- 	MUX_GATE(CLK_TOP_DPI0_SEL, "dpi0_sel", dpi0_parents,
- 		0x0080, 16, 3, 23),
--	MUX_GATE(CLK_TOP_DPI1_SEL, "dpi1_sel", dpi1_parents,
--		0x0080, 24, 2, 31),
-+	MUX_GATE_FLAGS_2(CLK_TOP_DPI1_SEL, "dpi1_sel", dpi1_parents,
-+		0x0080, 24, 2, 31, 0, CLK_MUX_ROUND_CLOSEST),
+diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+index 43bc058d5528..88dd9e812ca0 100644
+--- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
++++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+@@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
  
- 	MUX_GATE(CLK_TOP_TVE_SEL, "tve_sel", tve_parents,
- 		0x0090, 0, 3, 7),
+ 	if (rate <= 64000000)
+ 		pos_div = 3;
+-	else if (rate <= 12800000)
+-		pos_div = 1;
++	else if (rate <= 128000000)
++		pos_div = 2;
+ 	else
+ 		pos_div = 1;
+ 
 -- 
 2.14.1
 
