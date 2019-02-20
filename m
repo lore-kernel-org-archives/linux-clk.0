@@ -1,107 +1,100 @@
-Return-Path: <SRS0=Vpf0=Q2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=cs+B=Q3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16741C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B7BC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50132147A
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55C472146F
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbfBSRCK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:02:10 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:50045 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbfBSRCJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 12:02:09 -0500
-X-Originating-IP: 90.53.137.203
-Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id CC8FB1BF20D;
-        Tue, 19 Feb 2019 17:02:05 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 1/7] dt-bindings: clock: at91: new sckc bindings
-Date:   Tue, 19 Feb 2019 18:01:54 +0100
-Message-Id: <20190219170200.3608-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
-References: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
+        id S1727576AbfBTCyM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Feb 2019 21:54:12 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:6933 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726208AbfBTCyM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Feb 2019 21:54:12 -0500
+X-UUID: 0f66d9f8c5074e0ba703fcc9af5dfac8-20190220
+X-UUID: 0f66d9f8c5074e0ba703fcc9af5dfac8-20190220
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <wangyan.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 168051475; Wed, 20 Feb 2019 10:54:03 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
+ 2019 10:54:01 +0800
+Received: from mszsdaap41.mediatek.inc (10.16.6.141) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 20 Feb 2019 10:54:00 +0800
+From:   wangyan wang <wangyan.wang@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
+CC:     wangyan wang <wangyan.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH V5 0/8] make mt7623 clock of hdmi stable
+Date:   Wed, 20 Feb 2019 10:53:49 +0800
+Message-ID: <20190220025357.7354-1-wangyan.wang@mediatek.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove the need for child nodes in the sckc binding to be able to remove
-dtc warnings and have a more modern binding.
+From: Wangyan Wang <wangyan.wang@mediatek.com>
 
-Also document optional properties.
+V4 adopt maintainer's suggestion.
+Here is the change list between V4 & V5
+1. add Reviewed-by:CK Hu <ck.hu@mediatek.com>
+in " drm/mediatek: fix the rate ..." commit message.
 
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- .../devicetree/bindings/clock/at91-clock.txt  | 30 ++++++++-----------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+2. describe the reason why mt7623 clock of hdmi 
+is more stable than before.
+the tvdpll should be stable in hdmi normal setting
+to guarantee clock of hdmi stable, but the tvdpll 
+may be changed in original code ,the patch is to
+deal with the problem, you can find more descriptions
+in patch "drm/mediatek:using different flags of clk ...".
 
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-index e9f70fcdfe80..cb838c1c4bdd 100644
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-@@ -8,29 +8,23 @@ Slow Clock controller:
- 
- Required properties:
- - compatible : shall be one of the following:
--	"atmel,at91sam9x5-sckc" or
-+	"atmel,at91sam9x5-sckc",
-+	"atmel,sama5d3-sckc" or
- 	"atmel,sama5d4-sckc":
- 		at91 SCKC (Slow Clock Controller)
--		This node contains the slow clock definitions.
--
--	"atmel,at91sam9x5-clk-slow-osc":
--		at91 slow oscillator
--
--	"atmel,at91sam9x5-clk-slow-rc-osc":
--		at91 internal slow RC oscillator
--- reg : defines the IO memory reserved for the SCKC.
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
-+- #clock-cells : shall be 0.
-+- clocks : shall be the input parent clock phandle for the clock.
- 
-+Optional properties:
-+- atmel,osc-bypass : boolean property. Set this when a clock signal is directly
-+  provided on XIN.
- 
- For example:
--	sckc: sckc@fffffe50 {
--		compatible = "atmel,sama5d3-pmc";
--		reg = <0xfffffe50 0x4>
--		#size-cells = <0>;
--		#address-cells = <1>;
--
--		/* put at91 slow clocks here */
-+	sckc@fffffe50 {
-+		compatible = "atmel,at91sam9x5-sckc";
-+		reg = <0xfffffe50 0x4>;
-+		clocks = <&slow_xtal>;
-+		#clock-cells = <0>;
- 	};
- 
- Power Management Controller (PMC):
+
+chunhui dai (8):
+  drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
+    hardware
+  drm/mediatek: move the setting of fixed divider
+  drm/mediatek: using different flags of clk for HDMI phy
+  drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+  clk: mediatek: add MUX_GATE_FLAGS_2
+  clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
+  drm/mediatek: using new factor for tvdpll in MT2701
+  drm/mediatek: fix the rate of parent for hdmi phy in MT2701
+
+ drivers/clk/mediatek/clk-mt2701.c              |  4 +-
+ drivers/clk/mediatek/clk-mtk.c                 |  2 +-
+ drivers/clk/mediatek/clk-mtk.h                 | 20 ++++++---
+ drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 34 ++++------------
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  7 +---
+ drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 56 +++++++++++++++++++++++---
+ drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++++++
+ 8 files changed, 102 insertions(+), 52 deletions(-)
+
 -- 
-2.20.1
+2.14.1
 
