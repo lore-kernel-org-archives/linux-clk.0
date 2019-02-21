@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1566EC4360F
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E70C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C332147A
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7315520855
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550749576;
-	bh=DDiRvtPJqkBjJTbTwZbH4UyrKTh1xz3PTGlChDmk9Rs=;
+	s=default; t=1550749582;
+	bh=tG8WG6JLvjiga0m3PXtQzUYRvGvnMVYjtxeMvSz9qvQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RN22ODRTm8kVPIFM00XacvCscIPGRA8j6DmFTTCR8wFkuA9J7u9MsmZW/oReKAj6Q
-	 UVGiJliXou3PtTpY2iye7NTIHor/H6DzZ/K/TcXpKjEk065TS4cPjkl3vTo7GlVdd9
-	 cpQdbGvEkiSV99VEyf7T496zZwqcn1rcB9wcImA0=
+	b=TFALkeyWr5mlM2WSqd03fdUjgvee066xKmAbJHipIiCay9RP2Y7r/e2p/hLDGbZSn
+	 lEaASrhrBT/POtmpn2SkS1yv8BDkMAG1fPj6OvJtM9QURPAbo58fFw4fCfpbMcekS8
+	 X3s25iHwZGntsDeTI2t+196ySSvcI6SzXIqQcSjI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfBULqE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:46:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
+        id S1725774AbfBULqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 06:46:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726697AbfBULqE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:46:04 -0500
+        id S1726697AbfBULqB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:46:01 -0500
 Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7319D2147A;
-        Thu, 21 Feb 2019 11:46:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 104B02148D;
+        Thu, 21 Feb 2019 11:45:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550749563;
-        bh=DDiRvtPJqkBjJTbTwZbH4UyrKTh1xz3PTGlChDmk9Rs=;
+        s=default; t=1550749561;
+        bh=tG8WG6JLvjiga0m3PXtQzUYRvGvnMVYjtxeMvSz9qvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P9YLZiZymjeeHf4vGZAeZNVfhGzXgQ8Ri7LEn4S3ROGgZvskNXNL7BGYc+uAHcQAJ
-         0yAQn3VoOvcb3HJ0hADwAJGjUafEvvllAyd4EmyQZPmvXYS4unPB5mQt+GZYRS16qe
-         gJgyEjZnkOO1Oq3lB+34CqPl/Sp6lAlGCEGtZ/JA=
+        b=ZthLHshe9B5RyQqem0wd2tlKcJIiil5pMXO1Q57UQaqcaOik8LknXMuoFUap6Q1OJ
+         KzC53cnbIpZQKDakUbQ6OAPoS2Jz4rasjbSMHrNdipIIfkkjZbrmRa9puBUlSFOPvd
+         EVax4flRmHnJf8+6EZEJpBj0QeJU141ClyiEcPoQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
@@ -47,9 +47,9 @@ To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     stable@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: samsung: exynos5: Fix kfree() of const memory on setting driver_override
-Date:   Thu, 21 Feb 2019 12:45:52 +0100
-Message-Id: <1550749552-8133-3-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 1/2] clk: samsung: exynos5: Fix possible NULL pointer exception on platform_device_alloc() failure
+Date:   Thu, 21 Feb 2019 12:45:51 +0100
+Message-Id: <1550749552-8133-2-git-send-email-krzk@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550749552-8133-1-git-send-email-krzk@kernel.org>
 References: <1550749552-8133-1-git-send-email-krzk@kernel.org>
@@ -58,54 +58,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Platform driver driver_override field should not be initialized from
-const memory because the core later kfree() it.  If driver_override is
-manually set later through sysfs, kfree() of old value leads to:
-
-    $ echo "new_value" > /sys/bus/platform/drivers/.../driver_override
-
-    kernel BUG at ../mm/slub.c:3960!
-    Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-    ...
-    (kfree) from [<c058e8c0>] (platform_set_driver_override+0x84/0xac)
-    (platform_set_driver_override) from [<c058e908>] (driver_override_store+0x20/0x34)
-    (driver_override_store) from [<c031f778>] (kernfs_fop_write+0x100/0x1dc)
-    (kernfs_fop_write) from [<c0296de8>] (__vfs_write+0x2c/0x17c)
-    (__vfs_write) from [<c02970c4>] (vfs_write+0xa4/0x188)
-    (vfs_write) from [<c02972e8>] (ksys_write+0x4c/0xac)
-    (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-
-The clk-exynos5-subcmu driver uses override only for the purpose of
-creating meaningful names for children devices (matching names of power
-domains, e.g. DISP, MFC).  The driver_override was not developed for
-this purpose so just switch to default names of devices to fix the
-issue.
+During initialization of subdevices if platform_device_alloc() failed,
+returned NULL pointer will be later dereferenced.  Add proper error
+paths to exynos5_clk_register_subcmu().  The return value of this
+function is still ignored because at this stage of init there is nothing
+we can do.
 
 Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5-subcmu.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index d07ef26bd052..8ae44b5db4c2 100644
+index 93306283d764..d07ef26bd052 100644
 --- a/drivers/clk/samsung/clk-exynos5-subcmu.c
 +++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -138,12 +138,11 @@ static int __init exynos5_clk_register_subcmu(struct device *parent,
+@@ -136,15 +136,21 @@ static int __init exynos5_clk_register_subcmu(struct device *parent,
+ {
+ 	struct of_phandle_args genpdspec = { .np = pd_node };
  	struct platform_device *pdev;
- 	int ret;
++	int ret;
  
--	pdev = platform_device_alloc(info->pd_name, -1);
-+	pdev = platform_device_alloc("exynos5-subcmu", PLATFORM_DEVID_AUTO);
- 	if (!pdev)
- 		return -ENOMEM;
- 
+ 	pdev = platform_device_alloc(info->pd_name, -1);
++	if (!pdev)
++		return -ENOMEM;
++
  	pdev->dev.parent = parent;
--	pdev->driver_override = "exynos5-subcmu";
+ 	pdev->driver_override = "exynos5-subcmu";
  	platform_set_drvdata(pdev, (void *)info);
  	of_genpd_add_device(&genpdspec, &pdev->dev);
- 	ret = platform_device_add(pdev);
+-	platform_device_add(pdev);
++	ret = platform_device_add(pdev);
++	if (ret)
++		platform_device_put(pdev);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int __init exynos5_clk_probe(struct platform_device *pdev)
 -- 
 2.7.4
 
