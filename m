@@ -2,78 +2,95 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5625BC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B71EC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C87A2080F
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BBFC2070B
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550786031;
-	bh=HqmzWx1WnbLsrPdHjBxf+JDc5SDbk2yFRHQ+34ezSEo=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=Yjnz8l4xIlX9Szntmx8Fsm6/ML3wOzIm82pOsMfyv0/3W1sS/OJGv/o+7JGkxFPHS
-	 6K4u8ZUNB59DdYekhY4SD47DORkL/ABGb226n+H9BHKy/yVz0NKahOd0szBI8+v4IY
-	 TzfQOLmgLeD1fjUfOiLhPt4Vbsi2E6C0nc5Bx8+U=
+	s=default; t=1550786243;
+	bh=RrplMlGhdB7Wm9lg4n/L5iMAWtb0cODUzRZ/YstjTBw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=By18MgvhqH01Ao4zV2PANnp1FFtwx/DzEz1FTUv0LDTheaaf/HSzJ68pj7w3NbLhV
+	 GvCnU9be4iuq+MCSZi7xvR2l8673QomOLV8K1iFPPJeGy/kbeCek3Su0ez/8gIGZyE
+	 3wFWa5Xu+v/4P5caDU+FZ2M1P29nLZFwVEl5a0Sc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfBUVxq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:53:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58402 "EHLO mail.kernel.org"
+        id S1726121AbfBUV5W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 16:57:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfBUVxq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:53:46 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725802AbfBUV5W (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 16:57:22 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 915E52083E;
-        Thu, 21 Feb 2019 21:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E76642070B;
+        Thu, 21 Feb 2019 21:57:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550786025;
-        bh=HqmzWx1WnbLsrPdHjBxf+JDc5SDbk2yFRHQ+34ezSEo=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=X2ZckhBkLTSFOc4sRSX46kC68N/9tCozM71ZYDjQft23toKHMW1ESlRp2Nm5/lvtz
-         VxZwSJq+Xpe1Yre9GS3e9vjfCxtsSmDVLW+H82NGXNAYvMawWOb+qVq3Gzl+ik7K5V
-         mtb8PJMWyHGLaax+0SKQT6Km2NwERjIbRdwCRWcE=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] clk: mmp2: separate LCDC peripheral clk form the display clock
-Message-ID: <155078602492.77512.6283122570028118811@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <20190121063129.552580-1-lkundrak@v3.sk> <20190121063129.552580-3-lkundrak@v3.sk>
+        s=default; t=1550786242;
+        bh=RrplMlGhdB7Wm9lg4n/L5iMAWtb0cODUzRZ/YstjTBw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Mj303zbgGSH1I9oCIWcLJCNku0eches9tAVOSvYzYRrM2dyh2EG/y5dVf8AZUA60Y
+         ffZpmXOvhNewrTlSKpiJR8Ban9BeTYIsLJSOVlntoFmSblXsJ6AgLPUOSwnIORBnPa
+         9X/2oMA24Z7xN6GhAK4HbUL5GG3OA6JVBcO/ABQA=
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190121063129.552580-3-lkundrak@v3.sk>
-To:     Lubomir Rintel <lkundrak@v3.sk>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Date:   Thu, 21 Feb 2019 13:53:44 -0800
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.0-rc7
+Date:   Thu, 21 Feb 2019 13:57:21 -0800
+Message-Id: <20190221215721.3407-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-01-20 22:31:29)
-> These are in fact two clocks, they shouldn't be exposed as one. One is
-> required for accessing LCD controller registers (peripheral clock), while
-> other (AXI clock) can be optionally used as a pixel clock source for the
-> panel.
->=20
-> LCDC can alternatively use different clocks than the Display 1 AXI clock
-> for generating the pixel clock: the second AXI clock (fixed in this
-> commit too), the HDMI PLL, or the AXI bus clock.
->=20
-> They should really be controlled independently.
->=20
-> Link: https://lists.freedesktop.org/archives/dri-devel/2019-January/20397=
-5.html
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
+The following changes since commit 9ff1a3b4912528f853048ccd9757ba6a2cc75557:
 
-Applied to clk-next
+  clk: qcom: gcc: Use active only source for CPUSS clocks (2019-01-24 11:41:48 -0800)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 65a91e2e597dea62a798a8b771edc44859037e7f:
+
+  clk: at91: fix masterck name (2019-02-20 11:40:21 -0800)
+
+----------------------------------------------------------------
+A few more fixes for clk drivers causing regressions this release.
+Two Allwinner index fixes for A31 and V3 and two Microchip AT91 fixes
+for an incorrect clk parent linkage and a miscalculated number
+of clks.
+
+----------------------------------------------------------------
+Alexandre Belloni (2):
+      clk: at91: fix at91sam9x5 peripheral clock number
+      clk: at91: fix masterck name
+
+Andre Przywara (1):
+      clk: sunxi: A31: Fix wrong AHB gate number
+
+Paul Kocialkowski (1):
+      clk: sunxi-ng: v3s: Fix TCON reset de-assert bit
+
+Stephen Boyd (1):
+      Merge tag 'sunxi-clk-fixes-for-5.0' of https://git.kernel.org/.../sunxi/linux into clk-fixes
+
+ drivers/clk/at91/at91sam9x5.c        | 5 ++---
+ drivers/clk/at91/sama5d2.c           | 4 ++--
+ drivers/clk/at91/sama5d4.c           | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 4 ++--
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 2 +-
+ 5 files changed, 8 insertions(+), 9 deletions(-)
+
+-- 
+Sent by a computer through tubes
