@@ -2,93 +2,90 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE97DC4151A
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7670C4360F
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F63120818
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9014F20855
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:47:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550774876;
+	bh=AcaDa74sLaNQzmj3S2ctQBHylsgm8VAVgDr4WqrS+go=;
+	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
+	b=v+ADxKUw+Gc8bNIxu3MK/ABaXpRvw++GThTE7sy5g26TZBORbcLCwAX0yAuZRDee+
+	 ZvyZz8WETU6qgfAr4YVXF+odXf2JwgtfF4DDpf2Xswi/TCsb96Rgx4hrKhioQe4NyQ
+	 oSivdZSVuTLXrM61h0RtUpC0BhVHogSqOJqC6PrY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbfBUSdz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:33:55 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:46900 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbfBUSdz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 13:33:55 -0500
-Received: by mail-vk1-f196.google.com with SMTP id j68so7107153vke.13;
-        Thu, 21 Feb 2019 10:33:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M+WOkWRBssrtpVfH1qKg/+BBfeLuK8WLv6dFxZ5Q2WU=;
-        b=elKMSPLpmuCAlNoY9DWL3jm7wvLhjF4FDpwkj+zCR2WJQmq16kwTJCAuS/MZagFhrP
-         Mz5stnGIoHf0AzBfl1+oCbGzv4vPRgQXqn2a902ckXscLzJtdpi7sbrQ6HLhhWUtjhD1
-         mVLzzf2pFzRK0RsfCQpvlqmCzOEOEkqy/6OXGRPdHmQ4ZKpZZlKwfmlsG8iD3vHLJYJS
-         XPfB8Ok73Drjrr5wbNlYqUIgOfhxOxS68/1TmW4VyQMk8FA6WtvKkMYXQipcxRD+Z4Yp
-         O1jQpf0qybsODABihvTTmbEHDbPXlU4A2zhluDHimVuNk3tXTdUTcZ+5TcQQPl9/QpyR
-         oezQ==
-X-Gm-Message-State: AHQUAubGEfdDblaMGR0C5NNsghHONfyKMpsJQ9oLoyiK98+xOuyIl7Ln
-        2z6VevlY68n2J/nwZ23PeSnnrD3wmGhSPVnsSpa1Dq1Z
-X-Google-Smtp-Source: AHgI3Iale/6oc0Gtee5i6oMuxDhDTYH3loN3ZwTtpwuKVoiEFCLJY2LGbeVSI17Lw50WTsqie6U7JgDbelslq69XfK8=
-X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr14985576vke.40.1550774034566;
- Thu, 21 Feb 2019 10:33:54 -0800 (PST)
+        id S1726265AbfBUSr4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 13:47:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbfBUSrz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:47:55 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 439962084D;
+        Thu, 21 Feb 2019 18:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550774875;
+        bh=AcaDa74sLaNQzmj3S2ctQBHylsgm8VAVgDr4WqrS+go=;
+        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
+        b=ZDeSdKuNVtSaCBA7Igdki+nZPrp3344VYTt8/Mw55niqOSaftNt5wCq6ObLNw3uzM
+         RJNX1bnWciWkME2gHQAIKbqb0qH4+eCkgV0C3ZVmRxzaxMPktdAu0EK8vE4lqXQDpq
+         IILiF8LwgGhHiSx9nhShbK3CcZq4MqWzBPTG6i/M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Feb 2019 19:33:42 +0100
-Message-ID: <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [git pull] clk: renesas: Updates for v5.1 (take two)
+Message-ID: <155077487453.77512.5035334691458450250@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+References: <20190212102050.32229-1-geert+renesas@glider.be> <CAMuHMdUwNwVQ-4o8WKdH4pEUtk=Jmyq7gy7frXGW82rgu+afVA@mail.gmail.com> <CAMuHMdWy4MQ0FLU-8Yx1oc0Yj2iyn5mydrYwkAyVzn_4JxCpzA@mail.gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAMuHMdWy4MQ0FLU-8Yx1oc0Yj2iyn5mydrYwkAyVzn_4JxCpzA@mail.gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Thu, 21 Feb 2019 10:47:54 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 5:09 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Enum LAST_DT_CORE_CLK needs updating as R8A774C0_CLK_CANFD
-> was recently added and it's the core clock with the highest
-> index.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Quoting Geert Uytterhoeven (2019-02-21 04:36:46)
+> Hi Mike, Stephen,
+>=20
+> On Thu, Feb 21, 2019 at 10:18 AM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Tue, Feb 12, 2019 at 11:48 AM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > > The following changes since commit d9286d9743b6e8cfbf1a13f8db84e9c65c=
+0b09c7:
+> > >
+> > >   clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:0=
+1:08 +0100)
+> > >
+> > > are available in the Git repository at:
+> > >
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers=
+.git tags/clk-renesas-for-v5.1-tag2
+> > >
+> > > for you to fetch changes up to d1de227de8145e661e940377e050286098197e=
+eb:
+> > >
+> > >   clk: renesas: r8a774c0: Add TMU clock (2019-02-05 10:40:05 +0100)
+>=20
+> > I was wondering if you've received my pull request?
+>=20
+> Please ignore, I've just saw it appear in today's clk/clk-next.
+> Thanks!
+>=20
 
-Nice catch!
-You only notice this kind of bug when you start referencing the clock
-from DT, right? At registration time, the clock number space is shared with
-internal core clocks, so no error is detected.
-Can we improve that?
-
-Fixes: 2a6efbc6da5d248c ("clk: renesas: r8a774c0: Add missing CANFD clock")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Mike/Stephen: can you please take this one directly, as it is a fix for
-clk-next?
-
-Fabrizio: Looks like R8A774A1 has the same bug. Care to fix that as well?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sorry, I forgot to send the email where I stated it was pulled into
+clk-next.
