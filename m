@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D966FC4360F
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC34C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E62C20836
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0138620836
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:04:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LUvZB0TS"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="NZSq3n7N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfBUSEf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:04:35 -0500
-Received: from mail-eopbgr40082.outbound.protection.outlook.com ([40.107.4.82]:38912
+        id S1726146AbfBUSEk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 13:04:40 -0500
+Received: from mail-eopbgr40049.outbound.protection.outlook.com ([40.107.4.49]:61888
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726146AbfBUSEe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:04:34 -0500
+        id S1727160AbfBUSEk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:04:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dG/Lu3lEcktBKnjcHI2oMO7uD9T1zCup8IkgEFOJvWU=;
- b=LUvZB0TSNpex/Fzcgtpz8xLEHENIN5Lb6eAwDi2zm1yw3SUnppypMu95U2j+/FRTphLh6G2RX7R4x5GOCQ7mFhog9nVpsxwRvVKcbJCsf2vJq4DKgRnL8UUs41LavysKwLjSleP10WoWutOHEVorQ15U1va4T/4DBwrsnEdMQrY=
+ bh=f4SO+A1BXfvLtvNqz7MHtp5rJIQDpE2V70yBtLw0FfU=;
+ b=NZSq3n7Nqv8eqTIH7esFF+YpleK/YlrVX4CVbWqfJKgNuK1d5eufwoUasnNhM45rvyUx1eXUUlbfFexIxDWEuGkHW0aCZH03v2rQ8i58sv4LOWT1H0geUcci9n7w6Kfg0VjlDLf7YzGQ5HOPzbeJz1zUtqCc+gYFs+BtC8uH4G4=
 Received: from VI1PR04MB4222.eurprd04.prod.outlook.com (52.134.31.21) by
  VI1PR04MB1663.eurprd04.prod.outlook.com (10.164.85.13) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.18; Thu, 21 Feb 2019 18:03:54 +0000
+ 15.20.1622.18; Thu, 21 Feb 2019 18:03:51 +0000
 Received: from VI1PR04MB4222.eurprd04.prod.outlook.com
  ([fe80::b1cb:82a5:aacb:238d]) by VI1PR04MB4222.eurprd04.prod.outlook.com
  ([fe80::b1cb:82a5:aacb:238d%6]) with mapi id 15.20.1643.014; Thu, 21 Feb 2019
- 18:03:54 +0000
+ 18:03:51 +0000
 From:   Aisheng Dong <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-arm-kernel@lists.infradead.org" 
@@ -45,13 +45,12 @@ CC:     "linux-arm-kernel@lists.infradead.org"
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         Aisheng Dong <aisheng.dong@nxp.com>
-Subject: [PATCH 4/4] clk: imx: imx8qxp-lpcg: add parsing clocks from device
+Subject: [PATCH 3/4] clk: imx: imx8qxp: add parsing clocks from device tree
+Thread-Topic: [PATCH 3/4] clk: imx: imx8qxp: add parsing clocks from device
  tree
-Thread-Topic: [PATCH 4/4] clk: imx: imx8qxp-lpcg: add parsing clocks from
- device tree
-Thread-Index: AQHUyg/OXauWfdVZQ0K2EXeEbwi2Cg==
-Date:   Thu, 21 Feb 2019 18:03:54 +0000
-Message-ID: <1550771836-10014-5-git-send-email-aisheng.dong@nxp.com>
+Thread-Index: AQHUyg/MD67g7uqnCE2saCOKw8+KDA==
+Date:   Thu, 21 Feb 2019 18:03:51 +0000
+Message-ID: <1550771836-10014-4-git-send-email-aisheng.dong@nxp.com>
 References: <1550771836-10014-1-git-send-email-aisheng.dong@nxp.com>
 In-Reply-To: <1550771836-10014-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -67,46 +66,46 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a685bf21-8b64-4987-2763-08d69826f139
+x-ms-office365-filtering-correlation-id: f9c43c61-7b6f-4d08-f68c-08d69826ef35
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1663;
 x-ms-traffictypediagnostic: VI1PR04MB1663:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR04MB1663;23:J/dRCsgaxWLtgVG/bQV5bjFpCGIKYM9HUaRN29p?=
- =?iso-8859-1?Q?2eWzOpF0ogkEHo9wUCLP8SkD+yTNbbOKh1lN8s+cyjrpIwlVg8iSELsSOT?=
- =?iso-8859-1?Q?2Z72TfwJKn9037twF6K7cVlxqXFlA/5/4cxsCnejjp7q+Ad0DdAYkojLD6?=
- =?iso-8859-1?Q?sJEAwS72Nx9do5MdITvBlNYHC7GEi9Og3z+uCnryTsz7k2aSSsycPy5mlZ?=
- =?iso-8859-1?Q?xH26rP/+EoMtz5VvaJfgP3FRtfh0iYz4ERSjL0Cu9d6o0ACo2U/zSLslbd?=
- =?iso-8859-1?Q?HtV1wikXrI/DcD4fSnmx0UgFqWhrnIqEOFp7ZbUy7oJ/gD/Oy73lTfDhSF?=
- =?iso-8859-1?Q?JxsuqzC1ewQbntbhnVMqe3Ww7lYSbNGcAo+ozMr5gtmxEJgJhgLoboFnb1?=
- =?iso-8859-1?Q?nG2Z+ua7ls3i7/RDfy/xOsmO0qkrsHaix9J897L7sYi4VtKWkHxLD0zfZZ?=
- =?iso-8859-1?Q?lImJnnEc27eyca+DJUlzco0FbJQ40YhA3aEYP7c1NVX9Oi5h1biD+4WfNA?=
- =?iso-8859-1?Q?w4v3HN/dlj2RHJxtTLVRfqMiIie1Ra2GcGUTVMi5FthXCBcEEXEh0Apd9R?=
- =?iso-8859-1?Q?RS+/NBEMNFeCT+RkMUunAJdNJCuQUlz01/T1QZxEha9tWil2HGbzJ/SRuM?=
- =?iso-8859-1?Q?kTsa1+2X6CS0w2AS0oe2wUuq9jmRrSabIVC1V2WotRx30AsNVKLkFN7vfK?=
- =?iso-8859-1?Q?gIEe8BWkesyVAEB63HmXTYk4Z6NcYkX2AH86FvEKCYGUTWe+ZABranTo9y?=
- =?iso-8859-1?Q?1l0Un71gWmTahwkLteD30lZm0QQrpnLT63+SH/V5EUUuqj4Sd0MNnECTSx?=
- =?iso-8859-1?Q?uGsEbIc6rLvKgYT8qCB/JkUwu1A8LH/ek/LVCsfStIwf8Sy81wterOp0LH?=
- =?iso-8859-1?Q?WGBSaW53sbD7C/6AhE7CSkaTYKzy+G5UyEHz98r+HX4GheNG50NynRHx9h?=
- =?iso-8859-1?Q?C7JQ7dDb7q+zY9t2ogSRkD9tjAElTXiWDNdTfrfPRL0aaytK7Fx51rNYYy?=
- =?iso-8859-1?Q?7atgOcoLRCsAVrkHMg2xgTRBBro29dyDPRshqJuvS2a3QMmMQLvFURIAJI?=
- =?iso-8859-1?Q?YxWbLJoF2S+jcTTlin8Tm9fsQ9X35qLUFaPHiIRsyWgJwcRCkQULwN47NV?=
- =?iso-8859-1?Q?BJhNB2NCtIrS2o5PjirO1ThoJYloaC0b5TgXz8+9IE1+fDpJvm5zlH5+4q?=
- =?iso-8859-1?Q?NL94O7qNEd+yVN8Crs1nXUNxIBRXCWzIkZeGvc8W6DNPuxfGryamqYsENK?=
- =?iso-8859-1?Q?cMREyG6T8XoGPqDvpitmLV2Xc6fXY7tHJa5bnXBjW2tvupAcE6EcuzB4gD?=
- =?iso-8859-1?Q?YcoYJPRx4eecnBurpk++VmkjsiLtPbX6b6lpUWSxdsQFQ=3D=3D?=
-x-microsoft-antispam-prvs: <VI1PR04MB1663D9FE04A6098966D1A6A2807E0@VI1PR04MB1663.eurprd04.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR04MB1663;23:f3lgCKkz5T+tVWh+N4qFW6+nRXmz1EJHbQXpUPY?=
+ =?iso-8859-1?Q?Qw4vx2u03qw48kuF+v5vVFetNvVo/xoC7ekgr8rjC9c7H1aJlhkVYn/H7r?=
+ =?iso-8859-1?Q?w0MXK+p4E6DUEh4mgUNheGnh0+ul8ke/jo/BowCUy+aYmGHnPGAMfKGK5S?=
+ =?iso-8859-1?Q?JZlzXmS1lbtkRzfihQtQyMM22sX6IP+BgtudVLdBnsIJ4Z2k+12OHKjrjO?=
+ =?iso-8859-1?Q?GYFtdKqVA7TR1Oe6H3Iyc9t7k8AtqXsgdjicMOJsxpIpKO2vIO6Rc/BD8u?=
+ =?iso-8859-1?Q?YsdsyaoPc++m35/yENfuH4nwTm69mExMhQjJh39fNP8WHlMiNxWZ0fquTq?=
+ =?iso-8859-1?Q?nUuaDXiLMcPh4jtcjUQpcPH4uXx6R4TubuQrUMNfdXp3PQ6J62cPX0gAEw?=
+ =?iso-8859-1?Q?+Wh/Im10b/ZlHHRGDZ6LXB/VtUnjfQVpR0QjDBElAy7rgNbQ1+MUwgBR1e?=
+ =?iso-8859-1?Q?BfkKBsQB9xOAEuzT33/JE0g5kex8iZgnp5Fr9Ipfpwg8kgevuWZU1Ki/Kx?=
+ =?iso-8859-1?Q?cDLkLv3nlsibj2tkndCinTi5xJzwp8ixYs3BWfI97IimYY2z156VO/idZG?=
+ =?iso-8859-1?Q?hKIzT3e6ttV3kTDIdihkfpBlSc2MqakIkhn8p5N96TgIcODv1VxPnKW6az?=
+ =?iso-8859-1?Q?u2yYAyF7GPjcOEoGG0J+kY9cw1Zi5eWPMLjSZA4yNmhEl3rJU3o7BYL0jq?=
+ =?iso-8859-1?Q?FvW2ixmQTm/htcPIsNf1d7S9pB6A3shvzBpPf5GMng6+8WflsOOoFaurEK?=
+ =?iso-8859-1?Q?6ZJuGXjVpaSX4BbBQRHCSStK+Y4gLBTTJfcQ2nB4rt+Wm/eMfwqBZ0L6BC?=
+ =?iso-8859-1?Q?nK8/WFoW92MnECe6ZM0BHbu24V96KBfNqsBcpcVa4BPAfkOACMTWWCcz5S?=
+ =?iso-8859-1?Q?Qegw6eWesm70FJCuxcoHU7hRROgzbi++fCiqxqw3vBAHMVZAcbkm997N3R?=
+ =?iso-8859-1?Q?nbYBd0Su67ERweS/kz6AQmzREeStxN71Jhm01Q5v5dqAdBaMtETOcUzzsK?=
+ =?iso-8859-1?Q?zRRM5YiHfk9WjyEtu0kqgESRMrgWcn1vWq5dRIl12dq6h/ZGf8L9q5c5bk?=
+ =?iso-8859-1?Q?tYTfo+KzKoLvOOfutTKJXdiXdEXzPd3TtJN2eyrDgJYOxStulmkmYizHZX?=
+ =?iso-8859-1?Q?WDlvVwk2Nyfy7ynmPWA9Ma8QbO6t0f1S3L7rSRkTNj9wuqwqscKwbTIUdH?=
+ =?iso-8859-1?Q?Yvyj1NoMMR/PlkRzRxn+9VNWuCejtQ6zuO9d4fOMXLrM+mbiczTiisJ7a6?=
+ =?iso-8859-1?Q?uCSFRf4NqDFlmrcmBEs+NLVSF6qymsnW0hc+VvWw3lXXc/YfExJ4wLnEnE?=
+ =?iso-8859-1?Q?Q+T5YA0AlN1QUmuTOHf+k5R/JrzHN0LYTPEti8IQdMYVQ=3D=3D?=
+x-microsoft-antispam-prvs: <VI1PR04MB16634F60D76EDAC5D79FA37A807E0@VI1PR04MB1663.eurprd04.prod.outlook.com>
 x-forefront-prvs: 09555FB1AD
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(366004)(39860400002)(346002)(189003)(199004)(2906002)(8936002)(186003)(81156014)(4326008)(71200400001)(71190400001)(6506007)(97736004)(99286004)(102836004)(26005)(50226002)(2351001)(6512007)(68736007)(81166006)(386003)(3846002)(14454004)(6116002)(476003)(316002)(8676002)(5660300002)(478600001)(54906003)(2616005)(25786009)(44832011)(36756003)(305945005)(446003)(105586002)(106356001)(6486002)(486006)(76176011)(7736002)(53936002)(66066001)(52116002)(256004)(2501003)(6436002)(5640700003)(11346002)(6916009)(86362001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1663;H:VI1PR04MB4222.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eJatJiyyfYfCQEGnq2xniWLbV2m8e/m9JZ5TsfemwjrcRWzq2yT9dZsFN3Y2XZRH4Oru+pAYLLbpNARWa804Vcl7AzFFNx3Qc8hK1ZHOpVs22+z5BzoqWVKLr7Woi5WKONfyR4/AJR3fGfA/xquaPKiJ3BdklpvDHry53bk8kzIEaMN+L7grlSlNl0x666FgPIyHrYvwOkjYy2y3YFcXv4JkLwEMUu+kV34fX3tt1EZTPq7aotnaX/pMLYcCBar7Z1k+0zBXKLlVqVn1dKb/cB2JAF1/JPEgGqjl/b2GEz8asjeQ/PZx+FQ00+iUP5zle8DrnanPPKQ7bYQq9rt0palYyDnRQ2PnxJ5tv5oRaGCcxWex3GgvTIyOKFkkaZZTkzke/jPfl2fw4hzKp0+UxVeOx77kCswWr8tD6kdSa3A=
+x-microsoft-antispam-message-info: HIlT1084QzVrH6k2yfq6f8ZcAQEwzUTp1PhGZ+B4qf3aUyMYQd5nfXbDIv8JJCvTYUmJpVAkHC0KdY3JBkaIPa0NTY4dCSJRYoehg8eXiarDV3DROP3OinBkzHfzmez1uESLZOShdmQRj7Tb5O8c54yASv0xKT6QIUtoA3qrjZVqS4F7i3D8OlMebfP6c1WAVdutxbk2iYetEa3IoCekYJk++jhhz6xmvtYZdPfSd610N9hohbJYC5BP3a/1Y3u6v7Z+rUj/ChTmHFCZvNJAnB9RrvXDcqDWC+dCqMWSJ7VRyEMAzMUHNLgnzm68cylZGH4E41NpXknAZC2yZRz27ywE2DuHSkkIAoLmZbwAQUzYdyLjhaf58fGaNkgISN6kVtuANnhB7fofI41EYVWX2JESxPWqoobr/StZYYUHpE4=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a685bf21-8b64-4987-2763-08d69826f139
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 18:03:51.4147
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9c43c61-7b6f-4d08-f68c-08d69826ef35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 18:03:48.0344
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -117,7 +116,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add parsing clocks from device tree.
+add parsing clocks from device tree
 
 Cc: Stephen Boyd <sboyd@kernel.org>
 Cc: Shawn Guo <shawnguo@kernel.org>
@@ -125,138 +124,75 @@ Cc: Sascha Hauer <kernel@pengutronix.de>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 90 ++++++++++++++++++++++++++++++++++=
+ drivers/clk/imx/clk-imx8qxp.c | 43 +++++++++++++++++++++++++++++++++++++++=
 ++++
- 1 file changed, 90 insertions(+)
+ 1 file changed, 43 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8q=
-xp-lpcg.c
-index 99c2508..dbbd3bd 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -9,6 +9,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -152,6 +153,88 @@ static const struct imx8qxp_ss_lpcg imx8qxp_ss_lsio =
-=3D {
- 	.num_max =3D IMX_LSIO_LPCG_CLK_END,
- };
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+index 83e2ef9..7c5f8c6 100644
+--- a/drivers/clk/imx/clk-imx8qxp.c
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -17,17 +17,60 @@
+ #include <dt-bindings/clock/imx8-clock.h>
+ #include <dt-bindings/firmware/imx/rsrc.h>
 =20
-+#define IMX_LPCG_MAX_CLKS	8
-+
-+static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
-+				       struct device_node *np)
++static int imx_scu_parse_clks_from_dt(struct device *dev,
++				      const struct device_node *np)
 +{
-+	const char *output_names[IMX_LPCG_MAX_CLKS];
-+	const char *parent_names[IMX_LPCG_MAX_CLKS];
-+	unsigned int bit_offset[IMX_LPCG_MAX_CLKS];
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_hw **clk_hws;
-+	struct resource *res;
-+	void __iomem *base;
-+	bool autogate;
-+	int count;
++	struct clk_hw *hw;
++	const char *name;
++	int clk_type;
++	int rsrc_id;
 +	int ret;
-+	int i;
 +
-+	if (!of_device_is_compatible(np, "fsl,imx8qxp-lpcg"))
-+		return -EINVAL;
-+
-+	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base =3D devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	count =3D of_property_count_u32_elems(np, "bit-offset");
-+	if (count < 0) {
-+		dev_err(&pdev->dev, "failed to count clocks\n");
++	ret =3D of_property_read_u32(np, "rsrc-id", &rsrc_id);
++	if (ret) {
++		dev_err(dev, "failed to parse rsrc-id\n");
 +		return -EINVAL;
 +	}
 +
-+	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hws, count),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num =3D count;
-+	clk_hws =3D clk_data->hws;
-+
-+	ret =3D of_property_read_u32_array(np, "bit-offset", bit_offset,
-+					 clk_data->num);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to read clocks bit-offset\n");
++	ret =3D of_property_read_u32(np, "clk-type", &clk_type);
++	if (ret) {
++		dev_err(dev, "failed to parse clk-type\n");
 +		return -EINVAL;
 +	}
 +
-+	ret =3D of_clk_parent_fill(np, parent_names, clk_data->num);
-+	if (ret !=3D clk_data->num) {
-+		dev_err(&pdev->dev, "failed to get clock parent names\n");
++	ret =3D of_property_read_string(np, "clock-output-names", &name);
++	if (ret) {
++		dev_err(dev, "failed to parse clock-output-names\n");
 +		return -EINVAL;
 +	}
 +
-+	ret =3D of_property_read_string_array(np, "clock-output-names",
-+					    output_names, clk_data->num);
-+	if (ret !=3D clk_data->num) {
-+		dev_err(&pdev->dev, "failed to read clock-output-names\n");
++	hw =3D imx_clk_scu(name, rsrc_id, clk_type);
++	if (IS_ERR(hw)) {
++		dev_err(dev, "failed to register clock\n");
 +		return -EINVAL;
 +	}
 +
-+	autogate =3D of_property_read_bool(np, "hw-autogate");
-+
-+	for (i =3D 0; i < clk_data->num; i++) {
-+		if (bit_offset[i] > 31) {
-+			dev_warn(&pdev->dev, "invalid bit offset of clock %d\n",
-+				 i);
-+			return -EINVAL;
-+		}
-+
-+		clk_hws[i] =3D imx_clk_lpcg_scu(output_names[i],
-+					      parent_names[i], 0, base,
-+					      bit_offset[i], autogate);
-+		if (IS_ERR(clk_hws[i])) {
-+			dev_warn(&pdev->dev, "failed to register clock %d\n",
-+				 i);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
-+					   clk_data);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
 +}
 +
- static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
+ static int imx8qxp_clk_probe(struct platform_device *pdev)
  {
- 	struct device *dev =3D &pdev->dev;
-@@ -162,8 +245,14 @@ static int imx8qxp_lpcg_clk_probe(struct platform_devi=
-ce *pdev)
- 	struct resource *res;
+ 	struct device_node *ccm_node =3D pdev->dev.of_node;
+ 	struct clk_hw_onecell_data *clk_data;
  	struct clk_hw **clks;
- 	void __iomem *base;
-+	int ret;
- 	int i;
++	u32 clock_cells;
+ 	int ret, i;
+=20
+ 	ret =3D imx_clk_scu_init();
+ 	if (ret)
+ 		return ret;
 =20
 +	/* try new binding to parse clocks from device tree first */
-+	ret =3D imx_lpcg_parse_clks_from_dt(pdev, np);
-+	if (!ret)
-+		return 0;
++	of_property_read_u32(ccm_node, "#clock-cells", &clock_cells);
 +
- 	ss_lpcg =3D of_device_get_match_data(dev);
- 	if (!ss_lpcg)
- 		return -ENODEV;
-@@ -201,6 +290,7 @@ static const struct of_device_id imx8qxp_lpcg_match[] =
-=3D {
- 	{ .compatible =3D "fsl,imx8qxp-lpcg-adma", &imx8qxp_ss_adma, },
- 	{ .compatible =3D "fsl,imx8qxp-lpcg-conn", &imx8qxp_ss_conn, },
- 	{ .compatible =3D "fsl,imx8qxp-lpcg-lsio", &imx8qxp_ss_lsio, },
-+	{ .compatible =3D "fsl,imx8qxp-lpcg", NULL },
- 	{ /* sentinel */ }
- };
-=20
++	if (clock_cells =3D=3D 0)
++		return imx_scu_parse_clks_from_dt(&pdev->dev, ccm_node);
++
+ 	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hws,
+ 				IMX_SCU_CLK_END), GFP_KERNEL);
+ 	if (!clk_data)
 --=20
 2.7.4
 
