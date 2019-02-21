@@ -2,51 +2,176 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BF7C10F07
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 02:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B0AC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 08:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5722E2147A
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 02:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7242D21841
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 08:36:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNzt0tn1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbfBUCzv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Feb 2019 21:55:51 -0500
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:25709 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfBUCzv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Feb 2019 21:55:51 -0500
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1L2tYsm069056;
-        Thu, 21 Feb 2019 11:55:35 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
- Thu, 21 Feb 2019 11:55:34 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
-Received: from [192.168.1.2] (119.104.232.153.ap.dti.ne.jp [153.232.104.119])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1L2tYhk069049
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 21 Feb 2019 11:55:34 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Subject: Re: [PATCH v2] clk: fractional-divider: check parent rate only if
- flag is set
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190210153806.24201-1-katsuhiro@katsuster.net>
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Message-ID: <4d168495-ade8-bea0-997a-e28feb38c8ee@katsuster.net>
-Date:   Thu, 21 Feb 2019 11:55:34 +0900
+        id S1727219AbfBUIg3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 03:36:29 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46152 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBUIg3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 03:36:29 -0500
+Received: by mail-ed1-f66.google.com with SMTP id f2so22305580edy.13;
+        Thu, 21 Feb 2019 00:36:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9lbUimjtwre8R/NsVQ9Izb5SBgkSg5qu0O3hF49wMwg=;
+        b=VNzt0tn1LCZLa7t7NXyXSYFnx13q982HMjGjZw4/iCX3ffJdbr1+SvCVPES3MLRRmX
+         rC2uIucorjIeMULrGosfbMd0D+iXNUhc5Kv/9DuAhw6iDKCFARPEdHyZx6XKDefAeNvH
+         jXixUxq3Bun95reecjgfLiBrI3cPmnhsN0opxP81u/9cSkc8tvBl7QdxNpcZ/WLdKWLD
+         bZ5c2vB4ihbQ7IyZpbVHL+PxCylpEAVu+MU47HAkOP8Tmhc48An5e+Lue9wEhzwhVs8t
+         8wWdW8DMEM5gau4RBSnQ5TabkNILHXwNsKtI2+i1F4+0YI714EHYlTDNShNaVVjqkPcr
+         7dmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=9lbUimjtwre8R/NsVQ9Izb5SBgkSg5qu0O3hF49wMwg=;
+        b=BNnfU5VV3V2VsflQZY5bp6VWe0zuotJcGXQwcrj+soHlAPtkF65F7gYOdE2FnDfEg0
+         GYQHhVJz4UQ7B6EnIifyB24jzyce8gHBBY8W15lw0Gal2G0gHUBp8GCNKZ2ewrzHPjP5
+         AYbpGASdLS0kW+Js4hf0u1z4gk0Xw5Aj6KtqQG9Qei+FkmOz5pdyX0PAI0+1jy7nimBg
+         hn1u9HrXiIdJ1L09+ay9xlnWbuPbndFkI0fEVJQkr5gO2GMNxi0jfbbazv/F4kyr6QhW
+         dEOwieaUSEkHmemgnznc2cWApba6zjMUlM8+ZfAEAeDOrbWNeNc8HFleKXOpV1OhBVuN
+         ZzCw==
+X-Gm-Message-State: AHQUAuZK9AAr0q1OtAkHAqBR+1SL6JGkTAP+iEF5exhvOC1VIb/uMVSk
+        /YddRZaETZerJ6QccNRS52uDzQAz
+X-Google-Smtp-Source: AHgI3Ia3SsLubOQAvmazpI1OskOq+OYcNBtXXQhXLYlyYC5xS9wwAsT6WObkKw6jO7sVXyFJRJ+G/g==
+X-Received: by 2002:a50:b4f1:: with SMTP id x46mr30957400edd.289.1550738186604;
+        Thu, 21 Feb 2019 00:36:26 -0800 (PST)
+Received: from ziggy.stardust ([37.223.146.9])
+        by smtp.gmail.com with ESMTPSA id w24-v6sm4711175eja.71.2019.02.21.00.36.24
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 00:36:25 -0800 (PST)
+Subject: Re: [PATCH v4 00/12] Mediatek MT8183 clock and scpsys support
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org
+References: <20190201083016.25856-1-weiyi.lu@mediatek.com>
+ <20190201083016.25856-2-weiyi.lu@mediatek.com>
+ <155069033021.77512.14493210110678229730@swboyd.mtv.corp.google.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ jrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <b7abe484-71c1-5ec0-796c-544f1ac5d6f5@gmail.com>
+Date:   Thu, 21 Feb 2019 09:36:24 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190210153806.24201-1-katsuhiro@katsuster.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <155069033021.77512.14493210110678229730@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -54,116 +179,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ping...
 
-On 2019/02/11 0:38, Katsuhiro Suzuki wrote:
-> Custom approximation of fractional-divider may not need parent clock
-> rate checking. For example Rockchip SoCs work fine using grand parent
-> clock rate even if target rate is greater than parent.
+
+On 20/02/2019 20:18, Stephen Boyd wrote:
+> Quoting Weiyi Lu (2019-02-01 00:30:04)
+>> This series is based on v5.0-rc1 and most of changes are extracted from series below
+>> (clock/scpsys common changes for both MT8183 & MT6765)
+>> https://patchwork.kernel.org/patch/10528495/
+>> (clock support of MT8183)
+>> https://patchwork.kernel.org/patch/10549891/
+>>
+>> The whole series is composed of
+>> clock common changes for both MT8183 & MT6765 (PATCH 1-3),
+>> scpsys common changes for both MT8183 & MT6765 (PATCH 4),
+>> clock support of MT8183 (PATCH 5-8),
+>> scpsys support of MT8183 (PATCH 9-11) and
+>> resend a clock patch long time ago(PTACH 12).
 > 
-> This patch checks parent clock rate only if CLK_SET_RATE_PARENT flag
-> is set.
-> 
-> For detailed example, clock tree of Rockchip I2S audio hardware.
->    - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
->    - i2s1_div is integer divider can divide N (N is 1~128).
->      Input clock is CPLL or GPLL. Initial divider value is N = 1.
->      Ex) PLL = CPLL, N = 10, i2s1_div output rate is
->        CPLL / 10 = 1.2GHz / 10 = 120MHz
->    - i2s1_frac is fractional divider can divide input to x/y, x and
->      y are 16bit integer.
-> 
-> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
-> GPLL --> |          | ,--------------'    |          |
->                        `--> i2s1_frac ---> |          |
-> 
-> Clock mux system try to choose suitable one from i2s1_div and
-> i2s1_frac for master clock (MCLK) of I2S1.
-> 
-> Bad scenario as follows:
->    - Try to set MCLK to 8.192MHz (32kHz audio replay)
->      Candidate setting is
->      - i2s1_div: GPLL / 60 = 8.192MHz
->      i2s1_div candidate is exactly same as target clock rate, so mux
->      choose this clock source. i2s1_div output rate is changed
->      491.52MHz -> 8.192MHz
-> 
->    - After that try to set to 11.2896MHz (44.1kHz audio replay)
->      Candidate settings are
->      - i2s1_div : CPLL / 107 = 11.214945MHz
->      - i2s1_frac: i2s1_div   = 8.192MHz
->        This is because clk_fd_round_rate() thinks target rate
->        (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
->        and returns parent clock rate.
-> 
-> Above is current upstreamed behavior. Clock mux system choose
-> i2s1_div, but this clock rate is not acceptable for I2S driver, so
-> users cannot replay audio.
-> 
-> Expected behavior is:
->    - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
->      Candidate settings are
->      - i2s1_div : CPLL / 107          = 11.214945MHz
->      - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
->                   Change i2s1_div to GPLL / 1 = 491.52MHz at same
->                   time.
-> 
-> If apply this commit, clk_fd_round_rate() calls custom approximate
-> function of Rockchip even if target rate is higher than parent.
-> Custom function changes both grand parent (i2s1_div) and parent
-> (i2s_frac) settings at same time. Clock mux system can choose
-> i2s1_frac and audio works fine.
-> 
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> ---
->   drivers/clk/clk-fractional-divider.c | 2 +-
->   drivers/clk/clk.c                    | 8 ++++++++
->   include/linux/clk-provider.h         | 1 +
->   3 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-> index 545dceec0bbf..fdfe2e423d15 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -79,7 +79,7 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
->   	unsigned long m, n;
->   	u64 ret;
->   
-> -	if (!rate || rate >= *parent_rate)
-> +	if (!rate || (!clk_hw_can_set_rate_parent(hw) && rate >= *parent_rate))
->   		return *parent_rate;
->   
->   	if (fd->approximation)
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d2477a5058ac..070c0cb29ee8 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -518,6 +518,14 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
->   }
->   EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
->   
-> +bool clk_hw_can_set_rate_parent(struct clk_hw *hw)
-> +{
-> +	unsigned long flags = clk_hw_get_flags(hw);
-> +
-> +	return flags & CLK_SET_RATE_PARENT;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_can_set_rate_parent);
-> +
->   /*
->    * Helper for finding best parent to provide a given frequency. This can be used
->    * directly as a determine_rate callback (e.g. for a mux), or from a more
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index e443fa9fa859..693a51937ded 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -808,6 +808,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
->   void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
->   void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
->   			   unsigned long max_rate);
-> +bool clk_hw_can_set_rate_parent(struct clk_hw *hw);
->   
->   static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
->   {
+> What's the merge plan here? Do you want me to apply these patches to clk
+> tree? Will someone be sending me a pull request for mediatek clk changes
+> this cycle? It's getting pretty late for much of anything making this
+> upcoming merge window.
 > 
 
+As far as I can see, the clock patches are independent, so I think it is OK to
+take them. SCPSYS patches will go through my tree once they are in shape.
+
+Do you prefer to get pull requests for clock patches? I wasn't aware of that.
+But if you prefer that, we can find someone who prepares every merge window a
+pull request.
+
+Regards,
+Matthias
