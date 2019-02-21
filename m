@@ -2,96 +2,69 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFA4C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D9BC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45AF2081B
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3DEF20836
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550785444;
-	bh=9zxz3UN/CEWlIByBWZuZX/fn6rZgTADee+6kemEtPg0=;
+	s=default; t=1550785718;
+	bh=gXPgVC1drdiwat/q9UpDLdfvvZBzgovUIIFissx019M=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=ZHgtuUxGu34JwwLTGRRZYf2EcIcgBxKYkEwi2unEeyFj2iqafd4k8XqEGXS3yxoNZ
-	 pnQyjmG89CIbGqvDrmW2AG5I+fdqTqx4wBWGVLWyLLV2VE4GHWsHS1dReUEv+aiSol
-	 GdSunYet49Bso51SVPplYgE2PHbcbhkHC2BhQCgk=
+	b=Oo3tFtRpGxZMBTYS1qjbXQ/7JDkjJ9sOSFpIz3RKO6cZaFBSYJUSw51zDV/ZK+vIK
+	 tnTtMc+/Kr5Z9jtB88vOF9CM29nL792klbt9Kbscpb80K9Wjifsp3KZQ/CuHEzip0l
+	 GVkG4//O1c7rn0XjA0d3yjpcxRwOBmSuIazEMddw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbfBUVoE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:44:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51934 "EHLO mail.kernel.org"
+        id S1726295AbfBUVsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 16:48:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfBUVoE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:44:04 -0500
+        id S1725802AbfBUVsh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 16:48:37 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D1792080F;
-        Thu, 21 Feb 2019 21:44:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D81BE2080F;
+        Thu, 21 Feb 2019 21:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550785443;
-        bh=9zxz3UN/CEWlIByBWZuZX/fn6rZgTADee+6kemEtPg0=;
+        s=default; t=1550785717;
+        bh=gXPgVC1drdiwat/q9UpDLdfvvZBzgovUIIFissx019M=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=bYP2nwGAkhPJape5j1b4UOEQuR7Y5m8jIe5SWEkMM+vNBbLNtlcfgCizrQ/DgX2Pc
-         P3Mz4ByNhkl+dPfn4oOfrX2IdaoaPnGP/Qh4Xdei0O7X+ra/leNDAWwNeRFBOG+Jsc
-         Kk32fSAhle4Vu+35i+C3uJvzMCJDmEbLYmg9qiHM=
+        b=haxSBo1kbhH2pk2D/DATWbxAAka+KJdg6yd+DQg/gVtUfrc1nW8yIb4vLIMWG0Osf
+         hgRBFr4ZBjD6mibmO4YnJckBn1da4k2h83sacUxEpvts7BDRCZcJ4/NRjT8ZY95RDw
+         nJtdjkX+K+qlp6oNBkfVDBoQhhuJF5OFIelGmcnU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
-Message-ID: <155078544270.77512.5446420781034016673@swboyd.mtv.corp.google.com>
+Subject: Re: [GIT PULL] clk: ti: updates for v5.1
+Message-ID: <155078571607.77512.12268241822646115038@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <20190211181531.GA3238@embeddedor>
+References: <64201386-3f8d-6f0b-3e4a-447a78722a41@ti.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190211181531.GA3238@embeddedor>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Date:   Thu, 21 Feb 2019 13:44:02 -0800
+In-Reply-To: <64201386-3f8d-6f0b-3e4a-447a78722a41@ti.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "tony@atomide.com" <tony@atomide.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+Date:   Thu, 21 Feb 2019 13:48:36 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gustavo A. R. Silva (2019-02-11 10:15:31)
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
+Quoting Tero Kristo (2019-02-15 11:18:11)
+> Hi Stephen, Mike,
 >=20
-> This patch fixes the following warnings:
+> Please pull these late TI clock driver changes towards v5.1 merge=20
+> window. Contains one patch against hwmod core, which has been acked by=20
+> the maintainer.
 >=20
-> drivers/clk/samsung/clk-s3c2443.c: In function =E2=80=98s3c2443_common_cl=
-k_init=E2=80=99:
-> drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fall=
- through [-Wimplicit-fallthrough=3D]
->    samsung_clk_register_alias(ctx, s3c2450_aliases,
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->      ARRAY_SIZE(s3c2450_aliases));
->      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
->   case S3C2416:
->   ^~~~
->=20
-> Warning level 3 was used: -Wimplicit-fallthrough=3D3
->=20
-> Notice that, in this particular case,  the code comment is modified
-> in accordance with what GCC is expecting to find.
->=20
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
 
-Applied to clk-next
-
+Thanks. Pulled into clk-next.
