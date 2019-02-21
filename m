@@ -3,87 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A975C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5EDC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26DD420836
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A3CE20818
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 21:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550783425;
-	bh=4/wBKIrAjXYWFrYaS/gZt2IYII13yKOy67ryd3L2+D8=;
+	s=default; t=1550784795;
+	bh=sA7VhBFf+IzaFqjsolIFDiXiFvP2LNW92/ovKseyWus=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=UraDSBjU3PD8my35lQxylZV3CU/J2NNwYM4g3FqseB0nXQ43NQ5719FxwG5Q30Mx0
-	 n60IXlbi0wmOjWoTp1au0R5ae3Je7PI1FBh0HDuNMoJPcXbPMczcarXII9X8z1d+8S
-	 9SMhUNCfqL71FNrpaAUbEcXG4PozlmewaBULPhUs=
+	b=pF3cNg5cJnI23Yt5XfPnWv/nBlwbPWslKVlRgL5d1Ne7APhYV0A9PQEw27YfBBn4C
+	 KUuKDk/IeTPoqpm0cVL2NEiNsHB7ZLVNcOPCORKUeZIG6dT/EWBe9BJTjv3+04GBNa
+	 Qnwonx/0Ra35v3AdpOVbiXZo4y13ByYPPG4QJjng=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbfBUVKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:10:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35208 "EHLO mail.kernel.org"
+        id S1726075AbfBUVdK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 16:33:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbfBUVKY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:10:24 -0500
+        id S1725943AbfBUVdK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 16:33:10 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB1E82080F;
-        Thu, 21 Feb 2019 21:10:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FBA720818;
+        Thu, 21 Feb 2019 21:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550783424;
-        bh=4/wBKIrAjXYWFrYaS/gZt2IYII13yKOy67ryd3L2+D8=;
+        s=default; t=1550784789;
+        bh=sA7VhBFf+IzaFqjsolIFDiXiFvP2LNW92/ovKseyWus=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=AeKZ6+RWOveZ8XeDLaeOTv+aqT0JS+m9Mk4y+DFVVMp5aTI48OWUebdpRRTclRPvF
-         wdspA/InDX1lNdITjlqWnnvr8Tf7WT1RlXcDP/woK6wskqzQPkbsBclw3C5Eg3MZjN
-         DiWemwrHhSfgOZONFz+lpeI8g2kBlV6OYE/h29kE=
+        b=CqTBnm1yyJ4F47xyYK4nu0S563a3rDP+0ij+o/g5ky3FiG0N06GQ61oeviAF3L7G0
+         hp9h5/JdB1xwCeIJkqPd2PAhkU7iXK77AU/P2IwMV55NXlLrxfMfbuh3j+JgXSPKM0
+         f0IH2w3lqBJOaD8qcR0VVshy4D5TfxNQYtq94y5U=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
-Message-ID: <155078342316.77512.8478244735968237818@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5: Fix possible NULL pointer exception on platform_device_alloc() failure
+Message-ID: <155078478830.77512.13175629638067796591@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com> <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
+References: <1550749552-8133-1-git-send-email-krzk@kernel.org> <1550749552-8133-2-git-send-email-krzk@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+In-Reply-To: <1550749552-8133-2-git-send-email-krzk@kernel.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Date:   Thu, 21 Feb 2019 13:10:23 -0800
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Date:   Thu, 21 Feb 2019 13:33:08 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-02-21 10:33:42)
-> On Wed, Feb 20, 2019 at 5:09 PM Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com> wrote:
-> > Enum LAST_DT_CORE_CLK needs updating as R8A774C0_CLK_CANFD
-> > was recently added and it's the core clock with the highest
-> > index.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Quoting Krzysztof Kozlowski (2019-02-21 03:45:51)
+> During initialization of subdevices if platform_device_alloc() failed,
+> returned NULL pointer will be later dereferenced.  Add proper error
+> paths to exynos5_clk_register_subcmu().  The return value of this
+> function is still ignored because at this stage of init there is nothing
+> we can do.
 >=20
-> Nice catch!
-> You only notice this kind of bug when you start referencing the clock
-> from DT, right? At registration time, the clock number space is shared wi=
-th
-> internal core clocks, so no error is detected.
-> Can we improve that?
->=20
-> Fixes: 2a6efbc6da5d248c ("clk: renesas: r8a774c0: Add missing CANFD clock=
-")
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> Mike/Stephen: can you please take this one directly, as it is a fix for
-> clk-next?
->=20
+> Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Yep. Applied to clk-renesas and merged up.
+Applied to clk-next
 
