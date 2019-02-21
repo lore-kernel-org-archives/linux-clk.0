@@ -2,103 +2,89 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E70C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D03ABC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 12:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7315520855
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550749582;
-	bh=tG8WG6JLvjiga0m3PXtQzUYRvGvnMVYjtxeMvSz9qvQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TFALkeyWr5mlM2WSqd03fdUjgvee066xKmAbJHipIiCay9RP2Y7r/e2p/hLDGbZSn
-	 lEaASrhrBT/POtmpn2SkS1yv8BDkMAG1fPj6OvJtM9QURPAbo58fFw4fCfpbMcekS8
-	 X3s25iHwZGntsDeTI2t+196ySSvcI6SzXIqQcSjI=
+	by mail.kernel.org (Postfix) with ESMTP id A22D32085A
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 12:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbfBULqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:46:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726697AbfBULqB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:46:01 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 104B02148D;
-        Thu, 21 Feb 2019 11:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550749561;
-        bh=tG8WG6JLvjiga0m3PXtQzUYRvGvnMVYjtxeMvSz9qvQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZthLHshe9B5RyQqem0wd2tlKcJIiil5pMXO1Q57UQaqcaOik8LknXMuoFUap6Q1OJ
-         KzC53cnbIpZQKDakUbQ6OAPoS2Jz4rasjbSMHrNdipIIfkkjZbrmRa9puBUlSFOPvd
-         EVax4flRmHnJf8+6EZEJpBj0QeJU141ClyiEcPoQ=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: samsung: exynos5: Fix possible NULL pointer exception on platform_device_alloc() failure
-Date:   Thu, 21 Feb 2019 12:45:51 +0100
-Message-Id: <1550749552-8133-2-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550749552-8133-1-git-send-email-krzk@kernel.org>
-References: <1550749552-8133-1-git-send-email-krzk@kernel.org>
+        id S1726224AbfBUMhA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 07:37:00 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:40701 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUMhA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 07:37:00 -0500
+Received: by mail-ua1-f65.google.com with SMTP id c5so7654541uaq.7;
+        Thu, 21 Feb 2019 04:36:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Lh250ClGOklEUw2oJcXX6UQs+j9ucVz3tgP521RJxuk=;
+        b=F980luFBmP/zf/HafbBP+dv1HpVM6168d8dh030pSErVMldLkRp6619UNkxBwiSJp/
+         qCzXJdd4wXlHTJR04uluKhIEh/E+hKLJ3XMQe5xvnyj4qcL5I/QQUaF2vZ7ce6hSYG8J
+         FG6lI5Wi0nc1dlO3lDerJzcMKWVIAcgCp8Rx69PK0U3mQD4PtjLS6jhBDmr3h2ZioBST
+         ZANNqZqdwCpwZzFAMDvdUwX3SSa6AbTQKhm9ugMEGOEs0EODl1BP90M2NQmaPF+0ZGQE
+         PBVsw93El86ekSGkfHq5K0XINzqnvNVqUVKr6uzQElDonLyK23RU5NRsj/+C6GuthaCJ
+         kakQ==
+X-Gm-Message-State: AHQUAuaMoz8DybQbsixRkS+XesHjRTYO1qaxJOxknYrjERJze9fkn03z
+        JWWhZcY3+nBswwysggnpc4JwKv3qYaKFuiYOYEWI2A==
+X-Google-Smtp-Source: AHgI3IZAOTsvYH2vWwhp+++ziaxq49J/aL3xQKZXWSLaggC2dc42saAUvWv/FM1WBYD6vRydBBYSXmuKioGC7HFtFhM=
+X-Received: by 2002:a67:7dd1:: with SMTP id y200mr7087060vsc.96.1550752618962;
+ Thu, 21 Feb 2019 04:36:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20190212102050.32229-1-geert+renesas@glider.be> <CAMuHMdUwNwVQ-4o8WKdH4pEUtk=Jmyq7gy7frXGW82rgu+afVA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUwNwVQ-4o8WKdH4pEUtk=Jmyq7gy7frXGW82rgu+afVA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Feb 2019 13:36:46 +0100
+Message-ID: <CAMuHMdWy4MQ0FLU-8Yx1oc0Yj2iyn5mydrYwkAyVzn_4JxCpzA@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v5.1 (take two)
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-During initialization of subdevices if platform_device_alloc() failed,
-returned NULL pointer will be later dereferenced.  Add proper error
-paths to exynos5_clk_register_subcmu().  The return value of this
-function is still ignored because at this stage of init there is nothing
-we can do.
+Hi Mike, Stephen,
 
-Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos5-subcmu.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+On Thu, Feb 21, 2019 at 10:18 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Feb 12, 2019 at 11:48 AM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > The following changes since commit d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
+> >
+> >   clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08 +0100)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.1-tag2
+> >
+> > for you to fetch changes up to d1de227de8145e661e940377e050286098197eeb:
+> >
+> >   clk: renesas: r8a774c0: Add TMU clock (2019-02-05 10:40:05 +0100)
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index 93306283d764..d07ef26bd052 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -136,15 +136,21 @@ static int __init exynos5_clk_register_subcmu(struct device *parent,
- {
- 	struct of_phandle_args genpdspec = { .np = pd_node };
- 	struct platform_device *pdev;
-+	int ret;
- 
- 	pdev = platform_device_alloc(info->pd_name, -1);
-+	if (!pdev)
-+		return -ENOMEM;
-+
- 	pdev->dev.parent = parent;
- 	pdev->driver_override = "exynos5-subcmu";
- 	platform_set_drvdata(pdev, (void *)info);
- 	of_genpd_add_device(&genpdspec, &pdev->dev);
--	platform_device_add(pdev);
-+	ret = platform_device_add(pdev);
-+	if (ret)
-+		platform_device_put(pdev);
- 
--	return 0;
-+	return ret;
- }
- 
- static int __init exynos5_clk_probe(struct platform_device *pdev)
+> I was wondering if you've received my pull request?
+
+Please ignore, I've just saw it appear in today's clk/clk-next.
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
