@@ -2,102 +2,148 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D79EC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 15:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3099AC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02AF020823
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 15:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A91312083B
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:03:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="X7K21ml+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfBUPof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:44:35 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:45339 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbfBUPof (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 10:44:35 -0500
-Received: by mail-ua1-f65.google.com with SMTP id e16so9634191uam.12;
-        Thu, 21 Feb 2019 07:44:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6eMh2+4Dzu8fH8dTG8IuUcw3i7yHGPBUrizuhfdjbzM=;
-        b=Q0LWjaozhnYqMMcBHMD0Fua0qZOUJ+ULhEh537tLs1WCFgyO8ftyHUEzkdihKkoydK
-         r1P1uEPpe9YW7A6Ub+pxaqZaVAz0jGfwA2NKmORRkvWRIk+ndMye9IXSXQTyTJxUzrM+
-         HEE+UaOEBcEUGFCUvPZwWYFW/dO98NU3YIxaeDLWRQeU7pJLse6WLLvxwMqzggT+/ChO
-         qQlcX/j7jZQPQ/JRY1TqCvJGBLmlf8Vr0k4A8x+s0r79TGfXIfP9d6itTYg0umoCMama
-         9fAewp9uJmR8iXoAb8n+YqPPNZ3SLw9WiPa1TZInRQa4IQr1Mqef6CYF+O7M/GPBN0Ug
-         yTXA==
-X-Gm-Message-State: AHQUAua7ZzzFacvGuJwDulZJIN0emTEaxML54E6veIIIgw/e7Wo5kMgZ
-        25BA7+YvOz///GxFThW35YXHF3XvxV6kU3gjNcY=
-X-Google-Smtp-Source: AHgI3IYHR/rvso6r8oBc1YsmiKIWozJLbR7EZ4EqqZKb7c/uuOjbi1ImhsdIK1jqouVkO8hMKu9y1o7UYKxdNt8694g=
-X-Received: by 2002:a67:ead0:: with SMTP id s16mr17405341vso.63.1550763874055;
- Thu, 21 Feb 2019 07:44:34 -0800 (PST)
+        id S1726155AbfBUSDr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 13:03:47 -0500
+Received: from mail-eopbgr40049.outbound.protection.outlook.com ([40.107.4.49]:61888
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725866AbfBUSDr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:03:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/2T/GFvl4acGTeYYPDz7GFWh563lXxB8gW9gzleWxzs=;
+ b=X7K21ml++Top6B9eDPKhDlUzDBl3Qh6RhEhIJh8VLm8U/upPYbJqEEAW+PFTxvQs4FdckHL9s1qfYt8rMtuxDgRtYh6XfLvKy0HlL6ncL4L8frGXxuszuTlsApxbP25YXeayBVuQL3dv+OMLz0LXjeoLCb/4QJmrvRCCOAZ4Bik=
+Received: from VI1PR04MB4222.eurprd04.prod.outlook.com (52.134.31.21) by
+ VI1PR04MB1663.eurprd04.prod.outlook.com (10.164.85.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.18; Thu, 21 Feb 2019 18:03:40 +0000
+Received: from VI1PR04MB4222.eurprd04.prod.outlook.com
+ ([fe80::b1cb:82a5:aacb:238d]) by VI1PR04MB4222.eurprd04.prod.outlook.com
+ ([fe80::b1cb:82a5:aacb:238d%6]) with mapi id 15.20.1643.014; Thu, 21 Feb 2019
+ 18:03:40 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Subject: [PATCH 0/4] clk: imx: scu: add parsing clocks from device tree
+ support
+Thread-Topic: [PATCH 0/4] clk: imx: scu: add parsing clocks from device tree
+ support
+Thread-Index: AQHUyg/G0dfxbehLdEaU+79qEWIdDg==
+Date:   Thu, 21 Feb 2019 18:03:39 +0000
+Message-ID: <1550771836-10014-1-git-send-email-aisheng.dong@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0044.apcprd04.prod.outlook.com
+ (2603:1096:202:14::12) To VI1PR04MB4222.eurprd04.prod.outlook.com
+ (2603:10a6:803:3e::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 146b7d4c-6ef6-420d-391b-08d69826e862
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1663;
+x-ms-traffictypediagnostic: VI1PR04MB1663:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR04MB1663;23:tLP27KcK8oZUVEmFG/TKaA2YJBVbd4L64VoKhaz?=
+ =?iso-8859-1?Q?vPlc9G1XwG43ELNglCTWn4qdj5eRuRgEa7wAkzxtjUBUzb3tzYKIGo4vDm?=
+ =?iso-8859-1?Q?lwYdQokYDPD795B78/qhI6m42eUPKFT2Z7sOXshs2mQecrbWmDOxpaAjjc?=
+ =?iso-8859-1?Q?LJE0dLAmCHMhcgS6LbxoZFZug7WAJm/JL72n4TFNT41y33zmsK724zgbXr?=
+ =?iso-8859-1?Q?z48xrxfDqP6/d21GU0nEggnyLmO/uxuu7bziE75e1nVMMk4CRT4yjxuoKe?=
+ =?iso-8859-1?Q?Ls04cftrrbgUxWp8nwsGwrpgDETanWn+OKafNleSxhlnxrneXcg5x/OO0k?=
+ =?iso-8859-1?Q?YWYhkX3maXiAHHQg1YmSPzCV5mNtuMEyuLm3va/8hKA0ewzTfDul2QDbn9?=
+ =?iso-8859-1?Q?yS+6cYehiaufvTsbqwQf9zFgmohYGf3W8SAAog3HLdYv49qnz3vB7+3oLd?=
+ =?iso-8859-1?Q?HmqjCOvXb2wTH0daQ9GRXAJDChAayLouNdx3kGxs66ghFHQUQZvtA9drRJ?=
+ =?iso-8859-1?Q?fza98dY1GDXn59Arhjw45SQzF6gIHCZIu9E0+20ggF6TQZ2/wdR6abQIS1?=
+ =?iso-8859-1?Q?U3+DO3/MkMVXLxRdsZI5eVTOppGoe0tgiunefvw3U3pYEIjSYRkUE0uzaw?=
+ =?iso-8859-1?Q?BZYmCUK0EaIN/8DPXcWUEYuWkg06XyHKDw0wqjkVNOYt4jndwdVdsLtMfa?=
+ =?iso-8859-1?Q?aC4PJbRjDRRLUkOJKLpR/LaZyuncTyM59ydROARUFSWUiD3w8evzLNCigr?=
+ =?iso-8859-1?Q?qjfvJ5QKMl2juYc86GNWBbQLflFip0OLJ7B7zsah9Jv5FipCTKCMbzl5dp?=
+ =?iso-8859-1?Q?7+CTjEPU5B3fxMuPI/4spsDhj44Jil6uQ6IFLKURBqwODbTQ4teouINllj?=
+ =?iso-8859-1?Q?O9qkxHm+Tpg2vb8tGPXD4BwRqAzSk6BYNzJlgXv8rRzqMEFEVP/bP8GNsI?=
+ =?iso-8859-1?Q?e2I1hwzfr/eOr9H1/buIlCm0iiLQW2qpZ+L7cykx0PnXXclB4nExLjZw68?=
+ =?iso-8859-1?Q?2MthsnPpHJ1ZAcw15uz01u4jsb4mFCRCr2QJeSB5+ldOaO1qdNWdZlh9lq?=
+ =?iso-8859-1?Q?3w/cTdfQ1BaLu5GHVMsq49oK6SZ0mKVAn62KTGcXWvGYzdFNV27EE+hYMa?=
+ =?iso-8859-1?Q?TKruy8ELjIvqRGfAfdzVLf+bYPyE9EoorVfU8tzprGRhYJ8QveNdm3Od+s?=
+ =?iso-8859-1?Q?pExQwQD+uxOywW/mB0Z2NVqXijU4+f8fCLUrG3PD3gZ1dcRBJqoqomko2l?=
+ =?iso-8859-1?Q?uOf62KrYZuTo2HfE6?=
+x-microsoft-antispam-prvs: <VI1PR04MB1663A6EB292DC256CED708CA807E0@VI1PR04MB1663.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09555FB1AD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(366004)(39860400002)(346002)(189003)(199004)(2906002)(8936002)(186003)(81156014)(4326008)(71200400001)(71190400001)(6506007)(97736004)(99286004)(102836004)(26005)(50226002)(2351001)(6512007)(68736007)(81166006)(386003)(3846002)(14454004)(6116002)(476003)(316002)(8676002)(5660300002)(478600001)(54906003)(2616005)(25786009)(44832011)(36756003)(305945005)(105586002)(106356001)(6486002)(486006)(7736002)(53936002)(66066001)(52116002)(256004)(2501003)(6436002)(5640700003)(6916009)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1663;H:VI1PR04MB4222.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nd6H3LMaibYQ519ilXxwDKZZLJWuVVeWhjb3XUcsIlmbQ5CESZT0YZG7TYznbQ84cGauzCbBzVL3/n5G/Jlhldt/AGhVZA+iOd+KP6LK/QQ6FyOgqeQ4Pk7PguBRpQChdYyMVFqqZDvc9dB7xgJ3oKeoWWpUGAaQm266SHhY4770dofiUJXzGwY32e5nLK5TeE/MwwGj2LHQuTlGWDCuyfxorzWAHiLvN+Oe6JirXuD6HYvuNEEExWT3qE2OFiOdNcZH1YfIAu92RI15zE9Qn7hIcKLaWRtSkjSmKGJuMOl6XQ2nOoYl65BygNJyOa9Gx6B4erlO1jZd3QIlXOFMAcrMs8m8m1LOva+a660d/dC0yHh4NtJWoP6quIDKLhf7Jag9z6MuBK5/l6TVKQKQ2+CtulBFcz2VoVAMwpXmOvo=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1550749552-8133-1-git-send-email-krzk@kernel.org> <1550749552-8133-3-git-send-email-krzk@kernel.org>
-In-Reply-To: <1550749552-8133-3-git-send-email-krzk@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Feb 2019 16:44:22 +0100
-Message-ID: <CAMuHMdUFvrW5RuhJxCoZdjzbYobJydcdTttkZTaRtL3=7Ao_Fg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: samsung: exynos5: Fix kfree() of const memory
- on setting driver_override
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 146b7d4c-6ef6-420d-391b-08d69826e862
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 18:03:36.5814
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1663
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:46 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Platform driver driver_override field should not be initialized from
-> const memory because the core later kfree() it.  If driver_override is
-> manually set later through sysfs, kfree() of old value leads to:
->
->     $ echo "new_value" > /sys/bus/platform/drivers/.../driver_override
->
->     kernel BUG at ../mm/slub.c:3960!
->     Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->     ...
->     (kfree) from [<c058e8c0>] (platform_set_driver_override+0x84/0xac)
->     (platform_set_driver_override) from [<c058e908>] (driver_override_store+0x20/0x34)
->     (driver_override_store) from [<c031f778>] (kernfs_fop_write+0x100/0x1dc)
->     (kernfs_fop_write) from [<c0296de8>] (__vfs_write+0x2c/0x17c)
->     (__vfs_write) from [<c02970c4>] (vfs_write+0xa4/0x188)
->     (vfs_write) from [<c02972e8>] (ksys_write+0x4c/0xac)
->     (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
->
-> The clk-exynos5-subcmu driver uses override only for the purpose of
-> creating meaningful names for children devices (matching names of power
-> domains, e.g. DISP, MFC).  The driver_override was not developed for
-> this purpose so just switch to default names of devices to fix the
-> issue.
->
-> Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+This patch series is a preparation for the MX8 Architecture improvement.
+As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
+of a couple of SS(Subsystems) while most of them within the same SS
+can be shared. e.g. Clocks, Devices and etc.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+However, current device tree is heavily depends on Clocks IDs defined which
+cause some troubles in writing the common <soc>-ss-xx.dtsi file.
 
-Gr{oetje,eeting}s,
+This patch series adds a new binding to support parsing clocks from device =
+tree
+which can fully decouple the dependency of Clock IDs in device tree.
+This can make the clock driver much easily to be maintained in the future a=
+nd
+avoid writing a lot of duplicated codes.
 
-                        Geert
+Dong Aisheng (4):
+  dt-bindings: firmware: imx-scu: new binding to parse clocks from
+    device tree
+  dt-bindings: clock: imx-lpcg: add support to parse clocks from device
+    tree
+  clk: imx: imx8qxp: add parsing clocks from device tree
+  clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 29 +++++--
+ .../devicetree/bindings/clock/imx8qxp-lpcg.txt     | 14 ++++
+ drivers/clk/imx/clk-imx8qxp-lpcg.c                 | 90 ++++++++++++++++++=
+++++
+ drivers/clk/imx/clk-imx8qxp.c                      | 43 +++++++++++
+ include/dt-bindings/firmware/imx/rsrc.h            | 17 ++++
+ 5 files changed, 185 insertions(+), 8 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+2.7.4
+
