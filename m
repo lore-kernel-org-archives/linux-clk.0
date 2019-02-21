@@ -2,197 +2,93 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC34C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE97DC4151A
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0138620836
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:04:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="NZSq3n7N"
+	by mail.kernel.org (Postfix) with ESMTP id 8F63120818
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 18:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbfBUSEk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:04:40 -0500
-Received: from mail-eopbgr40049.outbound.protection.outlook.com ([40.107.4.49]:61888
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727160AbfBUSEk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:04:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f4SO+A1BXfvLtvNqz7MHtp5rJIQDpE2V70yBtLw0FfU=;
- b=NZSq3n7Nqv8eqTIH7esFF+YpleK/YlrVX4CVbWqfJKgNuK1d5eufwoUasnNhM45rvyUx1eXUUlbfFexIxDWEuGkHW0aCZH03v2rQ8i58sv4LOWT1H0geUcci9n7w6Kfg0VjlDLf7YzGQ5HOPzbeJz1zUtqCc+gYFs+BtC8uH4G4=
-Received: from VI1PR04MB4222.eurprd04.prod.outlook.com (52.134.31.21) by
- VI1PR04MB1663.eurprd04.prod.outlook.com (10.164.85.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.18; Thu, 21 Feb 2019 18:03:51 +0000
-Received: from VI1PR04MB4222.eurprd04.prod.outlook.com
- ([fe80::b1cb:82a5:aacb:238d]) by VI1PR04MB4222.eurprd04.prod.outlook.com
- ([fe80::b1cb:82a5:aacb:238d%6]) with mapi id 15.20.1643.014; Thu, 21 Feb 2019
- 18:03:51 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Subject: [PATCH 3/4] clk: imx: imx8qxp: add parsing clocks from device tree
-Thread-Topic: [PATCH 3/4] clk: imx: imx8qxp: add parsing clocks from device
- tree
-Thread-Index: AQHUyg/MD67g7uqnCE2saCOKw8+KDA==
-Date:   Thu, 21 Feb 2019 18:03:51 +0000
-Message-ID: <1550771836-10014-4-git-send-email-aisheng.dong@nxp.com>
-References: <1550771836-10014-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1550771836-10014-1-git-send-email-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR04CA0044.apcprd04.prod.outlook.com
- (2603:1096:202:14::12) To VI1PR04MB4222.eurprd04.prod.outlook.com
- (2603:10a6:803:3e::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f9c43c61-7b6f-4d08-f68c-08d69826ef35
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1663;
-x-ms-traffictypediagnostic: VI1PR04MB1663:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR04MB1663;23:f3lgCKkz5T+tVWh+N4qFW6+nRXmz1EJHbQXpUPY?=
- =?iso-8859-1?Q?Qw4vx2u03qw48kuF+v5vVFetNvVo/xoC7ekgr8rjC9c7H1aJlhkVYn/H7r?=
- =?iso-8859-1?Q?w0MXK+p4E6DUEh4mgUNheGnh0+ul8ke/jo/BowCUy+aYmGHnPGAMfKGK5S?=
- =?iso-8859-1?Q?JZlzXmS1lbtkRzfihQtQyMM22sX6IP+BgtudVLdBnsIJ4Z2k+12OHKjrjO?=
- =?iso-8859-1?Q?GYFtdKqVA7TR1Oe6H3Iyc9t7k8AtqXsgdjicMOJsxpIpKO2vIO6Rc/BD8u?=
- =?iso-8859-1?Q?YsdsyaoPc++m35/yENfuH4nwTm69mExMhQjJh39fNP8WHlMiNxWZ0fquTq?=
- =?iso-8859-1?Q?nUuaDXiLMcPh4jtcjUQpcPH4uXx6R4TubuQrUMNfdXp3PQ6J62cPX0gAEw?=
- =?iso-8859-1?Q?+Wh/Im10b/ZlHHRGDZ6LXB/VtUnjfQVpR0QjDBElAy7rgNbQ1+MUwgBR1e?=
- =?iso-8859-1?Q?BfkKBsQB9xOAEuzT33/JE0g5kex8iZgnp5Fr9Ipfpwg8kgevuWZU1Ki/Kx?=
- =?iso-8859-1?Q?cDLkLv3nlsibj2tkndCinTi5xJzwp8ixYs3BWfI97IimYY2z156VO/idZG?=
- =?iso-8859-1?Q?hKIzT3e6ttV3kTDIdihkfpBlSc2MqakIkhn8p5N96TgIcODv1VxPnKW6az?=
- =?iso-8859-1?Q?u2yYAyF7GPjcOEoGG0J+kY9cw1Zi5eWPMLjSZA4yNmhEl3rJU3o7BYL0jq?=
- =?iso-8859-1?Q?FvW2ixmQTm/htcPIsNf1d7S9pB6A3shvzBpPf5GMng6+8WflsOOoFaurEK?=
- =?iso-8859-1?Q?6ZJuGXjVpaSX4BbBQRHCSStK+Y4gLBTTJfcQ2nB4rt+Wm/eMfwqBZ0L6BC?=
- =?iso-8859-1?Q?nK8/WFoW92MnECe6ZM0BHbu24V96KBfNqsBcpcVa4BPAfkOACMTWWCcz5S?=
- =?iso-8859-1?Q?Qegw6eWesm70FJCuxcoHU7hRROgzbi++fCiqxqw3vBAHMVZAcbkm997N3R?=
- =?iso-8859-1?Q?nbYBd0Su67ERweS/kz6AQmzREeStxN71Jhm01Q5v5dqAdBaMtETOcUzzsK?=
- =?iso-8859-1?Q?zRRM5YiHfk9WjyEtu0kqgESRMrgWcn1vWq5dRIl12dq6h/ZGf8L9q5c5bk?=
- =?iso-8859-1?Q?tYTfo+KzKoLvOOfutTKJXdiXdEXzPd3TtJN2eyrDgJYOxStulmkmYizHZX?=
- =?iso-8859-1?Q?WDlvVwk2Nyfy7ynmPWA9Ma8QbO6t0f1S3L7rSRkTNj9wuqwqscKwbTIUdH?=
- =?iso-8859-1?Q?Yvyj1NoMMR/PlkRzRxn+9VNWuCejtQ6zuO9d4fOMXLrM+mbiczTiisJ7a6?=
- =?iso-8859-1?Q?uCSFRf4NqDFlmrcmBEs+NLVSF6qymsnW0hc+VvWw3lXXc/YfExJ4wLnEnE?=
- =?iso-8859-1?Q?Q+T5YA0AlN1QUmuTOHf+k5R/JrzHN0LYTPEti8IQdMYVQ=3D=3D?=
-x-microsoft-antispam-prvs: <VI1PR04MB16634F60D76EDAC5D79FA37A807E0@VI1PR04MB1663.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(366004)(39860400002)(346002)(189003)(199004)(2906002)(8936002)(186003)(81156014)(4326008)(71200400001)(71190400001)(6506007)(97736004)(99286004)(102836004)(26005)(50226002)(2351001)(6512007)(68736007)(81166006)(386003)(3846002)(14454004)(6116002)(476003)(316002)(8676002)(5660300002)(478600001)(54906003)(2616005)(25786009)(44832011)(36756003)(305945005)(446003)(105586002)(106356001)(6486002)(486006)(76176011)(7736002)(53936002)(66066001)(52116002)(256004)(2501003)(6436002)(5640700003)(11346002)(6916009)(86362001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1663;H:VI1PR04MB4222.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: HIlT1084QzVrH6k2yfq6f8ZcAQEwzUTp1PhGZ+B4qf3aUyMYQd5nfXbDIv8JJCvTYUmJpVAkHC0KdY3JBkaIPa0NTY4dCSJRYoehg8eXiarDV3DROP3OinBkzHfzmez1uESLZOShdmQRj7Tb5O8c54yASv0xKT6QIUtoA3qrjZVqS4F7i3D8OlMebfP6c1WAVdutxbk2iYetEa3IoCekYJk++jhhz6xmvtYZdPfSd610N9hohbJYC5BP3a/1Y3u6v7Z+rUj/ChTmHFCZvNJAnB9RrvXDcqDWC+dCqMWSJ7VRyEMAzMUHNLgnzm68cylZGH4E41NpXknAZC2yZRz27ywE2DuHSkkIAoLmZbwAQUzYdyLjhaf58fGaNkgISN6kVtuANnhB7fofI41EYVWX2JESxPWqoobr/StZYYUHpE4=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727160AbfBUSdz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 13:33:55 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:46900 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727126AbfBUSdz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 13:33:55 -0500
+Received: by mail-vk1-f196.google.com with SMTP id j68so7107153vke.13;
+        Thu, 21 Feb 2019 10:33:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M+WOkWRBssrtpVfH1qKg/+BBfeLuK8WLv6dFxZ5Q2WU=;
+        b=elKMSPLpmuCAlNoY9DWL3jm7wvLhjF4FDpwkj+zCR2WJQmq16kwTJCAuS/MZagFhrP
+         Mz5stnGIoHf0AzBfl1+oCbGzv4vPRgQXqn2a902ckXscLzJtdpi7sbrQ6HLhhWUtjhD1
+         mVLzzf2pFzRK0RsfCQpvlqmCzOEOEkqy/6OXGRPdHmQ4ZKpZZlKwfmlsG8iD3vHLJYJS
+         XPfB8Ok73Drjrr5wbNlYqUIgOfhxOxS68/1TmW4VyQMk8FA6WtvKkMYXQipcxRD+Z4Yp
+         O1jQpf0qybsODABihvTTmbEHDbPXlU4A2zhluDHimVuNk3tXTdUTcZ+5TcQQPl9/QpyR
+         oezQ==
+X-Gm-Message-State: AHQUAubGEfdDblaMGR0C5NNsghHONfyKMpsJQ9oLoyiK98+xOuyIl7Ln
+        2z6VevlY68n2J/nwZ23PeSnnrD3wmGhSPVnsSpa1Dq1Z
+X-Google-Smtp-Source: AHgI3Iale/6oc0Gtee5i6oMuxDhDTYH3loN3ZwTtpwuKVoiEFCLJY2LGbeVSI17Lw50WTsqie6U7JgDbelslq69XfK8=
+X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr14985576vke.40.1550774034566;
+ Thu, 21 Feb 2019 10:33:54 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9c43c61-7b6f-4d08-f68c-08d69826ef35
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 18:03:48.0344
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1663
+References: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Feb 2019 19:33:42 +0100
+Message-ID: <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-add parsing clocks from device tree
+On Wed, Feb 20, 2019 at 5:09 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Enum LAST_DT_CORE_CLK needs updating as R8A774C0_CLK_CANFD
+> was recently added and it's the core clock with the highest
+> index.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-imx8qxp.c | 43 +++++++++++++++++++++++++++++++++++++++=
-++++
- 1 file changed, 43 insertions(+)
+Nice catch!
+You only notice this kind of bug when you start referencing the clock
+from DT, right? At registration time, the clock number space is shared with
+internal core clocks, so no error is detected.
+Can we improve that?
 
-diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-index 83e2ef9..7c5f8c6 100644
---- a/drivers/clk/imx/clk-imx8qxp.c
-+++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -17,17 +17,60 @@
- #include <dt-bindings/clock/imx8-clock.h>
- #include <dt-bindings/firmware/imx/rsrc.h>
-=20
-+static int imx_scu_parse_clks_from_dt(struct device *dev,
-+				      const struct device_node *np)
-+{
-+	struct clk_hw *hw;
-+	const char *name;
-+	int clk_type;
-+	int rsrc_id;
-+	int ret;
-+
-+	ret =3D of_property_read_u32(np, "rsrc-id", &rsrc_id);
-+	if (ret) {
-+		dev_err(dev, "failed to parse rsrc-id\n");
-+		return -EINVAL;
-+	}
-+
-+	ret =3D of_property_read_u32(np, "clk-type", &clk_type);
-+	if (ret) {
-+		dev_err(dev, "failed to parse clk-type\n");
-+		return -EINVAL;
-+	}
-+
-+	ret =3D of_property_read_string(np, "clock-output-names", &name);
-+	if (ret) {
-+		dev_err(dev, "failed to parse clock-output-names\n");
-+		return -EINVAL;
-+	}
-+
-+	hw =3D imx_clk_scu(name, rsrc_id, clk_type);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "failed to register clock\n");
-+		return -EINVAL;
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
-+}
-+
- static int imx8qxp_clk_probe(struct platform_device *pdev)
- {
- 	struct device_node *ccm_node =3D pdev->dev.of_node;
- 	struct clk_hw_onecell_data *clk_data;
- 	struct clk_hw **clks;
-+	u32 clock_cells;
- 	int ret, i;
-=20
- 	ret =3D imx_clk_scu_init();
- 	if (ret)
- 		return ret;
-=20
-+	/* try new binding to parse clocks from device tree first */
-+	of_property_read_u32(ccm_node, "#clock-cells", &clock_cells);
-+
-+	if (clock_cells =3D=3D 0)
-+		return imx_scu_parse_clks_from_dt(&pdev->dev, ccm_node);
-+
- 	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hws,
- 				IMX_SCU_CLK_END), GFP_KERNEL);
- 	if (!clk_data)
---=20
-2.7.4
+Fixes: 2a6efbc6da5d248c ("clk: renesas: r8a774c0: Add missing CANFD clock")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Mike/Stephen: can you please take this one directly, as it is a fix for
+clk-next?
+
+Fabrizio: Looks like R8A774A1 has the same bug. Care to fix that as well?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
