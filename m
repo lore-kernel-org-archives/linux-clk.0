@@ -6,71 +6,65 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AF8C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE0DC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6612083B
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 589CC20818
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550787416;
-	bh=lkdR7iOTNdzrZJ/MCEMysfvGwqPVUOqZA7F9Zbi2jGE=;
+	s=default; t=1550787502;
+	bh=/YYYYphl0vonbsz9Y9uv/Tyba11Y1KFYWqqHBY7GSp0=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=vvaBQI2eSrIusUcKbIMoL0V7ZJ3UiFeY41+Z+1+h7Mpa4rItrkwGMydGcosdANFfr
-	 6hXCTdu1FcA4zgAEK40A5hdLpx4EKkNDpLwe10m2EuZga0oMtW0gHT39dS1KJDEzzf
-	 FTRoCYlAJ9JlwNKjmvtqxLVohSzrCQBQqCR7De2I=
+	b=QckCHE6dmvDkCz5lFhTfoNaqJhVboeZIfflNsjKP5eaeMrcQwv0F3231d5V/JO2MP
+	 CPKJEM2MXC4GAa0Ab9TLChhzr3+/iUq/IbEpmgs+GaNn3fQgaO1Zb+6Ial52vhsB/7
+	 JMSzLXNDwluRBHJ2+Q/HHgkjKKQNLeCz2hoZPRwo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfBUWQz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:16:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47452 "EHLO mail.kernel.org"
+        id S1726213AbfBUWSV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 17:18:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfBUWQz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:16:55 -0500
+        id S1725802AbfBUWSV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:18:21 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1D5020818;
-        Thu, 21 Feb 2019 22:16:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC23720818;
+        Thu, 21 Feb 2019 22:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550787415;
-        bh=lkdR7iOTNdzrZJ/MCEMysfvGwqPVUOqZA7F9Zbi2jGE=;
+        s=default; t=1550787501;
+        bh=/YYYYphl0vonbsz9Y9uv/Tyba11Y1KFYWqqHBY7GSp0=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=BCWorGNectwZh+YdGIk3tTL9teMKJKqKVMbjyoYpK23ZJo+WGtHPayPYpFROrn89f
-         UtSFzlq+yrTkJGJy8oI66/UDQfyExwtnecVrXp0AJik6OAuj7I/dBVXSsS5Jo3Fl9X
-         uKglMpJFTrnxWxQkgIIalbSd7RGy3C0ZLfhKNFSg=
+        b=EBtsYCTzEp4eP5vVnCYZ/6wSe3Xiw0IubHeHdVz4uwIV2oAs3DgxnfB0OkqopfoRe
+         buYUqVN6RJVVZYuedreZP0Dmy6RJD/NOZQMRpOZicwEa37zjZ7OJd3ph2cvhqA2wxB
+         50jm4twX4xDI4dZhZj0vCkVuL1HmTlUjhEpGWaVo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] dt-bindings: clock: remove unused definition for stm32mp1
-Message-ID: <155078741430.77512.14260216742704556101@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/3] clk: qcom: remove empty lines in clk-rcg.h
+Message-ID: <155078750023.77512.616266988533522444@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <20190214104242.1491-1-gabriel.fernandez@st.com>
+References: <20190211073928.20456-1-vkoul@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190214104242.1491-1-gabriel.fernandez@st.com>
-To:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Date:   Thu, 21 Feb 2019 14:16:54 -0800
+In-Reply-To: <20190211073928.20456-1-vkoul@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Date:   Thu, 21 Feb 2019 14:18:20 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting gabriel.fernandez@st.com (2019-02-14 02:42:42)
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Quoting Vinod Koul (2019-02-10 23:39:26)
+> Remove the redundant empty lines crept in.
 >=20
-> A copy of LTDC_PX and ETHCK_K (LTDC_K and ETHMAC_K) was introduced in
-> stm32mp1 dt-bindings file by mistake.
-> These bindings are not used and shouldn't be use to be conform with
-> convention name of the stm32mp1 clock IP.
->=20
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
 > ---
 
 Applied to clk-next
