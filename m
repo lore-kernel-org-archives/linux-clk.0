@@ -2,78 +2,106 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF777C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625AAC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 938F220818
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550787514;
-	bh=oc43sYWoXGP8rV6d6OmWQxB+e3eBasxUiph5ih0Aurw=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=XJKnadSH1/ibXaqqrKAbQxmtZ2kn7BADDSYzwbGkJuo08HUX6DJc9W72QyRB5QuU+
-	 mj4piWsilbPtIne6tbXeSOP5pzKcw+ulC4DrLyQuaB6eY7oGKbycjhHtYOaXP1J4iH
-	 ROXPEhgUV5gBIyFx16kVycMD3OgcIhw1ua9YM7hI=
+	by mail.kernel.org (Postfix) with ESMTP id 313352083B
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 22:23:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jribNhnq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbfBUWSe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:18:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfBUWSe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:18:34 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8759120818;
-        Thu, 21 Feb 2019 22:18:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550787513;
-        bh=oc43sYWoXGP8rV6d6OmWQxB+e3eBasxUiph5ih0Aurw=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=nGDgSTWm83Bju70qZGswXPm4gEEmE7QQntQ3gdWaN+fDS0colMGzbJxCjnVeILPYS
-         KLaAS7PiCBScHjt0vlgoGDmNIJXpeV73Zz4u2Ww3njsqiqsap2JZoT5qp9awaBDnQr
-         NuG9YNNtd+mPDJUY2BShO8NZpfHAfOXJ/uqKSkeU=
-Content-Type: text/plain; charset="utf-8"
+        id S1725891AbfBUWXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 17:23:34 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33377 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbfBUWXd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 17:23:33 -0500
+Received: by mail-ua1-f67.google.com with SMTP id q17so230645uam.0
+        for <linux-clk@vger.kernel.org>; Thu, 21 Feb 2019 14:23:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0Tho6tIvUAYXamApnhuj/cUi3XD+QjFAtPYIAiUbXtI=;
+        b=jribNhnqegu9qG91m4As5lZqDEGL7Duow2YEhm51aIDUM1n4ejizLIN230nxNTGUV3
+         WNuBmGxc0U3zfJ5RqfH+qscO5StQmvwdbWrsa/KQAspcpRnNAlk5itPT2kac+7RiylfP
+         WmFlHD8fQWl+q+blAKtgBaE/bTqgrjEEfBUME=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0Tho6tIvUAYXamApnhuj/cUi3XD+QjFAtPYIAiUbXtI=;
+        b=b8QZjfxASEB+tAghhLxMpggiPd9l5Ot8mEsDjRxbZY6JztnoSBZ7MdXeSzzZxt4G+A
+         zBsawAZt0ZotFdrXx0tXAW6YBytDe3Kp6xXJU0Pxb+vVIc5etuvRhZbtZj9OBtsJHBe+
+         EKtrOil9ioRbFwp5U3+yDX5vq2W/EdTnYLlMHl2qmT/KLwaNhIXwF7thCVdhXRftQJd0
+         nxUusU2r0iBor6eTJoRJ7LNCnSKMzj8TAc0dnp16EUHVw3+3ba7WFLlWghXSxQlnpqZt
+         iqh5OQoGSD5y+6dpiayD5eobYfZuqlsqn0ux6elCcnW0oOam56wmPBxI9EYFa3o8LVyR
+         WbWg==
+X-Gm-Message-State: AHQUAuYb1X4VIdeCeruF6JOIbMPTlesDfpWn/vfdLntmuj4jV7ADM0VB
+        +NhuKHFMryVe5/BQW6pjY7q7FFKUUec=
+X-Google-Smtp-Source: AHgI3IYSfZguwP0sE9d1E8EIVPyTT7fQZyKRSaZx2xsBnUDd3VAPyGIwquVxS64N1MjNj0XctyzF/A==
+X-Received: by 2002:a67:848c:: with SMTP id g134mr504221vsd.169.1550787811825;
+        Thu, 21 Feb 2019 14:23:31 -0800 (PST)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
+        by smtp.gmail.com with ESMTPSA id j4sm235339vke.0.2019.02.21.14.23.30
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 14:23:30 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id j68so43199vke.13
+        for <linux-clk@vger.kernel.org>; Thu, 21 Feb 2019 14:23:30 -0800 (PST)
+X-Received: by 2002:a1f:58d:: with SMTP id 135mr582859vkf.4.1550787809973;
+ Thu, 21 Feb 2019 14:23:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/3] clk: qcom: gcc-qcs404: Add cfg_offset for blsp1_uart3 clock
-Message-ID: <155078751283.77512.1286511890162753559@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <20190211073928.20456-1-vkoul@kernel.org> <20190211073928.20456-3-vkoul@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190211073928.20456-3-vkoul@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Shawn Guo <shawn.guo@linaro.org>, Vinod Koul <vkoul@kernel.org>
-Date:   Thu, 21 Feb 2019 14:18:32 -0800
+References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
+ <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com>
+ <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
+ <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com> <155078541292.77512.12594007340364187685@swboyd.mtv.corp.google.com>
+In-Reply-To: <155078541292.77512.12594007340364187685@swboyd.mtv.corp.google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 21 Feb 2019 14:23:18 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+_bm+usH+hK9Pz1hAS9qhmndhmt9Ue3T3Kdta3kk1LHg@mail.gmail.com>
+Message-ID: <CAGXu5j+_bm+usH+hK9Pz1hAS9qhmndhmt9Ue3T3Kdta3kk1LHg@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-02-10 23:39:28)
-> From: Taniya Das <tdas@codeaurora.org>
->=20
-> The CFG/M/N/D registers are at an offset of 0x20 from the CMD register
-> only for blsp1_uart3 clock, so add it for uart3 only.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
+On Thu, Feb 21, 2019 at 1:43 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Ok, thanks for the background. Looks like the perf tool already
+> introduced the #define __fallthrough that they use for this purpose.
+> Maybe they're hoping that it will be formalized.
 
-Applied to clk-next
+Yeah, GCC has an extension for it (but it's not yet part of the C
+standard -- though there are open bugs against Clang to support it).
+Our adoption of the markings, thanks to Gustavo's work, has rapidly
+increased lately too (we started with something like 2400 instances
+and we were gaining about as many each cycle as we removed). 5.1,
+though, is closing in on _0_ instances. My thinking is that once we're
+to the point where we can globally enable -Wimplicit-fallthrough, then
+we can depend on the compiler to enforce this (instead continuing to
+depend on external tracking in Coverity and the like). It was a bit of
+a chicken-and-egg and I was afraid we were going to be left with this
+"partial adoption" for a long time. But we're nearly to the point
+where I would be happy doing a tree-wide replacement to __fallthrough
+(which should be mechanically easy).
 
+-- 
+Kees Cook
