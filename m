@@ -2,111 +2,91 @@ Return-Path: <SRS0=pin/=Q4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09285C00319
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB40C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 10:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F27214AF
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50ACB2086A
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Feb 2019 10:34:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FD4lBNWk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfBUJSz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:18:55 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40501 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfBUJSz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 04:18:55 -0500
-Received: by mail-vs1-f66.google.com with SMTP id z18so15755559vso.7;
-        Thu, 21 Feb 2019 01:18:54 -0800 (PST)
+        id S1725823AbfBUKex (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Feb 2019 05:34:53 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37537 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfBUKew (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Feb 2019 05:34:52 -0500
+Received: by mail-oi1-f193.google.com with SMTP id w66so1001140oia.4
+        for <linux-clk@vger.kernel.org>; Thu, 21 Feb 2019 02:34:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iIAmxPn99UJSLULAPX5kBKtGCz1DGhBud8hKmEjk0Ms=;
+        b=FD4lBNWkOZJ2XUwI72no5ez3H6FO1gktI9Blik9Afu4/mjykLj7XnFS23PaSj5gQk6
+         P8ipnymsksBVNYcVGo44ibaqa23C+Q3me9mt6u8IzFEIEYsEVHbpAu3mr4U5vsBj6J8o
+         fP+xW0LhZKWwF/wyFvWw/BXMH9GR/LfuCgIPXMKwsR4rp0n7F5d2cfUu3i7qZe+CjTon
+         S24n/lM14fJvylvTbO53znWQbzoaOiO3HzGy49KmsZSYp6sTLiWtgnTElz64GV/bjqIi
+         oBSroZjLQADW7HkYy+vvVwn3GUyHmaiKoH04oFHYoBPans3yNEGrzSo5xvAF+K50rs8j
+         j3ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GLQ9kgqysd7lyEgI1/YYsugDHPv6WJmjwqK5/jhuiJ4=;
-        b=gMWYayph9zF92NBcSkgDaK2gnXdmYt+cw07s8hL8igKV6g+Sf6osmQTg35yEgCWhux
-         acTALTiqEc0YYboSAeh1SlNlF8F9QAxCl9uCadnNYjwfQ/Fwjo15E7XkN53Zz14ukzbG
-         5w9NBbu3Au8W2keKVW2sqbp2yCzOiaaXFkZJzYjpsgxH2y9TYKA/8NNuPf1kvfvj9iXN
-         H6ytnTBX+ZvtJ+/bvnunfsKURlYL5BuOV0kDPInOucIgrHzHCasW7JUVuqIz8LdEKURa
-         wJBs5Oj90VWoSNoqTkdjeiT9ACY3PEiE1+in0pjZJAQ5WjbBeNak7uOHepkGHbK7Z/vn
-         FgDw==
-X-Gm-Message-State: AHQUAubyVmQfp/OMnrwv5WCouM4x1jBEBmPBRzdfHmMOvUCbtHXoJrER
-        4i4DAqcRqUQR8N5gTXuNXkpE7qyvub6YIDPxe9twMw==
-X-Google-Smtp-Source: AHgI3IZ+xaYPn7zfWuDCm0psP7/YLIwcrv/WfmYw13e432blmMfOHVH8WSssGDCFnp0JB9x70ZAx+mTOOcWhhs6DIfk=
-X-Received: by 2002:a67:78ce:: with SMTP id t197mr19824839vsc.152.1550740734096;
- Thu, 21 Feb 2019 01:18:54 -0800 (PST)
+        bh=iIAmxPn99UJSLULAPX5kBKtGCz1DGhBud8hKmEjk0Ms=;
+        b=QDpxlKjUDtaeTog6Wv6dA/6UQ8/27ByhE0jqPFOxTZvsYSs/4zT4mICpzx6eX4GV6S
+         lYNaP9odWIOyAtcuYRHNFZBLCbq8epIuJtZkHtHpmqncCdtmzTvtt0sZn75Oz+9zB2Zx
+         bNCFgNzL8+DDjH5giY9GGf55/+nOdWX6iIBjY9dY2cb2tbpiT1MZj61SYQ92XtETnBNC
+         7IpH30nFm+mlh1B889jonuuUaC7gzq2Kb/MIQRhXsekhutZhCUyJ5Au69RwQNPohM0d5
+         45a1/3vCkN14dByfm8l0R6q24qBrd9EFEXGzxYH0Yh+xXtNKJUx7GCnKp+kJcXJKZXGv
+         zhmg==
+X-Gm-Message-State: AHQUAubUXAh0OFjHFL2+vdXjEZQlKjq9P0z3ZpKoCXSzsavYw6Yu2tAB
+        KLhzqOrojdfgsqo5uEaJxeryJagzjZ+7+mU51LY=
+X-Google-Smtp-Source: AHgI3IbfLEn4k5Fu0qMUeThwo9zg7+FvBKevvZd8j6A+Us2IeWQizYQq6mPXr3/TxqjfrJrJE6DYd8I2/IXoXO/Vjbk=
+X-Received: by 2002:aca:4a95:: with SMTP id x143mr9033108oia.18.1550745292035;
+ Thu, 21 Feb 2019 02:34:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212102050.32229-1-geert+renesas@glider.be>
-In-Reply-To: <20190212102050.32229-1-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Feb 2019 10:18:41 +0100
-Message-ID: <CAMuHMdUwNwVQ-4o8WKdH4pEUtk=Jmyq7gy7frXGW82rgu+afVA@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v5.1 (take two)
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20190130192102.7065-1-festevam@gmail.com> <154940574088.169292.15304825462770873584@swboyd.mtv.corp.google.com>
+ <CAOMZO5BYr_JXZ-ibb5JBvVtF0=Y-cz+qNsPHd0i-kkrC9Ok4ag@mail.gmail.com> <154947421987.74891.17150055410578722741@swboyd.mtv.corp.google.com>
+In-Reply-To: <154947421987.74891.17150055410578722741@swboyd.mtv.corp.google.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 21 Feb 2019 07:34:43 -0300
+Message-ID: <CAOMZO5DgQmxrrC1YzXeB8Rcyzckv9uPQ_C9x5PRv0LC+h+yJBg@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx8mq: Fix the CLKO2 source select list
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Rogerio Pimentel <rogerio.silva@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+Hi Stephen,
 
-On Tue, Feb 12, 2019 at 11:48 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> The following changes since commit d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
+On Wed, Feb 6, 2019 at 3:30 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
->   clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08 +0100)
+> Quoting Fabio Estevam (2019-02-05 14:35:49)
+> > Hi Stephen,
+> >
+> > On Tue, Feb 5, 2019 at 8:29 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > > Do I need to fast track this into v5.0 final? Or this is a non-critical
+> > > fix for something that isn't used right now?
+> >
+> > This is a non-critical fix and it can wait until v5.1.
+> >
 >
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.1-tag2
->
-> for you to fetch changes up to d1de227de8145e661e940377e050286098197eeb:
->
->   clk: renesas: r8a774c0: Add TMU clock (2019-02-05 10:40:05 +0100)
->
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v5.1 (take two)
->
->   - Add RPC (QSPI/HyperFLASH) clocks on R-Car V3H,
->   - Add TMU (timer) clocks on RZ/G2E,
->   - Small fixes and cleanups.
->
-> Thanks for pulling!
->
-> ----------------------------------------------------------------
-> Biju Das (1):
->       clk: renesas: r8a774c0: Add TMU clock
->
-> Sergei Shtylyov (4):
->       clk: renesas: rcar-gen3: Factor out cpg_reg_modify()
->       clk: renesas: rcar-gen3: Add spinlock
->       clk: renesas: rcar-gen3: Add RPC clocks
->       clk: renesas: r8a77980: Add RPC clocks
->
->  drivers/clk/renesas/r8a774c0-cpg-mssr.c |   5 ++
->  drivers/clk/renesas/r8a77980-cpg-mssr.c |   8 ++
->  drivers/clk/renesas/rcar-gen3-cpg.c     | 147 ++++++++++++++++++++++++++++----
->  drivers/clk/renesas/rcar-gen3-cpg.h     |   4 +
->  4 files changed, 146 insertions(+), 18 deletions(-)
+> Alright, thanks!
 
-I was wondering if you've received my pull request?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Can this go to clk-next?
