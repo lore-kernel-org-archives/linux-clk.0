@@ -2,67 +2,68 @@ Return-Path: <SRS0=aDlN=Q5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C744AC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4618AC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C192086C
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550823285;
-	bh=DpBV3JgeqWeM6hSwzRx2+3suu88eCRJUcSllZjdef9M=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=FGikMqNMoJ27AN7k1M5XKxUVlRcZZOK8Vo8vRf07DZ68UW2qEycEGvReInEUsnPzB
-	 ewjJH18+hIbA/WpzI/GHaRohLgqb1fyuXsIjrnCcyZiJnApVyQmu3XI6kd8168Sgkw
-	 VKBY6Kx0WeZbJ3JIa4PGx8eVGN/bJCqmxFbdDEQs=
+	by mail.kernel.org (Postfix) with ESMTP id 1F7E120700
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbfBVIOp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:14:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfBVIOp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:14:45 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E0A720823;
-        Fri, 22 Feb 2019 08:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550823284;
-        bh=DpBV3JgeqWeM6hSwzRx2+3suu88eCRJUcSllZjdef9M=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=P7N9XVKttOKa95Q1uAPsxAuLC8VVM0ap3UWvj0e+cu/gq/lf3FJmaADXUglx+qDFY
-         CllqdRQuW1ndBysy9/dvH5bbcK4e1VUu8rKJytvrAb9Qou3L9h5D/kwegOnz0e/RQW
-         h2lw+xDScYfU/Iumr2b0dLXugmDSHENIKKrGUhrY=
-Content-Type: text/plain; charset="utf-8"
+        id S1726117AbfBVIhO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 03:37:14 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:51919 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbfBVIhO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Feb 2019 03:37:14 -0500
+X-Originating-IP: 90.88.23.190
+Received: from windsurf (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
+        (Authenticated sender: thomas.petazzoni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 567341BF203;
+        Fri, 22 Feb 2019 08:37:12 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 09:37:11 +0100
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: clk-gpio: add support for sleeping GPIOs in
+ gpio-gate-clk
+Message-ID: <20190222093711.3dca5f3b@windsurf>
+In-Reply-To: <155078670927.77512.17882802117777143214@swboyd.mtv.corp.google.com>
+References: <20190211135818.10518-1-thomas.petazzoni@bootlin.com>
+        <155007806256.115909.10137511038361789251@swboyd.mtv.corp.google.com>
+        <155078670927.77512.17882802117777143214@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: x86: Move clk-lpss.h to platform_data/x86
-Message-ID: <155082328374.77512.1461384740318422430@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date:   Fri, 22 Feb 2019 00:14:43 -0800
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Andy Shevchenko (2019-02-18 11:34:15)
-> clk-lpss.h is solely x86 related header. Move it to correct folder.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+Hello,
 
-Applied to clk-next
+On Thu, 21 Feb 2019 14:05:09 -0800
+Stephen Boyd <sboyd@kernel.org> wrote:
 
+> Quoting Stephen Boyd (2019-02-13 09:14:22)
+> > 
+> > static?
+> 
+> Ok I marked it static and applied to clk-next.
+
+Thanks, and sorry for not getting back with a v2 in a timely fashion. I
+had several patch series in-flight for this project, and for several of
+them, additional iterations were needed, so I kind of lost track of
+this one. Sorry about that.
+
+Thanks again,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
