@@ -3,107 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A60C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 07:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A59C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 07:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 423832086C
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 07:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AF492086C
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 07:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550821696;
-	bh=IWsGKyF6tSaXeD7/EpbCy6bONxy5c7yvq1SKZiasmCs=;
+	s=default; t=1550822103;
+	bh=JEz0bcg046WywF68HABvhfGgl3vqU0KxKynTcb5gqmo=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=2G/7f3gFJbQRw8dC8MUDHfYUbAuBG9GJS2YcJBV+pllvjtqJXa4tteOo83F7bV8yv
-	 YyPdJV+JSdC5rb43T/Q3RD4ZvBlqUFoWu881HgCfF4fkoT9JeWcGvnumJ6UYEc1q+v
-	 eWuV6nedInSOS/qxwCz6AmN9PJ1UgT73nSVh9A70=
+	b=L8YtBuuuJywa28WCftxlGlfpUZHxVEfmp6OATJnbpn/A8EYKijJ+Fd2N30KNu0Mun
+	 8Fm5gKJuGAcfLDZk18InuEfW3pLhfuoZppMFqScz4HP3duBS7wklD1mVlxDOVdyanz
+	 4Ep2ebgLKcLGDMxSHB0ll0tM29R8LsujrL3wGLgQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbfBVHsK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:48:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38254 "EHLO mail.kernel.org"
+        id S1726131AbfBVHzC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 02:55:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbfBVHsK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:48:10 -0500
+        id S1726083AbfBVHzC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:55:02 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF37D207E0;
-        Fri, 22 Feb 2019 07:48:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C70B9207E0;
+        Fri, 22 Feb 2019 07:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550821689;
-        bh=IWsGKyF6tSaXeD7/EpbCy6bONxy5c7yvq1SKZiasmCs=;
+        s=default; t=1550822101;
+        bh=JEz0bcg046WywF68HABvhfGgl3vqU0KxKynTcb5gqmo=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=mHvlPgvXH8lhnQQ1MiSPkgg8nvk+Zdl0Mb0WdNqeFG4q1IHioJEte91aC+pPZ97FA
-         pg7IaKaMq3tF5+/fx2rP08nVw3X2Jkeg5EHZt2el9yPHz8pDT7tcbuL3eS0UbK1okE
-         Zr4iYUnV64ou6Om4hls2Zp0t6SKvB59wHEJm2U44=
+        b=llM7pLVq68TADgySgHWtB0kdPJ/TgXNZlpTLdQBkrYaP4JmTNaWDmKkN6qkRt4apg
+         s5ZL6Elew86NCzobE28xLKzID7bpahrV67GfVNEd+ji9+Ns+9px7vP4mToKLo6NzZV
+         NbexmdYxMaxjmwnEqup+4tfPjZytfFRyv8CehGKw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 00/12] Mediatek MT8183 clock and scpsys support
-Message-ID: <155082168901.77512.12893153125579041936@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V5 5/8] clk: mediatek: add MUX_GATE_FLAGS_2
+Message-ID: <155082210099.77512.4042430864962937771@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <20190201083016.25856-1-weiyi.lu@mediatek.com> <20190201083016.25856-2-weiyi.lu@mediatek.com> <155069033021.77512.14493210110678229730@swboyd.mtv.corp.google.com> <b7abe484-71c1-5ec0-796c-544f1ac5d6f5@gmail.com>
+References: <20190220025357.7354-1-wangyan.wang@mediatek.com> <20190220025357.7354-6-wangyan.wang@mediatek.com> <155069142918.77512.15726787055211591362@swboyd.mtv.corp.google.com> <1550716451.23876.5.camel@mszsdaap41>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <b7abe484-71c1-5ec0-796c-544f1ac5d6f5@gmail.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, stable@vger.kernel.org
-Date:   Thu, 21 Feb 2019 23:48:09 -0800
+In-Reply-To: <1550716451.23876.5.camel@mszsdaap41>
+To:     mtk14994 <wangyan.wang@mediatek.com>
+Cc:     CK Hu <ck.hu@mediatek.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        srv_heupstream@mediatek.com,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        David Airlie <airlied@linux.ie>,
+        Sean Wang <sean.wang@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date:   Thu, 21 Feb 2019 23:55:00 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matthias Brugger (2019-02-21 00:36:24)
->=20
->=20
-> On 20/02/2019 20:18, Stephen Boyd wrote:
+Quoting mtk14994 (2019-02-20 18:34:11)
+> Dear Stephen,
+> > +       unsigned char mux_flags;
 > >=20
-> > What's the merge plan here? Do you want me to apply these patches to clk
-> > tree? Will someone be sending me a pull request for mediatek clk changes
-> > this cycle? It's getting pretty late for much of anything making this
-> > upcoming merge window.
-> >=20
+> > Why isn't it an unsigned long? Isn't this supposed to match the
+> > frameworks version of the clk flags?
 >=20
-> As far as I can see, the clock patches are independent, so I think it is =
-OK to
-> take them. SCPSYS patches will go through my tree once they are in shape.
-
-Ok great. When patches for clks are interspersed throughout the patch
-series it makes me think that something later in the series depends on
-something that isn't a clk patch so then I can't apply it.
-
+> ---->   it is unsigned char mux_flags ,becasuse struct clk_mux {
 >=20
-> Do you prefer to get pull requests for clock patches? I wasn't aware of t=
-hat.
-> But if you prefer that, we can find someone who prepares every merge wind=
-ow a
-> pull request.
+> ....
+> ....
+> u8 flags;
+> ....
+> }
+>=20
+> it is matched when use " mux->flags =3D mc->mux_flags;"
 >=20
 
-I don't really care one way or the other about pull requests vs.
-manually applying patches. It helps if someone wants to pick the patches
-up and send them along when there are complex dependencies between the
-clk patches and dts bits or something like that. It also helps if
-there's someone else with knowledge of the particular SoC saying "these
-are good, please pull these patches". Subsystem maintainers obviously
-aren't experts in all SoCs and their various quirks, plus datasheets
-aren't always so widely available, so sharing the load with SoC
-maintainers who are familiar with the hardware usually makes a lot of
-sense.
+Please try to not top-post.
 
-Otherwise, if you just want to put your "Reviewed-by" tag on any patches
-that look good and are sane then I'll quickly understand that these
-patches are good and that I should pick them up into the clk tree from
-the list. Just please communicate one way or the other about patches
-that you care about because it helps to know if they've gotten attention
-or not.
-
+Ok I thought it was the generic clk flags, not the mux specific flag
+bits. Sounds fine then, but I would sort of expect it to match the type
+in clk_mux then, i.e. be a u8 instead of an unsigned char (yes it's the
+same in the end but it looks different at a glance).
