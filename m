@@ -3,82 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC63AC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 17:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C143C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 18:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D53A2070D
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 17:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D2382075C
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 18:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550857585;
-	bh=FKwqrUUguu6NXIhqOpxtDvpDKNPuz1Ra3atbXUUhTWc=;
+	s=default; t=1550858450;
+	bh=/3+hlxfQmTh7Je/tXAhe6DQ9UGqu35MSOMDr2VIkAQA=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=jDIZ+EHDdkpMtZ8OZ00RpqiXMLcPJTja+gExD+Z9mx2ZDguPnFP3pcTqsaPLJfyfi
-	 r7EFn4z6wFCM7znVbpNBpCaqx38D6vlSEIzL5rHTBcSfEfu930y03dS6mBSu86oRii
-	 NajsPkXdKRf9QogS3HvBbb6gW8bVXliYwEKtTDmw=
+	b=DEDZNna15seLy8EG9J0TI42g1AUfvcW1/US/OWxDj8JGVjfA/abrUaAYjjTWIVZxn
+	 W1+YytFU4yPSp4ACxM6m7NmgOqBiQ8SgijkXJIektHM7Br5F/j+9lDQTn0tT+z8LjE
+	 ktZotG/OzYbCax8lvaCsCYD+XiuRM9TvOlqP4BEQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfBVRqZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:46:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38458 "EHLO mail.kernel.org"
+        id S1726152AbfBVSAu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 13:00:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfBVRqY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:46:24 -0500
+        id S1725832AbfBVSAt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Feb 2019 13:00:49 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 459E520700;
-        Fri, 22 Feb 2019 17:46:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3553F2070D;
+        Fri, 22 Feb 2019 18:00:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550857584;
-        bh=FKwqrUUguu6NXIhqOpxtDvpDKNPuz1Ra3atbXUUhTWc=;
+        s=default; t=1550858449;
+        bh=/3+hlxfQmTh7Je/tXAhe6DQ9UGqu35MSOMDr2VIkAQA=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=mJjR4trVsbcC/03rAfScJB4DuFBnG1OW7vXMZZ3kZ3m5PEI2xnEILwW2h6LPsvcbn
-         5F8/SHFwx1P3JsDdkiiGxd9skUIEbR3sPvGGgo8h9F7WSMF4q0F1B5Duy76Y1xvF29
-         /0J9CnP5GAXIelVhFL4gvpoQWLjH1fk6/iFbf7rU=
+        b=zcclzWQYCwWU9EF7JCAySJC530Z5qHmM9kG1nVeSGpI+ln9IvRU2kgYZ+IGNET0AP
+         rkkFKG/m+wvrCvPJuk5RjIMn+Kh9pFKptIjbVgqe9928QqAieBQGgqObj7Lm8aUS6l
+         skz4qPPSnQ/41fnpP2/QUx+lojC9IAJUEacpBbYg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] clk: imx: Refactor entire sccg pll clk
-Message-ID: <155085758346.77512.1117855723990616329@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: qoriq: Improve an error message
+Message-ID: <155085844841.77512.11794519377167979747@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <1550855235-31528-1-git-send-email-abel.vesa@nxp.com>
+References: <20190218091906.GA7712@kadam>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1550855235-31528-1-git-send-email-abel.vesa@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Date:   Fri, 22 Feb 2019 09:46:23 -0800
+In-Reply-To: <20190218091906.GA7712@kadam>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Yuantian Tang <andy.tang@nxp.com>
+Cc:     linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date:   Fri, 22 Feb 2019 10:00:48 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2019-02-22 09:07:32)
-> Make the entire combination of plls to be one single clock. The parents u=
-sed
-> for bypasses are specified each as an index in the parents list.
-> The determine_rate does a lookup throughout all the possible combinations
-> for all the divs and returns the best possible 'setup' which in turn is u=
-sed
-> by set_rate later to set up all the divs and bypasses.
+Quoting Dan Carpenter (2019-02-18 01:19:06)
+> We intended to print "ret" but there is a copy and paste bug from the
+> previous error message.
 >=20
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Tested-by: Lucas Stach <l.stach@pengutronix.de>
-> Acked-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
 
-I suspect these tested by and acked tags should have been dropped,
-unless you discussed and tested off-list?
+Applied to clk-next
 
