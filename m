@@ -2,81 +2,67 @@ Return-Path: <SRS0=aDlN=Q5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E74EC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C744AC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E0CA2086C
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91C192086C
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550823200;
-	bh=ljvD/aGj+6Hipv0rUE56d5fYerjq/aYHjKYQ9G5T5gA=;
+	s=default; t=1550823285;
+	bh=DpBV3JgeqWeM6hSwzRx2+3suu88eCRJUcSllZjdef9M=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=TwVVO9gZ46IjkEzvCpMgO6nYp4pHYbl1cTcyQbGuWbMeVvb88iBWjleIoNYb2LzqC
-	 JFzPaGA4QrA5asXmRAqtYAxlHIaEva/9t1oCU1A824ujJqtzSqiPJNpn3xaBnzPsJn
-	 eYbxm0AoImH6RRBf7fJLKXj8wlaa2MlDcmbC30XU=
+	b=FGikMqNMoJ27AN7k1M5XKxUVlRcZZOK8Vo8vRf07DZ68UW2qEycEGvReInEUsnPzB
+	 ewjJH18+hIbA/WpzI/GHaRohLgqb1fyuXsIjrnCcyZiJnApVyQmu3XI6kd8168Sgkw
+	 VKBY6Kx0WeZbJ3JIa4PGx8eVGN/bJCqmxFbdDEQs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbfBVINU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:13:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51688 "EHLO mail.kernel.org"
+        id S1726250AbfBVIOp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 03:14:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfBVINT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:13:19 -0500
+        id S1725821AbfBVIOp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:14:45 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2478120823;
-        Fri, 22 Feb 2019 08:13:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0A720823;
+        Fri, 22 Feb 2019 08:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550823199;
-        bh=ljvD/aGj+6Hipv0rUE56d5fYerjq/aYHjKYQ9G5T5gA=;
+        s=default; t=1550823284;
+        bh=DpBV3JgeqWeM6hSwzRx2+3suu88eCRJUcSllZjdef9M=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=VTvOlSzqBB5QzLrdkk1Uc5Z8hrhsfHRq3W+a+QyxZFSZX/pM1tnFccoornqJk2S7S
-         HtiKbukXqD2Jc42uRtF/un1afpACYWQbk4reVruBhvyYB/7PvGaPw2qTwCntsaQUBe
-         jz7sTc/80zB3f0Z+81nA9nn2w2CohYTyRPlR+UIk=
+        b=P7N9XVKttOKa95Q1uAPsxAuLC8VVM0ap3UWvj0e+cu/gq/lf3FJmaADXUglx+qDFY
+         CllqdRQuW1ndBysy9/dvH5bbcK4e1VUu8rKJytvrAb9Qou3L9h5D/kwegOnz0e/RQW
+         h2lw+xDScYfU/Iumr2b0dLXugmDSHENIKKrGUhrY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] clk: fractional-divider: check parent rate only if flag is set
-Message-ID: <155082319829.77512.7935951458664373330@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1] clk: x86: Move clk-lpss.h to platform_data/x86
+Message-ID: <155082328374.77512.1461384740318422430@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <20190210153806.24201-1-katsuhiro@katsuster.net>
+References: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190210153806.24201-1-katsuhiro@katsuster.net>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+In-Reply-To: <20190218193415.79716-1-andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Date:   Fri, 22 Feb 2019 00:13:18 -0800
+        linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Fri, 22 Feb 2019 00:14:43 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Katsuhiro Suzuki (2019-02-10 07:38:06)
-> Custom approximation of fractional-divider may not need parent clock
-> rate checking. For example Rockchip SoCs work fine using grand parent
-> clock rate even if target rate is greater than parent.
+Quoting Andy Shevchenko (2019-02-18 11:34:15)
+> clk-lpss.h is solely x86 related header. Move it to correct folder.
 >=20
-> This patch checks parent clock rate only if CLK_SET_RATE_PARENT flag
-> is set.
->=20
-> For detailed example, clock tree of Rockchip I2S audio hardware.
->   - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
->   - i2s1_div is integer divider can divide N (N is 1~128).
->     Input clock is CPLL or GPLL. Initial divider value is N =3D 1.
->     Ex) PLL =3D CPLL, N =3D 10, i2s1_div output rate is
->       CPLL / 10 =3D 1.2GHz / 10 =3D 120MHz
->   - i2s1_frac is fractional divider can divide input to x/y, x and
->     y are 16bit integer.
->=20
-> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-Applied to clk-next but I made the function into a macro because I don't
-see the benefit to exporting such a simple thing.
+Applied to clk-next
 
