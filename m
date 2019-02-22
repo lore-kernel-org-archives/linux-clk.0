@@ -2,116 +2,76 @@ Return-Path: <SRS0=aDlN=Q5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B45C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F14C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D86C206BB
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 974232077B
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550862497;
-	bh=zn5gREfnAEgVz2BI4KrdGye4NvLUosAjzJ0G//JMftY=;
+	s=default; t=1550865056;
+	bh=qqLAYFVt4Bd4GjOHC6EQcZOOy0/X2MyINJ4jgLHjpRI=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=SLUM+8V0j6Uxh8n04TH+FzuBv7Q8DwBvyJrXoZ0WZW2yP/HXvDjS8frNfSMXz8Lx9
-	 hbMmjEPj3COc2sE9I83KGh4F+ESmb6SzLlF3AlBYtkB3hk95vKk5nRSCV4qsk6AT0W
-	 s7DhDWUr/rD0zabcK5UkdceLUeRTS8yS7DG4EGz0=
+	b=j7ihKr+AnrXT+MguuYzaZSr1ESeQpVQoTG+IU14udjvGAbEzyzHaWBUFNuYXfTsnM
+	 gwehhFCC9VpbS41VREl5WjtHdRUpHHPlO/e6hv5khzARlP7Ymr4QwKpzYlsYFuXLfk
+	 zv7Ng070SFbJ5G44cGBFAb+IfOB9k2s5BpEdRWCk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbfBVTIM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:08:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50606 "EHLO mail.kernel.org"
+        id S1726654AbfBVTu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 14:50:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbfBVTIL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:08:11 -0500
+        id S1725878AbfBVTu4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Feb 2019 14:50:56 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D23B3206BB;
-        Fri, 22 Feb 2019 19:08:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67B432070D;
+        Fri, 22 Feb 2019 19:50:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550862490;
-        bh=zn5gREfnAEgVz2BI4KrdGye4NvLUosAjzJ0G//JMftY=;
+        s=default; t=1550865055;
+        bh=qqLAYFVt4Bd4GjOHC6EQcZOOy0/X2MyINJ4jgLHjpRI=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=rvJ71P0vQdSAFNlEJjZ4Pe8azzNtfsV9AtdZmcTkrOuZxK9geLTwKtG7YAf3l8Vwm
-         qWX1lnThkUN9xUae0vOKy2p3arrmCbUPxQZo2AWLVfKPqH/orPjaPlLAAxHIC359l6
-         YxCnzqmv8kafRdWDmgPjp8LHeKyvH7XdIBIXTvIQ=
+        b=DH8dovr0q9qF5sRloo7eTzIccSuwsoWR/RFcmbuGSlAT5QIHgYmrMzpePKCmUYI5q
+         ztOxA1TDvqB8U8od2Lfcp/gGOtTay9oTeZ/O+cCIhh8OR95hflAqQeZGqmYekz4jrE
+         BPgluH3GjjLd3wXrGFA+bE1vkMCHH3sBHxa37K8o=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND V6 2/2] clk: imx: scu: add cpu frequency scaling support
-Message-ID: <155086249004.77512.8709011386763447047@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 0/4] clk: ti: get rid of CLK_IS_BASIC
+Message-ID: <155086505454.77512.10530464362384162696@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <1550802436-13007-1-git-send-email-Anson.Huang@nxp.com> <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
+References: <1547543715-16467-1-git-send-email-t-kristo@ti.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-Date:   Fri, 22 Feb 2019 11:08:10 -0800
+In-Reply-To: <1547543715-16467-1-git-send-email-t-kristo@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
+Cc:     linux-omap@vger.kernel.org, tony@atomide.com
+Date:   Fri, 22 Feb 2019 11:50:54 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2019-02-21 18:32:10)
-> On NXP's i.MX SoCs with system controller inside, CPU frequency
-> scaling can ONLY be done by system controller firmware, and it
-> can ONLY be requested from secure mode, so Linux kernel has to
-> call ARM SMC to trap to ARM-Trusted-Firmware to request system
-> controller firmware to do CPU frequency scaling.
+Quoting Tero Kristo (2019-01-15 01:15:11)
+> Hi Stephen,
 >=20
-> This patch adds i.MX system controller CPU frequency scaling support,
-> it reuses cpufreq-dt driver and implement the CPU frequency scaling
-> inside SCU clock driver.
+> As requested, this series gets rid of CLK_IS_BASIC flag usage from
+> TI clock drivers.
 >=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Boot tested on am3/am4/am5/omap3/omap4 series of SoCs. Also, ran a quick
+> suspend/resume test on omap3/omap4/am5.
+>=20
 
-Ah I missed one thing, see below.
+I'm looking at clk-next now that this is all merged in and I still see
+one usage of CLK_IS_BASIC in the omap2 hwmod code.
 
-> @@ -180,6 +185,23 @@ static long clk_scu_round_rate(struct clk_hw *hw, un=
-signed long rate,
->         return rate;
->  }
-> =20
-> +static int clk_scu_atf_set_cpu_rate(struct clk_hw *hw, unsigned long rat=
-e,
-> +                                   unsigned long parent_rate)
-> +{
-> +       struct clk_scu *clk =3D to_clk_scu(hw);
-> +       struct arm_smccc_res res;
-> +       unsigned long cluster_id;
-> +
-> +       if (clk->rsrc_id =3D=3D IMX_SC_R_A35)
-> +               cluster_id =3D 0;
+arch/arm/mach-omap2/omap_hwmod.c:               if (__clk_get_flags(oh->_cl=
+k) & CLK_IS_BASIC)
 
-Do we still need to check this anymore? Why not just always use
-cluster_id 0?
+Can that also be removed? If not, what clk types are on this platform?
+Maybe I can remove CLK_IS_BASIC from every clk type except for the ones
+that this code is checking for.
 
-> +
-> +       /* CPU frequency scaling can ONLY be done by ARM-Trusted-Firmware=
- */
-> +       arm_smccc_smc(IMX_SIP_CPUFREQ, IMX_SIP_SET_CPUFREQ,
-> +                     cluster_id, rate, 0, 0, 0, 0, &res);
-
-Because not checking would make this work, vs. checking causes this code
-to sometimes use an uninitialized value from the stack.
-
-> +
-> +       return 0;
-> +}
-> +
