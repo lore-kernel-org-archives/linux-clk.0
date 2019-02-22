@@ -4,68 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD95AC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1077C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F04F2086C
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C1EE2086C
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 08:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550822598;
-	bh=zsdoPUNU2yfLU76WhB7EY4WAcfCXllD/puGhaAGwnB4=;
+	s=default; t=1550822838;
+	bh=xkDpUe5jEGSFpbKRVg9CgjQYy+O817p/mwCbDRCtfvo=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=Wm8zO7fm4tvzNLC+01c34x74B1GDRYPZOeQJPYIEbU5taw6erf88HrnE3VH1hivTC
-	 EQAVmYe4nFKxArlVB5+1ycg9EOPT2wDvyryQcMUamW1I0XgLzRvlxlAUa6E89o3wfi
-	 at4n4hoqONj8hoKIrkA9KPUFvUBxeX3K2t9SxUC0=
+	b=zIJGRap0vG89IGk/Uc8KYcaoHms1V5C+W5h9+iZS/0NyR5lC6eiPUsEBQ65moZ6Mo
+	 a+TFSATxw9opYfmvvsPuibXobmCqWqDZVyqNueMgCLH68uEwLHjItCAhhQzfDeAyNj
+	 h8YX6otSaBV+SGuYtsy8kOS9W50EMDK3umiYjaGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfBVIDN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:03:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42958 "EHLO mail.kernel.org"
+        id S1726144AbfBVIHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 03:07:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfBVIDN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:03:13 -0500
+        id S1726117AbfBVIHS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:07:18 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2B7220818;
-        Fri, 22 Feb 2019 08:03:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6893720818;
+        Fri, 22 Feb 2019 08:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550822593;
-        bh=zsdoPUNU2yfLU76WhB7EY4WAcfCXllD/puGhaAGwnB4=;
+        s=default; t=1550822837;
+        bh=xkDpUe5jEGSFpbKRVg9CgjQYy+O817p/mwCbDRCtfvo=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=XZeSjqgVhziM2d1TFm2VVqxi0DiUxbgHO7mYSF9rX3k6HY9mzJ7qD66c+XEg6A5aZ
-         4FRAt1HNRPDuzsm/tTS6sd6pP/1AvU1Nyz9T5uwn9JYRgdPY/v7JbOf8m8S93mcpj7
-         dDeE8yhD5oEypxGhCK5MnPrpeeN2yf2OFZ4vgGTw=
+        b=eqmiJ7ZfhN8UC+KcdVaeCtAyBvebF3wN99P7ohRmDQ27pMNDfY4tCvA4ViaxZLK+u
+         SEUNlnFuCDhAnxHKlehZ5SrlZN62R3K35i11FRrpG1si1HPeNW+IcnvyytT1axMMJw
+         ntJHk3cYBVVNhi6+wxZKB3QTXNTRHyF2GGNost7E=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 5/6] clk: actions: Add clock driver for S500 SoC
-Message-ID: <155082259229.77512.12339399521506773511@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1] clk: qcom: Make common clk_hw registrations
+Message-ID: <155082283660.77512.10059723735671016353@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org> <20190115033340.25016-6-manivannan.sadhasivam@linaro.org>
+References: <1549829645-24400-1-git-send-email-jhugo@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190115033340.25016-6-manivannan.sadhasivam@linaro.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de, devicetree@vger.kernel.org,
-        linux-actions@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Date:   Fri, 22 Feb 2019 00:03:12 -0800
+In-Reply-To: <1549829645-24400-1-git-send-email-jhugo@codeaurora.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com
+Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Date:   Fri, 22 Feb 2019 00:07:16 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-01-14 19:33:39)
-> Add common clock driver for Actions Semi S500 SoC.
+Quoting Jeffrey Hugo (2019-02-10 12:14:05)
+> Several clock controller drivers define a list of clk_hw devices, and then
+> register those devices in probe() before using common code to process the
+> rest of initialization.  Extend the common code to accept a list of clk_hw
+> devices to process, thus eliminating many duplicate implementations.
 >=20
-> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-> [Mani: cleaned up the driver]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 > ---
 
 Applied to clk-next
