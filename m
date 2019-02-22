@@ -2,76 +2,90 @@ Return-Path: <SRS0=aDlN=Q5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F14C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C178C4360F
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974232077B
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CBCD206BB
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 19:54:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550865056;
-	bh=qqLAYFVt4Bd4GjOHC6EQcZOOy0/X2MyINJ4jgLHjpRI=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=j7ihKr+AnrXT+MguuYzaZSr1ESeQpVQoTG+IU14udjvGAbEzyzHaWBUFNuYXfTsnM
-	 gwehhFCC9VpbS41VREl5WjtHdRUpHHPlO/e6hv5khzARlP7Ymr4QwKpzYlsYFuXLfk
-	 zv7Ng070SFbJ5G44cGBFAb+IfOB9k2s5BpEdRWCk=
+	s=default; t=1550865284;
+	bh=Z47JLcKeQPTgwUAXGdJwxMDpArrgCOn/XZ67XgSGCxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TogkhS0OEaDUus6YhNV66LqKYQ3Y3b3iCMSEHogqJBX5OI/cmT7kjKgFNt8O7uzzU
+	 wl8NU7R8colSxrpA061NJ5ohFQL5PZeP0vXtuZw93HGkjfXrxri0A/b16Ebaycmcxq
+	 fbizLk9PPVBBEpC3k3eZHXpDQqAlA0DiTr0RbzMc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfBVTu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:50:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbfBVTu4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:50:56 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67B432070D;
-        Fri, 22 Feb 2019 19:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550865055;
-        bh=qqLAYFVt4Bd4GjOHC6EQcZOOy0/X2MyINJ4jgLHjpRI=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=DH8dovr0q9qF5sRloo7eTzIccSuwsoWR/RFcmbuGSlAT5QIHgYmrMzpePKCmUYI5q
-         ztOxA1TDvqB8U8od2Lfcp/gGOtTay9oTeZ/O+cCIhh8OR95hflAqQeZGqmYekz4jrE
-         BPgluH3GjjLd3wXrGFA+bE1vkMCHH3sBHxa37K8o=
-Content-Type: text/plain; charset="utf-8"
+        id S1726803AbfBVTyj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 14:54:39 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45831 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfBVTyi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Feb 2019 14:54:38 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so2847225ota.12;
+        Fri, 22 Feb 2019 11:54:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tLSf1F8h4zenC+IA1SEKa3+nVZ7TzyWzcS8/NUrEaGA=;
+        b=tM1uEdOpgE1c6FwfhCgpybQ6juGoMPtakE0DXZ72qf9zcqK36XUhIOhdas+JbddZoY
+         AGLaHupkxnNAtfcPWIw7kNVUojYdMVRldFIT7BA34pTQdDJjz8eA4J+EPuBSNWJoEHUQ
+         sHTR+4PqOsKG4CL/3+9ctwKGONh1leJIs+h6nr7NlKBVMya9ZT3j1jcKKWQefeDCrXIn
+         0eugZpvhlOn25VQA0a6SmEefpCXzHyeC+TyInRzb6XwzZbJ2tzcOENBMLpmvcwZMDv2G
+         mxDw+608ZuKkRQQN2FN68AZ9rT0V6nlrR+7PlZow5jGB9FEZFoMJUQ8CzTJZ4CCdTeZv
+         /xdA==
+X-Gm-Message-State: AHQUAuZbNV2eiNNQ8gK3JULK6D2PIrsHvxwmGDmP9YPTEB5qgV9Nlnk0
+        3vHhNfwDqHe5TlxX0KC4XA==
+X-Google-Smtp-Source: AHgI3IaMfxAxy1d5B1Ip8fYOLVMWVTIl7LABQBDFjU+427ucRIvC0UkEFejJwpVMTIA8XNwbxw1Tzw==
+X-Received: by 2002:a9d:7cca:: with SMTP id r10mr3956749otn.81.1550865277934;
+        Fri, 22 Feb 2019 11:54:37 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y124sm919639oie.57.2019.02.22.11.54.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 11:54:37 -0800 (PST)
+Date:   Fri, 22 Feb 2019 13:54:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] clk: gcc-qcs404: Add PCIe resets
+Message-ID: <20190222195436.GA26101@bogus>
+References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+ <20190219060407.15263-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/4] clk: ti: get rid of CLK_IS_BASIC
-Message-ID: <155086505454.77512.10530464362384162696@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <1547543715-16467-1-git-send-email-t-kristo@ti.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1547543715-16467-1-git-send-email-t-kristo@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Cc:     linux-omap@vger.kernel.org, tony@atomide.com
-Date:   Fri, 22 Feb 2019 11:50:54 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219060407.15263-2-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tero Kristo (2019-01-15 01:15:11)
-> Hi Stephen,
->=20
-> As requested, this series gets rid of CLK_IS_BASIC flag usage from
-> TI clock drivers.
->=20
-> Boot tested on am3/am4/am5/omap3/omap4 series of SoCs. Also, ran a quick
-> suspend/resume test on omap3/omap4/am5.
->=20
+On Mon, Feb 18, 2019 at 10:04:01PM -0800, Bjorn Andersson wrote:
+> Enabling PCIe requires several of the PCIe related resets from GCC, so
+> add them all.
+> 
+> Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
+>  include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
+>  2 files changed, 14 insertions(+)
 
-I'm looking at clk-next now that this is all merged in and I still see
-one usage of CLK_IS_BASIC in the omap2 hwmod code.
-
-arch/arm/mach-omap2/omap_hwmod.c:               if (__clk_get_flags(oh->_cl=
-k) & CLK_IS_BASIC)
-
-Can that also be removed? If not, what clk types are on this platform?
-Maybe I can remove CLK_IS_BASIC from every clk type except for the ones
-that this code is checking for.
-
+Acked-by: Rob Herring <robh@kernel.org>
