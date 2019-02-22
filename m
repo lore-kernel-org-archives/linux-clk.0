@@ -2,120 +2,172 @@ Return-Path: <SRS0=aDlN=Q5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9A3C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 10:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6702C4360F
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 10:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98DD20823
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 10:12:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="woeWSnf+"
+	by mail.kernel.org (Postfix) with ESMTP id BDE4C2075A
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Feb 2019 10:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbfBVKMa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 05:12:30 -0500
-Received: from mail-eopbgr1400121.outbound.protection.outlook.com ([40.107.140.121]:26421
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725895AbfBVKMa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 05:12:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zrq4vU4rsDXwacuQkSLDv+gAGnUmro+xtggXyESUo+M=;
- b=woeWSnf+Ui1Qs3lIJzk6IE18Aby4ozQBQpkuZE8MUmroAO7vy1JJoIBdNPLgHXbJqT1BPSZpfUnksB0+hx3p3v8o9b+JgicmWNPtlUF3MvwfToHi5JdTSafjhUpUH9b9Ne6tZ4dLfTTNY1WoiVHUPsn8zWfcdp6GPX8TRqJDpk0=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1PR01MB1836.jpnprd01.prod.outlook.com (52.133.164.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.15; Fri, 22 Feb 2019 10:12:24 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e%3]) with mapi id 15.20.1643.014; Fri, 22 Feb 2019
- 10:12:24 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
-Thread-Topic: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
-Thread-Index: AQHUyTar0aJjInAke0Kex+QMbpAYUqXqlYMAgAEEwMA=
-Date:   Fri, 22 Feb 2019 10:12:23 +0000
-Message-ID: <TY1PR01MB177050F5C00ED7DE89FB4318C07F0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 06abb428-1002-4fa6-4151-08d698ae3d5b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1836;
-x-ms-traffictypediagnostic: TY1PR01MB1836:
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1836;20:0cctzfI5dZ3+JBf3dgc/1E9/CmDHP1KERUEQceZGgcOnvZFxrDhkKPl4Ocw2lhmrCnSKVjILt3bJFkVUbJ4oXLe2dc+Cb8JH9HagPSqi7w3mDwjjaJQpEGtnY7cX6+oEaA9ezaRvB0fwklfgvQtU/QGZwvnV65u0CNuo231/0Co=
-x-microsoft-antispam-prvs: <TY1PR01MB1836099CE1DE576DA5F61961C07F0@TY1PR01MB1836.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 09565527D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(366004)(376002)(346002)(136003)(189003)(199004)(53936002)(11346002)(446003)(478600001)(2906002)(44832011)(97736004)(476003)(7696005)(74316002)(229853002)(9686003)(6436002)(486006)(99286004)(105586002)(106356001)(7736002)(68736007)(305945005)(6916009)(33656002)(55016002)(102836004)(6506007)(53546011)(3846002)(6116002)(26005)(76176011)(54906003)(14444005)(81156014)(81166006)(5660300002)(4326008)(256004)(8676002)(107886003)(6246003)(25786009)(186003)(14454004)(316002)(66066001)(71190400001)(71200400001)(8936002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1836;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: IFJplsMyD5WeNY+KBcfsorDU9ep3BIBvj8SWyIj5mKQ8UBNiL+6Hx+bMbX4/hCCfoeraM6jUtZvFl+ZZXH4xm3R4I/X+DkaATVqXJWCi1NGyNCuhElDVgNFChnGE8SwNTUmZ51IEs+emiYZEGYJpnt5rbdpTMXOKZpnVmqn3sPjYNNFD6i9mWBvZUquhhPDUpL57OrndoWcFz+mSlnMgInqiDQgh/tCVGcbZdV/ICa1xHC5ZeD5UAt8wemoCa6tsMhyw66XLmAUmhuVsN4pDftZt9lptw4fDnHf04v0C7s6xMBpk5m/ARMsZr+rvO/c1gFT0pUxMM7N4s9xNkYGW7/bJ7MbGmLqevMN+Ef4vpBiKBv2hGYiiSLSejgJCYdbxZFRkKey17gzAc6TeSdCm3xooY/GtOqSikxuCWE8CTds=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726882AbfBVKzD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 05:55:03 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43125 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbfBVKzC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Feb 2019 05:55:02 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gx8Tk-0000oK-0I; Fri, 22 Feb 2019 11:54:52 +0100
+Message-ID: <66e1685e5cc3fdcaba6ab55b3d030628c37ef8e2.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] clk: imx8mq: initialize clock tree earlier
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Anson Huang <anson.huang@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+Date:   Fri, 22 Feb 2019 11:54:47 +0100
+In-Reply-To: <1550828264-9962-1-git-send-email-Anson.Huang@nxp.com>
+References: <1550828264-9962-1-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06abb428-1002-4fa6-4151-08d698ae3d5b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2019 10:12:23.8304
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1836
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gR2VlcnQsDQoNCj4gRnJvbTogbGludXgtcmVuZXNhcy1zb2Mtb3duZXJAdmdlci5rZXJu
-ZWwub3JnIDxsaW51eC1yZW5lc2FzLXNvYy1vd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uIEJlaGFs
-ZiBPZiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogMjEgRmVicnVhcnkgMjAxOSAxODozNA0K
-PiBUbzogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+
-IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIGNsazogcmVuZXNhczogcjhhNzc0YzA6IEZpeCBMQVNUX0RU
-X0NPUkVfQ0xLDQo+IA0KPiBPbiBXZWQsIEZlYiAyMCwgMjAxOSBhdCA1OjA5IFBNIEZhYnJpemlv
-IENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBF
-bnVtIExBU1RfRFRfQ09SRV9DTEsgbmVlZHMgdXBkYXRpbmcgYXMgUjhBNzc0QzBfQ0xLX0NBTkZE
-DQo+ID4gd2FzIHJlY2VudGx5IGFkZGVkIGFuZCBpdCdzIHRoZSBjb3JlIGNsb2NrIHdpdGggdGhl
-IGhpZ2hlc3QNCj4gPiBpbmRleC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENh
-c3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiANCj4gTmljZSBjYXRjaCEN
-Cj4gWW91IG9ubHkgbm90aWNlIHRoaXMga2luZCBvZiBidWcgd2hlbiB5b3Ugc3RhcnQgcmVmZXJl
-bmNpbmcgdGhlIGNsb2NrDQo+IGZyb20gRFQsIHJpZ2h0PyBBdCByZWdpc3RyYXRpb24gdGltZSwg
-dGhlIGNsb2NrIG51bWJlciBzcGFjZSBpcyBzaGFyZWQgd2l0aA0KPiBpbnRlcm5hbCBjb3JlIGNs
-b2Nrcywgc28gbm8gZXJyb3IgaXMgZGV0ZWN0ZWQuDQo+IENhbiB3ZSBpbXByb3ZlIHRoYXQ/DQoN
-CkkgY2FuIGxvb2sgaW50byBpdA0KDQo+IA0KPiBGaXhlczogMmE2ZWZiYzZkYTVkMjQ4YyAoImNs
-azogcmVuZXNhczogcjhhNzc0YzA6IEFkZCBtaXNzaW5nIENBTkZEIGNsb2NrIikNCg0KQ29tbWl0
-IDJhNmVmYmM2ZGE1ZDI0OGMgaXMgbm90IGluIGEgcmVsZWFzZSBvciBpbiBhIHJjLCBpcyBpdCBv
-ayB0byByZWZlciB0byBpdCB3aXRoIGEgZml4ZXMgdGFnPw0KDQo+IFJldmlld2VkLWJ5OiBHZWVy
-dCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiANCj4gTWlrZS9TdGVw
-aGVuOiBjYW4geW91IHBsZWFzZSB0YWtlIHRoaXMgb25lIGRpcmVjdGx5LCBhcyBpdCBpcyBhIGZp
-eCBmb3INCj4gY2xrLW5leHQ/DQo+IA0KPiBGYWJyaXppbzogTG9va3MgbGlrZSBSOEE3NzRBMSBo
-YXMgdGhlIHNhbWUgYnVnLiBDYXJlIHRvIGZpeCB0aGF0IGFzIHdlbGw/DQoNCldpbGwgZG8NCg0K
-VGhhbmtzLA0KRmFiDQoNCj4gDQo+IFRoYW5rcyENCj4gDQo+IEdye29ldGplLGVldGluZ31zLA0K
-PiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5
-dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRA
-bGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNo
-bmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFs
-a2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcg
-bGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRv
-cnZhbGRzDQo=
+Am Freitag, den 22.02.2019, 09:42 +0000 schrieb Anson Huang:
+> Currently on i.MX8MQ platform, clock driver is probed
+> later than GPIO driver, and GPIO driver does NOT have
+> defer probe mechanism since the GPIO clock is optional,
+
+So this is what should be fixed. If there is a clock reference in the
+DT, having the clock driver ready is not optional. Optional to the GPIO
+driver just means it won't fail if there is no clock reference at all.
+If there is and the clock provider is not yet there, it needs to do a
+PROBE_DEFER.
+
+So that's a NACK on this patch.
+
+Regards,
+Lucas
+
+> some platforms have GPIO clocks and some are NOT. So
+> it is an issue that on i.MX8MQ platform, there are GPIO
+> clocks defined, but due to clock tree is NOT ready during
+> GPIO driver probe, the GPIO clock management will fail
+> and cause system hang if GPIO clocks are OFF by default.
+> 
+> This patch changes the i.MX8MQ clock tree initialization
+> using CLK_OF_DECLARE instead of platform driver model to
+> make clock tree ready earlier than GPIO driver.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx8mq.c | 33 +++++++--------------------------
+>  1 file changed, 7 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-
+> imx8mq.c
+> index 26b57f4..2df1575 100644
+> --- a/drivers/clk/imx/clk-imx8mq.c
+> +++ b/drivers/clk/imx/clk-imx8mq.c
+> @@ -269,10 +269,9 @@ static const char *imx8mq_clko2_sels[] =
+> {"osc_25m", "sys2_pll_200m", "sys1_pll_
+>  
+>  static struct clk_onecell_data clk_data;
+>  
+> -static int imx8mq_clocks_probe(struct platform_device *pdev)
+> +static void __init imx8mq_clocks_init(struct device_node *np)
+>  {
+> -	struct device *dev = &pdev->dev;
+> -	struct device_node *np = dev->of_node;
+> +	struct device_node *anatop_np;
+>  	void __iomem *base;
+>  	int err;
+>  	int i;
+> @@ -286,10 +285,10 @@ static int imx8mq_clocks_probe(struct
+> platform_device *pdev)
+>  	clks[IMX8MQ_CLK_EXT3] = of_clk_get_by_name(np, "clk_ext3");
+>  	clks[IMX8MQ_CLK_EXT4] = of_clk_get_by_name(np, "clk_ext4");
+>  
+> -	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-anatop");
+> -	base = of_iomap(np, 0);
+> +	anatop_np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-
+> anatop");
+> +	base = of_iomap(anatop_np, 0);
+>  	if (WARN_ON(!base))
+> -		return -ENOMEM;
+> +		return;
+>  
+>  	clks[IMX8MQ_ARM_PLL_REF_SEL] = imx_clk_mux("arm_pll_ref_sel",
+> base + 0x28, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+>  	clks[IMX8MQ_GPU_PLL_REF_SEL] = imx_clk_mux("gpu_pll_ref_sel",
+> base + 0x18, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+> @@ -389,10 +388,9 @@ static int imx8mq_clocks_probe(struct
+> platform_device *pdev)
+>  	clks[IMX8MQ_SYS2_PLL_500M] =
+> imx_clk_fixed_factor("sys2_pll_500m", "sys2_pll_out", 1, 2);
+>  	clks[IMX8MQ_SYS2_PLL_1000M] =
+> imx_clk_fixed_factor("sys2_pll_1000m", "sys2_pll_out", 1, 1);
+>  
+> -	np = dev->of_node;
+>  	base = of_iomap(np, 0);
+>  	if (WARN_ON(!base))
+> -		return -ENOMEM;
+> +		return;
+>  
+>  	/* CORE */
+>  	clks[IMX8MQ_CLK_A53_SRC] = imx_clk_mux2("arm_a53_src", base +
+> 0x8000, 24, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));
+> @@ -568,22 +566,5 @@ static int imx8mq_clocks_probe(struct
+> platform_device *pdev)
+>  
+>  	err = of_clk_add_provider(np, of_clk_src_onecell_get,
+> &clk_data);
+>  	WARN_ON(err);
+> -
+> -	return err;
+>  }
+> -
+> -static const struct of_device_id imx8mq_clk_of_match[] = {
+> -	{ .compatible = "fsl,imx8mq-ccm" },
+> -	{ /* Sentinel */ },
+> -};
+> -MODULE_DEVICE_TABLE(of, imx8mq_clk_of_match);
+> -
+> -
+> -static struct platform_driver imx8mq_clk_driver = {
+> -	.probe = imx8mq_clocks_probe,
+> -	.driver = {
+> -		.name = "imx8mq-ccm",
+> -		.of_match_table = of_match_ptr(imx8mq_clk_of_match),
+> -	},
+> -};
+> -module_platform_driver(imx8mq_clk_driver);
+> +CLK_OF_DECLARE(imx8mq, "fsl,imx8mq-ccm", imx8mq_clocks_init);
+
