@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B27AC43381
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC7DC43381
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67EF120661
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BE4C20661
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957609;
-	bh=0SxXURlF+Br8MWQYVTHLQnwpZ0lu5NMYcqFaK4DHWPk=;
+	s=default; t=1550957616;
+	bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SyR9RiWoBtJd/eQHTmzn9ZsYVwBpuDV9zL0qkfT9/jPJekohmheRw1hFjIQ9b6eTI
-	 0te5ccFax+G3QxRn9vReuVDP9lcQWBxcq3rvOYneVQ0t1XY2UUr31Wmqfc1SPk1sbZ
-	 UfrMu3bMZNAWxRua/D+hFLPUX/595L7LA7ORWEZs=
+	b=hWBPyeZtC5xSHhoAkvo82bytKVdbTYCLPfzS9VlCwnIj2TufszZB+KvACIeXAsSnp
+	 NHsFiL9Fbz6fRJnXNI+qBB1dZC7Nr6n+gU82PdOdfet24ykdHzfYFm8X8L2Bt+AwAN
+	 W4jGxfgkcoDjinsN7CJuo7Pb+iMx49LA25PThHok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbfBWVE4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:04:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
+        id S1727808AbfBWVda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Feb 2019 16:33:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728132AbfBWVEz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:55 -0500
+        id S1728122AbfBWVEy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D467D20657;
-        Sat, 23 Feb 2019 21:04:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BA2320855;
+        Sat, 23 Feb 2019 21:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955894;
-        bh=0SxXURlF+Br8MWQYVTHLQnwpZ0lu5NMYcqFaK4DHWPk=;
+        s=default; t=1550955893;
+        bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sWqQAmRjX95zC/D4XM5kceMWxpSRN0jFw6m6cCPgdWJKSdmhhmZzQJ+vAP+T58Mb
-         0oXZMrJKkkYBDWDdLdJDlcGIHuKMPlsIKe0+y5NrxbF+7Du2HdciqXYiYu1Xwdjzj4
-         oyazMU/Arfu/OGvAbqSD1BcY+a03ANX8Z3YYIdBY=
+        b=cKlYd4tYyQKQ1/WDeDN6c0c+J2EiU02rT4JF8ebMgkCu0mStTfpga8bUIkBYt3v4m
+         3Zn3QvsxQFHqVa13rhDf5ojMor480K4oyP4d3I9hnZGdt22akC6+NOO4vvXBIPZYe4
+         2uMS0rynJ3qa5CrIOdM1kJnl4nrNG8Acfc8fjG30=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 20/72] clk: qcom: gcc: Use active only source for CPUSS clocks
-Date:   Sat, 23 Feb 2019 16:03:30 -0500
-Message-Id: <20190223210422.199966-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 19/72] clk: ti: Fix error handling in ti_clk_parse_divider_data()
+Date:   Sat, 23 Feb 2019 16:03:29 -0500
+Message-Id: <20190223210422.199966-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -56,69 +58,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 9ff1a3b4912528f853048ccd9757ba6a2cc75557 ]
+[ Upstream commit 303aef8b84272d73999a3207dd05bbe10ed89dc5 ]
 
-The clocks of the CPUSS such as "gcc_cpuss_ahb_clk_src" is a CRITICAL
-clock and needs to vote on the active only source of XO, so as to keep
-the vote as long as CPUSS is active. Similar rbcpr_clk_src is also has
-the same requirement.
+The ti_clk_parse_divider_data() function is only called from
+_get_div_table_from_setup().  That function doesn't look at the return
+value but instead looks at the "*table" pointer.  In this case, if the
+kcalloc() fails then *table is NULL (which means success).  It should
+instead be an error pointer.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
+The ti_clk_parse_divider_data() function has two callers.  One checks
+for errors and the other doesn't.  I have fixed it so now both handle
+errors.
+
+Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-sdm845.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/clk/ti/divider.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index f133b7f5652fb..26110e74e086d 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -115,8 +115,8 @@ static const char * const gcc_parent_names_6[] = {
- 	"core_bi_pll_test_se",
- };
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 8d77090ad94ae..0241450f3eb3c 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ 	num_dividers = i;
  
--static const char * const gcc_parent_names_7[] = {
--	"bi_tcxo",
-+static const char * const gcc_parent_names_7_ao[] = {
-+	"bi_tcxo_ao",
- 	"gpll0",
- 	"gpll0_out_even",
- 	"core_bi_pll_test_se",
-@@ -128,6 +128,12 @@ static const char * const gcc_parent_names_8[] = {
- 	"core_bi_pll_test_se",
- };
+ 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
+-	if (!tmp)
++	if (!tmp) {
++		*table = ERR_PTR(-ENOMEM);
+ 		return -ENOMEM;
++	}
  
-+static const char * const gcc_parent_names_8_ao[] = {
-+	"bi_tcxo_ao",
-+	"gpll0",
-+	"core_bi_pll_test_se",
-+};
+ 	valid_div = 0;
+ 	*width = 0;
+@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ {
+ 	struct clk_omap_divider *div;
+ 	struct clk_omap_reg *reg;
++	int ret;
+ 
+ 	if (!setup)
+ 		return NULL;
+@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+ 
+ 	div->table = _get_div_table_from_setup(setup, &div->width);
++	if (IS_ERR(div->table)) {
++		ret = PTR_ERR(div->table);
++		kfree(div);
++		return ERR_PTR(ret);
++	}
 +
- static const struct parent_map gcc_parent_map_10[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_GPLL0_OUT_MAIN, 1 },
-@@ -210,7 +216,7 @@ static struct clk_rcg2 gcc_cpuss_ahb_clk_src = {
- 	.freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gcc_cpuss_ahb_clk_src",
--		.parent_names = gcc_parent_names_7,
-+		.parent_names = gcc_parent_names_7_ao,
- 		.num_parents = 4,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -229,7 +235,7 @@ static struct clk_rcg2 gcc_cpuss_rbcpr_clk_src = {
- 	.freq_tbl = ftbl_gcc_cpuss_rbcpr_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gcc_cpuss_rbcpr_clk_src",
--		.parent_names = gcc_parent_names_8,
-+		.parent_names = gcc_parent_names_8_ao,
- 		.num_parents = 3,
- 		.ops = &clk_rcg2_ops,
- 	},
+ 
+ 	div->shift = setup->bit_shift;
+ 	div->latch = -EINVAL;
 -- 
 2.19.1
 
