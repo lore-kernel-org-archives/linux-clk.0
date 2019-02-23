@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8422C43381
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B27AC43381
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E21920652
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67EF120661
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957241;
-	bh=xw0FXe1Bs2Wv3qb2e9hhR+PzJMOUSwat9clVu0Sbx10=;
+	s=default; t=1550957609;
+	bh=0SxXURlF+Br8MWQYVTHLQnwpZ0lu5NMYcqFaK4DHWPk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q869FOBjdldL1UqUgxAYa4kE8ZDGaEMjdiUCBR+wz2XPldJPBpFZRhjD63+++neKJ
-	 sfn6C2rP4K0x11u+fEHH4nN0Z9xo7gh1YutvypO0Cha71YRGdsO8bFuvWaV5ugJcBn
-	 m8eR2X2EJcOGY1RzzRS1rb8uZ4AcbEkwyhn2qxn0=
+	b=SyR9RiWoBtJd/eQHTmzn9ZsYVwBpuDV9zL0qkfT9/jPJekohmheRw1hFjIQ9b6eTI
+	 0te5ccFax+G3QxRn9vReuVDP9lcQWBxcq3rvOYneVQ0t1XY2UUr31Wmqfc1SPk1sbZ
+	 UfrMu3bMZNAWxRua/D+hFLPUX/595L7LA7ORWEZs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbfBWV1O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:27:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42288 "EHLO mail.kernel.org"
+        id S1728141AbfBWVE4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Feb 2019 16:04:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728965AbfBWVHF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:05 -0500
+        id S1728132AbfBWVEz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6194820861;
-        Sat, 23 Feb 2019 21:07:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D467D20657;
+        Sat, 23 Feb 2019 21:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956025;
-        bh=xw0FXe1Bs2Wv3qb2e9hhR+PzJMOUSwat9clVu0Sbx10=;
+        s=default; t=1550955894;
+        bh=0SxXURlF+Br8MWQYVTHLQnwpZ0lu5NMYcqFaK4DHWPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=URYVKG9JBotj5YPAtuKpNpaJf+jhiyMFmQ6WTjRx7zejiJX6M7GWLgXmjNOeScKCu
-         LaUvJ/qWz/0Pi9/YpRFFtdSMx13HhtSbztFsaLnVuzytv2wbRuRhTZJVnjg3CXbJsB
-         tnzvtYKdZzFY1O7vgDbXfzrlo0uC+mTQg7BXXMwg=
+        b=2sWqQAmRjX95zC/D4XM5kceMWxpSRN0jFw6m6cCPgdWJKSdmhhmZzQJ+vAP+T58Mb
+         0oXZMrJKkkYBDWDdLdJDlcGIHuKMPlsIKe0+y5NrxbF+7Du2HdciqXYiYu1Xwdjzj4
+         oyazMU/Arfu/OGvAbqSD1BcY+a03ANX8Z3YYIdBY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 17/65] clk: qcom: gcc: Use active only source for CPUSS clocks
-Date:   Sat, 23 Feb 2019 16:05:52 -0500
-Message-Id: <20190223210640.200911-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 20/72] clk: qcom: gcc: Use active only source for CPUSS clocks
+Date:   Sat, 23 Feb 2019 16:03:30 -0500
+Message-Id: <20190223210422.199966-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
-References: <20190223210640.200911-1-sashal@kernel.org>
+In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
+References: <20190223210422.199966-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -75,10 +74,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index fa1a196350f15..3bf11a6200942 100644
+index f133b7f5652fb..26110e74e086d 100644
 --- a/drivers/clk/qcom/gcc-sdm845.c
 +++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -131,8 +131,8 @@ static const char * const gcc_parent_names_6[] = {
+@@ -115,8 +115,8 @@ static const char * const gcc_parent_names_6[] = {
  	"core_bi_pll_test_se",
  };
  
@@ -89,7 +88,7 @@ index fa1a196350f15..3bf11a6200942 100644
  	"gpll0",
  	"gpll0_out_even",
  	"core_bi_pll_test_se",
-@@ -144,6 +144,12 @@ static const char * const gcc_parent_names_8[] = {
+@@ -128,6 +128,12 @@ static const char * const gcc_parent_names_8[] = {
  	"core_bi_pll_test_se",
  };
  
@@ -102,7 +101,7 @@ index fa1a196350f15..3bf11a6200942 100644
  static const struct parent_map gcc_parent_map_10[] = {
  	{ P_BI_TCXO, 0 },
  	{ P_GPLL0_OUT_MAIN, 1 },
-@@ -226,7 +232,7 @@ static struct clk_rcg2 gcc_cpuss_ahb_clk_src = {
+@@ -210,7 +216,7 @@ static struct clk_rcg2 gcc_cpuss_ahb_clk_src = {
  	.freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
  	.clkr.hw.init = &(struct clk_init_data){
  		.name = "gcc_cpuss_ahb_clk_src",
@@ -111,7 +110,7 @@ index fa1a196350f15..3bf11a6200942 100644
  		.num_parents = 4,
  		.ops = &clk_rcg2_ops,
  	},
-@@ -245,7 +251,7 @@ static struct clk_rcg2 gcc_cpuss_rbcpr_clk_src = {
+@@ -229,7 +235,7 @@ static struct clk_rcg2 gcc_cpuss_rbcpr_clk_src = {
  	.freq_tbl = ftbl_gcc_cpuss_rbcpr_clk_src,
  	.clkr.hw.init = &(struct clk_init_data){
  		.name = "gcc_cpuss_rbcpr_clk_src",
