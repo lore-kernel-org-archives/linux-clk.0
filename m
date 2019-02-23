@@ -2,185 +2,136 @@ Return-Path: <SRS0=vJlX=Q6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0F3C43381
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 03:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD562C43381
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 10:58:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FA7206B7
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 03:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90F7020684
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 10:58:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="b2AdHy6R"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lyakD850"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfBWDTu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 22:19:50 -0500
-Received: from mail-eopbgr70073.outbound.protection.outlook.com ([40.107.7.73]:6192
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        id S1726437AbfBWK6S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Feb 2019 05:58:18 -0500
+Received: from mail-eopbgr60074.outbound.protection.outlook.com ([40.107.6.74]:5677
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727604AbfBWDTt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Feb 2019 22:19:49 -0500
+        id S1726269AbfBWK6R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 23 Feb 2019 05:58:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1mnV7v4J/R+9M2m+85MnLUCSizdkFnf5BiF8/3iY7MU=;
- b=b2AdHy6R4iTOTNZ9xz//Q6WwR/Q5YvUC6rzOfZwCEg83B+Rtt7G1RQqWWewcvrlbkBjHLuGnfnrMlBMZpPBLOMVRor28P+7oyGFrEC6t1NvN44sGj01SkZCXwj0ZQi86B0nBFjxuyYvr7p//ShP/2DIvqdGajJUJBuPt+/ES/2M=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3659.eurprd04.prod.outlook.com (52.134.66.160) with Microsoft SMTP
+ bh=Arh/XAY6anGIWLDVGnZoqKxA4shfTu26Xfs7rjVxYcc=;
+ b=lyakD8503yJ40MypIOI7iND6MECaJfM727bht9Urox37AUAZUushuoqbKirKKgTfq89YDiGWfSubEd06e+AT61l0ajkP2HZRfIXlBqhktMXUALNzTBLRPOyROGJ5Nxo1CzZZsWXPIVIUVCsCsRlfZQqcx6mEDLNekJJFvwR310M=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB6098.eurprd04.prod.outlook.com (20.179.34.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Sat, 23 Feb 2019 03:19:09 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1cb4:3e1c:fc85:7ed7]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1cb4:3e1c:fc85:7ed7%2]) with mapi id 15.20.1643.016; Sat, 23 Feb 2019
- 03:19:09 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "ccaione@baylibre.com" <ccaione@baylibre.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "baruch@tkos.co.il" <baruch@tkos.co.il>,
+ 15.20.1643.18; Sat, 23 Feb 2019 10:58:14 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1622.018; Sat, 23 Feb 2019
+ 10:58:14 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
         Jacky Bai <ping.bai@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH V2 2/2] arm64: dts: freescale: imx8mq: add clock for GPIO node
-Thread-Topic: [PATCH V2 2/2] arm64: dts: freescale: imx8mq: add clock for GPIO
- node
-Thread-Index: AQHUyyaKrmPEmv52tkCys9RrGO55Gg==
-Date:   Sat, 23 Feb 2019 03:19:09 +0000
-Message-ID: <1550891665-29082-2-git-send-email-Anson.Huang@nxp.com>
-References: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: imx: Refactor entire sccg pll clk
+Thread-Topic: [PATCH v2] clk: imx: Refactor entire sccg pll clk
+Thread-Index: AQHUytEZ0gNCfcsGj0q44zlYEICsNKXsF2qAgAEgS4A=
+Date:   Sat, 23 Feb 2019 10:58:14 +0000
+Message-ID: <20190223105813.aepvfxzbjcdjvkzy@fsr-ub1664-175>
+References: <1550855235-31528-1-git-send-email-abel.vesa@nxp.com>
+ <155085758346.77512.1117855723990616329@swboyd.mtv.corp.google.com>
+In-Reply-To: <155085758346.77512.1117855723990616329@swboyd.mtv.corp.google.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR04CA0082.apcprd04.prod.outlook.com
- (2603:1096:202:15::26) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-originating-ip: [95.76.156.53]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 793cc2fd-a82a-4df0-d91f-08d6993dacdd
+x-ms-office365-filtering-correlation-id: 7b666910-c0cf-45bf-4b2c-08d6997dcf1b
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3659;
-x-ms-traffictypediagnostic: DB3PR0402MB3659:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3659;23:sjriJiI3Uk9ff/4ArC47OJMKir19nheMnMuHU?=
- =?iso-8859-1?Q?0wH9dKf+IejqAIy+NE+PYdpUrET1F90kdP3pN4SmD0erM4IYJFPVYOBofw?=
- =?iso-8859-1?Q?xeng75+PvzDLEW0k33HHmmf3W75ST9xf6QuM87U2h5JxuRXmgyc4tH1bGR?=
- =?iso-8859-1?Q?enb8RoFbarKcCSu4RA1pA+SHlv5N3C1MXHzZPzlJqgY783se9Qegh/mOLE?=
- =?iso-8859-1?Q?TNaUubwlGEKGmq8pkihj+zCaRc9tNbkSYYKddXQS0Id0wcXhTcNM0wtwh5?=
- =?iso-8859-1?Q?5Avzyn/KN9fd/OzwjOZUXwYSBbhreLNSDHU226b96/yxmEsW7F4zrZAUzB?=
- =?iso-8859-1?Q?2JYcn2XQ5Wxp4n/h3xgCSViMp/vMSb+Rp+ZUp/mtvPnQjPQddWjwmxITqw?=
- =?iso-8859-1?Q?iqo+m2FqA81JBtPZcm5s6NC0saEzE+F2fQuJVb7ulqLxj0onEiuqp5v+Sw?=
- =?iso-8859-1?Q?Mm3gLt4YGfW+67z1qorCfMCunK5papFJfQ4zX645KconDOMTE9Q4IqofSh?=
- =?iso-8859-1?Q?FiOHGB6btEibfXGz22Z3nGYrJ2dQ8bml/UYmpkL4/9qq29r9iFutUNgn8g?=
- =?iso-8859-1?Q?fIdaHuADmf6f9goSaYOg5o1Dxribc3sao3T1F3VF74/VorXzDEQQm19F9Y?=
- =?iso-8859-1?Q?smDw1fsUBKqBiyAjBY9FbasB9aXe+CNICPU/KL01vSKrSfvWLgnhkCn6B4?=
- =?iso-8859-1?Q?zFn/ZsWzEY6uLtAupFt2mdLem+oekkkWDLmaXKZRg52UJFHIPXdpvl/ScJ?=
- =?iso-8859-1?Q?BbajBEr0a1zZct0rAG4tJv0SK0YwvayzvQEYz8QIrvpA90sGzoTsk1MyHJ?=
- =?iso-8859-1?Q?VRgw/qMe4RMSNdJODSYo05SvpVjkJ0HnGjLD6L8hiZ+8+VfivM8zObKTt4?=
- =?iso-8859-1?Q?Qrz+lpIdrDmLWg+4p+Xm2fl8jjYzDX+OPZ+UeBF9EZsZ8G8dWN/AgDvdpB?=
- =?iso-8859-1?Q?MdLnqVEBos7I19RzlxZMxgUejF7uK+ksqneYtwm4XaYGcyFT4DmTS9r/56?=
- =?iso-8859-1?Q?zu+iXq11C54YJJsQFgCvdB3Wo7AsVXCAMXpL6fPv92+Q3pvl0ytA5KsMPw?=
- =?iso-8859-1?Q?Y6RCGG4ReWzxNhy/cqjtIsb2YaHzCxTiK4FwNhPdt1HQCTSdppRfGQqY4K?=
- =?iso-8859-1?Q?ejiF8kgAB3q5aBaV+43EEqm1dOrIO63auK+zwuMXsW0R12M1YDJn7VtKvL?=
- =?iso-8859-1?Q?wRM2lzaPk02eecgQJLtQOMDhsl7j6psACP+v0wd6Qps/exVQHHmPO8/a6B?=
- =?iso-8859-1?Q?URcH4iDKT2MUjj5oLouucQLaAXNzSsZ7rpuHKYX7AlKk0oD8S+Aw1lzYk+?=
- =?iso-8859-1?Q?YymoXqJG6Iiy4AYEds0KdRasS?=
-x-microsoft-antispam-prvs: <DB3PR0402MB3659F8919989B8094649CD76F5780@DB3PR0402MB3659.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6098;
+x-ms-traffictypediagnostic: AM0PR04MB6098:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM0PR04MB6098;23:5tgJzMyadcza+QQilHkXxeOt3odstM3qO95LVoYua?=
+ =?us-ascii?Q?Bbf/Rm/15vAYmAwZaKpo84qHuGpwFwBUR7ztC9RYvETeOmVudU3jRB5kcgBS?=
+ =?us-ascii?Q?ZyaUCNMmg7welRyOU2bwAViexNRrMbchpbG44xCgPsj4O+pZpNqNl+O4nvO1?=
+ =?us-ascii?Q?ILaIMI8YuCyRvIwKk/bbvL8zmEOE7zLjgWElhpmdsbFFClbigaP11mT2BP2D?=
+ =?us-ascii?Q?Kg1/bWNnJpj3rx9qs6XcmO0z7blZrk+u9P2vejBWSQL4mcOMQ8i8jsYpu5Pd?=
+ =?us-ascii?Q?CVXVvS6SPyJpB0OnmxWU6q2GVyVBvMYNyEWrzSByMCLNxduoZD5BR1dOYy9n?=
+ =?us-ascii?Q?M6Kcz947wVV+gL8lnmhHU/z939Z4APHCi6VeaLb0XHZ+vazZR6l1SiY1ZYHH?=
+ =?us-ascii?Q?+F/GM5Ofh7fRaLA2Mm8lRVUNyAkj6QSTRrZJjCYJCen96yab+Zylm0Esz+ep?=
+ =?us-ascii?Q?QDXFLPZzfkVcwiT2LQ2AWsx0yCcwIksjNaZdb+YOHTJXYmbPNWG51baIFLr9?=
+ =?us-ascii?Q?AZsi+Am1WPIqHUnwFYLyK/M3Pii8nnonwS5b4DaUsTUYrcXmkcDRqVdcjnjk?=
+ =?us-ascii?Q?HYKZhay0u/JguI2WCnRu0DEA76t1gk7Yfa5bjOKQnJ7pACMeARUap4+VX7qP?=
+ =?us-ascii?Q?qPdJe+5i0FPjZ8EWoNfL+EDNwACFgRzZzB9vEAtzCL2XruiZBEgjQavp/XwN?=
+ =?us-ascii?Q?mEeC5Ll3gNtKNkgWsgCq5F6HZ1hwG6XAy+zbedQ+V+JZhKIxnKJmM0HIHfS+?=
+ =?us-ascii?Q?GUgryJJGxj1ndwKsnUNg4on57SLZ+2RnQQAWusKiLOCkM3wJo5/2dXsPuQjS?=
+ =?us-ascii?Q?ZQCeQIs1F65xJqowytoJekHmBVQKXfNOnOE3GqSexA0t/hJi8BgSmdASQh1X?=
+ =?us-ascii?Q?uu1zBiKsVNPvWsyueKNL6Nj5wfOVQkXgK6trNzMuLM4Y5GSTVyV/Lm7UG2XJ?=
+ =?us-ascii?Q?yygN9JoBPeHZU6XMhBpQWaKMxiHWOdW+kWqq/fuCWDFc1v+S0Zx3ZlUTYSNF?=
+ =?us-ascii?Q?UIOAcA37RWHEs11Zl0k7hkwoNdS4GksEboHwxgaYSy/uqbVff7zsDKCeQbm6?=
+ =?us-ascii?Q?3+onkSynYM816URQyYyXw9iTDuTlL5Dls9GbDM+PltbTKcFDubAvmH97IkFp?=
+ =?us-ascii?Q?ab3M5kqY4px/1kRjOe9H1y7bpkeMSXfCjoZxzhgnnY7vlmtGrHYE+k28169F?=
+ =?us-ascii?Q?j6TATgPUP6+63bAH+hPbW8E82/GXZumnp4doUwWpAy6oDo8BoG/7eB9Xv392?=
+ =?us-ascii?Q?S7U7bBpMe4OJLjC4J6D089emKuR2fTB+u7tw/1gojzrdwbLwBDcNd/DUjt5I?=
+ =?us-ascii?B?Zz09?=
+x-microsoft-antispam-prvs: <AM0PR04MB609858DF8EA3BF70731E6CBBF6780@AM0PR04MB6098.eurprd04.prod.outlook.com>
 x-forefront-prvs: 0957AD37A0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(136003)(346002)(376002)(189003)(199004)(478600001)(14454004)(36756003)(99286004)(26005)(186003)(25786009)(53936002)(7736002)(50226002)(68736007)(86362001)(386003)(2201001)(6512007)(6506007)(2906002)(66066001)(4326008)(76176011)(6436002)(106356001)(476003)(5660300002)(2501003)(2616005)(11346002)(446003)(8676002)(102836004)(81166006)(8936002)(97736004)(7416002)(6116002)(81156014)(256004)(71200400001)(3846002)(486006)(110136005)(316002)(105586002)(71190400001)(52116002)(305945005)(6486002)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3659;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(366004)(376002)(346002)(39860400002)(396003)(199004)(189003)(25786009)(186003)(7736002)(44832011)(6116002)(2906002)(8936002)(446003)(476003)(53936002)(9686003)(68736007)(11346002)(6246003)(305945005)(486006)(3846002)(99286004)(6512007)(3716004)(14454004)(102836004)(86362001)(6506007)(53546011)(478600001)(106356001)(105586002)(76176011)(33716001)(1076003)(81166006)(26005)(256004)(97736004)(66066001)(4326008)(6486002)(71200400001)(4744005)(229853002)(71190400001)(6916009)(316002)(5660300002)(54906003)(81156014)(6436002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6098;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JbZMypRhc5Yvy5GKZDWO/1cHobKEn07KSuSU1VpLWMZ/v/Dr/vRCtqe7sXFAkIy7Kio8dyO/hQ8nCHXU/jXaQHIChOQhkjW6P6Fq3mZ0KH70Pkp1hapEgK5ixZH9oi8jjIHQMECEemTGJPIPXyRcT4kuhmN5RIQJriSZkJkl5Obh0Hp4fVEQLEtAfuYkF9QdoVRJq9MHxeAmdNRW6LYp6c1ca95/8QeDTFu2veKgXMyGX7uSjdPfIVUjdS2zVWgeph72HijCfUBi2fV9ksAtFBIAon6+qolBZ9kq7jNo09HHj9q5viC1QJJ3fcFLtvwX6RRZJeqb5r7+2kAd/bO/j42MMi52u8BtlZe87HegwOvYEtuq2+1QwCtR1cq7cmCmNm9HZnyCnrfS6763fZS97QXT1Ky06QXAiUCS33ATEtY=
-Content-Type: text/plain; charset="iso-8859-1"
+x-microsoft-antispam-message-info: tSGxPNNb4sV5czdnHD33/JdFBbYf4Snw9hFbZEFQ7bjmp0UTUChhzNUwMGY64aFVQ8v4lr2ZtLShtWQsvtLVqjE0tblBpdvKW0XZqj31WiHGsVFQdwmoWKPBXW7Z2dwnZLIvYQZbLLqr9sZbkHtlR3r1fy1K4D98dWu/1/PnWhYcGFQxe/i3NP2A2tV9fMg21JoODtP2/8rBhdM2UfbRFYiS7h5Q1iRyEuCZFUBUSFSzW4B2dnifjL7Y0MXM8oy3NOVIc4sbPVWWeH/1P3HGyQXEGzCfXRTXkI5Jbr0v8feBMa8Fcf5IleXpyblNa+CpC1LWKYPpJvuhnrslr1BSVdK+sn/uE1yNBPuUhCY1MiVrlPPVk1TqO2iMJ8WE0xf2PkMRFpWtvZlO50MiqeUgqMyFPEE2+H9HqIFabp74FNg=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6EFEBA46439D1A4F83553E95406276CC@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 793cc2fd-a82a-4df0-d91f-08d6993dacdd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2019 03:19:03.5669
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b666910-c0cf-45bf-4b2c-08d6997dcf1b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2019 10:58:14.3257
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3659
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6098
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-i.MX8MQ has clock gate for each GPIO bank, add clock info
-to GPIO node for clock management.
+On 19-02-22 09:46:23, Stephen Boyd wrote:
+> Quoting Abel Vesa (2019-02-22 09:07:32)
+> > Make the entire combination of plls to be one single clock. The parents=
+ used
+> > for bypasses are specified each as an index in the parents list.
+> > The determine_rate does a lookup throughout all the possible combinatio=
+ns
+> > for all the divs and returns the best possible 'setup' which in turn is=
+ used
+> > by set_rate later to set up all the divs and bypasses.
+> >=20
+> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > Tested-by: Lucas Stach <l.stach@pengutronix.de>
+> > Acked-by: Lucas Stach <l.stach@pengutronix.de>
+>=20
+> I suspect these tested by and acked tags should have been dropped,
+> unless you discussed and tested off-list?
+>=20
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change since V1, just drop 1 patch from V1 patch series.
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
-s/freescale/imx8mq.dtsi
-index 9155bd4..4c1fca9 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -160,6 +160,7 @@
- 				reg =3D <0x30200000 0x10000>;
- 				interrupts =3D <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
- 				             <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&clk IMX8MQ_CLK_GPIO1_ROOT>;
- 				gpio-controller;
- 				#gpio-cells =3D <2>;
- 				interrupt-controller;
-@@ -171,6 +172,7 @@
- 				reg =3D <0x30210000 0x10000>;
- 				interrupts =3D <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
- 				             <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&clk IMX8MQ_CLK_GPIO2_ROOT>;
- 				gpio-controller;
- 				#gpio-cells =3D <2>;
- 				interrupt-controller;
-@@ -182,6 +184,7 @@
- 				reg =3D <0x30220000 0x10000>;
- 				interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
- 				             <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&clk IMX8MQ_CLK_GPIO3_ROOT>;
- 				gpio-controller;
- 				#gpio-cells =3D <2>;
- 				interrupt-controller;
-@@ -193,6 +196,7 @@
- 				reg =3D <0x30230000 0x10000>;
- 				interrupts =3D <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
- 				             <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&clk IMX8MQ_CLK_GPIO4_ROOT>;
- 				gpio-controller;
- 				#gpio-cells =3D <2>;
- 				interrupt-controller;
-@@ -204,6 +208,7 @@
- 				reg =3D <0x30240000 0x10000>;
- 				interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
- 				             <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&clk IMX8MQ_CLK_GPIO5_ROOT>;
- 				gpio-controller;
- 				#gpio-cells =3D <2>;
- 				interrupt-controller;
---=20
-2.7.4
-
+Oups, I forgot to drop them.=
