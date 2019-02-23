@@ -2,192 +2,184 @@ Return-Path: <SRS0=vJlX=Q6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E05A0C10F00
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 03:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA39C43381
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 03:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0853206A3
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 03:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B9E206A3
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 03:19:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Tw0ky+oF"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="tW68+OJG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfBWDRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Feb 2019 22:17:53 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:52390 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfBWDRx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Feb 2019 22:17:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1550891868; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4KbSVb1ijM3oYHtM+13Cha0+e9uRIlTbHa9t0npCWgs=;
-        b=Tw0ky+oFKuhLWQ5sTdT9Cj07RAhbsI1WuSjOGrpfDrdxJ/q1bM+6nEdLzevL7TX1gA6VA+
-        P0oQHXA9NrkX0lEaiWN+IRgfRCNYZraOUtG9v19rThwyDCv+vDcNbRso/J4SbLCo/UgHCH
-        +KHiav28JGCtiEDS/ipBo4Z1vLA0oHc=
-Date:   Sat, 23 Feb 2019 00:17:25 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx
- OST
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
-        Maarten ter Huurne <maarten@treewalker.org>
-Message-Id: <1550891845.20534.1@crapouillou.net>
-In-Reply-To: <1548370388.3881.2@crapouillou.net>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <20181212220922.18759-6-paul@crapouillou.net>
-        <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com>
-        <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net>
-        <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net>
-        <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
-        <1548362788.3881.0@crapouillou.net>
-        <154836998080.136743.17683029101430122926@swboyd.mtv.corp.google.com>
-        <1548370388.3881.2@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+        id S1727666AbfBWDTs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Feb 2019 22:19:48 -0500
+Received: from mail-eopbgr70050.outbound.protection.outlook.com ([40.107.7.50]:51808
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725821AbfBWDTs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Feb 2019 22:19:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=29jKVA1O7T+TQjOP1RYrhmq68HKrX4S93JGlP0REPyI=;
+ b=tW68+OJGSIq2qwz7A39BVNzY/10gZm49sE56aNS/2wZh6RTcF/EGheQaxLYq52qy3WmFXYxDzv3gnKPQzVSd4NVty378GPaCWbY+F+Of/DnGpm19rwE3urSiH3h52LzyQgkasNFPg9Ye/u5XkGiAWdXykejGpHEbFBugOinklJc=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3659.eurprd04.prod.outlook.com (52.134.66.160) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Sat, 23 Feb 2019 03:19:03 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7%2]) with mapi id 15.20.1643.016; Sat, 23 Feb 2019
+ 03:19:03 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "baruch@tkos.co.il" <baruch@tkos.co.il>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
+Thread-Topic: [PATCH V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
+Thread-Index: AQHUyyaGRBH6PMV7RkGGfcdev8mMpA==
+Date:   Sat, 23 Feb 2019 03:19:03 +0000
+Message-ID: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0082.apcprd04.prod.outlook.com
+ (2603:1096:202:15::26) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ebaf8d05-7fb5-4eb2-cd57-08d6993da91a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3659;
+x-ms-traffictypediagnostic: DB3PR0402MB3659:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3659;23:X0ofPE9jMxdL+XKG1pmtTCp3+wKiVQtzefSQQ?=
+ =?iso-8859-1?Q?Yls5VFyYG5zLXz15qg0Xs5Su9H4ek7Kv2GZT1QsQfrWX+af8ZQEMVGVvU9?=
+ =?iso-8859-1?Q?zJu6DaiJ4RhQd+TU0XVip+3oX3s7u91HLdj1A4JtW+v+XvMG/6cmkGz4ic?=
+ =?iso-8859-1?Q?g0Fc9LcdkOYnBxcUFzeIWRsnbCdbqWTqvGIJ5RXH8Ndeia6H930hWGvThO?=
+ =?iso-8859-1?Q?SHPR8YZj2BPf+GeGkq733/ZA1vXpRiImYFwYS9P6A0ejAcx+F/53BHecOd?=
+ =?iso-8859-1?Q?qsAkskYHN/yRFICGOLtR4cgALMsyTKZK4KDhNJiyuTzZHiX0KkzeAfGbis?=
+ =?iso-8859-1?Q?rHQYQf6GP95nzl6mzFn3V9xL0GaHfJNzd+qSm3ecuMt+tiXzYt+NESyQWj?=
+ =?iso-8859-1?Q?0PaXj5F1YknwTYAU42+3QhWU0AWQmlCR0bxeg8/rh6/UOuAeQfimWyv/rY?=
+ =?iso-8859-1?Q?h9CrBTGmUs5zC3jdC+0l5m/2DcFpbm4RMCfYNN9ST3xOw1SkdOVsPsQnCm?=
+ =?iso-8859-1?Q?cj8LIKQeXvEPNieVbNdrRb41gOK0bXqRza++yL1hnHexqV0wa/gtMP/psd?=
+ =?iso-8859-1?Q?iCZe5QL8Fggs1QgP/vOAOLqGcfn+ihzHK2sIQ20O17ZJEzfFdflAax034K?=
+ =?iso-8859-1?Q?0BTVzlXZeyW6F8vCk+hKykuFeUfQaog968EpmANUp21e+wFRfnBNrkw2Py?=
+ =?iso-8859-1?Q?Ho/baOycNIzFdR0mr+T2J9WBH8/b5Flgky0npGfEeeAsFFI4EKAHUMkKrE?=
+ =?iso-8859-1?Q?wQLB7qFoIkcBeZURVvNrfs2Nvw2qDOTYh0Ty8QCNiwJwZbDOYwBMzZeN6R?=
+ =?iso-8859-1?Q?3INNnJuDdcbI6yuI95z8KJmpxNJMy812xwk7xTyD88UMaq8T+4jQQZCklA?=
+ =?iso-8859-1?Q?kL7vx441ta34f7H9Onxc2tNX1ANvtDnOBVBFn+x5wyvSR/BsE0BHkFpWUE?=
+ =?iso-8859-1?Q?QMYqw/BmLv6cH4AHPB/Nd+QFVqKmYaOoPcsB9giQf/3bT2bpddX0hN5Mwu?=
+ =?iso-8859-1?Q?3Bedj2PjmsdUGk4/ZXdkbKkYpWERNg00y0kIaALUUWL33DNw0AiyWDaH2M?=
+ =?iso-8859-1?Q?lyR9aBL9ahfCKtHECRG9quT1P6qDGM4koJTPh1WZWppiSIZLmZuEv/BmSs?=
+ =?iso-8859-1?Q?nNpuTP2q4vs0O10sANGoOQ9HalzakW8bGaRmKnyO1RBqQZEPOjwlc3+nkE?=
+ =?iso-8859-1?Q?hbX937Um8wKpcBYcdlT1jrmVFEd+5kQyv7tjBmwr6XVU/xE7DXfd+HhTz1?=
+ =?iso-8859-1?Q?uJqVlhMl1mQm+jNbFnUJhFRMelHJQX2mzbZOZ8Cfn77M6/BPPEHzsmBt15?=
+ =?iso-8859-1?Q?yXaY=3D?=
+x-microsoft-antispam-prvs: <DB3PR0402MB36597635D59E12B7960EABC0F5780@DB3PR0402MB3659.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0957AD37A0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(136003)(346002)(376002)(189003)(199004)(478600001)(14454004)(36756003)(99286004)(26005)(186003)(25786009)(53936002)(7736002)(50226002)(68736007)(86362001)(386003)(2201001)(6512007)(6506007)(2906002)(66066001)(4326008)(6436002)(106356001)(476003)(5660300002)(2501003)(2616005)(8676002)(102836004)(81166006)(8936002)(97736004)(7416002)(6116002)(81156014)(256004)(71200400001)(14444005)(3846002)(486006)(110136005)(316002)(105586002)(71190400001)(52116002)(305945005)(6486002)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3659;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5RgnqqvrpXUEEfDNsa8ItvgsIKi1IHhhUmPCL3k/rexlSF3jiIdUbcWz6h1Bv3vpVMyBMcBsLF+TE87tuuG7oZpC5wMSPddeIwA5/x2rMET7PlHNm0LOyqLmZxqeyOxuXW87c0WoytLTp0X9rfj3OUQOM0OTnlxEELKCzJav3z3L7OiwAgWodLl8AQNgfi8/dlNCw6ttppGLYQZuQ2JSVrZP4Z4Q43K6ND/uNVa0kI1HkWpgjAmXC0ApWB6TBeFXQi9LQV17z/4IPWTaUY3tVDKWwQB4zslKZoO9dUEVLJLA15L2SUtun0KTfZ6Gz5SwHrWygl9dOO9aPOeiGWMPQtxSlmKn6X8pUfl9udr6YInekQeFbiTYOT/irMNYxW4McnRvjSuoUSr/bqB586IohGEWt7Kfm2Wci1n+KpatkUs=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebaf8d05-7fb5-4eb2-cd57-08d6993da91a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2019 03:18:57.1624
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3659
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+i.MX8MQ has clock gate for each GPIO bank, add them
+into clock tree for GPIO driver to manage.
 
-Le jeu. 24 janv. 2019 =E0 19:53, Paul Cercueil <paul@crapouillou.net> a=20
-=E9crit :
->=20
->=20
-> Le jeu. 24 janv. 2019 =E0 19:46, Stephen Boyd <sboyd@kernel.org> a=20
-> =E9crit :
->> Quoting Paul Cercueil (2019-01-24 12:46:28)
->>>=20
->>>=20
->>>  Le jeu. 24 janv. 2019 =E0 16:28, Stephen Boyd <sboyd@kernel.org> a
->>>  =E9crit :
->>>  > Quoting Guenter Roeck (2019-01-23 10:01:55)
->>>  >>  On Wed, Jan 23, 2019 at 02:25:53PM -0300, Paul Cercueil wrote:
->>>  >>  > Hi,
->>>  >>  >
->>>  >>  > Le mer. 23 janv. 2019 =C3  11:31, Guenter Roeck
->>>  >> <linux@roeck-us.net> a =C3=A9crit :
->>>  >>  > >On 1/23/19 4:58 AM, Mathieu Malaterre wrote:
->>>  >>  > >>On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil
->>>  >> <paul@crapouillou.net>
->>>  >>  > >>wrote:
->>>  >>  > >>>
->>>  >>  > >>>From: Maarten ter Huurne <maarten@treewalker.org>
->>>  >>  > >>>
->>>  >>  > >>>OST is the OS Timer, a 64-bit timer/counter with buffered
->>>  >> reading.
->>>  >>  > >>>
->>>  >>  > >>>SoCs before the JZ4770 had (if any) a 32-bit OST; the=20
->>> =7F=7FJZ4770
->>>  >> and
->>>  >>  > >>>JZ4780 have a 64-bit OST.
->>>  >>  > >>>
->>>  >>  > >>>This driver will register both a clocksource and a=20
->>> =7F=7Fsched_clock
->>>  >> to the
->>>  >>  > >>>system.
->>>  >>  > >>>
->>>  >>  > >>>Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
->>>  >>  > >>>Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>>  >>  > >>>---
->>>  >>  > >>>
->>>  >>  > >>>Notes:
->>>  >>  > >>>      v5: New patch
->>>  >>  > >>>
->>>  >>  > >>>      v6: - Get rid of SoC IDs; pass pointer to
->>>  >> ingenic_ost_soc_info
->>>  >>  > >>>as
->>>  >>  > >>>            devicetree match data instead.
->>>  >>  > >>>          - Use device_get_match_data() instead of the=20
->>> of_*
->>>  >> variant
->>>  >>  > >>>          - Handle error of dev_get_regmap() properly
->>>  >>  > >>>
->>>  >>  > >>>      v7: Fix section mismatch by using
->>>  >>  > >>>builtin_platform_driver_probe()
->>>  >>  > >>>
->>>  >>  > >>>      v8: builtin_platform_driver_probe() does not work
->>>  >> anymore in
->>>  >>  > >>>          4.20-rc6? The probe function won't be called.=20
->>> =7F=7FWork
->>>  >> around
->>>  >>  > >>>this
->>>  >>  > >>>          for now by using late_initcall.
->>>  >>  > >>>
->>>  >>  > >
->>>  >>  > >Did anyone notice this ? Either something is wrong with the
->>>  >> driver, or
->>>  >>  > >with the kernel core. Hacking around it seems like the worst
->>>  >> possible
->>>  >>  > >"solution".
->>>  >>  >
->>>  >>  > I can confirm it still happens on 5.0-rc3.
->>>  >>  >
->>>  >>  > Just to explain what I'm doing:
->>>  >>  >
->>>  >>  > My ingenic-timer driver probes with=20
->>> =7F=7Fbuiltin_platform_driver_probe
->>>  >> (this
->>>  >>  > works),
->>>  >>  > and then calls of_platform_populate to probe its children.=20
->>> =7F=7FThis
->>>  >> driver,
->>>  >>  > ingenic-ost, is one of them, and will fail to probe with
->>>  >>  > builtin_platform_driver_probe.
->>>  >>  >
->>>  >>
->>>  >>  The big question is _why_ it fails to probe.
->>>  >>
->>>  >
->>>  > Are you sharing the device tree node between a 'normal' platform
->>>  > device
->>>  > driver and something more low level DT that marks the device's=20
->>> =7F=7Fbacking
->>>  > DT node as OF_POPULATED early on? That's my only guess why it's=20
->>> =7F=7Fnot
->>>  > working.
->>>=20
->>>  I do, but I clear the OF_POPULATED flag so that it is then probed=20
->>> =7F=7Fas a
->>>  normal platform device, and it's not on this driver's node but its
->>>  parent.
->>>=20
->>=20
->> Where do you clear the OF_POPULATED flag?
->>=20
->=20
-> In the ingenic-timer driver introduced in patch [04/26], inside the=20
-> probe function.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+No change since V1, just drop 1 patch from V1 patch series.
+---
+ drivers/clk/imx/clk-imx8mq.c             | 5 +++++
+ include/dt-bindings/clock/imx8mq-clock.h | 8 +++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-Anything new on this? It still happens on 5.0-rc7.
-It probes with late_initcall, and not with device_initcall.
-I have no clue what's going on.
-
--Paul
-=
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 26b57f4..553dcf5 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -500,6 +500,11 @@ static int imx8mq_clocks_probe(struct platform_device =
+*pdev)
+ 	clks[IMX8MQ_CLK_ECSPI2_ROOT] =3D imx_clk_gate4("ecspi2_root_clk", "ecspi2=
+", base + 0x4080, 0);
+ 	clks[IMX8MQ_CLK_ECSPI3_ROOT] =3D imx_clk_gate4("ecspi3_root_clk", "ecspi3=
+", base + 0x4090, 0);
+ 	clks[IMX8MQ_CLK_ENET1_ROOT] =3D imx_clk_gate4("enet1_root_clk", "enet_axi=
+", base + 0x40a0, 0);
++	clks[IMX8MQ_CLK_GPIO1_ROOT] =3D imx_clk_gate4("gpio1_root_clk", "ipg_root=
+", base + 0x40b0, 0);
++	clks[IMX8MQ_CLK_GPIO2_ROOT] =3D imx_clk_gate4("gpio2_root_clk", "ipg_root=
+", base + 0x40c0, 0);
++	clks[IMX8MQ_CLK_GPIO3_ROOT] =3D imx_clk_gate4("gpio3_root_clk", "ipg_root=
+", base + 0x40d0, 0);
++	clks[IMX8MQ_CLK_GPIO4_ROOT] =3D imx_clk_gate4("gpio4_root_clk", "ipg_root=
+", base + 0x40e0, 0);
++	clks[IMX8MQ_CLK_GPIO5_ROOT] =3D imx_clk_gate4("gpio5_root_clk", "ipg_root=
+", base + 0x40f0, 0);
+ 	clks[IMX8MQ_CLK_GPT1_ROOT] =3D imx_clk_gate4("gpt1_root_clk", "gpt1", bas=
+e + 0x4100, 0);
+ 	clks[IMX8MQ_CLK_I2C1_ROOT] =3D imx_clk_gate4("i2c1_root_clk", "i2c1", bas=
+e + 0x4170, 0);
+ 	clks[IMX8MQ_CLK_I2C2_ROOT] =3D imx_clk_gate4("i2c2_root_clk", "i2c2", bas=
+e + 0x4180, 0);
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings=
+/clock/imx8mq-clock.h
+index 04f7ac3..aff3335 100644
+--- a/include/dt-bindings/clock/imx8mq-clock.h
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -391,5 +391,11 @@
+=20
+ #define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	267
+=20
+-#define IMX8MQ_CLK_END				268
++#define IMX8MQ_CLK_GPIO1_ROOT			268
++#define IMX8MQ_CLK_GPIO2_ROOT			269
++#define IMX8MQ_CLK_GPIO3_ROOT			270
++#define IMX8MQ_CLK_GPIO4_ROOT			271
++#define IMX8MQ_CLK_GPIO5_ROOT			272
++
++#define IMX8MQ_CLK_END				273
+ #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
+--=20
+2.7.4
 
