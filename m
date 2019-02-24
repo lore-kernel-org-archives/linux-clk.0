@@ -1,123 +1,174 @@
-Return-Path: <SRS0=vJlX=Q6=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=9LRi=Q7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC7DC43381
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AA4C43381
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Feb 2019 15:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE4C20661
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957616;
-	bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hWBPyeZtC5xSHhoAkvo82bytKVdbTYCLPfzS9VlCwnIj2TufszZB+KvACIeXAsSnp
-	 NHsFiL9Fbz6fRJnXNI+qBB1dZC7Nr6n+gU82PdOdfet24ykdHzfYFm8X8L2Bt+AwAN
-	 W4jGxfgkcoDjinsN7CJuo7Pb+iMx49LA25PThHok=
+	by mail.kernel.org (Postfix) with ESMTP id 32C6C206B6
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Feb 2019 15:28:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmJIscQ/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbfBWVda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:33:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbfBWVEy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:54 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BA2320855;
-        Sat, 23 Feb 2019 21:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955893;
-        bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cKlYd4tYyQKQ1/WDeDN6c0c+J2EiU02rT4JF8ebMgkCu0mStTfpga8bUIkBYt3v4m
-         3Zn3QvsxQFHqVa13rhDf5ojMor480K4oyP4d3I9hnZGdt22akC6+NOO4vvXBIPZYe4
-         2uMS0rynJ3qa5CrIOdM1kJnl4nrNG8Acfc8fjG30=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        id S1728011AbfBXP2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Feb 2019 10:28:10 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37695 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbfBXP2K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Feb 2019 10:28:10 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z196so4339421lff.4;
+        Sun, 24 Feb 2019 07:28:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VTVCiu9UJJEAWIEm0N2KYXnp6/WhALYxpW+vg+wufXg=;
+        b=LmJIscQ/HMWwqMcYwvocBaxi6jmwpygT0g3gPtXhl+KwjJbGWYyTH8uHDm931qvcnN
+         l9eMS6cvRTYNu8jOl12qspk31R65PqAZW5pQvJW+CWdFEgV2cdcwxFgHSgjfI9J0KzYu
+         YM16i1JBDSNfdkObPH095MYbIy/CGKUZ7xzNNn27tLMQy1rwm5RzHziHaGPz41WT48ms
+         kcIfPExa/oJD8DoPplN8xdN+WEcxhCNoegv7onYqkrYXzOduRRNQ+uXmAMAtZHjARSbv
+         CcVh2WK9KTdCIhuIgoVlrTQayoJjQMzQb+uspSrHdC9RW0PzlBbj4AJEM19m6WmPTo/Q
+         6OFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VTVCiu9UJJEAWIEm0N2KYXnp6/WhALYxpW+vg+wufXg=;
+        b=ocSBm8nm1JwWYjtRQWzjnaX6fO2sr1eMhQsydNqFBiaYKkWV7it+z/UmRQ9W9xJxCs
+         fLVWI1qEf1xP9x4oWJKpFlhf3rGqoqagNVaFdUbK42Hg26rKdyvlqwfzA3Khx+6xf9ww
+         NaEoncA81tkSZ9uc/dvjIQ558mxOJEeA5k9fN824p1mAQszP7Bp+AVJvfgDaigVtbw9j
+         VYVWkvXph/T5geHYWVmKNRt1fKcwNAH0TrrAWrqvi3tTp9LYWYFXpf7G/YMeJ4/dsNNv
+         Bhb3D/kWSQRjEt4FKKVvd9yKPPUVA17k0bTxaZz0OiwhowMRZtndUKDrAlw+vBm3NiUO
+         eBeA==
+X-Gm-Message-State: AHQUAuaxYkGqZpawsKgpG5OLpFjZ6IOXcOL4o0cW1zP/kI9xSrgwXav9
+        YzXTMtRmAGr721bjZZxRjdM=
+X-Google-Smtp-Source: AHgI3IaMTteyTEmFL1FAk5snDc6/XmOUHUa1l0cbNjVn4mX6SQL+jfmLBEz8GjiFlEi/TuoBllukjg==
+X-Received: by 2002:ac2:446c:: with SMTP id y12mr390700lfl.44.1551022087695;
+        Sun, 24 Feb 2019 07:28:07 -0800 (PST)
+Received: from localhost.localdomain (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.gmail.com with ESMTPSA id a9-v6sm1907694ljf.52.2019.02.24.07.28.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Feb 2019 07:28:07 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 19/72] clk: ti: Fix error handling in ti_clk_parse_divider_data()
-Date:   Sat, 23 Feb 2019 16:03:29 -0500
-Message-Id: <20190223210422.199966-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
-References: <20190223210422.199966-1-sashal@kernel.org>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] ARM: tegra: cpuidle: Handle tick broadcasting within cpuidle core on Tegra20/30
+Date:   Sun, 24 Feb 2019 18:27:40 +0300
+Message-Id: <20190224152740.7305-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Tegra20/30 drivers do not handle the tick_broadcast_enter() error which
+potentially could happen when CPU timer isn't permitted to be stopped.
+Let's just move out the broadcasting to the CPUIDLE core by setting the
+respective flag in the Tegra20/30 drivers. This patch doesn't fix any
+problem because currently tick_broadcast_enter() could fail only on
+ARM64, so consider this change as a minor cleanup.
 
-[ Upstream commit 303aef8b84272d73999a3207dd05bbe10ed89dc5 ]
-
-The ti_clk_parse_divider_data() function is only called from
-_get_div_table_from_setup().  That function doesn't look at the return
-value but instead looks at the "*table" pointer.  In this case, if the
-kcalloc() fails then *table is NULL (which means success).  It should
-instead be an error pointer.
-
-The ti_clk_parse_divider_data() function has two callers.  One checks
-for errors and the other doesn't.  I have fixed it so now both handle
-errors.
-
-Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/ti/divider.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 11 ++---------
+ arch/arm/mach-tegra/cpuidle-tegra30.c |  9 +--------
+ 2 files changed, 3 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 8d77090ad94ae..0241450f3eb3c 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
- 	num_dividers = i;
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index 3f24addd7972..6620d61b5ec5 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -61,7 +61,8 @@ static struct cpuidle_driver tegra_idle_driver = {
+ 			.exit_latency     = 5000,
+ 			.target_residency = 10000,
+ 			.power_usage      = 0,
+-			.flags            = CPUIDLE_FLAG_COUPLED,
++			.flags            = CPUIDLE_FLAG_COUPLED |
++			                    CPUIDLE_FLAG_TIMER_STOP,
+ 			.name             = "powered-down",
+ 			.desc             = "CPU power gated",
+ 		},
+@@ -136,12 +137,8 @@ static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
+ 	if (tegra20_reset_cpu_1() || !tegra_cpu_rail_off_ready())
+ 		return false;
  
- 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
--	if (!tmp)
-+	if (!tmp) {
-+		*table = ERR_PTR(-ENOMEM);
- 		return -ENOMEM;
-+	}
+-	tick_broadcast_enter();
+-
+ 	tegra_idle_lp2_last();
  
- 	valid_div = 0;
- 	*width = 0;
-@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+-	tick_broadcast_exit();
+-
+ 	if (cpu_online(1))
+ 		tegra20_wake_cpu1_from_reset();
+ 
+@@ -153,14 +150,10 @@ static bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
+ 					 struct cpuidle_driver *drv,
+ 					 int index)
  {
- 	struct clk_omap_divider *div;
- 	struct clk_omap_reg *reg;
-+	int ret;
+-	tick_broadcast_enter();
+-
+ 	cpu_suspend(0, tegra20_sleep_cpu_secondary_finish);
  
- 	if (!setup)
- 		return NULL;
-@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+ 	tegra20_cpu_clear_resettable();
  
- 	div->table = _get_div_table_from_setup(setup, &div->width);
-+	if (IS_ERR(div->table)) {
-+		ret = PTR_ERR(div->table);
-+		kfree(div);
-+		return ERR_PTR(ret);
-+	}
-+
+-	tick_broadcast_exit();
+-
+ 	return true;
+ }
+ #else
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+index c1417361e10e..c8fe0447e3a9 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra30.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
+@@ -56,6 +56,7 @@ static struct cpuidle_driver tegra_idle_driver = {
+ 			.exit_latency		= 2000,
+ 			.target_residency	= 2200,
+ 			.power_usage		= 0,
++			.flags			= CPUIDLE_FLAG_TIMER_STOP,
+ 			.name			= "powered-down",
+ 			.desc			= "CPU power gated",
+ 		},
+@@ -76,12 +77,8 @@ static bool tegra30_cpu_cluster_power_down(struct cpuidle_device *dev,
+ 		return false;
+ 	}
  
- 	div->shift = setup->bit_shift;
- 	div->latch = -EINVAL;
+-	tick_broadcast_enter();
+-
+ 	tegra_idle_lp2_last();
+ 
+-	tick_broadcast_exit();
+-
+ 	return true;
+ }
+ 
+@@ -90,14 +87,10 @@ static bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
+ 					struct cpuidle_driver *drv,
+ 					int index)
+ {
+-	tick_broadcast_enter();
+-
+ 	smp_wmb();
+ 
+ 	cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+ 
+-	tick_broadcast_exit();
+-
+ 	return true;
+ }
+ #else
 -- 
-2.19.1
+2.20.1
 
