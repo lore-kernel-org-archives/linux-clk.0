@@ -2,232 +2,88 @@ Return-Path: <SRS0=kMKU=RA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF025C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABEBC10F16
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 18:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C47B20842
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2983920C01
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 18:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551117944;
+	bh=k+vmLvK+0++f+kWKz3J36/Su8BnPxbv98PYo9fdA//U=;
+	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
+	b=AIlS6tRma2wWsttQ77dZ5Gxuizp/6Y56SL8I/t47m/4sQxEAktt++jwTBwJCSCvmR
+	 WwI0PeF7VUFrDygzVoMGBJPR3WsEPg0FFqv/12nlYhboAGAAhribhaLsiVYdkAMZMA
+	 Rnc5V/WFP/WvF1qzGozH6R4EoVgjm6s9lJAJiMOM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfBYR2D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:28:03 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:50141 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbfBYR2D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Feb 2019 12:28:03 -0500
-Received: from localhost (alyon-652-1-170-85.w109-212.abo.wanadoo.fr [109.212.201.85])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 785A1240002;
-        Mon, 25 Feb 2019 17:27:58 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Matthias Wieloch <matthias.wieloch@few-bauer.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] clk: at91: fix programmable clock for sama5d2
-Date:   Mon, 25 Feb 2019 18:27:50 +0100
-Message-Id: <20190225172750.25816-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728768AbfBYSFi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Feb 2019 13:05:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbfBYSFi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Feb 2019 13:05:38 -0500
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 700752084D;
+        Mon, 25 Feb 2019 18:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551117937;
+        bh=k+vmLvK+0++f+kWKz3J36/Su8BnPxbv98PYo9fdA//U=;
+        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
+        b=XEU0juzihUj+xbQI6HAb0psTj7MEGhhpLFsIm4PQqlNqgEvA5FB/66LXvcRarxYpV
+         MQ8WFsw4g+qFVHPtKinjMWP8lN0l1sT3X5ryuLike/di4PQb1qRfh8J6unwnigB5FK
+         xmHQtoikSDkwRAulbsRTv3lyCxnuZULWCgHQHQP4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1550891845.20534.1@crapouillou.net>
+User-Agent: alot/0.8
+References: <20181212220922.18759-1-paul@crapouillou.net> <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com> <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net> <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net> <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com> <1548362788.3881.0@crapouillou.net> <154836998080.136743.17683029101430122926@swboyd.mtv.corp.google.com> <1548370388.3881.2@crapouillou.net> <1550891845.20534.1@crapouillou.net>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
+        Maarten ter Huurne <maarten@treewalker.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx OST
+Message-ID: <155111793658.191923.2540746255375959460@swboyd.mtv.corp.google.com>
+Date:   Mon, 25 Feb 2019 10:05:36 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+Quoting Paul Cercueil (2019-02-22 19:17:25)
+> Hi,
+>=20
+> Anything new on this? It still happens on 5.0-rc7.
+> It probes with late_initcall, and not with device_initcall.
+> I have no clue what's going on.
+>=20
 
-The prescaler formula of the programmable clock has changed for sama5d2. Update
-the driver accordingly. A new compatibility string is needed for this driver,
-now.
-
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-[nicolas.ferre@microchip.com: adapt the prescaler range,
-		fix clk_programmable_recalc_rate, split patch]
-Signed-off-by: Matthias Wieloch <matthias.wieloch@few-bauer.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clk/at91/clk-programmable.c | 57 ++++++++++++++++++++++-------
- drivers/clk/at91/pmc.h              |  2 +
- drivers/clk/at91/sama5d2.c          | 10 ++++-
- 3 files changed, 54 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 5bc68b9c5498..c3174a6bbd48 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -20,8 +20,7 @@
- #define PROG_ID_MAX		7
- 
- #define PROG_STATUS_MASK(id)	(1 << ((id) + 8))
--#define PROG_PRES_MASK		0x7
--#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & PROG_PRES_MASK)
-+#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & layout->pres_mask)
- #define PROG_MAX_RM9200_CSS	3
- 
- struct clk_programmable {
-@@ -37,20 +36,29 @@ static unsigned long clk_programmable_recalc_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
- 	struct clk_programmable *prog = to_clk_programmable(hw);
-+	const struct clk_programmable_layout *layout = prog->layout;
- 	unsigned int pckr;
-+	unsigned long rate;
- 
- 	regmap_read(prog->regmap, AT91_PMC_PCKR(prog->id), &pckr);
- 
--	return parent_rate >> PROG_PRES(prog->layout, pckr);
-+	if (layout->is_pres_direct)
-+		rate = parent_rate / (PROG_PRES(layout, pckr) + 1);
-+	else
-+		rate = parent_rate >> PROG_PRES(layout, pckr);
-+
-+	return rate;
- }
- 
- static int clk_programmable_determine_rate(struct clk_hw *hw,
- 					   struct clk_rate_request *req)
- {
-+	struct clk_programmable *prog = to_clk_programmable(hw);
-+	const struct clk_programmable_layout *layout = prog->layout;
- 	struct clk_hw *parent;
- 	long best_rate = -EINVAL;
- 	unsigned long parent_rate;
--	unsigned long tmp_rate;
-+	unsigned long tmp_rate = 0;
- 	int shift;
- 	int i;
- 
-@@ -60,10 +68,18 @@ static int clk_programmable_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		parent_rate = clk_hw_get_rate(parent);
--		for (shift = 0; shift < PROG_PRES_MASK; shift++) {
--			tmp_rate = parent_rate >> shift;
--			if (tmp_rate <= req->rate)
--				break;
-+		if (layout->is_pres_direct) {
-+			for (shift = 0; shift <= layout->pres_mask; shift++) {
-+				tmp_rate = parent_rate / (shift + 1);
-+				if (tmp_rate <= req->rate)
-+					break;
-+			}
-+		} else {
-+			for (shift = 0; shift < layout->pres_mask; shift++) {
-+				tmp_rate = parent_rate >> shift;
-+				if (tmp_rate <= req->rate)
-+					break;
-+			}
- 		}
- 
- 		if (tmp_rate > req->rate)
-@@ -140,16 +156,23 @@ static int clk_programmable_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!div)
- 		return -EINVAL;
- 
--	shift = fls(div) - 1;
-+	if (layout->is_pres_direct) {
-+		shift = div - 1;
- 
--	if (div != (1 << shift))
--		return -EINVAL;
-+		if (shift > layout->pres_mask)
-+			return -EINVAL;
-+	} else {
-+		shift = fls(div) - 1;
- 
--	if (shift >= PROG_PRES_MASK)
--		return -EINVAL;
-+		if (div != (1 << shift))
-+			return -EINVAL;
-+
-+		if (shift >= layout->pres_mask)
-+			return -EINVAL;
-+	}
- 
- 	regmap_update_bits(prog->regmap, AT91_PMC_PCKR(prog->id),
--			   PROG_PRES_MASK << layout->pres_shift,
-+			   layout->pres_mask << layout->pres_shift,
- 			   shift << layout->pres_shift);
- 
- 	return 0;
-@@ -205,19 +228,25 @@ at91_clk_register_programmable(struct regmap *regmap,
- }
- 
- const struct clk_programmable_layout at91rm9200_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 2,
- 	.css_mask = 0x3,
- 	.have_slck_mck = 0,
-+	.is_pres_direct = 0,
- };
- 
- const struct clk_programmable_layout at91sam9g45_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 2,
- 	.css_mask = 0x3,
- 	.have_slck_mck = 1,
-+	.is_pres_direct = 0,
- };
- 
- const struct clk_programmable_layout at91sam9x5_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 4,
- 	.css_mask = 0x7,
- 	.have_slck_mck = 0,
-+	.is_pres_direct = 0,
- };
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 672a79bda88c..a0e5ce9c9b9e 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -71,9 +71,11 @@ struct clk_pll_characteristics {
- };
- 
- struct clk_programmable_layout {
-+	u8 pres_mask;
- 	u8 pres_shift;
- 	u8 css_mask;
- 	u8 have_slck_mck;
-+	u8 is_pres_direct;
- };
- 
- extern const struct clk_programmable_layout at91rm9200_programmable_layout;
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index d69ad96fe988..31d6226b297a 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -125,6 +125,14 @@ static const struct {
- 	  .pll = true },
- };
- 
-+static const struct clk_programmable_layout sama5d2_programmable_layout = {
-+	.pres_mask = 0xff,
-+	.pres_shift = 4,
-+	.css_mask = 0x7,
-+	.have_slck_mck = 0,
-+	.is_pres_direct = 1,
-+};
-+
- static void __init sama5d2_pmc_setup(struct device_node *np)
- {
- 	struct clk_range range = CLK_RANGE(0, 0);
-@@ -248,7 +256,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 
- 		hw = at91_clk_register_programmable(regmap, name,
- 						    parent_names, 5, i,
--						    &at91sam9x5_programmable_layout);
-+						    &sama5d2_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
- 	}
--- 
-2.20.1
+I'm not sure what's going on either. You'll probably have to debug when
+the device is created and when it is probed by enabling the debug
+printing in the driver core or by adding in extra debug prints to narrow
+down the problem. For example, add a '#define DEBUG 1' at the top of
+drivers/base/dd.c and see if that helps give some info on what's going
+on with the drivers and devices.
 
