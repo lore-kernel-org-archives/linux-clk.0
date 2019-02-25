@@ -2,133 +2,76 @@ Return-Path: <SRS0=kMKU=RA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50771C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 02:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8BAC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 06:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278BD20989
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 02:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B602D2084D
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 06:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbfBYCJu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Feb 2019 21:09:50 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:35792 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727537AbfBYCJu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Feb 2019 21:09:50 -0500
-X-UUID: f2de0da55d91489f9118de8205985c87-20190225
-X-UUID: f2de0da55d91489f9118de8205985c87-20190225
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <wangyan.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1757952975; Mon, 25 Feb 2019 10:09:36 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 25 Feb
- 2019 10:09:35 +0800
-Received: from mszsdaap41.mediatek.inc (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 25 Feb 2019 10:09:34 +0800
-From:   wangyan wang <wangyan.wang@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
-CC:     wangyan wang <wangyan.wang@mediatek.com>,
+        id S1726666AbfBYGO1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Feb 2019 01:14:27 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16913 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726436AbfBYGO1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Feb 2019 01:14:27 -0500
+X-UUID: cd8873c7bf6a45629b353363b926c5b8-20190225
+X-UUID: cd8873c7bf6a45629b353363b926c5b8-20190225
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <seiya.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1096320972; Mon, 25 Feb 2019 14:14:17 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 25 Feb 2019 14:14:15 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 25 Feb 2019 14:14:15 +0800
+Message-ID: <1551075255.1446.8.camel@mtksdccf07>
+Subject: Re: [PATCH v1 2/2] clk: mediatek: correct cpu clock name for MT8173
+ SoC
+From:   Seiya Wang <seiya.wang@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rob Herring" <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH V6 5/8] clk: mediatek: add MUX_GATE_FLAGS_2
-Date:   Mon, 25 Feb 2019 10:09:09 +0800
-Message-ID: <20190225020912.29120-6-wangyan.wang@mediatek.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190225020912.29120-1-wangyan.wang@mediatek.com>
-References: <20190225020912.29120-1-wangyan.wang@mediatek.com>
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Date:   Mon, 25 Feb 2019 14:14:15 +0800
+In-Reply-To: <155078662163.77512.15925700437277835877@swboyd.mtv.corp.google.com>
+References: <20190211071555.31430-1-seiya.wang@mediatek.com>
+         <20190211071555.31430-2-seiya.wang@mediatek.com>
+         <155078662163.77512.15925700437277835877@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
 X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: chunhui dai <chunhui.dai@mediatek.com>
+On Thu, 2019-02-21 at 14:03 -0800, Stephen Boyd wrote:
+> Quoting Seiya Wang (2019-02-10 23:15:55)
+> > Change cpu clock name from ca57 to ca72 since MT8173 does use cortex-a72.
+> > 
+> > Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> > ---
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 
+> I'm guessing I can't apply this patch because the define is renamed
+> which would break older DTs. Another option would be to just add another
+> define and mark the old define as deprecated and unsupported. Then I
+> could apply the patch to clk tree.
 
-Add MUX_GATE_FLAGS_2 for the clock which needs to set two falgs.
-Such as some mux need to set the flags of "CLK_MUX_ROUND_CLOSEST".
+Thank you so much for your advice. We will update the patches and resend
+soon.
 
-Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>
----
- drivers/clk/mediatek/clk-mtk.c |  2 +-
- drivers/clk/mediatek/clk-mtk.h | 20 ++++++++++++++------
- 2 files changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 9c0ae4278a94..2ed996404804 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -167,7 +167,7 @@ struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		mux->mask = BIT(mc->mux_width) - 1;
- 		mux->shift = mc->mux_shift;
- 		mux->lock = lock;
--
-+		mux->flags = mc->mux_flags;
- 		mux_hw = &mux->hw;
- 		mux_ops = &clk_mux_ops;
- 
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index f83c2bbb677e..4b88d196d52f 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -81,15 +81,13 @@ struct mtk_composite {
- 	signed char divider_shift;
- 	signed char divider_width;
- 
-+	u8 mux_flags;
-+
- 	signed char num_parents;
- };
- 
--/*
-- * In case the rate change propagation to parent clocks is undesirable,
-- * this macro allows to specify the clock flags manually.
-- */
--#define MUX_GATE_FLAGS(_id, _name, _parents, _reg, _shift, _width,	\
--			_gate, _flags) {				\
-+#define MUX_GATE_FLAGS_2(_id, _name, _parents, _reg, _shift,		\
-+				_width, _gate, _flags, _muxflags) {	\
- 		.id = _id,						\
- 		.name = _name,						\
- 		.mux_reg = _reg,					\
-@@ -101,8 +99,18 @@ struct mtk_composite {
- 		.parent_names = _parents,				\
- 		.num_parents = ARRAY_SIZE(_parents),			\
- 		.flags = _flags,					\
-+		.mux_flags = _muxflags,					\
- 	}
- 
-+/*
-+ * In case the rate change propagation to parent clocks is undesirable,
-+ * this macro allows to specify the clock flags manually.
-+ */
-+#define MUX_GATE_FLAGS(_id, _name, _parents, _reg, _shift, _width,	\
-+			_gate, _flags)					\
-+		MUX_GATE_FLAGS_2(_id, _name, _parents, _reg,		\
-+					_shift, _width, _gate, _flags, 0)
-+
- /*
-  * Unless necessary, all MUX_GATE clocks propagate rate changes to their
-  * parent clock by default.
--- 
-2.14.1
 
