@@ -1,204 +1,92 @@
-Return-Path: <SRS0=9LRi=Q7=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=kMKU=RA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF709C43381
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Feb 2019 15:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D59C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 02:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F1A20842
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Feb 2019 15:32:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZSsWIdF"
+	by mail.kernel.org (Postfix) with ESMTP id 8FDB720989
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Feb 2019 02:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfBXPcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Feb 2019 10:32:54 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43506 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbfBXPcx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Feb 2019 10:32:53 -0500
-Received: by mail-lj1-f195.google.com with SMTP id z20so5279878ljj.10;
-        Sun, 24 Feb 2019 07:32:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n52uH9EqvJMEaRetRf+0j3XlFqHt7okOc8jjm051dQE=;
-        b=RZSsWIdFwBM91gPA+FbbhUESHzmjPdJ6XRP0Pp+WPsG9NYvk0J5ulkr2PlzXu+90QS
-         1sRL+BhL0b9V9Q1wb5GRLjYGC2XFdKNwOua6Bz6U77SkQCD+hjQ61CbfuGaWT1oxbQWF
-         RMgaBVlfOINz9eVOyQCY22wTkQQ+5GmP/z5bj//cVzUITR/AAT+rQnfq2ume0YYApo23
-         7pfUoSQkMOTmIxSNfKI4IOFVqeyPUZBNaQOicpppZYqJOcNZmejT5TyXLQcYOLpwTFzW
-         szPIogeXLTzZYLJwgWnRtY1BTkxwdbCBFc4s70dKtGny5y5AEOCpFrG8cBnGHWa9bZBL
-         okoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n52uH9EqvJMEaRetRf+0j3XlFqHt7okOc8jjm051dQE=;
-        b=nprItNia3t4yBS6bzUwFB25HV8jIvQdCvcw2cuv7Me36Nr44zc1IBbUVXMa6KbvKNF
-         hHHCC1BX0FqKF0KySz0dQPjxMBUylvzHRGmXEEtYazS+jT3US1wVlglH7D0fwnjWd6lx
-         O501VQ+qGxamxI1r7qDbM/fCFR+TK2V/Yxf51rjt3lU3+tsoKqtQJ0qjVO9u63w0BlR9
-         0Ejudel/v5TgmkV8JgnXs/TIoZ7kpYKeoiEl5h+1Upa1Ua9zBxTOEOJwFeqK1XjZt/2Y
-         1RHtO+7ZpcPJ8uAruRzdcWvQ+eqLC4D1K1Te+yaxPp+lM3rNpz/yZwl9Y0WZv3HPkm1P
-         JQAg==
-X-Gm-Message-State: AHQUAuY/qBq6FrVYIfU3+BbxBBp9FWIzoWacUGVzDKrKXdbow4MaLuW/
-        Ur/5FpwL2ATUPjcSSNIBgvY=
-X-Google-Smtp-Source: AHgI3IaPRjDQ+DaGaDxKf6xCMVSMj0W/4lCcfItpfpTy1sqZ0UTAZTkfgVNNTGaFW7DsAm2+lcJ6rw==
-X-Received: by 2002:a2e:b014:: with SMTP id y20mr7408444ljk.116.1551022371129;
-        Sun, 24 Feb 2019 07:32:51 -0800 (PST)
-Received: from localhost.localdomain (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.gmail.com with ESMTPSA id c86sm1910161ljf.28.2019.02.24.07.32.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 07:32:50 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
-Date:   Sun, 24 Feb 2019 18:32:22 +0300
-Message-Id: <20190224153222.8142-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726399AbfBYCJ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Feb 2019 21:09:26 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:41282 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725991AbfBYCJZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Feb 2019 21:09:25 -0500
+X-UUID: 4108df188aa944f08e12e0f96e639957-20190225
+X-UUID: 4108df188aa944f08e12e0f96e639957-20190225
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <wangyan.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 16261610; Mon, 25 Feb 2019 10:09:19 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 25 Feb
+ 2019 10:09:18 +0800
+Received: from mszsdaap41.mediatek.inc (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 25 Feb 2019 10:09:17 +0800
+From:   wangyan wang <wangyan.wang@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
+CC:     wangyan wang <wangyan.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH V6 0/8] make mt7623 clock of hdmi stable
+Date:   Mon, 25 Feb 2019 10:09:04 +0800
+Message-ID: <20190225020912.29120-1-wangyan.wang@mediatek.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Initially Common Clock Framework isn't aware of the clock-enable status,
-this results in enabling of clocks that were enabled by bootloader. This
-is not a big deal for a regular clock-gates, but for PLL's it may have
-some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
-clock) may result in extra long period of PLL re-locking.
+From: Wangyan Wang <wangyan.wang@mediatek.com>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 13 deletions(-)
+V6 adopt maintainer's suggestion.
+Here is the change list between V5 & V6
+1. change "unsigned char mux_flags;" to "u8 mux_flags;" to
+match with the struct in " clk: mediatek: add MUX_GATE_FLAGS_2".
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b50b7460014b..ebc8481a2122 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
- 	unsigned long flags = 0;
- 	int ret;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-@@ -940,11 +943,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 	struct tegra_clk_pll_freq_table sel;
-+	unsigned long input_rate;
- 	u32 val;
- 	int err;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
- 
-@@ -1355,6 +1363,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
- 	int ret;
- 	unsigned long flags = 0;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-@@ -1567,7 +1578,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -1704,6 +1720,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
-@@ -2379,6 +2398,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 	return clk;
- }
- 
-+static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl_base(pll);
-+
-+	return val & PLLE_BASE_ENABLE ? 1 : 0;
-+}
-+
- static int clk_plle_tegra210_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -2386,7 +2415,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret = 0;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_plle_tegra210_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2497,16 +2531,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
- 
--static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	u32 val;
--
--	val = pll_readl_base(pll);
--
--	return val & PLLE_BASE_ENABLE ? 1 : 0;
--}
--
- static const struct clk_ops tegra_clk_plle_tegra210_ops = {
- 	.is_enabled =  clk_plle_tegra210_is_enabled,
- 	.enable = clk_plle_tegra210_enable,
+
+chunhui dai (8):
+  drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
+    hardware
+  drm/mediatek: move the setting of fixed divider
+  drm/mediatek: using different flags of clk for HDMI phy
+  drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+  clk: mediatek: add MUX_GATE_FLAGS_2
+  clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
+  drm/mediatek: using new factor for tvdpll in MT2701
+  drm/mediatek: fix the rate of parent for hdmi phy in MT2701
+
+ drivers/clk/mediatek/clk-mt2701.c              |  4 +-
+ drivers/clk/mediatek/clk-mtk.c                 |  2 +-
+ drivers/clk/mediatek/clk-mtk.h                 | 20 ++++++---
+ drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 34 ++++------------
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  7 +---
+ drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 56 +++++++++++++++++++++++---
+ drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++++++
+ 8 files changed, 102 insertions(+), 52 deletions(-)
+
 -- 
-2.20.1
+2.14.1
 
