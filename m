@@ -2,69 +2,74 @@ Return-Path: <SRS0=PWff=RB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A907C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 12:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C995C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 15:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA9DD2087C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 12:59:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBE7A20652
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 15:59:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ym+07D4S"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OP5UDP36"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbfBZM7u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:59:50 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46193 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfBZM7u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Feb 2019 07:59:50 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f2so10600599edy.13;
-        Tue, 26 Feb 2019 04:59:47 -0800 (PST)
+        id S1726988AbfBZP74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 10:59:56 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45379 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbfBZP74 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Feb 2019 10:59:56 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w17so14513428wrn.12;
+        Tue, 26 Feb 2019 07:59:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AVLvJ4lp3f6rtULD55+9vdorc40ZbBM2Q0QN5dVM9yk=;
-        b=Ym+07D4Swj+p5Md/sPGOlr/n94JngQpgIOUvaMrSWjYVSnt5pDtk6DXCXVzQgA/1ui
-         aIkXKaE9AvUgcTVqDXk/KoGS5owqlPR/J4IF7BNxupr+3uA8OO3E2vgYiUqDkUM7BEW0
-         BK5CqPiBp6zUW8neIPLbWOWpiNOIOEJSe99I5u+RFwN24hgytBmuu+fWOKr0zFMhYH3c
-         MijIFnHKLi25cOnca3K6h9J5x1KXZ03Jvo7YxHPZbJW0doaZOW24VeXbGMPnYj/xeMm7
-         oGO37CF0lTPwyP792mRqpS9n06y+Bs5yW7R1GAgn7IQOUYtEhwyHoLyix1kPtjh5FevG
-         Xzeg==
+        bh=kA/bfMjsdzXFhkY0XRXfyqM+EC4WpkyAh8hAGb4jzS0=;
+        b=OP5UDP36ntEBh44ZFcNTag76nl6Qwav/+CiUhGRI2TUA1TAYREKWoRdG/rZiQXbCuh
+         V/ipqyG2x8LcJX9gXHq9a2/tmmjl+Udby4uoreweaijYAIA9YjEqIIztgaGi0pottkdh
+         sTRFdklZpwswgljdRwI4Wl7ZpZneTuzsl2f1UxcPuaAqFI9XTT9YHZ3Im9Nnv9Y7sxYw
+         dy5xT1YOq39oAPx6qxFXDobpTyoat4aVBcrRzRyPXCcuWbtf18hA2aJyfHjE/Yq14JJd
+         6vqoTtm78+QkOmBwjJC7dIhnTUHmAxtJTea3Z1gnr9RYh7xnovQtLljiNkFXB0yKxr5N
+         4QLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=AVLvJ4lp3f6rtULD55+9vdorc40ZbBM2Q0QN5dVM9yk=;
-        b=uJ9iNFS85I5SR/msCbM2MsY6QHUQd+4vCV4nWeYYcFxulw5tVhHn+h33fjsnLhOCr7
-         cxyB0/g6MwhW5A8jdlqyTrY3K4AqCwy4gWtuHGqi5+JJ2M5z+wVZHHqis01VpB3xX93P
-         vqaBYueNzWB3WYkHy4c8rjzg3oUxmSn7XsleTyCfZ0QyI4kTrzjSSmhM2wgl47qI3Hnt
-         kDktb5Vt/XMfJkShTEjkovYsiS7WJeWS5KnYWvU0NgCRaBp48vGqRYyRSL3MGQx5rvmB
-         l5uWmulQQrHe2f4y45btKWczj4M3awy3DjAgJ4uUe2/9mRy6xKrpJBoLFrH9D7nFpTI4
-         iYnA==
-X-Gm-Message-State: AHQUAuYza/FwRoZ0vkDLCODrSDjbrNViJiNhKMWxGFP0p6qxLB/khvE7
-        dPsDS7M7ylZr/PjdhCIyIYPBEpgP
-X-Google-Smtp-Source: AHgI3IZvzRgLnd42grpWPKjOE3Y0GTbSHgpJDzasKu7ZVyJO8VD+pt/uZmABIvSw5iFQVkKN++PCNg==
-X-Received: by 2002:a50:94d6:: with SMTP id t22mr19081350eda.232.1551185986453;
-        Tue, 26 Feb 2019 04:59:46 -0800 (PST)
+        bh=kA/bfMjsdzXFhkY0XRXfyqM+EC4WpkyAh8hAGb4jzS0=;
+        b=KqUo0Z6AXBATr+qUFZXUFuXYhoLUAxWsMr81EWAKzI53t1/NcudZ0JmjX2AshjPSsM
+         wgHpOzwdUMTzZJRmpQCX4577SrpF8mLjqGhoZzMF15aewa8O06RrpC7f3mUlFO7DF3xL
+         FshRNO1cAhwMr2Z8aYymDTwQ3L/XoRcAPfI/AC2GE7rswIPVJzbjETuXWafkRzBmPAh9
+         AMTqncyj4tnurcpI/Fswf5YDqbSr3OtRkcdn8/rRPzf+I2ApfLUwV3XjaidummOJZlEc
+         mcyoxtO5xSk0AQWee3ZTwoJny/1mQVMhTSE4t4HHDZ1CnqutFn7oT0YNJVnLG8HrCK+y
+         W4EA==
+X-Gm-Message-State: AHQUAubuNk7JzdidVbKZ9+lWdo8uxS02LZluFl/08OUCcmL6UyD62B75
+        9zYWCXCIAja1EF8lYt3zMnk=
+X-Google-Smtp-Source: AHgI3IZHfp9a6qtmAOGHvTDozulZ9B1ZXr00VM8+UxBUn9im/0hT8m7KkP/DzgOzgckY7I1ujFS5hw==
+X-Received: by 2002:a5d:654a:: with SMTP id z10mr16307134wrv.280.1551196793873;
+        Tue, 26 Feb 2019 07:59:53 -0800 (PST)
 Received: from ziggy.stardust ([37.223.147.22])
-        by smtp.gmail.com with ESMTPSA id w24sm2480231edb.72.2019.02.26.04.59.45
+        by smtp.gmail.com with ESMTPSA id g9sm3520290wmf.19.2019.02.26.07.59.52
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 04:59:45 -0800 (PST)
-Subject: Re: [PATCH v4 0/3] Mark clocks as critical for MT6797
-To:     matthias.bgg@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
-Cc:     sean.wang@mediatek.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <mbrugger@suse.com>
-References: <20190214163026.26073-1-matthias.bgg@kernel.org>
+        Tue, 26 Feb 2019 07:59:52 -0800 (PST)
+Subject: Re: [PATCH v4 01/12] clk: mediatek: Disable tuner_en before change
+ PLL rate
+To:     Weiyi Lu <weiyi.lu@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        Owen Chen <owen.chen@mediatek.com>
+References: <20190201083016.25856-1-weiyi.lu@mediatek.com>
+ <20190201083016.25856-3-weiyi.lu@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -160,12 +165,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <f7ed0750-665a-76bc-df1a-95af39fef8ec@gmail.com>
-Date:   Tue, 26 Feb 2019 13:59:44 +0100
+Message-ID: <41aed6f5-8794-ddf5-d5c2-17ee82e33db3@gmail.com>
+Date:   Tue, 26 Feb 2019 16:59:30 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190214163026.26073-1-matthias.bgg@kernel.org>
+In-Reply-To: <20190201083016.25856-3-weiyi.lu@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -176,63 +181,96 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 14/02/2019 17:30, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
+On 01/02/2019 09:30, Weiyi Lu wrote:
+> From: Owen Chen <owen.chen@mediatek.com>
 > 
-> Jasper send this series some month ago. As there was no reaction from
-> his side, I'll do a friendly take-over.
-> I tested the patches on my Helios X20 boards and they fix the issue.
-> I didn't add a Tested-by tag as I added my Signed-off-by.
+> PLLs with tuner_en bit, such as APLL1, need to disable
+> tuner_en before apply new frequency settings, or the new frequency
+> settings (pcw) will not be applied.
+> The tuner_en bit will be disabled during changing PLL rate
+> and be restored after new settings applied.
+> Another minor change is to correct the macro name of pcw change bit
+> to CON1_PCW_CHG because PCW_CHG(BIT31) is on CON1.
 > 
-> Changes since v3:
-> - add comments explaining why the clock muxer and gates are marked
->   as critical
+> Fixes: e2f744a82d725 (clk: mediatek: Add MT2712 clock support)
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
+>  1 file changed, 31 insertions(+), 2 deletions(-)
 > 
-> Changes since v2 (https://patchwork.kernel.org/patch/10686759/):
-> - axi_sel is not needed, drop CLK_IS_CRITICAL for it.
-> - update commit message
-> - add Acked-by from Mars
-> 
-> Changes since v1:
-> - add a fixes tag.
-> 
+> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> index f54e4015b0b1..f0ff5f535c7e 100644
+> --- a/drivers/clk/mediatek/clk-pll.c
+> +++ b/drivers/clk/mediatek/clk-pll.c
+> @@ -27,7 +27,7 @@
+>  #define CON0_BASE_EN		BIT(0)
+>  #define CON0_PWR_ON		BIT(0)
+>  #define CON0_ISO_EN		BIT(1)
+> -#define CON0_PCW_CHG		BIT(31)
+> +#define CON1_PCW_CHG		BIT(31)
+>  
+>  #define AUDPLL_TUNER_EN		BIT(31)
+>  
+> @@ -93,9 +93,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+>  {
+>  	u32 con1, val;
+>  	int pll_en;
+> +	u32 tuner_en = 0;
+> +	u32 tuner_en_mask;
+> +	void __iomem *tuner_en_addr = NULL;
+>  
+>  	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+>  
+> +	/* disable tuner */
+> +	if (pll->tuner_en_addr) {
+> +		tuner_en_addr = pll->tuner_en_addr;
+> +		tuner_en_mask = BIT(pll->data->tuner_en_bit);
+> +	} else if (pll->tuner_addr) {
+> +		tuner_en_addr = pll->tuner_addr;
+> +		tuner_en_mask = AUDPLL_TUNER_EN;
+> +	}
+> +
+> +	if (tuner_en_addr) {
+> +		val = readl(tuner_en_addr);
+> +		tuner_en = val & tuner_en_mask;
+> +
+> +		if (tuner_en) {
+> +			val &= ~tuner_en_mask;
+> +			writel(val, tuner_en_addr);
+> +		}
+> +	}
+> +
 
-Steven, Mike any comments on this?
+Why don't we use a flag here, it would make the code easier to understand.
+I think it would also help if you put this code in a separate function.
 
 Regards,
 Matthias
 
-> ---
-> 
-> Currently, DRAM-related clocks and the axi_sel MUX are not marked with
-> CLK_IS_CRITICAL for MT6797. This causes memory corruption when the
-> system is booted without clk_ignore_unused.
-> 
-> This patchset
-> 
-> 1. Makes it possible to mark outputs of MUXes as critical by introducing
->    a new macro, MUX_FLAGS,
-> 2. Makes it possible to mark gates as critical by adding flags to
->    mtk_gate, and
-> 3. Marks axi_sel, ddrphycfg_sel, infra_dramc_f26m and infra_dramc_b_f26m
->    as critical.
-> 
-> The addition of flags to mtk_gate also exists in the patch series "Add
-> basic and clock support for Mediatek MT8183 SoC" [1].  The type of
-> flags is unsigned int in that series, but the real type is unsigned
-> long, so my patch differs from that patch.
-> 
-> [1] https://patchwork.kernel.org/patch/10549953/
-> 
-> Jasper Mattsson (3):
->   clk: mediatek: Add MUX_FLAGS macro
->   clk: mediatek: Add flags to mtk_gate
->   clk: mediatek: Mark bus and DRAM related clocks as critical
-> 
->  drivers/clk/mediatek/clk-gate.c   |  4 +-
->  drivers/clk/mediatek/clk-gate.h   |  3 +-
->  drivers/clk/mediatek/clk-mt6797.c | 68 +++++++++++++++++++------------
->  drivers/clk/mediatek/clk-mtk.c    |  2 +-
->  drivers/clk/mediatek/clk-mtk.h    |  9 +++-
->  5 files changed, 56 insertions(+), 30 deletions(-)
+
+>  	/* set postdiv */
+>  	val = readl(pll->pd_addr);
+>  	val &= ~(POSTDIV_MASK << pll->data->pd_shift);
+> @@ -116,12 +138,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+>  	con1 = readl(pll->base_addr + REG_CON1);
+>  
+>  	if (pll_en)
+> -		con1 |= CON0_PCW_CHG;
+> +		con1 |= CON1_PCW_CHG;
+>  
+>  	writel(con1, pll->base_addr + REG_CON1);
+>  	if (pll->tuner_addr)
+>  		writel(con1 + 1, pll->tuner_addr);
+>  
+> +	/* restore tuner_en */
+> +	if (tuner_en_addr && tuner_en) {
+> +		val = readl(tuner_en_addr);
+> +		val |= tuner_en_mask;
+> +		writel(val, tuner_en_addr);
+> +	}
+> +
+>  	if (pll_en)
+>  		udelay(20);
+>  }
 > 
