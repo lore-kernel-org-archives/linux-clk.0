@@ -6,47 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF41C10F0B
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5183FC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098BA21852
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23163217F5
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:08:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551204025;
-	bh=73yotcdHld+L1e6oBpOPCpusDnidGBSb2ABlfKzMayY=;
+	s=default; t=1551204526;
+	bh=6luI78bJ4FYRrCrd9j5W8oBLzCAaME+1lLXedunPT7k=;
 	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=c5etcBoihTY8/6AXsuvX0y0peYgNeDNW4ll2ek19p17Zp61/tI8TxmdCycipw9Inu
-	 SHEVUeG4EKKBlTHmnLf9AEAhNV652HV8ZEdMk3l6pjRpmnYtwN3wn5ba5ZK8OkSM3P
-	 ZA/4BLpZ+u1spxIGdU0xlOTdk0v6IhyWEWsC+xL0=
+	b=wQZaUWSTS+1jVy5+FK4i4tSgZ8EpvKvVgTuJhfLGbWlfCjNn0RnLipDjVuJZ4nVAl
+	 rEA3FuVm5o2waCRZvgx6YrprrlvfYRO1aZyUT9mkcxbee15Ofd43DkzCa4lFHoh3cS
+	 Ysah7qVQOrI0WMi9vhrKEL1M9miYrH1cSy+Orak8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbfBZSAT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 13:00:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36398 "EHLO mail.kernel.org"
+        id S1728884AbfBZSIk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 13:08:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727732AbfBZSAT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 13:00:19 -0500
+        id S1728456AbfBZSIk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Feb 2019 13:08:40 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49EB9206B8;
-        Tue, 26 Feb 2019 18:00:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2468217F5;
+        Tue, 26 Feb 2019 18:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551204018;
-        bh=73yotcdHld+L1e6oBpOPCpusDnidGBSb2ABlfKzMayY=;
+        s=default; t=1551204519;
+        bh=6luI78bJ4FYRrCrd9j5W8oBLzCAaME+1lLXedunPT7k=;
         h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=s/pSooiOhpPbc9OLbutzInI6b7PNGzVZqhLh4MWd7wSyG18cQoNHnJkEazK00gVTn
-         Zj5lQ4W4GsGvy0fBeYg9TuZnI6KMrey9kGk+YC6ZUmbk73B6ZpkgSUV8Yt0dRGsf0t
-         dW1kXcK87LjOnEEZ4VV4Bu6DxDjFSHCY49GQBXwk=
+        b=K011+sfjrQJFpSVn8+2/GWdhhs+yGwngpiYn1zyWAriEJmyHOWTTPseavnAwEhJHK
+         Zv+MsW7R2fUw598EUTTPROoUbCwOlkPzjBM7Wso31A7Xb/WHxhlrznT1PB2bApUEbx
+         pB/YjiLWlr1VK2GY+g29bIr8S4+px8Yw0rOmHG9w=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "baruch@tkos.co.il" <baruch@tkos.co.il>,
-        "ccaione@baylibre.com" <ccaione@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "festevam@gmail.com" <festevam@gmail.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
@@ -56,29 +52,35 @@ To:     "agx@sigxcpu.org" <agx@sigxcpu.org>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-References: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <155120401746.260864.13314128182651447991@swboyd.mtv.corp.google.com>
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+References: <1551157967-30925-1-git-send-email-Anson.Huang@nxp.com> <1551157967-30925-2-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <155120451899.260864.1060210942751564859@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
 Cc:     dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
+Subject: Re: [PATCH V7 2/2] clk: imx: scu: add cpu frequency scaling support
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
-Date:   Tue, 26 Feb 2019 10:00:17 -0800
+In-Reply-To: <1551157967-30925-2-git-send-email-Anson.Huang@nxp.com>
+Date:   Tue, 26 Feb 2019 10:08:38 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2019-02-22 19:19:03)
-> i.MX8MQ has clock gate for each GPIO bank, add them
-> into clock tree for GPIO driver to manage.
+Quoting Anson Huang (2019-02-25 21:17:36)
+> On NXP's i.MX SoCs with system controller inside, CPU frequency
+> scaling can ONLY be done by system controller firmware, and it
+> can ONLY be requested from secure mode, so Linux kernel has to
+> call ARM SMC to trap to ARM-Trusted-Firmware to request system
+> controller firmware to do CPU frequency scaling.
+>=20
+> This patch adds i.MX system controller CPU frequency scaling support,
+> it reuses cpufreq-dt driver and implement the CPU frequency scaling
+> inside SCU clock driver.
 >=20
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
-> No change since V1, just drop 1 patch from V1 patch series.
 
-This doesn't apply to clk-imx branch or clk-next. Please rebase and
-resend.
+Applied to clk-next
 
