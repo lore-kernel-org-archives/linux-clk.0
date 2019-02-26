@@ -2,54 +2,57 @@ Return-Path: <SRS0=PWff=RB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A9DC43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 22:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E39C10F0B
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 22:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A851A218A5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 22:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6178218B0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 22:34:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551220472;
-	bh=IboUflHxCb359juQMeyLW3Xltd178tmZn/LHDEiDD5I=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=TmtB6dF+/vsRiGvih2DBQpHfUB67xvgs5xN8gA21xDhchkYgcE8S+n35tbp8A3ouQ
-	 mO2kXMsQoY1GVgeLSxkgCWGDIDIvDxV4KiJf3sMk4G62UAMMjEGfW5n1V3y2HNL0Uc
-	 9s94HpCDT88ngfgj9IZt0447g5IWuzn/tXEACiGo=
+	s=default; t=1551220474;
+	bh=EhSwc8YZXpNLa457hu+6PsYYq1FYt0pMKcWYUIlYCSE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=dZOUagGt7fa/au/SlS8qVhi5pCUfrlEE1YlNptH23jahci5Heo12NhkZ+jr0aRD8s
+	 3SjbrNFWGfkK66xGuP+QmhH0d/zcse3qpAunKMBh6bapx1CX96GIOnSEToqdLLaTEl
+	 hx1SEAup/P1QvWrdq7zU4a6QO7wGuaLqve7OiCRM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbfBZWec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 17:34:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48216 "EHLO mail.kernel.org"
+        id S1729321AbfBZWed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 17:34:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728766AbfBZWec (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 17:34:32 -0500
+        id S1729187AbfBZWed (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Feb 2019 17:34:33 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 790B22186A;
-        Tue, 26 Feb 2019 22:34:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54BB5218A1;
+        Tue, 26 Feb 2019 22:34:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551220470;
-        bh=IboUflHxCb359juQMeyLW3Xltd178tmZn/LHDEiDD5I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=1skYq4eVlxwP3y/fcDP3kXomRCGS9hrDMg+M4F1NYTeBkGVDhqKMW5xPLSuY9D+uX
-         42xL86wuTd77Jg/zFHDSbIy4hOMfDrpdt0YZeAFC+B2d0xLY5IF6cx9SD7NM4W6v6Z
-         MeMDJBBG7QxRoy5swUxavewxslaop9xQoe9JQVPs=
+        s=default; t=1551220471;
+        bh=EhSwc8YZXpNLa457hu+6PsYYq1FYt0pMKcWYUIlYCSE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jI+lGYBgVD+nUUzZMkqIsZXvF/TmO56M6kLugzmh06R6b5le6QM2oabRAunMnkJKh
+         zGZ0+tP/ZumBp3raKeqZtnC9V0mGt3a9r6/2/0CwGjGmPcJphER2R2YE3xVXzZvAqf
+         2tQjuZnEwxjM4BvMI5zxxiepgAHsp2LDUWG1w+KE=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Jerome Brunet <jbrunet@baylibre.com>,
         Russell King <linux@armlinux.org.uk>,
         Jeffrey Hugo <jhugo@codeaurora.org>,
         Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 0/8] Rewrite clk parent handling
-Date:   Tue, 26 Feb 2019 14:34:21 -0800
-Message-Id: <20190226223429.193873-1-sboyd@kernel.org>
+Subject: [PATCH v2 2/8] clk: core: clarify the check for runtime PM
+Date:   Tue, 26 Feb 2019 14:34:23 -0800
+Message-Id: <20190226223429.193873-3-sboyd@kernel.org>
 X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
+In-Reply-To: <20190226223429.193873-1-sboyd@kernel.org>
+References: <20190226223429.193873-1-sboyd@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -57,77 +60,92 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are a couple warts with clk parent handling in the common clk
-framework. This patch series addresses one of those warts, parent-child
-linkages. We use strings for all parent-child linkages, and this leads
-to poorly written code that extracts clk names from struct clk pointers
-and makes clk provider drivers use clk consumer APIs. 
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Also, clkdev.c has a collection of DT parsing logic in it that is only
-used when the common clk framework is present but we want to use that
-same logic for describing parent-child linkages of clk providers via DT.
-This code should all be moved into the common clk framework and used
-from there as well as from clkdev.c, so this series changes the way
-clkdev interacts with the clk framework by having clkdev get struct
-clk_hw pointers out of DT clk specifiers and then convert those into clk
-pointers with clk_hw_create_clk(). Splitting the API this way lets us
-get struct clk_hw pointers for clk providers and skip the struct clk
-pointer creation phase that we don't need to do when describing
-parent-child linkages.
+Currently, the core->dev entry is populated only if runtime PM is
+enabled. Doing so prevents accessing the device structure in any
+case.
 
-And finally, we have a few patches in here that lay the groundwork for
-supporting device links in the common clk framework. We do that by
-pushing the consuming device pointer through to the clk pointer creation
-in clk_hw_create_clk(). This wasn't always easy to do when we had
-__clk_create_clk() called from multiple places, some being deep in the
-clk registration path. This series simplifies that logic so that we can
-always attach a consumer device to a clk that we create in one place,
-instead of making that linkage in multiple places near where we create
-struct clk pointers.
+Keep the same logic but instead of using the presence of core->dev as
+the only condition, also check the status of
+pm_runtime_enabled(). Then, we can set the core->dev pointer at any
+time as long as a device structure is available.
 
-I plan to at least merge the early patches in this series into clk-next
-so we can clear the way for the later patches. I don't think anything is
-too controversial until we get to the new way of specifying parents
-at the end and of course, the sdm845 patch is incomplete so it's not
-going to be merged.
+This change will help supporting device links in the clock subsystem.
 
-Changes from v1:
- * Dropped new get_parent_hw, we'll pick it up in a later series
- * Rebased to v5.0-rc6 to avoid conflicts with clk-fixes
- * Renamed 'fallback' to 'name' and 'name' to 'fw_name' in parent map
- * Made sure that clk_hw_get_parent_by_index() never sees an error pointer
-   so that we don't mistakenly try to defer an error pointer
- * Fixed index passing mistake on of_clk_get_hw_from_clkspec()
- * Copy over all the data from parent maps and free it correctly too
-
-Miquel Raynal (1):
-  clk: core: clarify the check for runtime PM
-
-Stephen Boyd (7):
-  clk: Combine __clk_get() and __clk_create_clk()
-  clk: Introduce of_clk_get_hw_from_clkspec()
-  clk: Inform the core about consumer devices
-  clk: Move of_clk_*() APIs into clk.c from clkdev.c
-  clk: Allow parents to be specified without string names
-  clk: qcom: gcc-sdm845: Migrate to DT parent mapping
-  arm64: dts: qcom: Specify XO clk as input to GCC node
-
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>
 Cc: Russell King <linux@armlinux.org.uk>
+Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Jeffrey Hugo <jhugo@codeaurora.org>
 Cc: Chen-Yu Tsai <wens@csie.org>
+[sboyd@kernel.org: Change to a boolean flag]
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi |   2 +
- drivers/clk/clk.c                    | 512 +++++++++++++++++++++------
- drivers/clk/clk.h                    |  23 +-
- drivers/clk/clkdev.c                 | 120 +------
- drivers/clk/qcom/gcc-sdm845.c        | 180 +++++-----
- include/linux/clk-provider.h         |  19 +
- 6 files changed, 532 insertions(+), 324 deletions(-)
-
-
-base-commit: d13937116f1e82bf508a6325111b322c30c85eb9
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fef937ea44f4..d46e8b9b9c9f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -57,6 +57,7 @@ struct clk_core {
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
+ 	bool			orphan;
++	bool			rpm_enabled;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
+ 	unsigned int		protect_count;
+@@ -92,9 +93,9 @@ struct clk {
+ /***           runtime pm          ***/
+ static int clk_pm_runtime_get(struct clk_core *core)
+ {
+-	int ret = 0;
++	int ret;
+ 
+-	if (!core->dev)
++	if (!core->rpm_enabled)
+ 		return 0;
+ 
+ 	ret = pm_runtime_get_sync(core->dev);
+@@ -103,7 +104,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
+ 
+ static void clk_pm_runtime_put(struct clk_core *core)
+ {
+-	if (!core->dev)
++	if (!core->rpm_enabled)
+ 		return;
+ 
+ 	pm_runtime_put_sync(core->dev);
+@@ -223,7 +224,7 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 	 * taking enable spinlock, but the below check is needed if one tries
+ 	 * to call it from other places.
+ 	 */
+-	if (core->dev) {
++	if (core->rpm_enabled) {
+ 		pm_runtime_get_noresume(core->dev);
+ 		if (!pm_runtime_active(core->dev)) {
+ 			ret = false;
+@@ -233,7 +234,7 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 
+ 	ret = core->ops->is_enabled(core->hw);
+ done:
+-	if (core->dev)
++	if (core->rpm_enabled)
+ 		pm_runtime_put(core->dev);
+ 
+ 	return ret;
+@@ -3341,7 +3342,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 	core->ops = hw->init->ops;
+ 
+ 	if (dev && pm_runtime_enabled(dev))
+-		core->dev = dev;
++		core->rpm_enabled = true;
++	core->dev = dev;
+ 	if (dev && dev->driver)
+ 		core->owner = dev->driver->owner;
+ 	core->hw = hw;
 -- 
 Sent by a computer through tubes
 
