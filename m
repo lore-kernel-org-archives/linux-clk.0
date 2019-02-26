@@ -4,75 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EA8C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF41C10F0B
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FDC921850
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 098BA21852
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551203715;
-	bh=X5OVCzrsQAnuNCeXkl+OnEMMckqJHX7xniL91R3UZ3I=;
+	s=default; t=1551204025;
+	bh=73yotcdHld+L1e6oBpOPCpusDnidGBSb2ABlfKzMayY=;
 	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=ZCoCmk8K2g7NJM3lXQqdp28pXFJV6IfIbLec8COViybXPIB+NmS5bEK2XxzqEoarL
-	 cX2f15KlmTxds0yYtN6pujJnEHTOuhj8wfP2/fadoBZ/HGmnlhhARmUPmkgOyZGP8C
-	 3FBvkKuwJuaDYeBU/soAR9BecIzvDqfrZCBeXQdk=
+	b=c5etcBoihTY8/6AXsuvX0y0peYgNeDNW4ll2ek19p17Zp61/tI8TxmdCycipw9Inu
+	 SHEVUeG4EKKBlTHmnLf9AEAhNV652HV8ZEdMk3l6pjRpmnYtwN3wn5ba5ZK8OkSM3P
+	 ZA/4BLpZ+u1spxIGdU0xlOTdk0v6IhyWEWsC+xL0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbfBZRzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:55:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57334 "EHLO mail.kernel.org"
+        id S1728421AbfBZSAT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 13:00:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbfBZRzO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:55:14 -0500
+        id S1727732AbfBZSAT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Feb 2019 13:00:19 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 112912173C;
-        Tue, 26 Feb 2019 17:55:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49EB9206B8;
+        Tue, 26 Feb 2019 18:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551203714;
-        bh=X5OVCzrsQAnuNCeXkl+OnEMMckqJHX7xniL91R3UZ3I=;
+        s=default; t=1551204018;
+        bh=73yotcdHld+L1e6oBpOPCpusDnidGBSb2ABlfKzMayY=;
         h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=uTp+PCq0LQf7VAOSSO4ajmylbRf3pTVnNhDal66Aprct+bXoa1iLUExK008wDPgwM
-         GSP02jEkxfcElA/Gj1u4WwYWChorVWYEW+z/7C0JeVgNbd7su7NvwxnU6C+lUaSytq
-         xrimVfTPV9w0Adqz7iODnysevam+sUnjAIOmhhG4=
+        b=s/pSooiOhpPbc9OLbutzInI6b7PNGzVZqhLh4MWd7wSyG18cQoNHnJkEazK00gVTn
+         Zj5lQ4W4GsGvy0fBeYg9TuZnI6KMrey9kGk+YC6ZUmbk73B6ZpkgSUV8Yt0dRGsf0t
+         dW1kXcK87LjOnEEZ4VV4Bu6DxDjFSHCY49GQBXwk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com,
-        matthias.bgg@kernel.org, mturquette@baylibre.com
-References: <20190214163242.26259-1-matthias.bgg@kernel.org>
-Message-ID: <155120371334.260864.14503820089028591730@swboyd.mtv.corp.google.com>
+To:     "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "baruch@tkos.co.il" <baruch@tkos.co.il>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+References: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <155120401746.260864.13314128182651447991@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190214163242.26259-1-matthias.bgg@kernel.org>
-Date:   Tue, 26 Feb 2019 09:55:13 -0800
+In-Reply-To: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
+Date:   Tue, 26 Feb 2019 10:00:17 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting matthias.bgg@kernel.org (2019-02-14 08:32:42)
-> From: Jasper Mattsson <jasu@njomotys.info>
+Quoting Anson Huang (2019-02-22 19:19:03)
+> i.MX8MQ has clock gate for each GPIO bank, add them
+> into clock tree for GPIO driver to manage.
 >=20
-> Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
-> for MT6797. This causes memory corruption when the system is
-> booted without clk_ignore_unused.
-> This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
-> and infra_dramc_b_f26m as CLK_IS_CRITICAL.
->=20
-> Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
+> No change since V1, just drop 1 patch from V1 patch series.
 
-Applied to clk-next
-
-Would be nice to get someone from mediatek to ack it, but I can't wait
-forever.
+This doesn't apply to clk-imx branch or clk-next. Please rebase and
+resend.
 
