@@ -2,103 +2,174 @@ Return-Path: <SRS0=PWff=RB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6054C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 17:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00389C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 17:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7CAB21850
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 17:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C733E21850
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 17:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551203161;
-	bh=c2z4jtwehHe3TphH0an2gBgC1jwH9c+EUAZ8n2yejXg=;
+	s=default; t=1551203460;
+	bh=3nANAhLFyGRirluaGDEeKEuf9286NQe83pDNkn3J9cs=;
 	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=CilGB7odbjfFhkSy0mw7tYIPlFmOKAJUqcxiLNGmajkaKICT8N31riIsmhLBdubN7
-	 n0KWipILqMvIN4j7wl2HNLa2XC5r23bsfL8woMStaj2ph8jUqKRf4l9Ltdy4Hd21wF
-	 annbP+haSK/EDSOPjW9o++XP97SWfhYSuvc3IGNg=
+	b=EbJCrrt4xWcO24tXsGt7oSV5DTukecCah/5G3lPj5q/Md7BVjkNeYfcQoPzoe6H+x
+	 KKhL85vVbD38bS4yzj2ikc7P8jvxYPU0dLpdBq7Ja41sgEWY8WZbpNLqmiDSSxP4NP
+	 VUR4ZaV0tXZR3GN3/Nf8wHSKfmgU1BojGb0XGLT4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfBZRp4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:45:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47518 "EHLO mail.kernel.org"
+        id S1728316AbfBZRvA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 12:51:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727416AbfBZRp4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:45:56 -0500
+        id S1727108AbfBZRvA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:51:00 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 716162184D;
-        Tue, 26 Feb 2019 17:45:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB8352173C;
+        Tue, 26 Feb 2019 17:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551203155;
-        bh=c2z4jtwehHe3TphH0an2gBgC1jwH9c+EUAZ8n2yejXg=;
+        s=default; t=1551203459;
+        bh=3nANAhLFyGRirluaGDEeKEuf9286NQe83pDNkn3J9cs=;
         h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=M/PdYZw1E4fFGr2llB9KDjWf/mWEVOkmQ1+z3iUitWRDwd4atQx1zu2MEpnP3KXMd
-         niwA/w1GoB1Q5/aG0YE88d+zZTYlOfwjr15BMoXXc4j765TfNzGijU/qHWL2QxT+pc
-         NR68QCuB01MobEzpPkcRlLNrG97dFCTtwEnUhJII=
+        b=eU7Tu+U4qF5KIUncNyhZSeY/wqfVC2NtvtPhW8Vgp61WDzK1OOnj9df3Ved0morI9
+         ADal/JolADUMjFEeDzhztiednhGKX0AR/CaewISTFaZKW4bjvHJcp2P2OmYr500781
+         WowW3sDEvrvrRrYeMJAfU6hPJlFn9gmF/CsycrKk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-References: <20190201083016.25856-1-weiyi.lu@mediatek.com> <20190201083016.25856-2-weiyi.lu@mediatek.com> <155069033021.77512.14493210110678229730@swboyd.mtv.corp.google.com> <b7abe484-71c1-5ec0-796c-544f1ac5d6f5@gmail.com> <155082168901.77512.12893153125579041936@swboyd.mtv.corp.google.com> <1551153650.1047.4.camel@mtksdaap41>
-Message-ID: <155120315465.260864.9490825097795511702@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+References: <20190201083016.25856-1-weiyi.lu@mediatek.com> <20190201083016.25856-10-weiyi.lu@mediatek.com>
+Message-ID: <155120345816.260864.13433355004684800350@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
         Fan Chen <fan.chen@mediatek.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, stable@vger.kernel.org
-Subject: Re: [PATCH v4 00/12] Mediatek MT8183 clock and scpsys support
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: Re: [PATCH v4 08/12] clk: mediatek: Add MT8183 clock support
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1551153650.1047.4.camel@mtksdaap41>
-Date:   Tue, 26 Feb 2019 09:45:54 -0800
+In-Reply-To: <20190201083016.25856-10-weiyi.lu@mediatek.com>
+Date:   Tue, 26 Feb 2019 09:50:58 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Weiyi Lu (2019-02-25 20:00:50)
-> On Thu, 2019-02-21 at 23:48 -0800, Stephen Boyd wrote:
-> > Quoting Matthias Brugger (2019-02-21 00:36:24)
-> > >=20
-> > >=20
-> > > On 20/02/2019 20:18, Stephen Boyd wrote:
-> > > >=20
-> > > > What's the merge plan here? Do you want me to apply these patches t=
-o clk
-> > > > tree? Will someone be sending me a pull request for mediatek clk ch=
-anges
-> > > > this cycle? It's getting pretty late for much of anything making th=
-is
-> > > > upcoming merge window.
-> > > >=20
-> > >=20
-> > > As far as I can see, the clock patches are independent, so I think it=
- is OK to
-> > > take them. SCPSYS patches will go through my tree once they are in sh=
-ape.
-> >=20
-> > Ok great. When patches for clks are interspersed throughout the patch
-> > series it makes me think that something later in the series depends on
-> > something that isn't a clk patch so then I can't apply it.
-> >=20
->=20
-> Hi Stephen,
->=20
-> Sorry for making such complex dependencies between the clk patches and
-> others in this series. And just like Matthias mentioned, the clock
-> patches are independent from others. I could resend a clock-only series
-> right away if each clock patch in v4 is qualified to merge into
-> clk-next.
-> If there still some provide need to be fixed, please let me know. I'll
-> fix them and send v5 only for clock.
+Quoting Weiyi Lu (2019-02-01 00:30:12)
+> diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk=
+-mt8183.c
+> new file mode 100644
+> index 000000000000..e9de9fe774ca
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8183.c
+> @@ -0,0 +1,1285 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (c) 2018 MediaTek Inc.
+> +// Author: Weiyi Lu <weiyi.lu@mediatek.com>
+> +
+> +#include <linux/delay.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+[....]
+> +
+> +static int clk_mt8183_top_probe(struct platform_device *pdev)
+> +{
+> +       struct resource *res =3D platform_get_resource(pdev, IORESOURCE_M=
+EM, 0);
+> +       void __iomem *base;
+> +       struct clk_onecell_data *clk_data;
+> +       struct device_node *node =3D pdev->dev.of_node;
+> +
+> +       base =3D devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(base)) {
+> +               pr_err("%s(): ioremap failed\n", __func__);
 
-It looks like Matthias has some comments on the first patch that need to
-be addressed. I looked over the rest of the clk patches and they look ok
-at a quick glance. If you resend just the clk patches without the rest
-then I can probably apply them for the upcoming merge window.
+This API already prints an error so please remove this duplicate error
+message
+
+> +               return PTR_ERR(base);
+> +       }
+> +
+> +       clk_data =3D mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+> +
+> +       mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_=
+clks),
+> +               clk_data);
+> +
+> +       mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data=
+);
+> +
+> +       mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
+> +               node, &mt8183_clk_lock, clk_data);
+> +
+> +       mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_mux=
+es),
+> +               base, &mt8183_clk_lock, clk_data);
+> +
+> +       mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs=
+),
+> +               base, &mt8183_clk_lock, clk_data);
+> +
+> +       mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
+> +               clk_data);
+> +
+> +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data=
+);
+> +}
+> +
+> +static int clk_mt8183_infra_probe(struct platform_device *pdev)
+> +{
+> +       struct clk_onecell_data *clk_data;
+> +       struct device_node *node =3D pdev->dev.of_node;
+> +
+> +       clk_data =3D mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
+> +
+> +       mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
+> +               clk_data);
+> +
+> +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data=
+);
+> +}
+> +
+> +static int clk_mt8183_mcu_probe(struct platform_device *pdev)
+> +{
+> +       struct clk_onecell_data *clk_data;
+> +       struct device_node *node =3D pdev->dev.of_node;
+> +       void __iomem *base;
+> +       struct resource *res =3D platform_get_resource(pdev, IORESOURCE_M=
+EM, 0);
+> +
+> +       base =3D devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(base)) {
+> +               pr_err("%s(): ioremap failed\n", __func__);
+> +               return PTR_ERR(base);
+> +       }
+> +
+> +       clk_data =3D mtk_alloc_clk_data(CLK_MCU_NR_CLK);
+
+Can this fail? It doesn't seem to be checked for failure so I guess we
+don't care?
+
+> +
+> +       mtk_clk_register_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), bas=
+e,
+> +                       &mt8183_clk_lock, clk_data);
+> +
+> +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data=
+);
+> +}
+> +
