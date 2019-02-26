@@ -3,165 +3,236 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A664C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 12:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A907C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 12:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF155217F5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 12:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA9DD2087C
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 12:59:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Lsj7qKqt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ym+07D4S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726082AbfBZMDu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:03:50 -0500
-Received: from mail-eopbgr140083.outbound.protection.outlook.com ([40.107.14.83]:20110
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726063AbfBZMDu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:03:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JjNJAvpY45/UF8rVbyDRsUQ30Q+c3pkeMgMVahrgWKg=;
- b=Lsj7qKqt1SJydiOjJAhGUEwV8gzITe5PdbtrjrNP5POSBIcR468kURGyVz0kK2mSVUb9tki3XQxkQP9FTgqlicw6dFyUPuNeDWITdeFMpOp3qnKmo/PL2J2DrHBvWu9LPr/XC0atcYqP3fw+gAOPGdwuXy4rxZWOXoiDNOVMB5c=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.91.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.21; Tue, 26 Feb 2019 12:03:45 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 12:03:45 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-CC:     Stephen Boyd <sboyd@kernel.org>, Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: imx: Refactor entire sccg pll clk
-Thread-Topic: [PATCH v2] clk: imx: Refactor entire sccg pll clk
-Thread-Index: AQHUytEZ0gNCfcsGj0q44zlYEICsNKXsF2qAgAEgS4CAA5A8AIABK8BQgAACEoCAAAWUMIAABaoA
-Date:   Tue, 26 Feb 2019 12:03:45 +0000
-Message-ID: <20190226120344.r5ymbrdfddaoslbn@fsr-ub1664-175>
-References: <1550855235-31528-1-git-send-email-abel.vesa@nxp.com>
- <155085758346.77512.1117855723990616329@swboyd.mtv.corp.google.com>
- <20190223105813.aepvfxzbjcdjvkzy@fsr-ub1664-175>
- <155111539427.77512.17052467596124902632@swboyd.mtv.corp.google.com>
- <VI1PR04MB42229D26B9713EA6DFC484D2807B0@VI1PR04MB4222.eurprd04.prod.outlook.com>
- <20190226112329.slvskbyokeqe7vik@fsr-ub1664-175>
- <VI1PR04MB4222FB04467A3FF699FF43D8807B0@VI1PR04MB4222.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB4222FB04467A3FF699FF43D8807B0@VI1PR04MB4222.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 708b819f-97fa-49de-115d-08d69be275a2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4290;
-x-ms-traffictypediagnostic: AM0PR04MB4290:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM0PR04MB4290;23:ZU/Sk7JpFbv6acEoMlzhxITzz5KcQKxr6TBXMxCdh?=
- =?us-ascii?Q?4VntaZGk4vx10SKqfkSBqpyCdAqWwGCBySBFD9wxNqyH1Li0/NB5AsGDj5eD?=
- =?us-ascii?Q?SjMd0HosVMv0l2jAmXtB1u2Goi4hH3IpwGl8aFpafBzAAy74OWZVtfklDJ/h?=
- =?us-ascii?Q?bB/c9l1Fxymt+0svtE2y2mrwLK/6fVpCzMUeZt4c7Y5dSabnE1ZyeGDv2SHT?=
- =?us-ascii?Q?8oKvLP1olYcvYyFOWy2Cj670D9qJfuWm0j4QPEJ0iUZ9KeBojwOh5QSZ3ThA?=
- =?us-ascii?Q?wOAPQcM1+zvYd9wF9ATsN+CEjq9tVuj1jc4qlrO9eB/QEqmMJCMT1mUvHC5a?=
- =?us-ascii?Q?crey3c0s1u0EEy0pa/PTr6TE8HXInfdFGIk+4nYy+OhispJhSLztz79C+5qt?=
- =?us-ascii?Q?vtwbWrkNpHEzrfCvq/1NbfQwpx3mxvAQpI95VrTi0k/13l/3MhxO8Fde3vqu?=
- =?us-ascii?Q?7Wd2r7R1AhCL9WvLYIqR3TCK8dl34TzuH5PUpDAGtfjMI435+3hUGNTLZT5X?=
- =?us-ascii?Q?ys6piA5+ytPTz42DyW9FhIqBooDOcO5KuE1zdJmi9pxnvW3VrN+n+Epitox2?=
- =?us-ascii?Q?nR0fOWsnMx3loPz0WXHW9+i7A0vgUwnhDGPC5VTxOjjRT+rVj1LhHAoP3Acd?=
- =?us-ascii?Q?Br8jJQrguC60/UiG4rRemzQ/0fIfeqgFk7XecQXdO53Ob+G0Uw/X48MUS0LC?=
- =?us-ascii?Q?bwCC4s76kMtryFXyNcLpM654LQKZcU5C0KzOqAWvI0w+lysyLgeKd2bxnpLa?=
- =?us-ascii?Q?juS9RubgwT9ggr74TgEiVISzbK2lN+CB//Fpbinwek99nVES3ZXNytptbsZC?=
- =?us-ascii?Q?08pPPWzFxmarwJb0efYc7rauq2+MdkCXIn8WAP5l+kb8/86kOmSWxOp/Nhof?=
- =?us-ascii?Q?WujjlrAy3PVdlGioasJAnkFdX7lQpayox7x7g/oLAbtwlXTa0+PUXU6CvqEx?=
- =?us-ascii?Q?2AgKLvBdwyf8ewi23TefI35PZrVQqy2PZiEL3u078r3VyGwjVYg9FyoKyTOW?=
- =?us-ascii?Q?Q64l+sPnthO28wEIFomlNPRNhCb/OMJ44JSz13k4H51PIzs2rDgydJotnBDl?=
- =?us-ascii?Q?Ik5NKys61XS3OA/R6Oc7yvJux4gW4CXsA/LqfCuT+Q4kuMUC091SKwF593yp?=
- =?us-ascii?Q?+JCOiyY+fS5AyNjIBWQxUEE52xWvuZRSaQfF5Cy7oJcW+GE4tM/oGKE5oIv5?=
- =?us-ascii?Q?iJmUhmlnwRrwT7wiXT4vG+rd5Gp5gkcE73/yIXJxSthfaNnO6sDBYYVUKBED?=
- =?us-ascii?Q?VHAUTgWZcNdMg9T5DvurQDzvHhLJ4m+9nhAdjO846r08jANo/YtDpaz0RXJv?=
- =?us-ascii?B?UT09?=
-x-microsoft-antispam-prvs: <AM0PR04MB4290B58AD2A465F7CFE12990F67B0@AM0PR04MB4290.eurprd04.prod.outlook.com>
-x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(39860400002)(136003)(366004)(346002)(376002)(189003)(199004)(4326008)(229853002)(3846002)(14454004)(6246003)(6116002)(186003)(106356001)(26005)(6862004)(478600001)(6506007)(99286004)(1076003)(105586002)(102836004)(76176011)(25786009)(53546011)(66066001)(9686003)(5660300002)(316002)(44832011)(486006)(54906003)(476003)(6512007)(305945005)(7736002)(11346002)(446003)(2906002)(93886005)(81156014)(53936002)(8936002)(256004)(86362001)(6636002)(71190400001)(6486002)(97736004)(71200400001)(8676002)(81166006)(68736007)(6436002)(33716001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4290;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: v8dQGVfNwkbPNqBfyQj9RWPUie/j1xl1wcD2bWiPqPAefg/MBpi5El7pVLn7HsoUcEH+eQSth52o7kYD+uUyIs+JVsMJBQUacusCb6rqD0sql3EZbF00+SWjS7wm3WQz75ZA+OV9zLA3M3k7eGRzKVsKCLQxigMQ0zNE5q/C5YNvaSLxSKT8HR/U0QNrd1kA0EcO2ect/wZzsyqwpn/U1Gkx5ITCKo9Y1ap8r4WgElASXCEzGqiCw/TQR/w4eoW1hRLHIiMKpuXdBzOivp76NQLRvUjZOm0Pyr1n56zUE4HBSlzA+wh+R1Zl603aoXsalOpOaEFQxmk9ScOTONmMFdX2uL4tr9kiL7Janb6QxaBIXsQSbWzw3To7pN5/qJAojG9BGniatNutb8VkGq6o5zDJOvYv0PzgEsYuamzJf3A=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1361B4BE64762642BA864C327BB269F2@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726063AbfBZM7u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 07:59:50 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46193 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbfBZM7u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Feb 2019 07:59:50 -0500
+Received: by mail-ed1-f66.google.com with SMTP id f2so10600599edy.13;
+        Tue, 26 Feb 2019 04:59:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AVLvJ4lp3f6rtULD55+9vdorc40ZbBM2Q0QN5dVM9yk=;
+        b=Ym+07D4Swj+p5Md/sPGOlr/n94JngQpgIOUvaMrSWjYVSnt5pDtk6DXCXVzQgA/1ui
+         aIkXKaE9AvUgcTVqDXk/KoGS5owqlPR/J4IF7BNxupr+3uA8OO3E2vgYiUqDkUM7BEW0
+         BK5CqPiBp6zUW8neIPLbWOWpiNOIOEJSe99I5u+RFwN24hgytBmuu+fWOKr0zFMhYH3c
+         MijIFnHKLi25cOnca3K6h9J5x1KXZ03Jvo7YxHPZbJW0doaZOW24VeXbGMPnYj/xeMm7
+         oGO37CF0lTPwyP792mRqpS9n06y+Bs5yW7R1GAgn7IQOUYtEhwyHoLyix1kPtjh5FevG
+         Xzeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=AVLvJ4lp3f6rtULD55+9vdorc40ZbBM2Q0QN5dVM9yk=;
+        b=uJ9iNFS85I5SR/msCbM2MsY6QHUQd+4vCV4nWeYYcFxulw5tVhHn+h33fjsnLhOCr7
+         cxyB0/g6MwhW5A8jdlqyTrY3K4AqCwy4gWtuHGqi5+JJ2M5z+wVZHHqis01VpB3xX93P
+         vqaBYueNzWB3WYkHy4c8rjzg3oUxmSn7XsleTyCfZ0QyI4kTrzjSSmhM2wgl47qI3Hnt
+         kDktb5Vt/XMfJkShTEjkovYsiS7WJeWS5KnYWvU0NgCRaBp48vGqRYyRSL3MGQx5rvmB
+         l5uWmulQQrHe2f4y45btKWczj4M3awy3DjAgJ4uUe2/9mRy6xKrpJBoLFrH9D7nFpTI4
+         iYnA==
+X-Gm-Message-State: AHQUAuYza/FwRoZ0vkDLCODrSDjbrNViJiNhKMWxGFP0p6qxLB/khvE7
+        dPsDS7M7ylZr/PjdhCIyIYPBEpgP
+X-Google-Smtp-Source: AHgI3IZvzRgLnd42grpWPKjOE3Y0GTbSHgpJDzasKu7ZVyJO8VD+pt/uZmABIvSw5iFQVkKN++PCNg==
+X-Received: by 2002:a50:94d6:: with SMTP id t22mr19081350eda.232.1551185986453;
+        Tue, 26 Feb 2019 04:59:46 -0800 (PST)
+Received: from ziggy.stardust ([37.223.147.22])
+        by smtp.gmail.com with ESMTPSA id w24sm2480231edb.72.2019.02.26.04.59.45
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 04:59:45 -0800 (PST)
+Subject: Re: [PATCH v4 0/3] Mark clocks as critical for MT6797
+To:     matthias.bgg@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
+Cc:     sean.wang@mediatek.com, jasu@njomotys.info,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <mbrugger@suse.com>
+References: <20190214163026.26073-1-matthias.bgg@kernel.org>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ jrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <f7ed0750-665a-76bc-df1a-95af39fef8ec@gmail.com>
+Date:   Tue, 26 Feb 2019 13:59:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 708b819f-97fa-49de-115d-08d69be275a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 12:03:45.6152
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4290
+In-Reply-To: <20190214163026.26073-1-matthias.bgg@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-02-26 11:45:17, Aisheng Dong wrote:
-> [...]
->=20
-> > > > > > > Tested-by: Lucas Stach <l.stach@pengutronix.de>
-> > > > > > > Acked-by: Lucas Stach <l.stach@pengutronix.de>
-> > > > > >
-> > > > > > I suspect these tested by and acked tags should have been
-> > > > > > dropped, unless you discussed and tested off-list?
-> > > > > >
-> > > > >
-> > > > > Oups, I forgot to drop them.
-> > > >
-> > > > Ok. Can Lucas re-test?
-> > >
-> > > Tested on clk-next by cherry-pick a few defconfig patches from imx tr=
-ee.
-> > > So:
-> > > Tested-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > >
-> >=20
-> > Thanks for helping with the testing.
-> >=20
-> > I don't think there should be any defconfig changes required by this pa=
-tch.
-> >=20
-> > Can you please list here the CONFIGs added?
-> >=20
-> > Just wanna make sure I'm not missing anything.
-> >=20
->=20
-> Clk-next does not have MX8 defconfig patches.
-> So I manually cherry-picked them from imx-next.
-> Below two needed:
-> dee305e arm64: defconfig: Add i.MX8MQ boot necessary configs
-> a1624ef arm64: defconfig: add imx8qxp support
->=20
 
-Ah, makes sense.
 
-Thanks.
+On 14/02/2019 17:30, matthias.bgg@kernel.org wrote:
+> From: Matthias Brugger <mbrugger@suse.com>
+> 
+> Jasper send this series some month ago. As there was no reaction from
+> his side, I'll do a friendly take-over.
+> I tested the patches on my Helios X20 boards and they fix the issue.
+> I didn't add a Tested-by tag as I added my Signed-off-by.
+> 
+> Changes since v3:
+> - add comments explaining why the clock muxer and gates are marked
+>   as critical
+> 
+> Changes since v2 (https://patchwork.kernel.org/patch/10686759/):
+> - axi_sel is not needed, drop CLK_IS_CRITICAL for it.
+> - update commit message
+> - add Acked-by from Mars
+> 
+> Changes since v1:
+> - add a fixes tag.
+> 
 
-> Regards
-> Dong Aisheng
->=20
-> > > Regards
-> > > Dong Aisheng=
+Steven, Mike any comments on this?
+
+Regards,
+Matthias
+
+> ---
+> 
+> Currently, DRAM-related clocks and the axi_sel MUX are not marked with
+> CLK_IS_CRITICAL for MT6797. This causes memory corruption when the
+> system is booted without clk_ignore_unused.
+> 
+> This patchset
+> 
+> 1. Makes it possible to mark outputs of MUXes as critical by introducing
+>    a new macro, MUX_FLAGS,
+> 2. Makes it possible to mark gates as critical by adding flags to
+>    mtk_gate, and
+> 3. Marks axi_sel, ddrphycfg_sel, infra_dramc_f26m and infra_dramc_b_f26m
+>    as critical.
+> 
+> The addition of flags to mtk_gate also exists in the patch series "Add
+> basic and clock support for Mediatek MT8183 SoC" [1].  The type of
+> flags is unsigned int in that series, but the real type is unsigned
+> long, so my patch differs from that patch.
+> 
+> [1] https://patchwork.kernel.org/patch/10549953/
+> 
+> Jasper Mattsson (3):
+>   clk: mediatek: Add MUX_FLAGS macro
+>   clk: mediatek: Add flags to mtk_gate
+>   clk: mediatek: Mark bus and DRAM related clocks as critical
+> 
+>  drivers/clk/mediatek/clk-gate.c   |  4 +-
+>  drivers/clk/mediatek/clk-gate.h   |  3 +-
+>  drivers/clk/mediatek/clk-mt6797.c | 68 +++++++++++++++++++------------
+>  drivers/clk/mediatek/clk-mtk.c    |  2 +-
+>  drivers/clk/mediatek/clk-mtk.h    |  9 +++-
+>  5 files changed, 56 insertions(+), 30 deletions(-)
+> 
