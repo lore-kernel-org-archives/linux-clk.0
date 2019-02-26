@@ -2,79 +2,95 @@ Return-Path: <SRS0=PWff=RB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C54C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EAEC10F0B
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 21:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51893217F9
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 18:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551205098;
-	bh=bFLXljzs2qAylOC1A8tQ7CTZcoU6o67PgXbdazTu9uI=;
-	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=pkDmrmMF8rRgZnFLBSIhfwjgoclfkeXc/1BmftCFDzc5cPDmgO24Mm0WxRRp7jaE5
-	 ttbGd0Srx4crX2YP5Flp1art2hm/8NZKd2iJFXojQlt4bvravCSbe88otCqSlplv/Z
-	 WQvt487KQgS8QvhgHClSQDSMjDcCq1jvxnsF6So0=
+	by mail.kernel.org (Postfix) with ESMTP id 1802B21873
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 21:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfBZSSR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 13:18:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728736AbfBZSSR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 13:18:17 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 018EB217F5;
-        Tue, 26 Feb 2019 18:18:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551205097;
-        bh=bFLXljzs2qAylOC1A8tQ7CTZcoU6o67PgXbdazTu9uI=;
-        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=s4UKrbE7YvarmlFrjpcAMX83XIBwsz7PvW3mliL0XOlnJcULTTfeUdpx3ZNS+ZqQu
-         d9DJAqjNCd5hBZqpop0MzQmsRr2ig+7cYrVcxavLIYCH63f7rrmDT/NPOMzWrrlHk6
-         GeJh4QD/F+0Xka8gJPlxUbgH9Vi0CPFGo8WqbLv4=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Seiya Wang <seiya.wang@mediatek.com>
-References: <20190225065112.3400-1-seiya.wang@mediatek.com> <20190225065112.3400-2-seiya.wang@mediatek.com>
-Message-ID: <155120509627.260864.5936412356126577519@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>
-Subject: Re: [PATCH v2 2/2] clk: mediatek: correct cpu clock name for MT8173 SoC
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190225065112.3400-2-seiya.wang@mediatek.com>
-Date:   Tue, 26 Feb 2019 10:18:16 -0800
+        id S1729022AbfBZVcm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 16:32:42 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:60292 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbfBZVcm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Feb 2019 16:32:42 -0500
+Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1gykIj-0007gR-TM; Tue, 26 Feb 2019 15:30:10 -0600
+Message-ID: <e7aee179918feb5ed4913e1bdebc9c6dc084a738.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Vabhav Sharma <vabhav.sharma@nxp.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel-owner@vger.kernel.org" 
+        <linux-kernel-owner@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+Cc:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Date:   Tue, 26 Feb 2019 15:30:07 -0600
+In-Reply-To: <1551132245-6089-4-git-send-email-vabhav.sharma@nxp.com>
+References: <1551132245-6089-1-git-send-email-vabhav.sharma@nxp.com>
+         <1551132245-6089-4-git-send-email-vabhav.sharma@nxp.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: vabhav.sharma@nxp.com, sudeep.holla@arm.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com, sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de, kstewart@linuxfoundation.org, yamada.masahiro@socionext.com, leoyang.li@nxp.com, shawnguo@kernel.org, linux@armlinux.org.uk, adrian.hunter@intel.com, ulf.hansson@linaro.org, yogeshnarayan.gaur@nxp.com
+X-SA-Exim-Mail-From: oss@buserror.net
+Subject: Re: [PATCH v1 3/4] clk: qoriq: increase array size of cmux_to_group
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Seiya Wang (2019-02-24 22:51:12)
-> diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings=
-/clock/mt8173-clk.h
-> index 8aea623dd518..76e4e5b65353 100644
-> --- a/include/dt-bindings/clock/mt8173-clk.h
-> +++ b/include/dt-bindings/clock/mt8173-clk.h
-> @@ -194,7 +194,8 @@
->  #define CLK_INFRA_PMICWRAP             11
->  #define CLK_INFRA_CLK_13M              12
->  #define CLK_INFRA_CA53SEL               13
-> -#define CLK_INFRA_CA57SEL               14
-> +#define CLK_INFRA_CA57SEL               14 /* Deprecated. Don't use it. =
-*/
-> +#define CLK_INFRA_CA72SEL               14
+On Tue, 2019-02-26 at 10:11 +0000, Vabhav Sharma wrote:
+> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> 
+> Increase size of cmux_to_group array, to accomdate entry of
+> -1 termination.
+> 
+> Added -1, terminated, entry for 4080_cmux_grpX.
+> 
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk-qoriq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Also, please send a followup patch to remove the deprecated define later
-when the dts file is fixed up.
+Acked-by: Scott Wood <oss@buserror.net>
+
+-Scott
+
 
