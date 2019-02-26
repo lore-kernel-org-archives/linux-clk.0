@@ -2,101 +2,157 @@ Return-Path: <SRS0=PWff=RB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD49C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 07:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CBFC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 08:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2D3D2173C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 07:01:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C84CE2173C
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 08:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kRoL17ql"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="pZOxzGQI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbfBZHBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:01:50 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44662 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbfBZHBu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Feb 2019 02:01:50 -0500
-Received: by mail-pf1-f195.google.com with SMTP id a3so5747702pff.11
-        for <linux-clk@vger.kernel.org>; Mon, 25 Feb 2019 23:01:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=QttOz8KAk5HTV2qQPu3H+rSCJ+Pe4jsGqkjtfi076ts=;
-        b=kRoL17qlnGXp14y62Kj2jmQN18xp96F19TLL45rzeKqGqKGkiAyKrV6IdZhECFaYbs
-         NbMpg/07HN6F4OZYTdx5PxkmFkFPsvFZOfGqq+Q9lrJPa6JJEx7Oe+Csolz9MYLqDBFd
-         QRRcv80m17j9ZyYVmOQUPlCfzo8uKzoJRicpuuvLeYvmkb6MJBRVR+cGN2hkJamY8Qv+
-         jRHoNEozhpwUueU9w1CYpiy9odi8Ro1n90u5QygBtIGRsncLAX13dErn0ccfi2PoFrD7
-         PoGx/FvIZlAlXvSvgpjDTZCI5cb0Oo31TAy04LmhYazMnfvx7enUbKe/I9oZ2onSKGaQ
-         AAGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QttOz8KAk5HTV2qQPu3H+rSCJ+Pe4jsGqkjtfi076ts=;
-        b=XMVaQX1hZbdp+HVy2NizaJ+qprI8wf9UFHEhiNWeaGXEHCwgyNGcTO/ej/BjXidg3y
-         fkQG30i8pVCzQ/3swj4DWDkRP9L7IXUdJFvUuYvZezFZ7HpIvhPwOJB2nCOgrq5MTrbj
-         LKAYPkv/kI2xtkX1SqiyRfWy47B6sC6jO7g9bFavmuumyNTzMN3ku8ALsxaGyS+KcVEa
-         WaZHmFIVOGTqo/1W/6F/7t1p+Au4lMCFn5ycFKaAF2E65n5CyuTcCwiKds1xUdT2DNLR
-         BnkYZmPhtTdpGopFHj8+T0YdZZ3Sq0tYPM1V4c42IvEFhGlbl2lZQPLtojlIDfgxsT6N
-         2Exw==
-X-Gm-Message-State: AHQUAubwxINQ5GyjzfkVPNyEqPBfBFBxryvKKbtqvZn6D9FIe2E3BFhx
-        27pNCSyCAK8Q5ES9p4z0huHvZA==
-X-Google-Smtp-Source: AHgI3IbbIEYQomxqLl908709DI9aXcQAOzkuApX8mysPdcH38QHhMsvvqDQzM+SLUEsjxvfzwI8EWg==
-X-Received: by 2002:a62:61c4:: with SMTP id v187mr23953793pfb.133.1551164509636;
-        Mon, 25 Feb 2019 23:01:49 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j24sm18324829pgl.58.2019.02.25.23.01.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 23:01:48 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-sdm845: Define parent of PCIe PIPE clocks
-Date:   Mon, 25 Feb 2019 23:02:21 -0800
-Message-Id: <20190226070221.22382-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        id S1726706AbfBZIe3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 03:34:29 -0500
+Received: from mail-eopbgr150054.outbound.protection.outlook.com ([40.107.15.54]:18581
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725881AbfBZIe3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Feb 2019 03:34:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e7aI4QmtKuT1UFvH1OsoPAFh58Tw4TT19iR3rLotEHk=;
+ b=pZOxzGQIdcfiodBX5XmSMP143wYgYpTWUh/BO3yUDNj1ZTLloU2aQrzMCXsA9RJcOsHBkdUotzKBvRUC+Y2yb+OlxptyfTSOpEA8EC7e/7C7CUCXWHw66FU1vsRInOv8zn3MWFZSfhGntNk82YZL3Pd/BkQsuydyOT/AcrM6Qyk=
+Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
+ VI1PR04MB5645.eurprd04.prod.outlook.com (20.178.125.218) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.15; Tue, 26 Feb 2019 08:34:24 +0000
+Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
+ ([fe80::7437:2195:ffd3:a33a]) by VI1PR04MB4800.eurprd04.prod.outlook.com
+ ([fe80::7437:2195:ffd3:a33a%5]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
+ 08:34:24 +0000
+From:   Vabhav Sharma <vabhav.sharma@nxp.com>
+To:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "oss@buserror.net" <oss@buserror.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel-owner@vger.kernel.org" 
+        <linux-kernel-owner@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH 0/4] arm64: dts: NXP: add basic dts file for LX2160A SoC
+Thread-Topic: [PATCH 0/4] arm64: dts: NXP: add basic dts file for LX2160A SoC
+Thread-Index: AQHUza4TOTc711rzQESpWziL6V1yEw==
+Date:   Tue, 26 Feb 2019 08:34:24 +0000
+Message-ID: <1551126463-5341-1-git-send-email-vabhav.sharma@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BMXPR01CA0013.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:d::23) To VI1PR04MB4800.eurprd04.prod.outlook.com
+ (2603:10a6:803:53::29)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vabhav.sharma@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 1.9.1
+x-originating-ip: [92.120.1.65]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1d8e6be2-106d-4395-4cf4-08d69bc5360a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5645;
+x-ms-traffictypediagnostic: VI1PR04MB5645:
+x-ms-exchange-purlcount: 1
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR04MB5645;23:JQwkxwDpdiJ7YKUnterg8q9tRDyFw+6Y4lvJLQg?=
+ =?iso-8859-1?Q?sPpuqdMEZW6/ZIP8AuB9W1t7kt1A5dFNS2QuAS4dcgDWrWlQ7Qi0USbpUD?=
+ =?iso-8859-1?Q?W8wbvB3yTF1lFSx816vtS/2MAs2pgc+2g8WpnDMjlKywgL/6zqgt0QgeTX?=
+ =?iso-8859-1?Q?fsHErxZT0gCBQxQFWi1f9hwc7eLvs2xVGgfSYRnVS6EtepzQxzmPdFwunj?=
+ =?iso-8859-1?Q?fN8UlO2BXRnqFWlSw9Br7dvBVmaaasMTGQCeN75VeBFi6O03fuf93l0t/I?=
+ =?iso-8859-1?Q?e79O03u8/ETnYkurDS0CKHea65TVgmmZAIew6ZZ+hFYIwfyIauGwhGKCxu?=
+ =?iso-8859-1?Q?sZUGursdP1y7LwxZwoAnURwJuxjT6rMQmUTSUsiRMdtl2uxV5ljGxhAkw5?=
+ =?iso-8859-1?Q?W+EO8SmBG6zs3n+DAt4ElXe+JH37nsXlJVTvje32yGu3YFYFwi0yZ3TOt8?=
+ =?iso-8859-1?Q?8fdJVE5TqQdqlUtj7HivkgTmdHpBz88/ye3vlzu7W3nxn45oNwZqO76Nr7?=
+ =?iso-8859-1?Q?SEdTTZlKC8yz4njRYfk4ElQTmC+0dCTcohef4YqFkSSgHitOVeOecJXml/?=
+ =?iso-8859-1?Q?gc/jbbEQsS04l+icQDV9Q9J9fG1o/MmrCQrJFhmMbuHPXEr3u3V4qnJbJ6?=
+ =?iso-8859-1?Q?RTOecyF/7VayTGoRyDlpWsjjfjgpRh+2LHEOx6Bcp5UJtVptk50A4PmZxj?=
+ =?iso-8859-1?Q?OkMLxE7T4zLw21dvrM4SLzU77xqOdIPGqfTRhPafqmw9w46wywCLNGk/eX?=
+ =?iso-8859-1?Q?Rt4qEaZmcSY58nZoIDUKGFVeBkwzRBCfHe8IMFAiVXGSNBxD5EVo5Yjim8?=
+ =?iso-8859-1?Q?jDlAi7pOk88uJEZ7xvbJv5sOBghkYRwSqMvI1+WWHUTJZN3/RiqjvoG0Lt?=
+ =?iso-8859-1?Q?K+RMRcJjK/PZ9iFuFv3cM62Lz/pYEpQih0khZMLmCY8uoH2cO1Hip4qNxa?=
+ =?iso-8859-1?Q?OgrRUaNQUutOF9NOYJDTsxNmyjAWoYbaRyGKw/wDkgVOOJcGvX0lmonz/q?=
+ =?iso-8859-1?Q?9c8QjXSOPa4c1j+BMDzNsL0Eq19fsbYj/m2b3P60UjNbTuab45OJNf7gnE?=
+ =?iso-8859-1?Q?YUdBgiYzVCJhA5ySRbkYPZf3cCC/mWHQhKeV2ntY11hz1z6YbduaAII0/R?=
+ =?iso-8859-1?Q?A8ADJcJhiG1J33oGNGXMbcd4QIQSPoPDAOh1ddwdN/Do1zkD6PMnJyXIwf?=
+ =?iso-8859-1?Q?dM2Kop4Lj86InkKznw4DdKUr7Td4WPder7j0PK4+8Mru3sdKRXcbvPgwJu?=
+ =?iso-8859-1?Q?C6NG46UrOhLc0e9FozimlJiw30hn2XZGsNQTGCkP6yCKtd6N6pzsUscgpR?=
+ =?iso-8859-1?Q?K2cbJWAN3EMEBCbetY8Vbsc618eafk97VegSZgIBjH0Jw=3D=3D?=
+x-microsoft-antispam-prvs: <VI1PR04MB5645A0662BD35B0917C58518F37B0@VI1PR04MB5645.eurprd04.prod.outlook.com>
+x-forefront-prvs: 096029FF66
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(396003)(136003)(39860400002)(376002)(199004)(189003)(66066001)(966005)(71200400001)(71190400001)(6306002)(2906002)(478600001)(97736004)(6512007)(50226002)(8936002)(5660300002)(54906003)(6506007)(99286004)(386003)(102836004)(2501003)(53936002)(110136005)(2201001)(52116002)(86362001)(68736007)(4744005)(316002)(6436002)(2616005)(476003)(486006)(7416002)(7736002)(44832011)(186003)(81166006)(8676002)(81156014)(3846002)(6116002)(6486002)(4326008)(25786009)(256004)(106356001)(36756003)(305945005)(26005)(105586002)(14454004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5645;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: KgnfgoM/dfNzKGpTEfLeRX+T+b6CQfXd4tcf31BAhac0GBrw1cnnxs5XfcEuJVbCBRlEDIJbbIF283oCceo4aCLUWcoA6upPH7e904CNhdNqFQq9I6ebtkGwgYfdJvvx/YKkIibkek4w41xCIzGh7Y9BEVv1wxl1vG7ZkY/vwJiyX1jiI3e6AMnmnjnM8kRmtoLQgfsHY1WsKpvnNpCanTlK2wDqazZ/3yao9Z5GxQ6NBPrjgWC1cYHF9or1sNHby07p6Dy4lDiFpNUmrrd+SXzu5/RfwOGi/FdYqqJhRxa1Mj+kXHXnWHiQPPlYr4m/n0/7voSF7HiYdrIP9/u/ByPrpBL0i61IkA3ZBRAousNH3rSApa2Qf6CsA/IYMOodKZGPfdZO/wi8pR8AueasklJx8wpbNizlKDJK+7WHdws=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d8e6be2-106d-4395-4cf4-08d69bc5360a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 08:34:18.8336
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5645
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PCIe PIPE clock in the GCC is fed by the PIPE clock coming from the
-PHY, describe this relationship.
+These patches were reviewed and acked but dropped during merge window.
+Patchwork link was https://lore.kernel.org/patchwork/cover/1004155/
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/gcc-sdm845.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 58fa5c247af1..7131dcf9b060 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -1703,6 +1703,9 @@ static struct clk_branch gcc_pcie_0_pipe_clk = {
- 		.enable_mask = BIT(4),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_0_pipe_clk",
-+			.parent_names = (const char *[]){ "pcie_0_pipe_clk" },
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1802,6 +1805,8 @@ static struct clk_branch gcc_pcie_1_pipe_clk = {
- 		.enable_mask = BIT(30),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_1_pipe_clk",
-+			.parent_names = (const char *[]){ "pcie_1_pipe_clk" },
-+			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
--- 
-2.18.0
+Vabhav Sharma (2):
+  dt-bindings: arm64: add compatible for LX2160A
+  soc/fsl/guts: Add definition for LX2160A
+
+Yogesh Gaur (2):
+  clk: qoriq: increase array size of cmux_to_group
+  clk: qoriq: Add clockgen support for lx2160a
+
+ .../bindings/arm/freescale/fsl,layerscape-dcfg.txt       |  2 +-
+ Documentation/devicetree/bindings/arm/fsl.txt            | 12 ++++++++++++
+ Documentation/devicetree/bindings/clock/qoriq-clock.txt  |  1 +
+ drivers/clk/clk-qoriq.c                                  | 16 ++++++++++++=
+++--
+ drivers/cpufreq/qoriq-cpufreq.c                          |  1 +
+ drivers/soc/fsl/guts.c                                   |  6 ++++++
+ 6 files changed, 35 insertions(+), 3 deletions(-)
+
+--=20
+2.7.4
 
