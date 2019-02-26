@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EFCC43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 08:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BED5C4360F
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 08:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A64642173C
+	by mail.kernel.org (Postfix) with ESMTP id DE6A4217F5
 	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 08:34:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="NJRLoGGO"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IAtsGL7s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfBZIeq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:34:46 -0500
-Received: from mail-eopbgr130072.outbound.protection.outlook.com ([40.107.13.72]:35265
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1726590AbfBZIef (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 03:34:35 -0500
+Received: from mail-eopbgr00075.outbound.protection.outlook.com ([40.107.0.75]:14425
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727115AbfBZIeq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:34:46 -0500
+        id S1725881AbfBZIef (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Feb 2019 03:34:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VUwFwSIdfiDEo6k9YkpeFTU6ChkELgnRTCdvU3pJ+DI=;
- b=NJRLoGGOmiauh45GmNweuHQQ4gotoKGeg/Fx8yusmnNxagJEANk4SI6DJT2iJZ0FPD1HU5HaGBcVW7mY/lo2OoqCk0Da2h/29SdWbyk+Lkss1O/o9FHoxabDlORpSZHWp/oLeaXE7/l2MiBvBCg3dZ4gyoLQ0FGO08lnv5Vc5jM=
+ bh=WG269VoNS5sKeqRvSDeU13wX2mT/JDfn6uqCW8w3biU=;
+ b=IAtsGL7sq6GThgAbptBdPofLJdgfrrBXS0uGgE3EerYT5EOhu6SkHbSXtcpOqlIYRW3brcJcglpUDGzu8XAWehvveYV57g3rY/VtzXZs6G27sxHENTUVN4dKemke7M5ieyfoy4ZMn3OBh1AR8Sl3PVdObFC0A42nBRgmcenQG54=
 Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB1645.eurprd04.prod.outlook.com (10.164.84.155) with Microsoft SMTP
+ VI1PR04MB5645.eurprd04.prod.outlook.com (20.178.125.218) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.15; Tue, 26 Feb 2019 08:34:41 +0000
+ 15.20.1643.15; Tue, 26 Feb 2019 08:34:29 +0000
 Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
  ([fe80::7437:2195:ffd3:a33a]) by VI1PR04MB4800.eurprd04.prod.outlook.com
  ([fe80::7437:2195:ffd3:a33a%5]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 08:34:41 +0000
+ 08:34:29 +0000
 From:   Vabhav Sharma <vabhav.sharma@nxp.com>
 To:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
         "oss@buserror.net" <oss@buserror.net>,
@@ -63,13 +63,12 @@ To:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
 CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
         "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
         "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
         Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH 3/4] clk: qoriq: increase array size of cmux_to_group
-Thread-Topic: [PATCH 3/4] clk: qoriq: increase array size of cmux_to_group
-Thread-Index: AQHUza4d/teqfsBUD02fLzxmh9m0lg==
-Date:   Tue, 26 Feb 2019 08:34:40 +0000
-Message-ID: <1551126463-5341-4-git-send-email-vabhav.sharma@nxp.com>
+Subject: [PATCH 1/4] dt-bindings: arm64: add compatible for LX2160A
+Thread-Topic: [PATCH 1/4] dt-bindings: arm64: add compatible for LX2160A
+Thread-Index: AQHUza4Xsegi2YRAlUK+EnXv/Ykw5A==
+Date:   Tue, 26 Feb 2019 08:34:29 +0000
+Message-ID: <1551126463-5341-2-git-send-email-vabhav.sharma@nxp.com>
 References: <1551126463-5341-1-git-send-email-vabhav.sharma@nxp.com>
 In-Reply-To: <1551126463-5341-1-git-send-email-vabhav.sharma@nxp.com>
 Accept-Language: en-US
@@ -85,93 +84,121 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 1.9.1
 x-originating-ip: [92.120.1.65]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8eb8fd5b-19bf-49db-f87a-08d69bc53ffd
+x-ms-office365-filtering-correlation-id: d29bb221-4b57-4cfa-73b1-08d69bc53947
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1645;
-x-ms-traffictypediagnostic: VI1PR04MB1645:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR04MB1645;23:FOITSOP/sx5kluSzQvBtgK2T5t9QsxbLIbU2Drg?=
- =?iso-8859-1?Q?Fsgx+sfzlan8r9EWXku1PD6gVvHI9Dt06kT1aCrofOPT5luFgsuAo5/RMg?=
- =?iso-8859-1?Q?77+voetuQHKuaPMyFPeUlJdxP+0pvUvTydP+jIZyFBF8FhQ+epgv/Jcgb0?=
- =?iso-8859-1?Q?3gp9yw/11TOsNWk3ZSdFTFAi7Nq/GaFMgdsVGrynx47HZfO1oLFXyquSBy?=
- =?iso-8859-1?Q?MpZsHTtfFKYimQzzct/MRMPw2J+/zXv/pvQnv5ABb87+5sLTAgdVXifYe+?=
- =?iso-8859-1?Q?/zNgdV3AgsBNGF2Ix9GN2W23hlgfDM25hZc8Rgp20oCtvWbfQGJKKt/1gJ?=
- =?iso-8859-1?Q?OoPb46Sexg5PSCgtxZaJ7Sa5V8RpVLjW3Sg/FTP773ghXKFpuluEWqYtuq?=
- =?iso-8859-1?Q?SOEkw9yECXQmOSip/p5GlAJ2XU27189+xS5f3LAYYg/GaO9edJYbVFGJm4?=
- =?iso-8859-1?Q?6PqW6hlcTFDPf/Ymws0NOYwAMeaqcWGnPMSrvJVsb8FcKTQTny5OayGiPH?=
- =?iso-8859-1?Q?GJMEahjAOjin9SEEpEvM1nHIHJ15QI/P0GR+dbHIhTZPUrh6WYx2caX404?=
- =?iso-8859-1?Q?h685aKb39AolDHe07FDYw5Al9f+mHaWdMpA5VjwG/idb+y/6gNT9zvj+Kz?=
- =?iso-8859-1?Q?27JTGS3Ggzt881yVxmZXFL0KQClDDbjtMA83wIK6QlMNOcMMAEp+0R76nR?=
- =?iso-8859-1?Q?Yfam5Hf+DZgTau9rnfbaYo1fSg4/GAkyWl8AGabUKUHfH8cguz478pTcZF?=
- =?iso-8859-1?Q?Q2uwiNTUFwYwSp0e20KJ/mnAtHedaoJK19lTcC7tzio3aEMDqu/4pkVoCb?=
- =?iso-8859-1?Q?nlapWSQyeAVyP100efDuZGdS48FS6LzJrSRap+SMdjAt5lZP2jVbp80aLW?=
- =?iso-8859-1?Q?1O1fiJWnYwEXwHp36+TLoMo/5WO6MPK4FwRbQBOAmLYNyI0NQO/xk9j/dj?=
- =?iso-8859-1?Q?NekrP7Xubj+X/+TuOv7qNl4vNAZBwNlMDh1j8WqND1XzABZ8cB7BQf4aos?=
- =?iso-8859-1?Q?FPNbVAwePympOXOuRBkOVH5WuHNtEgc+/8YlCcBWRdeqBQmLxsgP3oJL+R?=
- =?iso-8859-1?Q?cTL1YeVMELn/Ybz/dkv953pTzuBwETi5ftU0aqANKY6qHFmEWRx2PrFIG5?=
- =?iso-8859-1?Q?h2+GqitVPw+Gk+WkptRRWU1uwNsfQ+/BbMhDkHcurvUn56msSRRoDD+VIs?=
- =?iso-8859-1?Q?8fJRlOl14T2VnuShibOzeNkCMulMdFB5u5v796mLrk+sdAwyRjItik/tLa?=
- =?iso-8859-1?Q?c9mpzPCvcsvMn5u8qBSp6tk7i1EgKuc51ummiX7q+gP1RHDvnO5l/JGXwd?=
- =?iso-8859-1?Q?uvYe+IWEtN+ReUelfHg2H7Eh0IGCqf1yQVxIzxNcgSSTSxpZB4a0lSuVmE?=
- =?iso-8859-1?Q?BQQfohLWAFCmy0aSE3BbEdJZkBj/x?=
-x-microsoft-antispam-prvs: <VI1PR04MB16456F2AE8EB30AE3EF4254CF37B0@VI1PR04MB1645.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5645;
+x-ms-traffictypediagnostic: VI1PR04MB5645:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR04MB5645;23:21//tDeWovUVEBPeul9ePo6KYsxIHLktnDmB741?=
+ =?iso-8859-1?Q?AkdXssCVVaJPpfdBUt5H59j+tkb3s9P7/FcQPj83NefZlLCSLhlna4FuWI?=
+ =?iso-8859-1?Q?QoegMQW8BrrnC+a01bfeolZc6Wt8MIMAp2TY0P0jfYiWKTt6kf0NtVzDQR?=
+ =?iso-8859-1?Q?vdIEl+Cod/WKmZUaQzxXaJIc/jiq7yuPaITqRfTV/rSnfzNpkxqS849ENu?=
+ =?iso-8859-1?Q?wNOPyJnoeDVLkIPfu1UdLHHd283lA2bFVfpE4P9W/IQ1bKFN6y0te+fRjP?=
+ =?iso-8859-1?Q?VrlzF3ENsqe+7VPuxIV9goXKskDxrjmttTUrAEtChFckFQ+Hbb89Thk2t6?=
+ =?iso-8859-1?Q?LJk8pGiRw+T5Lu5WpLy4A2Ki/0zPx/JsMKkiYQmFfemu9LJRv0a5b5vMVh?=
+ =?iso-8859-1?Q?17GX7gMal+i0na/Hj0u9kDbhLksyIr1LV6OSYswavATLk7mMO4v2zgBvc1?=
+ =?iso-8859-1?Q?vfcEO22y4CgXPqCSqltmuEKL6A6IXA+rlaqEy5vak2IzkFvjvuCcwm3jyQ?=
+ =?iso-8859-1?Q?PxGnlX9kkZfXo7LB+sxBoYr1HGe9n16IOP+zun2pQJanYJnwhsvE9+OKN3?=
+ =?iso-8859-1?Q?YxP40trr7XsExl40p7m6F8r1+MKDmK0PSANee/oDgBQSQ9NsDHZs//pq/5?=
+ =?iso-8859-1?Q?CPaFZHeNrPn84frgbTu1lNo4Q9zus5R7Z2FqMwSoGUpKvj9Te5+C1SVfcB?=
+ =?iso-8859-1?Q?0wxta/nmQwkpa95FOs4wWb8ZHb3wcAe1fOHdhk/RUKT4NUA3WxNBAq0hZ1?=
+ =?iso-8859-1?Q?D47JfH8n0/DyNrYqCIW1MQvUisXsPjcg10lkBhJeCpNABH7EIRJOpXilTx?=
+ =?iso-8859-1?Q?MpPvJqIgQm7BjEUm7tafrlM7z+wwg9jolRidB9dAbRqkDv77KKif+F4Kep?=
+ =?iso-8859-1?Q?bUPN+VsPSK+qzya31O4WA4m2acFECK9dJcSIenAjNbs+xenWYzgmiajj07?=
+ =?iso-8859-1?Q?Qd2/4j+6QY/TYNl10P9pv4nuQPBnxfhj6aUm3yZBBf3nRjVVn/3xitfIpF?=
+ =?iso-8859-1?Q?zTGiEjIud1TUUo3IJdPA6iInNas1sbG84NIwYFAbBQ6lItN/bObNyg1ePh?=
+ =?iso-8859-1?Q?kFoX1kB4nSNjeIipKmRWobLoBxdYw6xheavwZD6y2iYslDCZd6toVYh0Jt?=
+ =?iso-8859-1?Q?o1E1rz+m6Qm7lkz0XNt5LZPWwcmdwXAxTLmJbBCDf/ceLp9e77t8ZRhQnm?=
+ =?iso-8859-1?Q?Zdxg562/8NFG53N8Q9QOcEWNc8oXqBbu68pXFyuQuQZfUh8EUwywY2E0At?=
+ =?iso-8859-1?Q?ZtFLYcLcVx+BGb9qVE1/u62Zpxo763oumG+PpZaehC1uyQrjmrQl6JS21V?=
+ =?iso-8859-1?Q?h5XxBT0e9qcTn+dlanMgcg7fiOqzfamaYMKETjE0kdAkYBPdYb3+WZ1d84?=
+ =?iso-8859-1?Q?S1hUYQDI=3D?=
+x-microsoft-antispam-prvs: <VI1PR04MB5645DCBB70488EE9484EE998F37B0@VI1PR04MB5645.eurprd04.prod.outlook.com>
 x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(346002)(136003)(39860400002)(199004)(189003)(71190400001)(446003)(11346002)(25786009)(476003)(2616005)(71200400001)(7416002)(2906002)(97736004)(316002)(4326008)(478600001)(6512007)(68736007)(6116002)(6486002)(44832011)(3846002)(6436002)(486006)(2501003)(105586002)(5660300002)(106356001)(81166006)(256004)(14444005)(386003)(52116002)(6506007)(7736002)(305945005)(50226002)(102836004)(2201001)(86362001)(26005)(53936002)(110136005)(8676002)(54906003)(14454004)(81156014)(8936002)(186003)(99286004)(76176011)(66066001)(36756003)(21314003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1645;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(396003)(136003)(39860400002)(376002)(199004)(189003)(66066001)(71200400001)(71190400001)(2906002)(478600001)(97736004)(6512007)(50226002)(8936002)(5660300002)(54906003)(6506007)(99286004)(386003)(76176011)(102836004)(2501003)(53936002)(110136005)(2201001)(52116002)(86362001)(68736007)(316002)(6436002)(2616005)(11346002)(476003)(486006)(7416002)(7736002)(44832011)(186003)(81166006)(8676002)(81156014)(3846002)(6116002)(446003)(6486002)(4326008)(25786009)(256004)(14444005)(106356001)(36756003)(305945005)(26005)(105586002)(14454004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5645;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NKM055rnnlpxMvned1tUegnb37oaO9qx50EwolmvlIELgPpstyf/I3mAF5/wwNYOndFK9ppcunBF+gXFTrZi0pIPx5obLzC5R7xrgLaC4xc3XUPRJ23mEkldwW+p43Y9bCFEglh5+DqMP9ZnBZgYQ7y5UWz9FuByb8CZlGVXtHKvcnPbJuykT8DgUq8RQ5UkE6qfBAcle5UJyHzvdbjQIniTEhSAGE1Dqvz/ww0FNcqCDnnETDcVCHzjluFWQG2vWc51dBmhWWOGQNjWJ4yNrLX7Jny9qaDdLWcbFI0aoKY0qcl5X74LDORAMu/fQuc/Qmu92M+e+QE32XRoB0e1RN8G4SzrAKLnuhlmByAY8j5GGTjjYz6F3COv3rZ87xQVVUQdQw0ffaIump2MHNL+vkwgFQr+a/qqUlohiProdPY=
+x-microsoft-antispam-message-info: QwOI7rdRE+gB59b3veD4JT9SrSf3a1VNbZB5N8XdrKWFAtSH1eYQyQAm//6DhRHncWSGPiHrXUBgZSKgCnXwMEIldw3+4fU4ooXQ3eRiRhB0tSAH+EkgPv/hm/AzgzNlsUMLcStzRwRvTs8BszEZBJajzLCh5Eb4O+3liQOlZiybvWJrjhbsvCQR/iUX20SFwCGWdwKrDlGhYbrHMkuDNKyhpmJqprtpvenMGcIJPUcuwMLdWoDN6rqKe9UWjAcPt0JmjHcmzwTj5E6kaXCfY5/vUZKg2G14HgP7UcwClUcuKMrBIcy2Rx6Eza7gI8xr86RFpNX7D6treoMboRj5pLYYjl2JfoYhOjyv4Ykh0MVzFTzTzbsq/yqd0Lfz7MCvX5xdUFmHnLtg3cBeIi+qPpRswckOssrI1ZD0mGUVvTw=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8eb8fd5b-19bf-49db-f87a-08d69bc53ffd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 08:34:35.3255
+X-MS-Exchange-CrossTenant-Network-Message-Id: d29bb221-4b57-4cfa-73b1-08d69bc53947
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 08:34:24.2544
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1645
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5645
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Add compatible for LX2160A SoC,QDS and RDB board
+Add lx2160a compatible for clockgen and dcfg
 
-Increase size of cmux_to_group array, to accomdate entry of
--1 termination.
-
-Added -1, terminated, entry for 4080_cmux_grpX.
-
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/clk-qoriq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../bindings/arm/freescale/fsl,layerscape-dcfg.txt           |  2 +-
+ Documentation/devicetree/bindings/arm/fsl.txt                | 12 ++++++++=
+++++
+ Documentation/devicetree/bindings/clock/qoriq-clock.txt      |  1 +
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 5baa9e0..e75194a 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -79,7 +79,7 @@ struct clockgen_chipinfo {
- 	const struct clockgen_muxinfo *cmux_groups[2];
- 	const struct clockgen_muxinfo *hwaccel[NUM_HWACCEL];
- 	void (*init_periph)(struct clockgen *cg);
--	int cmux_to_group[NUM_CMUX]; /* -1 terminates if fewer than NUM_CMUX */
-+	int cmux_to_group[NUM_CMUX+1]; /* array should be -1 terminated */
- 	u32 pll_mask;	/* 1 << n bit set if PLL n is valid */
- 	u32 flags;	/* CG_xxx */
- };
-@@ -601,7 +601,7 @@ static const struct clockgen_chipinfo chipinfo[] =3D {
- 			&p4080_cmux_grp1, &p4080_cmux_grp2
- 		},
- 		.cmux_to_group =3D {
--			0, 0, 0, 0, 1, 1, 1, 1
-+			0, 0, 0, 0, 1, 1, 1, 1, -1
- 		},
- 		.pll_mask =3D 0x1f,
- 	},
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,layerscape=
+-dcfg.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,layerscape-=
+dcfg.txt
+index b5cb374..dc76046 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,layerscape-dcfg.t=
+xt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,layerscape-dcfg.t=
+xt
+@@ -8,7 +8,7 @@ Required properties:
+   - compatible: Should contain a chip-specific compatible string,
+ 	Chip-specific strings are of the form "fsl,<chip>-dcfg",
+ 	The following <chip>s are known to be supported:
+-	ls1012a, ls1021a, ls1043a, ls1046a, ls2080a.
++	ls1012a, ls1021a, ls1043a, ls1046a, ls2080a, lx2160a.
+=20
+   - reg : should contain base address and length of DCFG memory-mapped reg=
+isters
+=20
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/=
+devicetree/bindings/arm/fsl.txt
+index 7fbc424..baef162 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -235,3 +235,15 @@ Required root node properties:
+ LS2088A ARMv8 based RDB Board
+ Required root node properties:
+     - compatible =3D "fsl,ls2088a-rdb", "fsl,ls2088a";
++
++LX2160A SoC
++Required root node properties:
++    - compatible =3D "fsl,lx2160a";
++
++LX2160A ARMv8 based QDS Board
++Required root node properties:
++    - compatible =3D "fsl,lx2160a-qds", "fsl,lx2160a";
++
++LX2160A ARMv8 based RDB Board
++Required root node properties:
++    - compatible =3D "fsl,lx2160a-rdb", "fsl,lx2160a";
+diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Docu=
+mentation/devicetree/bindings/clock/qoriq-clock.txt
+index c655f28..f322989 100644
+--- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
++++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+@@ -43,6 +43,7 @@ Required properties:
+ 	* "fsl,ls1046a-clockgen"
+ 	* "fsl,ls1088a-clockgen"
+ 	* "fsl,ls2080a-clockgen"
++	* "fsl,lx2160a-clockgen"
+ 	Chassis-version clock strings include:
+ 	* "fsl,qoriq-clockgen-1.0": for chassis 1.0 clocks
+ 	* "fsl,qoriq-clockgen-2.0": for chassis 2.0 clocks
 --=20
 2.7.4
 
