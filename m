@@ -2,174 +2,178 @@ Return-Path: <SRS0=19dm=RC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84B1C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 02:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53815C00319
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 03:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABCA9218D0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 02:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CE6E218D0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 03:51:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729482AbfB0Cvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 21:51:45 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:40319 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729409AbfB0Cvp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Feb 2019 21:51:45 -0500
-X-UUID: fd4c391035854900935be50a1503b2eb-20190227
-X-UUID: fd4c391035854900935be50a1503b2eb-20190227
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        id S1729313AbfB0DvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 22:51:12 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:25368 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729128AbfB0DvL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Feb 2019 22:51:11 -0500
+X-UUID: c645e0912d2d4f079abe90325cde9fff-20190227
+X-UUID: c645e0912d2d4f079abe90325cde9fff-20190227
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 516935137; Wed, 27 Feb 2019 10:51:38 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 27 Feb 2019 10:51:37 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+        with ESMTP id 541379978; Wed, 27 Feb 2019 11:51:04 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 27 Feb 2019 11:51:02 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 27 Feb 2019 10:51:37 +0800
-Message-ID: <1551235897.1047.11.camel@mtksdaap41>
-Subject: Re: [PATCH v4 08/12] clk: mediatek: Add MT8183 clock support
+ Transport; Wed, 27 Feb 2019 11:51:02 +0800
+Message-ID: <1551239460.1047.30.camel@mtksdaap41>
+Subject: Re: [PATCH v4 01/12] clk: mediatek: Disable tuner_en before change
+ PLL rate
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh@kernel.org>,
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Nicolas Boichat <drinkcat@chromium.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
         James Liao <jamesjj.liao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, Fan Chen <fan.chen@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 27 Feb 2019 10:51:37 +0800
-In-Reply-To: <155120345816.260864.13433355004684800350@swboyd.mtv.corp.google.com>
+        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
+        Owen Chen <owen.chen@mediatek.com>
+Date:   Wed, 27 Feb 2019 11:51:00 +0800
+In-Reply-To: <41aed6f5-8794-ddf5-d5c2-17ee82e33db3@gmail.com>
 References: <20190201083016.25856-1-weiyi.lu@mediatek.com>
-         <20190201083016.25856-10-weiyi.lu@mediatek.com>
-         <155120345816.260864.13433355004684800350@swboyd.mtv.corp.google.com>
+         <20190201083016.25856-3-weiyi.lu@mediatek.com>
+         <41aed6f5-8794-ddf5-d5c2-17ee82e33db3@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 8AA3E19B124612539407FF0DB6EB0CEF394A2D080949110F5D66794B339111752000:8
 X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2019-02-26 at 09:50 -0800, Stephen Boyd wrote:
-> Quoting Weiyi Lu (2019-02-01 00:30:12)
-> > diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-> > new file mode 100644
-> > index 000000000000..e9de9fe774ca
-> > --- /dev/null
-> > +++ b/drivers/clk/mediatek/clk-mt8183.c
-> > @@ -0,0 +1,1285 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +//
-> > +// Copyright (c) 2018 MediaTek Inc.
-> > +// Author: Weiyi Lu <weiyi.lu@mediatek.com>
-> > +
-> > +#include <linux/delay.h>
-> > +#include <linux/mfd/syscon.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/slab.h>
-> > +
-> [....]
-> > +
-> > +static int clk_mt8183_top_probe(struct platform_device *pdev)
-> > +{
-> > +       struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +       void __iomem *base;
-> > +       struct clk_onecell_data *clk_data;
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +
-> > +       base = devm_ioremap_resource(&pdev->dev, res);
-> > +       if (IS_ERR(base)) {
-> > +               pr_err("%s(): ioremap failed\n", __func__);
+On Tue, 2019-02-26 at 16:59 +0100, Matthias Brugger wrote:
 > 
-> This API already prints an error so please remove this duplicate error
-> message
+> On 01/02/2019 09:30, Weiyi Lu wrote:
+> > From: Owen Chen <owen.chen@mediatek.com>
+> > 
+> > PLLs with tuner_en bit, such as APLL1, need to disable
+> > tuner_en before apply new frequency settings, or the new frequency
+> > settings (pcw) will not be applied.
+> > The tuner_en bit will be disabled during changing PLL rate
+> > and be restored after new settings applied.
+> > Another minor change is to correct the macro name of pcw change bit
+> > to CON1_PCW_CHG because PCW_CHG(BIT31) is on CON1.
+> > 
+> > Fixes: e2f744a82d725 (clk: mediatek: Add MT2712 clock support)
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> > ---
+> >  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
+> >  1 file changed, 31 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> > index f54e4015b0b1..f0ff5f535c7e 100644
+> > --- a/drivers/clk/mediatek/clk-pll.c
+> > +++ b/drivers/clk/mediatek/clk-pll.c
+> > @@ -27,7 +27,7 @@
+> >  #define CON0_BASE_EN		BIT(0)
+> >  #define CON0_PWR_ON		BIT(0)
+> >  #define CON0_ISO_EN		BIT(1)
+> > -#define CON0_PCW_CHG		BIT(31)
+> > +#define CON1_PCW_CHG		BIT(31)
+> >  
+> >  #define AUDPLL_TUNER_EN		BIT(31)
+> >  
+> > @@ -93,9 +93,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> >  {
+> >  	u32 con1, val;
+> >  	int pll_en;
+> > +	u32 tuner_en = 0;
+> > +	u32 tuner_en_mask;
+> > +	void __iomem *tuner_en_addr = NULL;
+> >  
+> >  	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+> >  
+> > +	/* disable tuner */
+> > +	if (pll->tuner_en_addr) {
+> > +		tuner_en_addr = pll->tuner_en_addr;
+> > +		tuner_en_mask = BIT(pll->data->tuner_en_bit);
+> > +	} else if (pll->tuner_addr) {
+> > +		tuner_en_addr = pll->tuner_addr;
+> > +		tuner_en_mask = AUDPLL_TUNER_EN;
+> > +	}
+> > +
+> > +	if (tuner_en_addr) {
+> > +		val = readl(tuner_en_addr);
+> > +		tuner_en = val & tuner_en_mask;
+> > +
+> > +		if (tuner_en) {
+> > +			val &= ~tuner_en_mask;
+> > +			writel(val, tuner_en_addr);
+> > +		}
+> > +	}
+> > +
 > 
-
-ok, I'll remove those duplicate error message in next version.
-
-> > +               return PTR_ERR(base);
-> > +       }
-> > +
-> > +       clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-> > +
-> > +       mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
-> > +               clk_data);
-> > +
-> > +       mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
-> > +
-> > +       mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
-> > +               node, &mt8183_clk_lock, clk_data);
-> > +
-> > +       mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_muxes),
-> > +               base, &mt8183_clk_lock, clk_data);
-> > +
-> > +       mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs),
-> > +               base, &mt8183_clk_lock, clk_data);
-> > +
-> > +       mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
-> > +               clk_data);
-> > +
-> > +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> > +}
-> > +
-> > +static int clk_mt8183_infra_probe(struct platform_device *pdev)
-> > +{
-> > +       struct clk_onecell_data *clk_data;
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +
-> > +       clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
-> > +
-> > +       mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
-> > +               clk_data);
-> > +
-> > +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> > +}
-> > +
-> > +static int clk_mt8183_mcu_probe(struct platform_device *pdev)
-> > +{
-> > +       struct clk_onecell_data *clk_data;
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +       void __iomem *base;
-> > +       struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +
-> > +       base = devm_ioremap_resource(&pdev->dev, res);
-> > +       if (IS_ERR(base)) {
-> > +               pr_err("%s(): ioremap failed\n", __func__);
-> > +               return PTR_ERR(base);
-> > +       }
-> > +
-> > +       clk_data = mtk_alloc_clk_data(CLK_MCU_NR_CLK);
+> Why don't we use a flag here, it would make the code easier to understand.
+> I think it would also help if you put this code in a separate function.
 > 
-> Can this fail? It doesn't seem to be checked for failure so I guess we
-> don't care?
+> Regards,
+> Matthias
 > 
 
-It might fail but we have data validity checks in all the
-mtk_clk_register APIs.
+Hi Matthias,
 
-> > +
-> > +       mtk_clk_register_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), base,
-> > +                       &mt8183_clk_lock, clk_data);
-> > +
-> > +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> > +}
-> > +
+I guess you suggest to add a flag (e.g. CLK_TUNER_SUPPORT) and declare
+the PLL clock with this flag. And inside this mtk_pll_set_rate_regs()
+function, we could modify it as below. Am I right?
+
+if (pll->data->flags & CLK_TUNER_SUPPORT)
+    disable_tuner();
+[...]
+if (pll->data->flags & CLK_TUNER_SUPPORT)
+    enable_tuner();
+
+
+But I thought this flag might be a customized flags and can only be put
+in clk-mtk.h not clk-provider.h so far. And it might cause 
+potential problem of clock flag re-definition. May I have more
+suggestion?
+
 > 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> >  	/* set postdiv */
+> >  	val = readl(pll->pd_addr);
+> >  	val &= ~(POSTDIV_MASK << pll->data->pd_shift);
+> > @@ -116,12 +138,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> >  	con1 = readl(pll->base_addr + REG_CON1);
+> >  
+> >  	if (pll_en)
+> > -		con1 |= CON0_PCW_CHG;
+> > +		con1 |= CON1_PCW_CHG;
+> >  
+> >  	writel(con1, pll->base_addr + REG_CON1);
+> >  	if (pll->tuner_addr)
+> >  		writel(con1 + 1, pll->tuner_addr);
+> >  
+> > +	/* restore tuner_en */
+> > +	if (tuner_en_addr && tuner_en) {
+> > +		val = readl(tuner_en_addr);
+> > +		val |= tuner_en_mask;
+> > +		writel(val, tuner_en_addr);
+> > +	}
+> > +
+> >  	if (pll_en)
+> >  		udelay(20);
+> >  }
+> > 
 
 
