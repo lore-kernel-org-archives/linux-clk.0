@@ -1,365 +1,182 @@
-Return-Path: <SRS0=PWff=RB=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=19dm=RC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16A3C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 22:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E30C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 01:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2621218CD
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Feb 2019 22:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551220514;
-	bh=sM9+js7IZRf/8Ngn8rWh/XzWSauHe7ffLH25ayUuXrU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zEWgzJYxnQthe+BkAANyzy7fHJiXKKdWvUOGamEVlTf3ImwpIa5mazpfhm6jXh+ck
-	 45JJxRj6ls90IQv7/RL3aia/UXVk9caPYbS/T3yKFzTPktUAGATqwYT1i8qEN/m1dk
-	 XCAeTwdVUDCPKeqS01HvQUwM+kuJ+39DkwtP8Ee4=
+	by mail.kernel.org (Postfix) with ESMTP id 37FFF218D0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 01:28:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Kkic222P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbfBZWfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Feb 2019 17:35:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729154AbfBZWec (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Feb 2019 17:34:32 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEB5D21874;
-        Tue, 26 Feb 2019 22:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551220471;
-        bh=sM9+js7IZRf/8Ngn8rWh/XzWSauHe7ffLH25ayUuXrU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tS/Dluldv5tItK/ZCT/aFvsozKFPWoMnj6uC3G/kdEo98dv8QlLt7tSrfNxIWmop+
-         7AkfoAHpca4an4vLhJHPiXnq8Ed2GTVZBt2VF9mIRDa4FfngRNvC6qu+LRpPrL71EH
-         k0EQgBIZ6rmawbEC3nVsPoSrTdBIp8A1G00Ef+0o=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 1/8] clk: Combine __clk_get() and __clk_create_clk()
-Date:   Tue, 26 Feb 2019 14:34:22 -0800
-Message-Id: <20190226223429.193873-2-sboyd@kernel.org>
-X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
-In-Reply-To: <20190226223429.193873-1-sboyd@kernel.org>
-References: <20190226223429.193873-1-sboyd@kernel.org>
+        id S1729257AbfB0B2e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Feb 2019 20:28:34 -0500
+Received: from mail-eopbgr70059.outbound.protection.outlook.com ([40.107.7.59]:61344
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729044AbfB0B2e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:28:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DrHTnIpqOsWp1sorKavNCaDKeym4sGa7ZutNrdbv8Oo=;
+ b=Kkic222PWWYbewG/W2+x6ajarCTCMnXWlzeVE/YUhWvRQrqWEPK7dmOAiz6zAjohEkR1cupG9WHtJDSnUR8gXoyWDpWHFfG3Dq1LfTeYcQDJd31UZpMBf24Mv7hw7R1/Bemn+EUgDyvw9M4S6f+DC6EA+YIqAO/6bKwNLkvGblc=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3772.eurprd04.prod.outlook.com (52.134.71.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.18; Wed, 27 Feb 2019 01:28:27 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7%2]) with mapi id 15.20.1643.019; Wed, 27 Feb 2019
+ 01:28:26 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH RESEND V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
+Thread-Topic: [PATCH RESEND V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
+Thread-Index: AQHUzju83XkEqBBPo0W2mhbzy8FScA==
+Date:   Wed, 27 Feb 2019 01:28:26 +0000
+Message-ID: <1551230622-30660-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR04CA0022.apcprd04.prod.outlook.com
+ (2603:1096:203:36::34) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8bec0cde-b41e-49b2-7e68-08d69c52df44
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3772;
+x-ms-traffictypediagnostic: DB3PR0402MB3772:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3772;23:Q+LTe/YLteerxDh2mR1BpuR9So7/nw9vr9CVM?=
+ =?iso-8859-1?Q?3L35Y9iQZJD6kol2ELZZRUcGDyjdvQcPLqX1lsFS97uS9nATf6Cksi9isj?=
+ =?iso-8859-1?Q?rWO0CPqAQcAJEwTQhuAIyruOtE8ydsVjyjii3vwtjHtQAJDukj9rHN9h8f?=
+ =?iso-8859-1?Q?dtHmEdqctk4vmizd4G42+wki0D39M90/1DeI3QcN8MD2EN5CWdZ7tlFWLN?=
+ =?iso-8859-1?Q?kgW7BpU3waAS94kHlmSUp+mHxqWnJEBXS/DU3xTZJL3UawectsAVhGlQaN?=
+ =?iso-8859-1?Q?nhDRP2aENWVNw+ZioXiFMc7NvGmoRu9mz80QcnZEMzII+JVg3XDDLhjcfD?=
+ =?iso-8859-1?Q?+dKuXBX5OIbPi17PE5ErFllJmJzHJDgDDSwgOR34anrxa4ttolZ3vE97/n?=
+ =?iso-8859-1?Q?YXiATQrE61bcAMMz905XFh4PaRrzif4RS1p8a9TTf01l7nePRC2raBePE+?=
+ =?iso-8859-1?Q?YpXW7kzF8Ok6ar/NIfRQgcI5/kawsHdXHXSbKh+mt11TwiumOMB+tQP1JF?=
+ =?iso-8859-1?Q?qlxRA4Vmp8T9gWY2ygIEuZichG4NlXcNIgUTe82/z/UIj7Ce1ttCfZbksn?=
+ =?iso-8859-1?Q?fLxMNDYbTcoRMbt5QOJTh4Q7o5ph6yKU+gM4eApXwPOXQr4poXmRa/j4eY?=
+ =?iso-8859-1?Q?Rpc1oLbquG/LHbgF2jXQLbu93VNaUn0CnFJPhzUK9TC5szOV55b14M9yVl?=
+ =?iso-8859-1?Q?4cRQo+g/VlfFT2Y5hjcGGk9mfHYGBhOpRS6+vTifp/mQgtPkHRZZmEOtIt?=
+ =?iso-8859-1?Q?TYwak5C+Qmm5/2oFS2M7NUGgBs006QoOymHBkzJB7wTCXfCx0PYhWbCKwK?=
+ =?iso-8859-1?Q?+tVM9MGltYKT7WxVYcZ1wlTjq5e+IlYENW5vW1TT8/R0az5YrGG8bdUZNT?=
+ =?iso-8859-1?Q?Ja4PlXMld9gpkzTl4+LiAKld7hshif3MxqgPsSk0p6DIj8Rc7QgDosB5S/?=
+ =?iso-8859-1?Q?/7PEEqsy5rdtoRsBFGk2Cb65rfckTg8z1sUP001yAWeJaqZxPWgCnSCd6i?=
+ =?iso-8859-1?Q?Eu0HPYAI5fHeHoptyzu8SJ8azSTgcqjpv/FBo+sO78qKeQorqgMeJhrmX/?=
+ =?iso-8859-1?Q?KuUI1CXDN0WIFemzVWMd0huLc1nH4Kh4uL8JxfvjGkghtkKOdNQ1fqaT0c?=
+ =?iso-8859-1?Q?dSWvBmDViU561woLgmOqYnlJUR/Mc6oLNPIi/T9IfYtYXm7J3KSUFBzQ0x?=
+ =?iso-8859-1?Q?JvRHAPsKEJ+co3ZmY4JOSl0ErHejz9knSEAvTy1BMt+V5yBjEEjQ6H+heg?=
+ =?iso-8859-1?Q?WS8nnjV5AQKOYtRW9uCtyzSjyeqQq76+73eGAgsZLP8zwwVVNgmrXJL21w?=
+ =?iso-8859-1?Q?0guK0WieMfc7MxVIbJbFOxe5K?=
+x-microsoft-antispam-prvs: <DB3PR0402MB37725A6AB1593824B5CE3246F5740@DB3PR0402MB3772.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0961DF5286
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(366004)(136003)(39860400002)(199004)(189003)(6486002)(3846002)(6436002)(386003)(6116002)(7416002)(316002)(71200400001)(71190400001)(14444005)(256004)(186003)(6506007)(478600001)(99286004)(6346003)(102836004)(5660300002)(53936002)(50226002)(6512007)(7736002)(305945005)(81166006)(14454004)(26005)(81156014)(8936002)(8676002)(486006)(2616005)(4326008)(68736007)(66066001)(25786009)(2906002)(105586002)(52116002)(110136005)(97736004)(2501003)(36756003)(2201001)(476003)(86362001)(106356001)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3772;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: x4TWHMeNuSTc6k4yq374iZgJvNB/IsKXPev3thVdLs+utvAD5dvu9Prw8pRw0l3hXLA9z8Fpj7fL8MM5x3XflcFWrHkFwGddqHo79Is6XvaSxuaXs4j7tx04urXs0sRLhCrFVGbuMSfNI7zM+4hec37qLS0nVcYQJoFzvEO7hnlrpNlwWmubNlVPyqRi1xJWlGx+0DMs7Iinfc/8dYAxbHzLqKSpS2GAV+w3icWUocLqsjAgxoluZxtGWp7ngTcVyIyDqONr6+GlVSXaSk5RVfBev0DalwS0gqWndsDkE8k9VDhXTvUohG1w52Q+pVjdz6bF3BMmnBS98H/g5GkZeGIYhadrOt/vGaYI2SYN+DNN/XLXE+G9pQtaAjmt6xQA7PkSatIVFlhGZ5h7HnZuoqIOO5bLG2MAyPD+Ef6LHaA=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bec0cde-b41e-49b2-7e68-08d69c52df44
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 01:28:21.7898
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3772
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The __clk_get() function is practically a private clk implementation
-detail now. No architecture defines it, and given that new code should
-be using the common clk framework there isn't a need for it to keep
-existing just to serve clkdev purposes. Let's fold it into the
-__clk_create_clk() function and make that a little more generic by
-renaming it to clk_hw_create_clk(). This will allow the framework to
-create a struct clk handle to a particular clk_hw pointer and link it up
-as a consumer wherever that's needed.
+i.MX8MQ has clock gate for each GPIO bank, add them
+into clock tree for GPIO driver to manage.
 
-Doing this also lets us get rid of the __clk_free_clk() API that had to
-be kept in sync with __clk_put(). Splitting that API up into the "link
-and unlink from consumer list" phase and "free the clk pointer" phase
-allows us to reuse that logic in a couple places, simplifying the code.
-
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Jeffrey Hugo <jhugo@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/clk/clk.c    | 140 +++++++++++++++++++++++++++++--------------
- drivers/clk/clk.h    |  10 +---
- drivers/clk/clkdev.c |   9 +--
- 3 files changed, 98 insertions(+), 61 deletions(-)
+No changes, just rebase to clk-next.
+---
+ drivers/clk/imx/clk-imx8mq.c             | 5 +++++
+ include/dt-bindings/clock/imx8mq-clock.h | 8 +++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d2477a5058ac..fef937ea44f4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3209,42 +3209,103 @@ static int __clk_core_init(struct clk_core *core)
- 	return ret;
- }
- 
--struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
-+/**
-+ * clk_core_link_consumer - Add a clk consumer to the list of consumers in a clk_core
-+ * @core: clk to add consumer to
-+ * @clk: consumer to link to a clk
-+ */
-+static void clk_core_link_consumer(struct clk_core *core, struct clk *clk)
-+{
-+	clk_prepare_lock();
-+	hlist_add_head(&clk->clks_node, &core->clks);
-+	clk_prepare_unlock();
-+}
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 01c771f..789dc8e 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -510,6 +510,11 @@ static int imx8mq_clocks_probe(struct platform_device =
+*pdev)
+ 	clks[IMX8MQ_CLK_ECSPI2_ROOT] =3D imx_clk_gate4("ecspi2_root_clk", "ecspi2=
+", base + 0x4080, 0);
+ 	clks[IMX8MQ_CLK_ECSPI3_ROOT] =3D imx_clk_gate4("ecspi3_root_clk", "ecspi3=
+", base + 0x4090, 0);
+ 	clks[IMX8MQ_CLK_ENET1_ROOT] =3D imx_clk_gate4("enet1_root_clk", "enet_axi=
+", base + 0x40a0, 0);
++	clks[IMX8MQ_CLK_GPIO1_ROOT] =3D imx_clk_gate4("gpio1_root_clk", "ipg_root=
+", base + 0x40b0, 0);
++	clks[IMX8MQ_CLK_GPIO2_ROOT] =3D imx_clk_gate4("gpio2_root_clk", "ipg_root=
+", base + 0x40c0, 0);
++	clks[IMX8MQ_CLK_GPIO3_ROOT] =3D imx_clk_gate4("gpio3_root_clk", "ipg_root=
+", base + 0x40d0, 0);
++	clks[IMX8MQ_CLK_GPIO4_ROOT] =3D imx_clk_gate4("gpio4_root_clk", "ipg_root=
+", base + 0x40e0, 0);
++	clks[IMX8MQ_CLK_GPIO5_ROOT] =3D imx_clk_gate4("gpio5_root_clk", "ipg_root=
+", base + 0x40f0, 0);
+ 	clks[IMX8MQ_CLK_GPT1_ROOT] =3D imx_clk_gate4("gpt1_root_clk", "gpt1", bas=
+e + 0x4100, 0);
+ 	clks[IMX8MQ_CLK_I2C1_ROOT] =3D imx_clk_gate4("i2c1_root_clk", "i2c1", bas=
+e + 0x4170, 0);
+ 	clks[IMX8MQ_CLK_I2C2_ROOT] =3D imx_clk_gate4("i2c2_root_clk", "i2c2", bas=
+e + 0x4180, 0);
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings=
+/clock/imx8mq-clock.h
+index 491e39c..b58cc64 100644
+--- a/include/dt-bindings/clock/imx8mq-clock.h
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -394,5 +394,11 @@
+ #define IMX8MQ_CLK_CLKO1			268
+ #define IMX8MQ_CLK_ARM				269
+=20
+-#define IMX8MQ_CLK_END				270
++#define IMX8MQ_CLK_GPIO1_ROOT			270
++#define IMX8MQ_CLK_GPIO2_ROOT			271
++#define IMX8MQ_CLK_GPIO3_ROOT			272
++#define IMX8MQ_CLK_GPIO4_ROOT			273
++#define IMX8MQ_CLK_GPIO5_ROOT			274
 +
-+/**
-+ * clk_core_unlink_consumer - Remove a clk consumer from the list of consumers in a clk_core
-+ * @clk: consumer to unlink
-+ */
-+static void clk_core_unlink_consumer(struct clk *clk)
-+{
-+	lockdep_assert_held(&prepare_lock);
-+	hlist_del(&clk->clks_node);
-+}
-+
-+/**
-+ * alloc_clk - Allocate a clk consumer, but leave it unlinked to the clk_core
-+ * @core: clk to allocate a consumer for
-+ * @dev_id: string describing device name
-+ * @con_id: connection ID string on device
-+ *
-+ * Returns: clk consumer left unlinked from the consumer list
-+ */
-+static struct clk *alloc_clk(struct clk_core *core, const char *dev_id,
- 			     const char *con_id)
- {
- 	struct clk *clk;
- 
--	/* This is to allow this function to be chained to others */
--	if (IS_ERR_OR_NULL(hw))
--		return ERR_CAST(hw);
--
- 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
- 	if (!clk)
- 		return ERR_PTR(-ENOMEM);
- 
--	clk->core = hw->core;
-+	clk->core = core;
- 	clk->dev_id = dev_id;
- 	clk->con_id = kstrdup_const(con_id, GFP_KERNEL);
- 	clk->max_rate = ULONG_MAX;
- 
--	clk_prepare_lock();
--	hlist_add_head(&clk->clks_node, &hw->core->clks);
--	clk_prepare_unlock();
--
- 	return clk;
- }
- 
--/* keep in sync with __clk_put */
--void __clk_free_clk(struct clk *clk)
-+/**
-+ * free_clk - Free a clk consumer
-+ * @clk: clk consumer to free
-+ *
-+ * Note, this assumes the clk has been unlinked from the clk_core consumer
-+ * list.
-+ */
-+static void free_clk(struct clk *clk)
- {
--	clk_prepare_lock();
--	hlist_del(&clk->clks_node);
--	clk_prepare_unlock();
--
- 	kfree_const(clk->con_id);
- 	kfree(clk);
- }
- 
-+/**
-+ * clk_hw_create_clk: Allocate and link a clk consumer to a clk_core given
-+ * a clk_hw
-+ * @hw: clk_hw associated with the clk being consumed
-+ * @dev_id: string describing device name
-+ * @con_id: connection ID string on device
-+ *
-+ * This is the main function used to create a clk pointer for use by clk
-+ * consumers. It connects a consumer to the clk_core and clk_hw structures
-+ * used by the framework and clk provider respectively.
-+ */
-+struct clk *clk_hw_create_clk(struct clk_hw *hw,
-+			      const char *dev_id, const char *con_id)
-+{
-+	struct clk *clk;
-+	struct clk_core *core;
-+
-+	/* This is to allow this function to be chained to others */
-+	if (IS_ERR_OR_NULL(hw))
-+		return ERR_CAST(hw);
-+
-+	core = hw->core;
-+	clk = alloc_clk(core, dev_id, con_id);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	if (!try_module_get(core->owner)) {
-+		free_clk(clk);
-+		return ERR_PTR(-ENOENT);
-+	}
-+
-+	kref_get(&core->ref);
-+	clk_core_link_consumer(core, clk);
-+
-+	return clk;
-+}
-+
- /**
-  * clk_register - allocate a new clock, register it and return an opaque cookie
-  * @dev: device that is registering this clock
-@@ -3320,17 +3381,27 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 
- 	INIT_HLIST_HEAD(&core->clks);
- 
--	hw->clk = __clk_create_clk(hw, NULL, NULL);
-+	/*
-+	 * Don't call clk_hw_create_clk() here because that would pin the
-+	 * provider module to itself and prevent it from ever being removed.
-+	 */
-+	hw->clk = alloc_clk(core, NULL, NULL);
- 	if (IS_ERR(hw->clk)) {
- 		ret = PTR_ERR(hw->clk);
- 		goto fail_parents;
- 	}
- 
-+	clk_core_link_consumer(hw->core, hw->clk);
-+
- 	ret = __clk_core_init(core);
- 	if (!ret)
- 		return hw->clk;
- 
--	__clk_free_clk(hw->clk);
-+	clk_prepare_lock();
-+	clk_core_unlink_consumer(hw->clk);
-+	clk_prepare_unlock();
-+
-+	free_clk(hw->clk);
- 	hw->clk = NULL;
- 
- fail_parents:
-@@ -3601,20 +3672,7 @@ EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
- /*
-  * clkdev helpers
-  */
--int __clk_get(struct clk *clk)
--{
--	struct clk_core *core = !clk ? NULL : clk->core;
--
--	if (core) {
--		if (!try_module_get(core->owner))
--			return 0;
--
--		kref_get(&core->ref);
--	}
--	return 1;
--}
- 
--/* keep in sync with __clk_free_clk */
- void __clk_put(struct clk *clk)
- {
- 	struct module *owner;
-@@ -3648,8 +3706,7 @@ void __clk_put(struct clk *clk)
- 
- 	module_put(owner);
- 
--	kfree_const(clk->con_id);
--	kfree(clk);
-+	free_clk(clk);
- }
- 
- /***        clk rate change notifiers        ***/
-@@ -4025,8 +4082,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 				       const char *dev_id, const char *con_id)
- {
- 	struct of_clk_provider *provider;
--	struct clk *clk = ERR_PTR(-EPROBE_DEFER);
--	struct clk_hw *hw;
-+	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
- 
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
-@@ -4036,21 +4092,13 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	list_for_each_entry(provider, &of_clk_providers, link) {
- 		if (provider->node == clkspec->np) {
- 			hw = __of_clk_get_hw_from_provider(provider, clkspec);
--			clk = __clk_create_clk(hw, dev_id, con_id);
--		}
--
--		if (!IS_ERR(clk)) {
--			if (!__clk_get(clk)) {
--				__clk_free_clk(clk);
--				clk = ERR_PTR(-ENOENT);
--			}
--
--			break;
-+			if (!IS_ERR(hw))
-+				break;
- 		}
- 	}
- 	mutex_unlock(&of_clk_mutex);
- 
--	return clk;
-+	return clk_hw_create_clk(hw, dev_id, con_id);
- }
- 
- /**
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index b02f5e604e69..4cdf30b0008c 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -12,24 +12,20 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- #endif
- 
- #ifdef CONFIG_COMMON_CLK
--struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
--			     const char *con_id);
--void __clk_free_clk(struct clk *clk);
--int __clk_get(struct clk *clk);
-+struct clk *clk_hw_create_clk(struct clk_hw *hw,
-+			      const char *dev_id, const char *con_id);
- void __clk_put(struct clk *clk);
- #else
- /* All these casts to avoid ifdefs in clkdev... */
- static inline struct clk *
--__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id)
-+clk_hw_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id)
- {
- 	return (struct clk *)hw;
- }
--static inline void __clk_free_clk(struct clk *clk) { }
- static struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return (struct clk_hw *)clk;
- }
--static inline int __clk_get(struct clk *clk) { return 1; }
- static inline void __clk_put(struct clk *clk) { }
- 
- #endif
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8b3988..bdeaffc950ae 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -174,16 +174,9 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- 	if (!cl)
- 		goto out;
- 
--	clk = __clk_create_clk(cl->clk_hw, dev_id, con_id);
-+	clk = clk_hw_create_clk(cl->clk_hw, dev_id, con_id);
- 	if (IS_ERR(clk))
--		goto out;
--
--	if (!__clk_get(clk)) {
--		__clk_free_clk(clk);
- 		cl = NULL;
--		goto out;
--	}
--
- out:
- 	mutex_unlock(&clocks_mutex);
- 
--- 
-Sent by a computer through tubes
++#define IMX8MQ_CLK_END				275
+ #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
+--=20
+2.7.4
 
