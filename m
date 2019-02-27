@@ -2,181 +2,114 @@ Return-Path: <SRS0=19dm=RC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25173C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 19:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58621C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 23:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D935B2186A
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 19:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551294399;
-	bh=lM1ELI/k8dCbQnwNanFXBTkQJXP+Ff4wQxwg5W07IQg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=JWcKl88qYXh7teryiyWtIEUpDP5BcMijio8F0FZAx0PEqb/OzGU49VjBDuE6NCYHP
-	 W0plNKiB+v0M3JNrPHzU1y6q9V9aU+aBUJWnaWYhZYStaf4CD9FeWP/EQLaCmQWFoM
-	 rIN8ReoN0bYuoG3MvD8/gLP2s2W9vBZfgYlCpzmA=
+	by mail.kernel.org (Postfix) with ESMTP id 094D2214D8
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 23:54:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="vz6Gts0A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfB0TGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Feb 2019 14:06:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726419AbfB0TGj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Feb 2019 14:06:39 -0500
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79215218D8
-        for <linux-clk@vger.kernel.org>; Wed, 27 Feb 2019 19:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551294398;
-        bh=lM1ELI/k8dCbQnwNanFXBTkQJXP+Ff4wQxwg5W07IQg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gLm41XR6xJ5dD6vH5tYdqxCGmg2nmAYHVfcdscHzl0m1nWY9PIpEzX5zUpSbfUVWk
-         xfNF4BHLIqdUIuWRskZAZajmQyynUgb0Gt+I7xX1EvtGg8jgMJ7xe9Jh/el10IEu4D
-         ZGA8gV0ijRhQ8FDY3V5ht1j20x0IBkrOrToL2njc=
-Received: by mail-oi1-f173.google.com with SMTP id q81so14377658oic.5
-        for <linux-clk@vger.kernel.org>; Wed, 27 Feb 2019 11:06:38 -0800 (PST)
-X-Gm-Message-State: AHQUAubyQuREMtCg33kPurmrkj1DCfr/wp8Lmb55jqu10d8lfVUmA1iO
-        7iSzq7Eu/kMGGcPZe/NVOKR12MABskOtBiyO4+83tg==
-X-Google-Smtp-Source: APXvYqx6NF4OKEEiatSs/WbXmDF9IxmniVBRhb4np+k4gLUzDzHBmCErp6GRgvSitsTqtD2NWQ7YvXCJ2hAzUJDmmko=
-X-Received: by 2002:aca:c307:: with SMTP id t7mr575243oif.46.1551294397621;
- Wed, 27 Feb 2019 11:06:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20181229133318.18128-1-jbx6244@gmail.com> <20190201123235.1693-1-jbx6244@gmail.com>
- <20190225165923.GA2578@bogus> <b183d099-dcb3-9c3f-7031-2bd54d7fe5bb@gmail.com>
-In-Reply-To: <b183d099-dcb3-9c3f-7031-2bd54d7fe5bb@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 27 Feb 2019 13:06:26 -0600
-X-Gmail-Original-Message-ID: <CABGGisyUfENpaHgE3u9ECiMYn-fvC22x3BRKdj2y3eCdgFjKUA@mail.gmail.com>
-Message-ID: <CABGGisyUfENpaHgE3u9ECiMYn-fvC22x3BRKdj2y3eCdgFjKUA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: rockchip: add document for rk3066 hdmi
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        hjc@rock-chips.com, airlied@linux.ie,
+        id S1729432AbfB0Xy4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Feb 2019 18:54:56 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:60472 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728397AbfB0Xy4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Feb 2019 18:54:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1551311691; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cJ6fULrEGLrLtO/O+I4SpN9dM7a0vaIBbaxUxFE0zew=;
+        b=vz6Gts0AlF1ZMxzNvwztMEwxrlMYtUm8vCZGrHH2K38uvYsNaQEwsGoASa1KbumPTB+Z6A
+        88PY/c9CQ9QkAnmFVsij8HjTByhDB1NR1aR4C+wZhWzvjIocvGJMOFJt+2Di8Cg69huwZl
+        zA1bw5utq6/tPI8K1f1TGueCFOzSWK4=
+Date:   Wed, 27 Feb 2019 20:54:28 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx
+ OST
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rockchip@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
+        Maarten ter Huurne <maarten@treewalker.org>
+Message-Id: <1551311669.21164.1@crapouillou.net>
+In-Reply-To: <155111793658.191923.2540746255375959460@swboyd.mtv.corp.google.com>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+        <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com>
+        <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net>
+        <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net>
+        <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
+        <1548362788.3881.0@crapouillou.net>
+        <154836998080.136743.17683029101430122926@swboyd.mtv.corp.google.com>
+        <1548370388.3881.2@crapouillou.net> <1550891845.20534.1@crapouillou.net>
+        <155111793658.191923.2540746255375959460@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 12:04 PM Johan Jonker <jbx6244@gmail.com> wrote:
->
-> Thanks for your advice.
->
-> On 2/25/19 5:59 PM, Rob Herring wrote:> On Fri, Feb 01, 2019 at
-> 01:32:35PM +0100, Johan Jonker wrote:
-> >> This patch adds a binding that describes the HDMI controller for
-> >> rk3066.
-> >
-> > This is not using the DW block like other Rockchip SoCs (IIRC)?
->
-> As outsider it's a little bit difficult to comment on that.
-> Maybe an insider can give a better answer.
-> The rk3066 is there early model.
-> Reusing blocks like in the later improved models wasn't in the fashion
-> yet I think.
-> Also comparing the rk3066-hdmi driver to the inno driver gives too many
-> differences in registers, sound support and irqs.
-> If it was similar they would have combined it in there own kernel.
-> Given the age there won't come any other support for it.
-> This is what we have...
+Hi,
 
-Okay, if it looks different then good enough for me.
+Le lun. 25 f=E9vr. 2019 =E0 15:05, Stephen Boyd <sboyd@kernel.org> a=20
+=E9crit :
+> Quoting Paul Cercueil (2019-02-22 19:17:25)
+>>  Hi,
+>>=20
+>>  Anything new on this? It still happens on 5.0-rc7.
+>>  It probes with late_initcall, and not with device_initcall.
+>>  I have no clue what's going on.
+>>=20
+>=20
+> I'm not sure what's going on either. You'll probably have to debug=20
+> when
+> the device is created and when it is probed by enabling the debug
+> printing in the driver core or by adding in extra debug prints to=20
+> narrow
+> down the problem. For example, add a '#define DEBUG 1' at the top of
+> drivers/base/dd.c and see if that helps give some info on what's going
+> on with the drivers and devices.
 
-> >> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> >> ---
-> >>  .../display/rockchip/rk3066_hdmi-rockchip.txt      | 60
-> ++++++++++++++++++++++
-> >
-> > Using the compatible string plus '.txt' is the preferred naming.
->
-> Will change that in V2.
-> rk3066-hdmi      -> rk3066-hdmi-rockchip.txt
->
-> How about the other documents?
-> rk3036-inno-hdmi -> inno_hdmi-rockchip.txt
-> rk3288-dw-hdmi   -> dw_hdmi-rockchip.txt
-> rk3288-dp        -> analogix_dp-rockchip.txt
-> etc.
+The doc of __platform_driver_probe says:
+"Use this instead of platform_driver_register() when you know the device
+is not hotpluggable and has already been registered".
 
-Just leave them for now.
+When the parent device and child device are both probed with
+builtin_platform_driver_probe(), and the parent calls
+devm_of_platform_populate(), it is not certain that the parent's
+probe will happen before the child's, and if it does not, the child
+device has not been registered and its probe is not allowed to defer.
+So it turned out not to be a core bug, rather a misuse of the API.
 
-> >>  1 file changed, 60 insertions(+)
-> >>  create mode 100644
-> Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
-> >>
-> >> diff --git
-> a/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
-> b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
-> >> new file mode 100644
-> >> index 000000000..6a8f3754f
-> >> --- /dev/null
-> >> +++
-> b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
-> >> @@ -0,0 +1,60 @@
-> >> +Rockchip specific extensions for rk3066 HDMI
-> >> +============================================
-> >> +
-> >> +Required properties:
-> >> +- compatible:
-> >> +    "rockchip,rk3066-hdmi";
-> >> +- reg:
-> >> +    Physical base address and length of the controller's registers.
-> >> +- clocks, clock-names:
-> >> +    Phandle to HDMI controller clock, name should be "hclk".
-> >> +- interrupts:
-> >> +    HDMI interrupt number.
-> >> +- power-domains:
-> >> +    Phandle to the RK3066_PD_VIO power domain.
-> >> +- rockchip,grf:
-> >> +    This soc uses GRF regs to switch the HDMI TX input between vop0 and
-> vop1.
-> >> +- ports:
->
-> Should "ports" be replaced by: "hdmi_in: port"?
-> What is preferred?
->
-> There are two different methods in use:
-> -1
->                 hdmi_in: port {
->
-> -2
->                 ports {
->                         hdmi_in: port {
+So I will keep the builtin_platform_driver_probe() in the child, and=20
+use a
+subsys_initcall() in the parent. That works fine.
 
-Generally, you have 'ports' when there is more than one 'port' node
-which you should in this case.
+Regards,
+-Paul
+=
 
-> >> +    Contains one port node with two endpoints, numbered 0 and 1,
-> >> +    connected respectively to vop0 and vop1.
-> >
-> > You should have an output port to an hdmi-connector node (or bridge) as
-> > well.
->
-> Which hdmi-connector node?
-> Could you explane with an example?
-
-grep hdmi-connector in the tree there's lot's of examples.
-
-> The Rockchip hdmi nodes I'm aware off only use the port nodes as a way
-> to switch the hdmi input between the vop's.
-> The vop nodes can have multiple outputs.
-
-Yes, that's the input side. And generally, muxing is represented as
-multiple endpoints.
-
-Not all cases of HDMI have defined a connector node as that came along later.
-
-Rob
