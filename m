@@ -2,88 +2,93 @@ Return-Path: <SRS0=19dm=RC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E190C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 10:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEF0C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 15:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F06520830
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 10:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8D77213A2
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 15:15:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJ7U0FsF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbfB0Kgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:36:38 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:52743 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725993AbfB0Kgi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Feb 2019 05:36:38 -0500
-X-UUID: 71e2a34a19ac4d28873855d972c510a1-20190227
-X-UUID: 71e2a34a19ac4d28873855d972c510a1-20190227
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 632255843; Wed, 27 Feb 2019 18:36:33 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 27 Feb 2019 18:36:31 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 27 Feb 2019 18:36:31 +0800
-Message-ID: <1551263791.9274.1.camel@mtkswgap22>
-Subject: Re: [PATCH v4 3/3] clk: mediatek: Mark bus and DRAM related clocks
- as critical
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     <kevin-cw.chen@mediatek.com>, <matthias.bgg@kernel.org>,
-        <mturquette@baylibre.com>, <sean.wang@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <jasu@njomotys.info>,
-        <matthias.bgg@gmail.com>, <linux-mediatek@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 27 Feb 2019 18:36:31 +0800
-In-Reply-To: <155120371334.260864.14503820089028591730@swboyd.mtv.corp.google.com>
-References: <20190214163242.26259-1-matthias.bgg@kernel.org>
-         <155120371334.260864.14503820089028591730@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1729862AbfB0PPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Feb 2019 10:15:15 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44770 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbfB0PPP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Feb 2019 10:15:15 -0500
+Received: by mail-pg1-f194.google.com with SMTP id j3so8086386pgm.11;
+        Wed, 27 Feb 2019 07:15:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=09UsXtmMlPqyjs0g1mEFYSqyEsjC6rGycLBx4GCevCE=;
+        b=VJ7U0FsFsSEPEd2grg9ESaQkoL0+IY5dZVuq8tBLF7sAXIoApBq8oFmHVP75F2QtqY
+         eb+dHyNbSYQe/J8qsRva9FrQCFSRQWk2Oa8fx70g2XfgaZB+8sKpbXCnoTklcfkkuvSL
+         d2hzKuY9ww/mxwt6poF9M4WzO8GnUUYvmSRN3xycntIqDRP7BoPM4ZJGoJu9LdIqwhix
+         BArZs/v3sE/b+5x+0JghTdM6HixZ3E5Za1KdCwG58glcIxK4IUmZFdvAx5i6ugz6Nqvl
+         elidIxRboxiXBE2wcmvyp2qkrdnQ7jCA8riP51HUPHNEQuXCTIJ2EGObFbWLJrb6Iz9k
+         IzLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=09UsXtmMlPqyjs0g1mEFYSqyEsjC6rGycLBx4GCevCE=;
+        b=tPqrX/nXXfN4/gZdlzy9P6Gl59f0b08LJDiqy7ISD7lXs0gcUXQ0BaOcB2xNPKX/c+
+         hJIHRw4JFwzgwrKS8boExQpk53O458pZnoUHKHGNBn9a58Pxgow7bEDLKFe3ld0bc5iB
+         HHYc2+cwXX5zObUz5FO4LU0DOpWfVI520CDG9uE2cu11qDfTLlg8/zNYq/K94ckrlQA+
+         OB7mOHtNrt3QJjQhvMoOX2G0PSC6fmyBaRCYKlITrvu7Fd723UBpNWVWLew/tWZyUMho
+         EX6rHzFvahSRzn1E0lTf9CZnq08TIe1iUeHjQr+eCB5/I8qwwwkl/DXh7dV8xzILtaKF
+         vhyg==
+X-Gm-Message-State: AHQUAubpxIJ9ZXEunv/4sHBqh16IPC3p1HkXCcvqk5G68IoUsjhbDxJ+
+        LcWoTG2dN0qq41FmAm3ooR60VG66
+X-Google-Smtp-Source: AHgI3Ibmq0tjbP8V9P6nRAsmEvxPq0WVuYHsZqFuE35WAOTt48hI8QjGU0no7W2dPdOhrzksN0BYwA==
+X-Received: by 2002:aa7:8390:: with SMTP id u16mr2104460pfm.63.1551280514170;
+        Wed, 27 Feb 2019 07:15:14 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id e63sm31521709pfa.116.2019.02.27.07.15.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 07:15:13 -0800 (PST)
+Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190224153222.8142-1-digetx@gmail.com>
+Message-ID: <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
+Date:   Wed, 27 Feb 2019 18:15:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: D09BE145A9C3858815200826CB1E71BDDEEAAAAAD9CD596644D19FA7396885AF2000:8
-X-MTK:  N
+In-Reply-To: <20190224153222.8142-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen
-
-On Tue, 2019-02-26 at 09:55 -0800, Stephen Boyd wrote:
-> Quoting matthias.bgg@kernel.org (2019-02-14 08:32:42)
-> > From: Jasper Mattsson <jasu@njomotys.info>
-> > 
-> > Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
-> > for MT6797. This causes memory corruption when the system is
-> > booted without clk_ignore_unused.
-> > This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
-> > and infra_dramc_b_f26m as CLK_IS_CRITICAL.
-> > 
-> > Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-> > Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> > ---
+24.02.2019 18:32, Dmitry Osipenko пишет:
+> Initially Common Clock Framework isn't aware of the clock-enable status,
+> this results in enabling of clocks that were enabled by bootloader. This
+> is not a big deal for a regular clock-gates, but for PLL's it may have
+> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+> clock) may result in extra long period of PLL re-locking.
 > 
-> Applied to clk-next
-> 
-> Would be nice to get someone from mediatek to ack it, but I can't wait
-> forever.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-Acked-by:Mars Cheng <mars.cheng@mediatek.com>
-
-Thanks a lot.
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+Peter (and everyone else), yours r-b and ACK will be appreciated since you kinda already took a look at this patch in the past and were okay with it (IIRC, we had some brief discussion on the #tegra IRC a few months ago), thanks. 
 
