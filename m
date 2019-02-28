@@ -2,88 +2,174 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF619C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E1EC4360F
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 20:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7960218D0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:42:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551379354;
-	bh=oLvNdA/M/UKLXZYqQYq+ZFgHkuM+Rc/ZO2DPIBogeu8=;
-	h=In-Reply-To:To:Subject:References:From:Cc:Date:List-ID:From;
-	b=Vj15NJv9imE8q1g30WOSAisSC7qP8ZiH89yHfMLhdkgfQEJxCvG31CaPoJ21pO9dP
-	 QsoR+GdtzA/Ofg0CA28jV9gSk3tWDIQjvhQDd+g5m+pbbeIICPDXJV/jXu1pJRdAzE
-	 7C5kmSbvjpH3BbFPE5rXPdfebFTbNd+5+Gt8UAdY=
+	by mail.kernel.org (Postfix) with ESMTP id E2E162084F
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 20:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbfB1Sme (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Feb 2019 13:42:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfB1Sme (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Feb 2019 13:42:34 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15E4D20863;
-        Thu, 28 Feb 2019 18:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551379353;
-        bh=oLvNdA/M/UKLXZYqQYq+ZFgHkuM+Rc/ZO2DPIBogeu8=;
-        h=In-Reply-To:To:Subject:References:From:Cc:Date:From;
-        b=NHhvjKfZ0S2SmY3fzFrEisgq9iBjLgtBixr81bonO7/cd74Bl0bXj7JRTKH0BPZOB
-         gpvHNZiaGqy+E/OauSBFdEhVavO5AMwE8Z+JSeLwNjjzEbIn90ZvlqHJZpUw0SxYnw
-         rCLAgD6VYA+TfR4L6Np3MB8QERrXRxY6H8PVtZtg=
-Content-Type: text/plain; charset="utf-8"
+        id S2387573AbfB1UJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Feb 2019 15:09:00 -0500
+Received: from mailoutvs50.siol.net ([185.57.226.241]:40912 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387554AbfB1UI7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 15:08:59 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 550B952228D;
+        Thu, 28 Feb 2019 21:03:43 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 7l6qKG3iBqMX; Thu, 28 Feb 2019 21:03:43 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id ECC9A522467;
+        Thu, 28 Feb 2019 21:03:42 +0100 (CET)
+Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 98A9052228D;
+        Thu, 28 Feb 2019 21:03:40 +0100 (CET)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
+        daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: [PATCH 2/3] drm/sun4i: Add VI scaler line size quirk for DE2/DE3
+Date:   Thu, 28 Feb 2019 21:03:28 +0100
+Message-Id: <20190228200329.11128-3-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190228200329.11128-1-jernej.skrabec@siol.net>
+References: <20190228200329.11128-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1550884678.20534.0@crapouillou.net>
-To:     Paul Cercueil <paul@crapouillou.net>,
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v9 14/27] pwm: jz4740: Improve algorithm of clock calculation
-Message-ID: <155137935225.16805.10412318501940648799@swboyd.mtv.corp.google.com>
-References: <20181227181319.31095-1-paul@crapouillou.net> <20181227181319.31095-15-paul@crapouillou.net> <20190105195725.cuxfge6zkpbt3cyk@pengutronix.de> <1546722339.30174.0@crapouillou.net> <20190105212711.s765knwwerceytvk@pengutronix.de> <1547129096.16183.0@crapouillou.net> <1550884678.20534.0@crapouillou.net>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-User-Agent: alot/0.8
-Date:   Thu, 28 Feb 2019 10:42:32 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2019-02-22 17:17:58)
-> Bump.
->=20
-> What should I do here?
->=20
+While all RGB scalers have maximum line size of 2048, some YUV scalers
+have maximum line size of 2048 and some have line size of 4096.
 
-I thought I replied to the list but maybe it got rejected because my MUA
-is currently failing hard at sending 8-bit mails without
-using quoted printable. Let me remove all non-ascii characters from this
-mail!
+Since there is no rule for that, add a quirk.
 
-If someone has the mail please rebounce it to the list. Otherwise, I
-think I basically said this is OK because clk_round_rate() semantics are
-specifically vague here to allow the implementation to decide how rates
-are rounded (up, down, closest, etc). As long as the whole rate space is
-searched with a +1 or a -1 style of search it should be work. We're not
-going to add round_up() or round_down() APIs as far as I'm concerned,
-and you can look on the list to see previous proposals on that topic to
-get some background on why they aren't liked.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 9 +++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.h | 2 ++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/=
+sun8i_mixer.c
+index 30a2eff55687..a2c4807fc9b7 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -554,6 +554,7 @@ static int sun8i_mixer_remove(struct platform_device =
+*pdev)
+ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg =3D {
+ 	.ccsc		=3D 0,
+ 	.scaler_mask	=3D 0xf,
++	.scanline_yuv	=3D 2048,
+ 	.ui_num		=3D 3,
+ 	.vi_num		=3D 1,
+ };
+@@ -561,6 +562,7 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0=
+_cfg =3D {
+ static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg =3D {
+ 	.ccsc		=3D 1,
+ 	.scaler_mask	=3D 0x3,
++	.scanline_yuv	=3D 2048,
+ 	.ui_num		=3D 1,
+ 	.vi_num		=3D 1,
+ };
+@@ -569,6 +571,7 @@ static const struct sun8i_mixer_cfg sun8i_h3_mixer0_c=
+fg =3D {
+ 	.ccsc		=3D 0,
+ 	.mod_rate	=3D 432000000,
+ 	.scaler_mask	=3D 0xf,
++	.scanline_yuv	=3D 2048,
+ 	.ui_num		=3D 3,
+ 	.vi_num		=3D 1,
+ };
+@@ -577,6 +580,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer0_=
+cfg =3D {
+ 	.ccsc		=3D 0,
+ 	.mod_rate	=3D 297000000,
+ 	.scaler_mask	=3D 0xf,
++	.scanline_yuv	=3D 2048,
+ 	.ui_num		=3D 3,
+ 	.vi_num		=3D 1,
+ };
+@@ -585,6 +589,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer1_=
+cfg =3D {
+ 	.ccsc		=3D 1,
+ 	.mod_rate	=3D 297000000,
+ 	.scaler_mask	=3D 0x3,
++	.scanline_yuv	=3D 2048,
+ 	.ui_num		=3D 1,
+ 	.vi_num		=3D 1,
+ };
+@@ -593,6 +598,7 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_c=
+fg =3D {
+ 	.vi_num =3D 2,
+ 	.ui_num =3D 1,
+ 	.scaler_mask =3D 0x3,
++	.scanline_yuv =3D 2048,
+ 	.ccsc =3D 0,
+ 	.mod_rate =3D 150000000,
+ };
+@@ -601,6 +607,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixer0=
+_cfg =3D {
+ 	.ccsc		=3D 0,
+ 	.mod_rate	=3D 297000000,
+ 	.scaler_mask	=3D 0xf,
++	.scanline_yuv	=3D 4096,
+ 	.ui_num		=3D 3,
+ 	.vi_num		=3D 1,
+ };
+@@ -609,6 +616,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixer1=
+_cfg =3D {
+ 	.ccsc		=3D 1,
+ 	.mod_rate	=3D 297000000,
+ 	.scaler_mask	=3D 0x3,
++	.scanline_yuv	=3D 2048,
+ 	.ui_num		=3D 1,
+ 	.vi_num		=3D 1,
+ };
+@@ -618,6 +626,7 @@ static const struct sun8i_mixer_cfg sun50i_h6_mixer0_=
+cfg =3D {
+ 	.is_de3		=3D true,
+ 	.mod_rate	=3D 600000000,
+ 	.scaler_mask	=3D 0xf,
++	.scanline_yuv	=3D 4096,
+ 	.ui_num		=3D 3,
+ 	.vi_num		=3D 1,
+ };
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/=
+sun8i_mixer.h
+index 913d14ce68b0..80e084caa084 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+@@ -159,6 +159,7 @@ struct de2_fmt_info {
+  * @mod_rate: module clock rate that needs to be set in order to have
+  *	a functional block.
+  * @is_de3: true, if this is next gen display engine 3.0, false otherwis=
+e.
++ * @scaline_yuv: size of a scanline for VI scaler for YUV formats.
+  */
+ struct sun8i_mixer_cfg {
+ 	int		vi_num;
+@@ -167,6 +168,7 @@ struct sun8i_mixer_cfg {
+ 	int		ccsc;
+ 	unsigned long	mod_rate;
+ 	unsigned int	is_de3 : 1;
++	unsigned int	scanline_yuv;
+ };
+=20
+ struct sun8i_mixer {
+--=20
+2.20.1
 
