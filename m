@@ -2,99 +2,78 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AFAC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 00:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCD9C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 02:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111A0218A5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 00:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551312091;
-	bh=q1T5iaEa2b4R1Gj+EQUVl8fwuZfLBtUF45gOHNybkwc=;
-	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=epuTelE88i40RpuxEJb5QBOSe8fDMMMIOoSRGs5nls8+EFyqmk+5GjmdVn+OSVNeg
-	 LtYRO2lrP4SVkts9a4Ysmm0I2Ktbr4Ra3ZZUE4YjRNXSQ62HeQ0WlYjHi9lFH6vg6K
-	 jLlXVCWRcGt+hVvmx1LTXodp5y28UDVgZPI0AlSQ=
+	by mail.kernel.org (Postfix) with ESMTP id B3794214D8
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 02:03:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730481AbfB1ABa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Feb 2019 19:01:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728397AbfB1ABa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Feb 2019 19:01:30 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A64321850;
-        Thu, 28 Feb 2019 00:01:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551312089;
-        bh=q1T5iaEa2b4R1Gj+EQUVl8fwuZfLBtUF45gOHNybkwc=;
-        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=zDfH4MMVgN14ka7lGXfzzT6yY2UOpwoM08CbnIi2qMsfzFPy/UNF1wP2A5b/g9iRr
-         PwUhxPaX9PMXbmoWzrOiLO2YgO8u71Zefm+U8ke7OoXBMqttzWVLRLqMM5NeX+IBF5
-         UTrQgTHzCmkHGL4IJB+ltUYcHyGkireIt0QMTuqg=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "arnd@arndb.de" <arnd@arndb.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        id S1730654AbfB1CDs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Feb 2019 21:03:48 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:43446 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730649AbfB1CDs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Feb 2019 21:03:48 -0500
+X-UUID: 1fe05881b1af47fca3a0cc347b992b6c-20190228
+X-UUID: 1fe05881b1af47fca3a0cc347b992b6c-20190228
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <seiya.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 860474768; Thu, 28 Feb 2019 10:03:38 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 28 Feb 2019 10:03:37 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 28 Feb 2019 10:03:37 +0800
+Message-ID: <1551319417.3477.0.camel@mtksdccf07>
+Subject: Re: [PATCH v2 2/2] clk: mediatek: correct cpu clock name for MT8173
+ SoC
+From:   Seiya Wang <seiya.wang@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rob Herring" <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "viresh.kumar@lina ro.org" <viresh.kumar@linaro.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-References: <1551132245-6089-1-git-send-email-vabhav.sharma@nxp.com>
-Message-ID: <155131208867.260864.6630901066653352400@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Cc:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: Re: [PATCH v1 0/4] arm64: dts: NXP: add basic dts file for LX2160A SoC
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1551132245-6089-1-git-send-email-vabhav.sharma@nxp.com>
-Date:   Wed, 27 Feb 2019 16:01:28 -0800
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Date:   Thu, 28 Feb 2019 10:03:37 +0800
+In-Reply-To: <155120509627.260864.5936412356126577519@swboyd.mtv.corp.google.com>
+References: <20190225065112.3400-1-seiya.wang@mediatek.com>
+         <20190225065112.3400-2-seiya.wang@mediatek.com>
+         <155120509627.260864.5936412356126577519@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vabhav Sharma (2019-02-26 02:10:46)
-> These patches were reviewed and acked but dropped during merge window.
-> Patchwork link was https://lore.kernel.org/patchwork/cover/1004155/
->=20
-> Changes for v1:
-> - Updated lx2160a clockgen in alphabetical order
->=20
-> Vabhav Sharma (2):
->   dt-bindings: arm64: add compatible for LX2160A
->   soc/fsl/guts: Add definition for LX2160A
->=20
-> Yogesh Gaur (2):
->   clk: qoriq: increase array size of cmux_to_group
->   clk: qoriq: Add clockgen support for lx2160a
+On Tue, 2019-02-26 at 10:18 -0800, Stephen Boyd wrote:
+> Quoting Seiya Wang (2019-02-24 22:51:12)
+> > diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings/clock/mt8173-clk.h
+> > index 8aea623dd518..76e4e5b65353 100644
+> > --- a/include/dt-bindings/clock/mt8173-clk.h
+> > +++ b/include/dt-bindings/clock/mt8173-clk.h
+> > @@ -194,7 +194,8 @@
+> >  #define CLK_INFRA_PMICWRAP             11
+> >  #define CLK_INFRA_CLK_13M              12
+> >  #define CLK_INFRA_CA53SEL               13
+> > -#define CLK_INFRA_CA57SEL               14
+> > +#define CLK_INFRA_CA57SEL               14 /* Deprecated. Don't use it. */
+> > +#define CLK_INFRA_CA72SEL               14
+> 
+> Also, please send a followup patch to remove the deprecated define later
+> when the dts file is fixed up.
+> 
 
-Who do you want to apply these patches?
+Sure. Thank you so much~
 
