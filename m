@@ -2,117 +2,78 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7847C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 15:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF216C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8687D218B0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 15:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96C052084D
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551368277;
-	bh=d9Fnt7h8JVsgePf/Xp/5197DVDsk15WNv/erwfjZqyI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=LggPvNbS72oMC8Nvvhz71Te67+w5rJlYAQy5SgPeQTSDPGMGXNWNFis8Y0skuTL0m
-	 FBsaSOp7Ma6CJ09Exsu/Ly1tjUiJuXcw25/PFZpyV9rxWRM29CGfSZwn/9ZqwvaYSE
-	 XbJHdA01kIjKk+oCpy+DkEX9u9nhNSF9jPVdWnTI=
+	s=default; t=1551378164;
+	bh=KXUUamm4lOgpukmBbHaWbLfqk/WDtg++1OifGhScH70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ziPfa1f++f5ueRv59rgBKM9sjaoQtUVpogaKVZBDo+jNFXdSOm/sNXiCgXNX3ol3W
+	 mopmK6/VgmD6cVxk5Ztpmdkk0+Z+QSJBjNy40P0aHwbLJ5AuffpKa7vfxX9Ecl5FGG
+	 76R8WEjiWJ4i420f17Yk/MOPMBY3Jwrav1fyeJlE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732656AbfB1Ph5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Feb 2019 10:37:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732208AbfB1Ph4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Feb 2019 10:37:56 -0500
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75FA5218D9;
-        Thu, 28 Feb 2019 15:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551368275;
-        bh=d9Fnt7h8JVsgePf/Xp/5197DVDsk15WNv/erwfjZqyI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qatioSbEHWqtsTDpJORUjJz0D1kSBOB6Os61XglmPXRR5qhbi9rp2Ig0mzG7Kr6nT
-         dVtrfMNFfnLygjqmUJGKKiY+lJYCxboroT3zqrEBLr/Ep6K/FYbYNB0lDRd0nwH1gE
-         8Dhi4HtdQxRF/xU8uydpdfhXXKz6wF6R0+GfeGwY=
-Received: by mail-qt1-f170.google.com with SMTP id u7so14751027qtg.9;
-        Thu, 28 Feb 2019 07:37:55 -0800 (PST)
-X-Gm-Message-State: APjAAAVuZq9FsqWhE8a1EtDbe9WgmuciCk+P1xFDHKJX2bzrcQ/BLJY6
-        xcQfGwqDIcA1o/OwklhpStPeHu1ZU4Rmg5buAg==
-X-Google-Smtp-Source: APXvYqx9QcG+QKclLDKNC4bwxAoXMtgqvzvQbLRUOLlwSeWtXHH49hDWkAeqxI8e2DKOMhViR3JpoVBytrPjYs1/cpw=
-X-Received: by 2002:a0c:ecc5:: with SMTP id o5mr6962500qvq.106.1551368274651;
- Thu, 28 Feb 2019 07:37:54 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <80de7a2b537ae3f414b0281736652256f38cf94c.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <20190223003041.GA16670@bogus> <20190228064923.GA3773@localhost.localdomain>
-In-Reply-To: <20190228064923.GA3773@localhost.localdomain>
+        id S1733014AbfB1SWo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Feb 2019 13:22:44 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40464 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfB1SWn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 13:22:43 -0500
+Received: by mail-ot1-f67.google.com with SMTP id v20so18555071otk.7;
+        Thu, 28 Feb 2019 10:22:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ciu4RtKy/TQpYDmARzTmV1mLvriWjUCX/biF69oe3CE=;
+        b=aEYb8EYG3hf/kArne+ycMuTP8wGCk/C3wZGUI2MKffpymD3zayoZphGYePCm9RUZp4
+         foHMDSvEZpSnKmXPjNUl4JylPtLm+cSmnL0MMatyWVdCzPmeZMK7gnMmmNms/5z7GflH
+         kRdZ7oQ/6KGu+TjAfGz8sNfns2h9BD4aCuZxO0PeoJ4oqKguT1weqnoBxJ9Ql1Gw/O2r
+         jbRRvZeKoYPgf0WwhDfjIN+sgBIt1POeCF2qT0DugQZ4c0+sJ3CqvwBYSe7pYV60/tKF
+         Pmr0fLMJLTViKNkGrQyjUU/mS0rAjq/IiVJm6nPIRNapxdrdEKbZ6xDISif6nxcE6hLd
+         LJKA==
+X-Gm-Message-State: APjAAAXEa/OSF+TXCFJWGPcrLtu/L4QY5xtape25O4R3tmlYe5VL5EPC
+        +lE3ai9NkzXj7TaTDqiRug==
+X-Google-Smtp-Source: APXvYqzUGBeVL+BGkD0KXI58J5UvcYFla6rX/zpcID6ahsJQ4loXCVyYVvlP/MFSuhb+LQ/MghsnzA==
+X-Received: by 2002:a9d:7547:: with SMTP id b7mr635391otl.244.1551378163006;
+        Thu, 28 Feb 2019 10:22:43 -0800 (PST)
+Received: from localhost (ip-184-203-129-180.hstntx.spcsdns.net. [184.203.129.180])
+        by smtp.gmail.com with ESMTPSA id g80sm7695801otg.38.2019.02.28.10.22.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Feb 2019 10:22:42 -0800 (PST)
+Date:   Thu, 28 Feb 2019 12:22:41 -0600
 From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 28 Feb 2019 09:37:43 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKBUyygGu9FRb+hye+1DyRgdATm_64+XfsvwEa8AvZhJg@mail.gmail.com>
-Message-ID: <CAL_JsqKBUyygGu9FRb+hye+1DyRgdATm_64+XfsvwEa8AvZhJg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 07/13] devicetree: bindings: Document first ROHM
- BD70528 bindings
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Content-Type: text/plain; charset="UTF-8"
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: clock: exynos: Put CLK_UART3 in order
+Message-ID: <20190228182241.GA18048@bogus>
+References: <20190212175052.6310-1-krzk@kernel.org>
+ <20190212175052.6310-2-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212175052.6310-2-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 28, 2019 at 12:49 AM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
->
-> Hello Rob, All
->
-> Sorry for long delay - I was ill for a few days. Back at the business
-> now =)
->
-> Rob, maybe dropping the RFC tag has messed your book keeping? This
-> is the latest version:
-> https://lore.kernel.org/lkml/90c3b820baf072a7cc3a21aa50c661774a045158.1550148989.git.matti.vaittinen@fi.rohmeurope.com/
-> and I thought it already had the Reviewed-by tag from you :)
+On Tue, 12 Feb 2019 18:50:49 +0100, Krzysztof Kozlowski wrote:
+> Order the CLK_UART3 by ID.  No change in functionality.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  include/dt-bindings/clock/exynos5410.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-I thought I ignored RFC tag, but could be that. My script (and memory)
-aren't perfect.
-
-> On Fri, Feb 22, 2019 at 06:30:41PM -0600, Rob Herring wrote:
-> > On Tue, Jan 22, 2019 at 11:45:38AM +0200, Matti Vaittinen wrote:
-> > > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> > > drivers) and 4 GPIO pins which can be configured for I/O or
-> > > as interrupt sources withe configurable trigger levels.
-> >
-> > 'dt-bindings: mfd: ...' for the subject.
->
-> I see at least the patch subject comment is still valid though. Do you
-> want me to change it and resubmit the series?
-
-No, if that's the only thing, it's not important.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
