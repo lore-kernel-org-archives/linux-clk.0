@@ -2,111 +2,100 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360EFC10F06
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 11:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25C4C10F00
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 13:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BED214D8
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 11:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551354063;
-	bh=zorMPTfb1TPeO4nwA4T4qEy8dDYyeF8JQMspHx5/z3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iX8ptRUBg1fLdZCJo4t1zNoyM1d0KGW683nTRxfd+0Y1T4mzWC+Vyuae3M8OwOqeh
-	 zIKcPsH5tda4gqTNHQ39ITsUVUa0uc6SA4wv52X0HZP6OO+lDaxzWSak2eG1cjRHsO
-	 qbh1661zqaZkFQ0DfkZ/BChdZ53KE96WkthPn4Yo=
+	by mail.kernel.org (Postfix) with ESMTP id 965CD214D8
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 13:52:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="QNqPX2CN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731510AbfB1Lk5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Feb 2019 06:40:57 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49356 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731013AbfB1Lk4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 06:40:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LLiNH4oIr4+JwdwcpJ+DDQQsoNcU24lAEfaNV3Etzf0=; b=um/mSy8gXDP3Bi4q2X0zs4/KY
-        ovato2EYhXlJMgy405qMYClvzMZQTbCYqXAEuDVJMe+82ZwPbq8e0YvsQFKn4K7yDGLBtGYSYgh1c
-        monHmeuu0SplBQmXvsXqnWw9fME5DAZ8LRFcsLSX5TlsludkIncTDtx+bH16GH22hAlH8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gzK3E-0005kG-Dr; Thu, 28 Feb 2019 11:40:32 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 74BA21126E9D; Thu, 28 Feb 2019 11:40:26 +0000 (GMT)
-Date:   Thu, 28 Feb 2019 11:40:26 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
-Subject: Re: [PATCH v10 0/9] support ROHM BD70528 PMIC
-Message-ID: <20190228114026.GA6802@sirena.org.uk>
-References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
- <20190228070450.GB3773@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Content-Disposition: inline
-In-Reply-To: <20190228070450.GB3773@localhost.localdomain>
-X-Cookie: You must be present to win.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730385AbfB1Nwy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Feb 2019 08:52:54 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:43906 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfB1Nwy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 08:52:54 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6EDF725BEC6;
+        Fri,  1 Mar 2019 00:52:52 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551361972; bh=zI0kZG463S82ZzAj8vnPDU2soEyWqPZr+AKTYEQfdho=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QNqPX2CNoJBtboPYQyb6b/jdFjy4ml00T4bH9sRRJwoD8caXAzG5dguxREvzSFpzX
+         5EBrpbriK8ZP65E9znEDWfbIRElMSBR4J7cilJrTQYKy/8bJjDi8J9ANNCTnTtMWod
+         P4lzGNKOcfoR6mD9vLcw0g/YuJ7dway5BFu0qFn0=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 50C959403EF; Thu, 28 Feb 2019 14:52:50 +0100 (CET)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/4] clk: renesas: r8a77990: Add ZG clock
+Date:   Thu, 28 Feb 2019 14:52:44 +0100
+Message-Id: <20190228135246.31714-3-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190228135246.31714-1-horms+renesas@verge.net.au>
+References: <20190228135246.31714-1-horms+renesas@verge.net.au>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Adds support for R-Car E3 (r8a77990) ZG clock.
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+Tested on Ebisu to the extent that the clock rate is 600MHz on boot
+---
+ drivers/clk/renesas/r8a77990-cpg-mssr.c | 2 ++
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 1 -
+ drivers/clk/renesas/rcar-gen3-cpg.h     | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-On Thu, Feb 28, 2019 at 09:04:50AM +0200, Matti Vaittinen wrote:
-> On Thu, Feb 14, 2019 at 03:02:37PM +0200, Matti Vaittinen wrote:
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+index 0e475dcb68b9..d0d29fc942ff 100644
+--- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -83,6 +83,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+ 	DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
+ 	DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z, CLK_PLL0,
+ 		   4, CPG_FRQCRC, 8),
++	DEF_GEN3_Z("zg",       R8A77990_CLK_ZG,    CLK_TYPE_GEN3_Z, CLK_PLL0,
++		   8, CPG_FRQCRB, 24),
+ 	DEF_FIXED("ztr",       R8A77990_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A77990_CLK_ZT,    CLK_PLL1,       4, 1),
+ 	DEF_FIXED("zx",        R8A77990_CLK_ZX,    CLK_PLL1,       3, 1),
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 14a82c51682e..0d0e698442e2 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -70,7 +70,6 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
+  * rate - rate is adjustable.  clk->rate = (parent->rate * mult / 32 ) / 2
+  * parent - fixed parent.  No clk_set_parent support
+  */
+-#define CPG_FRQCRB			0x00000004
+ #define CPG_FRQCRB_KICK			BIT(31)
+ 
+ struct cpg_z_clk {
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 02bf3785263c..9525df8a835c 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -68,6 +68,7 @@ struct rcar_gen3_cpg_pll_config {
+ 	u8 osc_prediv;
+ };
+ 
++#define CPG_FRQCRB	0x004
+ #define CPG_FRQCRC	0x0e0
+ #define CPG_RCKCR	0x240
+ 
+-- 
+2.11.0
 
->> Patch series introducing support for ROHM BD70528 PMIC
->=20
-> I was wondering if there is anything that could be done to allow the MFD
-> part of this series to end up in upstream without having to wait the
-> regmap-irq changes
-> (https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/commi=
-t/?h=3Dtopic/irq)
->  to be merged from Linus' tree to MFD tree? If I see it correctly, the
-> regmap-irq (main-irq-reg support) changes are not targeted to linux 5.1.
-> To me it looks like getting them to MFD via Linus' tree will take a while.
-
-They're targeted for v5.1 and I sent a pull request to Lee for that
-branch IIRC.
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlx3yKcACgkQJNaLcl1U
-h9D7LQgAgBAtFp4ti3bwtZh4iVfn9N4nYX2Sy8YynfGs/Nfwxm+m+KAl+IiOOo6C
-S1kWALtElOcido6myPacabi0EAyre1Q+Ne7tqUITOb4HQL0dGDpi/a1llthziX7d
-ZG6Slh0JGjOlPVZ8dMyxqXzySEjtwbKUMY4FqMd9LpkQ64FCmo5WdI9R6dnu0BZn
-DJjdUbHmqAbgNoxJ9M/U6mqDTXEviO2eqPhUCAnISc6GvabHA7UdRUxIzi770HjM
-Zi+AFlBE8mWAGvzn3C5u0h+4dnZxCMxMpSpyGokXkL25v5MzHB7lXOpi7a37Zpvo
-VBkTW0n5LezH7ejhsiqf90PtqfUptQ==
-=/nOu
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
