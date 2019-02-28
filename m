@@ -4,79 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E134C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4D8C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8D162084D
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 444FD218AE
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:27:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551378200;
-	bh=VLU9DprE/AM+9vvusMSHIdJVB5RFGYqnShT96kCG/rA=;
+	s=default; t=1551378456;
+	bh=TtxvfFBtf5+mYVXEEAGD1O+zdCvnZ0GId4GIiYTiFYU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=oDHkx6HjnjEjyV0LDvS0ojOhl0gZJJQE6BHRDuaoSkiKMe3FCGgygRXDOb0Z0bwZd
-	 JZVDej7DP9lgYMJLJ4SB70/vlUxym1GPUR7xI8kYNlYgqOewMr5CO9fh70X/j+gGcb
-	 v7cbkPU72a2cF9wo54Hb+E4yeVt2kTLcp/FP0NEw=
+	b=atxvo3fTc1MO8bMpBElXaA2Wms5aZqtafD5r7ttzhMBzVedBt9dFw6KFo+XrWKRmT
+	 f2/k2pQcMt2Oan3BPi89ZXfmXEJjIpPVquIrlgTw14l+k072349BmzYwbw+cc3jVOW
+	 IUfx2XRyM0RRG2G/wPVvyhcAfQuscGzoydQOc7fo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732272AbfB1SXO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Feb 2019 13:23:14 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43818 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbfB1SXO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 13:23:14 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i8so17275352oib.10;
-        Thu, 28 Feb 2019 10:23:14 -0800 (PST)
+        id S1733082AbfB1S1f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Feb 2019 13:27:35 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46550 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731063AbfB1S1f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 13:27:35 -0500
+Received: by mail-ot1-f66.google.com with SMTP id c18so18519121otl.13;
+        Thu, 28 Feb 2019 10:27:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bFFvBVoBhmge3SUaDzTJ53Yvmjzga/qiBIN7du0ol3E=;
-        b=ftO8OvdnYVn90j+B0SAVa8XN4AjA74Yzb8l43XRdHlxgZgPnT72guz2kAqzu3loPYI
-         0cNkcLQrRto5OIo9uJiWlgyCr3H1CwJBpZNQG7J5eJm37n2rutWwrrr+X44uT71qFOo7
-         v6U9gVwQsLs04MZ0ER3wcee7bUVIaLF8aNfGXARIcijZFzM3f4Qz89S5wjDROok/toEb
-         y3vPrjsKWW3sNx9onOLyMmr4LzUCvoKJBs/zYCbGOcJs6htHNs/kWJ9tKkX8HvBMMN8e
-         8j5kKuIZZ6YvWjbELKMuVoGhKlzHu6/Qfc66GSypWc8cpsMEloTvooKZZQBTIdDpyll6
-         M0wQ==
-X-Gm-Message-State: AHQUAuZHYkdu+mN2HErZCm565tiunyNkVRuVh86MAvVM7cmYwpjGrGyE
-        3/rqBsf81Gsn7tcCO5SuUw==
-X-Google-Smtp-Source: AHgI3IZZwqiSDSHdiLTQNK+lTbSlVFdwpLSc+EkLTLQ/vi4TxOYnxH29YumU2rsa6/ESEyKH2fjZ7A==
-X-Received: by 2002:aca:f2c4:: with SMTP id q187mr698559oih.168.1551378193592;
-        Thu, 28 Feb 2019 10:23:13 -0800 (PST)
+        bh=xNovduMDo+bsSSdGYFMtjocQrj85X9mGKNQDCwYuzkg=;
+        b=VFlS28DadXj3N/rwsRpBfQxAATYWci7cAjbjGS77kB8fLGhUYgm7ZWW2hQCcJ3gQ49
+         7/cAbfYjU50ndyLoNdBdaeAbopLlnUooHLv3LpSGdfyptxylcsCwSasQOVseaSkqDRMc
+         9eMQs6opdBj8PigpQAm8tjw0Paak9zD/7kMoYP71v4HsU6BNhcvEa/ook808x8enasM0
+         cecx0u7VZM0aH1QmBOCapUv/F8qc5H7kXtCCDjSfirlqhoVIfTjxaUFIFMGSTJQpkZgJ
+         NiU1MPmfGyNy+o9+G1c2aLlo6aJuqYGmNzTao0D8gARdU77THCrk5hxPzscGwr+4IkTJ
+         rP6Q==
+X-Gm-Message-State: APjAAAWilfh2MDPMoQ22DX07ap+WYVTDc3ooGIUURbIG/aQUor7wnAvx
+        X8YOd1dH5/0WogbZHEMkvu7Wq+0=
+X-Google-Smtp-Source: APXvYqyNztIquLFpPlpRDDOooGeKjMhiVzNnt8fny7bkcGDxJPnYOcFHdFPJEM4teymiA5fIbja7Hw==
+X-Received: by 2002:a9d:32e5:: with SMTP id u92mr681650otb.208.1551378454720;
+        Thu, 28 Feb 2019 10:27:34 -0800 (PST)
 Received: from localhost (ip-184-203-129-180.hstntx.spcsdns.net. [184.203.129.180])
-        by smtp.gmail.com with ESMTPSA id y37sm8754967ota.17.2019.02.28.10.23.12
+        by smtp.gmail.com with ESMTPSA id q8sm635449oih.6.2019.02.28.10.27.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Feb 2019 10:23:12 -0800 (PST)
-Date:   Thu, 28 Feb 2019 12:23:11 -0600
+        Thu, 28 Feb 2019 10:27:34 -0800 (PST)
+Date:   Thu, 28 Feb 2019 12:27:31 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: clock: exynos: Add ADC clock ID to
- Exynos5410
-Message-ID: <20190228182311.GA18866@bogus>
-References: <20190212175052.6310-1-krzk@kernel.org>
- <20190212175052.6310-3-krzk@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Maxime Jourdan <mjourdan@baylibre.com>
+Subject: Re: [PATCH] dt-bindings: clock: axg-audio: unexpose controller inputs
+Message-ID: <20190228182731.GA25353@bogus>
+References: <20190213095835.17448-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190212175052.6310-3-krzk@kernel.org>
+In-Reply-To: <20190213095835.17448-1-jbrunet@baylibre.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 12 Feb 2019 18:50:50 +0100, Krzysztof Kozlowski wrote:
-> Add ID for TSADC clock to Exynos5410.  Choose the same value of ID as in
-> Exynos5420 to make it simpler/compatible in future (although clock
-> driver code is not shared).
+On Wed, 13 Feb 2019 10:58:35 +0100, Jerome Brunet wrote:
+> Remove the bindings ID of the clock input of the controller. These
+> clocks are purely internal to the controller, exposing them was a
+> mistake. Actually, these should not even be in the provider and have
+> IDs to begin with.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Unexpose these IDs before:
+>  * someone starts using them (even if there no valid reason to do so)
+>  * the actual clocks are removed. The fact that they exist is just the
+>    result of an ugly hack. This will be resolved in CCF when we can
+>    reference DT directly in parent table.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  include/dt-bindings/clock/exynos5410.h | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/meson/axg-audio.h              | 20 ++++++++++++++++++++
+>  include/dt-bindings/clock/axg-audio-clkc.h | 20 --------------------
+>  2 files changed, 20 insertions(+), 20 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
