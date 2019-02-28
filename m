@@ -2,79 +2,88 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C28CC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF619C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E95218D0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7960218D0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 18:42:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551378516;
-	bh=EDlpU+X+9JIQiHcd6wbYcvmKfkUiQnRd+oNU2kUUGY8=;
-	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=b/LQTSYsr5SWSweKaIZr50eAr5bKdynzgMq3rXGnDGjNz+dYYoky+52qapgFJmejb
-	 ZhnPhxpT+WnzTikhCFpBcAgWhDiq2TdM4RKY0jSsKAnbyOeHCvpPZv9KyRxXUbpyg4
-	 RIvLCTUez+b7CsTtloQCRZNQiHOANXMNyrcVqOAs=
+	s=default; t=1551379354;
+	bh=oLvNdA/M/UKLXZYqQYq+ZFgHkuM+Rc/ZO2DPIBogeu8=;
+	h=In-Reply-To:To:Subject:References:From:Cc:Date:List-ID:From;
+	b=Vj15NJv9imE8q1g30WOSAisSC7qP8ZiH89yHfMLhdkgfQEJxCvG31CaPoJ21pO9dP
+	 QsoR+GdtzA/Ofg0CA28jV9gSk3tWDIQjvhQDd+g5m+pbbeIICPDXJV/jXu1pJRdAzE
+	 7C5kmSbvjpH3BbFPE5rXPdfebFTbNd+5+Gt8UAdY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfB1S2f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Feb 2019 13:28:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36940 "EHLO mail.kernel.org"
+        id S1727445AbfB1Sme (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Feb 2019 13:42:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726810AbfB1S2f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Feb 2019 13:28:35 -0500
+        id S1726232AbfB1Sme (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 Feb 2019 13:42:34 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DCEF218AE;
-        Thu, 28 Feb 2019 18:28:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15E4D20863;
+        Thu, 28 Feb 2019 18:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551378514;
-        bh=EDlpU+X+9JIQiHcd6wbYcvmKfkUiQnRd+oNU2kUUGY8=;
-        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=QLh6bVItzkZatE3zhsIdzVZ3TED7T1IcpQZclFHdMo8rnLJ5EOADbx2NARxA10W0A
-         OLFeF7Gzi90fVPweI2QV2F5+0N5B8sr1nP+/fZ78V72fnUxnAyRV1YMjj8OXxWooM/
-         Tk8SVwxySVlR2s187v6XSi+H0xzgHqlkCVTwVpYI=
+        s=default; t=1551379353;
+        bh=oLvNdA/M/UKLXZYqQYq+ZFgHkuM+Rc/ZO2DPIBogeu8=;
+        h=In-Reply-To:To:Subject:References:From:Cc:Date:From;
+        b=NHhvjKfZ0S2SmY3fzFrEisgq9iBjLgtBixr81bonO7/cd74Bl0bXj7JRTKH0BPZOB
+         gpvHNZiaGqy+E/OauSBFdEhVavO5AMwE8Z+JSeLwNjjzEbIn90ZvlqHJZpUw0SxYnw
+         rCLAgD6VYA+TfR4L6Np3MB8QERrXRxY6H8PVtZtg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-References: <1551230622-30660-1-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <155137851395.260864.14415827055284077946@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH RESEND V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
+In-Reply-To: <1550884678.20534.0@crapouillou.net>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v9 14/27] pwm: jz4740: Improve algorithm of clock calculation
+Message-ID: <155137935225.16805.10412318501940648799@swboyd.mtv.corp.google.com>
+References: <20181227181319.31095-1-paul@crapouillou.net> <20181227181319.31095-15-paul@crapouillou.net> <20190105195725.cuxfge6zkpbt3cyk@pengutronix.de> <1546722339.30174.0@crapouillou.net> <20190105212711.s765knwwerceytvk@pengutronix.de> <1547129096.16183.0@crapouillou.net> <1550884678.20534.0@crapouillou.net>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1551230622-30660-1-git-send-email-Anson.Huang@nxp.com>
-Date:   Thu, 28 Feb 2019 10:28:33 -0800
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>
+User-Agent: alot/0.8
+Date:   Thu, 28 Feb 2019 10:42:32 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2019-02-26 17:28:26)
-> i.MX8MQ has clock gate for each GPIO bank, add them
-> into clock tree for GPIO driver to manage.
+Quoting Paul Cercueil (2019-02-22 17:17:58)
+> Bump.
 >=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+> What should I do here?
+>=20
 
-Applied to clk-next
+I thought I replied to the list but maybe it got rejected because my MUA
+is currently failing hard at sending 8-bit mails without
+using quoted printable. Let me remove all non-ascii characters from this
+mail!
+
+If someone has the mail please rebounce it to the list. Otherwise, I
+think I basically said this is OK because clk_round_rate() semantics are
+specifically vague here to allow the implementation to decide how rates
+are rounded (up, down, closest, etc). As long as the whole rate space is
+searched with a +1 or a -1 style of search it should be work. We're not
+going to add round_up() or round_down() APIs as far as I'm concerned,
+and you can look on the list to see previous proposals on that topic to
+get some background on why they aren't liked.
 
