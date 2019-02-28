@@ -2,49 +2,46 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC03C10F09
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 20:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C68C10F06
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 20:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273012084F
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 20:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 352BB2084F
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 20:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387577AbfB1UJB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Feb 2019 15:09:01 -0500
-Received: from mailoutvs51.siol.net ([185.57.226.242]:40928 "EHLO
+        id S2387554AbfB1UJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Feb 2019 15:09:00 -0500
+Received: from mailoutvs35.siol.net ([185.57.226.226]:40920 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726087AbfB1UJB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 15:09:01 -0500
-X-Greylist: delayed 319 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Feb 2019 15:08:59 EST
+        with ESMTP id S2387552AbfB1UJA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 15:09:00 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id CD12B522467;
-        Thu, 28 Feb 2019 21:03:45 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id 6993E5213F9;
+        Thu, 28 Feb 2019 21:03:38 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id zvu3CY22wvHV; Thu, 28 Feb 2019 21:03:45 +0100 (CET)
+        with ESMTP id 7wfP5sypCxRY; Thu, 28 Feb 2019 21:03:38 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 53362521852;
-        Thu, 28 Feb 2019 21:03:45 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id 0A6D852222D;
+        Thu, 28 Feb 2019 21:03:38 +0100 (CET)
 Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 00B6552246B;
-        Thu, 28 Feb 2019 21:03:42 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id BDE5B5213F9;
+        Thu, 28 Feb 2019 21:03:36 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
         daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: [PATCH 3/3] drm/sun4i: Improve VI scaling for DE2/DE3
-Date:   Thu, 28 Feb 2019 21:03:29 +0100
-Message-Id: <20190228200329.11128-4-jernej.skrabec@siol.net>
+Subject: [PATCH 0/3] drm/sun4i: DE2/DE3 improvements
+Date:   Thu, 28 Feb 2019 21:03:26 +0100
+Message-Id: <20190228200329.11128-1-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190228200329.11128-1-jernej.skrabec@siol.net>
-References: <20190228200329.11128-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
@@ -52,139 +49,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-VI planes support coarse scaling which helps to overcome VI scaler
-limitations. While exact working of coarse scaling isn't known, it seems
-that it just skips programmed amount of rows and columns. This is
-especially useful for downscaling very big planes (4K down to 1080p).
+DE2 and DE3 VI channels support coarse scaling to overcome VI scaler
+limitations. That is especially useful for downscaling big planes, for
+example 4K to 1080p.
 
-Horizontal coarse scaling is currently used to fit one line to VI scaler
-buffer.
+Following patches were tested on H3 and A64 with 4K video playback on
+1080p monitor. Without them, picture was mangled.
 
-Vertical coarse scaling is used to assure that VI scaler is actually
-capable of processing framebuffer in one frame time.
+Please take a look.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
+Best regards,
+Jernej
+
+Jernej Skrabec (3):
+  clk: sunxi-ng: Allow DE clock to set parent rate
+  drm/sun4i: Add VI scaler line size quirk for DE2/DE3
+  drm/sun4i: Improve VI scaling for DE2/DE3
+
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c  |  3 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c   |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c   |  3 +-
+ drivers/gpu/drm/sun4i/sun8i_mixer.c    |  9 +++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.h    |  2 +
  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 54 ++++++++++++++++++++++++--
  drivers/gpu/drm/sun4i/sun8i_vi_layer.h | 11 ++++++
- 2 files changed, 62 insertions(+), 3 deletions(-)
+ 7 files changed, 78 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun=
-4i/sun8i_vi_layer.c
-index 8a0616238467..bb8e026d6405 100644
---- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-@@ -80,6 +80,8 @@ static int sun8i_vi_layer_update_coord(struct sun8i_mix=
-er *mixer, int channel,
- 	u32 bld_base, ch_base;
- 	u32 outsize, insize;
- 	u32 hphase, vphase;
-+	u32 hn =3D 0, hm =3D 0;
-+	u32 vn =3D 0, vm =3D 0;
- 	bool subsampled;
-=20
- 	DRM_DEBUG_DRIVER("Updating VI channel %d overlay %d\n",
-@@ -137,12 +139,41 @@ static int sun8i_vi_layer_update_coord(struct sun8i=
-_mixer *mixer, int channel,
- 	subsampled =3D format->hsub > 1 || format->vsub > 1;
-=20
- 	if (insize !=3D outsize || subsampled || hphase || vphase) {
--		u32 hscale, vscale;
-+		unsigned int scanline, required;
-+		struct drm_display_mode *mode;
-+		u32 hscale, vscale, fps;
-+		u64 ability;
-=20
- 		DRM_DEBUG_DRIVER("HW scaling is enabled\n");
-=20
--		hscale =3D state->src_w / state->crtc_w;
--		vscale =3D state->src_h / state->crtc_h;
-+		mode =3D &plane->state->crtc->state->mode;
-+		fps =3D (mode->clock * 1000) / (mode->vtotal * mode->htotal);
-+		ability =3D clk_get_rate(mixer->mod_clk);
-+		/* BSP algorithm assumes 80% efficiency of VI scaler unit */
-+		ability *=3D 80;
-+		do_div(ability, mode->vdisplay * fps * max(src_w, dst_w));
-+
-+		required =3D src_h * 100 / dst_h;
-+
-+		if (ability < required) {
-+			DRM_DEBUG_DRIVER("Using vertical coarse scaling\n");
-+			vm =3D src_h;
-+			vn =3D (u32)ability * dst_h / 100;
-+			src_h =3D vn;
-+		}
-+
-+		/* it seems that every RGB scaler has buffer for 2048 pixels */
-+		scanline =3D subsampled ? mixer->cfg->scanline_yuv : 2048;
-+
-+		if (src_w > scanline) {
-+			DRM_DEBUG_DRIVER("Using horizontal coarse scaling\n");
-+			hm =3D src_w;
-+			hn =3D scanline;
-+			src_w =3D hn;
-+		}
-+
-+		hscale =3D (src_w << 16) / dst_w;
-+		vscale =3D (src_h << 16) / dst_h;
-=20
- 		sun8i_vi_scaler_setup(mixer, channel, src_w, src_h, dst_w,
- 				      dst_h, hscale, vscale, hphase, vphase,
-@@ -153,6 +184,23 @@ static int sun8i_vi_layer_update_coord(struct sun8i_=
-mixer *mixer, int channel,
- 		sun8i_vi_scaler_enable(mixer, channel, false);
- 	}
-=20
-+	regmap_write(mixer->engine.regs,
-+		     SUN8I_MIXER_CHAN_VI_HDS_Y(ch_base),
-+		     SUN8I_MIXER_CHAN_VI_DS_N(hn) |
-+		     SUN8I_MIXER_CHAN_VI_DS_M(hm));
-+	regmap_write(mixer->engine.regs,
-+		     SUN8I_MIXER_CHAN_VI_HDS_UV(ch_base),
-+		     SUN8I_MIXER_CHAN_VI_DS_N(hn) |
-+		     SUN8I_MIXER_CHAN_VI_DS_M(hm));
-+	regmap_write(mixer->engine.regs,
-+		     SUN8I_MIXER_CHAN_VI_VDS_Y(ch_base),
-+		     SUN8I_MIXER_CHAN_VI_DS_N(vn) |
-+		     SUN8I_MIXER_CHAN_VI_DS_M(vm));
-+	regmap_write(mixer->engine.regs,
-+		     SUN8I_MIXER_CHAN_VI_VDS_UV(ch_base),
-+		     SUN8I_MIXER_CHAN_VI_DS_N(vn) |
-+		     SUN8I_MIXER_CHAN_VI_DS_M(vm));
-+
- 	/* Set base coordinates */
- 	DRM_DEBUG_DRIVER("Layer destination coordinates X: %d Y: %d\n",
- 			 state->dst.x1, state->dst.y1);
-diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h b/drivers/gpu/drm/sun=
-4i/sun8i_vi_layer.h
-index 8a5e6d01c85d..a223a4839f45 100644
---- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-@@ -24,6 +24,14 @@
- 		((base) + 0x30 * (layer) + 0x18 + 4 * (plane))
- #define SUN8I_MIXER_CHAN_VI_OVL_SIZE(base) \
- 		((base) + 0xe8)
-+#define SUN8I_MIXER_CHAN_VI_HDS_Y(base) \
-+		((base) + 0xf0)
-+#define SUN8I_MIXER_CHAN_VI_HDS_UV(base) \
-+		((base) + 0xf4)
-+#define SUN8I_MIXER_CHAN_VI_VDS_Y(base) \
-+		((base) + 0xf8)
-+#define SUN8I_MIXER_CHAN_VI_VDS_UV(base) \
-+		((base) + 0xfc)
-=20
- #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_EN		BIT(0)
- /* RGB mode should be set for RGB formats and cleared for YCbCr */
-@@ -33,6 +41,9 @@
- #define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK	GENMASK(31, 24)
- #define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA(x)	((x) << 24)
-=20
-+#define SUN8I_MIXER_CHAN_VI_DS_N(x)			((x) << 16)
-+#define SUN8I_MIXER_CHAN_VI_DS_M(x)			((x) << 0)
-+
- struct sun8i_mixer;
-=20
- struct sun8i_vi_layer {
 --=20
 2.20.1
 
