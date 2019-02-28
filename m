@@ -2,166 +2,129 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDADC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 06:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D24A9C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 06:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0945218AE
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 06:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551336243;
-	bh=wndOF3hxQ8k75sl5B2xgQsDmYmj22Q/zCD7HsxymWTc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xFSaLzo58JJbspbKtFZN6O3PsRzDuBoj4QRW0T0o2caot0Ch78mTj9vQjTn7deFEx
-	 YhS3AREoesetVtT6TfR+mkDvz4rbYS7IsJvVgUyCd8nLE5zJ3uYJiwe9ShlFJsTqoG
-	 gka29TwxknF9uW2oS5wCXB/yQ+GbBVp7lYGf5E58=
+	by mail.kernel.org (Postfix) with ESMTP id A9063214D8
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 06:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbfB1Gnr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Feb 2019 01:43:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727819AbfB1Gnr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Feb 2019 01:43:47 -0500
-Received: from dragon (unknown [139.162.86.229])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C9A92184A;
-        Thu, 28 Feb 2019 06:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551336225;
-        bh=wndOF3hxQ8k75sl5B2xgQsDmYmj22Q/zCD7HsxymWTc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T6+4/DmaXwRp143MJx/2ukgI+6a63LVSeNJxHWLPwUkeleIlgiFiyYLl6FmEMO8Xt
-         uGscn9OeiNLeAipjNllRTDXhwbDXld6+vSeBd9OM1JisiL3L9/g6oLXmg33SI2NHHt
-         aMgFfkHFx6zPEFQnfkx/q490cyyG4xPhCYF4zxHQ=
-Date:   Thu, 28 Feb 2019 14:42:49 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V7 1/2] arm64: dts: freescale: imx8qxp: add cpu opp table
-Message-ID: <20190228064247.GI26041@dragon>
-References: <1551157967-30925-1-git-send-email-Anson.Huang@nxp.com>
- <20190228031832.GH26041@dragon>
- <AM6PR0402MB3911278158F4980C83331B40F5750@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+        id S1731072AbfB1Gte (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Feb 2019 01:49:34 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39506 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725967AbfB1Gte (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Feb 2019 01:49:34 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g80so16109142ljg.6;
+        Wed, 27 Feb 2019 22:49:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9SEvbt26GPXckLEI57p2CYdvBjjgs/4kevRD1pygy3M=;
+        b=F06n/TMKR6ygoXhHpo6QWrF0ELxwJWDNgeM8D1da7zj5ZUF92D5TmKyEwiSpz5iXAX
+         vufE4mLg0wrgrAGndMNmTNd5hwBrf4tAGsrbSVNpd18bFgTsnUEr7db3wg4FfY6U3iMe
+         iQ6cbOjJ3oJldus7wMKU6lA+499PaWyNrGmghbTi6/kAjAQBAum/pTBnR42dnptHf8gx
+         Jx4uaJSGzmyK627gmuwXeT85+dynnUoRcjKIP4rHW5e6oquoVMRMCzS1CADjoTu3HFEo
+         yi1GmQvaPliXphZTH1KnOYNaP2ZxZQgPhM175uYDFsh+resveo4dDWZUQlQANHm8De4n
+         w6lA==
+X-Gm-Message-State: AHQUAubUymWPHw8KXzas0BCYAkZXJY/F4G6xiMQ6HmFD3OcYUfGHlCfN
+        oqTz6Mct9flXmGzV6IB45YU=
+X-Google-Smtp-Source: AHgI3IYI5kI99ZoJJV//cQtkAxyfn1eQWvpIE3u5Qc2vsW3KfuRlmHrVN5p16mwg0GXyW97ilVsnzw==
+X-Received: by 2002:a2e:934a:: with SMTP id m10mr3658426ljh.164.1551336571836;
+        Wed, 27 Feb 2019 22:49:31 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g24sm3231411ljj.87.2019.02.27.22.49.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Feb 2019 22:49:30 -0800 (PST)
+Date:   Thu, 28 Feb 2019 08:49:23 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 07/13] devicetree: bindings: Document first ROHM
+ BD70528 bindings
+Message-ID: <20190228064923.GA3773@localhost.localdomain>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <80de7a2b537ae3f414b0281736652256f38cf94c.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190223003041.GA16670@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM6PR0402MB3911278158F4980C83331B40F5750@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190223003041.GA16670@bogus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 28, 2019 at 06:18:30AM +0000, Anson Huang wrote:
-> Hi, Shawn
-> 
-> Best Regards!
-> Anson Huang
-> 
-> > -----Original Message-----
-> > From: Shawn Guo [mailto:shawnguo@kernel.org]
-> > Sent: 2019年2月28日 11:19
-> > To: Anson Huang <anson.huang@nxp.com>
-> > Cc: robh+dt@kernel.org; mark.rutland@arm.com; s.hauer@pengutronix.de;
-> > kernel@pengutronix.de; festevam@gmail.com; mturquette@baylibre.com;
-> > sboyd@kernel.org; Aisheng Dong <aisheng.dong@nxp.com>; Daniel Baluta
-> > <daniel.baluta@nxp.com>; devicetree@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> > clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> > Subject: Re: [PATCH V7 1/2] arm64: dts: freescale: imx8qxp: add cpu opp
-> > table
-> > 
-> > On Tue, Feb 26, 2019 at 05:17:31AM +0000, Anson Huang wrote:
-> > > Add i.MX8QXP CPU opp table to support cpufreq.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > 
-> > Prefix 'arm64: dts: imx8qxp: ' would already be clear enough.  I dropped
-> > 'freescale' from there and applied patch.
-> > 
-> > > ---
-> > > No changes since V6.
-> > > ---
-> > >  arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 30
-> > > ++++++++++++++++++++++++++++++
-> > >  1 file changed, 30 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> > > b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> > > index 4c3dd95..41bf0ce 100644
-> > > --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> > > +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> > > @@ -34,6 +34,9 @@
-> > >  			reg = <0x0 0x0>;
-> > >  			enable-method = "psci";
-> > >  			next-level-cache = <&A35_L2>;
-> > > +			clocks = <&clk IMX_A35_CLK>;
-> > > +			operating-points-v2 = <&a35_0_opp_table>;
-> > > +			#cooling-cells = <2>;
-> > >  		};
-> > >
-> > >  		A35_1: cpu@1 {
-> > > @@ -42,6 +45,9 @@
-> > >  			reg = <0x0 0x1>;
-> > >  			enable-method = "psci";
-> > >  			next-level-cache = <&A35_L2>;
-> > > +			clocks = <&clk IMX_A35_CLK>;
-> > > +			operating-points-v2 = <&a35_0_opp_table>;
-> > > +			#cooling-cells = <2>;
-> > >  		};
-> > >
-> > >  		A35_2: cpu@2 {
-> > > @@ -50,6 +56,9 @@
-> > >  			reg = <0x0 0x2>;
-> > >  			enable-method = "psci";
-> > >  			next-level-cache = <&A35_L2>;
-> > > +			clocks = <&clk IMX_A35_CLK>;
-> > > +			operating-points-v2 = <&a35_0_opp_table>;
-> > > +			#cooling-cells = <2>;
-> > >  		};
-> > >
-> > >  		A35_3: cpu@3 {
-> > > @@ -58,6 +67,9 @@
-> > >  			reg = <0x0 0x3>;
-> > >  			enable-method = "psci";
-> > >  			next-level-cache = <&A35_L2>;
-> > > +			clocks = <&clk IMX_A35_CLK>;
-> > > +			operating-points-v2 = <&a35_0_opp_table>;
-> > > +			#cooling-cells = <2>;
-> > >  		};
-> > >
-> > >  		A35_L2: l2-cache0 {
-> > > @@ -65,6 +77,24 @@
-> > >  		};
-> > >  	};
-> > >
-> > > +	a35_0_opp_table: opp-table {
-> > 
-> > What does the '0' in the label mean?
-> 
-> Looks like the '0' in the label is NOT necessary, we can just use 'a35_opp_table',
-> do you want me resend the patch to remove '0'?
+Hello Rob, All
 
-No.  I just fixed it up and applied the patch.
+Sorry for long delay - I was ill for a few days. Back at the business
+now =)
 
-Shawn
+Rob, maybe dropping the RFC tag has messed your book keeping? This
+is the latest version:
+https://lore.kernel.org/lkml/90c3b820baf072a7cc3a21aa50c661774a045158.1550148989.git.matti.vaittinen@fi.rohmeurope.com/
+and I thought it already had the Reviewed-by tag from you :)
+
+On Fri, Feb 22, 2019 at 06:30:41PM -0600, Rob Herring wrote:
+> On Tue, Jan 22, 2019 at 11:45:38AM +0200, Matti Vaittinen wrote:
+> > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> > drivers) and 4 GPIO pins which can be configured for I/O or
+> > as interrupt sources withe configurable trigger levels.
+> 
+> 'dt-bindings: mfd: ...' for the subject.
+
+I see at least the patch subject comment is still valid though. Do you
+want me to change it and resubmit the series?
+
+> 
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
+> >  1 file changed, 104 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> > new file mode 100644
+> > index 000000000000..21801440a53a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> > @@ -0,0 +1,104 @@
+> > +* ROHM BD70528 Power Management Integrated Circuit bindings
+> > +
+> > +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
+> > +for battery-powered portable devices. The IC integrates 3 ultra-low current
+> > +consumption buck converters, 3 LDOs and 2 LED Drivers. Also included are 4
+> > +GPIOs, a real-time clock (RTC), a 32kHz clock gate, high-accuracy VREF
+> > +for use with an external ADC, flexible dual-input power path, 10 bits SAR ADC
+> > +for battery temperature monitor and 1S battery charger with scalable charge
+> > +currents.
+
+Br,
+	Matti Vaittinen
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
