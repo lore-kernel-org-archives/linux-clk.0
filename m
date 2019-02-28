@@ -2,85 +2,167 @@ Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7FEC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 02:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B293C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 03:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49BEB218A5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 02:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63713218AE
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 03:19:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551320167;
-	bh=1wUhbJN+Gop84TwnGzWWetTBDUMQxJV5H28RQ12PQHU=;
+	s=default; t=1551323971;
+	bh=xePYJHDagXzcOhYXctzwQW8JZanDVo7BDIflpVHfPE8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=V0oCt6gdwNQ/MmlaF0HzDvs20UgbwllM/6bkFG5PZQvNwXuM3X4klIhiuqMNBBNNr
-	 hTD1WUZRvYV4VkeCLmfyz1PaM8SIy+Q1U/ZG9azAO8Q5sA/4X64HlgLpC27SrCYDqV
-	 a64N9Vciil0eAITcWHUPqHnUnJZPHEj0oujSuaPw=
+	b=EV2Voh8KJHCZTiENP9ueks7DxuH46SrY198UwBrGO8UyyamEphEQ166Q9HEg3focd
+	 mxxsNrIcPjSe5V4V8neE5qX95FIYTcgN8B9HYqRYZIGfSRectSvCyzUPbHmhHeRpg8
+	 PXOg82rB2EDuykIhKV57Nen7+esq5lh4XtD0VXB0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730254AbfB1CQG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Feb 2019 21:16:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41766 "EHLO mail.kernel.org"
+        id S1730254AbfB1DTa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Feb 2019 22:19:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730240AbfB1CQG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Feb 2019 21:16:06 -0500
+        id S1730131AbfB1DTa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 Feb 2019 22:19:30 -0500
 Received: from dragon (unknown [139.162.86.229])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 378EC218A2;
-        Thu, 28 Feb 2019 02:16:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A75A2183F;
+        Thu, 28 Feb 2019 03:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551320166;
-        bh=1wUhbJN+Gop84TwnGzWWetTBDUMQxJV5H28RQ12PQHU=;
+        s=default; t=1551323969;
+        bh=xePYJHDagXzcOhYXctzwQW8JZanDVo7BDIflpVHfPE8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FFyqE2ehnRpnr9O3sY3yqvy5sj10MyMJ6uh6JFqzQJ2hAP8ra8JFNTdXyiGquC2iJ
-         5FJKMdOHEksoAqZbPLHSqIW2Sl5WYjQqeJSKrdlUJ6MIq68HIpw9J95wTRHXcZr0hO
-         QSoaziTsicnAZdYrw+6YHHlBLEm/2CuPluUacODw=
-Date:   Thu, 28 Feb 2019 10:15:12 +0800
+        b=lbEZhmOsNZAIOEu1ugj4MGpwIKsf1oyn1S1xz+6c0cg2USnKTrm7s1obnOgnRE7+p
+         J/Agka6rq/a3m+JKjrLk0eFv6fa6uuiQWY8XfZB+8wr49jAOkG9GoQg5xhnVFUGv8g
+         hVMH8XlhcKWIV6KXL1dqcon6bCCCCuMFLXG+HS5o=
+Date:   Thu, 28 Feb 2019 11:18:34 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabio Estevam <festevam@gmail.com>, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abel.vesa@nxp.com>, Bai Ping <ping.bai@nxp.com>,
-        Carlo Caione <ccaione@baylibre.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH] clk: imx8mq: Add support for the CLKO1 clock
-Message-ID: <20190228021509.GA26041@dragon>
-References: <20190131002056.12024-1-festevam@gmail.com>
- <155078140414.77512.3157214123340597508@swboyd.mtv.corp.google.com>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V7 1/2] arm64: dts: freescale: imx8qxp: add cpu opp table
+Message-ID: <20190228031832.GH26041@dragon>
+References: <1551157967-30925-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155078140414.77512.3157214123340597508@swboyd.mtv.corp.google.com>
+In-Reply-To: <1551157967-30925-1-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:36:44PM -0800, Stephen Boyd wrote:
-> Quoting Fabio Estevam (2019-01-30 16:20:56)
-> > Add the entry for the CLKO1 clock.
-> > 
-> > Signed-off-by: Fabio Estevam <festevam@gmail.com>
-> > ---
+On Tue, Feb 26, 2019 at 05:17:31AM +0000, Anson Huang wrote:
+> Add i.MX8QXP CPU opp table to support cpufreq.
 > 
-> Applied to clk-next but I had to fix the whole DT binding number because
-> I don't know what this patch is based on. In fact, please get everyone
-> involved at NXP and whoever else is working on i.MX clk drivers to
-> coordinate somehow. I just spent 20 minutes working through the set of
-> imx patches in my inbox and I see approximately 6 different authors all
-> sending out a few clks at a time for the same drivers with zero
-> information about what the patches are based on or what order they're
-> supposed to be applied in.
-> 
-> If someone wants to collect all the patches and indicate on the list
-> they've picked them up and will be sending them as a pull request that's
-> fine.
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-I will help collect the i.MX platform clock patches and send you as
-pull request.
+Prefix 'arm64: dts: imx8qxp: ' would already be clear enough.  I dropped
+'freescale' from there and applied patch.
+
+> ---
+> No changes since V6.
+> ---
+>  arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> index 4c3dd95..41bf0ce 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> @@ -34,6 +34,9 @@
+>  			reg = <0x0 0x0>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			clocks = <&clk IMX_A35_CLK>;
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_1: cpu@1 {
+> @@ -42,6 +45,9 @@
+>  			reg = <0x0 0x1>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			clocks = <&clk IMX_A35_CLK>;
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_2: cpu@2 {
+> @@ -50,6 +56,9 @@
+>  			reg = <0x0 0x2>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			clocks = <&clk IMX_A35_CLK>;
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_3: cpu@3 {
+> @@ -58,6 +67,9 @@
+>  			reg = <0x0 0x3>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&A35_L2>;
+> +			clocks = <&clk IMX_A35_CLK>;
+> +			operating-points-v2 = <&a35_0_opp_table>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		A35_L2: l2-cache0 {
+> @@ -65,6 +77,24 @@
+>  		};
+>  	};
+>  
+> +	a35_0_opp_table: opp-table {
+
+What does the '0' in the label mean?
 
 Shawn
+
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp-900000000 {
+> +			opp-hz = /bits/ 64 <900000000>;
+> +			opp-microvolt = <1000000>;
+> +			clock-latency-ns = <150000>;
+> +		};
+> +
+> +		opp-1200000000 {
+> +			opp-hz = /bits/ 64 <1200000000>;
+> +			opp-microvolt = <1100000>;
+> +			clock-latency-ns = <150000>;
+> +			opp-suspend;
+> +		};
+> +	};
+> +
+>  	gic: interrupt-controller@51a00000 {
+>  		compatible = "arm,gic-v3";
+>  		reg = <0x0 0x51a00000 0 0x10000>, /* GIC Dist */
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
