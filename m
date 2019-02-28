@@ -1,115 +1,100 @@
-Return-Path: <SRS0=19dm=RC=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=eSXj=RD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58621C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 23:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AFAC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 00:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 094D2214D8
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Feb 2019 23:54:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="vz6Gts0A"
+	by mail.kernel.org (Postfix) with ESMTP id 111A0218A5
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Feb 2019 00:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551312091;
+	bh=q1T5iaEa2b4R1Gj+EQUVl8fwuZfLBtUF45gOHNybkwc=;
+	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
+	b=epuTelE88i40RpuxEJb5QBOSe8fDMMMIOoSRGs5nls8+EFyqmk+5GjmdVn+OSVNeg
+	 LtYRO2lrP4SVkts9a4Ysmm0I2Ktbr4Ra3ZZUE4YjRNXSQ62HeQ0WlYjHi9lFH6vg6K
+	 jLlXVCWRcGt+hVvmx1LTXodp5y28UDVgZPI0AlSQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbfB0Xy4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Feb 2019 18:54:56 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:60472 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728397AbfB0Xy4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Feb 2019 18:54:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1551311691; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cJ6fULrEGLrLtO/O+I4SpN9dM7a0vaIBbaxUxFE0zew=;
-        b=vz6Gts0AlF1ZMxzNvwztMEwxrlMYtUm8vCZGrHH2K38uvYsNaQEwsGoASa1KbumPTB+Z6A
-        88PY/c9CQ9QkAnmFVsij8HjTByhDB1NR1aR4C+wZhWzvjIocvGJMOFJt+2Di8Cg69huwZl
-        zA1bw5utq6/tPI8K1f1TGueCFOzSWK4=
-Date:   Wed, 27 Feb 2019 20:54:28 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx
- OST
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
-        Maarten ter Huurne <maarten@treewalker.org>
-Message-Id: <1551311669.21164.1@crapouillou.net>
-In-Reply-To: <155111793658.191923.2540746255375959460@swboyd.mtv.corp.google.com>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com>
-        <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net>
-        <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net>
-        <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
-        <1548362788.3881.0@crapouillou.net>
-        <154836998080.136743.17683029101430122926@swboyd.mtv.corp.google.com>
-        <1548370388.3881.2@crapouillou.net> <1550891845.20534.1@crapouillou.net>
-        <155111793658.191923.2540746255375959460@swboyd.mtv.corp.google.com>
+        id S1730481AbfB1ABa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Feb 2019 19:01:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728397AbfB1ABa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 Feb 2019 19:01:30 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A64321850;
+        Thu, 28 Feb 2019 00:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551312089;
+        bh=q1T5iaEa2b4R1Gj+EQUVl8fwuZfLBtUF45gOHNybkwc=;
+        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
+        b=zDfH4MMVgN14ka7lGXfzzT6yY2UOpwoM08CbnIi2qMsfzFPy/UNF1wP2A5b/g9iRr
+         PwUhxPaX9PMXbmoWzrOiLO2YgO8u71Zefm+U8ke7OoXBMqttzWVLRLqMM5NeX+IBF5
+         UTrQgTHzCmkHGL4IJB+ltUYcHyGkireIt0QMTuqg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
+To:     "arnd@arndb.de" <arnd@arndb.de>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel-owner@vger.kernel.org" 
+        <linux-kernel-owner@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "oss@buserror.net" <oss@buserror.net>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "viresh.kumar@lina ro.org" <viresh.kumar@linaro.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>
+References: <1551132245-6089-1-git-send-email-vabhav.sharma@nxp.com>
+Message-ID: <155131208867.260864.6630901066653352400@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Cc:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: Re: [PATCH v1 0/4] arm64: dts: NXP: add basic dts file for LX2160A SoC
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1551132245-6089-1-git-send-email-vabhav.sharma@nxp.com>
+Date:   Wed, 27 Feb 2019 16:01:28 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-Le lun. 25 f=E9vr. 2019 =E0 15:05, Stephen Boyd <sboyd@kernel.org> a=20
-=E9crit :
-> Quoting Paul Cercueil (2019-02-22 19:17:25)
->>  Hi,
->>=20
->>  Anything new on this? It still happens on 5.0-rc7.
->>  It probes with late_initcall, and not with device_initcall.
->>  I have no clue what's going on.
->>=20
+Quoting Vabhav Sharma (2019-02-26 02:10:46)
+> These patches were reviewed and acked but dropped during merge window.
+> Patchwork link was https://lore.kernel.org/patchwork/cover/1004155/
 >=20
-> I'm not sure what's going on either. You'll probably have to debug=20
-> when
-> the device is created and when it is probed by enabling the debug
-> printing in the driver core or by adding in extra debug prints to=20
-> narrow
-> down the problem. For example, add a '#define DEBUG 1' at the top of
-> drivers/base/dd.c and see if that helps give some info on what's going
-> on with the drivers and devices.
+> Changes for v1:
+> - Updated lx2160a clockgen in alphabetical order
+>=20
+> Vabhav Sharma (2):
+>   dt-bindings: arm64: add compatible for LX2160A
+>   soc/fsl/guts: Add definition for LX2160A
+>=20
+> Yogesh Gaur (2):
+>   clk: qoriq: increase array size of cmux_to_group
+>   clk: qoriq: Add clockgen support for lx2160a
 
-The doc of __platform_driver_probe says:
-"Use this instead of platform_driver_register() when you know the device
-is not hotpluggable and has already been registered".
-
-When the parent device and child device are both probed with
-builtin_platform_driver_probe(), and the parent calls
-devm_of_platform_populate(), it is not certain that the parent's
-probe will happen before the child's, and if it does not, the child
-device has not been registered and its probe is not allowed to defer.
-So it turned out not to be a core bug, rather a misuse of the API.
-
-So I will keep the builtin_platform_driver_probe() in the child, and=20
-use a
-subsys_initcall() in the parent. That works fine.
-
-Regards,
--Paul
-=
+Who do you want to apply these patches?
 
