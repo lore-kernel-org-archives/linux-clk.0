@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2105C43381
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 16:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6D1C43381
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 16:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FEEB20850
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 16:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40C6B2084D
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 16:43:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="i1drMWF4"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pG21FsL3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388801AbfCAQmG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 11:42:06 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54445 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389038AbfCAQmF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 11:42:05 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so13179449wmh.4
-        for <linux-clk@vger.kernel.org>; Fri, 01 Mar 2019 08:42:02 -0800 (PST)
+        id S2389151AbfCAQnW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 11:43:22 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37128 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389190AbfCAQnW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 11:43:22 -0500
+Received: by mail-wm1-f67.google.com with SMTP id x10so12759510wmg.2
+        for <linux-clk@vger.kernel.org>; Fri, 01 Mar 2019 08:43:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=QWA54+N+XOlaNSbILt1/WRF1/1gjCAAgT4y6HcS5SxM=;
-        b=i1drMWF4SAwxaCvpFDj7B4lLNeHG5oA1r1VMGHGzTPTChFaK53zsReyIjkjU9B2HjE
-         +Fqoum2DeH7fQAcXjm0fRADz8OIsKayBcOwcfwu2cz/z7Kk1UJ1jv8D3NWiyaBrXnPu6
-         lNZZYxzAlXcuNhftm0n6Pftj4Y9+DdIB2JueOeZ2RoIdq7lAsfmq4JooD58nkfFXMicc
-         EOXY8slpLvNYkWkPmKUndryewhIQlYx9dRqaiPgQS97Wr/kAP93U+h8eU90gG0fjQfqO
-         O8+O6Wulfb4ogFIiHgOl+vOORPgZq3a8PvtFYf2S+VCUTq4tT3RL8eBOFnqyqfaHrtZi
-         zUQg==
+        bh=wI5ZbLYXGwQ4PxTHH1sQXfHjabbpeQAJk4FXKsJi/6k=;
+        b=pG21FsL3Ic7MB5OUeYZIktAQBbtaPDkSHwDkpWWmbDkgsQsHnNvVuPZowoJBOPOx09
+         Ex6GLsYdjgIgtUe99JfptkEIL3PHZHq8AwHnAA9cIvGJhRvtO/yOufT3hlEG3web/TB3
+         JieKs+hZxeTu3D3APm4wtcx/Vs6jh1AT8kXTbo3zQkZi+SDb4ms4D2bE09rqnGR737wu
+         m/BE46P1F9VYSCyQetu83N/6PMMNXmtTP3LiYmTB10fXHelE//S6b9bAZdHsUXcckD6j
+         mrEKvSjBgrKIS169kE1sLmS2z8YbbrmmYt+MQ1MhPrDp2NYiNf+qD1Gic0n1E4Tgn3zv
+         IWHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=QWA54+N+XOlaNSbILt1/WRF1/1gjCAAgT4y6HcS5SxM=;
-        b=DxV4B5WubTyyiKcxMGANFpRWY95tMbEf91EZVHAoDkJmxCVeoEu1YjCgQghEFALsw1
-         GrXHVIEECt4HT9qGsmoFHj9oXRrCBeD/bBq/Q1YepL3Jl6qoA0gXUZbMJXVIlV4kKTcX
-         1mwodsQYiwVuAy2gMnqHkh8fI13m5CLlucO4cTw2UjoBfG8iYYg3jsedEqbZ/TZMlV+6
-         A4xBfJZMOkxVB44Gjv4MWrGh2XuTDZ8g2+wdRspz7Y4r3Z99tMuSrwrvpIoFXe6EhyhM
-         g8114Srglvs5NIS3fi7mocIILYJPozeVBlyv5sL+An2AfpzEctaTfHSS2ahJ8bfqzthp
-         zgIQ==
-X-Gm-Message-State: APjAAAWzuoErHzsRCQJ+UOZSvv/K0II2Lh7Psrj3gQ/sHj6s/RiCiKFn
-        Rc0qVp+AJdLi19A7ft3CDZHuYA==
-X-Google-Smtp-Source: AHgI3IaFvnTYz6QS9CF20E0X3nhauiVy9jYWqqJ11NHLw2zB48zmye3Tdh5vQAnVsmFCtTVO4L70Ow==
-X-Received: by 2002:a1c:c60b:: with SMTP id w11mr3761580wmf.39.1551458521195;
-        Fri, 01 Mar 2019 08:42:01 -0800 (PST)
+        bh=wI5ZbLYXGwQ4PxTHH1sQXfHjabbpeQAJk4FXKsJi/6k=;
+        b=XDCWDEf5exR3IX2ITorhyQzJHa+yzTZqhpgIVwVfOzDkquQF9RxC6LMADhpC9eR+3V
+         GSU1zJLD2DxBZKuJKDSqg2cZyL9Qzbsg33WNhBxYQD+Yk6jMlfrX/iAUYriI33EyK4yp
+         iL4Rl2iT4LFOubHkcs2cTXaRYzNa/eV2Me4Rzh85GQlAFGgz9HS+B9bLa0nVVPWa7PzS
+         9qPFkH6DS8a3Dlby7ubEacX5gL06MUB7e9b+2eenX/1k5api5OxhMKCr0nlGtc0GL05r
+         opJJHCL0yjuMPe+9ZZPm0DbpQ7XxY4+woglbNN2yBNOFDaGmI3uPRSgG6wR5hXJluJ3b
+         K59Q==
+X-Gm-Message-State: APjAAAWr5W+RezexyUEEh1H+qUYrCaEIXQCHmxetSqv16n8HuKka8YMc
+        xOO7Rl2rgC3UyDswWHIFq7BRjkSB6MQRlA==
+X-Google-Smtp-Source: APXvYqz4i7P+HmKIpAKYlk443EicNKD93sVYUMCpEYD861QK8MKdzPI5lZhulCToH4RfPgGAb3awxw==
+X-Received: by 2002:a7b:c34c:: with SMTP id l12mr3734176wmj.126.1551458599332;
+        Fri, 01 Mar 2019 08:43:19 -0800 (PST)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x17sm41404438wrd.95.2019.03.01.08.42.00
+        by smtp.gmail.com with ESMTPSA id p68sm6655538wme.45.2019.03.01.08.43.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Mar 2019 08:42:00 -0800 (PST)
-Subject: Re: [PATCH 2/2] clk: meson: g12a: add cpu clocks
+        Fri, 01 Mar 2019 08:43:18 -0800 (PST)
+Subject: Re: [PATCH 1/2] clk: meson-g12a: add cpu clock bindings
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20190301102140.7181-1-narmstrong@baylibre.com>
- <20190301102140.7181-3-narmstrong@baylibre.com>
- <CAFBinCC1b5Q8Y=5qXKJ+B1XBhpo8PGFYHwTEeVTgbXwz7ge3-A@mail.gmail.com>
+ <20190301102140.7181-2-narmstrong@baylibre.com>
+ <CAFBinCCtmykL-ccWd9cporEOmxeUKC-RgrP3wfuSuYoAEjrGWA@mail.gmail.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -116,12 +116,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <a3654bdb-4289-7755-5601-e8177b00790f@baylibre.com>
-Date:   Fri, 1 Mar 2019 17:41:59 +0100
+Message-ID: <d841b285-7994-fd7a-215b-13314bd0b298@baylibre.com>
+Date:   Fri, 1 Mar 2019 17:43:18 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCC1b5Q8Y=5qXKJ+B1XBhpo8PGFYHwTEeVTgbXwz7ge3-A@mail.gmail.com>
+In-Reply-To: <CAFBinCCtmykL-ccWd9cporEOmxeUKC-RgrP3wfuSuYoAEjrGWA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -132,359 +132,76 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Martin,
 
-On 01/03/2019 16:21, Martin Blumenstingl wrote:
+On 01/03/2019 16:26, Martin Blumenstingl wrote:
 > Hi Neil,
-> 
-> it's great to see the progress on G12A!
 > 
 > On Fri, Mar 1, 2019 at 11:22 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >>
->> Add the Amlogic G12A Family CPU Clock tree in read/only for now.
->>
->> The CPU clock can either use the SYS_PLL for > 1GHz frequencies or
->> use a couple of div+mux from 1GHz/667MHz/24MHz source with 2 non-glitch
->> muxes.
->>
->> Proper DVFS support will come in a second time.
-> can you please also mention that this adds various CPU clock
-> post-dividers (APB, ATB, AXI and CPU trace)?
-> I don't mind them being int his patchset
+>> Add Amlogic G12A Family CPU clocks bindings, only export CPU_CLK since
+>> it should be the only ID used.
+> is this also true for the CPU post-dividers (APB, ATB, AXI, CPU CLK TRACE)?
 
-indeed, I forgot this !
+Do we need these to be exported ?
 
-> 
-> disclaimer for my code-review:
-> - I don't have access to the datasheet so I can't verify if the clock
-> tree from this patch is correct
-> - the latest buildroot code with G12A support
-> (buildroot_openlinux_kernel_4.9_fbdev_20180706) doesn't have proper
-> names for all clocks
-> - based on my experience with Meson8* this looks good overall, some
-> questions and comments below
 > 
 >> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>
 >> ---
->>  drivers/clk/meson/g12a.c | 348 +++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/g12a.h |   1 +
->>  2 files changed, 349 insertions(+)
+>>  drivers/clk/meson/g12a.h              | 24 +++++++++++++++++++++++-
+>>  include/dt-bindings/clock/g12a-clkc.h |  1 +
+>>  2 files changed, 24 insertions(+), 1 deletion(-)
 >>
->> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> index 0e1ce8c03259..4c938f1b8421 100644
->> --- a/drivers/clk/meson/g12a.c
->> +++ b/drivers/clk/meson/g12a.c
->> @@ -150,6 +150,316 @@ static struct clk_regmap g12a_sys_pll = {
->>         },
->>  };
+>> diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+>> index f399dfe1401c..4854750df902 100644
+>> --- a/drivers/clk/meson/g12a.h
+>> +++ b/drivers/clk/meson/g12a.h
+>> @@ -166,8 +166,30 @@
+>>  #define CLKID_MALI_0_DIV                       170
+>>  #define CLKID_MALI_1_DIV                       173
+>>  #define CLKID_MPLL_5OM_DIV                     176
+>> +#define CLKID_PCIE_PLL_DCO                     178
+>> +#define CLKID_PCIE_PLL_DCO_DIV2                        179
+>> +#define CLKID_PCIE_PLL_OD                      180
+> how are these PCIe clock related to the CPU clocks?
+
+Oops, bad merge...
+
+> 
+>> +#define CLKID_SYS_PLL_DIV16_EN                 181
+>> +#define CLKID_SYS_PLL_DIV16                    182
+>> +#define CLKID_CPU_CLK_DYN0_SEL                 183
+>> +#define CLKID_CPU_CLK_DYN0_DIV                 184
+>> +#define CLKID_CPU_CLK_DYN0                     185
+>> +#define CLKID_CPU_CLK_DYN1_SEL                 186
+>> +#define CLKID_CPU_CLK_DYN1_DIV                 187
+>> +#define CLKID_CPU_CLK_DYN1                     188
+>> +#define CLKID_CPU_CLK_DYN                      189
+>> +#define CLKID_CPU_CLK_DIV16_EN                 191
+>> +#define CLKID_CPU_CLK_DIV16                    192
+>> +#define CLKID_CPU_CLK_APB_DIV                  193
+>> +#define CLKID_CPU_CLK_APB                      194
+>> +#define CLKID_CPU_CLK_ATB_DIV                  195
+>> +#define CLKID_CPU_CLK_ATB                      196
+>> +#define CLKID_CPU_CLK_AXI_DIV                  197
+>> +#define CLKID_CPU_CLK_AXI                      198
+>> +#define CLKID_CPU_CLK_TRACE_DIV                        299
+>> +#define CLKID_CPU_CLK_TRACE                    200
 >>
->> +static struct clk_regmap g12a_sys_pll_div16_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .bit_idx = 24,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "sys_pll_div16_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "sys_pll" },
->> +               .num_parents = 1,
->> +               /*
->> +                * This clock is used to debug the sys_pll range
->> +                * Linux should not change it at runtime
->> +                */
-> if we're not supposed to touch this the enable bit, can you switch to
-> clk_regmap_gate_ro_ops ?
+>> -#define NR_CLKS                                        178
+>> +#define NR_CLKS                                        201
+> shouldn't all changes to this file (drivers/clk/meson/g12a.h) be part
+> of the patch which adds the actual clocks so the dt-bindings patch is
+> independent of the clock driver patches?
+> in this case the subject should also be updated to "dt-bindings:
+> clock: g12a: ..."
 
-exact
+I don't have any opinion, Jerome ?
 
 > 
->> +               .flags = CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor g12a_sys_pll_div16 = {
->> +       .mult = 1,
->> +       .div = 16,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "sys_pll_div16",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "sys_pll_div16_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_dyn0_sel = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL0,
->> +               .mask = 0x3,
->> +               .shift = 0,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_dyn0_sel",
-> the buildroot code has a variable with the name "p_premux"
-> I'm not sure what the datasheet states, but maybe this should be
-> cpu_clk_dyn0_pre_sel
-> same applies to the corresponding dyn1 clock below
-
-these bit are named "premux1", and cpu_clk_dyn0 names "postmux1",
-which has no sense because there is no mux in between.
-
-clk_dyn0_sel is the actual source selector of the dyn0 tree,
-clkdyn0 is the top of the dyn0 tree, this is why i did not add "sel"
-in it.
-
 > 
->> +               .ops = &clk_regmap_mux_ro_ops,
->> +               .parent_names = (const char *[]){ IN_PREFIX "xtal",
->> +                                                 "fclk_div2",
->> +                                                 "fclk_div3" },
->> +               .num_parents = 3,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_dyn0_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL0,
->> +               .shift = 4,
->> +               .width = 6,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_dyn0_div",
->> +               .ops = &clk_regmap_divider_ro_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk_dyn0_sel" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_dyn0 = {
->> +       .data = &(struct clk_regmap_mux_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL0,
->> +               .mask = 0x1,
->> +               .shift = 2,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_dyn0",
-> the buildroot code has a variable with the name "p_postmux". in this
-> case I would leave the name "cpu_clk_dyn0" because it's the "output"
-> of this specific "clock tree/branch".
-> same applies to the corresponding dyn1 clock below
+> Regards
+> Martin
 > 
->> +               .ops = &clk_regmap_mux_ro_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk_dyn0_sel",
->> +                                                 "cpu_clk_dyn0_div" },
->> +               .num_parents = 2,
->> +       },
->> +};
->> +
-
-[...]
-
->> +
->> +static struct clk_regmap g12a_cpu_clk_div16_en = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .bit_idx = 1,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cpu_clk_div16_en",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk" },
->> +               .num_parents = 1,
->> +               /*
->> +                * This clock is used to debug the cpu_clk range
->> +                * Linux should not change it at runtime
->> +                */
-> same as above: if we're not supposed to touch this the enable bit, can
-> you switch to clk_regmap_gate_ro_ops ?
-
-Yep
-
-> 
->> +               .flags = CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_fixed_factor g12a_cpu_clk_div16 = {
->> +       .mult = 1,
->> +       .div = 16,
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_div16",
->> +               .ops = &clk_fixed_factor_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk_div16_en" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_apb_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .shift = 3,
->> +               .width = 3,
->> +               .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_apb_div",
->> +               .ops = &clk_regmap_divider_ro_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_apb = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .bit_idx = 1,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cpu_clk_apb",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk_apb_div" },
->> +               .num_parents = 1,
->> +               /*
->> +                * This clock is set by the ROM monitor code,
->> +                * Linux should not change it at runtime
->> +                */
-> same as above: if we're not supposed to touch this the enable bit, can
-> you switch to clk_regmap_gate_ro_ops ?
-
-Yep
-
-> 
->> +               .flags = CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_atb_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .shift = 6,
->> +               .width = 3,
->> +               .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_atb_div",
->> +               .ops = &clk_regmap_divider_ro_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_atb = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .bit_idx = 17,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cpu_clk_atb",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk_atb_div" },
->> +               .num_parents = 1,
->> +               /*
->> +                * This clock is set by the ROM monitor code,
->> +                * Linux should not change it at runtime
->> +                */
-> same as above: if we're not supposed to touch this the enable bit, can
-> you switch to clk_regmap_gate_ro_ops ?
-
-Yep
-
-> 
->> +               .flags = CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_axi_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .shift = 9,
->> +               .width = 3,
->> +               .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_axi_div",
->> +               .ops = &clk_regmap_divider_ro_ops,
-> out of curiosity (this applies to all CPU clock post-dividers):
-> did you check whether CLK_DIVIDER_POWER_OF_TWO is correct on G12A?
-> I'm asking because on Meson8b the post-dividers select between one of:
-> "cpu_clk divided by 2, 3, 4, 5, 6, 7 or 8". also some of the
-> post-dividers use register value 0 for cpu_clk_div2 while others use
-> register value 1 for cpu_clk_div2.
-
-It's correct !
-
-> 
->> +               .parent_names = (const char *[]){ "cpu_clk" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_axi = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .bit_idx = 18,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cpu_clk_axi",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk_axi_div" },
->> +               .num_parents = 1,
->> +               /*
->> +                * This clock is set by the ROM monitor code,
->> +                * Linux should not change it at runtime
->> +                */
-> same as above: if we're not supposed to touch this the enable bit, can
-> you switch to clk_regmap_gate_ro_ops ?
-
-Yep
-
-> 
->> +               .flags = CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_trace_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .shift = 20,
->> +               .width = 3,
->> +               .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpu_clk_trace_div",
->> +               .ops = &clk_regmap_divider_ro_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk" },
->> +               .num_parents = 1,
->> +       },
->> +};
->> +
->> +static struct clk_regmap g12a_cpu_clk_trace = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPU_CLK_CNTL1,
->> +               .bit_idx = 23,
->> +       },
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cpu_clk_trace",
->> +               .ops = &clk_regmap_gate_ops,
->> +               .parent_names = (const char *[]){ "cpu_clk_trace_div" },
->> +               .num_parents = 1,
->> +               /*
->> +                * This clock is set by the ROM monitor code,
->> +                * Linux should not change it at runtime
->> +                */
-> same as above: if we're not supposed to touch this the enable bit, can
-> you switch to clk_regmap_gate_ro_ops ?
-
-Yep
-
-> 
->> +               .flags = CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->>  static const struct pll_mult_range g12a_gp0_pll_mult_range = {
->>         .min = 55,
->>         .max = 255,
 
 Thanks !
 
 Neil
-
