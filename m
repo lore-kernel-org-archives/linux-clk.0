@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC659C4360F
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB06C43381
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B75BF2087E
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 278B82087E
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="WeCYBJBR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yq/iHkkD"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="ebMq51fO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z3Op50un"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbfCAF34 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 00:29:56 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:33955 "EHLO
+        id S1728052AbfCAFaP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 00:30:15 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:57663 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726066AbfCAF3z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 00:29:55 -0500
+        by vger.kernel.org with ESMTP id S1727596AbfCAF3y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 00:29:54 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3117A220A5;
-        Fri,  1 Mar 2019 00:29:54 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id 967E92208D;
+        Fri,  1 Mar 2019 00:29:53 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 01 Mar 2019 00:29:54 -0500
+  by compute5.internal (MEProxy); Fri, 01 Mar 2019 00:29:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=ecURF+ayLWpY2
-        Oe8w1vUiDRoINN11ZW1ygsWBjCaQUk=; b=WeCYBJBRXlPZXmlC9T0h/93xUddER
-        0Qhy6pfcRlUAiyxTltGRz65rD9wOk8mO6ywuixEmNmY5CfT85yW4pFGHTShBk4H2
-        DIfqwZW7ZThEgPXHKF5fowsoQZtkAxIYRnbuOMYwilAlT2XaLm/KkJNfB5kJgo46
-        Q6ClXpU77V52GUClvvgNx1HgJBvW5lH5h05OIE3q70qqgRJH9SUH8E3gXWV5Nu0p
-        PRikLj++Xj1LGVKFQFSwIHSJquoHmtOc10XlfQI5JXZnkYXqBhRp6LdTuJCZL6OC
-        KsdXuxA0M+NwVniA0cvYX5iMg4CGVOCIA10kXtQWC08y4FgsAlYwSFv0w==
+        :mime-version:content-transfer-encoding; s=fm2; bh=0E3xQubbqSzCI
+        eQmbqeab4IA+YPmZG/r+t8YmeooEPM=; b=ebMq51fOg5rn8EPA617OH03+udIbI
+        r7moTkCiPaYugIPrVmiw2CTaMpcI8HUjJupT9CmIRhtbcxarSa0XgRQSWARuTKLo
+        VhVHeoZYeNR1IMmj4ryYtN5ByovrDoVVABqO31zKNH0lbWcIdC5GLdLzbzrj+rc2
+        RYIntEjtp6URuN6D1TyqWi5SDv2V3KvJDh6tTkylFrB4FxrUbdp3ymUk2wSje1AH
+        l6gZGILHgSscKWf1jqFPcBAP+77Ib/+2LjAom+VYwea3b6LkOq0FamV748FPKYpM
+        u0ZtsWbvz90FTwlhajO8xwEy8H4rqWlzyGQAdbF7VZwRBv/VSJAq6cd2Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=ecURF+ayLWpY2Oe8w1vUiDRoINN11ZW1ygsWBjCaQUk=; b=yq/iHkkD
-        KOvzs3J43w+aptL8QS+n9ikPjaonjII4ZDcwrUS3uN40o5TpHrXi66UYPsBOypeK
-        lTIu9gi6GtUalpeHeT3yOJTpEwYT8VUoSPvFTNr8UR/Tt7JspoCDa5SXty21xZug
-        jeBH45ST8kg26fVMn2aYq0acAfF3XGM4QjgcsEkLaFctPg64vNVbOapcPb7p55Mx
-        uTtGWU2urGxraK7WsoLaOfru0eYM+mGD6uPsno/j8E20amufMFpFOGvrAS4Cuoy7
-        O0N1JSfTtIh/j8fXFUVcgyXDMLe5tv7xTg7eIeGKh1LkTa7wioUtV2shHk02n9fs
-        zK4JuvhupFdDVw==
-X-ME-Sender: <xms:UcN4XD4W4MqZyuXMn2wTc967TsKBFR8O8qx70VkUq-wSd-lizQdiPQ>
+        fm2; bh=0E3xQubbqSzCIeQmbqeab4IA+YPmZG/r+t8YmeooEPM=; b=Z3Op50un
+        +yu3kP2MBvE99tyB6We0F/Jn0k08ZU9q306b1ipcOJxrUDiCyyf1kI56H65sy3lL
+        w39f8BIV0PY872737u/ZSbKJxwEYPIYFadntsWJygHhuOtWwnVvxJiLZ16T1s8Zb
+        jNfmMwhlUhzHHDubP+XAWXMMREQttzqJ9z9wiWlryThaxim8WGFXaTVA2Cp2rGau
+        5bDm1DIEF+zm28biF8+LYGmCgREwidrtVlr8a7tXAl/tQ+Tu/dMBnh2EfcnVq/1r
+        gbmh8C7DorMJI0eAkw/dtsqXjE54Amz02C3CU2j9b1fR4+7Sgnev9gkQn8qMUpQw
+        7VdOWP/+YRN3Mw==
+X-ME-Sender: <xms:UcN4XMEHwnJmim1VKbQ9n6ZwzO69ymPiw9OQHlLgXh6_mjeG9FBcBQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeggdekjecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -55,13 +55,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeggdekjecutefuodetggdote
     ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
     ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
     vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedv
-X-ME-Proxy: <xmx:UsN4XBrItZdRHaHIxnUDF6Lz3oiyQBEZzn5TtwzJ03LFQlh7l0afrA>
-    <xmx:UsN4XJKuxDizt1UUXr-avAF0_3PyhQN6Px23jPTmphA52RUGq5KAaA>
-    <xmx:UsN4XGgXSM25iAI0ct9BPxVNRewHhi902ThPi7oaFcGp3pbxPWCFwQ>
-    <xmx:UsN4XF1YKokIyL4cEsxsbd9Xx5KXKfD41oybjKlZB9jV3rcuVNqsuA>
+X-ME-Proxy: <xmx:UcN4XD3GhE0zThJZ5WyiOvFbCSUqZp2gfTIv3wYXPWKgTe6duFo1EA>
+    <xmx:UcN4XM2rmDvrS0ilpflgVQzIfL29mgyLk0ia5GDeaCeLjVQyKAFtdg>
+    <xmx:UcN4XNM-jD3J-udp68_8Qw_ZX8Ht_2h8jM0rhfpmgrNJ7mlH6lNWbQ>
+    <xmx:UcN4XFYBuBpSlBIIUZfmB3ekp5NSMkWeQhdiCEZOSZIqog4hW82MNA>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 471A4E427E;
-        Fri,  1 Mar 2019 00:29:53 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id B3960E40C1;
+        Fri,  1 Mar 2019 00:29:52 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -73,9 +73,9 @@ To:     Jassi Brar <jassisinghbrar@gmail.com>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 08/10] ARM: dts: sunxi: h3/h5: Add msgbox node
-Date:   Thu, 28 Feb 2019 23:29:45 -0600
-Message-Id: <20190301052947.32032-9-samuel@sholland.org>
+Subject: [PATCH v2 07/10] ARM: dts: sunxi: a83t: Add msgbox node
+Date:   Thu, 28 Feb 2019 23:29:44 -0600
+Message-Id: <20190301052947.32032-8-samuel@sholland.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190301052947.32032-1-samuel@sholland.org>
 References: <20190301052947.32032-1-samuel@sholland.org>
@@ -86,36 +86,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The H3 and H5 SoCs contain a message box that can be used to send
-messages and interrupts back and forth between the ARM application CPUs
-and the ARISC coprocessor. Add a device tree node for it.
+The A83T SoC contains a message box that can be used to send messages
+and interrupts back and forth between the ARM application CPUs and the
+ARISC coprocessor. Add a device tree node for it.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 10 ++++++++++
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index a4c757c0b741..a42fd3f9739e 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -227,6 +227,16 @@
- 			#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index b099d2fbb5cd..c80c4f942439 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -546,6 +546,16 @@
+ 			reg = <0x1c14000 0x400>;
  		};
  
 +		msgbox: mailbox@1c17000 {
-+			compatible = "allwinner,sun8i-h3-msgbox",
++			compatible = "allwinner,sun8i-a83t-msgbox",
 +				     "allwinner,sun6i-a31-msgbox";
 +			reg = <0x01c17000 0x1000>;
 +			clocks = <&ccu CLK_BUS_MSGBOX>;
 +			resets = <&ccu RST_BUS_MSGBOX>;
 +			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+			#mbox-cells = <2>;
++			#mbox-cells = <1>;
 +		};
 +
  		usb_otg: usb@1c19000 {
- 			compatible = "allwinner,sun8i-h3-musb";
- 			reg = <0x01c19000 0x400>;
+ 			compatible = "allwinner,sun8i-a83t-musb",
+ 				     "allwinner,sun8i-a33-musb";
 -- 
 2.19.2
 
