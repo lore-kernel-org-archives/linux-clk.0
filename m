@@ -2,132 +2,86 @@ Return-Path: <SRS0=/2Yr=RE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4B2C43381
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 10:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD0AC10F03
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 10:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0867D2087E
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 10:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A64D218AE
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 10:24:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1bWLjVae"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="NEtki5mx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfCAKV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 05:21:58 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46404 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728290AbfCAKVr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 05:21:47 -0500
-Received: by mail-wr1-f66.google.com with SMTP id i16so25200944wrs.13
-        for <linux-clk@vger.kernel.org>; Fri, 01 Mar 2019 02:21:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=o+56+BpEQ+JbsY5jIsG+5HwoLjz/jjEOEZma5vzKtt4=;
-        b=1bWLjVaecO1Kwe5bWwvDDRYZaziz8Z5HOixwmyelDDE6QltSKocYM44r/FgPZw0ma+
-         tgvKzgX1ripXsAT0c9c26b6QxF8siLn/ctI2hJrC7sZfWUDMIKsfHZx08XRuea2V1AZc
-         66cHJa7SbS0rFkiGyZVCJzhb7wxCrUXFT5lSPuFval67fkSjbrgEmslFZKw5RSrG2i6u
-         YGp64wlteKaIZcq/lG7PVmJ54GLxqQRP3lIergtmj96E1WWFLn0Ab8GF0EGGE0HW2FiG
-         efbZJeKMUJF/LQUpH6EXDNGnDehmECgTT6o+83CKy0bD+4H9KCSmrsROYk5xJXvjgoY5
-         x6wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=o+56+BpEQ+JbsY5jIsG+5HwoLjz/jjEOEZma5vzKtt4=;
-        b=ASB5mbQRBot6PavZHFdf5rNZD+vKfpm6uWiWsw85TjVzMd3goBCV1BRtgHd+myihfI
-         ifhBjL3cdhTB/IY0GdF/tyhkL9FNgAlgllnoVMssV6CnakuBJHO8JG9ZAGZyL/JGgnz5
-         q2flT3rrm2NZedMn31is8HQDrYInHsjn5IwW8+Od9SKIHSqZeoXtm4xuGE7knHyZ2VfH
-         JgmybEOIbBNr+v+mkp2zJ4P4onpVkUXRQ6Nw+IEpHG889pB5uPreVBQ4EjM/X3STRrVq
-         UXQQnLIO5e8/MhnS3PQe0vnDy6m4nZTgue+9YkFchJlhZjdvS5aE3R5y8e5dj9PPaZSY
-         /yJg==
-X-Gm-Message-State: APjAAAUY8t3gBCFc+tiaeDgC4D00hrKUKWa4G3VsJFEoyriGKXReottN
-        8cBwaqOVhPAI0YvOORy4e7BqxQ==
-X-Google-Smtp-Source: APXvYqwF4WLTCHup3GgNWVBASfxQaDJG/YFQq7/AFPxadwysFmn4Z3qJ1yFYFuP66LZK0pGgodqoog==
-X-Received: by 2002:adf:ee4d:: with SMTP id w13mr2909974wro.16.1551435704900;
-        Fri, 01 Mar 2019 02:21:44 -0800 (PST)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f68sm14446626wmg.5.2019.03.01.02.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 01 Mar 2019 02:21:44 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, devicetree@vger.kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: meson-g12a: add cpu clock bindings
-Date:   Fri,  1 Mar 2019 11:21:39 +0100
-Message-Id: <20190301102140.7181-2-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190301102140.7181-1-narmstrong@baylibre.com>
-References: <20190301102140.7181-1-narmstrong@baylibre.com>
+        id S1727125AbfCAKY6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 05:24:58 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:32950 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfCAKY6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 05:24:58 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 8546E25B769;
+        Fri,  1 Mar 2019 21:24:55 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551435895; bh=TcEEu7oZx7XJhjHM5fN1k4dtZpZKXb+3qKPnxkPjt8c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NEtki5mxJ/Y2FZ9bBY8tFrlHRzr1EkINoHTXVMoXWF4BJFAsn+JCPmhJkxF/Wfeuq
+         FUkbHZOanPKxmBuzNUkqZY5UL7u2vToKns+P68Sy6S9fpkI0q2yPYZ9Tpz+gGGxFT4
+         iB5ulQvPHcPHFwFdWXcxtCc2wuKbiX2VlJoNGMX8=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id BF985940421; Fri,  1 Mar 2019 11:24:53 +0100 (CET)
+Date:   Fri, 1 Mar 2019 11:24:53 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/4] [RFT] clk: renesas: r8a774c0: Add ZG clock
+Message-ID: <20190301102453.tssc5o5bf3bwiluo@verge.net.au>
+References: <20190228135246.31714-1-horms+renesas@verge.net.au>
+ <20190228135246.31714-4-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190228135246.31714-4-horms+renesas@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add Amlogic G12A Family CPU clocks bindings, only export CPU_CLK since
-it should be the only ID used.
+On Thu, Feb 28, 2019 at 02:52:45PM +0100, Simon Horman wrote:
+> Adds support for R-Car RZ/G2E (r8a774c0) ZG clock.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.h              | 24 +++++++++++++++++++++++-
- include/dt-bindings/clock/g12a-clkc.h |  1 +
- 2 files changed, 24 insertions(+), 1 deletion(-)
+Apologies,
 
-diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
-index f399dfe1401c..4854750df902 100644
---- a/drivers/clk/meson/g12a.h
-+++ b/drivers/clk/meson/g12a.h
-@@ -166,8 +166,30 @@
- #define CLKID_MALI_0_DIV			170
- #define CLKID_MALI_1_DIV			173
- #define CLKID_MPLL_5OM_DIV			176
-+#define CLKID_PCIE_PLL_DCO			178
-+#define CLKID_PCIE_PLL_DCO_DIV2			179
-+#define CLKID_PCIE_PLL_OD			180
-+#define CLKID_SYS_PLL_DIV16_EN			181
-+#define CLKID_SYS_PLL_DIV16			182
-+#define CLKID_CPU_CLK_DYN0_SEL			183
-+#define CLKID_CPU_CLK_DYN0_DIV			184
-+#define CLKID_CPU_CLK_DYN0			185
-+#define CLKID_CPU_CLK_DYN1_SEL			186
-+#define CLKID_CPU_CLK_DYN1_DIV			187
-+#define CLKID_CPU_CLK_DYN1			188
-+#define CLKID_CPU_CLK_DYN			189
-+#define CLKID_CPU_CLK_DIV16_EN			191
-+#define CLKID_CPU_CLK_DIV16			192
-+#define CLKID_CPU_CLK_APB_DIV			193
-+#define CLKID_CPU_CLK_APB			194
-+#define CLKID_CPU_CLK_ATB_DIV			195
-+#define CLKID_CPU_CLK_ATB			196
-+#define CLKID_CPU_CLK_AXI_DIV			197
-+#define CLKID_CPU_CLK_AXI			198
-+#define CLKID_CPU_CLK_TRACE_DIV			299
-+#define CLKID_CPU_CLK_TRACE			200
- 
--#define NR_CLKS					178
-+#define NR_CLKS					201
- 
- /* include the CLKIDs that have been made part of the DT binding */
- #include <dt-bindings/clock/g12a-clkc.h>
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-index 83b657038d1e..33aba232282c 100644
---- a/include/dt-bindings/clock/g12a-clkc.h
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -131,5 +131,6 @@
- #define CLKID_MALI_1				174
- #define CLKID_MALI				175
- #define CLKID_MPLL_5OM				177
-+#define CLKID_CPU_CLK				190
- 
- #endif /* __G12A_CLKC_H */
--- 
-2.20.1
+the Tested-by tag should not be present above.
+It is a cut-and-paste error.
 
+> ---
+> Compile tested only
+> ---
+>  drivers/clk/renesas/r8a774c0-cpg-mssr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> index d9130723d6c8..2c12bfddca95 100644
+> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> @@ -81,6 +81,8 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+>  	DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
+>  	DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z,
+>  		   CLK_PLL0, 4, CPG_FRQCRC, 8),
+> +	DEF_GEN3_Z("zg",       R8A774C0_CLK_ZG,    CLK_TYPE_GEN3_Z,
+> +		   CLK_PLL0, 8, CPG_FRQCRB, 24),
+>  	DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
+>  	DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
+>  	DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
+> -- 
+> 2.11.0
+> 
