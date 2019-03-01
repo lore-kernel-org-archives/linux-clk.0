@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86461C43381
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54811C43381
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 497632087E
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2490A2087E
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 05:30:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="JT/A7mXN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h+a2NI2N"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="FwSwP0LM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HO83+WTM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbfCAF3x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 00:29:53 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:54155 "EHLO
+        id S1727124AbfCAF3w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 00:29:52 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60011 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726066AbfCAF3w (ORCPT
+        by vger.kernel.org with ESMTP id S1726088AbfCAF3w (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 00:29:52 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 60C1B22094;
+        by mailout.nyi.internal (Postfix) with ESMTP id 62F7F22096;
         Fri,  1 Mar 2019 00:29:51 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
   by compute5.internal (MEProxy); Fri, 01 Mar 2019 00:29:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=TTwkUtJ9PY83X
-        cQmX2n6BAa0PkEZyFKMbWTQxj8EjRw=; b=JT/A7mXNrL0ezHxSycWhLLM3lVkUh
-        ns4Wh1d9bcxgVqBI1IOwa+o2UzcBX4ZF7JrFrKiSD4jSYT2g08z0lsdMG6qjXe8I
-        Nbjb0KFVoxA79ighDK7pf5srkiNXIvrliKezsEWd2ll+3YzT1UY0RVmxnJYeBX0/
-        /iP7U1CrqWei2gW6mIzdApukljilpkAWRbdu+XGaUsYIr+6Uwx1zYN71qhS+LKsS
-        ElMKSFK13WNETOCiPgXGkpQLHd4zlKoHfTzJ5cQMXnd4FXM+jgdBEcrf6zeZn1JY
-        exnWelZgks6TEC69cUewSODU/f2k0KSgUW3Xe8eUQfQD7ub7twFVH3ocw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=yryg0tD/bXbuw
+        sX4giILeR1x3xJOYHPxD4a8sc7UekA=; b=FwSwP0LMLYMroz+Lqw8UuB8gBJLyo
+        uIFh4F2qKwAXmnMrgclRXGbJDAtZHW3Eo9ZpSvu3/L/FoJf68a2zFYXN86clmysM
+        2mjk8CpzN72Hra5uO8CIoMHBIU7CQLEbPmDFUC++1ZdjL1UU/Kd+j0Mp00UIqQUU
+        g4B0vkFePKkyrvwf1KZlCsKZ4mPix+0QkNaUITHtntQIMODa965EJcl0PJ/xpX3R
+        +oPJXM8Hn5zcp8GZiKUqeGSre91DhIjUSGXoeziYTXLA6gwcX+22/3EwktIxvp79
+        /p1Pzi7/DtPkliVqgG3ORPsEZLH1mLlecE714LNCKbdaM+Ovm9MZn0LRA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=TTwkUtJ9PY83XcQmX2n6BAa0PkEZyFKMbWTQxj8EjRw=; b=h+a2NI2N
-        aYGwF7T4BilhMabMgkpAiiyxN6N1M/2hV63u6vbYcOG+2OrUJPjEQo1Wnuch5T9C
-        Vjvt1NsZPhrF/Z7rr8oOLEfGRrriVoslRK+PI4/r4qGnrLqa2pOCLppJIB2iWZcz
-        IBh1Shs06G70sdhtUQ9Z/3GNZMmVB7aAZKewBCCgSdxl17V4WakyBvwxjnMKSrrg
-        478aZGFoEtL25OljaFuF7Ja7bJNDbed5rKwDDpEgK6IF0kWVdnGGwGXCwE5XYIbn
-        ZCOAcnemaTPuBONrsWzMRnCCRHjWqXOsJBValGLmRyULeLsPaObLywuigGHXksyS
-        tHxbmssRCrF/gQ==
-X-ME-Sender: <xms:TcN4XBJG_vr0o_jdIq6eBSwLQZ-RRE4pW6IBiEVOfpA_Way4dzXfLw>
+        fm2; bh=yryg0tD/bXbuwsX4giILeR1x3xJOYHPxD4a8sc7UekA=; b=HO83+WTM
+        ogLjdbs06hh1xYXJFob11pI5tU9H0ElAOm40M8INISRf2UUqGmCCy/vJyOsRqj8x
+        yvK/67SPo5SITy2iQrK/o8azrwd5JCvcMkUn6P/3udpVDHoYeO6eopc/yoIu2Xd/
+        OEEJubH0+5iN4O7RsLMlyDg2Rku+l0uIX4ny2JLNm+//nafy/tSXQguvTtTbiMuI
+        CWJK6+ZZZZ2cvfnKV27+dFq8o7pIa8H8PjAGU+jC35s5apib3aAMp8x0+nBHY5oa
+        U/A71Xb/c5Z9UhEQOWUazZYtzCuy4HgCOjI1ai6AVmywogisODL5EOqqeDXsI3xr
+        NXSwhu4/iPEjNA==
+X-ME-Sender: <xms:TsN4XOPWpTsBQpBFW48kmPkyLFL2yhtL9Zr0RoyluMG2WgaWYIs-iQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeggdekjecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -55,12 +55,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeggdekjecutefuodetggdote
     ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
     ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
     vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:TcN4XLAHpf57_4NXHyGU3P51RiFX35GEqn-YmtxHpD5fdxANcmCrwg>
-    <xmx:TcN4XCzaQRPuyIK5Wt7GNg2zbMAu2h4MecbUT-qr3eOB6TdLTXa8hA>
-    <xmx:TcN4XDrKr0CoCx9zlYYDLWZgqqllBy4jFoJv50-2rf_JFczieEiKDQ>
-    <xmx:T8N4XDTQBOsuXhNrTrce6eOKROTYtnKiz5xn-Jg20K8nT5Hw1ka6wg>
+X-ME-Proxy: <xmx:TsN4XBNmFfmTlyCjBKSitGy4bLeF9LNj8RtUtPqL69O-ob12LsKnJQ>
+    <xmx:TsN4XAR1AJ3trxn_8MTJHId6arAHe7A64X6MaCygmOa0wYXu6F97oA>
+    <xmx:TsN4XDB0Aqlv5xbn6c3400x2rj019Kg81O9sMrjLxzFvHhjLrnWGwg>
+    <xmx:T8N4XHJM3dLcEjV8FwQQ-Nn0Sv5CUOfDKcZ1fjPHOfaTHA0kbN3g2Q>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3EAA8E427E;
+        by mail.messagingengine.com (Postfix) with ESMTPA id CEB25E4546;
         Fri,  1 Mar 2019 00:29:49 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
@@ -73,9 +73,9 @@ To:     Jassi Brar <jassisinghbrar@gmail.com>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 01/10] clk: sunxi-ng: sun8i: Mark the msgbox clock as critical
-Date:   Thu, 28 Feb 2019 23:29:38 -0600
-Message-Id: <20190301052947.32032-2-samuel@sholland.org>
+Subject: [PATCH v2 02/10] clk: sunxi-ng: sun9i: Mark the msgbox clock as critical
+Date:   Thu, 28 Feb 2019 23:29:39 -0600
+Message-Id: <20190301052947.32032-3-samuel@sholland.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190301052947.32032-1-samuel@sholland.org>
 References: <20190301052947.32032-1-samuel@sholland.org>
@@ -98,71 +98,29 @@ Linux performs a SMC into EL3, as both the firmware and Linux can run
 concurrently on separate CPUs. So it is never safe for Linux to turn
 this clock off, and it should be marked as critical.
 
-At this time, such power management firmware only exists for the H5.
+At this time, such power management firmware does not exist for the A80.
 However, it makes sense to take care of all CCU drivers now for
 consistency, and to ease the transition in the future, once firmware is
-ported to the other SoCs.
+ported to this SoC.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c  | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c  | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c   | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index a4fa2945f230..22d09cb20326 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -263,7 +263,7 @@ static SUNXI_CCU_GATE(bus_de_fe_clk,	"bus-de-fe",	"ahb1",
- static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
- 		      0x064, BIT(20), 0);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index 8936ef87652c..f9309782e7d8 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -756,7 +756,7 @@ static SUNXI_CCU_GATE(bus_usb_clk,	"bus-usb",	"ahb1",
+ static SUNXI_CCU_GATE(bus_gmac_clk,	"bus-gmac",	"ahb1",
+ 		      0x584, BIT(17), 0);
  static SUNXI_CCU_GATE(bus_msgbox_clk,	"bus-msgbox",	"ahb1",
--		      0x064, BIT(21), 0);
-+		      0x064, BIT(21), CLK_IS_CRITICAL);
+-		      0x584, BIT(21), 0);
++		      0x584, BIT(21), CLK_IS_CRITICAL);
  static SUNXI_CCU_GATE(bus_spinlock_clk,	"bus-spinlock",	"ahb1",
- 		      0x064, BIT(22), 0);
- static SUNXI_CCU_GATE(bus_drc_clk,	"bus-drc",	"ahb1",
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index c7bf814dfd2b..6d25b7a1c81e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -275,7 +275,7 @@ static SUNXI_CCU_GATE(bus_de_fe_clk,	"bus-de-fe",	"ahb1",
- static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
- 		      0x064, BIT(20), 0);
- static SUNXI_CCU_GATE(bus_msgbox_clk,	"bus-msgbox",	"ahb1",
--		      0x064, BIT(21), 0);
-+		      0x064, BIT(21), CLK_IS_CRITICAL);
- static SUNXI_CCU_GATE(bus_spinlock_clk,	"bus-spinlock",	"ahb1",
- 		      0x064, BIT(22), 0);
- static SUNXI_CCU_GATE(bus_drc_clk,	"bus-drc",	"ahb1",
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-index 2d6555d73170..85809c454b1f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-@@ -347,7 +347,7 @@ static SUNXI_CCU_GATE(bus_de_clk,	"bus-de",	"ahb1",
- static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
- 		      0x064, BIT(20), 0);
- static SUNXI_CCU_GATE(bus_msgbox_clk,	"bus-msgbox",	"ahb1",
--		      0x064, BIT(21), 0);
-+		      0x064, BIT(21), CLK_IS_CRITICAL);
- static SUNXI_CCU_GATE(bus_spinlock_clk,	"bus-spinlock",	"ahb1",
- 		      0x064, BIT(22), 0);
- 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index e71e2451c2e3..d09629688fd4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -281,7 +281,7 @@ static SUNXI_CCU_GATE(bus_de_clk,	"bus-de",	"ahb1",
- static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
- 		      0x064, BIT(20), 0);
- static SUNXI_CCU_GATE(bus_msgbox_clk,	"bus-msgbox",	"ahb1",
--		      0x064, BIT(21), 0);
-+		      0x064, BIT(21), CLK_IS_CRITICAL);
- static SUNXI_CCU_GATE(bus_spinlock_clk,	"bus-spinlock",	"ahb1",
- 		      0x064, BIT(22), 0);
- 
+ 		      0x584, BIT(22), 0);
+ static SUNXI_CCU_GATE(bus_hstimer_clk,	"bus-hstimer",	"ahb1",
 -- 
 2.19.2
 
