@@ -2,103 +2,114 @@ Return-Path: <SRS0=/2Yr=RE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF90C10F03
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 12:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFD3C43381
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 14:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6737A20851
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 12:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1772220854
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 14:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfCAMxD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 07:53:03 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:41045 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727920AbfCAMxC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 07:53:02 -0500
-Received: by mail-vk1-f194.google.com with SMTP id b6so5586565vkf.8;
-        Fri, 01 Mar 2019 04:53:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P7qszWOfoLfuGJhgFmotpkeWhfLT6IfLYkVq3D/FMYE=;
-        b=HeAlrUdlzyn80SElOWH8OM3IBMdvrNWZewxSGMowXO3dCBZPeAW6iN7Dg3JiFx6o46
-         KQFBmCU9FydLnms0ANdM/0gtD0rt/9CYCPTzDnO7n3wruipaqHfVd7YopteWoikTxgOD
-         kCqhGzFlSxPvxW0SO6QIpMvfUgQ9ERlUf7bvriwTkHTGirKmGpf9mQ5Bjomv9kmuN3ld
-         QObQnuc9J7eBtlAis8Zo9NVC9m2lZTp0DYVnJuScyC7EjPuEKEHvrOanREy18IRV/jvi
-         RwCdYCCGm9SkfaNU1ANSBDv0FSjxJd9tFn+SDQtpxXBDUsK3IxMY4ByIJt8G6nLfh43I
-         eGaQ==
-X-Gm-Message-State: APjAAAVToCp54NS9OENABgDigxStzzoSJUvWP447SU7KGVFB4tLMG1pS
-        fCJkkTqkBxyI6F/fh0K6mX4pU37fq35sxqja4Mwe8XpJ
-X-Google-Smtp-Source: APXvYqxERk+iblTxq/3AhASSN0NYr9xx8sv6Q2WQSEXZeeUo7j6bdC4OTtu7L24WK/sFB8RWiFx7GI89D3/6PHZVwJ0=
-X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr2722870vke.40.1551444781658;
- Fri, 01 Mar 2019 04:53:01 -0800 (PST)
+        id S1728187AbfCAOrI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 09:47:08 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:35623 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728395AbfCAOrI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 09:47:08 -0500
+X-Originating-IP: 90.88.147.150
+Received: from localhost (aaubervilliers-681-1-27-150.w90-88.abo.wanadoo.fr [90.88.147.150])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 33857E0002;
+        Fri,  1 Mar 2019 14:47:03 +0000 (UTC)
+Date:   Fri, 1 Mar 2019 15:47:03 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 00/10] Allwinner sunxi message box support
+Message-ID: <20190301144703.kyqyajysfsdvg3td@flea>
+References: <20190301052947.32032-1-samuel@sholland.org>
 MIME-Version: 1.0
-References: <20190228135246.31714-1-horms+renesas@verge.net.au> <20190228135246.31714-3-horms+renesas@verge.net.au>
-In-Reply-To: <20190228135246.31714-3-horms+renesas@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Mar 2019 13:52:50 +0100
-Message-ID: <CAMuHMdU8AWAWjGHQC6tJnxqZRU1W+LmLvnw0nhWqNAKotGApMw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: renesas: r8a77990: Add ZG clock
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ghobjd6npcdkzhom"
+Content-Disposition: inline
+In-Reply-To: <20190301052947.32032-1-samuel@sholland.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Simon,
 
-On Thu, Feb 28, 2019 at 2:52 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> Adds support for R-Car E3 (r8a77990) ZG clock.
+--ghobjd6npcdkzhom
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi
+
+On Thu, Feb 28, 2019 at 11:29:37PM -0600, Samuel Holland wrote:
+> This series adds support for the "hardware message box" in sun8i, sun9i,
+> and sun50i SoCs, used for communication with the ARISC management
+> processor (the platform's equivalent of the ARM SCP). The end goal is to
+> use the arm_scpi driver as a client, communicating with firmware running
+> on the ARISC CPU, or to use the mailbox to forward NMIs that the
+> firmware picks up from R_INTC.
+>=20
+> Changes from v1:
+>   - Marked message box clocks as critical instead of hacks in the driver
+>   - 8 unidirectional channels instead of 4 bidirectional pairs
+>   - Use per-SoC compatible strings and an A31 fallback compatible
+>   - Dropped the mailbox framework patch
+>   - Include DT patches for SoCs that document the message box
 >
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> Tested on Ebisu to the extent that the clock rate is 600MHz on boot
-> ---
->  drivers/clk/renesas/r8a77990-cpg-mssr.c | 2 ++
->  drivers/clk/renesas/rcar-gen3-cpg.c     | 1 -
->  drivers/clk/renesas/rcar-gen3-cpg.h     | 1 +
->  3 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> index 0e475dcb68b9..d0d29fc942ff 100644
-> --- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> @@ -83,6 +83,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
->         DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
->         DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z, CLK_PLL0,
->                    4, CPG_FRQCRC, 8),
-> +       DEF_GEN3_Z("zg",       R8A77990_CLK_ZG,    CLK_TYPE_GEN3_Z, CLK_PLL0,
-> +                  8, CPG_FRQCRB, 24),
+> Samuel Holland (10):
+>   clk: sunxi-ng: sun8i: Mark the msgbox clock as critical
+>   clk: sunxi-ng: sun9i: Mark the msgbox clock as critical
+>   clk: sunxi-ng: sun50i: Mark the msgbox clock as critical
+>   dt-bindings: mailbox: Add a sunxi message box binding
+>   mailbox: sunxi-msgbox: Add a new mailbox driver
+>   ARM: dts: sunxi: a80: Add msgbox node
+>   ARM: dts: sunxi: a83t: Add msgbox node
+>   ARM: dts: sunxi: h3/h5: Add msgbox node
+>   arm64: dts: allwinner: a64: Add msgbox node
+>   arm64: dts: allwinner: h6: Add msgbox node
 
-While this approach may be correct for R-Car H3, M3-W, and M3-N, this is
-not correct for R-Car E3, due to the presence of Spread Spectrum Clock
-Generator support:
-  - When SCCG is enabled (MD12=1), the parent clock is either S0 or S1,
-    with only 2 or 3 (out of 32) supported dividers,
-  - When SCCG is disabled (MD12=0), the parent clock is PLL0, with only
-    2 (out of 32) supported dividers.
+It looks good to me but a few things:
 
-So I'm afraid the ZG clock on SCCG-capable SoCs needs its own very special
-clock type.
+  - There's no reason to split the first three patches, so they should
+    all be merged
 
-This applies also to R-Car D3 and RZ/G2E.
+  - You might consider using a YAML schemas for your DT bindings
+    documentation. That will bring a more formal descriptiion and DT
+    validation.
 
-Gr{oetje,eeting}s,
+Thanks!
+Maxime
 
-                        Geert
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--ghobjd6npcdkzhom
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXHlF5wAKCRDj7w1vZxhR
+xSZNAQDg4A34dO9psJhWuKf/Wp3ytO0V7HBWnLGd7ABC26v6KQD/b/+fngiCFXHC
+iEpvES4rw5pW+xkjiTfH1/ANXt3brQQ=
+=nWPd
+-----END PGP SIGNATURE-----
+
+--ghobjd6npcdkzhom--
