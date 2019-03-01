@@ -2,98 +2,103 @@ Return-Path: <SRS0=/2Yr=RE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0824C43381
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 17:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42796C43381
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 17:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8903620848
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 17:05:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="OswRkEMs"
+	by mail.kernel.org (Postfix) with ESMTP id 1023A2085A
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Mar 2019 17:31:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551461486;
+	bh=BQE+SMLxxsmFEvJ/1XIaQOXrWm6bgHplun/ybCjHg+A=;
+	h=In-Reply-To:To:Subject:References:From:Cc:Date:List-ID:From;
+	b=XOD/xgIgK3qqQv2lCn3Tz4SIGFvUlCcTQCFBYEOpicnCGfqlNOAxvz1cBa2ZhuKyY
+	 M3oblwg8l/kMphGCvUL3OY0PQZjobO2GBlleNWLsqbIaW1EER7w2ouHuVyIQqhr45u
+	 DZ6wv4XNnXe61e2qJ+9GhqcahCPbn6IlWa6CzMss=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389348AbfCARFY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 12:05:24 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36414 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728507AbfCARFX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 12:05:23 -0500
-Received: by mail-ot1-f66.google.com with SMTP id v62so21558830otb.3;
-        Fri, 01 Mar 2019 09:05:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TS2oNY4HfsJhDMVwcswsu8FZ8ib/zHV6j835eCfyGLI=;
-        b=OswRkEMstAuif4RS3Do5iMeBc6c6jEl9neM4eEGAmREZtvhMRvkuhx7NHuGwCbk9BK
-         4peoKFHecQZV3Wbrv+tnDtzrcqM8gvi/Nh+ii9elIkK5zQQ6puG1UjfagRu4gkyzLIjA
-         sfPLkdRWEfNfiBtlOh+ts5NXOmjowuowEmTZimb6YRoZJKaMDoE/zKsYb5MVHh0VJDOB
-         zsUTN9k8RXr0wiWlzfJj06hTNtIawJJj+ADbvWR902bAwYEZ63jra8Hmfum+c7dGFrwg
-         7StgPhwxvubuCEJt2jU6WwtF/RGI9Ldw1n+pl9RO4wPPA9kKnvj4AVBOfrG1AOYUE9TN
-         imVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TS2oNY4HfsJhDMVwcswsu8FZ8ib/zHV6j835eCfyGLI=;
-        b=Ui0o48HMnoE5jyEAPeEB+NoHkZUgrj47lZrKNw7R7JlIC34id29rIZz7PcHNZ9qBA3
-         PrM1C7rGGYcZW+wqErovcHx/GfvQAqGnPKSS4A7RGcyN5fnqWAdYVhTkeaBgFY2IUFd/
-         KM2mcE+yvySobSeJKLt9eEhZ04qJjlaKuLF36RE620q8y8c5EyUYRBRalUciM/G6qbcH
-         +dO9oykIut85Lh77OtEZXFocIgUn7u1+o61y9MKsBzAW1XfCNNM14ociT5+GezbKLJrN
-         qOtEooKR7Cz2SWRvRX2VkD9FHBB2LZMud3JoKtrcAcHvwUgSIgCsjwf5HWeK4J2N6vdj
-         aUoQ==
-X-Gm-Message-State: APjAAAVnvb7Ln0RNaEwVeZwe2iAQGdel87+ukQ0qYaky6e1TJ9eN8Es2
-        SVJphKgOsjSbJMdKMIwTfXYF/NeLQzdCacGic1RlJDnT
-X-Google-Smtp-Source: APXvYqwsTkIjwBot2w5Ng+9fomMlKgcYPCmyZUu9wklmT2VrB9CBW57WGAe247B9PS+bZOAvuoupKOZDqRmri1HYgMA=
-X-Received: by 2002:a9d:a11:: with SMTP id 17mr4219386otg.148.1551459923091;
- Fri, 01 Mar 2019 09:05:23 -0800 (PST)
+        id S1733137AbfCARbZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 12:31:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727418AbfCARbZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 1 Mar 2019 12:31:25 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EC0620818;
+        Fri,  1 Mar 2019 17:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551461484;
+        bh=BQE+SMLxxsmFEvJ/1XIaQOXrWm6bgHplun/ybCjHg+A=;
+        h=In-Reply-To:To:Subject:References:From:Cc:Date:From;
+        b=kj6g66x2aa/b/Tec/ACBezsobpCsPcrV/rJ4LPhM94i9xwsFa16OrGt4FiXa2OYel
+         iJOjLXPkrWHYyCAW5z0GfATN4QYU47X0bZ9CO82AKcHNueW+UmBCDh781N0xy57EPi
+         ojxf6LYPWd7Ldjwv//YyrOmQe24YItesrc/TaqCI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190301102140.7181-1-narmstrong@baylibre.com>
- <20190301102140.7181-2-narmstrong@baylibre.com> <CAFBinCCtmykL-ccWd9cporEOmxeUKC-RgrP3wfuSuYoAEjrGWA@mail.gmail.com>
- <d841b285-7994-fd7a-215b-13314bd0b298@baylibre.com>
-In-Reply-To: <d841b285-7994-fd7a-215b-13314bd0b298@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 1 Mar 2019 18:05:12 +0100
-Message-ID: <CAFBinCDt=BB_nAJ5P1TX0ahmOiqTaLGrqv5X4v2u62KCPw1UGQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: meson-g12a: add cpu clock bindings
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190301052947.32032-4-samuel@sholland.org>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH v2 03/10] clk: sunxi-ng: sun50i: Mark the msgbox clock as critical
+Message-ID: <155146148359.16805.78863244252924530@swboyd.mtv.corp.google.com>
+References: <20190301052947.32032-1-samuel@sholland.org> <20190301052947.32032-4-samuel@sholland.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
+User-Agent: alot/0.8
+Date:   Fri, 01 Mar 2019 09:31:23 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Neil,
+Quoting Samuel Holland (2019-02-28 21:29:40)
+> The msgbox clock is critical because the hardware is shared between
+> Linux and system firmware. The message box may be used by the EL3 secure
+> monitor's PSCI implementation. On 64-bit sunxi SoCs, this is provided by
+> ARM TF-A; 32-bit SoCs use a different implementation. The secure monitor
+> uses the message box to forward requests to power management firmware
+> running on a separate CPU.
+>=20
+> It is not enough for the secure monitor to enable the clock each time
+> Linux performs a SMC into EL3, as both the firmware and Linux can run
+> concurrently on separate CPUs. So it is never safe for Linux to turn
+> this clock off, and it should be marked as critical.
+>=20
+> At this time, such power management firmware only exists for the A64.
+> However, it makes sense to take care of all CCU drivers now for
+> consistency, and to ease the transition in the future, once firmware is
+> ported to the other SoCs.
+>=20
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 2 +-
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng=
+/ccu-sun50i-a64.c
+> index 932836d26e2b..7780e855c56f 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> @@ -350,7 +350,7 @@ static SUNXI_CCU_GATE(bus_de_clk,   "bus-de",       "=
+ahb1",
+>  static SUNXI_CCU_GATE(bus_gpu_clk,     "bus-gpu",      "ahb1",
+>                       0x064, BIT(20), 0);
+>  static SUNXI_CCU_GATE(bus_msgbox_clk,  "bus-msgbox",   "ahb1",
+> -                     0x064, BIT(21), 0);
+> +                     0x064, BIT(21), CLK_IS_CRITICAL);
 
-On Fri, Mar 1, 2019 at 5:43 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Hi Martin,
->
-> On 01/03/2019 16:26, Martin Blumenstingl wrote:
-> > Hi Neil,
-> >
-> > On Fri, Mar 1, 2019 at 11:22 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >>
-> >> Add Amlogic G12A Family CPU clocks bindings, only export CPU_CLK since
-> >> it should be the only ID used.
-> > is this also true for the CPU post-dividers (APB, ATB, AXI, CPU CLK TRACE)?
->
-> Do we need these to be exported ?
-I'm not sure as I couldn't find more details about APB, ATB and AXI on G12A:
-- APB and ATB may be needed by the CoreSight bindings
-(Documentation/devicetree/bindings/arm/coresight.txt)
-- AXI may be needed by the VPU driver (the S912 datasheet mentions in
-OSD1_AFBCD_ENABLE: "id_fifo_thrd : unsigned , default = 64, axi id
-fifo threshold")
+Please add a comment explaining why CLK_IS_CRITICAL is used. It helps us
+remember years from now without having to dig in the git history.
 
-if you don't know either then I'm fine with skipping them for now, we
-can still export them later.
-
-
-Martin
