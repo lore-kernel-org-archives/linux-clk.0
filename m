@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63162C10F05
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA85C43381
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C1E20863
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF58520857
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="h0eExKGh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DoPqF77W"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="RdauTGcL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qsIETBD3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbfCBEaR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 23:30:17 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39837 "EHLO
+        id S1728263AbfCBEa3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 23:30:29 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:50547 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728100AbfCBEaC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:30:02 -0500
+        by vger.kernel.org with ESMTP id S1728094AbfCBEaB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:30:01 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 19FEC22158;
-        Fri,  1 Mar 2019 23:30:01 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id 8728622141;
+        Fri,  1 Mar 2019 23:30:00 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:30:01 -0500
+  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:30:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=9acILfTnwSiDO
-        KxTjEmIxA9/egLaSc8vNg9Rsf4kxgs=; b=h0eExKGhaVNgqPbGKe99EXE/Cyn/5
-        vl71PtOET1cxTBeXzcjR9gHzotlJWO0UDJKi6c5Jit0UlyuiSbBV5nGTjtzeBd2S
-        IZlvnUnBOS3rFMqsewpIZE1dfHfStkjdzy3laKVSrkyem3coS9PMuiNdxeFfbjYL
-        tWs8zJiie6xah55NM51QNCH04f0ESWdPaTCsOAhpgtQNOJS532LcRMrzYpE3HNIg
-        Is6A0G/9deFUGy3fRPamwsW0V0plZZ0sDpz3iQQEjYFDrBN4gFezpSVA/hz5eq52
-        hWBTFi33ljMs5jBEFqaIKK/TAWJxMY8E/CuxhiyYkPhaqAmebmiMUrPNw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=ooUrU7uGG5qG1
+        YLHj5lkEeYiw80CHNq9zOV4g5e9hA4=; b=RdauTGcLp3wpSfwXKHeGhO+QUrFXV
+        tKRCSxiEN93Xfz9OQEfsEo2HwoVXBU6PlWndHbC9Ye3QQuyIC/PChIvkc4hZPWDq
+        7m3Mh57P4WKfaiS3YzvZljH/xF0Nnc5yOmrx0+aPqWlumqu8TqK6y8Mf7HyvyX0Q
+        25xyXLx4dP6egrBwS/PB5PYBR7YK/YzvS7ttKfuqWoOhaWuGS96p2eTDNYMeusjj
+        C2z8nsx5xlrgQ7bRNxONihkxddceCwi6XsSDYmy1HvVEbFSk0fu63VR2wQCNqWJF
+        c9DnNVO+dHRTT0V7WRoIbpoQP2oM+LH8k0q5DgadnngxFwfNvOoZ0Z8zw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=9acILfTnwSiDOKxTjEmIxA9/egLaSc8vNg9Rsf4kxgs=; b=DoPqF77W
-        taxQDN4m2km5TOipMt3x7IiWlOPXv8dsJ2jWletnxK1xHN73IsYcNnSjFAFEmE2P
-        T1+0nAy5bkRM4Fm71BjgKBt6CqNwZ+hDXjTehp8ZCKKzQ3XC3FtalLQuwutsuuXv
-        af4qSUEvmjsB0p2pNJbS6eQ4JIhn9slIjEQSiKFl10E+43zkY3BUBu8E3AhvMaxd
-        XTR9gL3RlFOM+GSUMhc6brr8lXmMzD1Qyo3T9kmj4ui6Ym176E3QLQTpXCr5fNvx
-        wRW+1ZoBg4ubstqpqut6hVAUhdzj6EmSMOGV6xuP125sR5TtN+gfAbuU1RwWNSa5
-        DriYmTe4o62SpQ==
-X-ME-Sender: <xms:yAZ6XED7St2KJDz4gSqUIm354OOeJaWvSF9UwIJ17_lqUs5Cmb0jIQ>
+        fm2; bh=ooUrU7uGG5qG1YLHj5lkEeYiw80CHNq9zOV4g5e9hA4=; b=qsIETBD3
+        JNnxNOHwn51oDwyRMIEtg/Fmh6/+TsHXC9WuqsPl8L3RucSc0PFukehUc/tDAJHM
+        A/2z/TXCyQMZXIynDAE46IXw2xeFbp1nD+scMZgZPWtDomif6IdUReE/9zftGm5o
+        AK4EalJKGtnvwHkjhexvSQpKk49r1EJv2ES3089d67GjqzzBPEJwQKj017p9D5Q3
+        0vryF/BLrM62UdniEQ2+KKG7m8CR3ZlNBsZW95Gz5bN2cOTRdBn/LwrvK34aamGA
+        XfAtkfCM4P6kc50gcRBrmVAXaOoA/ZeRto+/97T0UXfdZJNvKurUElL+bL4ZgQeI
+        hRWllzfi0ILNXw==
+X-ME-Sender: <xms:yAZ6XA1R_nuyCVsq8n3iLfLId6l6oFy6qiS5v13xJj1jf0cA8TGLWw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeigdejtdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -55,13 +55,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeigdejtdcutefuodetggdote
     ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
     ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
     vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpeek
-X-ME-Proxy: <xmx:yAZ6XMTC9OgMTbE-9KbsRQXuyn9V65ZmiCaGfqyaAlMIVang5proOg>
-    <xmx:yAZ6XFpU5ncKqGerj6MXfxaJb4Ot9bX5VGR5b78zSg2aUTyv3hR9Wg>
-    <xmx:yAZ6XFWt5tSCAmlI_flaafBKOFPC0r8VGZizA4oU0OaO4B_4WM_gXw>
-    <xmx:yQZ6XBuaDPUgH_wH4IbfSnsvNEtIj8pXXC--pZahzy9UB7z_k2XMaA>
+X-ME-Proxy: <xmx:yAZ6XG64Z1qX7CJBSEZli7OupFvjwb60BJDHxEdBigzSs8HnOtRomA>
+    <xmx:yAZ6XOaYyvYyL487buQjXjCdy2mLHOKVASVW8eL5HfxdtO5wyIgyiA>
+    <xmx:yAZ6XMTZpfe_nPvLRieKQ7MgLIfHUQb4ga9d2c-JChGKW85HPf45MQ>
+    <xmx:yAZ6XJFuqUpoL09LmwzBtxn2u9UNr4hplX3xMlVZWdmWsE_TzBlZyw>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2D2D110310;
-        Fri,  1 Mar 2019 23:30:00 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9879910312;
+        Fri,  1 Mar 2019 23:29:59 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 14/15] [NOT FOR MERGE] arm64: dts: allwinner: a64: Convert DTS to use msgbox_intc
-Date:   Fri,  1 Mar 2019 22:29:50 -0600
-Message-Id: <20190302042951.53671-15-samuel@sholland.org>
+Subject: [PATCH v3 13/15] [NOT FOR MERGE] arm64: dts: allwinner: a64: Add interrupt controller node
+Date:   Fri,  1 Mar 2019 22:29:49 -0600
+Message-Id: <20190302042951.53671-14-samuel@sholland.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190302042951.53671-1-samuel@sholland.org>
 References: <20190302042951.53671-1-samuel@sholland.org>
@@ -86,158 +86,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that there is an alternate way for Linux to receive NMIs from the
-PMIC, replace references to r_intc with references to the new interrupt
-controller.
+In order to give firmware full access to r_intc, Linux needs to avoid
+using it in the device tree. Most IRQ lines attached to r_intc are also
+attached to the GIC. Unfortunately, the NMI is not. For it to be used in
+Linux, we have to forward it in firmware over the mailbox.
+
+Add a node representing this virtual interrupt controller.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts  | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts    | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts     | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts  | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts        | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts      | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi       | 4 ++--
- arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts       | 4 ++--
- 9 files changed, 18 insertions(+), 18 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index 6cb2b7f0c817..57690fc3f65e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -78,8 +78,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 29ee8f0f833a..63e33215dea0 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -128,6 +128,14 @@
+ 		status = "disabled";
  	};
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 9d0afd7d50ec..0d5693710cb2 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -214,8 +214,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
- 	};
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 31884dbc8838..33d89c2d7b60 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -179,8 +179,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 	};
- };
  
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index f7a4bccaa5d4..6f9da1cc6c79 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -169,8 +169,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 		x-powers,drive-vbus-en;	/* set N_VBUSEN as output pin */
- 	};
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index 8974b5a1d3b1..94bc6fadc58f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -186,8 +186,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
- 	};
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index 216f2f5db5ef..ceb6d7353cc7 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -162,8 +162,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-index d22736a62481..02b5dfabc181 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-@@ -169,8 +169,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
-index d2651f284aa0..9555dce6703b 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
-@@ -68,8 +68,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-index c455b24dd079..63aba1519ce3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-@@ -137,8 +137,8 @@
- 	axp803: pmic@3a3 {
- 		compatible = "x-powers,axp803";
- 		reg = <0x3a3>;
--		interrupt-parent = <&r_intc>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&msgbox_intc>;
-+		interrupts = <0>;
- 		wakeup-source;
- 	};
- };
++	msgbox_intc: interrupt-controller {
++		compatible = "allwinner,sunxi-msgbox-intc";
++		interrupt-controller;
++		#interrupt-cells = <1>;
++		mboxes = <&msgbox 6>, <&msgbox 7>;
++		mbox-names = "tx", "rx";
++	};
++
+ 	osc24M: osc24M_clk {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
 -- 
 2.19.2
 
