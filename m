@@ -2,195 +2,151 @@ Return-Path: <SRS0=3lGJ=RF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEC8C00319
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B0CC43381
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 10:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43F52085A
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:31:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6916520838
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 10:15:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="hpHyY9IV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UziwOdgY"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="1P6ZFaIM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfCBE34 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 23:29:56 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:52857 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726693AbfCBE3z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:29:55 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0D5BF22102;
-        Fri,  1 Mar 2019 23:29:54 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:29:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=6wxraRm1tf0iqprrxkQWCK7za3
-        ofjuzsdLJXXH6XaDU=; b=hpHyY9IVi8062UihAai0ChkVdK18aEOvJ1vprNoAa1
-        c6ITqZU18+0XG/Os1eZalls0CriamtSZ1cYtp6o3fSCfti4wRm291FwP7VEcI+Qh
-        RjMTz/9PfAp/0TumqzP7lB1Dcy0dDiDvP7xkfLQUgyG4LoR4q35GsRBqMCmqjhl+
-        G9YaDu68yKnayTrJ037LGN7wbUsaB+UDyjRqvBxNlv3JNGi76i1u6f/s3xLEkxym
-        ERyuAYaQn3S9NeyKZjSLai0JgaF2ggGDtL/5QfguEJq0VI1LvT/+cOsbxN/DlMzP
-        DnOt3YTLV16lY7B0AjYrcYWEjTkUN/4bR2tPj1MSsgGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=6wxraRm1tf0iqprrx
-        kQWCK7za3ofjuzsdLJXXH6XaDU=; b=UziwOdgY/0/FoXCTrAzf6i5BvmeeYNdku
-        pB81qxAba0sz+rP2p1SYBtyqotmXkj910Ga2qh46uvxPksXGFwKKBn1Xtn4nOX4c
-        cVS+GOilW9mCW67L0Z4eAEOVWjDVnEti4oZ+aO3w0iy7631L193SkygkiJg9IdS3
-        Jque0Zk7v9x7XYe0ig8xBnIy00BGi1QXAjLVACjQXOINr+m9U5ekrRin1USNyqVH
-        FGMTINmVyc/NLqx2s21kJAvM02+TvEclCYZrXSWTwAcRpY+w6Z+OCQkuK9T9l7dy
-        3DqKCxUbBS2PgAKSwwHO1YvWv5VX7qqYInQAVrNlwz7Ssf96Upy1A==
-X-ME-Sender: <xms:wAZ6XKZGLEvtVcvujsGbf1L3xHkZGiFaQC3Cy-4k7dl0P7_qIa7QMw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeigdejtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
-    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuffhomhgrih
-    hnpehgihhthhhusgdrtghomhenucfkphepjedtrddufeehrddugeekrdduhedunecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:wAZ6XCnHmQaz9QZ_GjodN2fOnElqtbsSXpcYULi6uS-sG_5TPwl7nA>
-    <xmx:wAZ6XF2g7ADyQB3lzl612i9hc02c1Mg1kLy8zRD_AfIaK1XC0F3zdA>
-    <xmx:wAZ6XC0mU_u_iB9GW-xT3VOtkvuMcxSyhqwDeVlBx3-MkezjZdMLNg>
-    <xmx:wQZ6XJosX9vyx4Cqt3r5H7rS4TtHgaQ90Acvl9mMo5CtyS5aewnU-Q>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0F9A310310;
-        Fri,  1 Mar 2019 23:29:52 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726113AbfCBKPa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Mar 2019 05:15:30 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35997 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfCBKP3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Mar 2019 05:15:29 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v10so279455lji.3
+        for <linux-clk@vger.kernel.org>; Sat, 02 Mar 2019 02:15:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cHHNRHPJqf7aByI4pP6V3ueWusNGY7S6yJanIoX8rTY=;
+        b=1P6ZFaIM1F95ENHgM3CW+4bVcUDbaBO0y1+qHrrX2gu7yaOiS8YNDYxKnXIbelJBXX
+         fpBUxJ9UfJbeXl1uyD+Z9jK5DQWCOvQPgKoH+yjHqJPeqvWXiLS6Zb/2zxFe6edeSPCN
+         Wo+sCvW9Fgtc+LebR6XqrYSJwQPmhHJcJK9+3O2aerJlO9gQK4DX5s2Bhir8YNXyMUwi
+         hQIiIkApoMaWQcTSK9UXBcYGmPGPzi5SbPqUZlC3ZaxizeEOoYgJ+IHkpxr8iYM1fBXj
+         RqhJv1qxYlZbMWDOqh+WC/HGVt0PN0sESMyj8hY4Y7xW4Z98CrKDv4wuAqCcoJHPRVyr
+         yCjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=cHHNRHPJqf7aByI4pP6V3ueWusNGY7S6yJanIoX8rTY=;
+        b=Z3AeFMap1kuVnq8yHoBQKbGjEo+rwpZmMhMmV5m+uOUh0Vi2r6TBlQspdhM0FBdYJU
+         bo61XBlfGVWlX79TJSUzy3LzjY/1KyaVtQX4hSfBvwj55VPjwFwcybwFhmNt7kQO25qO
+         iCb6HcFgL9Klo5Szq+ALO/bS1MDNs4BHlVIu6pTUk6NhyHaMVaGrlrbYNo+fPcu0T07k
+         yXuxVs2HMxCoyijQxZHczaJXX66p3xJeKWc05Mf8trbwY4obsFYGVL7VDZQ34dHLj+DZ
+         R1qXh9R+YlEB8lUWwNmVYB52vsxvL74wg//ENsStGo6aIsHX4ipX04ITCkkrVtWM8hT/
+         njuw==
+X-Gm-Message-State: APjAAAWAPNfKrf2Q9Xj9zDSWgIZer8SbviYX14o1ew0y0q1zMhYO/U7P
+        M7AFcFcEWsElGhZMCwBebTbtWQ==
+X-Google-Smtp-Source: APXvYqxVIXcZ7Aw/RkZDXIEJju6w+sr+4U+X5vnxKPSG8gghr1cTT7GC9Fvx8n3N2igqgYmFV3T3JA==
+X-Received: by 2002:a2e:8092:: with SMTP id i18mr5426826ljg.91.1551521727624;
+        Sat, 02 Mar 2019 02:15:27 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id u14sm108891lfu.94.2019.03.02.02.15.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 02 Mar 2019 02:15:26 -0800 (PST)
+Date:   Sat, 2 Mar 2019 11:15:26 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 00/15] Allwinner sunxi message box support
-Date:   Fri,  1 Mar 2019 22:29:36 -0600
-Message-Id: <20190302042951.53671-1-samuel@sholland.org>
-X-Mailer: git-send-email 2.19.2
+        Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Pass name/offset to
+ cpg_sd_clk_register()
+Message-ID: <20190302101526.GB22550@bigcity.dyn.berto.se>
+References: <20190301123822.808-1-geert+renesas@glider.be>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190301123822.808-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds support for the "hardware message box" in sun8i, sun9i,
-and sun50i SoCs, used for communication with the ARISC management
-processor (the platform's equivalent of the ARM SCP). The end goal is to
-use the arm_scpi driver as a client, communicating with firmware running
-on the AR100 CPU, or to use the mailbox to forward NMIs that the
-firmware picks up from R_INTC.
+Hi Geert,
 
-Unfortunately, the ARM SCPI client no longer works with this driver
-since it now exposes all 8 hardware FIFOs individually. The SCPI client
-could be made to work (and I posted proof-of-concept code to that effect
-with v1 of this series), but that is a low priority, as Linux does not
-directly use SCPI with the current firmware version; all SCPI use goes
-through ATF via PSCI.
+Thanks for your patch.
 
-An example usage is included at the end of this patch series. The IRQ
-forwarding code is WIP and not even RFC quality yet, but it does work.
-To build the firmware component, run:
+On 2019-03-01 13:38:22 +0100, Geert Uytterhoeven wrote:
+> Explicitly pass the clock's name and register offset to
+> cpg_sd_clk_register(), so the latter doesn't have to extract them from
+> the cpg_core_clk object.
+> 
+> This keeps all cpg_core_clk parsing and unmarshalling contained in a
+> single function (rcar_gen3_cpg_clk_register()).
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-  git clone https://github.com/crust-firmware/meta meta
-  git clone https://github.com/smaeul/crust -b linux-mailbox-example meta/crust
-  cd meta
-  make
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-That will by default produce a U-Boot + ATF + SCP firmware image in
-[meta/]build/pinebook/u-boot-sunxi-with-spl.bin. See the top-level README.md
-for more information (like cross-compiler setup). The IRQ-forwarding mailbox
-server is implemented in [meta/crust/]common/irqf.c.
-
-With that firmware and the full patch series here (on top of
-torvalds/master), Linux boots and is able to receive NMIs from the PMIC
-(i.e. use `showkey` to see that the power button works, and see that
-/proc/interrupts updates). As an added bonus, suspend/resume also mostly
-works :)
-
-Changes from v2:
-  - Merge patches 1-3
-  - Add a comment in the code explaining the CLK_IS_CRITICAL usage
-  - Add a patch to mark the AR100 clocks as critical
-  - Use YAML for the device tree binding
-  - Include a not-for-merge example usage of the mailbox.
-
-Changes from v1:
-  - Marked message box clocks as critical instead of hacks in the driver
-  - 8 unidirectional channels instead of 4 bidirectional pairs
-  - Use per-SoC compatible strings and an A31 fallback compatible
-  - Dropped the mailbox framework patch
-  - Include DT patches for SoCs that document the message box
-
-Samuel Holland (15):
-  clk: sunxi-ng: Mark msgbox clocks as critical
-  clk: sunxi-ng: Mark AR100 clocks as critical
-  dt-bindings: mailbox: Add a sunxi message box binding
-  mailbox: sunxi-msgbox: Add a new mailbox driver
-  ARM: dts: sunxi: a80: Add msgbox node
-  ARM: dts: sunxi: a83t: Add msgbox node
-  ARM: dts: sunxi: h3/h5: Add msgbox node
-  arm64: dts: allwinner: a64: Add msgbox node
-  arm64: dts: allwinner: h6: Add msgbox node
-  [NOT FOR MERGE] clk: sunxi-ng: sun8i: Avoid turning off unused PRCM
-    gates
-  [NOT FOR MERGE] dt-bindings: Add a binding for a mailbox-backed
-    interrupt controller
-  [NOT FOR MERGE] irqchip/mbox: Introduce a mailbox-backed irqchip
-    driver
-  [NOT FOR MERGE] arm64: dts: allwinner: a64: Add interrupt controller
-    node
-  [NOT FOR MERGE] arm64: dts: allwinner: a64: Convert DTS to use
-    msgbox_intc
-  [NOT FOR MERGE] arm64: dts: allwinner: a64: Remove unused r_intc
-
- .../interrupt-controller/mbox-intc.txt        |  33 ++
- .../mailbox/allwinner,sunxi-msgbox.yaml       |  79 +++++
- arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
- arch/arm/boot/dts/sun9i-a80.dtsi              |  10 +
- arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
- .../allwinner/sun50i-a64-amarula-relic.dts    |   4 +-
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |   4 +-
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |   4 +-
- .../dts/allwinner/sun50i-a64-olinuxino.dts    |   4 +-
- .../dts/allwinner/sun50i-a64-orangepi-win.dts |   4 +-
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  |   4 +-
- .../dts/allwinner/sun50i-a64-pinebook.dts     |   4 +-
- .../boot/dts/allwinner/sun50i-a64-sopine.dtsi |   4 +-
- .../boot/dts/allwinner/sun50i-a64-teres-i.dts |   4 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  27 +-
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   3 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |   2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c          |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c          |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c         |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c           |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r.c            |  20 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c          |   3 +-
- drivers/irqchip/Kconfig                       |   9 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-mbox.c                    | 199 +++++++++++
- drivers/mailbox/Kconfig                       |  11 +
- drivers/mailbox/Makefile                      |   2 +
- drivers/mailbox/sunxi-msgbox.c                | 315 ++++++++++++++++++
- 31 files changed, 750 insertions(+), 45 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt
- create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sunxi-msgbox.yaml
- create mode 100644 drivers/irqchip/irq-mbox.c
- create mode 100644 drivers/mailbox/sunxi-msgbox.c
+> ---
+> To be queued in clk-renesas-for-v5.2.
+> 
+>  drivers/clk/renesas/rcar-gen3-cpg.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+> index 9a8071a8114daec9..dcd4ac389326b932 100644
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -369,8 +369,8 @@ static u32 cpg_quirks __initdata;
+>  #define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
+>  #define SD_SKIP_FIRST	BIT(2)		/* Skip first clock in SD table */
+>  
+> -static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+> -	void __iomem *base, const char *parent_name,
+> +static struct clk * __init cpg_sd_clk_register(const char *name,
+> +	void __iomem *base, unsigned int offset, const char *parent_name,
+>  	struct raw_notifier_head *notifiers)
+>  {
+>  	struct clk_init_data init;
+> @@ -383,13 +383,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+>  	if (!clock)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	init.name = core->name;
+> +	init.name = name;
+>  	init.ops = &cpg_sd_clock_ops;
+>  	init.flags = CLK_SET_RATE_PARENT;
+>  	init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+>  
+> -	clock->csn.reg = base + core->offset;
+> +	clock->csn.reg = base + offset;
+>  	clock->hw.init = &init;
+>  	clock->div_table = cpg_sd_div_table;
+>  	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
+> @@ -606,8 +606,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>  		break;
+>  
+>  	case CLK_TYPE_GEN3_SD:
+> -		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
+> -					   notifiers);
+> +		return cpg_sd_clk_register(core->name, base, core->offset,
+> +					   __clk_get_name(parent), notifiers);
+>  
+>  	case CLK_TYPE_GEN3_R:
+>  		if (cpg_quirks & RCKCR_CKSEL) {
+> -- 
+> 2.17.1
+> 
 
 -- 
-2.19.2
-
+Regards,
+Niklas Söderlund
