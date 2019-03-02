@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFD4C43381
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01400C00319
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF662085A
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C323E2085A
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="TJeYQcGk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TskFMf6f"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="U19Yy44d";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="0UzCjnkN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbfCBEaR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 23:30:17 -0500
+        id S1728115AbfCBEaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 23:30:01 -0500
 Received: from out2-smtp.messagingengine.com ([66.111.4.26]:57233 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728106AbfCBEaC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:30:02 -0500
+        by vger.kernel.org with ESMTP id S1728072AbfCBEaA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:30:00 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id AF9EE22155;
-        Fri,  1 Mar 2019 23:30:01 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id 5E24F22148;
+        Fri,  1 Mar 2019 23:29:59 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:30:01 -0500
+  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:29:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=XJA11nR7CLJ9T
-        4EliiutwRMHPS8CdG6OgOIvQtL5T+o=; b=TJeYQcGkao3E926Sdw2Biek9x9q6M
-        OBtPb/T6zM0bBmIPF1zrcQYQY2lTwXsXPj0SC1o774UDTU6fIKJB/yTW9BaG70QY
-        G+ydk6/qT/f97Yuf4P6tQVuLlFGFGsEzpkz81Io49iVNNcF0ZxXkkRAF5wvdpWKW
-        3++skSnDE2u2Btfk1Q4Pp+tGjiqCK3gZWkARvNUTOavwthsufDyAXEwQX/Y1wFLK
-        t8s3KgQHgopzbSbFV2sPFDm80Kg2n/1UQKDYdGuX0Ac9qonixDWCm0GlNos2hnUh
-        EfCh4TB59B8lpnVMjPVjy0xy5UiNQrrq+WwLsNdqIWlG1snzuuq+j8p4Q==
+        :mime-version:content-transfer-encoding; s=fm2; bh=jYp+ycn1UzPzl
+        xBONZFtfT7KW34dUxVmR4eWWrPmRKU=; b=U19Yy44dJkZznMu5F6hMcIJ++5yEE
+        NK4Vpp5Y/rXdz0caYJ39xBuCinDBPy8UTTwD6xvaswTyxmpsSwwq0ySjp6z7CBGO
+        NjHV4Z+xNTaUjiaxDmspdl6VOWnuMbDL3ILmqtQKoxd1BoMcAyjObtZvpkQqDjm1
+        T5G5l8kQYh1RB9X7LlghNyr/zOJ9IZWESSk2wxLy4JbMkEe+Jd1a/JVETGb7kJjm
+        P6itnsgAfp8mPdHfNMwuFsQaZbkyko+pxQwD8lBWtXjRs2SQi9Q3CHjZQmfLeILm
+        zq/h6fYchaiXpzYMHRnwjRXbutE+BBnKg+7jz+eEYPZiCprRfJmOj/pAA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=XJA11nR7CLJ9T4EliiutwRMHPS8CdG6OgOIvQtL5T+o=; b=TskFMf6f
-        tr7CsuVpin2sheE2LaqMUMTBxjVDGkLCqy4JU6hoLXxvUKoMAsHkClGqPEMNCAbe
-        uDFOwJyoSBBIZAvsDDXpHimLW5Kug8FouMjyUGfZ3q5b9qTkrh6Ty/YIYnhCq5VA
-        GneIIHp1jtx5p8DoVeuD/UZ4rote2gH3/+aCeoHYDS+ouLdciVCVRJ4imtXoveWE
-        Sw54B3AtwoMqnTqAMguTdKpK6hIxkSnIa218lFWLJOsbWnAFk0Em2Sxzv7eJmIvA
-        r1rq+XPG4f3UJb7sttJc36ocyJ/1+aJR4XSoYs7CYAYXpcZTVu67EQtFa0ZABK6s
-        UUCdtTM3vzqjaA==
-X-ME-Sender: <xms:yQZ6XLAda1d3Q-kmtg1QBdEUNXKa39vNd5eueiCQMLYa95vqTnv_zA>
+        fm2; bh=jYp+ycn1UzPzlxBONZFtfT7KW34dUxVmR4eWWrPmRKU=; b=0UzCjnkN
+        eBMSp5r4qrY+EsHy+mr1idD+e7JMm46fjGxl7FsXv5qthRbG/VxoHAcNGeTHUuTN
+        YzliprCS/rTFCHdOXjKlsyaMKAsy6HDZj/n7PG2O4e+9JUnj6iVJXFvua5lstfG6
+        fgLs3Pwc/OYcnlAVINO2iqPd/PJSsVlFBqGDCVQGfsaAlzhDLwRLMvbDa93cPvy5
+        aJwYp+GXuIp8bkSa56r+6Uf+HyaJmQa0DFnkxcMWa0bBeGTUi+c8/WJY3GUO2Oba
+        rcxpaxCk3D+unfhGwoJVfTN88J9H1UGm63vmJPzYkfPYPir66330pAt6O0DMG9BU
+        BgvgfGBW0fR6dA==
+X-ME-Sender: <xms:xwZ6XGpG013EGgkBBIy2GFEPjqFl4Z_TXFDPIcSCH1Y04bgG7iD26A>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeigdejtdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -55,13 +55,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeigdejtdcutefuodetggdote
     ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
     ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
     vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpeek
-X-ME-Proxy: <xmx:yQZ6XL_RID3TCSQCVLTgzqsMDgH7CtY3jvr1JBQxfLL1h2Oxm31S1Q>
-    <xmx:yQZ6XOFm6dPVht1gFmM4o3sprtHQCtruI0kD6AunUMPfCTdcNHSLwA>
-    <xmx:yQZ6XFQVK1-lG6ZA0OJjFost0MFkt_I0sZtCsBYIyC_cPyK8KdV44A>
-    <xmx:yQZ6XCFjDnzx3Wardj8-3mR7FUpNEAp_XMbPM2y_rr8bzwN2geK0pQ>
+X-ME-Proxy: <xmx:xwZ6XFZAY9ugVlTcMv1ZQ5D3h7QfXS2n39uUmDlkFJ1wnhMTaZ_uzw>
+    <xmx:xwZ6XEHYHKbI8wSuLDiEkEWUhXGEHfo9hTFAHDOFuV4-8blP2vYSVg>
+    <xmx:xwZ6XNwPHaS4BDxUpTrr3KEr1OqfDBg7Lwa7CTE-d_JbdBv6VVcfsQ>
+    <xmx:xwZ6XGK_2ii0HsMhMqHhFyEejuy8MIIbid0OQMr-5ZmM_WJdYFiumQ>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BB28510312;
-        Fri,  1 Mar 2019 23:30:00 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 730B910312;
+        Fri,  1 Mar 2019 23:29:58 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 15/15] [NOT FOR MERGE] arm64: dts: allwinner: a64: Remove unused r_intc
-Date:   Fri,  1 Mar 2019 22:29:51 -0600
-Message-Id: <20190302042951.53671-16-samuel@sholland.org>
+Subject: [PATCH v3 11/15] [NOT FOR MERGE] dt-bindings: Add a binding for a mailbox-backed interrupt controller
+Date:   Fri,  1 Mar 2019 22:29:47 -0600
+Message-Id: <20190302042951.53671-12-samuel@sholland.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190302042951.53671-1-samuel@sholland.org>
 References: <20190302042951.53671-1-samuel@sholland.org>
@@ -86,34 +86,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that r_intc is no longer used directly by Linux, it can be removed
-from the SoC device tree.
+This is a somewhat generic binding for an interrupt controller/forwarder
+implemented in firmware and communicated with using a mailbox.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 9 ---------
- 1 file changed, 9 deletions(-)
+ .../interrupt-controller/mbox-intc.txt        | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 63e33215dea0..163ee3576329 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -989,15 +989,6 @@
- 			#clock-cells = <1>;
- 		};
- 
--		r_intc: interrupt-controller@1f00c00 {
--			compatible = "allwinner,sun50i-a64-r-intc",
--				     "allwinner,sun6i-a31-r-intc";
--			interrupt-controller;
--			#interrupt-cells = <2>;
--			reg = <0x01f00c00 0x400>;
--			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
--		};
--
- 		r_ccu: clock@1f01400 {
- 			compatible = "allwinner,sun50i-a64-r-ccu";
- 			reg = <0x01f01400 0x100>;
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt
+new file mode 100644
+index 000000000000..a0eb7904ca83
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt
+@@ -0,0 +1,33 @@
++Mailbox-backed Interrupt Controller
++===================================
++
++This binding represents an interrupt controller implemented in firmware,
++that uses a mailbox channel to signal and acknowledge interrupts.
++
++Device Node:
++============
++
++Required properties:
++--------------------
++- compatible:		Must be one of the following strings:
++			- allwinner,sunxi-msgbox-intc
++- interrupt-controller:	Signifies that this node is an interrupt controller.
++- #interrupt-cells:	Must be 1.
++- mboxes:		phandle for the mailbox controller and channel
++			specifier. If the mailbox controller has unidirectional
++			channels, two entries are required (see below).
++- mbox-names:		Only required for unidirectional mailbox channels. In
++			that case, it must contain the strings "tx" and "rx"
++			(where "tx" and "rx" are from Linux's perspective, not
++			the direction the interrupts are traveling).
++
++Example:
++--------
++
++	msgbox_intc: interrupt-controller {
++		compatible = "allwinner,sunxi-msgbox-intc";
++		interrupt-controller;
++		#interrupt-cells = <1>;
++		mboxes = <&msgbox 6>, <&msgbox 7>;
++		mbox-names = "tx", "rx";
++	};
 -- 
 2.19.2
 
