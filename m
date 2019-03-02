@@ -2,71 +2,143 @@ Return-Path: <SRS0=3lGJ=RF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70897C43381
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 00:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C4CC43381
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C74320840
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 00:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551487554;
-	bh=Dix9wYJZswox9q6lMBAmIBLAamPZesWSaBZcvyecDmk=;
-	h=In-Reply-To:To:Subject:References:From:Cc:Date:List-ID:From;
-	b=V5Ur9Z8pfc8W2wtwZs9Sfuws16twg6RE70MJAa7eUtfNb7Yoasr2sK0I9gNMulw5o
-	 /Adbu/7tvcSRxXP0M0NRDHvt/mlIzfxR9XI4+rBfzhYbgAu8qkHJ1xMrsbPh1L50PA
-	 U2aI5mwaII/ACZKY07OEaxzgQQ3PZQ6BKkj+bb5U=
+	by mail.kernel.org (Postfix) with ESMTP id BEE682085A
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:29:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="K50d1HyP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HRCCY0W7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbfCBApx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 19:45:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725966AbfCBApx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 Mar 2019 19:45:53 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16F9520823;
-        Sat,  2 Mar 2019 00:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551487553;
-        bh=Dix9wYJZswox9q6lMBAmIBLAamPZesWSaBZcvyecDmk=;
-        h=In-Reply-To:To:Subject:References:From:Cc:Date:From;
-        b=WQ3DxGgrCgdby2yAjd7DkZv0tZTRB/eLf09w/3tpLgkDzPS9hoXcvVxc9BdQYXvvC
-         8MIJqBBpN143pWKJGLOjLpXaaEXh8Jpr2IzZ3H0bVOTfSoxqqS0iRHzZtqbbDfKIBr
-         UpT308iiV0Uyq4BUTquuQ6WHq6VYep3CqbhS+EnA=
-Content-Type: text/plain; charset="utf-8"
+        id S1727420AbfCBE3z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 23:29:55 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:57657 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727354AbfCBE3z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:29:55 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3B42E22101;
+        Fri,  1 Mar 2019 23:29:54 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:29:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm2; bh=bADvv49nXnLPt
+        pW614Ubn0XGjHhOdyRTQa2gb7Gflf0=; b=K50d1HyPpvpTEjvzWX5dR1s0dSMJT
+        LAlxolW8MyvZ52EOMPnd1Ya3L5d/VhuAPc/1KWaSrCuk5lDXvilCWjPUoiYWhIb0
+        IrqweSGPcPUxVt8DcwcI2dQ4gWv7DUk3wHMqu5E7cdESQk2eq882V9PV916Jc58E
+        NmxDLdoKlL0uVvwco1A6bXydp9BkyC7QxRS0h471sqeuL5ET0Ux8vXh7eAuj6Yiu
+        3lQohhPg417zaGe/JJh5AIw7YN9giX/G4tX0n9JUFpuS/+vq+RNKTfDAdjKorrmk
+        SRKdB268yPzdQjZthA9Kqejw0C8CQqu9Ez2VbWyKk/siC/JeClUcuufXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; bh=bADvv49nXnLPtpW614Ubn0XGjHhOdyRTQa2gb7Gflf0=; b=HRCCY0W7
+        Uym4gSN0f944OKlxytTMGQXKPJRkx8bIHe45yQVo4CmV6ileBE8jUCiXPb1LTK82
+        4Ma4YdJ6j23+ZS3yBUT96lLIgaO1GjycPqT7eFtFbx97h+PRVMPD80BKoAyxAJJu
+        7Y9f+ElHXEFrXgEVr6qzk6GBetvhnCJSoFy8bVYInI9TBP5TPQ9tqObPVfcylzQC
+        +jQzI+mn/l/fZuqSS7uGU0DfoYOqXDeT4H/BoxMZtOqsXbBhuyibafnZYrXV3+9y
+        4hl+gO0reh46oy0dGsoHegKVqNyjBW0yKxAS2JceFRtbVg3J1ebJqxf5M9n/cVQ6
+        c3HFa106rfUh8A==
+X-ME-Sender: <xms:wQZ6XCDgzddpLC1N8Z446tWGa7TCT_yHFYTZA62YBG7LE5JYvuFe9Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeigdejtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
+    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
+    ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
+    vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:wgZ6XMsjzmtv3DMr6lyeYz0m4snfv7va2F3ZQ1pimD_8Mqnbm6bu4A>
+    <xmx:wgZ6XHbo60uwKnBBkubPjb41C-IVyRB_ujRDHwpZBkQ--3_eCFguWw>
+    <xmx:wgZ6XPV72tBRstFhsziV_GusAJgHjNLkMrAZgm7gkIzLFcMZ3Rtgaw>
+    <xmx:wgZ6XPHBKUnvAAoLJCJOdaxTPkjlwPKa8WGScS-6p-a_zAlzMkDQ2w>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 41B7210318;
+        Fri,  1 Mar 2019 23:29:53 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v3 02/15] clk: sunxi-ng: Mark AR100 clocks as critical
+Date:   Fri,  1 Mar 2019 22:29:38 -0600
+Message-Id: <20190302042951.53671-3-samuel@sholland.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190302042951.53671-1-samuel@sholland.org>
+References: <20190302042951.53671-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190226223429.193873-1-sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 0/8] Rewrite clk parent handling
-Message-ID: <155148755222.16805.14783532568007890826@swboyd.mtv.corp.google.com>
-References: <20190226223429.193873-1-sboyd@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>
-User-Agent: alot/0.8
-Date:   Fri, 01 Mar 2019 16:45:52 -0800
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2019-02-26 14:34:21)
->=20
-> I plan to at least merge the early patches in this series into clk-next
-> so we can clear the way for the later patches. I don't think anything is
-> too controversial until we get to the new way of specifying parents
-> at the end and of course, the sdm845 patch is incomplete so it's not
-> going to be merged.
+On sun8i, sun9i, and sun50i SoCs, system suspend/resume support requires
+firmware running on the AR100 coprocessor (the "SCP"). Such firmware can
+provide additional features, such as thermal monitoring and poweron/off
+support for boards without a PMIC.
 
-I've pushed the first 5 to clk-next.=20
+Since the AR100 may be running critical firmware, even if Linux does not
+know about it or directly interact with it (all requests may go through
+an intermediary interface such as PSCI), Linux must not turn off its
+clock.
+
+At this time, such power management firmware only exists for the A64 and
+H5 SoCs.  However, it makes sense to take care of all CCU drivers now
+for consistency, and to ease the transition in the future once firmware
+is ported to the other SoCs.
+
+Leaving the clock running is safe even if no firmware is present, since
+the AR100 stays in reset by default. In most cases, the AR100 clock is
+kept enabled by Linux anyway, since it is the parent of all APB0 bus
+peripherals. This change only prevents Linux from turning off the AR100
+clock in the rare case that no peripherals are in use.
+
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+index 27554eaf6929..4f822b598ade 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -45,7 +45,7 @@ static struct ccu_div ar100_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS("ar100",
+ 						      ar100_r_apb2_parents,
+ 						      &ccu_div_ops,
+-						      0),
++						      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+index 71feb7b24e8a..90b3530e2c18 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+@@ -50,7 +50,7 @@ static struct ccu_div ar100_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS("ar100",
+ 						      ar100_parents,
+ 						      &ccu_div_ops,
+-						      0),
++						      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+-- 
+2.19.2
 
