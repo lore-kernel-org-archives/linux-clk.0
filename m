@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA85C43381
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B29C43381
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF58520857
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7C5E20857
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 04:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="RdauTGcL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qsIETBD3"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="hjk4OJ6P";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PvS7S7Yc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfCBEa3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Mar 2019 23:30:29 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:50547 "EHLO
+        id S1728295AbfCBEag (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Mar 2019 23:30:36 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39837 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728094AbfCBEaB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:30:01 -0500
+        by vger.kernel.org with ESMTP id S1727974AbfCBE37 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Mar 2019 23:29:59 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8728622141;
-        Fri,  1 Mar 2019 23:30:00 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id A34C121C82;
+        Fri,  1 Mar 2019 23:29:57 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:30:00 -0500
+  by compute5.internal (MEProxy); Fri, 01 Mar 2019 23:29:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=ooUrU7uGG5qG1
-        YLHj5lkEeYiw80CHNq9zOV4g5e9hA4=; b=RdauTGcLp3wpSfwXKHeGhO+QUrFXV
-        tKRCSxiEN93Xfz9OQEfsEo2HwoVXBU6PlWndHbC9Ye3QQuyIC/PChIvkc4hZPWDq
-        7m3Mh57P4WKfaiS3YzvZljH/xF0Nnc5yOmrx0+aPqWlumqu8TqK6y8Mf7HyvyX0Q
-        25xyXLx4dP6egrBwS/PB5PYBR7YK/YzvS7ttKfuqWoOhaWuGS96p2eTDNYMeusjj
-        C2z8nsx5xlrgQ7bRNxONihkxddceCwi6XsSDYmy1HvVEbFSk0fu63VR2wQCNqWJF
-        c9DnNVO+dHRTT0V7WRoIbpoQP2oM+LH8k0q5DgadnngxFwfNvOoZ0Z8zw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=iyNHX5bab3Lfe
+        AAxywZMP6Pf+JBDMgU9maMkQ45NjMk=; b=hjk4OJ6POVLyUPslwe7Vvj4kHDAES
+        xZ5TQbvhPQTOhtYJImhQynTYGUUgA8dzlSFEdeXbe1nCaK0YQs9EwNh3dY0RB8Tc
+        caItwbz2uUsJPpLKygO1qfFGCaAqL0kQE6WiIc+sKttiYBzqO8v2/7wBC0Dh6cbF
+        Y96yjSYeCQ0yzERYdY3gp48qGbqXEctYypte7m5oS6xdwm3ft+Oc1QxW5MnF0EtQ
+        TDdvzG2Zv3ptTITeB5Aw7t5NE1Aw8C98x7r5iB3qtFsaGYQmIucbp7Js/QEtR6jy
+        kzUbUxTJ26p5QjokKEX6t6Lp6McDl7bxgjI4gpeqJJve6zxHWaUjaQHFw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=ooUrU7uGG5qG1YLHj5lkEeYiw80CHNq9zOV4g5e9hA4=; b=qsIETBD3
-        JNnxNOHwn51oDwyRMIEtg/Fmh6/+TsHXC9WuqsPl8L3RucSc0PFukehUc/tDAJHM
-        A/2z/TXCyQMZXIynDAE46IXw2xeFbp1nD+scMZgZPWtDomif6IdUReE/9zftGm5o
-        AK4EalJKGtnvwHkjhexvSQpKk49r1EJv2ES3089d67GjqzzBPEJwQKj017p9D5Q3
-        0vryF/BLrM62UdniEQ2+KKG7m8CR3ZlNBsZW95Gz5bN2cOTRdBn/LwrvK34aamGA
-        XfAtkfCM4P6kc50gcRBrmVAXaOoA/ZeRto+/97T0UXfdZJNvKurUElL+bL4ZgQeI
-        hRWllzfi0ILNXw==
-X-ME-Sender: <xms:yAZ6XA1R_nuyCVsq8n3iLfLId6l6oFy6qiS5v13xJj1jf0cA8TGLWw>
+        fm2; bh=iyNHX5bab3LfeAAxywZMP6Pf+JBDMgU9maMkQ45NjMk=; b=PvS7S7Yc
+        XPHkAo4pdMq24igXGdPaz73XaawXCVwwvg39r7FB+xOcL6cK8vwKCXV1TfEwCV+7
+        6ZaF6UEyv6XMTGJukxiiTdMeCDzZyaRy08YAB8OPkURUQK2NEK2urjcb43fmFFQo
+        N7Csha+6dL9t/oN+7MqVTQrlYTvt8MbH1ZGW95V6Dzh4iLyYPryAbfJI5kzqEKd3
+        /x1tyY2Q9qzcWsk6X/2rDBkYxCr+J0vAdn0943VxTJWNJJh6wA8Eyqs+F6OetvDC
+        dcTchkSw2089+rwVaJWQiQb6gLTceUuKRnOG+1Q00TbCjGJfEp2Vft09p1XNU3Eq
+        lX2SmY+ish5K9A==
+X-ME-Sender: <xms:xQZ6XON16BTLr7mt5tlbh0306PCGg6Th2ABpXy_PmTMlDfPcsT3z8g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvdeigdejtdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
     ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
     ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
-    vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpeek
-X-ME-Proxy: <xmx:yAZ6XG64Z1qX7CJBSEZli7OupFvjwb60BJDHxEdBigzSs8HnOtRomA>
-    <xmx:yAZ6XOaYyvYyL487buQjXjCdy2mLHOKVASVW8eL5HfxdtO5wyIgyiA>
-    <xmx:yAZ6XMTZpfe_nPvLRieKQ7MgLIfHUQb4ga9d2c-JChGKW85HPf45MQ>
-    <xmx:yAZ6XJFuqUpoL09LmwzBtxn2u9UNr4hplX3xMlVZWdmWsE_TzBlZyw>
+    vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:xQZ6XBMZTekxXT86t8sf8S8H5xkUfvYlxm2eixAuQrpAp5127cedAA>
+    <xmx:xQZ6XASsifMx0-IXCrJr7VJLybCz-CuDwOnogL_JM5VUVUOT6-5H9A>
+    <xmx:xQZ6XDDf2HxuWPCuhSj1PyWGfPVpINae7Qm0N-gki_13s8It9_tDTA>
+    <xmx:xQZ6XHJ3JMVo1WNnsO241R8_RmsAKwO6QoRccdtytuyrqhHd9PAVYg>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9879910312;
-        Fri,  1 Mar 2019 23:29:59 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id B9C1E10310;
+        Fri,  1 Mar 2019 23:29:56 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 13/15] [NOT FOR MERGE] arm64: dts: allwinner: a64: Add interrupt controller node
-Date:   Fri,  1 Mar 2019 22:29:49 -0600
-Message-Id: <20190302042951.53671-14-samuel@sholland.org>
+Subject: [PATCH v3 08/15] arm64: dts: allwinner: a64: Add msgbox node
+Date:   Fri,  1 Mar 2019 22:29:44 -0600
+Message-Id: <20190302042951.53671-9-samuel@sholland.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190302042951.53671-1-samuel@sholland.org>
 References: <20190302042951.53671-1-samuel@sholland.org>
@@ -86,37 +86,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to give firmware full access to r_intc, Linux needs to avoid
-using it in the device tree. Most IRQ lines attached to r_intc are also
-attached to the GIC. Unfortunately, the NMI is not. For it to be used in
-Linux, we have to forward it in firmware over the mailbox.
-
-Add a node representing this virtual interrupt controller.
+The A64 SoC contains a message box that can be used to send messages and
+interrupts back and forth between the ARM application CPUs and the ARISC
+coprocessor. Add a device tree node for it.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 29ee8f0f833a..63e33215dea0 100644
+index 2abb335145a6..29ee8f0f833a 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -128,6 +128,14 @@
- 		status = "disabled";
- 	};
+@@ -447,6 +447,16 @@
+ 			reg = <0x1c14000 0x400>;
+ 		};
  
-+	msgbox_intc: interrupt-controller {
-+		compatible = "allwinner,sunxi-msgbox-intc";
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		mboxes = <&msgbox 6>, <&msgbox 7>;
-+		mbox-names = "tx", "rx";
-+	};
++		msgbox: mailbox@1c17000 {
++			compatible = "allwinner,sun50i-a64-msgbox",
++				     "allwinner,sun6i-a31-msgbox";
++			reg = <0x01c17000 0x1000>;
++			clocks = <&ccu CLK_BUS_MSGBOX>;
++			resets = <&ccu RST_BUS_MSGBOX>;
++			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <1>;
++		};
 +
- 	osc24M: osc24M_clk {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
+ 		usb_otg: usb@1c19000 {
+ 			compatible = "allwinner,sun8i-a33-musb";
+ 			reg = <0x01c19000 0x0400>;
 -- 
 2.19.2
 
