@@ -2,164 +2,95 @@ Return-Path: <SRS0=1i5z=RH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40793C43381
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3611C43381
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 13:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE3E2070B
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FEAD2075B
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 13:11:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZG5S3f9"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="n6SgtuK6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbfCDMfB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Mar 2019 07:35:01 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44096 "EHLO
+        id S1726770AbfCDNLh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Mar 2019 08:11:37 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38029 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfCDMfB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Mar 2019 07:35:01 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w2so5345561wrt.11;
-        Mon, 04 Mar 2019 04:34:59 -0800 (PST)
+        with ESMTP id S1726094AbfCDNLf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Mar 2019 08:11:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id g12so5483394wrm.5
+        for <linux-clk@vger.kernel.org>; Mon, 04 Mar 2019 05:11:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LgPdbTiPfqSCbOMpqcHezDufRGXfU2W7+3meyv7VIqc=;
-        b=TZG5S3f99RKjTjVmeW1jHWQ99fPNZY2xUI7YYgOBZSoK3N3HQzVtHkwRiB8Vc7H6Hz
-         EkBVdj+af8GV4rU7Ov6dV8fWm0MyjDPQ7B33oZjLPsOaedhQ4XCZW42zDA3WfhJwPtMj
-         LCNPMUYMOxIbKWL3l4EsXIIrOaGFcQr+bQUHkpZyJq6HXvn2v9RXoV966/Fc1VuE05z4
-         7Ks4UkhCCWwpywuFVvpja2oja2W54XFX5mQphzJ0oVf4snx+gBo3ZP6pIRS1M8QVZlBQ
-         OhW/HBfzdZmm9RtFrleGF/OMOTbmPG2hFOJ9D1UHMOWS7YOLeA2zxuH+PyLU8dnwBfq6
-         W/ww==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OrFGKmvdQsI+KI1EYx/jy8kl6OFXOGcUtXpV5mGC+WU=;
+        b=n6SgtuK6ZI1hPdYec7KSCcwF64+UTbuk67mL76ndzhPFFOwA1HgcE/czpDVWQnfUGM
+         4SRroladBEgxFu6oUeBH1KbXZ3lVCDv8aa12uXOI0HXLonPQm7GYsCZ64UzMw54opGy5
+         5e2xORvztAEBV4C/0/aH4voosfcdGDimouyqD0ejRZz9jG6lmrzNBCHvYFt18QfByQIQ
+         BSgRjOy9aCA4VEkPGDR7gNlPsmIa3JwQc+1Khs6bpIANMIV73DIDwfzPJafnOuo21WgI
+         VKXNNS7WxI066bSnLEhysM4+7UdtkgTYPOvi2aovWk8yMYvPMSm8N2EPLYt/ETGEJyRX
+         2Cqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LgPdbTiPfqSCbOMpqcHezDufRGXfU2W7+3meyv7VIqc=;
-        b=sCG6XMsH9IiWdGJquGZhQR5NJSXblXS4Zar3Wo90MxZAW0mvG0Di0/3DXSbsGe4Wop
-         LLbzfKVn2R1N4tlJmgBEmrvBz00K1kX1+456iRRbOhjfI3XkdSImqfFTETBKK7U5EO//
-         zeILg82DAiP7JEawNKntZtlJp9z6cczqMvfjS5M8NK0IDu0VBpQST8DFaPgC89RIYmzK
-         jACxcblernBCaPT3j6ZAYx0W2PH4GvpLTx/tAiBEY/IafiXf4rW5LX9Tn1cTySARJ7Kt
-         LOAaUE3Ei/zQepprTp2HmfpLYN2NuqKiMbiz0D8UHtRNcbMGDTmmItZ7hDw1bh7V8QtK
-         BXWg==
-X-Gm-Message-State: APjAAAUvfzJjijn8D5MiIUt/UDg5esLb7Xw+bL4Ao+Kul/1lERPLpwD1
-        ogyLzq5MTfLlVtFdNcGuxU0=
-X-Google-Smtp-Source: APXvYqwtxVh6JMFAbTXGfcYmt8rl8I0vq/rAvfmF2mY4RyPwWPAMMdyzg2gXmq/nai1f9rlXgA5ELw==
-X-Received: by 2002:a05:6000:10cf:: with SMTP id b15mr12927657wrx.32.1551702898291;
-        Mon, 04 Mar 2019 04:34:58 -0800 (PST)
-Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id x11sm16273917wrt.27.2019.03.04.04.34.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Mar 2019 04:34:57 -0800 (PST)
-Date:   Mon, 4 Mar 2019 13:34:56 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v10 15/27] pwm: jz4740: Allow selection of PWM channels 0
- and 1
-Message-ID: <20190304123456.GG9040@ulmo>
-References: <20190302233413.14813-1-paul@crapouillou.net>
- <20190302233413.14813-16-paul@crapouillou.net>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OrFGKmvdQsI+KI1EYx/jy8kl6OFXOGcUtXpV5mGC+WU=;
+        b=CGpquS0jHX9i5/ulvjwNFa0aP6sbmjmxXa0Vw1LNKovABr5UInnCrsw/6t3Yzc9ust
+         DLYoONmVNUtP3uVnwj6a0n3BneLPMMrxp4Lrkuv/9H0q6CsACC3dyuCTR2KzYD2XaxU1
+         FpnYRKtUp14joFvtg4fNW3gQEmbqeVOypN3LN0umeZql2kcOYseZqjXfioLT7lKdUa3M
+         Ttt/9EW17+mNRlZ2ma9VvfKG0KDXr5ZkVjOlLyJvpHsiGdIvjkMdwEiNTYFNFzg8gh4F
+         LmZbjRuMUeNn4iT2Nqjq28P/f9Ap+wbWbYMAI7slOzgTtgjOrtwBdqcScnbzRgeDDVRX
+         P3sQ==
+X-Gm-Message-State: APjAAAXs9jE5mADVt/PqcNNI27lvnHaZ9y8N6B/uchI13G+h2kLo6sDt
+        HSUChl4yvoQp2GL33GeDb6ob+A==
+X-Google-Smtp-Source: APXvYqzvwVbi3zUS5C3lBD7Oxc/Sz1v2Z2fFgofmsF8Yxuxr7RU7gijJf0Q/lsiC4P+jiVF9YsHDjQ==
+X-Received: by 2002:adf:efc8:: with SMTP id i8mr13378495wrp.164.1551705093614;
+        Mon, 04 Mar 2019 05:11:33 -0800 (PST)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id a8sm11695624wmh.26.2019.03.04.05.11.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 04 Mar 2019 05:11:32 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com, devicetree@vger.kernel.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] clk: meson-g12a: add cpu clock bindings
+Date:   Mon,  4 Mar 2019 14:11:28 +0100
+Message-Id: <20190304131129.7762-2-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190304131129.7762-1-narmstrong@baylibre.com>
+References: <20190304131129.7762-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UTZ8bGhNySVQ9LYl"
-Content-Disposition: inline
-In-Reply-To: <20190302233413.14813-16-paul@crapouillou.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add Amlogic G12A Family CPU clocks bindings, only export CPU_CLK since
+it should be the only ID used.
 
---UTZ8bGhNySVQ9LYl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ include/dt-bindings/clock/g12a-clkc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Sat, Mar 02, 2019 at 08:34:01PM -0300, Paul Cercueil wrote:
-> The TCU channels 0 and 1 were previously reserved for system tasks, and
-> thus unavailable for PWM.
->=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Mathieu Malaterre <malat@debian.org>
-> Tested-by: Artur Rojek <contact@artur-rojek.eu>
-> ---
->=20
-> Notes:
->          v6: New patch
->    =20
->          v7: No change
->    =20
->          v8: ingenic_tcu_[request,release]_channel are dropped. We now use
->              the memory resources provided to the driver to detect whether
->     	 or not we are allowed to use the TCU channel.
->    =20
->          v9: Drop previous system. Call a API function provided by the
->              clocksource driver to know if we can use the channel as PWM.
->    =20
->          v10: No change
->=20
->  drivers/pwm/pwm-jz4740.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-> index f497388fc818..c914589d547b 100644
-> --- a/drivers/pwm/pwm-jz4740.c
-> +++ b/drivers/pwm/pwm-jz4740.c
-> @@ -44,11 +44,7 @@ static int jz4740_pwm_request(struct pwm_chip *chip, s=
-truct pwm_device *pwm)
->  	char clk_name[16];
->  	int ret;
-> =20
-> -	/*
-> -	 * Timers 0 and 1 are used for system tasks, so they are unavailable
-> -	 * for use as PWMs.
-> -	 */
-> -	if (pwm->hwpwm < 2)
-> +	if (!ingenic_tcu_pwm_can_use_chn(pwm->hwpwm))
->  		return -EBUSY;
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+index 83b657038d1e..d7bf0830c87d 100644
+--- a/include/dt-bindings/clock/g12a-clkc.h
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -131,5 +131,6 @@
+ #define CLKID_MALI_1				174
+ #define CLKID_MALI				175
+ #define CLKID_MPLL_5OM				177
++#define CLKID_CPU_CLK				187
+ 
+ #endif /* __G12A_CLKC_H */
+-- 
+2.20.1
 
-Like I said earlier, I think this would be nicer to take a parameter to
-a struct device * to remove the need for a global variable (at least for
-this particular case).
-
-Thierry
-
---UTZ8bGhNySVQ9LYl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlx9G3AACgkQ3SOs138+
-s6GsoBAAlgsmxh5F3erzL0YSoFLi9YUFWsXW2ac2aWNG727Q8nKu59W9ZYGGimxk
-os1XIwKsey4CI/zaAId1lIc74rTrOBooY5AjWApD9+HjU5xeePuSKTzmQkAs38DV
-ZUCw7icfbeWIaNtSZmXPwxzbQIgyLJkkdO7CXKzTg5Hj1Ty9Fcn7xa850dKLKbpv
-MOlS7msP6FhY8HVDgjt/Wn2yxEoUWPncdZROBwhYH6W3NNXgI6zU++xTgDIYOWHm
-YIlxgo2QUmRGChruJuxtnN8GniJdSnqemBZevLdWFsCOs6hH+HTXTO1Arb0yttGI
-QDKMUfilZ0BnNfoZJ7qopbC2D856bHvkQBvOw5hsTHZqgs/P9TKxDjDRtnBvMMHk
-KPSlscjq2sKR+9BK7FOR1ikkzDVvQpq28yWfw93Fh2yJTvUndk29f+EjLOADg/lE
-UbSU/+7dpS4n2lVv4z4vl3xFBWWUCIW7Rmu0K0UFv9lzY90mI6aEH0qe32lO8lhK
-FIsofG/ifAkNgJI1SiR6IV4KA61mqCMeVs4v6Oaj7sFluz1Izq9SPCaHhmkJY1jC
-YfRgu2GJpnG5dSa2gRwxFIh2HeLvqKBQhIwRQitiSVUJQHwcIKJGqnDgf0SABuea
-fplDG6LMvlKjk6QGXy1jrDhYpaDasxtwV+Ur2I/yc/qlBCd/P1E=
-=ACVI
------END PGP SIGNATURE-----
-
---UTZ8bGhNySVQ9LYl--
