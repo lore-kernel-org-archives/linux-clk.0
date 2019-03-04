@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C39C43381
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 09:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACCFC43381
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 10:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4321820836
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 09:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCE342082F
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 10:03:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="mLUbifPa"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="XxlFqW03"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbfCDJpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Mar 2019 04:45:22 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38621 "EHLO
+        id S1726066AbfCDKDK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Mar 2019 05:03:10 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:38906 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfCDJpV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Mar 2019 04:45:21 -0500
+        with ESMTP id S1726034AbfCDKDK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Mar 2019 05:03:10 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id D25A725B74E;
-        Mon,  4 Mar 2019 20:45:19 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 439C725B74E;
+        Mon,  4 Mar 2019 21:03:08 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551692720; bh=QWfvagg8rrZK7t6Gu7tVrSQhAltjISWhf8gyZyokeks=;
+        t=1551693788; bh=4DBMyYf1rL9mvwX8dA1g2df0CLX/e38QBIT9eC3BkuY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mLUbifPayAhxGgQeptNoDp9MJj9BbKsVqwZzeML98GFrlhaF1HRWUw4rxyFOyLuP2
-         Upvhv35GS4fvJrKLLRnkMyOW98KRBWSYX2BWW3KySTHtdoO5n1oVZ3ohsP4iKyOStg
-         ErnUg53N1XTo6WmvyoOMswXYG96CwPWe2dOHNHpU=
+        b=XxlFqW03zhuuHxNywV0rrgCA+idX9kLM3LETzuBPOKVyoO2lD2YbgBnd37JxNTjk1
+         E6G6NGu8gRwRF7pHWW6fN/VhDXuJJaiVh/uSe3Bg2TRZFyECn31NtJrP9X5rXQGgex
+         wCYGba/L8MByoAqZGa4UrwyXAxGGrgvDGupIzo0c=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 18F4E94030D; Mon,  4 Mar 2019 10:45:18 +0100 (CET)
-Date:   Mon, 4 Mar 2019 10:45:18 +0100
+        id 3C25894030D; Mon,  4 Mar 2019 11:03:06 +0100 (CET)
+Date:   Mon, 4 Mar 2019 11:03:06 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/4] clk: renesas: r8a77990: Add ZG clock
-Message-ID: <20190304094517.xlr73yi2chkf3qvi@verge.net.au>
-References: <20190228135246.31714-1-horms+renesas@verge.net.au>
- <20190228135246.31714-3-horms+renesas@verge.net.au>
- <CAMuHMdU8AWAWjGHQC6tJnxqZRU1W+LmLvnw0nhWqNAKotGApMw@mail.gmail.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Pass name/offset to
+ cpg_sd_clk_register()
+Message-ID: <20190304100305.lbzf7pqny7flxp7c@verge.net.au>
+References: <20190301123822.808-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdU8AWAWjGHQC6tJnxqZRU1W+LmLvnw0nhWqNAKotGApMw@mail.gmail.com>
+In-Reply-To: <20190301123822.808-1-geert+renesas@glider.be>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
@@ -55,56 +53,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 01:52:50PM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
+On Fri, Mar 01, 2019 at 01:38:22PM +0100, Geert Uytterhoeven wrote:
+> Explicitly pass the clock's name and register offset to
+> cpg_sd_clk_register(), so the latter doesn't have to extract them from
+> the cpg_core_clk object.
 > 
-> On Thu, Feb 28, 2019 at 2:52 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> > Adds support for R-Car E3 (r8a77990) ZG clock.
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > ---
-> > Tested on Ebisu to the extent that the clock rate is 600MHz on boot
-> > ---
-> >  drivers/clk/renesas/r8a77990-cpg-mssr.c | 2 ++
-> >  drivers/clk/renesas/rcar-gen3-cpg.c     | 1 -
-> >  drivers/clk/renesas/rcar-gen3-cpg.h     | 1 +
-> >  3 files changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> > index 0e475dcb68b9..d0d29fc942ff 100644
-> > --- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> > @@ -83,6 +83,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
-> >         DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
-> >         DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z, CLK_PLL0,
-> >                    4, CPG_FRQCRC, 8),
-> > +       DEF_GEN3_Z("zg",       R8A77990_CLK_ZG,    CLK_TYPE_GEN3_Z, CLK_PLL0,
-> > +                  8, CPG_FRQCRB, 24),
+> This keeps all cpg_core_clk parsing and unmarshalling contained in a
+> single function (rcar_gen3_cpg_clk_register()).
 > 
-> While this approach may be correct for R-Car H3, M3-W, and M3-N, this is
-> not correct for R-Car E3, due to the presence of Spread Spectrum Clock
-> Generator support:
->   - When SCCG is enabled (MD12=1), the parent clock is either S0 or S1,
->     with only 2 or 3 (out of 32) supported dividers,
->   - When SCCG is disabled (MD12=0), the parent clock is PLL0, with only
->     2 (out of 32) supported dividers.
-> 
-> So I'm afraid the ZG clock on SCCG-capable SoCs needs its own very special
-> clock type.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for pointing this out, I'll investigate further.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
+> ---
+> To be queued in clk-renesas-for-v5.2.
 > 
-> This applies also to R-Car D3 and RZ/G2E.
+>  drivers/clk/renesas/rcar-gen3-cpg.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+> index 9a8071a8114daec9..dcd4ac389326b932 100644
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -369,8 +369,8 @@ static u32 cpg_quirks __initdata;
+>  #define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
+>  #define SD_SKIP_FIRST	BIT(2)		/* Skip first clock in SD table */
+>  
+> -static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+> -	void __iomem *base, const char *parent_name,
+> +static struct clk * __init cpg_sd_clk_register(const char *name,
+> +	void __iomem *base, unsigned int offset, const char *parent_name,
+>  	struct raw_notifier_head *notifiers)
+>  {
+>  	struct clk_init_data init;
+> @@ -383,13 +383,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+>  	if (!clock)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	init.name = core->name;
+> +	init.name = name;
+>  	init.ops = &cpg_sd_clock_ops;
+>  	init.flags = CLK_SET_RATE_PARENT;
+>  	init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+>  
+> -	clock->csn.reg = base + core->offset;
+> +	clock->csn.reg = base + offset;
+>  	clock->hw.init = &init;
+>  	clock->div_table = cpg_sd_div_table;
+>  	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
+> @@ -606,8 +606,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>  		break;
+>  
+>  	case CLK_TYPE_GEN3_SD:
+> -		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
+> -					   notifiers);
+> +		return cpg_sd_clk_register(core->name, base, core->offset,
+> +					   __clk_get_name(parent), notifiers);
+>  
+>  	case CLK_TYPE_GEN3_R:
+>  		if (cpg_quirks & RCKCR_CKSEL) {
 > -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+> 2.17.1
 > 
