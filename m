@@ -2,79 +2,97 @@ Return-Path: <SRS0=1i5z=RH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADDFC43381
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 05:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AD4C43381
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 08:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE6DA2082F
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 05:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551677202;
-	bh=i1mdTNwlT+9/KI72W9F3JVKrnoPS7734UOheh/YqMtQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=B8lg688ikgMILNoV05PDpw+0j5cNuHGWul2jYCY1AFDoxcUSXOHcaabhMFPiWWezo
-	 N6X9sTMVjOw/OxmcK5ri1od9iXO5Vn6wB+gtqgDHoN+MctdhqzMwXaBQaSYx8FEYKO
-	 EE74ALCYxp67NZoi5Owj5k6xMy1rMUs6A2J87GQI=
+	by mail.kernel.org (Postfix) with ESMTP id 3456420823
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 08:19:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lFAgzRtr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbfCDF0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Mar 2019 00:26:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725550AbfCDF0f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 4 Mar 2019 00:26:35 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBD112082F;
-        Mon,  4 Mar 2019 05:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551677194;
-        bh=i1mdTNwlT+9/KI72W9F3JVKrnoPS7734UOheh/YqMtQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HD5lPhYN5Zuz62AYozgTry2GabnsPVnA0wtrNtrIq8RXftKzgVeb4nC3/4Xo+/paq
-         wVI6e6yBEGfvx+F4WyBCXXv0pjZa5KUwu3A13Bm4NOWA2ms/SFx2r+B0XBSfZhRg3B
-         UygDQO+XDJkq+PischFOfLtJ9RojGScjVZ6Sxl+A=
-Date:   Mon, 4 Mar 2019 13:25:30 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Angus Ainslie <angus.ainslie@puri.sm>,
-        Anson Huang <anson.huang@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/3] arm: dts: imx8mq: Add cpufreq support
-Message-ID: <20190304052528.GW26041@dragon>
-References: <1551390149-15443-1-git-send-email-abel.vesa@nxp.com>
+        id S1725982AbfCDITA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Mar 2019 03:19:00 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8877 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfCDITA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Mar 2019 03:19:00 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c7cdf730000>; Mon, 04 Mar 2019 00:18:59 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 04 Mar 2019 00:18:59 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 04 Mar 2019 00:18:59 -0800
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Mar
+ 2019 08:18:59 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 5B4A941F64; Mon,  4 Mar 2019 10:18:57 +0200 (EET)
+Date:   Mon, 4 Mar 2019 10:18:57 +0200
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
+Message-ID: <20190304081857.GE21084@pdeschrijver-desktop.Nvidia.com>
+References: <20190224153222.8142-1-digetx@gmail.com>
+ <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <1551390149-15443-1-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1551687539; bh=BCemnCHaLtC4wiA6/c9/e02ruRZtENUbivo9tQSLybU=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:
+         Content-Transfer-Encoding:In-Reply-To:X-NVConfidentiality:
+         User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=lFAgzRtr1Cv6r4dSKDpaqmsTOiQxtAZVxu1zk+LiYpp+exaMNjeTVbgiINS0ec7Rx
+         vWmGtLjYPdJAkQsMbrRySqoYVnw90453bvJ/JuK5yxCESUzSuqQgFnmhy9lROO5bJV
+         ZZ/cF9fKXJOIu8jmb48wO94k3unqNM9RCf1aM32jBfr1ip+KztfwvnAq/yXyqXblag
+         3dCxB3IjHWG/GMIrihqfmtu2kHaBlHv340FURjJndslMmi3wLvxeGev4d92Ba8tmPW
+         qLNR4JBeQfhj0+YkDQKU6dUMAsBeqgq1rLEw6DCl8OyiJ6+n3jVss7Z4bE2BQeZNoO
+         HGBI97jjc+BnQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 28, 2019 at 09:42:43PM +0000, Abel Vesa wrote:
-> Changes since v2:
->  * renamed the regulator
->  * removed the useless enable-active-high from the regulator 
->  * renamed a53_0_opp_table to a53_opp_table
-> 
-> Abel Vesa (3):
->   arm64: dts: imx8mq: Add the clocks and the latencies for the A53 cores
->   arm64: dts: imx8mq: Add the buck vdd_arm regulator
->   arm64: dts: imx8mq: Add the opp table and cores opp properties
+On Wed, Feb 27, 2019 at 06:15:04PM +0300, Dmitry Osipenko wrote:
+> 24.02.2019 18:32, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Initially Common Clock Framework isn't aware of the clock-enable status=
+,
+> > this results in enabling of clocks that were enabled by bootloader. Thi=
+s
+> > is not a big deal for a regular clock-gates, but for PLL's it may have
+> > some unpleasant consequences. Thus re-enabling PLLX (the main CPU paren=
+t
+> > clock) may result in extra long period of PLL re-locking.
+> >=20
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+>=20
+> Peter (and everyone else), yours r-b and ACK will be appreciated since yo=
+u kinda already took a look at this patch in the past and were okay with it=
+ (IIRC, we had some brief discussion on the #tegra IRC a few months ago), t=
+hanks.=20
+>=20
 
-Applied all, thanks.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+
