@@ -2,506 +2,102 @@ Return-Path: <SRS0=1i5z=RH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0B7C4360F
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 13:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B29C43381
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 13:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5BC2075B
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 13:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 842062075B
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 13:42:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1KlfT9in"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="toZAEs7b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfCDNLi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Mar 2019 08:11:38 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40160 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbfCDNLh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Mar 2019 08:11:37 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q1so5484909wrp.7
-        for <linux-clk@vger.kernel.org>; Mon, 04 Mar 2019 05:11:35 -0800 (PST)
+        id S1726186AbfCDNmW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Mar 2019 08:42:22 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37745 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfCDNmV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Mar 2019 08:42:21 -0500
+Received: by mail-pg1-f193.google.com with SMTP id q206so3139389pgq.4;
+        Mon, 04 Mar 2019 05:42:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ii8eJGdsN8bfQAaCMmEW83TuFvrl71fjU1+jEsXisP4=;
-        b=1KlfT9innVh5mZ8sXhma++gzXCQUEzuyzpgMy3dB0/RWYk3gAHNqqoPsyEhAiyH+0u
-         gKpX9cPQJu2MaMpAFhpHZn/6Cn6+aRCPPqUrmPEcIh45ljbzJuitOtyAgNLXhMDq+tnS
-         0miiC6u9jXR4xLLlzP+O5HJyFKA2nlPuv0KMH/cjF4fjREHgpRm1iAVdIIqQ7O1elvdK
-         nFvjtjZR3ol/6ZJPvUhipp1JNYSjf/22yvWWYSH0ZlfXwrWcGv55+y6l9sMmcMVuEYab
-         PLtzufwGZG/YYFf5B1gJPnPaXJS5A8mToEZ8cK4cjoFZo0ZPMtvbrTIetppo+H9zL+O8
-         BZpg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y9/FuZn/xSNSu2RD4k/9tZpluYFjb3nzrKMrqPIU0GI=;
+        b=toZAEs7b2doiOqLEI1nInZyHrQLniEprTPHJYy5lLKqI5ZLgIMbqrQO0YrK4pu61WG
+         SFY/3NUnZwl3C+iB8PmH0YhI9P6UYLsin6oS75GuC5vntvQBtxwMBlqLtE5wqd2f9gVg
+         PY+mNDqALPO81DLTKRIrGXwXhk5u8Yp4mYP1k6VCY5x6ybV3MRIVc95mNk4k1Ir9VfFr
+         B3HPWieITS0fnnvM12/ODJ38/ww6jKHXp9EaX5PnB3FPJ9UG7SEy1zkcPet9CxUmCpA0
+         +DBXPxSQt6rXza9vWj3ggtT+pGzOpT5Y7EvOfwYBAVsH+HjGLfjwxaVlsCfEPSe8tNhA
+         knIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ii8eJGdsN8bfQAaCMmEW83TuFvrl71fjU1+jEsXisP4=;
-        b=teBuBp+DX2MMHlZZ+faryQZfPwqV0z0t9YPkNqfgSh9wwu2PkpuMxrvvMvt5l5OQvm
-         saKOXc4Gle6NjFDx6MmZAqwH7l/rGpxGTKQktaS1Kv+N4cnUGioUGaItfDXWFxpFkpp/
-         q/DlWwKkvQQfsktwhWL074YUWAiK6JEZ4nrEiyU9naEjYIOYJpWWMKw6sjKbZVwtEn0f
-         7ofmgn6bcMwb/uEo5qfRfLgQWhi0gpm/TgsPqldqEbLA9ewrbmAanMwtDjrmXSWjgqAq
-         U4dHm9IRnc4vQXzY4RSUzHzHSifTopVOLixQplyP+pQeUi/aEPhbui/3mtjMY2cuN7E9
-         Fcvw==
-X-Gm-Message-State: APjAAAXJichot4Mz0aMdATGYJxB5RZjnV6cT1L9OmW0IaSqnYwkkQM9h
-        Lcs1+o3rWOsOc7Q617iC55O9Bw==
-X-Google-Smtp-Source: APXvYqxMTVf5FE8CzmjRp+IamQeUY0+29Bwtp7KgilF+O05dDXhV/uncjNVx2gS/YvNFXsNJRQZZzQ==
-X-Received: by 2002:a5d:4887:: with SMTP id g7mr12684452wrq.51.1551705094675;
-        Mon, 04 Mar 2019 05:11:34 -0800 (PST)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a8sm11695624wmh.26.2019.03.04.05.11.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Mar 2019 05:11:33 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: meson: g12a: add cpu clocks
-Date:   Mon,  4 Mar 2019 14:11:29 +0100
-Message-Id: <20190304131129.7762-3-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190304131129.7762-1-narmstrong@baylibre.com>
-References: <20190304131129.7762-1-narmstrong@baylibre.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y9/FuZn/xSNSu2RD4k/9tZpluYFjb3nzrKMrqPIU0GI=;
+        b=BJFNdoSoBwsmJP2ZPcK7iON0RZsDFQdUX2YnfGS5CgknsSalgVam4HUWU0vZ/GeVwl
+         EfLEH3jIjzgd7FC/HNeQCL5WgqiGDItQNnO5jDHp8hJ0w8uqtDIROSjqv6/LWkVx/Kw2
+         1FeOU4QsG6HR6QZFOZFBsNvzMeAZ33tTUd/m68/RYg73l4ywD6jI0ZBmB7ZGi2tIFug4
+         /SYZ3icuzoMvO6ULcH7hFw+mSb7MV8m1iwTLLFagF1yhr5wbIL455+5WLGmzkk3e3cAp
+         JuVsEw2rlG+isTcVIpnP8ZgVu332A+qYZbGC0zn8jx+0JP8Imyx05WPHOK3cp8iKjiNv
+         MINA==
+X-Gm-Message-State: APjAAAWKdXO3eK59xsCtay3kl7sfQFZ+9fXbndJBr+0wOSVDzRHDZiLi
+        l7JrZhB7rZoPzQ6UuBEFSRMy6au1
+X-Google-Smtp-Source: APXvYqzri0fMXZETVX4MZf8VQ43dJQD9PZAr5sHaAgkMwABho8/F2bnLxH0W29XY/8N8hNrECQJ/xg==
+X-Received: by 2002:a63:80c7:: with SMTP id j190mr17840476pgd.357.1551706940653;
+        Mon, 04 Mar 2019 05:42:20 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id a184sm8900798pge.68.2019.03.04.05.42.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Mar 2019 05:42:19 -0800 (PST)
+Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190224153222.8142-1-digetx@gmail.com>
+ <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
+ <20190304081857.GE21084@pdeschrijver-desktop.Nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9171e4f6-1ede-ab3a-caa6-83a2d9033650@gmail.com>
+Date:   Mon, 4 Mar 2019 16:42:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
+In-Reply-To: <20190304081857.GE21084@pdeschrijver-desktop.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the Amlogic G12A Family CPU Clock tree in read/only for now.
+04.03.2019 11:18, Peter De Schrijver пишет:
+> On Wed, Feb 27, 2019 at 06:15:04PM +0300, Dmitry Osipenko wrote:
+>> 24.02.2019 18:32, Dmitry Osipenko пишет:
+>>> Initially Common Clock Framework isn't aware of the clock-enable status,
+>>> this results in enabling of clocks that were enabled by bootloader. This
+>>> is not a big deal for a regular clock-gates, but for PLL's it may have
+>>> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+>>> clock) may result in extra long period of PLL re-locking.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>
+>> Peter (and everyone else), yours r-b and ACK will be appreciated since you kinda already took a look at this patch in the past and were okay with it (IIRC, we had some brief discussion on the #tegra IRC a few months ago), thanks. 
+>>
+> 
+> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
 
-The CPU clock can either use the SYS_PLL for > 1GHz frequencies or
-use a couple of div+mux from 1GHz/667MHz/24MHz source with 2 non-glitch
-muxes.
-
-Proper DVFS support will come in a second time.
-
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.c | 350 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/g12a.h |  22 ++-
- 2 files changed, 371 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 0e1ce8c03259..80a7172df2a6 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -150,6 +150,318 @@ static struct clk_regmap g12a_sys_pll = {
- 	},
- };
- 
-+static struct clk_regmap g12a_sys_pll_div16_en = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 24,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "sys_pll_div16_en",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "sys_pll" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock is used to debug the sys_pll range
-+		 * Linux should not change it at runtime
-+		 */
-+	},
-+};
-+
-+static struct clk_fixed_factor g12a_sys_pll_div16 = {
-+	.mult = 1,
-+	.div = 16,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sys_pll_div16",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "sys_pll_div16_en" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+/* Datasheet names this field as "premux0" */
-+static struct clk_regmap g12a_cpu_clk_dyn0_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.mask = 0x3,
-+		.shift = 0,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn0_sel",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ IN_PREFIX "xtal",
-+						  "fclk_div2",
-+						  "fclk_div3" },
-+		.num_parents = 3,
-+	},
-+};
-+
-+/* Datasheet names this field as "mux0_divn_tcnt" */
-+static struct clk_regmap g12a_cpu_clk_dyn0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.shift = 4,
-+		.width = 6,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn0_div",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_dyn0_sel" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+/* Datasheet names this field as "postmux0" */
-+static struct clk_regmap g12a_cpu_clk_dyn0 = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.mask = 0x1,
-+		.shift = 2,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn0",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_dyn0_sel",
-+						  "cpu_clk_dyn0_div" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+/* Datasheet names this field as "premux1" */
-+static struct clk_regmap g12a_cpu_clk_dyn1_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.mask = 0x3,
-+		.shift = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn1_sel",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ IN_PREFIX "xtal",
-+						  "fclk_div2",
-+						  "fclk_div3" },
-+		.num_parents = 3,
-+	},
-+};
-+
-+/* Datasheet names this field as "Mux1_divn_tcnt" */
-+static struct clk_regmap g12a_cpu_clk_dyn1_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.shift = 20,
-+		.width = 6,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn1_div",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_dyn1_sel" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+/* Datasheet names this field as "postmux1" */
-+static struct clk_regmap g12a_cpu_clk_dyn1 = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.mask = 0x1,
-+		.shift = 18,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn1",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_dyn1_sel",
-+						  "cpu_clk_dyn1_div" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+/* Datasheet names this field as "Final_dyn_mux_sel" */
-+static struct clk_regmap g12a_cpu_clk_dyn = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.mask = 0x1,
-+		.shift = 10,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_dyn0",
-+						  "cpu_clk_dyn1" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+/* Datasheet names this field as "Final_mux_sel" */
-+static struct clk_regmap g12a_cpu_clk = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.mask = 0x1,
-+		.shift = 11,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_dyn",
-+						  "sys_pll" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_div16_en = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 1,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_clk_div16_en",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock is used to debug the cpu_clk range
-+		 * Linux should not change it at runtime
-+		 */
-+	},
-+};
-+
-+static struct clk_fixed_factor g12a_cpu_clk_div16 = {
-+	.mult = 1,
-+	.div = 16,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div16",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_div16_en" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_apb_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.shift = 3,
-+		.width = 3,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_apb_div",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_apb = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 1,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_clk_apb",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_apb_div" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock is set by the ROM monitor code,
-+		 * Linux should not change it at runtime
-+		 */
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_atb_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.shift = 6,
-+		.width = 3,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_atb_div",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_atb = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 17,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_clk_atb",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_atb_div" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock is set by the ROM monitor code,
-+		 * Linux should not change it at runtime
-+		 */
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_axi_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.shift = 9,
-+		.width = 3,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_axi_div",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_axi = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 18,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_clk_axi",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_axi_div" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock is set by the ROM monitor code,
-+		 * Linux should not change it at runtime
-+		 */
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_trace_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.shift = 20,
-+		.width = 3,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_trace_div",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap g12a_cpu_clk_trace = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 23,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_clk_trace",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_trace_div" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock is set by the ROM monitor code,
-+		 * Linux should not change it at runtime
-+		 */
-+	},
-+};
-+
- static const struct pll_mult_range g12a_gp0_pll_mult_range = {
- 	.min = 55,
- 	.max = 255,
-@@ -2167,6 +2479,26 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
- 		[CLKID_MALI]			= &g12a_mali.hw,
- 		[CLKID_MPLL_5OM_DIV]		= &g12a_mpll_50m_div.hw,
- 		[CLKID_MPLL_5OM]		= &g12a_mpll_50m.hw,
-+		[CLKID_SYS_PLL_DIV16_EN]	= &g12a_sys_pll_div16_en.hw,
-+		[CLKID_SYS_PLL_DIV16]		= &g12a_sys_pll_div16.hw,
-+		[CLKID_CPU_CLK_DYN0_SEL]	= &g12a_cpu_clk_dyn0_sel.hw,
-+		[CLKID_CPU_CLK_DYN0_DIV]	= &g12a_cpu_clk_dyn0_div.hw,
-+		[CLKID_CPU_CLK_DYN0]		= &g12a_cpu_clk_dyn0.hw,
-+		[CLKID_CPU_CLK_DYN1_SEL]	= &g12a_cpu_clk_dyn1_sel.hw,
-+		[CLKID_CPU_CLK_DYN1_DIV]	= &g12a_cpu_clk_dyn1_div.hw,
-+		[CLKID_CPU_CLK_DYN1]		= &g12a_cpu_clk_dyn1.hw,
-+		[CLKID_CPU_CLK_DYN]		= &g12a_cpu_clk_dyn.hw,
-+		[CLKID_CPU_CLK]			= &g12a_cpu_clk.hw,
-+		[CLKID_CPU_CLK_DIV16_EN]	= &g12a_cpu_clk_div16_en.hw,
-+		[CLKID_CPU_CLK_DIV16]		= &g12a_cpu_clk_div16.hw,
-+		[CLKID_CPU_CLK_APB_DIV]		= &g12a_cpu_clk_apb_div.hw,
-+		[CLKID_CPU_CLK_APB]		= &g12a_cpu_clk_apb.hw,
-+		[CLKID_CPU_CLK_ATB_DIV]		= &g12a_cpu_clk_atb_div.hw,
-+		[CLKID_CPU_CLK_ATB]		= &g12a_cpu_clk_atb.hw,
-+		[CLKID_CPU_CLK_AXI_DIV]		= &g12a_cpu_clk_axi_div.hw,
-+		[CLKID_CPU_CLK_AXI]		= &g12a_cpu_clk_axi.hw,
-+		[CLKID_CPU_CLK_TRACE_DIV]	= &g12a_cpu_clk_trace_div.hw,
-+		[CLKID_CPU_CLK_TRACE]		= &g12a_cpu_clk_trace.hw,
- 		[NR_CLKS]			= NULL,
- 	},
- 	.num = NR_CLKS,
-@@ -2335,6 +2667,24 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
- 	&g12a_mali_1,
- 	&g12a_mali,
- 	&g12a_mpll_50m,
-+	&g12a_sys_pll_div16_en,
-+	&g12a_cpu_clk_dyn0_sel,
-+	&g12a_cpu_clk_dyn0_div,
-+	&g12a_cpu_clk_dyn0,
-+	&g12a_cpu_clk_dyn1_sel,
-+	&g12a_cpu_clk_dyn1_div,
-+	&g12a_cpu_clk_dyn1,
-+	&g12a_cpu_clk_dyn,
-+	&g12a_cpu_clk,
-+	&g12a_cpu_clk_div16_en,
-+	&g12a_cpu_clk_apb_div,
-+	&g12a_cpu_clk_apb,
-+	&g12a_cpu_clk_atb_div,
-+	&g12a_cpu_clk_atb,
-+	&g12a_cpu_clk_axi_div,
-+	&g12a_cpu_clk_axi,
-+	&g12a_cpu_clk_trace_div,
-+	&g12a_cpu_clk_trace,
- };
- 
- static const struct meson_eeclkc_data g12a_clkc_data = {
-diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
-index f399dfe1401c..70aa469ca1cf 100644
---- a/drivers/clk/meson/g12a.h
-+++ b/drivers/clk/meson/g12a.h
-@@ -50,6 +50,7 @@
- #define HHI_GCLK_MPEG2			0x148
- #define HHI_GCLK_OTHER			0x150
- #define HHI_GCLK_OTHER2			0x154
-+#define HHI_SYS_CPU_CLK_CNTL1		0x15c
- #define HHI_VID_CLK_DIV			0x164
- #define HHI_MPEG_CLK_CNTL		0x174
- #define HHI_AUD_CLK_CNTL		0x178
-@@ -166,8 +167,27 @@
- #define CLKID_MALI_0_DIV			170
- #define CLKID_MALI_1_DIV			173
- #define CLKID_MPLL_5OM_DIV			176
-+#define CLKID_SYS_PLL_DIV16_EN			178
-+#define CLKID_SYS_PLL_DIV16			179
-+#define CLKID_CPU_CLK_DYN0_SEL			180
-+#define CLKID_CPU_CLK_DYN0_DIV			181
-+#define CLKID_CPU_CLK_DYN0			182
-+#define CLKID_CPU_CLK_DYN1_SEL			183
-+#define CLKID_CPU_CLK_DYN1_DIV			184
-+#define CLKID_CPU_CLK_DYN1			185
-+#define CLKID_CPU_CLK_DYN			186
-+#define CLKID_CPU_CLK_DIV16_EN			188
-+#define CLKID_CPU_CLK_DIV16			189
-+#define CLKID_CPU_CLK_APB_DIV			190
-+#define CLKID_CPU_CLK_APB			191
-+#define CLKID_CPU_CLK_ATB_DIV			192
-+#define CLKID_CPU_CLK_ATB			193
-+#define CLKID_CPU_CLK_AXI_DIV			194
-+#define CLKID_CPU_CLK_AXI			195
-+#define CLKID_CPU_CLK_TRACE_DIV			196
-+#define CLKID_CPU_CLK_TRACE			197
- 
--#define NR_CLKS					178
-+#define NR_CLKS					198
- 
- /* include the CLKIDs that have been made part of the DT binding */
- #include <dt-bindings/clock/g12a-clkc.h>
--- 
-2.20.1
-
+Awesome, thanks again!
