@@ -1,158 +1,80 @@
-Return-Path: <SRS0=3lGJ=RF=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=1i5z=RH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF765C10F05
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 23:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADDFC43381
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 05:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C305208E4
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Mar 2019 23:37:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="rnnAc4Z9"
+	by mail.kernel.org (Postfix) with ESMTP id AE6DA2082F
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Mar 2019 05:26:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551677202;
+	bh=i1mdTNwlT+9/KI72W9F3JVKrnoPS7734UOheh/YqMtQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=B8lg688ikgMILNoV05PDpw+0j5cNuHGWul2jYCY1AFDoxcUSXOHcaabhMFPiWWezo
+	 N6X9sTMVjOw/OxmcK5ri1od9iXO5Vn6wB+gtqgDHoN+MctdhqzMwXaBQaSYx8FEYKO
+	 EE74ALCYxp67NZoi5Owj5k6xMy1rMUs6A2J87GQI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfCBXgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Mar 2019 18:36:01 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:34528 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfCBXgB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Mar 2019 18:36:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1551569757; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=T5gM9fNr36oTxFv1YWXbA8rrY8lrYbbD1rX18qV1k78=;
-        b=rnnAc4Z9csRKPiG4x9NkmzbqXZ5L7zsGSSmV8buOUWJTfsh4v22a9Qb2FW9u2XVSQLo2gy
-        5oZUSeZaM5jkJyT+3zV2Ietg55z4p/5axVVuAKs88B13u1oVHb6YhvpeUzCZWf7hheFZmj
-        mia1rOU2tFj1TyheATgXR2XVJBA3hIs=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v10 14/27] pwm: jz4740: Improve algorithm of clock calculation
-Date:   Sat,  2 Mar 2019 20:34:00 -0300
-Message-Id: <20190302233413.14813-15-paul@crapouillou.net>
-In-Reply-To: <20190302233413.14813-1-paul@crapouillou.net>
-References: <20190302233413.14813-1-paul@crapouillou.net>
+        id S1725975AbfCDF0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Mar 2019 00:26:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725550AbfCDF0f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 4 Mar 2019 00:26:35 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBD112082F;
+        Mon,  4 Mar 2019 05:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551677194;
+        bh=i1mdTNwlT+9/KI72W9F3JVKrnoPS7734UOheh/YqMtQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HD5lPhYN5Zuz62AYozgTry2GabnsPVnA0wtrNtrIq8RXftKzgVeb4nC3/4Xo+/paq
+         wVI6e6yBEGfvx+F4WyBCXXv0pjZa5KUwu3A13Bm4NOWA2ms/SFx2r+B0XBSfZhRg3B
+         UygDQO+XDJkq+PischFOfLtJ9RojGScjVZ6Sxl+A=
+Date:   Mon, 4 Mar 2019 13:25:30 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Angus Ainslie <angus.ainslie@puri.sm>,
+        Anson Huang <anson.huang@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/3] arm: dts: imx8mq: Add cpufreq support
+Message-ID: <20190304052528.GW26041@dragon>
+References: <1551390149-15443-1-git-send-email-abel.vesa@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1551390149-15443-1-git-send-email-abel.vesa@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The previous algorithm hardcoded details about how the TCU clocks work.
-The new algorithm will use clk_round_rate to find the perfect clock rate
-for the PWM channel.
+On Thu, Feb 28, 2019 at 09:42:43PM +0000, Abel Vesa wrote:
+> Changes since v2:
+>  * renamed the regulator
+>  * removed the useless enable-active-high from the regulator 
+>  * renamed a53_0_opp_table to a53_opp_table
+> 
+> Abel Vesa (3):
+>   arm64: dts: imx8mq: Add the clocks and the latencies for the A53 cores
+>   arm64: dts: imx8mq: Add the buck vdd_arm regulator
+>   arm64: dts: imx8mq: Add the opp table and cores opp properties
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Tested-by: Artur Rojek <contact@artur-rojek.eu>
----
-
-Notes:
-         v9: New patch
-    
-        v10: - New algorithm. Instead of starting with the maximum clock rate
-               and using clk_round_rate(rate - 1) to get the next (smaller)
-    	   clock, we compute the maximum rate we can use before the
-    	   register overflows, and apply it with clk_set_max_rate.
-    	   Then we read the new clock rate and compute the register values
-    	   of the period and duty from that.
-    	 - Use NSEC_PER_SEC instead of magic 1000000000 value
-
- drivers/pwm/pwm-jz4740.c | 49 ++++++++++++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index c6136bd4434b..f497388fc818 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -110,24 +110,45 @@ static int jz4740_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct jz4740_pwm_chip *jz4740 = to_jz4740(pwm->chip);
- 	struct clk *clk = jz4740->clks[pwm->hwpwm],
- 		   *parent_clk = clk_get_parent(clk);
--	unsigned long rate, period, duty;
-+	unsigned long rate, parent_rate, period, duty;
- 	unsigned long long tmp;
--	unsigned int prescaler = 0;
-+	int ret;
- 
--	rate = clk_get_rate(parent_clk);
--	tmp = (unsigned long long)rate * state->period;
--	do_div(tmp, 1000000000);
--	period = tmp;
-+	parent_rate = clk_get_rate(parent_clk);
-+
-+	jz4740_pwm_disable(chip, pwm);
-+
-+	/* Reset the clock to the maximum rate, and we'll reduce it if needed */
-+	ret = clk_set_rate(clk, parent_rate);
-+	if (ret)
-+		return ret;
- 
--	while (period > 0xffff && prescaler < 6) {
--		period >>= 2;
--		rate >>= 2;
--		++prescaler;
-+	/* Limit the clock to a maximum rate that still gives us a period value
-+	 * which fits in 16 bits.
-+	 */
-+	tmp = 0xffffull * NSEC_PER_SEC;
-+	do_div(tmp, state->period);
-+
-+	ret = clk_set_max_rate(clk, tmp);
-+	if (ret) {
-+		dev_err(chip->dev, "Unable to set max rate: %i\n", ret);
-+		return ret;
- 	}
- 
--	if (prescaler == 6)
--		return -EINVAL;
-+	/* Read back the clock rate, as it may have been modified by
-+	 * clk_set_max_rate()
-+	 */
-+	rate = clk_get_rate(clk);
- 
-+	if (rate != parent_rate)
-+		dev_dbg(chip->dev, "PWM clock updated to %lu Hz\n", rate);
-+
-+	/* Calculate period value */
-+	tmp = (unsigned long long)rate * state->period;
-+	do_div(tmp, NSEC_PER_SEC);
-+	period = (unsigned long)tmp;
-+
-+	/* Calculate duty value */
- 	tmp = (unsigned long long)period * state->duty_cycle;
- 	do_div(tmp, state->period);
- 	duty = period - tmp;
-@@ -135,14 +156,10 @@ static int jz4740_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	if (duty >= period)
- 		duty = period - 1;
- 
--	jz4740_pwm_disable(chip, pwm);
--
- 	/* Set abrupt shutdown */
- 	regmap_update_bits(jz4740->map, TCU_REG_TCSRc(pwm->hwpwm),
- 			   TCU_TCSR_PWM_SD, TCU_TCSR_PWM_SD);
- 
--	clk_set_rate(clk, rate);
--
- 	/* Reset counter to 0 */
- 	regmap_write(jz4740->map, TCU_REG_TCNTc(pwm->hwpwm), 0);
- 
--- 
-2.11.0
-
+Applied all, thanks.
