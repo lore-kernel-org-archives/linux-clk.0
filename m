@@ -2,101 +2,75 @@ Return-Path: <SRS0=s9Xv=RI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F649C43381
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Mar 2019 18:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB890C43381
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Mar 2019 21:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FB0208E4
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Mar 2019 18:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551811782;
-	bh=k+Iq3xwBIbt9ZPAisBgeg2pj+qY/jWn5gCD7h7gjDnA=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=El0gaqMGkyBvd+M/QQipypsj/NXM6b4Zckr2Y8EoVW0AlG7QOndd1nQwxJQXbI45h
-	 /b5h7Az20vY4grWyMLTmaYUq4vGWFN4Q6haWp+c7qd3ugHViN3sjyH/LUVnrcQ3Oao
-	 eNWYT6xtROw8NQtIoDosN1UY5opkN/qZ5a0hi6XE=
+	by mail.kernel.org (Postfix) with ESMTP id B82BF2082C
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Mar 2019 21:03:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="NtPbMt7Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbfCESth (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Mar 2019 13:49:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbfCEStg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Mar 2019 13:49:36 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15CBF208E4;
-        Tue,  5 Mar 2019 18:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551811776;
-        bh=k+Iq3xwBIbt9ZPAisBgeg2pj+qY/jWn5gCD7h7gjDnA=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=mC6lKazT6lIrm9i+G1AcAWAwRkMzT8/Ne7BEWwXlNXjNPYIOYPwlaerFACuAP2N03
-         X9CvpctEsfCQmrSSWm6IOqDTjv7d6VVZ4oGqXbf0ZrgJOd/XLwzYm3joGozHT8cp9A
-         gYfeXENWzH1wYz6K9nVJbSL2DeYeMr5Zxvx68/Eo=
-Content-Type: text/plain; charset="utf-8"
+        id S1728622AbfCEVD2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Mar 2019 16:03:28 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45483 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfCEVD2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Mar 2019 16:03:28 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i12so8697662otp.12;
+        Tue, 05 Mar 2019 13:03:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GH9PWq7BwLFfuuMZa78aaB8pbIhV8onTtf7NpZHzVy8=;
+        b=NtPbMt7QB/c6LegEcoxN3Aqi1GU23MFJ+ja4h41ZYe3/3OCyLbfyvPghTJsd44FPli
+         ma76PuUDof9RdoMPGHf8gOWnaHkJhR5774K4+w1R94EKlYVqn+Ft0+Ssvjm9s25AqGZ2
+         lGxja8nUc/7nwb4aqPLcr+Fw7FYDdMkYTDc09MZTDx1bq/JKXAWkjANhK543CANVAYuB
+         VEK9WyvisFe34Mi0kOO+sUfSgpIegFR1SPTvmgdo5T5pnkdKsViDdHwV3m7m5pkJSnoX
+         o91azTXC1U+m66hxHJ8DpiJ5eXNqrpxccGCAQPVd7EGYALvLfqQ0nukv81+sedTAPPLH
+         IYRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GH9PWq7BwLFfuuMZa78aaB8pbIhV8onTtf7NpZHzVy8=;
+        b=TmbRpRhoYgKF+OjBFDLr54hRTiQ96oTT546j0OKfE3rKssoSSZM0zMa/7WLx8ZkS7d
+         ymoXHQboz+XcuYZCZrXM/ZaMEL/SdfWgCbPzKbOQfioKOXiTdbPnxHeu4NVik6tHcqMU
+         HECEHa++NheuuFLbxfYSL//vMnR0nsl9i6Efgz1Yyfa4+QG7aAFWy49h9YD3rGWK88sN
+         ig9ZcxRlYdlhxaaPg13vh1iQxhTt5xudjFCf/bnN0kAhlonpeVQvAgvyD5q7qGB2lVVc
+         NXO1M4VaJC8YPfgmtNMCrRZynjfUgb1BJfkZ/gjkJG1KT/beJou+6aTX8/MHzm30fE/P
+         RKJA==
+X-Gm-Message-State: APjAAAXnVSq6u6RdhHAD6Cj3a1/RZ6upYqWccFspGYziybsIkL2Nw+zr
+        0WWiRqid+41CQvIAaafcQ/6hJzJaZgZRM0u1t947I4Ez
+X-Google-Smtp-Source: APXvYqwPiDXybaC+IkpseC0vNHek7azGoumctxYWbPQ1zioQjVZmEXZEPxGkhAUTPXZU+f9jKiXaqeMUNyx16FWqaVE=
+X-Received: by 2002:a9d:a11:: with SMTP id 17mr2338491otg.148.1551819807613;
+ Tue, 05 Mar 2019 13:03:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190305044936.22267-2-dbasehore@chromium.org>
-References: <20190305044936.22267-1-dbasehore@chromium.org> <20190305044936.22267-2-dbasehore@chromium.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        mturquette@baylibre.com, heiko@sntech.de, aisheng.dong@nxp.com,
-        mchehab+samsung@kernel.org, corbet@lwn.net, jbrunet@baylibre.com,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Derek Basehore <dbasehore@chromium.org>
-To:     Derek Basehore <dbasehore@chromium.org>,
-        linux-kernel@vger.kernel.org
-Message-ID: <155181177527.20095.15680753964583935841@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Tue, 05 Mar 2019 10:49:35 -0800
+References: <20190304131129.7762-1-narmstrong@baylibre.com> <20190304131129.7762-2-narmstrong@baylibre.com>
+In-Reply-To: <20190304131129.7762-2-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 5 Mar 2019 22:03:16 +0100
+Message-ID: <CAFBinCC30DR7dsk589Z2yQr=HkOQofNYX8y-ds1DM_gV=iBujg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: meson-g12a: add cpu clock bindings
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Derek Basehore (2019-03-04 20:49:31)
-> From: Stephen Boyd <sboyd@codeaurora.org>
->=20
-> Enabling and preparing clocks can be written quite naturally with
-> recursion. We start at some point in the tree and recurse up the
-> tree to find the oldest parent clk that needs to be enabled or
-> prepared. Then we enable/prepare and return to the caller, going
-> back to the clk we started at and enabling/preparing along the
-> way. This also unroll the recursion in unprepare,disable which can
-> just be done in the order of walking up the clk tree.
->=20
-> The problem is recursion isn't great for kernel code where we
-> have a limited stack size. Furthermore, we may be calling this
-> code inside clk_set_rate() which also has recursion in it, so
-> we're really not looking good if we encounter a tall clk tree.
->=20
-> Let's create a stack instead by looping over the parent chain and
-> collecting clks of interest. Then the enable/prepare becomes as
-> simple as iterating over that list and calling enable.
->=20
-> Modified verison of https://lore.kernel.org/patchwork/patch/814369/
-> -Fixed kernel warning
-> -unrolled recursion in unprepare/disable too
->=20
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
-
-From the original post:
-
-"I have some vague fear that this may not work if a clk op is framework=20
-reentrant and attemps to call consumer clk APIs from within the clk ops.
-If the reentrant call tries to add a clk that's already in the list then
-we'll corrupt the list. Ugh."
-
-Do we have this sort of problem here? Or are you certain that we don't
-have clks that prepare or enable something that is already in the
-process of being prepared or enabled?
-
+On Mon, Mar 4, 2019 at 2:11 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add Amlogic G12A Family CPU clocks bindings, only export CPU_CLK since
+> it should be the only ID used.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
