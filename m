@@ -2,95 +2,297 @@ Return-Path: <SRS0=wiT5=RJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58305C43381
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90A7C10F00
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280E420842
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551892843;
-	bh=MT71fMATCuz2XZX1ybMXgIrXaeYpKKAzQ6zbd902jwI=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=pkchJKSQj/oJn0eNOHHFY5ygttk2EFeiVm0zWW5U83HKM7M+KoYNQgrSCTrsnEe5w
-	 V58UGb6XyY3CuWtvgsLok/CufoeF/PuLEuLcaMe5nGT0OzedxOQ0Kao7cbHLIn020S
-	 REUyWVQqmsFgEYP/+RRs3cbvCbMB6fkuCXuOvtfg=
+	by mail.kernel.org (Postfix) with ESMTP id B65BD20854
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:47:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yKRcvIa0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfCFRUm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Mar 2019 12:20:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbfCFRUm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Mar 2019 12:20:42 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF23820684;
-        Wed,  6 Mar 2019 17:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551892841;
-        bh=MT71fMATCuz2XZX1ybMXgIrXaeYpKKAzQ6zbd902jwI=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=BJVUY58nY/QVO8yUQYkAt2SgIBaqwZE31IKr8JtbAzp8BmW914nY56oujEtDzIFzC
-         scaqK7qs6b1jEHY3envbHvNyGTrCAywESl5enSLUUj1hYK0IHHkHUuFKX9DBfnmqM3
-         J21/IRJNqpnzd3D8rMi4HFcgqhmlvXJghAWeS4+I=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <87wolcbhy4.wl-kuninori.morimoto.gx@renesas.com>
-References: <877edcczwl.wl-kuninori.morimoto.gx@renesas.com> <87wolcbhy4.wl-kuninori.morimoto.gx@renesas.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: Question about devm_get_clk_from_child()
-Cc:     Linux-ALSA <alsa-devel@alsa-project.org>,
-        <linux-clk@vger.kernel.org>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Message-ID: <155189284090.20095.14047212664009518639@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Wed, 06 Mar 2019 09:20:40 -0800
+        id S1730544AbfCFRrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Mar 2019 12:47:17 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:47028 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730549AbfCFRrQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Mar 2019 12:47:16 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g6so9176842pfh.13
+        for <linux-clk@vger.kernel.org>; Wed, 06 Mar 2019 09:47:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=mQqRiUcOBnf84owwha1uaK826K7g8AcK1SIu5pAC4cY=;
+        b=yKRcvIa0DkIaHDQxu1z4+ypdBKlq6eamk8w3W+jcg+s/8cpAdwFSARvx0egLS8JL9H
+         CS5/NHTedguwCIt/3AZXEEz771qMkyNa9+v3m1OPfHKieGPNy6hu/mkB56br8ECcPCBG
+         nZCD2YaZHUyT2m9TdqPwgtyaV4p/akJPn4w1OtEDmKs3JWjP+q94mz0DNHu8EliWVcqs
+         9IT/28u0wylN6Dg6CFlNW0GCyIujGYNWx5iA+AbYA/y3hML9THBqby78VVc0NNKnKcP7
+         nkzJzPfIzzUAeP2Fp4Jt7ZUEn1lKM3jBbBlDC7Ix5DMcCynV8uCGyMhwKzlCayCMvCEC
+         oCuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=mQqRiUcOBnf84owwha1uaK826K7g8AcK1SIu5pAC4cY=;
+        b=jcUTvj+tlsqOFTLZaJTV8pMAzuaGURv+twNQ3uUC7t1XvgkjXj+jvPTvwvp+iSDzID
+         w/6zPGnkaQJKd0E8LRb+7Z/hv0H6BC9ZpwSmXGNGGzg/YctU2Erl2XZFwuUnk7wwFjQd
+         C5oenWmpB5PWslcCG/RijNyR8UKxMvEvJAl+zNGnJbdNAx6L6CujpVqYUr1meJtMdwsD
+         lS/KrKki5Ur4bPPwllR3o0tyrC8HZZ52PoHxV8lVOVnL6TIURY4XF06LXaqp8hzTRdJq
+         ifMydwcEsA8U/ufVNL536g6ZDziUdQ+uUquP1qtpyUsUdQMZ/6EOU4heVjxffxYEOYmR
+         Pq7Q==
+X-Gm-Message-State: APjAAAUP0ByK5ynxQlAUVSPhS0VsSaPzRcKxHFS0vtjWLmPthLjR5jgD
+        u3wrM4J48fTunREIwqbEnYk7lQ==
+X-Google-Smtp-Source: APXvYqyoyy8QD4QZPgCyvUZnyDFGKoidnJexwhZekrgpy3BMswO/hlD4V1uBvgGFEupbUzqGhOxTyw==
+X-Received: by 2002:a62:20c9:: with SMTP id m70mr8297130pfj.118.1551894434669;
+        Wed, 06 Mar 2019 09:47:14 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h64sm4098293pfj.40.2019.03.06.09.47.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Mar 2019 09:47:14 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] clk: qcom: Add QCS404 TuringCC
+Date:   Wed,  6 Mar 2019 09:47:58 -0800
+Message-Id: <20190306174758.22462-4-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20190306174758.22462-1-bjorn.andersson@linaro.org>
+References: <20190306174758.22462-1-bjorn.andersson@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kuninori Morimoto (2019-03-05 23:18:28)
->=20
-> of_clk_get_by_name() is using -1 for __of_clk_get() index.
-> It will goes to of_parse_clkspec(), and be used for
-> of_parse_phandle_with_args().
-> Here, if user doesn't specified clock name
-> (=3D of_clk_get_by_name(np, NULL)), this index is still -1,
-> and of_parse_phandle_with_args() will return -EINVAL
-> (This index will be updated if if it had clock name).
-> clk_get_by_name(np, NULL) should work, then, default index
-> should be 0 instead of -1.
-> This patch fixup it.
->=20
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->  drivers/clk/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 14cbf23..96053a9 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4213,7 +4213,7 @@ struct clk *of_clk_get_by_name(struct device_node *=
-np, const char *name)
->         if (!np)
->                 return ERR_PTR(-ENOENT);
-> =20
-> -       return __of_clk_get(np, -1, np->full_name, name);
-> +       return __of_clk_get(np, 0, np->full_name, name);
->  }
+The Turing Clock Controller provides resources related to running the
+Turing subsystem.
 
-Yes this is correct. Thanks for debugging and fixing my thinko here. I
-was thinking that nobody would call of_clk_get_by_name() unless they
-wanted to find some clk that had a matching name, but it seems that we
-also allow NULL to be passed as the name to mean the typical "wildcard
-match" thing that clkdev has done for years. I'll throw this patch on
-top of the merge commit so the breakage window is small as I'd rather
-not rewrite the series just for this. Thanks.
+PM runtime is used to ensure that the associated AHB clock is ticking
+while the clock framework is accessing the registers in the Turing clock
+controller.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/clk/qcom/Kconfig           |   6 +
+ drivers/clk/qcom/Makefile          |   1 +
+ drivers/clk/qcom/turingcc-qcs404.c | 170 +++++++++++++++++++++++++++++
+ 3 files changed, 177 insertions(+)
+ create mode 100644 drivers/clk/qcom/turingcc-qcs404.c
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 1c04575c118f..18bdf34d5e64 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -243,6 +243,12 @@ config SDM_GCC_660
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+ 	  i2C, USB, UFS, SDDC, PCIe, etc.
+ 
++config QCS_TURING_404
++	tristate "QCS404 Turing Clock Controller"
++	help
++	  Support for the Turing Clock Controller on QCS404, provides clocks
++	  and resets for the Turing subsystem.
++
+ config SDM_GCC_845
+ 	tristate "SDM845 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index ee8d0698e370..f0768fb1f037 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -42,6 +42,7 @@ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
++obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
+ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+ obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
+diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
+new file mode 100644
+index 000000000000..aa859e6ec9bd
+--- /dev/null
++++ b/drivers/clk/qcom/turingcc-qcs404.c
+@@ -0,0 +1,170 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019, Linaro Ltd.
++ */
++
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/pm_clock.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,turingcc-qcs404.h>
++
++#include "clk-regmap.h"
++#include "clk-branch.h"
++#include "common.h"
++#include "reset.h"
++
++static struct clk_branch turing_wrapper_aon_cbcr = {
++	.halt_reg = 0x5098,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5098,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "turing_wrapper_aon_clk",
++			.ops = &clk_branch2_aon_ops,
++		},
++	},
++};
++
++static struct clk_branch turing_q6ss_ahbm_aon_cbcr = {
++	.halt_reg = 0x9000,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "turing_q6ss_ahbm_aon_cbcr",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch turing_q6ss_q6_axim_clk = {
++	.halt_reg = 0xb000,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "turing_q6ss_q6_axim_clk",
++			.ops = &clk_branch2_aon_ops,
++		},
++	},
++};
++
++static struct clk_branch turing_q6ss_ahbs_aon_cbcr = {
++	.halt_reg = 0x10000,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x10000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "turing_q6ss_ahbs_aon_clk",
++			.ops = &clk_branch2_aon_ops,
++		},
++	},
++};
++
++static struct clk_branch turing_wrapper_qos_ahbs_aon_cbcr = {
++	.halt_reg = 0x11014,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x11014,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "turing_wrapper_qos_ahbs_aon_clk",
++			.ops = &clk_branch2_aon_ops,
++		},
++	},
++};
++
++static struct clk_regmap *turingcc_clocks[] = {
++	[TURING_WRAPPER_AON_CLK] = &turing_wrapper_aon_cbcr.clkr,
++	[TURING_Q6SS_AHBM_AON_CLK] = &turing_q6ss_ahbm_aon_cbcr.clkr,
++	[TURING_Q6SS_Q6_AXIM_CLK] = &turing_q6ss_q6_axim_clk.clkr,
++	[TURING_Q6SS_AHBS_AON_CLK] = &turing_q6ss_ahbs_aon_cbcr.clkr,
++	[TURING_WRAPPER_QOS_AHBS_AON_CLK] = &turing_wrapper_qos_ahbs_aon_cbcr.clkr,
++};
++
++static const struct regmap_config turingcc_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0x30000,
++	.fast_io	= true,
++};
++
++static const struct qcom_cc_desc turingcc_desc = {
++	.config = &turingcc_regmap_config,
++	.clks = turingcc_clocks,
++	.num_clks = ARRAY_SIZE(turingcc_clocks),
++};
++
++static int turingcc_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	pm_runtime_enable(&pdev->dev);
++	ret = pm_clk_create(&pdev->dev);
++	if (ret)
++		goto disable_pm_runtime;
++
++	ret = pm_clk_add(&pdev->dev, NULL);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to acquire iface clock\n");
++		goto destroy_pm_clk;
++	}
++
++	ret = qcom_cc_probe(pdev, &turingcc_desc);
++	if (ret < 0)
++		goto destroy_pm_clk;
++
++	return 0;
++
++destroy_pm_clk:
++	pm_clk_destroy(&pdev->dev);
++
++disable_pm_runtime:
++	pm_runtime_disable(&pdev->dev);
++
++	return ret;
++}
++
++static int turingcc_remove(struct platform_device *pdev)
++{
++	pm_clk_destroy(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops turingcc_pm_ops = {
++	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
++};
++
++static const struct of_device_id turingcc_match_table[] = {
++	{ .compatible = "qcom,qcs404-turingcc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, turingcc_match_table);
++
++static struct platform_driver turingcc_driver = {
++	.probe		= turingcc_probe,
++	.remove		= turingcc_remove,
++	.driver		= {
++		.name	= "qcs404-turingcc",
++		.of_match_table = turingcc_match_table,
++		.pm = &turingcc_pm_ops,
++	},
++};
++
++module_platform_driver(turingcc_driver);
++
++MODULE_DESCRIPTION("Qualcomm QCS404 Turing Clock Controller");
++MODULE_LICENSE("GPL v2");
+-- 
+2.18.0
 
