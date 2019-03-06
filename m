@@ -2,117 +2,136 @@ Return-Path: <SRS0=wiT5=RJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F1EC43381
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 01:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 696F2C43381
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 01:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E7C20675
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 01:35:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fCP/wRgI"
+	by mail.kernel.org (Postfix) with ESMTP id 3C7A120684
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 01:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbfCFBfh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Mar 2019 20:35:37 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52977 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfCFBfh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Mar 2019 20:35:37 -0500
-Received: by mail-it1-f193.google.com with SMTP id g17so7113736ita.2
-        for <linux-clk@vger.kernel.org>; Tue, 05 Mar 2019 17:35:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nnH5gTz+dmOUwUqdWQFZb+nIuHdSODZLbf2vioXCAnk=;
-        b=fCP/wRgIYLeiTmFflgsjdwwp0QsBmy7GKbkTMNUOTJN3bUEiQK5DVFEB7vr0vLRi3f
-         +FA4NcDElVBKw69oVPwkI9Q8bCo8TQHlIw2YfWd4UxOAm1MHrBA4B54FXVURqogfRZY4
-         M50OogYNM13dMbHJZnx4IH69KvHbBup6d/KoM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nnH5gTz+dmOUwUqdWQFZb+nIuHdSODZLbf2vioXCAnk=;
-        b=VOOCP1cl4skttE7u6KpCJ4rYD6arxCdnxOr04Uq5gQzU4CTFiO7WFBrkT3Yom1sQz+
-         Ru3vqLvv3XWKD5m1i7TXQnWiRImA/uGj9wVlyUUy/2z+YnPTwtyQhDATPSE+i4FC6Sdx
-         NB571sAE2PAi0MvKY43/zo1o8UEKPJCuFFU7ZpjrLkOc/QTWa3Met5rCqcRDKiEY0wtT
-         JmxepivlArVS6+79uOaCWOPr3fuRcboJxAwfhSAwa31ahgQCOUd25W7QtZpiE2u0NmRN
-         +y85OzjAmowu4uCpcG6scsDt1mdHn1vVAYDpmRgIqgGo9MAj4vedIedoQLih3BszJ3YJ
-         Sp5w==
-X-Gm-Message-State: APjAAAVb4i1o5CRMwR2aNM6pqm5zM7HESi7rndScEr1RE2l9LSBNuQmF
-        hqbIWZZNuyaEw+2jJK44+SmX4/ZE8Y0a2UpEzrqndA==
-X-Google-Smtp-Source: APXvYqxej0lhInzne5NXHvBkXSEhPEAZJNAeSRcEpKwOs9nJoEQyJXn9c82lVv/8xPPEFiqnHi+itxduPEsOPHOWRTY=
-X-Received: by 2002:a24:38c:: with SMTP id e134mr764476ite.24.1551836136101;
- Tue, 05 Mar 2019 17:35:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20190305044936.22267-1-dbasehore@chromium.org>
- <20190305044936.22267-2-dbasehore@chromium.org> <155181177527.20095.15680753964583935841@swboyd.mtv.corp.google.com>
-In-Reply-To: <155181177527.20095.15680753964583935841@swboyd.mtv.corp.google.com>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Tue, 5 Mar 2019 17:35:24 -0800
-Message-ID: <CAGAzgso9-1j2XDsHQn+RbSTtV8Vqideu_nG=2qCJD94iyaxFFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, jbrunet@baylibre.com,
-        Stephen Boyd <sboyd@codeaurora.org>
+        id S1728262AbfCFBwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Mar 2019 20:52:36 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:61242 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726069AbfCFBwg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Mar 2019 20:52:36 -0500
+X-UUID: 3dfd3b1805e94ed4b8f40d9a1d5f4e7e-20190306
+X-UUID: 3dfd3b1805e94ed4b8f40d9a1d5f4e7e-20190306
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 321559164; Wed, 06 Mar 2019 09:52:22 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 6 Mar 2019 09:52:21 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 6 Mar 2019 09:52:21 +0800
+Message-ID: <1551837141.23995.13.camel@mtksdaap41>
+Subject: Re: [PATCH V6 0/8] make mt7623 clock of hdmi stable
+From:   CK Hu <ck.hu@mediatek.com>
+To:     wangyan wang <wangyan.wang@mediatek.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        "Ryder Lee" <ryder.lee@mediatek.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 6 Mar 2019 09:52:21 +0800
+In-Reply-To: <20190225020912.29120-1-wangyan.wang@mediatek.com>
+References: <20190225020912.29120-1-wangyan.wang@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 5, 2019 at 10:49 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Derek Basehore (2019-03-04 20:49:31)
-> > From: Stephen Boyd <sboyd@codeaurora.org>
-> >
-> > Enabling and preparing clocks can be written quite naturally with
-> > recursion. We start at some point in the tree and recurse up the
-> > tree to find the oldest parent clk that needs to be enabled or
-> > prepared. Then we enable/prepare and return to the caller, going
-> > back to the clk we started at and enabling/preparing along the
-> > way. This also unroll the recursion in unprepare,disable which can
-> > just be done in the order of walking up the clk tree.
-> >
-> > The problem is recursion isn't great for kernel code where we
-> > have a limited stack size. Furthermore, we may be calling this
-> > code inside clk_set_rate() which also has recursion in it, so
-> > we're really not looking good if we encounter a tall clk tree.
-> >
-> > Let's create a stack instead by looping over the parent chain and
-> > collecting clks of interest. Then the enable/prepare becomes as
-> > simple as iterating over that list and calling enable.
-> >
-> > Modified verison of https://lore.kernel.org/patchwork/patch/814369/
-> > -Fixed kernel warning
-> > -unrolled recursion in unprepare/disable too
-> >
-> > Cc: Jerome Brunet <jbrunet@baylibre.com>
-> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > ---
->
-> From the original post:
->
-> "I have some vague fear that this may not work if a clk op is framework
-> reentrant and attemps to call consumer clk APIs from within the clk ops.
-> If the reentrant call tries to add a clk that's already in the list then
-> we'll corrupt the list. Ugh."
->
-> Do we have this sort of problem here? Or are you certain that we don't
-> have clks that prepare or enable something that is already in the
-> process of being prepared or enabled?
+On Mon, 2019-02-25 at 10:09 +0800, wangyan wang wrote:
+> From: Wangyan Wang <wangyan.wang@mediatek.com>
+> 
+> V6 adopt maintainer's suggestion.
+> Here is the change list between V5 & V6
+> 1. change "unsigned char mux_flags;" to "u8 mux_flags;" to
+> match with the struct in " clk: mediatek: add MUX_GATE_FLAGS_2".
+> 
 
-I can look into whether anything's doing this and add a WARN_ON which
-returns an error if we ever hit that case. If this is happening on
-some platform, we'd want to correct that anyways.
+Hi, Wangyan:
 
->
+I'm not familiar with this clock system, so I still have some question
+about it, if you could describe more clear, it would help us to speed up
+this review process.
+
+In [1], I find the clock that dpi and hdmi_phy controls,
+
+	dpi0: dpi@14014000 {
+		clocks = <&mmsys CLK_MM_DPI1_DIGL>,
+			 <&mmsys CLK_MM_DPI1_ENGINE>,
+			 <&topckgen CLK_TOP_TVDPLL>;
+		clock-names = "pixel", "engine", "pll";
+	};
+
+
+	hdmi_phy: phy@10209100 {
+		clocks = <&apmixedsys CLK_APMIXED_HDMI_REF>;
+		clock-names = "pll_ref";
+	};
+
+In [2], You say that to prevent changing tvdpll would let hdmi stable,
+and this clock is controlled by dpi, why do you modify the control flow
+in hdmi_phy? If these two have relationship, please describe more clear
+because I'm not familiar with this clock system.
+
+And I think that patch 'drm/mediatek: using new factor for tvdpll in
+MT2701' is the major patch to prevent modifying tvdpll because it reduce
+the factor case. Does MT8173 has the same problem? Just ask, I does not
+require you to modify MT8173 part.
+
+[1]
+https://github.com/frank-w/BPI-R2-4.14/blob/663f7def421952eb49b2d698eadaff12d02622d2/arch/arm/boot/dts/mt7623.dtsi
+[2]
+http://lists.infradead.org/pipermail/linux-mediatek/2019-February/017693.html
+
+
+Regards,
+CK
+
+
+> 
+> chunhui dai (8):
+>   drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
+>     hardware
+>   drm/mediatek: move the setting of fixed divider
+>   drm/mediatek: using different flags of clk for HDMI phy
+>   drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+>   clk: mediatek: add MUX_GATE_FLAGS_2
+>   clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
+>   drm/mediatek: using new factor for tvdpll in MT2701
+>   drm/mediatek: fix the rate of parent for hdmi phy in MT2701
+> 
+>  drivers/clk/mediatek/clk-mt2701.c              |  4 +-
+>  drivers/clk/mediatek/clk-mtk.c                 |  2 +-
+>  drivers/clk/mediatek/clk-mtk.h                 | 20 ++++++---
+>  drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 ++--
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 34 ++++------------
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  7 +---
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 56 +++++++++++++++++++++++---
+>  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++++++
+>  8 files changed, 102 insertions(+), 52 deletions(-)
+> 
+
+
