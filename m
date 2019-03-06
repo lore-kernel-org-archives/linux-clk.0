@@ -2,105 +2,95 @@ Return-Path: <SRS0=wiT5=RJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17155C43381
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 10:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58305C43381
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A3B20661
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 10:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 280E420842
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:20:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551892843;
+	bh=MT71fMATCuz2XZX1ybMXgIrXaeYpKKAzQ6zbd902jwI=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=pkchJKSQj/oJn0eNOHHFY5ygttk2EFeiVm0zWW5U83HKM7M+KoYNQgrSCTrsnEe5w
+	 V58UGb6XyY3CuWtvgsLok/CufoeF/PuLEuLcaMe5nGT0OzedxOQ0Kao7cbHLIn020S
+	 REUyWVQqmsFgEYP/+RRs3cbvCbMB6fkuCXuOvtfg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbfCFKi3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Mar 2019 05:38:29 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44220 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbfCFKi3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Mar 2019 05:38:29 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q128so10392790ljb.11;
-        Wed, 06 Mar 2019 02:38:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pkbGJnzrNQWp1Q//kyZcWCjFglxOFBhl6nZ3Kk0wE3I=;
-        b=s34ODNwagVp0VTyp0Vs2Rnuq552D+19dWobMZe7NNYeWxEoitSbXKDCaMxlxsO1bNz
-         ouT38fJtiWBhI8jKmiK5rQpjWFKfFWZtDzlwi/GqllID+gtOHq7/jkDuhVjiToOaKiMH
-         d6kgSJ/Y6USAkc7a12havjabBUHjOhBel81c0aNAsK4upsXQ7X65R7QNQPv0BG5EHLOn
-         SdYMNujDHx2f1fQcxhbXBYmhyzGgct6nnWQnkDUBM6wGts0iUjeiEffPn6QyaC7nuPSy
-         6/8BlNbwF5Ih3usZEnl5o7g048IHQYj/yTcXBqYKUc/unD2I5GnN7J0faZCOm2D6xvjK
-         6UDg==
-X-Gm-Message-State: APjAAAX/Vev4X726cZ8ktZMXh+1Z7tBkhlMhDHjb0e67YEO/KPrGJ/sa
-        QI6umalJLcRHKi0dKGjy2FY=
-X-Google-Smtp-Source: APXvYqwSZpXNqawZCxqpf81sWMEG0ADqPGL3hCmeo+GD8l0NCKMHdZx32634V7xuAqXy+DDZ8gZo6w==
-X-Received: by 2002:a2e:97ce:: with SMTP id m14mr2022026ljj.162.1551868705751;
-        Wed, 06 Mar 2019 02:38:25 -0800 (PST)
-Received: from localhost.localdomain (dyvyhqw8krmdp3vv9p36y-4.rev.dnainternet.fi. [2001:14bb:440:66cb:8872:86cb:c63d:65f4])
-        by smtp.gmail.com with ESMTPSA id b64sm259421ljf.82.2019.03.06.02.38.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Mar 2019 02:38:24 -0800 (PST)
-Date:   Wed, 6 Mar 2019 12:38:16 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
-Subject: Re: [PATCH v10 0/9] support ROHM BD70528 PMIC
-Message-ID: <20190306103816.GA23959@localhost.localdomain>
-References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
- <20190228070450.GB3773@localhost.localdomain>
- <20190228114026.GA6802@sirena.org.uk>
+        id S1727133AbfCFRUm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Mar 2019 12:20:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbfCFRUm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 6 Mar 2019 12:20:42 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF23820684;
+        Wed,  6 Mar 2019 17:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551892841;
+        bh=MT71fMATCuz2XZX1ybMXgIrXaeYpKKAzQ6zbd902jwI=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=BJVUY58nY/QVO8yUQYkAt2SgIBaqwZE31IKr8JtbAzp8BmW914nY56oujEtDzIFzC
+         scaqK7qs6b1jEHY3envbHvNyGTrCAywESl5enSLUUj1hYK0IHHkHUuFKX9DBfnmqM3
+         J21/IRJNqpnzd3D8rMi4HFcgqhmlvXJghAWeS4+I=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190228114026.GA6802@sirena.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87wolcbhy4.wl-kuninori.morimoto.gx@renesas.com>
+References: <877edcczwl.wl-kuninori.morimoto.gx@renesas.com> <87wolcbhy4.wl-kuninori.morimoto.gx@renesas.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: Question about devm_get_clk_from_child()
+Cc:     Linux-ALSA <alsa-devel@alsa-project.org>,
+        <linux-clk@vger.kernel.org>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Message-ID: <155189284090.20095.14047212664009518639@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Wed, 06 Mar 2019 09:20:40 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 28, 2019 at 11:40:26AM +0000, Mark Brown wrote:
-> On Thu, Feb 28, 2019 at 09:04:50AM +0200, Matti Vaittinen wrote:
-> > On Thu, Feb 14, 2019 at 03:02:37PM +0200, Matti Vaittinen wrote:
-> 
-> >> Patch series introducing support for ROHM BD70528 PMIC
-> > 
-> > I was wondering if there is anything that could be done to allow the MFD
-> > part of this series to end up in upstream without having to wait the
-> > regmap-irq changes
-> > (https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/commit/?h=topic/irq)
-> >  to be merged from Linus' tree to MFD tree? If I see it correctly, the
-> > regmap-irq (main-irq-reg support) changes are not targeted to linux 5.1.
-> > To me it looks like getting them to MFD via Linus' tree will take a while.
-> 
-> They're targeted for v5.1 and I sent a pull request to Lee for that
-> branch IIRC.
-Thanks Mark. I think I have misunderstood how you deliver changes to 5.1
-- or then I have done some other mistake. I thought these changes were
-  not going to 5.1 as I did not see them in your for-5.1 branch. But I
-probably did some error there. Thanks for explaining this :)
+Quoting Kuninori Morimoto (2019-03-05 23:18:28)
+>=20
+> of_clk_get_by_name() is using -1 for __of_clk_get() index.
+> It will goes to of_parse_clkspec(), and be used for
+> of_parse_phandle_with_args().
+> Here, if user doesn't specified clock name
+> (=3D of_clk_get_by_name(np, NULL)), this index is still -1,
+> and of_parse_phandle_with_args() will return -EINVAL
+> (This index will be updated if if it had clock name).
+> clk_get_by_name(np, NULL) should work, then, default index
+> should be 0 instead of -1.
+> This patch fixup it.
+>=20
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  drivers/clk/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 14cbf23..96053a9 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -4213,7 +4213,7 @@ struct clk *of_clk_get_by_name(struct device_node *=
+np, const char *name)
+>         if (!np)
+>                 return ERR_PTR(-ENOENT);
+> =20
+> -       return __of_clk_get(np, -1, np->full_name, name);
+> +       return __of_clk_get(np, 0, np->full_name, name);
+>  }
 
-Br,
-	Matti Vaittinen
+Yes this is correct. Thanks for debugging and fixing my thinko here. I
+was thinking that nobody would call of_clk_get_by_name() unless they
+wanted to find some clk that had a matching name, but it seems that we
+also allow NULL to be passed as the name to mean the typical "wildcard
+match" thing that clkdev has done for years. I'll throw this patch on
+top of the merge commit so the breakage window is small as I'd rather
+not rewrite the series just for this. Thanks.
 
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
