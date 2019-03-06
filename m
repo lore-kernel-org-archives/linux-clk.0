@@ -1,102 +1,118 @@
-Return-Path: <SRS0=s9Xv=RI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=wiT5=RJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 054EEC43381
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Mar 2019 21:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F1EC43381
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 01:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C67302082C
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Mar 2019 21:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03E7C20675
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 01:35:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="j1x8CTF8"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fCP/wRgI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfCEVKU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Mar 2019 16:10:20 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43311 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfCEVKU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Mar 2019 16:10:20 -0500
-Received: by mail-oi1-f195.google.com with SMTP id i8so8032955oib.10;
-        Tue, 05 Mar 2019 13:10:19 -0800 (PST)
+        id S1727372AbfCFBfh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Mar 2019 20:35:37 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52977 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfCFBfh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Mar 2019 20:35:37 -0500
+Received: by mail-it1-f193.google.com with SMTP id g17so7113736ita.2
+        for <linux-clk@vger.kernel.org>; Tue, 05 Mar 2019 17:35:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eK7b1ysZ5RYfu11FRazX4UI1S6Ih8JesHu0IF5iHaA8=;
-        b=j1x8CTF89Qs41ZyHYjesb8CIgIIirRbLLbb74rWFRAebVHldQBlD5QT67h0Mm9Z240
-         KVz22+PcxuhvZOwORvRobXSh8gSNmMp6Vnfugst5/J856M6jIxk8j8+oK2GrD2h8kDzN
-         csbWJ8ZN2qxzvT8N8v6CLuxR6iE33EsdeX5I/QZ2B6FCbJyBCfRYt/jIQGipH9MSk95o
-         QUknPxRMrdFmREuHUd6CaGmuP6jc2SyaFj1DsLv+x063A6viqMOWqKzdK11PrDM1MkFu
-         u8cGl5dMijZQdfd6inLK9WSYtVKn4B+rec1VT8BSMDsINYoWTieh7cMaAhgF8XdsqYvs
-         vSiw==
+        bh=nnH5gTz+dmOUwUqdWQFZb+nIuHdSODZLbf2vioXCAnk=;
+        b=fCP/wRgIYLeiTmFflgsjdwwp0QsBmy7GKbkTMNUOTJN3bUEiQK5DVFEB7vr0vLRi3f
+         +FA4NcDElVBKw69oVPwkI9Q8bCo8TQHlIw2YfWd4UxOAm1MHrBA4B54FXVURqogfRZY4
+         M50OogYNM13dMbHJZnx4IH69KvHbBup6d/KoM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eK7b1ysZ5RYfu11FRazX4UI1S6Ih8JesHu0IF5iHaA8=;
-        b=Ch4B3IPLqdNtrILmFLjpR6wzVemwcofD2jlFHzvFafJfCEwTScFZyYVcAyGXgXlHyW
-         k9WX2jqvVIStjAX8wFz7iVQXYLvWVTvbAUrfoxvZ1O2aipKyPCoD2cA4zPYOV7tCqd76
-         iurhMhzuVFZhS82PdgWNVEU+oHIkrKljHgG3mknssIJ8IYtXNoGFZdBDHYsUH7XamP7s
-         OHun8heqAXUBALhkWoOdRKrRk6nIQja7rWtyX3WjsRnHE7PtR0gC8t3Cdq0kh97gNnGL
-         ublgWRGfUowycIhObIASYWeBVoV5liAWR3aDq4cQAobIX5f4orzs1qtV+iof7ft8SZiC
-         /dbg==
-X-Gm-Message-State: APjAAAX1Nn8HJiRoAEnnm5CQUUqe5WtjAl2hvlax4kdQ0D+O7ItY2IJJ
-        6WtHycQYL28Yvsksjx8g9a6TZW3mtj8si/FwOYk=
-X-Google-Smtp-Source: APXvYqzNLUVc4KWV8pZ6sWH20srMIwANXU8OP6BAlUdcDbU5dWTNHrF5O5cGb48Aw1nFP7347/B/cSjSO2p09s+kWkw=
-X-Received: by 2002:aca:4205:: with SMTP id p5mr309442oia.15.1551820219243;
- Tue, 05 Mar 2019 13:10:19 -0800 (PST)
+        bh=nnH5gTz+dmOUwUqdWQFZb+nIuHdSODZLbf2vioXCAnk=;
+        b=VOOCP1cl4skttE7u6KpCJ4rYD6arxCdnxOr04Uq5gQzU4CTFiO7WFBrkT3Yom1sQz+
+         Ru3vqLvv3XWKD5m1i7TXQnWiRImA/uGj9wVlyUUy/2z+YnPTwtyQhDATPSE+i4FC6Sdx
+         NB571sAE2PAi0MvKY43/zo1o8UEKPJCuFFU7ZpjrLkOc/QTWa3Met5rCqcRDKiEY0wtT
+         JmxepivlArVS6+79uOaCWOPr3fuRcboJxAwfhSAwa31ahgQCOUd25W7QtZpiE2u0NmRN
+         +y85OzjAmowu4uCpcG6scsDt1mdHn1vVAYDpmRgIqgGo9MAj4vedIedoQLih3BszJ3YJ
+         Sp5w==
+X-Gm-Message-State: APjAAAVb4i1o5CRMwR2aNM6pqm5zM7HESi7rndScEr1RE2l9LSBNuQmF
+        hqbIWZZNuyaEw+2jJK44+SmX4/ZE8Y0a2UpEzrqndA==
+X-Google-Smtp-Source: APXvYqxej0lhInzne5NXHvBkXSEhPEAZJNAeSRcEpKwOs9nJoEQyJXn9c82lVv/8xPPEFiqnHi+itxduPEsOPHOWRTY=
+X-Received: by 2002:a24:38c:: with SMTP id e134mr764476ite.24.1551836136101;
+ Tue, 05 Mar 2019 17:35:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20190304131129.7762-1-narmstrong@baylibre.com> <20190304131129.7762-3-narmstrong@baylibre.com>
-In-Reply-To: <20190304131129.7762-3-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 5 Mar 2019 22:10:08 +0100
-Message-ID: <CAFBinCAax7=dbLxTNtSrJJthuFb02+7YMyGwpie28F1bnr0qRw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: meson: g12a: add cpu clocks
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+References: <20190305044936.22267-1-dbasehore@chromium.org>
+ <20190305044936.22267-2-dbasehore@chromium.org> <155181177527.20095.15680753964583935841@swboyd.mtv.corp.google.com>
+In-Reply-To: <155181177527.20095.15680753964583935841@swboyd.mtv.corp.google.com>
+From:   "dbasehore ." <dbasehore@chromium.org>
+Date:   Tue, 5 Mar 2019 17:35:24 -0800
+Message-ID: <CAGAzgso9-1j2XDsHQn+RbSTtV8Vqideu_nG=2qCJD94iyaxFFQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, jbrunet@baylibre.com,
+        Stephen Boyd <sboyd@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 4, 2019 at 2:12 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Tue, Mar 5, 2019 at 10:49 AM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Add the Amlogic G12A Family CPU Clock tree in read/only for now.
+> Quoting Derek Basehore (2019-03-04 20:49:31)
+> > From: Stephen Boyd <sboyd@codeaurora.org>
+> >
+> > Enabling and preparing clocks can be written quite naturally with
+> > recursion. We start at some point in the tree and recurse up the
+> > tree to find the oldest parent clk that needs to be enabled or
+> > prepared. Then we enable/prepare and return to the caller, going
+> > back to the clk we started at and enabling/preparing along the
+> > way. This also unroll the recursion in unprepare,disable which can
+> > just be done in the order of walking up the clk tree.
+> >
+> > The problem is recursion isn't great for kernel code where we
+> > have a limited stack size. Furthermore, we may be calling this
+> > code inside clk_set_rate() which also has recursion in it, so
+> > we're really not looking good if we encounter a tall clk tree.
+> >
+> > Let's create a stack instead by looping over the parent chain and
+> > collecting clks of interest. Then the enable/prepare becomes as
+> > simple as iterating over that list and calling enable.
+> >
+> > Modified verison of https://lore.kernel.org/patchwork/patch/814369/
+> > -Fixed kernel warning
+> > -unrolled recursion in unprepare/disable too
+> >
+> > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > ---
 >
-> The CPU clock can either use the SYS_PLL for > 1GHz frequencies or
-> use a couple of div+mux from 1GHz/667MHz/24MHz source with 2 non-glitch
-> muxes.
+> From the original post:
 >
-> Proper DVFS support will come in a second time.
+> "I have some vague fear that this may not work if a clk op is framework
+> reentrant and attemps to call consumer clk APIs from within the clk ops.
+> If the reentrant call tries to add a clk that's already in the list then
+> we'll corrupt the list. Ugh."
 >
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Do we have this sort of problem here? Or are you certain that we don't
+> have clks that prepare or enable something that is already in the
+> process of being prepared or enabled?
 
-in my previous review I criticized that the post-dividers are not
-mentioned in the description.
-it's not part of v2 but after having a closer look again I think it's
-not a big issue:
-these CPU post-dividers are all marked as read-only and have a comment
-that "ROM monitor code" manages them.
+I can look into whether anything's doing this and add a WARN_ON which
+returns an error if we ever hit that case. If this is happening on
+some platform, we'd want to correct that anyways.
 
-disclaimer for my "reviewed-by":
-- I don't have access to the datasheet so I can't verify if the clock
-tree from this patch is correct
-- the latest buildroot code with G12A support
-(buildroot_openlinux_kernel_4.9_fbdev_20180706) doesn't have proper
-names for all clocks
-- this review is based on my experience with Meson8* (where Linux also
-manages the CPU clock, unlike on the GX SoCs where it's managed in
-firmware)
-
-
-Regards
-Martin
+>
