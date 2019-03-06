@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90A7C10F00
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF96C43381
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65BD20854
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 837F520661
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 17:47:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yKRcvIa0"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nI2UrWF7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730544AbfCFRrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Mar 2019 12:47:17 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:47028 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730549AbfCFRrQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Mar 2019 12:47:16 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g6so9176842pfh.13
-        for <linux-clk@vger.kernel.org>; Wed, 06 Mar 2019 09:47:15 -0800 (PST)
+        id S1730558AbfCFRrZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Mar 2019 12:47:25 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42005 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730540AbfCFRrO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Mar 2019 12:47:14 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b2so8971786pgl.9
+        for <linux-clk@vger.kernel.org>; Wed, 06 Mar 2019 09:47:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mQqRiUcOBnf84owwha1uaK826K7g8AcK1SIu5pAC4cY=;
-        b=yKRcvIa0DkIaHDQxu1z4+ypdBKlq6eamk8w3W+jcg+s/8cpAdwFSARvx0egLS8JL9H
-         CS5/NHTedguwCIt/3AZXEEz771qMkyNa9+v3m1OPfHKieGPNy6hu/mkB56br8ECcPCBG
-         nZCD2YaZHUyT2m9TdqPwgtyaV4p/akJPn4w1OtEDmKs3JWjP+q94mz0DNHu8EliWVcqs
-         9IT/28u0wylN6Dg6CFlNW0GCyIujGYNWx5iA+AbYA/y3hML9THBqby78VVc0NNKnKcP7
-         nkzJzPfIzzUAeP2Fp4Jt7ZUEn1lKM3jBbBlDC7Ix5DMcCynV8uCGyMhwKzlCayCMvCEC
-         oCuA==
+        bh=oBZ8sxxMGg3aMYJDNUgn+TSIDMbgVfPO7ogD65Yj6kM=;
+        b=nI2UrWF7RpU7tNN8WkgmIPRpACpS7NRT1WKf5L/6h3GqcnncisSQrXLv7yzBRrOV0J
+         8vIcnudSCbQ+85cTQUgDpJsX+Fr34PzfJ3jQxspVFi1qsnyFm/m3Xs8AR/S6njfp2X2w
+         l6EwaZLuFOlyNiP3YEr1ORGO8HN6ExP4envur8iDON40kR446+EguUftAsmvdmt8JgQp
+         5bwF68bqXNDhS8Q1AYCSbojfe/ExxO5+Aw0nAN1YOBxM4bKoOOJ8jIXu0wOXJZrj6elh
+         8jJClWN3s6yWbyy/i2O7jQatH8f3aPrCPjHlhg5yQTcxCQnG3U5LquI59ABl/iSvGgoY
+         /g/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=mQqRiUcOBnf84owwha1uaK826K7g8AcK1SIu5pAC4cY=;
-        b=jcUTvj+tlsqOFTLZaJTV8pMAzuaGURv+twNQ3uUC7t1XvgkjXj+jvPTvwvp+iSDzID
-         w/6zPGnkaQJKd0E8LRb+7Z/hv0H6BC9ZpwSmXGNGGzg/YctU2Erl2XZFwuUnk7wwFjQd
-         C5oenWmpB5PWslcCG/RijNyR8UKxMvEvJAl+zNGnJbdNAx6L6CujpVqYUr1meJtMdwsD
-         lS/KrKki5Ur4bPPwllR3o0tyrC8HZZ52PoHxV8lVOVnL6TIURY4XF06LXaqp8hzTRdJq
-         ifMydwcEsA8U/ufVNL536g6ZDziUdQ+uUquP1qtpyUsUdQMZ/6EOU4heVjxffxYEOYmR
-         Pq7Q==
-X-Gm-Message-State: APjAAAUP0ByK5ynxQlAUVSPhS0VsSaPzRcKxHFS0vtjWLmPthLjR5jgD
-        u3wrM4J48fTunREIwqbEnYk7lQ==
-X-Google-Smtp-Source: APXvYqyoyy8QD4QZPgCyvUZnyDFGKoidnJexwhZekrgpy3BMswO/hlD4V1uBvgGFEupbUzqGhOxTyw==
-X-Received: by 2002:a62:20c9:: with SMTP id m70mr8297130pfj.118.1551894434669;
-        Wed, 06 Mar 2019 09:47:14 -0800 (PST)
+        bh=oBZ8sxxMGg3aMYJDNUgn+TSIDMbgVfPO7ogD65Yj6kM=;
+        b=VPNlf8z4pLg8E7FNlvggJ9QEB8VZ5z+gwFbbxLWcTAp3AIM4w15TJQurwG7eKYW27c
+         y6ggdkSr14q9SRSG2FUssh1Gdsx2zj4mKx5MYxg8ESo11F2oi3iNDAgXZoHeIJt4KrXU
+         tdHZwI6aI1sVj7/YhRDGQ5Y3pPLZPpZIeGSvoGoZNcxTdzD9s2kji/psTiAcktRFD/V+
+         J7Mz1V4hbvgEZxh81nPymx3J6195DF6j+WFcciyBjIDFXT73woEJMdHFOyvQYQe8iDYQ
+         W+yEqgjGTo3+B/KpmIiMl/m/rDwTIFEwYfdltIBRw4ohx84rnWbTyvXctj9VRqJtWN0a
+         sT/Q==
+X-Gm-Message-State: APjAAAVw6dR4Pw7M6OlWuhX3yrcP5fvzWWMXUXxZiyXby/9LQGRqPGBn
+        WKs9tasIWTII44qMTh1BKJGVHQ==
+X-Google-Smtp-Source: APXvYqwvOm5jgoN9OHBhMYX768Y3KCZWsp6YwEfaPkb0XZY4qFhssogqi64csOCMNU5vFlWxTveObQ==
+X-Received: by 2002:a63:2c50:: with SMTP id s77mr7392020pgs.440.1551894433640;
+        Wed, 06 Mar 2019 09:47:13 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h64sm4098293pfj.40.2019.03.06.09.47.13
+        by smtp.gmail.com with ESMTPSA id h64sm4098293pfj.40.2019.03.06.09.47.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Mar 2019 09:47:14 -0800 (PST)
+        Wed, 06 Mar 2019 09:47:13 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -62,9 +62,9 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] clk: qcom: Add QCS404 TuringCC
-Date:   Wed,  6 Mar 2019 09:47:58 -0800
-Message-Id: <20190306174758.22462-4-bjorn.andersson@linaro.org>
+Subject: [PATCH 2/3] clk: qcom: branch: Add AON clock ops
+Date:   Wed,  6 Mar 2019 09:47:57 -0800
+Message-Id: <20190306174758.22462-3-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190306174758.22462-1-bjorn.andersson@linaro.org>
 References: <20190306174758.22462-1-bjorn.andersson@linaro.org>
@@ -73,226 +73,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Turing Clock Controller provides resources related to running the
-Turing subsystem.
-
-PM runtime is used to ensure that the associated AHB clock is ticking
-while the clock framework is accessing the registers in the Turing clock
-controller.
+Some clocks can only be turned on by resetting the block containing
+them, provide a clock type that allow us to reference these clocks and
+have the client drivers enable and "disable" them.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/clk/qcom/Kconfig           |   6 +
- drivers/clk/qcom/Makefile          |   1 +
- drivers/clk/qcom/turingcc-qcs404.c | 170 +++++++++++++++++++++++++++++
- 3 files changed, 177 insertions(+)
- create mode 100644 drivers/clk/qcom/turingcc-qcs404.c
+ drivers/clk/qcom/clk-branch.c | 6 ++++++
+ drivers/clk/qcom/clk-branch.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 1c04575c118f..18bdf34d5e64 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -243,6 +243,12 @@ config SDM_GCC_660
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
- 	  i2C, USB, UFS, SDDC, PCIe, etc.
+diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+index 99446bf630aa..f869fc6aaed6 100644
+--- a/drivers/clk/qcom/clk-branch.c
++++ b/drivers/clk/qcom/clk-branch.c
+@@ -146,6 +146,12 @@ const struct clk_ops clk_branch2_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_branch2_ops);
  
-+config QCS_TURING_404
-+	tristate "QCS404 Turing Clock Controller"
-+	help
-+	  Support for the Turing Clock Controller on QCS404, provides clocks
-+	  and resets for the Turing subsystem.
-+
- config SDM_GCC_845
- 	tristate "SDM845 Global Clock Controller"
- 	select QCOM_GDSC
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index ee8d0698e370..f0768fb1f037 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -42,6 +42,7 @@ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
-+obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
-new file mode 100644
-index 000000000000..aa859e6ec9bd
---- /dev/null
-+++ b/drivers/clk/qcom/turingcc-qcs404.c
-@@ -0,0 +1,170 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019, Linaro Ltd.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,turingcc-qcs404.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-branch.h"
-+#include "common.h"
-+#include "reset.h"
-+
-+static struct clk_branch turing_wrapper_aon_cbcr = {
-+	.halt_reg = 0x5098,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x5098,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "turing_wrapper_aon_clk",
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
++const struct clk_ops clk_branch2_aon_ops = {
++	.enable = clk_branch2_enable,
++	.is_enabled = clk_is_enabled_regmap,
 +};
++EXPORT_SYMBOL_GPL(clk_branch2_aon_ops);
 +
-+static struct clk_branch turing_q6ss_ahbm_aon_cbcr = {
-+	.halt_reg = 0x9000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "turing_q6ss_ahbm_aon_cbcr",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch turing_q6ss_q6_axim_clk = {
-+	.halt_reg = 0xb000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xb000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "turing_q6ss_q6_axim_clk",
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch turing_q6ss_ahbs_aon_cbcr = {
-+	.halt_reg = 0x10000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x10000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "turing_q6ss_ahbs_aon_clk",
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch turing_wrapper_qos_ahbs_aon_cbcr = {
-+	.halt_reg = 0x11014,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x11014,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "turing_wrapper_qos_ahbs_aon_clk",
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap *turingcc_clocks[] = {
-+	[TURING_WRAPPER_AON_CLK] = &turing_wrapper_aon_cbcr.clkr,
-+	[TURING_Q6SS_AHBM_AON_CLK] = &turing_q6ss_ahbm_aon_cbcr.clkr,
-+	[TURING_Q6SS_Q6_AXIM_CLK] = &turing_q6ss_q6_axim_clk.clkr,
-+	[TURING_Q6SS_AHBS_AON_CLK] = &turing_q6ss_ahbs_aon_cbcr.clkr,
-+	[TURING_WRAPPER_QOS_AHBS_AON_CLK] = &turing_wrapper_qos_ahbs_aon_cbcr.clkr,
-+};
-+
-+static const struct regmap_config turingcc_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x30000,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc turingcc_desc = {
-+	.config = &turingcc_regmap_config,
-+	.clks = turingcc_clocks,
-+	.num_clks = ARRAY_SIZE(turingcc_clocks),
-+};
-+
-+static int turingcc_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	pm_runtime_enable(&pdev->dev);
-+	ret = pm_clk_create(&pdev->dev);
-+	if (ret)
-+		goto disable_pm_runtime;
-+
-+	ret = pm_clk_add(&pdev->dev, NULL);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to acquire iface clock\n");
-+		goto destroy_pm_clk;
-+	}
-+
-+	ret = qcom_cc_probe(pdev, &turingcc_desc);
-+	if (ret < 0)
-+		goto destroy_pm_clk;
-+
-+	return 0;
-+
-+destroy_pm_clk:
-+	pm_clk_destroy(&pdev->dev);
-+
-+disable_pm_runtime:
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int turingcc_remove(struct platform_device *pdev)
-+{
-+	pm_clk_destroy(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops turingcc_pm_ops = {
-+	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-+};
-+
-+static const struct of_device_id turingcc_match_table[] = {
-+	{ .compatible = "qcom,qcs404-turingcc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, turingcc_match_table);
-+
-+static struct platform_driver turingcc_driver = {
-+	.probe		= turingcc_probe,
-+	.remove		= turingcc_remove,
-+	.driver		= {
-+		.name	= "qcs404-turingcc",
-+		.of_match_table = turingcc_match_table,
-+		.pm = &turingcc_pm_ops,
-+	},
-+};
-+
-+module_platform_driver(turingcc_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm QCS404 Turing Clock Controller");
-+MODULE_LICENSE("GPL v2");
+ const struct clk_ops clk_branch_simple_ops = {
+ 	.enable = clk_enable_regmap,
+ 	.disable = clk_disable_regmap,
+diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+index b3561e0a3984..17a58119165e 100644
+--- a/drivers/clk/qcom/clk-branch.h
++++ b/drivers/clk/qcom/clk-branch.h
+@@ -40,6 +40,7 @@ struct clk_branch {
+ extern const struct clk_ops clk_branch_ops;
+ extern const struct clk_ops clk_branch2_ops;
+ extern const struct clk_ops clk_branch_simple_ops;
++extern const struct clk_ops clk_branch2_aon_ops;
+ 
+ #define to_clk_branch(_hw) \
+ 	container_of(to_clk_regmap(_hw), struct clk_branch, clkr)
 -- 
 2.18.0
 
