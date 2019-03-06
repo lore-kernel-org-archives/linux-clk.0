@@ -2,128 +2,269 @@ Return-Path: <SRS0=wiT5=RJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A58C43381
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 04:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6CBC43381
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 05:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6091020675
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 04:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8252420675
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Mar 2019 05:51:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PneuEQz/"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AF8H/jTG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfCFEMJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Mar 2019 23:12:09 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35465 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfCFEMJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Mar 2019 23:12:09 -0500
-Received: by mail-it1-f194.google.com with SMTP id 188so8193883itb.0
-        for <linux-clk@vger.kernel.org>; Tue, 05 Mar 2019 20:12:08 -0800 (PST)
+        id S1728108AbfCFFvE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Mar 2019 00:51:04 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36400 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfCFFvD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Mar 2019 00:51:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id r124so7448590pgr.3
+        for <linux-clk@vger.kernel.org>; Tue, 05 Mar 2019 21:51:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=StaGLvBUS5TkIV4j1JexcDZXarlMywUEPr5FgW/yy0o=;
-        b=PneuEQz/skP/WogMeUOW+UYsnaNE/hhVPn4Zv7tbSkwSNBVpHGZBTsOFMOlRXox3dq
-         4gNhG4yWKXNgsToj0PufVCK0vKMTZvDZIRi2hR+xwSpsXhJRPx7feF3xe7PxoqQpj2xl
-         a7ES/NWzqQ1YKpH0+LLop6IVIBGc213WPiNGM=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=aE9JHBMG90TEdbBNGP6b/uxyxA2Dn4socGIFoANBok8=;
+        b=AF8H/jTGuiYT7kICDMJ+21U2HV5AfZUnOxJ8VQjHcl/oJjL0ZZ1seyeg7lxPZbs3sI
+         G/pwi2iOktJuWCW1L/y3Mfs2NY+eJjr35JwkjgZGeDu4s1JMEi/rF/gCSJivqBJREQaV
+         CRkeFwI1YnAYWcAxnSpFNIuNSpYa2EYRnHy7AUVvHJXSf6CSaKmbAAH8JeiN4bQVolXd
+         3HhEsrKxcKo9Aw50tNhCAyMHjtSY/TA7Ea7WrjPhFuzUFhjZazDKP0Obr78wWyTQ/Ah2
+         C8E8JxHOFSnb/AWeq8UQanqj07xnRVFRviNtkVqc01P367d+siknPSpsiWlzAqZPaT9s
+         Aweg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=StaGLvBUS5TkIV4j1JexcDZXarlMywUEPr5FgW/yy0o=;
-        b=FKjZCV1rqwajZTeV8jrUPHUOZ5x9MAJYKSkWzSCD25DY4zs1eHEaQ33+W5DtC5EjvD
-         FDHxvYXuaTajMRJeGoYDxDRMLybPDcIIiM4tuHqSMM1naswBBCjDnAlxUfO3E2Jodu1d
-         70uUZzUJas8XwcOl2enHB44ELmttHG7TZfC/M4nBhyA79LtDz5BPcgGujNDUK0Ti1zux
-         Skyi4ruGza6M7/EyNlLEwq8Jf1s3CRaRT3lA6PUpiEV8XHypRNXNNPAytS+L7YueEgjW
-         iAyeCHPOJgMKL8ApMImb7yFOo2trkDC3rGGwiATOWe4HX4dq01pvO4JLimA2Ggn70xFm
-         38MA==
-X-Gm-Message-State: APjAAAV7oMhSd5FXXsEMPygPJAe42S69088BECFWo7e81z5tmgZH3M8V
-        0ul14zBAN4RE9TFQqkAmKJjS+SRn00lGTtU4kOt3yA==
-X-Google-Smtp-Source: APXvYqzzglElDR1D4t81plRiZtamMX56ugLYpYTHsVMIRqPBa76+GJwz3Vhuamnt3DPyIOFqzcF9CAFlAI2q+Jptzao=
-X-Received: by 2002:a24:338a:: with SMTP id k132mr930699itk.123.1551845528178;
- Tue, 05 Mar 2019 20:12:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20190305044936.22267-1-dbasehore@chromium.org>
- <20190305044936.22267-2-dbasehore@chromium.org> <155181177527.20095.15680753964583935841@swboyd.mtv.corp.google.com>
- <CAGAzgso9-1j2XDsHQn+RbSTtV8Vqideu_nG=2qCJD94iyaxFFQ@mail.gmail.com>
-In-Reply-To: <CAGAzgso9-1j2XDsHQn+RbSTtV8Vqideu_nG=2qCJD94iyaxFFQ@mail.gmail.com>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Tue, 5 Mar 2019 20:11:57 -0800
-Message-ID: <CAGAzgsp0fWbH1f7gRKvhTotvdHMAL8gWw1bTKpVHfW9hJddXAw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, jbrunet@baylibre.com,
-        Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aE9JHBMG90TEdbBNGP6b/uxyxA2Dn4socGIFoANBok8=;
+        b=idoU7gNx2l8RPzw/Y4XCb8F3e9EAfzkUURSDzqjLR6WklCHKVn954Zy05oX9T+iaaU
+         Wew0Cd+IuoUXXjk2VNDrGY9kIKN1+ApKdH5vwd0Nqv4lOm+aZh6qKncBKmjLzpSuGhEC
+         Bv4jqJ7Mh81jezSXisMXfFdp3fJyUzNefxmxyvtwZfEd1j6FdgNW/dzTmEPhtxz62ZjF
+         Y/b/4gOFrymgdp6b4UPMq8ySr9iJjQ7uwLbN0t4+4UAQiO1NUrqtB+tHCgupeCMTzpsK
+         3gnU4hRgGuJGCuwsj/t9RwaWSOW9H6o/jPsjz8xlwiqhTiEhMvgAgWKMn38Ee/187A09
+         RNzA==
+X-Gm-Message-State: APjAAAXYaee4T+gBjKqPXIfYM3mUi7+cWNdGxzSbS2KKO7cCqHN5GUic
+        6lsRiVgtWi1mPOTC9BXZI7TY6g==
+X-Google-Smtp-Source: APXvYqzLEf5kCzkj6uC4dXaGoBrUgN1M8DknvgGNJ6u1xHTrFVOSeVSlKYQWWsTlTqFODoTyl1PQng==
+X-Received: by 2002:a65:6483:: with SMTP id e3mr4744181pgv.273.1551851462439;
+        Tue, 05 Mar 2019 21:51:02 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y7sm1877351pge.35.2019.03.05.21.51.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Mar 2019 21:51:01 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-qcs404: Add CDSP related clocks and resets
+Date:   Tue,  5 Mar 2019 21:51:48 -0800
+Message-Id: <20190306055148.10823-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 5, 2019 at 5:35 PM dbasehore . <dbasehore@chromium.org> wrote:
->
-> On Tue, Mar 5, 2019 at 10:49 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Derek Basehore (2019-03-04 20:49:31)
-> > > From: Stephen Boyd <sboyd@codeaurora.org>
-> > >
-> > > Enabling and preparing clocks can be written quite naturally with
-> > > recursion. We start at some point in the tree and recurse up the
-> > > tree to find the oldest parent clk that needs to be enabled or
-> > > prepared. Then we enable/prepare and return to the caller, going
-> > > back to the clk we started at and enabling/preparing along the
-> > > way. This also unroll the recursion in unprepare,disable which can
-> > > just be done in the order of walking up the clk tree.
-> > >
-> > > The problem is recursion isn't great for kernel code where we
-> > > have a limited stack size. Furthermore, we may be calling this
-> > > code inside clk_set_rate() which also has recursion in it, so
-> > > we're really not looking good if we encounter a tall clk tree.
-> > >
-> > > Let's create a stack instead by looping over the parent chain and
-> > > collecting clks of interest. Then the enable/prepare becomes as
-> > > simple as iterating over that list and calling enable.
-> > >
-> > > Modified verison of https://lore.kernel.org/patchwork/patch/814369/
-> > > -Fixed kernel warning
-> > > -unrolled recursion in unprepare/disable too
-> > >
-> > > Cc: Jerome Brunet <jbrunet@baylibre.com>
-> > > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > > ---
-> >
-> > From the original post:
-> >
-> > "I have some vague fear that this may not work if a clk op is framework
-> > reentrant and attemps to call consumer clk APIs from within the clk ops.
-> > If the reentrant call tries to add a clk that's already in the list then
-> > we'll corrupt the list. Ugh."
-> >
-> > Do we have this sort of problem here? Or are you certain that we don't
-> > have clks that prepare or enable something that is already in the
-> > process of being prepared or enabled?
->
-> I can look into whether anything's doing this and add a WARN_ON which
-> returns an error if we ever hit that case. If this is happening on
-> some platform, we'd want to correct that anyways.
->
+Add the clocks and resets need in order to control the Turing
+remoteproc.
 
-Also, if we're ever able to move to another locking scheme (hopefully
-soon...), we can make the prepare/enable locks non-reentrant. Then if
-anyone recursively calls back into the framework for another
-prepare/enable, they will deadlock. I guess that's one way of making
-sure no one does that.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/clk/qcom/gcc-qcs404.c               | 90 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-qcs404.h |  5 ++
+ 2 files changed, 95 insertions(+)
 
-> >
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 5a62f64ada93..a54807eb3b28 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -260,6 +260,20 @@ static const char * const gcc_parent_names_15[] = {
+ 	"core_bi_pll_test_se",
+ };
+ 
++static const struct parent_map gcc_parent_map_16[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0_OUT_MAIN, 1 },
++	{ P_GPLL0_OUT_AUX, 2 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const gcc_parent_names_16[] = {
++	"cxo",
++	"gpll0_out_main",
++	"gpll0_out_aux",
++	"core_bi_pll_test_se",
++};
++
+ static struct clk_fixed_factor cxo = {
+ 	.mult = 1,
+ 	.div = 1,
+@@ -1194,6 +1208,28 @@ static struct clk_rcg2 vsync_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_cdsp_bimc_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(133333333, P_GPLL0_OUT_MAIN, 6, 0, 0),
++	F(266666667, P_GPLL0_OUT_MAIN, 3, 0, 0),
++	F(320000000, P_GPLL0_OUT_MAIN, 2.5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cdsp_bimc_clk_src = {
++	.cmd_rcgr = 0x5e010,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = gcc_parent_map_16,
++	.freq_tbl = ftbl_cdsp_bimc_clk_src,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "cdsp_bimc_clk_src",
++		.parent_names = gcc_parent_names_16,
++		.num_parents = 4,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
+ static struct clk_branch gcc_apss_ahb_clk = {
+ 	.halt_reg = 0x4601c,
+ 	.halt_check = BRANCH_HALT_VOTED,
+@@ -1255,6 +1291,24 @@ static struct clk_branch gcc_bimc_gpu_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_bimc_cdsp_clk = {
++	.halt_reg = 0x31030,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x31030,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "gcc_bimc_cdsp_clk",
++			.parent_names = (const char *[]) {
++				"cdsp_bimc_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_bimc_mdss_clk = {
+ 	.halt_reg = 0x31038,
+ 	.halt_check = BRANCH_HALT,
+@@ -1792,6 +1846,24 @@ static struct clk_branch gcc_gfx_tbu_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_cdsp_tbu_clk = {
++	.halt_reg = 0x1203c,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x13020,
++		.enable_mask = BIT(9),
++		.hw.init = &(struct clk_init_data) {
++			.name = "gcc_cdsp_tbu_clk",
++			.parent_names = (const char *[]) {
++				"cdsp_bimc_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_gp1_clk = {
+ 	.halt_reg = 0x8000,
+ 	.halt_check = BRANCH_HALT,
+@@ -2304,6 +2376,19 @@ static struct clk_branch gcc_sdcc1_ice_core_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_cdsp_cfg_ahb_clk = {
++	.halt_reg = 0x5e004,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5e004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "gcc_cdsp_cfg_ahb_cbcr",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_sdcc2_ahb_clk = {
+ 	.halt_reg = 0x4301c,
+ 	.halt_check = BRANCH_HALT,
+@@ -2548,6 +2633,7 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
+ 	[GCC_ESC0_CLK_SRC] = &esc0_clk_src.clkr,
+ 	[GCC_APSS_AHB_CLK] = &gcc_apss_ahb_clk.clkr,
+ 	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
++	[GCC_BIMC_CDSP_CLK] = &gcc_bimc_cdsp_clk.clkr,
+ 	[GCC_BIMC_MDSS_CLK] = &gcc_bimc_mdss_clk.clkr,
+ 	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
+ 	[GCC_BLSP1_QUP0_I2C_APPS_CLK] = &gcc_blsp1_qup0_i2c_apps_clk.clkr,
+@@ -2605,6 +2691,7 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
+ 	[GCC_SDCC1_AHB_CLK] = &gcc_sdcc1_ahb_clk.clkr,
+ 	[GCC_SDCC1_APPS_CLK] = &gcc_sdcc1_apps_clk.clkr,
+ 	[GCC_SDCC1_ICE_CORE_CLK] = &gcc_sdcc1_ice_core_clk.clkr,
++	[GCC_CDSP_CFG_AHB_CLK] = &gcc_cdsp_cfg_ahb_clk.clkr,
+ 	[GCC_SDCC2_AHB_CLK] = &gcc_sdcc2_ahb_clk.clkr,
+ 	[GCC_SDCC2_APPS_CLK] = &gcc_sdcc2_apps_clk.clkr,
+ 	[GCC_SYS_NOC_USB3_CLK] = &gcc_sys_noc_usb3_clk.clkr,
+@@ -2645,6 +2732,7 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
+ 	[GCC_USB3_PHY_AUX_CLK_SRC] = &usb3_phy_aux_clk_src.clkr,
+ 	[GCC_USB_HS_SYSTEM_CLK_SRC] = &usb_hs_system_clk_src.clkr,
+ 	[GCC_VSYNC_CLK_SRC] = &vsync_clk_src.clkr,
++	[GCC_CDSP_BIMC_CLK_SRC] = &cdsp_bimc_clk_src.clkr,
+ 	[GCC_USB_HS_INACTIVITY_TIMERS_CLK] =
+ 			&gcc_usb_hs_inactivity_timers_clk.clkr,
+ 	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
+@@ -2653,6 +2741,7 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
+ 	[GCC_GFX_TBU_CLK] = &gcc_gfx_tbu_clk.clkr,
+ 	[GCC_SMMU_CFG_CLK] = &gcc_smmu_cfg_clk.clkr,
+ 	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
++	[GCC_CDSP_TBU_CLK] = &gcc_cdsp_tbu_clk.clkr,
+ 	[GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
+ 	[GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
+ 	[GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
+@@ -2664,6 +2753,7 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
+ 
+ static const struct qcom_reset_map gcc_qcs404_resets[] = {
+ 	[GCC_GENI_IR_BCR] = { 0x0F000 },
++	[GCC_CDSP_RESTART] = { 0x18000 },
+ 	[GCC_USB_HS_BCR] = { 0x41000 },
+ 	[GCC_USB2_HS_PHY_ONLY_BCR] = { 0x41034 },
+ 	[GCC_QUSB2_PHY_BCR] = { 0x4103c },
+diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+index 6ceb55ed72c6..454b3f43f538 100644
+--- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
++++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+@@ -146,6 +146,10 @@
+ #define GCC_MDP_TBU_CLK					138
+ #define GCC_QDSS_DAP_CLK				139
+ #define GCC_DCC_XO_CLK					140
++#define GCC_CDSP_CFG_AHB_CLK				143
++#define GCC_BIMC_CDSP_CLK				144
++#define GCC_CDSP_TBU_CLK				145
++#define GCC_CDSP_BIMC_CLK_SRC				146
+ 
+ #define GCC_GENI_IR_BCR					0
+ #define GCC_USB_HS_BCR					1
+@@ -161,5 +165,6 @@
+ #define GCC_PCIE_0_LINK_DOWN_BCR			11
+ #define GCC_PCIEPHY_0_PHY_BCR				12
+ #define GCC_EMAC_BCR					13
++#define GCC_CDSP_RESTART				14
+ 
+ #endif
+-- 
+2.18.0
+
