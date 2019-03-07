@@ -2,66 +2,69 @@ Return-Path: <SRS0=2CmL=RK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AABC43381
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Mar 2019 14:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F2FC43381
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Mar 2019 14:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13BD520684
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Mar 2019 14:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16E7720684
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Mar 2019 14:15:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MntE3LMd"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZUspskAc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbfCGOO6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Mar 2019 09:14:58 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33895 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbfCGOO6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Mar 2019 09:14:58 -0500
-Received: by mail-wr1-f67.google.com with SMTP id f14so17605647wrg.1
-        for <linux-clk@vger.kernel.org>; Thu, 07 Mar 2019 06:14:57 -0800 (PST)
+        id S1726348AbfCGOPE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Mar 2019 09:15:04 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35564 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfCGOPD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Mar 2019 09:15:03 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y15so9438405wma.0
+        for <linux-clk@vger.kernel.org>; Thu, 07 Mar 2019 06:15:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=102m7vigukY6b2r4HXlaV9za2FJR75yPTrUYx8MuDyg=;
-        b=MntE3LMdL4WhEyeakqoEbbBDCZnuNWUqFQom72tuwIEjS8DppGHYQmct58TELWCtZT
-         Y9OmEDJCTdEnb6M8bVpIsW1HNfbJNQwYBGrzpjzk5YMitJqAtQjg7MKwEfCtS9uANjvE
-         oi+iaF15k8UY3mQ0vOlKYHEZAd7tKOr046UooTQdj0hHBuY7MlADQdoD1uNU2b1CwFgb
-         VSVlstjyAp7uqIi5WaGWIX6q3nH8JdlZdtVbB4f5nplukWcHn6KL4UxJ2JEy+QA0d33J
-         h55Aub59jR3p5VisbfBTG6QyExNutxND8gOKpiuD3qc22Gh12rqHbdug8j1JqRIvO7qK
-         JrjQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=h5CtO0ucQaulmciUoQ1fe7VqyscuYbd4ACXEONNNHhk=;
+        b=ZUspskAcoOBQ9Zw+aOrkAlKFkDg3Ol2NeiZeR/1Ts9nXbRT1nanWnblrfX3dxDtcnJ
+         ZU94YcCc3LFQaOjiUgBBJ6s9rOiir13pQGpTeFp/hjFmDBZ4lFUOjx99Zd6p65JbMqSH
+         sEo5p6uryHipH3S1c/T7lxhlEjsyKJ5zGjuDNyOz7pjP8xivbVdcx2HFe4aE9uorYL8Z
+         enA7HuqLYRqn5DHivGj8IuY2SNB1cY6teTtjbANhRB0WbEy4keJqOXVpg2jiHw/Y1rUg
+         5LAnRBl3UU6iEnKNPu85lgyxDjDaT1rlys0+HFVtsFz2h/cVrvb2nZ00Zirea94YKcez
+         TmMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=102m7vigukY6b2r4HXlaV9za2FJR75yPTrUYx8MuDyg=;
-        b=CdmRHJOom+EgvtYyEGSEp41+ctt5fzDDwZgQCbSdp+owEUW9Yi+p9glZbS6sSDk+U0
-         svMrhucMyusUIkZtN5q5rpk8qeM0WNHQxx3BKkhu8tvJygADoq//flqhN9lpcxrPXBNU
-         gUCS/9cXdef2rXKMoEHVcjtXhRLqGXo47V1apiEL31Q41VW+W9Q2gfU2nQ33EOw9svU8
-         Etq6vl6eMH4JCfNeApcFpWfkuPEGkzZyMZousj66gM0Oz/0UGNWRCvMnkJgXqT3KydyC
-         /PRnxiYgEH7WsF9M3GpUsCW+YPvU4Dy6AX0yDNSj8IjzfhWnnpW7Csfw13rULIgWYPjh
-         MVzA==
-X-Gm-Message-State: APjAAAWNAaohbBcU8FbFRAmBC/KQY70BR5do8eZDqHuuyTwNs+Lgfb+X
-        0y7EzYXTFKaJz1QwQFrobPvLfQ==
-X-Google-Smtp-Source: APXvYqxFIGkuc2l23hZhsQeS86bnCNmzSmXwrXIRW2MPpe+DTrSSQZmfekPLccn6gHd1+XuMZzVL+g==
-X-Received: by 2002:adf:f711:: with SMTP id r17mr6998984wrp.38.1551968096841;
-        Thu, 07 Mar 2019 06:14:56 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=h5CtO0ucQaulmciUoQ1fe7VqyscuYbd4ACXEONNNHhk=;
+        b=Yxxcsc4+Ur0BEOy3CRdiX/YcxLjmZiIySwXd+bAO8/HSlsveDoX9O1QA/3MawqIu4e
+         t2CtBM/eqjvVec7tnVGeiAtGrp4f7JF/NVYpTgO0yNb6tCmorIT6oFp015YG9tuma3vb
+         O8dglMsjDKgG0AifwVqBugBmD29L3JVyTWUOz6DVokEkyJI0XqKVdzud+UUj9S7R5RN5
+         jPmCYq0bHyOUbjQfuS7tgotmuNiOczWNJnjoFI/LjmkOY6e6LJmH5h+CwdsL5XxmpCSA
+         mRhpmy9wYfjFyKWRt8ctdddu7iWuVYNiDHpGcFeVmipZg46QgrzxPC4SH0dGVm3jtIVW
+         +E3A==
+X-Gm-Message-State: APjAAAUvwi06pEwQ+ZlViDuL9GN8lN1QYpFEnWDz2nlQb1b7YbDCet8W
+        jUuQWQFrG50JngKh3qEzh2Q6Cg==
+X-Google-Smtp-Source: APXvYqx47eIbcTjMk6Nn35k9CidruU+6YKtfm6BsPjVMrD06M9mHbte9SBUh+BRyTVETzrfS4KZpPg==
+X-Received: by 2002:a1c:39d5:: with SMTP id g204mr6128818wma.17.1551968100586;
+        Thu, 07 Mar 2019 06:15:00 -0800 (PST)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id h9sm9679304wrv.11.2019.03.07.06.14.56
+        by smtp.gmail.com with ESMTPSA id h9sm9679304wrv.11.2019.03.07.06.14.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Mar 2019 06:14:56 -0800 (PST)
+        Thu, 07 Mar 2019 06:15:00 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] clk: meson: add support for PCIE PLL
-Date:   Thu,  7 Mar 2019 15:14:52 +0100
-Message-Id: <20190307141455.23879-1-narmstrong@baylibre.com>
+Subject: [PATCH 3/3] clk: meson-g12a: add PCIE PLL clocks
+Date:   Thu,  7 Mar 2019 15:14:55 +0100
+Message-Id: <20190307141455.23879-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190307141455.23879-1-narmstrong@baylibre.com>
+References: <20190307141455.23879-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -69,33 +72,185 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Amlogic G12A SoCs embeds a dedicated PLL to feed the USB3+PCIE
-Combo PHY. This PLL needs a very specific and strict register sequence
-in order to correcly enable it and deliver the 100MHz reference clock
-to the Analog PHY.
+Add the PCIe reference clock feeding the USB3 + PCIE combo PHY.
 
-After lot of trials and errors, and since this PLL will ever feed 100MHz
-with a static configuration, it is simpler to setup a dedicated ops
-structure with a custom _enable() op applying the init register sequence.
+This PLL needs a very precise register sequence to permit to be locked,
+thus using the specific clk-pll pcie ops.
 
-The rate calculation ops are kept in order to keep the nominal read
-ops as-in, but set_rate is removed.
+The PLL is then followed by :
+- a fixed /2 divider
+- a 5-bit 1-based divider
+- a final /2 divider
 
-With this setup, the PLL can be enabled and disable safely and always have
-the recommended PLL setup to feed the USB3+PCIE Combo PHY.
+This reference clock is fixed to 100MHz, thus only a single PLL setup
+is added.
 
-Neil Armstrong (3):
-  clk: meson-pll: add reduced specific clk_ops for G12A PCIe PLL
-  dt-bindings: clk: g12a-clkc: add PCIE PLL clock ID
-  clk: meson-g12a: add PCIE PLL clocks
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/g12a.c | 118 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.h |   5 +-
+ 2 files changed, 122 insertions(+), 1 deletion(-)
 
- drivers/clk/meson/clk-pll.c           |  26 ++++++
- drivers/clk/meson/clk-pll.h           |   1 +
- drivers/clk/meson/g12a.c              | 118 ++++++++++++++++++++++++++
- drivers/clk/meson/g12a.h              |   5 +-
- include/dt-bindings/clock/g12a-clkc.h |   1 +
- 5 files changed, 150 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 80a7172df2a6..d382c21a29e5 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -614,6 +614,118 @@ static struct clk_regmap g12a_hifi_pll = {
+ 	},
+ };
+ 
++/*
++ * The Meson G12A PCIE PLL is fined tuned to deliver a very precise
++ * 100MHz reference clock for the PCIe Analog PHY, and thus requires
++ * a strict register sequence to enable the PLL.
++ */
++static const struct reg_sequence g12a_pcie_pll_init_regs[] = {
++	{ .reg = HHI_PCIE_PLL_CNTL0,	.def = 0x20090496 },
++	{ .reg = HHI_PCIE_PLL_CNTL0,	.def = 0x30090496 },
++	{ .reg = HHI_PCIE_PLL_CNTL1,	.def = 0x00000000 },
++	{ .reg = HHI_PCIE_PLL_CNTL2,	.def = 0x00001100 },
++	{ .reg = HHI_PCIE_PLL_CNTL3,	.def = 0x10058e00 },
++	{ .reg = HHI_PCIE_PLL_CNTL4,	.def = 0x000100c0 },
++	{ .reg = HHI_PCIE_PLL_CNTL5,	.def = 0x68000048 },
++	{ .reg = HHI_PCIE_PLL_CNTL5,	.def = 0x68000068, .delay_us = 20 },
++	{ .reg = HHI_PCIE_PLL_CNTL4,	.def = 0x008100c0, .delay_us = 10 },
++	{ .reg = HHI_PCIE_PLL_CNTL0,	.def = 0x34090496 },
++	{ .reg = HHI_PCIE_PLL_CNTL0,	.def = 0x14090496, .delay_us = 10 },
++	{ .reg = HHI_PCIE_PLL_CNTL2,	.def = 0x00001000 },
++};
++
++/* Keep a single entry table for recalc/round_rate() ops */
++static const struct pll_params_table g12a_pcie_pll_table[] = {
++	PLL_PARAMS(150, 1),
++	{0, 0},
++};
++
++static struct clk_regmap g12a_pcie_pll_dco = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = HHI_PCIE_PLL_CNTL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = HHI_PCIE_PLL_CNTL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.n = {
++			.reg_off = HHI_PCIE_PLL_CNTL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.frac = {
++			.reg_off = HHI_PCIE_PLL_CNTL1,
++			.shift   = 0,
++			.width   = 12,
++		},
++		.l = {
++			.reg_off = HHI_PCIE_PLL_CNTL0,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = HHI_PCIE_PLL_CNTL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.table = g12a_pcie_pll_table,
++		.init_regs = g12a_pcie_pll_init_regs,
++		.init_count = ARRAY_SIZE(g12a_pcie_pll_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_dco",
++		.ops = &meson_clk_pcie_pll_ops,
++		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor g12a_pcie_pll_dco_div2 = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_dco_div2",
++		.ops = &clk_fixed_factor_ops,
++		.parent_names = (const char *[]){ "pcie_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap g12a_pcie_pll_od = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_PCIE_PLL_CNTL0,
++		.shift = 16,
++		.width = 5,
++		.flags = CLK_DIVIDER_ROUND_CLOSEST |
++			 CLK_DIVIDER_ONE_BASED |
++			 CLK_DIVIDER_ALLOW_ZERO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_od",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "pcie_pll_dco_div2" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_fixed_factor g12a_pcie_pll = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_pll",
++		.ops = &clk_fixed_factor_ops,
++		.parent_names = (const char *[]){ "pcie_pll_od" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static struct clk_regmap g12a_hdmi_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+@@ -2499,6 +2611,10 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
+ 		[CLKID_CPU_CLK_AXI]		= &g12a_cpu_clk_axi.hw,
+ 		[CLKID_CPU_CLK_TRACE_DIV]	= &g12a_cpu_clk_trace_div.hw,
+ 		[CLKID_CPU_CLK_TRACE]		= &g12a_cpu_clk_trace.hw,
++		[CLKID_PCIE_PLL_DCO]		= &g12a_pcie_pll_dco.hw,
++		[CLKID_PCIE_PLL_DCO_DIV2]	= &g12a_pcie_pll_dco_div2.hw,
++		[CLKID_PCIE_PLL_OD]		= &g12a_pcie_pll_od.hw,
++		[CLKID_PCIE_PLL]		= &g12a_pcie_pll.hw,
+ 		[NR_CLKS]			= NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -2685,6 +2801,8 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
+ 	&g12a_cpu_clk_axi,
+ 	&g12a_cpu_clk_trace_div,
+ 	&g12a_cpu_clk_trace,
++	&g12a_pcie_pll_od,
++	&g12a_pcie_pll_dco,
+ };
+ 
+ static const struct meson_eeclkc_data g12a_clkc_data = {
+diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+index 70aa469ca1cf..1393a09730a6 100644
+--- a/drivers/clk/meson/g12a.h
++++ b/drivers/clk/meson/g12a.h
+@@ -186,8 +186,11 @@
+ #define CLKID_CPU_CLK_AXI			195
+ #define CLKID_CPU_CLK_TRACE_DIV			196
+ #define CLKID_CPU_CLK_TRACE			197
++#define CLKID_PCIE_PLL_DCO			198
++#define CLKID_PCIE_PLL_DCO_DIV2			199
++#define CLKID_PCIE_PLL_OD			200
+ 
+-#define NR_CLKS					198
++#define NR_CLKS					202
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/g12a-clkc.h>
 -- 
 2.20.1
 
