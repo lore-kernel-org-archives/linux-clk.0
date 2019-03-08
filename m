@@ -2,224 +2,178 @@ Return-Path: <SRS0=0ksy=RL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5F9C43381
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 10:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449B4C10F09
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 14:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB19C20854
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 10:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CA12087C
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 14:46:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epBVeoos"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MDSbdybV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfCHKWb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Mar 2019 05:22:31 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37007 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfCHKWa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Mar 2019 05:22:30 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w6so20750742wrs.4;
-        Fri, 08 Mar 2019 02:22:28 -0800 (PST)
+        id S1726736AbfCHOqO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Mar 2019 09:46:14 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46070 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbfCHOqO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Mar 2019 09:46:14 -0500
+Received: by mail-qk1-f195.google.com with SMTP id h71so792355qke.12
+        for <linux-clk@vger.kernel.org>; Fri, 08 Mar 2019 06:46:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IpZDsQhgbJoZdZVetbX8Dzz68rld3uU7ePrvGFTagJo=;
-        b=epBVeoos4I1Kw6ngvIgmb7IQJ5FC943s4RNA+w13IUFY5mngW9IZXCx9cCzy6+yo9z
-         l5fiOzRYttup7XRApbdlnJ1I9dcyiauoBq6yJEtPJpRhgDzdN1Bvj20CiLo64KEtMX5Y
-         SuiW32c76NRcRwm0Z9BfCMOK00Pn6IyJjCesCG6B+rJ2c5ch9w5rZWhq7xRqOijReyBA
-         ItqbmS/NAOg/2HBdYO8pQnrLRyJU0J1HBCBkEVzbnrtrflRs+ik/nVK+bFe4bC6muKRq
-         BMSZfKZb6Ww2phpGp1/t9ZUBN0r2c2PNM8UXMUvRx/YypKYsssLvCz82SAspeGuadSCA
-         WFMw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zudgGPjYTkagNqp9SUwl9xpMh9Y0w208BiIA8AHKW2I=;
+        b=MDSbdybVQWQ1FZ3jmai9YJE8WZmLJKotIeiKt6YB6sT6Cs39WmAurN1WuO9X1Wiz98
+         u1ItGZGCNSKVGu9wxjaqaH6R1PvdAPNPHaZq8acLeD0Nq3+j5l4Pim4sRwiUBdrHUCml
+         ri4b2mZdZI5kpR3yufslBWDDc3zpDJMR6N0SU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IpZDsQhgbJoZdZVetbX8Dzz68rld3uU7ePrvGFTagJo=;
-        b=efZaeZiWNlE3TRoSsOS/awHdrIyUNiD1dfvK1WBECC0nWch1OThcsfXgVHrb5Dw/6T
-         bOzOAWu3mbYmqV8aySwHz2vpVV+Y/1ndcgvc/Cx6kgPvsuyS5yHZSDl0XYKh0GEAyFl4
-         zWInCHf98QXPv2ZDGD0PnkEPiQF28ldlCleGTjb5EcgQpJxbguHi/DnuVU08JR9MPKPp
-         bA6jiw3RB3G6w6/4qWI13AzEp5gRGR0gRDn2UqwqXpVjHziHZ7joXaL8hYs8Mwb4gleC
-         +aXDhG+ZrVPmM0wO/7abyDwKST5gKSUWED4sdLL+r8QHGhCfJuyI8oRum2IpkmLW7+q+
-         nBTg==
-X-Gm-Message-State: APjAAAWwdkjZ1LzfT04NsT4cA/kJ6a2l8OEpgTf3WofAyBOYs/R0/ix2
-        pFxRIJC3G1ZjLrMiPv8Olw0=
-X-Google-Smtp-Source: APXvYqwDj1yp6Ih80l2irqW8VBdNZs5+DZ2AGEZE0+vY1UwJGRXjunNx3YZxlcDzRpEAtMp5+kFssA==
-X-Received: by 2002:adf:9e47:: with SMTP id v7mr10709141wre.190.1552040547819;
-        Fri, 08 Mar 2019 02:22:27 -0800 (PST)
-Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id b12sm5806810wrx.33.2019.03.08.02.22.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Mar 2019 02:22:27 -0800 (PST)
-Date:   Fri, 8 Mar 2019 11:22:25 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v10 04/27] clocksource: Add a new timer-ingenic driver
-Message-ID: <20190308102225.GC22655@ulmo>
-References: <20190302233413.14813-1-paul@crapouillou.net>
- <20190302233413.14813-5-paul@crapouillou.net>
- <20190304122250.GC9040@ulmo>
- <1551723186.4932.0@crapouillou.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zudgGPjYTkagNqp9SUwl9xpMh9Y0w208BiIA8AHKW2I=;
+        b=U305jA4hahg3uQnIYk2bXl2MfpwxlrDuS4LW+SzyPR5/oSIK/7V2d5+BiLyENiCpKa
+         arb6l+Y6vMjeMFDlMqdvK1u0RpOGKTowYhQXagf6KTZ+z6xbJuQDTYP32ArSyBlwRBXx
+         lcbjQqXy7ZFqWN2sKHzDOOReeLLg/Xr/ycG7vkboFax56uFuET2LZtorvdw0chrhUhF3
+         Y4SXuwPqCF+75cypU8E7idqwFSHUmx7ElM8qhRsNt2StgLYlzA+hn/p5ivtFY1ur5V6L
+         X7zNXUg8ZsfIe4D0B5CUhb4PIDIsjFBdYeUGLSXPW0S0Hj7e8lWimmD18bP2IoP3jJ6h
+         3rYQ==
+X-Gm-Message-State: APjAAAV4DEipERoo3UmBbXNJZ9Z/XuDr4Qit1/MirDDD270YwzQ9WP4Y
+        gHJdWvvzsM4Y9teteVlv+wcI182Sl8grR1BL3SzXUw==
+X-Google-Smtp-Source: APXvYqzEMwkkGy5B9w5z4GHbJMJ2GNH0i0b1nmC2IhW9Fd71ECOGee7zBumuwtm4yR5TcVHXnHVUbOGFZdMRnjZwfYA=
+X-Received: by 2002:ae9:ef05:: with SMTP id d5mr14533524qkg.323.1552056372290;
+ Fri, 08 Mar 2019 06:46:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
-Content-Disposition: inline
-In-Reply-To: <1551723186.4932.0@crapouillou.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190305050546.23431-1-weiyi.lu@mediatek.com> <20190305050546.23431-10-weiyi.lu@mediatek.com>
+ <CANMq1KBuTcVis2CyHB+sysp56YJwkzWytMsx8Tzk_SZyC1H=aQ@mail.gmail.com>
+In-Reply-To: <CANMq1KBuTcVis2CyHB+sysp56YJwkzWytMsx8Tzk_SZyC1H=aQ@mail.gmail.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Fri, 8 Mar 2019 22:46:01 +0800
+Message-ID: <CANMq1KCFCBfaXff3qdGd7CXmz-rNt+aMVP87J84YNgxojV8TZA@mail.gmail.com>
+Subject: Re: [PATCH v5 8/9] clk: mediatek: Add MT8183 clock support
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Mar 8, 2019 at 2:42 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
+>
+> )
+> On Tue, Mar 5, 2019 at 1:05 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+> >
+> > Add MT8183 clock support, include topckgen, apmixedsys,
+> > infracfg, mcucfg and subsystem clocks.
+> >
+> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+>
+> In v1 a while back (https://patchwork.kernel.org/patch/10669765/) I
+> was complaining about code duplication between these many files, and
+> wondering if we can make simplify a lot of this code.
 
---i7F3eY7HS/tUJxUd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Okay, we had a discussion on this gerrit:
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1510921,
+and I didn't know the history that having separate clock domains that
+we can enable/disable with config options. And the same pattern
+already exists on clk-mt2712-*.c, for example.
 
-On Mon, Mar 04, 2019 at 07:13:05PM +0100, Paul Cercueil wrote:
-> Hi Thierry,
->=20
-> On Mon, Mar 4, 2019 at 1:22 PM, Thierry Reding <thierry.reding@gmail.com>
-> wrote:
-> > On Sat, Mar 02, 2019 at 08:33:50PM -0300, Paul Cercueil wrote:
-> > [...]
-> > >  diff --git a/drivers/clocksource/ingenic-timer.c
-> > > b/drivers/clocksource/ingenic-timer.c
-[...]
-> > >  +static u64 notrace ingenic_tcu_timer_read(void)
-> > >  +{
-> > >  +	unsigned int channel =3D ingenic_tcu->cs_channel;
-> > >  +	u16 count;
-> > >  +
-> > >  +	count =3D readw(ingenic_tcu_base + TCU_REG_TCNTc(channel));
-> >=20
-> > Can't yo do this via the regmap?
->=20
-> I could, but for the sched_clock to be precise the function must return
-> as fast as possible. That's the rationale behind the use of readw() here.
->=20
-> That's also the reason why ingenic_tcu_base is global and exported, so
-> that the OS Timer driver can use it as well.
+So, for now:
+Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
 
-Is the path through the regmap really significantly slower than the
-direct register access? Anyway, if you need the global anyway, might as
-well use it.
+Some comment below about how this could be improved, potentially:
 
-[...]
-> > >  +	// Register the sched_clock at the very end as there's no way to
-> > > undo it
-> > >  +	rate =3D clk_get_rate(tcu->cs_clk);
-> > >  +	sched_clock_register(ingenic_tcu_timer_read, 16, rate);
-> >=20
-> > Oh wow... so you managed to nicely encapsulate everything and now this
-> > seems to be the only reason why you need to rely on global variables.
-> >=20
-> > That's unfortunate. I suppose we could go and add a void *data parameter
-> > to sched_clock_register() and pass that to the read() function. That way
-> > you could make this completely independent of global variables, but
-> > there are 73 callers of sched_clock_register() and they are spread all
-> > over the place, so sounds a bit daunting to me.
->=20
-> Yes, that's the main reason behind the use of a global variables.
-> Is there a way we could introduce another callback, e.g. .read_value(),
-> that would receive a void *param? Then the current .read() callback
-> can be deprecated and the 73 callers can be migrated later.
+> Apart from that:
+> Tested-by: Nicolas Boichat <drinkcat@chromium.org>
+>
+[snip]
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-mt8183-audio.c
+> > @@ -0,0 +1,105 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +//
+> > +// Copyright (c) 2018 MediaTek Inc.
+> > +// Author: Weiyi Lu <weiyi.lu@mediatek.com>
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include "clk-mtk.h"
+> > +#include "clk-gate.h"
+> > +
+> > +#include <dt-bindings/clock/mt8183-clk.h>
+> > +
+> > +static const struct mtk_gate_regs audio0_cg_regs = {
+> > +       .set_ofs = 0x0,
+> > +       .clr_ofs = 0x0,
+> > +       .sta_ofs = 0x0,
+> > +};
+> > +
+> > +static const struct mtk_gate_regs audio1_cg_regs = {
+> > +       .set_ofs = 0x4,
+> > +       .clr_ofs = 0x4,
+> > +       .sta_ofs = 0x4,
+> > +};
+> > +
+> > +#define GATE_AUDIO0(_id, _name, _parent, _shift)               \
+> > +       GATE_MTK(_id, _name, _parent, &audio0_cg_regs, _shift,  \
+> > +               &mtk_clk_gate_ops_no_setclr)
 
-Yeah, I suppose that would be possible. I'll defer to Daniel and Thomas
-on this. They may not consider this important enough.
+This macro (or variants that end up being equivalent) is repeated 103
+times in drivers/clk/mediatek/*. We can probably do better. My
+suggestion is to do something like this:
+#define GATE_MTK_CLK(reg, _id, _name, _parent, _shift) \
+GATE_MTK(_id, _name, _parent, &reg##_cg_regs, _shift, \
+&mtk_clk_gate_ops_setclr_inv)
 
-> > >  +
-> > >  +	return 0;
-> > >  +
-> > >  +err_tcu_clocksource_cleanup:
-> > >  +	ingenic_tcu_clocksource_cleanup(tcu);
-> > >  +err_tcu_clk_cleanup:
-> > >  +	ingenic_tcu_clk_cleanup(tcu, np);
-> > >  +err_tcu_intc_cleanup:
-> > >  +	ingenic_tcu_intc_cleanup(tcu);
-> > >  +err_clk_disable:
-> > >  +	clk_disable_unprepare(tcu->clk);
-> > >  +err_clk_put:
-> > >  +	clk_put(tcu->clk);
-> > >  +err_free_regmap:
-> > >  +	regmap_exit(tcu->map);
-> > >  +err_iounmap:
-> > >  +	iounmap(base);
-> > >  +	release_mem_region(res.start, resource_size(&res));
-> > >  +err_free_ingenic_tcu:
-> > >  +	kfree(tcu);
-> > >  +	return ret;
-> > >  +}
-> > >  +
-> > >  +TIMER_OF_DECLARE(jz4740_tcu_intc,  "ingenic,jz4740-tcu",
-> > > ingenic_tcu_init);
-> > >  +TIMER_OF_DECLARE(jz4725b_tcu_intc, "ingenic,jz4725b-tcu",
-> > > ingenic_tcu_init);
-> > >  +TIMER_OF_DECLARE(jz4770_tcu_intc,  "ingenic,jz4770-tcu",
-> > > ingenic_tcu_init);
-> > >  +
-> > >  +
-> > >  +static int __init ingenic_tcu_probe(struct platform_device *pdev)
-> > >  +{
-> > >  +	platform_set_drvdata(pdev, ingenic_tcu);
-> >=20
-> > Then there's also this. Oh well... nevermind then.
->=20
-> The content of ingenic_tcu_platform_init() could be moved inside
-> ingenic_tcu_init(). But can we get a hold of the struct device before the
-> probe function is called? That would allow to set the drvdata and regmap
-> without relying on global state.
+and use GATE_MTK_CLK(audio0, ...) in the gate clock arrays.
 
-I'm not sure if the driver core is ready at this point. It's likely it
-isn't, otherwise there'd be no need for TIMER_OF_DECLARE(), really. I
-also vaguely recall looking into this a few years ago because of some
-similar work I was but I eventually gave up because I couldn't find a
-way that would allow both the code to execute early enough and still
-use the regular driver model.
+> > +static int clk_mt8183_audio_probe(struct platform_device *pdev)
+> > +{
+> > +       struct clk_onecell_data *clk_data;
+> > +       int r;
+> > +       struct device_node *node = pdev->dev.of_node;
+> > +
+> > +       clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+> > +
+> > +       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+> > +                       clk_data);
+> > +
+> > +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> > +       if (r)
+> > +               return r;
+> > +
+> > +       r = devm_of_platform_populate(&pdev->dev);
+> > +       if (r)
+> > +               of_clk_del_provider(node);
+> > +
+> > +       return r;
+> > +}
 
-Platform device become available at arch_initcall_sync (3s), while the
-TIMER_OF_DECLARE code runs way earlier than any of the initcalls, so I
-don't think there's a way to do it. Unless perhaps if the timers can
-be initialized later. I'm not sure if that's possible, and might not be
-worth it just for the sake of being pedantic.
+This (almost exact) function is now repeated 33 times in
+drivers/clk/mediatek, I think it's really time for a cleanup... Maybe
+there should be a common helper in clk-gate.c (or another file, not
+sure), that fetches the clocks (and number of clocks from .data field
+in the structure below).
 
-Thierry
-
---i7F3eY7HS/tUJxUd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyCQl4ACgkQ3SOs138+
-s6FwaxAAhFukhP2XtK/Q+gbHvCxe+dGRdbj+yiW2HETrTg+p4NXttEfL00si0i/l
-o+o7ILOilnDLIm4HCGkPhY1gOzVaJWz6NpJDIbXCuPIScp3LKq5em+t+nU7ek7R+
-91L9c4sAfBTeTYSY7oxy/yi7X7LDKFKEvPjeLNg+N4jys8Qte9ofkjY1hQvRJjJ3
-R9H/6PwDaH1e6tSkCOEqmKJh37dCiHg3xuTAP6L+8VZ61FjPvJPLSBnGDzYGRpCW
-af1Pp1o5Htc20GvF7SwgQOvXd0q+w8iiks39HiWiPBwjjXTWtBWCRgCCg/axhCSJ
-ZqMqZg5LzpWwYtXBJ6BgO7ytypyWg6+fYOeeB8W0bbs1nLhBDyEtTE5jD+yZDKLd
-k6xzBjgoX2cwNj6oC2WonkPZ9NUylv+ywHlaFfU5WZsWwZouw/NLhWzBGZphL3ZC
-Ic3yRs0Y2RwzP1k369pMG+T4ZrzvTvqHuHKqKkH2AhF6fjhkgbsRhvn5I6im7udj
-+OyfxMngwmmrJp8Nowsw1EfxCPtu4gVa8ffXCT865e8wJYfWPR8V8T3YvROZsG8q
-tvlPLOMgw+0mkbeYoYR0TOS8s8PkrCxYE4U2FGusISGqF5NnKXq0J2C6iv9ZAyvv
-EIgou6aiGfVE39fISzW48iXcFFL/WNfanae0YNLTcHeP7vwv86s=
-=vng8
------END PGP SIGNATURE-----
-
---i7F3eY7HS/tUJxUd--
+> > +static const struct of_device_id of_match_clk_mt8183_audio[] = {
+> > +       { .compatible = "mediatek,mt8183-audiosys", },
+> > +       {}
+> > +};
+[snip]
