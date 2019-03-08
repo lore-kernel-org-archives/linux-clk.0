@@ -3,177 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449B4C10F09
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 14:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D00EC43381
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 15:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15CA12087C
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 14:46:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MDSbdybV"
+	by mail.kernel.org (Postfix) with ESMTP id 5EC842133F
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Mar 2019 15:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1552057802;
+	bh=RaXNKRVGXAmg+J1BjcdrQ+9zXUa+iYb4CqvCVNcKRMo=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=tTUckgNp2701hc4E6wD6jR1QgdjVMHTrQMkkyp6jNR0xgwgCfd35OqKxqMohbu+Lq
+	 t/QWRxdSCU3aSGikDZmGVC3mxTku+BU4j/AWlgojcXaP3KAmrcdOpo4g8kQY4ZrGhV
+	 4ZPDEqT10TpzvPJ5xIaRXmiezTCLWrs5mmFz4Gco=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfCHOqO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Mar 2019 09:46:14 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46070 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbfCHOqO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Mar 2019 09:46:14 -0500
-Received: by mail-qk1-f195.google.com with SMTP id h71so792355qke.12
-        for <linux-clk@vger.kernel.org>; Fri, 08 Mar 2019 06:46:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zudgGPjYTkagNqp9SUwl9xpMh9Y0w208BiIA8AHKW2I=;
-        b=MDSbdybVQWQ1FZ3jmai9YJE8WZmLJKotIeiKt6YB6sT6Cs39WmAurN1WuO9X1Wiz98
-         u1ItGZGCNSKVGu9wxjaqaH6R1PvdAPNPHaZq8acLeD0Nq3+j5l4Pim4sRwiUBdrHUCml
-         ri4b2mZdZI5kpR3yufslBWDDc3zpDJMR6N0SU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zudgGPjYTkagNqp9SUwl9xpMh9Y0w208BiIA8AHKW2I=;
-        b=U305jA4hahg3uQnIYk2bXl2MfpwxlrDuS4LW+SzyPR5/oSIK/7V2d5+BiLyENiCpKa
-         arb6l+Y6vMjeMFDlMqdvK1u0RpOGKTowYhQXagf6KTZ+z6xbJuQDTYP32ArSyBlwRBXx
-         lcbjQqXy7ZFqWN2sKHzDOOReeLLg/Xr/ycG7vkboFax56uFuET2LZtorvdw0chrhUhF3
-         Y4SXuwPqCF+75cypU8E7idqwFSHUmx7ElM8qhRsNt2StgLYlzA+hn/p5ivtFY1ur5V6L
-         X7zNXUg8ZsfIe4D0B5CUhb4PIDIsjFBdYeUGLSXPW0S0Hj7e8lWimmD18bP2IoP3jJ6h
-         3rYQ==
-X-Gm-Message-State: APjAAAV4DEipERoo3UmBbXNJZ9Z/XuDr4Qit1/MirDDD270YwzQ9WP4Y
-        gHJdWvvzsM4Y9teteVlv+wcI182Sl8grR1BL3SzXUw==
-X-Google-Smtp-Source: APXvYqzEMwkkGy5B9w5z4GHbJMJ2GNH0i0b1nmC2IhW9Fd71ECOGee7zBumuwtm4yR5TcVHXnHVUbOGFZdMRnjZwfYA=
-X-Received: by 2002:ae9:ef05:: with SMTP id d5mr14533524qkg.323.1552056372290;
- Fri, 08 Mar 2019 06:46:12 -0800 (PST)
+        id S1726899AbfCHPKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Mar 2019 10:10:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51220 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726800AbfCHPKB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Mar 2019 10:10:01 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B6312087C;
+        Fri,  8 Mar 2019 15:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1552057801;
+        bh=RaXNKRVGXAmg+J1BjcdrQ+9zXUa+iYb4CqvCVNcKRMo=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=F6eSIoJjVO5Tb7bsbwB0N5rpACV51y8Uk7k5Z+JF1+Zjd7eRy5t+CCRE/rOHpdQeF
+         YzUrTz5Jve/t5ru6YPu5V4iIa46aMPIzb0j8TAG2aO6urbvkhSUV++WJSnwVo6xv3I
+         vrNHnQRC6fHF/MXyO4YC85uuF3ttqHxv1Ntkez7Q=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190305050546.23431-1-weiyi.lu@mediatek.com> <20190305050546.23431-10-weiyi.lu@mediatek.com>
- <CANMq1KBuTcVis2CyHB+sysp56YJwkzWytMsx8Tzk_SZyC1H=aQ@mail.gmail.com>
-In-Reply-To: <CANMq1KBuTcVis2CyHB+sysp56YJwkzWytMsx8Tzk_SZyC1H=aQ@mail.gmail.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Fri, 8 Mar 2019 22:46:01 +0800
-Message-ID: <CANMq1KCFCBfaXff3qdGd7CXmz-rNt+aMVP87J84YNgxojV8TZA@mail.gmail.com>
-Subject: Re: [PATCH v5 8/9] clk: mediatek: Add MT8183 clock support
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190307201056.59985-1-tony@atomide.com>
+References: <20190307201056.59985-1-tony@atomide.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: ti: clkctrl: Fix clkdm_name regression for TI_CLK_CLKCTRL_COMPAT
+Cc:     linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+        Tero Kristo <t-kristo@ti.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tony Lindgren <tony@atomide.com>
+Message-ID: <155205780030.20095.17109428111345820798@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Fri, 08 Mar 2019 07:10:00 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 8, 2019 at 2:42 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
->
-> )
-> On Tue, Mar 5, 2019 at 1:05 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
-> >
-> > Add MT8183 clock support, include topckgen, apmixedsys,
-> > infracfg, mcucfg and subsystem clocks.
-> >
-> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
->
-> In v1 a while back (https://patchwork.kernel.org/patch/10669765/) I
-> was complaining about code duplication between these many files, and
-> wondering if we can make simplify a lot of this code.
+Quoting Tony Lindgren (2019-03-07 12:10:56)
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -530,7 +530,7 @@ static void __init _ti_omap4_clkctrl_setup(struct dev=
+ice_node *node)
+>                  * Create default clkdm name, replace _cm from end of par=
+ent
+>                  * node name with _clkdm
+>                  */
+> -               provider->clkdm_name[strlen(provider->clkdm_name) - 5] =
+=3D 0;
+> +               provider->clkdm_name[strlen(provider->clkdm_name) - 2] =
+=3D 0;
 
-Okay, we had a discussion on this gerrit:
-https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1510921,
-and I didn't know the history that having separate clock domains that
-we can enable/disable with config options. And the same pattern
-already exists on clk-mt2712-*.c, for example.
+Looks right. I must have become confused about what was going on. I
+think I'll just apply this to clk-next and send off the PR for the merge
+window.
 
-So, for now:
-Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
-
-Some comment below about how this could be improved, potentially:
-
-> Apart from that:
-> Tested-by: Nicolas Boichat <drinkcat@chromium.org>
->
-[snip]
-> > --- /dev/null
-> > +++ b/drivers/clk/mediatek/clk-mt8183-audio.c
-> > @@ -0,0 +1,105 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +//
-> > +// Copyright (c) 2018 MediaTek Inc.
-> > +// Author: Weiyi Lu <weiyi.lu@mediatek.com>
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include "clk-mtk.h"
-> > +#include "clk-gate.h"
-> > +
-> > +#include <dt-bindings/clock/mt8183-clk.h>
-> > +
-> > +static const struct mtk_gate_regs audio0_cg_regs = {
-> > +       .set_ofs = 0x0,
-> > +       .clr_ofs = 0x0,
-> > +       .sta_ofs = 0x0,
-> > +};
-> > +
-> > +static const struct mtk_gate_regs audio1_cg_regs = {
-> > +       .set_ofs = 0x4,
-> > +       .clr_ofs = 0x4,
-> > +       .sta_ofs = 0x4,
-> > +};
-> > +
-> > +#define GATE_AUDIO0(_id, _name, _parent, _shift)               \
-> > +       GATE_MTK(_id, _name, _parent, &audio0_cg_regs, _shift,  \
-> > +               &mtk_clk_gate_ops_no_setclr)
-
-This macro (or variants that end up being equivalent) is repeated 103
-times in drivers/clk/mediatek/*. We can probably do better. My
-suggestion is to do something like this:
-#define GATE_MTK_CLK(reg, _id, _name, _parent, _shift) \
-GATE_MTK(_id, _name, _parent, &reg##_cg_regs, _shift, \
-&mtk_clk_gate_ops_setclr_inv)
-
-and use GATE_MTK_CLK(audio0, ...) in the gate clock arrays.
-
-> > +static int clk_mt8183_audio_probe(struct platform_device *pdev)
-> > +{
-> > +       struct clk_onecell_data *clk_data;
-> > +       int r;
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +
-> > +       clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
-> > +
-> > +       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> > +                       clk_data);
-> > +
-> > +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> > +       if (r)
-> > +               return r;
-> > +
-> > +       r = devm_of_platform_populate(&pdev->dev);
-> > +       if (r)
-> > +               of_clk_del_provider(node);
-> > +
-> > +       return r;
-> > +}
-
-This (almost exact) function is now repeated 33 times in
-drivers/clk/mediatek, I think it's really time for a cleanup... Maybe
-there should be a common helper in clk-gate.c (or another file, not
-sure), that fetches the clocks (and number of clocks from .data field
-in the structure below).
-
-> > +static const struct of_device_id of_match_clk_mt8183_audio[] = {
-> > +       { .compatible = "mediatek,mt8183-audiosys", },
-> > +       {}
-> > +};
-[snip]
