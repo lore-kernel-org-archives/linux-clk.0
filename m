@@ -1,115 +1,170 @@
-Return-Path: <SRS0=BXls=RM=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=VRqQ=RN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3513DC43381
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Mar 2019 01:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CFDC43381
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Mar 2019 12:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057ED20851
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Mar 2019 01:02:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A603C20643
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Mar 2019 12:00:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbfCIBCc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Mar 2019 20:02:32 -0500
-Received: from mga06.intel.com ([134.134.136.31]:13872 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726375AbfCIBCc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Mar 2019 20:02:32 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Mar 2019 17:02:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,458,1544515200"; 
-   d="scan'208";a="123946847"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 08 Mar 2019 17:02:30 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1h2QNi-0001hY-9n; Sat, 09 Mar 2019 09:02:30 +0800
-Date:   Sat, 9 Mar 2019 09:02:25 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     kbuild-all@01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [clk:clk-parent-rewrite 21/32] drivers/clk/clk.c:2369:6-13: ERROR:
- PTR_ERR applied after initialization to constant on line 2361
-Message-ID: <201903090923.Uyt2rglj%lkp@intel.com>
+        id S1725885AbfCJMAu convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 10 Mar 2019 08:00:50 -0400
+Received: from mail-oln040092072014.outbound.protection.outlook.com ([40.92.72.14]:40261
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725852AbfCJMAt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 10 Mar 2019 08:00:49 -0400
+Received: from AM5EUR03FT037.eop-EUR03.prod.protection.outlook.com
+ (10.152.16.53) by AM5EUR03HT165.eop-EUR03.prod.protection.outlook.com
+ (10.152.17.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1686.19; Sun, 10 Mar
+ 2019 12:00:46 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com (10.152.16.58) by
+ AM5EUR03FT037.mail.protection.outlook.com (10.152.17.241) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1686.19 via Frontend Transport; Sun, 10 Mar 2019 12:00:46 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::c89:4e52:34c1:7009]) by AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::c89:4e52:34c1:7009%5]) with mapi id 15.20.1686.021; Sun, 10 Mar 2019
+ 12:00:46 +0000
+From:   Jonas Karlman <jonas@kwiboo.se>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH] clk: rockchip: fix wrong clock definitions for rk3328
+Thread-Topic: [PATCH] clk: rockchip: fix wrong clock definitions for rk3328
+Thread-Index: AQHU1zjkDgu15ohweESrobPfCE5TKQ==
+Date:   Sun, 10 Mar 2019 12:00:45 +0000
+Message-ID: <AM3PR03MB0966A06101CACDAEA4ECD72BAC4F0@AM3PR03MB0966.eurprd03.prod.outlook.com>
+Accept-Language: sv-SE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR0402CA0017.eurprd04.prod.outlook.com
+ (2603:10a6:209::30) To AM3PR03MB0966.eurprd03.prod.outlook.com
+ (2a01:111:e400:884c::23)
+x-incomingtopheadermarker: OriginalChecksum:6349A1023B54DF8E5D94AD8DFEF5BF47B44C59FA69D3604BE0F7C99C7C425856;UpperCasedChecksum:41456B7F609395309D238C3F3105CDB12737865004AFA9DFA69ED1BE8E5F14C0;SizeAsReceived:7715;Count:49
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-tmn:  [9ZMzfXL3hY0Clj+BAWmE9WI8buAOl5nv]
+x-microsoft-original-message-id: <20190310120022.7599-1-jonas@kwiboo.se>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 49
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031322404)(2017031323274)(2017031324274)(1601125500)(1603101475)(1701031045);SRVR:AM5EUR03HT165;
+x-ms-traffictypediagnostic: AM5EUR03HT165:
+x-microsoft-antispam-message-info: w1nHXtIFIRL80zADD73qlMuTqBeSq1M3PBKTofns0+bSEzURXXJU9IXIsCrbAQ84
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7975fa91-dd33-4927-57c2-08d6a55006c0
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2019 12:00:46.0348
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR03HT165
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-parent-rewrite
-head:   6a6d2ba76f95f9e4f7afea765841f40eb33d55d4
-commit: 1dee7b91c5de9c8684a5deb13769505518040f35 [21/32] clk: Introduce get_parent_hw clk op
+This patch fixes definition of several clock gate and select register
+that is wrong for rk3328 referring to the TRM and vendor kernel.
+Also use correct number of softrst registers.
 
+Fix clock definition for:
+- clk_crypto
+- aclk_h265
+- pclk_h265
+- aclk_h264
+- hclk_h264
+- aclk_axisram
+- aclk_gmac
+- aclk_usb3otg
 
-coccinelle warnings: (new ones prefixed by >>)
-
->> drivers/clk/clk.c:2369:6-13: ERROR: PTR_ERR applied after initialization to constant on line 2361
-
-vim +2369 drivers/clk/clk.c
-
-  2334	
-  2335	static struct clk_core *
-  2336	__clk_init_parent(struct clk_core *core, bool update_orphan)
-  2337	{
-  2338		u8 index = 0;
-  2339		struct clk_hw *parent_hw = NULL;
-  2340	
-  2341		if (core->ops->get_parent_hw) {
-  2342			parent_hw = core->ops->get_parent_hw(core->hw);
-  2343		} else {
-  2344			if (core->num_parents > 1 && core->ops->get_parent)
-  2345				index = core->ops->get_parent(core->hw);
-  2346	
-  2347			if (index >= core->num_parents) {
-  2348				/*
-  2349				 * Overwrite with NULL here because we can't
-  2350				 * differentiate true errors in getting the index from
-  2351				 * the case where the clk isn't found because it never
-  2352				 * exists or isn't described as a possible parent.
-  2353				 *
-  2354				 * Note that we don't update the orphan status to true
-  2355				 * in this case, because we can't really know for sure
-  2356				 * if the clk is truly orphaned or not. To avoid this,
-  2357				 * implement .get_parent_hw or use the direct pointer
-  2358				 * mechanism of struct clk_parent_data::hw to point
-  2359				 * to the parent clk directly.
-  2360				 */
-> 2361				parent_hw = NULL;
-  2362			} else {
-  2363				parent_hw = clk_hw_get_parent_by_index(core->hw, index);
-  2364			}
-  2365		}
-  2366	
-  2367		if (IS_ERR_OR_NULL(parent_hw)) {
-  2368			/* Parent clk provider hasn't probed yet, orphan it */
-> 2369			if (PTR_ERR(parent_hw) == -EPROBE_DEFER) {
-  2370				if (update_orphan)
-  2371					core->orphan = true;
-  2372	
-  2373				/* Orphans don't have a parent, so use NULL */
-  2374				return NULL;
-  2375			}
-  2376	
-  2377			return ERR_CAST(parent_hw);
-  2378		}
-  2379	
-  2380		if (update_orphan)
-  2381			core->orphan = parent_hw->core->orphan;
-  2382		return parent_hw->core;
-  2383	}
-  2384	
-
+Fixes: fe3511ad8a1c ("clk: rockchip: add clock controller for rk3328")
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/clk/rockchip/clk-rk3328.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index faa94adb2a37..5f6b6bcc2149 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -458,7 +458,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
+ 			RK3328_CLKSEL_CON(35), 15, 1, MFLAGS, 8, 7, DFLAGS,
+ 			RK3328_CLKGATE_CON(2), 12, GFLAGS),
+ 	COMPOSITE(SCLK_CRYPTO, "clk_crypto", mux_2plls_p, 0,
+-			RK3328_CLKSEL_CON(20), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			RK3328_CLKSEL_CON(20), 7, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RK3328_CLKGATE_CON(2), 4, GFLAGS),
+ 	COMPOSITE_NOMUX(SCLK_TSADC, "clk_tsadc", "clk_24m", 0,
+ 			RK3328_CLKSEL_CON(22), 0, 10, DFLAGS,
+@@ -550,15 +550,15 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
+ 	GATE(0, "hclk_rkvenc_niu", "hclk_rkvenc", 0,
+ 			RK3328_CLKGATE_CON(25), 1, GFLAGS),
+ 	GATE(ACLK_H265, "aclk_h265", "aclk_rkvenc", 0,
+-			RK3328_CLKGATE_CON(25), 0, GFLAGS),
++			RK3328_CLKGATE_CON(25), 2, GFLAGS),
+ 	GATE(PCLK_H265, "pclk_h265", "hclk_rkvenc", 0,
+-			RK3328_CLKGATE_CON(25), 1, GFLAGS),
++			RK3328_CLKGATE_CON(25), 3, GFLAGS),
+ 	GATE(ACLK_H264, "aclk_h264", "aclk_rkvenc", 0,
+-			RK3328_CLKGATE_CON(25), 0, GFLAGS),
++			RK3328_CLKGATE_CON(25), 4, GFLAGS),
+ 	GATE(HCLK_H264, "hclk_h264", "hclk_rkvenc", 0,
+-			RK3328_CLKGATE_CON(25), 1, GFLAGS),
++			RK3328_CLKGATE_CON(25), 5, GFLAGS),
+ 	GATE(ACLK_AXISRAM, "aclk_axisram", "aclk_rkvenc", CLK_IGNORE_UNUSED,
+-			RK3328_CLKGATE_CON(25), 0, GFLAGS),
++			RK3328_CLKGATE_CON(25), 6, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_VENC_CORE, "sclk_venc_core", mux_4plls_p, 0,
+ 			RK3328_CLKSEL_CON(51), 14, 2, MFLAGS, 8, 5, DFLAGS,
+@@ -663,7 +663,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
+ 
+ 	/* PD_GMAC */
+ 	COMPOSITE(ACLK_GMAC, "aclk_gmac", mux_2plls_hdmiphy_p, 0,
+-			RK3328_CLKSEL_CON(35), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			RK3328_CLKSEL_CON(25), 6, 2, MFLAGS, 0, 5, DFLAGS,
+ 			RK3328_CLKGATE_CON(3), 2, GFLAGS),
+ 	COMPOSITE_NOMUX(PCLK_GMAC, "pclk_gmac", "aclk_gmac", 0,
+ 			RK3328_CLKSEL_CON(25), 8, 3, DFLAGS,
+@@ -733,7 +733,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
+ 
+ 	/* PD_PERI */
+ 	GATE(0, "aclk_peri_noc", "aclk_peri", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(19), 11, GFLAGS),
+-	GATE(ACLK_USB3OTG, "aclk_usb3otg", "aclk_peri", 0, RK3328_CLKGATE_CON(19), 4, GFLAGS),
++	GATE(ACLK_USB3OTG, "aclk_usb3otg", "aclk_peri", 0, RK3328_CLKGATE_CON(19), 14, GFLAGS),
+ 
+ 	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_peri", 0, RK3328_CLKGATE_CON(19), 0, GFLAGS),
+ 	GATE(HCLK_SDIO, "hclk_sdio", "hclk_peri", 0, RK3328_CLKGATE_CON(19), 1, GFLAGS),
+@@ -913,7 +913,7 @@ static void __init rk3328_clk_init(struct device_node *np)
+ 				     &rk3328_cpuclk_data, rk3328_cpuclk_rates,
+ 				     ARRAY_SIZE(rk3328_cpuclk_rates));
+ 
+-	rockchip_register_softrst(np, 11, reg_base + RK3328_SOFTRST_CON(0),
++	rockchip_register_softrst(np, 12, reg_base + RK3328_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+ 
+ 	rockchip_register_restart_notifier(ctx, RK3328_GLB_SRST_FST, NULL);
+-- 
+2.17.1
+
