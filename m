@@ -2,95 +2,153 @@ Return-Path: <SRS0=QyO6=RO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8646CC4360F
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 15:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6D5C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 16:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5595921900
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 15:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5642E20857
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 16:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=nelint.com header.i=@nelint.com header.b="IwH44vRg"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="FLRf+fk1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfCKPmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Mar 2019 11:42:03 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37328 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfCKPmC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 11:42:02 -0400
-Received: by mail-pf1-f196.google.com with SMTP id s22so3976862pfh.4
-        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2019 08:42:02 -0700 (PDT)
+        id S1727590AbfCKQBZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Mar 2019 12:01:25 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:56288 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbfCKQBZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 12:01:25 -0400
+Received: by mail-it1-f194.google.com with SMTP id z131so8083328itf.5
+        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2019 09:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nelint.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=s9xRnixyHVoINZU2BQB3v+lhu5gym36tZtZUEmGxQn8=;
-        b=IwH44vRgMPKuiG9iNmsRyK/Qjd5jSr45uCckQstvG5if5ko6Gjm64O5jMisjaCzPx6
-         OCwrHna8cX0c/4LKcqtGrYfvUdK0LlwHNeIEcy1ZU59US0rqu74/JvC2FjaRQ3VkNhTi
-         GoQhbPygHgYWIf9TbhWvTyywQ3Tut0rgBH4sY=
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TMOi8B+1epU1K9RxGY+X9JnIHdYzFe8+3EHfpEokmkY=;
+        b=FLRf+fk1TZIGb7sOTxWw6TueK1CN17obX7x/bk8oQ3hieAGf6DlKds0R5H7P6NCQVb
+         U9bHExmfwU4I9hkoJvJSWVMnl8/Bj/1qVuO/19SaU6OqgTqWylID5nX6Fv2SaaxxLzAa
+         hwtCQAaAhgKnB4sSoP+/txzAaY97jvnFb85GM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=s9xRnixyHVoINZU2BQB3v+lhu5gym36tZtZUEmGxQn8=;
-        b=YdFQcfMSTytrhMPOg7JrxasLNvIvyIszghibZQaawCJcgQ1Ou1UZmF0ON5AIBIm+rw
-         lp+u6VBt1xO4/qEmT+BXnyOdvCrgqgZSrK300CVxDJMDiCv3/+42Kf3HTt7ep27bKfKb
-         It4hnIhg3Uzpskwcd4vWPVTPKhtAfSafR4jBHu2RCaG6Yk9AcyOTTFossmE7VAbGEvAB
-         r7aPuWOmfZ91s1uuIYQ2agmAqim9OhjXvXLSW3vd4/U2dOBpnCPTI5Ps8fRR4d+Vcr0h
-         pfXn+nittMP6mPSrW9TX2GveQz4VHHifLkKsEd8IH/aDFBRdL0/agh0CSN02B4A9cyPZ
-         /Vbw==
-X-Gm-Message-State: APjAAAWlL6458d15tNx4KvVOda/UKd5f4kXbhugNIWCtg7ySuTcSLQAC
-        w095J71bL7F7fmIfEMa0IV5RDQ==
-X-Google-Smtp-Source: APXvYqwUKvhIvTrkXmpcshHM0lOrDzYR+PkR6aJhfJuIn53CaJfJiATAZjCKVt5qo78ApIA0bYukIw==
-X-Received: by 2002:a63:d502:: with SMTP id c2mr8899921pgg.290.1552318921674;
-        Mon, 11 Mar 2019 08:42:01 -0700 (PDT)
-Received: from localhost.localdomain ([2600:8800:1301:2190:cc32:ad00:b1c0:818c])
-        by smtp.gmail.com with ESMTPSA id z67sm14349347pfi.152.2019.03.11.08.41.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Mar 2019 08:42:01 -0700 (PDT)
-From:   Eric Nelson <eric@nelint.com>
-To:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     anson.huang@nxp.com, colin.didier@devialet.com, festevam@gmail.com,
-        kernel@pengutronix.de, l.stach@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        s.hauer@pengutronix.de, sboyd@kernel.org, shawnguo@kernel.org,
-        tiny.windzz@gmail.com, Eric Nelson <eric@nelint.com>
-Subject: [V2 0/2] ARM: imx6qdl: remove PLL4_AUDIO_DIV clock
-Date:   Mon, 11 Mar 2019 08:39:50 -0700
-Message-Id: <1552318792-22565-1-git-send-email-eric@nelint.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1552304271.2453.12.camel@pengutronix.de>
-References: <1552304271.2453.12.camel@pengutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TMOi8B+1epU1K9RxGY+X9JnIHdYzFe8+3EHfpEokmkY=;
+        b=gjlPbUEzI/0bcG7Ftrnp1FS85iQlj+paeXEdqP5mlArsBEgSVMmeDcQloswWYF5VLv
+         XLTIsUvNiE2nJtyFKkI96jv958TBsfPPoel1dJZCgP+w0O4fN+ogGhMEjSmNEUa++wAr
+         I8RrtZboKLH3KurkQcPhZB4QZ/7v/ejrscP9u/KhjgMz7/M+VKV/jvXr0Au2aaVL+UQY
+         n4bSGE3RV1yGnNdObErBToOy/XhzTbx0Hug/vCeoKeZCB2XgaNJHzge9fBNRLig+ctXP
+         ZjXHOqiBNOqulw53XCEgJwmZIn8E8Mg0luud8um3pHTOUeIvXKKWGXg1lyAFBAFMl6K/
+         A+Ow==
+X-Gm-Message-State: APjAAAUcuxMzJf7bW6s1d/Xgdq14tO4b4JcwcOZUOmACVcvY5EOzbXji
+        qvD0qoU9Yy88USBFPL0Fuj/kiwM4aom4jOVsSArq9Q==
+X-Google-Smtp-Source: APXvYqwg59UDVOWE7z/p66RcYCYFpXYZVzNaNxc8DEk5jyLaaU5ZR7vkiUNMh2C0kQBomEoNZ/9wSb5kds+tkR4b6Gc=
+X-Received: by 2002:a24:3655:: with SMTP id l82mr244741itl.107.1552320083085;
+ Mon, 11 Mar 2019 09:01:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190311133637.18334-1-jagan@amarulasolutions.com>
+ <20190311133637.18334-2-jagan@amarulasolutions.com> <20190311153734.izg44ijwqqh2vpxc@flea>
+In-Reply-To: <20190311153734.izg44ijwqqh2vpxc@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 11 Mar 2019 21:31:11 +0530
+Message-ID: <CAMty3ZDDARP02qMJZ9CXeiMv=kghoiUHgEAV9b4q+SrbLss40Q@mail.gmail.com>
+Subject: Re: [PATCH v8 01/15] drm/sun4i: dsi: Fix video start delay computation
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series removes the unsupported PLL4_AUDIO_DIV clock which appeared
-in early versions of the i.MX6DQ reference manual, but doesn't function
-as described in the current clock driver (i.e., it's a divide-by-1).
+On Mon, Mar 11, 2019 at 9:07 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Mon, Mar 11, 2019 at 07:06:23PM +0530, Jagan Teki wrote:
+> > Vertical video start delay is computed by excluding vertical front
+> > porch value from total vertical timings.
+> >
+> > This clearly confirmed from BSP code and here how it computed,
+> >
+> > (drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> >    - panel->lcd_y - (panel->lcd_vbp)
+> > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> >                            - panel->lcd_y - panel->lcd_vbp
+> > => timmings->ver_front_porch
+> >
+> > But the current driver is assuming it can exclude vertical front
+> > porch along with vertical sync values from total vertical timings,
+> > which resulting wrong start delay indeed wrong picture rendering
+> > in the panel.
+>
+> Same story here: which panel, which datasheet, which "wrong picture
+> rendering"?
 
-Since the clock node is also used to control the topology of the clock
-tree, the PLL4_POST_DIV node is used to control parenting of downstream
-SSI, CKO1, and ESAI/ASRC/SPDIF peripherals.
+It's bananapi,s070wv20-ct16 DSI
 
-The first patch removes the clock, and the second updates several
-device tree files to use PLL4_POST_DIV to select proper parents.
+>
+> > Example: timings, where it produces the issue.
+> > {
+> >       .vdisplay       = 600,
+> >       .vsync_start    = 600 + 12,
+> >       .vsync_end      = 600 + 12 + 2,
+> >       .vtotal         = 600 + 12 + 2 + 21,
+> > }
+>
+> Can you 100% trust those timings?
 
-Eric Nelson (2):
-  clk: imx6q: remove unsupported pll4_audio_div
-  ARM: dts: imx6q: remove references to PLL4_AUDIO_DIV
+ie. reason, I have given the Mainline timings [1]. The above timings
+are wrongly mentioned actual timings are from [1]
 
- arch/arm/boot/dts/imx6q-cm-fx6.dts        |  4 ++--
- arch/arm/boot/dts/imx6q-novena.dts        |  2 +-
- arch/arm/boot/dts/imx6qdl-sabreauto.dtsi  |  2 +-
- drivers/clk/imx/clk-imx6q.c               |  7 +++----
- include/dt-bindings/clock/imx6qdl-clock.h | 10 +++++++++-
- 5 files changed, 16 insertions(+), 9 deletions(-)
+>
+> > It produces the desired start delay value as 19 but the correct working
+> > value should be 513.
+> >
+> > So, Fix it by computing proper video start delay.
+> >
+> > Fixes: 69006ef0ecb1 ("drm/sun4i: dsi: Change the start delay calculation")
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > index 62a508420227..8d6292c0158b 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > @@ -364,8 +364,14 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+> >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+> >                                          struct drm_display_mode *mode)
+> >  {
+> > -     u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
+> > -     u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
+> > +     u16 delay = mode->vtotal - (mode->vsync_start - mode->vdisplay);
+> > +
+> > +     /**
+> > +      * BSP comment:
+> > +      * put start_delay to tcon. set ready sync early to dramfreq,
+> > +      * so set start_delay 1
+> > +      */
+>
+> That doesn't make any sense to me... What does it mean?
 
--- 
-2.7.4
+Which is meaning as above stated as "BSP comment" from here[2]
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
+[2] https://github.com/longsleep/linux-pine64/blob/pine64-hacks-1.2/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L729
