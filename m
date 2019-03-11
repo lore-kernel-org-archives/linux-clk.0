@@ -2,169 +2,257 @@ Return-Path: <SRS0=QyO6=RO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C61AC43381
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 10:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803A1C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 11:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B88206BA
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 10:41:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="haFvogwM"
+	by mail.kernel.org (Postfix) with ESMTP id 44DB6206BA
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 11:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfCKKlp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Mar 2019 06:41:45 -0400
-Received: from mail-eopbgr00044.outbound.protection.outlook.com ([40.107.0.44]:30083
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726826AbfCKKlp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Mar 2019 06:41:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fPh1j3RIgOMN9U4MQeYrhzAWxwt1dV5frmqk13pI/yw=;
- b=haFvogwMv4mwKlJrteRdz06Z0VCnK0s42WHtUj9ij1dcT4tymhPRsIJBjlbO2r+mI99A4w0B5hNpy1osy2lTSCfj1DQ7/ImZ6z1i7gi5arxt/kX2jD/qJ3Q9T3skfZqecPNUDHI/oBG/ih+pI0wkcE69bC1Ly4UbljgunplwwLE=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB5235.eurprd04.prod.outlook.com (20.177.41.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1686.18; Mon, 11 Mar 2019 10:41:41 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::9579:32ab:898e:6769]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::9579:32ab:898e:6769%2]) with mapi id 15.20.1686.021; Mon, 11 Mar 2019
- 10:41:41 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC] clk: imx: Allow re-parenting by default on set rate
-Thread-Topic: [RFC] clk: imx: Allow re-parenting by default on set rate
-Thread-Index: AQHU1McGI7U/PNQmd0+BEjFYJ+Rc/6YGQMOAgAADtAA=
-Date:   Mon, 11 Mar 2019 10:41:40 +0000
-Message-ID: <20190311104140.n65jvamx76rzkonr@fsr-ub1664-175>
-References: <1551950425-7346-1-git-send-email-abel.vesa@nxp.com>
- <20190311102825.g7d5mmorcltxnnzf@pengutronix.de>
-In-Reply-To: <20190311102825.g7d5mmorcltxnnzf@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 083f4345-1380-407b-07d8-08d6a60e25a1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5235;
-x-ms-traffictypediagnostic: AM0PR04MB5235:
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM0PR04MB5235;23:F8K8odyvHgToQcAc+X8xEFyJUawdwlCaV7vCW21De?=
- =?us-ascii?Q?Ec/LPEsTfDbzhQzAdb2iEC8biOsfEQhb7xz+03c0YUdMY1o25u6w5jzqd/Qu?=
- =?us-ascii?Q?NQFfjcNd0PzAuy/1EnLBPJ3iCk83tVP9zGdSwvhuh9v5RnItbm/cLjAiCUJa?=
- =?us-ascii?Q?LI6+urwmeBFlGYvkYY85OGxYFfBPbcZRbVd+Ba9thkUcZzGj9vqiLb2l6iTj?=
- =?us-ascii?Q?ucMs0pZnwkVPQoBLtlUqW0eS6uqxL3CaMaackiOM5gshpOsf5ircQCZR+d88?=
- =?us-ascii?Q?8hPA9BVjRgFr8tRVG8QYzRKhlIw/eVRXKucQwWZF/8Tq2WPlRmvXu4g9vCZY?=
- =?us-ascii?Q?QXOdGso422epkOA9cXPjrvh1BGO3QJo6/a1sFHwHJCbV4PadZRTZGd1bpibH?=
- =?us-ascii?Q?Qe6gguzubMI3iMtqJvApZmRaWEi/xu2qpIBTHzh8C/1nMUE+C3hUcasTbg9o?=
- =?us-ascii?Q?E1ubUKmjwRelEW//507a0T0Gzw5jogf+zmsBhLXYxGMhWEoc7rp1BOA7oR+w?=
- =?us-ascii?Q?kME5hXNTdqYY5uiRQybaD9rbE/zuO0L0WbuVtkBxpDtUQHJeW0/MiCXFvPna?=
- =?us-ascii?Q?GR7+0Povl4c0JYC8CeizPg/Cby94h2bJkQkZqT2pdjRf6t5nAbCeK1qRlKo3?=
- =?us-ascii?Q?pBbJ1VaThgMEb4xiQzubKlAkJzR0F4BBq19Vqmtvm5ked9QOYcT0uRAOBw3z?=
- =?us-ascii?Q?pyaOS9tUnj5Uc4CrxwQ/G612+JeluygA8CRXFRRbd65GO/DBuaLbdYOxi7Hq?=
- =?us-ascii?Q?5Kl83C0uzbJzhpUfDn9ksJ4EWVnDSuHtWEVX3QCoZztzxTSV5nOR29k02WmI?=
- =?us-ascii?Q?jtpDXoA4u8hGZ4kluTuSKKhRi8K0md94+cAckpWwAqn2wr0LGrp/iAMfMJSm?=
- =?us-ascii?Q?oRLUDBefebwPjreJ8LK2Qg2Z9ZgeJPR3AJoczzjUCwmDih7+zMcaDwNE1rrE?=
- =?us-ascii?Q?9MFhy2IfeS35ZUyqKSimWz77xoUgfzZ/+t6BUlLx0KTVP6+p0ftimHqQCATE?=
- =?us-ascii?Q?oubDBzjFqZpDWYDeyzSeHjOQbGgektzfbgXlOnBuPgXjEICEGRbPwrxWYvAH?=
- =?us-ascii?Q?nKs88ET1xnfh9zIkALL87gExBT07QRU3xJZZo3+1d5M5P9QTWSfqc4zZt2uZ?=
- =?us-ascii?Q?DmLNxqbt4MTSOTQFrdAq8xDFkRiU7HwoXjg2djOhI2656zfbcDmChEyzbJBX?=
- =?us-ascii?Q?LoUxiU5+hA8TmQ/u/MV9WDZHKBg8xhwtMwJ+XtvV63K6z5Vt+5pEx6nFaf39?=
- =?us-ascii?Q?0IM/6GTPwxmxxh4nbQLW81xqgqzU4BNYAPBjfntGZEt7o9XAYid2nPH/Npyi?=
- =?us-ascii?Q?VegBxnsxtZSS2fwzJBe854=3D?=
-x-microsoft-antispam-prvs: <AM0PR04MB52353D5863959B138D8ED9D8F6480@AM0PR04MB5235.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09730BD177
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(366004)(396003)(39860400002)(376002)(346002)(199004)(189003)(76176011)(316002)(45080400002)(71190400001)(71200400001)(6246003)(11346002)(476003)(54906003)(486006)(53936002)(8936002)(3846002)(66066001)(446003)(14454004)(6116002)(4326008)(99286004)(86362001)(186003)(44832011)(6916009)(97736004)(33716001)(966005)(6486002)(26005)(9686003)(5660300002)(105586002)(68736007)(106356001)(478600001)(6512007)(25786009)(1076003)(6306002)(229853002)(6436002)(6506007)(53546011)(256004)(102836004)(8676002)(7736002)(305945005)(81156014)(2906002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5235;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gYrHP6Iy7Rmci91nP5JA2qB09OGxasZbtALJYOclH80T3BRsArBsNYomLn6vm1hqCDrhP+GnBzdzlmlI5GjA8SmW//SOBI5rB5xdj+u3Vu5lvY5TM/SRgleb23uP3CvrtM0ZgKxlEKf2VExHtR7UM647iCSpVwmQsTqUbvcjAhPL8noko7dfnoO0ibh62Fm6Vo025tLqmCfAO+Ii4xQ7xt3/J6j8tXfsm3Sz9dw6uXwBXo0Wj4491jac+8iX94XRhYU1iDwzg6nncWT5uYXwVU3dKyCt3LnjFQrvo6ueNd8OMiv0wOv4Hpw/XwHIHMh0UJTQvdmQIkovJ55Sj9ufrYxmvqdPNhTpXKvUUPzNEm7Eqc9zsam/yRafSoe0OYt6ikBQTwGx79Hn8WHfakIEziSgGQiiiCIrv2OMPk2wvN8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E70C3BCC02B7404296141FBA214DC5C2@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 083f4345-1380-407b-07d8-08d6a60e25a1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2019 10:41:40.9616
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5235
+        id S1727239AbfCKLhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Mar 2019 07:37:54 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45105 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbfCKLhy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 07:37:54 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1h3JFg-0006Kv-EB; Mon, 11 Mar 2019 12:37:52 +0100
+Message-ID: <1552304271.2453.12.camel@pengutronix.de>
+Subject: Re: [PATCH] clk: imx6q: remove unsupported pll4_audio_div
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Eric Nelson <eric@nelint.com>, linux-clk@vger.kernel.org
+Cc:     anson.huang@nxp.com, clement.peron@devialet.com,
+        colin.didier@devialet.com, devicetree@vger.kernel.org,
+        festevam@gmail.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        s.hauer@pengutronix.de, sboyd@kernel.org, shawnguo@kernel.org,
+        tiny.windzz@gmail.com
+Date:   Mon, 11 Mar 2019 12:37:51 +0100
+In-Reply-To: <1552259930-27786-1-git-send-email-eric@nelint.com>
+References: <1552259930-27786-1-git-send-email-eric@nelint.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-03-11 11:28:25, Sascha Hauer wrote:
-> Hi Abel,
->=20
-> On Thu, Mar 07, 2019 at 09:20:37AM +0000, Abel Vesa wrote:
-> > By default, the muxes should re-parent on set_rate.
-> > This would allow the drivers to control only the leaf clock node,
-> > leaving the rest to the clock driver, that way simplifying the
-> > clock control.
->=20
-> I am afraid of this change. Besides the rate there might be other
-> reasons to choose one mux input over another, consider for example low
-> power audio playback where we need one specific mux setting because it
-> provides a clock which runs at low power mode.
-> On the IPU on i.MX5/6 there are clocks being used as pixel clocks
-> derived from different muxes. I don't think you want to pick an input
-> clock just because it happens to deliver the best clock rate at that
-> point in time, but really is shared with some other clock that changes
-> its rate in the next moment.
->=20
+Hi Eric,
 
-> I have no concrete examples for things that break with this change, but
-> I would be more confident if we change the behaviour explicitly only for
-> the muxes that we have reviewed to cope with this change.
->=20
+Am Sonntag, den 10.03.2019, 16:18 -0700 schrieb Eric Nelson:
+> The pll4_audio_div attempted to reflect one bit of a two-bit
+> divisor (AUDIO_DIV_LSB) in the CCM_ANALOG_MISC2 register.
+> 
+> Unfortunately, this divisor is non-functional at least on the
+> latest silicon revisions and has been removed from the reference
+> manual.
+> 
+> This is discussed in this NXP Community thread:
+> 
+>     https://community.nxp.com/thread/462806
+> 
+> Remove the definition of pll4_audio_div to reflect this and
+> reparent the ssi, cko1, and ESAI/ASRC/SPDIF clocks to the
+> pll4_post_div clock.
+> 
+> > Signed-off-by: Eric Nelson <eric@nelint.com>
+> ---
+>  drivers/clk/imx/clk-imx6q.c               |   7 +-
+>  include/dt-bindings/clock/imx6qdl-clock.h | 127 +++++++++++++++---------------
+>  2 files changed, 66 insertions(+), 68 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> index 708e7c5..56d6ebb 100644
+> --- a/drivers/clk/imx/clk-imx6q.c
+> +++ b/drivers/clk/imx/clk-imx6q.c
+> > @@ -32,7 +32,7 @@ static const char *periph2_clk2_sels[]	= { "pll3_usb_otg", "pll2_bus", };
+> >  static const char *periph_sels[]	= { "periph_pre", "periph_clk2", };
+> >  static const char *periph2_sels[]	= { "periph2_pre", "periph2_clk2", };
+> >  static const char *axi_sels[]		= { "periph", "pll2_pfd2_396m", "periph", "pll3_pfd1_540m", };
+> > -static const char *audio_sels[]	= { "pll4_audio_div", "pll3_pfd2_508m", "pll3_pfd3_454m", "pll3_usb_otg", };
+> > +static const char *audio_sels[]	= { "pll4_post_div", "pll3_pfd2_508m", "pll3_pfd3_454m", "pll3_usb_otg", };
+> >  static const char *gpu_axi_sels[]	= { "axi", "ahb", };
+> >  static const char *pre_axi_sels[]	= { "axi", "ahb", };
+> >  static const char *gpu2d_core_sels[]	= { "axi", "pll3_usb_otg", "pll2_pfd0_352m", "pll2_pfd2_396m", };
+> > @@ -52,7 +52,7 @@ static const char *ipu2_di0_sels_2[]	= { "ipu2_di0_pre", "dummy", "dummy", "ldb_
+> >  static const char *ipu2_di1_sels_2[]	= { "ipu2_di1_pre", "dummy", "dummy", "ldb_di0_podf", "ldb_di1_podf", };
+> >  static const char *hsi_tx_sels[]	= { "pll3_120m", "pll2_pfd2_396m", };
+> >  static const char *pcie_axi_sels[]	= { "axi", "ahb", };
+> > -static const char *ssi_sels[]		= { "pll3_pfd2_508m", "pll3_pfd3_454m", "pll4_audio_div", };
+> > +static const char *ssi_sels[]		= { "pll3_pfd2_508m", "pll3_pfd3_454m", "pll4_post_div", };
+> >  static const char *usdhc_sels[]	= { "pll2_pfd2_396m", "pll2_pfd0_352m", };
+> >  static const char *enfc_sels[]	= { "pll2_pfd0_352m", "pll2_bus", "pll3_usb_otg", "pll2_pfd2_396m", };
+>  static const char *enfc_sels_2[] = {"pll2_pfd0_352m", "pll2_bus", "pll3_usb_otg", "pll2_pfd2_396m", "pll3_pfd3_454m", "dummy", };
+> @@ -66,7 +66,7 @@ static const char *ecspi_sels[] = { "pll3_60m", "osc", };
+>  static const char *can_sels[] = { "pll3_60m", "osc", "pll3_80m", };
+> >  static const char *cko1_sels[]	= { "pll3_usb_otg", "pll2_bus", "pll1_sys", "pll5_video_div",
+> >  				    "video_27m", "axi", "enfc", "ipu1_di0", "ipu1_di1", "ipu2_di0",
+> > -				    "ipu2_di1", "ahb", "ipg", "ipg_per", "ckil", "pll4_audio_div", };
+> > +				    "ipu2_di1", "ahb", "ipg", "ipg_per", "ckil", "pll4_post_div", };
+>  static const char *cko2_sels[] = {
+> >  	"mmdc_ch0_axi", "mmdc_ch1_axi", "usdhc4", "usdhc1",
+> >  	"gpu2d_axi", "dummy", "ecspi_root", "gpu3d_axi",
+> @@ -607,7 +607,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+> >  	}
+>  
+> >  	clk[IMX6QDL_CLK_PLL4_POST_DIV] = clk_register_divider_table(NULL, "pll4_post_div", "pll4_audio", CLK_SET_RATE_PARENT, base + 0x70, 19, 2, 0, post_div_table, &imx_ccm_lock);
+> > -	clk[IMX6QDL_CLK_PLL4_AUDIO_DIV] = clk_register_divider(NULL, "pll4_audio_div", "pll4_post_div", CLK_SET_RATE_PARENT, base + 0x170, 15, 1, 0, &imx_ccm_lock);
+> >  	clk[IMX6QDL_CLK_PLL5_POST_DIV] = clk_register_divider_table(NULL, "pll5_post_div", "pll5_video", CLK_SET_RATE_PARENT, base + 0xa0, 19, 2, 0, post_div_table, &imx_ccm_lock);
+> >  	clk[IMX6QDL_CLK_PLL5_VIDEO_DIV] = clk_register_divider_table(NULL, "pll5_video_div", "pll5_post_div", CLK_SET_RATE_PARENT, base + 0x170, 30, 2, 0, video_div_table, &imx_ccm_lock);
+>  
+> diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+> index b3cef29..dea23a9 100644
+> --- a/include/dt-bindings/clock/imx6qdl-clock.h
+> +++ b/include/dt-bindings/clock/imx6qdl-clock.h
+> @@ -213,69 +213,68 @@
+> >  #define IMX6QDL_CLK_CKO2			200
+> >  #define IMX6QDL_CLK_CKO				201
+> >  #define IMX6QDL_CLK_VDOA			202
+> > -#define IMX6QDL_CLK_PLL4_AUDIO_DIV		203
+> > -#define IMX6QDL_CLK_LVDS1_SEL			204
+> > -#define IMX6QDL_CLK_LVDS2_SEL			205
+> > -#define IMX6QDL_CLK_LVDS1_GATE			206
+> > -#define IMX6QDL_CLK_LVDS2_GATE			207
+> > -#define IMX6QDL_CLK_ESAI_IPG			208
+> > -#define IMX6QDL_CLK_ESAI_MEM			209
+> > -#define IMX6QDL_CLK_ASRC_IPG			210
+> > -#define IMX6QDL_CLK_ASRC_MEM			211
+> > -#define IMX6QDL_CLK_LVDS1_IN			212
+> > -#define IMX6QDL_CLK_LVDS2_IN			213
+> > -#define IMX6QDL_CLK_ANACLK1			214
+> > -#define IMX6QDL_CLK_ANACLK2			215
+> > -#define IMX6QDL_PLL1_BYPASS_SRC			216
+> > -#define IMX6QDL_PLL2_BYPASS_SRC			217
+> > -#define IMX6QDL_PLL3_BYPASS_SRC			218
+> > -#define IMX6QDL_PLL4_BYPASS_SRC			219
+> > -#define IMX6QDL_PLL5_BYPASS_SRC			220
+> > -#define IMX6QDL_PLL6_BYPASS_SRC			221
+> > -#define IMX6QDL_PLL7_BYPASS_SRC			222
+> > -#define IMX6QDL_CLK_PLL1			223
+> > -#define IMX6QDL_CLK_PLL2			224
+> > -#define IMX6QDL_CLK_PLL3			225
+> > -#define IMX6QDL_CLK_PLL4			226
+> > -#define IMX6QDL_CLK_PLL5			227
+> > -#define IMX6QDL_CLK_PLL6			228
+> > -#define IMX6QDL_CLK_PLL7			229
+> > -#define IMX6QDL_PLL1_BYPASS			230
+> > -#define IMX6QDL_PLL2_BYPASS			231
+> > -#define IMX6QDL_PLL3_BYPASS			232
+> > -#define IMX6QDL_PLL4_BYPASS			233
+> > -#define IMX6QDL_PLL5_BYPASS			234
+> > -#define IMX6QDL_PLL6_BYPASS			235
+> > -#define IMX6QDL_PLL7_BYPASS			236
+> > -#define IMX6QDL_CLK_GPT_3M			237
+> > -#define IMX6QDL_CLK_VIDEO_27M			238
+> > -#define IMX6QDL_CLK_MIPI_CORE_CFG		239
+> > -#define IMX6QDL_CLK_MIPI_IPG			240
+> > -#define IMX6QDL_CLK_CAAM_MEM			241
+> > -#define IMX6QDL_CLK_CAAM_ACLK			242
+> > -#define IMX6QDL_CLK_CAAM_IPG			243
+> > -#define IMX6QDL_CLK_SPDIF_GCLK			244
+> > -#define IMX6QDL_CLK_UART_SEL			245
+> > -#define IMX6QDL_CLK_IPG_PER_SEL			246
+> > -#define IMX6QDL_CLK_ECSPI_SEL			247
+> > -#define IMX6QDL_CLK_CAN_SEL			248
+> > -#define IMX6QDL_CLK_MMDC_CH1_AXI_CG		249
+> > -#define IMX6QDL_CLK_PRE0			250
+> > -#define IMX6QDL_CLK_PRE1			251
+> > -#define IMX6QDL_CLK_PRE2			252
+> > -#define IMX6QDL_CLK_PRE3			253
+> > -#define IMX6QDL_CLK_PRG0_AXI			254
+> > -#define IMX6QDL_CLK_PRG1_AXI			255
+> > -#define IMX6QDL_CLK_PRG0_APB			256
+> > -#define IMX6QDL_CLK_PRG1_APB			257
+> > -#define IMX6QDL_CLK_PRE_AXI			258
+> > -#define IMX6QDL_CLK_MLB_SEL			259
+> > -#define IMX6QDL_CLK_MLB_PODF			260
+> > -#define IMX6QDL_CLK_EPIT1			261
+> > -#define IMX6QDL_CLK_EPIT2			262
+> > -#define IMX6QDL_CLK_MMDC_P0_IPG			263
+> > -#define IMX6QDL_CLK_DCIC1			264
+> > -#define IMX6QDL_CLK_DCIC2			265
+> > -#define IMX6QDL_CLK_END				266
+> > +#define IMX6QDL_CLK_LVDS1_SEL			203
+> > +#define IMX6QDL_CLK_LVDS2_SEL			204
+> > +#define IMX6QDL_CLK_LVDS1_GATE			205
+> > +#define IMX6QDL_CLK_LVDS2_GATE			206
+> > +#define IMX6QDL_CLK_ESAI_IPG			207
+> > +#define IMX6QDL_CLK_ESAI_MEM			208
+> > +#define IMX6QDL_CLK_ASRC_IPG			209
+> > +#define IMX6QDL_CLK_ASRC_MEM			210
+> > +#define IMX6QDL_CLK_LVDS1_IN			211
+> > +#define IMX6QDL_CLK_LVDS2_IN			212
+> > +#define IMX6QDL_CLK_ANACLK1			213
+> > +#define IMX6QDL_CLK_ANACLK2			214
+> > +#define IMX6QDL_PLL1_BYPASS_SRC			215
+> > +#define IMX6QDL_PLL2_BYPASS_SRC			216
+> > +#define IMX6QDL_PLL3_BYPASS_SRC			217
+> > +#define IMX6QDL_PLL4_BYPASS_SRC			218
+> > +#define IMX6QDL_PLL5_BYPASS_SRC			219
+> > +#define IMX6QDL_PLL6_BYPASS_SRC			220
+> > +#define IMX6QDL_PLL7_BYPASS_SRC			221
+> > +#define IMX6QDL_CLK_PLL1			222
+> > +#define IMX6QDL_CLK_PLL2			223
+> > +#define IMX6QDL_CLK_PLL3			224
+> > +#define IMX6QDL_CLK_PLL4			225
+> > +#define IMX6QDL_CLK_PLL5			226
+> > +#define IMX6QDL_CLK_PLL6			227
+> > +#define IMX6QDL_CLK_PLL7			228
+> > +#define IMX6QDL_PLL1_BYPASS			229
+> > +#define IMX6QDL_PLL2_BYPASS			230
+> > +#define IMX6QDL_PLL3_BYPASS			231
+> > +#define IMX6QDL_PLL4_BYPASS			232
+> > +#define IMX6QDL_PLL5_BYPASS			233
+> > +#define IMX6QDL_PLL6_BYPASS			234
+> > +#define IMX6QDL_PLL7_BYPASS			235
+> > +#define IMX6QDL_CLK_GPT_3M			236
+> > +#define IMX6QDL_CLK_VIDEO_27M			237
+> > +#define IMX6QDL_CLK_MIPI_CORE_CFG		238
+> > +#define IMX6QDL_CLK_MIPI_IPG			239
+> > +#define IMX6QDL_CLK_CAAM_MEM			240
+> > +#define IMX6QDL_CLK_CAAM_ACLK			241
+> > +#define IMX6QDL_CLK_CAAM_IPG			242
+> > +#define IMX6QDL_CLK_SPDIF_GCLK			243
+> > +#define IMX6QDL_CLK_UART_SEL			244
+> > +#define IMX6QDL_CLK_IPG_PER_SEL			245
+> > +#define IMX6QDL_CLK_ECSPI_SEL			246
+> > +#define IMX6QDL_CLK_CAN_SEL			247
+> > +#define IMX6QDL_CLK_MMDC_CH1_AXI_CG		248
+> > +#define IMX6QDL_CLK_PRE0			249
+> > +#define IMX6QDL_CLK_PRE1			250
+> > +#define IMX6QDL_CLK_PRE2			251
+> > +#define IMX6QDL_CLK_PRE3			252
+> > +#define IMX6QDL_CLK_PRG0_AXI			253
+> > +#define IMX6QDL_CLK_PRG1_AXI			254
+> > +#define IMX6QDL_CLK_PRG0_APB			255
+> > +#define IMX6QDL_CLK_PRG1_APB			256
+> > +#define IMX6QDL_CLK_PRE_AXI			257
+> > +#define IMX6QDL_CLK_MLB_SEL			258
+> > +#define IMX6QDL_CLK_MLB_PODF			259
+> > +#define IMX6QDL_CLK_EPIT1			260
+> > +#define IMX6QDL_CLK_EPIT2			261
+> > +#define IMX6QDL_CLK_MMDC_P0_IPG			262
+> > +#define IMX6QDL_CLK_DCIC1			263
+> > +#define IMX6QDL_CLK_DCIC2			264
+> > +#define IMX6QDL_CLK_END				265
 
-Fair enough. We could replace all the imx_clk_mux with imx_clk_mux_norepare=
-nt
-and after that we can independently switch the clocks that are safe (to swi=
-tch)
-to imx_clk_mux (which would not have the noreparent flag set).
+You can not renumber the DT clock defines, as this breaks DT backward
+compatibility. You can however remove IMX6QDL_CLK_PLL4_AUDIO_DIV and
+leave a hole in the numbers, maybe with a comment about why it exists.
 
-The main idea is to simplify the clock control from drivers point of view.
+Regards,
+Lucas
 
-The end goal here would be to only have noreparent flag set for the clocks =
-that
-need specific mux control.
-
-> Sascha
->=20
-> --=20
-> Pengutronix e.K.                           |                             =
-|
-> Industrial Linux Solutions                 | https://emea01.safelinks.pro=
-tection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.pengutronix.de%2F&amp;data=3D02=
-%7C01%7Cabel.vesa%40nxp.com%7Cde43ba7dcd774a3709df08d6a60c4d90%7C686ea1d3bc=
-2b4c6fa92cd99c5c301635%7C0%7C0%7C636878969100157679&amp;sdata=3D4eU6YmuXDhH=
-JZUKVKJhiRwlzq7b9XIrUfLSl2JFlRd8%3D&amp;reserved=3D0  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|=
