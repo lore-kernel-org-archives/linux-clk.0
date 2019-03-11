@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80821C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 13:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A26C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 13:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501382148D
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 13:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 291032087C
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 13:37:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="XErLydjX"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GE40YkM+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbfCKNhO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Mar 2019 09:37:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40310 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbfCKNhO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 09:37:14 -0400
-Received: by mail-pf1-f195.google.com with SMTP id h1so3715825pfo.7
-        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2019 06:37:14 -0700 (PDT)
+        id S1727694AbfCKNhV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Mar 2019 09:37:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40611 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbfCKNhU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 09:37:20 -0400
+Received: by mail-pg1-f193.google.com with SMTP id u9so4058880pgo.7
+        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2019 06:37:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MkagwlmaneGvabM0zWKgTIFVY3fD3rJzVWmLGOw3QRg=;
-        b=XErLydjXMg/QyI27+lL8zd+GEF4hndh+xt4uFSI2FPJ8nxjLniWmr6+TVkvdqJjfmi
-         CPWuViuINP+DP7WSAjjC17T8nQ3bsTAms8GEl+PBZ5MlGIji/OhpNwwYT54Dq+wwQf8p
-         7J1a88YNyCChcBjq6esKarAOf4z9EmKUQmmoo=
+        bh=/ET2SANK/wHVq0QXTm2x4G8KkMw/va+BLQnLjopmn8Q=;
+        b=GE40YkM+ZtlVQujTvvWvz08Y0k50Gs4IFQSnWhXytWqhMAQvtUTh851ppkbGr3m7Tn
+         Nj8IteZ6gBkbX3BN/RPEs/iDiD62mXrsqzEK983QlGLrpXODx8LQh18hCbwVjyZtGQVC
+         pn0h6vOSoVPIClJDZYYeRojApw/n4+Oj7iwOI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MkagwlmaneGvabM0zWKgTIFVY3fD3rJzVWmLGOw3QRg=;
-        b=OJh0DFZ9bzo+9l12bS4CN48Ol3+wspFEF28Mw5cDMNXZXB2Lav14WVqG6YGfnGgDgL
-         C/shv0wC+Kp7Df5peFomghYy2sHPIVHpDIcTO0nh5iaoX29le57LBUuJo62a5zn+vnAo
-         pMya2x0xvREDSX9l7eJlbL8s1tza7BUdylWtyA1bDVsSZln6FfpxbVRF5gqBu6Qu7dsk
-         4P/CyKnYSlabxQvtTf5XNeqe6N82m0D1Yfe6L7oVPbxGTtqyBaSLKLaQPQ47a4Om0eCr
-         39bU669XaWoQ1FDAfl8ApCvU+POoicol6QJXGWlz/ri8E27uZXZfAed6Y3Mfx3l4/8VG
-         u3fA==
-X-Gm-Message-State: APjAAAW1lgYZKklP4bvsWB224/Iu4Oa690cK1tQgOclbe8oFe1dVCOxx
-        WeZkhm/PMZe7ovAGsp3nOVh9WEFyQOo=
-X-Google-Smtp-Source: APXvYqzgDkRmYbgZGTC2UrWOeicCqY4vApUX7An7J715NGniYxmfJNivATrHauH7tdqmvXkAa9wkDg==
-X-Received: by 2002:a17:902:aa92:: with SMTP id d18mr3697807plr.278.1552311434067;
-        Mon, 11 Mar 2019 06:37:14 -0700 (PDT)
+        bh=/ET2SANK/wHVq0QXTm2x4G8KkMw/va+BLQnLjopmn8Q=;
+        b=gnUD8qIbImnxw8IecRFtQCmq4AEmCk0rzJtP0e/h3nJS6iHTmwUqJK82K27w86btS/
+         UxGYARIDdnSGZXfKNYEEGHxURQxHPHfUSK39fANQy0orQD7kTD8s1yhzGaoYBF9rE2mt
+         npbaqMVaXJ8b7XAodn4Qv69+MKQouE/Ck9v7jTEJWyRIa2mbjQ97dJWUxIp9VU6gkcc3
+         0QjCG7vHBtrYjIXdzbMGQy5cC8jyBRzU54VTQAC4lyjeWHxLE+akNSl8KITPrlyNWh0H
+         ilTUmauuaPPhzm37CY4BK96njpjlv95hrQR/i9t+6u1DWdWF9KW/1XzU05GNo7Enp+4q
+         hlkA==
+X-Gm-Message-State: APjAAAWtJIz9StkzU+FBcbzzx4QMIJIo1pFDTr1x1QeGdkqRTpgz5pyj
+        RMzdWYrHwuE5vTcFtFzEnHR1nQ==
+X-Google-Smtp-Source: APXvYqwhenf7qGpkwbdKLmXya+DJF9KRSA/4ff40kcLVV9BisaDGzvPeZllZF+e0BN1f6mu538eh/Q==
+X-Received: by 2002:aa7:8847:: with SMTP id k7mr32426578pfo.99.1552311439648;
+        Mon, 11 Mar 2019 06:37:19 -0700 (PDT)
 Received: from localhost.localdomain ([183.82.224.199])
-        by smtp.gmail.com with ESMTPSA id s79sm9960397pfa.61.2019.03.11.06.37.08
+        by smtp.gmail.com with ESMTPSA id s79sm9960397pfa.61.2019.03.11.06.37.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Mar 2019 06:37:13 -0700 (PDT)
+        Mon, 11 Mar 2019 06:37:18 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v8 01/15] drm/sun4i: dsi: Fix video start delay computation
-Date:   Mon, 11 Mar 2019 19:06:23 +0530
-Message-Id: <20190311133637.18334-2-jagan@amarulasolutions.com>
+Subject: [PATCH v8 02/15] drm/sun4i: tcon: Compute DCLK dividers based on format, lanes
+Date:   Mon, 11 Mar 2019 19:06:24 +0530
+Message-Id: <20190311133637.18334-3-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190311133637.18334-1-jagan@amarulasolutions.com>
 References: <20190311133637.18334-1-jagan@amarulasolutions.com>
@@ -77,65 +77,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Vertical video start delay is computed by excluding vertical front
-porch value from total vertical timings.
+pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
+MIPI clock topology in Allwinner DSI controller.
 
-This clearly confirmed from BSP code and here how it computed,
+TCON dotclock driver is computing the desired DCLK divider based on
+panel pixel clock along with input DCLK min, max divider values from
+tcon driver and that would eventually set the pll-mipi clock rate.
 
-(drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-=> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-=> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-   - panel->lcd_y - (panel->lcd_vbp)
-=> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-  			     - panel->lcd_y - panel->lcd_vbp
-=> timmings->ver_front_porch
+The current code allows the TCON clock divider to have a default 4
+for min, max ranges that would fail to compute the desired pll-mipi
+rate while supporting new panels.
 
-But the current driver is assuming it can exclude vertical front
-porch along with vertical sync values from total vertical timings,
-which resulting wrong start delay indeed wrong picture rendering
-in the panel.
+So, add the computation logic 'format/lanes' to dclk min and max dividers
+and instead of default 4. This computation logic align with Allwinner A64
+BSP, hoping that would work even for A33.
 
-Example: timings, where it produces the issue.
-{
-	.vdisplay	= 600,
-	.vsync_start	= 600 + 12,
-	.vsync_end	= 600 + 12 + 2,
-	.vtotal		= 600 + 12 + 2 + 21,
-}
+Tested this on 4 different DSI panels.
 
-It produces the desired start delay value as 19 but the correct working
-value should be 513.
-
-So, Fix it by computing proper video start delay.
-
-Fixes: 69006ef0ecb1 ("drm/sun4i: dsi: Change the start delay calculation")
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 62a508420227..8d6292c0158b 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -364,8 +364,14 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
- static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- 					   struct drm_display_mode *mode)
- {
--	u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
--	u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
-+	u16 delay = mode->vtotal - (mode->vsync_start - mode->vdisplay);
-+
-+	/**
-+	 * BSP comment:
-+	 * put start_delay to tcon. set ready sync early to dramfreq,
-+	 * so set start_delay 1
-+	 */
-+	delay += 1;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index e75f77ff8e0f..339f9b1f5745 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -341,8 +341,8 @@ static void sun4i_tcon0_mode_set_cpu(struct sun4i_tcon *tcon,
+ 	u32 block_space, start_delay;
+ 	u32 tcon_div;
  
- 	if (delay > mode->vtotal)
- 		delay = delay % mode->vtotal;
+-	tcon->dclk_min_div = SUN6I_DSI_TCON_DIV;
+-	tcon->dclk_max_div = SUN6I_DSI_TCON_DIV;
++	tcon->dclk_min_div = bpp/lanes;
++	tcon->dclk_max_div = bpp/lanes;
+ 
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+ 
 -- 
 2.18.0.321.gffc6fa0e3
 
