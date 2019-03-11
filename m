@@ -2,179 +2,138 @@ Return-Path: <SRS0=QyO6=RO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57853C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 13:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F394C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 14:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263232087C
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 13:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1D2320657
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 14:02:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ncOMkBB8"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=nelint.com header.i=@nelint.com header.b="H5yNOBrs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfCKNif (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Mar 2019 09:38:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34929 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfCKNif (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 09:38:35 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e17so4073730pgd.2
-        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2019 06:38:34 -0700 (PDT)
+        id S1727489AbfCKOC6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Mar 2019 10:02:58 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42652 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbfCKOC6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 10:02:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id n74so3762752pfi.9
+        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2019 07:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ywK6pcoFaKLaYGBN5FuWj3q4y3hHnb3hpgGYqdNyD7Y=;
-        b=ncOMkBB8mB7oL36RVl5q+7LNC2GRiivcr43tpO1ceLPFPCLlPSnXiPt2qKjh0YY0pf
-         nja5/2O5TYU3jrRicWkHqK6ldbein4tSsC3gfUJG/nLpMJABIxPw7TGxARnCWn3lMKWJ
-         tOhCz4I+Lj/sVy0/sTbkBDAjH2jOrS2xYqbh0=
+        d=nelint.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7a64RIAQDwKVyFqy1XdgNWky8hgCqGay2wB34badhI8=;
+        b=H5yNOBrsFMdnA4xV9x7tW743xVtQTLqf1+XD2ZlO0n8j8x38SKd5ItQTyJQigDxW0y
+         LoCwgk3yCjaIj67xT2927mO85Lw5KftggtQCeP/AhD0b71LOHejkpGdf0Bhe8GLmUDNc
+         DC30BssWsBvAeHGln+7DEBXabMFgc+MJGgWAg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ywK6pcoFaKLaYGBN5FuWj3q4y3hHnb3hpgGYqdNyD7Y=;
-        b=NLXMcjGdH7nOahuj5ts650FVU+FjJKbthxh3CCgGCn/Isc1YejrG4C6BBZY6ta0NTj
-         jtWjJNq15S2JnQ2RmeSk+Lpm5LVmxoR1lRo8bJ61ZfD1EovIa+p8SU7mGDIAP+WeBVPc
-         5I89wOWjhfB7ecCFQb5+KsOAuuIswa7i5PDgisglFzPpKmeWcecY/SGUAn9bgB6VKzEJ
-         bNBTbw8hMEnmOaz57nuymKHj95kKCiVC1xKa+hxLD+XmT7PeciE0Q0Jz1IGx2tp8rSoL
-         99mYmI2EF6LMhyVzQdysabMNsB22IBJwkqeekQ8Rh3Lw7wopijr3HkYNknIfCAGpG6wp
-         Zgpw==
-X-Gm-Message-State: APjAAAVOY18A4rBEefePlahtOHwSai6DefVdKPsH9JwT1P3GEis/8B3r
-        4qh5xqIpGP9W3xZJ49wzA/po+w==
-X-Google-Smtp-Source: APXvYqywa4k2PZAD46bMMH8bMhhIyGJ5Um33yGmFDDkMdwtxmXYS3hFK8dUXwopXD0rJiC4n++R79g==
-X-Received: by 2002:a62:1283:: with SMTP id 3mr33977851pfs.122.1552311514206;
-        Mon, 11 Mar 2019 06:38:34 -0700 (PDT)
-Received: from localhost.localdomain ([183.82.224.199])
-        by smtp.gmail.com with ESMTPSA id s79sm9960397pfa.61.2019.03.11.06.38.28
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7a64RIAQDwKVyFqy1XdgNWky8hgCqGay2wB34badhI8=;
+        b=FTMGeCjvr4wO4k3sPbTe6lSJLPMi6gL7e0GIx4CmuQ2UXYjs5uL0VFQ53xpeX3POs+
+         3nlQ6bNhK6qNMRhWoSZ/sX6w1xjxSEg25gCIn57la6FeRJvAML8ruLqbt33UDOW2JMbZ
+         61LcuSdjxhciQKqZT8e/YhTJ5gu27jIQjIPVaM/czBWAymNXSgTG27VPyU42nFSWozrj
+         81DaxvnkxHz+GOGMyDhl9g94DxGigdESTLUZhTMgiBVZiBhK04w1QvYKXnGm4pcNFuiE
+         MNQbwa29btbm1oUCaHiNhiCjjZyArsC7PZhAHelNMO8vPh2+kN2QmfxAPJjZg0tfqGgX
+         bUOw==
+X-Gm-Message-State: APjAAAVXZTtbSfeuKnRykMNhUM2abqvfyZiOAPYMU0o1tUuhdLZncdBd
+        mUWyOC17jQcXiH6mmxolaGfrMQ==
+X-Google-Smtp-Source: APXvYqwi9yU2YvH/l+6VN67F0vo0jMQJff/cpmFXQb0HIlDW7cRAT5CrrlxWUfs/XDCBPCDjw19+Bg==
+X-Received: by 2002:aa7:8d53:: with SMTP id s19mr34001506pfe.16.1552312977366;
+        Mon, 11 Mar 2019 07:02:57 -0700 (PDT)
+Received: from ?IPv6:2600:8800:1301:2190:cc32:ad00:b1c0:818c? ([2600:8800:1301:2190:cc32:ad00:b1c0:818c])
+        by smtp.gmail.com with ESMTPSA id c2sm8087246pfd.159.2019.03.11.07.02.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Mar 2019 06:38:33 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [DO NOT MERGE] [PATCH v8 15/15] arm64: dts: allwinner: bananapi-m64: Enable Bananapi S070WV20-CT16 DSI panel
-Date:   Mon, 11 Mar 2019 19:06:37 +0530
-Message-Id: <20190311133637.18334-16-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190311133637.18334-1-jagan@amarulasolutions.com>
-References: <20190311133637.18334-1-jagan@amarulasolutions.com>
+        Mon, 11 Mar 2019 07:02:56 -0700 (PDT)
+Subject: Re: [PATCH] clk: imx6q: remove unsupported pll4_audio_div
+To:     Lucas Stach <l.stach@pengutronix.de>, linux-clk@vger.kernel.org
+Cc:     anson.huang@nxp.com, clement.peron@devialet.com,
+        colin.didier@devialet.com, devicetree@vger.kernel.org,
+        festevam@gmail.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        s.hauer@pengutronix.de, sboyd@kernel.org, shawnguo@kernel.org,
+        tiny.windzz@gmail.com
+References: <1552259930-27786-1-git-send-email-eric@nelint.com>
+ <1552304271.2453.12.camel@pengutronix.de>
+From:   Eric Nelson <eric@nelint.com>
+Message-ID: <6eeb02d8-62fe-6b2a-d265-b437a02ef8d1@nelint.com>
+Date:   Mon, 11 Mar 2019 07:02:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
+In-Reply-To: <1552304271.2453.12.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch add support for Bananapi S070WV20-CT16 DSI panel to
-BPI-M64 board.
+Hi Lucas,
 
-DSI panel connected via board DSI port with,
-- DLDO1 as VDD supply
-- DLDO1 as VCC-DSI supply
-- PD6 gpio for reset pin
-- PD5 gpio for backlight enable pin
-- PD7 gpio for backlight vdd supply
+On 3/11/19 4:37 AM, Lucas Stach wrote:
+> Hi Eric,
+> 
+> Am Sonntag, den 10.03.2019, 16:18 -0700 schrieb Eric Nelson:
+>> The pll4_audio_div attempted to reflect one bit of a two-bit
+>> divisor (AUDIO_DIV_LSB) in the CCM_ANALOG_MISC2 register.
+>>
+>> Unfortunately, this divisor is non-functional at least on the
+>> latest silicon revisions and has been removed from the reference
+>> manual.
+>>
+>> This is discussed in this NXP Community thread:
+>>
+>>      https://community.nxp.com/thread/462806
+>>
+>> Remove the definition of pll4_audio_div to reflect this and
+>> reparent the ssi, cko1, and ESAI/ASRC/SPDIF clocks to the
+>> pll4_post_div clock.
+>>
+>>> Signed-off-by: Eric Nelson <eric@nelint.com>
+>> ---
+>>   drivers/clk/imx/clk-imx6q.c               |   7 +-
+>>   include/dt-bindings/clock/imx6qdl-clock.h | 127 +++++++++++++++---------------
+>>   2 files changed, 66 insertions(+), 68 deletions(-)
+>>
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+<snip>
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 7793ebb5d2b8..9d740afadd30 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -45,6 +45,7 @@
- #include "sun50i-a64.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "BananaPi-M64";
-@@ -56,6 +57,15 @@
- 		serial1 = &uart1;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <2>;
-+		enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD5 */
-+		power-supply = <&reg_vdd_backlight>;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -91,6 +101,15 @@
- 		};
- 	};
- 
-+	reg_vdd_backlight: vdd-backlight {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-backlight";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN: PD7 */
-+		enable-active-high;
-+	};
-+
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-@@ -116,6 +135,25 @@
- 	status = "okay";
- };
- 
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;		/* VCC3V3-DSI */
-+	status = "okay";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	panel@0 {
-+		compatible = "bananapi,s070wv20-ct16-icn6211";
-+		reg = <0>;
-+		reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD6 */
-+		vdd-supply = <&reg_dldo1>;
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -208,6 +246,12 @@
- 	status = "okay";
- };
- 
-+&r_pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&r_pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
--- 
-2.18.0.321.gffc6fa0e3
+>>   
+>> diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+>> index b3cef29..dea23a9 100644
+>> --- a/include/dt-bindings/clock/imx6qdl-clock.h
+>> +++ b/include/dt-bindings/clock/imx6qdl-clock.h
+>> @@ -213,69 +213,68 @@
+>>>   #define IMX6QDL_CLK_CKO2			200
+>>>   #define IMX6QDL_CLK_CKO				201
+>>>   #define IMX6QDL_CLK_VDOA			202
+>>> -#define IMX6QDL_CLK_PLL4_AUDIO_DIV		203
+>>> -#define IMX6QDL_CLK_LVDS1_SEL			204
 
+<snip>
+
+>>> +#define IMX6QDL_CLK_LVDS1_SEL			203
+>>> +#define IMX6QDL_CLK_LVDS2_SEL			204
+>>> +#define IMX6QDL_CLK_LVDS1_GATE			205
+
+<snip>
+
+> 
+> You can not renumber the DT clock defines, as this breaks DT backward
+> compatibility. You can however remove IMX6QDL_CLK_PLL4_AUDIO_DIV and
+> leave a hole in the numbers, maybe with a comment about why it exists.
+> 
+
+Okay. I wasn't aware of this requirement, and I'll send a V2.
+
+It will also make the patch much smaller!
