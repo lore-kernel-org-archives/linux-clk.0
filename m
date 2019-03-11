@@ -2,92 +2,131 @@ Return-Path: <SRS0=QyO6=RO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC67C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 16:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CA7C4360F
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 17:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ACD4205F4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 16:39:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B57520643
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Mar 2019 17:14:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0GQ7eTM"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="tzQNLFE7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726625AbfCKQjP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Mar 2019 12:39:15 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35835 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbfCKQjO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 12:39:14 -0400
-Received: by mail-lj1-f193.google.com with SMTP id t13so4687381lji.2;
-        Mon, 11 Mar 2019 09:39:13 -0700 (PDT)
+        id S1726625AbfCKRO2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Mar 2019 13:14:28 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36049 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfCKRO1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Mar 2019 13:14:27 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v10so4800365lji.3
+        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2019 10:14:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/l9agYG24ttd+pftcaaqtOMGEdAzL8zrUAxIKIuK968=;
-        b=f0GQ7eTMH5sL0nOBdceav2GdcV8ZtFMhaIzEMUNQRHL7TuChJjgbIvHWVeKcvn1kEJ
-         YbXNzpNz+XFbPLFZG0Yfe9fETm16uKxVeLpfk24+mK/9REK5N08BQmCDbvWKijXWc6Oh
-         jDXB6dAbJtC6bOmikUVpnKvb7wdnt8jTBbjuKVN6TzRSTWsV1mXWE+Jq+TRXwZhjwG5+
-         xPnoym9QcltB+HV3ZzT8RL61opVXbMh320sNZ546HYAlyzCxzLg0fvmN+3EfVfg7CNJq
-         LfhiIPE8Ey8av1mnDc7am7EMpVQrwcOCc2GYP2cRoTmvUbnxumOISkX2rDmKh2WSynap
-         DllQ==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Tm2sboZ+m13IuloFkRzB7RkPN72xfHg8nIovqn8OW6M=;
+        b=tzQNLFE7DyCxKE81v72sPyCg+S8APQYVucN5HwP1bv+mSV7YPCEF8sOdIZGcsfIcH7
+         dwtxS5nknb98SFjLlskAI/a6rl/2N7IUeQzP+Ivri3w+1Zhuspa416XaLtRWBkeFfxw5
+         dPAB99nue9BeDOKt5MjF26nM8Grr3ypVX8UUDT4p4G4bMFT7xDQfPTbXAgNjuX+BZsvL
+         KqaCn+FPXdrymsyWFKStuPbehf3wIZjexRXrnO9HsdH5B/3oFbuTsyjWsYDCBemhti5c
+         Lm7nAjZyZks+YajXpMJj77s1Xq0cyXUIA/ZYtmOamTuzoSdWvXeakM1+bHaxv1Civ+p0
+         vP8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/l9agYG24ttd+pftcaaqtOMGEdAzL8zrUAxIKIuK968=;
-        b=NqXdl8OeC9H1PoAtINCzVoit6DaJZ9E0YdhqsxTw+hQHgCB1aIdJcd1jVoxS4MVwGi
-         Hg/dMc8NnuMzf/m8hBUWC5t/mAOvC8g7qq4DxS50DKafi1I8wjdiTTEoJvRGlvpOvy3p
-         +xvI6ocCSsB9o74/qdc11LOYfREupJ2+ndUZoot1X1pQnbUH16t61e8C3xQrC+CuW7/d
-         GeTXUtnGCjrEM+ePiTZqRaKxZODqUKSYWsNkF8ocO9SC6c2/+m5S/qSUWM/gQwZgN2kJ
-         C+je7fKtBAc6NQPHIq5GaS2bLX0HnJc6DhTzUrKHOPbzATtEAahLekD2x72OyPt9nlO4
-         akhw==
-X-Gm-Message-State: APjAAAVPUJXNvxsOsyrna3l1bKyh0mFD2+ANnCfeTWWpSG4Mbscd4BUs
-        QHGtJSkQWyefsSy/fz6qw87m0Owofp0WWqfVDek=
-X-Google-Smtp-Source: APXvYqwIQywK5nIULbuCgIk9uf9m6ayw/gZDCiYv17b5lV1TSEWB/qhXONDIpYstGTPX7PzYtOTLqek9Kz1cbIiv+ZA=
-X-Received: by 2002:a2e:964b:: with SMTP id z11mr15524581ljh.138.1552322352236;
- Mon, 11 Mar 2019 09:39:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <1552304271.2453.12.camel@pengutronix.de> <1552319997-24622-1-git-send-email-eric@nelint.com>
- <1552319997-24622-3-git-send-email-eric@nelint.com>
-In-Reply-To: <1552319997-24622-3-git-send-email-eric@nelint.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 11 Mar 2019 13:39:21 -0300
-Message-ID: <CAOMZO5AAz210dRw7aDD8SxVAh63RGN=sJsCGnPgY4xtnQoeLQA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: imx6q: remove references to PLL4_AUDIO_DIV
-To:     Eric Nelson <eric@nelint.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Yongcai Huang <anson.huang@nxp.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Tm2sboZ+m13IuloFkRzB7RkPN72xfHg8nIovqn8OW6M=;
+        b=XknJupRNmC8KkWUJhlD7I2FJsIy/4o7vIE1OPSd7M4UQWbkrtcUdzCbrE4WNXiVG6Z
+         j65hSG8aQnOtbim3k6vSbsRkiT2Aa6KUSrwXhcRGiY+voPaxpH2BjFXWNwW4MhFqaRXR
+         lP6Iqy0J+BkeJ1wea6aXSLPwvHeTRF3WYTrS+QcmtoAosguMDP4zVfVK562QR+Gq0tv+
+         NxVTZsMSfZB8x8pQWnbb3tsOZOtPk7oDGaUk55ewk47Fxa1LzlcGOZoie5JBANE8DX2X
+         hvEa+bAHIyBvKtMNjWUSclDckhJEIumrEXN+tOhVKcjmKuY0uHXJTcQTxkz81UdWVcCD
+         xKLg==
+X-Gm-Message-State: APjAAAUf0+PpllgIkr0G4Me+JoFCOzujPl8y0JUVaN8BC9qkLGQoDSb6
+        1xO8rRhIF4+ZsY28gqQGp10uBwRtLis=
+X-Google-Smtp-Source: APXvYqzkgHVpwEUQven0sKqYYjA9A1fQspIOm2/aYWBU64d5Ly1uiTt6WRcJEaYNHceoopOq9saxSw==
+X-Received: by 2002:a2e:85d2:: with SMTP id h18mr1237923ljj.69.1552324465349;
+        Mon, 11 Mar 2019 10:14:25 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.87.168])
+        by smtp.gmail.com with ESMTPSA id t81sm515163lff.21.2019.03.11.10.14.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Mar 2019 10:14:24 -0700 (PDT)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] clk: renesas: r8a77980-cpg-mssr: fix RPC-IF module
+ clock's parent
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, tiny.windzz@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com>
+ <ebc41558-2a0a-bf6d-05df-077e3c769344@cogentembedded.com>
+ <CAMuHMdWxkM2YbLqyz3BemcVJphWYSZi4ejuLiG+fpfDdnuU4Uw@mail.gmail.com>
+Organization: Cogent Embedded
+Message-ID: <981d0e06-76b8-fe69-1a8e-91661ad0faba@cogentembedded.com>
+Date:   Mon, 11 Mar 2019 20:14:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWxkM2YbLqyz3BemcVJphWYSZi4ejuLiG+fpfDdnuU4Uw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 11, 2019 at 1:02 PM Eric Nelson <eric@nelint.com> wrote:
->
-> Since we removed the PLL4_AUDIO_DIV clock, we need to replace
-> any references to it in the device tree with PLL4_POST_DIV to
-> keep the proper parents.
->
-> Signed-off-by: Eric Nelson <eric@nelint.com>
+On 03/11/2019 12:30 PM, Geert Uytterhoeven wrote:
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+>> Testing has shown that the RPC-IF module clock's parent is the RPCD2 clock,
+>> not the RPC one -- the RPC-IF register reads stall otherwise...
+> 
+> Perhaps... Or something else is wrong with how the RPC driver uses the
+> clock hierarchy.
+
+   Yes, explicitly enabling RPCD2 did help as well.
+
+> According to the docs, RPC clocks RPC-PHY, and RPCD2 clocks RPC-LINK.
+
+   I've also read the manual. Note it's not that reading a PHY register
+hangs the kernel but reading CMNCR...
+
+> Currently nothing references RPCD2, so it is disabled automatically.
+
+  Only on V3H.
+
+> If you make RPC -> RPCD2 -> RPC-IF, enabling RPC-IF indeed enables
+> both RPC and RPCD2.
+
+   Sure, it does. :-)
+
+> Perhaps the RPC device node does need a reference to RPCD2?
+
+   Looks like that wouldn't hurt either...
+
+> Is this also the case on R-Car V3M, where RPCD2 is not controlled by the
+> CPG, but by the DIVREG register in the RPC-IF module itself?
+
+   No hangs were seen on V3M, despite the RPCD2 clock remained disabled.
+The RPC clocks on both V3H and V3M suffer from a lack of clear documentation...
+
+> See also section 62.4.7 (Frequency change), which does not have a
+> subsection for V3H, but it may be impacted (changing RPCD2 causes
+> an additional read of RPCCKR, satisfying the read-after-write requirement
+> documented there).
+
+   Hmm, haven't seen this item before; it looks like we can't use the standard
+divider component. BTW, this section in the 1.50 manual tells to use the soft
+reset on V3MOK. OK, I'll investigate this...
+
+>> Fixes: 94e3935b5756 ("clk: renesas: r8a77980: Add RPC clocks")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
+
+MBR, Sergei
