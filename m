@@ -2,53 +2,53 @@ Return-Path: <SRS0=gleC=RP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F90C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 13:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F5EC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 13:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB022075C
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 13:36:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB094214AF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 13:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552397776;
-	bh=00wyTXqWX76U7EJhEj8ZAT23m2crFFSJsLkJ4U8IQwE=;
+	s=default; t=1552398131;
+	bh=h8/VRoGEIFxhVZzPMK3EN+z2WLQlW8+m38g6dMRwdPo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eQ52E+FxxwgLcIiFkTqpmqVcCaO+LFZUpkxAO/MrwWL3xRSsrccAqH/xP6poAgaZs
-	 GKjHy9OOl+sL3JBYyy8cnJ46ox/reb00eNm+QISUrU5o+/LKz02LUNY+hNVkpUKmyo
-	 KQJLAa2bVUO8ys7/JRofFnZ0D8D5bozZi/L0eM/s=
+	b=aEXqmtb4cWM85PY51J3taN/ntObRiA/2zzbVWyk6Doc/ks1Prsj2YXMHURbZX/PlB
+	 Xd8kb074N/D4BOuJwkU8f5ujt51UXiFXwryRRQBzgpl5f7wG5KSTDEUZupP/g6sN3v
+	 FUxRmqAjYv7/FdUdarvCSTPaxNFHuVbC4MbzdL+w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725894AbfCLNgL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Mar 2019 09:36:11 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45463 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfCLNgL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Mar 2019 09:36:11 -0400
-Received: by mail-ot1-f65.google.com with SMTP id i12so2432418otp.12;
-        Tue, 12 Mar 2019 06:36:10 -0700 (PDT)
+        id S1726075AbfCLNmL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Mar 2019 09:42:11 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37821 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfCLNmL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Mar 2019 09:42:11 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w66so2093891oia.4;
+        Tue, 12 Mar 2019 06:42:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UU7k0eOZg0/Y7Vk5736NSTrT4B9Krd4qGWbggtfpSuE=;
-        b=r9D1rTUjxB/qAvmV8BPwmts6G6ddUCLNhl3fKsUV6ZmGn9CnMVescHgvntUxzv9udI
-         GF4GWTzJoj1oElMVRUdhT7NsUIe+Z+lQP0h79YnnWtcq04If9F+TnhstEjWj6IniAfA2
-         dcPBI//YkdZOuVY0oXbRYn72lxeoCPWoSlcg0ffqcE/Hb5jq6KangWxhxqu5TMTO1x8w
-         RWWNtPZ9taLAdd2aMUG0POCN9nRlHibNaPUr+MQGJUFmBLQHt6lbESz79kRkTxtJBXOb
-         DHa56ZrshAjITgibYbXEWPutyRhj2cxz0AB22HMFIR1WxbfhQCjtXgLvH04jsp4UewIs
-         M3Qw==
-X-Gm-Message-State: APjAAAVrAU+9SCF7pPP+hkQIqnBJ5v1u4ZWx79ZKU/Mq1+u+gN04KAr5
-        jbCkUlqnZruM3K0C+ee/SQ==
-X-Google-Smtp-Source: APXvYqxYkAjFQYd9GvTq6ZGM50y0s50m8F/4PaomQm5+tq6hNZwpYE2cMwpdYoraACxVLX+cIlutGA==
-X-Received: by 2002:a05:6830:2089:: with SMTP id y9mr23026751otq.329.1552397770323;
-        Tue, 12 Mar 2019 06:36:10 -0700 (PDT)
+        bh=HfcLv1/QrBGNjOWRj6KsbXECfCitu3ITt5OND6TyLp8=;
+        b=gLYQjQj48JxAJztNK5xBtS1TzHpK846ASLCrtnEOcgW+SYK/9g6KQHaf4YwRQEXs+/
+         Y3fTo9EYu+kRPU90q2KaxxJAWm3Y7DccGerDNFR88f3dzegNDChYvGXu7svba6GWds+e
+         sVoiWbdLjvC+9a9pOkmH6252Cq+mORtteev/Np3jTaks+BZqVEQfrOMx2/1brcErY39u
+         Uo1Te7Z2wZ7AnOvz7ltU7oEva/zTZextAQpVPqbOIT1dWfBNJ7tZ27qZpY15B7D9F6lS
+         wCq+9XwZ3r/A7/75pH0LxQApT9QcHizpCwuwW/YnBvmzK9a0Qk6nAEf62jirb7FOPsqf
+         dcsw==
+X-Gm-Message-State: APjAAAWIKcyVPiu0n1WHry+hFXKx1duyznd+quWJwuIdDBo1YSX6mzNA
+        83+gugSssVx2pJ5W85vPyakIXic=
+X-Google-Smtp-Source: APXvYqwYEevY2oWR9RU4BlZqVu0LMG+77i6mtsJVfO93pDoJFh2SwxY11++65Bu3oKQuppDIY1WIcw==
+X-Received: by 2002:aca:5906:: with SMTP id n6mr1664288oib.154.1552398129677;
+        Tue, 12 Mar 2019 06:42:09 -0700 (PDT)
 Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id h25sm3359075otl.29.2019.03.12.06.36.09
+        by smtp.gmail.com with ESMTPSA id q1sm3444268oth.42.2019.03.12.06.42.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Mar 2019 06:36:09 -0700 (PDT)
-Date:   Tue, 12 Mar 2019 08:36:09 -0500
+        Tue, 12 Mar 2019 06:42:09 -0700 (PDT)
+Date:   Tue, 12 Mar 2019 08:42:08 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Samuel Holland <samuel@sholland.org>
 Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -59,31 +59,81 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH v3 03/15] dt-bindings: mailbox: Add a sunxi message box
- binding
-Message-ID: <20190312133609.GA31956@bogus>
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 11/15] [NOT FOR MERGE] dt-bindings: Add a binding for
+ a mailbox-backed interrupt controller
+Message-ID: <20190312134208.GA2017@bogus>
 References: <20190302042951.53671-1-samuel@sholland.org>
- <20190302042951.53671-4-samuel@sholland.org>
+ <20190302042951.53671-12-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190302042951.53671-4-samuel@sholland.org>
+In-Reply-To: <20190302042951.53671-12-samuel@sholland.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri,  1 Mar 2019 22:29:39 -0600, Samuel Holland wrote:
-> This mailbox hardware is present in Allwinner sun8i, sun9i, and sun50i
-> SoCs. Add a device tree binding for it.
+On Fri, Mar 01, 2019 at 10:29:47PM -0600, Samuel Holland wrote:
+> This is a somewhat generic binding for an interrupt controller/forwarder
+> implemented in firmware and communicated with using a mailbox.
 > 
 > Signed-off-by: Samuel Holland <samuel@sholland.org>
 > ---
->  .../mailbox/allwinner,sunxi-msgbox.yaml       | 79 +++++++++++++++++++
->  1 file changed, 79 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sunxi-msgbox.yaml
+>  .../interrupt-controller/mbox-intc.txt        | 33 +++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt
+> new file mode 100644
+> index 000000000000..a0eb7904ca83
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/mbox-intc.txt
+> @@ -0,0 +1,33 @@
+> +Mailbox-backed Interrupt Controller
+> +===================================
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Probably never really going to be generic as every mailbox protocol is 
+different.
+
+> +
+> +This binding represents an interrupt controller implemented in firmware,
+> +that uses a mailbox channel to signal and acknowledge interrupts.
+> +
+> +Device Node:
+> +============
+> +
+> +Required properties:
+> +--------------------
+> +- compatible:		Must be one of the following strings:
+> +			- allwinner,sunxi-msgbox-intc
+> +- interrupt-controller:	Signifies that this node is an interrupt controller.
+> +- #interrupt-cells:	Must be 1.
+
+No edge/level control?
+
+> +- mboxes:		phandle for the mailbox controller and channel
+> +			specifier. If the mailbox controller has unidirectional
+> +			channels, two entries are required (see below).
+> +- mbox-names:		Only required for unidirectional mailbox channels. In
+> +			that case, it must contain the strings "tx" and "rx"
+> +			(where "tx" and "rx" are from Linux's perspective, not
+
+/Linux/the OS/
+
+> +			the direction the interrupts are traveling).
+> +
+> +Example:
+> +--------
+> +
+> +	msgbox_intc: interrupt-controller {
+> +		compatible = "allwinner,sunxi-msgbox-intc";
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +		mboxes = <&msgbox 6>, <&msgbox 7>;
+> +		mbox-names = "tx", "rx";
+> +	};
+> -- 
+> 2.19.2
+> 
