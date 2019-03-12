@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B565C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5E4C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F1C2083D
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86C642083D
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:33:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfCLPc7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1726774AbfCLPc7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 12 Mar 2019 11:32:59 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:40106 "EHLO hermes.aosc.io"
+Received: from hermes.aosc.io ([199.195.250.187]:40108 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbfCLPc6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726656AbfCLPc6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 12 Mar 2019 11:32:58 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 6686B15FCBC;
-        Tue, 12 Mar 2019 15:24:08 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 6AA2715FCC3;
+        Tue, 12 Mar 2019 15:26:07 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -31,9 +31,9 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 02/14] pinctrl: sunxi: rename V3s driver to V3 driver
-Date:   Tue, 12 Mar 2019 23:22:44 +0800
-Message-Id: <20190312152256.35574-3-icenowy@aosc.io>
+Subject: [PATCH 09/14] dt-bindings: vendor-prefixes: add SoChip
+Date:   Tue, 12 Mar 2019 23:22:51 +0800
+Message-Id: <20190312152256.35574-10-icenowy@aosc.io>
 In-Reply-To: <20190312152256.35574-1-icenowy@aosc.io>
 References: <20190312152256.35574-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
@@ -41,50 +41,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Allwinner V3s is in fact an Allwinner V3 chip with different package
-and some GPIOs not wired out on the package.
+Shenzhen SoChip Technology Co., Ltd. is a hardware vendor that produces
+EVBs with Allwinner chips. There's also a SoC named S3 that is developed
+by Allwinner (based on Allwinner V3/V3s) but branded SoChip.
 
-Rename the V3s pinctrl driver to V3 driver, to prepare to add support
-for the V3 GPIO controller with the GPIOs not wired out on V3s.
+Add the vendor prefix for SoChip.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/pinctrl/sunxi/Kconfig                                   | 2 +-
- drivers/pinctrl/sunxi/Makefile                                  | 2 +-
- .../pinctrl/sunxi/{pinctrl-sun8i-v3s.c => pinctrl-sun8i-v3.c}   | 0
- 3 files changed, 2 insertions(+), 2 deletions(-)
- rename drivers/pinctrl/sunxi/{pinctrl-sun8i-v3s.c => pinctrl-sun8i-v3.c} (100%)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index a731fc966b63..0a40ee4c9153 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -56,7 +56,7 @@ config PINCTRL_SUN8I_H3_R
- 	def_bool MACH_SUN8I || (ARM64 && ARCH_SUNXI)
- 	select PINCTRL_SUNXI
- 
--config PINCTRL_SUN8I_V3S
-+config PINCTRL_SUN8I_V3
- 	def_bool MACH_SUN8I
- 	select PINCTRL_SUNXI
- 
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index fafcdae8134f..3dc6ac4d896b 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -17,7 +17,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
- obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
--obj-$(CONFIG_PINCTRL_SUN8I_V3S)		+= pinctrl-sun8i-v3s.o
-+obj-$(CONFIG_PINCTRL_SUN8I_V3)		+= pinctrl-sun8i-v3.o
- obj-$(CONFIG_PINCTRL_SUN50I_H5)		+= pinctrl-sun50i-h5.o
- obj-$(CONFIG_PINCTRL_SUN50I_H6)		+= pinctrl-sun50i-h6.o
- obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-similarity index 100%
-rename from drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-rename to drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index bb6f6e8a2eee..b03a2a49440b 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -377,6 +377,7 @@ sitronix	Sitronix Technology Corporation
+ skyworks	Skyworks Solutions, Inc.
+ smsc	Standard Microsystems Corporation
+ snps	Synopsys, Inc.
++sochip	Shenzhen SoChip Technology Co., Ltd.
+ socionext	Socionext Inc.
+ solidrun	SolidRun
+ solomon        Solomon Systech Limited
 -- 
 2.18.1
 
