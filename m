@@ -2,108 +2,92 @@ Return-Path: <SRS0=gleC=RP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8D0C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 16:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD4AC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 16:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4322147C
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 16:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2230A214AE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 16:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552408384;
-	bh=45V6WHZtBHhMh2RK4oUj6EaslPNU+dibvt8x+PyCv34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AJEfwS9SwqEDri/rTwgL8Z4kERrZBd714fRDj/Oax55CJ7no8kW/4bePsmtw9YJlU
-	 dSQD+IElblAvyUOoXxYlqAjrm93Oz0H/lsKJBCHX5K+cWgApXIhoC6VlWJyGLfhEzF
-	 a1VsVzmeyiwIBkWWXpEt6CrhE4gC3lQ0Gtdd9WG8=
+	s=default; t=1552409364;
+	bh=/fh07EKFxybUJeqB9oylMV6QhOEsOeqS7kNOOyTZFOM=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=PLq+VqHkwAExp5hRHncrPSYWWObLgf88qw01xDh8a3h58beDwsJ52hEoAUw50b9pf
+	 pypw0nE9sh+h5IuP9SjgqPIIrZUorjv0dVMLg6enF71m5VRJNBEElgG0dM7QrAdFGj
+	 qgHMOFYyzzkqqG39fRZfrPBvkLQJkagm9Af3Wz9g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfCLQdE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Mar 2019 12:33:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49356 "EHLO mail.kernel.org"
+        id S1726502AbfCLQtX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Mar 2019 12:49:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfCLQdE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Mar 2019 12:33:04 -0400
-Received: from localhost (unknown [104.133.8.98])
+        id S1725894AbfCLQtX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Mar 2019 12:49:23 -0400
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 659F32083D;
-        Tue, 12 Mar 2019 16:33:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D14EE2087C;
+        Tue, 12 Mar 2019 16:49:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1552408383;
-        bh=45V6WHZtBHhMh2RK4oUj6EaslPNU+dibvt8x+PyCv34=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BM+LtH5YL6NCXI6WfxhLMb4tvYmZnWWNsBsV1XirkInQY5c9Mgba1GciFK57g/hye
-         9ovF5VEuRaaYWClwfh3Op6r9XCxMJKF8pgaAzdJ56eDoLPVEtiGKANUmFI2YANBgvb
-         dZ1TRG4ClBZIgTwDyoN6XpUnTA6PFpL266+VJTyw=
-Date:   Tue, 12 Mar 2019 09:33:02 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
-        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, zhiyong.tao@mediatek.com,
-        Mengqi.Zhang@mediatek.com
-Subject: Re: [PATCH v8 1/2] dt-bindings: serial: Add compatible for Mediatek
- MT8183
-Message-ID: <20190312163302.GA13549@kroah.com>
-References: <1552294472-32929-1-git-send-email-erin.lo@mediatek.com>
- <1552294472-32929-2-git-send-email-erin.lo@mediatek.com>
- <d824b15d-49b4-ef6c-779a-0c21c8c05d62@gmail.com>
+        s=default; t=1552409362;
+        bh=/fh07EKFxybUJeqB9oylMV6QhOEsOeqS7kNOOyTZFOM=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=PqQ/+I/mJn5/QBAdjg8l7LC/xDxMHKMD1EVIOU8rC2wiMeL1enSqoQTCdS1eDNqrA
+         Z3p0/E4/G9kZTP+Y5mKotbFwt01m799DNwwFFLJh+uxtZck6MOaM/Vcug4L65uqPaD
+         S1qzpMUuVvgEjElSYbu1goljodC7PMa0nEttlBAw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d824b15d-49b4-ef6c-779a-0c21c8c05d62@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190312110016.29174-2-m.tretter@pengutronix.de>
+References: <20190312110016.29174-1-m.tretter@pengutronix.de> <20190312110016.29174-2-m.tretter@pengutronix.de>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/5] clk: zynqmp: fix check for fractional clock
+Cc:     kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Michael Tretter <m.tretter@pengutronix.de>
+To:     Michael Tretter <m.tretter@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Message-ID: <155240936160.20095.7716704029189456788@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Tue, 12 Mar 2019 09:49:21 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 03:41:57PM +0100, Matthias Brugger wrote:
-> 
-> 
-> On 11/03/2019 09:54, Erin Lo wrote:
-> > This adds dt-binding documentation of uart for Mediatek MT8183 SoC
-> > Platform.
-> > 
-> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/serial/mtk-uart.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
-> > index 742cb47..bcfb131 100644
-> > --- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
-> > +++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
-> > @@ -16,6 +16,7 @@ Required properties:
-> >    * "mediatek,mt8127-uart" for MT8127 compatible UARTS
-> >    * "mediatek,mt8135-uart" for MT8135 compatible UARTS
-> >    * "mediatek,mt8173-uart" for MT8173 compatible UARTS
-> > +  * "mediatek,mt8183-uart", "mediatek,mt6577-uart" for MT8183 compatible UARTS
-> >    * "mediatek,mt6577-uart" for MT6577 and all of the above
-> >  
-> >  - reg: The base address of the UART register bank.
-> > 
-> 
-> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
-> 
-> Greg will you take this through your branch or do you prefer me to queue it?
+Quoting Michael Tretter (2019-03-12 04:00:12)
+> CLK_FRAC is not set in the divider->flags, but in the hw->flags.
+>=20
+> The firmware sets CLK_FRAC for fractional clocks in the clkflag field.
+> When registering the devider, these clkflags are copied to hw->flags.
+>=20
+> Moreover, divider->flags field is a u8 type, but CLK_FRAG is BIT(13). So
+> this check would never work.
+>=20
+> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> ---
+>  drivers/clk/zynqmp/divider.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+> index a371c66e72ef..fc70950c1e24 100644
+> --- a/drivers/clk/zynqmp/divider.c
+> +++ b/drivers/clk/zynqmp/divider.c
+> @@ -117,7 +117,7 @@ static long zynqmp_clk_divider_round_rate(struct clk_=
+hw *hw,
+>         bestdiv =3D zynqmp_divider_get_val(*prate, rate);
+> =20
+>         if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) &&
+> -           (divider->flags & CLK_FRAC))
+> +           (clk_hw_get_flags(hw) & CLK_FRAC))
 
-I can take it, let's wait for 5.1-rc1 to come out first please.
+CLK_FRAC shouldn't be set in the struct clk_hw::core::flags field. It's
+not a clk framework flag so it shouldn't go there. Please fix the user
+of this flag to place the CLK_FRAC flag somewhere else. Even adding it
+into divider::flags is not a good idea because that numberspace is for
+dividers, and this flag seems to be zynqmp driver specific, so maybe
+just add a bool to the zynqmp_clk_divider?
 
-thanks,
-
-greg k-h
