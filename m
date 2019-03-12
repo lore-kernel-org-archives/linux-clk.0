@@ -3,24 +3,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B50C10F00
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAABC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3E06214AF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2D97214AF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfCLPdk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Mar 2019 11:33:40 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:40107 "EHLO hermes.aosc.io"
+        id S1726345AbfCLPd7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Mar 2019 11:33:59 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:40103 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfCLPc7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Mar 2019 11:32:59 -0400
+        id S1726504AbfCLPc6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Mar 2019 11:32:58 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 6B58615FCBE;
-        Tue, 12 Mar 2019 15:24:44 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 9B7C815FCC5;
+        Tue, 12 Mar 2019 15:26:22 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -31,9 +31,9 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 05/14] clk: sunxi-ng: v3s: add the missing PLL_DDR1
-Date:   Tue, 12 Mar 2019 23:22:47 +0800
-Message-Id: <20190312152256.35574-6-icenowy@aosc.io>
+Subject: [PATCH 11/14] ARM: sunxi: dts: s3/s3l/v3: add DTSI files for S3/S3L/V3 SoCs
+Date:   Tue, 12 Mar 2019 23:22:53 +0800
+Message-Id: <20190312152256.35574-12-icenowy@aosc.io>
 In-Reply-To: <20190312152256.35574-1-icenowy@aosc.io>
 References: <20190312152256.35574-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
@@ -41,106 +41,67 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The user manual of V3/V3s/S3 declares a PLL_DDR1, however it's forgot
-when developing the V3s CCU driver.
+The Allwinner S3/S3L/V3 SoCs all share the same die with the V3s SoC,
+but with more GPIO wired out of the package.
 
-Add back the missing PLL_DDR1.
+Add DTSI files for these SoCs. The DTSI file for V3 just replaces the
+pinctrl compatible string, and the S3/S3L DTSI files just include the V3
+DTSI file.
 
-Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 19 +++++++++++++++----
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.h |  6 ++++--
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/sun8i-s3.dtsi  |  6 ++++++
+ arch/arm/boot/dts/sun8i-s3l.dtsi |  6 ++++++
+ arch/arm/boot/dts/sun8i-v3.dtsi  | 14 ++++++++++++++
+ 3 files changed, 26 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun8i-s3.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-s3l.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-v3.dtsi
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index ac12f261f8ca..cbba04f5f761 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -84,7 +84,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					BIT(28),	/* lock */
- 					0);
- 
--static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
-+static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr0_clk, "pll-ddr0",
- 				    "osc24M", 0x020,
- 				    8, 5,	/* N */
- 				    4, 2,	/* K */
-@@ -123,6 +123,14 @@ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph1_clk, "pll-periph1",
- 					   2,		/* post-div */
- 					   0);
- 
-+static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
-+				   "osc24M", 0x04c,
-+				   8, 7,	/* N */
-+				   0, 2,	/* M */
-+				   BIT(31),	/* gate */
-+				   BIT(28),	/* lock */
-+				   0);
+diff --git a/arch/arm/boot/dts/sun8i-s3.dtsi b/arch/arm/boot/dts/sun8i-s3.dtsi
+new file mode 100644
+index 000000000000..0f41a25ecb30
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-s3.dtsi
+@@ -0,0 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
++ */
 +
- static const char * const cpu_parents[] = { "osc32k", "osc24M",
- 					     "pll-cpu", "pll-cpu" };
- static SUNXI_CCU_MUX(cpu_clk, "cpu", cpu_parents,
-@@ -310,7 +318,8 @@ static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
- static SUNXI_CCU_GATE(usb_ohci0_clk,	"usb-ohci0",	"osc24M",
- 		      0x0cc, BIT(16), 0);
- 
--static const char * const dram_parents[] = { "pll-ddr", "pll-periph0-2x" };
-+static const char * const dram_parents[] = { "pll-ddr0", "pll-ddr1",
-+					     "pll-periph0-2x" };
- static SUNXI_CCU_M_WITH_MUX(dram_clk, "dram", dram_parents,
- 			    0x0f4, 0, 4, 20, 2, CLK_IS_CRITICAL);
- 
-@@ -369,10 +378,11 @@ static struct ccu_common *sun8i_v3s_ccu_clks[] = {
- 	&pll_audio_base_clk.common,
- 	&pll_video_clk.common,
- 	&pll_ve_clk.common,
--	&pll_ddr_clk.common,
-+	&pll_ddr0_clk.common,
- 	&pll_periph0_clk.common,
- 	&pll_isp_clk.common,
- 	&pll_periph1_clk.common,
-+	&pll_ddr1_clk.common,
- 	&cpu_clk.common,
- 	&axi_clk.common,
- 	&ahb1_clk.common,
-@@ -457,11 +467,12 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
- 		[CLK_PLL_AUDIO_8X]	= &pll_audio_8x_clk.hw,
- 		[CLK_PLL_VIDEO]		= &pll_video_clk.common.hw,
- 		[CLK_PLL_VE]		= &pll_ve_clk.common.hw,
--		[CLK_PLL_DDR]		= &pll_ddr_clk.common.hw,
-+		[CLK_PLL_DDR0]		= &pll_ddr0_clk.common.hw,
- 		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
- 		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
- 		[CLK_PLL_ISP]		= &pll_isp_clk.common.hw,
- 		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
-+		[CLK_PLL_DDR1]		= &pll_ddr1_clk.common.hw,
- 		[CLK_CPU]		= &cpu_clk.common.hw,
- 		[CLK_AXI]		= &axi_clk.common.hw,
- 		[CLK_AHB1]		= &ahb1_clk.common.hw,
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
-index 4a4d36fdad96..a091b7217dfd 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
-@@ -29,7 +29,7 @@
- #define CLK_PLL_AUDIO_8X	5
- #define CLK_PLL_VIDEO		6
- #define CLK_PLL_VE		7
--#define CLK_PLL_DDR		8
-+#define CLK_PLL_DDR0		8
- #define CLK_PLL_PERIPH0		9
- #define CLK_PLL_PERIPH0_2X	10
- #define CLK_PLL_ISP		11
-@@ -58,6 +58,8 @@
- 
- /* And the GPU module clock is exported */
- 
--#define CLK_NUMBER		(CLK_MIPI_CSI + 1)
-+#define CLK_PLL_DDR1		74
++#include "sun8i-v3.dtsi"
+diff --git a/arch/arm/boot/dts/sun8i-s3l.dtsi b/arch/arm/boot/dts/sun8i-s3l.dtsi
+new file mode 100644
+index 000000000000..0f41a25ecb30
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-s3l.dtsi
+@@ -0,0 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
++ */
 +
-+#define CLK_NUMBER		(CLK_PLL_DDR1 + 1)
- 
- #endif /* _CCU_SUN8I_H3_H_ */
++#include "sun8i-v3.dtsi"
+diff --git a/arch/arm/boot/dts/sun8i-v3.dtsi b/arch/arm/boot/dts/sun8i-v3.dtsi
+new file mode 100644
+index 000000000000..6ae8645ade50
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-v3.dtsi
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
++ */
++
++#include "sun8i-v3s.dtsi"
++
++&ccu {
++	compatible = "allwinner,sun8i-v3-ccu";
++};
++
++&pio {
++	compatible = "allwinner,sun8i-v3-pinctrl";
++};
 -- 
 2.18.1
 
