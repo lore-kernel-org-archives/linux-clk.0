@@ -2,30 +2,30 @@ Return-Path: <SRS0=gleC=RP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CD9C10F00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB993C10F0B
 	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 11:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343BA20883
+	by mail.kernel.org (Postfix) with ESMTP id A8743206DF
 	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 11:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbfCLLAW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Mar 2019 07:00:22 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51445 "EHLO
+        id S1726452AbfCLLAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Mar 2019 07:00:23 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45755 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbfCLLAU (ORCPT
+        with ESMTP id S1726434AbfCLLAU (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Mar 2019 07:00:20 -0400
 Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <mtr@pengutronix.de>)
-        id 1h3f8s-0005ng-C0; Tue, 12 Mar 2019 12:00:18 +0100
+        id 1h3f8s-0005nL-Bx; Tue, 12 Mar 2019 12:00:18 +0100
 Received: from mtr by dude02.lab.pengutronix.de with local (Exim 4.89)
         (envelope-from <mtr@pengutronix.de>)
-        id 1h3f8r-0007bS-IT; Tue, 12 Mar 2019 12:00:17 +0100
+        id 1h3f8r-0007bN-H6; Tue, 12 Mar 2019 12:00:17 +0100
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
@@ -33,12 +33,10 @@ Cc:     kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
         Michal Simek <michal.simek@xilinx.com>,
         Jolly Shah <jolly.shah@xilinx.com>,
         Michael Tretter <m.tretter@pengutronix.de>
-Subject: [PATCH 2/5] clk: zynqmp: fix doc of __zynqmp_clock_get_parents
-Date:   Tue, 12 Mar 2019 12:00:13 +0100
-Message-Id: <20190312110016.29174-3-m.tretter@pengutronix.de>
+Subject: [PATCH 0/5] clk: zynqmp: fix CLK_FRAC and various cleanups
+Date:   Tue, 12 Mar 2019 12:00:11 +0100
+Message-Id: <20190312110016.29174-1-m.tretter@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190312110016.29174-1-m.tretter@pengutronix.de>
-References: <20190312110016.29174-1-m.tretter@pengutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
@@ -50,32 +48,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The kernel-doc refers to __zynqmp_clock_get_topology(), while it actually
-documents __zynqmp_clock_get_parents(). Fix the documentation to refer
-to the correct function name.
+Hello,
 
-Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
----
-I think most of the function documentation in this file is pretty
-useless and sometimes misleading. Maybe we should drop the documentation
-entirely, because all functions are static anyway?
----
- drivers/clk/zynqmp/clkc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These are various patches for the ZynqMP clock driver.
 
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index b0908ec62f73..d3d4ce305e71 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -408,7 +408,7 @@ static int zynqmp_clock_get_topology(u32 clk_id,
- }
- 
- /**
-- * __zynqmp_clock_get_topology() - Get parents info of clock from firmware
-+ * __zynqmp_clock_get_parents() - Get parents info of clock from firmware
-  *				   response data
-  * @parents:		Clock parents
-  * @data:		Clock parents data received from firmware
+Patch 1 fixes an erroneous test for the CLK_FRAC flag.
+
+Patch 2 fixes a wrong function name in the kernel-doc. However, I think most
+of the kernel-doc for the static functions is pretty useless/misleading and
+maybe instead of fixing, we should just remove it.
+
+Patches 3 to 5 are cleanup and refactoring and make the macros that are used
+to handle the responses from the firmware more consistent.
+
+Michael
+
+Michael Tretter (5):
+  clk: zynqmp: fix check for fractional clock
+  clk: zynqmp: fix doc of __zynqmp_clock_get_parents
+  clk: zynqmp: do not export zynqmp_clk_register_mux
+  clk: zynqmp: cleanup sizes of firmware responses
+  clk: zynqmp: make field definitions of query responses consistent
+
+ drivers/clk/zynqmp/clk-mux-zynqmp.c |  1 -
+ drivers/clk/zynqmp/clk-zynqmp.h     |  6 ---
+ drivers/clk/zynqmp/clkc.c           | 71 +++++++++++++++--------------
+ drivers/clk/zynqmp/divider.c        |  2 +-
+ 4 files changed, 38 insertions(+), 42 deletions(-)
+
 -- 
 2.20.1
 
