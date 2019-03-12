@@ -2,69 +2,106 @@ Return-Path: <SRS0=gleC=RP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E72C8C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A21C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18912083D
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:34:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F9552173C
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Mar 2019 15:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfCLPeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Mar 2019 11:34:21 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:40099 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfCLPc4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Mar 2019 11:32:56 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id ACFAE15FCC0;
-        Tue, 12 Mar 2019 15:25:20 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        id S1726192AbfCLPg7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Mar 2019 11:36:59 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:57793 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfCLPg7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Mar 2019 11:36:59 -0400
+X-Originating-IP: 90.88.22.102
+Received: from localhost (aaubervilliers-681-1-80-102.w90-88.abo.wanadoo.fr [90.88.22.102])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id BF6E6FF80A;
+        Tue, 12 Mar 2019 15:36:54 +0000 (UTC)
+Date:   Tue, 12 Mar 2019 16:36:54 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 06/14] dt-bindings: clock: sunxi-ccu: remove bogus + before R40 compatible
-Date:   Tue, 12 Mar 2019 23:22:48 +0800
-Message-Id: <20190312152256.35574-7-icenowy@aosc.io>
-In-Reply-To: <20190312152256.35574-1-icenowy@aosc.io>
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/14] pinctrl: sunxi: v3: really introduce support for V3
+Message-ID: <20190312153654.25r5orlw7qjtlhbt@flea>
 References: <20190312152256.35574-1-icenowy@aosc.io>
+ <20190312152256.35574-5-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s44e46kj3dzvjmpr"
+Content-Disposition: inline
+In-Reply-To: <20190312152256.35574-5-icenowy@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When adding the R40 compatible string to the binding document, a + is
-left behind the string, which seems to be a fault when dealing with
-patches.
 
-Remove the bogus + sign.
+--s44e46kj3dzvjmpr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Mar 12, 2019 at 11:22:46PM +0800, Icenowy Zheng wrote:
+> Introduce the GPIO pins that is only available on V3 (not on V3s) to the
+> V3 pinctrl driver.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c | 291 +++++++++++++++++++++--
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h    |   2 +
+>  2 files changed, 275 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c b/drivers/pinctrl/s=
+unxi/pinctrl-sun8i-v3.c
+> index 6704ce8e5e3d..54c210871a95 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Allwinner V3s SoCs pinctrl driver.
+> + * Allwinner V3/V3s SoCs pinctrl driver.
+>   *
+>   * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
+>   *
+> @@ -23,7 +23,7 @@
+> =20
+>  #include "pinctrl-sunxi.h"
+> =20
+> -static const struct sunxi_desc_pin sun8i_v3s_pins[] =3D {
+> +static const struct sunxi_desc_pin sun8i_v3_v3s_pins[] =3D {
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index e3bd88ae456b..8e39c6e26c26 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -14,7 +14,7 @@ Required properties :
- 		- "allwinner,sun8i-a83t-r-ccu"
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-h3-r-ccu"
--+		- "allwinner,sun8i-r40-ccu"
-+		- "allwinner,sun8i-r40-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
- 		- "allwinner,sun9i-a80-ccu"
- 		- "allwinner,sun50i-a64-ccu"
--- 
-2.18.1
+I'm not sure all that remaining is worth it to be honest. It adds a
+lot of noise for no particular reason (and the same goes for renaming
+the file itself).
 
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--s44e46kj3dzvjmpr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXIfSFgAKCRDj7w1vZxhR
+xeMoAP9cCIzeT8Xt0BOkFXCLT5N0x8WG+hu1LJdL68F4nFyYBwEAjKgt55dGpvYI
+Ct/rlZuXdLVvzId1pYTvBgYdBH9H8QA=
+=pRN9
+-----END PGP SIGNATURE-----
+
+--s44e46kj3dzvjmpr--
