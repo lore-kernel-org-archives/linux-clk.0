@@ -2,117 +2,95 @@ Return-Path: <SRS0=1SIp=RQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42C5C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B9AC10F03
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9B62077B
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552494247;
-	bh=/ZmvsKjpEWJJ4zAr3XbjzZMc87BlSrdPZQbEkOzcXV0=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=s3d7Y50+7nRzhac97pkKs+G5rwqODRL6nvtCjj2hksaeQM49llP7inyEbKiy6VWif
-	 5wDxpa79QZeGuPKfHwM4YKQRs37bJdcWzwhJvW5tmi0Nf4CgwQuP8QlcHx5VLILLdD
-	 OA+Z70MnGCXeDrdmsUIuRZmHTOAt0ZnaCR6Ap9HU=
+	by mail.kernel.org (Postfix) with ESMTP id B5F8A2177E
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbfCMQYH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Mar 2019 12:24:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbfCMQYG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Mar 2019 12:24:06 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2F5A2075C;
-        Wed, 13 Mar 2019 16:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1552494245;
-        bh=/ZmvsKjpEWJJ4zAr3XbjzZMc87BlSrdPZQbEkOzcXV0=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=QL2Dujf9zVpRDwhiJT2QyJloApkbJYNJiTRw7MhImiFtJFSczoAlqJVO4YzXhKk3j
-         ermq83P4vxJ/XpAEb6LMWEPQHb8O9H2RCWTELlhxdwxlgv3FdpznSL5jFz5MKaftlq
-         nNqblc1v3lKt1h64k9rzln//X7XKlXE2jfeFi5Ds=
-Content-Type: text/plain; charset="utf-8"
+        id S1726787AbfCMQgT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Mar 2019 12:36:19 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:42669 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfCMQgT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 12:36:19 -0400
+Received: from localhost (alyon-652-1-66-9.w109-213.abo.wanadoo.fr [109.213.209.9])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 9191620000E;
+        Wed, 13 Mar 2019 16:36:12 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org,
+        Christian Neubert <christian.neubert.86@gmail.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for cpu clocks
+Date:   Wed, 13 Mar 2019 17:35:58 +0100
+Message-Id: <20190313163558.6705-1-gregory.clement@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190312182546.24e46c5c@litschi.hi.pengutronix.de>
-References: <20190312110016.29174-1-m.tretter@pengutronix.de> <20190312110016.29174-2-m.tretter@pengutronix.de> <155240936160.20095.7716704029189456788@swboyd.mtv.corp.google.com> <20190312182546.24e46c5c@litschi.hi.pengutronix.de>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/5] clk: zynqmp: fix check for fractional clock
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>
-To:     Michael Tretter <m.tretter@pengutronix.de>
-Message-ID: <155249424471.20095.16028115604342624987@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Wed, 13 Mar 2019 09:24:04 -0700
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Tretter (2019-03-12 10:25:46)
-> On Tue, 12 Mar 2019 09:49:21 -0700, Stephen Boyd wrote:
-> > Quoting Michael Tretter (2019-03-12 04:00:12)
-> > > CLK_FRAC is not set in the divider->flags, but in the hw->flags.
-> > >=20
-> > > The firmware sets CLK_FRAC for fractional clocks in the clkflag field.
-> > > When registering the devider, these clkflags are copied to hw->flags.
-> > >=20
-> > > Moreover, divider->flags field is a u8 type, but CLK_FRAG is BIT(13).=
- So
-> > > this check would never work.
-> > >=20
-> > > Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
-> > > ---
-> > >  drivers/clk/zynqmp/divider.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divide=
-r.c
-> > > index a371c66e72ef..fc70950c1e24 100644
-> > > --- a/drivers/clk/zynqmp/divider.c
-> > > +++ b/drivers/clk/zynqmp/divider.c
-> > > @@ -117,7 +117,7 @@ static long zynqmp_clk_divider_round_rate(struct =
-clk_hw *hw,
-> > >         bestdiv =3D zynqmp_divider_get_val(*prate, rate);
-> > > =20
-> > >         if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) &&
-> > > -           (divider->flags & CLK_FRAC))
-> > > +           (clk_hw_get_flags(hw) & CLK_FRAC)) =20
-> >=20
-> > CLK_FRAC shouldn't be set in the struct clk_hw::core::flags field. It's
-> > not a clk framework flag so it shouldn't go there. Please fix the user
-> > of this flag to place the CLK_FRAC flag somewhere else. Even adding it
-> > into divider::flags is not a good idea because that numberspace is for
-> > dividers, and this flag seems to be zynqmp driver specific, so maybe
-> > just add a bool to the zynqmp_clk_divider?
-> >=20
->=20
-> Thanks. The driver sets the clk_hw::core::flags based on a response
-> from the ATF and this response includes this flag with other clk
-> frameworks flags. I can test for the flag when registering the clock
-> and set another flag or a bool for the zynqmp_clk_divider and will do
-> so in v2.
+The clock parenting was not setup properly when DVFS was enabled. It was
+expected that the same clock source was used with and without DVFS which
+was not the case.
 
-Cool. Thanks!
+This patch fixes this issue, allowing to make the cpufreq support work
+when the CPU clocks source are not the default ones.
 
->=20
-> However, this merely sounds like a workaround for an issue in the ATF,
-> which should not define and use this flag in the first place.=20
->=20
+Fixes: 92ce45fb875d ("cpufreq: Add DVFS support for Armada 37xx")
+Cc: <stable@vger.kernel.org>
+Reported-by: Christian Neubert <christian.neubert.86@gmail.com>
+Reported-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/clk/mvebu/armada-37xx-periph.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-What is ATF doing with these flags? Hopefully ATF and the Linux kernel
-aren't using the same numberspace to describe these things. For example,
-I would be concerned if ATF was looking at the CLK_SET_RATE_PARENT flag
-and passing that value from firmware to the kernel, blindly assuming
-that the kernel wouldn't change those numbers to be something else.
-Obviously that type of kernel change would be invasive but it's not an
-ABI that we've ever published so we're free to do these sorts of things.
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 1f1cff428d78..26ed3c18a239 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -671,6 +671,17 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
+ 		map = syscon_regmap_lookup_by_compatible(
+ 				"marvell,armada-3700-nb-pm");
+ 		pmcpu_clk->nb_pm_base = map;
++
++		/*
++		 * Use the same parent when DVFS is enabled that the
++		 * default parent received at boot time. When this
++		 * function is called, DVFS is not enabled yet, so we
++		 * get the default parent and we can set the parent
++		 * for DVFS.
++		 */
++		if (clk_pm_cpu_set_parent(muxrate_hw,
++					  clk_pm_cpu_get_parent(muxrate_hw)))
++			dev_warn(dev, "Failed to setup default parent clock for DVFS\n");
+ 	}
+ 
+ 	*hw = clk_hw_register_composite(dev, data->name, data->parent_names,
+-- 
+2.20.1
 
