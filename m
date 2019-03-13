@@ -2,138 +2,95 @@ Return-Path: <SRS0=1SIp=RQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719CCC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 11:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8B9C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 13:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399B02147C
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 11:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D16A2087C
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 13:55:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUX9VT8p"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KKIcVuiS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726039AbfCML3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Mar 2019 07:29:25 -0400
-Received: from mail-ed1-f54.google.com ([209.85.208.54]:33748 "EHLO
-        mail-ed1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfCML3Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 07:29:24 -0400
-Received: by mail-ed1-f54.google.com with SMTP id d12so1189204edp.0;
-        Wed, 13 Mar 2019 04:29:23 -0700 (PDT)
+        id S1726772AbfCMNzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Mar 2019 09:55:07 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54063 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbfCMNzH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 09:55:07 -0400
+Received: by mail-wm1-f66.google.com with SMTP id e74so2136771wmg.3
+        for <linux-clk@vger.kernel.org>; Wed, 13 Mar 2019 06:55:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IaHS6lLWgrNLAc+oodSpbhdPL3EOi9KHTDGrU9ZVgp0=;
-        b=XUX9VT8pVXcb8+bqb7zXGK2Cb57iRvC3/QqMbj3Sjge+2wT6FOsu+VIz5vg139EQNk
-         sm/WIJjV1tQjGYc2ZlBJszYSXQAzk0wK1Krz9hYxbGrs30dVYD4Ypp2SqbFJrMzi4Esk
-         GsBbZCUVjGFEY4BvJeRWMwk6UjPboOvjnG0tgrpy+416xFCVRZeoQaDUfEV9wkxigoHu
-         qNfVUx9VQwczy+v/Szi9aJW+9ZRCx63OgPuHqAPaVkjTUEjcvm3wPiPZ1JdbcYMjCU2z
-         cC6VT/6hwYYlAlUd2nPSGR0qexcHQ8p+9bHPSR87Eq47yClq+nCVhmM57MNxQeskQXTU
-         tXZA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d/XcG1evH1WLkyrTUwfyNJFSPc+4/xkbOCaOxw4Zna0=;
+        b=KKIcVuiSg58QhTbCMj+bu+T/HGR0cNEZIvnK6O17f1iSwyS56caeS33GyZ/o8BP1fz
+         8f2h6883+nC/DMfXiS5+Z3EF+cHhOXBgnP7CXrWrqhNeyJUcph0EallekUARYaN3YCnT
+         AEDhJeklV5sw1Ujk0HGLDD4gR9tKmZgo4HvRynoen94p8revoKYmpN9FcbXJohPgCSpH
+         CAr8TrZCn7mrKi68AJSpahYDMasKhFYznl5fZwPeBl/lwo5TTH+vQSf0pq4uz7Q43pTB
+         W8DF4dO21PxkMzVZGGm0ibZrNVe3AKtfaJWqB2AuOoyYRc7fHWEcQUGoyNWy1VQfoQIM
+         sXbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IaHS6lLWgrNLAc+oodSpbhdPL3EOi9KHTDGrU9ZVgp0=;
-        b=IwrlV0WyZqlXgPSKoENaDC87539ViO/B2GggzId3bTlcx0k47CEGndFjqEb4BLOdkD
-         JPCpj75yGpEIZcU/00uA7qEBWQR9vv8Kx8fOh8s/Q6/HBdn+Na314mu2U7kPAC3M9OBK
-         sotsGUICQX7QzRibTfJ/81TDW71L4ZcBIbkxIpY1p/N91pozE3CnTFzXJMhyMWuhyvk0
-         HFO5uoYr1knOgKYntpiwdJRwec1JyEKR/CW/lvisLFZwMoLbeYgPLs2OWQGPYy8Rk6sk
-         UH2+SJSeJv6fh3Ub5qB53uHfHKD06SfJXBlQyzfJz/wC7Dfj3TtRlXEigxlOBRQlkshN
-         XjUQ==
-X-Gm-Message-State: APjAAAXBuwJx04WhkaS3kLVs4J+U1IUDfI2p74tmmeqIombqux5hCqwt
-        vMMoUcAJUniB3X7tUaCdi0xM1HzaOmA77A4E8FHlV1Pz
-X-Google-Smtp-Source: APXvYqwGrL3664lc8agee0fLVURsnokfYzQuhvdfuRL6Y9zG555x9Obt4UcFOxl6C48AsijpAmamcMypSq+OH83p/8Y=
-X-Received: by 2002:a50:aa2e:: with SMTP id o43mr7273283edc.67.1552476562574;
- Wed, 13 Mar 2019 04:29:22 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d/XcG1evH1WLkyrTUwfyNJFSPc+4/xkbOCaOxw4Zna0=;
+        b=TJETWqT1sOvlibdF0852Yw5PZVEuKWn+WIHXNpBitchYdX66NWmDSf8X+LLP3f8ON4
+         rhCELjfktajvnxMU9W6McL2SmsPfl3dHiAFFiFAHfAI/paq32CZ/y/KwG8duk/OuUOQb
+         IfWQub1IMT2kpsav07uXz8CTHt53jj5k+tfV6iw8UcXfuZzN94HfRAJkH0Rpj4gzIWhT
+         idsd09uMPYNILVwcLOwx5zsZSsLLKEXm6Y0mYMotIdrAtXmZMQiBgeF6OkDd9kRLrzO/
+         mIxkKDNI4PVH53/dsoLJlFwGgTjk7gJoGlRXbAf1G8Xg0jVPN2YfP0mqQgMxpcocdoKF
+         O1jw==
+X-Gm-Message-State: APjAAAX7Rg6sUXkI1+xdkA8v9BPXVDu9Mk2Zc2jmlqtbLGed62udw4Jz
+        OnDEOzzIJe2YjSbjs29MZbCEig==
+X-Google-Smtp-Source: APXvYqy861EIsMqnM3GMUNQwAgzamaE1WJuJZgpTU4We/AYfmMtHTiEca8tFB0OcsSPtD9R42ybGHQ==
+X-Received: by 2002:a1c:a007:: with SMTP id j7mr2296073wme.25.1552485306152;
+        Wed, 13 Mar 2019 06:55:06 -0700 (PDT)
+Received: from localhost.localdomain (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id l5sm2216071wmi.24.2019.03.13.06.55.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 13 Mar 2019 06:55:05 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson-g12a: fix VPU clock parents
+Date:   Wed, 13 Mar 2019 14:55:03 +0100
+Message-Id: <20190313135503.3198-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1551950425-7346-1-git-send-email-abel.vesa@nxp.com>
- <20190311102825.g7d5mmorcltxnnzf@pengutronix.de> <20190311104140.n65jvamx76rzkonr@fsr-ub1664-175>
- <20190313104149.blhwqgn53lsgow6z@pengutronix.de>
-In-Reply-To: <20190313104149.blhwqgn53lsgow6z@pengutronix.de>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Wed, 13 Mar 2019 13:29:10 +0200
-Message-ID: <CAEnQRZAHTjKVZwviNnXSwMEn1f6PN1fV2==3xeG9kZ462ryYhw@mail.gmail.com>
-Subject: Re: [RFC] clk: imx: Allow re-parenting by default on set rate
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 13, 2019 at 12:42 PM Sascha Hauer <s.hauer@pengutronix.de> wrote:
->
-> On Mon, Mar 11, 2019 at 10:41:40AM +0000, Abel Vesa wrote:
-> > On 19-03-11 11:28:25, Sascha Hauer wrote:
-> > > Hi Abel,
-> > >
-> > > On Thu, Mar 07, 2019 at 09:20:37AM +0000, Abel Vesa wrote:
-> > > > By default, the muxes should re-parent on set_rate.
-> > > > This would allow the drivers to control only the leaf clock node,
-> > > > leaving the rest to the clock driver, that way simplifying the
-> > > > clock control.
-> > >
-> > > I am afraid of this change. Besides the rate there might be other
-> > > reasons to choose one mux input over another, consider for example low
-> > > power audio playback where we need one specific mux setting because it
-> > > provides a clock which runs at low power mode.
-> > > On the IPU on i.MX5/6 there are clocks being used as pixel clocks
-> > > derived from different muxes. I don't think you want to pick an input
-> > > clock just because it happens to deliver the best clock rate at that
-> > > point in time, but really is shared with some other clock that changes
-> > > its rate in the next moment.
-> > >
-> >
-> > > I have no concrete examples for things that break with this change, but
-> > > I would be more confident if we change the behaviour explicitly only for
-> > > the muxes that we have reviewed to cope with this change.
-> > >
-> >
-> > Fair enough. We could replace all the imx_clk_mux with imx_clk_mux_noreparent
-> > and after that we can independently switch the clocks that are safe (to switch)
-> > to imx_clk_mux (which would not have the noreparent flag set).
->
-> Ok with me.
->
-> >
-> > The main idea is to simplify the clock control from drivers point of view.
->
-> Which drivers do you have in mind? I hardly ever missed reparenting on
-> rate changes, so where is this feature useful?
+First two VPU clock parents are wrong, fix it here.
 
-Hi Sascha,
+Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/g12a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reparenting is very useful for Audio IPs (SAI, SPDIF, PDM, FSL DSP).
-We often need clock rates that are multiples of 8000 or 11025
-which can be obtain from different PLLs. But in order for this to work
-we need to have the correct parent.
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 0e1ce8c03259..9b0151993bcc 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -960,7 +960,7 @@ static struct clk_regmap g12a_sd_emmc_c_clk0 = {
+ /* VPU Clock */
+ 
+ static const char * const g12a_vpu_parent_names[] = {
+-	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7",
++	"fclk_div3", "fclk_div4", "fclk_div5", "fclk_div7",
+ 	"mpll1", "vid_pll", "hifi_pll", "gp0_pll",
+ };
+ 
+-- 
+2.20.1
 
-In our current tree we do the re parenting manually inside drivers. For example:
-
-https://source.codeaurora.org/external/imx/linux-imx/tree/sound/soc/fsl/fsl_sai.c?h=imx_4.14.78_1.0.0_ga#n244
-
-This is far from optimal. Abel's patch will be of a great help for Audio.
-
-thanks,
-Daniel.
