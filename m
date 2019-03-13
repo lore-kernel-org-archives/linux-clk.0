@@ -2,95 +2,89 @@ Return-Path: <SRS0=1SIp=RQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B9AC10F03
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9949C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F8A2177E
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78A872171F
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 16:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1552495055;
+	bh=u32E5a379asKhNhmA+n6oTLP9rU/qPWdvTTB3r4mnKg=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=gbEnv69TLckAxaEDoot/ZClzkBapF9r9Pm5oSVg6aKM/7RMwPTP7JrZahi1KB1io1
+	 FmUzF1PHslB9XjzM33msM+meAN/p0b1/7WTLgvbt9sKZ22VqbVJicuuQ7H5qhe5T/B
+	 BPEwZ3dfgn0/C5wfTlw52FY6ilcCh46kF+r3j1NA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfCMQgT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Mar 2019 12:36:19 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:42669 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfCMQgT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 12:36:19 -0400
-Received: from localhost (alyon-652-1-66-9.w109-213.abo.wanadoo.fr [109.213.209.9])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 9191620000E;
-        Wed, 13 Mar 2019 16:36:12 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Christian Neubert <christian.neubert.86@gmail.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for cpu clocks
-Date:   Wed, 13 Mar 2019 17:35:58 +0100
-Message-Id: <20190313163558.6705-1-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726962AbfCMQhe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Mar 2019 12:37:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfCMQhe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Mar 2019 12:37:34 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00EEB2147C;
+        Wed, 13 Mar 2019 16:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1552495054;
+        bh=u32E5a379asKhNhmA+n6oTLP9rU/qPWdvTTB3r4mnKg=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=wwRj3FSY1xpp1ufxHpdwRLT2hB+nMQCD+zk+DahZwLcVHW9qmIgsM39z6kK8djI/T
+         UO0t5Wv8kPdYHkTvNw5JHNOjrHTMpIuRQvTSY82Ls21K+bTY/23waTEaKZHQ7/Pfit
+         /BLejlt1d2NresguqtGApKj8m8pMTpCU1PZkcQco=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190312110016.29174-5-m.tretter@pengutronix.de>
+References: <20190312110016.29174-1-m.tretter@pengutronix.de> <20190312110016.29174-5-m.tretter@pengutronix.de>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 4/5] clk: zynqmp: cleanup sizes of firmware responses
+Cc:     kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Michael Tretter <m.tretter@pengutronix.de>
+To:     Michael Tretter <m.tretter@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Message-ID: <155249505317.20095.16258634766892338311@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Wed, 13 Mar 2019 09:37:33 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock parenting was not setup properly when DVFS was enabled. It was
-expected that the same clock source was used with and without DVFS which
-was not the case.
+Quoting Michael Tretter (2019-03-12 04:00:15)
+> @@ -248,7 +251,8 @@ static int zynqmp_pm_clock_get_topology(u32 clock_id,=
+ u32 index, u32 *topology)
+>         qdata.arg2 =3D index;
+> =20
+>         ret =3D eemi_ops->query_data(qdata, ret_payload);
+> -       memcpy(topology, &ret_payload[1], CLK_GET_TOPOLOGY_RESP_WORDS * 4=
+);
+> +       memcpy(topology, &ret_payload[1],
+> +              CLK_GET_TOPOLOGY_RESP_WORDS * sizeof(*topology));
 
-This patch fixes this issue, allowing to make the cpufreq support work
-when the CPU clocks source are not the default ones.
+It would be even clearer to have a set of structs that encoded what the
+responses looked like, instead of having to unmarshal the response
+somewhat manually on top of a u32 buffer.
 
-Fixes: 92ce45fb875d ("cpufreq: Add DVFS support for Armada 37xx")
-Cc: <stable@vger.kernel.org>
-Reported-by: Christian Neubert <christian.neubert.86@gmail.com>
-Reported-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/clk/mvebu/armada-37xx-periph.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+So something like
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 1f1cff428d78..26ed3c18a239 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -671,6 +671,17 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
- 		map = syscon_regmap_lookup_by_compatible(
- 				"marvell,armada-3700-nb-pm");
- 		pmcpu_clk->nb_pm_base = map;
-+
-+		/*
-+		 * Use the same parent when DVFS is enabled that the
-+		 * default parent received at boot time. When this
-+		 * function is called, DVFS is not enabled yet, so we
-+		 * get the default parent and we can set the parent
-+		 * for DVFS.
-+		 */
-+		if (clk_pm_cpu_set_parent(muxrate_hw,
-+					  clk_pm_cpu_get_parent(muxrate_hw)))
-+			dev_warn(dev, "Failed to setup default parent clock for DVFS\n");
- 	}
- 
- 	*hw = clk_hw_register_composite(dev, data->name, data->parent_names,
--- 
-2.20.1
+	struct topology_resp {
+		u32 node[3];
+	};
+
+and then just use sizeof(*topology_resp). Also, it's odd that we make a
+stack local variable for the response in this function and then copy it
+onto the stack again for the caller of this function
+(zynqmp_clock_get_topology()) and then pass it to the unmarshal function
+that copies it the third time into the struct clk_topology. It would be
+better to do the copy at most once into some structure that has the data
+all packed together and then use the macros to access the fields
+wherever the response is used.
 
