@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7382EC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 19:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A950C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 19:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3936A20657
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 19:26:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3093F20657
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 19:27:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552505163;
-	bh=czZl/gcxHPAw0X51AAq6wUpiY10Lipe9Aso2/qfZ9n4=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=PDQBIV7kamegSHsrbMsQKSIX38AH7mXlELrYLACMc5wOjnQV3PtSKiG+HvLNeRccw
-	 zCzTQs3skZA+aohcOiGXewtHTfYTUlKiiyydiae2vABVyPlWj73ABUmrHyxJUei2GO
-	 Pz4fpqtWrGJLxQo8xnK/SC4jzlVpg2c8FPlBIVFY=
+	s=default; t=1552505278;
+	bh=oUf4rJXIQVM0NBO+Z5iCE20XrHnJibK2mLjXF4bKmfs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=S5gHVVjM96ydkxZQyti1AKotuNL6BhLIgUqBtO2YFX+LTV54WagAL4jA4HdHSqy56
+	 5c0EA6NCyE2PtnRUcf2wGF4cPzt1iJwguzguPOqCnM5XOT4TSGK1/+Ce0t5OOA9m3r
+	 3R4DERsCi2j315ttyTJwsAiiXQCl2SuFhPxy6FDc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbfCMTPL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Mar 2019 15:15:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45384 "EHLO mail.kernel.org"
+        id S1728408AbfCMTPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Mar 2019 15:15:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728391AbfCMTPL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Mar 2019 15:15:11 -0400
+        id S1727655AbfCMTPN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Mar 2019 15:15:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA6132075C;
-        Wed, 13 Mar 2019 19:15:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EE44213A2;
+        Wed, 13 Mar 2019 19:15:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1552504510;
-        bh=czZl/gcxHPAw0X51AAq6wUpiY10Lipe9Aso2/qfZ9n4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XhfwXuTgc7JOdFHt7FRRhSa0k/nm/WkKa/XYAJqMYOYsPuDCUvd1PyjgWjm1oigIx
-         OwB8I7uWJ/nugxzMFCzRCykRY0rUKZGZj8ARg0GkE4wOXUBqvVMcIDfadfZCBdLIk3
-         pT7Olty3iOjYKl8Ky8oxmGjB9vFyPhtIOwaxSjhQ=
+        s=default; t=1552504513;
+        bh=oUf4rJXIQVM0NBO+Z5iCE20XrHnJibK2mLjXF4bKmfs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RXzLcFj9odJLl7GXE8ENAx6uYM7t4OOHX00DpSYpl0eYTjP6tlO5yhzMcL24BNG98
+         l7idSXlMCEDw8yIaqbIrpP9HqUA/RXYoaPTJC4xWzK4NPLi319QqSNiq4FYbN+h8MM
+         wYuMPP6QjWIKOojFkewnkZJz9q82X+3lraksAswM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+Cc:     Andre Przywara <andre.przywara@arm.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 01/33] clk: sunxi-ng: v3s: Fix TCON reset de-assert bit
-Date:   Wed, 13 Mar 2019 15:14:34 -0400
-Message-Id: <20190313191506.159677-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 02/33] clk: sunxi: A31: Fix wrong AHB gate number
+Date:   Wed, 13 Mar 2019 15:14:35 -0400
+Message-Id: <20190313191506.159677-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190313191506.159677-1-sashal@kernel.org>
+References: <20190313191506.159677-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -54,35 +57,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit 5c59801f7018acba11b12de59017a3fcdcf7421d ]
+[ Upstream commit ee0b27a3a4da0b0ed2318aa092f8856896e9450b ]
 
-According to the datasheet and the reference code from Allwinner, the
-bit used to de-assert the TCON reset is bit 4, not bit 3.
+According to the manual the gate clock for MMC3 is at bit 11, and NAND1
+is controlled by bit 12.
 
-Fix it in the V3s CCU driver.
+Fix the gate bit definitions in the clock driver.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index 621b1cd996db..ac12f261f8ca 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -542,7 +542,7 @@ static struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
- 	[RST_BUS_OHCI0]		=  { 0x2c0, BIT(29) },
- 
- 	[RST_BUS_VE]		=  { 0x2c4, BIT(0) },
--	[RST_BUS_TCON0]		=  { 0x2c4, BIT(3) },
-+	[RST_BUS_TCON0]		=  { 0x2c4, BIT(4) },
- 	[RST_BUS_CSI]		=  { 0x2c4, BIT(8) },
- 	[RST_BUS_DE]		=  { 0x2c4, BIT(12) },
- 	[RST_BUS_DBG]		=  { 0x2c4, BIT(31) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 40d5f74cb2ac..d93b4815e65c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -252,9 +252,9 @@ static SUNXI_CCU_GATE(ahb1_mmc1_clk,	"ahb1-mmc1",	"ahb1",
+ static SUNXI_CCU_GATE(ahb1_mmc2_clk,	"ahb1-mmc2",	"ahb1",
+ 		      0x060, BIT(10), 0);
+ static SUNXI_CCU_GATE(ahb1_mmc3_clk,	"ahb1-mmc3",	"ahb1",
+-		      0x060, BIT(12), 0);
++		      0x060, BIT(11), 0);
+ static SUNXI_CCU_GATE(ahb1_nand1_clk,	"ahb1-nand1",	"ahb1",
+-		      0x060, BIT(13), 0);
++		      0x060, BIT(12), 0);
+ static SUNXI_CCU_GATE(ahb1_nand0_clk,	"ahb1-nand0",	"ahb1",
+ 		      0x060, BIT(13), 0);
+ static SUNXI_CCU_GATE(ahb1_sdram_clk,	"ahb1-sdram",	"ahb1",
 -- 
 2.19.1
 
