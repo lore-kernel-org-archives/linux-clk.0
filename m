@@ -2,95 +2,187 @@ Return-Path: <SRS0=1SIp=RQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8B9C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 13:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F794C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D16A2087C
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 13:55:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KKIcVuiS"
+	by mail.kernel.org (Postfix) with ESMTP id 6478321019
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfCMNzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Mar 2019 09:55:07 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54063 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbfCMNzH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 09:55:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id e74so2136771wmg.3
-        for <linux-clk@vger.kernel.org>; Wed, 13 Mar 2019 06:55:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d/XcG1evH1WLkyrTUwfyNJFSPc+4/xkbOCaOxw4Zna0=;
-        b=KKIcVuiSg58QhTbCMj+bu+T/HGR0cNEZIvnK6O17f1iSwyS56caeS33GyZ/o8BP1fz
-         8f2h6883+nC/DMfXiS5+Z3EF+cHhOXBgnP7CXrWrqhNeyJUcph0EallekUARYaN3YCnT
-         AEDhJeklV5sw1Ujk0HGLDD4gR9tKmZgo4HvRynoen94p8revoKYmpN9FcbXJohPgCSpH
-         CAr8TrZCn7mrKi68AJSpahYDMasKhFYznl5fZwPeBl/lwo5TTH+vQSf0pq4uz7Q43pTB
-         W8DF4dO21PxkMzVZGGm0ibZrNVe3AKtfaJWqB2AuOoyYRc7fHWEcQUGoyNWy1VQfoQIM
-         sXbQ==
+        id S1725883AbfCMOpQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Mar 2019 10:45:16 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:35266 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfCMOpQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 10:45:16 -0400
+Received: by mail-ua1-f68.google.com with SMTP id f88so745610uaf.2;
+        Wed, 13 Mar 2019 07:45:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d/XcG1evH1WLkyrTUwfyNJFSPc+4/xkbOCaOxw4Zna0=;
-        b=TJETWqT1sOvlibdF0852Yw5PZVEuKWn+WIHXNpBitchYdX66NWmDSf8X+LLP3f8ON4
-         rhCELjfktajvnxMU9W6McL2SmsPfl3dHiAFFiFAHfAI/paq32CZ/y/KwG8duk/OuUOQb
-         IfWQub1IMT2kpsav07uXz8CTHt53jj5k+tfV6iw8UcXfuZzN94HfRAJkH0Rpj4gzIWhT
-         idsd09uMPYNILVwcLOwx5zsZSsLLKEXm6Y0mYMotIdrAtXmZMQiBgeF6OkDd9kRLrzO/
-         mIxkKDNI4PVH53/dsoLJlFwGgTjk7gJoGlRXbAf1G8Xg0jVPN2YfP0mqQgMxpcocdoKF
-         O1jw==
-X-Gm-Message-State: APjAAAX7Rg6sUXkI1+xdkA8v9BPXVDu9Mk2Zc2jmlqtbLGed62udw4Jz
-        OnDEOzzIJe2YjSbjs29MZbCEig==
-X-Google-Smtp-Source: APXvYqy861EIsMqnM3GMUNQwAgzamaE1WJuJZgpTU4We/AYfmMtHTiEca8tFB0OcsSPtD9R42ybGHQ==
-X-Received: by 2002:a1c:a007:: with SMTP id j7mr2296073wme.25.1552485306152;
-        Wed, 13 Mar 2019 06:55:06 -0700 (PDT)
-Received: from localhost.localdomain (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id l5sm2216071wmi.24.2019.03.13.06.55.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Mar 2019 06:55:05 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson-g12a: fix VPU clock parents
-Date:   Wed, 13 Mar 2019 14:55:03 +0100
-Message-Id: <20190313135503.3198-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=63dkDYz52se4E5080eXzCZ9vNZBXRS9vr4q0KCO8Cy4=;
+        b=kL5mCFyxSv2Idhf5IdagVjq6n03T/S2IQP03G1EYV/o7XBfBFPsMSvgMTiuhltYD2i
+         4JzGwlasIFJVW+u8jqFh5Gf1kAs7UrJtQSaXuyrGT7WesH8tRJOnhTb6xbE4C+lrDlXq
+         RRWYA1zME9HbdQprbbWRahjNPbK8M9/u+K9WeXLxxw/vz9N15CTUEqDWbTlohhyZKfS6
+         GxT2FENbOWkErV6MW3kLgByJq5r1Xe1fimv4HkEJpMJwo55SLuTsvuaJTvB/LV5e/FiO
+         xr6mKwcniqLZdi0rusU+Y7WA9lRJEYoO0wIDFKSWZuFwOkc0OQCfpan4c8T7qRGY5ub5
+         mEtQ==
+X-Gm-Message-State: APjAAAWdJwjfkAy9KC8rAFE1Qhq7Q+aGB5k/4S3COReh4aEY6nI6ZXEJ
+        4v47gPURftwJVIKqtKl0gtfuy9SRrMwKTgX0Tlk=
+X-Google-Smtp-Source: APXvYqyEfu3Iegnjt5eiK9aoYhPNx4ak8DInz6UPgEF0pcBCsIACErDiJ7EkuOwnf1l+FgvaGN7fQDytKUngxHrHcrE=
+X-Received: by 2002:ab0:6419:: with SMTP id x25mr22757596uao.20.1552488314929;
+ Wed, 13 Mar 2019 07:45:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190312065128.24994-1-jiada_wang@mentor.com>
+In-Reply-To: <20190312065128.24994-1-jiada_wang@mentor.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 13 Mar 2019 15:45:03 +0100
+Message-ID: <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] PM / Domains: Avoid a potential deadlock
+To:     Jiada Wang <jiada_wang@mentor.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-First two VPU clock parents are wrong, fix it here.
+Hi Jiada,
 
-Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+CC Marek, Jon, Mike, Stephen, linux-clk, linux-renesas-soc
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 0e1ce8c03259..9b0151993bcc 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -960,7 +960,7 @@ static struct clk_regmap g12a_sd_emmc_c_clk0 = {
- /* VPU Clock */
- 
- static const char * const g12a_vpu_parent_names[] = {
--	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7",
-+	"fclk_div3", "fclk_div4", "fclk_div5", "fclk_div7",
- 	"mpll1", "vid_pll", "hifi_pll", "gp0_pll",
- };
- 
--- 
-2.20.1
+On Tue, Mar 12, 2019 at 7:51 AM Jiada Wang <jiada_wang@mentor.com> wrote:
+> Lockdep warns that prepare_lock and genpd->mlock can cause a deadlock
+> the deadlock scenario is like following:
+> First thread is probing cs2000
+> cs2000_probe()
+>   clk_register()
+>     __clk_core_init()
+>       clk_prepare_lock()                            ----> acquires prepare_lock
+>         cs2000_recalc_rate()
+>           i2c_smbus_read_byte_data()
+>             rcar_i2c_master_xfer()
+>               dma_request_chan()
+>                 rcar_dmac_of_xlate()
+>                   rcar_dmac_alloc_chan_resources()
+>                     pm_runtime_get_sync()
+>                       __pm_runtime_resume()
+>                         rpm_resume()
+>                           rpm_callback()
+>                             genpd_runtime_resume()   ----> acquires genpd->mlock
+>
+> Second thread is attaching any device to the same PM domain
+> genpd_add_device()
+>   genpd_lock()                                       ----> acquires genpd->mlock
+>     cpg_mssr_attach_dev()
+>       of_clk_get_from_provider()
+>         __of_clk_get_from_provider()
+>           __clk_create_clk()
+>             clk_prepare_lock()                       ----> acquires prepare_lock
+>
+> Since currently no PM provider access genpd's critical section
+> in .attach_dev, and .detach_dev callbacks, so there is no need to protect
+> these two callbacks with genpd->mlock.
+> This patch avoids a potential deadlock by moving out .attach_dev and .detach_dev
+> from genpd->mlock, so that genpd->mlock won't be held when prepare_lock is acquired
+> in .attach_dev and .detach_dev
+>
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 
+Thanks a lot for your perseverance!
+I had tried putting each PM Domain in its own lockdep class, but that
+didn't help.
+
+Your patch fixes the lockdep warnings on my Salvator-X(S) boards.
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Your solution makes sense, as the .{at,de}tach_dev() callbacks are
+owned by the individual PM Domain drivers, and not by the genpd core.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+One thing I'm still wondering about: genpd_add_device() is always called
+with gpd_list_lock held.
+However, the same cannot be said about genpd_remove_device():
+  - pm_genpd_remove_device() does not take gpd_list_lock, unlike
+    pm_genpd_add_device(),
+  - genpd_dev_pm_detach() does not take gpd_list_lock, while
+    __genpd_dev_pm_attach() does take the lock for adding,
+    but not for removing (in the error patch)?
+
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1467,12 +1467,12 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+>         if (IS_ERR(gpd_data))
+>                 return PTR_ERR(gpd_data);
+>
+> -       genpd_lock(genpd);
+> -
+>         ret = genpd->attach_dev ? genpd->attach_dev(genpd, dev) : 0;
+>         if (ret)
+>                 goto out;
+>
+> +       genpd_lock(genpd);
+> +
+>         dev_pm_domain_set(dev, &genpd->domain);
+>
+>         genpd->device_count++;
+> @@ -1480,9 +1480,8 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+>
+>         list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+>
+> - out:
+>         genpd_unlock(genpd);
+> -
+> + out:
+>         if (ret)
+>                 genpd_free_dev_data(dev, gpd_data);
+>         else
+> @@ -1531,15 +1530,15 @@ static int genpd_remove_device(struct generic_pm_domain *genpd,
+>         genpd->device_count--;
+>         genpd->max_off_time_changed = true;
+>
+> -       if (genpd->detach_dev)
+> -               genpd->detach_dev(genpd, dev);
+> -
+>         dev_pm_domain_set(dev, NULL);
+>
+>         list_del_init(&pdd->list_node);
+>
+>         genpd_unlock(genpd);
+>
+> +       if (genpd->detach_dev)
+> +               genpd->detach_dev(genpd, dev);
+> +
+>         genpd_free_dev_data(dev, gpd_data);
+>
+>         return 0;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
