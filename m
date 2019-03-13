@@ -2,187 +2,140 @@ Return-Path: <SRS0=1SIp=RQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F794C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB1DC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 14:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6478321019
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67DB721019
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 14:48:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="PD/oiZvO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725883AbfCMOpQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Mar 2019 10:45:16 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:35266 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfCMOpQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 10:45:16 -0400
-Received: by mail-ua1-f68.google.com with SMTP id f88so745610uaf.2;
-        Wed, 13 Mar 2019 07:45:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=63dkDYz52se4E5080eXzCZ9vNZBXRS9vr4q0KCO8Cy4=;
-        b=kL5mCFyxSv2Idhf5IdagVjq6n03T/S2IQP03G1EYV/o7XBfBFPsMSvgMTiuhltYD2i
-         4JzGwlasIFJVW+u8jqFh5Gf1kAs7UrJtQSaXuyrGT7WesH8tRJOnhTb6xbE4C+lrDlXq
-         RRWYA1zME9HbdQprbbWRahjNPbK8M9/u+K9WeXLxxw/vz9N15CTUEqDWbTlohhyZKfS6
-         GxT2FENbOWkErV6MW3kLgByJq5r1Xe1fimv4HkEJpMJwo55SLuTsvuaJTvB/LV5e/FiO
-         xr6mKwcniqLZdi0rusU+Y7WA9lRJEYoO0wIDFKSWZuFwOkc0OQCfpan4c8T7qRGY5ub5
-         mEtQ==
-X-Gm-Message-State: APjAAAWdJwjfkAy9KC8rAFE1Qhq7Q+aGB5k/4S3COReh4aEY6nI6ZXEJ
-        4v47gPURftwJVIKqtKl0gtfuy9SRrMwKTgX0Tlk=
-X-Google-Smtp-Source: APXvYqyEfu3Iegnjt5eiK9aoYhPNx4ak8DInz6UPgEF0pcBCsIACErDiJ7EkuOwnf1l+FgvaGN7fQDytKUngxHrHcrE=
-X-Received: by 2002:ab0:6419:: with SMTP id x25mr22757596uao.20.1552488314929;
- Wed, 13 Mar 2019 07:45:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190312065128.24994-1-jiada_wang@mentor.com>
-In-Reply-To: <20190312065128.24994-1-jiada_wang@mentor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Mar 2019 15:45:03 +0100
-Message-ID: <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] PM / Domains: Avoid a potential deadlock
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
+        id S1725883AbfCMOsZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Mar 2019 10:48:25 -0400
+Received: from mail-eopbgr770081.outbound.protection.outlook.com ([40.107.77.81]:37860
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725832AbfCMOsY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Mar 2019 10:48:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KTrHRvFWcG5Y8swz1FtZaxINQyPb4MorU7ayOiP8Qs4=;
+ b=PD/oiZvOAtW9BFQ54pZMdKeZGcSD7S+pBUymQgNU1C6I8rbUWR3NIIyy3MyyHe91KJN54mfYKHk5OQPIcmjz4W3s6Pd1M1Xn7ofUwOegJTRpRyz8aUpoqxMQi1R3Q7QzSrxb+yT9ex9lN6Tno63z79EJ+pk2OKokH6yJ4YSa2PA=
+Received: from MN2PR02CA0016.namprd02.prod.outlook.com (2603:10b6:208:fc::29)
+ by MWHPR02MB2814.namprd02.prod.outlook.com (2603:10b6:300:108::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1709.13; Wed, 13 Mar
+ 2019 14:48:21 +0000
+Received: from SN1NAM02FT009.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::203) by MN2PR02CA0016.outlook.office365.com
+ (2603:10b6:208:fc::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1709.13 via Frontend
+ Transport; Wed, 13 Mar 2019 14:48:21 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; pengutronix.de; dkim=none (message not signed)
+ header.d=none;pengutronix.de; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT009.mail.protection.outlook.com (10.152.73.32) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1686.19
+ via Frontend Transport; Wed, 13 Mar 2019 14:48:20 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1h45B6-0006zZ-39; Wed, 13 Mar 2019 07:48:20 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1h45B0-0000u4-Va; Wed, 13 Mar 2019 07:48:15 -0700
+Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x2DEm45D016960;
+        Wed, 13 Mar 2019 07:48:04 -0700
+Received: from [172.30.17.111]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1h45Aq-0000mY-Gu; Wed, 13 Mar 2019 07:48:04 -0700
+Subject: Re: [PATCH 2/5] clk: zynqmp: fix doc of __zynqmp_clock_get_parents
+To:     Michael Tretter <m.tretter@pengutronix.de>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC:     <kernel@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>
+References: <20190312110016.29174-1-m.tretter@pengutronix.de>
+ <20190312110016.29174-3-m.tretter@pengutronix.de>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <8fea7830-0d86-1d88-ed12-f5c9ffb907e3@xilinx.com>
+Date:   Wed, 13 Mar 2019 15:48:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190312110016.29174-3-m.tretter@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(39850400004)(136003)(396003)(2980300002)(51444003)(189003)(199004)(316002)(476003)(229853002)(126002)(2616005)(26005)(31696002)(11346002)(305945005)(8676002)(107886003)(8936002)(9786002)(4326008)(2906002)(356004)(63266004)(76176011)(65956001)(44832011)(2486003)(5660300002)(23676004)(65826007)(81156014)(336012)(106466001)(81166006)(54906003)(106002)(6246003)(47776003)(446003)(2201001)(50466002)(478600001)(36386004)(77096007)(230700001)(58126008)(110136005)(186003)(36756003)(64126003)(31686004)(426003)(486006)(65806001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2814;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cbed624e-f997-4bbb-6dee-08d6a7c2efc5
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:MWHPR02MB2814;
+X-MS-TrafficTypeDiagnostic: MWHPR02MB2814:
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <MWHPR02MB281493FBD095ACCB46A53FCCC64A0@MWHPR02MB2814.namprd02.prod.outlook.com>
+X-Forefront-PRVS: 09752BC779
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: T1/o2nQTGE3hjbscE7YvGhL+hZHimHLmR4TBc8y4GzvVayd7v/DklUGcNh8WUYprFXNAwGbIsf2d2uikuwaiLTCNPxpfnoIok5S8P46RIQfM3R28Zw7Sm6UpPWQE/G8Mk57mP3Oa/bpaSMp+Kn2UvugjK5LN/Sy12a8afqsxV9oNHZqLTBd6hdoqjHMNqpMXmJqqMqtFVOW2wSqas/E120PexlynyZCe5oEm8WqzE/PoGWoZ8A47EroHf4zRNs9QAFAfneRJBfes3ZJSSzCnWEL67kMhuChbgZRXlt0EmPOjLe4QZRyDrza5tU0C35QMiIBvYA4Mql3evePVx3PzkqYGfa3XhIod6gLAxxe60XUWTCeXLYEwJ9ax/mo4I4riHPz0EutuiwMZbLgN6g8NTwPkhlICfT1KFMOt9DVuvUM=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2019 14:48:20.4868
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbed624e-f997-4bbb-6dee-08d6a7c2efc5
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2814
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jiada,
+On 12. 03. 19 12:00, Michael Tretter wrote:
+> The kernel-doc refers to __zynqmp_clock_get_topology(), while it actually
+> documents __zynqmp_clock_get_parents(). Fix the documentation to refer
+> to the correct function name.
+> 
+> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> ---
+> I think most of the function documentation in this file is pretty
+> useless and sometimes misleading. Maybe we should drop the documentation
+> entirely, because all functions are static anyway?
 
-CC Marek, Jon, Mike, Stephen, linux-clk, linux-renesas-soc
+Interesting is that kernel-doc is not able to find this issue.
 
-On Tue, Mar 12, 2019 at 7:51 AM Jiada Wang <jiada_wang@mentor.com> wrote:
-> Lockdep warns that prepare_lock and genpd->mlock can cause a deadlock
-> the deadlock scenario is like following:
-> First thread is probing cs2000
-> cs2000_probe()
->   clk_register()
->     __clk_core_init()
->       clk_prepare_lock()                            ----> acquires prepare_lock
->         cs2000_recalc_rate()
->           i2c_smbus_read_byte_data()
->             rcar_i2c_master_xfer()
->               dma_request_chan()
->                 rcar_dmac_of_xlate()
->                   rcar_dmac_alloc_chan_resources()
->                     pm_runtime_get_sync()
->                       __pm_runtime_resume()
->                         rpm_resume()
->                           rpm_callback()
->                             genpd_runtime_resume()   ----> acquires genpd->mlock
->
-> Second thread is attaching any device to the same PM domain
-> genpd_add_device()
->   genpd_lock()                                       ----> acquires genpd->mlock
->     cpg_mssr_attach_dev()
->       of_clk_get_from_provider()
->         __of_clk_get_from_provider()
->           __clk_create_clk()
->             clk_prepare_lock()                       ----> acquires prepare_lock
->
-> Since currently no PM provider access genpd's critical section
-> in .attach_dev, and .detach_dev callbacks, so there is no need to protect
-> these two callbacks with genpd->mlock.
-> This patch avoids a potential deadlock by moving out .attach_dev and .detach_dev
-> from genpd->mlock, so that genpd->mlock won't be held when prepare_lock is acquired
-> in .attach_dev and .detach_dev
->
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+drivers/clk/zynqmp/clkc.c:336: info: Scanning doc for
+zynqmp_pm_clock_get_attributes
+drivers/clk/zynqmp/clkc.c:360: info: Scanning doc for
+__zynqmp_clock_get_topology
+drivers/clk/zynqmp/clkc.c:388: info: Scanning doc for
+zynqmp_clock_get_topology
+drivers/clk/zynqmp/clkc.c:418: info: Scanning doc for
+__zynqmp_clock_get_topology
+drivers/clk/zynqmp/clkc.c:453: info: Scanning doc for
+zynqmp_clock_get_parents
+drivers/clk/zynqmp/clkc.c:485: info: Scanning doc for zynqmp_get_parent_list
 
-Thanks a lot for your perseverance!
-I had tried putting each PM Domain in its own lockdep class, but that
-didn't help.
+I think that doc is good because it helps with understanding of code.
+If there is something misleading that it should be rather fix then remove.
 
-Your patch fixes the lockdep warnings on my Salvator-X(S) boards.
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Your solution makes sense, as the .{at,de}tach_dev() callbacks are
-owned by the individual PM Domain drivers, and not by the genpd core.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-One thing I'm still wondering about: genpd_add_device() is always called
-with gpd_list_lock held.
-However, the same cannot be said about genpd_remove_device():
-  - pm_genpd_remove_device() does not take gpd_list_lock, unlike
-    pm_genpd_add_device(),
-  - genpd_dev_pm_detach() does not take gpd_list_lock, while
-    __genpd_dev_pm_attach() does take the lock for adding,
-    but not for removing (in the error patch)?
-
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1467,12 +1467,12 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->         if (IS_ERR(gpd_data))
->                 return PTR_ERR(gpd_data);
->
-> -       genpd_lock(genpd);
-> -
->         ret = genpd->attach_dev ? genpd->attach_dev(genpd, dev) : 0;
->         if (ret)
->                 goto out;
->
-> +       genpd_lock(genpd);
-> +
->         dev_pm_domain_set(dev, &genpd->domain);
->
->         genpd->device_count++;
-> @@ -1480,9 +1480,8 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->
->         list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
->
-> - out:
->         genpd_unlock(genpd);
-> -
-> + out:
->         if (ret)
->                 genpd_free_dev_data(dev, gpd_data);
->         else
-> @@ -1531,15 +1530,15 @@ static int genpd_remove_device(struct generic_pm_domain *genpd,
->         genpd->device_count--;
->         genpd->max_off_time_changed = true;
->
-> -       if (genpd->detach_dev)
-> -               genpd->detach_dev(genpd, dev);
-> -
->         dev_pm_domain_set(dev, NULL);
->
->         list_del_init(&pdd->list_node);
->
->         genpd_unlock(genpd);
->
-> +       if (genpd->detach_dev)
-> +               genpd->detach_dev(genpd, dev);
-> +
->         genpd_free_dev_data(dev, gpd_data);
->
->         return 0;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+M
