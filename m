@@ -2,83 +2,128 @@ Return-Path: <SRS0=Z7Th=RR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 136AEC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 15:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3415DC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 16:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDEF82184C
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 15:58:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="PdDwh9KV"
+	by mail.kernel.org (Postfix) with ESMTP id 70DAE2184C
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 16:10:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfCNP6M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Mar 2019 11:58:12 -0400
-Received: from mout.gmx.net ([212.227.15.18]:54499 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726564AbfCNP6M (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Mar 2019 11:58:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1552579081;
-        bh=vmAyjpCjbx7nHbuZIFmr0VpBsMC27MyC0x6eIXC2nW4=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=PdDwh9KVa5q3GQHpv2izC+MX6P/4DYvedM61H8gZ+YZ1G2RenrjgfhWba0jiLbXnA
-         Wf30hiS4Z3VX483fy2xHOm2r2mXNAAgj/qQa85wVuOKgnKJ3TWNCJmgBC9q14xRKvo
-         i7im6Z6bhrv1h8SpxzRj6IaM4XiP1Hv6vxjbUVkw=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.11.10] ([185.137.174.251]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MC4y8-1hDEBU3Rmi-008qfX; Thu, 14
- Mar 2019 16:58:01 +0100
+        id S1727234AbfCNQKe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Mar 2019 12:10:34 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41997 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbfCNQKd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Mar 2019 12:10:33 -0400
+Received: by mail-ed1-f66.google.com with SMTP id j89so5103763edb.9
+        for <linux-clk@vger.kernel.org>; Thu, 14 Mar 2019 09:10:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=reBZQ5r1u2El0dJ7xnYcnXJoyLXO/V2VF1ce8Vs2elM=;
+        b=jjVuuM//aBJRUY3hTQARBmlrdzhVXES58zdFLIzGCwggQ3mPfNLpgtHmctwMekCg3q
+         bF2g68qZJYvWD5PRszoUbcILUCpy9CIifVFiLBm7QI7yeedHNsxPbdh9eijeyVGxvTob
+         8bQmDu59Gvf1KR+baMgRxbLicGGJ1M+QYJkPwpleJTAETYhAAQziVtc7cpIJvwG6axQy
+         Glj5sSzXJejK8plK4gr4SuRFPn+AunkAue0Ifx0Q2aBwMcu6OLFr4amb4wChl+UfLz8P
+         +xOtY17k1M12GTfVFlHrFJUzV+VEnL+b5Y10I1ew5NHzJzZwffPlRoMdk9Zbgg3VQqdg
+         vKvA==
+X-Gm-Message-State: APjAAAUWuXUDX9h5vlhYI3Kp0G38JFaYXgfOz7U31qPBmL7jNRt5ElrL
+        JNfEFH1oG/tsGhn69R8W0YGuEQ==
+X-Google-Smtp-Source: APXvYqy5GFsm+0I12t9dNNSE2CKMZZM5Bh74bRxnsZ6XbBSfiLpEjv5i05csFpYotsz+Sz6vSW9voQ==
+X-Received: by 2002:a50:8f05:: with SMTP id 5mr1314580edy.113.1552579832138;
+        Thu, 14 Mar 2019 09:10:32 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id a58sm1572228eda.91.2019.03.14.09.10.31
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Mar 2019 09:10:31 -0700 (PDT)
 Subject: Re: clk: x86: Stop marking clocks as CLK_IS_CRITICAL is causing
  non-working hardware.
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>
+        =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>
 Cc:     linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>
 References: <e6e11d5c-988a-aef4-cb8c-9e3bef254b87@gmx.ch>
  <155257844626.20095.2420043618878828782@swboyd.mtv.corp.google.com>
-From:   =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>
-Organization: Privat
-Message-ID: <9f602139-b2cc-8d13-a50b-7ebd1f5a71be@gmx.ch>
-Date:   Thu, 14 Mar 2019 16:58:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
- SeaMonkey/2.49.4
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <73c30c82-1a69-97e6-40e9-3cdd6059e72d@redhat.com>
+Date:   Thu, 14 Mar 2019 17:10:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
 In-Reply-To: <155257844626.20095.2420043618878828782@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:85N2f8RKEf4gyHW81YkwQGTgpWvQae++bizuvkhi7z7XI3WwYV6
- cBgHnmcWAlp2kKG3i3WTBiJZe6YM2h6U63nyO7S3hpz0Tx1SU+Lq1z5GN3qBSXBd8GBMFQi
- 5OOKF0PAVjZWqX0QqqCdMWqnUuwH+KPwrG0G3SI1Fp+3nN5tDHfnTfO46IrFbhqDCi+lbwN
- MTYq8Q8QgpSGupPkhqi4Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yJ/Jl+fGD48=:QCoJH/MSD2HuayLkA21Usk
- tHoXMioRNZBWuI7nJ3hHgwJYsMpox6zaUBSV5+TuiL5GsqeWHC1bYQVlQ1KUQe7AsEMwMPjkC
- XeOMPND7JRy4Kqonr6PvYEJ3npFT3KDaM7YxU1wnWBG6BUs0KdQPp+vk3yrZh9qardR20CEoH
- 9yy7stz/lHIQGhsUpJjyLvhM9TdM86hfEht1WXNL3aNTncLIS8gg7DCFHX14NtiBhUnD2kkzC
- S40dt9zwEG+eS/Xo9l2/mUxkGyI+paxwLeH4F4e9sKQBsNSPM7fnOmlAyEi3EaMKlqdj3m3c4
- X2e9Wg4JDKjcK4h7LraWZJ8KzoRS0sGpscxoYi9Wg5niCvqw2m1KstMkuTp55Effd0Yexuzzu
- 8+ypYqGUar62LRcPqlSTIqjnNG4OMLUSFUn1K38xfD48U4ZoEY016fWTayyBH7uAby9cMB2kq
- segemaiHpVda5LCNLOaxPPkhZ2iMap3eQ1dLlqWnYKpsFynuVnMZ3JgvfqgR5RWRi3sE/nbr9
- auaJqhcmtolXRU7bth8Eb84Ap1TQ9seWxumnbYJkbg2L9TA/paSKti0qDWa0WZfxrBGoHBMUO
- D3SYu3fNgvokPV+GlPcbPvGXgpW2bJACGWQpqhgTWlgAbKIghjmb1+Tyl5lHPrrrD+V9xlGod
- DHpmQRWAOCUfd1sqXkqZf8WJQXsjzs7rHG0BUFI77U5P1HNawMR6Zq9OIjmhGOz3iIeLJO1wE
- 4+nixvVkEYocCIa0CtYji0RrBloXyjYbRZSbsyVxqnO8smifSWcLivBU0ef01D6TryftzVgdI
- ndfunvgqqbPe/DUFnJ6xn4D0Ei7cNdqB8g3Fj794vaQUGGmAnecnR5AesI97Y8+oUJP1XnHHL
- uT9YUztTe3pqzXsUEiv8ku+cKHsVxh8+DSnCk0PJbEEcm7d/mVeqLySPMf51ReShR48dXIGEc
- Dde87GTtKjA==
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Stephen Boyd wrote:
+Hi,
 
-> Quoting David M=C3=BCller (2019-03-14 03:18:59)
+On 14-03-19 16:47, Stephen Boyd wrote:
+> Quoting David Müller (2019-03-14 03:18:59)
+>> Hello
+>>
+>> I have a x86 (Bay Trail) based hardware, where pmc_plt_clk0 is used to
+>> drive some external hardware (USB HSIC chip attached to the SoC's xHCI
+>> root port).
+>>
 >> Since commit 88659387b9d509ee4bb8f0b0fe9ce2ff00988b46, the pmc_plt_clk0
->
+> 
 > Is this a stable tree commit? It's not in Linus' tree.
 
-Yes, the upstream commit is 648e921888ad96ea3dc922739e96716ad3225d7f
+Likely, I believe the mainline commit being talked about is:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=648e921888ad96ea3dc922739e96716ad3225d7f
+
+>> is unconditionally gated off, resulting in a non-working HSIC chip and
+>> all the USB devices behind it.
+>>
+>> What is the proper way to fix this regression:
+>> - revert this commit?
+>> - implement some kind of "quirk" in the clk-pmc-atom driver?
+
+So the background here is that the ACPI tables would normally be
+responsible for turning on/off the pmc clocks and they are on cherry-trail
+but on bay-trail the OS is somehow supposed to figure this all out.
+
+The commit which is causing this problem for you is in essence a revert
+of commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the firmware"),
+which was an (in hindsight) ill advised fix to fix a similar problem with
+a NIC. Since that commit broke entering deep sleep states during suspend
+on all Bay Trail devices, I first upstreamed another fix for the NIC:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b1e3454d39f992e5409cd19f97782185950df6e7
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c2f6f3ee7f22521fabc3295f51149bc3f4dd9202
+
+And then I submitted the "clk: x86: Stop marking clocks as CLK_IS_CRITICAL"
+which in hindsight I should have submitted as a revert of d31fd43c0f9a,
+rather then as a new patch to make sure that this patch was unbreaking things.
+
+TL;DR: we do not want to revert "clk: x86: Stop marking clocks as CLK_IS_CRITICAL"
+as that will regress power-consumption during suspend on many devices.
+
+So you will need to do something similar to the 2 commits I did for the r8169.c
+problem, but then limited to your board/model since we do not want to be enabling
+pmc_plt_clk0 on every Bay Trail machine.
+
+Do you know if the kernel already has some special code-paths to deal with the HSIC
+phy in the xhci code ? Then we could just get and enable the clock there.
+
+Otherwise I guess we should probably conditionally register a platform_usb_phy_clk
+clock alias (see commit b1e3454d39f992) based on a dmi_system_id table and have
+the xhci driver (optionally) request this clock and enable it if present. There are
+some interesting probe-ordering issues here though, for this to work the
+clk-pmc-atom (builtin) platform driver must bind to the clk-pmc-atom platform-device
+*before* the xhci driver tries to get the clock.
+
+Regards,
+
+Hans
