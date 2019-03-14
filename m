@@ -2,129 +2,88 @@ Return-Path: <SRS0=Z7Th=RR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12E2C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 08:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33CFC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 10:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 720B3204FD
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 08:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A83962064A
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 10:18:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="gWcgCsSw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbfCNIin (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Mar 2019 04:38:43 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54353 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbfCNIim (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Mar 2019 04:38:42 -0400
-Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <m.tretter@pengutronix.de>)
-        id 1h4Lss-0005JD-5F; Thu, 14 Mar 2019 09:38:38 +0100
-Date:   Thu, 14 Mar 2019 09:38:36 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>
-Subject: Re: [PATCH 1/5] clk: zynqmp: fix check for fractional clock
-Message-ID: <20190314093836.6a70abc7@litschi.hi.pengutronix.de>
-In-Reply-To: <155249424471.20095.16028115604342624987@swboyd.mtv.corp.google.com>
-References: <20190312110016.29174-1-m.tretter@pengutronix.de>
-        <20190312110016.29174-2-m.tretter@pengutronix.de>
-        <155240936160.20095.7716704029189456788@swboyd.mtv.corp.google.com>
-        <20190312182546.24e46c5c@litschi.hi.pengutronix.de>
-        <155249424471.20095.16028115604342624987@swboyd.mtv.corp.google.com>
-Organization: Pengutronix
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1727277AbfCNKS4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Mar 2019 06:18:56 -0400
+Received: from mout.gmx.net ([212.227.17.20]:60433 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727281AbfCNKS4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Mar 2019 06:18:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1552558727;
+        bh=MUtwv8sh+35U8CFGxY4MaoDXm1iD9MVvVE0ZolcZNY4=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=gWcgCsSw28ZYN8ia24LHFSC+kkK/iJSUXUNMbpFr+IENWiPZphOHSMfuu0jQ5XgDx
+         qnMbs/AGK9FSKKzTKgQGDph4uTOj0JKaUz+nNlqorm5BIjRvKaw4je5S1Zd/7gYJD3
+         P5EiMIm5pYXg833h+Wlma4fi1q2CDYsSyqmZC9Ww=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.11.10] ([185.137.174.251]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MQNFY-1hThpz2vyG-00TjFZ; Thu, 14
+ Mar 2019 11:18:47 +0100
+To:     Hans de Goede <hdegoede@redhat.com>
+From:   =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>
+Organization: Privat
+Subject: clk: x86: Stop marking clocks as CLK_IS_CRITICAL is causing
+ non-working hardware.
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <e6e11d5c-988a-aef4-cb8c-9e3bef254b87@gmx.ch>
+Date:   Thu, 14 Mar 2019 11:18:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
+ SeaMonkey/2.49.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
-X-SA-Exim-Mail-From: m.tretter@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+X-Provags-ID: V03:K1:wYURcmuB6nTtXpy8Bv61eXcy042MPd0MkwjFh3TYBo4To5wn6aP
+ X+8YtbjFxMN57rlUKVWcOX19oggPXZIZbA4ePuI657mJoQjlXHdLDRQeO1SRPDWRc/hbNgv
+ iUeMvhiy4/m8t68taJN8ch/ebjFNNWvbqOz9N1b8Ya/w8nifEB9R990Rfvh4JTGKXO37oTl
+ PAV3sNRKNu6hTEqgaCDzQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fEel+8FmGGQ=:68vNPCYtG3lP8AK237M4r/
+ P5yREJ2zFprF4qpH8ZtCzBKpakD3Eptf+uVnsH5vEfN8ak1RmbJ/T7KOuliCE0PV17ZnbByty
+ nCP3a45qa0iCK6LRZETkVJBMqn0G/CfhbuWN5ba/6wBFhMutaBZAB05ne6PWgNIRihWaAXo8c
+ WlNRIEGelnakVXlzr+wI8myeNRnOulySux+SbahefcE22mRoH1snpOElMmRhE9a9ObQEMWL6k
+ CnL994ayL7bf/z+df/ZOtZcWlGlDhVFzg39g9uDOU2DawcwvyFqZlp484KUvr+4EDqOwGtAAx
+ Zix/EiidUw/1LhSIkII+CEAFgQ/zMv64tiuiHmDmtfUNRotJTuV75bzuy5OF7vXFxrYgoJ/Fa
+ K3nXNMwS+p69kSIxvJb7FEuM79yRFB8PuX6ZTMmo0+Gl5JUr8o+u8JlEj5c/9KUYIoXQcywpi
+ Hpw21H8oueAuDcL5giTl8wYbTnidzMerCOohU6ix3fsw8/JRf7cuD8JoUGkdrOsXN6W2LMKQa
+ MrlUpt90IHQiIsC78zVYnn9fxmIySDNLuOsVaZOg6sktLslZTY4yV219TG5mpoWHFz/O1Uzt6
+ rVqrC6bYHtMzR4tuXb7b+21xxU77ZeZ6FZVy2LoP+blLioxrQkQsICUIqD0LcHr0Gl81iZE7l
+ aJUhT6pKdUcIyLxD9wvQAv+M8WYDTxD2G7vitAZ/s6TcH0ApcGV+NV2PJmVsi62Ff+DPHuZ0A
+ rP4U4wxNb5YN02il1/LtVsl038d9tEl0Sp62MkmzEwGBeSJVDgigWywP9d1HcEd1W9T8x84gh
+ 2VDfdNxZa8u8c6ykzFTzhkTUtBtGziDSa//h16CtZy3mb0kZMxLrGS6rSi8uVk/q1iKYo9X94
+ jYZxiaEOwFoHyq0lFmV9ZuCSQiq25PQRJRWITrWZO7BGVCUJ2fbuaUuYr5iP7iehqn3Iooh9S
+ 7SF3DEx42oQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 13 Mar 2019 09:24:04 -0700, Stephen Boyd wrote:
-> Quoting Michael Tretter (2019-03-12 10:25:46)
-> > On Tue, 12 Mar 2019 09:49:21 -0700, Stephen Boyd wrote:  
-> > > Quoting Michael Tretter (2019-03-12 04:00:12)  
-> > > > CLK_FRAC is not set in the divider->flags, but in the hw->flags.
-> > > > 
-> > > > The firmware sets CLK_FRAC for fractional clocks in the clkflag field.
-> > > > When registering the devider, these clkflags are copied to hw->flags.
-> > > > 
-> > > > Moreover, divider->flags field is a u8 type, but CLK_FRAG is BIT(13). So
-> > > > this check would never work.
-> > > > 
-> > > > Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
-> > > > ---
-> > > >  drivers/clk/zynqmp/divider.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-> > > > index a371c66e72ef..fc70950c1e24 100644
-> > > > --- a/drivers/clk/zynqmp/divider.c
-> > > > +++ b/drivers/clk/zynqmp/divider.c
-> > > > @@ -117,7 +117,7 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
-> > > >         bestdiv = zynqmp_divider_get_val(*prate, rate);
-> > > >  
-> > > >         if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) &&
-> > > > -           (divider->flags & CLK_FRAC))
-> > > > +           (clk_hw_get_flags(hw) & CLK_FRAC))    
-> > > 
-> > > CLK_FRAC shouldn't be set in the struct clk_hw::core::flags field. It's
-> > > not a clk framework flag so it shouldn't go there. Please fix the user
-> > > of this flag to place the CLK_FRAC flag somewhere else. Even adding it
-> > > into divider::flags is not a good idea because that numberspace is for
-> > > dividers, and this flag seems to be zynqmp driver specific, so maybe
-> > > just add a bool to the zynqmp_clk_divider?
-> > >   
-> > 
-> > Thanks. The driver sets the clk_hw::core::flags based on a response
-> > from the ATF and this response includes this flag with other clk
-> > frameworks flags. I can test for the flag when registering the clock
-> > and set another flag or a bool for the zynqmp_clk_divider and will do
-> > so in v2.  
-> 
-> Cool. Thanks!
-> 
-> > 
-> > However, this merely sounds like a workaround for an issue in the ATF,
-> > which should not define and use this flag in the first place. 
-> >   
-> 
-> What is ATF doing with these flags? Hopefully ATF and the Linux kernel
-> aren't using the same numberspace to describe these things. For example,
-> I would be concerned if ATF was looking at the CLK_SET_RATE_PARENT flag
-> and passing that value from firmware to the kernel, blindly assuming
-> that the kernel wouldn't change those numbers to be something else.
-> Obviously that type of kernel change would be invasive but it's not an
-> ABI that we've ever published so we're free to do these sorts of things.
+Hello
 
-You mean that the ATF defines macros like
+I have a x86 (Bay Trail) based hardware, where pmc_plt_clk0 is used to
+drive some external hardware (USB HSIC chip attached to the SoC's xHCI
+root port).
 
-	#define CLK_SET_RATE_GATE       BIT(0) /* must be gated across rate change */
-	#define CLK_SET_PARENT_GATE     BIT(1) /* must be gated across re-parent */
-	#define CLK_SET_RATE_PARENT     BIT(2) /* propagate rate change up one level */
+Since commit 88659387b9d509ee4bb8f0b0fe9ce2ff00988b46, the pmc_plt_clk0
+is unconditionally gated off, resulting in a non-working HSIC chip and
+all the USB devices behind it.
 
-in plat/xilinx/zynqmp/pm_service/pm_api_clock.h, sets the flags in the
-response to the Linux driver, and the Linux driver copies the flags
-that it got from the ATF to clk_hw::core::flags like
+What is the proper way to fix this regression:
+- revert this commit?
+- implement some kind of "quirk" in the clk-pmc-atom driver?
+- ???
 
-	init.flags = nodes->flag;
 
-where nodes is the response from the ATF? That's exactly what is happening.
-
-So instead of only translating CLK_FRAC, the driver should actually
-translate all flags in the ATF response to proper clk framework flags
-instead of blindly copying them, right?
-
-Michael
+Thanks
