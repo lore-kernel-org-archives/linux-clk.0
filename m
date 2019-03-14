@@ -2,176 +2,103 @@ Return-Path: <SRS0=Z7Th=RR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D063C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 14:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB554C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 15:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E157520657
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 14:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EAE72184E
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 15:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1552578356;
+	bh=VrEeyG/2ic1d+xc3Z6NpPPnT1+32K3iUIB5ZVSPenGs=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=As5UK/5FkW77FwtNGWXRAd+4HkJ89GqNY7BVteOjqtKsLv6CJYCGbEOlD89WyK1Ro
+	 6myIJ6NrYQqbbbJIHLbeKPgcGNoEZbl5zmenTt4ApCa9Rw467eSaJw988qxYlPS+Fg
+	 5fbm6vf2KUGgrDnbnCNhvYI6HZF99EnmXWawuuNk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbfCNOUn convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Mar 2019 10:20:43 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:34735 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfCNOUn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Mar 2019 10:20:43 -0400
-Received: from localhost (alyon-652-1-66-9.w109-213.abo.wanadoo.fr [109.213.209.9])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id E685010000E;
-        Thu, 14 Mar 2019 14:20:37 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Christian Neubert <christian.neubert.86@gmail.com>
-Cc:     Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for cpu clocks
-In-Reply-To: <20190314134428.GA24768@apalos>
-References: <20190313163558.6705-1-gregory.clement@bootlin.com> <20190314121541.GB19385@apalos> <CAC5LXJcCs4nr-qFOWzUJpUBAJ9ngG-cgeTCVCFBKFc1SPzHMuQ@mail.gmail.com> <20190314134428.GA24768@apalos>
-Date:   Thu, 14 Mar 2019 15:20:37 +0100
-Message-ID: <874l85v8p6.fsf@FE-laptop>
+        id S1726349AbfCNPp4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Mar 2019 11:45:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbfCNPpz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Mar 2019 11:45:55 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E948820811;
+        Thu, 14 Mar 2019 15:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1552578355;
+        bh=VrEeyG/2ic1d+xc3Z6NpPPnT1+32K3iUIB5ZVSPenGs=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=Al0n8OyCn6As8u7pOYS0XtVfZq0kvR7xqASF70c4a+2szuCDF3Tm7X68cqcP42Qeu
+         +VDKhWBFXXOzzZTmfvtA0OggpSPvkYL152UuKHdGZsYQMQT+KRl69kvK9uuyOY5/X5
+         ipTMZ7Tvu5sWizU2Cm3EIiq+ku0UyMIYxoUd72XQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190314093836.6a70abc7@litschi.hi.pengutronix.de>
+References: <20190312110016.29174-1-m.tretter@pengutronix.de> <20190312110016.29174-2-m.tretter@pengutronix.de> <155240936160.20095.7716704029189456788@swboyd.mtv.corp.google.com> <20190312182546.24e46c5c@litschi.hi.pengutronix.de> <155249424471.20095.16028115604342624987@swboyd.mtv.corp.google.com> <20190314093836.6a70abc7@litschi.hi.pengutronix.de>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/5] clk: zynqmp: fix check for fractional clock
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>
+To:     Michael Tretter <m.tretter@pengutronix.de>
+Message-ID: <155257835410.20095.18419234559322879166@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Thu, 14 Mar 2019 08:45:54 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ilias,
- 
- On jeu., mars 14 2019, Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
+Quoting Michael Tretter (2019-03-14 01:38:36)
+> On Wed, 13 Mar 2019 09:24:04 -0700, Stephen Boyd wrote:
+> > Quoting Michael Tretter (2019-03-12 10:25:46)
+> > >=20
+> > > However, this merely sounds like a workaround for an issue in the ATF,
+> > > which should not define and use this flag in the first place.=20
+> > >  =20
+> >=20
+> > What is ATF doing with these flags? Hopefully ATF and the Linux kernel
+> > aren't using the same numberspace to describe these things. For example,
+> > I would be concerned if ATF was looking at the CLK_SET_RATE_PARENT flag
+> > and passing that value from firmware to the kernel, blindly assuming
+> > that the kernel wouldn't change those numbers to be something else.
+> > Obviously that type of kernel change would be invasive but it's not an
+> > ABI that we've ever published so we're free to do these sorts of things.
+>=20
+> You mean that the ATF defines macros like
+>=20
+>         #define CLK_SET_RATE_GATE       BIT(0) /* must be gated across ra=
+te change */
+>         #define CLK_SET_PARENT_GATE     BIT(1) /* must be gated across re=
+-parent */
+>         #define CLK_SET_RATE_PARENT     BIT(2) /* propagate rate change u=
+p one level */
+>=20
+> in plat/xilinx/zynqmp/pm_service/pm_api_clock.h, sets the flags in the
+> response to the Linux driver, and the Linux driver copies the flags
+> that it got from the ATF to clk_hw::core::flags like
+>=20
+>         init.flags =3D nodes->flag;
+>=20
+> where nodes is the response from the ATF? That's exactly what is happenin=
+g.
 
-> Hello Christian,
->> Hi,
->> 
->> I assume you use the 1000 MHz firmware. This does also not work on my Rev 7
->> board. But I'm pretty sure this is not a problem of the patches, because if
->> I take a newer kernel (4.19.20/27) without the patches it also does not
->> work. A kernel 4.19.17 does work for me. My opinion on that is that this is
->> another problem which does just occure now because now the cpu frequency
->> scaling is working with the right frequencies.
-> I am not sure which firmware i am running, i did all my tests on 5.0.0 and
-> changing between governors worked fine without the patches
+Yes, that looks like a strong coupling between firmware and OS
+implemented in a non-obvious way.
 
-Curently my espressobin is broken so I tested the patches on the Armada
-3700 DB and I didn't observe the issue you had.
+>=20
+> So instead of only translating CLK_FRAC, the driver should actually
+> translate all flags in the ATF response to proper clk framework flags
+> instead of blindly copying them, right?
+>=20
 
-The 3700 DB I used is configured to run at 800MHz.
+Sure. The CLK_FRAC will have to be filtered out anyway it sounds like.
 
-Could you apply the following patch and sent me the boot log?
-
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 26ed3c18a239..f814ade5cd80 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -452,14 +452,17 @@ static int clk_pm_cpu_set_parent(struct clk_hw *hw, u8 index)
- 
-        /* Set the parent clock for all the load level */
-        for (load_level = 0; load_level < LOAD_LEVEL_NR; load_level++) {
--               unsigned int reg, mask,  val,
-+               unsigned int reg, mask,  val, old,
-                        offset = ARMADA_37XX_NB_TBG_SEL_OFF;
- 
-                armada_3700_pm_dvfs_update_regs(load_level, &reg, &offset);
- 
-                val = index << offset;
-                mask = ARMADA_37XX_NB_TBG_SEL_MASK << offset;
-+               regmap_read(base, reg, &old);
-                regmap_update_bits(base, reg, mask, val);
-+               pr_err("%s old=%X -> val=0x%X load_level=%d\n",
-+                      __func__, old,  val, load_level);
-        }
-        return 0;
- }
-
-
-
->
-> Regards
-> /Ilias
->> 
->> Ilias Apalodimas <ilias.apalodimas@linaro.org> schrieb am Do., 14. März
->> 2019, 13:15:
->> 
->> > Hi Gregory,
->> > > The clock parenting was not setup properly when DVFS was enabled. It was
->> > > expected that the same clock source was used with and without DVFS which
->> > > was not the case.
->> > >
->> > > This patch fixes this issue, allowing to make the cpufreq support work
->> > > when the CPU clocks source are not the default ones.
->> > >
->> > > Fixes: 92ce45fb875d ("cpufreq: Add DVFS support for Armada 37xx")
->> > > Cc: <stable@vger.kernel.org>
->> > > Reported-by: Christian Neubert <christian.neubert.86@gmail.com>
->> > > Reported-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
->> > > Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> > > ---
->> > >  drivers/clk/mvebu/armada-37xx-periph.c | 11 +++++++++++
->> > >  1 file changed, 11 insertions(+)
->> > >
->> > > diff --git a/drivers/clk/mvebu/armada-37xx-periph.c
->> > b/drivers/clk/mvebu/armada-37xx-periph.c
->> > > index 1f1cff428d78..26ed3c18a239 100644
->> > > --- a/drivers/clk/mvebu/armada-37xx-periph.c
->> > > +++ b/drivers/clk/mvebu/armada-37xx-periph.c
->> > > @@ -671,6 +671,17 @@ static int armada_3700_add_composite_clk(const
->> > struct clk_periph_data *data,
->> > >               map = syscon_regmap_lookup_by_compatible(
->> > >                               "marvell,armada-3700-nb-pm");
->> > >               pmcpu_clk->nb_pm_base = map;
->> > > +
->> > > +             /*
->> > > +              * Use the same parent when DVFS is enabled that the
->> > > +              * default parent received at boot time. When this
->> > > +              * function is called, DVFS is not enabled yet, so we
->> > > +              * get the default parent and we can set the parent
->> > > +              * for DVFS.
->> > > +              */
->> > > +             if (clk_pm_cpu_set_parent(muxrate_hw,
->> > > +
->> >  clk_pm_cpu_get_parent(muxrate_hw)))
->> > > +                     dev_warn(dev, "Failed to setup default parent
->> > clock for DVFS\n");
->> > >       }
->> > >
->> > >       *hw = clk_hw_register_composite(dev, data->name,
->> > data->parent_names,
->> > > --
->> > > 2.20.1
->> > >
->> > Applied this and selected only
->> >
->> > CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y
->> > CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
->> > CONFIG_CPU_FREQ_GOV_POWERSAVE=y
->> >
->> > After changing the governor from 'powersave' to 'performance' the board
->> > completely froze (i even lost access to the serial port)
->> >
->> > Cheers
->> > /Ilias
->> >
-
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
