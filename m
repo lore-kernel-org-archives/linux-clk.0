@@ -1,161 +1,130 @@
-Return-Path: <SRS0=1SIp=RQ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Z7Th=RR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E85C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 19:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12E2C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 08:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D707A213A2
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Mar 2019 19:52:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vlXhpm74"
+	by mail.kernel.org (Postfix) with ESMTP id 720B3204FD
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Mar 2019 08:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfCMTww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Mar 2019 15:52:52 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42816 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfCMTww (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Mar 2019 15:52:52 -0400
-Received: by mail-vs1-f65.google.com with SMTP id c189so1785370vsd.9
-        for <linux-clk@vger.kernel.org>; Wed, 13 Mar 2019 12:52:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cjdeQoiG1CNqxDr3JRQdESRZNgyXUbmkKypj0mAhhmU=;
-        b=vlXhpm74SJXur6SrLE48nJ6+mfVl9SDyFvy0gYifys0dVKBh1a6vAYTa0HH3LNCT9T
-         ogOf9/IClNoYF+1sAShrEgsksL6UpQBj6U+Wd0XZh8+hBT9v1nrCQTiN4Adme141ZDfQ
-         1L7h2ugFFyDqvhYj+Gfiu8KzJewb9VpYRGN7b+oIm9Qxa5tBhXNcfQr4SOsvP3c0LdR1
-         9HraVKYsazq1QpAvqCms8Pk5ybzgs0qDKmdnJiadl/SH/nlfubtR/ru8ORph0lIKZIGQ
-         ikXygKns8wJUPCSqenfcxlK9rBVjIJPqP249sg0A/72DYiXaGxOcIx2XMAGrv8Q7TDnh
-         +nlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cjdeQoiG1CNqxDr3JRQdESRZNgyXUbmkKypj0mAhhmU=;
-        b=t2RIGcZuwOXE9/K3zTJEa0smPGjwUh4l3WIN1/ai90DFGNidoV1EnhQUeOJoom/07l
-         9qM07c8nHpQnVLDDgV8TQ0H/BPbl7T1YBQXlG9sWSSx3JtFhZAyBWCfgIajuz9jSWG3T
-         8ZnBlkujsUCp7KZ70N63OampptADAw6C10fNOxa2Sh56eieSBcfXU70eM/eapMXjPfa4
-         BivOngkT07yyeLmSXVp+Da9pRNVphUjz4tk7pvNNm1Vl1rcVr3pkPV2Ct+FvO0qs2uUd
-         evsNjNV7hlVbNZCjuzJG7tZU1cBZ/GcPym/ADpDczGEhzoPVCKxUHGYFMyhA0/8//fxa
-         4DJw==
-X-Gm-Message-State: APjAAAVy1C1GfY6HSSOlHQEAVIpq0BglKIWO7agkJ0kEYBklPQxSky80
-        gMCeZOQWXCjOuaaQcoxfhvoA1mSDi3eI4PnfW7CwFg==
-X-Google-Smtp-Source: APXvYqyy6VfIy5GhgM6JCvhHivvrjUdIsOIGIpnjpbo1kO4TEY492dPrJ8asN+wprEt5Ev8O4VE6A3e0GjF2r2dnxQY=
-X-Received: by 2002:a67:fe51:: with SMTP id m17mr6089630vsr.35.1552506770869;
- Wed, 13 Mar 2019 12:52:50 -0700 (PDT)
+        id S1726421AbfCNIin (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Mar 2019 04:38:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54353 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbfCNIim (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Mar 2019 04:38:42 -0400
+Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <m.tretter@pengutronix.de>)
+        id 1h4Lss-0005JD-5F; Thu, 14 Mar 2019 09:38:38 +0100
+Date:   Thu, 14 Mar 2019 09:38:36 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>
+Subject: Re: [PATCH 1/5] clk: zynqmp: fix check for fractional clock
+Message-ID: <20190314093836.6a70abc7@litschi.hi.pengutronix.de>
+In-Reply-To: <155249424471.20095.16028115604342624987@swboyd.mtv.corp.google.com>
+References: <20190312110016.29174-1-m.tretter@pengutronix.de>
+        <20190312110016.29174-2-m.tretter@pengutronix.de>
+        <155240936160.20095.7716704029189456788@swboyd.mtv.corp.google.com>
+        <20190312182546.24e46c5c@litschi.hi.pengutronix.de>
+        <155249424471.20095.16028115604342624987@swboyd.mtv.corp.google.com>
+Organization: Pengutronix
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190312065128.24994-1-jiada_wang@mentor.com> <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
-In-Reply-To: <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 13 Mar 2019 20:52:14 +0100
-Message-ID: <CAPDyKFpCOfAURN0=ZfS5yXH-ZrCfpfH+iNUwh=fZZ-wViKYQqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] PM / Domains: Avoid a potential deadlock
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jiada Wang <jiada_wang@mentor.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
+X-SA-Exim-Mail-From: m.tretter@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 13 Mar 2019 at 15:45, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Jiada,
->
-> CC Marek, Jon, Mike, Stephen, linux-clk, linux-renesas-soc
->
-> On Tue, Mar 12, 2019 at 7:51 AM Jiada Wang <jiada_wang@mentor.com> wrote:
-> > Lockdep warns that prepare_lock and genpd->mlock can cause a deadlock
-> > the deadlock scenario is like following:
-> > First thread is probing cs2000
-> > cs2000_probe()
-> >   clk_register()
-> >     __clk_core_init()
-> >       clk_prepare_lock()                            ----> acquires prepare_lock
-> >         cs2000_recalc_rate()
-> >           i2c_smbus_read_byte_data()
-> >             rcar_i2c_master_xfer()
-> >               dma_request_chan()
-> >                 rcar_dmac_of_xlate()
-> >                   rcar_dmac_alloc_chan_resources()
-> >                     pm_runtime_get_sync()
-> >                       __pm_runtime_resume()
-> >                         rpm_resume()
-> >                           rpm_callback()
-> >                             genpd_runtime_resume()   ----> acquires genpd->mlock
-> >
-> > Second thread is attaching any device to the same PM domain
-> > genpd_add_device()
-> >   genpd_lock()                                       ----> acquires genpd->mlock
-> >     cpg_mssr_attach_dev()
-> >       of_clk_get_from_provider()
-> >         __of_clk_get_from_provider()
-> >           __clk_create_clk()
-> >             clk_prepare_lock()                       ----> acquires prepare_lock
-> >
-> > Since currently no PM provider access genpd's critical section
-> > in .attach_dev, and .detach_dev callbacks, so there is no need to protect
-> > these two callbacks with genpd->mlock.
-> > This patch avoids a potential deadlock by moving out .attach_dev and .detach_dev
-> > from genpd->mlock, so that genpd->mlock won't be held when prepare_lock is acquired
-> > in .attach_dev and .detach_dev
-> >
-> > Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
->
-> Thanks a lot for your perseverance!
-> I had tried putting each PM Domain in its own lockdep class, but that
-> didn't help.
->
-> Your patch fixes the lockdep warnings on my Salvator-X(S) boards.
->
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Your solution makes sense, as the .{at,de}tach_dev() callbacks are
-> owned by the individual PM Domain drivers, and not by the genpd core.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> One thing I'm still wondering about: genpd_add_device() is always called
-> with gpd_list_lock held.
-> However, the same cannot be said about genpd_remove_device():
->   - pm_genpd_remove_device() does not take gpd_list_lock, unlike
->     pm_genpd_add_device(),
->   - genpd_dev_pm_detach() does not take gpd_list_lock, while
->     __genpd_dev_pm_attach() does take the lock for adding,
->     but not for removing (in the error patch)?
+On Wed, 13 Mar 2019 09:24:04 -0700, Stephen Boyd wrote:
+> Quoting Michael Tretter (2019-03-12 10:25:46)
+> > On Tue, 12 Mar 2019 09:49:21 -0700, Stephen Boyd wrote:  
+> > > Quoting Michael Tretter (2019-03-12 04:00:12)  
+> > > > CLK_FRAC is not set in the divider->flags, but in the hw->flags.
+> > > > 
+> > > > The firmware sets CLK_FRAC for fractional clocks in the clkflag field.
+> > > > When registering the devider, these clkflags are copied to hw->flags.
+> > > > 
+> > > > Moreover, divider->flags field is a u8 type, but CLK_FRAG is BIT(13). So
+> > > > this check would never work.
+> > > > 
+> > > > Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> > > > ---
+> > > >  drivers/clk/zynqmp/divider.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+> > > > index a371c66e72ef..fc70950c1e24 100644
+> > > > --- a/drivers/clk/zynqmp/divider.c
+> > > > +++ b/drivers/clk/zynqmp/divider.c
+> > > > @@ -117,7 +117,7 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
+> > > >         bestdiv = zynqmp_divider_get_val(*prate, rate);
+> > > >  
+> > > >         if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) &&
+> > > > -           (divider->flags & CLK_FRAC))
+> > > > +           (clk_hw_get_flags(hw) & CLK_FRAC))    
+> > > 
+> > > CLK_FRAC shouldn't be set in the struct clk_hw::core::flags field. It's
+> > > not a clk framework flag so it shouldn't go there. Please fix the user
+> > > of this flag to place the CLK_FRAC flag somewhere else. Even adding it
+> > > into divider::flags is not a good idea because that numberspace is for
+> > > dividers, and this flag seems to be zynqmp driver specific, so maybe
+> > > just add a bool to the zynqmp_clk_divider?
+> > >   
+> > 
+> > Thanks. The driver sets the clk_hw::core::flags based on a response
+> > from the ATF and this response includes this flag with other clk
+> > frameworks flags. I can test for the flag when registering the clock
+> > and set another flag or a bool for the zynqmp_clk_divider and will do
+> > so in v2.  
+> 
+> Cool. Thanks!
+> 
+> > 
+> > However, this merely sounds like a workaround for an issue in the ATF,
+> > which should not define and use this flag in the first place. 
+> >   
+> 
+> What is ATF doing with these flags? Hopefully ATF and the Linux kernel
+> aren't using the same numberspace to describe these things. For example,
+> I would be concerned if ATF was looking at the CLK_SET_RATE_PARENT flag
+> and passing that value from firmware to the kernel, blindly assuming
+> that the kernel wouldn't change those numbers to be something else.
+> Obviously that type of kernel change would be invasive but it's not an
+> ABI that we've ever published so we're free to do these sorts of things.
 
-That's correctly observed and it's something that needs to be fixed in
-the long run. Although I am not sure that we should use the
-gpd_list_lock...
+You mean that the ATF defines macros like
 
-There are race conditions while removing a device at the same time as
-the genpd is removed. As a matter of fact, even the debugfs isn't
-correctly dropped, when a genpd is removed. However, because almost
-none it ever removing a genpd, this isn't a problem in practice.
+	#define CLK_SET_RATE_GATE       BIT(0) /* must be gated across rate change */
+	#define CLK_SET_PARENT_GATE     BIT(1) /* must be gated across re-parent */
+	#define CLK_SET_RATE_PARENT     BIT(2) /* propagate rate change up one level */
 
-Anyway, I have a TODO list for genpd (starting to be quite longe) and
-this one is already on it, whatever that means. :-)
+in plat/xilinx/zynqmp/pm_service/pm_api_clock.h, sets the flags in the
+response to the Linux driver, and the Linux driver copies the flags
+that it got from the ATF to clk_hw::core::flags like
 
-[...]
+	init.flags = nodes->flag;
 
-Kind regards
-Uffe
+where nodes is the response from the ATF? That's exactly what is happening.
+
+So instead of only translating CLK_FRAC, the driver should actually
+translate all flags in the ATF response to proper clk framework flags
+instead of blindly copying them, right?
+
+Michael
