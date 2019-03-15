@@ -2,252 +2,178 @@ Return-Path: <SRS0=u1Nm=RS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFC6C4360F
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Mar 2019 10:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86304C4360F
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Mar 2019 16:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E6F4218AC
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Mar 2019 10:02:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54461218FD
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Mar 2019 16:54:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fDvhQF16"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qttjRic1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfCOKCB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Mar 2019 06:02:01 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39943 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbfCOKCA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Mar 2019 06:02:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t5so8898879wri.7
-        for <linux-clk@vger.kernel.org>; Fri, 15 Mar 2019 03:01:59 -0700 (PDT)
+        id S1729632AbfCOQys (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Mar 2019 12:54:48 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46152 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729444AbfCOQyr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Mar 2019 12:54:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 33so10317865wrb.13
+        for <linux-clk@vger.kernel.org>; Fri, 15 Mar 2019 09:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=aTIK0LCsOpjbqNnkr9WKIuo1B5wu5hVVeCjiOVmUEPU=;
-        b=fDvhQF16DBxOGbX1QngOBDEMicHBX/Tg8D1582P6dCrI944PyR7qeT0BTjy2luR0aJ
-         UKMOBoEMr9cc4EpcFe5Wl+FzXaqeJrOPW8a2CkWmMV2Vboy7LHqJ3WU3ZIxWG4TiRQts
-         hgFvsE5wyQuq5BhLWZ64VCJaRIzk91hD2caBu9hGMdf4HXe4viPqR62k/ovtFpji7cTG
-         pld1Vv3804R9qtnoQ5vmYc5DvEOyvjDX9KhlIvB0gkm8IKGxzCAApgfu0VoQ6eQQtIOC
-         Rf6sQ1wghUjwQghEkGwg4RwIMYZ97ftDO76ZKTmuc4Z4BDf/RAGhW03SLB7AvxAN2JYm
-         I3ew==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pXeZMnL43+Lsa/ffo/nYk6kVF563RsBvvUL09b37Wks=;
+        b=qttjRic1kG4VhDMuMfhx7d9HCnBCE6tbysXUuTi8KtZmvM8YF0T9dM3HnTNLf13byR
+         o76o6wREjaBZA14OlIZJ+GTWB0dSImWtTIJp9S9D6HnZG+K/n2rQgIqKEMxaMxY6U0if
+         CGiGVwR/2tGsiL9IYw2BaGFmE/j9TFKmzVc5e8uZIHpBr8t/GO3flV+QWsDVEfsx7f4t
+         ozRN9jwnQvIkgzYDYwLpizwjcU7psVfi5T1s1p/46IJe8GkHkDmi1o5NngXUGLsWFtKN
+         C11b9N9Q25e6UZrRJ6ruateBuf4qZGoOvTVeCcVfWZRnTAfAOG+djLBrv8f4SN8gp98+
+         U5Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=aTIK0LCsOpjbqNnkr9WKIuo1B5wu5hVVeCjiOVmUEPU=;
-        b=n7OfIG43CmqHRoc2P9B6J9duPenY6fQtdMpqt7WO2U8vcQGCqJLyD2wrqmaazbDWbj
-         vu0lxsyGnFw2tmVTCIUKbc82J6yZnJ+hxOuTq7xzZOpoC8xy+Gz/+Un4qAGa3TSoDYAW
-         4jqZPxbOfGMK5umzOOO7ifUlLRXs+hscpfmfGyclxGf1bjcXO2NWoO58/onhhJL2SjNg
-         nhkXzC3jCp7FUGQjwogaLVQWL16apYwxNh3xo2m2urox0Xe2uNTAcR3WK76U/QFkjYyw
-         GWBIlwfaBQK4o+PqVaMlFrhNRJcQqhutqGlPqJhRnTCVz5/UnrLjXxpxvULDzz6MBAD2
-         yWBg==
-X-Gm-Message-State: APjAAAUSaOc0pkJcpDduuS48WG+w02t0qQ7QlbOeOvV2SlGsdnFvx29L
-        w0Sf7AEvSA/GsAMeF/FZ+pxvFQ==
-X-Google-Smtp-Source: APXvYqyX8dtN1a10Wf0OZkEc8xCBgs/sCpmU0yNr9Yiq5hi+JetTu2u6f0t8PeUWkKTdIdy42cfspQ==
-X-Received: by 2002:a5d:500c:: with SMTP id e12mr1866929wrt.27.1552644117002;
-        Fri, 15 Mar 2019 03:01:57 -0700 (PDT)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id v20sm7060865wmj.2.2019.03.15.03.01.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 15 Mar 2019 03:01:55 -0700 (PDT)
-Message-ID: <3e6aa4c392ccdd3bac76b556645139536e61e5e6.camel@baylibre.com>
-Subject: Re: [PATCH v2 6/8] clk: Allow parents to be specified without
- string names
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 15 Mar 2019 11:01:53 +0100
-In-Reply-To: <20190226223429.193873-7-sboyd@kernel.org>
-References: <20190226223429.193873-1-sboyd@kernel.org>
-         <20190226223429.193873-7-sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pXeZMnL43+Lsa/ffo/nYk6kVF563RsBvvUL09b37Wks=;
+        b=KusGCCrii7dmoTMQ8F2Hplx63IscfIu89Gqz9MGLfuGMtQGD0gPiclgVHp6+ORce+m
+         GyiDovkFbVHErO6ys8gMNLJQFqO80ObWGjaFH6jtseL4plS4XSB9F7lAQHNO2kcagbJs
+         SZIM36SMOdvvjnMvoO0J8pYVAKjPk/d5L+Onx1bkJzXmYScOBhMoERouWh9fYy6Wmrt9
+         jCjMKZcGEmkNCp42PNXy6n7rrR8xui1MnDVREiIO+cta9fWzDaXmM85vqLxLT//fYQ3f
+         /KbR82ypjKt0s/tZo3G7OTQR1MLlhFvol7GJX0TuXtgdbCfeSSk+TMp9Iik3L5geOyTi
+         w3ig==
+X-Gm-Message-State: APjAAAUefhO7QNiCpz/9FYrDY8LlggBDg0DHR2qii1ZX81di+5rJrOui
+        wtg1nyacBm3VwSh4Mr+65iw9qA==
+X-Google-Smtp-Source: APXvYqz2oOQj2N11YZUYi7CjBMA19+hdHalS7BvNh7GZIFe3g1N8cBabnQk5dmRRU2zuGQT9EoDCOQ==
+X-Received: by 2002:a5d:66c2:: with SMTP id k2mr1678734wrw.312.1552668885066;
+        Fri, 15 Mar 2019 09:54:45 -0700 (PDT)
+Received: from [10.2.4.163] (aputeaux-684-1-31-143.w90-86.abo.wanadoo.fr. [90.86.86.143])
+        by smtp.gmail.com with ESMTPSA id z12sm3632276wmf.31.2019.03.15.09.54.43
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Mar 2019 09:54:43 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/3] Add support of busfreq
+To:     Michael Turquette <mturquette@baylibre.com>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Patrick Titiano <ptitiano@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Emilio Lopez <emilio@elopez.com.ar>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Zening Wang <zening.wang@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <ccaione@baylibre.com>
+References: <20190313193408.23740-1-abailon@baylibre.com>
+ <CAEG3pNA+U1tw4sWq9i2cTni6QKQkLyd3qyZXd2i8M7WFDF4ZsQ@mail.gmail.com>
+From:   Alexandre Bailon <abailon@baylibre.com>
+Message-ID: <8af96425-a6f5-0114-7abb-c2a67b952e1b@baylibre.com>
+Date:   Fri, 15 Mar 2019 17:55:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <CAEG3pNA+U1tw4sWq9i2cTni6QKQkLyd3qyZXd2i8M7WFDF4ZsQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2019-02-26 at 14:34 -0800, Stephen Boyd wrote:
-> The common clk framework is lacking in ability to describe the clk
-> topology without specifying strings for every possible parent-child
-> link. There are a few drawbacks to the current approach:
+Hi Mike,
+On 3/15/19 5:17 PM, Michael Turquette wrote:
+> Hi Alex,
 > 
->  1) String comparisons are used for everything, including describing
->  topologies that are 'local' to a single clock controller.
+> Some nitpick review comments below.
 > 
->  2) clk providers (e.g. i2c clk drivers) need to create globally unique
->  clk names to avoid collisions in the clk namespace, leading to awkward
->  name generation code in various clk drivers.
+> On Wed, Mar 13, 2019 at 12:33 PM Alexandre Bailon <abailon@baylibre.com> wrote:
+>>
+>> This series implements busfreq, a framework used in MXP's
 > 
->  3) DT bindings may not fully describe the clk topology and linkages
->  between clk controllers because drivers can easily rely on globally unique
->  strings to describe connections between clks.
+> s/MXP/NXP/
 > 
-> This leads to confusing DT bindings, complicated clk name generation
-> code, and inefficient string comparisons during clk registration just so
-> that the clk framework can detect the topology of the clk tree.
-> Furthermore, some drivers call clk_get() and then __clk_get_name() to
-> extract the globally unique clk name just so they can specify the parent
-> of the clk they're registering. We have of_clk_parent_fill() but that
-> mostly only works for single clks registered from a DT node, which isn't
-> the norm. Let's simplify this all by introducing two new ways of
-> specifying clk parents.
+>> tree to scale the interconnect and dram frequencies.
+>> In the vendor tree, device's driver request for a
+>> performance level, which is used to scale the frequencies.
+>> This series implements it using the interconnect framework.
+>> Devices' driver request for bandwidth which is use by busfreq
+>> to determine a performance level, and then scale the frequency.
+>>
+>> Busfreq is quite generic. It could be used for any i.MX SoC.
+>> A busfreq platform driver just have to define a list of
+>> interconnect nodes, and some OPPs.
+>>
+>> This series is sent as RFC mostly because the current support
+>> of i.MX SoC won't benefit of busfreq framework, because the
+>> clocks' driver don't support interconnect / dram frequency
+>> scaling.
 > 
-> The first method is an array of pointers to clk_hw structures
-> corresponding to the parents at that index. This works for clks that are
-> registered when we have access to all the clk_hw pointers for the
-> parents.
+> In your v2 cover letter could you post a link to a git branch that has
+> everything integrated that is needed to test the series? I guess this
+> is similar to what Aisheng asked for already.
+I will do it.
 > 
-> The second method is a mix of clk_hw pointers and strings of local and
-> global parent clk names. If the .name member of the map is set we'll
-> look for that clk by performing a DT based lookup of the device the clk
-> is registered with and the .name specified in the map. If that fails,
-> we'll fallback to the .fallback member and perform a global clk name
-> lookup like we've always done before.
+>> As exemple, this series implements busfreq for i.MX8MM whose
+>> upstreaming is in progress. Because this relies on ATF to
+>> do the frequency scaling, it won't be hard make it work.
 > 
-> Using either one of these new methods is entirely optional. Existing
-> drivers will continue to work, and they can migrate to this new approach
-> as they see fit. Eventually, we'll want to get rid of the 'parent_names'
-> array in struct clk_init_data and use one of these new methods instead.
+> It's not clear to me whether this series actual scales the dram
+> frequency based on what you said above. Is it just theoretical or do
+> you have it working with a pile of out-of-tree patches? Would be good
+> to include that pile of patches in your integration branch that I
+> suggested above.
+The current series only introduce busfreq generic driver, and the 
+busfreq driver for the imx8mm.
+As is, the imx8mm driver will just be loaded, but do nothing because
+none of the drivers have been updated to request bandwidth using the 
+interconnect framework.
+In addition, the current clock driver of imx8mm doesn't allow dram 
+frequency scaling, so if busfreq driver tries, it will fail (should be 
+harmless because any other clocks should restored to their previous rate).
+
+My intent was to sent a first draft o busfreq, to get some feedback, 
+before to send a more complete, and fully functional series.
+
+Thanks,
+Alexandre
 > 
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Jeffrey Hugo <jhugo@codeaurora.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk.c            | 260 ++++++++++++++++++++++++++---------
->  include/linux/clk-provider.h |  19 +++
->  2 files changed, 217 insertions(+), 62 deletions(-)
-
-Sorry for the delay.
-
-With the fix you sent to Jeffrey
-Tested by porting the aoclk controller of Amlogic g12a SoC.
-This allowed to test
- * hws only table
- * parent_data with a mix of hw pointers and fw_name (with different input
-controllers and also an input that is optional and never provided)
-
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-
-With the small comment below
-
-Reviewed-by Jerome Brunet <jbrunet@baylibre.com>
-
-
+> Thanks,
+> Mike
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 937b8d092d17..3d01e8c56400 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -39,6 +39,13 @@ static LIST_HEAD(clk_notifier_list);
->  
-
-[...]
-
->  
-> +static int clk_cpy_name(const char *dst, const char *src, bool must_exist)
-> +{
-> +	if (!src) {
-> +		if (must_exist)
-> +			return -EINVAL;
-> +		return 0;
-> +	}
-> +
-> +	dst = kstrdup_const(src, GFP_KERNEL);
-> +	if (!dst)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_core_populate_parent_map(struct clk_core *core)
-> +{
-> +	const struct clk_init_data *init = core->hw->init;
-> +	u8 num_parents = init->num_parents;
-> +	const char * const *parent_names = init->parent_names;
-> +	const struct clk_hw **parent_hws = init->parent_hws;
-> +	const struct clk_parent_data *parent_data = init->parent_data;
-> +	int i, ret = 0;
-> +	struct clk_parent_map *parents, *parent;
-> +
-> +	if (!num_parents)
-> +		return 0;
-> +
-> +	/*
-> +	 * Avoid unnecessary string look-ups of clk_core's possible parents by
-> +	 * having a cache of names/clk_hw pointers to clk_core pointers.
-> +	 */
-> +	parents = kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
-> +	core->parents = parents;
-> +	if (!parents)
-> +		return -ENOMEM;
-> +
-> +	/* Copy everything over because it might be __initdata */
-> +	for (i = 0, parent = parents; i < num_parents; i++, parent++) {
-> +		if (parent_names) {
-> +			/* throw a WARN if any entries are NULL */
-> +			WARN(!parent_names[i],
-> +				"%s: invalid NULL in %s's .parent_names\n",
-> +				__func__, core->name);
-> +			ret = clk_cpy_name(parent->name, parent_names[i],
-> +					   true);
-> +		} else if (parent_data) {
-
-While testing, I mistakenly left both parent_names and parent_data. I was
-surprised that parent_data did not take precedence of parent_names.
-
-Maybe it should ? (... but I understand we are not supposed to provide both)
-
-> +			parent->hw = parent_data[i].hw;
-> +			ret = clk_cpy_name(parent->fw_name,
-> +					   parent_data[i].fw_name, false);
-> +			if (!ret)
-> +				ret = clk_cpy_name(parent->name,
-> +						   parent_data[i].name,
-> +						   false);
-> +		} else if (parent_hws) {
-> +			parent->hw = parent_hws[i];
-> +		} else {
-
-Maybe there should also some kinda of check to verify if more than one option
-(among hws, parent_data and parent_names) was provided and throw a warn ?
-
-Could be useful with drivers move away from parent_names ?
-
-> +			ret = -EINVAL;
-> +			WARN(1, "Must specify parents if num_parents > 0\n");
-> +		}
-
-
-
-> +
-> +		if (ret) {
-> +			do {
-> +				kfree_const(parents[i].name);
-> +				kfree_const(parents[i].fw_name);
-> +			} while (--i >= 0);
-> +			kfree(parents);
-> +
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+>>
+>> As exemple, this series implements busfreq for
+>> Alexandre Bailon (3):
+>>    drivers: interconnect: Add a driver for i.MX SoC
+>>    drivers: interconnect: imx: Add support of i.MX8MM
+>>    dt-bindings: interconnect: Document fsl,busfreq-imx8mm bindings
+>>
+>>   .../bindings/interconnect/imx8mm.txt          |  24 +
+>>   drivers/interconnect/Kconfig                  |   1 +
+>>   drivers/interconnect/Makefile                 |   1 +
+>>   drivers/interconnect/imx/Kconfig              |  17 +
+>>   drivers/interconnect/imx/Makefile             |   2 +
+>>   drivers/interconnect/imx/busfreq-imx8mm.c     | 132 ++++
+>>   drivers/interconnect/imx/busfreq.c            | 570 ++++++++++++++++++
+>>   drivers/interconnect/imx/busfreq.h            | 123 ++++
+>>   include/dt-bindings/interconnect/imx8mm.h     |  37 ++
+>>   9 files changed, 907 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/interconnect/imx8mm.txt
+>>   create mode 100644 drivers/interconnect/imx/Kconfig
+>>   create mode 100644 drivers/interconnect/imx/Makefile
+>>   create mode 100644 drivers/interconnect/imx/busfreq-imx8mm.c
+>>   create mode 100644 drivers/interconnect/imx/busfreq.c
+>>   create mode 100644 drivers/interconnect/imx/busfreq.h
+>>   create mode 100644 include/dt-bindings/interconnect/imx8mm.h
+>>
+>> --
+>> 2.19.2
+> 
+> 
 > 
 
