@@ -1,197 +1,88 @@
-Return-Path: <SRS0=u1Nm=RS=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=kppf=RU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D55C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Mar 2019 17:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A00C43381
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Mar 2019 17:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4565B218D0
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Mar 2019 17:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552670222;
-	bh=V3/XgsQWVmPCXl4GDlQD79hp94lmq10+5QAqPCddwss=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=uZXFtYdMYOayOpJvKRrqNGr6MQxuZTz5YiwnIpPjU5EpgAiSCQ6GyrzsJm7id2cUV
-	 uARboRPn9FcNrfAhUJ/hon9Uf0WEROd6mwnhuO7taEz1WcE7Dmo6hldqzPjSFY/wgc
-	 lrfEuWCAKPCO1fSV8hMMVbnCUjorxQ+4mTEg/TB4=
+	by mail.kernel.org (Postfix) with ESMTP id CD48D20857
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Mar 2019 17:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfCORRB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Mar 2019 13:17:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47354 "EHLO mail.kernel.org"
+        id S1726639AbfCQRr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Mar 2019 13:47:59 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:51214 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727001AbfCORRB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Mar 2019 13:17:01 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FA8721019;
-        Fri, 15 Mar 2019 17:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1552670220;
-        bh=V3/XgsQWVmPCXl4GDlQD79hp94lmq10+5QAqPCddwss=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=DGyXZRh4ufdls23OelKLRSrvihXBHg7ql0YkMRNtlzVz/aSCH1IKWvAVeFJEtn50M
-         VtJoAUMEx11YABdxMbMp3h6+Dr9/SzKdVS85BR0CDCxDTrkg9XqJUgTF8Z7zFTvHjt
-         3cwQh6PAh0yn6R6GHf5FAC3BhNVPQkSCFDKQPLfs=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3e6aa4c392ccdd3bac76b556645139536e61e5e6.camel@baylibre.com>
-References: <20190226223429.193873-1-sboyd@kernel.org> <20190226223429.193873-7-sboyd@kernel.org> <3e6aa4c392ccdd3bac76b556645139536e61e5e6.camel@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 6/8] clk: Allow parents to be specified without string names
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Message-ID: <155267021941.20095.16439182841724325601@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 15 Mar 2019 10:16:59 -0700
+        id S1726115AbfCQRr7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 17 Mar 2019 13:47:59 -0400
+X-Greylist: delayed 484 seconds by postgrey-1.27 at vger.kernel.org; Sun, 17 Mar 2019 13:47:58 EDT
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id E76DDA542E;
+        Sun, 17 Mar 2019 17:39:49 +0000 (UTC)
+Message-ID: <2485e6c52810df376a0df6eb7f749f35b7b19044.camel@aosc.xyz>
+Subject: Re: [PATCH 0/7] Timer & SPI support for Allwinner suniv F1C100s
+From:   Icenowy Zheng <icenowy@aosc.xyz>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mesih Kilinc <mesihkilinc@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 18 Mar 2019 01:39:44 +0800
+In-Reply-To: <cover.1549875778.git.mesihkilinc@gmail.com>
+References: <cover.1549875778.git.mesihkilinc@gmail.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-03-15 03:01:53)
-> On Tue, 2019-02-26 at 14:34 -0800, Stephen Boyd wrote:
-> > ---
-> >  drivers/clk/clk.c            | 260 ++++++++++++++++++++++++++---------
-> >  include/linux/clk-provider.h |  19 +++
-> >  2 files changed, 217 insertions(+), 62 deletions(-)
->=20
-> Sorry for the delay.
->=20
-> With the fix you sent to Jeffrey
-> Tested by porting the aoclk controller of Amlogic g12a SoC.
-> This allowed to test
->  * hws only table
->  * parent_data with a mix of hw pointers and fw_name (with different input
-> controllers and also an input that is optional and never provided)
->=20
-> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
->=20
-> With the small comment below
->=20
-> Reviewed-by Jerome Brunet <jbrunet@baylibre.com>
->=20
+在 2019-02-11一的 12:21 +0300，Mesih Kilinc写道：
+> This is followup series for F1C100s initial support patchset. 
+> All patches merged except patch 1 ~ 2 which is related to timer.
+> I am resending those since they are already have Acked tags.
 
-Awesome. Thanks! I need to Cc Rob H to hopefully get an ack on the
-concept of relying on DT so I'll resend this series again next week. It
-would also be nice if I can throw in a couple more patches to let
-drivers specify a DT node when registering a clk if they don't have a
-struct device on hand and let drivers lookup with clk_lookups somehow.
+Ping.
 
->=20
-> >=20
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 937b8d092d17..3d01e8c56400 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -39,6 +39,13 @@ static LIST_HEAD(clk_notifier_list);
-> > =20
->=20
-> [...]
->=20
-> > =20
-> > +static int clk_cpy_name(const char *dst, const char *src, bool must_ex=
-ist)
-> > +{
-> > +     if (!src) {
-> > +             if (must_exist)
-> > +                     return -EINVAL;
-> > +             return 0;
-> > +     }
-> > +
-> > +     dst =3D kstrdup_const(src, GFP_KERNEL);
-> > +     if (!dst)
-> > +             return -ENOMEM;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int clk_core_populate_parent_map(struct clk_core *core)
-> > +{
-> > +     const struct clk_init_data *init =3D core->hw->init;
-> > +     u8 num_parents =3D init->num_parents;
-> > +     const char * const *parent_names =3D init->parent_names;
-> > +     const struct clk_hw **parent_hws =3D init->parent_hws;
-> > +     const struct clk_parent_data *parent_data =3D init->parent_data;
-> > +     int i, ret =3D 0;
-> > +     struct clk_parent_map *parents, *parent;
-> > +
-> > +     if (!num_parents)
-> > +             return 0;
-> > +
-> > +     /*
-> > +      * Avoid unnecessary string look-ups of clk_core's possible paren=
-ts by
-> > +      * having a cache of names/clk_hw pointers to clk_core pointers.
-> > +      */
-> > +     parents =3D kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
-> > +     core->parents =3D parents;
-> > +     if (!parents)
-> > +             return -ENOMEM;
-> > +
-> > +     /* Copy everything over because it might be __initdata */
-> > +     for (i =3D 0, parent =3D parents; i < num_parents; i++, parent++)=
- {
-> > +             if (parent_names) {
-> > +                     /* throw a WARN if any entries are NULL */
-> > +                     WARN(!parent_names[i],
-> > +                             "%s: invalid NULL in %s's .parent_names\n=
-",
-> > +                             __func__, core->name);
-> > +                     ret =3D clk_cpy_name(parent->name, parent_names[i=
-],
-> > +                                        true);
-> > +             } else if (parent_data) {
->=20
-> While testing, I mistakenly left both parent_names and parent_data. I was
-> surprised that parent_data did not take precedence of parent_names.
->=20
-> Maybe it should ? (... but I understand we are not supposed to provide bo=
-th)
+Could you please merge these timer-related patches?
 
-I don't think we can. We have a problem where drivers don't initialize
-the init structure properly, opting to just throw it on the stack and
-leave junk in there that they overwrite. We'd have to go through all the
-init structures and initialize them. I suppose we could make a macro for
-that:
+Thanks!
+Icenowy
 
-	DECLARE_CLK_INIT_DATA(init);
-
-or something like that that does this. We could bury a magic number in
-there under some debug option too so that we can make sure drivers are
-doing this properly. Otherwise we're left to doing these weird tricks
-like I've done here.
-
-Regardless. I'll have to add a comment to this fact in the code. Thanks.
-
->=20
-> > +                     parent->hw =3D parent_data[i].hw;
-> > +                     ret =3D clk_cpy_name(parent->fw_name,
-> > +                                        parent_data[i].fw_name, false);
-> > +                     if (!ret)
-> > +                             ret =3D clk_cpy_name(parent->name,
-> > +                                                parent_data[i].name,
-> > +                                                false);
-> > +             } else if (parent_hws) {
-> > +                     parent->hw =3D parent_hws[i];
-> > +             } else {
->=20
-> Maybe there should also some kinda of check to verify if more than one op=
-tion
-> (among hws, parent_data and parent_names) was provided and throw a warn ?
->=20
-> Could be useful with drivers move away from parent_names ?
-
-Same thing. It would be nice but we're sort of unable to do so unless we
-do what I suggest above. Should we do it?
+> 
+> Our dt-bindings for F1C100s are merged, we can now use them at our 
+> device tree source - patch 3.
+> 
+> Also this series add spi support and enables spi flash at Lichee-pi
+> Nano
+> in patch 4 ~ 7. This patches are based on Icenowy's work.
+> 
+> Thanks!
+> 
+> Mesih Kilinc (7):
+>   dt-bindings: timer: Add Allwinner suniv timer
+>   clocksource: sun4i: add a compatible for suniv
+>   ARM: dts: suniv: Add dt-binding headers for F1C100s
+>   dt-bindings: spi: Add Support for Allwinner F1C100s
+>   ARM: dts: suniv: Add SPI device-tree nodes
+>   ARM: dts: suniv: Add pinmux for SPI0 and SPI1 of F1C100s
+>   ARM: dts: f1c100s: Activate SPI flash on Lichee Pi Nano
+> 
+>  .../devicetree/bindings/spi/spi-sun6i.txt          |  5 +-
+>  .../bindings/timer/allwinner,sun4i-timer.txt       |  4 +-
+>  arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  | 13 ++++++
+>  arch/arm/boot/dts/suniv-f1c100s.dtsi               | 53
+> +++++++++++++++++++---
+>  drivers/clocksource/timer-sun4i.c                  |  5 +-
+>  5 files changed, 70 insertions(+), 10 deletions(-)
+> 
 
