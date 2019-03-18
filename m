@@ -2,161 +2,136 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73514C4360F
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 12:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725A3C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 12:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37A0820854
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 12:21:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wDBMklCl"
+	by mail.kernel.org (Postfix) with ESMTP id 4857A20850
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 12:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfCRMVU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 08:21:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40390 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727028AbfCRMVT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 08:21:19 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t5so16796969wri.7
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 05:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=P9/cen8CVbo+znHQQsAo4qiCUTF1XfHWG/NaxmxJ1qA=;
-        b=wDBMklCl7RpOVCjc4ngbvw0XsaKizFRJBjb5z0hbRirLt9fxoDM5jEEnJ+wwyaitGb
-         mJbswo+LQ2PRFIeofidt7OddFbSXT25jMMgnPgElUe9B8LU9EDVxaXn5e9sAgd0e7htC
-         9EpL5T7QrfepvX08Ha5yWSdw3BmGhI6vagX8qufmj1mw5z3XJ6kJ9I+JX2rEVahNF9NJ
-         GpANQ9jZ9KxCODkGvcc6CahonZzfmDJ8jLIfpunY1xsPPSh+u692389SMAmMZJixBdlt
-         NQ8Jp0iw+lCmFQaQjjxJdf1Xr9/HBXVhtC9C4GxD90CEbmU+Q+Dny8vTBG8SDY0V/3jO
-         W3Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P9/cen8CVbo+znHQQsAo4qiCUTF1XfHWG/NaxmxJ1qA=;
-        b=Smf/F6SXY9ZqPYs+ZNobliMcPZdYuzZClUPzrISbhPSwGJ387JmKOYp9eI4zHkn1yV
-         FO8JgQ7ymV0Wf1khxqQMucBihVEfIZU3RPk3t5a9VWyfCJlmJ4H13lBWAg1De43edHfy
-         92I3jjAfK1sGn2aAOnBu8+uQjxkuBB//vGKCnrJYbY0QGcUsotvRJaQHm/X4vcCcUE9i
-         Bi1XBKFTblzossP5ImaXm+A2yQN7LZVSYMDspvA5zDq5ty/cOcBjZm9UREPdOhOqcQ44
-         nxBXZnXsTH56htZJd/zgcsLmW4mQrrOXwPaHkMSm/B62UOR3+Pz4pxz+7lhMUaGVRIf6
-         rTuQ==
-X-Gm-Message-State: APjAAAUo07NFxEGSoxYSmJCMKHWDyL0pNZ4VY2rQruOuiuwCDD22C+N0
-        UhMoUpzf9FE5dK6mDvjqnXCbIQ==
-X-Google-Smtp-Source: APXvYqzpKQOS80Qxf1vky/6E7HcreVeX3wYaRUt2pyU2wLKMDXuf64WO0snBlm7gZFseK74TPVB2gg==
-X-Received: by 2002:a5d:54c4:: with SMTP id x4mr5405071wrv.296.1552911677983;
-        Mon, 18 Mar 2019 05:21:17 -0700 (PDT)
-Received: from apalos (ppp-94-64-206-130.home.otenet.gr. [94.64.206.130])
-        by smtp.gmail.com with ESMTPSA id y7sm15413322wmi.34.2019.03.18.05.21.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Mar 2019 05:21:17 -0700 (PDT)
-Date:   Mon, 18 Mar 2019 14:21:13 +0200
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Christian Neubert <christian.neubert.86@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for
- cpu clocks
-Message-ID: <20190318122113.GA4834@apalos>
-References: <20190313163558.6705-1-gregory.clement@bootlin.com>
- <20190314121541.GB19385@apalos>
- <CAC5LXJcCs4nr-qFOWzUJpUBAJ9ngG-cgeTCVCFBKFc1SPzHMuQ@mail.gmail.com>
- <20190314134428.GA24768@apalos>
- <874l85v8p6.fsf@FE-laptop>
- <20190318112844.GA1708@apalos>
- <87h8c0s955.fsf@FE-laptop>
+        id S1726788AbfCRMlh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 08:41:37 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:58253 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbfCRMlg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 08:41:36 -0400
+X-Originating-IP: 90.88.22.102
+Received: from aptenodytes (aaubervilliers-681-1-80-102.w90-88.abo.wanadoo.fr [90.88.22.102])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id A971A4000B;
+        Mon, 18 Mar 2019 12:41:32 +0000 (UTC)
+Message-ID: <ea4f86798466bd9680f064f663a50450452509bc.camel@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH 11/14] ARM: sunxi: dts: s3/s3l/v3: add
+ DTSI files for S3/S3L/V3 SoCs
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Date:   Mon, 18 Mar 2019 13:41:32 +0100
+In-Reply-To: <20190312152256.35574-12-icenowy@aosc.io>
+References: <20190312152256.35574-1-icenowy@aosc.io>
+         <20190312152256.35574-12-icenowy@aosc.io>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.0 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h8c0s955.fsf@FE-laptop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Gregory, 
+Hi,
 
-> >> 
-> > [   14.909524] clk_pm_cpu_set_parent old=28004840 -> val=0x6000000 load_level=0
-> > [   14.916424] clk_pm_cpu_set_parent old=2E004840 -> val=0x600 load_level=1
-> > [   14.923315] clk_pm_cpu_set_parent old=8880A8C0 -> val=0x6000000 load_level=2
-> > [   14.930572] clk_pm_cpu_set_parent old=8E80A8C0 -> val=0x600 load_level=3
-> >
-> >
-> > Let me know if you need anything else
+Le mardi 12 mars 2019 à 23:22 +0800, Icenowy Zheng a écrit :
+> The Allwinner S3/S3L/V3 SoCs all share the same die with the V3s SoC,
+> but with more GPIO wired out of the package.
 > 
-> Could you show me the output of "cat /sys/kernel/debug/clk/clk_summary"
-> 
-root@localhost ~ # cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect                                duty
-   clock                          count    count    count        rate   accuracy phase  cycle
----------------------------------------------------------------------------------------------
- xtal                                 2        3        0    25000000          0     0  50000
-    i2c_1                             0        0        0    25000000          0     0  50000
-    i2c_2                             0        0        0    25000000          0     0  50000
-    avs                               0        0        0    25000000          0     0  50000
-    TBG-B-S                           2        2        0  1000000000          0     0  50000
-       cpu                            0        0        0   200000000          0     0  50000
-       usb32_ss_sys                   1        1        0   125000000          0     0  50000
-       usb32_usb2_sys                 0        0        0   100000000          0     0  50000
-       gbe_125                        0        0        0   125000000          0     0  50000
-          gbe0_125                    0        0        0   125000000          0     0  50000
-          gbe1_125                    0        0        0   125000000          0     0  50000
-       gbe_core                       1        1        0   250000000          0     0  50000
-          gbe_bm                      0        0        0   250000000          0     0  50000
-          gbe0_core                   1        1        0   250000000          0     0  50000
-          gbe1_core                   0        0        0   250000000          0     0  50000
-       eip97                          0        0        0   500000000          0     0  50000
-       trace                          0        0        0  1000000000          0     0  50000
-       ddr_fclk                       0        0        0   125000000          0     0  50000
-       pwm                            0        0        0    50000000          0     0  50000
-       tscem_tmx                      0        0        0  1000000000          0     0  50000
-       sec_dap                        0        0        0   100000000          0     0  50000
-       sec_at                         0        0        0   200000000          0     0  50000
-    TBG-A-S                           0        0        0  1600000000          0     0  50000
-       sdio                           0        0        0   400000000          0     0  50000
-       ddr_phy                        0        0        0   400000000          0     0  50000
-       mmc                            0        0        0   400000000          0     0  50000
-    TBG-B-P                           0        0        0   500000000          0     0  50000
-       gbe_50                         0        0        0    50000000          0     0  50000
-          gbe0_50                     0        0        0    50000000          0     0  50000
-          gbe1_50                     0        0        0    50000000          0     0  50000
-    TBG-A-P                           0        1        0   800000000          0     0  50000
-       counter                        0        0        0   160000000          0     0  50000
-       sqf                            0        1        0   200000000          0     0  50000
-       tscem                          0        0        0   200000000          0     0  50000
-       sata_host                      0        0        0   200000000          0     0  50000
-root@localhost ~ # 
+> Add DTSI files for these SoCs. The DTSI file for V3 just replaces the
+> pinctrl compatible string, and the S3/S3L DTSI files just include the V3
+> DTSI file.
 
-> Also, during this week-end, Christian suggested that the issue might
-> come from the AVS support.
-> 
-> Could you disable it and check you still have the issue?
-> 
-> For this, you just have to remove the avs node in
-> arch/arm64/boot/dts/marvell/armada-37xx.dtsi and rebuild the dtb.
-Sure. You'll have to wait for a week though. Currently on a trip. I'll run that
- once i return
+Note that the V3 has a NMI controller at 1c000d0, that is required for
+handling the AXP209 interrupts IIRQ. I have no idea whether it's also
+the case on the V3s/S3/S3L though but it would be good to know.
 
+Note that I can totally add support for it when adding support for my
+V3 device that uses the AXP209 this way.
 
-Cheers
-/Ilias
+Also, could we get proper compatibles and config options for these new
+SoCs, since they are distinct from the V3S?
+
+Cheers,
+
+Paul
+
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm/boot/dts/sun8i-s3.dtsi  |  6 ++++++
+>  arch/arm/boot/dts/sun8i-s3l.dtsi |  6 ++++++
+>  arch/arm/boot/dts/sun8i-v3.dtsi  | 14 ++++++++++++++
+>  3 files changed, 26 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/sun8i-s3.dtsi
+>  create mode 100644 arch/arm/boot/dts/sun8i-s3l.dtsi
+>  create mode 100644 arch/arm/boot/dts/sun8i-v3.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/sun8i-s3.dtsi b/arch/arm/boot/dts/sun8i-s3.dtsi
+> new file mode 100644
+> index 000000000000..0f41a25ecb30
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-s3.dtsi
+> @@ -0,0 +1,6 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
+> + */
+> +
+> +#include "sun8i-v3.dtsi"
+> diff --git a/arch/arm/boot/dts/sun8i-s3l.dtsi b/arch/arm/boot/dts/sun8i-s3l.dtsi
+> new file mode 100644
+> index 000000000000..0f41a25ecb30
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-s3l.dtsi
+> @@ -0,0 +1,6 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
+> + */
+> +
+> +#include "sun8i-v3.dtsi"
+> diff --git a/arch/arm/boot/dts/sun8i-v3.dtsi b/arch/arm/boot/dts/sun8i-v3.dtsi
+> new file mode 100644
+> index 000000000000..6ae8645ade50
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-v3.dtsi
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
+> + */
+> +
+> +#include "sun8i-v3s.dtsi"
+> +
+> +&ccu {
+> +	compatible = "allwinner,sun8i-v3-ccu";
+> +};
+> +
+> +&pio {
+> +	compatible = "allwinner,sun8i-v3-pinctrl";
+> +};
+> -- 
+> 2.18.1
+> 
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
