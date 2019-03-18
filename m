@@ -2,280 +2,465 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78876C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 10:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E718C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D0E2082F
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 10:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54BBC20854
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfCRKvB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 06:51:01 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:48761 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbfCRKvB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 06:51:01 -0400
-IronPort-Data: A9a23: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
-X-IronPort-AV: E=Sophos;i="5.58,493,1544511600"; 
-   d="scan'208";a="28422467"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Mar 2019 03:51:00 -0700
-Received: from tenerife.corp.atmel.com (10.10.76.4) by
- chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 18 Mar 2019 03:50:59 -0700
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <matthias.wieloch@few-bauer.de>, <stable@vger.kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH v2] clk: at91: fix programmable clock for sama5d2
-Date:   Mon, 18 Mar 2019 11:50:45 +0100
-Message-ID: <20190318105045.26943-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726643AbfCRLAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 07:00:20 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:37565 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfCRLAT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 07:00:19 -0400
+X-Originating-IP: 90.88.22.102
+Received: from aptenodytes (aaubervilliers-681-1-80-102.w90-88.abo.wanadoo.fr [90.88.22.102])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 1E17BC000A;
+        Mon, 18 Mar 2019 11:00:12 +0000 (UTC)
+Message-ID: <16d670d78c5616fb86898fdd8f8fa615177c31af.camel@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH 04/14] pinctrl: sunxi: v3: really
+ introduce support for V3
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Date:   Mon, 18 Mar 2019 12:00:12 +0100
+In-Reply-To: <20190312152256.35574-5-icenowy@aosc.io>
+References: <20190312152256.35574-1-icenowy@aosc.io>
+         <20190312152256.35574-5-icenowy@aosc.io>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.0 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+Hi Icenowy,
 
-The prescaler formula of the programmable clock has changed for sama5d2. Update
-the driver accordingly.
+Le mardi 12 mars 2019 à 23:22 +0800, Icenowy Zheng a écrit :
+> Introduce the GPIO pins that is only available on V3 (not on V3s) to the
+> V3 pinctrl driver.
 
-Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
-Cc: <stable@vger.kernel.org> # v4.20+
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-[nicolas.ferre@microchip.com: adapt the prescaler range,
-		fix clk_programmable_recalc_rate, split patch]
-Signed-off-by: Matthias Wieloch <matthias.wieloch@few-bauer.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
-v2: adapt to v5.1-rc1
-    remove unneeded sentence about DT in commit message
+Thanks for working on this, I was actually close to submitting similar
+patches for V3 support!
 
-Stephen,
+I just reviewed the definitions and found a mistakes about the LVDS
+function (that should be 0x3 instead of 0x2).
 
-I think it would be good to see this fix going upstream during v5.1-rc phase.
+Otherwise, things look good and match what I had came up with.
 
-Best regards,
-  Nicolas
+Cheers,
 
+Paul
 
- drivers/clk/at91/clk-programmable.c | 57 ++++++++++++++++++++++-------
- drivers/clk/at91/pmc.h              |  2 +
- drivers/clk/at91/sama5d2.c          | 10 ++++-
- 3 files changed, 54 insertions(+), 15 deletions(-)
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c | 291 +++++++++++++++++++++--
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h    |   2 +
+>  2 files changed, 275 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> index 6704ce8e5e3d..54c210871a95 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Allwinner V3s SoCs pinctrl driver.
+> + * Allwinner V3/V3s SoCs pinctrl driver.
+>   *
+>   * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
+>   *
+> @@ -23,7 +23,7 @@
+>  
+>  #include "pinctrl-sunxi.h"
+>  
+> -static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
+> +static const struct sunxi_desc_pin sun8i_v3_v3s_pins[] = {
+>  	/* Hole */
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 0),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> @@ -77,6 +77,30 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
+>  		  SUNXI_FUNCTION(0x2, "i2c1"),		/* SCK */
+>  		  SUNXI_FUNCTION(0x3, "uart0"),		/* RX */
+>  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PB_EINT9 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(B, 10),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "jtag"),		/* MS */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PB_EINT10 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(B, 11),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "jtag"),		/* CK */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PB_EINT11 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(B, 12),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "jtag"),		/* DO */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 12)),	/* PB_EINT12 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(B, 13),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "jtag"),		/* DI */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 13)),	/* PB_EINT13 */
+>  	/* Hole */
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 0),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> @@ -98,6 +122,180 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+>  		  SUNXI_FUNCTION(0x2, "mmc2"),		/* D0 */
+>  		  SUNXI_FUNCTION(0x3, "spi0")),		/* MOSI */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(C, 4),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "mmc2")),		/* D1 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(C, 5),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "mmc2")),		/* D2 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(C, 6),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "mmc2")),		/* D3 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(C, 7),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "mmc2")),		/* D4 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(C, 8),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "mmc2")),		/* D5 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(C, 9),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "mmc2")),		/* D6 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(C, 10),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "mmc2")),		/* D7 */
+> +	/* Hole */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 0),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D2 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* RXD3 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 1),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D3 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* RXD2 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 2),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D4 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* RXD1 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 3),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D5 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* RXD0 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 4),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D6 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* RXCK */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 5),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D7 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* RXCTL/RXDV */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 6),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D10 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* RXERR */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 7),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D11 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* TXD3 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 8),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D12 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* TXD2 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 9),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D13 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* TXD1 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 10),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D14 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* TXD0 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 11),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D15 */
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* CRS */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 12),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D18 */
+> +		  SUNXI_FUNCTION(0x2, "lvds"),		/* VP0 */
 
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 89d6f3736dbf..f8edbb65eda3 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -20,8 +20,7 @@
- #define PROG_ID_MAX		7
- 
- #define PROG_STATUS_MASK(id)	(1 << ((id) + 8))
--#define PROG_PRES_MASK		0x7
--#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & PROG_PRES_MASK)
-+#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & layout->pres_mask)
- #define PROG_MAX_RM9200_CSS	3
- 
- struct clk_programmable {
-@@ -37,20 +36,29 @@ static unsigned long clk_programmable_recalc_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
- 	struct clk_programmable *prog = to_clk_programmable(hw);
-+	const struct clk_programmable_layout *layout = prog->layout;
- 	unsigned int pckr;
-+	unsigned long rate;
- 
- 	regmap_read(prog->regmap, AT91_PMC_PCKR(prog->id), &pckr);
- 
--	return parent_rate >> PROG_PRES(prog->layout, pckr);
-+	if (layout->is_pres_direct)
-+		rate = parent_rate / (PROG_PRES(layout, pckr) + 1);
-+	else
-+		rate = parent_rate >> PROG_PRES(layout, pckr);
-+
-+	return rate;
- }
- 
- static int clk_programmable_determine_rate(struct clk_hw *hw,
- 					   struct clk_rate_request *req)
- {
-+	struct clk_programmable *prog = to_clk_programmable(hw);
-+	const struct clk_programmable_layout *layout = prog->layout;
- 	struct clk_hw *parent;
- 	long best_rate = -EINVAL;
- 	unsigned long parent_rate;
--	unsigned long tmp_rate;
-+	unsigned long tmp_rate = 0;
- 	int shift;
- 	int i;
- 
-@@ -60,10 +68,18 @@ static int clk_programmable_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		parent_rate = clk_hw_get_rate(parent);
--		for (shift = 0; shift < PROG_PRES_MASK; shift++) {
--			tmp_rate = parent_rate >> shift;
--			if (tmp_rate <= req->rate)
--				break;
-+		if (layout->is_pres_direct) {
-+			for (shift = 0; shift <= layout->pres_mask; shift++) {
-+				tmp_rate = parent_rate / (shift + 1);
-+				if (tmp_rate <= req->rate)
-+					break;
-+			}
-+		} else {
-+			for (shift = 0; shift < layout->pres_mask; shift++) {
-+				tmp_rate = parent_rate >> shift;
-+				if (tmp_rate <= req->rate)
-+					break;
-+			}
- 		}
- 
- 		if (tmp_rate > req->rate)
-@@ -137,16 +153,23 @@ static int clk_programmable_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!div)
- 		return -EINVAL;
- 
--	shift = fls(div) - 1;
-+	if (layout->is_pres_direct) {
-+		shift = div - 1;
- 
--	if (div != (1 << shift))
--		return -EINVAL;
-+		if (shift > layout->pres_mask)
-+			return -EINVAL;
-+	} else {
-+		shift = fls(div) - 1;
- 
--	if (shift >= PROG_PRES_MASK)
--		return -EINVAL;
-+		if (div != (1 << shift))
-+			return -EINVAL;
-+
-+		if (shift >= layout->pres_mask)
-+			return -EINVAL;
-+	}
- 
- 	regmap_update_bits(prog->regmap, AT91_PMC_PCKR(prog->id),
--			   PROG_PRES_MASK << layout->pres_shift,
-+			   layout->pres_mask << layout->pres_shift,
- 			   shift << layout->pres_shift);
- 
- 	return 0;
-@@ -202,19 +225,25 @@ at91_clk_register_programmable(struct regmap *regmap,
- }
- 
- const struct clk_programmable_layout at91rm9200_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 2,
- 	.css_mask = 0x3,
- 	.have_slck_mck = 0,
-+	.is_pres_direct = 0,
- };
- 
- const struct clk_programmable_layout at91sam9g45_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 2,
- 	.css_mask = 0x3,
- 	.have_slck_mck = 1,
-+	.is_pres_direct = 0,
- };
- 
- const struct clk_programmable_layout at91sam9x5_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 4,
- 	.css_mask = 0x7,
- 	.have_slck_mck = 0,
-+	.is_pres_direct = 0,
- };
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 672a79bda88c..a0e5ce9c9b9e 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -71,9 +71,11 @@ struct clk_pll_characteristics {
- };
- 
- struct clk_programmable_layout {
-+	u8 pres_mask;
- 	u8 pres_shift;
- 	u8 css_mask;
- 	u8 have_slck_mck;
-+	u8 is_pres_direct;
- };
- 
- extern const struct clk_programmable_layout at91rm9200_programmable_layout;
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index 1f70cb164b06..81943fac4537 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -125,6 +125,14 @@ static const struct {
- 	  .pll = true },
- };
- 
-+static const struct clk_programmable_layout sama5d2_programmable_layout = {
-+	.pres_mask = 0xff,
-+	.pres_shift = 4,
-+	.css_mask = 0x7,
-+	.have_slck_mck = 0,
-+	.is_pres_direct = 1,
-+};
-+
- static void __init sama5d2_pmc_setup(struct device_node *np)
- {
- 	struct clk_range range = CLK_RANGE(0, 0);
-@@ -249,7 +257,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 
- 		hw = at91_clk_register_programmable(regmap, name,
- 						    parent_names, 6, i,
--						    &at91sam9x5_programmable_layout);
-+						    &sama5d2_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
- 	}
+LVDS should be function 0x3.
+
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* TXCK */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 13),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D19 */
+> +		  SUNXI_FUNCTION(0x2, "lvds"),		/* VN0 */
+
+Ditto about LVDS.
+
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* TXCTL/TXEN */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 14),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D20 */
+> +		  SUNXI_FUNCTION(0x2, "lvds"),		/* VP1 */
+
+Ditto about LVDS.
+
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* TXERR */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 15),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D21 */
+> +		  SUNXI_FUNCTION(0x2, "lvds"),		/* VN1 */
+
+Ditto about LVDS.
+
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* CLKIN/COL */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 16),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D22 */
+> +		  SUNXI_FUNCTION(0x2, "lvds"),		/* VP2 */
+
+Ditto about LVDS.
+
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* MDC */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 17),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* D23 */
+> +		  SUNXI_FUNCTION(0x2, "lvds"),		/* VN2 */
+
+Ditto about LVDS.
+
+> +		  SUNXI_FUNCTION(0x4, "emac")),		/* MDIO */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 18),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* CLK */
+> +		  SUNXI_FUNCTION(0x2, "lvds")),		/* VPC */
+
+Ditto about LVDS.
+
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 19),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* DE */
+> +		  SUNXI_FUNCTION(0x2, "lvds")),		/* VNC */
+
+Ditto about LVDS.
+
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 20),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* HSYNC */
+> +		  SUNXI_FUNCTION(0x2, "lvds")),		/* VP3 */
+
+Ditto about LVDS.
+
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(D, 21),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "lcd"),		/* VSYNC */
+> +		  SUNXI_FUNCTION(0x2, "lvds")),		/* VN3 */
+
+Ditto about LVDS.
+
+>  	/* Hole */
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 0),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> @@ -291,34 +489,91 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+>  		  SUNXI_FUNCTION(0x2, "mmc1"),		/* D3 */
+>  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 5)),	/* PG_EINT5 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 6),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "uart1"),		/* TX */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 6)),	/* PG_EINT6 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 7),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "uart1"),		/* RX */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 7)),	/* PG_EINT7 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 8),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "uart1"),		/* RTS */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 8)),	/* PG_EINT8 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 9),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "uart1"),		/* CTS */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 9)),	/* PG_EINT9 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 10),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "i2s"),		/* SYNC */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 10)),	/* PG_EINT10 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 11),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "i2s"),		/* BCLK */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 11)),	/* PG_EINT11 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 12),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "i2s"),		/* DOUT */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 12)),	/* PG_EINT12 */
+> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(G, 13),
+> +		  PINCTRL_SUN8I_V3,
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "i2s"),		/* DIN */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 13)),	/* PG_EINT13 */
+>  };
+>  
+> -static const unsigned int sun8i_v3s_pinctrl_irq_bank_map[] = { 1, 2 };
+> +static const unsigned int sun8i_v3_v3s_pinctrl_irq_bank_map[] = { 1, 2 };
+>  
+> -static const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_data = {
+> -	.pins = sun8i_v3s_pins,
+> -	.npins = ARRAY_SIZE(sun8i_v3s_pins),
+> +static const struct sunxi_pinctrl_desc sun8i_v3_v3s_pinctrl_data = {
+> +	.pins = sun8i_v3_v3s_pins,
+> +	.npins = ARRAY_SIZE(sun8i_v3_v3s_pins),
+>  	.irq_banks = 2,
+> -	.irq_bank_map = sun8i_v3s_pinctrl_irq_bank_map,
+> +	.irq_bank_map = sun8i_v3_v3s_pinctrl_irq_bank_map,
+>  	.irq_read_needs_mux = true
+>  };
+>  
+> -static int sun8i_v3s_pinctrl_probe(struct platform_device *pdev)
+> +static int sun8i_v3_v3s_pinctrl_probe(struct platform_device *pdev)
+>  {
+> -	return sunxi_pinctrl_init(pdev,
+> -				  &sun8i_v3s_pinctrl_data);
+> +	unsigned long variant = (unsigned long)of_device_get_match_data(&pdev->dev);
+> +
+> +	return sunxi_pinctrl_init_with_variant(pdev, &sun8i_v3_v3s_pinctrl_data,
+> +					       variant);
+>  }
+>  
+> -static const struct of_device_id sun8i_v3s_pinctrl_match[] = {
+> -	{ .compatible = "allwinner,sun8i-v3s-pinctrl", },
+> -	{}
+> +static const struct of_device_id sun8i_v3_v3s_pinctrl_match[] = {
+> +	{
+> +		.compatible = "allwinner,sun8i-v3-pinctrl",
+> +		.data = (void *)PINCTRL_SUN8I_V3
+> +	},
+> +	{
+> +		.compatible = "allwinner,sun8i-v3s-pinctrl",
+> +		.data = (void *)PINCTRL_SUN8I_V3S
+> +	},
+> +	{ },
+>  };
+>  
+> -static struct platform_driver sun8i_v3s_pinctrl_driver = {
+> -	.probe	= sun8i_v3s_pinctrl_probe,
+> +static struct platform_driver sun8i_v3_v3s_pinctrl_driver = {
+> +	.probe	= sun8i_v3_v3s_pinctrl_probe,
+>  	.driver	= {
+> -		.name		= "sun8i-v3s-pinctrl",
+> -		.of_match_table	= sun8i_v3s_pinctrl_match,
+> +		.name		= "sun8i-v3-v3s-pinctrl",
+> +		.of_match_table	= sun8i_v3_v3s_pinctrl_match,
+>  	},
+>  };
+> -builtin_platform_driver(sun8i_v3s_pinctrl_driver);
+> +builtin_platform_driver(sun8i_v3_v3s_pinctrl_driver);
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> index ee15ab067b5f..cfff6b02ddae 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> @@ -94,6 +94,8 @@
+>  #define PINCTRL_SUN4I_A10	BIT(6)
+>  #define PINCTRL_SUN7I_A20	BIT(7)
+>  #define PINCTRL_SUN8I_R40	BIT(8)
+> +#define PINCTRL_SUN8I_V3	BIT(9)
+> +#define PINCTRL_SUN8I_V3S	BIT(10)
+>  
+>  struct sunxi_desc_function {
+>  	unsigned long	variant;
+> -- 
+> 2.18.1
+> 
 -- 
-2.17.1
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
