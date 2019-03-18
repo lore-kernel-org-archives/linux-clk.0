@@ -2,96 +2,100 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196F3C10F0D
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BACC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB8A82133F
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:41:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dsiYe/yZ"
+	by mail.kernel.org (Postfix) with ESMTP id 475E620989
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1552938179;
+	bh=jU0Hvq4xla+ij8ejd0tcj9NnaSuDFRrX9qP2lKseDPg=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=bilXsxVAdOoj6Q0jD6QDekMxGt7BoN2/X7gycaBdvHZq+8KtadaS+ea/biMMXFFOo
+	 Qn/kCC+d25gX4u1oh8Z8NI8x43xGjD7MBanVEMphAHigw7uzYFZs7O/49e+uuFdINY
+	 gquOjX837b/QLGM7UygcgtGaDhNsKcegSACTABzc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfCRTl2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 15:41:28 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39137 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbfCRTk6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 15:40:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t124so14081365wma.4
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 12:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WEK+MgheKchhg0QX3P2gNwOnQXfun2RSNYUOC8zRsk4=;
-        b=dsiYe/yZUBe6lSW+iEdRvlktkI7Q0wuP9+i4Z28M8UccRbAv375XO4fZA3IYCwPLJN
-         xwiSuVAzT/fahbzoBmW7k4AB1AT23dm0+U/gkLFdiqtuj5nqbxzAmC7U+obVy29+yYkS
-         cLM1Ev696VSbFSeDvc3SAJAs9pCXzunpjN0ruWPtH4TPr4FISyjtqd5LxG2JaP4n/avj
-         ohRSUCEzPnABA6yqCOFnkw3+301dfhNBhR4wtX4io9eMdv5gbYwJ/QVeIX2deziFdP+R
-         1QAsdokHa7+G/xjbeOBNVbIO20V0GuzUrDGIgS1iykxPr8vWE8e4unsMs+Y+KlG/Vv4/
-         Z1Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WEK+MgheKchhg0QX3P2gNwOnQXfun2RSNYUOC8zRsk4=;
-        b=RVfAr2k3pAoolCXR99TWwsWAc3UMqX2JuX5Dule32KZLh3SiQxftD+ZbqpezMc7bWX
-         cPo+ruDXztBm+iP/hqfMWLEzHBwRGIoJbonpJ39M2ccn+OpGSrRiXtyDGvn6vgj2mUFA
-         nxldFTEtFNvTdXjFLOtdwaVdVcFPAL8jCOOei7QT0p17a3QpxEM4YTty/DsQNyBf12zI
-         yjxnR0Gq4U4QRADQcIfM4DCPzh4fLitmHvukq2OsPgHjBx2w0EmwqyRftrgrsjNR79jx
-         dKn3lcNXRlu5V3PPjBc8L/9bjKepmS1vqX9S5KauEyjgO8WDsIffdbPI3Gyls7LCa0hq
-         1wlA==
-X-Gm-Message-State: APjAAAXakLorE3ercz8gtgiWfBBnZdzNl4MzzFwAoQfEtr3Z8WelyzXt
-        ofNua22Qt4ic1uj+wStfyZsS4g==
-X-Google-Smtp-Source: APXvYqwJZbk+OcjkXCuV+3ZFHBV8lbxBg9HSXosLaS4d3bZyL3B4C/f1ZmmVqWQLq+L/YAYYsDPdFA==
-X-Received: by 2002:a1c:f914:: with SMTP id x20mr393705wmh.62.1552938056210;
-        Mon, 18 Mar 2019 12:40:56 -0700 (PDT)
-Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust4998.18-1.cable.virginm.net. [86.31.179.135])
-        by smtp.gmail.com with ESMTPSA id s10sm4583941wrv.56.2019.03.18.12.40.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 18 Mar 2019 12:40:55 -0700 (PDT)
-From:   Peter Griffin <peter.griffin@linaro.org>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
-        mark.rutland@arm.com, p.zabel@pengutronix.de, xuwei5@hisilicon.com,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     john.stultz@linaro.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        yuq825@gmail.com
-Subject: [PATCH v1 2/6] dt-bindings: reset: hisilicon: Update compatible documentation
-Date:   Mon, 18 Mar 2019 19:38:47 +0000
-Message-Id: <1552937931-23050-3-git-send-email-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1552937931-23050-1-git-send-email-peter.griffin@linaro.org>
-References: <1552937931-23050-1-git-send-email-peter.griffin@linaro.org>
+        id S1727480AbfCRTm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 15:42:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727028AbfCRTm6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Mar 2019 15:42:58 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B90AF20685;
+        Mon, 18 Mar 2019 19:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1552938177;
+        bh=jU0Hvq4xla+ij8ejd0tcj9NnaSuDFRrX9qP2lKseDPg=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=qVQlr9BsdYS76JtNhqSj3QIOxFKXc2z2VQs4TpCU1moyxOUfWM5U4IRjctLCKZUDZ
+         Vu1L9U9Ak+RPqaSFOoYctYHU9ideR7weDasoC6n6rMwTkPjfqjmgE/Ba4TI+5UArKj
+         ybH9dl6JzPXd8Z+mN6oUnWO/2qlJrXZvedq3ddec=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <15f0f82f-0607-4cf5-f5a5-5edd7c5321bc@xilinx.com>
+References: <1551742066-10825-1-git-send-email-jollys@xilinx.com> <15f0f82f-0607-4cf5-f5a5-5edd7c5321bc@xilinx.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] drivers: clk: zynqmp: Allow zero divisor value
+Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
+        Jolly Shah <jollys@xilinx.com>
+To:     Jolly Shah <jolly.shah@xilinx.com>, linux-clk@vger.kernel.org,
+        michal.simek@xilinx.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org
+Message-ID: <155293817691.20095.7275560826051843640@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Mon, 18 Mar 2019 12:42:56 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The reset driver now supports the ao reset controller, so update the
-documentation to match.
+Quoting Michal Simek (2019-03-18 05:48:52)
+> On 05. 03. 19 0:27, Jolly Shah wrote:
+> > From: Rajan Vaja <rajan.vaja@xilinx.com>
+> >=20
+> > Zero divider is valid and default for some of ZynqMP
+> > clocks. Allow zero divisor when CLK_DIVIDER_ALLOW_ZERO
+> > for the clock is set.
+> >=20
+> > Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> > Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> > ---
+> >  drivers/clk/zynqmp/divider.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >=20
+> > diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+> > index a371c66..e146b6f 100644
+> > --- a/drivers/clk/zynqmp/divider.c
+> > +++ b/drivers/clk/zynqmp/divider.c
+> > @@ -76,6 +76,13 @@ static unsigned long zynqmp_clk_divider_recalc_rate(=
+struct clk_hw *hw,
+> >       else
+> >               value =3D div >> 16;
+> > =20
+> > +     if (!value) {
+> > +             WARN(!(divider->flags & CLK_DIVIDER_ALLOW_ZERO),
+> > +                  "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set=
+\n",
+> > +                  clk_name);
+> > +             return parent_rate;
+> > +     }
+> > +
+> >       return DIV_ROUND_UP_ULL(parent_rate, value);
+> >  }
+> > =20
+> >=20
+>=20
+> Stephen: Do you want to take it via your tree?
+>=20
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- Documentation/devicetree/bindings/reset/hisilicon,hi6220-reset.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/reset/hisilicon,hi6220-reset.txt b/Documentation/devicetree/bindings/reset/hisilicon,hi6220-reset.txt
-index c25da39..ea0a6a9 100644
---- a/Documentation/devicetree/bindings/reset/hisilicon,hi6220-reset.txt
-+++ b/Documentation/devicetree/bindings/reset/hisilicon,hi6220-reset.txt
-@@ -11,6 +11,7 @@ Required properties:
- - compatible: should be one of the following:
-   - "hisilicon,hi6220-sysctrl", "syscon" : For peripheral reset controller.
-   - "hisilicon,hi6220-mediactrl", "syscon" : For media reset controller.
-+  - "hisilicon,hi6220-aoctrl", "syscon" : For ao reset controller.
- - reg: should be register base and length as documented in the
-   datasheet
- - #reset-cells: 1, see below
--- 
-2.7.4
+Sure.
 
