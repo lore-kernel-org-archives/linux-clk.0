@@ -2,142 +2,161 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62516C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73514C4360F
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 12:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8762084F
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37A0820854
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 12:21:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wDBMklCl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfCRL5i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 07:57:38 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:44185 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbfCRL5i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 07:57:38 -0400
-X-Originating-IP: 90.88.22.102
-Received: from localhost (aaubervilliers-681-1-80-102.w90-88.abo.wanadoo.fr [90.88.22.102])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 7368DC0006;
-        Mon, 18 Mar 2019 11:57:34 +0000 (UTC)
-Date:   Mon, 18 Mar 2019 12:57:33 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     icenowy@aosc.io, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH 04/14] pinctrl: sunxi: v3: really
- introduce support for V3
-Message-ID: <20190318115733.4onedngeaqbm4txp@flea>
-References: <20190312152256.35574-1-icenowy@aosc.io>
- <20190312152256.35574-5-icenowy@aosc.io>
- <20190312153654.25r5orlw7qjtlhbt@flea>
- <7B6C1341-BAB5-48C5-9E60-11BCEAC3D0CD@aosc.io>
- <ef0c3061986b7456605a61f835f2a2003cf4c678.camel@bootlin.com>
+        id S1726435AbfCRMVU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 08:21:20 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40390 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfCRMVT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 08:21:19 -0400
+Received: by mail-wr1-f67.google.com with SMTP id t5so16796969wri.7
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 05:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=P9/cen8CVbo+znHQQsAo4qiCUTF1XfHWG/NaxmxJ1qA=;
+        b=wDBMklCl7RpOVCjc4ngbvw0XsaKizFRJBjb5z0hbRirLt9fxoDM5jEEnJ+wwyaitGb
+         mJbswo+LQ2PRFIeofidt7OddFbSXT25jMMgnPgElUe9B8LU9EDVxaXn5e9sAgd0e7htC
+         9EpL5T7QrfepvX08Ha5yWSdw3BmGhI6vagX8qufmj1mw5z3XJ6kJ9I+JX2rEVahNF9NJ
+         GpANQ9jZ9KxCODkGvcc6CahonZzfmDJ8jLIfpunY1xsPPSh+u692389SMAmMZJixBdlt
+         NQ8Jp0iw+lCmFQaQjjxJdf1Xr9/HBXVhtC9C4GxD90CEbmU+Q+Dny8vTBG8SDY0V/3jO
+         W3Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P9/cen8CVbo+znHQQsAo4qiCUTF1XfHWG/NaxmxJ1qA=;
+        b=Smf/F6SXY9ZqPYs+ZNobliMcPZdYuzZClUPzrISbhPSwGJ387JmKOYp9eI4zHkn1yV
+         FO8JgQ7ymV0Wf1khxqQMucBihVEfIZU3RPk3t5a9VWyfCJlmJ4H13lBWAg1De43edHfy
+         92I3jjAfK1sGn2aAOnBu8+uQjxkuBB//vGKCnrJYbY0QGcUsotvRJaQHm/X4vcCcUE9i
+         Bi1XBKFTblzossP5ImaXm+A2yQN7LZVSYMDspvA5zDq5ty/cOcBjZm9UREPdOhOqcQ44
+         nxBXZnXsTH56htZJd/zgcsLmW4mQrrOXwPaHkMSm/B62UOR3+Pz4pxz+7lhMUaGVRIf6
+         rTuQ==
+X-Gm-Message-State: APjAAAUo07NFxEGSoxYSmJCMKHWDyL0pNZ4VY2rQruOuiuwCDD22C+N0
+        UhMoUpzf9FE5dK6mDvjqnXCbIQ==
+X-Google-Smtp-Source: APXvYqzpKQOS80Qxf1vky/6E7HcreVeX3wYaRUt2pyU2wLKMDXuf64WO0snBlm7gZFseK74TPVB2gg==
+X-Received: by 2002:a5d:54c4:: with SMTP id x4mr5405071wrv.296.1552911677983;
+        Mon, 18 Mar 2019 05:21:17 -0700 (PDT)
+Received: from apalos (ppp-94-64-206-130.home.otenet.gr. [94.64.206.130])
+        by smtp.gmail.com with ESMTPSA id y7sm15413322wmi.34.2019.03.18.05.21.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Mar 2019 05:21:17 -0700 (PDT)
+Date:   Mon, 18 Mar 2019 14:21:13 +0200
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Christian Neubert <christian.neubert.86@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for
+ cpu clocks
+Message-ID: <20190318122113.GA4834@apalos>
+References: <20190313163558.6705-1-gregory.clement@bootlin.com>
+ <20190314121541.GB19385@apalos>
+ <CAC5LXJcCs4nr-qFOWzUJpUBAJ9ngG-cgeTCVCFBKFc1SPzHMuQ@mail.gmail.com>
+ <20190314134428.GA24768@apalos>
+ <874l85v8p6.fsf@FE-laptop>
+ <20190318112844.GA1708@apalos>
+ <87h8c0s955.fsf@FE-laptop>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kfiqbz764gzlm462"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ef0c3061986b7456605a61f835f2a2003cf4c678.camel@bootlin.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <87h8c0s955.fsf@FE-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Gregory, 
 
---kfiqbz764gzlm462
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 18, 2019 at 12:05:12PM +0100, Paul Kocialkowski wrote:
-> Hi,
->
-> Le mardi 12 mars 2019 =C3=A0 23:45 +0800, Icenowy Zheng a =C3=A9crit :
+> >> 
+> > [   14.909524] clk_pm_cpu_set_parent old=28004840 -> val=0x6000000 load_level=0
+> > [   14.916424] clk_pm_cpu_set_parent old=2E004840 -> val=0x600 load_level=1
+> > [   14.923315] clk_pm_cpu_set_parent old=8880A8C0 -> val=0x6000000 load_level=2
+> > [   14.930572] clk_pm_cpu_set_parent old=8E80A8C0 -> val=0x600 load_level=3
 > >
-> > =E4=BA=8E 2019=E5=B9=B43=E6=9C=8812=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
-=8811:36:54, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
-> > > On Tue, Mar 12, 2019 at 11:22:46PM +0800, Icenowy Zheng wrote:
-> > > > Introduce the GPIO pins that is only available on V3 (not on V3s) to
-> > > the
-> > > > V3 pinctrl driver.
-> > > >
-> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > ---
-> > > >  drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c | 291
-> > > +++++++++++++++++++++--
-> > > >  drivers/pinctrl/sunxi/pinctrl-sunxi.h    |   2 +
-> > > >  2 files changed, 275 insertions(+), 18 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-> > > b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-> > > > index 6704ce8e5e3d..54c210871a95 100644
-> > > > --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-> > > > +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-> > > > @@ -1,5 +1,5 @@
-> > > >  /*
-> > > > - * Allwinner V3s SoCs pinctrl driver.
-> > > > + * Allwinner V3/V3s SoCs pinctrl driver.
-> > > >   *
-> > > >   * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
-> > > >   *
-> > > > @@ -23,7 +23,7 @@
-> > > >
-> > > >  #include "pinctrl-sunxi.h"
-> > > >
-> > > > -static const struct sunxi_desc_pin sun8i_v3s_pins[] =3D {
-> > > > +static const struct sunxi_desc_pin sun8i_v3_v3s_pins[] =3D {
-> > >
-> > > I'm not sure all that remaining is worth it to be honest. It adds a
-> > > lot of noise for no particular reason (and the same goes for renaming
-> > > the file itself)
 > >
-> > Maybe keeping names is okay "for historial reasons".
-> >
-> > In fact I want to keep them.
->
-> My two cents about this: kernel development is plagued by the unability
-> to rename and rework things as soon as backward compatibility is
-> involved. I believe that renaming and reworking things is quite a good
-> thing to do when it leads to a situation that is easier to understand
-> and makes more sense.
->
-> In this case, I don't see any blockers that would prevent us from doing
-> this, so I am strongly in favor of it. I really don't see how increased
-> noise and "historical reasons" make up for better clarity.
+> > Let me know if you need anything else
+> 
+> Could you show me the output of "cat /sys/kernel/debug/clk/clk_summary"
+> 
+root@localhost ~ # cat /sys/kernel/debug/clk/clk_summary
+                                 enable  prepare  protect                                duty
+   clock                          count    count    count        rate   accuracy phase  cycle
+---------------------------------------------------------------------------------------------
+ xtal                                 2        3        0    25000000          0     0  50000
+    i2c_1                             0        0        0    25000000          0     0  50000
+    i2c_2                             0        0        0    25000000          0     0  50000
+    avs                               0        0        0    25000000          0     0  50000
+    TBG-B-S                           2        2        0  1000000000          0     0  50000
+       cpu                            0        0        0   200000000          0     0  50000
+       usb32_ss_sys                   1        1        0   125000000          0     0  50000
+       usb32_usb2_sys                 0        0        0   100000000          0     0  50000
+       gbe_125                        0        0        0   125000000          0     0  50000
+          gbe0_125                    0        0        0   125000000          0     0  50000
+          gbe1_125                    0        0        0   125000000          0     0  50000
+       gbe_core                       1        1        0   250000000          0     0  50000
+          gbe_bm                      0        0        0   250000000          0     0  50000
+          gbe0_core                   1        1        0   250000000          0     0  50000
+          gbe1_core                   0        0        0   250000000          0     0  50000
+       eip97                          0        0        0   500000000          0     0  50000
+       trace                          0        0        0  1000000000          0     0  50000
+       ddr_fclk                       0        0        0   125000000          0     0  50000
+       pwm                            0        0        0    50000000          0     0  50000
+       tscem_tmx                      0        0        0  1000000000          0     0  50000
+       sec_dap                        0        0        0   100000000          0     0  50000
+       sec_at                         0        0        0   200000000          0     0  50000
+    TBG-A-S                           0        0        0  1600000000          0     0  50000
+       sdio                           0        0        0   400000000          0     0  50000
+       ddr_phy                        0        0        0   400000000          0     0  50000
+       mmc                            0        0        0   400000000          0     0  50000
+    TBG-B-P                           0        0        0   500000000          0     0  50000
+       gbe_50                         0        0        0    50000000          0     0  50000
+          gbe0_50                     0        0        0    50000000          0     0  50000
+          gbe1_50                     0        0        0    50000000          0     0  50000
+    TBG-A-P                           0        1        0   800000000          0     0  50000
+       counter                        0        0        0   160000000          0     0  50000
+       sqf                            0        1        0   200000000          0     0  50000
+       tscem                          0        0        0   200000000          0     0  50000
+       sata_host                      0        0        0   200000000          0     0  50000
+root@localhost ~ # 
 
-It simplifies the git history, for once, which has the side effect of
-reducing conflicts too.
+> Also, during this week-end, Christian suggested that the issue might
+> come from the AVS support.
+> 
+> Could you disable it and check you still have the issue?
+> 
+> For this, you just have to remove the avs node in
+> arch/arm64/boot/dts/marvell/armada-37xx.dtsi and rebuild the dtb.
+Sure. You'll have to wait for a week though. Currently on a trip. I'll run that
+ once i return
 
-A second one is: Do you prefer to review patches that have some
-significant value (like a new feature, a bugfix, a new SoC support,
-etc) or one that renames files and / or symbols?
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kfiqbz764gzlm462
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXI+HnwAKCRDj7w1vZxhR
-xfbaAP4tTPJsX9kjGgO2E96g98P/Y+TcQb27RkXk4LjnteSexAEAw1P3kGgeQQ04
-LmZksUSSEkd+Gy4cLhehmv11w/aPWAo=
-=CCMo
------END PGP SIGNATURE-----
-
---kfiqbz764gzlm462--
+Cheers
+/Ilias
