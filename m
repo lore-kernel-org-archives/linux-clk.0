@@ -2,138 +2,100 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F450C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 18:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563BDC10F00
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D491620835
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 18:25:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27B6E20989
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:40:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="I4WPNbtt"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pKH3YWLU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfCRSY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 14:24:57 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34283 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfCRSY5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 14:24:57 -0400
-Received: by mail-io1-f65.google.com with SMTP id n11so15532688ioh.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 11:24:57 -0700 (PDT)
+        id S1727691AbfCRTkz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 15:40:55 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35952 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbfCRTkz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 15:40:55 -0400
+Received: by mail-wm1-f67.google.com with SMTP id h18so5695854wml.1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 12:40:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=40KwwJTreUr7SrlhIboEHgMAtXuwNdUA9TdB84CMBq0=;
-        b=I4WPNbttg47zfiGrm5quGozOpx0FlbzWFxGENkVdtsZpdjAc8cWv2MsAAtbEzDkb+N
-         VvBaXDFHXy9XrpRjlc30ysNVeX+VY1RgB6cUH2G9q5821V43fZmAfxCbZ7dYyblwXK1K
-         exZHSfGU3E2EpBAWCR5N5nYYtJ/ritD+zx+RE=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ahIMuoESdMu5R38KiM1/7f8+T+ghV4vTUmrgse54dwM=;
+        b=pKH3YWLUlw4OZuBixmTJ9AO8g9yutoaF3pjWe/mrnCF29bCAO6LUrJNVZqWFf7HS6c
+         FaSOzf+HBm4diSAXXarb2tJe4oHjnQx1fuSyl8+e71GXh5gWaBG6VVSzkV9Q2gI8EfDv
+         uLv2eXbfUJR1tozBQcXJVkzU3oLmAusWJ6fnNPJX8HJGtSwhseCPcuQMVyrJt3Ok2tu0
+         zTzV8UmzFOUwzqg+bEujFcmUoR6cylZSkZ8t2+z/08/kYAjfcybU2dUHLX+6yrMdm3Bu
+         Ql+OEiIjRN+LTn9nOcOOeaH1V4GbIeUU8rFKtK/tQj+MMsbjfbvwAdXC1s6jtpyZ7NPF
+         UJuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=40KwwJTreUr7SrlhIboEHgMAtXuwNdUA9TdB84CMBq0=;
-        b=r9CPcQduzXrYzXUEDw46BvDGi9asAKhEQpuGKpm4fxCyddtNt9HOcY5QJhFNqgWLBJ
-         BtpxKJH3DzeOKSH1aaenSY0wiHUu1RCgVw1hdnaVGBELL21w+kwqTIX+2Z4h0qkVZZsE
-         u2yzeovMqLhgWPw38q49jbO95b9lS7KlUDLNicHFCivK6G8odBvEf1nSoM6h2IFWjKaF
-         U4Aw0Ykbc5CorOSKXr5ybBXN+eKlgRVc7Kqrv5GaOBFjuZsKVm/WTnHNmFRi5r4ie9aO
-         EbHa/ZI+tBIG2Q7AqK38mbXbvzc4En0ulPZAzFauauAjm146HrWRg7oSyQEWheF1gZex
-         ydfA==
-X-Gm-Message-State: APjAAAUOOb6rueu98lxquSjgAu+UyMptNAEsSjeSTI0cK3odAncYChG6
-        oCuCakaUVjVGHrP44Qw8aMFMVtn9l7+hQCs2q0QTVg==
-X-Google-Smtp-Source: APXvYqxYqD0aZLB9hBkLVdZqLnVaPTv9c5ALFTgs89uQqO7nn0GZ4egTAaKxg7v2cFKuYzB2cy26MeXWCLByUIynQK8=
-X-Received: by 2002:a5d:97c8:: with SMTP id k8mr12627122ios.267.1552933496448;
- Mon, 18 Mar 2019 11:24:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190311133637.18334-1-jagan@amarulasolutions.com>
- <20190311133637.18334-3-jagan@amarulasolutions.com> <20190311153847.oz6ruqmptaq2befn@flea>
- <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
-In-Reply-To: <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 18 Mar 2019 23:54:45 +0530
-Message-ID: <CAMty3ZBteruXzMNkyUKv5VmDVzmN1E6zKL0+o7PYo_bFc7gq9g@mail.gmail.com>
-Subject: Re: [PATCH v8 02/15] drm/sun4i: tcon: Compute DCLK dividers based on
- format, lanes
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ahIMuoESdMu5R38KiM1/7f8+T+ghV4vTUmrgse54dwM=;
+        b=ggb/hokWxGKRdBT7/r87/78sbogXYWOGZmb05Jpr+pAIJg9I5QXcC0s4qu8RIOWjDe
+         5IaYjxvqpu5lZi8iPhCaC1CA76j8zFQGglpXq7/e4BGF73dy2BVd54hgqMPIUmIwwCAU
+         8axhfcnehcYLdvwFj32ex8DovbaEYDSf02G9eC51lThhzcXyokNxtE+zUOL2W3k5uA1f
+         HLXdcXZB7Axch/miZTs4AzyJBeurdLapZPt6wt1Z0CPWiBllhzBkFfZ5Y+CO30JGeZrA
+         2PnIpUPfiEOXUkMEZ/8r/dFsxg+QOorR2nvNQm7dTDny1vmVwIkf7zPE3pvs+pXf4oWG
+         nOaw==
+X-Gm-Message-State: APjAAAWnIFyMdodUxnK7w1d3bF7Cc2svRJYGw66HFOfcn4M1jGXuHyGC
+        mLmrwsJVqlAa3J4UBkb1FuEoQg==
+X-Google-Smtp-Source: APXvYqwMnl6/oFPYIByWun0v1IvE8rYmnA7Af3sT1KvNyg0ca+6RXPfTxfw1x9N/MolkfPd2bYmU/w==
+X-Received: by 2002:a1c:152:: with SMTP id 79mr417492wmb.152.1552938053739;
+        Mon, 18 Mar 2019 12:40:53 -0700 (PDT)
+Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust4998.18-1.cable.virginm.net. [86.31.179.135])
+        by smtp.gmail.com with ESMTPSA id s10sm4583941wrv.56.2019.03.18.12.40.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 18 Mar 2019 12:40:53 -0700 (PDT)
+From:   Peter Griffin <peter.griffin@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
+        mark.rutland@arm.com, p.zabel@pengutronix.de, xuwei5@hisilicon.com,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     john.stultz@linaro.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        yuq825@gmail.com
+Subject: `From c152138a8ec2bcd8faaac8db01dbb9be547fd021 Mon Sep 17 00:00:00 2001
+Date:   Mon, 18 Mar 2019 19:38:45 +0000
+Message-Id: <1552937931-23050-1-git-send-email-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 11, 2019 at 9:36 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Mon, Mar 11, 2019 at 9:08 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Mon, Mar 11, 2019 at 07:06:24PM +0530, Jagan Teki wrote:
-> > > pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
-> > > MIPI clock topology in Allwinner DSI controller.
-> > >
-> > > TCON dotclock driver is computing the desired DCLK divider based on
-> > > panel pixel clock along with input DCLK min, max divider values from
-> > > tcon driver and that would eventually set the pll-mipi clock rate.
-> > >
-> > > The current code allows the TCON clock divider to have a default 4
-> > > for min, max ranges that would fail to compute the desired pll-mipi
-> > > rate while supporting new panels.
-> > >
-> > > So, add the computation logic 'format/lanes' to dclk min and max dividers
-> > > and instead of default 4. This computation logic align with Allwinner A64
-> > > BSP, hoping that would work even for A33.
-> >
-> > Last time we discussed this, we found out that this wasn't the case,
-> > even in the BSP.
->
-> This was the case for BSP to compute pll-mipi not for TCON_DSI clock
-> register, SUN4I_TCON0_DCLK_REG, which marked the divider 4 by default.
->
-> >
-> > What compelling evidence have you found that makes you say otherwise?
->
-> divider 4 isn't worked, this I would mentioned before as well.
->
-> Tested this on 4 different panels, and below are the desired divider values
-> and pll-mipi clock rate with respect to pixel clock frequency.
->
-> - 55MHz pixel clock with 4-lane panel, and the desired DSI clock divider
->   is 6 with the output parent clock rate of 330MHz.
-> - 30MHz pixel clock with 4-lane panel, and the desired DSI clock divider
->   is 6 with parent clock rate of 180MHz.
-> - 27.5Mhz pixel clock with 2-lane pane, and the desired DSI clock divider
->   is 12 with the output parent clock rate of 330MHz.
-> - 147MHz pixel clock with 4-lane panel, and the desired DSI clock divider
->   is 6 with the output parent clock rate of 882MHz.
->
-> BSP trying to use this format/lane to compute dsi divider that in-turn
-> using pll-mipi set_rate but TCON0_DCLK_REG keep constant 4.
+Hi folks,
 
-Any comments?
+This series adds support for the Mali450 MP4 GPU found on the
+hi6220 SoC from HiSilicon. It has been tested with the out
+of tree lima drm/mesa driver hosted on freedesktop.org gitlab,
+and validated using Weston and kmscube.
 
-For more information, I have even tying to get the dump here to show
-the pll_rate set in BSP code [1], please have a look at this gist[2]
-where the bpp/lanes value of 6 is computed for pll_rate and let me
-know what do you think?
+regards,
 
-DSI rate is 148.5Mhz
-Panel Pixel clock is 148Mhz
-PLL set rate is 888Mhz (which is bpp/lanes = 6 * 148 Mhz)
+Peter.
 
-[1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L793
-[2] https://gist.github.com/openedev/9bae2d87d2fcc06b999fe48c998b7043
-     https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
+Peter Griffin (6):
+  dt-bindings: gpu: mali-utgard: add hisilicon,hi6220-mali compatible
+  dt-bindings: reset: hisilicon: Update compatible documentation
+  arm64: dts: hisilicon: Add Mali-450 MP4 GPU DT entry
+  reset: hi6220: Add support for AO reset controller
+  dt-bindings: reset: hisilicon: Add ao reset controller
+  clk: hi6220: use CLK_OF_DECLARE_DRIVER
+
+ .../devicetree/bindings/gpu/arm,mali-utgard.txt    |  5 +++
+ .../bindings/reset/hisilicon,hi6220-reset.txt      |  1 +
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          | 38 ++++++++++++++++
+ drivers/clk/hisilicon/clk-hi6220.c                 |  2 +-
+ drivers/reset/hisilicon/hi6220_reset.c             | 51 +++++++++++++++++++++-
+ include/dt-bindings/reset/hisi,hi6220-resets.h     |  7 +++
+ 6 files changed, 102 insertions(+), 2 deletions(-)
+
+-- 
+2.7.4
+
