@@ -3,94 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC03C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE32C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E897A213F2
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D3252173C
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552938577;
-	bh=rOGaqJLsPNHQ5Crk49tSHE7Ios2UsBkT7W9r9Ss67SI=;
+	s=default; t=1552938849;
+	bh=S5qXjlimOmlmPK6S44dA6deTiv59CNz9XxD1naSz9Ys=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=NkSIlMvVDNaGTYFCErfqa4594p9hcbj8uwRyk99fObiKVdG6eFQHLb1q0w807Hh7n
-	 Eft0J0dMaFxTdAYoqCWhWrGTgZkOE8uLn4z3B5a3VdUd9l9KhTRa3d528u0nlAAQSH
-	 mu7ECrU2rwkuDscxmU5Mg4JydLN0cOh1DFMNpqr4=
+	b=OTBeZdH9uwGhSO8faZqLUIFxuSlSIjcFNe8qosgASD5wduEifo1ds7JAGNce4nh+e
+	 Cj9VYN/KJacq2UcfD3DVUwlCdQpgo5NfgyRxHWb4gd+IJnUysh5XQYogXls2W4rOQS
+	 frGEZi0MYAokvv6LR74o2wlGHcavJDPf0SJ+ElNo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfCRTtg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 15:49:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40688 "EHLO mail.kernel.org"
+        id S1727357AbfCRTyE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 15:54:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbfCRTtg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Mar 2019 15:49:36 -0400
+        id S1726806AbfCRTyD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Mar 2019 15:54:03 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1CE520989;
-        Mon, 18 Mar 2019 19:49:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCB712173C;
+        Mon, 18 Mar 2019 19:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1552938575;
-        bh=rOGaqJLsPNHQ5Crk49tSHE7Ios2UsBkT7W9r9Ss67SI=;
+        s=default; t=1552938843;
+        bh=S5qXjlimOmlmPK6S44dA6deTiv59CNz9XxD1naSz9Ys=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=wNaGduMP50wgMMB+McHVfEdOWaGg3m/sNDrwzbCd236tsDE1SrmWI3tT7aIIGY6Gi
-         dQ+KPvItuRREZYDWf7GXErmqci0CBKEz+g0vJV/A4VirkhJXOFqH/ov41QZcZiarna
-         61iUrol9DPIQdaAninl9zEvvZRlr1dmS/JP/7PrA=
+        b=pY9hE0g6FBj3ayx2f0DIl7j+GMvQFXTEmNqc7Qwny151k0RrV4QWRRFv3Jjwb/dJ2
+         c0S8LHITMTFvqDbFz3tU9Ql1vjVuzuimLn2z4Wd5SPN3QzUSFK6iNQex3TqDpBE1jA
+         cLa96OoJZzVqqeqeu2/4AdIhWGMe0/U2uc5yYwVk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190318102805.10145-1-maxime.ripard@bootlin.com>
-References: <20190318102805.10145-1-maxime.ripard@bootlin.com>
+In-Reply-To: <20190318105045.26943-1-nicolas.ferre@microchip.com>
+References: <20190318105045.26943-1-nicolas.ferre@microchip.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: sunxi: Add Kconfig options
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <155293857501.20095.5076762911679502932@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: at91: fix programmable clock for sama5d2
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, matthias.wieloch@few-bauer.de,
+        stable@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-clk@vger.kernel.org
+Message-ID: <155293884206.20095.9858756917267939797@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Mon, 18 Mar 2019 12:49:35 -0700
+Date:   Mon, 18 Mar 2019 12:54:02 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2019-03-18 03:28:05)
-> diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
-> new file mode 100644
-> index 000000000000..2842d2feca0e
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/Kconfig
-> @@ -0,0 +1,21 @@
-> +config CLK_SUNXI
-> +       bool "Legacy clock support for Allwinner SoCs"
+Quoting Nicolas Ferre (2019-03-18 03:50:45)
+> From: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+>=20
+> The prescaler formula of the programmable clock has changed for sama5d2. =
+Update
+> the driver accordingly.
+>=20
+> Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
+> Cc: <stable@vger.kernel.org> # v4.20+
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> [nicolas.ferre@microchip.com: adapt the prescaler range,
+>                 fix clk_programmable_recalc_rate, split patch]
+> Signed-off-by: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+> v2: adapt to v5.1-rc1
+>     remove unneeded sentence about DT in commit message
+>=20
+> Stephen,
+>=20
+> I think it would be good to see this fix going upstream during v5.1-rc ph=
+ase.
 
-Maybe this should be a submenu, i.e. a menuconfig, so it's even further
-buried and doesn't show up in the top-level clk config listing when it's
-enabled.
+Ok. I can apply this clk-fixes. I presume that things are real bad and
+it can't wait until v5.2?
 
-> +       depends on ARCH_SUNXI || COMPILE_TEST
-> +
-> +if CLK_SUNXI
-> +
-> +config CLK_SUNXI_CLOCKS
-> +       bool "Legacy clock drivers"
+> @@ -60,10 +68,18 @@ static int clk_programmable_determine_rate(struct clk=
+_hw *hw,
+>                         continue;
+> =20
+>                 parent_rate =3D clk_hw_get_rate(parent);
+> -               for (shift =3D 0; shift < PROG_PRES_MASK; shift++) {
+> -                       tmp_rate =3D parent_rate >> shift;
+> -                       if (tmp_rate <=3D req->rate)
+> -                               break;
+> +               if (layout->is_pres_direct) {
+> +                       for (shift =3D 0; shift <=3D layout->pres_mask; s=
+hift++) {
+> +                               tmp_rate =3D parent_rate / (shift + 1);
+> +                               if (tmp_rate <=3D req->rate)
+> +                                       break;
+> +                       }
+> +               } else {
+> +                       for (shift =3D 0; shift < layout->pres_mask; shif=
+t++) {
+> +                               tmp_rate =3D parent_rate >> shift;
+> +                               if (tmp_rate <=3D req->rate)
+> +                                       break;
+> +                       }
 
-Maybe you can add some help text here to guide the user to understand
-that these drivers shouldn't be used in most (all?) cases?
+This looks like a lot of copy paste when the if statement could have been
+pulled into the for loop instead of duplicating the loops and
+surrounding if condition check for tmp_rate.
 
-> +
-> +config CLK_SUNXI_PRCM_SUN6I
-> +       bool "Legacy sun6i PRCM driver"
-> +       select MFD_SUN6I_PRCM
-> +
-> +config CLK_SUNXI_PRCM_SUN8I
-> +       bool "Legacy sun8i PRCM driver"
-> +       select MFD_SUN6I_PRCM
-> +
-> +config CLK_SUNXI_PRCM_SUN9I
-> +       bool "Legacy sun9i PRCM driver"
-> +
-> +endif
+>                 }
+> =20
+>                 if (tmp_rate > req->rate)
