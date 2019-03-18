@@ -2,139 +2,142 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F6FC43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62516C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBF1520854
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:40:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B8762084F
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 11:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfCRLkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 07:40:46 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:37075 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfCRLkq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 07:40:46 -0400
-X-Originating-IP: 109.213.80.250
-Received: from localhost (alyon-652-1-57-250.w109-213.abo.wanadoo.fr [109.213.80.250])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E4646240006;
-        Mon, 18 Mar 2019 11:40:39 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc:     Christian Neubert <christian.neubert.86@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for cpu clocks
-In-Reply-To: <20190318112844.GA1708@apalos>
-References: <20190313163558.6705-1-gregory.clement@bootlin.com> <20190314121541.GB19385@apalos> <CAC5LXJcCs4nr-qFOWzUJpUBAJ9ngG-cgeTCVCFBKFc1SPzHMuQ@mail.gmail.com> <20190314134428.GA24768@apalos> <874l85v8p6.fsf@FE-laptop> <20190318112844.GA1708@apalos>
-Date:   Mon, 18 Mar 2019 12:40:38 +0100
-Message-ID: <87h8c0s955.fsf@FE-laptop>
+        id S1727197AbfCRL5i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 07:57:38 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:44185 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbfCRL5i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 07:57:38 -0400
+X-Originating-IP: 90.88.22.102
+Received: from localhost (aaubervilliers-681-1-80-102.w90-88.abo.wanadoo.fr [90.88.22.102])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 7368DC0006;
+        Mon, 18 Mar 2019 11:57:34 +0000 (UTC)
+Date:   Mon, 18 Mar 2019 12:57:33 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     icenowy@aosc.io, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH 04/14] pinctrl: sunxi: v3: really
+ introduce support for V3
+Message-ID: <20190318115733.4onedngeaqbm4txp@flea>
+References: <20190312152256.35574-1-icenowy@aosc.io>
+ <20190312152256.35574-5-icenowy@aosc.io>
+ <20190312153654.25r5orlw7qjtlhbt@flea>
+ <7B6C1341-BAB5-48C5-9E60-11BCEAC3D0CD@aosc.io>
+ <ef0c3061986b7456605a61f835f2a2003cf4c678.camel@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kfiqbz764gzlm462"
+Content-Disposition: inline
+In-Reply-To: <ef0c3061986b7456605a61f835f2a2003cf4c678.camel@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ilias,
- 
- On lun., mars 18 2019, Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
 
-> Hi Gregory, 
->> Hi Ilias,
->>  
->>  On jeu., mars 14 2019, Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
->> 
->> > Hello Christian,
->> >> Hi,
->> >> 
->> >> I assume you use the 1000 MHz firmware. This does also not work on my Rev 7
->> >> board. But I'm pretty sure this is not a problem of the patches, because if
->> >> I take a newer kernel (4.19.20/27) without the patches it also does not
->> >> work. A kernel 4.19.17 does work for me. My opinion on that is that this is
->> >> another problem which does just occure now because now the cpu frequency
->> >> scaling is working with the right frequencies.
->> > I am not sure which firmware i am running, i did all my tests on 5.0.0 and
->> > changing between governors worked fine without the patches
->> 
->> Curently my espressobin is broken so I tested the patches on the Armada
->> 3700 DB and I didn't observe the issue you had.
->> 
->> The 3700 DB I used is configured to run at 800MHz.
->> 
->> Could you apply the following patch and sent me the boot log?
->> 
->> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
->> index 26ed3c18a239..f814ade5cd80 100644
->> --- a/drivers/clk/mvebu/armada-37xx-periph.c
->> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
->> @@ -452,14 +452,17 @@ static int clk_pm_cpu_set_parent(struct clk_hw *hw, u8 index)
->>  
->>         /* Set the parent clock for all the load level */
->>         for (load_level = 0; load_level < LOAD_LEVEL_NR; load_level++) {
->> -               unsigned int reg, mask,  val,
->> +               unsigned int reg, mask,  val, old,
->>                         offset = ARMADA_37XX_NB_TBG_SEL_OFF;
->>  
->>                 armada_3700_pm_dvfs_update_regs(load_level, &reg, &offset);
->>  
->>                 val = index << offset;
->>                 mask = ARMADA_37XX_NB_TBG_SEL_MASK << offset;
->> +               regmap_read(base, reg, &old);
->>                 regmap_update_bits(base, reg, mask, val);
->> +               pr_err("%s old=%X -> val=0x%X load_level=%d\n",
->> +                      __func__, old,  val, load_level);
->>         }
->>         return 0;
->>  }
->> 
->> 
->> 
-> [   14.909524] clk_pm_cpu_set_parent old=28004840 -> val=0x6000000 load_level=0
-> [   14.916424] clk_pm_cpu_set_parent old=2E004840 -> val=0x600 load_level=1
-> [   14.923315] clk_pm_cpu_set_parent old=8880A8C0 -> val=0x6000000 load_level=2
-> [   14.930572] clk_pm_cpu_set_parent old=8E80A8C0 -> val=0x600 load_level=3
+--kfiqbz764gzlm462
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Mar 18, 2019 at 12:05:12PM +0100, Paul Kocialkowski wrote:
+> Hi,
 >
+> Le mardi 12 mars 2019 =C3=A0 23:45 +0800, Icenowy Zheng a =C3=A9crit :
+> >
+> > =E4=BA=8E 2019=E5=B9=B43=E6=9C=8812=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
+=8811:36:54, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
+> > > On Tue, Mar 12, 2019 at 11:22:46PM +0800, Icenowy Zheng wrote:
+> > > > Introduce the GPIO pins that is only available on V3 (not on V3s) to
+> > > the
+> > > > V3 pinctrl driver.
+> > > >
+> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > ---
+> > > >  drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c | 291
+> > > +++++++++++++++++++++--
+> > > >  drivers/pinctrl/sunxi/pinctrl-sunxi.h    |   2 +
+> > > >  2 files changed, 275 insertions(+), 18 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> > > b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> > > > index 6704ce8e5e3d..54c210871a95 100644
+> > > > --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> > > > +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+> > > > @@ -1,5 +1,5 @@
+> > > >  /*
+> > > > - * Allwinner V3s SoCs pinctrl driver.
+> > > > + * Allwinner V3/V3s SoCs pinctrl driver.
+> > > >   *
+> > > >   * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
+> > > >   *
+> > > > @@ -23,7 +23,7 @@
+> > > >
+> > > >  #include "pinctrl-sunxi.h"
+> > > >
+> > > > -static const struct sunxi_desc_pin sun8i_v3s_pins[] =3D {
+> > > > +static const struct sunxi_desc_pin sun8i_v3_v3s_pins[] =3D {
+> > >
+> > > I'm not sure all that remaining is worth it to be honest. It adds a
+> > > lot of noise for no particular reason (and the same goes for renaming
+> > > the file itself)
+> >
+> > Maybe keeping names is okay "for historial reasons".
+> >
+> > In fact I want to keep them.
 >
-> Let me know if you need anything else
-
-Could you show me the output of "cat /sys/kernel/debug/clk/clk_summary"
-
-Also, during this week-end, Christian suggested that the issue might
-come from the AVS support.
-
-Could you disable it and check you still have the issue?
-
-For this, you just have to remove the avs node in
-arch/arm64/boot/dts/marvell/armada-37xx.dtsi and rebuild the dtb.
-
-Thanks,
-
-Gregory
-
+> My two cents about this: kernel development is plagued by the unability
+> to rename and rework things as soon as backward compatibility is
+> involved. I believe that renaming and reworking things is quite a good
+> thing to do when it leads to a situation that is easier to understand
+> and makes more sense.
 >
-> Regards
-> /Ilias
+> In this case, I don't see any blockers that would prevent us from doing
+> this, so I am strongly in favor of it. I really don't see how increased
+> noise and "historical reasons" make up for better clarity.
 
--- 
-Gregory Clement, Bootlin
+It simplifies the git history, for once, which has the side effect of
+reducing conflicts too.
+
+A second one is: Do you prefer to review patches that have some
+significant value (like a new feature, a bugfix, a new SoC support,
+etc) or one that renames files and / or symbols?
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
-http://bootlin.com
+https://bootlin.com
+
+--kfiqbz764gzlm462
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXI+HnwAKCRDj7w1vZxhR
+xfbaAP4tTPJsX9kjGgO2E96g98P/Y+TcQb27RkXk4LjnteSexAEAw1P3kGgeQQ04
+LmZksUSSEkd+Gy4cLhehmv11w/aPWAo=
+=CCMo
+-----END PGP SIGNATURE-----
+
+--kfiqbz764gzlm462--
