@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76864C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95FCC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453A320685
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:41:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A06D20685
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 19:41:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zave381f"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rDY5Z6be"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfCRTlB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 15:41:01 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44247 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727713AbfCRTk7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 15:40:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w2so18414755wrt.11
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 12:40:58 -0700 (PDT)
+        id S1727716AbfCRTlH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 15:41:07 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40921 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727779AbfCRTlD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 15:41:03 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t5so18448349wri.7
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 12:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iYcbdw0SobNZ1DKEtyOsg/AhnPu/CmThFhgWWs7DOwA=;
-        b=Zave381f6F6eYXUT5XE8kYOOwujnnpASeD67mm7RFLbGbsjITUf2fUwDUipX5c2jSj
-         OdBWKis4xAPiNst8Ut6f2EcApUFinBFLLvGPFIek6CrwuelpHoRJH6duE1Dfo7TJhHm2
-         CJOqQcxCdoFUrwYGKNQrH/vbpe/xWMNezLEF4kSfh3W/iDg9dhwnlpdlW1X75ZGOEr7m
-         w3E95sEwUSUYTj09Y8A5xGWJIBnxdEIF7/Y66RxxUyimmX44WKgcxB2ew1LndlqGWUnP
-         7H/WiI+WTpwDcLdDE+1vABKwGIMnoAMpMrPxqu1gP1/9qD/x/XtFwjcwoWdDHMNSKs6e
-         H37g==
+        bh=f+uCN0dtjEGnlJv3pfIkjdcZRrqjbDiHnBp4IPbDmW4=;
+        b=rDY5Z6beU5to+2BGAZgeIkJkgr3wfP/KjLMRUdOpcCW6YCcJ4RivVQwKnooXBtJ2dj
+         7ok/tS8E0MGmIRyTmVgHPxRcJwd/tiRKSmPIbanxJm74jm/pZ3aUUI75FRp5+v5K/aTk
+         vzJp68jARltyDy5MT0btgZdSjS5LTLQuLPAVaefO6yYD3maHUd2VxrlHDHVybALZ4mpK
+         5TzpsvylL5K4z+4aF+zVwWWRNby21sQ+vjjhehkTawWw9y+hheExStyuzngOL6bFP6w5
+         apFCKS0evYsNOvuWmCAb6rPc8eehmHkyOGdrVFROzko5ZAx02jSkcjFrS7KFWRNA+IsB
+         nZtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iYcbdw0SobNZ1DKEtyOsg/AhnPu/CmThFhgWWs7DOwA=;
-        b=XXWEyZCl+X9RXE+S7EU5RauWvkWx/1vOndon7Y32M8H6jv0ZDMqQJyU1w4bZ/Jf2S/
-         7bU6amsPI+Sx9anf3WU3eY2zNqebeNmcnHoIqCm/4xhUeoXBODHfQj+/cGqzOIFi3ycs
-         +PiIHLtfuGBe/BF3IEqVOjtvWNWZRxjy1GC46aPUeYe56nTDfMnH8Q7BluAbSheI+/EC
-         ZUIY9SNAsdvjZz7tOxgZrF+CoFgbfLQ2QwO2WWu3fI78ISFuN3iXMlj5Iikqxliwm3yv
-         DrTDbD5GnhC4TK7LTlwqJnWkDnyHhqQIzn71CpKyX9cRMmhDTne3ggdjYNoeuoPKOY6v
-         x0Tw==
-X-Gm-Message-State: APjAAAUfYBS2TmAeBV0Z6JAHLYTqlSu4okiZx4obuF5VPPWLJBppZ43T
-        dBGjjAdZuFltua3D5jYnvxv1dQ==
-X-Google-Smtp-Source: APXvYqxDhFz9Mg6jRME+Pb5JgnyOr8wtDzca5R7ayCiHcrg9EPTTNaVUtjBUnOW4nepUdFmTI19jkA==
-X-Received: by 2002:adf:e2ca:: with SMTP id d10mr13102295wrj.250.1552938057398;
-        Mon, 18 Mar 2019 12:40:57 -0700 (PDT)
+        bh=f+uCN0dtjEGnlJv3pfIkjdcZRrqjbDiHnBp4IPbDmW4=;
+        b=sSEhGi2EIWchVnpLSh9S2N99HzBSreeCRGhLVa7d3d1hugSrSXAZFU8DLnrRc5Yisy
+         CsxdpCHw0+ECCTLfFTm8Q3e/71tXWIntlfazTWruD4zieJcg4Uf0bj8vRGMB/DtMmhsy
+         NMI96dqvD/9J2c9mrCFR+xDZzNJDEObZmhTem7pKR7OgdQZ0bT0iNWB8u21ZMkrmdVV9
+         f4E94Nfyj1rbWpsr3VhXJIpzHxFjbFC3YjqsCPz6IRzbLvud2yD714mfJnZoYlz5x1M6
+         XOSn/Nzj9DaK7+eI7096idO1vK79ysWUa9KDDrIw4g+K5j648uRI1eaM3zJak+GgLurU
+         gFXg==
+X-Gm-Message-State: APjAAAX4F4oujImG9hpWJMaLjJbiiviGytiVCK36chPCTb999PP3XrJZ
+        SqROqBssxU6XLoezP9Z7xMkTHQ==
+X-Google-Smtp-Source: APXvYqx+OpyuPhR9OKH2oYNzz4yUdu4KL8pJugxaOx7zkWRlZz+b/DZpiR2HE59qYxCt/JwwY6NXNQ==
+X-Received: by 2002:adf:fb82:: with SMTP id a2mr4551043wrr.214.1552938061153;
+        Mon, 18 Mar 2019 12:41:01 -0700 (PDT)
 Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust4998.18-1.cable.virginm.net. [86.31.179.135])
-        by smtp.gmail.com with ESMTPSA id s10sm4583941wrv.56.2019.03.18.12.40.56
+        by smtp.gmail.com with ESMTPSA id s10sm4583941wrv.56.2019.03.18.12.41.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 18 Mar 2019 12:40:56 -0700 (PDT)
+        Mon, 18 Mar 2019 12:41:00 -0700 (PDT)
 From:   Peter Griffin <peter.griffin@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
@@ -61,9 +61,9 @@ To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 Cc:     john.stultz@linaro.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         yuq825@gmail.com
-Subject: [PATCH v1 3/6] arm64: dts: hisilicon: Add Mali-450 MP4 GPU DT entry
-Date:   Mon, 18 Mar 2019 19:38:48 +0000
-Message-Id: <1552937931-23050-4-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v1 6/6] clk: hi6220: use CLK_OF_DECLARE_DRIVER
+Date:   Mon, 18 Mar 2019 19:38:51 +0000
+Message-Id: <1552937931-23050-7-git-send-email-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1552937931-23050-1-git-send-email-peter.griffin@linaro.org>
 References: <1552937931-23050-1-git-send-email-peter.griffin@linaro.org>
@@ -72,69 +72,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-hi6220 has a Mali450 MP4 so lets add it into the DT.
+As now we also need to probe in the reset driver as well.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 38 +++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/clk/hisilicon/clk-hi6220.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-index 108e2a4..2072b63 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-@@ -260,6 +260,7 @@
- 			compatible = "hisilicon,hi6220-aoctrl", "syscon";
- 			reg = <0x0 0xf7800000 0x0 0x2000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
+diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+index a87809d..952ffe2 100644
+--- a/drivers/clk/hisilicon/clk-hi6220.c
++++ b/drivers/clk/hisilicon/clk-hi6220.c
+@@ -89,7 +89,7 @@ static void __init hi6220_clk_ao_init(struct device_node *np)
+ 	hisi_clk_register_gate_sep(hi6220_separated_gate_clks_ao,
+ 				ARRAY_SIZE(hi6220_separated_gate_clks_ao), clk_data_ao);
+ }
+-CLK_OF_DECLARE(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_init);
++CLK_OF_DECLARE_DRIVER(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_init);
  
- 		sys_ctrl: sys_ctrl@f7030000 {
-@@ -1021,6 +1022,43 @@
- 			clock-names = "apb_pclk";
- 			cpu = <&cpu7>;
- 		};
-+
-+		mali: gpu@f4080000 {
-+			compatible = "hisilicon,hi6220-mali", "arm,mali-450";
-+			reg = <0x0 0xf4080000 0x0 0x00040000>;
-+			interrupt-parent = <&gic>;
-+			interrupts =	<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_PPI 126 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interrupt-names = "gp",
-+					  "gpmmu",
-+					  "pp",
-+					  "pp0",
-+					  "ppmmu0",
-+					  "pp1",
-+					  "ppmmu1",
-+					  "pp2",
-+					  "ppmmu2",
-+					  "pp3",
-+					  "ppmmu3";
-+			clocks = <&media_ctrl HI6220_G3D_CLK>,
-+				 <&media_ctrl HI6220_G3D_PCLK>;
-+			clock-names = "core", "bus";
-+			assigned-clocks = <&media_ctrl HI6220_G3D_CLK>,
-+					  <&media_ctrl HI6220_G3D_PCLK>;
-+			assigned-clock-rates = <500000000>, <144000000>;
-+			reset-names = "ao_g3d", "media_g3d";
-+			resets = <&ao_ctrl AO_G3D>, <&media_ctrl MEDIA_G3D>;
-+		};
- 	};
- };
  
+ /* clocks in sysctrl */
 -- 
 2.7.4
 
