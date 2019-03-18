@@ -2,178 +2,138 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 283FEC43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 15:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F450C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 18:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04ECA20872
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 15:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D491620835
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 18:25:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="I4WPNbtt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfCRPTY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 11:19:24 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38995 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726730AbfCRPTY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 11:19:24 -0400
-X-Originating-IP: 90.88.22.102
-Received: from aptenodytes (aaubervilliers-681-1-80-102.w90-88.abo.wanadoo.fr [90.88.22.102])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id A0AFA240004;
-        Mon, 18 Mar 2019 15:19:16 +0000 (UTC)
-Message-ID: <b33c62f75ffd5858a50fe1edb970faa59ee9cd1e.camel@bootlin.com>
-Subject: Re: [linux-sunxi] [PATCH 11/14] ARM: sunxi: dts: s3/s3l/v3: add
- DTSI files for S3/S3L/V3 SoCs
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org
-Date:   Mon, 18 Mar 2019 16:19:16 +0100
-In-Reply-To: <86A3A1C2-323E-439D-9615-530E2AD9E199@aosc.io>
-References: <20190312152256.35574-1-icenowy@aosc.io>
-         <20190312152256.35574-12-icenowy@aosc.io>
-         <ea4f86798466bd9680f064f663a50450452509bc.camel@bootlin.com>
-         <86A3A1C2-323E-439D-9615-530E2AD9E199@aosc.io>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.0 
+        id S1727116AbfCRSY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 14:24:57 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34283 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfCRSY5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 14:24:57 -0400
+Received: by mail-io1-f65.google.com with SMTP id n11so15532688ioh.1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 11:24:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=40KwwJTreUr7SrlhIboEHgMAtXuwNdUA9TdB84CMBq0=;
+        b=I4WPNbttg47zfiGrm5quGozOpx0FlbzWFxGENkVdtsZpdjAc8cWv2MsAAtbEzDkb+N
+         VvBaXDFHXy9XrpRjlc30ysNVeX+VY1RgB6cUH2G9q5821V43fZmAfxCbZ7dYyblwXK1K
+         exZHSfGU3E2EpBAWCR5N5nYYtJ/ritD+zx+RE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=40KwwJTreUr7SrlhIboEHgMAtXuwNdUA9TdB84CMBq0=;
+        b=r9CPcQduzXrYzXUEDw46BvDGi9asAKhEQpuGKpm4fxCyddtNt9HOcY5QJhFNqgWLBJ
+         BtpxKJH3DzeOKSH1aaenSY0wiHUu1RCgVw1hdnaVGBELL21w+kwqTIX+2Z4h0qkVZZsE
+         u2yzeovMqLhgWPw38q49jbO95b9lS7KlUDLNicHFCivK6G8odBvEf1nSoM6h2IFWjKaF
+         U4Aw0Ykbc5CorOSKXr5ybBXN+eKlgRVc7Kqrv5GaOBFjuZsKVm/WTnHNmFRi5r4ie9aO
+         EbHa/ZI+tBIG2Q7AqK38mbXbvzc4En0ulPZAzFauauAjm146HrWRg7oSyQEWheF1gZex
+         ydfA==
+X-Gm-Message-State: APjAAAUOOb6rueu98lxquSjgAu+UyMptNAEsSjeSTI0cK3odAncYChG6
+        oCuCakaUVjVGHrP44Qw8aMFMVtn9l7+hQCs2q0QTVg==
+X-Google-Smtp-Source: APXvYqxYqD0aZLB9hBkLVdZqLnVaPTv9c5ALFTgs89uQqO7nn0GZ4egTAaKxg7v2cFKuYzB2cy26MeXWCLByUIynQK8=
+X-Received: by 2002:a5d:97c8:: with SMTP id k8mr12627122ios.267.1552933496448;
+ Mon, 18 Mar 2019 11:24:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190311133637.18334-1-jagan@amarulasolutions.com>
+ <20190311133637.18334-3-jagan@amarulasolutions.com> <20190311153847.oz6ruqmptaq2befn@flea>
+ <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
+In-Reply-To: <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 18 Mar 2019 23:54:45 +0530
+Message-ID: <CAMty3ZBteruXzMNkyUKv5VmDVzmN1E6zKL0+o7PYo_bFc7gq9g@mail.gmail.com>
+Subject: Re: [PATCH v8 02/15] drm/sun4i: tcon: Compute DCLK dividers based on
+ format, lanes
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Mon, Mar 11, 2019 at 9:36 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Mon, Mar 11, 2019 at 9:08 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Mon, Mar 11, 2019 at 07:06:24PM +0530, Jagan Teki wrote:
+> > > pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
+> > > MIPI clock topology in Allwinner DSI controller.
+> > >
+> > > TCON dotclock driver is computing the desired DCLK divider based on
+> > > panel pixel clock along with input DCLK min, max divider values from
+> > > tcon driver and that would eventually set the pll-mipi clock rate.
+> > >
+> > > The current code allows the TCON clock divider to have a default 4
+> > > for min, max ranges that would fail to compute the desired pll-mipi
+> > > rate while supporting new panels.
+> > >
+> > > So, add the computation logic 'format/lanes' to dclk min and max dividers
+> > > and instead of default 4. This computation logic align with Allwinner A64
+> > > BSP, hoping that would work even for A33.
+> >
+> > Last time we discussed this, we found out that this wasn't the case,
+> > even in the BSP.
+>
+> This was the case for BSP to compute pll-mipi not for TCON_DSI clock
+> register, SUN4I_TCON0_DCLK_REG, which marked the divider 4 by default.
+>
+> >
+> > What compelling evidence have you found that makes you say otherwise?
+>
+> divider 4 isn't worked, this I would mentioned before as well.
+>
+> Tested this on 4 different panels, and below are the desired divider values
+> and pll-mipi clock rate with respect to pixel clock frequency.
+>
+> - 55MHz pixel clock with 4-lane panel, and the desired DSI clock divider
+>   is 6 with the output parent clock rate of 330MHz.
+> - 30MHz pixel clock with 4-lane panel, and the desired DSI clock divider
+>   is 6 with parent clock rate of 180MHz.
+> - 27.5Mhz pixel clock with 2-lane pane, and the desired DSI clock divider
+>   is 12 with the output parent clock rate of 330MHz.
+> - 147MHz pixel clock with 4-lane panel, and the desired DSI clock divider
+>   is 6 with the output parent clock rate of 882MHz.
+>
+> BSP trying to use this format/lane to compute dsi divider that in-turn
+> using pll-mipi set_rate but TCON0_DCLK_REG keep constant 4.
 
-Le lundi 18 mars 2019 à 23:15 +0800, Icenowy Zheng a écrit :
-> 
-> 于 2019年3月18日 GMT+08:00 下午8:41:32, Paul Kocialkowski <paul.kocialkowski@bootlin.com> 写到:
-> > Hi,
-> > 
-> > Le mardi 12 mars 2019 à 23:22 +0800, Icenowy Zheng a écrit :
-> > > The Allwinner S3/S3L/V3 SoCs all share the same die with the V3s SoC,
-> > > but with more GPIO wired out of the package.
-> > > 
-> > > Add DTSI files for these SoCs. The DTSI file for V3 just replaces the
-> > > pinctrl compatible string, and the S3/S3L DTSI files just include the
-> > V3
-> > > DTSI file.
-> > 
-> > Note that the V3 has a NMI controller at 1c000d0, that is required for
-> > handling the AXP209 interrupts IIRQ. I have no idea whether it's also
-> > the case on the V3s/S3/S3L though but it would be good to know.
-> 
-> It's not mentioned on the datasheet.
-> 
-> If it's present, please send a patch.
+Any comments?
 
-Indeed, it is not documented but the block is definitely there (and it
-shows up in Allwinner's kernel source too). I'll send a patch once
-these series is merged then!
+For more information, I have even tying to get the dump here to show
+the pll_rate set in BSP code [1], please have a look at this gist[2]
+where the bpp/lanes value of 6 is computed for pll_rate and let me
+know what do you think?
 
-> BTW all V3 series chip share the same die (sun8iw8).
+DSI rate is 148.5Mhz
+Panel Pixel clock is 148Mhz
+PLL set rate is 888Mhz (which is bpp/lanes = 6 * 148 Mhz)
 
-Right, so I think it's safe to assume that the controller is there on
-all of them then.
-
-Cheers,
-
-Paul
-
-> Thanks
-> 
-> > Note that I can totally add support for it when adding support for my
-> > V3 device that uses the AXP209 this way.
-> > 
-> > Also, could we get proper compatibles and config options for these new
-> > SoCs, since they are distinct from the V3S?
-> > 
-> > Cheers,
-> > 
-> > Paul
-> > 
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > ---
-> > >  arch/arm/boot/dts/sun8i-s3.dtsi  |  6 ++++++
-> > >  arch/arm/boot/dts/sun8i-s3l.dtsi |  6 ++++++
-> > >  arch/arm/boot/dts/sun8i-v3.dtsi  | 14 ++++++++++++++
-> > >  3 files changed, 26 insertions(+)
-> > >  create mode 100644 arch/arm/boot/dts/sun8i-s3.dtsi
-> > >  create mode 100644 arch/arm/boot/dts/sun8i-s3l.dtsi
-> > >  create mode 100644 arch/arm/boot/dts/sun8i-v3.dtsi
-> > > 
-> > > diff --git a/arch/arm/boot/dts/sun8i-s3.dtsi
-> > b/arch/arm/boot/dts/sun8i-s3.dtsi
-> > > new file mode 100644
-> > > index 000000000000..0f41a25ecb30
-> > > --- /dev/null
-> > > +++ b/arch/arm/boot/dts/sun8i-s3.dtsi
-> > > @@ -0,0 +1,6 @@
-> > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > > +/*
-> > > + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-> > > + */
-> > > +
-> > > +#include "sun8i-v3.dtsi"
-> > > diff --git a/arch/arm/boot/dts/sun8i-s3l.dtsi
-> > b/arch/arm/boot/dts/sun8i-s3l.dtsi
-> > > new file mode 100644
-> > > index 000000000000..0f41a25ecb30
-> > > --- /dev/null
-> > > +++ b/arch/arm/boot/dts/sun8i-s3l.dtsi
-> > > @@ -0,0 +1,6 @@
-> > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > > +/*
-> > > + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-> > > + */
-> > > +
-> > > +#include "sun8i-v3.dtsi"
-> > > diff --git a/arch/arm/boot/dts/sun8i-v3.dtsi
-> > b/arch/arm/boot/dts/sun8i-v3.dtsi
-> > > new file mode 100644
-> > > index 000000000000..6ae8645ade50
-> > > --- /dev/null
-> > > +++ b/arch/arm/boot/dts/sun8i-v3.dtsi
-> > > @@ -0,0 +1,14 @@
-> > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > > +/*
-> > > + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-> > > + */
-> > > +
-> > > +#include "sun8i-v3s.dtsi"
-> > > +
-> > > +&ccu {
-> > > +	compatible = "allwinner,sun8i-v3-ccu";
-> > > +};
-> > > +
-> > > +&pio {
-> > > +	compatible = "allwinner,sun8i-v3-pinctrl";
-> > > +};
-> > > -- 
-> > > 2.18.1
-> > > 
-> > -- 
-> > Paul Kocialkowski, Bootlin
-> > Embedded Linux and kernel engineering
-> > https://bootlin.com
-> > 
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
--- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
+[1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L793
+[2] https://gist.github.com/openedev/9bae2d87d2fcc06b999fe48c998b7043
+     https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
