@@ -2,90 +2,143 @@ Return-Path: <SRS0=cbsA=RV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E75C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 20:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE07FC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 21:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAED0213F2
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 20:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552940703;
-	bh=eU6ZllXkqrCdE81PRkZFm1rsacOkiebJtb7Yx/fdmwQ=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=DXqCOk0P0UG9b4orKSrHP9PG9+r2lHJZFfbhtAy2ImGNnRGFo/qhgCfFdH/oWqWLK
-	 EiQP5KLDacSsmeZ3k4iuLqRxqM5bcEbX7Z1Xp5ZzjjOSO/M5H/4KSpsSJ6yI8kLAy7
-	 kmgLMjzGIkO7xGejlVxwK6dmaTr1GLVoTOZEdmxY=
+	by mail.kernel.org (Postfix) with ESMTP id 8F2682133D
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Mar 2019 21:49:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="00IANnBc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfCRUZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Mar 2019 16:25:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726777AbfCRUZD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Mar 2019 16:25:03 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 102C320850;
-        Mon, 18 Mar 2019 20:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1552940702;
-        bh=eU6ZllXkqrCdE81PRkZFm1rsacOkiebJtb7Yx/fdmwQ=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=H9AoONiMuUBkmMi3txRSajgLJgC95IvN/12LOgMMq7LFeQhv8dof6AS5bEq6Rk6bW
-         OJgklsBsrUUqkvY/A4hVzeHWmqAGhH0Ov1U252KkXEmcaSObPTXAjQzttf+mhQyf/1
-         FZKKUIXG20enGA+VqK1rb37Qg93GbGPCJpJLHN80=
-Content-Type: text/plain; charset="utf-8"
+        id S1727099AbfCRVtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Mar 2019 17:49:42 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:40635 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfCRVtl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Mar 2019 17:49:41 -0400
+Received: by mail-wm1-f52.google.com with SMTP id u10so11961014wmj.5
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2019 14:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Oiz0K3jaNGJftGjdDGJRO7YTH4i8SI0Guel0OdUVXvI=;
+        b=00IANnBc4zlqBDNj0LA3gQhU3Oeh/w0E0sKjsRoycKkdbffQy0MdkAVZ2DMDcF40Qb
+         /pohm8dkb4Pn0pbkNnqvsRFDBMfJUI/Udps61bHJiqCo8NkfwbpUKd8EyjI1t6DXx3Hb
+         dHu7lw2qqBZJtsCNAGUfhbEHjLnY4EK+lo/26gQp7JG/ZfPQ2s22Mt88mnu8DDCc0KUv
+         GqnFI4pwa9NPP9ZOdWGjrmx2WaZ2AU0ZrkG4pg0H9y4vWlffo9RZ8LFFCmNUCB0lvV9L
+         6Hqp5qCrYOeFblL6mT2cevW1C3QKhdytyOOTtnGkfpBYUz/WT/DbDpSyOgENidGFbP+1
+         e3Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Oiz0K3jaNGJftGjdDGJRO7YTH4i8SI0Guel0OdUVXvI=;
+        b=PnL1mal4lESNBAvK4rraDJlieGcfaoRsjPKuSZtlZxnq4IlD2IUrOGwyFyNKPqq5Kw
+         UhM/E7HVUgEjn8XBHm0W71IURCcmHi8+jjKrhBouhwMVJiUTZQNS6PObEXi3h60qn99+
+         Lyme0ZkE9Sjw4B2u16f9mHa0z6wSgsCMIkynVRmRG5myPbBbjOHxg36h7pfSx+dqt+PO
+         k6yWyk6gBAFZBYXntAw/zimvQvUnqTX6M+93NlJiX2aYeFDCo507ofIDk9VkhHfvGaZB
+         TSXELckhB8APaLVi0WnXspyBImWyq9CR9Sj1dLJ7xeRRpueKCebwKa8agbdtvwbLcUUS
+         /buQ==
+X-Gm-Message-State: APjAAAUh+0985yLyyS3v/VxUvT+6aQ1fjlvrnktxB8+xnM8ccH/XO1yc
+        TdbiotwbzaBi71JkQGiDgEgKsA==
+X-Google-Smtp-Source: APXvYqwpbw61vB0AKPMMy4McF9NDhxWYbV/s2xI1CGgkkjWazSyJyUel/j7n+wlTN9PIL+o/JdI9iw==
+X-Received: by 2002:a1c:c90b:: with SMTP id f11mr744286wmb.61.1552945778623;
+        Mon, 18 Mar 2019 14:49:38 -0700 (PDT)
+Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id f20sm29882177wrg.91.2019.03.18.14.49.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Mar 2019 14:49:37 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson-g12a: fix VPU clock parents
+To:     Stephen Boyd <sboyd@kernel.org>, jbrunet@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190313135503.3198-1-narmstrong@baylibre.com>
+ <155294054725.20095.14218989036413639726@swboyd.mtv.corp.google.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <06017d3a-229d-e9cf-03a3-0251a072e096@baylibre.com>
+Date:   Mon, 18 Mar 2019 22:49:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0cf890a4-20b0-13ce-14d3-06f7c3227655@nelint.com>
-References: <1552304271.2453.12.camel@pengutronix.de> <1552319997-24622-1-git-send-email-eric@nelint.com> <1552319997-24622-2-git-send-email-eric@nelint.com> <0cf890a4-20b0-13ce-14d3-06f7c3227655@nelint.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [V2 1/2] clk: imx6q: remove unsupported pll4_audio_div
-Cc:     anson.huang@nxp.com, colin.didier@devialet.com, festevam@gmail.com,
-        kernel@pengutronix.de, l.stach@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org, tiny.windzz@gmail.com
-To:     Eric Nelson <eric@nelint.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Message-ID: <155294070124.20095.17167777488324467790@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Mon, 18 Mar 2019 13:25:01 -0700
+In-Reply-To: <155294054725.20095.14218989036413639726@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Eric Nelson (2019-03-11 13:48:55)
->  > On March 11, 2019, 6:35 p.m. UTC, Stephen Boyd wrote:
-> > Quoting Eric Nelson (2019-03-11 08:59:56)
-> >> + *
-> >> + * Renamed to _BROKEN to prevent inadvertent use,
-> >> + * but reserved the array slot to maintain DT binary
-> >> + * compatibility.
-> >> + */
-> >> +#define IMX6QDL_CLK_PLL4_AUDIO_DIV_BROKEN      203
-> >=20
-> > But it breaks the build. I don't get it. Just add a comment indicating
-> > it shouldn't be used? That breaks the cross-tree dependency chain and
-> > lets clk tree merge the clk driver part and arm-soc merge the dts part.
-> The device tree update also requires the update to clk-imx6q.c
-> for proper run-time operation, so I don't see how these two parts
-> can be separated.
->=20
-> I thought about leaving the PLL4_AUDIO_DIV clock in place but
-> turning it into a dummy (placeholder), but that might lead others
-> down the long path I traversed before I found out that my manual
-> was old and the clock didn't function.
+On 18/03/2019 21:22, Stephen Boyd wrote:
+> Quoting Neil Armstrong (2019-03-13 06:55:03)
+>> First two VPU clock parents are wrong, fix it here.
+>>
+>> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> Are you going to send this as a PR later? Or I can pick this directly to
+> clk-fixes now?
+> 
 
-I'm not suggesting that it's left as a dummy forever, just until the
-other trees can merge their parts of this series and so that these
-patches can be applied in order that they're sent. Right now, the kbuild
-robot fails on this patch series because this patch intentionally breaks
-the build. Please don't do that. Send patch series that are bisectable
-so that the build doesn't break in the middle.
+Two other fixes are coming in the next days,
+I will send them in a PR later.
 
+Neil
