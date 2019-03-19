@@ -2,67 +2,66 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89962C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C75FC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E29E2075C
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FEF1213F2
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:23:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="wtmlVeo6"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="iCW/eZ1T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfCSUDi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 16:03:38 -0400
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:53881 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbfCSUDi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 16:03:38 -0400
-Received: by mail-wm1-f47.google.com with SMTP id e74so18147531wmg.3
-        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 13:03:36 -0700 (PDT)
+        id S1727116AbfCSUXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 16:23:13 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37485 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbfCSUXN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 16:23:13 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v14so9317013wmf.2
+        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 13:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:openpgp:autocrypt:organization:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=WpnIZou/SZYV4cXG99Y+VTUtfseFOoZs7/D8cWviIU4=;
-        b=wtmlVeo6OihF0VTCXvrSlyYX+LVlU1eYJsfI6YRgVmn9YzV9c9To2GifiWPYGIG3Jj
-         Q8SnBVHs/oM1YSaU25DZd1tY81opFwCKibLp9THA7Ykj3PQ5yQwS0z3wBKUlSEL9/lGh
-         BtT0g/wje3qn57oXCHHNuhJ2xZ0HtHpKJIydaEL1/6v8jUNnOjcvuHJr5TB5XZF0xjH8
-         mlpJyTYMKbEncWDMthADnat3pqwPpR5kK4gTf9z0jXWSFgnPAzEb8zglWCxh4sK6olAQ
-         kFBDuH7hGS8Y+oiMxURlfOPZ9xm7WaDZqutqxNzdhCW87zi4bzBkMeQ05efZVrsRkoCB
-         JvwA==
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=88tPsrPMPqYB1In/fB+lVmebSE2nvbar1boY4w5+Hlc=;
+        b=iCW/eZ1TXoz+fs6IB2WRL76stZeBllse/i6gcshGW8qof0/MQkQc6V7f/TOq8q7f1N
+         HUp8H5hpglp/B9foo+cp6S2bL4B8I2s7kg3uON5+Ybf1WEE+4QbHzHYWtfdQCV96a3GK
+         15zimJoDWhbB0sKN2e/Ws0pbBqEYTSBqvaybQAk4wG7nrHiFnrxi+xIboI+DPHffPKb2
+         23SVnn6F81Bnw81FWzk9o0k7KC7yTrjFycfbPJEzi+Z001SzVozUi9Q8Cb62dXGC80rn
+         plBZUMfm35FGzcAx6RNKeTw/BjN3PEz2uGlEGmCUQbF3j0YynYOIy4mVA1IlyIDCUzim
+         aA7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=WpnIZou/SZYV4cXG99Y+VTUtfseFOoZs7/D8cWviIU4=;
-        b=kY5YA1/sUXHsMK2kpCOS9k9bxBG1Wat//CAYBRvDcNP8ZN2jqJwByMbkyJd701tSsd
-         05Loi/gkyDd0rbNphVxbKAPZx+V5Yp1773wbtdEoPkcNhernBuIEy/NE9Ha2BW2oFhcq
-         QOE6NP0CJgEqkjyFQA/G/1OYOWqHzvbysdfUIQRRkRVxt49R83Ktw3R3ZKiscAjH3eEE
-         LmzbIX6Hoc4DsUogtmM/skyOBSCDoTTI6ZFQ3TE0gpCs6MmoDPvi334zLkIRzIUJf7Re
-         e4/Wdh7Ly3SsOhNkI+sklitu/0c5u5l+Rva8s6VYFsZ92p0QM4GgFVQtXFL/+Y7bE0cN
-         wYGA==
-X-Gm-Message-State: APjAAAVUhmSZ0Zr4UoKe+LXwLrqGE2Y9ZsSs18My5K1Y9EKz3Xlitwn2
-        FnyDKvY2lTH80pZDA/HgmfhcIw==
-X-Google-Smtp-Source: APXvYqwrv+TRHzc/SuHE+nSI5avWsgEnDxVF+0K9+kdxQsVSySbwfE20cueOAGDIs/AVMQC72p+dhA==
-X-Received: by 2002:a7b:cf23:: with SMTP id m3mr4818174wmg.96.1553025815712;
-        Tue, 19 Mar 2019 13:03:35 -0700 (PDT)
+        bh=88tPsrPMPqYB1In/fB+lVmebSE2nvbar1boY4w5+Hlc=;
+        b=WJJHAqoVFQlxgsO1gER3ugp2wN2ujgMt6nSIHqybKZjT9sX2hTEvox8gldk35U0SU3
+         v1FDPUt+V94F1Td8iM5eSZFPJmQj5sGVbtkh8oPYd4GyBVb0eUyVyc7Dzr5FHhrx4I0M
+         kSNZ3JYUkLvPVxW6G/TnmyfQO4Nr2nZy0O8j++L2H6yp5D9R6xjGbEE8bCHRBTrT+SSO
+         eMfU0FvEMVJEIrPEEektuNRBUS1F46fFNYki+aloCIw+KEtOpOLw3FXrweJgb6LrdmR/
+         svAQNNoZnInaWbIkOhSNR4MdJTGnKLEup58e5RHsZT9+Zemk094CzdNt1j86z6GbPKjp
+         KAww==
+X-Gm-Message-State: APjAAAVmrqIiVy53zlelKtLEz7U8/V/XUxqk0HFhkFknHCrKYbomSJfU
+        0agSmPUM3nuK5oU2B+3cwfqkefr0GT1g+jBw
+X-Google-Smtp-Source: APXvYqyDODcxE4r1LgrUTFdsXWtJSDhNiOpe68EnE6DM+moXTyuPj8WolhJH3lwHDZNqNHuaybmERQ==
+X-Received: by 2002:a1c:4105:: with SMTP id o5mr3864934wma.35.1553026991274;
+        Tue, 19 Mar 2019 13:23:11 -0700 (PDT)
 Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id a9sm9991605wrt.29.2019.03.19.13.03.34
+        by smtp.gmail.com with ESMTPSA id v6sm63803wme.24.2019.03.19.13.23.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Mar 2019 13:03:35 -0700 (PDT)
+        Tue, 19 Mar 2019 13:23:10 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] clk: meson: g12a: Add CPU Clock support
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190304131129.7762-1-narmstrong@baylibre.com>
+ <e9e5644385fb0ac45faceec5ba005dc20ab65989.camel@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
-Subject: [GIT PULL] clk: meson: fixes for v5.1
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -114,11 +113,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <1aff3a5c-75d3-5fd3-1aed-88eab2add828@baylibre.com>
-Date:   Tue, 19 Mar 2019 21:03:34 +0100
+Message-ID: <cd33907c-9b58-3e62-c490-35c184746367@baylibre.com>
+Date:   Tue, 19 Mar 2019 21:23:09 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.1
 MIME-Version: 1.0
+In-Reply-To: <e9e5644385fb0ac45faceec5ba005dc20ab65989.camel@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,41 +127,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear clock maintainers,
+On 19/03/2019 10:39, Jerome Brunet wrote:
+> On Mon, 2019-03-04 at 14:11 +0100, Neil Armstrong wrote:
+>> This patchset adds support for the clock tree feeding the 4xCortex A53
+>> cpu cluster.
+>>
+>> This patchet does not handle clock changing, this will be added in a
+>> secondary patchset.
+>>
+>> The CPU clock can either use the SYS_PLL for > 1GHz frequencies or
+>> use a couple of div+mux from 1GHz/667MHz/24MHz source with 2 non-glitch
+>> muxes.
+>>
+>> The CPU clock must be switched to a safe clock while changing the clocks
+>> before the non-glitch muxes. Proper support will be added later.
+>>
+>> In this patchset, clocks are set read-only.
+>>
+>> Changes since v1:
+>> - moved to clk_regmap_gate_ro_ops for R/O gates
+>> - added comments with datasheet field names
+>> - moved pribate bindings changes to driver patch
+>> - removed invalid PCIE IDs
+>>
+>> Neil Armstrong (2):
+>>   clk: meson-g12a: add cpu clock bindings
+>>   clk: meson: g12a: add cpu clocks
+>>
+>>  drivers/clk/meson/g12a.c              | 350 ++++++++++++++++++++++++++
+>>  drivers/clk/meson/g12a.h              |  22 +-
+>>  include/dt-bindings/clock/g12a-clkc.h |   1 +
+>>  3 files changed, 372 insertions(+), 1 deletion(-)
+>>
+> 
+> With the small naming comment on patch 2
+> 
+> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
 
-Below is a request to pull amlogic clock fixes for v5.1
-These changes fixes a couple of simple mistakes I did while adding video
-clocks to G12A, and a fix from Maxime fixing the Video Decoder clocks
-rate rounding.
+I fixed the naming while applying on next/headers for patch 1, next/drivers for patch 2
 
-Cheers
 Neil
-
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/meson-clk-fixes-for-5.1
-
-for you to fetch changes up to 9e05e49c29fde3f5e0d82542cb89e26c0bc828d0:
-
-  clk: meson-g12a: fix VPU clock parents (2019-03-19 17:38:41 +0100)
-
-----------------------------------------------------------------
-First round of fixes for meson clocks targeted for v5.1:
-- g12a: Fix VPU clock parents and mux mask
-- gxbb: Add CLK_DIVIDER_ROUND_CLOSEST to video decoder clocks
-
-----------------------------------------------------------------
-Maxime Jourdan (2):
-      clk: meson-gxbb: round the vdec dividers to closest
-      clk: meson: g12a: fix VPU clock muxes mask
-
-Neil Armstrong (1):
-      clk: meson-g12a: fix VPU clock parents
-
- drivers/clk/meson/g12a.c | 6 +++---
- drivers/clk/meson/gxbb.c | 2 ++
- 2 files changed, 5 insertions(+), 3 deletions(-)
