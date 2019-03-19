@@ -2,336 +2,134 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6D8C4360F
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75392C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC0520989
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:35:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="XYahg6RS"
+	by mail.kernel.org (Postfix) with ESMTP id 4762020857
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:53:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfCSKfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 06:35:04 -0400
-Received: from plaes.org ([188.166.43.21]:60216 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfCSKfD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Mar 2019 06:35:03 -0400
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 7F1C140091;
-        Tue, 19 Mar 2019 10:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1552991699; bh=ULOU71fB4bGoMbQIkKCIMUP28u46cVjyGuQRPWP6gD0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XYahg6RS7u2NsuAQGdDruDa9rMXLy9aSDEYsoWitHj4dQSkOzVzJvh+UpdRkOffMU
-         nXryaEUrWU+OKx3zWMVPMnStYNVtuEI7xE+XiEGJBmJM3BwjjFjcCzwQOmi20Vbdd+
-         DHeJ6thJeb6hxxag6gi+NUsNmG6uDRPhVCHEcG5bVGYQKFucDR5axyukisGv4+kqJa
-         GYPoTxPsNpK5ZDJ1MrEwA43JSZ01AnRQtUAaMN1Ey2h2xc+RuHqKtQgfEn8NWAqSP+
-         VCewF7j9RRwsU4P0zdND6Qt56Yzy4Q20WtgHmFMLhBAbF1sVHe78T8TGi96oOjL7LV
-         TqpyXyqaLwr1Q==
-Date:   Tue, 19 Mar 2019 10:34:58 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-        architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 02/28] clk: sunxi-ng: Adjust MP clock
- parent rate when allowed
-Message-ID: <20190319103458.zrznmgz5v65ujbcj@plaes.org>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net>
- <20190121083729.7qsmj7drxvmnjoye@plaes.org>
- <20190121133433.lryqz7ivrj5cxu3g@plaes.org>
- <1726638.4TPIZlPAWH@jernej-laptop>
+        id S1726464AbfCSKxP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 06:53:15 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:46733 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfCSKxP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 06:53:15 -0400
+X-Originating-IP: 90.88.22.102
+Received: from localhost (aaubervilliers-681-1-80-102.w90-88.abo.wanadoo.fr [90.88.22.102])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 30120240006;
+        Tue, 19 Mar 2019 10:53:08 +0000 (UTC)
+Date:   Tue, 19 Mar 2019 11:53:07 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v8 02/15] drm/sun4i: tcon: Compute DCLK dividers based on
+ format, lanes
+Message-ID: <20190319105307.omowzyhqu33e3pzy@flea>
+References: <20190311133637.18334-1-jagan@amarulasolutions.com>
+ <20190311133637.18334-3-jagan@amarulasolutions.com>
+ <20190311153847.oz6ruqmptaq2befn@flea>
+ <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="w5h7eaccwffawgtl"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1726638.4TPIZlPAWH@jernej-laptop>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 07:13:07PM +0100, Jernej Škrabec wrote:
-> Dne ponedeljek, 21. januar 2019 ob 14:34:33 CET je Priit Laes napisal(a):
-> > On Mon, Jan 21, 2019 at 08:37:29AM +0000, Priit Laes wrote:
-> > > On Fri, Jan 18, 2019 at 10:51:10PM +0100, Jernej Škrabec wrote:
-> > > > Dne četrtek, 17. januar 2019 ob 08:24:02 CET je Priit Laes napisal(a):
-> > > > > On Wed, Jan 16, 2019 at 06:00:32PM +0100, Jernej Škrabec wrote:
-> > > > > > Dne sreda, 16. januar 2019 ob 13:09:58 CET je Priit Laes napisal(a):
-> > > > > > > On Thu, Jan 10, 2019 at 06:10:59PM +0100, Jernej Škrabec wrote:
-> > > > > > > > Dne četrtek, 10. januar 2019 ob 10:15:48 CET je Priit Laes 
-> napisal(a):
-> > > > > > > > > On Sun, Nov 04, 2018 at 07:26:39PM +0100, Jernej Skrabec 
-> wrote:
-> > > > > > > > > > Currently MP clocks don't consider adjusting parent rate
-> > > > > > > > > > even if
-> > > > > > > > > > they
-> > > > > > > > > > are allowed to do so. Such behaviour considerably lowers
-> > > > > > > > > > amount of
-> > > > > > > > > > possible rates, which is very inconvenient when such clock
-> > > > > > > > > > is used
-> > > > > > > > > > for
-> > > > > > > > > > pixel clock, for example.
-> > > > > > > > > > 
-> > > > > > > > > > In order to improve the situation, adjusting parent rate is
-> > > > > > > > > > considered
-> > > > > > > > > > when allowed.
-> > > > > > > > > > 
-> > > > > > > > > > This code is inspired by clk_divider_bestdiv() function,
-> > > > > > > > > > which
-> > > > > > > > > > does
-> > > > > > > > > > basically the same thing for different clock type.
-> > > > > > > > > 
-> > > > > > > > > This patch seems to break the eMMC support on
-> > > > > > > > > Olinuxino-Lime2-eMMC
-> > > > > > > > > boards:
-> > > > > > > > > 
-> > > > > > > > > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly
-> > > > > > > > > filesystem
-> > > > > > > > > EXT4-fs (mmcblk1p4): write access will be enabled during
-> > > > > > > > > recovery
-> > > > > > > > > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > > > > > > > > sunxi-mmc 1c11000.mmc: send stop command failed
-> > > > > > > > 
-> > > > > > > > I'm not familiar with A20. What is interesting is that emmc
-> > > > > > > > clocks
-> > > > > > > > don't
-> > > > > > > > have CLK_SET_RATE_PARENT flag set, so you shouldn't see any
-> > > > > > > > difference.
-> > > > > > > > 
-> > > > > > > > Can you post content of clk_summary with and without this patch?
-> > > > > > > 
-> > > > > > > In both cases I booted from FEL with rootfs on sdcard and tried to
-> > > > > > > mount
-> > > > > > > partition from eMMC to /mnt. With your patch, last step it fails.
-> > > > > > > 
-> > > > > > > pre-patch working:
-> > > > > > > pll-ddr-other[768MHz] -> mmc2[512MHz]. (For some reason ahb-mmc2
-> > > > > > > is
-> > > > > > > off?)
-> > > > > > > 
-> > > > > > > post-patch not working:
-> > > > > > > pll-periph[600MHz] ->  mmc2[500Mhz], (ahb-mmc2 is enabled)
-> > > > > > > 
-> > > > > > > Also, attached the logs.
-> > > > > > 
-> > > > > > Thanks. Just one more request. Can you enable debug messages in mmc
-> > > > > > driver?
-> > > > > > I'm interested in output of this line:
-> > > > > > 
-> > > > > > dev_dbg(mmc_dev(mmc), "setting clk to %d, rounded %ld\n",
-> > > > > > 
-> > > > > > 		clock, rate);
-> > > > > 
-> > > > > 1c11000 is eMMC:
-> > > > > [snip]
-> > > > > [    1.961644] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.004091] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.020296] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.039917] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.047847] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.055053] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.065256] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.092351] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.168725] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > > 400000
-> > > > > [    2.189403] sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded
-> > > > > 52000000 [    2.203340] sunxi-mmc 1c11000.mmc: setting clk to
-> > > > > 52000000,
-> > > > > rounded 52000000 [    2.211412] sunxi-mmc 1c11000.mmc: setting clk to
-> > > > > 52000000, rounded 52000000 [    4.967865] sunxi-mmc 1c11000.mmc:
-> > > > > setting
-> > > > > clk to 52000000, rounded 52000000 [    8.755345] sunxi-mmc
-> > > > > 1c11000.mmc:
-> > > > > setting clk to 52000000, rounded 52000000 [    9.082510] sunxi-mmc
-> > > > > 1c11000.mmc: setting clk to 52000000, rounded 52000000
-> > > > > 
-> > > > > Here I tried to mount partition from eMMC...
-> > > > > 
-> > > > > [   72.167311] sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded
-> > > > > 52000000 [   72.269629] sunxi-mmc 1c11000.mmc: data error, sending
-> > > > > stop
-> > > > > command [   73.268999] sunxi-mmc 1c11000.mmc: send stop command failed
-> > > > > [/snip]
-> > > > > 
-> > > > > And clock tree:
-> > > > > [snip]
-> > > > > pll-periph-base                3        3        0  1200000000        
-> > > > >  0
-> > > > > 
-> > > > >  0  50000 pll-periph                  6        6        0   600000000
-> > > > >  
-> > > > >    0     0  50000 mmc2                     3        3        0   
-> > > > >    50000000
-> > > > >    
-> > > > >         0     0  50000 mmc2_sample           1        1        0
-> > > > > 
-> > > > > 50000000          0   120  50000 mmc2_output           1        1     
-> > > > >   0
-> > > > > 
-> > > > >   50000000          0    60  50000 ahb                     18       18
-> > > > >   0   300000000          0     0  50000 ahb-mmc2              1       
-> > > > >   1
-> > > > >   
-> > > > >     0   300000000          0     0  50000 [/snip]
-> > > > > 
-> > > > > And without patch:
-> > > > > [snip]
-> > > > > [    2.003341] sunxi-mmc 1c11000.mmc: XXX: setting clk to 400000,
-> > > > > rounded
-> > > > > 400000 [    2.019479] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > > > > 400000,
-> > > > > rounded 400000 [    2.039144] sunxi-mmc 1c11000.mmc: XXX: setting clk
-> > > > > to
-> > > > > 400000, rounded 400000 [    2.047129] sunxi-mmc 1c11000.mmc: XXX:
-> > > > > setting
-> > > > > clk to 400000, rounded 400000 [    2.054324] sunxi-mmc 1c11000.mmc:
-> > > > > XXX:
-> > > > > setting clk to 400000, rounded 400000 [    2.064481] sunxi-mmc
-> > > > > 1c11000.mmc:
-> > > > > XXX: setting clk to 400000, rounded 400000 [    2.091624] sunxi-mmc
-> > > > > 1c11000.mmc: XXX: setting clk to 400000, rounded 400000 [    2.168067]
-> > > > > sunxi-mmc 1c11000.mmc: XXX: setting clk to 400000, rounded 400000 [
-> > > > > 2.188239] sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded
-> > > > > 51200000 [    2.202779] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > > > > 52000000, rounded 51200000 [    2.210817] sunxi-mmc 1c11000.mmc: XXX:
-> > > > > setting clk to 52000000, rounded 51200000 [    5.103358] sunxi-mmc
-> > > > > 1c11000.mmc: XXX: setting clk to 52000000, rounded 51200000 [   
-> > > > > 8.950237]
-> > > > > sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded 51200000
-> > > > > [
-> > > > > 9.376201] sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded
-> > > > > 51200000 [  113.618387] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > > > > 52000000, rounded 51200000 [  113.707979] EXT4-fs (mmcblk1p4):
-> > > > > recovery
-> > > > > complete
-> > > > > [  113.728162] EXT4-fs (mmcblk1p4): mounted filesystem with ordered
-> > > > > data
-> > > > > mode. Opts: (null) [/snip]
-> > > > > 
-> > > > > And clock tree:
-> > > > > [snip]
-> > > > > pll-ddr-base                   2        2        0   768000000        
-> > > > >  0
-> > > > > 
-> > > > >  0  50000 pll-ddr-other               1        1        0   768000000
-> > > > >  
-> > > > >    0     0  50000 mmc2                     0        0        0   
-> > > > >    51200000
-> > > > >    
-> > > > >         0     0  50000 mmc2_sample           0        0        0
-> > > > > 
-> > > > > 51200000          0   120  50000 mmc2_output           0        0     
-> > > > >   0
-> > > > > 
-> > > > >   51200000          0    72  50000 [/snip]
-> > > > 
-> > > > It seems to me that clock rate is set properly. It's even better than
-> > > > before since there is no error between wanted and real clock. I bet
-> > > > that if you call clk_get_rate() directly behind clk_set_rate() in mmc
-> > > > driver, you'll get correct value.
-> > > > 
-> > > > However, it seems that at some point some other peripheral changes it's
-> > > > parent clock rate, which inadvertely changes emmc2 clock rate too. The
-> > > > only possible clock which could interfere is sata. Can you disable
-> > > > driver in you kernel config and try again?
-> > > 
-> > > OK, tried following things in succession, but SATA disabling does not
-> > > work:
-> > > 
-> > > a) Marked all ahci stuff in devicetree as disabled
-> > > b) Disable CONFIG_AHCI_SUNXI in kernel
-> > > c) Even disabled SATA stuff in u-boot
-> > 
-> > But it works, when I allow mmc2 clock to set parent rate:
-> 
-> Strange, I checked both pre- and post- patch clk_summary you sent me and in 
-> both cases both mmc2 parent clocks have same rate as before. This would need a 
-> more detailed analysis with a lot of debug print, but don't have such board.
-> 
-> CLK_SET_PARENT rate might be viable solution, but  you have to be sure that 
-> any clock using pll-periph as a parent is in expected range.
-> 
-> On the plus side, if this works, eMMC will work faster due to 8 MHz clock rate 
-> increase :)
-> 
-> > 
-> > pll-periph-base                3        3        0   312000000          0   
-> >  0  50000 mbus                        1        1        0    78000000      
-> >    0     0  50000 pll-periph-sata             1        1        0   
-> > 26000000          0     0  50000 sata                     1        1       
-> > 0    26000000          0     0  50000 pll-periph                  5       
-> > 5        0   156000000          0     0  50000 mmc2                     0  
-> >      0        0    52000000          0     0  50000 mmc2_sample           0
-> >        0        0    52000000          0   120  50000 mmc2_output          
-> > 0        0        0    52000000          0   120  50000 mmc0               
-> >      0        0        0    39000000          0     0  50000 mmc0_sample   
-> >        0        0        0    39000000          0    90  50000 mmc0_output 
-> >          0        0        0    39000000          0    90  50000
-> > 
-> > 
-> > Now, what I don't understand is why the `enable count` does not increase :(
-> 
-> mmc has suspend/resume functionality which might power down mmc when not in 
-> use and thus disable clocks. Try initiate some big transfer from/to eMMC and 
-> check clocks in between.
 
-OK, seems like everything magically started working again in 5.1.0-rc1:
+--w5h7eaccwffawgtl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-pll-periph-base       3 3 0  1200000000  0     0  50000
-   mbus               1 1 0   300000000  0     0  50000
-   pll-periph-sata    1 1 0   100000000  0     0  50000
-      sata            1 1 0   100000000  0     0  50000
-   pll-periph         3 3 0   600000000  0     0  50000
-      mmc2            0 0 0    50000000  0     0  50000
-         mmc2_sample  0 0 0    50000000  0   120  50000
-         mmc2_output  0 0 0    50000000  0    60  50000
+On Mon, Mar 11, 2019 at 09:36:27PM +0530, Jagan Teki wrote:
+> On Mon, Mar 11, 2019 at 9:08 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Mon, Mar 11, 2019 at 07:06:24PM +0530, Jagan Teki wrote:
+> > > pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
+> > > MIPI clock topology in Allwinner DSI controller.
+> > >
+> > > TCON dotclock driver is computing the desired DCLK divider based on
+> > > panel pixel clock along with input DCLK min, max divider values from
+> > > tcon driver and that would eventually set the pll-mipi clock rate.
+> > >
+> > > The current code allows the TCON clock divider to have a default 4
+> > > for min, max ranges that would fail to compute the desired pll-mipi
+> > > rate while supporting new panels.
+> > >
+> > > So, add the computation logic 'format/lanes' to dclk min and max dividers
+> > > and instead of default 4. This computation logic align with Allwinner A64
+> > > BSP, hoping that would work even for A33.
+> >
+> > Last time we discussed this, we found out that this wasn't the case,
+> > even in the BSP.
+>
+> This was the case for BSP to compute pll-mipi not for TCON_DSI clock
+> register, SUN4I_TCON0_DCLK_REG, which marked the divider 4 by default.
+>
+> > What compelling evidence have you found that makes you say otherwise?
+>
+> divider 4 isn't worked, this I would mentioned before as well.
 
-> BR,
-> Jernej
-> 
-> > 
-> > ---
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> > b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c index 129ebd2588fd..605e13b4ef90
-> > 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> > @@ -498,7 +498,7 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2",
-> > mod0_default_parents, 0x090, 16, 2,        /* P */
-> >                                   24, 2,        /* mux */
-> >                                   BIT(31),      /* gate */
-> > -                                 0);
-> > +                                 CLK_SET_RATE_PARENT);
-> > 
-> >  /* MMC output and sample clocks are not present on A10 */
-> >  static SUNXI_CCU_PHASE(mmc2_output_clk, "mmc2_output", "mmc2",
-> > 
-> > > > Best regards,
-> > > > Jernej
-> 
-> 
-> 
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+Maybe you mentionned it before, but it's nowhere to be found in your
+commit log.
+
+> Tested this on 4 different panels, and below are the desired divider values
+> and pll-mipi clock rate with respect to pixel clock frequency.
+>
+> - 55MHz pixel clock with 4-lane panel, and the desired DSI clock divider
+>   is 6 with the output parent clock rate of 330MHz.
+> - 30MHz pixel clock with 4-lane panel, and the desired DSI clock divider
+>   is 6 with parent clock rate of 180MHz.
+> - 27.5Mhz pixel clock with 2-lane pane, and the desired DSI clock divider
+>   is 12 with the output parent clock rate of 330MHz.
+> - 147MHz pixel clock with 4-lane panel, and the desired DSI clock divider
+>   is 6 with the output parent clock rate of 882MHz.
+>
+> BSP trying to use this format/lane to compute dsi divider that in-turn
+> using pll-mipi set_rate but TCON0_DCLK_REG keep constant 4.
+
+Feel free to reply to
+http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/629596.html
+
+And correct whatever is said there that isn't what is happening.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--w5h7eaccwffawgtl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXJDKEwAKCRDj7w1vZxhR
+xbr5AQCiJXB+00l7s1Mti99Cws7LddzTZwolRvZ771IyBtL7JgD8DsVRc1k30G2W
+pWr8WWorQ8oIxnGrpRrlMfKhBsi+9Aw=
+=x16K
+-----END PGP SIGNATURE-----
+
+--w5h7eaccwffawgtl--
