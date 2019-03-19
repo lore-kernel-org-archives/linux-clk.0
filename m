@@ -2,68 +2,70 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EE7C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 21:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7466AC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 21:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277F92146E
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 21:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32B01217F9
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 21:52:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CvQ+w7ba"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="LqL2drVM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfCSVwC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 17:52:02 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39990 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfCSVwC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 17:52:02 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t5so511535wri.7;
-        Tue, 19 Mar 2019 14:52:01 -0700 (PDT)
+        id S1726914AbfCSVwJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 17:52:09 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53666 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbfCSVwH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 17:52:07 -0400
+Received: by mail-wm1-f67.google.com with SMTP id e74so18401632wmg.3;
+        Tue, 19 Mar 2019 14:52:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ceCKFAiifM4URXix3mWG4CFxvV6hD9gyANT0DrHC0ek=;
-        b=CvQ+w7baEAeYUe8mvYxM4uTyTZK/DnDgQ7dHqe0HCRFZboDe1gySN4JjXObLPkJ8Sf
-         cUCY4MwyC3cqhQuLgrfXZGZw2C1M69QREPksKvDemXxFPDdRJNZ8ASNhY/NV3sIDG6VY
-         yxUzDCEqMoeQ5qPKN6p/7nUFETgE8G8EygM5THk3WOFr7p9Uyin7z0czcN1imUhQOW78
-         SDOvvduzyjtlmiUBeLf9MbX4migdhwng777A/Zcv+905/5Goz3k2spIeev0ZHH8i5PvF
-         btHrRH4IzyXgluFiAG0Cgd8lhsUKTGpe+6P8Ysiq5UKTp+wLAeh8k67cZVF/FAwuGqaT
-         tDHw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rSjFHJZnDxSY2v2H4EMSbc5i5yGhNHUicmXHX/OEWYY=;
+        b=LqL2drVMpxTbwGIK13zu8YvBqGeTdg7rvxBqgYQpvC9rtI1gpi7k+d7b8A/7RGw89e
+         fnMq3/ziTtT6vzhfqpU0W1w8Orvk2eBFbHHZfSTGKvP5alwRPq/tkW3teDw/vYDnyOkJ
+         ZhBTjKrLQt7AKFpYTbOrziBzHmEbQInuTDfCsAoddHbjCKMdkWZxsJnsQCSWLgE6sYT2
+         PWl4VrKrKSbzJLeoAMyUWb500ZID+7Eqm/JUFTdfFKcalqC5kIddXFfq/FRY0qRXftWb
+         VUfZ0JmdtieJwmGlOiwH0fj9HV5P7GGOJPcVHSIJvJEXiaEs+n9WCq6wJnupr/veYZpD
+         I74A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ceCKFAiifM4URXix3mWG4CFxvV6hD9gyANT0DrHC0ek=;
-        b=sFrQqWLfm5OyjQHEOaCAJkHFt7wYh2kQ/GMFGMpJrAGYnfEOichaKvPHM0AMgWnTUq
-         aKQI7fMFlYJenZ0I9fWthsrM/xVlYbLwGgNpGwNhzg2mcTXQINF1Pcjb7gdKa9dxtVkA
-         Zv337UwjU0nJy1JP4+YQMiyM+Yegu2P8iswd7PujwdVJB+KWP+otvir7ZBDxLDFl+SfW
-         KyIfQfcPGPNFVQ1NCiimEp6THwp6FuWo/6hVdtYQPb2oiDY0BdTV9jlRz8jn3EP8UHvx
-         SHMTpWfGJfBJ3d95zasOu40ZgSHwt3TiTCP9eAbGxOPekV+GvMpZXHA8dAuaaJH/5T5t
-         u7Rg==
-X-Gm-Message-State: APjAAAVz+FH3K/UXluUFAPIikTW0bDihtdocNtao/Egd/tSQD7XcUTK3
-        73/Bo3PPVHbd05gg/Pyem8mDrJmt
-X-Google-Smtp-Source: APXvYqzIVqXbjloTFfhiIXnXahqeCO+0TjGgv+9rsMdLbjXkhlmcvZzVriWM5csKorfWlOgnjwuEvQ==
-X-Received: by 2002:adf:eb46:: with SMTP id u6mr18393828wrn.288.1553032320612;
-        Tue, 19 Mar 2019 14:52:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rSjFHJZnDxSY2v2H4EMSbc5i5yGhNHUicmXHX/OEWYY=;
+        b=QR6ke5dMsiE+iw/1kfhiPNieCYAO/53++Vj+YSIz5vw2WuN5H4tG0/s8txgdQI11z7
+         lY+reLOIfpx4Q69EAOugibm9EwFMfM6jleS+aYvMBSZPGB7HZIqnpfqkZVLSLet2yRx1
+         VG98bJlyjWVchuWy024nVtayLyygvSFPo/xM1vEO1ZTjl/nBstQdGk+g9E0Agx9z5wXg
+         NJGiLdNqxGWBloo/vSpdvqYur3N5DAYLNIM/BeZE76HoU386E5RplQbuHm4WIcl05o4l
+         Jovl+g6ge41/3+JfQy3EZYMMbtZRZCi/FY/+RBZUAkGwx0LRPfaTgXLKXfG0gE8BwgKr
+         mAeg==
+X-Gm-Message-State: APjAAAVW7cwryPgwUdHZKfzJOL0bMTQmOy0B1n4PObGypnWQ4Ga/mlCg
+        1TGGHK58hRmaf+p4tcY/O1U=
+X-Google-Smtp-Source: APXvYqzdWUyy1q209VuTUst+wB4j7/ADBYV9yjYBmwMgzxYRlD51Z2bYgmEHo+n5DvwS9iUJBugZ9Q==
+X-Received: by 2002:a1c:7008:: with SMTP id l8mr5202457wmc.63.1553032325365;
+        Tue, 19 Mar 2019 14:52:05 -0700 (PDT)
 Received: from blackbox.darklights.net (p200300DCD739990039EE738515149D3E.dip0.t-ipconnect.de. [2003:dc:d739:9900:39ee:7385:1514:9d3e])
-        by smtp.googlemail.com with ESMTPSA id c8sm56050wrx.6.2019.03.19.14.51.59
+        by smtp.googlemail.com with ESMTPSA id c8sm56050wrx.6.2019.03.19.14.52.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Mar 2019 14:51:59 -0700 (PDT)
+        Tue, 19 Mar 2019 14:52:04 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
         linux-amlogic@lists.infradead.org
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 0/4] clk: meson8b: add the VPU clock tree
-Date:   Tue, 19 Mar 2019 22:51:17 +0100
-Message-Id: <20190319215121.29340-1-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 4/4] clk: meson: meson8b: add the VPU clock trees
+Date:   Tue, 19 Mar 2019 22:51:21 +0100
+Message-Id: <20190319215121.29340-5-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190319215121.29340-1-martin.blumenstingl@googlemail.com>
+References: <20190319215121.29340-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -71,35 +73,261 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds the VPU clock tree for Meson8, Meson8b and Meson8m2.
-The VPU clock tree is slightly different on all three SoCs. The details
-are explained in patch #4.
+The VPU clock tree is slightly different on all three supported SoCs:
 
-Meson8m2 requires the previously unsupported "gp_pll" PLL. This PLL only
-exists on Meson8m2 - Meson8 and Meson8b don't have it.
-A separate clk_hw_onecell_data is introduced for Meson8m2 (using the
-compatible string which is already available) to account for this SoC
-specific clock setup.
+Meson8 only has an input mux (which chooses between "fclk_div4",
+"fclk_div3", "fclk_div5" and "fclk_div7"), a divider and a gate.
 
-dependencies:
-This series is meant to be applied on top of my other patch from [0]:
-  dt-bindings: clock: meson8b: drop the "ABP" clock definition
+Meson8b has two VPU clock trees, each with an input mux (using the same
+parents as the input mux on Meson8), divider and a gates. The final VPU
+clock is a glitch-free mux which chooses between VPU_1 and VPU_2.
 
+Meson8m2 uses a similar clock tree as Meson8b but the last input clock
+is different: instead of using "fclk_div7" as input Meson8m2 uses
+"gp_pll". This was probably done in hardware to improve the accuracy of
+the clock because fclk_div7 gives us 2550MHz / 7 = 364.286MHz while
+GP_PLL can achieve 364.0MHz.
 
-[0] https://patchwork.kernel.org/patch/10860387/
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 167 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h |   9 +-
+ 2 files changed, 175 insertions(+), 1 deletion(-)
 
-
-Martin Blumenstingl (4):
-  dt-bindings: clock: meson8b: export the VPU clock
-  clk: meson: meson8b: use a sparate clock table for Meson8m2
-  clk: meson: meson8b: add support for the GP_PLL clock on Meson8m2
-  clk: meson: meson8b: add the VPU clock trees
-
- drivers/clk/meson/meson8b.c              | 422 ++++++++++++++++++++++-
- drivers/clk/meson/meson8b.h              |  12 +-
- include/dt-bindings/clock/meson8b-clkc.h |   1 +
- 3 files changed, 433 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 0d08f1ef7af8..8e091c2d10e6 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -1761,6 +1761,147 @@ static struct clk_regmap meson8m2_gp_pll = {
+ 	},
+ };
+ 
++static const char * const mmeson8b_vpu_0_1_parent_names[] = {
++	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
++};
++
++static const char * const mmeson8m2_vpu_0_1_parent_names[] = {
++	"fclk_div4", "fclk_div3", "fclk_div5", "gp_pll"
++};
++
++static struct clk_regmap meson8b_vpu_0_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.mask = 0x3,
++		.shift = 9,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vpu_0_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = mmeson8b_vpu_0_1_parent_names,
++		.num_parents = ARRAY_SIZE(mmeson8b_vpu_0_1_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8m2_vpu_0_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.mask = 0x3,
++		.shift = 9,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vpu_0_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = mmeson8m2_vpu_0_1_parent_names,
++		.num_parents = ARRAY_SIZE(mmeson8m2_vpu_0_1_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8b_vpu_0_div = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.shift = 0,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vpu_0_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "vpu_0_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8b_vpu_0 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.bit_idx = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "vpu_0",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "vpu_0_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8b_vpu_1_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.mask = 0x3,
++		.shift = 25,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vpu_1_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = mmeson8b_vpu_0_1_parent_names,
++		.num_parents = ARRAY_SIZE(mmeson8b_vpu_0_1_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8m2_vpu_1_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.mask = 0x3,
++		.shift = 25,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vpu_1_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = mmeson8m2_vpu_0_1_parent_names,
++		.num_parents = ARRAY_SIZE(mmeson8m2_vpu_0_1_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8b_vpu_1_div = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.shift = 16,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vpu_1_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "vpu_1_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8b_vpu_1 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.bit_idx = 24,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "vpu_1",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "vpu_1_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap meson8b_vpu = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VPU_CLK_CNTL,
++		.mask = 1,
++		.shift = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vpu",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = (const char *[]){ "vpu_0", "vpu_1" },
++		.num_parents = 2,
++		.flags = CLK_SET_RATE_NO_REPARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ 
+ static MESON_GATE(meson8b_ddr, HHI_GCLK_MPEG0, 0);
+@@ -2024,6 +2165,9 @@ static struct clk_hw_onecell_data meson8_hw_onecell_data = {
+ 		[CLKID_MALI_0_SEL]	    = &meson8b_mali_0_sel.hw,
+ 		[CLKID_MALI_0_DIV]	    = &meson8b_mali_0_div.hw,
+ 		[CLKID_MALI]		    = &meson8b_mali_0.hw,
++		[CLKID_VPU_0_SEL]	    = &meson8b_vpu_0_sel.hw,
++		[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
++		[CLKID_VPU]		    = &meson8b_vpu_0.hw,
+ 		[CLK_NR_CLKS]		    = NULL,
+ 	},
+ 	.num = CLK_NR_CLKS,
+@@ -2210,6 +2354,13 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 		[CLKID_MALI_1_DIV]	    = &meson8b_mali_1_div.hw,
+ 		[CLKID_MALI_1]		    = &meson8b_mali_1.hw,
+ 		[CLKID_MALI]		    = &meson8b_mali.hw,
++		[CLKID_VPU_0_SEL]	    = &meson8b_vpu_0_sel.hw,
++		[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
++		[CLKID_VPU_0]		    = &meson8b_vpu_0.hw,
++		[CLKID_VPU_1_SEL]	    = &meson8b_vpu_1_sel.hw,
++		[CLKID_VPU_1_DIV]	    = &meson8b_vpu_1_div.hw,
++		[CLKID_VPU_1]		    = &meson8b_vpu_1.hw,
++		[CLKID_VPU]		    = &meson8b_vpu.hw,
+ 		[CLK_NR_CLKS]		    = NULL,
+ 	},
+ 	.num = CLK_NR_CLKS,
+@@ -2398,6 +2549,13 @@ static struct clk_hw_onecell_data meson8m2_hw_onecell_data = {
+ 		[CLKID_MALI]		    = &meson8b_mali.hw,
+ 		[CLKID_GP_PLL_DCO]	    = &meson8m2_gp_pll_dco.hw,
+ 		[CLKID_GP_PLL]		    = &meson8m2_gp_pll.hw,
++		[CLKID_VPU_0_SEL]	    = &meson8m2_vpu_0_sel.hw,
++		[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
++		[CLKID_VPU_0]		    = &meson8b_vpu_0.hw,
++		[CLKID_VPU_1_SEL]	    = &meson8m2_vpu_1_sel.hw,
++		[CLKID_VPU_1_DIV]	    = &meson8b_vpu_1_div.hw,
++		[CLKID_VPU_1]		    = &meson8b_vpu_1.hw,
++		[CLKID_VPU]		    = &meson8b_vpu.hw,
+ 		[CLK_NR_CLKS]		    = NULL,
+ 	},
+ 	.num = CLK_NR_CLKS,
+@@ -2562,6 +2720,15 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
+ 	&meson8b_mali,
+ 	&meson8m2_gp_pll_dco,
+ 	&meson8m2_gp_pll,
++	&meson8b_vpu_0_sel,
++	&meson8m2_vpu_0_sel,
++	&meson8b_vpu_0_div,
++	&meson8b_vpu_0,
++	&meson8b_vpu_1_sel,
++	&meson8m2_vpu_1_sel,
++	&meson8b_vpu_1_div,
++	&meson8b_vpu_1,
++	&meson8b_vpu,
+ };
+ 
+ static const struct meson8b_clk_reset_line {
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index a45f7102c558..e775f91ccce9 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -35,6 +35,7 @@
+ #define HHI_VID_DIVIDER_CNTL		0x198 /* 0x66 offset in data sheet */
+ #define HHI_SYS_CPU_CLK_CNTL0		0x19c /* 0x67 offset in data sheet */
+ #define HHI_MALI_CLK_CNTL		0x1b0 /* 0x6c offset in data sheet */
++#define HHI_VPU_CLK_CNTL		0x1bc /* 0x6f offset in data sheet */
+ #define HHI_HDMI_CLK_CNTL		0x1cc /* 0x73 offset in data sheet */
+ #define HHI_NAND_CLK_CNTL		0x25c /* 0x97 offset in data sheet */
+ #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
+@@ -149,8 +150,14 @@
+ #define CLKID_MALI_1		180
+ #define CLKID_GP_PLL_DCO	181
+ #define CLKID_GP_PLL		182
++#define CLKID_VPU_0_SEL		183
++#define CLKID_VPU_0_DIV		184
++#define CLKID_VPU_0		185
++#define CLKID_VPU_1_SEL		186
++#define CLKID_VPU_1_DIV		187
++#define CLKID_VPU_1		189
+ 
+-#define CLK_NR_CLKS		183
++#define CLK_NR_CLKS		191
+ 
+ /*
+  * include the CLKID and RESETID that have
 -- 
 2.21.0
 
