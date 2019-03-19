@@ -2,102 +2,106 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA89C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 07:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFAAC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 08:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB82720989
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 07:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE502075C
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 08:26:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zvr/+mH9"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ROfsAq4E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbfCSHwZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 03:52:25 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36636 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbfCSHwY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 03:52:24 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o74so4000439ota.3
-        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 00:52:24 -0700 (PDT)
+        id S1726703AbfCSI0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 04:26:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42120 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfCSI0p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 04:26:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n9so15863394wrr.9
+        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 01:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=iqS0mD2DkpD+ki4OIwDG5Tufv1Vltf3JG5TtzYwAJaQ=;
-        b=Zvr/+mH9ntX/IUd8XbK5tTWRysrJ0bUUH71hlw4jh7X6JpBDONMBXdmVs6GaAg/iAC
-         XQfefILIzmPvCxp8jhsP3TjGIroSwYyJ1KQBFhUmi3663eK83B35j/V4EM6Ex40XepQd
-         PHtL5V+wEKJeVFsypf698f1VpwnPe8HDmVHQxUg3xQWhAvyDCPlj10i3fypfGBvTM41w
-         MGnrKHewGBiQQiZLUE2VKm7E3NcSjkVW5GrbUFxxKzQArmr5C/z+uh0J8mcqf4dmIGyy
-         K5aoYeAyQgKjl2Pcf/gyjudALDs3KwNC7mgK753vyjsGfMA/ifYu8SLhX0q2CZrX5f1Q
-         Feew==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CLzEElnP3dxyv8R6IH/C8LDRIdXF93RnCixM1ah2hMo=;
+        b=ROfsAq4EycQSAWNhwT+bJP3yHo6sajvh/DOVf1X6KgoGiI9FciHoxYEc8Df3XiPt8S
+         isAXnU6PNkc8HO1CnCg006HJ5iUkDYpup3J6p/mAUbDjenokGDTiv4VhxEVQAAIebk6Q
+         aE1Fr4xSzuTBWBe795UPFcLrsV/bxyiRI8SwxxwIsJVZR7WLEbKjRlWpwNAnXOrjAb9f
+         6+B3YAOwIAD12R5cg3Y239tijtDUv6iCa24wFPXsXOL/Cb7GDoNLB6QZYOEEyTrrcrpp
+         iQ2MILTCPTjt6pxLId9hVTDaxKKizya9OtgAPFr0qMI0Egw+jwvLaPF/wipx58PnrCp/
+         y3Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iqS0mD2DkpD+ki4OIwDG5Tufv1Vltf3JG5TtzYwAJaQ=;
-        b=Bm63GDWU0xgy3kL9iugve5HSFIVCCkVDItd6NfLFsAce6dS1KfFUng833C5ZNnRZax
-         XtXjzqfPZGQcYMoFfDA2r8cFxpbmAAfuhzPcz11encdu6uiCzomtxLFDmasB368CdK+L
-         15sOAMuBoOETf+QAKDNDLomlUvjnN6rylmDE01p2L1TTLiam89VdhN02slb+hH1H6I+X
-         56kOl4ESxAtovEIVJn5uuIxGKPCfFdo6pkGCEUUR4OE0I+wWpQeMaE9mPe9I54EaRMSL
-         ivMnMIreQZN8kNjYGj/UIqlTjwK5/bycz71KGBP6MByn8CUE+OgIAz43rS9Zz4cwB8ut
-         KoTw==
-X-Gm-Message-State: APjAAAXAdwWbiU7aWvrkZ5tDNtsF0AC9zph1PkbLL1XEGnqm5cllcgpt
-        5iyEcIxlNslnDyzPaCcuOhtZaQ==
-X-Google-Smtp-Source: APXvYqxLecB5Qq2OdyfErVl3NSOhJPNRMBsJGA/gAx35jWSEVPwtP0DfZHORphZWkdYx/3KoyK37YA==
-X-Received: by 2002:a9d:7597:: with SMTP id s23mr663856otk.25.1552981944068;
-        Tue, 19 Mar 2019 00:52:24 -0700 (PDT)
-Received: from localhost.localdomain (li808-42.members.linode.com. [104.237.132.42])
-        by smtp.gmail.com with ESMTPSA id a14sm5032730otl.46.2019.03.19.00.52.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CLzEElnP3dxyv8R6IH/C8LDRIdXF93RnCixM1ah2hMo=;
+        b=s1BC+It3G6zUvIKq0DNEhjcMc9nwzAYHg+FNJx9G4nNyuWW6EWXH8sujLr3/1ggzw9
+         exbr6TDfo+B3KQQOBoOjh5Ry5h/HQvFJqFEKUkaJ3r9TeKxDWzvgQHo227w/u6hk8k9l
+         QURS1Ybf4v/9i/xC+cr4d9Rchei9NRqF+jjkYwDl8NgQUXqVEsoWcYku2iJV1CmlCPmQ
+         Okgq+X//0/E4X2Y8FLblGLbdK9jVezz7eqNaiYVcS3lH0dkhiDYo4OD1RajjbdJ9+8HS
+         p2NrBPDp1Q3POrxXsMcWC+nLjl/npoXMLWY6SNDCBhS5ipIH5hZqDdtBhwjXJucrRB3Z
+         MWqw==
+X-Gm-Message-State: APjAAAVEVqOImoc7qZHFk6I7c/b3s+dxpo+0JtjoprTPazsLMzirSAYH
+        gft5m7xG3hWlOPEnhvdQ2Mh0NQ==
+X-Google-Smtp-Source: APXvYqy21IQIltfVclIGabKt/9gSbK6VRtrToMVt+v8yERTtliPMgJyxHa9zJTAcoNBGOm7UuHmRHA==
+X-Received: by 2002:a05:6000:104b:: with SMTP id c11mr16704504wrx.9.1552984003549;
+        Tue, 19 Mar 2019 01:26:43 -0700 (PDT)
+Received: from mjourdan-pc.numericable.fr (abo-99-183-68.mtp.modulonet.fr. [85.68.183.99])
+        by smtp.gmail.com with ESMTPSA id 12sm3267104wme.25.2019.03.19.01.26.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Mar 2019 00:52:22 -0700 (PDT)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Leo Yan <leo.yan@linaro.org>, stable@vger.kernel.org,
-        Zhong Kaihua <zhongkaihua@huawei.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: [PATCH] clk: hi3660: clk: Mark clk_gate_ufs_subsys as critical
-Date:   Tue, 19 Mar 2019 15:52:06 +0800
-Message-Id: <20190319075206.30740-1-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 19 Mar 2019 01:26:42 -0700 (PDT)
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
+        Jian Hu <jian.hu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: g12a: fix VPU clock muxes mask
+Date:   Tue, 19 Mar 2019 09:26:11 +0100
+Message-Id: <20190319082611.6215-1-mjourdan@baylibre.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_gate_ufs_subsys is a system bus clock, turning off it will
-introduce lockup issue during system suspend flow.  Let's mark
-clk_gate_ufs_subsys as critical clock, thus keeps it on during
-system suspend and resume.
+There are 8 parents, use 0x7
 
-Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
-Cc: stable@vger.kernel.org
-Cc: Zhong Kaihua <zhongkaihua@huawei.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
 ---
- drivers/clk/hisilicon/clk-hi3660.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/meson/g12a.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index f40419959656..32ba80181cc6 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -164,7 +164,7 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_sep_clks[] = {
- 	{ HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
- 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
- 	{ HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sysbus",
--	  CLK_SET_RATE_PARENT, 0x50, 21, 0, },
-+	  CLK_SET_RATE_PARENT|CLK_IS_CRITICAL, 0x50, 21, 0, },
- 	{ HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
- 	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
- 	{ HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index cfb91df884cb..e52b0b53f398 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -1391,7 +1391,7 @@ static const char * const g12a_vpu_parent_names[] = {
+ static struct clk_regmap g12a_vpu_0_sel = {
+ 	.data = &(struct clk_regmap_mux_data){
+ 		.offset = HHI_VPU_CLK_CNTL,
+-		.mask = 0x3,
++		.mask = 0x7,
+ 		.shift = 9,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -1435,7 +1435,7 @@ static struct clk_regmap g12a_vpu_0 = {
+ static struct clk_regmap g12a_vpu_1_sel = {
+ 	.data = &(struct clk_regmap_mux_data){
+ 		.offset = HHI_VPU_CLK_CNTL,
+-		.mask = 0x3,
++		.mask = 0x7,
+ 		.shift = 25,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
 -- 
-2.17.1
+2.21.0
 
