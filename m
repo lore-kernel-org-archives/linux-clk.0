@@ -2,98 +2,176 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4453C10F03
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC6FC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3DD020828
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:12:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Yzff3i2P"
+	by mail.kernel.org (Postfix) with ESMTP id DEDB520828
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfCSKME (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 06:12:04 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54297 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727018AbfCSKLw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 06:11:52 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f3so16120940wmj.4
-        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 03:11:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SvHHOPdjX31+8rEIKUG20XZp/bt/In6fypqaOoH+9BU=;
-        b=Yzff3i2PZkBeTqGtwPOqQ3j+XCInyjGqJpt75KA6x3Wi4/yB/Agb2kr+MuD1TBLdpU
-         YgYXNPHo4dHtLViLE7GuWBZwPpDE5einCa9RiFhgib2LgmXwV0KDHuNVYZAwuEq/XXry
-         d57tSGALrwsnHn8NT+XJrEd9jXhlB5+CDXHZLoJqhZMMSgmpJrKtejHaiOOTJ3BuG8/Q
-         /UXCYgyxcTpuIUGzWZ9QtlqEDCm7hmc2SskCXsyY2qpaY6F2CKKUjwXUBG2yjEPHsSK0
-         BqynV/Fv1O6R42iwoiW3gHU/pELm8A9wB68+A0Uk/7ezW8pBrL3cGNsC6rUB+PLDZpOc
-         rtfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SvHHOPdjX31+8rEIKUG20XZp/bt/In6fypqaOoH+9BU=;
-        b=da+YMGNahFJz35qOyKx3ukjmsVxIXMx0wYz+1axM4xzs1jmf50IW0+hiKejDirvtfK
-         8iua/EMpwii/wszU35h8kbVFc/kDaUo8RjoRpO1tdpRbr0qxUqwIHKeanug1PFjARSLi
-         AWvYr7hw6egVdRvv9Z9MTArpJndKqMsyUYSp9o8e8xmR23bRGbmNa4q+8WzgoVux7PGo
-         nPxOdnpVpy4io3jPZXNmrbr5f+SUd37K0wiAtbizFthUYnDg4YJjpukqht6n7/DVpYLy
-         H6fi1qw2iXMQeUVgDP24tMBQA+aYiQT6InrJobofKtlEARtkDtAsFq+zYnMKC8W3LiMa
-         PkGQ==
-X-Gm-Message-State: APjAAAVVmuV15NBIBdoNJ2d+rB1PJBcYhywRNtIYkkJmqZ+zzMp06uvq
-        BUAKKR4ATapY2aEoR9JfkzfFnA==
-X-Google-Smtp-Source: APXvYqwpFmH36r17EpnbWypN9BNTp/txPpd62YnFCcbyy5KtOAXjRmASH8ayjcpFinwMcEVSZ1VEPw==
-X-Received: by 2002:a7b:c192:: with SMTP id y18mr2941028wmi.50.1552990310936;
-        Tue, 19 Mar 2019 03:11:50 -0700 (PDT)
-Received: from mjourdan-pc.numericable.fr (abo-99-183-68.mtp.modulonet.fr. [85.68.183.99])
-        by smtp.gmail.com with ESMTPSA id h10sm3911245wmf.2.2019.03.19.03.11.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Mar 2019 03:11:49 -0700 (PDT)
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        devicetree@vger.kernel.org
-Cc:     Maxime Jourdan <mjourdan@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: clk: g12a-clkc: add VDEC clock IDs
-Date:   Tue, 19 Mar 2019 11:11:37 +0100
-Message-Id: <20190319101138.27520-2-mjourdan@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190319101138.27520-1-mjourdan@baylibre.com>
-References: <20190319101138.27520-1-mjourdan@baylibre.com>
+        id S1726703AbfCSKTM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 06:19:12 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35185 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbfCSKTM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 06:19:12 -0400
+Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <m.tretter@pengutronix.de>)
+        id 1h6Bps-0005UV-El; Tue, 19 Mar 2019 11:19:08 +0100
+Date:   Tue, 19 Mar 2019 11:19:07 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Jolly Shah <JOLLYS@xilinx.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michals@xilinx.com>
+Subject: Re: [PATCH 1/5] clk: zynqmp: fix check for fractional clock
+Message-ID: <20190319111907.753f7820@litschi.hi.pengutronix.de>
+In-Reply-To: <BYAPR02MB59921A729FAD12C5B4143D09B8400@BYAPR02MB5992.namprd02.prod.outlook.com>
+References: <20190312110016.29174-1-m.tretter@pengutronix.de>
+        <20190312110016.29174-2-m.tretter@pengutronix.de>
+        <155240936160.20095.7716704029189456788@swboyd.mtv.corp.google.com>
+        <20190312182546.24e46c5c@litschi.hi.pengutronix.de>
+        <155249424471.20095.16028115604342624987@swboyd.mtv.corp.google.com>
+        <20190314093836.6a70abc7@litschi.hi.pengutronix.de>
+        <BYAPR02MB59921A729FAD12C5B4143D09B8400@BYAPR02MB5992.namprd02.prod.outlook.com>
+Organization: Pengutronix
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
+X-SA-Exim-Mail-From: m.tretter@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Expose the three clocks related to the video decoder.
+On Tue, 19 Mar 2019 00:56:31 +0000, Jolly Shah wrote:
+> > -----Original Message-----
+> > From: Michael Tretter <m.tretter@pengutronix.de>
+> > Sent: Thursday, March 14, 2019 1:39 AM
+> > To: Stephen Boyd <sboyd@kernel.org>
+> > Cc: linux-arm-kernel@lists.infradead.org; linux-clk@vger.kernel.org;
+> > kernel@pengutronix.de; Michael Turquette <mturquette@baylibre.com>;
+> > Michal Simek <michals@xilinx.com>; Jolly Shah <JOLLYS@xilinx.com>
+> > Subject: Re: [PATCH 1/5] clk: zynqmp: fix check for fractional clock
+> > 
+> > On Wed, 13 Mar 2019 09:24:04 -0700, Stephen Boyd wrote:  
+> > > Quoting Michael Tretter (2019-03-12 10:25:46)  
+> > > > On Tue, 12 Mar 2019 09:49:21 -0700, Stephen Boyd wrote:  
+> > > > > Quoting Michael Tretter (2019-03-12 04:00:12)  
+> > > > > > CLK_FRAC is not set in the divider->flags, but in the hw->flags.
+> > > > > >
+> > > > > > The firmware sets CLK_FRAC for fractional clocks in the clkflag field.
+> > > > > > When registering the devider, these clkflags are copied to hw->flags.
+> > > > > >
+> > > > > > Moreover, divider->flags field is a u8 type, but CLK_FRAG is BIT(13). So
+> > > > > > this check would never work.
+> > > > > >
+> > > > > > Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> > > > > > ---
+> > > > > >  drivers/clk/zynqmp/divider.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+> > > > > > index a371c66e72ef..fc70950c1e24 100644
+> > > > > > --- a/drivers/clk/zynqmp/divider.c
+> > > > > > +++ b/drivers/clk/zynqmp/divider.c
+> > > > > > @@ -117,7 +117,7 @@ static long  
+> > zynqmp_clk_divider_round_rate(struct clk_hw *hw,  
+> > > > > >         bestdiv = zynqmp_divider_get_val(*prate, rate);
+> > > > > >
+> > > > > >         if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) &&
+> > > > > > -           (divider->flags & CLK_FRAC))
+> > > > > > +           (clk_hw_get_flags(hw) & CLK_FRAC))  
+> > > > >
+> > > > > CLK_FRAC shouldn't be set in the struct clk_hw::core::flags field. It's
+> > > > > not a clk framework flag so it shouldn't go there. Please fix the user
+> > > > > of this flag to place the CLK_FRAC flag somewhere else. Even adding it
+> > > > > into divider::flags is not a good idea because that numberspace is for
+> > > > > dividers, and this flag seems to be zynqmp driver specific, so maybe
+> > > > > just add a bool to the zynqmp_clk_divider?
+> > > > >  
+> > > >
+> > > > Thanks. The driver sets the clk_hw::core::flags based on a response
+> > > > from the ATF and this response includes this flag with other clk
+> > > > frameworks flags. I can test for the flag when registering the clock
+> > > > and set another flag or a bool for the zynqmp_clk_divider and will do
+> > > > so in v2.  
+> > >
+> > > Cool. Thanks!
+> > >  
+> > > >
+> > > > However, this merely sounds like a workaround for an issue in the ATF,
+> > > > which should not define and use this flag in the first place.
+> > > >  
+> > >
+> > > What is ATF doing with these flags? Hopefully ATF and the Linux kernel
+> > > aren't using the same numberspace to describe these things. For example,
+> > > I would be concerned if ATF was looking at the CLK_SET_RATE_PARENT flag
+> > > and passing that value from firmware to the kernel, blindly assuming
+> > > that the kernel wouldn't change those numbers to be something else.
+> > > Obviously that type of kernel change would be invasive but it's not an
+> > > ABI that we've ever published so we're free to do these sorts of things.  
+> > 
+> > You mean that the ATF defines macros like
+> > 
+> > 	#define CLK_SET_RATE_GATE       BIT(0) /* must be gated across rate
+> > change */
+> > 	#define CLK_SET_PARENT_GATE     BIT(1) /* must be gated across re-
+> > parent */
+> > 	#define CLK_SET_RATE_PARENT     BIT(2) /* propagate rate change up
+> > one level */
+> > 
+> > in plat/xilinx/zynqmp/pm_service/pm_api_clock.h, sets the flags in the
+> > response to the Linux driver, and the Linux driver copies the flags
+> > that it got from the ATF to clk_hw::core::flags like
+> > 
+> > 	init.flags = nodes->flag;
+> > 
+> > where nodes is the response from the ATF? That's exactly what is happening.
+> > 
+> > So instead of only translating CLK_FRAC, the driver should actually
+> > translate all flags in the ATF response to proper clk framework flags
+> > instead of blindly copying them, right?  
+> 
+> Except CLK_FRAC, all flags are defined same as clk framework. I think
+> we should add custom flags field and pass zynqmp specific flags there.
 
-Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
----
- include/dt-bindings/clock/g12a-clkc.h | 3 +++
- 1 file changed, 3 insertions(+)
+Using the same flags in the ATF and the common clk framework works now,
+because they have the same value. However, the flags are not actually
+the same, because the flags that the driver gets from the ATF are
+defined in the ATF and the flags that the driver passes to the common
+clk framework are defined in the common clk framework. If the flags in
+the common clk framework are changed (which is admittedly unlikely), the
+ZynqMP clock driver will break, because it still assumes that the
+common clk framework uses the same flags as defined in the ATF.
 
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-index 30303728fe09..82c9e0c020b2 100644
---- a/include/dt-bindings/clock/g12a-clkc.h
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -133,5 +133,8 @@
- #define CLKID_MPLL_5OM				177
- #define CLKID_CPU_CLK				187
- #define CLKID_PCIE_PLL				201
-+#define CLKID_VDEC_1				204
-+#define CLKID_VDEC_HEVC				207
-+#define CLKID_VDEC_HEVCF			210
- 
- #endif /* __G12A_CLKC_H */
--- 
-2.21.0
+Therefore, the driver should actually decouple the flags by defining
+its own flags that correspond to the flags as defined by the ATF (i.e.
+platform specific flags) and convert these flags into flags for the
+common clk framework when registering the clocks.
 
+The problem is that two things that have the same value are not
+necessarily the same thing.
+
+Michael
+
+> 
+> Thanks,
+> Jolly Shah
+> 
+> > 
+> > Michael  
+> 
