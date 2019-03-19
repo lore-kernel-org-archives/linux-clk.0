@@ -2,187 +2,99 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B559CC43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 14:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7193FC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 14:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82FCF2133D
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 14:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4409B2083D
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 14:47:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="puQOKMZ0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfCSOiG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 10:38:06 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:35519 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfCSOiG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 10:38:06 -0400
-Received: from localhost (unknown [185.94.189.188])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id DEA25240019;
-        Tue, 19 Mar 2019 14:38:00 +0000 (UTC)
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2] clk: sunxi: Add Kconfig options
-Date:   Tue, 19 Mar 2019 15:37:59 +0100
-Message-Id: <20190319143759.21650-1-maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727368AbfCSOr0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 10:47:26 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53451 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727745AbfCSOrV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 10:47:21 -0400
+Received: by mail-wm1-f65.google.com with SMTP id e74so17065920wmg.3
+        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 07:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YzjCpRmDA9wR1xnyZxcnZ23puQ+O+dahoaacjFD0+qo=;
+        b=puQOKMZ0IH4UlmFsa1rH5QgDMBI84tDQy/feHxhesTqYUVtnxCXbbiBawDzEGXCtWH
+         meiT7fs8tFknGtl65jxRSiYPvmdhOmdyMipizwMkoblW6v6JbE6vimFXsxyeroRQX8ri
+         M576S2t1Nv1o/3OoAYiNtvSaCyoplpoo4X+HM3NrZy0x0IFzxBcMNbKZ4MlIvjx5iz2n
+         KAZVE9zaOR3SvA+HbZRvOc64v2vwKadrIYVZno+azCjRYlSLgkq9nk/9DUKs4sQW8rhR
+         NywGtkS7kvLiCpVJd836howA4pbwXeNZiHokrMVxgjs0rLekFBuISHbmy/VheBAGLJ8E
+         Tp+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YzjCpRmDA9wR1xnyZxcnZ23puQ+O+dahoaacjFD0+qo=;
+        b=hBE90O+1LxC/jflooe4HAjOoGZKwlt02nFPZyw8IJtojYoB4fZFeIzyoHT+Gq+Tjq4
+         9zxIBSwvSkUSV1FqCFDCaJoQCvHZiLjuKjL2bzdcP9+1VqFztdUOwu0jrOc1FlXT1/NN
+         F2SY6RcFj54cjFuMeL+N7AorpViuIsL+aOrog+yXsgjJ1eqAqz6B2NYlzq95Zz/EMOks
+         ENKxQE43AHN/vjE8gh2sOyOWAunpm2pdBnwwKH+QvGb16q1aNuziQIqXNATfx3LXN4C1
+         WCoTKljP74zw+DOPQCeMJbA9daC0RZ0CcbaUPeGuqioI5PRZHyidMwkSSCOO7rTfOiR3
+         LZAw==
+X-Gm-Message-State: APjAAAXPFgOBKfp++vSE+mYnJQDr/l3pPE9c0Nd/yc0/597r8Wy3AYcE
+        +nyrF8g7lgz4VJRl9EvUTY07YA==
+X-Google-Smtp-Source: APXvYqxcNtjhQ0z3cetH6v1VZ6VuFLNCn9gYpf9j1i7ObgC46aGf6b75xKQFHEKb3Sy18IszK26IzA==
+X-Received: by 2002:a7b:ce83:: with SMTP id q3mr3895176wmj.108.1553006839764;
+        Tue, 19 Mar 2019 07:47:19 -0700 (PDT)
+Received: from dell ([2.31.167.140])
+        by smtp.gmail.com with ESMTPSA id z20sm2812630wma.48.2019.03.19.07.47.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Mar 2019 07:47:18 -0700 (PDT)
+Date:   Tue, 19 Mar 2019 14:47:17 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc:     Tony Xie <tony.xie@rock-chips.com>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v7 0/6] support a new type of PMIC,including two
+ chips(rk817 and rk809)
+Message-ID: <20190319144717.GG4731@dell>
+References: <20190102102002.29245-1-tony.xie@rock-chips.com>
+ <36121846.smLYK4jT4q@diego>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <36121846.smLYK4jT4q@diego>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We used to have a clock framework that isn't really used these days, except
-for a few clocks and/or SoCs. Most of the time, the new framework and
-drivers (sunxi-ng) will provide everything needed for the customer devices
-to operate properly.
+On Tue, 19 Mar 2019, Heiko Stübner wrote:
+> Am Mittwoch, 2. Januar 2019, 11:19:56 CET schrieb Tony Xie:
+> > Most of functions and registers of the rk817 and rk808 are the same,
+> > so they can share allmost all codes.
+> 
+> do you have this series on your radar somewhere or should Tony
+> resend the series? As it looks like it fell through the cracks somehow.
 
-Since we're not needing it that much, it might make sense to disable those
-drivers, for example when we want to reduce the kernel size. Let's add
-options in Kconfig that can be disabled if needed, but are still on by
-default to keep the same features in the standard case.
+It wasn't, but it is now, thanks.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
----
-
-Changes from v1
-  - Switched from a config to a menuconfig
-  - Added help texts
----
- drivers/clk/Kconfig        |  1 +
- drivers/clk/sunxi/Kconfig  | 43 +++++++++++++++++++++++++++++++++
- drivers/clk/sunxi/Makefile | 49 +++++++++++++++++++++-----------------
- 3 files changed, 71 insertions(+), 22 deletions(-)
- create mode 100644 drivers/clk/sunxi/Kconfig
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index e705aab9e38b..f96c7f39ab7e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -310,6 +310,7 @@ source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/sprd/Kconfig"
-+source "drivers/clk/sunxi/Kconfig"
- source "drivers/clk/sunxi-ng/Kconfig"
- source "drivers/clk/tegra/Kconfig"
- source "drivers/clk/ti/Kconfig"
-diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
-new file mode 100644
-index 000000000000..2b6207cc4eda
---- /dev/null
-+++ b/drivers/clk/sunxi/Kconfig
-@@ -0,0 +1,43 @@
-+menuconfig CLK_SUNXI
-+	bool "Legacy clock support for Allwinner SoCs"
-+	depends on ARCH_SUNXI || COMPILE_TEST
-+	default y
-+
-+if CLK_SUNXI
-+
-+config CLK_SUNXI_CLOCKS
-+	bool "Legacy clock drivers"
-+	default y
-+	help
-+	  Legacy clock drivers being used on older (A10, A13, A20,
-+	  A23, A31, A80) SoCs. These drivers are kept around for
-+	  Device Tree backward compatibility issues, in case one would
-+	  still use a Device Tree with one clock provider by
-+	  node. Newer Device Trees and newer SoCs use the drivers
-+	  controlled by CONFIG_SUNXI_CCU.
-+
-+config CLK_SUNXI_PRCM_SUN6I
-+	bool "Legacy A31 PRCM driver"
-+	select MFD_SUN6I_PRCM
-+	default y
-+	help
-+	  Legacy clock driver for the A31 PRCM clocks. Those are
-+	  usually needed for the PMIC communication, mostly.
-+
-+config CLK_SUNXI_PRCM_SUN8I
-+	bool "Legacy sun8i PRCM driver"
-+	select MFD_SUN6I_PRCM
-+	default y
-+	help
-+	  Legacy clock driver for the sun8i family PRCM clocks.
-+	  Those are usually needed for the PMIC communication,
-+	  mostly.
-+
-+config CLK_SUNXI_PRCM_SUN9I
-+	bool "Legacy A80 PRCM driver"
-+	default y
-+	help
-+	  Legacy clock driver for the A80 PRCM clocks. Those are
-+	  usually needed for the PMIC communication, mostly.
-+
-+endif
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index be88368b48a1..e10824c76ae9 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -3,27 +3,32 @@
- # Makefile for sunxi specific clk
- #
- 
--obj-y += clk-sunxi.o clk-factors.o
--obj-y += clk-a10-codec.o
--obj-y += clk-a10-hosc.o
--obj-y += clk-a10-mod1.o
--obj-y += clk-a10-pll2.o
--obj-y += clk-a10-ve.o
--obj-y += clk-a20-gmac.o
--obj-y += clk-mod0.o
--obj-y += clk-simple-gates.o
--obj-y += clk-sun4i-display.o
--obj-y += clk-sun4i-pll3.o
--obj-y += clk-sun4i-tcon-ch1.o
--obj-y += clk-sun8i-bus-gates.o
--obj-y += clk-sun8i-mbus.o
--obj-y += clk-sun9i-core.o
--obj-y += clk-sun9i-mmc.o
--obj-y += clk-usb.o
-+obj-$(CONFIG_CLK_SUNXI) += clk-factors.o
- 
--obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
--obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sunxi.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-a10-codec.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-a10-hosc.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-a10-mod1.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-a10-pll2.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-a10-ve.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-a20-gmac.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-mod0.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-simple-gates.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun4i-display.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun4i-pll3.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun4i-tcon-ch1.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun8i-bus-gates.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun8i-mbus.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun9i-core.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun9i-mmc.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-usb.o
- 
--obj-$(CONFIG_MFD_SUN6I_PRCM) += \
--	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
--	clk-sun8i-apb0.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun8i-apb0.o
-+obj-$(CONFIG_CLK_SUNXI_CLOCKS) += clk-sun9i-cpus.o
-+
-+obj-$(CONFIG_CLK_SUNXI_PRCM_SUN6I)	+= clk-sun6i-apb0.o
-+obj-$(CONFIG_CLK_SUNXI_PRCM_SUN6I)	+= clk-sun6i-apb0-gates.o
-+obj-$(CONFIG_CLK_SUNXI_PRCM_SUN6I)	+= clk-sun6i-ar100.o
-+
-+obj-$(CONFIG_CLK_SUNXI_PRCM_SUN8I)	+= clk-sun8i-apb0.o
-+obj-$(CONFIG_CLK_SUNXI_PRCM_SUN8I)	+= clk-sun6i-apb0-gates.o
 -- 
-2.20.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
