@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C75FC43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C51C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FEF1213F2
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:23:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 984A12082F
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 20:23:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="iCW/eZ1T"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YQKMODLN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfCSUXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 16:23:13 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37485 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbfCSUXN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 16:23:13 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v14so9317013wmf.2
-        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 13:23:12 -0700 (PDT)
+        id S1727141AbfCSUX5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 16:23:57 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54514 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbfCSUX4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 16:23:56 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f3so18425231wmj.4
+        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 13:23:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=88tPsrPMPqYB1In/fB+lVmebSE2nvbar1boY4w5+Hlc=;
-        b=iCW/eZ1TXoz+fs6IB2WRL76stZeBllse/i6gcshGW8qof0/MQkQc6V7f/TOq8q7f1N
-         HUp8H5hpglp/B9foo+cp6S2bL4B8I2s7kg3uON5+Ybf1WEE+4QbHzHYWtfdQCV96a3GK
-         15zimJoDWhbB0sKN2e/Ws0pbBqEYTSBqvaybQAk4wG7nrHiFnrxi+xIboI+DPHffPKb2
-         23SVnn6F81Bnw81FWzk9o0k7KC7yTrjFycfbPJEzi+Z001SzVozUi9Q8Cb62dXGC80rn
-         plBZUMfm35FGzcAx6RNKeTw/BjN3PEz2uGlEGmCUQbF3j0YynYOIy4mVA1IlyIDCUzim
-         aA7Q==
+        bh=ko57RkHWPQkVm3K0JFUtK8DPri+oySpxmdfi+52IKgo=;
+        b=YQKMODLNqMN6FtVyX1X/eMBCrG8dI/zrETNzs1EJ7xo7hN4nWve9O5DYfwwcCwgOXN
+         o96EjF/NNb0kBkAVsgaImCF2nb2hxP5HbGEeEbY7r+xtH6xGcgCgKQeMd/os7hf6frpx
+         g6u231yoQ7rQM+IhsqU+5cx1tmWGNBSZDPUj9dkGCl21TnWuT6WrHh91WKYrMJVTIvG0
+         FBOhLo0m7HS76XGlgWvCNbuGKXLFP0niyvBaJs7BNjmBhiKcyUMFIyhxnU5oBudQGxd8
+         hCkvNTyJw0DGNuMOLkpK2AL5l66Xyr4zDFyiYrurMVm4g4z340RlqotpUF6Xr04AWJHE
+         lGWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=88tPsrPMPqYB1In/fB+lVmebSE2nvbar1boY4w5+Hlc=;
-        b=WJJHAqoVFQlxgsO1gER3ugp2wN2ujgMt6nSIHqybKZjT9sX2hTEvox8gldk35U0SU3
-         v1FDPUt+V94F1Td8iM5eSZFPJmQj5sGVbtkh8oPYd4GyBVb0eUyVyc7Dzr5FHhrx4I0M
-         kSNZ3JYUkLvPVxW6G/TnmyfQO4Nr2nZy0O8j++L2H6yp5D9R6xjGbEE8bCHRBTrT+SSO
-         eMfU0FvEMVJEIrPEEektuNRBUS1F46fFNYki+aloCIw+KEtOpOLw3FXrweJgb6LrdmR/
-         svAQNNoZnInaWbIkOhSNR4MdJTGnKLEup58e5RHsZT9+Zemk094CzdNt1j86z6GbPKjp
-         KAww==
-X-Gm-Message-State: APjAAAVmrqIiVy53zlelKtLEz7U8/V/XUxqk0HFhkFknHCrKYbomSJfU
-        0agSmPUM3nuK5oU2B+3cwfqkefr0GT1g+jBw
-X-Google-Smtp-Source: APXvYqyDODcxE4r1LgrUTFdsXWtJSDhNiOpe68EnE6DM+moXTyuPj8WolhJH3lwHDZNqNHuaybmERQ==
-X-Received: by 2002:a1c:4105:: with SMTP id o5mr3864934wma.35.1553026991274;
-        Tue, 19 Mar 2019 13:23:11 -0700 (PDT)
+        bh=ko57RkHWPQkVm3K0JFUtK8DPri+oySpxmdfi+52IKgo=;
+        b=RHHLsM6oXdIzJPAHoGv72a8IDgcvxBLuYicPNjLTzsPUwiZeVRGmAJ73+apRprPbXo
+         BzsMOmjEtwtShhn+ewYrNN4iK5sDbNq18X3WXdMNRqQ4JCY8oPSwAQ4QCW74iCCSOKOn
+         JtDyyj7agnspP2jStnnONVSMMKmp/ZqOo+CVA1vGAF2GL3afYypBB3ma5ULIVG2jM+Eb
+         kZ1c6AgBLAdJ7HBD7AlXg6n80kFWDczhm04FIZ+Y3E8dMUOAj8VhLm6eKxtgRGA/Um3Z
+         assA9cxupLd4lImX7W+aoUzEPZwIatO8BCBAGuN1N835Pi3LQz+jrTBPJH04DhyZasRH
+         cOkg==
+X-Gm-Message-State: APjAAAX2Exm/q+qNcEhhok54HUFsiPzfRR0DurCe1nxq9pVtuhVigHoI
+        /OmHXO7XPK3t3K8WBUqLhtabRQ==
+X-Google-Smtp-Source: APXvYqzpWjzk3k5cXK3ebbe+B8tX5f+7NHtSlTIxlZ+yPx3/H0J8npMwtEixWgDxP2kPWmaVqw6Ftg==
+X-Received: by 2002:a1c:40d6:: with SMTP id n205mr5106851wma.146.1553027034571;
+        Tue, 19 Mar 2019 13:23:54 -0700 (PDT)
 Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id v6sm63803wme.24.2019.03.19.13.23.10
+        by smtp.gmail.com with ESMTPSA id o20sm43329wmh.21.2019.03.19.13.23.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Mar 2019 13:23:10 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] clk: meson: g12a: Add CPU Clock support
+        Tue, 19 Mar 2019 13:23:53 -0700 (PDT)
+Subject: Re: [PATCH 0/3] clk: meson: add support for PCIE PLL
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190304131129.7762-1-narmstrong@baylibre.com>
- <e9e5644385fb0ac45faceec5ba005dc20ab65989.camel@baylibre.com>
+References: <20190307141455.23879-1-narmstrong@baylibre.com>
+ <2f8d217befcc4fdec36e5a31947cccfe74ccd49f.camel@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -113,12 +113,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <cd33907c-9b58-3e62-c490-35c184746367@baylibre.com>
-Date:   Tue, 19 Mar 2019 21:23:09 +0100
+Message-ID: <18c924b3-2b06-802d-712a-23f973285128@baylibre.com>
+Date:   Tue, 19 Mar 2019 21:23:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <e9e5644385fb0ac45faceec5ba005dc20ab65989.camel@baylibre.com>
+In-Reply-To: <2f8d217befcc4fdec36e5a31947cccfe74ccd49f.camel@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,44 +127,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/03/2019 10:39, Jerome Brunet wrote:
-> On Mon, 2019-03-04 at 14:11 +0100, Neil Armstrong wrote:
->> This patchset adds support for the clock tree feeding the 4xCortex A53
->> cpu cluster.
+On 19/03/2019 11:01, Jerome Brunet wrote:
+> On Thu, 2019-03-07 at 15:14 +0100, Neil Armstrong wrote:
+>> The Amlogic G12A SoCs embeds a dedicated PLL to feed the USB3+PCIE
+>> Combo PHY. This PLL needs a very specific and strict register sequence
+>> in order to correcly enable it and deliver the 100MHz reference clock
+>> to the Analog PHY.
 >>
->> This patchet does not handle clock changing, this will be added in a
->> secondary patchset.
+>> After lot of trials and errors, and since this PLL will ever feed 100MHz
+>> with a static configuration, it is simpler to setup a dedicated ops
+>> structure with a custom _enable() op applying the init register sequence.
 >>
->> The CPU clock can either use the SYS_PLL for > 1GHz frequencies or
->> use a couple of div+mux from 1GHz/667MHz/24MHz source with 2 non-glitch
->> muxes.
+>> The rate calculation ops are kept in order to keep the nominal read
+>> ops as-in, but set_rate is removed.
 >>
->> The CPU clock must be switched to a safe clock while changing the clocks
->> before the non-glitch muxes. Proper support will be added later.
+>> With this setup, the PLL can be enabled and disable safely and always have
+>> the recommended PLL setup to feed the USB3+PCIE Combo PHY.
 >>
->> In this patchset, clocks are set read-only.
+>> Neil Armstrong (3):
+>>   clk: meson-pll: add reduced specific clk_ops for G12A PCIe PLL
+>>   dt-bindings: clk: g12a-clkc: add PCIE PLL clock ID
+>>   clk: meson-g12a: add PCIE PLL clocks
 >>
->> Changes since v1:
->> - moved to clk_regmap_gate_ro_ops for R/O gates
->> - added comments with datasheet field names
->> - moved pribate bindings changes to driver patch
->> - removed invalid PCIE IDs
->>
->> Neil Armstrong (2):
->>   clk: meson-g12a: add cpu clock bindings
->>   clk: meson: g12a: add cpu clocks
->>
->>  drivers/clk/meson/g12a.c              | 350 ++++++++++++++++++++++++++
->>  drivers/clk/meson/g12a.h              |  22 +-
+>>  drivers/clk/meson/clk-pll.c           |  26 ++++++
+>>  drivers/clk/meson/clk-pll.h           |   1 +
+>>  drivers/clk/meson/g12a.c              | 118 ++++++++++++++++++++++++++
+>>  drivers/clk/meson/g12a.h              |   5 +-
 >>  include/dt-bindings/clock/g12a-clkc.h |   1 +
->>  3 files changed, 372 insertions(+), 1 deletion(-)
->>
+>>  5 files changed, 150 insertions(+), 1 deletion(-)
 > 
-> With the small naming comment on patch 2
+> Well this PLL is indeed a nasty one ;)
 > 
 > Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
 
-I fixed the naming while applying on next/headers for patch 1, next/drivers for patch 2
+Applied patch 2 on next/headers, patches 1 & 3 on next/drivers
 
 Neil
