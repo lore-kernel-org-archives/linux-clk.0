@@ -3,80 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CA2C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C124C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C98920863
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:42:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C3E520863
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:44:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553024566;
-	bh=Jdh4DX65N7rfGvDocSid8LiXD/bAViD7h+fq7uSALJc=;
+	s=default; t=1553024652;
+	bh=dPpK2GZsgvw3VeUXID6bIJVQ/XVKm0pIUGrMBOe3ZRo=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=bZ4fEIQ6PXwCGOjM6ulceMUc/+OM13Z86Hb54/PadiGkdtxjfvbRNb6mOZjxs1KvX
-	 72boGgsKtA9Mi0ijM1EPbJx8Bs6lvftWrsYGA8HyAUY8K+U33LgK3xDc8CLfXDH4Nx
-	 8yOXgPRXYNx2cxrX2XUKBNuj1wNBNDMCnfBq0LOM=
+	b=tfMPl/vqKhw/Xs6ZUls7uhuQkzI2n6uLvmAlghsqXi8LO58jx1W1eVXl57WtApjyj
+	 d6A1Kr7YUwvwFobV34qmfqxBP/DwFpuPVDd8YW8ubbUfRRrmI4lJM5N1hUXtPYuj2H
+	 hQXUB72OUaEMgHaJVsg8EhEJmeQqv4AvH3cTiAck=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfCSTmp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 15:42:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52082 "EHLO mail.kernel.org"
+        id S1727066AbfCSToM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 15:44:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbfCSTmp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Mar 2019 15:42:45 -0400
+        id S1726944AbfCSToL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 Mar 2019 15:44:11 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A61762085A;
-        Tue, 19 Mar 2019 19:42:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 179542085A;
+        Tue, 19 Mar 2019 19:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553024564;
-        bh=Jdh4DX65N7rfGvDocSid8LiXD/bAViD7h+fq7uSALJc=;
+        s=default; t=1553024651;
+        bh=dPpK2GZsgvw3VeUXID6bIJVQ/XVKm0pIUGrMBOe3ZRo=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=izp9BdwSFHPposxifLrsKmT5ILC7LDDMtzWwRW/Atl1qnwMvhN4ZgyO306OrJFisQ
-         m29Y2UCRi2WtQzjM4M6obieLBNk9dmWu08ZzlzOjf/3+DXitMMel92jzaJQzrPG3rr
-         nx7JWWHtBYdXpAnrBqOLw+DLm91xFAcH+BEZJBnU=
+        b=p1RbnstWe/xD+diUa7zTEltFhBrdAM5rlLkCWbNjKYbf3GGporYg8ovQme50GDQVe
+         UwNIOAOZ4VpfhK8LffWudOi3Hmvb6hWDb96w1dFlJ/x4yVsnHFzDSX6st1/PaT4U0/
+         gq381TDsy96Mo4EeYTQUwF2N4T5c9pXF1HAkKALQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190319093148.1909-1-leo.yan@linaro.org>
-References: <20190319093148.1909-1-leo.yan@linaro.org>
+In-Reply-To: <20190318105045.26943-1-nicolas.ferre@microchip.com>
+References: <20190318105045.26943-1-nicolas.ferre@microchip.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RESEND PATCH] clk: hi3660: Mark clk_gate_ufs_subsys as critical
-Cc:     Leo Yan <leo.yan@linaro.org>, stable@vger.kernel.org,
-        Zhong Kaihua <zhongkaihua@huawei.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-To:     Leo Yan <leo.yan@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <155302456384.20095.11089482394019450818@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: at91: fix programmable clock for sama5d2
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, matthias.wieloch@few-bauer.de,
+        stable@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-clk@vger.kernel.org
+Message-ID: <155302465034.20095.18419682766528248325@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Tue, 19 Mar 2019 12:42:43 -0700
+Date:   Tue, 19 Mar 2019 12:44:10 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Leo Yan (2019-03-19 02:31:48)
-> diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/c=
-lk-hi3660.c
-> index f40419959656..32ba80181cc6 100644
-> --- a/drivers/clk/hisilicon/clk-hi3660.c
-> +++ b/drivers/clk/hisilicon/clk-hi3660.c
-> @@ -164,7 +164,7 @@ static const struct hisi_gate_clock hi3660_crgctrl_ga=
-te_sep_clks[] =3D {
->         { HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
->           "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
->         { HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sys=
-bus",
-> -         CLK_SET_RATE_PARENT, 0x50, 21, 0, },
-> +         CLK_SET_RATE_PARENT|CLK_IS_CRITICAL, 0x50, 21, 0, },
+Quoting Nicolas Ferre (2019-03-18 03:50:45)
+> From: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+>=20
+> The prescaler formula of the programmable clock has changed for sama5d2. =
+Update
+> the driver accordingly.
+>=20
+> Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
+> Cc: <stable@vger.kernel.org> # v4.20+
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> [nicolas.ferre@microchip.com: adapt the prescaler range,
+>                 fix clk_programmable_recalc_rate, split patch]
+> Signed-off-by: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
 
-Nitpick: Please add space around | and also comment in the code why this
-is a critical clk.
+Applied to clk-fixes
 
->         { HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
->           CLK_SET_RATE_PARENT, 0x50, 28, 0, },
->         { HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
