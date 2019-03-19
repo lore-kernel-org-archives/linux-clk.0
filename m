@@ -3,75 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B29C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CA2C43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C485C204EC
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C98920863
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 19:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553024339;
-	bh=Swh4Nx9EHbpfn9+3aXW+jQdf511OrEPyZz7sHqxAcRo=;
+	s=default; t=1553024566;
+	bh=Jdh4DX65N7rfGvDocSid8LiXD/bAViD7h+fq7uSALJc=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=oSjjQqDSqcIRfKzGEi0uD3JlGcM18sAWaJtwWaST9YvTINNqDiy2V8GzgS+zPr4K2
-	 c8gDRw1uHGZJNw7kvHubUTuGIEGudCaxB3P/L2nq6FvoT8wcuDkj0YxAYXQfSJh/o5
-	 2uyKMyTFzYSo0v8+znS5L+9apEqUR8Al4bpkgB/Q=
+	b=bZ4fEIQ6PXwCGOjM6ulceMUc/+OM13Z86Hb54/PadiGkdtxjfvbRNb6mOZjxs1KvX
+	 72boGgsKtA9Mi0ijM1EPbJx8Bs6lvftWrsYGA8HyAUY8K+U33LgK3xDc8CLfXDH4Nx
+	 8yOXgPRXYNx2cxrX2XUKBNuj1wNBNDMCnfBq0LOM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfCSTi7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 15:38:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47914 "EHLO mail.kernel.org"
+        id S1726925AbfCSTmp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 15:42:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726627AbfCSTi7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Mar 2019 15:38:59 -0400
+        id S1726768AbfCSTmp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 Mar 2019 15:42:45 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B36B20811;
-        Tue, 19 Mar 2019 19:38:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A61762085A;
+        Tue, 19 Mar 2019 19:42:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553024338;
-        bh=Swh4Nx9EHbpfn9+3aXW+jQdf511OrEPyZz7sHqxAcRo=;
+        s=default; t=1553024564;
+        bh=Jdh4DX65N7rfGvDocSid8LiXD/bAViD7h+fq7uSALJc=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=pZu94NU1Z5I7+K24aFIVqGOvb1qYW85/uJZLVEaBlmNBKLdHiT1pm8q77cyUZf6Zl
-         fBvZYowX0itBSdNylaoh00qp5V8Lmvi3sRba4QB2Rie6szd2Ym5xt7NnsyoSR33jLw
-         hcX8w/RGWax6kkK4lsgkc2jZ7Pb3gch+7A77ExEA=
+        b=izp9BdwSFHPposxifLrsKmT5ILC7LDDMtzWwRW/Atl1qnwMvhN4ZgyO306OrJFisQ
+         m29Y2UCRi2WtQzjM4M6obieLBNk9dmWu08ZzlzOjf/3+DXitMMel92jzaJQzrPG3rr
+         nx7JWWHtBYdXpAnrBqOLw+DLm91xFAcH+BEZJBnU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190319143759.21650-1-maxime.ripard@bootlin.com>
-References: <20190319143759.21650-1-maxime.ripard@bootlin.com>
+In-Reply-To: <20190319093148.1909-1-leo.yan@linaro.org>
+References: <20190319093148.1909-1-leo.yan@linaro.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: sunxi: Add Kconfig options
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <155302433780.20095.8306789134509103174@swboyd.mtv.corp.google.com>
+Subject: Re: [RESEND PATCH] clk: hi3660: Mark clk_gate_ufs_subsys as critical
+Cc:     Leo Yan <leo.yan@linaro.org>, stable@vger.kernel.org,
+        Zhong Kaihua <zhongkaihua@huawei.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>
+To:     Leo Yan <leo.yan@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <155302456384.20095.11089482394019450818@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Tue, 19 Mar 2019 12:38:57 -0700
+Date:   Tue, 19 Mar 2019 12:42:43 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2019-03-19 07:37:59)
-> We used to have a clock framework that isn't really used these days, exce=
-pt
-> for a few clocks and/or SoCs. Most of the time, the new framework and
-> drivers (sunxi-ng) will provide everything needed for the customer devices
-> to operate properly.
->=20
-> Since we're not needing it that much, it might make sense to disable those
-> drivers, for example when we want to reduce the kernel size. Let's add
-> options in Kconfig that can be disabled if needed, but are still on by
-> default to keep the same features in the standard case.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
->=20
-> ---
+Quoting Leo Yan (2019-03-19 02:31:48)
+> diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/c=
+lk-hi3660.c
+> index f40419959656..32ba80181cc6 100644
+> --- a/drivers/clk/hisilicon/clk-hi3660.c
+> +++ b/drivers/clk/hisilicon/clk-hi3660.c
+> @@ -164,7 +164,7 @@ static const struct hisi_gate_clock hi3660_crgctrl_ga=
+te_sep_clks[] =3D {
+>         { HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
+>           "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
+>         { HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sys=
+bus",
+> -         CLK_SET_RATE_PARENT, 0x50, 21, 0, },
+> +         CLK_SET_RATE_PARENT|CLK_IS_CRITICAL, 0x50, 21, 0, },
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Nitpick: Please add space around | and also comment in the code why this
+is a critical clk.
 
+>         { HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
+>           CLK_SET_RATE_PARENT, 0x50, 28, 0, },
+>         { HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
