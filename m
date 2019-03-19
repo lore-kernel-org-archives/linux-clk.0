@@ -2,65 +2,65 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB43C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 16:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FEFDC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 16:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D192064A
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 16:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E8752064A
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 16:33:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Fp/YWQUT"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OOLxPuO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfCSQcv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 12:32:51 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53682 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfCSQcu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 12:32:50 -0400
-Received: by mail-wm1-f68.google.com with SMTP id e74so17500703wmg.3
-        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 09:32:49 -0700 (PDT)
+        id S1727827AbfCSQdc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 12:33:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52485 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfCSQdb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 12:33:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a184so3590094wma.2
+        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 09:33:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=LwcgbP/FhQcnTh6imxVlErky6Q46KkyWkYCztYza87M=;
-        b=Fp/YWQUT4PIqnflF6CHYGcYNsbNLvBWaleu9MtSaHZPGBaKDtwJptLRbyZ/KRbLX8m
-         tyc8xnfECgC91Sb3qsZE7xJ/WxyO6jRd5qNgqx4yiFV06qfQUC5+6zfcPA/GbtXwkFXd
-         fQZMDz9dGyYyDwmLkX3K7OwTh3fHpv/Dd8T0nJg1mj090XQrof3+UA0Iud8bbAGOXdJ9
-         0vkK4NoWHCYtsqpTUmFKT6s4K6VqJ6iKjfRNOE2U9C2UHWNOUGKR0LYlZqsXCHLXiPhd
-         vyxnFocsmspAMtUf08byDSlhrgUNUazvHoLWljb76NpBEtWRA/raivCbJvIIAnCHNSW7
-         wFrA==
+        bh=PUdHg/ISDrEbb+A75UJh8MypGV9Y5nmA6hJrbLJRLVE=;
+        b=OOLxPuO2NAndU/ZrAEk6AG/nF5fpUtvfIrigi/rCt7Ck3MLb7YMDgMAZlQ7elK+Btq
+         bvb1Qh3IPTekGmLitpgtr3cWBn1/T2Nw6jwzWusQ0XUpwxLL5I9CQlyFr5NCDVIymFBK
+         W4pgEW/0y/EWJzZ5+8gqoiQBx9F6+ZUvy+TwSKlSUsw8wEFtNyGpqfl8XiyK/GBW/DTF
+         9yMC/f7G1ZpSzSOSbXK5A8UV4JH0JA6V/iwMelwfhcbhahNgYK8nNdlI0mYqCto4JVXk
+         ZzlIYGcZZ8jzYxfqUmSdud9h8BDTfg8QQPtY2d1Bq9ZpxYJJ0q9rV/D7PXfGRNnuoXKK
+         SOTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=LwcgbP/FhQcnTh6imxVlErky6Q46KkyWkYCztYza87M=;
-        b=sthQlSGE5tHwSdbnjy9jbeQ6/7PL3XvwkPvEBdG0UrTXg2t31+stj2G2+gINH/FPHq
-         23OmEJkXq+OclGW2gQSuv3L5aKNEZNftqxWucXzhfZeSsW7RUOPdXApO85qZOxdZVeKa
-         9bntgC+3bew6K3sUL97aUgB5T8S/dy4u74gOqsEdc7nxkirIGQhiW7UWWypLhT8fBTPt
-         gdFNGUQ28o/4PG/X/4ynG6dA8g0hJgTnXaIqLPP9DOTwLpqng1+luoNRp3XLp4LJe4sd
-         pXu+ByKrHnGoZnHgDtlnw7679ICMm2H6X4OW3X2gxtPnpI7VPkGMIuiREY2k/LbWYJxs
-         bxIA==
-X-Gm-Message-State: APjAAAVsRASBE4ngovVX2ps9d4IqcaECKGiK4/k4uJ/ZTgoJ9O9wpE5w
-        3lcURGkQa1bq8Ylj+6tQ4fJ71w==
-X-Google-Smtp-Source: APXvYqzVZsWnqQQ754VIydHEBs1DZpKvxnSy+ZM+Of1V906piVviz7pekPfD0KA1s7KeljDirD/q4g==
-X-Received: by 2002:a7b:c382:: with SMTP id s2mr4309463wmj.56.1553013168315;
-        Tue, 19 Mar 2019 09:32:48 -0700 (PDT)
+        bh=PUdHg/ISDrEbb+A75UJh8MypGV9Y5nmA6hJrbLJRLVE=;
+        b=F8rTq4NWpWbmcbxF0MXp0rLEbD+tLsQnjNkkDuDd74Oqc4Mho0iqzefoF+P4ioE89P
+         dS7PwlriAv8FM35lYvlDO0YrSieNLVEDvhrM5Ilqgfnx/AGcZIKLqR2fCRt8SPJQyQ7p
+         ARpBv9rV5UP4olg/j6RnUanHa+HrZnX3iLuTIH548Kf4ENIMwYVGaGXE+Brs8HzsWCmO
+         K8SxCKz//vuqOojPVdZoJLSRI4kHxdv9o5YRcelc6O12HQdMxBkHEHXKKe32OuQ/QNbP
+         slLNXdaDenwWK/3MvwsmXGPLV+PtVyzdP0rS//olVU+uP3w61bJm4y+MiH/Gm5WoZxoM
+         YLww==
+X-Gm-Message-State: APjAAAVuLReCmtQFEPfbK0qHRponscVIv42lYBAbz9BMBKEiJGopRXNE
+        y5g43mLLXCsixu/O0auLYZO0qA==
+X-Google-Smtp-Source: APXvYqzMPVpQH9xnQA1K8aIjbDjcptfeuBmsku3ToQ31AK5pEm4nGSWjwkj0mhS11uU/8GYaw7CmyQ==
+X-Received: by 2002:a1c:808c:: with SMTP id b134mr749232wmd.16.1553013209210;
+        Tue, 19 Mar 2019 09:33:29 -0700 (PDT)
 Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id b9sm5788736wmc.9.2019.03.19.09.32.46
+        by smtp.gmail.com with ESMTPSA id a9sm9043939wrt.29.2019.03.19.09.33.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Mar 2019 09:32:47 -0700 (PDT)
-Subject: Re: [PATCH] clk: meson-gxbb: round the vdec dividers to closest
-To:     Maxime Jourdan <mjourdan@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
+        Tue, 19 Mar 2019 09:33:28 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson-g12a: fix VPU clock parents
+To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190319102537.2043-1-mjourdan@baylibre.com>
+References: <20190313135503.3198-1-narmstrong@baylibre.com>
+ <3bebbae829d0a0e1e3ad26572e91ed141dbe5f20.camel@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -113,12 +113,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <5738d62f-4076-2b29-2539-f13592dc318b@baylibre.com>
-Date:   Tue, 19 Mar 2019 17:32:46 +0100
+Message-ID: <b8a194d6-dc07-e39f-35a5-2c1c4d2b3161@baylibre.com>
+Date:   Tue, 19 Mar 2019 17:33:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <20190319102537.2043-1-mjourdan@baylibre.com>
+In-Reply-To: <3bebbae829d0a0e1e3ad26572e91ed141dbe5f20.camel@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,41 +127,17 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/03/2019 11:25, Maxime Jourdan wrote:
-> We want the video decoder clocks to always round to closest. While the
-> muxes are already using CLK_MUX_ROUND_CLOSEST, the corresponding
-> CLK_DIVIDER_ROUND_CLOSEST was forgotten for the dividers.
+On 19/03/2019 10:11, Jerome Brunet wrote:
+> On Wed, 2019-03-13 at 14:55 +0100, Neil Armstrong wrote:
+>> First two VPU clock parents are wrong, fix it here.
+>>
+>> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/clk/meson/g12a.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Fix this by adding the flag to the two vdec dividers.
+> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
-> Fixes: a565242eb9fc ("clk: meson: gxbb: add the video decoder clocks")
-> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
-> ---
->  drivers/clk/meson/gxbb.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 04df2e208ed6..29ffb4fde714 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -2216,6 +2216,7 @@ static struct clk_regmap gxbb_vdec_1_div = {
->  		.offset = HHI_VDEC_CLK_CNTL,
->  		.shift = 0,
->  		.width = 7,
-> +		.flags = CLK_DIVIDER_ROUND_CLOSEST,
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "vdec_1_div",
-> @@ -2261,6 +2262,7 @@ static struct clk_regmap gxbb_vdec_hevc_div = {
->  		.offset = HHI_VDEC2_CLK_CNTL,
->  		.shift = 16,
->  		.width = 7,
-> +		.flags = CLK_DIVIDER_ROUND_CLOSEST,
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "vdec_hevc_div",
-> 
-
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
 Will apply to fixes/drivers for 5.1
