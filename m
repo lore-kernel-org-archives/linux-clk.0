@@ -2,104 +2,79 @@ Return-Path: <SRS0=gal5=RW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9C4C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84288C10F03
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92BD20857
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:01:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ou3ERKZX"
+	by mail.kernel.org (Postfix) with ESMTP id 6021520857
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Mar 2019 10:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfCSKBj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Mar 2019 06:01:39 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42175 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfCSKBi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 06:01:38 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n9so16202712wrr.9
-        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2019 03:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=opIwr+LSOxebZuop6rJKZi2dDlWJbe9q7JQeFwl12vc=;
-        b=ou3ERKZXc13ZIO3uMV1dAKJiph09MzUn2Iz/+74xW8AKAEf54On4+B6xfd9cW9crA+
-         IPW4FRIpBusWJ+Uevhn4HeKecEAeV6h1zl4nqFIxhFaM94ZxPxczDTSe5JPa/CwwlvGV
-         Ne50AC1aUhavUvQNmm2NtwdVMzjmPc+PPbL2T4YHYbBCIaQHGyhiX4P2Sh2X4RPsemPi
-         CH8R2HEQdvBZ0/PaoamK+ii6s07BWMlXHzwIGgSg6zQYNkQHkKm2r213Xz4atLQaYr9N
-         D7ua91avN0vkyNyCp5VKteCrh8wf77UNwC5XcZxRbtV5P6ljrpssJkTO6L+NY2rscYBd
-         Zb+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=opIwr+LSOxebZuop6rJKZi2dDlWJbe9q7JQeFwl12vc=;
-        b=qvsd5JA+skzdlqKUeGVc/IvhIPIS3WOKnZD7a1sLXuCz40O+d4D/XfhL1X6P4fPCBJ
-         R6U1mLNw9vAYI0WjSVhJOyLe0bPJSw60KwqxCsuOgPtLka1ZoDONIuxu1Hg33lOAS+q3
-         eze6gBJI0EdEzq9qEBUnrtY3/YfdJHJ8tP3tyoVet1wyaM76wJ1cmHRbEolAsksqCixv
-         xSweWoUt5TVkw3rmpy9ZOVnPa8tIImHHFvqUmY+HM+HtWjlc3R8p81XwIWuvEwvOBCL1
-         SZYJH+IUyBw54n19hc6eHYFFgZaEkFwcIdZmHqVLcvpJvC3xh5xWpCF1FpM/FlarOAbB
-         ZhKg==
-X-Gm-Message-State: APjAAAU2Ra9yDlUGJmGeCszBZFVIOJP5nRdE0Gm3aBbLlzxbJXNR2qn5
-        +yIBz2mCsssPaZkt0/hSlQchKw==
-X-Google-Smtp-Source: APXvYqwe2UkmD1q/qMxlum03VsVtWDwnc35WofKXjVdJhq+R7iQJgEUzK9bUOvpnnUG36+XwmOCxew==
-X-Received: by 2002:adf:fe83:: with SMTP id l3mr15321368wrr.229.1552989697023;
-        Tue, 19 Mar 2019 03:01:37 -0700 (PDT)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id b3sm17596163wrx.57.2019.03.19.03.01.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 19 Mar 2019 03:01:36 -0700 (PDT)
-Message-ID: <2f8d217befcc4fdec36e5a31947cccfe74ccd49f.camel@baylibre.com>
-Subject: Re: [PATCH 0/3] clk: meson: add support for PCIE PLL
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Tue, 19 Mar 2019 11:01:34 +0100
-In-Reply-To: <20190307141455.23879-1-narmstrong@baylibre.com>
-References: <20190307141455.23879-1-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1727495AbfCSKBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Mar 2019 06:01:50 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33449 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbfCSKBu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Mar 2019 06:01:50 -0400
+Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1h6BZ7-0003IF-CH; Tue, 19 Mar 2019 11:01:49 +0100
+Received: from mtr by dude02.lab.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1h6BZ6-00016c-LE; Tue, 19 Mar 2019 11:01:48 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Michael Tretter <m.tretter@pengutronix.de>
+Subject: [PATCH v2 1/4] clk: zynqmp: fix kerneldoc of __zynqmp_clock_get_parents
+Date:   Tue, 19 Mar 2019 11:01:44 +0100
+Message-Id: <20190319100147.4178-2-m.tretter@pengutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190319100147.4178-1-m.tretter@pengutronix.de>
+References: <20190319100147.4178-1-m.tretter@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2019-03-07 at 15:14 +0100, Neil Armstrong wrote:
-> The Amlogic G12A SoCs embeds a dedicated PLL to feed the USB3+PCIE
-> Combo PHY. This PLL needs a very specific and strict register sequence
-> in order to correcly enable it and deliver the 100MHz reference clock
-> to the Analog PHY.
-> 
-> After lot of trials and errors, and since this PLL will ever feed 100MHz
-> with a static configuration, it is simpler to setup a dedicated ops
-> structure with a custom _enable() op applying the init register sequence.
-> 
-> The rate calculation ops are kept in order to keep the nominal read
-> ops as-in, but set_rate is removed.
-> 
-> With this setup, the PLL can be enabled and disable safely and always have
-> the recommended PLL setup to feed the USB3+PCIE Combo PHY.
-> 
-> Neil Armstrong (3):
->   clk: meson-pll: add reduced specific clk_ops for G12A PCIe PLL
->   dt-bindings: clk: g12a-clkc: add PCIE PLL clock ID
->   clk: meson-g12a: add PCIE PLL clocks
-> 
->  drivers/clk/meson/clk-pll.c           |  26 ++++++
->  drivers/clk/meson/clk-pll.h           |   1 +
->  drivers/clk/meson/g12a.c              | 118 ++++++++++++++++++++++++++
->  drivers/clk/meson/g12a.h              |   5 +-
->  include/dt-bindings/clock/g12a-clkc.h |   1 +
->  5 files changed, 150 insertions(+), 1 deletion(-)
+The kerneldoc refers to __zynqmp_clock_get_topology(), but actually
+documents __zynqmp_clock_get_parents(). Refer to the correct function
+name in the kerneldoc.
 
-Well this PLL is indeed a nasty one ;)
+Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+---
+v1 -> v2:
+- none
+---
+ drivers/clk/zynqmp/clkc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+index b0908ec62f73..d3d4ce305e71 100644
+--- a/drivers/clk/zynqmp/clkc.c
++++ b/drivers/clk/zynqmp/clkc.c
+@@ -408,7 +408,7 @@ static int zynqmp_clock_get_topology(u32 clk_id,
+ }
+ 
+ /**
+- * __zynqmp_clock_get_topology() - Get parents info of clock from firmware
++ * __zynqmp_clock_get_parents() - Get parents info of clock from firmware
+  *				   response data
+  * @parents:		Clock parents
+  * @data:		Clock parents data received from firmware
+-- 
+2.20.1
 
