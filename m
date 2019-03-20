@@ -2,69 +2,132 @@ Return-Path: <SRS0=YCcY=RX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FE7C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 16:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D02C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 17:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976502184D
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 16:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553098490;
-	bh=xWb6a3OT5EbC7LPFjRw6+Jt9LU1t6SR/toxDvr/mVL4=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=t8QAjTIEyyGC/ypr7v/KjJgBDSWtGWvJI81iu/2G046kbozAZNsfTaPgDtJHMdcC1
-	 YPRBmcYs7h3aWByiBlLeqYTtYXFtF4GFw6rLn6hFR5iCldJU3Tgy87j+bUtp4BxonL
-	 wGIgXPh6xZQG+tB5iDju3xI2xG/bPXt7Uh/i4Iuk=
+	by mail.kernel.org (Postfix) with ESMTP id 5FD2620850
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 17:12:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FIS98PvF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbfCTQOu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Mar 2019 12:14:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbfCTQOu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Mar 2019 12:14:50 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 632582183E;
-        Wed, 20 Mar 2019 16:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553098489;
-        bh=xWb6a3OT5EbC7LPFjRw6+Jt9LU1t6SR/toxDvr/mVL4=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=OIUUjc6i1G/OY61i5Dlx1VJINOZJTDO5SlVRZ/bMqAdB6B6K7ZF3t/iDcbKBIs0k+
-         t/OG8KZt2ouNKmEYCg4BG97jQFc3fjNEJVZ+8JrDHUBIikW/pDpA8PfQM5gG221xCy
-         +PMjl67o8yjHS0a7efmNkTVY+QUEDsil2TRCnTTY=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1726529AbfCTRMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Mar 2019 13:12:55 -0400
+Received: from mail-eopbgr50040.outbound.protection.outlook.com ([40.107.5.40]:64227
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726449AbfCTRMy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Mar 2019 13:12:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qwNLqDDZfTO49FoZHd7h+WkFgMmjZAZdVXfeCnBp/lk=;
+ b=FIS98PvFC4SVb0STk/ak/cFVJJFlFQC8lxqP4BHThOGw36b6FG9FhpV61/uafex86CLwx+y2K262geGKibMmHYXUgKI2Vvdc5H37PV52nMm10LgszJKe/L+gRcmN34jNiWmyaM/4VNRoOaMUTz6V6aNEg6NhfiOT18773sTwWBg=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB6465.eurprd04.prod.outlook.com (20.179.253.78) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1709.13; Wed, 20 Mar 2019 17:12:49 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::9579:32ab:898e:6769]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::9579:32ab:898e:6769%2]) with mapi id 15.20.1709.015; Wed, 20 Mar 2019
+ 17:12:49 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+CC:     Aisheng Dong <aisheng.dong@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx6q: Do not reparent unregistered IMX6QDL_CLK_PERIPH2
+Thread-Topic: [PATCH] clk: imx6q: Do not reparent unregistered
+ IMX6QDL_CLK_PERIPH2
+Thread-Index: AQHU30AlQ7uX5WNrk0iZ5CsAK+rIhw==
+Date:   Wed, 20 Mar 2019 17:12:49 +0000
+Message-ID: <1553101958-13457-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0701CA0064.eurprd07.prod.outlook.com
+ (2603:10a6:800:5f::26) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
+x-originating-ip: [212.146.100.6]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 445192cc-3329-4b5e-e706-08d6ad57479e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6465;
+x-ms-traffictypediagnostic: AM0PR04MB6465:
+x-microsoft-antispam-prvs: <AM0PR04MB6465C74A3983A6D0E2A5021CF6410@AM0PR04MB6465.eurprd04.prod.outlook.com>
+x-forefront-prvs: 098291215C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(136003)(366004)(39860400002)(346002)(199004)(189003)(4326008)(486006)(478600001)(36756003)(26005)(68736007)(8936002)(2616005)(97736004)(5660300002)(81166006)(476003)(71190400001)(6512007)(44832011)(186003)(81156014)(6636002)(25786009)(53936002)(106356001)(105586002)(54906003)(6506007)(66066001)(386003)(50226002)(86362001)(71200400001)(14454004)(2906002)(6436002)(8676002)(52116002)(305945005)(102836004)(256004)(7736002)(6116002)(316002)(99286004)(110136005)(3846002)(6486002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6465;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: zn1MnoEthL4ImsKFUXH/FlVG00RNcgN99LLeCZGPJqIBZF90pjYKR4zru2WPlgUIqbVqLVcfYiK26xaas1nmX4gj0HBJ5026n7rIb3X9anuNJ6jRq1GPX6LgahkWSHXICMQ+S918vKYYFk5yqxTaLqNCmlNLw54TLy6XRcvPwCnQoKqC0SFPPyV89v3HZstGf13aIqoT4NiFtdxn/MkPCmJrM9WBVhgOzsxyhA3Tm2DuMBC3lBQt6FiaWn+WDv4opwFVJVIsZvafRhroLg/HoQcbx3+aW5rIU3IepvtaMMxVMMVLk5UfuGJaqkllFNlv2bFha5/Ox2u9ErvY6QEmh5lJxuguN05AQPniNqH8VIEs2iVlQFmtJkaBCNL1InK9FOo2IT0J3Aphgr+fAeR8J3pQvMhvPPioKjHGO8F4YwU=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1aff3a5c-75d3-5fd3-1aed-88eab2add828@baylibre.com>
-References: <1aff3a5c-75d3-5fd3-1aed-88eab2add828@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] clk: meson: fixes for v5.1
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <155309848856.20095.17946675922821809396@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Wed, 20 Mar 2019 09:14:48 -0700
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 445192cc-3329-4b5e-e706-08d6ad57479e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2019 17:12:49.8192
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6465
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Neil Armstrong (2019-03-19 13:03:34)
-> Dear clock maintainers,
->=20
-> Below is a request to pull amlogic clock fixes for v5.1
-> These changes fixes a couple of simple mistakes I did while adding video
-> clocks to G12A, and a fix from Maxime fixing the Video Decoder clocks
-> rate rounding.
->=20
+The clock is registered later then these two re-parentings
 
-Thanks. Pulled into clk-fixes.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx6q.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 708e7c5..c7b671e 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -291,12 +291,6 @@ static void mmdc_ch1_disable(void __iomem *ccm_base)
+ 	clk_set_parent(clk[IMX6QDL_CLK_PERIPH2_CLK2_SEL],
+ 		       clk[IMX6QDL_CLK_PLL3_USB_OTG]);
+=20
+-	/*
+-	 * Handshake with mmdc_ch1 module must be masked when changing
+-	 * periph2_clk_sel.
+-	 */
+-	clk_set_parent(clk[IMX6QDL_CLK_PERIPH2], clk[IMX6QDL_CLK_PERIPH2_CLK2]);
+-
+ 	/* Disable pll3_sw_clk by selecting the bypass clock source */
+ 	reg =3D readl_relaxed(ccm_base + CCM_CCSR);
+ 	reg |=3D CCSR_PLL3_SW_CLK_SEL;
+@@ -311,8 +305,6 @@ static void mmdc_ch1_reenable(void __iomem *ccm_base)
+ 	reg =3D readl_relaxed(ccm_base + CCM_CCSR);
+ 	reg &=3D ~CCSR_PLL3_SW_CLK_SEL;
+ 	writel_relaxed(reg, ccm_base + CCM_CCSR);
+-
+-	clk_set_parent(clk[IMX6QDL_CLK_PERIPH2], clk[IMX6QDL_CLK_PERIPH2_PRE]);
+ }
+=20
+ /*
+--=20
+2.7.4
+
