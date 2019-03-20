@@ -2,216 +2,107 @@ Return-Path: <SRS0=YCcY=RX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A02C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 08:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BC6C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 10:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA0521841
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 08:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D36D92184E
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Mar 2019 10:06:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WA0k8sfd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cLqPdQOB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfCTItg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Mar 2019 04:49:36 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39359 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbfCTItg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Mar 2019 04:49:36 -0400
-Received: by mail-wm1-f68.google.com with SMTP id t124so19128177wma.4
-        for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2019 01:49:34 -0700 (PDT)
+        id S1726067AbfCTKGC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Mar 2019 06:06:02 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42949 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfCTKGC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Mar 2019 06:06:02 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w139so1299367oie.9
+        for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2019 03:06:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=OGXGcvskv4iCf+DQMwdniJ9CF3Cv0SYqxOdkT3KVa+w=;
-        b=WA0k8sfdCPCCgdaECQhrTL4VIxD5StlA7xxHwHEzX7kM/F6Z1UF0sUCfASwdX1Ge0J
-         cWsA03a/x6qvODKIBwD44V/xm7lzHInUUU4GMpEuWObgquhln3NCE+2FTPgdoe/SO6XC
-         MbCkYUh/iJBkrsbp/B+RVfk3lsm7k1skYRjD2iiPq1GBtXnvnlSCVqXA3DLl+OSeqKmS
-         1fuEmFjbzOxL7Toou2zqJxbXsTUwQQ+lVj/gDF102U9bo03n07WzPbEx6LmRq8Eq/P6H
-         RScVTypeUr22Huema2t/Bsvi4eCdG231JJMzhUdsaEjmMBPuChK+mYdGg0H70Xc1NDXw
-         DH2g==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=it2EbfqIKkGakT1fEE8g/fE0QVmOppWgv7mGI6uSqEg=;
+        b=cLqPdQOBKlG14DWYeUi7imbmZmOZeC9+Iy8OCANwmMgEeXCaUVqjc6+1WbF8HbR1/k
+         Ggwmuy4Ja7mQNDIZjCO8rgW2vmGtwOg4vazra3G9PpAeVjRLm9OhyxtcgSkyfpXFh21V
+         htyYLYADPD4+dUx61SqKgg+hHvLEJrvTtxLEqq8gDHLkswHjPREgGWzreZpfxA43hVQp
+         G03+69p4egQD7kmD4jRfP/apQbflnAHxf6cWlojFDhD75SP2TNt3Gq25iLv/sjqkKqTm
+         s/9OdYVf34CLOiyK0SxONTbUrHlGig6yRVk7FZ9hVl4RHRcfdfEgd/HRYRJbIIyXQjUR
+         0dwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=OGXGcvskv4iCf+DQMwdniJ9CF3Cv0SYqxOdkT3KVa+w=;
-        b=dA9pDBQ1xFE0C3cnVl6g1ByiTICaee8nPIIKCEuFphQWIn1anWiCZuZlvn+89jMPg0
-         Q8Zti8uqrAdMaJeHbS1pcC2DmfoLnEnOGg0ErKkSJWQ3N9rqTVeGY2o+qBEeRneOSzln
-         Cjk0vlYp70BIHej3baYGnH6/31xwn7xV8phMsCsIADdj0Ni/4ihTI2Ybmvv2RQlBpN6G
-         DFsqgb9NRWIuxf7FP1tgXInz8sFvlc0bngKUfOUnNRYDeeI9XHH8RrWA+6MlKD6N1/Nb
-         9kVIGC3Lxk5RFMeM7cBGNzCISj0VtJ54td18gYW4DLc3r1NsIcWeh4Fi8MrnYlYhx9h9
-         9pJg==
-X-Gm-Message-State: APjAAAUGgFlzQ4AnS4pvyktyIcFG2NusJosu47yRmWu5ZKvPDVYe/G0z
-        6miERzPPGp8Lc3PLUx5KcRPicg==
-X-Google-Smtp-Source: APXvYqx/j0beIVS2vwDu50rOrnf8gkb7XYqITZeZIfk0qeRZvwzUQiB8KpoyngBXodMOq3m6MLHsXA==
-X-Received: by 2002:a1c:cb82:: with SMTP id b124mr6907166wmg.11.1553071773429;
-        Wed, 20 Mar 2019 01:49:33 -0700 (PDT)
-Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id a9sm1672536wrt.29.2019.03.20.01.49.32
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=it2EbfqIKkGakT1fEE8g/fE0QVmOppWgv7mGI6uSqEg=;
+        b=GZp3I+QR/xDdRLb7ktjmeNGwwF8rmIDiBuEMCgmN+Hos6mQVxp9MUThQOj9ZQdyq0v
+         IrXTJ3cOcLbVyhx8W1MlfZ9G2uNn1AbrstHG4npe6KjrBl+0ku5SepfYMImPvX3RRXww
+         Iz4dzQ8UxLEDlSXyGyi1BtsJx36iolkgJ/zhne6QmkUPbis1mAcx/XWf17SkV3dMVKoo
+         FdRCRUO9r8CJb4/cuifwLviijw/yLApmXHdA1sbNuNia+oppywc2xrWk+Bp/cm3+6iEu
+         IEhZbMePpbkumGxEMrgQHOVJYrHi//OiQx0f+qh0gVfZjkPIDjRR02s41sdelgUW6Ryd
+         XLvw==
+X-Gm-Message-State: APjAAAWnaOJVBKzHJCv043WlV20pRA0aTWRp7DZSLrEw2/FUkAhJKOhs
+        07rCro5gx4X38MFabACFlXOa3g==
+X-Google-Smtp-Source: APXvYqydifx4B5RNdoO11t2G7D+px5rkmRJJW5kp2u2zqubf34DxbKoy2HLzYarnKncfCkpSYRP2hA==
+X-Received: by 2002:a54:4891:: with SMTP id r17mr4821054oic.7.1553076361704;
+        Wed, 20 Mar 2019 03:06:01 -0700 (PDT)
+Received: from localhost.localdomain (li808-42.members.linode.com. [104.237.132.42])
+        by smtp.gmail.com with ESMTPSA id f62sm609238otb.54.2019.03.20.03.05.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Mar 2019 01:49:32 -0700 (PDT)
-Subject: Re: [PATCH] dt-bindings: clock: axg-audio: unexpose controller inputs
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Maxime Jourdan <mjourdan@baylibre.com>
-References: <20190213095835.17448-1-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <703bf558-a0f7-e64b-bf0b-bb619c16d4c3@baylibre.com>
-Date:   Wed, 20 Mar 2019 09:49:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <20190213095835.17448-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Mar 2019 03:06:00 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Leo Yan <leo.yan@linaro.org>, stable@vger.kernel.org,
+        Zhong Kaihua <zhongkaihua@huawei.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>
+Subject: [PATCH v2] clk: hi3660: Mark clk_gate_ufs_subsys as critical
+Date:   Wed, 20 Mar 2019 18:05:08 +0800
+Message-Id: <20190320100508.6950-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/02/2019 10:58, Jerome Brunet wrote:
-> Remove the bindings ID of the clock input of the controller. These
-> clocks are purely internal to the controller, exposing them was a
-> mistake. Actually, these should not even be in the provider and have
-> IDs to begin with.
-> 
-> Unexpose these IDs before:
->  * someone starts using them (even if there no valid reason to do so)
->  * the actual clocks are removed. The fact that they exist is just the
->    result of an ugly hack. This will be resolved in CCF when we can
->    reference DT directly in parent table.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/axg-audio.h              | 20 ++++++++++++++++++++
->  include/dt-bindings/clock/axg-audio-clkc.h | 20 --------------------
->  2 files changed, 20 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
-> index 7191b39c9d65..644f0b0fddf2 100644
-> --- a/drivers/clk/meson/axg-audio.h
-> +++ b/drivers/clk/meson/axg-audio.h
-> @@ -60,6 +60,26 @@
->  #define AUD_CLKID_MST5			6
->  #define AUD_CLKID_MST6			7
->  #define AUD_CLKID_MST7			8
-> +#define AUD_CLKID_SLV_SCLK0		9
-> +#define AUD_CLKID_SLV_SCLK1		10
-> +#define AUD_CLKID_SLV_SCLK2		11
-> +#define AUD_CLKID_SLV_SCLK3		12
-> +#define AUD_CLKID_SLV_SCLK4		13
-> +#define AUD_CLKID_SLV_SCLK5		14
-> +#define AUD_CLKID_SLV_SCLK6		15
-> +#define AUD_CLKID_SLV_SCLK7		16
-> +#define AUD_CLKID_SLV_SCLK8		17
-> +#define AUD_CLKID_SLV_SCLK9		18
-> +#define AUD_CLKID_SLV_LRCLK0		19
-> +#define AUD_CLKID_SLV_LRCLK1		20
-> +#define AUD_CLKID_SLV_LRCLK2		21
-> +#define AUD_CLKID_SLV_LRCLK3		22
-> +#define AUD_CLKID_SLV_LRCLK4		23
-> +#define AUD_CLKID_SLV_LRCLK5		24
-> +#define AUD_CLKID_SLV_LRCLK6		25
-> +#define AUD_CLKID_SLV_LRCLK7		26
-> +#define AUD_CLKID_SLV_LRCLK8		27
-> +#define AUD_CLKID_SLV_LRCLK9		28
->  #define AUD_CLKID_MST_A_MCLK_SEL	59
->  #define AUD_CLKID_MST_B_MCLK_SEL	60
->  #define AUD_CLKID_MST_C_MCLK_SEL	61
-> diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-> index fd9c362099d9..eafb0de8466b 100644
-> --- a/include/dt-bindings/clock/axg-audio-clkc.h
-> +++ b/include/dt-bindings/clock/axg-audio-clkc.h
-> @@ -7,26 +7,6 @@
->  #ifndef __AXG_AUDIO_CLKC_BINDINGS_H
->  #define __AXG_AUDIO_CLKC_BINDINGS_H
->  
-> -#define AUD_CLKID_SLV_SCLK0		9
-> -#define AUD_CLKID_SLV_SCLK1		10
-> -#define AUD_CLKID_SLV_SCLK2		11
-> -#define AUD_CLKID_SLV_SCLK3		12
-> -#define AUD_CLKID_SLV_SCLK4		13
-> -#define AUD_CLKID_SLV_SCLK5		14
-> -#define AUD_CLKID_SLV_SCLK6		15
-> -#define AUD_CLKID_SLV_SCLK7		16
-> -#define AUD_CLKID_SLV_SCLK8		17
-> -#define AUD_CLKID_SLV_SCLK9		18
-> -#define AUD_CLKID_SLV_LRCLK0		19
-> -#define AUD_CLKID_SLV_LRCLK1		20
-> -#define AUD_CLKID_SLV_LRCLK2		21
-> -#define AUD_CLKID_SLV_LRCLK3		22
-> -#define AUD_CLKID_SLV_LRCLK4		23
-> -#define AUD_CLKID_SLV_LRCLK5		24
-> -#define AUD_CLKID_SLV_LRCLK6		25
-> -#define AUD_CLKID_SLV_LRCLK7		26
-> -#define AUD_CLKID_SLV_LRCLK8		27
-> -#define AUD_CLKID_SLV_LRCLK9		28
->  #define AUD_CLKID_DDR_ARB		29
->  #define AUD_CLKID_PDM			30
->  #define AUD_CLKID_TDMIN_A		31
-> 
+clk_gate_ufs_subsys is a system bus clock, turning off it will
+introduce lockup issue during system suspend flow.  Let's mark
+clk_gate_ufs_subsys as critical clock, thus keeps it on during
+system suspend and resume.
 
+Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
+Cc: stable@vger.kernel.org
+Cc: Zhong Kaihua <zhongkaihua@huawei.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi3660.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Applied to next/drivers
+diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+index f40419959656..794eeff0d5d2 100644
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -163,8 +163,12 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_sep_clks[] = {
+ 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 17, 0, },
+ 	{ HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
+ 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
++	/*
++	 * clk_gate_ufs_subsys is a system bus clock, mark it as critical
++	 * clock and keep it on for system suspend and resume.
++	 */
+ 	{ HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sysbus",
+-	  CLK_SET_RATE_PARENT, 0x50, 21, 0, },
++	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 21, 0, },
+ 	{ HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
+ 	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
+ 	{ HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
+-- 
+2.17.1
+
