@@ -2,188 +2,96 @@ Return-Path: <SRS0=PHVF=RY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6958C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Mar 2019 14:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01911C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Mar 2019 14:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8074720850
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Mar 2019 14:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3F91218D3
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Mar 2019 14:50:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="B/MTc6FK"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J8/ZCUP7";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mpWkjbK6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbfCUOjM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Mar 2019 10:39:12 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37800 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727987AbfCUOjM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Mar 2019 10:39:12 -0400
-Received: by mail-it1-f194.google.com with SMTP id z124so4427676itc.2
-        for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2019 07:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=caNEbSEGdMRUhb7Ixa2bcE1bckNZ3P3M0HJR9FDriCo=;
-        b=B/MTc6FKftVTTf+la1N2OYnKKBP7SZe/2vApEwO8XANvTXXZ9BURpAtJG1aG3YL39E
-         F7UBmEV1IaLDAFK91z+cuymxqINB2qiI3WC+zMZsSfVrZS8XVfEKd4fM8M9OBfDqinHX
-         /gjeA3/PEvBq28CNrpqte+6tumpe1Zl9LOwVc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=caNEbSEGdMRUhb7Ixa2bcE1bckNZ3P3M0HJR9FDriCo=;
-        b=V28dpDvLvHDpgwjPvrCwDnlRwfraH6bbfmTR+bDx1Zs7QX2s6IBuuXrI7yz/BG/ZLp
-         q0bEfK5xuy36VC7adwleJEL0PJGkT8tif412L8sQ8/65qDwDetdsT5rVfUP8AYp5Z3C3
-         fbqQmfb4OyqQPXwbGzH7RKnY8UfSRXlc5sJp+Odhoqm9ay/YGLhCU3TiJFZuq/49i6SA
-         ORP+EJXRRWaFi59eErz6iRqVX8kZ9UHUO5C34An6/Fy0wAqlMX63llb/kEh3C+kRAZ9S
-         UYDLZV6X1uRH0NkKLs+1JVrKGKyq1HaDvZkxhka9FdERoWTPLdWsDhQqG58yZ2psiT/L
-         1Kpg==
-X-Gm-Message-State: APjAAAVqtdC6OoAo0d+DwLajL4h2StZShGE1vX7mBghRTOXa36FdT64a
-        qk1dEqaeNMZkBMEcS+TjSNV+/GXmLQbj9HPKVQLfMw==
-X-Google-Smtp-Source: APXvYqzIt5b8qkhy+DpcMutq3rTziyyFTkqCC+akkHxgRIaTVat/lN5pRJTP02biLZ02xqTu8IsN8Ba+1fA0LrdPt4M=
-X-Received: by 2002:a24:72c6:: with SMTP id x189mr2897332itc.32.1553179150617;
- Thu, 21 Mar 2019 07:39:10 -0700 (PDT)
+        id S1728093AbfCUOur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Mar 2019 10:50:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44808 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728088AbfCUOur (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Mar 2019 10:50:47 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4B56D6087F; Thu, 21 Mar 2019 14:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1553179846;
+        bh=yowy9rN/QCpAdY30SxzxUpQ5gl5ONtmBlVm1TDftSGI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=J8/ZCUP7xKAJ064sKYnt97X7vkzPU0wzgOqbFtS3b5gO3aghRB6v+PpmR8WvE6rQs
+         jGLAD6dxWUn3hFC68NnVN2KaDsfQZuQ19wmigbnsYsKeU/fo38IzO5YgtfNB7X6gVX
+         SHCNZ60BuJYIYvxVTMQM868w95bjm6VjzFwFwUXs=
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 373926141B;
+        Thu, 21 Mar 2019 14:50:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1553179845;
+        bh=yowy9rN/QCpAdY30SxzxUpQ5gl5ONtmBlVm1TDftSGI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mpWkjbK62ivjxAmJe8byst9xb3lPiuBVN/9KG4fmHYN+7Cln40INe+p3MPN98HHZ+
+         kLmwAKrQPVOeYZoMb3nj6Q5vnl1Qh3NKkE7Vmpwq8Cw4J7D0oUqHr2R+5+YCKWNYBu
+         9grUaGB5k8OFzq0UMMBD0IlUfrWWyb8yWj5oJdK8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 373926141B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v1] clk: Probe defer clk_get() on orphans
+To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, georgi.djakov@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1549911467-2465-1-git-send-email-jhugo@codeaurora.org>
+ <873279a6-0755-2094-ec99-d9e5f6c963dd@codeaurora.org>
+ <155191438574.20095.6161802248500300707@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <29112c43-790e-e7e4-9e4b-9eda8f5bdb78@codeaurora.org>
+Date:   Thu, 21 Mar 2019 08:50:43 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.3
 MIME-Version: 1.0
-References: <20190311133637.18334-1-jagan@amarulasolutions.com>
- <20190311133637.18334-2-jagan@amarulasolutions.com> <20190311153734.izg44ijwqqh2vpxc@flea>
- <CAMty3ZDDARP02qMJZ9CXeiMv=kghoiUHgEAV9b4q+SrbLss40Q@mail.gmail.com> <20190319102520.ldgjtyzrphuib3td@flea>
-In-Reply-To: <20190319102520.ldgjtyzrphuib3td@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 21 Mar 2019 20:08:58 +0530
-Message-ID: <CAMty3ZC+dTVuc2TWR=cqKNbrZe6j2vnwfXAqg6RbvduvY_63LA@mail.gmail.com>
-Subject: Re: [PATCH v8 01/15] drm/sun4i: dsi: Fix video start delay computation
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <155191438574.20095.6161802248500300707@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 19, 2019 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Mon, Mar 11, 2019 at 09:31:11PM +0530, Jagan Teki wrote:
-> > On Mon, Mar 11, 2019 at 9:07 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Mon, Mar 11, 2019 at 07:06:23PM +0530, Jagan Teki wrote:
-> > > > Vertical video start delay is computed by excluding vertical front
-> > > > porch value from total vertical timings.
-> > > >
-> > > > This clearly confirmed from BSP code and here how it computed,
-> > > >
-> > > > (drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > > > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-> > > > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-> > > > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-> > > >    - panel->lcd_y - (panel->lcd_vbp)
-> > > > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-> > > >                            - panel->lcd_y - panel->lcd_vbp
-> > > > => timmings->ver_front_porch
-> > > >
-> > > > But the current driver is assuming it can exclude vertical front
-> > > > porch along with vertical sync values from total vertical timings,
-> > > > which resulting wrong start delay indeed wrong picture rendering
-> > > > in the panel.
-> > >
-> > > Same story here: which panel, which datasheet, which "wrong picture
-> > > rendering"?
-> >
-> > It's bananapi,s070wv20-ct16 DSI
+On 3/6/2019 4:19 PM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-03-06 13:48:13)
+>> Ping?
+>>
+>> Stephen, I know as this depends on your clock parent handling series
+>> (happens to apply just fine to v2), its not going to be accepted until
+>> that gets sorted out, but do you have any thoughts on if this seems like
+>> an appropriate thing to do, or if you'd like to see a different solution?
+> 
+> Please don't ping during the merge window. I'll probably look at this
+> patch next week.
+> 
 
-2. as I said before, it is the same panel for both RGB and DSI, and
-ICN6211 bridge is converter for RGB-to-DSI. we don't have any specific
-programming or detailed datasheet from this except BSP DSI panel
-sequence along with BSP panel timings which are similar to RGB one.
+Sorry about pinging during the merge window.  At the time, I just 
+realized the patch has been on list for several weeks with no response, 
+but hadn't connected the dots that it happened to be the merge window at 
+that particular moment.
 
-3. wrong picture rendering is something sprightliness followed by
-colors jerks, which I couldn't explain it properly ie reason I
-mentioned some generic term for understanding.
+Any update on when you think you might get around to having a look at this?
 
->
-> You're answering one out of three questions.
->
-> > > > Example: timings, where it produces the issue.
-> > > > {
-> > > >       .vdisplay       = 600,
-> > > >       .vsync_start    = 600 + 12,
-> > > >       .vsync_end      = 600 + 12 + 2,
-> > > >       .vtotal         = 600 + 12 + 2 + 21,
-> > > > }
-> > >
-> > > Can you 100% trust those timings?
-> >
-> > ie. reason, I have given the Mainline timings [1]. The above timings
-> > are wrongly mentioned actual timings are from [1]
->
-> You're still answering partially here. Those timings are working for
-> RGB, you have no proof that we need to make the same adjustments for
-> DSI.
-
-It is RGB to DSI bridge on the same panel, as I explained above and it
-would shared same timings. I can confirm or proved it from BSP panel
-timings which are working. indeed same timings are been in Mainline
-tree, we can trust them atleast.
-
->
-> > > > It produces the desired start delay value as 19 but the correct working
-> > > > value should be 513.
-> > > >
-> > > > So, Fix it by computing proper video start delay.
-> > > >
-> > > > Fixes: 69006ef0ecb1 ("drm/sun4i: dsi: Change the start delay calculation")
-> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > ---
-> > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 10 ++++++++--
-> > > >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > index 62a508420227..8d6292c0158b 100644
-> > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > @@ -364,8 +364,14 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
-> > > >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
-> > > >                                          struct drm_display_mode *mode)
-> > > >  {
-> > > > -     u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
-> > > > -     u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
-> > > > +     u16 delay = mode->vtotal - (mode->vsync_start - mode->vdisplay);
-> > > > +
-> > > > +     /**
-> > > > +      * BSP comment:
-> > > > +      * put start_delay to tcon. set ready sync early to dramfreq,
-> > > > +      * so set start_delay 1
-> > > > +      */
-> > >
-> > > That doesn't make any sense to me... What does it mean?
-> >
-> > Which is meaning as above stated as "BSP comment" from here[2]
->
-> It doesn't matter where you took it from. If you cannot explain what
-> happen, putting a random label that doesn't explain anything will not
-> help.
-
-I have no idea or document to refer why this 1 would be added. so I
-used same comment from BSP like many places on sun4i does. w/o this +1
-the delay is computed to 512 which is not working and with this the
-desired delay is 513 which is perfectly working.
-
-If you have any idea on this, please share so-that I can add it in
-comment otherwise.
-
-Jagan.
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
