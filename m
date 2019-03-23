@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20939C4360F
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23143C4360F
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E02B221874
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E278B21873
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:18:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OrRvZI/x"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FT1WzEVF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbfCWVSb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Mar 2019 17:18:31 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32913 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728638AbfCWVR0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 17:17:26 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q1so6019375wrp.0
-        for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2019 14:17:25 -0700 (PDT)
+        id S1728490AbfCWVSl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Mar 2019 17:18:41 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41543 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728595AbfCWVRU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 17:17:20 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p1so5950513wrs.8
+        for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2019 14:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=D3cE3TMFkcyblg01XVc51l5mjrk592SE8nW3ut2z8Rc=;
-        b=OrRvZI/xBP7IVwxK0cxVq9lP/gexguutdq3apP+04CwFppE8iUjR0cl9pYUrxWGiAA
-         aXLmqEjN3H91QaXDPIrcjz4i3R9CtCygjtKOslQf9FuCaNZw2QctYj9hA4gGsAHxMOqt
-         maMQDi223hYjv6l5bFeD2TO0QBpwZYe9KX8LSYkSyMhz5xxCOoSuncujUb81VlL6ZcCm
-         SFYXl0TQbzOWz8WBBvek4hml1RCWpI2E9UIE/7eg84mU1VEfjQjbwHI7Tn/NO8QrlV1X
-         oo3EVRRKUg05jvG6TrsU7p6m1zlOKqAaXfbDgnky9nVPvI9VIxQbR25tA8Imw3jV29zc
-         j7Rw==
+        bh=lxFyf3iGCzky6hYo5GBIQf4Vm1JfhvCOSwUzC5ba4VM=;
+        b=FT1WzEVFRl2Mc4LCsx9r8aU1OM1JlPanNNk/sIfuv7GiGjtpMTfCd5GEMInr4v+gnJ
+         o/VUtCJxB5Zvq5pfF61Ppnp76b3lVzop6e09LY4BC3GOhZROAfLTltxW+IbxehlKzxpy
+         J5T12PYGt4eZpGk7lI/0IjWEmxx2bSPcfmdlLmkXB6RB/tNFIEOzGJgVCmlcepXzxaiQ
+         elVMmJppS9aB0T5I7pGMn4TrvbWhiU1VBE9GAaRgIilFfW8GZp1KtIHnBb6WHR538FZu
+         mCDcPlyucrDQbtft4vMkiGp9aZvoprjZ5lsbPmlZtfjb4kSNmjxPcI/kGd2DIHAz9kZy
+         QJ0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=D3cE3TMFkcyblg01XVc51l5mjrk592SE8nW3ut2z8Rc=;
-        b=INnpGbbPI+AZbU6Ukgm81xdOjYpfwSooaBu0d/xM3Fth1eX/yKUct2bYVmQ0J0SLPJ
-         2e2fCuqMcM/ek8BogZbb3pQOk+M8kyjuui+cfMSlIhow5nODw/0wK2eOfesZMjmqfB2h
-         iraEBBUuD3Wi2ys/XtCkTkYhhgBIERPjWlN9udv/byb9g/QgyW/eXI6c6sc9syc9LWDa
-         wWGBXFtlTjlpV2HIzhZRf13mAF7rDknnzNEJb2D6uN6d//hQs8xAimy+TTiOIrWGryFq
-         yDsdKiYkWx1spdxYlKfyzhlmCf5rvE+HWqYGBsqQ8PLmQExVpoHizYfbWB+bwDbX7R4h
-         oEOg==
-X-Gm-Message-State: APjAAAUZ/F7D2GAk9T9hVvO4so66DYTRDNZK4JULJRcXRpTrIXdbyYsP
-        NTC2ZZbLAZHWid40XQ8/SIqS7g==
-X-Google-Smtp-Source: APXvYqy+VwtCSJsLToTuAbnMmIBRsksKSl7qErH0WunqQXrCpPhqctKau5R5XbmZjw1YdNUP2s8Vww==
-X-Received: by 2002:a5d:448b:: with SMTP id j11mr11190641wrq.218.1553375844777;
-        Sat, 23 Mar 2019 14:17:24 -0700 (PDT)
+        bh=lxFyf3iGCzky6hYo5GBIQf4Vm1JfhvCOSwUzC5ba4VM=;
+        b=LG7Q0qak4fxlBlVNQ5X2i7f26i1xcWzc/X6gFBDIeyrSqT33C7qXw4BfBxuRnooLV/
+         VrQtg/626IYdL/6myhIMcDjIj5KM38IXq+34BxWsgSYNnRM4NMSRlN3r/0kdjIxjBaSg
+         +zVzBAYBi3mn4kNRSYm/W3fEj84fWy9VR3W3eHD3WVztM98k016Vwax8keCaWBl1G0Qy
+         k6hCDPtYKg8ACiItbWQgefbhlIFWaNZD8r3NYUpuhXtXJ+VzWP90hR4tqpaTGWsFmr4N
+         C2JV0OiRenjHq4gQvXM8Kfi8BV48pawmcPZ3PLUrcgeZ+DJMfd1JKpdn49a4FmM49NS9
+         stfA==
+X-Gm-Message-State: APjAAAUrgoUGijbbMdnr4aWoqH25gUqbmRuEPT1Ib38DwrQ3LOiNW6va
+        KR7D0YVM70qmD/fBZftuekx/ZA==
+X-Google-Smtp-Source: APXvYqwQbslBtW3BEz6P7fx084A7x94qUBVWZHEB8F2Vc9kI0VXkL3AafNkKIhvIuNwjnIQ+5hx5Sw==
+X-Received: by 2002:adf:afee:: with SMTP id y46mr10592700wrd.217.1553375838551;
+        Sat, 23 Mar 2019 14:17:18 -0700 (PDT)
 Received: from localhost.localdomain (cag06-8-78-203-165-84.fbx.proxad.net. [78.203.165.84])
-        by smtp.gmail.com with ESMTPSA id y66sm8050503wmd.37.2019.03.23.14.17.22
+        by smtp.gmail.com with ESMTPSA id y66sm8050503wmd.37.2019.03.23.14.17.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Mar 2019 14:17:24 -0700 (PDT)
+        Sat, 23 Mar 2019 14:17:17 -0700 (PDT)
 From:   Fabien Parent <fparent@baylibre.com>
 To:     matthias.bgg@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     sean.wang@kernel.org, ryder.lee@mediatek.com,
@@ -67,9 +67,9 @@ Cc:     sean.wang@kernel.org, ryder.lee@mediatek.com,
         linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-clk@vger.kernel.org, stephane.leprovost@mediatek.com,
         Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH 17/24] dt-bindings: wdog: mtk-wdt: add support for MT851
-Date:   Sat, 23 Mar 2019 22:16:05 +0100
-Message-Id: <20190323211612.860-18-fparent@baylibre.com>
+Subject: [PATCH 15/24] dt-bindings: pinctrl: pinctrl-mt65xx: add support for MT8516
+Date:   Sat, 23 Mar 2019 22:16:03 +0100
+Message-Id: <20190323211612.860-16-fparent@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190323211612.860-1-fparent@baylibre.com>
 References: <20190323211612.860-1-fparent@baylibre.com>
@@ -80,25 +80,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add binding documentation of mtk-wdt for MT8516 SoC.
+Add binding documentation of pinctrl-mt65xx for MT8516 SoC.
 
 Signed-off-by: Fabien Parent <fparent@baylibre.com>
 ---
- Documentation/devicetree/bindings/watchdog/mtk-wdt.txt | 1 +
+ Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-index 8682d6a93e5b..fd380eb28df5 100644
---- a/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/mtk-wdt.txt
-@@ -9,6 +9,7 @@ Required properties:
- 	"mediatek,mt7622-wdt", "mediatek,mt6589-wdt": for MT7622
- 	"mediatek,mt7623-wdt", "mediatek,mt6589-wdt": for MT7623
- 	"mediatek,mt7629-wdt", "mediatek,mt6589-wdt": for MT7629
-+	"mediatek,mt8516-wdt", "mediatek,mt6589-wdt": for MT8516
- 
- - reg : Specifies base physical address and size of the registers.
- 
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+index e7d6f81c227f..205be98ae078 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+@@ -11,6 +11,7 @@ Required properties:
+ 	"mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+ 	"mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
+ 	"mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
++	"mediatek,mt8516-pinctrl", compatible with mt8516 pinctrl.
+ - pins-are-numbered: Specify the subnodes are using numbered pinmux to
+   specify pins.
+ - gpio-controller : Marks the device node as a gpio controller.
 -- 
 2.20.1
 
