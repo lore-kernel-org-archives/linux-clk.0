@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9661C43381
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939DDC43381
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3E7D2133F
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54D152133F
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dJk++uOx"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZOXO69iy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbfCWVTS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Mar 2019 17:19:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34195 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728372AbfCWVQ7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 17:16:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p10so6018215wrq.1
-        for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2019 14:16:58 -0700 (PDT)
+        id S1728041AbfCWVTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Mar 2019 17:19:22 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55504 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728326AbfCWVQ5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 17:16:57 -0400
+Received: by mail-wm1-f67.google.com with SMTP id o25so5259452wmf.5
+        for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2019 14:16:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XjSY7GkEUKTVia2V0gFbX9EZoOEjMqM9LfrLzseMi5w=;
-        b=dJk++uOx5tpZufmmq0SOswI/AqF9PCcaFhN0q0rCUw5njHqtJLv5MKR3ZR2KOC/hus
-         k+h9uovDHQ+mY6Lytc+UfKuxYusxcrAWABcn2cQ5ege4cGwNCV24N/k1cjc604giAIoq
-         7AlGeZ3lPlwypJ3TrPfPIIVgbp+PFmydj1zMcG2RR+C+/oSpzx9CDyPFuymaIjzI1RYe
-         kuSGryHEowptYI+LcGval1WkVnr2Y8UFJisyRUz2KZd07H2xqgosXAUPnAAg0B8Rn4x0
-         6ivVKXCs/8sT/MI6WTmv3XYcefKa826X1emJe/XZuPSgpN9xzry8RV9Y+dE2S6USK9YH
-         WfGg==
+        bh=AdHRYJryAaxYVOMT8m1MuQVCWPZpf0WJ2ig7I3MUpzE=;
+        b=ZOXO69iyAEJoTueYZBYxaPeNXjucZ4yRr2588wavJL4dvF/TSIDm1HcsjMLdsP+U4s
+         hOkCOo7dsVU/IbrCGomdjvPCRW1kH3O24p7Q+yhICWNOTuuP42POXw7mgYrBo812CiCX
+         ljyaqqJ25StC4HDdn46+b0xRFo/pUKavgbBP/bl2f+DjdVhDOC8BazPCwilkWqT9q+wx
+         MMVPD2oPkdykfnF+gns/CWGHm7irAYjvBevgbEgfnZBgoKPOGj8KdujIsU7imFRndQDB
+         hzYWJ522OiDlUcOlbPyEjinyICam7ZD3lrRbyNH2w2W0tno++MG9NXV4s0t5SuvdLTRj
+         vLiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XjSY7GkEUKTVia2V0gFbX9EZoOEjMqM9LfrLzseMi5w=;
-        b=ssKly9NXCJE6HLWnENm3ouD8nu+MwqyxxZjFi7N00SeucLLX4GVvXlyUl8hePUlKn/
-         ZS0QJJUHs833r4Y3YO9pIgP0/9/R+HA1jo14gDmDlwAu8dbosOdT6vbPMapP3CrhgWpH
-         WnWRw60T8zAUb1xBLtoR9Dvt7qTsE5CU3h53Kx3nc9nBoygoHvVNlbYGm2LYMMiYsyDR
-         u5ra65q9YzzlM/UCT0w+/BHMqrXMLtl2JpqdigBdB/vdhbGUvI9Z5/9ezBVbYZeFIiG2
-         EIMEX6tjptV5yYftgcHSh8ZUQR77cMhm6LgN2KZLDxrhs+FRloEM1i2w9AVrFUtGrcz8
-         0mQA==
-X-Gm-Message-State: APjAAAUcP2/lS21m5idwJ5UloC4ajGhHAVtSE2skfw5oUt3QIm5euEj5
-        j3h7bitXQdDE3EMGzJZObGZEkA==
-X-Google-Smtp-Source: APXvYqyYO48bTY3cyp2gU4ct6hmi4qwhdUyjfSzlyOoq5TPdIWdzRX4XfQYrpZ4rO7Tx/wA8f82/MA==
-X-Received: by 2002:adf:dc08:: with SMTP id t8mr11186790wri.103.1553375817902;
-        Sat, 23 Mar 2019 14:16:57 -0700 (PDT)
+        bh=AdHRYJryAaxYVOMT8m1MuQVCWPZpf0WJ2ig7I3MUpzE=;
+        b=gbp/i2pjxIDamIJYih2QLbBVQO8zekk+cm64gbdIIaclEbmUMT8FwmghRNuoQpIwc8
+         uP9QTPssBM8uCXnAh7y0hL6iLMehh6e7d8lfiNyqx3zm7QybDue+KCI8Qb1WWe5spSIY
+         xNbsBwE3bcxPRJiNTxsf2nAHzumjNzb/xEMHTBcLr8yvyQLBNoPVisqKQ9uaLftkVNK4
+         0Bhobvg3g8SIg/itV1wNLuJySWt5nkkUTD9y4pUYWLpEZs1mXMRdZ6uVQAkb/oYbpzJb
+         Xy31DPztzuNd7KHBD5O89070ZQ1mSsTRVMi4vMG0FWUA10nHpss030D6tL9X1bzLOpru
+         fWrQ==
+X-Gm-Message-State: APjAAAWWi11BTuF+tai1Qy9gXsB3bFhEC2S8gH7uixWeEjbrE1nnGzTp
+        w3dS6fl5V9kYPRo60K5o1qrJMA==
+X-Google-Smtp-Source: APXvYqxYPaJhFRUHv8HBUyZW5omCRwDkkzMwHJ14T3fFjhXXI4tFr09qr7yHSwkWltyTVfz+3nuGqw==
+X-Received: by 2002:a1c:4cf:: with SMTP id 198mr831787wme.125.1553375815235;
+        Sat, 23 Mar 2019 14:16:55 -0700 (PDT)
 Received: from localhost.localdomain (cag06-8-78-203-165-84.fbx.proxad.net. [78.203.165.84])
-        by smtp.gmail.com with ESMTPSA id y66sm8050503wmd.37.2019.03.23.14.16.55
+        by smtp.gmail.com with ESMTPSA id y66sm8050503wmd.37.2019.03.23.14.16.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Mar 2019 14:16:57 -0700 (PDT)
+        Sat, 23 Mar 2019 14:16:54 -0700 (PDT)
 From:   Fabien Parent <fparent@baylibre.com>
 To:     matthias.bgg@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     sean.wang@kernel.org, ryder.lee@mediatek.com,
@@ -67,9 +67,9 @@ Cc:     sean.wang@kernel.org, ryder.lee@mediatek.com,
         linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-clk@vger.kernel.org, stephane.leprovost@mediatek.com,
         Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH 08/24] dt-bindings: mmc: mtk-sd: add mtk-sd support for MT8516
-Date:   Sat, 23 Mar 2019 22:15:56 +0100
-Message-Id: <20190323211612.860-9-fparent@baylibre.com>
+Subject: [PATCH 07/24] arm64: dts: mt6392: Add PMIC mt6392 dtsi
+Date:   Sat, 23 Mar 2019 22:15:55 +0100
+Message-Id: <20190323211612.860-8-fparent@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190323211612.860-1-fparent@baylibre.com>
 References: <20190323211612.860-1-fparent@baylibre.com>
@@ -80,25 +80,228 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add binding documentation of mtk-sd for MT8516 SoCs.
+Add the regulator nodes for the MT6392 PMIC.
 
 Signed-off-by: Fabien Parent <fparent@baylibre.com>
 ---
- Documentation/devicetree/bindings/mmc/mtk-sd.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/mediatek/mt6392.dtsi | 208 +++++++++++++++++++++++
+ 1 file changed, 208 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6392.dtsi
 
-diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-index f5bcda3980cc..91a2ec59e497 100644
---- a/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-+++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-@@ -11,6 +11,7 @@ Required properties:
- 	"mediatek,mt8135-mmc": for mmc host ip compatible with mt8135
- 	"mediatek,mt8173-mmc": for mmc host ip compatible with mt8173
- 	"mediatek,mt8183-mmc": for mmc host ip compatible with mt8183
-+	"mediatek,mt8516-mmc": for mmc host ip compatible with mt8516
- 	"mediatek,mt2701-mmc": for mmc host ip compatible with mt2701
- 	"mediatek,mt2712-mmc": for mmc host ip compatible with mt2712
- 	"mediatek,mt7622-mmc": for MT7622 SoC
+diff --git a/arch/arm64/boot/dts/mediatek/mt6392.dtsi b/arch/arm64/boot/dts/mediatek/mt6392.dtsi
+new file mode 100644
+index 000000000000..e33a45fd52af
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt6392.dtsi
+@@ -0,0 +1,208 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 MediaTek Inc.
++ */
++
++&pwrap {
++	pmic: mt6392 {
++		compatible = "mediatek,mt6392", "mediatek,mt6323";
++		mediatek,system-power-controller;
++
++		mt6392_regulator: mt6392_regulator {
++			compatible = "mediatek,mt6392-regulator";
++
++			mt6392_vproc_reg: buck_vproc {
++				regulator-name = "buck_vproc";
++				regulator-min-microvolt = < 700000>;
++				regulator-max-microvolt = <1350000>;
++				regulator-ramp-delay = <12500>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vsys_reg: buck_vsys {
++				regulator-name = "buck_vsys";
++				regulator-min-microvolt = <1400000>;
++				regulator-max-microvolt = <2987500>;
++				regulator-ramp-delay = <25000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vcore_reg: buck_vcore {
++				regulator-name = "buck_vcore";
++				regulator-min-microvolt = < 700000>;
++				regulator-max-microvolt = <1350000>;
++				regulator-ramp-delay = <12500>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vxo22_reg: ldo_vxo22 {
++				regulator-name = "ldo_vxo22";
++				regulator-min-microvolt = <2200000>;
++				regulator-max-microvolt = <2200000>;
++				regulator-enable-ramp-delay = <110>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vaud22_reg: ldo_vaud22 {
++				regulator-name = "ldo_vaud22";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <2200000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vcama_reg: ldo_vcama {
++				regulator-name = "ldo_vcama";
++				regulator-min-microvolt = <2800000>;
++				regulator-max-microvolt = <2800000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vaud28_reg: ldo_vaud28 {
++				regulator-name = "ldo_vaud28";
++				regulator-min-microvolt = <2800000>;
++				regulator-max-microvolt = <2800000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vadc18_reg: ldo_vadc18 {
++				regulator-name = "ldo_vadc18";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vcn35_reg: ldo_vcn35 {
++				regulator-name = "ldo_vcn35";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3600000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vio28_reg: ldo_vio28 {
++				regulator-name = "ldo_vio28";
++				regulator-min-microvolt = <2800000>;
++				regulator-max-microvolt = <2800000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vusb_reg: ldo_vusb {
++				regulator-name = "ldo_vusb";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vmc_reg: ldo_vmc {
++				regulator-name = "ldo_vmc";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-boot-on;
++			};
++
++			mt6392_vmch_reg: ldo_vmch {
++				regulator-name = "ldo_vmch";
++				regulator-min-microvolt = <3000000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-boot-on;
++			};
++
++			mt6392_vemc3v3_reg: ldo_vemc3v3 {
++				regulator-name = "ldo_vemc3v3";
++				regulator-min-microvolt = <3000000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-boot-on;
++			};
++
++			mt6392_vgp1_reg: ldo_vgp1 {
++				regulator-name = "ldo_vgp1";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vgp2_reg: ldo_vgp2 {
++				regulator-name = "ldo_vgp2";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vcn18_reg: ldo_vcn18 {
++				regulator-name = "ldo_vcn18";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vcamaf_reg: ldo_vcamaf {
++				regulator-name = "ldo_vcamaf";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vm_reg: ldo_vm {
++				regulator-name = "ldo_vm";
++				regulator-min-microvolt = <1240000>;
++				regulator-max-microvolt = <1390000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vio18_reg: ldo_vio18 {
++				regulator-name = "ldo_vio18";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-enable-ramp-delay = <264>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			mt6392_vcamd_reg: ldo_vcamd {
++				regulator-name = "ldo_vcamd";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vcamio_reg: ldo_vcamio {
++				regulator-name = "ldo_vcamio";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vm25_reg: ldo_vm25 {
++				regulator-name = "ldo_vm25";
++				regulator-min-microvolt = <2500000>;
++				regulator-max-microvolt = <2500000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++
++			mt6392_vefuse_reg: ldo_vefuse {
++				regulator-name = "ldo_vefuse";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <2000000>;
++				regulator-enable-ramp-delay = <264>;
++			};
++		};
++	};
++};
 -- 
 2.20.1
 
