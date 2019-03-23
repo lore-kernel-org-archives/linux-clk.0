@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F07BC10F05
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02090C43381
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A8021873
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C133221873
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 21:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RaqFqpAj"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="TNE9CAyj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbfCWVQw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Mar 2019 17:16:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34187 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728204AbfCWVQv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 17:16:51 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p10so6018043wrq.1
-        for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2019 14:16:49 -0700 (PDT)
+        id S1728042AbfCWVTk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Mar 2019 17:19:40 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53510 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbfCWVQp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 17:16:45 -0400
+Received: by mail-wm1-f66.google.com with SMTP id q16so5273812wmj.3
+        for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2019 14:16:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AvtBLsKLNWu+ywafXMmRrKND7dTDO57aIqV2ZZB2CJo=;
-        b=RaqFqpAjJFXotCIJxIaPFncshGS4+OlCbgDuvpBwl/83SgYPH1R2YGALChAWnqrPEo
-         oOO7R2EPeBrHL0+20piwWqcA7vzGgoaJJZtch0M1cn9d/fVgMCJWjQ9d9MwXvaGjGbmU
-         +ugzEEsnzDExtV21sovtKGIjJSaPjrkUpJyK7z9bn803UHdd7h6HCrR52gj0F6mMeZNX
-         nIC8zDrcEd6g+R5huFvGKdjR/87/WpKUJLt/E/Mrk+cG/uLezCHBXRxWCTsYbdPGPZZZ
-         AHseMpJmlrEnyyB65c39wiucf3aT8FfJRleTEkMl5Q3F3DP1n75FhrCX9pbVJVGjLATV
-         nqpA==
+        bh=8CBudz3H1DPyVigof7bklSKtdnOHBWQH7PJ01poP6l0=;
+        b=TNE9CAyjTjiHx0MHysvJWZWRVZMPKr81uUgdNOnOHO1vtvyvAOtFRkEc33mXYFGWpq
+         KPtZQjsAsElUlTIlTMjO/ac5hWvAYBrNFSMe0/W/cm7jDr37JIWumnoaemwlMBULZ0eO
+         I6P8wzt5ckHfxepytcoou9dli/PRLRQtXXgu8e8ZZQ/iDOEpVCHDCmULdCkbet0iMMdE
+         wip0CTJSU9I/wHolawI2BjFbXxdvGkigllmYVrto9vrDdPj8D0uFhOEIw8I1lBV7iN0V
+         Yfrq42XJemE6bZ5YtRuMP4qgfA1P3CW7rLQb9qHgA8m9g9lYcGLsn/Ps33g6oaDqlOaj
+         NvDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AvtBLsKLNWu+ywafXMmRrKND7dTDO57aIqV2ZZB2CJo=;
-        b=ieC8bu6Vk0TNdNBxqgWhXiqX4ffoHy0LNJdQ2nWmyILMX3T+BoS5PESL3KjdRnapc3
-         jS+wtsHwYCDrgJJEjZlBZUqL1BllLPdhG3AX1HKR1l/H1Cf0DUHSQj8I6+Wq2/tOm6hs
-         py0vlXrIJCztfgTSkMwQk9LY3Lj0zO7U0hpXGR4Gv77bZ9zSNk6UsIzokP7gCKoP8/Ha
-         XOoG5GkMI8BCPqSgoeCP2tULwvVU+XHtpjtKV0Onwsp4jVgUd34CxCp9ru5NzMx5OoN6
-         GCkL9PqUjoSJcIzdFpg4lkGw+ZW+8Aij5oqJs8758xq4vvE7Wh926pOCjY5O1e+0GHM6
-         xaQw==
-X-Gm-Message-State: APjAAAVAvLRvGwm8n/+3Z4AqHvPJydKwKqbRNcQt4wLJaT/FEf/gkEZq
-        bklDtXu3gInZap1BA7IRBeQCUQ==
-X-Google-Smtp-Source: APXvYqxjNWHypi6LC8z9SnG/Nr8nHpXvSSjdOYVbtPSjKY6HqjTWRaJLnc0sGtL7JiGUp+gGSozcgQ==
-X-Received: by 2002:adf:dc8e:: with SMTP id r14mr11109206wrj.118.1553375809110;
-        Sat, 23 Mar 2019 14:16:49 -0700 (PDT)
+        bh=8CBudz3H1DPyVigof7bklSKtdnOHBWQH7PJ01poP6l0=;
+        b=XlzJm41hiK/eMWhfYeKBaMjFZI37QcIkYluasxaaxP9OH1xLCYY0L/VXc/pZSkY+iI
+         u8OLtJ87VCWt4nVsQ5WJQIPODgHyqeH6ZLr8C2MmOx3TiqO06bZiiLGubJ6/OGV2R4PR
+         d1oNK/N1/0/tN4IiRIiE8DWmatw6uGdb8565/+apjL/1+Ra/n4kL5a3KbVC2XA3nK7PD
+         uFy4fZHOEsooHhsIMxSkQMFx6LUf540rqoxXIYjOqLSLJCBjlijuR/9psiruHimHuvB4
+         GErXJr2FF0IDjZYgoqeLXfwaoOX/Q0uHgwDisbku55fMl9Y7H2ZLYXuC9C3pOZ0Sp+1O
+         p1jw==
+X-Gm-Message-State: APjAAAVuaVdIlWJU9jSEeEbvZ6NUa3GzbeuhoxaZzDFVk85yo08DjFIV
+        DpvoGgVECbNdRabZ9cHZB4lCHA==
+X-Google-Smtp-Source: APXvYqwQXLwZ/5GxBRuCftwQ3CxEztQ7XbdRahDZrZGRiUm2F0EnfNVyGbVskGvwQYjP5CKNYN5pmg==
+X-Received: by 2002:a1c:6309:: with SMTP id x9mr932061wmb.101.1553375803647;
+        Sat, 23 Mar 2019 14:16:43 -0700 (PDT)
 Received: from localhost.localdomain (cag06-8-78-203-165-84.fbx.proxad.net. [78.203.165.84])
-        by smtp.gmail.com with ESMTPSA id y66sm8050503wmd.37.2019.03.23.14.16.46
+        by smtp.gmail.com with ESMTPSA id y66sm8050503wmd.37.2019.03.23.14.16.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Mar 2019 14:16:48 -0700 (PDT)
+        Sat, 23 Mar 2019 14:16:42 -0700 (PDT)
 From:   Fabien Parent <fparent@baylibre.com>
 To:     matthias.bgg@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     sean.wang@kernel.org, ryder.lee@mediatek.com,
@@ -67,9 +67,9 @@ Cc:     sean.wang@kernel.org, ryder.lee@mediatek.com,
         linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-clk@vger.kernel.org, stephane.leprovost@mediatek.com,
         Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH 05/24] soc: mediatek: pwrap: add support for MT8516 pwrap
-Date:   Sat, 23 Mar 2019 22:15:53 +0100
-Message-Id: <20190323211612.860-6-fparent@baylibre.com>
+Subject: [PATCH 03/24] dt-bindings: pwrap: mediatek: add pwrap support for MT8516
+Date:   Sat, 23 Mar 2019 22:15:51 +0100
+Message-Id: <20190323211612.860-4-fparent@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190323211612.860-1-fparent@baylibre.com>
 References: <20190323211612.860-1-fparent@baylibre.com>
@@ -80,165 +80,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the code to support the pwrap IP on the MediaTek MT8516 SoC.
+Add binding documentation of pwrap for MT8516 SoCs.
 
 Signed-off-by: Fabien Parent <fparent@baylibre.com>
 ---
- drivers/soc/mediatek/mtk-pmic-wrap.c | 106 +++++++++++++++++++++++++++
- 1 file changed, 106 insertions(+)
+ Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-index b3ba2301f569..73f0be0567bd 100644
---- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-+++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-@@ -381,6 +381,10 @@ enum pwrap_regs {
- 	PWRAP_EXT_GPS_AUXADC_RDATA_ADDR,
- 	PWRAP_GPSINF_0_STA,
- 	PWRAP_GPSINF_1_STA,
-+
-+	/* MT8516 only regs */
-+	PWRAP_OP_TYPE,
-+	PWRAP_MSB_FIRST,
- };
- 
- static int mt2701_regs[] = {
-@@ -852,6 +856,91 @@ static int mt8183_regs[] = {
- 	[PWRAP_WACS2_VLDCLR] =			0xC28,
- };
- 
-+static int mt8516_regs[] = {
-+	[PWRAP_MUX_SEL] =		0x0,
-+	[PWRAP_WRAP_EN] =		0x4,
-+	[PWRAP_DIO_EN] =		0x8,
-+	[PWRAP_SIDLY] =			0xc,
-+	[PWRAP_RDDMY] =			0x10,
-+	[PWRAP_SI_CK_CON] =		0x14,
-+	[PWRAP_CSHEXT_WRITE] =		0x18,
-+	[PWRAP_CSHEXT_READ] =		0x1c,
-+	[PWRAP_CSLEXT_START] =		0x20,
-+	[PWRAP_CSLEXT_END] =		0x24,
-+	[PWRAP_STAUPD_PRD] =		0x28,
-+	[PWRAP_STAUPD_GRPEN] =		0x2c,
-+	[PWRAP_STAUPD_MAN_TRIG] =	0x40,
-+	[PWRAP_STAUPD_STA] =		0x44,
-+	[PWRAP_WRAP_STA] =		0x48,
-+	[PWRAP_HARB_INIT] =		0x4c,
-+	[PWRAP_HARB_HPRIO] =		0x50,
-+	[PWRAP_HIPRIO_ARB_EN] =		0x54,
-+	[PWRAP_HARB_STA0] =		0x58,
-+	[PWRAP_HARB_STA1] =		0x5c,
-+	[PWRAP_MAN_EN] =		0x60,
-+	[PWRAP_MAN_CMD] =		0x64,
-+	[PWRAP_MAN_RDATA] =		0x68,
-+	[PWRAP_MAN_VLDCLR] =		0x6c,
-+	[PWRAP_WACS0_EN] =		0x70,
-+	[PWRAP_INIT_DONE0] =		0x74,
-+	[PWRAP_WACS0_CMD] =		0x78,
-+	[PWRAP_WACS0_RDATA] =		0x7c,
-+	[PWRAP_WACS0_VLDCLR] =		0x80,
-+	[PWRAP_WACS1_EN] =		0x84,
-+	[PWRAP_INIT_DONE1] =		0x88,
-+	[PWRAP_WACS1_CMD] =		0x8c,
-+	[PWRAP_WACS1_RDATA] =		0x90,
-+	[PWRAP_WACS1_VLDCLR] =		0x94,
-+	[PWRAP_WACS2_EN] =		0x98,
-+	[PWRAP_INIT_DONE2] =		0x9c,
-+	[PWRAP_WACS2_CMD] =		0xa0,
-+	[PWRAP_WACS2_RDATA] =		0xa4,
-+	[PWRAP_WACS2_VLDCLR] =		0xa8,
-+	[PWRAP_INT_EN] =		0xac,
-+	[PWRAP_INT_FLG_RAW] =		0xb0,
-+	[PWRAP_INT_FLG] =		0xb4,
-+	[PWRAP_INT_CLR] =		0xb8,
-+	[PWRAP_SIG_ADR] =		0xbc,
-+	[PWRAP_SIG_MODE] =		0xc0,
-+	[PWRAP_SIG_VALUE] =		0xc4,
-+	[PWRAP_SIG_ERRVAL] =		0xc8,
-+	[PWRAP_CRC_EN] =		0xcc,
-+	[PWRAP_TIMER_EN] =		0xd0,
-+	[PWRAP_TIMER_STA] =		0xd4,
-+	[PWRAP_WDT_UNIT] =		0xd8,
-+	[PWRAP_WDT_SRC_EN] =		0xdc,
-+	[PWRAP_WDT_FLG] =		0xe0,
-+	[PWRAP_DEBUG_INT_SEL] =		0xe4,
-+	[PWRAP_DVFS_ADR0] =		0xe8,
-+	[PWRAP_DVFS_WDATA0] =		0xec,
-+	[PWRAP_DVFS_ADR1] =		0xf0,
-+	[PWRAP_DVFS_WDATA1] =		0xf4,
-+	[PWRAP_DVFS_ADR2] =		0xf8,
-+	[PWRAP_DVFS_WDATA2] =		0xfc,
-+	[PWRAP_DVFS_ADR3] =		0x100,
-+	[PWRAP_DVFS_WDATA3] =		0x104,
-+	[PWRAP_DVFS_ADR4] =		0x108,
-+	[PWRAP_DVFS_WDATA4] =		0x10c,
-+	[PWRAP_DVFS_ADR5] =		0x110,
-+	[PWRAP_DVFS_WDATA5] =		0x114,
-+	[PWRAP_DVFS_ADR6] =		0x118,
-+	[PWRAP_DVFS_WDATA6] =		0x11c,
-+	[PWRAP_DVFS_ADR7] =		0x120,
-+	[PWRAP_DVFS_WDATA7] =		0x124,
-+	[PWRAP_SPMINF_STA] =		0x128,
-+	[PWRAP_CIPHER_KEY_SEL] =	0x12c,
-+	[PWRAP_CIPHER_IV_SEL] =		0x130,
-+	[PWRAP_CIPHER_EN] =		0x134,
-+	[PWRAP_CIPHER_RDY] =		0x138,
-+	[PWRAP_CIPHER_MODE] =		0x13c,
-+	[PWRAP_CIPHER_SWRST] =		0x140,
-+	[PWRAP_DCM_EN] =		0x144,
-+	[PWRAP_DCM_DBC_PRD] =		0x148,
-+	[PWRAP_SW_RST] =		0x168,
-+	[PWRAP_OP_TYPE] =		0x16c,
-+	[PWRAP_MSB_FIRST] =		0x170,
-+};
-+
- enum pmic_type {
- 	PMIC_MT6323,
- 	PMIC_MT6351,
-@@ -869,6 +958,7 @@ enum pwrap_type {
- 	PWRAP_MT8135,
- 	PWRAP_MT8173,
- 	PWRAP_MT8183,
-+	PWRAP_MT8516,
- };
- 
- struct pmic_wrapper;
-@@ -1297,6 +1387,7 @@ static int pwrap_init_cipher(struct pmic_wrapper *wrp)
- 	case PWRAP_MT6765:
- 	case PWRAP_MT6797:
- 	case PWRAP_MT8173:
-+	case PWRAP_MT8516:
- 		pwrap_writel(wrp, 1, PWRAP_CIPHER_EN);
- 		break;
- 	case PWRAP_MT7622:
-@@ -1765,6 +1856,18 @@ static const struct pmic_wrapper_type pwrap_mt8183 = {
- 	.init_soc_specific = pwrap_mt8183_init_soc_specific,
- };
- 
-+static struct pmic_wrapper_type pwrap_mt8516 = {
-+	.regs = mt8516_regs,
-+	.type = PWRAP_MT8516,
-+	.arb_en_all = 0xff,
-+	.int_en_all = ~(u32)(BIT(31) | BIT(2)),
-+	.spi_w = PWRAP_MAN_CMD_SPI_WRITE,
-+	.wdt_src = PWRAP_WDT_SRC_MASK_ALL,
-+	.caps = PWRAP_CAP_DCM,
-+	.init_reg_clock = pwrap_mt2701_init_reg_clock,
-+	.init_soc_specific = NULL,
-+};
-+
- static const struct of_device_id of_pwrap_match_tbl[] = {
- 	{
- 		.compatible = "mediatek,mt2701-pwrap",
-@@ -1787,6 +1890,9 @@ static const struct of_device_id of_pwrap_match_tbl[] = {
- 	}, {
- 		.compatible = "mediatek,mt8183-pwrap",
- 		.data = &pwrap_mt8183,
-+	}, {
-+		.compatible = "mediatek,mt8516-pwrap",
-+		.data = &pwrap_mt8516,
- 	}, {
- 		/* sentinel */
- 	}
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+index 5a2ef1726e2a..7a32404c6114 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+@@ -25,6 +25,7 @@ Required properties in pwrap device node.
+ 	"mediatek,mt8135-pwrap" for MT8135 SoCs
+ 	"mediatek,mt8173-pwrap" for MT8173 SoCs
+ 	"mediatek,mt8183-pwrap" for MT8183 SoCs
++	"mediatek,mt8516-pwrap" for MT8516 SoCs
+ - interrupts: IRQ for pwrap in SOC
+ - reg-names: Must include the following entries:
+   "pwrap": Main registers base
 -- 
 2.20.1
 
