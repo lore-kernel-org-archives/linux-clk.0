@@ -1,110 +1,210 @@
-Return-Path: <SRS0=WJwD=RZ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=a61j=R2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EC1C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Mar 2019 23:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F0EC43381
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 06:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DDBE2175B
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Mar 2019 23:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D85020850
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Mar 2019 06:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="LRIgFl2E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jn7QZ8S6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfCVXxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Mar 2019 19:53:36 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43166 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726916AbfCVXxg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Mar 2019 19:53:36 -0400
-Received: by mail-pg1-f193.google.com with SMTP id l11so2520848pgq.10
-        for <linux-clk@vger.kernel.org>; Fri, 22 Mar 2019 16:53:36 -0700 (PDT)
+        id S1726522AbfCWG7Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Mar 2019 02:59:24 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34426 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfCWG7Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 02:59:24 -0400
+Received: by mail-ed1-f67.google.com with SMTP id x14so829861eds.1;
+        Fri, 22 Mar 2019 23:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=8MeyfL9P+TzBFKo4h9VhMDlScje41WZzffHv3i9eBuE=;
-        b=LRIgFl2Ez/ojrJM1byKWK8Ct2jtgAqzce4cbuXE/NFDtflo64JFlbS54p8RcSX73X5
-         2IyPpsaCZxI89O61w0K0joj53H7Aw/wfscd/+V4ZKouOjUyN7+GbiRrSXU8g/yvVgXlT
-         kkB6cj6QfzuQDFMJJUHzVrtUJ/Zo1oVzluk85FCKnhg0YzvRi+6oGlPLgPt2Z5ePpyYv
-         nFa5f6At8V5sS36qvzLMnkPNi9XyEX+mb60kB6L8DYH7FH5RK0kH7pqpxAfF0AQa8zFZ
-         izLrVsdH8naqP7kA/K+TOn83ny2hMYqnChlmnnUCJeTPuYvz+HJ3YAsMiQg31UVxgW9c
-         t3jw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xPGocWTVd/nSz9pCODUG9wpnXOGLye4QDFZK77+yf9g=;
+        b=jn7QZ8S6kf8fGyNUCNIil+yFwiyTHK+iOG+glQ7VYcbFnYgUljpT/kO6fEvvS/HNFB
+         yH0L0gNuLDYok8O3qEbXGiBtLLg160UiyxY9ZcqvhysiCGae/y735V5qYqM+G8zkEjqe
+         1UHsi8CHQ9BI93SMmXqaJNxAaZF+H+z8iZgr3ZJJ8dvjZlhYURlaJYfk3hGJqtMzLFXE
+         FbLrnt7dzRblBwQcfUzbmlrdf5a6wo/vOVGSNKutdyjpsZrt8jYH0YD4F1Bgzpt+Ju19
+         GIRg4chuoYL17Dalcco/v7iqnPmLujraGkeLIvezDn1N6MqEAJl6uvSJTCV2laWJV0M/
+         6qYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=8MeyfL9P+TzBFKo4h9VhMDlScje41WZzffHv3i9eBuE=;
-        b=GgPygln5z4HbjPVEQnl1i0iL6Zozx7Lrk4PZfTu8uoo9mXT9k39vlAJoKrqRg1aW9B
-         PF8kyDJaPLyL3WkmulCEb6tnzk/aDnzYZ4vQS6PKBe2rpGnXvI02tgd+kOCjcoTwS7tx
-         h59N683KwxmMY9i28p6mAMWtKvCZrXMzb23Ta4cVHsX+gyKwC6dBGTBCcLy41COo8Vgq
-         HZ10XLCCwnoXUooobOROxH4fHaJxeF/oVO/WmYzVET6ByB5npLAycxGkuT6r2NrVV05Y
-         bIF/aUJYRKcr4unA08qZT/d1v6W1cyNMqTKFsbaXFUQLMuS9/Zg7aofvGb0LsRD6CzH3
-         1qzw==
-X-Gm-Message-State: APjAAAWteHLJRcEcV6B7XVE4tl1OHg4yaCuzI4bix1EPG3ObDRYbfukw
-        lRjaqDIpKaKoZFoJnoo2Zz9khg==
-X-Google-Smtp-Source: APXvYqwYT2gMrQkqM3vM84OkzVg5sj2ee78VHyGr7eQxU3ba0PNNCfKtK5/keBYa4Q6ob+lGqV9Kww==
-X-Received: by 2002:a65:4384:: with SMTP id m4mr11431713pgp.375.1553298815248;
-        Fri, 22 Mar 2019 16:53:35 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:314c:c810:897b:a1d4])
-        by smtp.googlemail.com with ESMTPSA id n82sm16887304pfi.63.2019.03.22.16.53.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Mar 2019 16:53:34 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        jbrunet@baylibre.com, linux-amlogic@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/1] dt-bindings: clock: meson8b: drop the "ABP" clock definition
-In-Reply-To: <b7d2edf1-da66-a09f-5f29-28f37ce3f06b@baylibre.com>
-References: <20190319214123.27219-1-martin.blumenstingl@googlemail.com> <20190319214123.27219-2-martin.blumenstingl@googlemail.com> <b7d2edf1-da66-a09f-5f29-28f37ce3f06b@baylibre.com>
-Date:   Fri, 22 Mar 2019 16:53:33 -0700
-Message-ID: <7hmulmzcsi.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xPGocWTVd/nSz9pCODUG9wpnXOGLye4QDFZK77+yf9g=;
+        b=LkiQWL9H217A2pMc1MZHxlVwXY10HCaEE2qlQGsCTNOdeIDGKp2MfdPsFEGNdEBSGL
+         KZM42M2NLy8WpgwK+tqhLkCWZZs1uNtnT/2WPtOwtL7NYu5uHiyBYvS2HJN2FJN3GpQH
+         kxkokhEK9YHULxNjhO9bhHL5xtUwq0VXVoVOwcJY7K6Sgnbc/TNr79pZ9kfiK3zOJauL
+         ws08gxIxD0zEAEpobadd1FQT2nJr2lY9HQrmN1Q7FpVAP5ZxBZIcAG11dBpyPp9+Awt+
+         t2mCiw1bD3hUOeFyly7nET3Ud1TX1wOKywHLri2VaD1PVBpdAmnQw/i+GRpRaERmpN7O
+         N7Mw==
+X-Gm-Message-State: APjAAAX5EgNF3J9oTEqrdZn3GHbZNlTeVMDnXIIcdGDNthFt+fY7gF9k
+        3pq324MkdtB6fO8txeSLxzY+X/lcj3J3oBhC4wF4cg==
+X-Google-Smtp-Source: APXvYqziWWz4RC37KSnnH3pcbg7kZZyBbwUDpgP+VE4ALMEVV5Pqd+atueoqXBmfon4tBJEVV8Eplztil+Zs0xp6Cs0=
+X-Received: by 2002:a50:aa2e:: with SMTP id o43mr8936733edc.67.1553324361517;
+ Fri, 22 Mar 2019 23:59:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1553269010-15591-1-git-send-email-abel.vesa@nxp.com> <1553269010-15591-6-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1553269010-15591-6-git-send-email-abel.vesa@nxp.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Sat, 23 Mar 2019 08:59:09 +0200
+Message-ID: <CAEnQRZAEO-mnfeGtDX19Trjxc94FvPvvyfcVia=W5Zan+msVKQ@mail.gmail.com>
+Subject: Re: [RFC 05/19] clk: imx: clk-busy: Switch to clk_hw based API
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
-
-> On 19/03/2019 22:41, Martin Blumenstingl wrote:
->> Commit 8e1dd17c8b0e3f ("dt-bindings: clock: meson8b: export the CPU post
->> dividers") added a new clock ID "CLKID_ABP" which contains a typo. This
->> was fixed by adding a new (typo-free) #define CLKID_APB in
->> commit 40d08f774c17ad ("dt-bindings: clock: meson8b: add APB clock
->> definition").
->> Now that the new #define is used by the driver we can remove the old
->> one (because the old one is not used anywhere).
->> 
->> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->> ---
->>  include/dt-bindings/clock/meson8b-clkc.h | 1 -
->>  1 file changed, 1 deletion(-)
->> 
->> diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
->> index 8067077a62ca..cd11628f50f8 100644
->> --- a/include/dt-bindings/clock/meson8b-clkc.h
->> +++ b/include/dt-bindings/clock/meson8b-clkc.h
->> @@ -103,7 +103,6 @@
->>  #define CLKID_MPLL1		94
->>  #define CLKID_MPLL2		95
->>  #define CLKID_NAND_CLK		112
->> -#define CLKID_ABP		124
->>  #define CLKID_APB		124
->>  #define CLKID_PERIPH		126
->>  #define CLKID_AXI		128
->> 
+On Fri, Mar 22, 2019 at 5:39 PM Abel Vesa <abel.vesa@nxp.com> wrote:
 >
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> Switch all the clk_busy clock registering functions
+> to clk_hw based API.
+>
 
-Neil / Jerome, I'm assuming you will queue this via the clk-meson tree?
+Hi Abel,
 
-Kevin
+The commit message should explain why such a change is needed.
+
+thanks,
+Daniel.
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  drivers/clk/imx/clk-busy.c | 30 ++++++++++++++++++++----------
+>  drivers/clk/imx/clk.h      | 11 +++++++++--
+>  2 files changed, 29 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+> index e695622..51f75500 100644
+> --- a/drivers/clk/imx/clk-busy.c
+> +++ b/drivers/clk/imx/clk-busy.c
+> @@ -78,13 +78,14 @@ static const struct clk_ops clk_busy_divider_ops = {
+>         .set_rate = clk_busy_divider_set_rate,
+>  };
+>
+> -struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+> +struct clk_hw *imx_clk_hw_busy_divider(const char *name, const char *parent_name,
+>                                  void __iomem *reg, u8 shift, u8 width,
+>                                  void __iomem *busy_reg, u8 busy_shift)
+>  {
+>         struct clk_busy_divider *busy;
+> -       struct clk *clk;
+> +       struct clk_hw *hw;
+>         struct clk_init_data init;
+> +       int ret;
+>
+>         busy = kzalloc(sizeof(*busy), GFP_KERNEL);
+>         if (!busy)
+> @@ -107,11 +108,15 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+>
+>         busy->div.hw.init = &init;
+>
+> -       clk = clk_register(NULL, &busy->div.hw);
+> -       if (IS_ERR(clk))
+> +       hw = &busy->div.hw;
+> +
+> +       ret = clk_hw_register(NULL, hw);
+> +       if (ret) {
+>                 kfree(busy);
+> +               return ERR_PTR(ret);
+> +       }
+>
+> -       return clk;
+> +       return hw;
+>  }
+>
+>  struct clk_busy_mux {
+> @@ -152,13 +157,14 @@ static const struct clk_ops clk_busy_mux_ops = {
+>         .set_parent = clk_busy_mux_set_parent,
+>  };
+>
+> -struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+> +struct clk_hw *imx_clk_hw_busy_mux(const char *name, void __iomem *reg, u8 shift,
+>                              u8 width, void __iomem *busy_reg, u8 busy_shift,
+>                              const char * const *parent_names, int num_parents)
+>  {
+>         struct clk_busy_mux *busy;
+> -       struct clk *clk;
+> +       struct clk_hw *hw;
+>         struct clk_init_data init;
+> +       int ret;
+>
+>         busy = kzalloc(sizeof(*busy), GFP_KERNEL);
+>         if (!busy)
+> @@ -181,9 +187,13 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+>
+>         busy->mux.hw.init = &init;
+>
+> -       clk = clk_register(NULL, &busy->mux.hw);
+> -       if (IS_ERR(clk))
+> +       hw = &busy->mux.hw;
+> +
+> +       ret = clk_hw_register(NULL, hw);
+> +       if (ret) {
+>                 kfree(busy);
+> +               return ERR_PTR(ret);
+> +       }
+>
+> -       return clk;
+> +       return hw;
+>  }
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index e78519c..69b2a13 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -10,6 +10,7 @@ extern spinlock_t imx_ccm_lock;
+>  void imx_check_clocks(struct clk *clks[], unsigned int count);
+>  void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
+>  void imx_register_uart_clocks(struct clk ** const clks[]);
+> +void imx_register_uart_clocks_hws(struct clk_hw ** const hws[]);
+>
+>  extern void imx_cscmr1_fixup(u32 *val);
+>
+> @@ -48,6 +49,12 @@ struct imx_pll14xx_clk {
+>         int flags;
+>  };
+>
+> +#define imx_clk_busy_divider(name, parent_name, reg, shift, width, busy_reg, busy_shift) \
+> +       imx_clk_hw_busy_divider(name, parent_name, reg, shift, width, busy_reg, busy_shift)->clk
+> +
+> +#define imx_clk_busy_mux(name, reg, shift, width, busy_reg, busy_shift, parent_names, num_parents) \
+> +       imx_clk_hw_busy_mux(name, reg, shift, width, busy_reg, busy_shift, parent_names, num_parents)->clk
+> +
+>  struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+>                  void __iomem *base, const struct imx_pll14xx_clk *pll_clk);
+>
+> @@ -109,11 +116,11 @@ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+>  struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
+>                              void __iomem *reg, u8 idx);
+>
+> -struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+> +struct clk_hw *imx_clk_hw_busy_divider(const char *name, const char *parent_name,
+>                                  void __iomem *reg, u8 shift, u8 width,
+>                                  void __iomem *busy_reg, u8 busy_shift);
+>
+> -struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+> +struct clk_hw *imx_clk_hw_busy_mux(const char *name, void __iomem *reg, u8 shift,
+>                              u8 width, void __iomem *busy_reg, u8 busy_shift,
+>                              const char * const *parent_names, int num_parents);
+>
+> --
+> 2.7.4
+>
