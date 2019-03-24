@@ -2,100 +2,109 @@ Return-Path: <SRS0=ejKp=R3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE20C43381
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 03:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9B9C43381
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 15:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54182171F
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 03:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA376222EC
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 15:11:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hs3OUz0J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfCXDer (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Mar 2019 23:34:47 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:1799 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727706AbfCXDer (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Mar 2019 23:34:47 -0400
-X-UUID: 4139318f1e5040d8bdad11c93286e163-20190324
-X-UUID: 4139318f1e5040d8bdad11c93286e163-20190324
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <yingjoe.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1396306676; Sun, 24 Mar 2019 11:34:29 +0800
-Received: from MTKMBS01DR.mediatek.inc (172.21.101.111) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 24 Mar 2019 11:34:27 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01dr.mediatek.inc (172.21.101.111) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 24 Mar 2019 11:34:26 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 24 Mar 2019 11:34:26 +0800
-Message-ID: <1553398466.26628.0.camel@mtksdaap41>
-Subject: Re: [PATCH 09/24] mmc: mtk-sd: check for valid optional memory
- resource
-From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
-To:     Fabien Parent <fparent@baylibre.com>
-CC:     <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <ryder.lee@mediatek.com>,
-        <linux-watchdog@vger.kernel.org>, <jjian.zhou@mediatek.com>,
-        <wenzhen.yu@mediatek.com>, <stephane.leprovost@mediatek.com>,
-        <sean.wang@kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yong.mao@mediatek.com>,
-        <linux-spi@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <hsin-hsiung.wang@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <chaotian.jing@mediatek.com>,
-        <linux-i2c@vger.kernel.org>
-Date:   Sun, 24 Mar 2019 11:34:26 +0800
-In-Reply-To: <20190323211612.860-10-fparent@baylibre.com>
-References: <20190323211612.860-1-fparent@baylibre.com>
-         <20190323211612.860-10-fparent@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726889AbfCXPLf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Mar 2019 11:11:35 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36327 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfCXPLf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Mar 2019 11:11:35 -0400
+Received: by mail-wm1-f67.google.com with SMTP id h18so6487408wml.1;
+        Sun, 24 Mar 2019 08:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1iOOQJkzqOi5ynjs0xO8WYzOHUwCsH2EAzRs/Ax8GJE=;
+        b=hs3OUz0JbxZxme1r8SwQL0kZwc6wySPZXX9gIRv7FU+yXvG2XCjdHfMktnUdqRcyI3
+         w1Co1Y+luHghdARp5MuWen7kUR6+n3IySEG1lXnPrjBk5BNZoX3xBeh3o17WR1OhRoCP
+         XshgrjbDjUejPMI8YQhFPUlgEFyzbFTxi8Z1KAwaWGrU1hS1fvU0VLiwUbhklWY7Zqov
+         O7j272zDZtSLuOQ/JDkHC6/vOWXLAAQNM1QfjQBBCBW92I69YYpCqWsTRthXQ1Zt4C1u
+         RKgPpywTHqMeal6CdAPEuw5sU3iB7ySblKZWqH4TgAdR+meV6bER4Edn+rxLho9FwrhJ
+         SRyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1iOOQJkzqOi5ynjs0xO8WYzOHUwCsH2EAzRs/Ax8GJE=;
+        b=fJidNiaXtFKFQIrPef/wyDxXrubNWosxfvZCw5RZtTpWWp+QE8N8K0+kxeN9g6w27Y
+         KK1m0CCZVTVmRcCKhyZwokRmJ7WZNddRdNZdQ+0CyckTLgO+X9Jqk0VHLy0ZQws+xFKS
+         L+9Ha5R+0VGboVXyEMY6MUNaet3FeODf6gdqJOAUMBGc/xbCMI5jk24mgA17CB2ffbRx
+         6S3FvH5V9tllQ5OE5bmh5O5Cx/q5utBGZOMwVcrBPtGdnhqVQSs7Puff7jHjeRAESGb2
+         0y9nadcH0OKGZNOlCFarpKULnkT67Cew2TSF/rDZDlXODAgWj0dwWp8luWzAhn7Vb+zO
+         ImUQ==
+X-Gm-Message-State: APjAAAUAul56OikLmsnwAdCDWMcxwa3a/D1dtT7U50gr5hsoPhuM3+a0
+        ncY+WGrVrXYtb2ErGnM/OAE=
+X-Google-Smtp-Source: APXvYqywixNeYOzIbg+q68/qtFvRc6hmSkULAK2cS8wT1U0oQ6U1t3UZUj7/NyH/qQsskEZbNUp3sA==
+X-Received: by 2002:a1c:ef1a:: with SMTP id n26mr9184065wmh.67.1553440293194;
+        Sun, 24 Mar 2019 08:11:33 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300DCD7399900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:dc:d739:9900:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id 66sm13697730wmd.3.2019.03.24.08.11.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Mar 2019 08:11:32 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/4] clk: meson8b: add the VPU clock tree
+Date:   Sun, 24 Mar 2019 16:11:00 +0100
+Message-Id: <20190324151104.18397-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
-X-TM-SNTS-SMTP: 054869C2B2FF6DCD1AFCF49E6578D95B61694A9C9726265AD53ECF398AE763E82000:8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 2019-03-23 at 22:15 +0100, Fabien Parent wrote:
-> 'top_base' memory region is optional. Check that the resource is valid
-> before using it. This avoid getting a "invalid resource" error message
-> printed by the kernel.
-> 
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> ---
->  drivers/mmc/host/mtk-sd.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index 833ef0590af8..573aa127d00b 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -2123,9 +2123,11 @@ static int msdc_drv_probe(struct platform_device *pdev)
->  	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -	host->top_base = devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(host->top_base))
-> -		host->top_base = NULL;
-> +	if (ret) {
+This adds the VPU clock tree for Meson8, Meson8b and Meson8m2.
+The VPU clock tree is slightly different on all three SoCs. The details
+are explained in patch #4.
 
-This should be res?
+Meson8m2 requires the previously unsupported "gp_pll" PLL. This PLL only
+exists on Meson8m2 - Meson8 and Meson8b don't have it.
+A separate clk_hw_onecell_data is introduced for Meson8m2 (using the
+compatible string which is already available) to account for this SoC
+specific clock setup.
 
-> +		host->top_base = devm_ioremap_resource(&pdev->dev, res);
-> +		if (IS_ERR(host->top_base))
-> +			host->top_base = NULL;
-> +	}
->  
->  	ret = mmc_regulator_get_supply(mmc);
->  	if (ret)
+dependencies:
+This series is meant to be applied on top of my other patch from [0]:
+  dt-bindings: clock: meson8b: drop the "ABP" clock definition
 
+changes since v1 at [1]:
+- fixed typo in the subject of patch #2 (spotted by Neil)
+- collected Reviewed-by tags from Neil (thank you!)
+
+
+[0] https://patchwork.kernel.org/patch/10860387/
+[1] https://patchwork.kernel.org/cover/10860401/
+
+
+Martin Blumenstingl (4):
+  dt-bindings: clock: meson8b: export the VPU clock
+  clk: meson: meson8b: use a separate clock table for Meson8m2
+  clk: meson: meson8b: add support for the GP_PLL clock on Meson8m2
+  clk: meson: meson8b: add the VPU clock trees
+
+ drivers/clk/meson/meson8b.c              | 422 ++++++++++++++++++++++-
+ drivers/clk/meson/meson8b.h              |  12 +-
+ include/dt-bindings/clock/meson8b-clkc.h |   1 +
+ 3 files changed, 433 insertions(+), 2 deletions(-)
+
+-- 
+2.21.0
 
