@@ -2,117 +2,107 @@ Return-Path: <SRS0=ejKp=R3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB58C10F00
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 15:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 550ACC10F00
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 16:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6953B2075C
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 15:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FB682087E
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Mar 2019 16:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mQUHe/2T"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="tt9+WuWl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfCXPTD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Mar 2019 11:19:03 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36847 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbfCXPS5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Mar 2019 11:18:57 -0400
-Received: by mail-it1-f195.google.com with SMTP id h9so10381177itl.1
-        for <linux-clk@vger.kernel.org>; Sun, 24 Mar 2019 08:18:56 -0700 (PDT)
+        id S1728873AbfCXQnj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Mar 2019 12:43:39 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33921 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbfCXQnj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Mar 2019 12:43:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p10so7470180wrq.1;
+        Sun, 24 Mar 2019 09:43:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LA6GXUCgoW4lEEmR/LMufysHJYXyTKx9RuJsaqKLxUA=;
-        b=mQUHe/2T27VeYzPtkFZWO1opnsxSqurAU0juAhv8EYg793y8UFMp/YczASj+Er6Z3r
-         e85zNaO4H+71QAWIfcCYz9gh+g0W9X1kULySVZDNKRZaI1YDpVgkgR8dXUxaqWkBbwCA
-         b35aoGlfuXQBqmOsZNDNvK4+SjOE6mzMHAA8iFANLLbsDkfFqmPmQFJNuAcYbqcHVxKW
-         xglcSytksG3tFjvpVEh/g05uCObI7wJhkJasPFgnE2sKeGtJKZ+jBe78z3xlUTRDKpX3
-         P8ubfmY3jOhP2iixXc7eyPmcN+N1D0dq2Jge/QydJky8x8i4g52kQPlD7baUo7XgyeAx
-         FCIw==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w2r38gJpfFe4P7HtoACDMN8D+Ed6JJt9Nux7ChLwiuk=;
+        b=tt9+WuWlBUcM3VoHmNt/kZywyCPpRq7NpHMDQI2bYrXvGbUwk4Jdg/p4HU6mWcnQb8
+         BIl099tfJO592uJMq/LbjsAy7m//DnLgHRFRWsQWMLuX8v56fXaXzVnRZqulYl7H00MX
+         nzBRRwwYXNhUSvhVBOempMLaSSThHwum8FhF35XUWAQ6gjocFAA00Olto/DLWxP0ZPJI
+         /2S/quGgmUSe9m7wC0dFCMEzfii9u+kebjs+FBwqfhdCC7raXKAiIkhrn5TfcZxs2mWT
+         Tqk3AZoZ6FFd4Wrc/BtuP8K+gSPNkhIIJYZW7s7YS+eI21NBHnWJAER9JqSV6LXB6lEX
+         hmEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LA6GXUCgoW4lEEmR/LMufysHJYXyTKx9RuJsaqKLxUA=;
-        b=S4fvPiGagj2pp1H1N38JDCX8oMupIzWZDMLv+Bbvon0t0hL2iyBEyWcEYuA5Bo2hri
-         EKKW2F6TPg5YrtpSjF+UCR6eHtqP/tJ6ytTGk6jyesJqx8ea1p2pcYH0042Vd/2xGf79
-         gS7mOwAiSRyA2+Hn5ijO2oadTM0GCdeNID5/cqhHpnFawf4LS3QUzMoMBWa3z24ZXwoM
-         GlG+I0OC0XuLdkEu6tV4jiaoS9ZuWOpayUq2Uham+XHS0puRd5SfjpOhFpEKx8HDgYgO
-         I9y2eUlZLFLqD1ouAb8feLjoxqNoCZqU3c1rVN+uRfimMrJsl1+SpdOpk2HMhm1PlDIU
-         QrJA==
-X-Gm-Message-State: APjAAAW9SDiFlWsZqvjsddG1T7YNk5xBsSgZm2tDK/cffaYSJwkhtMlD
-        RJS7JOJrME04Vgr6cA2eAcFWeFKSeZKTkH0P59EMsQ==
-X-Google-Smtp-Source: APXvYqw8WMiyqKB6zM8rvKiZfNagZNLvEHPd2d2+gxclGYL+TMCJXc47XLd0mHezierdMyacId2wPEUkNlQ/mF1nTnc=
-X-Received: by 2002:a24:3c4c:: with SMTP id m73mr8815805ita.23.1553440736289;
- Sun, 24 Mar 2019 08:18:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w2r38gJpfFe4P7HtoACDMN8D+Ed6JJt9Nux7ChLwiuk=;
+        b=BEscDDQJHnHt/TUvnQHtkV1vYTPMKLIlZ1dDg8FGgEEgCwc6LbzUe8OzP0uv6KwFtS
+         wOepwR6Yb8jZdYBj5fNP5rWuzXlXScs0Ag1Ixh2fZKaGGrLCWVTjo9g+PHvJHv7ogu+H
+         Z4wJrY1yooBaJKMQyGM6+0TV1g7GjD/pnna3RqrYd4QpteOClIrxkhRVoDOmSEzRJWPK
+         hBP1xP+Gm9K5iyTvTcPO2htHDCHlLA1yjFhGVUTcXnnyJLjG+QcLl2Q7+VZt2ffSpyTa
+         1v+tIrCI9qZnOY7I02JqaG6kmPXyEN8SQge57zEcUKR62x6SBQjPQ32w8qjVy+AviS6D
+         Wu6Q==
+X-Gm-Message-State: APjAAAXj/K4VtSmDEK1XLQc5OLuoc0aWHCPbUxozQ0t3djGKy6ukDooS
+        5e5R1ZDz1xPyvnI76Gw8K6kg7uHr
+X-Google-Smtp-Source: APXvYqxi7MrEGPvI0xo3HHvxXE+5nclfglXNSMkgiW0axjGrWnZa8Vm3ska1+I89HKUOFX6JXH12bA==
+X-Received: by 2002:adf:fbd2:: with SMTP id d18mr12858946wrs.55.1553445817321;
+        Sun, 24 Mar 2019 09:43:37 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300DCD7399900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:dc:d739:9900:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id v16sm19042461wru.76.2019.03.24.09.43.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Mar 2019 09:43:36 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/1] clk: meson: fix PLL rate rounding
+Date:   Sun, 24 Mar 2019 17:43:26 +0100
+Message-Id: <20190324164327.22590-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-10-fparent@baylibre.com>
- <1553398466.26628.0.camel@mtksdaap41>
-In-Reply-To: <1553398466.26628.0.camel@mtksdaap41>
-From:   Fabien Parent <fparent@baylibre.com>
-Date:   Sun, 24 Mar 2019 16:18:45 +0100
-Message-ID: <CAOwMV_zkHMZv8y_8C9kRCUsPtSbm+vPkJUNzU-_LK5=OhTkiPw@mail.gmail.com>
-Subject: Re: [PATCH 09/24] mmc: mtk-sd: check for valid optional memory resource
-To:     Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, ryder.lee@mediatek.com,
-        linux-watchdog@vger.kernel.org, jjian.zhou@mediatek.com,
-        wenzhen.yu@mediatek.com,
-        Stephane Le Provost <stephane.leprovost@mediatek.com>,
-        sean.wang@kernel.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yong.mao@mediatek.com,
-        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, hsin-hsiung.wang@mediatek.com,
-        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Mar 24, 2019 at 4:34 AM Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
->
-> On Sat, 2019-03-23 at 22:15 +0100, Fabien Parent wrote:
-> > 'top_base' memory region is optional. Check that the resource is valid
-> > before using it. This avoid getting a "invalid resource" error message
-> > printed by the kernel.
-> >
-> > Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> > ---
-> >  drivers/mmc/host/mtk-sd.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> > index 833ef0590af8..573aa127d00b 100644
-> > --- a/drivers/mmc/host/mtk-sd.c
-> > +++ b/drivers/mmc/host/mtk-sd.c
-> > @@ -2123,9 +2123,11 @@ static int msdc_drv_probe(struct platform_device *pdev)
-> >       }
-> >
-> >       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> > -     host->top_base = devm_ioremap_resource(&pdev->dev, res);
-> > -     if (IS_ERR(host->top_base))
-> > -             host->top_base = NULL;
-> > +     if (ret) {
->
-> This should be res?
+Hi Jerome,
 
-Indeed. Thanks, I will fix it in v2.
+can you please look at this small fix? I discovered that my Odroid-C1
+wasn't booting anymore. My other Meson8m2 board was using fine.
 
-> > +             host->top_base = devm_ioremap_resource(&pdev->dev, res);
-> > +             if (IS_ERR(host->top_base))
-> > +                     host->top_base = NULL;
-> > +     }
-> >
-> >       ret = mmc_regulator_get_supply(mmc);
-> >       if (ret)
->
->
+While investigating this I found that it hangs while setting the
+sys_pll_dco rate. This is important because unlike Odroid-C1 my
+Meson8m2 board has a fixed regulator (and thus always runs at a
+fixed CPU speed).
+It always hanged while trying to set a CPU frequency of 312MHz. This
+can be achieved with:
+  24MHz (xtal) * 52 (m) / 1 (n) / 4 (sys_pll)
+However, my added debug logging showed that it was trying to set an
+M value of 51, resulting in an output frequency of 306MHz. My debug
+logs showed that meson_clk_get_pll_settings() considers 1248MHz
+(which is the rate requested for sys_pll_dco for a CPU frequency of
+ 312MHz) "worse" than 1224MHz.
+
+I'm not sure exactly why the bug caused the board to hang, but my
+patch fixes it.
+
+Please apply this to v5.1-rc as I believe the Odroid-C1 on kernelci
+also suffers from this issue.
+
+
+Martin Blumenstingl (1):
+  clk: meson: pll: fix rounding and setting a rate that matches
+    precisely
+
+ drivers/clk/meson/clk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.21.0
+
