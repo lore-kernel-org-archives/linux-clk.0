@@ -2,84 +2,99 @@ Return-Path: <SRS0=mYc5=R4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D90C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CC0C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740472087C
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CB2F2087C
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553533821;
+	bh=mjxygTOz0VfXyEdP437l5ZjPaHMvCuH2ypZNPL35xTk=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=zFcYH2T8tYeqBChyS0LcjvQsPLXOVnfB3b4OkNmkI0D+jdaC04LCLmRC+rE2H1iR0
+	 UbSGPQCp8UIg8HktBrBep3/5kqVA2xE52XP7xFkez+Kbr1q1q44nsNRBDeVlOFjZ9B
+	 qsOUg9xd1w50x4jJSxJ5eyFgN5JUO5INTCqqX0pA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbfCYRE7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Mar 2019 13:04:59 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:44579 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbfCYRE7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 13:04:59 -0400
-X-Originating-IP: 109.213.38.144
-Received: from localhost (alyon-652-1-47-144.w109-213.abo.wanadoo.fr [109.213.38.144])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 1444FE0013;
-        Mon, 25 Mar 2019 17:04:51 +0000 (UTC)
-Date:   Mon, 25 Mar 2019 18:04:51 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH v11 6/8] rtc: bd70528: Initial support for ROHM bd70528
- RTC
-Message-ID: <20190325170451.GQ30105@piout.net>
-References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
- <901900e12e2a06865b3649ec94af511fcc6443a3.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1729506AbfCYRKU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Mar 2019 13:10:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54548 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729095AbfCYRKU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Mar 2019 13:10:20 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F3F3207DD;
+        Mon, 25 Mar 2019 17:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553533819;
+        bh=mjxygTOz0VfXyEdP437l5ZjPaHMvCuH2ypZNPL35xTk=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=X+d7VbyuaMdwdPzusjaMKEp7d/Z9+OKyt6GTmtaX3hLJQBpw/+bkF+lEpfazRgZlI
+         ihs4fTc6CjUy3/JITKtxz42md16cfO+/WXiG1bJnwCsZ5B/10yo9T7WkZRI9EGUecQ
+         bpMLRyNBxwLBLmgi7wTV45/9Z4oAH1n96p/6UoaE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <901900e12e2a06865b3649ec94af511fcc6443a3.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190325111200.15940-2-jbrunet@baylibre.com>
+References: <20190325111200.15940-1-jbrunet@baylibre.com> <20190325111200.15940-2-jbrunet@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/4] clk: meson: mpll: add init callback and regs
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <155353381842.20095.17915880223118004926@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Mon, 25 Mar 2019 10:10:18 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/03/2019 14:06:42+0200, Matti Vaittinen wrote:
-> Support RTC block in ROHM bd70528 power management IC. Support
-> getting and setting the time and date as well as arming an alarm
-> which can also be used to wake the PMIC from standby state.
-> 
-> HW supports wake interrupt only for the next 24 hours (sec, minute
-> and hour information only) so we limit also the alarm interrupt to
-> this 24 hours for the sake of consistency.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Quoting Jerome Brunet (2019-03-25 04:11:57)
+> @@ -138,6 +129,27 @@ static int mpll_set_rate(struct clk_hw *hw,
+>         return 0;
+>  }
+> =20
+> +static void mpll_init(struct clk_hw *hw)
+> +{
+> +       struct clk_regmap *clk =3D to_clk_regmap(hw);
+> +       struct meson_clk_mpll_data *mpll =3D meson_clk_mpll_data(clk);
+> +
+> +       if (mpll->init_count)
+> +               regmap_multi_reg_write(clk->map, mpll->init_regs,
+> +                                      mpll->init_count);
+> +
+> +       /* Enable the fractional part */
+> +       meson_parm_write(clk->map, &mpll->sdm_en, 1);
+> +
+> +       /* Set additional fractional part enable if required */
+> +       if (MESON_PARM_APPLICABLE(&mpll->ssen))
+> +               meson_parm_write(clk->map, &mpll->ssen, 1);
+> +
+> +       /* Set the magic misc bit if required */
+> +       if (MESON_PARM_APPLICABLE(&mpll->misc))
+> +               meson_parm_write(clk->map, &mpll->misc, 1);
+> +}
+> +
+>  const struct clk_ops meson_clk_mpll_ro_ops =3D {
+>         .recalc_rate    =3D mpll_recalc_rate,
+>         .round_rate     =3D mpll_round_rate,
+> @@ -148,6 +160,7 @@ const struct clk_ops meson_clk_mpll_ops =3D {
+>         .recalc_rate    =3D mpll_recalc_rate,
+>         .round_rate     =3D mpll_round_rate,
+>         .set_rate       =3D mpll_set_rate,
+> +       .init           =3D mpll_init,
 
-> +	r->time.hour |= BD70528_MASK_RTC_HOUR_24H;
-> +	r->day |= bin2bcd(t->tm_mday);
-> +	r->week |= bin2bcd(t->tm_wday);
-> +	r->month |= bin2bcd(t->tm_mon + 1);
-> +	r->year = bin2bcd(t->tm_year-100);
+We actively discourage using init callbacks. Can you do this some other
+way?
 
-If you ever have to resend, please add spaces around that -
-
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  };
+>  EXPORT_SYMBOL_GPL(meson_clk_mpll_ops);
+> =20
