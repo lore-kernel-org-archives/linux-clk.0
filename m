@@ -2,77 +2,256 @@ Return-Path: <SRS0=mYc5=R4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E59C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 13:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68D7C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 16:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD0120830
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 13:56:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A562120863
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 16:36:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LuKqBgKY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbfCYN4M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Mar 2019 09:56:12 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:41026 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbfCYN4M (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 25 Mar 2019 09:56:12 -0400
-X-Greylist: delayed 376 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Mar 2019 09:56:11 EDT
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 5AA23207DC;
-        Mon, 25 Mar 2019 14:49:54 +0100 (CET)
-Received: from [192.168.108.8] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 42291207AE;
-        Mon, 25 Mar 2019 14:49:54 +0100 (CET)
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for
- 8998
-Message-ID: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
-Date:   Mon, 25 Mar 2019 14:49:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Mar 25 14:49:54 2019 +0100 (CET)
+        id S1726743AbfCYQgO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Mar 2019 12:36:14 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:42069 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbfCYQgO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 12:36:14 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6B2A825B780;
+        Tue, 26 Mar 2019 03:36:10 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1553531770; bh=Oqb/hl/Z/0kQebo3QZgObCYRrnL6kqqCMEqs+9Fr+nQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LuKqBgKYD+W+HNIDfpsTdu7xMFyubh7W+hZIKYpyl/pQZ8n4tjLy4LSy6la4j31mQ
+         EjZCHtKxmVqQjEdyL6/temktdzCuDkspmghbAGK57tTmgbR4hbJqpMZrfiCOKewXwi
+         NmBVTBnFWSBOTZgKZcSOsdCFPMAd/+74xjSJnvZU=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 9FFEC9403ED; Mon, 25 Mar 2019 17:36:08 +0100 (CET)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v6 1/7] clk: renesas: rcar-gen3: Parameterise Z and Z2 clock fixed divisor
+Date:   Mon, 25 Mar 2019 17:35:50 +0100
+Message-Id: <20190325163556.22025-2-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190325163556.22025-1-horms+renesas@verge.net.au>
+References: <20190325163556.22025-1-horms+renesas@verge.net.au>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-See similar issue solved by commit 5f2420ed2189
-("clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998")
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Without this patch, PCIe PHY init fails:
+Parameterise Z and Z2 clock fixed divisor to allow clocks with a fixed
+divisor other than 2, the value used by all such clocks supported to date.
 
-qcom-qmp-phy 1c06000.phy: pipe_clk enable failed err=-16
-phy phy-1c06000.phy.0: phy init failed --> -16
+This is in preparation for supporting the Z2 clock on the R-Car E3
+(r8a77990) SoC which has a fixed divisor of 4.
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[simon: squashed several patches; rewrote changelog; added r8a774a1 change]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/qcom/gcc-msm8998.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3
+- Retain original whitespace alignment
 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index c240fba794c7..033688264c7b 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2161,7 +2161,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
+v2
+- New patch
+---
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c |  4 ++--
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  |  5 +++--
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  |  5 +++--
+ drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 24 +++++++++++++++---------
+ drivers/clk/renesas/rcar-gen3-cpg.h     |  4 ++++
+ 6 files changed, 28 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+index 4d92b27a6153..99bcb7c8022f 100644
+--- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+@@ -71,8 +71,8 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
+ 	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
  
- static struct clk_branch gcc_pcie_0_pipe_clk = {
- 	.halt_reg = 0x6b018,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x6b018,
- 		.enable_mask = BIT(0),
+ 	/* Core Clock Outputs */
+-	DEF_BASE("z",           R8A774A1_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+-	DEF_BASE("z2",          R8A774A1_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
++	DEF_GEN3_Z("z",		R8A774A1_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0, 2),
++	DEF_GEN3_Z("z2",	R8A774A1_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2),
+ 	DEF_FIXED("ztr",        R8A774A1_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A774A1_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A774A1_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 86842c9fd314..d4cf1c91533e 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -3,6 +3,7 @@
+  * r8a7795 Clock Pulse Generator / Module Standby and Software Reset
+  *
+  * Copyright (C) 2015 Glider bvba
++ * Copyright (C) 2018 Renesas Electronics Corp.
+  *
+  * Based on clk-rcar-gen3.c
+  *
+@@ -73,8 +74,8 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+ 	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
+ 
+ 	/* Core Clock Outputs */
+-	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+-	DEF_BASE("z2",          R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
++	DEF_GEN3_Z("z",         R8A7795_CLK_Z,	   CLK_TYPE_GEN3_Z,  CLK_PLL0, 2),
++	DEF_GEN3_Z("z2",        R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2),
+ 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 12c455859f2c..77254f2b4519 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -3,6 +3,7 @@
+  * r8a7796 Clock Pulse Generator / Module Standby and Software Reset
+  *
+  * Copyright (C) 2016 Glider bvba
++ * Copyright (C) 2018 Renesas Electronics Corp.
+  *
+  * Based on r8a7795-cpg-mssr.c
+  *
+@@ -73,8 +74,8 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
+ 
+ 	/* Core Clock Outputs */
+-	DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+-	DEF_BASE("z2",          R8A7796_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
++	DEF_GEN3_Z("z",         R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2),
++	DEF_GEN3_Z("z2",        R8A7796_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2, 2),
+ 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index eb1cca58a1e1..f8f73558c1ec 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -71,7 +71,7 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
+ 	DEF_GEN3_OSC(".r",	CLK_RINT,		CLK_EXTAL,	32),
+ 
+ 	/* Core Clock Outputs */
+-	DEF_BASE("z",		R8A77965_CLK_Z,		CLK_TYPE_GEN3_Z, CLK_PLL0),
++	DEF_GEN3_Z("z",		R8A77965_CLK_Z,		CLK_TYPE_GEN3_Z,  CLK_PLL0, 2),
+ 	DEF_FIXED("ztr",	R8A77965_CLK_ZTR,	CLK_PLL1_DIV2,	6, 1),
+ 	DEF_FIXED("ztrd2",	R8A77965_CLK_ZTRD2,	CLK_PLL1_DIV2,	12, 1),
+ 	DEF_FIXED("zt",		R8A77965_CLK_ZT,	CLK_PLL1_DIV2,	4, 1),
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index dcd4ac389326..be0940c8103c 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -96,6 +96,7 @@ struct cpg_z_clk {
+ 	void __iomem *reg;
+ 	void __iomem *kick_reg;
+ 	unsigned long mask;
++	unsigned int fixed_div;
+ };
+ 
+ #define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
+@@ -110,17 +111,18 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+ 	val = readl(zclk->reg) & zclk->mask;
+ 	mult = 32 - (val >> __ffs(zclk->mask));
+ 
+-	/* Factor of 2 is for fixed divider */
+-	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, 32 * 2);
++	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult,
++				     32 * zclk->fixed_div);
+ }
+ 
+ static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				 unsigned long *parent_rate)
+ {
+-	/* Factor of 2 is for fixed divider */
+-	unsigned long prate = *parent_rate / 2;
++	struct cpg_z_clk *zclk = to_z_clk(hw);
++	unsigned long prate;
+ 	unsigned int mult;
+ 
++	prate = *parent_rate / zclk->fixed_div;;
+ 	mult = div_u64(rate * 32ULL, prate);
+ 	mult = clamp(mult, 1U, 32U);
+ 
+@@ -134,8 +136,8 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned int mult;
+ 	unsigned int i;
+ 
+-	/* Factor of 2 is for fixed divider */
+-	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * 2, parent_rate);
++	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * zclk->fixed_div,
++				     parent_rate);
+ 	mult = clamp(mult, 1U, 32U);
+ 
+ 	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+@@ -178,7 +180,8 @@ static const struct clk_ops cpg_z_clk_ops = {
+ static struct clk * __init cpg_z_clk_register(const char *name,
+ 					      const char *parent_name,
+ 					      void __iomem *reg,
+-					      unsigned long mask)
++					      unsigned long mask,
++					      unsigned int div)
+ {
+ 	struct clk_init_data init;
+ 	struct cpg_z_clk *zclk;
+@@ -198,6 +201,7 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+ 	zclk->kick_reg = reg + CPG_FRQCRB;
+ 	zclk->hw.init = &init;
+ 	zclk->mask = mask;
++	zclk->fixed_div = div; /* PLLVCO x 1/div x SYS-CPU divider */
+ 
+ 	clk = clk_register(NULL, &zclk->hw);
+ 	if (IS_ERR(clk))
+@@ -658,11 +662,13 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 
+ 	case CLK_TYPE_GEN3_Z:
+ 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
+-					  base, CPG_FRQCRC_ZFC_MASK);
++					  base, CPG_FRQCRC_ZFC_MASK,
++					  core->div);
+ 
+ 	case CLK_TYPE_GEN3_Z2:
+ 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
+-					  base, CPG_FRQCRC_Z2FC_MASK);
++					  base, CPG_FRQCRC_Z2FC_MASK,
++					  core->div);
+ 
+ 	case CLK_TYPE_GEN3_OSC:
+ 		/*
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index eac1b057455a..802936625330 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -3,6 +3,7 @@
+  * R-Car Gen3 Clock Pulse Generator
+  *
+  * Copyright (C) 2015-2018 Glider bvba
++ * Copyright (C) 2018 Renesas Electronics Corp.
+  *
+  */
+ 
+@@ -51,6 +52,9 @@ enum rcar_gen3_clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,	\
+ 		 (_parent0) << 16 | (_parent1),	.div = (_div0) << 16 | (_div1))
+ 
++#define DEF_GEN3_Z(_name, _id, _type, _parent, _div)	\
++	DEF_BASE(_name, _id, _type, _parent, .div = _div)
++
+ struct rcar_gen3_cpg_pll_config {
+ 	u8 extal_div;
+ 	u8 pll1_mult;
 -- 
-2.17.1
+2.11.0
+
