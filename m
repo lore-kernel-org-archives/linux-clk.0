@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095BCC43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AE8C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911212085A
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:45:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D7522085A
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:52:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="r36n0Er9"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mSNpmRCk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729889AbfCYHp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Mar 2019 03:45:58 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16691 "EHLO
+        id S1729867AbfCYHwB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Mar 2019 03:52:01 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16705 "EHLO
         hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729720AbfCYHp6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 03:45:58 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c9887220000>; Mon, 25 Mar 2019 00:45:39 -0700
+        with ESMTP id S1729868AbfCYHwA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 03:52:00 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c9887280002>; Mon, 25 Mar 2019 00:45:44 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 25 Mar 2019 00:45:40 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 25 Mar 2019 00:45:46 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 25 Mar 2019 00:45:40 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Mar
- 2019 07:45:40 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Mar
- 2019 07:45:39 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 25 Mar 2019 07:45:39 +0000
+        by hqpgpgate102.nvidia.com on Mon, 25 Mar 2019 00:45:46 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Mar
+ 2019 07:45:45 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Mar
+ 2019 07:45:45 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 25 Mar 2019 07:45:45 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c9887210001>; Mon, 25 Mar 2019 00:45:38 -0700
+        id <B5c9887260002>; Mon, 25 Mar 2019 00:45:44 -0700
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -47,9 +47,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 3/8] memory: tegra: Add Tegra210 EMC clock driver
-Date:   Mon, 25 Mar 2019 15:45:18 +0800
-Message-ID: <20190325074523.26456-4-josephl@nvidia.com>
+Subject: [PATCH 5/8] memory: tegra: Add EMC scaling sequence code for Tegra210
+Date:   Mon, 25 Mar 2019 15:45:20 +0800
+Message-ID: <20190325074523.26456-6-josephl@nvidia.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190325074523.26456-1-josephl@nvidia.com>
 References: <20190325074523.26456-1-josephl@nvidia.com>
@@ -58,2412 +58,2314 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1553499939; bh=OcsTGCyAcWXPCnlHG/6/cx1Qmkxmd0v90iAnqz13UEY=;
+        t=1553499944; bh=LSs56IceIEA/+DaEzuSD8j/dONtBx1tPw6yUwgb6rSs=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=r36n0Er9fZmF6ARP3ZX8Aso0jbBltSwGy1Ntib4Wc7tPqO91PJ58XJhXteSCAMxvc
-         bZpw2a6zLrGtTS6ezLJKsbQHliuUC8xdLSDrjnCrsiaq7KyzegcZR6Zva2Nq0NWOlG
-         k7HB7qdtzG01piHaqUPkbMYUgBrDQaAuhwf2AagMUVRSr/jV8E+AKrZ/rEfy9rd0b+
-         EFB+B27ieCIBcpTQiwvjy6GxQ1ABZoaHCEA3YAkFkm4UJkj9FCm7bf71sOkEHCVbKW
-         +N7YlfqHdtpFmoBj2iXrSM+x2DTZCAAE7oUcxLkXXxKSnQJ2XHqTZbN7ksGDt6DUAk
-         jakWzQ7tQ9jvA==
+        b=mSNpmRCk1xeee6PfJcnPbjtFukxrFjKS6aMosv4mvNmvEeH4MkTpoyGYAuYqRWYEY
+         y5I3zKcx+tYvpoN1CuXUkwzY9/0ro/EL9eN3glC6AOb+M7wXUui30gKpDZw/Kl110B
+         dsgrw03scvsquZCbw/q1Z3LW8CcOzYsg2DGNG04bKibgVW4YwRx5FpqhHrSYtDU7XM
+         q1sjIXi8ExXwcBtqSkx/p/pV9myxL1PYxeS9csT9aJ5J17OdDRt8mALzNUYTbaZuRc
+         YfNPsYbKyYq2auJ8JtBJTiWnkYoVK6X8Wkvl+XKYR04kMxT60vzlNdGNFrGsJgZzR3
+         s20Z9Mxc9VpbA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is the initial patch for Tegra210 EMC clock driver, which doesn't
-include the support code and detail sequence for clock scaling yet.
+This patch includes the sequence for controlling the rate changing for
+EMC frequency and the dynamic training mechanism when the rate reaches
+the higher rates of EMC rate.
 
-The driver is designed to support LPDDR4 SDRAMs. Because of the LPDDR4
-devices need to do initial time training before it can be used, the
-firmware will help to do that at early boot stage. The trained table for
-the rates that we will support in the kernel will be merged to the
-kernel DTB. So the driver can get the trained table for clock scaling
-support.
-
-For the higher rate support (above 800MHz), the periodic training is
-needed for the timing compensation. So basically, two methodologies for
-clock scaling support, one is following the clock changing sequence to
-update the EMC table to EMC registers and another is if the rate needs
-periodic training, then we will start a timer to do that periodically
-until it leaves the rate that doesn't need that.
+And historically there have been different sequences to change the EMC
+clock. The sequence to be used is specified in the scaling data.
+However, for the currently supported upstreaming platform, only the most
+recent sequence is used. So only support that in this patch.
 
 Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- drivers/memory/tegra/Kconfig             |   10 +
- drivers/memory/tegra/Makefile            |    1 +
- drivers/memory/tegra/tegra210-dt-parse.c |  340 +++++++
- drivers/memory/tegra/tegra210-emc-reg.h  | 1083 ++++++++++++++++++++++
- drivers/memory/tegra/tegra210-emc.c      |  886 ++++++++++++++++++
- 5 files changed, 2320 insertions(+)
- create mode 100644 drivers/memory/tegra/tegra210-dt-parse.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-reg.h
- create mode 100644 drivers/memory/tegra/tegra210-emc.c
+ drivers/memory/tegra/Makefile                 |    2 +-
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1962 +++++++++++++++++
+ drivers/memory/tegra/tegra210-emc-reg.h       |  134 ++
+ drivers/memory/tegra/tegra210-emc.c           |    5 +
+ 4 files changed, 2102 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index 34e0b70f5c5f..614e9b370183 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -25,3 +25,13 @@ config TEGRA124_EMC
- 	  Tegra124 chips. The EMC controls the external DRAM on the board.
- 	  This driver is required to change memory timings / clock rate for
- 	  external memory.
-+
-+config TEGRA210_EMC
-+	bool "NVIDIA Tegra210 External Memory Controller driver"
-+	default y
-+	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-+	help
-+	  This driver is for the External Memory Controller (EMC) found on
-+	  Tegra210 chips. The EMC controls the external DRAM on the board.
-+	  This driver is required to change memory timings / clock rate for
-+	  external memory.
 diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index 3971a6b7c487..36a835620bbd 100644
+index 36a835620bbd..dcc245b2ef45 100644
 --- a/drivers/memory/tegra/Makefile
 +++ b/drivers/memory/tegra/Makefile
-@@ -12,4 +12,5 @@ obj-$(CONFIG_TEGRA_MC) +=3D tegra-mc.o
+@@ -12,5 +12,5 @@ obj-$(CONFIG_TEGRA_MC) +=3D tegra-mc.o
 =20
  obj-$(CONFIG_TEGRA20_EMC)  +=3D tegra20-emc.o
  obj-$(CONFIG_TEGRA124_EMC) +=3D tegra124-emc.o
-+obj-$(CONFIG_TEGRA210_EMC) +=3D tegra210-emc.o tegra210-dt-parse.o
+-obj-$(CONFIG_TEGRA210_EMC) +=3D tegra210-emc.o tegra210-dt-parse.o
++obj-$(CONFIG_TEGRA210_EMC) +=3D tegra210-emc.o tegra210-dt-parse.o tegra21=
+0-emc-cc-r21021.o
  obj-$(CONFIG_ARCH_TEGRA_186_SOC) +=3D tegra186.o
-diff --git a/drivers/memory/tegra/tegra210-dt-parse.c b/drivers/memory/tegr=
-a/tegra210-dt-parse.c
+diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory=
+/tegra/tegra210-emc-cc-r21021.c
 new file mode 100644
-index 000000000000..6a3a3a28ac64
+index 000000000000..f577a8c3aa95
 --- /dev/null
-+++ b/drivers/memory/tegra/tegra210-dt-parse.c
-@@ -0,0 +1,340 @@
++++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
+@@ -0,0 +1,1962 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2013-2019, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
 + */
 +
 +#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <soc/tegra/fuse.h>
-+
-+#include "tegra210-emc-reg.h"
-+
-+static struct device_node *tegra_emc_ramcode_devnode(
-+	struct device_node *np)
-+{
-+	struct device_node *iter;
-+	u32 reg;
-+
-+	for_each_child_of_node(np, iter) {
-+		if (of_property_read_u32(iter, "nvidia,ram-code", &reg))
-+			continue;
-+		if (reg =3D=3D tegra_read_ram_code())
-+			return of_node_get(iter);
-+	}
-+
-+	return NULL;
-+}
-+
-+static void *tegra_emc_dt_parse_pdata_comp(const char *emc_mode,
-+					   const char *comp,
-+					   void *pdata,
-+					   struct device_node *tnp,
-+					   struct platform_device *pdev,
-+					   int num_tables, int *table_count)
-+{
-+#define PNE_U32(node, entry, tbl_entry)					\
-+	do {								\
-+		int __ret__;						\
-+		u32 __tmp__;						\
-+									\
-+		__ret__ =3D of_property_read_u32((node), (entry), &__tmp__); \
-+		if (__ret__) {						\
-+			dev_err(&pdev->dev, "Failed to parse %s in %s: %d\n", \
-+				(entry), (node)->full_name, __ret__);	\
-+			continue;					\
-+		}							\
-+									\
-+		tables[i].tbl_entry =3D __tmp__;				\
-+	} while (0)
-+
-+#define PNE_U32_ARRAY(node, entry, tbl_entry, length)			\
-+	do {								\
-+		int __ret__;						\
-+									\
-+		__ret__ =3D of_property_read_u32_array((node), (entry),	\
-+						     (tbl_entry), (length)); \
-+		if (__ret__) {						\
-+			dev_err(&pdev->dev, "Failed to parse %s in %s: %d\n", \
-+				(entry), (node)->full_name, __ret__);	\
-+			continue;					\
-+		}							\
-+	} while (0)
-+
-+	int i =3D 0, ret =3D 0;
-+	struct device_node *iter;
-+	struct emc_table *tables;
-+
-+	tables =3D devm_kzalloc(&pdev->dev, sizeof(*tables) * num_tables,
-+			      GFP_KERNEL);
-+
-+	if (!tables) {
-+		of_node_put(tnp);
-+		return tables;
-+	}
-+
-+	for_each_child_of_node(tnp, iter) {
-+		if (of_device_is_compatible(iter, comp)) {
-+			const char *source_name;
-+			const char *dvfs_ver;
-+
-+			ret =3D of_property_read_string(iter, "nvidia,source",
-+						      &source_name);
-+			if (ret) {
-+				dev_err(&pdev->dev, "no source name in %s\n",
-+					iter->full_name);
-+				continue;
-+			}
-+			strlcpy(tables[i].clock_src, source_name,
-+				sizeof(tables[i].clock_src));
-+
-+			ret =3D of_property_read_string(iter,
-+						      "nvidia,dvfs-version",
-+						      &dvfs_ver);
-+			if (ret) {
-+				dev_err(&pdev->dev, "no dvfs version in %s\n",
-+					iter->full_name);
-+				continue;
-+			}
-+			strlcpy(tables[i].dvfs_ver, dvfs_ver,
-+				sizeof(tables[i].dvfs_ver));
-+
-+			PNE_U32(iter, "nvidia,revision", rev);
-+			PNE_U32(iter, "clock-frequency", rate);
-+			PNE_U32(iter, "nvidia,emc-min-mv", min_volt);
-+			PNE_U32(iter, "nvidia,gk20a-min-mv", gpu_min_volt);
-+			PNE_U32(iter, "nvidia,src-sel-reg", clk_src_emc);
-+			PNE_U32(iter, "nvidia,burst-regs-num", num_burst);
-+			PNE_U32(iter, "nvidia,emc-cfg-2", emc_cfg_2);
-+			PNE_U32(iter, "nvidia,emc-sel-dpd-ctrl",
-+				emc_sel_dpd_ctrl);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config",
-+				emc_auto_cal_config);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config2",
-+				emc_auto_cal_config2);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config3",
-+				emc_auto_cal_config3);
-+			PNE_U32(iter, "nvidia,emc-clock-latency-change",
-+				latency);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-registers",
-+				      tables[i].burst_regs,
-+				      tables[i].num_burst);
-+
-+			PNE_U32(iter, "nvidia,needs-training", needs_training);
-+			PNE_U32(iter, "nvidia,trained", trained);
-+			if (tables[i].rev < 0x6)
-+				goto skip_periodic_training_params;
-+			PNE_U32(iter, "nvidia,periodic_training",
-+				periodic_training);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d0u0",
-+				trained_dram_clktree_c0d0u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d0u1",
-+				trained_dram_clktree_c0d0u1);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d1u0",
-+				trained_dram_clktree_c0d1u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d1u1",
-+				trained_dram_clktree_c0d1u1);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d0u0",
-+				trained_dram_clktree_c1d0u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d0u1",
-+				trained_dram_clktree_c1d0u1);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d1u0",
-+				trained_dram_clktree_c1d1u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d1u1",
-+				trained_dram_clktree_c1d1u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d0u0",
-+				current_dram_clktree_c0d0u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d0u1",
-+				current_dram_clktree_c0d0u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d1u0",
-+				current_dram_clktree_c0d1u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d1u1",
-+				current_dram_clktree_c0d1u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d0u0",
-+				current_dram_clktree_c1d0u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d0u1",
-+				current_dram_clktree_c1d0u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d1u0",
-+				current_dram_clktree_c1d1u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d1u1",
-+				current_dram_clktree_c1d1u1);
-+			PNE_U32(iter, "nvidia,run_clocks", run_clocks);
-+			PNE_U32(iter, "nvidia,tree_margin", tree_margin);
-+
-+skip_periodic_training_params:
-+			PNE_U32(iter, "nvidia,burst-regs-per-ch-num",
-+				num_burst_per_ch);
-+			PNE_U32(iter, "nvidia,trim-regs-num", num_trim);
-+			PNE_U32(iter, "nvidia,trim-regs-per-ch-num",
-+				num_trim_per_ch);
-+			PNE_U32(iter, "nvidia,burst-mc-regs-num",
-+				num_mc_regs);
-+			PNE_U32(iter, "nvidia,la-scale-regs-num",
-+				num_up_down);
-+			PNE_U32(iter, "nvidia,vref-regs-num", vref_num);
-+			PNE_U32(iter, "nvidia,dram-timing-regs-num",
-+				dram_timing_num);
-+			PNE_U32(iter, "nvidia,min-mrs-wait", min_mrs_wait);
-+			PNE_U32(iter, "nvidia,emc-mrw", emc_mrw);
-+			PNE_U32(iter, "nvidia,emc-mrw2", emc_mrw2);
-+			PNE_U32(iter, "nvidia,emc-mrw3", emc_mrw3);
-+			PNE_U32(iter, "nvidia,emc-mrw4", emc_mrw4);
-+			PNE_U32(iter, "nvidia,emc-mrw9", emc_mrw9);
-+			PNE_U32(iter, "nvidia,emc-mrs", emc_mrs);
-+			PNE_U32(iter, "nvidia,emc-emrs", emc_emrs);
-+			PNE_U32(iter, "nvidia,emc-emrs2", emc_emrs2);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config4",
-+				emc_auto_cal_config4);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config5",
-+				emc_auto_cal_config5);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config6",
-+				emc_auto_cal_config6);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config7",
-+				emc_auto_cal_config7);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config8",
-+				emc_auto_cal_config8);
-+			PNE_U32(iter, "nvidia,emc-fdpd-ctrl-cmd-no-ramp",
-+				emc_fdpd_ctrl_cmd_no_ramp);
-+			PNE_U32(iter, "nvidia,dll-clk-src", dll_clk_src);
-+			PNE_U32(iter, "nvidia,clk-out-enb-x-0-clk-enb-emc-dll",
-+				clk_out_enb_x_0_clk_enb_emc_dll);
-+
-+			if (tables[i].rev >=3D 0x7)
-+				PNE_U32_ARRAY(iter, "nvidia,ptfv",
-+					      tables[i].ptfv_list,
-+					      sizeof(tables[i].ptfv_list)
-+						     / sizeof(u32));
-+
-+			PNE_U32_ARRAY(iter, "nvidia,emc-burst-regs-per-ch",
-+				      tables[i].burst_reg_per_ch,
-+				      tables[i].num_burst_per_ch);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-shadow-regs-ca-train",
-+				      tables[i].shadow_regs_ca_train,
-+				      tables[i].num_burst);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-shadow-regs-quse-train",
-+				      tables[i].shadow_regs_quse_train,
-+				      tables[i].num_burst);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-shadow-regs-rdwr-train",
-+				      tables[i].shadow_regs_rdwr_train,
-+				      tables[i].num_burst);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-trim-regs",
-+				      tables[i].trim_regs,
-+				      tables[i].num_trim);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-trim-regs-per-ch",
-+				      tables[i].trim_perch_regs,
-+				      tables[i].num_trim_per_ch);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-vref-regs",
-+				      tables[i].vref_perch_regs,
-+				      tables[i].vref_num);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-dram-timing-regs",
-+				      tables[i].dram_timings,
-+				      tables[i].dram_timing_num);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-burst-mc-regs",
-+				      tables[i].burst_mc_regs,
-+				      tables[i].num_mc_regs);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-la-scale-regs",
-+				      tables[i].la_scale_regs,
-+				      tables[i].num_up_down);
-+			i++;
-+		}
-+	}
-+
-+	*table_count =3D i;
-+
-+	return tables;
-+}
-+
-+static const struct of_device_id emc_table_match[] =3D {
-+	{
-+		.compatible =3D "nvidia,tegra210-emc-table",
-+		.data =3D "nvidia,tegra210-emc-table-derated",
-+	},
-+	{
-+		.compatible =3D "nvidia,tegra21-emc-table",
-+		.data =3D "nvidia,tegra21-emc-table-derated",
-+	},
-+	{ },
-+};
-+
-+int tegra_emc_dt_parse_pdata(struct platform_device *pdev,
-+			     struct emc_table **tables,
-+			     struct emc_table **derated_tables,
-+			     int *num_entries)
-+{
-+	struct device_node *np =3D pdev->dev.of_node;
-+	struct device_node *tnp, *iter;
-+	int num_tables, table_count;
-+	u32 tegra_bct_strapping;
-+	const char *emc_mode =3D "nvidia,emc-mode-0";
-+	struct tegra21_emc_pdata *pdata =3D NULL;
-+	const char *comp =3D NULL;
-+	const char *comp_derated =3D NULL;
-+
-+	if (!np) {
-+		dev_err(&pdev->dev,
-+			"Unable to find external-memory-controller node\n");
-+		return -ENODEV;
-+	}
-+
-+	tegra_bct_strapping =3D tegra_read_ram_code();
-+
-+	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
-+		tnp =3D tegra_emc_ramcode_devnode(np);
-+
-+		if (!tnp) {
-+			dev_warn(&pdev->dev,
-+				 "can't find emc table for ram-code 0x%02x\n",
-+				 tegra_bct_strapping);
-+			return -ENODEV;
-+		}
-+	} else
-+		tnp =3D of_node_get(np);
-+
-+	num_tables =3D 0;
-+	for_each_child_of_node(tnp, iter) {
-+		if (!comp) {
-+			const struct of_device_id *m =3D
-+				of_match_node(emc_table_match, iter);
-+			if (m) {
-+				comp =3D m->compatible;
-+				comp_derated =3D m->data;
-+				num_tables++;
-+			}
-+			continue;
-+		}
-+		if (of_device_is_compatible(iter, comp))
-+			num_tables++;
-+	}
-+
-+	if (!num_tables) {
-+		*tables =3D NULL;
-+		goto out;
-+	}
-+
-+	*tables =3D tegra_emc_dt_parse_pdata_comp(emc_mode, comp, pdata, tnp,
-+						pdev, num_tables, &table_count);
-+	*num_entries =3D table_count;
-+
-+	/* populate the derated tables */
-+	num_tables =3D 0;
-+	for_each_child_of_node(tnp, iter) {
-+		if (of_device_is_compatible(iter, comp_derated))
-+			num_tables++;
-+	}
-+
-+	if (!num_tables) {
-+		*derated_tables =3D NULL;
-+		goto out;
-+	}
-+
-+	*derated_tables =3D tegra_emc_dt_parse_pdata_comp(emc_mode,
-+							comp_derated,
-+							pdata, tnp, pdev,
-+							num_tables,
-+							&table_count);
-+
-+out:
-+	of_node_put(tnp);
-+	return 0;
-+}
-diff --git a/drivers/memory/tegra/tegra210-emc-reg.h b/drivers/memory/tegra=
-/tegra210-emc-reg.h
-new file mode 100644
-index 000000000000..84fcc85f3b6d
---- /dev/null
-+++ b/drivers/memory/tegra/tegra210-emc-reg.h
-@@ -0,0 +1,1083 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2015-2019, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#ifndef _TEGRA210_EMC_REG_H
-+#define _TEGRA210_EMC_REG_H
-+
++#include <linux/io.h>
 +#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include "mc.h"
-+
-+#define MC_EMEM_ARB_CFG						0x90
-+#define MC_EMEM_ARB_OUTSTANDING_REQ				0x94
-+#define MC_EMEM_ARB_TIMING_RCD					0x98
-+#define MC_EMEM_ARB_TIMING_RP					0x9c
-+#define MC_EMEM_ARB_TIMING_RC					0xa0
-+#define MC_EMEM_ARB_TIMING_RAS					0xa4
-+#define MC_EMEM_ARB_TIMING_FAW					0xa8
-+#define MC_EMEM_ARB_TIMING_RRD					0xac
-+#define MC_EMEM_ARB_TIMING_RAP2PRE				0xb0
-+#define MC_EMEM_ARB_TIMING_WAP2PRE				0xb4
-+#define MC_EMEM_ARB_TIMING_R2R					0xb8
-+#define MC_EMEM_ARB_TIMING_W2W					0xbc
-+#define MC_EMEM_ARB_TIMING_R2W					0xc0
-+#define MC_EMEM_ARB_TIMING_W2R					0xc4
-+#define MC_EMEM_ARB_MISC2					0xc8
-+#define MC_EMEM_ARB_DA_TURNS					0xd0
-+#define MC_EMEM_ARB_DA_COVERS					0xd4
-+#define MC_EMEM_ARB_MISC0					0xd8
-+#define MC_EMEM_ARB_MISC0_EMC_SAME_FREQ				BIT(27)
-+#define MC_EMEM_ARB_MISC1					0xdc
-+#define MC_EMEM_ARB_RING1_THROTTLE				0xe0
-+#define MC_LATENCY_ALLOWANCE_AVPC_0				0x2e4
-+#define MC_LATENCY_ALLOWANCE_HC_0				0x310
-+#define MC_LATENCY_ALLOWANCE_HC_1				0x314
-+#define MC_LATENCY_ALLOWANCE_MPCORE_0				0x320
-+#define MC_LATENCY_ALLOWANCE_NVENC_0				0x328
-+#define MC_LATENCY_ALLOWANCE_PPCS_0				0x344
-+#define MC_LATENCY_ALLOWANCE_PPCS_1				0x348
-+#define MC_LATENCY_ALLOWANCE_ISP2_0				0x370
-+#define MC_LATENCY_ALLOWANCE_ISP2_1				0x374
-+#define MC_LATENCY_ALLOWANCE_XUSB_0				0x37c
-+#define MC_LATENCY_ALLOWANCE_XUSB_1				0x380
-+#define MC_LATENCY_ALLOWANCE_TSEC_0				0x390
-+#define MC_LATENCY_ALLOWANCE_VIC_0				0x394
-+#define MC_LATENCY_ALLOWANCE_VI2_0				0x398
-+#define MC_LATENCY_ALLOWANCE_GPU_0				0x3ac
-+#define MC_LATENCY_ALLOWANCE_SDMMCA_0				0x3b8
-+#define MC_LATENCY_ALLOWANCE_SDMMCAA_0				0x3bc
-+#define MC_LATENCY_ALLOWANCE_SDMMC_0				0x3c0
-+#define MC_LATENCY_ALLOWANCE_SDMMCAB_0				0x3c4
-+#define MC_LATENCY_ALLOWANCE_GPU2_0				0x3e8
-+#define MC_LATENCY_ALLOWANCE_NVDEC_0				0x3d8
-+#define MC_MLL_MPCORER_PTSA_RATE				0x44c
-+#define MC_FTOP_PTSA_RATE					0x50c
-+#define MC_EMEM_ARB_TIMING_RFCPB				0x6c0
-+#define MC_EMEM_ARB_TIMING_CCDMW				0x6c4
-+#define MC_EMEM_ARB_REFPB_HP_CTRL				0x6f0
-+#define MC_EMEM_ARB_REFPB_BANK_CTRL				0x6f4
-+#define MC_PTSA_GRANT_DECREMENT					0x960
-+#define MC_EMEM_ARB_DHYST_CTRL					0xbcc
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0			0xbd0
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1			0xbd4
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2			0xbd8
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3			0xbdc
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4			0xbe0
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5			0xbe4
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6			0xbe8
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7			0xbec
-+
-+#define CLK_RST_CONTROLLER_CLK_SOURCE_EMC			0x19c
-+#define EMC_CLK_EMC_2X_CLK_SRC_SHIFT				29
-+#define EMC_CLK_EMC_2X_CLK_SRC_MASK				\
-+	(0x7 << EMC_CLK_EMC_2X_CLK_SRC_SHIFT)
-+#define	EMC_CLK_MC_EMC_SAME_FREQ				BIT(16)
-+#define EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT			0
-+#define EMC_CLK_EMC_2X_CLK_DIVISOR_MASK				\
-+	(0xff << EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT)
-+
-+#define EMC_CFG							0xc
-+#define EMC_RC							0x2c
-+#define EMC_RFC							0x30
-+#define EMC_RAS							0x34
-+#define EMC_RP							0x38
-+#define EMC_R2W							0x3c
-+#define EMC_W2R							0x40
-+#define EMC_R2P							0x44
-+#define EMC_W2P							0x48
-+#define EMC_RD_RCD						0x4c
-+#define EMC_WR_RCD						0x50
-+#define EMC_RRD							0x54
-+#define EMC_REXT						0x58
-+#define EMC_WDV							0x5c
-+#define EMC_QUSE						0x60
-+#define EMC_QRST						0x64
-+#define EMC_QSAFE						0x68
-+#define EMC_RDV							0x6c
-+#define EMC_REFRESH						0x70
-+#define EMC_BURST_REFRESH_NUM					0x74
-+#define EMC_PDEX2WR						0x78
-+#define EMC_PDEX2RD						0x7c
-+#define EMC_PCHG2PDEN						0x80
-+#define EMC_ACT2PDEN						0x84
-+#define EMC_AR2PDEN						0x88
-+#define EMC_RW2PDEN						0x8c
-+#define EMC_TXSR						0x90
-+#define EMC_TCKE						0x94
-+#define EMC_TFAW						0x98
-+#define EMC_TRPAB						0x9c
-+#define EMC_TCLKSTABLE						0xa0
-+#define EMC_TCLKSTOP						0xa4
-+#define EMC_TREFBW						0xa8
-+#define EMC_TPPD						0xac
-+#define EMC_ODT_WRITE						0xb0
-+#define EMC_PDEX2MRR						0xb4
-+#define EMC_WEXT						0xb8
-+#define EMC_RFC_SLR						0xc0
-+#define EMC_MRS_WAIT_CNT2					0xc4
-+#define EMC_MRS_WAIT_CNT					0xc8
-+#define EMC_FBIO_SPARE						0x100
-+#define EMC_FBIO_CFG5						0x104
-+#define EMC_FBIO_CFG5_DRAM_TYPE_SHIFT				0
-+#define EMC_FBIO_CFG5_DRAM_TYPE_MASK				\
-+	(0x3 <<	EMC_FBIO_CFG5_DRAM_TYPE_SHIFT)
-+#define EMC_PDEX2CKE						0x118
-+#define EMC_CKE2PDEN						0x11c
-+#define EMC_R2R							0x144
-+#define EMC_EINPUT						0x14c
-+#define EMC_EINPUT_DURATION					0x150
-+#define EMC_PUTERM_EXTRA					0x154
-+#define EMC_TCKESR						0x158
-+#define EMC_TPD							0x15c
-+#define EMC_CFG_DIG_DLL						0x2bc
-+#define EMC_CFG_DIG_DLL_PERIOD					0x2c0
-+#define EMC_RDV_MASK						0x2cc
-+#define EMC_WDV_MASK						0x2d0
-+#define EMC_RDV_EARLY_MASK					0x2d4
-+#define EMC_RDV_EARLY						0x2d8
-+#define EMC_ZCAL_INTERVAL					0x2e0
-+#define EMC_ZCAL_WAIT_CNT					0x2e4
-+#define EMC_FDPD_CTRL_DQ					0x310
-+#define EMC_FDPD_CTRL_CMD					0x314
-+#define EMC_PMACRO_CMD_BRICK_CTRL_FDPD				0x318
-+#define EMC_PMACRO_DATA_BRICK_CTRL_FDPD				0x31c
-+#define EMC_PMACRO_BRICK_CTRL_RFU1				0x330
-+#define EMC_PMACRO_BRICK_CTRL_RFU2				0x334
-+#define EMC_TR_TIMING_0						0x3b4
-+#define EMC_TR_CTRL_1						0x3bc
-+#define EMC_TR_RDV						0x3c4
-+#define EMC_PRE_REFRESH_REQ_CNT					0x3dc
-+#define EMC_DYN_SELF_REF_CONTROL				0x3e0
-+#define EMC_TXSRDLL						0x3e4
-+#define EMC_TR_QPOP						0x3f4
-+#define EMC_TR_RDV_MASK						0x3f8
-+#define EMC_TR_QSAFE						0x3fc
-+#define EMC_TR_QRST						0x400
-+#define EMC_TR_DVFS						0x460
-+#define EMC_AUTO_CAL_CHANNEL					0x464
-+#define EMC_IBDLY						0x468
-+#define EMC_OBDLY						0x46c
-+#define EMC_TXDSRVTTGEN						0x480
-+#define EMC_WE_DURATION						0x48c
-+#define EMC_WS_DURATION						0x490
-+#define EMC_WEV							0x494
-+#define EMC_WSV							0x498
-+#define EMC_CFG_3						0x49c
-+#define EMC_MRW6						0x4a4
-+#define EMC_MRW7						0x4a8
-+#define EMC_MRW8						0x4ac
-+#define EMC_MRW10						0x4b4
-+#define EMC_MRW11						0x4b8
-+#define EMC_MRW12						0x4bc
-+#define EMC_MRW13						0x4c0
-+#define EMC_MRW14						0x4c4
-+#define EMC_MRW15						0x4d0
-+#define EMC_WDV_CHK						0x4e0
-+#define EMC_CFG_PIPE_2						0x554
-+#define EMC_CFG_PIPE_1						0x55c
-+#define EMC_CFG_PIPE						0x560
-+#define EMC_QPOP						0x564
-+#define EMC_QUSE_WIDTH						0x568
-+#define EMC_PUTERM_WIDTH					0x56c
-+#define EMC_REFCTRL2						0x580
-+#define EMC_FBIO_CFG7						0x584
-+#define EMC_DATA_BRLSHFT_0					0x588
-+#define EMC_DATA_BRLSHFT_1					0x58c
-+#define EMC_RFCPB						0x590
-+#define EMC_DQS_BRLSHFT_0					0x594
-+#define EMC_DQS_BRLSHFT_1					0x598
-+#define EMC_CMD_BRLSHFT_0					0x59c
-+#define EMC_CMD_BRLSHFT_1					0x5a0
-+#define EMC_CMD_BRLSHFT_2					0x5a4
-+#define EMC_CMD_BRLSHFT_3					0x5a8
-+#define EMC_QUSE_BRLSHFT_0					0x5ac
-+#define EMC_QUSE_BRLSHFT_1					0x5b8
-+#define EMC_QUSE_BRLSHFT_2					0x5bc
-+#define EMC_CCDMW						0x5c0
-+#define EMC_QUSE_BRLSHFT_3					0x5c4
-+#define EMC_DLL_CFG_0						0x5e4
-+#define EMC_DLL_CFG_1						0x5e8
-+#define EMC_CONFIG_SAMPLE_DELAY					0x5f0
-+#define EMC_PMACRO_QUSE_DDLL_RANK0_0				0x600
-+#define EMC_PMACRO_QUSE_DDLL_RANK0_1				0x604
-+#define EMC_PMACRO_QUSE_DDLL_RANK0_2				0x608
-+#define EMC_PMACRO_QUSE_DDLL_RANK0_3				0x60c
-+#define EMC_PMACRO_QUSE_DDLL_RANK0_4				0x610
-+#define EMC_PMACRO_QUSE_DDLL_RANK0_5				0x614
-+#define EMC_PMACRO_QUSE_DDLL_RANK1_0				0x620
-+#define EMC_PMACRO_QUSE_DDLL_RANK1_1				0x624
-+#define EMC_PMACRO_QUSE_DDLL_RANK1_2				0x628
-+#define EMC_PMACRO_QUSE_DDLL_RANK1_3				0x62c
-+#define EMC_PMACRO_QUSE_DDLL_RANK1_4				0x630
-+#define EMC_PMACRO_QUSE_DDLL_RANK1_5				0x634
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0			0x640
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1			0x644
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2			0x648
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3			0x64c
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_4			0x650
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_5			0x654
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0			0x660
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1			0x664
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2			0x668
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3			0x66c
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_4			0x670
-+#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_5			0x674
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_0			0x680
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_1			0x684
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_2			0x688
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_3			0x68c
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_4			0x690
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_5			0x694
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_0			0x6a0
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_1			0x6a4
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_2			0x6a8
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_3			0x6ac
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_4			0x6b0
-+#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_5			0x6b4
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_0			0x6c0
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_1			0x6c4
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_2			0x6c8
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_3			0x6cc
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_0			0x6e0
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_1			0x6e4
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_2			0x6e8
-+#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_3			0x6ec
-+#define EMC_PMACRO_TX_PWRD_0					0x720
-+#define EMC_PMACRO_TX_PWRD_1					0x724
-+#define EMC_PMACRO_TX_PWRD_2					0x728
-+#define EMC_PMACRO_TX_PWRD_3					0x72c
-+#define EMC_PMACRO_TX_PWRD_4					0x730
-+#define EMC_PMACRO_TX_PWRD_5					0x734
-+#define EMC_PMACRO_TX_SEL_CLK_SRC_0				0x740
-+#define EMC_PMACRO_TX_SEL_CLK_SRC_1				0x744
-+#define EMC_PMACRO_TX_SEL_CLK_SRC_3				0x74c
-+#define EMC_PMACRO_TX_SEL_CLK_SRC_2				0x748
-+#define EMC_PMACRO_TX_SEL_CLK_SRC_4				0x750
-+#define EMC_PMACRO_TX_SEL_CLK_SRC_5				0x754
-+#define EMC_PMACRO_DDLL_BYPASS					0x760
-+#define EMC_PMACRO_DDLL_PWRD_0					0x770
-+#define EMC_PMACRO_DDLL_PWRD_1					0x774
-+#define EMC_PMACRO_DDLL_PWRD_2					0x778
-+#define EMC_PMACRO_CMD_CTRL_0					0x780
-+#define EMC_PMACRO_CMD_CTRL_1					0x784
-+#define EMC_PMACRO_CMD_CTRL_2					0x788
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_0		0x800
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_1		0x804
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_2		0x808
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_3		0x80c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_0		0x810
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_1		0x814
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_2		0x818
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_3		0x81c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_0		0x820
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_1		0x824
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_2		0x828
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_3		0x82c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_0		0x830
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_1		0x834
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_2		0x838
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_3		0x83c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_0		0x840
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_1		0x844
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_2		0x848
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_3		0x84c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_0		0x850
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_1		0x854
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_2		0x858
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_3		0x85c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_0		0x860
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_1		0x864
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_2		0x868
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_3		0x86c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_0		0x870
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_1		0x874
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_2		0x878
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_3		0x87c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_0		0x880
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_1		0x884
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_2		0x888
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_3		0x88c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_0		0x890
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_1		0x894
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_2		0x898
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_3		0x89c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_0		0x8a0
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_1		0x8a4
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_2		0x8a8
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_3		0x8ac
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_0		0x8b0
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_1		0x8b4
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_2		0x8b8
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_3		0x8bc
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_0		0x900
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_1		0x904
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_2		0x908
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_3		0x90c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_0		0x910
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_1		0x914
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_2		0x918
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_3		0x91c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_0		0x920
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_1		0x924
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_2		0x928
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_3		0x92c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_0		0x930
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_1		0x934
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_2		0x938
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_3		0x93c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_0		0x940
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_1		0x944
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_2		0x948
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_3		0x94c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_0		0x950
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_1		0x954
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_2		0x958
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_3		0x95c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_0		0x960
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_1		0x964
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_2		0x968
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_3		0x96c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_0		0x970
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_1		0x974
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_2		0x978
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_3		0x97c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_0		0x980
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_1		0x984
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_2		0x988
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_3		0x98c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_0		0x990
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_1		0x994
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_2		0x998
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_3		0x99c
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_0		0x9a0
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_1		0x9a4
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_2		0x9a8
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_3		0x9ac
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_0		0x9b0
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_1		0x9b4
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_2		0x9b8
-+#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_3		0x9bc
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_0		0xa00
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_1		0xa04
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_2		0xa08
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_0		0xa10
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_1		0xa14
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_2		0xa18
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_0		0xa20
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_1		0xa24
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_2		0xa28
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_0		0xa30
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_1		0xa34
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_2		0xa38
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_0		0xa40
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_1		0xa44
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_2		0xa48
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_0		0xa50
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_1		0xa54
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_2		0xa58
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_0		0xa60
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_1		0xa64
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_2		0xa68
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_0		0xa70
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_1		0xa74
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_2		0xa78
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_0		0xb00
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_1		0xb04
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_2		0xb08
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_0		0xb10
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_1		0xb14
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_2		0xb18
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_0		0xb20
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_1		0xb24
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_2		0xb28
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_0		0xb30
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_1		0xb34
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_2		0xb38
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_0		0xb40
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_1		0xb44
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_2		0xb48
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_0		0xb50
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_1		0xb54
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_2		0xb58
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_0		0xb60
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_1		0xb64
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_2		0xb68
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_0		0xb70
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_1		0xb74
-+#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_2		0xb78
-+#define EMC_PMACRO_IB_VREF_DQ_0					0xbe0
-+#define EMC_PMACRO_IB_VREF_DQ_1					0xbe4
-+#define EMC_PMACRO_IB_VREF_DQS_0				0xbf0
-+#define EMC_PMACRO_IB_VREF_DQS_1				0xbf4
-+#define EMC_PMACRO_DDLL_LONG_CMD_0				0xc00
-+#define EMC_PMACRO_DDLL_LONG_CMD_1				0xc04
-+#define EMC_PMACRO_DDLL_LONG_CMD_2				0xc08
-+#define EMC_PMACRO_DDLL_LONG_CMD_3				0xc0c
-+#define EMC_PMACRO_DDLL_LONG_CMD_4				0xc10
-+#define EMC_PMACRO_DDLL_LONG_CMD_5				0xc14
-+#define EMC_PMACRO_DDLL_SHORT_CMD_0				0xc20
-+#define EMC_PMACRO_DDLL_SHORT_CMD_1				0xc24
-+#define EMC_PMACRO_DDLL_SHORT_CMD_2				0xc28
-+#define EMC_PMACRO_VTTGEN_CTRL_0				0xc34
-+#define EMC_PMACRO_VTTGEN_CTRL_1				0xc38
-+#define EMC_PMACRO_BG_BIAS_CTRL_0				0xc3c
-+#define EMC_PMACRO_PAD_CFG_CTRL					0xc40
-+#define EMC_PMACRO_ZCTRL					0xc44
-+#define EMC_PMACRO_CMD_PAD_RX_CTRL				0xc50
-+#define EMC_PMACRO_DATA_PAD_RX_CTRL				0xc54
-+#define EMC_PMACRO_CMD_RX_TERM_MODE				0xc58
-+#define EMC_PMACRO_DATA_RX_TERM_MODE				0xc5c
-+#define EMC_PMACRO_CMD_PAD_TX_CTRL				0xc60
-+#define EMC_PMACRO_DATA_PAD_TX_CTRL				0xc64
-+#define EMC_PMACRO_COMMON_PAD_TX_CTRL				0xc68
-+#define EMC_PMACRO_AUTOCAL_CFG_COMMON				0xc78
-+#define EMC_PMACRO_VTTGEN_CTRL_2				0xcf0
-+#define EMC_PMACRO_IB_RXRT					0xcf4
-+#define EMC_TRAINING_CTRL					0xe04
-+#define EMC_TRAINING_QUSE_CORS_CTRL				0xe0c
-+#define EMC_TRAINING_QUSE_FINE_CTRL				0xe10
-+#define EMC_TRAINING_QUSE_CTRL_MISC				0xe14
-+#define EMC_TRAINING_WRITE_FINE_CTRL				0xe18
-+#define EMC_TRAINING_WRITE_CTRL_MISC				0xe1c
-+#define EMC_TRAINING_WRITE_VREF_CTRL				0xe20
-+#define EMC_TRAINING_READ_FINE_CTRL				0xe24
-+#define EMC_TRAINING_READ_CTRL_MISC				0xe28
-+#define EMC_TRAINING_READ_VREF_CTRL				0xe2c
-+#define EMC_TRAINING_CA_FINE_CTRL				0xe30
-+#define EMC_TRAINING_CA_CTRL_MISC				0xe34
-+#define EMC_TRAINING_CA_CTRL_MISC1				0xe38
-+#define EMC_TRAINING_CA_VREF_CTRL				0xe3c
-+#define EMC_TRAINING_SETTLE					0xe44
-+#define EMC_TRAINING_MPC					0xe5c
-+#define EMC_TRAINING_VREF_SETTLE				0xe6c
-+#define EMC_TRAINING_QUSE_VREF_CTRL				0xed0
-+#define EMC_TRAINING_OPT_DQS_IB_VREF_RANK0			0xed4
-+#define EMC_TRAINING_OPT_DQS_IB_VREF_RANK1			0xed8
-+
-+#define EMC_COPY_TABLE_PARAM_PERIODIC_FIELDS			BIT(0)
-+#define EMC_COPY_TABLE_PARAM_TRIM_REGS				BIT(1)
-+
-+enum {
-+	REG_MC,
-+	REG_EMC,
-+	REG_EMC0,
-+	REG_EMC1,
-+};
-+
-+#define BURST_REGS_PER_CH_LIST						\
-+{									\
-+	DEFINE_REG(REG_EMC0, EMC_MRW10),				\
-+	DEFINE_REG(REG_EMC1, EMC_MRW10),				\
-+	DEFINE_REG(REG_EMC0, EMC_MRW11),				\
-+	DEFINE_REG(REG_EMC1, EMC_MRW11),				\
-+	DEFINE_REG(REG_EMC0, EMC_MRW12),				\
-+	DEFINE_REG(REG_EMC1, EMC_MRW12),				\
-+	DEFINE_REG(REG_EMC0, EMC_MRW13),				\
-+	DEFINE_REG(REG_EMC1, EMC_MRW13),				\
-+}
-+
-+#define BURST_REGS_LIST							\
-+{									\
-+	DEFINE_REG(REG_EMC, EMC_RC),					\
-+	DEFINE_REG(REG_EMC, EMC_RFC),					\
-+	DEFINE_REG(REG_EMC, EMC_RFCPB),					\
-+	DEFINE_REG(REG_EMC, EMC_REFCTRL2),				\
-+	DEFINE_REG(REG_EMC, EMC_RFC_SLR),				\
-+	DEFINE_REG(REG_EMC, EMC_RAS),					\
-+	DEFINE_REG(REG_EMC, EMC_RP),					\
-+	DEFINE_REG(REG_EMC, EMC_R2W),					\
-+	DEFINE_REG(REG_EMC, EMC_W2R),					\
-+	DEFINE_REG(REG_EMC, EMC_R2P),					\
-+	DEFINE_REG(REG_EMC, EMC_W2P),					\
-+	DEFINE_REG(REG_EMC, EMC_R2R),					\
-+	DEFINE_REG(REG_EMC, EMC_TPPD),					\
-+	DEFINE_REG(REG_EMC, EMC_CCDMW),					\
-+	DEFINE_REG(REG_EMC, EMC_RD_RCD),				\
-+	DEFINE_REG(REG_EMC, EMC_WR_RCD),				\
-+	DEFINE_REG(REG_EMC, EMC_RRD),					\
-+	DEFINE_REG(REG_EMC, EMC_REXT),					\
-+	DEFINE_REG(REG_EMC, EMC_WEXT),					\
-+	DEFINE_REG(REG_EMC, EMC_WDV_CHK),				\
-+	DEFINE_REG(REG_EMC, EMC_WDV),					\
-+	DEFINE_REG(REG_EMC, EMC_WSV),					\
-+	DEFINE_REG(REG_EMC, EMC_WEV),					\
-+	DEFINE_REG(REG_EMC, EMC_WDV_MASK),				\
-+	DEFINE_REG(REG_EMC, EMC_WS_DURATION),				\
-+	DEFINE_REG(REG_EMC, EMC_WE_DURATION),				\
-+	DEFINE_REG(REG_EMC, EMC_QUSE),					\
-+	DEFINE_REG(REG_EMC, EMC_QUSE_WIDTH),				\
-+	DEFINE_REG(REG_EMC, EMC_IBDLY),					\
-+	DEFINE_REG(REG_EMC, EMC_OBDLY),					\
-+	DEFINE_REG(REG_EMC, EMC_EINPUT),				\
-+	DEFINE_REG(REG_EMC, EMC_MRW6),					\
-+	DEFINE_REG(REG_EMC, EMC_EINPUT_DURATION),			\
-+	DEFINE_REG(REG_EMC, EMC_PUTERM_EXTRA),				\
-+	DEFINE_REG(REG_EMC, EMC_PUTERM_WIDTH),				\
-+	DEFINE_REG(REG_EMC, EMC_QRST),					\
-+	DEFINE_REG(REG_EMC, EMC_QSAFE),					\
-+	DEFINE_REG(REG_EMC, EMC_RDV),					\
-+	DEFINE_REG(REG_EMC, EMC_RDV_MASK),				\
-+	DEFINE_REG(REG_EMC, EMC_RDV_EARLY),				\
-+	DEFINE_REG(REG_EMC, EMC_RDV_EARLY_MASK),			\
-+	DEFINE_REG(REG_EMC, EMC_REFRESH),				\
-+	DEFINE_REG(REG_EMC, EMC_BURST_REFRESH_NUM),			\
-+	DEFINE_REG(REG_EMC, EMC_PRE_REFRESH_REQ_CNT),			\
-+	DEFINE_REG(REG_EMC, EMC_PDEX2WR),				\
-+	DEFINE_REG(REG_EMC, EMC_PDEX2RD),				\
-+	DEFINE_REG(REG_EMC, EMC_PCHG2PDEN),				\
-+	DEFINE_REG(REG_EMC, EMC_ACT2PDEN),				\
-+	DEFINE_REG(REG_EMC, EMC_AR2PDEN),				\
-+	DEFINE_REG(REG_EMC, EMC_RW2PDEN),				\
-+	DEFINE_REG(REG_EMC, EMC_CKE2PDEN),				\
-+	DEFINE_REG(REG_EMC, EMC_PDEX2CKE),				\
-+	DEFINE_REG(REG_EMC, EMC_PDEX2MRR),				\
-+	DEFINE_REG(REG_EMC, EMC_TXSR),					\
-+	DEFINE_REG(REG_EMC, EMC_TXSRDLL),				\
-+	DEFINE_REG(REG_EMC, EMC_TCKE),					\
-+	DEFINE_REG(REG_EMC, EMC_TCKESR),				\
-+	DEFINE_REG(REG_EMC, EMC_TPD),					\
-+	DEFINE_REG(REG_EMC, EMC_TFAW),					\
-+	DEFINE_REG(REG_EMC, EMC_TRPAB),					\
-+	DEFINE_REG(REG_EMC, EMC_TCLKSTABLE),				\
-+	DEFINE_REG(REG_EMC, EMC_TCLKSTOP),				\
-+	DEFINE_REG(REG_EMC, EMC_MRW7),					\
-+	DEFINE_REG(REG_EMC, EMC_TREFBW),				\
-+	DEFINE_REG(REG_EMC, EMC_ODT_WRITE),				\
-+	DEFINE_REG(REG_EMC, EMC_FBIO_CFG5),				\
-+	DEFINE_REG(REG_EMC, EMC_FBIO_CFG7),				\
-+	DEFINE_REG(REG_EMC, EMC_CFG_DIG_DLL),				\
-+	DEFINE_REG(REG_EMC, EMC_CFG_DIG_DLL_PERIOD),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_RXRT),			\
-+	DEFINE_REG(REG_EMC, EMC_CFG_PIPE_1),				\
-+	DEFINE_REG(REG_EMC, EMC_CFG_PIPE_2),				\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_4),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_5),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_4),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_5),		\
-+	DEFINE_REG(REG_EMC, EMC_MRW8),					\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_4),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_5),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_4),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_5),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_4),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_5),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_0),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_1),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_2),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_3),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_4),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_SHORT_CMD_0),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_SHORT_CMD_1),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_SHORT_CMD_2),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_3),	\
-+	DEFINE_REG(REG_EMC, EMC_TXDSRVTTGEN),				\
-+	DEFINE_REG(REG_EMC, EMC_FDPD_CTRL_DQ),				\
-+	DEFINE_REG(REG_EMC, EMC_FDPD_CTRL_CMD),				\
-+	DEFINE_REG(REG_EMC, EMC_FBIO_SPARE),				\
-+	DEFINE_REG(REG_EMC, EMC_ZCAL_INTERVAL),				\
-+	DEFINE_REG(REG_EMC, EMC_ZCAL_WAIT_CNT),				\
-+	DEFINE_REG(REG_EMC, EMC_MRS_WAIT_CNT),				\
-+	DEFINE_REG(REG_EMC, EMC_MRS_WAIT_CNT2),				\
-+	DEFINE_REG(REG_EMC, EMC_AUTO_CAL_CHANNEL),			\
-+	DEFINE_REG(REG_EMC, EMC_DLL_CFG_0),				\
-+	DEFINE_REG(REG_EMC, EMC_DLL_CFG_1),				\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_AUTOCAL_CFG_COMMON),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_ZCTRL),				\
-+	DEFINE_REG(REG_EMC, EMC_CFG),					\
-+	DEFINE_REG(REG_EMC, EMC_CFG_PIPE),				\
-+	DEFINE_REG(REG_EMC, EMC_DYN_SELF_REF_CONTROL),			\
-+	DEFINE_REG(REG_EMC, EMC_QPOP),					\
-+	DEFINE_REG(REG_EMC, EMC_DQS_BRLSHFT_0),				\
-+	DEFINE_REG(REG_EMC, EMC_DQS_BRLSHFT_1),				\
-+	DEFINE_REG(REG_EMC, EMC_CMD_BRLSHFT_2),				\
-+	DEFINE_REG(REG_EMC, EMC_CMD_BRLSHFT_3),				\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_PAD_CFG_CTRL),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_PAD_RX_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_PAD_RX_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_RX_TERM_MODE),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_RX_TERM_MODE),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_PAD_TX_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_PAD_TX_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_COMMON_PAD_TX_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_VTTGEN_CTRL_0),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_VTTGEN_CTRL_1),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_VTTGEN_CTRL_2),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_BRICK_CTRL_RFU1),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_BRICK_CTRL_FDPD),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_BRICK_CTRL_RFU2),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_BRICK_CTRL_FDPD),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_BG_BIAS_CTRL_0),			\
-+	DEFINE_REG(REG_EMC, EMC_CFG_3),					\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_0),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_1),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_2),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_3),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_4),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_5),			\
-+	DEFINE_REG(REG_EMC, EMC_CONFIG_SAMPLE_DELAY),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_0),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_1),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_2),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_3),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_4),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_5),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_BYPASS),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_PWRD_0),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_PWRD_1),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_PWRD_2),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_CTRL_0),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_CTRL_1),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_CTRL_2),			\
-+	DEFINE_REG(REG_EMC, EMC_TR_TIMING_0),				\
-+	DEFINE_REG(REG_EMC, EMC_TR_DVFS),				\
-+	DEFINE_REG(REG_EMC, EMC_TR_CTRL_1),				\
-+	DEFINE_REG(REG_EMC, EMC_TR_RDV),				\
-+	DEFINE_REG(REG_EMC, EMC_TR_QPOP),				\
-+	DEFINE_REG(REG_EMC, EMC_TR_RDV_MASK),				\
-+	DEFINE_REG(REG_EMC, EMC_MRW14),					\
-+	DEFINE_REG(REG_EMC, EMC_TR_QSAFE),				\
-+	DEFINE_REG(REG_EMC, EMC_TR_QRST),				\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_CTRL),				\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_SETTLE),			\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_VREF_SETTLE),			\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_FINE_CTRL),			\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_CTRL_MISC),			\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_CTRL_MISC1),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_VREF_CTRL),			\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_CORS_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_FINE_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_CTRL_MISC),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_VREF_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_READ_FINE_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_READ_CTRL_MISC),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_READ_VREF_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_WRITE_FINE_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_WRITE_CTRL_MISC),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_WRITE_VREF_CTRL),		\
-+	DEFINE_REG(REG_EMC, EMC_TRAINING_MPC),				\
-+	DEFINE_REG(REG_EMC, EMC_MRW15),					\
-+}
-+
-+#define TRIM_REGS_PER_CH_LIST						\
-+{									\
-+	DEFINE_REG(REG_EMC0, EMC_CMD_BRLSHFT_0),			\
-+	DEFINE_REG(REG_EMC1, EMC_CMD_BRLSHFT_1),			\
-+	DEFINE_REG(REG_EMC0, EMC_DATA_BRLSHFT_0),			\
-+	DEFINE_REG(REG_EMC1, EMC_DATA_BRLSHFT_0),			\
-+	DEFINE_REG(REG_EMC0, EMC_DATA_BRLSHFT_1),			\
-+	DEFINE_REG(REG_EMC1, EMC_DATA_BRLSHFT_1),			\
-+	DEFINE_REG(REG_EMC0, EMC_QUSE_BRLSHFT_0),			\
-+	DEFINE_REG(REG_EMC1, EMC_QUSE_BRLSHFT_1),			\
-+	DEFINE_REG(REG_EMC0, EMC_QUSE_BRLSHFT_2),			\
-+	DEFINE_REG(REG_EMC1, EMC_QUSE_BRLSHFT_3),			\
-+}
-+
-+#define TRIM_REGS_LIST							\
-+{									\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQS_0),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQS_1),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQ_0),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQ_1),			\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_4),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_5),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_0),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_1),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_2),	\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_0),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_1),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_2),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_3),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_0),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_1),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_2),		\
-+	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_3),		\
-+}
-+
-+#define BURST_MC_REGS_LIST						\
-+{									\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_CFG),				\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_OUTSTANDING_REQ),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_REFPB_HP_CTRL),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_REFPB_BANK_CTRL),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RCD),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RP),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RC),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RAS),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_FAW),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RRD),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RAP2PRE),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_WAP2PRE),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_R2R),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_W2W),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_R2W),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_CCDMW),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_W2R),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RFCPB),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DA_TURNS),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DA_COVERS),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_MISC0),				\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_MISC1),				\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_MISC2),				\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_RING1_THROTTLE),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_CTRL),			\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6),		\
-+	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7),		\
-+}
-+
-+#define BURST_UP_DOWN_REGS_LIST						\
-+{									\
-+	DEFINE_REG(REG_MC, MC_MLL_MPCORER_PTSA_RATE),			\
-+	DEFINE_REG(REG_MC, MC_FTOP_PTSA_RATE),				\
-+	DEFINE_REG(REG_MC, MC_PTSA_GRANT_DECREMENT),			\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_XUSB_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_XUSB_1),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_TSEC_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMCA_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMCAA_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMC_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMCAB_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_PPCS_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_PPCS_1),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_MPCORE_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_HC_0),			\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_HC_1),			\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_AVPC_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_GPU_0),			\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_GPU2_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_NVENC_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_NVDEC_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_VIC_0),			\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_VI2_0),			\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_ISP2_0),		\
-+	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_ISP2_1),		\
-+}
-+
-+#define VREF_REGS_PER_CH_LIST						\
-+{									\
-+	DEFINE_REG(REG_EMC0, EMC_TRAINING_OPT_DQS_IB_VREF_RANK0),	\
-+	DEFINE_REG(REG_EMC1, EMC_TRAINING_OPT_DQS_IB_VREF_RANK0),	\
-+	DEFINE_REG(REG_EMC0, EMC_TRAINING_OPT_DQS_IB_VREF_RANK1),	\
-+	DEFINE_REG(REG_EMC1, EMC_TRAINING_OPT_DQS_IB_VREF_RANK1),	\
-+}
-+
-+#define DEFINE_REG(type, reg)	reg##_INDEX
-+enum BURST_REGS_LIST;
-+enum TRIM_REGS_LIST;
-+enum BURST_MC_REGS_LIST;
-+enum BURST_UP_DOWN_REGS_LIST;
-+#undef DEFINE_REG
-+
-+#define DEFINE_REG(type, reg)	type##_##reg##_INDEX
-+enum BURST_REGS_PER_CH_LIST;
-+enum TRIM_REGS_PER_CH_LIST;
-+enum VREF_REGS_PER_CH_LIST;
-+#undef DEFINE_REG
-+
-+enum {
-+	DRAM_TYPE_DDR3   =3D 0,
-+	DRAM_TYPE_LPDDR4 =3D 1,
-+	DRAM_TYPE_LPDDR2 =3D 2,
-+	DRAM_TYPE_DDR2 =3D 3,
-+};
-+
-+struct emc_table {
-+	u32 rev;
-+	char dvfs_ver[60];
-+	u32 rate;
-+	u32 min_volt;
-+	u32 gpu_min_volt;
-+	char clock_src[32];
-+	u32 clk_src_emc;
-+	u32 needs_training;
-+	u32 training_parttern;
-+	u32 trained;
-+
-+	u32 periodic_training;
-+	u32 trained_dram_clktree_c0d0u0;
-+	u32 trained_dram_clktree_c0d0u1;
-+	u32 trained_dram_clktree_c0d1u0;
-+	u32 trained_dram_clktree_c0d1u1;
-+	u32 trained_dram_clktree_c1d0u0;
-+	u32 trained_dram_clktree_c1d0u1;
-+	u32 trained_dram_clktree_c1d1u0;
-+	u32 trained_dram_clktree_c1d1u1;
-+	u32 current_dram_clktree_c0d0u0;
-+	u32 current_dram_clktree_c0d0u1;
-+	u32 current_dram_clktree_c0d1u0;
-+	u32 current_dram_clktree_c0d1u1;
-+	u32 current_dram_clktree_c1d0u0;
-+	u32 current_dram_clktree_c1d0u1;
-+	u32 current_dram_clktree_c1d1u0;
-+	u32 current_dram_clktree_c1d1u1;
-+	u32 run_clocks;
-+	u32 tree_margin;
-+
-+	u32 num_burst;
-+	u32 num_burst_per_ch;
-+	u32 num_trim;
-+	u32 num_trim_per_ch;
-+	u32 num_mc_regs;
-+	u32 num_up_down;
-+	u32 vref_num;
-+	u32 training_mod_num;
-+	u32 dram_timing_num;
-+
-+	u32  ptfv_list[12];
-+
-+	u32 burst_regs[221];
-+	u32 burst_reg_per_ch[8];
-+	u32 shadow_regs_ca_train[221];
-+	u32 shadow_regs_quse_train[221];
-+	u32 shadow_regs_rdwr_train[221];
-+
-+	u32 trim_regs[138];
-+	u32 trim_perch_regs[10];
-+
-+	u32 vref_perch_regs[4];
-+
-+	u32 dram_timings[5];
-+	u32 training_mod_regs[20];
-+	u32 save_restore_mod_regs[12];
-+	u32 burst_mc_regs[33];
-+	u32 la_scale_regs[24];
-+
-+	u32 min_mrs_wait;
-+	u32 emc_mrw;
-+	u32 emc_mrw2;
-+	u32 emc_mrw3;
-+	u32 emc_mrw4;
-+	u32 emc_mrw9;
-+	u32 emc_mrs;
-+	u32 emc_emrs;
-+	u32 emc_emrs2;
-+	u32 emc_auto_cal_config;
-+	u32 emc_auto_cal_config2;
-+	u32 emc_auto_cal_config3;
-+	u32 emc_auto_cal_config4;
-+	u32 emc_auto_cal_config5;
-+	u32 emc_auto_cal_config6;
-+	u32 emc_auto_cal_config7;
-+	u32 emc_auto_cal_config8;
-+	u32 emc_cfg_2;
-+	u32 emc_sel_dpd_ctrl;
-+	u32 emc_fdpd_ctrl_cmd_no_ramp;
-+	u32 dll_clk_src;
-+	u32 clk_out_enb_x_0_clk_enb_emc_dll;
-+	u32 latency;
-+};
-+
-+struct tegra_emc {
-+	struct clk_hw hw;
-+	struct clk *emc_clk;
-+	struct device *dev;
-+
-+	struct tegra_mc *mc;
-+
-+	void __iomem *emc_base;
-+	void __iomem *emc0_base;
-+	void __iomem *emc1_base;
-+
-+	struct emc_table *current_timing;
-+	struct emc_table *next_timing;
-+	struct emc_table start_timing;
-+
-+	struct emc_table *emc_table;
-+	struct emc_table *emc_table_normal;
-+	struct emc_table *emc_table_derated;
-+
-+	unsigned int emc_table_size;
-+
-+	int dram_dev_num;
-+	u32 dram_type;
-+	u32 ram_code;
-+	u32 clk_setting;
-+};
-+#define to_emc(_hw) container_of(_hw, struct tegra_emc, hw)
-+
-+struct supported_sequence {
-+	u8     table_rev;
-+	void (*set_clock)(struct tegra_emc *emc, u32 clksrc);
-+	u32  (*periodic_compensation)(struct tegra_emc *emc);
-+	char  *seq_rev;
-+};
-+
-+int tegra_emc_dt_parse_pdata(struct platform_device *pdev,
-+			     struct emc_table **tables,
-+			     struct emc_table **derated_tables,
-+			     int *num_entries);
-+
-+#endif
-diff --git a/drivers/memory/tegra/tegra210-emc.c b/drivers/memory/tegra/teg=
-ra210-emc.c
-new file mode 100644
-index 000000000000..0c20bcd0e6de
---- /dev/null
-+++ b/drivers/memory/tegra/tegra210-emc.c
-@@ -0,0 +1,886 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2015-2019, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk/tegra.h>
-+#include <linux/clk-provider.h>
-+#include <linux/debugfs.h>
 +#include <linux/delay.h>
-+#include <linux/kernel.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <soc/tegra/fuse.h>
++#include <linux/of.h>
 +#include <soc/tegra/mc.h>
 +
 +#include "mc.h"
 +#include "tegra210-emc-reg.h"
 +
-+#define TEGRA_EMC_TABLE_MAX_SIZE		16
-+#define TEGRA210_EMC_SUSPEND_RATE		204000000
++#define DVFS_CLOCK_CHANGE_VERSION	21021
++#define EMC_PRELOCK_VERSION		2101
 +
-+enum TEGRA_EMC_SOURCE {
-+	TEGRA_EMC_SRC_PLLM,
-+	TEGRA_EMC_SRC_PLLC,
-+	TEGRA_EMC_SRC_PLLP,
-+	TEGRA_EMC_SRC_CLKM,
-+	TEGRA_EMC_SRC_PLLM_UD,
-+	TEGRA_EMC_SRC_PLLMB_UD,
-+	TEGRA_EMC_SRC_PLLMB,
-+	TEGRA_EMC_SRC_PLLP_UD,
-+	TEGRA_EMC_SRC_COUNT,
++#define emc_cc_dbg(t, ...) pr_debug(__VA_ARGS__)
++
++/*
++ * Enable flags for specifying verbosity.
++ */
++#define INFO            (1 << 0)
++#define STEPS           (1 << 1)
++#define SUB_STEPS       (1 << 2)
++#define PRELOCK         (1 << 3)
++#define PRELOCK_STEPS   (1 << 4)
++#define ACTIVE_EN       (1 << 5)
++#define PRAMP_UP        (1 << 6)
++#define PRAMP_DN        (1 << 7)
++#define EMA_WRITES      (1 << 10)
++#define EMA_UPDATES     (1 << 11)
++#define PER_TRAIN       (1 << 16)
++#define CC_PRINT        (1 << 17)
++#define CCFIFO          (1 << 29)
++#define REGS            (1 << 30)
++#define REG_LISTS       (1 << 31)
++
++enum {
++	DVFS_SEQUENCE =3D 1,
++	WRITE_TRAINING_SEQUENCE =3D 2,
++	PERIODIC_TRAINING_SEQUENCE =3D 3,
++	DVFS_PT1 =3D 10,
++	DVFS_UPDATE =3D 11,
++	TRAINING_PT1 =3D 12,
++	TRAINING_UPDATE =3D 13,
++	PERIODIC_TRAINING_UPDATE =3D 14
 +};
 +
-+struct emc_sel {
-+	struct clk *input;
-+	u32 value;
-+	unsigned long input_rate;
++/*
++ * PTFV defines - basically just indexes into the per table PTFV array.
++ */
++#define PTFV_DQSOSC_MOVAVG_C0D0U0_INDEX		0
++#define PTFV_DQSOSC_MOVAVG_C0D0U1_INDEX		1
++#define PTFV_DQSOSC_MOVAVG_C0D1U0_INDEX		2
++#define PTFV_DQSOSC_MOVAVG_C0D1U1_INDEX		3
++#define PTFV_DQSOSC_MOVAVG_C1D0U0_INDEX		4
++#define PTFV_DQSOSC_MOVAVG_C1D0U1_INDEX		5
++#define PTFV_DQSOSC_MOVAVG_C1D1U0_INDEX		6
++#define PTFV_DQSOSC_MOVAVG_C1D1U1_INDEX		7
++#define PTFV_DVFS_SAMPLES_INDEX			9
++#define PTFV_MOVAVG_WEIGHT_INDEX		10
++#define PTFV_CONFIG_CTRL_INDEX			11
 +
-+	struct clk *input_b;
-+	u32 value_b;
-+	unsigned long input_rate_b;
-+};
++#define PTFV_CONFIG_CTRL_USE_PREVIOUS_EMA	(1 << 0)
 +
-+struct emc_stats {
-+	u64 time_at_clock[TEGRA_EMC_TABLE_MAX_SIZE];
-+	int last_sel;
-+	u64 last_update;
-+	u64 clkchange_count;
-+	spinlock_t spinlock;
-+};
++/*
++ * Do arithmetic in fixed point.
++ */
++#define MOVAVG_PRECISION_FACTOR		100
 +
-+static struct emc_sel *emc_clk_sel;
-+static struct clk *emc_src[TEGRA_EMC_SRC_COUNT];
-+static const char *emc_src_names[TEGRA_EMC_SRC_COUNT] =3D {
-+	[TEGRA_EMC_SRC_PLLM] =3D "pll_m",
-+	[TEGRA_EMC_SRC_PLLC] =3D "pll_c",
-+	[TEGRA_EMC_SRC_PLLP] =3D "pll_p",
-+	[TEGRA_EMC_SRC_CLKM] =3D "clk_m",
-+	[TEGRA_EMC_SRC_PLLM_UD] =3D "pll_m_ud",
-+	[TEGRA_EMC_SRC_PLLMB_UD] =3D "pll_mb_ud",
-+	[TEGRA_EMC_SRC_PLLMB] =3D "pll_mb",
-+	[TEGRA_EMC_SRC_PLLP_UD] =3D "pll_p_ud",
-+};
-+static struct emc_stats emc_stats;
-+static struct supported_sequence supported_seqs[] =3D {
-+	{
-+		0,
-+		NULL,
-+		NULL,
-+		NULL
-+	}
-+};
-+static struct supported_sequence *seq;
-+static struct tegra_emc *tegra_emc;
-+static DEFINE_SPINLOCK(emc_access_lock);
-+static ktime_t clkchange_time;
-+static int clkchange_delay =3D 100;
++/*
++ * The division portion of the average operation.
++ */
++#define __AVERAGE_PTFV(dev)						\
++	({ next_timing->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] =3D \
++	   next_timing->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] / \
++	   next_timing->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
 +
-+static void emc_train(struct timer_list *tmr);
-+DEFINE_TIMER(emc_training_timer, emc_train);
-+static u32 timer_period_training =3D 100;
++/*
++ * Convert val to fixed point and add it to the temporary average.
++ */
++#define __INCREMENT_PTFV(dev, val)					\
++	({ next_timing->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] +=3D \
++	   ((val) * MOVAVG_PRECISION_FACTOR); })
 +
-+#define DEFINE_REG(type, reg) (reg)
-+u32 burst_regs_per_ch_off[] =3D BURST_REGS_PER_CH_LIST;
-+u32 burst_regs_off[] =3D BURST_REGS_LIST;
-+u32 burst_mc_regs_off[] =3D BURST_MC_REGS_LIST;
-+u32 la_scale_regs_off[] =3D BURST_UP_DOWN_REGS_LIST;
-+u32 trim_regs_per_ch_off[] =3D TRIM_REGS_PER_CH_LIST;
-+u32 trim_regs_off[] =3D TRIM_REGS_LIST;
-+u32 vref_regs_per_ch_off[] =3D VREF_REGS_PER_CH_LIST;
-+#undef DEFINE_REG
++/*
++ * Convert a moving average back to integral form and return the value.
++ */
++#define __MOVAVG_AC(timing, dev)					\
++	((timing)->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] /	\
++	 MOVAVG_PRECISION_FACTOR)
 +
-+#define DEFINE_REG(type, reg) (type)
-+u32 burst_regs_per_ch_type[] =3D BURST_REGS_PER_CH_LIST;
-+u32 trim_regs_per_ch_type[] =3D TRIM_REGS_PER_CH_LIST;
-+u32 vref_regs_per_ch_type[] =3D VREF_REGS_PER_CH_LIST;
-+#undef DEFINE_REG
++/* Weighted update. */
++#define __WEIGHTED_UPDATE_PTFV(dev, nval)				\
++	do {								\
++		int w =3D PTFV_MOVAVG_WEIGHT_INDEX;			\
++		int dqs =3D PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX;		\
++									\
++		next_timing->ptfv_list[dqs] =3D				\
++			((nval * MOVAVG_PRECISION_FACTOR) +		\
++			 (next_timing->ptfv_list[dqs] *			\
++			  next_timing->ptfv_list[w])) /			\
++			(next_timing->ptfv_list[w] + 1);		\
++									\
++		emc_cc_dbg(EMA_UPDATES, "%s: (s=3D%u) EMA: %u\n",		\
++			   __stringify(dev), nval,			\
++			   next_timing->ptfv_list[dqs]);		\
++	} while (0)
 +
-+#ifdef CONFIG_PM_SLEEP
-+static bool emc_suspend;
-+static unsigned long emc_resume_rate;
-+#endif
++/* Access a particular average. */
++#define __MOVAVG(timing, dev)                      \
++	((timing)->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX])
 +
-+inline u32 emc_readl(struct tegra_emc *emc, unsigned long offset)
++static u32 update_clock_tree_delay(struct tegra_emc *emc,
++				   u32 dram_dev_num, u32 channel_mode, int type)
 +{
-+	return readl(emc->emc_base + offset);
-+}
-+
-+inline u32 emc_readl_per_ch(struct tegra_emc *emc, int type,
-+			    unsigned long offset)
-+{
-+	u32 val =3D 0;
-+
-+	switch (type) {
-+	case REG_EMC:
-+	case REG_EMC0:
-+		val =3D readl(emc->emc_base + offset);
-+		break;
-+	case REG_EMC1:
-+		val =3D readl(emc->emc1_base + offset);
-+		break;
-+	}
-+
-+	return val;
-+}
-+
-+static inline u32 emc_src_val(u32 val)
-+{
-+	return (val & EMC_CLK_EMC_2X_CLK_SRC_MASK) >>
-+		EMC_CLK_EMC_2X_CLK_SRC_SHIFT;
-+}
-+
-+static inline u32 emc_div_val(u32 val)
-+{
-+	return (val & EMC_CLK_EMC_2X_CLK_DIVISOR_MASK) >>
-+		EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT;
-+}
-+
-+static void emc_train(struct timer_list *tmr)
-+{
-+	unsigned long flags;
-+	struct tegra_emc *emc =3D tegra_emc;
-+
-+	if (!emc->current_timing)
-+		return;
-+
-+	spin_lock_irqsave(&emc_access_lock, flags);
-+	if (seq->periodic_compensation)
-+		seq->periodic_compensation(emc);
-+	spin_unlock_irqrestore(&emc_access_lock, flags);
-+
-+	mod_timer(&emc_training_timer,
-+		  jiffies + msecs_to_jiffies(timer_period_training));
-+}
-+
-+static void emc_training_timer_start(void)
-+{
-+	mod_timer(&emc_training_timer,
-+		  jiffies + msecs_to_jiffies(timer_period_training));
-+}
-+
-+static void emc_training_timer_stop(void)
-+{
-+	del_timer(&emc_training_timer);
-+}
-+
-+static void emc_set_clock(struct tegra_emc *emc, u32 clksrc)
-+{
-+	seq->set_clock(emc, clksrc);
-+
-+	if (emc->next_timing->periodic_training)
-+		emc_training_timer_start();
-+	else
-+		emc_training_timer_stop();
-+}
-+
-+static inline void emc_get_timing(struct tegra_emc *emc,
-+				  struct emc_table *timing)
-+{
-+	int i, div;
-+	u32 val;
-+	unsigned long rate;
-+
-+	for (i =3D 0; i < timing->num_burst; i++) {
-+		if (burst_regs_off[i])
-+			timing->burst_regs[i] =3D emc_readl(emc,
-+							  burst_regs_off[i]);
-+		else
-+			timing->burst_regs[i] =3D 0;
-+	}
-+
-+	for (i =3D 0; i < timing->num_burst_per_ch; i++)
-+		timing->burst_reg_per_ch[i] =3D emc_readl_per_ch(emc,
-+			burst_regs_per_ch_type[i], burst_regs_per_ch_off[i]);
-+
-+	for (i =3D 0; i < timing->num_trim; i++)
-+		timing->trim_regs[i] =3D emc_readl(emc, trim_regs_off[i]);
-+
-+	for (i =3D 0; i < timing->num_trim_per_ch; i++)
-+		timing->trim_perch_regs[i] =3D emc_readl_per_ch(emc,
-+			trim_regs_per_ch_type[i], trim_regs_per_ch_off[i]);
-+
-+	for (i =3D 0; i < timing->vref_num; i++)
-+		timing->vref_perch_regs[i] =3D emc_readl_per_ch(emc,
-+			vref_regs_per_ch_type[i], vref_regs_per_ch_off[i]);
-+
-+	for (i =3D 0; i < timing->num_mc_regs; i++)
-+		timing->burst_mc_regs[i] =3D mc_readl(emc->mc,
-+						    burst_mc_regs_off[i]);
-+
-+	for (i =3D 0; i < timing->num_up_down; i++)
-+		timing->la_scale_regs[i] =3D mc_readl(emc->mc,
-+						    la_scale_regs_off[i]);
-+
-+	val =3D tegra210_clk_emc_get_setting();
-+	rate =3D clk_get_rate(emc_src[emc_src_val(val)]);
-+	div =3D emc_div_val(val);
-+	div +=3D 2;
-+	rate *=3D 2;
-+	rate +=3D div - 1;
-+	do_div(rate, div);
-+	timing->rate =3D rate / 1000;
-+}
-+
-+static void __emc_copy_table_params(struct emc_table *src,
-+				    struct emc_table *dst, int flags)
-+{
-+	int i;
-+
-+	if (flags & EMC_COPY_TABLE_PARAM_PERIODIC_FIELDS) {
-+		dst->trained_dram_clktree_c0d0u0 =3D
-+			src->trained_dram_clktree_c0d0u0;
-+		dst->trained_dram_clktree_c0d0u1 =3D
-+			src->trained_dram_clktree_c0d0u1;
-+		dst->trained_dram_clktree_c0d1u0 =3D
-+			src->trained_dram_clktree_c0d1u0;
-+		dst->trained_dram_clktree_c0d1u1 =3D
-+			src->trained_dram_clktree_c0d1u1;
-+		dst->trained_dram_clktree_c1d0u0 =3D
-+			src->trained_dram_clktree_c1d0u0;
-+		dst->trained_dram_clktree_c1d0u1 =3D
-+			src->trained_dram_clktree_c1d0u1;
-+		dst->trained_dram_clktree_c1d1u0 =3D
-+			src->trained_dram_clktree_c1d1u0;
-+		dst->trained_dram_clktree_c1d1u1 =3D
-+			src->trained_dram_clktree_c1d1u1;
-+		dst->current_dram_clktree_c0d0u0 =3D
-+			src->current_dram_clktree_c0d0u0;
-+		dst->current_dram_clktree_c0d0u1 =3D
-+			src->current_dram_clktree_c0d0u1;
-+		dst->current_dram_clktree_c0d1u0 =3D
-+			src->current_dram_clktree_c0d1u0;
-+		dst->current_dram_clktree_c0d1u1 =3D
-+			src->current_dram_clktree_c0d1u1;
-+		dst->current_dram_clktree_c1d0u0 =3D
-+			src->current_dram_clktree_c1d0u0;
-+		dst->current_dram_clktree_c1d0u1 =3D
-+			src->current_dram_clktree_c1d0u1;
-+		dst->current_dram_clktree_c1d1u0 =3D
-+			src->current_dram_clktree_c1d1u0;
-+		dst->current_dram_clktree_c1d1u1 =3D
-+			src->current_dram_clktree_c1d1u1;
-+	}
-+
-+	if (flags & EMC_COPY_TABLE_PARAM_TRIM_REGS) {
-+		for (i =3D 0; i < src->num_trim_per_ch; i++)
-+			dst->trim_perch_regs[i] =3D src->trim_perch_regs[i];
-+
-+		for (i =3D 0; i < src->num_trim; i++)
-+			dst->trim_regs[i] =3D src->trim_regs[i];
-+
-+		for (i =3D 0; i < src->num_burst_per_ch; i++)
-+			dst->burst_reg_per_ch[i] =3D src->burst_reg_per_ch[i];
-+
-+		dst->trained =3D src->trained;
-+	}
-+}
-+
-+static void emc_copy_table_params(struct emc_table *src,
-+				  struct emc_table *dst,
-+				  int table_size,
-+				  int flags)
-+{
-+	int i;
-+
-+	for (i =3D 0; i < table_size; i++)
-+		__emc_copy_table_params(&src[i], &dst[i], flags);
-+}
-+
-+static void emc_last_stats_update(int last_sel)
-+{
-+	unsigned long flags;
-+	u64 cur_jiffies =3D get_jiffies_64();
-+
-+	spin_lock_irqsave(&emc_stats.spinlock, flags);
-+
-+	if (emc_stats.last_sel < TEGRA_EMC_TABLE_MAX_SIZE)
-+		emc_stats.time_at_clock[emc_stats.last_sel] =3D
-+			emc_stats.time_at_clock[emc_stats.last_sel]
-+			+ (cur_jiffies - emc_stats.last_update);
-+
-+	emc_stats.last_update =3D cur_jiffies;
-+
-+	if (last_sel < TEGRA_EMC_TABLE_MAX_SIZE) {
-+		emc_stats.clkchange_count++;
-+		emc_stats.last_sel =3D last_sel;
-+	}
-+
-+	spin_unlock_irqrestore(&emc_stats.spinlock, flags);
-+}
-+
-+static int emc_table_lookup(struct tegra_emc *emc, unsigned long rate)
-+{
-+	int i;
-+
-+	for (i =3D 0; i < emc->emc_table_size; i++) {
-+		if (emc_clk_sel[i].input =3D=3D NULL)
-+			continue;
-+
-+		if (emc->emc_table[i].rate =3D=3D rate)
-+			return i;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static struct clk *emc_predict_parent(struct tegra_emc *emc,
-+				      unsigned long rate)
-+{
-+	struct clk *old_parent, *new_parent;
-+	unsigned long parent_rate;
-+	int idx;
-+
-+	idx =3D emc_table_lookup(emc, rate / 1000);
-+	if (idx < 0)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent_rate =3D emc_clk_sel[idx].input_rate * 1000;
-+	new_parent =3D emc_clk_sel[idx].input;
-+	old_parent =3D clk_get_parent(emc->emc_clk);
-+
-+	if (parent_rate =3D=3D clk_get_rate(old_parent))
-+		return old_parent;
-+
-+	if (clk_is_match(new_parent, old_parent))
-+		new_parent =3D emc_clk_sel[idx].input_b;
-+
-+	if (parent_rate !=3D clk_get_rate(new_parent))
-+		clk_set_rate(new_parent, parent_rate);
-+
-+	return new_parent;
-+}
-+
-+static int emc_set_rate(struct tegra_emc *emc, unsigned long rate)
-+{
-+	int i;
-+	unsigned long flags;
-+	s64 last_change_delay;
-+	struct clk *parent;
-+
-+	if (emc_suspend)
-+		rate =3D TEGRA210_EMC_SUSPEND_RATE;
-+
-+	if (rate =3D=3D emc->current_timing->rate)
-+		return 0;
-+
-+	i =3D emc_table_lookup(emc, rate / 1000);
-+
-+	if (i < 0)
-+		return i;
-+
-+	if (rate > 204000000 && !emc->emc_table[i].trained)
-+		return -EINVAL;
-+
-+	parent =3D emc_predict_parent(emc, rate);
-+	if (clk_is_match(parent, emc_clk_sel[i].input))
-+		emc->clk_setting =3D emc_clk_sel[i].value;
-+	else
-+		emc->clk_setting =3D emc_clk_sel[i].value_b;
-+
-+	emc->next_timing =3D &emc->emc_table[i];
-+	last_change_delay =3D ktime_us_delta(ktime_get(), clkchange_time);
-+	if ((last_change_delay >=3D 0) && (last_change_delay < clkchange_delay))
-+		udelay(clkchange_delay - (int)last_change_delay);
-+
-+	spin_lock_irqsave(&emc_access_lock, flags);
-+	emc_set_clock(emc, emc->clk_setting);
-+	clkchange_time =3D ktime_get();
-+	emc->current_timing =3D &emc->emc_table[i];
-+	spin_unlock_irqrestore(&emc_access_lock, flags);
-+
-+	emc_last_stats_update(i);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static int emc_stats_show(struct seq_file *s, void *data)
-+{
-+	int i;
-+	struct tegra_emc *emc =3D (struct tegra_emc *)s->private;
-+
-+	if (!emc->emc_table_size || !seq)
-+		return 0;
-+
-+	emc_last_stats_update(TEGRA_EMC_TABLE_MAX_SIZE);
-+
-+	seq_printf(s, "%-10s %-10s\n", "rate kHz", "time");
-+	for (i =3D 0; i < emc->emc_table_size; i++) {
-+		if (emc_clk_sel[i].input =3D=3D NULL)
-+			continue;
-+
-+		seq_printf(s, "%-10u %-10llu\n",
-+			   emc->emc_table[i].rate,
-+			   jiffies_64_to_clock_t(
-+			   emc_stats.time_at_clock[i]));
-+	}
-+	seq_printf(s, "%-15s %llu\n", "transitions:",
-+		   emc_stats.clkchange_count);
-+	seq_printf(s, "%-15s %llu\n", "time-stamp:",
-+		   jiffies_64_to_clock_t(emc_stats.last_update));
-+
-+	return 0;
-+}
-+
-+static int emc_stats_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, emc_stats_show, inode->i_private);
-+}
-+
-+static const struct file_operations emc_stats_fops =3D {
-+	.open		=3D emc_stats_open,
-+	.read		=3D seq_read,
-+	.llseek		=3D seq_lseek,
-+	.release	=3D single_release,
-+};
-+
-+static int debug_emc_get_rate(void *data, u64 *val)
-+{
-+	struct clk *c =3D data;
-+
-+	*val =3D clk_get_rate(c);
-+
-+	return 0;
-+}
-+
-+static int debug_emc_set_rate(void *data, u64 val)
-+{
-+	struct clk *c =3D data;
-+
-+	return clk_set_rate(c, val);
-+}
-+DEFINE_SIMPLE_ATTRIBUTE(emc_rate_fops, debug_emc_get_rate,
-+			debug_emc_set_rate, "%llu\n");
-+
-+static int tegra_emc_debug_init(struct tegra_emc *emc)
-+{
-+	struct dentry *emc_debugfs_root;
-+
-+	emc_debugfs_root =3D debugfs_create_dir("tegra_emc", NULL);
-+	if (!emc_debugfs_root)
-+		return -ENOMEM;
-+
-+	if (!debugfs_create_file("stats", 0444, emc_debugfs_root, emc,
-+				 &emc_stats_fops))
-+		goto err_out;
-+
-+	if (!debugfs_create_file("rate", 0644, emc_debugfs_root, emc->emc_clk,
-+				 &emc_rate_fops))
-+		goto err_out;
-+
-+	return 0;
-+
-+err_out:
-+	debugfs_remove_recursive(emc_debugfs_root);
-+	return -ENOMEM;
-+}
-+#endif /* CONFIG_DEBUG_FS */
-+
-+static u8 clk_emc_get_parent(struct clk_hw *hw)
-+{
-+	struct tegra_emc *emc =3D to_emc(hw);
-+
-+	if (!emc->clk_setting)
-+		emc->clk_setting =3D tegra210_clk_emc_get_setting();
-+
-+	return emc_src_val(emc->clk_setting);
-+}
-+
-+static unsigned long clk_emc_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct tegra_emc *emc =3D to_emc(hw);
-+
-+	if (!emc->emc_table_size || !seq) {
-+		u32 emc_setting =3D tegra210_clk_emc_get_setting();
-+
-+		return clk_get_rate(emc_src[emc_src_val(emc_setting)]);
-+	}
-+
-+	return emc->current_timing->rate * 1000;
-+}
-+
-+static long clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	struct tegra_emc *emc =3D to_emc(hw);
-+	int i;
-+
-+	if (!emc->emc_table_size || !seq) {
-+		u32 emc_setting =3D tegra210_clk_emc_get_setting();
-+
-+		return clk_get_rate(emc_src[emc_src_val(emc_setting)]);
-+	}
-+
-+	if (emc_suspend)
-+		return TEGRA210_EMC_SUSPEND_RATE;
-+
-+	rate /=3D 1000;
-+
-+	for (i =3D 0; i < emc->emc_table_size; i++) {
-+		if (emc->emc_table[i].rate >=3D rate)
-+			return emc->emc_table[i].rate * 1000;
-+	}
-+
-+	return emc->emc_table[i - 1].rate * 1000;
-+}
-+
-+static int clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct tegra_emc *emc =3D to_emc(hw);
-+	struct clk *old_parent, *new_parent;
-+	int ret =3D -EINVAL;
-+
-+	if (!emc->emc_table_size || !seq)
-+		return ret;
-+
-+	if (emc_suspend)
-+		rate =3D TEGRA210_EMC_SUSPEND_RATE;
-+
-+	old_parent =3D clk_get_parent(hw->clk);
-+	new_parent =3D emc_predict_parent(emc, rate);
-+	if (IS_ERR(new_parent))
-+		goto out;
-+
-+	if (!clk_is_match(new_parent, old_parent))
-+		clk_prepare_enable(new_parent);
-+
-+	ret =3D emc_set_rate(emc, rate);
-+	if (ret) {
-+		if (new_parent !=3D old_parent)
-+			clk_disable_unprepare(new_parent);
-+		goto out;
-+	}
-+
-+	if (!clk_is_match(new_parent, old_parent)) {
-+		clk_hw_reparent(hw, __clk_get_hw(new_parent));
-+		clk_disable_unprepare(old_parent);
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static const struct clk_ops tegra_clk_emc_ops =3D {
-+	.get_parent =3D clk_emc_get_parent,
-+	.recalc_rate =3D clk_emc_recalc_rate,
-+	.round_rate =3D clk_emc_round_rate,
-+	.set_rate =3D clk_emc_set_rate,
-+};
-+
-+static int find_matching_input(struct emc_table *table, struct emc_sel *se=
-l)
-+{
-+	u32 div_value;
-+	u32 src_value;
-+	unsigned long input_rate =3D 0;
-+	struct clk *input_clk;
-+
-+	div_value =3D emc_div_val(table->clk_src_emc);
-+	src_value =3D emc_src_val(table->clk_src_emc);
-+
-+	if (div_value & 0x1) {
-+		pr_warn("Tegra EMC: invalid odd divider for EMC rate %u\n",
-+			table->rate);
-+		return -EINVAL;
-+	}
-+
-+	if (!(table->clk_src_emc & EMC_CLK_MC_EMC_SAME_FREQ) !=3D
-+	    !(MC_EMEM_ARB_MISC0_EMC_SAME_FREQ &
-+	    table->burst_regs[MC_EMEM_ARB_MISC0_INDEX])) {
-+		pr_warn("Tegra EMC: ambiguous EMC to MC ratio for rate %u\n",
-+			table->rate);
-+		return -EINVAL;
-+	}
-+
-+	input_clk =3D emc_src[src_value];
-+	if (input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM]
-+		|| input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM_UD]) {
-+		input_rate =3D table->rate * (1 + div_value / 2);
-+	} else {
-+		input_rate =3D clk_get_rate(input_clk) / 1000;
-+		if (input_rate !=3D (table->rate * (1 + div_value / 2))) {
-+			pr_warn("Tegra EMC: rate %u doesn't match input\n",
-+				table->rate);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	sel->input =3D input_clk;
-+	sel->input_rate =3D input_rate;
-+	sel->value =3D table->clk_src_emc;
-+	sel->input_b =3D input_clk;
-+	sel->input_rate_b =3D input_rate;
-+	sel->value_b =3D table->clk_src_emc;
-+
-+	if (input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM]) {
-+		sel->input_b =3D emc_src[TEGRA_EMC_SRC_PLLMB];
-+		sel->value_b =3D table->clk_src_emc &
-+			       ~EMC_CLK_EMC_2X_CLK_SRC_MASK;
-+		sel->value_b |=3D TEGRA_EMC_SRC_PLLMB <<
-+				EMC_CLK_EMC_2X_CLK_SRC_SHIFT;
-+	}
-+
-+	if (input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM_UD]) {
-+		sel->input_b =3D emc_src[TEGRA_EMC_SRC_PLLMB_UD];
-+		sel->value_b =3D table->clk_src_emc &
-+			       ~EMC_CLK_EMC_2X_CLK_SRC_MASK;
-+		sel->value_b |=3D TEGRA_EMC_SRC_PLLMB_UD <<
-+				EMC_CLK_EMC_2X_CLK_SRC_SHIFT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra210_emc_probe(struct platform_device *pdev)
-+{
-+	int i, div;
-+	unsigned long table_rate;
-+	unsigned long current_rate;
-+	struct device_node *np;
-+	struct platform_device *mc;
-+	struct tegra_emc *emc;
-+	struct clk_init_data init;
-+	struct clk *clk;
-+	struct resource *r;
-+	u32 emc_setting;
-+
-+	emc =3D devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
-+	if (!emc)
-+		return -ENOMEM;
-+
-+	np =3D of_parse_phandle(pdev->dev.of_node, "nvidia,memory-controller", 0)=
-;
-+	if (!np) {
-+		dev_err(&pdev->dev, "could not get memory controller\n");
-+		return -ENOENT;
-+	}
-+
-+	mc =3D of_find_device_by_node(np);
-+	of_node_put(np);
-+	if (!mc)
-+		return -ENOENT;
-+
-+	emc->mc =3D platform_get_drvdata(mc);
-+	if (!emc->mc)
-+		return -EPROBE_DEFER;
-+
-+	emc->ram_code =3D tegra_read_ram_code();
-+	r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	emc->emc_base =3D devm_ioremap_resource(&pdev->dev, r);
-+	r =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	emc->emc0_base =3D devm_ioremap_resource(&pdev->dev, r);
-+	r =3D platform_get_resource(pdev, IORESOURCE_MEM, 2);
-+	emc->emc1_base =3D devm_ioremap_resource(&pdev->dev, r);
-+
-+	for (i =3D 0; i < TEGRA_EMC_SRC_COUNT; i++) {
-+		emc_src[i] =3D devm_clk_get(&pdev->dev,
-+						emc_src_names[i]);
-+		if (IS_ERR(emc_src[i])) {
-+			dev_err(&pdev->dev, "Can not find EMC source clock\n");
-+			return -ENODATA;
-+		}
-+	}
-+
-+	/* Init EMC rate statistic data */
-+	emc_stats.clkchange_count =3D 0;
-+	spin_lock_init(&emc_stats.spinlock);
-+	emc_stats.last_update =3D get_jiffies_64();
-+	emc_stats.last_sel =3D TEGRA_EMC_TABLE_MAX_SIZE;
-+
-+	emc->dram_type =3D (emc_readl(emc, EMC_FBIO_CFG5) &
-+			  EMC_FBIO_CFG5_DRAM_TYPE_MASK) >>
-+			  EMC_FBIO_CFG5_DRAM_TYPE_SHIFT;
-+	if (emc->dram_type !=3D DRAM_TYPE_DDR3 &&
-+	    emc->dram_type !=3D DRAM_TYPE_LPDDR2 &&
-+	    emc->dram_type !=3D DRAM_TYPE_LPDDR4) {
-+		dev_err(&pdev->dev, "DRAM not supported\n");
-+		return -ENODATA;
-+	}
-+
-+	emc->dram_dev_num =3D tegra_mc_get_emem_device_count(emc->mc);
-+
-+	tegra_emc_dt_parse_pdata(pdev, &emc->emc_table_normal,
-+				 &emc->emc_table_derated,
-+				 &emc->emc_table_size);
-+	if (!emc->emc_table_size ||
-+	    emc->emc_table_size > TEGRA_EMC_TABLE_MAX_SIZE) {
-+		dev_err(&pdev->dev, "Invalid table size %d\n",
-+			emc->emc_table_size);
-+		goto emc_clk_register;
-+	}
-+	emc->emc_table =3D emc->emc_table_normal;
++	u32 mrr_req =3D 0, mrr_data =3D 0;
++	u32 temp0_0 =3D 0, temp0_1 =3D 0, temp1_0 =3D 0, temp1_1 =3D 0;
++	s32 tdel =3D 0, tmdel =3D 0, adel =3D 0;
++	u32 cval =3D 0;
++	struct emc_table *last_timing =3D emc->current_timing;
++	struct emc_table *next_timing =3D emc->next_timing;
++	u32 last_timing_rate_mhz =3D last_timing->rate / 1000;
++	u32 next_timing_rate_mhz =3D next_timing->rate / 1000;
++	int dvfs_pt1 =3D type =3D=3D DVFS_PT1;
++	int dvfs_update =3D type =3D=3D DVFS_UPDATE;
++	int periodic_training_update =3D type =3D=3D PERIODIC_TRAINING_UPDATE;
 +
 +	/*
-+	 * Copy trained trimmers from the normal table to the derated
-+	 * table for LP4. Bootloader trains only the normal table.
-+	 * Trimmers are the same for derated and normal tables.
++	 * Dev0 MSB.
 +	 */
-+	if (emc->emc_table_derated && emc->dram_type =3D=3D DRAM_TYPE_LPDDR4)
-+		emc_copy_table_params(emc->emc_table_normal,
-+				      emc->emc_table_derated,
-+				      emc->emc_table_size,
-+				      EMC_COPY_TABLE_PARAM_PERIODIC_FIELDS |
-+				      EMC_COPY_TABLE_PARAM_TRIM_REGS);
++	if (dvfs_pt1 || periodic_training_update) {
++		mrr_req =3D (2 << EMC_MRR_DEV_SEL_SHIFT) |
++			(19 << EMC_MRR_MA_SHIFT);
++		emc_writel(emc, mrr_req, EMC_MRR);
 +
-+	seq =3D supported_seqs;
-+	while (seq->table_rev) {
-+		if (seq->table_rev =3D=3D emc->emc_table[0].rev)
-+			break;
-+		seq++;
-+	}
-+	if (!seq->set_clock) {
-+		seq =3D NULL;
-+		dev_err(&pdev->dev, "Invalid EMC sequence for table Rev. %d\n",
-+			emc->emc_table[0].rev);
-+		goto emc_clk_register;
-+	}
++		WARN(wait_for_update(emc, EMC_EMC_STATUS,
++				     EMC_EMC_STATUS_MRR_DIVLD, 1, REG_EMC),
++		     "Timed out waiting for MRR 19 (ch=3D0)\n");
++		if (channel_mode =3D=3D DUAL_CHANNEL)
++			WARN(wait_for_update(emc, EMC_EMC_STATUS,
++					     EMC_EMC_STATUS_MRR_DIVLD, 1,
++					     REG_EMC1),
++			     "Timed out waiting for MRR 19 (ch=3D1)\n");
 +
-+	emc_clk_sel =3D devm_kcalloc(&pdev->dev,
-+				   emc->emc_table_size,
-+				   sizeof(struct emc_sel),
-+				   GFP_KERNEL);
-+	if (!emc_clk_sel) {
-+		dev_err(&pdev->dev, "Memory allocation failed\n");
-+		return -ENOMEM;
-+	}
++		mrr_data =3D (emc_readl(emc, EMC_MRR) & EMC_MRR_DATA_MASK) <<
++			   EMC_MRR_DATA_SHIFT;
 +
-+	/* calculate the rate from source clock */
-+	emc_setting =3D tegra210_clk_emc_get_setting();
-+	current_rate =3D clk_get_rate(emc_src[emc_src_val(emc_setting)]);
-+	div =3D emc_div_val(emc_setting);
-+	div +=3D 2;
-+	current_rate *=3D 2;
-+	current_rate +=3D div - 1;
-+	do_div(current_rate, div);
-+	current_rate /=3D  1000;
++		temp0_0 =3D (mrr_data & 0xff) << 8;
++		temp0_1 =3D mrr_data & 0xff00;
 +
-+	for (i =3D 0; i < emc->emc_table_size; i++) {
-+		table_rate =3D emc->emc_table[i].rate;
-+		if (!table_rate)
-+			continue;
++		if (channel_mode =3D=3D DUAL_CHANNEL) {
++			mrr_data =3D (emc1_readl(emc, EMC_MRR) &
++				    EMC_MRR_DATA_MASK) <<
++				   EMC_MRR_DATA_SHIFT;
++			temp1_0 =3D (mrr_data & 0xff) << 8;
++			temp1_1 =3D mrr_data & 0xff00;
++		}
 +
-+		if (i && ((table_rate <=3D emc->emc_table[i-1].rate) ||
-+		   (emc->emc_table[i].min_volt <
-+		    emc->emc_table[i-1].min_volt)))
-+			continue;
++		/*
++		 * Dev0 LSB.
++		 */
++		mrr_req =3D (mrr_req & ~EMC_MRR_MA_MASK) |
++			  (18 << EMC_MRR_MA_SHIFT);
++		emc_writel(emc, mrr_req, EMC_MRR);
 +
-+		if (emc->emc_table[i].rev !=3D emc->emc_table[0].rev)
-+			continue;
++		WARN(wait_for_update(emc, EMC_EMC_STATUS,
++				     EMC_EMC_STATUS_MRR_DIVLD, 1, REG_EMC),
++		     "Timed out waiting for MRR 18 (ch=3D0)\n");
++		if (channel_mode =3D=3D DUAL_CHANNEL)
++			WARN(wait_for_update(emc, EMC_EMC_STATUS,
++					     EMC_EMC_STATUS_MRR_DIVLD, 1,
++					     REG_EMC1),
++			     "Timed out waiting for MRR 18 (ch=3D1)\n");
 +
-+		if (find_matching_input(&emc->emc_table[i], &emc_clk_sel[i]))
-+			continue;
++		mrr_data =3D (emc_readl(emc, EMC_MRR) & EMC_MRR_DATA_MASK) <<
++			   EMC_MRR_DATA_SHIFT;
 +
-+		if (table_rate =3D=3D current_rate)
-+			emc_stats.last_sel =3D i;
-+	}
++		temp0_0 |=3D mrr_data & 0xff;
++		temp0_1 |=3D (mrr_data & 0xff00) >> 8;
 +
-+	dev_info(&pdev->dev, "validated EMC DFS table\n");
-+
-+	/* Update the start_timing base on the settings from firmware */
-+	emc->start_timing.num_burst =3D emc->emc_table[0].num_burst;
-+	emc->start_timing.num_burst_per_ch =3D
-+		emc->emc_table[0].num_burst_per_ch;
-+	emc->start_timing.num_trim =3D emc->emc_table[0].num_trim;
-+	emc->start_timing.num_trim_per_ch =3D
-+		emc->emc_table[0].num_trim_per_ch;
-+	emc->start_timing.num_mc_regs =3D emc->emc_table[0].num_mc_regs;
-+	emc->start_timing.num_up_down =3D emc->emc_table[0].num_up_down;
-+	emc->start_timing.vref_num =3D emc->emc_table[0].vref_num;
-+
-+	emc_get_timing(emc, &emc->start_timing);
-+	emc->current_timing =3D &emc->start_timing;
-+	emc->clk_setting =3D emc_setting;
-+
-+emc_clk_register:
-+	init.name =3D "emc";
-+	init.ops =3D &tegra_clk_emc_ops;
-+	init.flags =3D CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE;
-+	init.parent_names =3D emc_src_names;
-+	init.num_parents =3D ARRAY_SIZE(emc_src_names);
-+	emc->hw.init =3D &init;
-+
-+	clk =3D clk_register(&pdev->dev, &emc->hw);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	emc->emc_clk =3D clk;
-+	emc->dev =3D &pdev->dev;
-+	tegra_emc =3D emc;
-+	dev_set_drvdata(emc->dev, emc);
-+
-+	if (emc->emc_table_size && seq) {
-+		for (i =3D 0; i < emc->emc_table_size; i++) {
-+			table_rate =3D emc->emc_table[i].rate * 1000;
-+			if (clk_set_rate(clk, table_rate))
-+				dev_info(&pdev->dev,
-+					 "rate: %lu validation fail\n",
-+					 table_rate);
-+
-+			dev_info(&pdev->dev, "rate: %lu validation success\n",
-+				 table_rate);
++		if (channel_mode =3D=3D DUAL_CHANNEL) {
++			mrr_data =3D (emc1_readl(emc, EMC_MRR) &
++				    EMC_MRR_DATA_MASK) <<
++				   EMC_MRR_DATA_SHIFT;
++			temp1_0 |=3D (mrr_data & 0xff);
++			temp1_1 |=3D (mrr_data & 0xff00) >> 8;
 +		}
 +	}
 +
-+	if (IS_ENABLED(CONFIG_DEBUG_FS))
-+		tegra_emc_debug_init(emc);
++	if (dvfs_pt1 || periodic_training_update)
++		cval =3D (1000000 * tegra210_actual_osc_clocks(
++					last_timing->run_clocks)) /
++		       (last_timing_rate_mhz * 2 * temp0_0);
 +
-+	return 0;
++	if (dvfs_pt1)
++		__INCREMENT_PTFV(C0D0U0, cval);
++	else if (dvfs_update)
++		__AVERAGE_PTFV(C0D0U0);
++	else if (periodic_training_update)
++		__WEIGHTED_UPDATE_PTFV(C0D0U0, cval);
++
++	if (dvfs_update || periodic_training_update) {
++		tdel =3D next_timing->current_dram_clktree_c0d0u0 -
++			__MOVAVG_AC(next_timing, C0D0U0);
++		tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++		adel =3D tmdel;
++		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++		    next_timing->tree_margin)
++			next_timing->current_dram_clktree_c0d0u0 =3D
++				__MOVAVG_AC(next_timing, C0D0U0);
++	}
++
++	if (dvfs_pt1 || periodic_training_update)
++		cval =3D (1000000 * tegra210_actual_osc_clocks(
++					last_timing->run_clocks)) /
++		       (last_timing_rate_mhz * 2 * temp0_1);
++
++	if (dvfs_pt1)
++		__INCREMENT_PTFV(C0D0U1, cval);
++	else if (dvfs_update)
++		__AVERAGE_PTFV(C0D0U1);
++	else if (periodic_training_update)
++		__WEIGHTED_UPDATE_PTFV(C0D0U1, cval);
++
++	if (dvfs_update || periodic_training_update) {
++		tdel =3D next_timing->current_dram_clktree_c0d0u1 -
++			__MOVAVG_AC(next_timing, C0D0U1);
++		tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++
++		if (tmdel > adel)
++			adel =3D tmdel;
++
++		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++		    next_timing->tree_margin)
++			next_timing->current_dram_clktree_c0d0u1 =3D
++				__MOVAVG_AC(next_timing, C0D0U1);
++	}
++
++	if (channel_mode =3D=3D DUAL_CHANNEL) {
++		if (dvfs_pt1 || periodic_training_update)
++			cval =3D (1000000 * tegra210_actual_osc_clocks(
++						last_timing->run_clocks)) /
++			       (last_timing_rate_mhz * 2 * temp1_0);
++		if (dvfs_pt1)
++			__INCREMENT_PTFV(C1D0U0, cval);
++		else if (dvfs_update)
++			__AVERAGE_PTFV(C1D0U0);
++		else if (periodic_training_update)
++			__WEIGHTED_UPDATE_PTFV(C1D0U0, cval);
++
++		if (dvfs_update || periodic_training_update) {
++			tdel =3D next_timing->current_dram_clktree_c1d0u0 -
++				__MOVAVG_AC(next_timing, C1D0U0);
++			tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++
++			if (tmdel > adel)
++				adel =3D tmdel;
++
++			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++			    next_timing->tree_margin)
++				next_timing->current_dram_clktree_c1d0u0 =3D
++					__MOVAVG_AC(next_timing, C1D0U0);
++		}
++
++		if (dvfs_pt1 || periodic_training_update)
++			cval =3D (1000000 * tegra210_actual_osc_clocks(
++						last_timing->run_clocks)) /
++			       (last_timing_rate_mhz * 2 * temp1_1);
++		if (dvfs_pt1)
++			__INCREMENT_PTFV(C1D0U1, cval);
++		else if (dvfs_update)
++			__AVERAGE_PTFV(C1D0U1);
++		else if (periodic_training_update)
++			__WEIGHTED_UPDATE_PTFV(C1D0U1, cval);
++
++		if (dvfs_update || periodic_training_update) {
++			tdel =3D next_timing->current_dram_clktree_c1d0u1 -
++				__MOVAVG_AC(next_timing, C1D0U1);
++			tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++
++			if (tmdel > adel)
++				adel =3D tmdel;
++
++			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++			    next_timing->tree_margin)
++				next_timing->current_dram_clktree_c1d0u1 =3D
++					__MOVAVG_AC(next_timing, C1D0U1);
++		}
++	}
++
++	if (emc->dram_dev_num !=3D TWO_RANK)
++		goto done;
++
++	/*
++	 * Dev1 MSB.
++	 */
++	if (dvfs_pt1 || periodic_training_update) {
++		mrr_req =3D (1 << EMC_MRR_DEV_SEL_SHIFT) |
++			  (19 << EMC_MRR_MA_SHIFT);
++		emc_writel(emc, mrr_req, EMC_MRR);
++
++		WARN(wait_for_update(emc, EMC_EMC_STATUS,
++				     EMC_EMC_STATUS_MRR_DIVLD, 1, REG_EMC),
++		     "Timed out waiting for MRR 19 (ch=3D0)\n");
++		if (channel_mode =3D=3D DUAL_CHANNEL)
++			WARN(wait_for_update(emc, EMC_EMC_STATUS,
++					     EMC_EMC_STATUS_MRR_DIVLD, 1,
++					     REG_EMC1),
++			     "Timed out waiting for MRR 19 (ch=3D1)\n");
++
++		mrr_data =3D (emc_readl(emc, EMC_MRR) & EMC_MRR_DATA_MASK) <<
++			   EMC_MRR_DATA_SHIFT;
++
++		temp0_0 =3D (mrr_data & 0xff) << 8;
++		temp0_1 =3D mrr_data & 0xff00;
++
++		if (channel_mode =3D=3D DUAL_CHANNEL) {
++			mrr_data =3D (emc1_readl(emc, EMC_MRR) &
++				    EMC_MRR_DATA_MASK) <<
++				   EMC_MRR_DATA_SHIFT;
++			temp1_0 =3D (mrr_data & 0xff) << 8;
++			temp1_1 =3D mrr_data & 0xff00;
++		}
++
++		/*
++		 * Dev1 LSB.
++		 */
++		mrr_req =3D (mrr_req & ~EMC_MRR_MA_MASK) |
++			  (18 << EMC_MRR_MA_SHIFT);
++		emc_writel(emc, mrr_req, EMC_MRR);
++
++		WARN(wait_for_update(emc, EMC_EMC_STATUS,
++				     EMC_EMC_STATUS_MRR_DIVLD, 1, REG_EMC),
++		     "Timed out waiting for MRR 18 (ch=3D0)\n");
++		if (channel_mode =3D=3D DUAL_CHANNEL)
++			WARN(wait_for_update(emc, EMC_EMC_STATUS,
++					     EMC_EMC_STATUS_MRR_DIVLD, 1,
++					     REG_EMC1),
++			     "Timed out waiting for MRR 18 (ch=3D1)\n");
++
++		mrr_data =3D (emc_readl(emc, EMC_MRR) & EMC_MRR_DATA_MASK) <<
++			   EMC_MRR_DATA_SHIFT;
++
++		temp0_0 |=3D mrr_data & 0xff;
++		temp0_1 |=3D (mrr_data & 0xff00) >> 8;
++
++		if (channel_mode =3D=3D DUAL_CHANNEL) {
++			mrr_data =3D (emc1_readl(emc, EMC_MRR) &
++				    EMC_MRR_DATA_MASK) <<
++				   EMC_MRR_DATA_SHIFT;
++			temp1_0 |=3D (mrr_data & 0xff);
++			temp1_1 |=3D (mrr_data & 0xff00) >> 8;
++		}
++	}
++
++	if (dvfs_pt1 || periodic_training_update)
++		cval =3D (1000000 * tegra210_actual_osc_clocks(
++					last_timing->run_clocks)) /
++		       (last_timing_rate_mhz * 2 * temp0_0);
++
++	if (dvfs_pt1)
++		__INCREMENT_PTFV(C0D1U0, cval);
++	else if (dvfs_update)
++		__AVERAGE_PTFV(C0D1U0);
++	else if (periodic_training_update)
++		__WEIGHTED_UPDATE_PTFV(C0D1U0, cval);
++
++	if (dvfs_update || periodic_training_update) {
++		tdel =3D next_timing->current_dram_clktree_c0d1u0 -
++		       __MOVAVG_AC(next_timing, C0D1U0);
++		tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++		if (tmdel > adel)
++			adel =3D tmdel;
++
++		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++		    next_timing->tree_margin)
++			next_timing->current_dram_clktree_c0d1u0 =3D
++				__MOVAVG_AC(next_timing, C0D1U0);
++	}
++
++	if (dvfs_pt1 || periodic_training_update)
++		cval =3D (1000000 * tegra210_actual_osc_clocks(
++					last_timing->run_clocks)) /
++		       (last_timing_rate_mhz * 2 * temp0_1);
++
++	if (dvfs_pt1)
++		__INCREMENT_PTFV(C0D1U1, cval);
++	else if (dvfs_update)
++		__AVERAGE_PTFV(C0D1U1);
++	else if (periodic_training_update)
++		__WEIGHTED_UPDATE_PTFV(C0D1U1, cval);
++
++	if (dvfs_update || periodic_training_update) {
++		tdel =3D next_timing->current_dram_clktree_c0d1u1 -
++		       __MOVAVG_AC(next_timing, C0D1U1);
++		tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++		if (tmdel > adel)
++			adel =3D tmdel;
++
++		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++		    next_timing->tree_margin)
++			next_timing->current_dram_clktree_c0d1u1 =3D
++				__MOVAVG_AC(next_timing, C0D1U1);
++	}
++
++	if (channel_mode =3D=3D DUAL_CHANNEL) {
++		if (dvfs_pt1 || periodic_training_update)
++			cval =3D (1000000 * tegra210_actual_osc_clocks(
++						last_timing->run_clocks)) /
++			       (last_timing_rate_mhz * 2 * temp1_0);
++
++		if (dvfs_pt1)
++			__INCREMENT_PTFV(C1D1U0, cval);
++		else if (dvfs_update)
++			__AVERAGE_PTFV(C1D1U0);
++		else if (periodic_training_update)
++			__WEIGHTED_UPDATE_PTFV(C1D1U0, cval);
++
++		if (dvfs_update || periodic_training_update) {
++			tdel =3D next_timing->current_dram_clktree_c1d1u0 -
++			       __MOVAVG_AC(next_timing, C1D1U0);
++			tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++			if (tmdel > adel)
++				adel =3D tmdel;
++
++			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++			    next_timing->tree_margin)
++				next_timing->current_dram_clktree_c1d1u0 =3D
++					__MOVAVG_AC(next_timing, C1D1U0);
++		}
++
++		if (dvfs_pt1 || periodic_training_update)
++			cval =3D (1000000 * tegra210_actual_osc_clocks(
++						last_timing->run_clocks)) /
++			       (last_timing_rate_mhz * 2 * temp1_1);
++
++		if (dvfs_pt1)
++			__INCREMENT_PTFV(C1D1U1, cval);
++		else if (dvfs_update)
++			__AVERAGE_PTFV(C1D1U1);
++		else if (periodic_training_update)
++			__WEIGHTED_UPDATE_PTFV(C1D1U1, cval);
++
++		if (dvfs_update || periodic_training_update) {
++			tdel =3D next_timing->current_dram_clktree_c1d1u1 -
++			       __MOVAVG_AC(next_timing, C1D1U1);
++			tmdel =3D (tdel < 0) ? -1 * tdel : tdel;
++			if (tmdel > adel)
++				adel =3D tmdel;
++
++			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
++			    next_timing->tree_margin)
++				next_timing->current_dram_clktree_c1d1u1 =3D
++					__MOVAVG_AC(next_timing, C1D1U1);
++		}
++	}
++
++done:
++	return adel;
 +}
 +
-+#ifdef CONFIG_PM_SLEEP
-+static int tegra210_emc_suspend(struct device *dev)
++static u32 periodic_compensation_handler(struct tegra_emc *emc, u32 type,
++					 u32 dram_dev_num,
++					 u32 channel_mode,
++					 struct emc_table *last_timing,
++					 struct emc_table *next_timing)
 +{
-+	struct tegra_emc *emc =3D dev_get_drvdata(dev);
++#define __COPY_EMA(nt, lt, dev)						\
++	({ __MOVAVG(nt, dev) =3D __MOVAVG(lt, dev) *			\
++	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
 +
-+	if (!IS_ERR(emc->emc_clk)) {
-+		emc_suspend =3D true;
-+		emc_resume_rate =3D clk_get_rate(emc->emc_clk);
-+		clk_set_rate(emc->emc_clk, TEGRA210_EMC_SUSPEND_RATE);
++	u32 i;
++	u32 adel =3D 0;
++	u32 samples =3D next_timing->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
++	u32 delay =3D 2 +
++		(1000 * tegra210_actual_osc_clocks(last_timing->run_clocks) /
++		last_timing->rate);
 +
-+		pr_debug("%s at rate %lu\n", __func__,
-+			 clk_get_rate(emc->emc_clk));
++	if (!next_timing->periodic_training)
++		return 0;
++
++	if (type =3D=3D DVFS_SEQUENCE) {
++		if (last_timing->periodic_training &&
++		    (next_timing->ptfv_list[PTFV_CONFIG_CTRL_INDEX] &
++		     PTFV_CONFIG_CTRL_USE_PREVIOUS_EMA)) {
++			/*
++			 * If the previous frequency was using periodic
++			 * calibration then we can reuse the previous
++			 * frequencies EMA data.
++			 */
++			__COPY_EMA(next_timing, last_timing, C0D0U0);
++			__COPY_EMA(next_timing, last_timing, C0D0U1);
++			__COPY_EMA(next_timing, last_timing, C1D0U0);
++			__COPY_EMA(next_timing, last_timing, C1D0U1);
++			__COPY_EMA(next_timing, last_timing, C0D1U0);
++			__COPY_EMA(next_timing, last_timing, C0D1U1);
++			__COPY_EMA(next_timing, last_timing, C1D1U0);
++			__COPY_EMA(next_timing, last_timing, C1D1U1);
++		} else {
++			/* Reset the EMA.*/
++			__MOVAVG(next_timing, C0D0U0) =3D 0;
++			__MOVAVG(next_timing, C0D0U1) =3D 0;
++			__MOVAVG(next_timing, C1D0U0) =3D 0;
++			__MOVAVG(next_timing, C1D0U1) =3D 0;
++			__MOVAVG(next_timing, C0D1U0) =3D 0;
++			__MOVAVG(next_timing, C0D1U1) =3D 0;
++			__MOVAVG(next_timing, C1D1U0) =3D 0;
++			__MOVAVG(next_timing, C1D1U1) =3D 0;
++
++			for (i =3D 0; i < samples; i++) {
++				tegra210_start_periodic_compensation(emc);
++				udelay(delay);
++
++				/*
++				 * Generate next sample of data.
++				 */
++				adel =3D update_clock_tree_delay(emc,
++							emc->dram_dev_num,
++							channel_mode,
++							DVFS_PT1);
++			}
++		}
++
++		/*
++		 * Seems like it should be part of the
++		 * 'if (last_timing->periodic_training)' conditional
++		 * since is already done for the else clause.
++		 */
++		adel =3D update_clock_tree_delay(emc,
++					       emc->dram_dev_num,
++					       channel_mode,
++					       DVFS_UPDATE);
++	}
++
++	if (type =3D=3D PERIODIC_TRAINING_SEQUENCE) {
++		tegra210_start_periodic_compensation(emc);
++		udelay(delay);
++
++		adel =3D update_clock_tree_delay(emc,
++					       emc->dram_dev_num,
++					       channel_mode,
++					       PERIODIC_TRAINING_UPDATE);
++	}
++
++	return adel;
++}
++
++u32 __do_periodic_emc_compensation_r21021(struct tegra_emc *emc)
++{
++	u32 dram_dev_num;
++	u32 channel_mode;
++	u32 emc_cfg, emc_cfg_o;
++	u32 emc_dbg_o;
++	u32 del, i;
++	u32 list[] =3D {
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0,
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1,
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2,
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3,
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0,
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1,
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2,
++		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3,
++		EMC_DATA_BRLSHFT_0,
++		EMC_DATA_BRLSHFT_1
++	};
++	u32 items =3D ARRAY_SIZE(list);
++	u32 emc_cfg_update;
++	struct emc_table *current_timing =3D emc->current_timing;
++
++	if (current_timing->periodic_training) {
++		channel_mode =3D
++			!!(current_timing->burst_regs[EMC_FBIO_CFG7_INDEX] &
++			(1 << 2));
++		dram_dev_num =3D 1 + (mc_readl(emc->mc, MC_EMEM_ADR_CFG) & 0x1);
++
++		emc_cc_dbg(PER_TRAIN, "Periodic training starting\n");
++
++		emc_dbg_o =3D emc_readl(emc, EMC_DBG);
++		emc_cfg_o =3D emc_readl(emc, EMC_CFG);
++		emc_cfg =3D emc_cfg_o & ~(EMC_CFG_DYN_SELF_REF |
++					EMC_CFG_DRAM_ACPD |
++					EMC_CFG_DRAM_CLKSTOP_PD |
++					EMC_CFG_DRAM_CLKSTOP_PD);
++
++
++		/*
++		 * 1. Power optimizations should be off.
++		 */
++		emc_writel(emc, emc_cfg, EMC_CFG);
++
++		/* Does emc_timing_update() for above changes. */
++		tegra210_dll_disable(emc, channel_mode);
++
++		wait_for_update(emc, EMC_EMC_STATUS,
++				EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK, 0,
++				REG_EMC);
++		if (channel_mode)
++			wait_for_update(emc, EMC_EMC_STATUS,
++					EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK,
++					0, REG_EMC1);
++
++		wait_for_update(emc, EMC_EMC_STATUS,
++				EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK, 0,
++				REG_EMC);
++		if (channel_mode)
++			wait_for_update(emc, EMC_EMC_STATUS,
++				EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK, 0,
++				REG_EMC1);
++
++		emc_cfg_update =3D emc_readl(emc, EMC_CFG_UPDATE);
++		emc_writel(emc, (emc_cfg_update &
++			    ~EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_MASK) |
++			   (2 << EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_SHIFT),
++			   EMC_CFG_UPDATE);
++
++		/*
++		 * 2. osc kick off - this assumes training and dvfs have set
++		 *    correct MR23.
++		 */
++		tegra210_start_periodic_compensation(emc);
++
++		/*
++		 * 3. Let dram capture its clock tree delays.
++		 */
++		udelay((tegra210_actual_osc_clocks(current_timing->run_clocks) *
++			1000) /
++		       current_timing->rate + 1);
++
++		/*
++		 * 4. Check delta wrt previous values (save value if margin
++		 *    exceeds what is set in table).
++		 */
++		del =3D periodic_compensation_handler(emc,
++						    PERIODIC_TRAINING_SEQUENCE,
++						    dram_dev_num,
++						    channel_mode,
++						    current_timing,
++						    current_timing);
++
++		/*
++		 * 5. Apply compensation w.r.t. trained values (if clock tree
++		 *    has drifted more than the set margin).
++		 */
++		if (current_timing->tree_margin <
++		    ((del * 128 * (current_timing->rate / 1000)) / 1000000)) {
++			for (i =3D 0; i < items; i++) {
++				u32 tmp =3D
++				tegra210_apply_periodic_compensation_trimmer(
++				current_timing, list[i]);
++
++				emc_cc_dbg(EMA_WRITES, "0x%08x <=3D 0x%08x\n",
++					   list[i], tmp);
++				emc_writel(emc, tmp, list[i]);
++			}
++		}
++
++		emc_writel(emc, emc_cfg_o, EMC_CFG);
++
++		/*
++		 * 6. Timing update actally applies the new trimmers.
++		 */
++		emc_timing_update(emc, channel_mode);
++
++		/* 6.1. Restore the UPDATE_DLL_IN_UPDATE field. */
++		emc_writel(emc, emc_cfg_update, EMC_CFG_UPDATE);
++
++		/* 6.2. Restore the DLL. */
++		tegra210_dll_enable(emc, channel_mode);
++
++		/*
++		 * 7. Copy over the periodic training registers that we updated
++		 *    here to the corresponding derated/non-derated table.
++		 */
++		tegra210_update_emc_alt_timing(emc, current_timing);
 +	}
 +
 +	return 0;
 +}
 +
-+static int tegra210_emc_resume(struct device *dev)
++/*
++ * Do the clock change sequence.
++ */
++void emc_set_clock_r21021(struct tegra_emc *emc, u32 clksrc)
 +{
-+	struct tegra_emc *emc =3D dev_get_drvdata(dev);
++	/*
++	 * This is the timing table for the source frequency. It does _not_
++	 * necessarily correspond to the actual timing values in the EMC at the
++	 * moment. If the boot BCT differs from the table then this can happen.
++	 * However, we need it for accessing the dram_timings (which are not
++	 * really registers) array for the current frequency.
++	 */
++	struct emc_table *fake_timing;
++	struct emc_table *last_timing =3D emc->current_timing;
++	struct emc_table *next_timing =3D emc->next_timing;
 +
-+	if (!IS_ERR(emc->emc_clk)) {
-+		emc_suspend =3D false;
-+		clk_set_rate(emc->emc_clk, emc_resume_rate);
++	u32 i, tmp;
 +
-+		pr_debug("%s at rate %lu\n", __func__,
-+			 clk_get_rate(emc->emc_clk));
++	u32 cya_allow_ref_cc =3D 0, ref_b4_sref_en =3D 0, cya_issue_pc_ref =3D 0;
++
++	u32 zqcal_before_cc_cutoff =3D 2400; /* In picoseconds */
++	u32 ref_delay_mult;
++	u32 ref_delay;
++	s32 zq_latch_dvfs_wait_time;
++	s32 tZQCAL_lpddr4_fc_adj;
++	/* Scaled by x1000 */
++	u32 tFC_lpddr4 =3D 1000 * next_timing->dram_timings[T_FC_LPDDR4];
++	u32 tZQCAL_lpddr4 =3D 1000000;
++
++	u32 dram_type, dram_dev_num, shared_zq_resistor;
++	u32 channel_mode;
++	u32 is_lpddr3;
++
++	u32 emc_cfg, emc_sel_dpd_ctrl, emc_cfg_reg;
++
++	u32 emc_dbg;
++	u32 emc_zcal_interval;
++	u32 emc_zcal_wait_cnt_old;
++	u32 emc_zcal_wait_cnt_new;
++	u32 emc_dbg_active;
++	u32 zq_op;
++	u32 zcal_wait_time_clocks;
++	u32 zcal_wait_time_ps;
++
++	u32 emc_auto_cal_config;
++	u32 auto_cal_en;
++
++	u32 mr13_catr_enable;
++
++	u32 ramp_up_wait =3D 0, ramp_down_wait =3D 0;
++
++	/* In picoseconds. */
++	u32 source_clock_period;
++	u32 destination_clock_period;
++
++	u32 emc_dbg_o;
++	u32 emc_cfg_pipe_clk_o;
++	u32 emc_pin_o;
++
++	u32 mr13_flip_fspwr;
++	u32 mr13_flip_fspop;
++
++	u32 opt_zcal_en_cc;
++	u32 opt_do_sw_qrst =3D 1;
++	u32 opt_dvfs_mode;
++	u32 opt_dll_mode;
++	u32 opt_cc_short_zcal =3D 1;
++	u32 opt_short_zcal =3D 1;
++	u32 save_restore_clkstop_pd =3D 1;
++
++	u32 prelock_dll_en =3D 0, dll_out;
++
++	int next_push, next_dq_e_ivref, next_dqs_e_ivref;
++
++	u32 opt_war_200024907;
++	u32 zq_wait_long;
++	u32 zq_wait_short;
++
++	u32 bg_regulator_switch_complete_wait_clks;
++	u32 bg_regulator_mode_change;
++	u32 enable_bglp_regulator;
++	u32 enable_bg_regulator;
++
++	u32 tRTM;
++	u32 RP_war;
++	u32 R2P_war;
++	u32 TRPab_war;
++	s32 nRTP;
++	u32 deltaTWATM;
++	u32 W2P_war;
++	u32 tRPST;
++
++	u32 mrw_req;
++	u32 adel =3D 0, compensate_trimmer_applicable =3D 0;
++	u32 next_timing_rate_mhz =3D next_timing->rate / 1000;
++
++	static u32 fsp_for_next_freq;
++
++	emc_cc_dbg(INFO, "Running clock change.\n");
++
++	fake_timing =3D get_timing_from_freq(emc, last_timing->rate);
++
++	fsp_for_next_freq =3D !fsp_for_next_freq;
++
++	dram_type =3D emc_readl(emc, EMC_FBIO_CFG5) &
++		    EMC_FBIO_CFG5_DRAM_TYPE_MASK >>
++		    EMC_FBIO_CFG5_DRAM_TYPE_SHIFT;
++	shared_zq_resistor =3D last_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX] &
++			     1 << 31;
++	channel_mode =3D !!(last_timing->burst_regs[EMC_FBIO_CFG7_INDEX] &
++			  1 << 2);
++	opt_zcal_en_cc =3D (next_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX] &&
++			  !last_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX]) ||
++			  dram_type =3D=3D DRAM_TYPE_LPDDR4;
++	opt_dll_mode =3D (dram_type =3D=3D DRAM_TYPE_DDR3) ?
++		       get_dll_state(next_timing) : DLL_OFF;
++	is_lpddr3 =3D (dram_type =3D=3D DRAM_TYPE_LPDDR2) &&
++		    next_timing->burst_regs[EMC_FBIO_CFG5_INDEX] &
++		    1 << 25;
++	opt_war_200024907 =3D (dram_type =3D=3D DRAM_TYPE_LPDDR4);
++	opt_dvfs_mode =3D MAN_SR;
++	dram_dev_num =3D (mc_readl(emc->mc, MC_EMEM_ADR_CFG) & 0x1) + 1;
++
++	emc_cfg_reg =3D emc_readl(emc, EMC_CFG);
++	emc_auto_cal_config =3D emc_readl(emc, EMC_AUTO_CAL_CONFIG);
++
++	source_clock_period =3D 1000000000 / last_timing->rate;
++	destination_clock_period =3D 1000000000 / next_timing->rate;
++
++	tZQCAL_lpddr4_fc_adj =3D (destination_clock_period >
++				zqcal_before_cc_cutoff) ?
++		tZQCAL_lpddr4 / destination_clock_period :
++		(tZQCAL_lpddr4 - tFC_lpddr4) / destination_clock_period;
++	emc_dbg_o =3D emc_readl(emc, EMC_DBG);
++	emc_pin_o =3D emc_readl(emc, EMC_PIN);
++	emc_cfg_pipe_clk_o =3D emc_readl(emc, EMC_CFG_PIPE_CLK);
++	emc_dbg =3D emc_dbg_o;
++
++	emc_cfg =3D next_timing->burst_regs[EMC_CFG_INDEX];
++	emc_cfg &=3D ~(EMC_CFG_DYN_SELF_REF | EMC_CFG_DRAM_ACPD |
++		     EMC_CFG_DRAM_CLKSTOP_SR | EMC_CFG_DRAM_CLKSTOP_PD);
++	emc_sel_dpd_ctrl =3D next_timing->emc_sel_dpd_ctrl;
++	emc_sel_dpd_ctrl &=3D ~(EMC_SEL_DPD_CTRL_CLK_SEL_DPD_EN |
++			      EMC_SEL_DPD_CTRL_CA_SEL_DPD_EN |
++			      EMC_SEL_DPD_CTRL_RESET_SEL_DPD_EN |
++			      EMC_SEL_DPD_CTRL_ODT_SEL_DPD_EN |
++			      EMC_SEL_DPD_CTRL_DATA_SEL_DPD_EN);
++
++	emc_cc_dbg(INFO, "Clock change version: %d\n",
++		   DVFS_CLOCK_CHANGE_VERSION);
++	emc_cc_dbg(INFO, "DRAM type =3D %d\n", emc->dram_type);
++	emc_cc_dbg(INFO, "DRAM dev #: %d\n", dram_dev_num);
++	emc_cc_dbg(INFO, "Next EMC clksrc: 0x%08x\n", clksrc);
++	emc_cc_dbg(INFO, "DLL clksrc:      0x%08x\n", next_timing->dll_clk_src);
++	emc_cc_dbg(INFO, "last rate: %u, next rate %u\n", last_timing->rate,
++		   next_timing->rate);
++	emc_cc_dbg(INFO, "last period: %u, next period: %u\n",
++		   source_clock_period, destination_clock_period);
++	emc_cc_dbg(INFO, "  shared_zq_resistor: %d\n", !!shared_zq_resistor);
++	emc_cc_dbg(INFO, "  channel_mode: %d\n", channel_mode);
++	emc_cc_dbg(INFO, "  opt_dll_mode: %d\n", opt_dll_mode);
++
++	/*
++	 * Step 1:
++	 *   Pre DVFS SW sequence.
++	 */
++	emc_cc_dbg(STEPS, "Step 1\n");
++	emc_cc_dbg(STEPS, "Step 1.1: Disable DLL temporarily.\n");
++	tmp =3D emc_readl(emc, EMC_CFG_DIG_DLL);
++	tmp &=3D ~EMC_CFG_DIG_DLL_CFG_DLL_EN;
++	emc_writel(emc, tmp, EMC_CFG_DIG_DLL);
++
++	emc_timing_update(emc, channel_mode);
++	wait_for_update(emc, EMC_CFG_DIG_DLL,
++			EMC_CFG_DIG_DLL_CFG_DLL_EN, 0, REG_EMC);
++	if (channel_mode)
++		wait_for_update(emc, EMC_CFG_DIG_DLL,
++				EMC_CFG_DIG_DLL_CFG_DLL_EN, 0, REG_EMC1);
++
++	emc_cc_dbg(STEPS, "Step 1.2: Disable AUTOCAL temporarily.\n");
++	emc_auto_cal_config =3D next_timing->emc_auto_cal_config;
++	auto_cal_en =3D emc_auto_cal_config & EMC_AUTO_CAL_CONFIG_AUTO_CAL_ENABLE=
+;
++	emc_auto_cal_config &=3D ~EMC_AUTO_CAL_CONFIG_AUTO_CAL_START;
++	emc_auto_cal_config |=3D  EMC_AUTO_CAL_CONFIG_AUTO_CAL_MEASURE_STALL;
++	emc_auto_cal_config |=3D  EMC_AUTO_CAL_CONFIG_AUTO_CAL_UPDATE_STALL;
++	emc_auto_cal_config |=3D  auto_cal_en;
++	emc_writel(emc, emc_auto_cal_config, EMC_AUTO_CAL_CONFIG);
++	emc_readl(emc, EMC_AUTO_CAL_CONFIG); /* Flush write. */
++
++	emc_cc_dbg(STEPS, "Step 1.3: Disable other power features.\n");
++	emc_set_shadow_bypass(emc, ACTIVE);
++	emc_writel(emc, emc_cfg, EMC_CFG);
++	emc_writel(emc, emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
++	emc_set_shadow_bypass(emc, ASSEMBLY);
++
++	if (next_timing->periodic_training) {
++		tegra210_reset_dram_clktree_values(next_timing);
++
++		wait_for_update(emc, EMC_EMC_STATUS,
++				EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK, 0,
++				REG_EMC);
++		if (channel_mode)
++			wait_for_update(emc, EMC_EMC_STATUS,
++					EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK,
++					0, REG_EMC1);
++
++		wait_for_update(emc, EMC_EMC_STATUS,
++				EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK, 0,
++				REG_EMC);
++		if (channel_mode)
++			wait_for_update(emc, EMC_EMC_STATUS,
++				EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK, 0,
++				REG_EMC1);
++
++		tegra210_start_periodic_compensation(emc);
++
++		udelay(((1000 *
++			 tegra210_actual_osc_clocks(last_timing->run_clocks)) /
++			last_timing->rate) + 2);
++		adel =3D periodic_compensation_handler(emc, DVFS_SEQUENCE,
++						     dram_dev_num,
++						     channel_mode,
++						     fake_timing, next_timing);
++		compensate_trimmer_applicable =3D
++			next_timing->periodic_training &&
++			((adel * 128 * next_timing_rate_mhz) / 1000000) >
++			next_timing->tree_margin;
 +	}
 +
-+	return 0;
++	emc_writel(emc, EMC_INTSTATUS_CLKCHANGE_COMPLETE, EMC_INTSTATUS);
++	emc_set_shadow_bypass(emc, ACTIVE);
++	emc_writel(emc, emc_cfg, EMC_CFG);
++	emc_writel(emc, emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
++	emc_writel(emc, emc_cfg_pipe_clk_o | EMC_CFG_PIPE_CLK_CLK_ALWAYS_ON,
++		   EMC_CFG_PIPE_CLK);
++	emc_writel(emc, next_timing->emc_fdpd_ctrl_cmd_no_ramp &
++		   ~EMC_FDPD_CTRL_CMD_NO_RAMP_CMD_DPD_NO_RAMP_ENABLE,
++		   EMC_FDPD_CTRL_CMD_NO_RAMP);
++
++	bg_regulator_mode_change =3D
++		((next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++		  EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD) ^
++		 (last_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++		  EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD)) ||
++		((next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++		  EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD) ^
++		 (last_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++		  EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD));
++	enable_bglp_regulator =3D
++		(next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++		 EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD) =3D=3D 0;
++	enable_bg_regulator =3D
++		(next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++		 EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD) =3D=3D 0;
++
++	if (bg_regulator_mode_change) {
++		if (enable_bg_regulator)
++			emc_writel(emc, last_timing->burst_regs
++				   [EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++				   ~EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD,
++				   EMC_PMACRO_BG_BIAS_CTRL_0);
++		else
++			emc_writel(emc, last_timing->burst_regs
++				   [EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++				   ~EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD,
++				   EMC_PMACRO_BG_BIAS_CTRL_0);
++	}
++
++	/* Check if we need to turn on VREF generator. */
++	if ((((last_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
++	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF) =3D=3D 0) &&
++	     ((next_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
++	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF) =3D=3D 1)) ||
++	    (((last_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
++	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF) =3D=3D 0) &&
++	     ((next_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
++	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF) =3D=3D 1))) {
++		u32 pad_tx_ctrl =3D
++		    next_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX];
++		u32 last_pad_tx_ctrl =3D
++		    last_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX];
++
++		next_dqs_e_ivref =3D pad_tx_ctrl &
++				   EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF;
++		next_dq_e_ivref =3D pad_tx_ctrl &
++				  EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF;
++		next_push =3D (last_pad_tx_ctrl &
++			     ~EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF &
++			     ~EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF) |
++			    next_dq_e_ivref | next_dqs_e_ivref;
++		emc_writel(emc, next_push, EMC_PMACRO_DATA_PAD_TX_CTRL);
++		udelay(1);
++	} else if (bg_regulator_mode_change) {
++		udelay(1);
++	}
++
++	emc_set_shadow_bypass(emc, ASSEMBLY);
++
++	/*
++	 * Step 2:
++	 *   Prelock the DLL.
++	 */
++	emc_cc_dbg(STEPS, "Step 2\n");
++	if (next_timing->burst_regs[EMC_CFG_DIG_DLL_INDEX] &
++	    EMC_CFG_DIG_DLL_CFG_DLL_EN) {
++		emc_cc_dbg(INFO, "Prelock enabled for target frequency.\n");
++		dll_out =3D tegra210_dll_prelock(emc, 0, clksrc);
++		emc_cc_dbg(INFO, "DLL out: 0x%03x\n", dll_out);
++		prelock_dll_en =3D 1;
++	} else {
++		emc_cc_dbg(INFO, "Disabling DLL for target frequency.\n");
++		tegra210_dll_disable(emc, channel_mode);
++	}
++
++	/*
++	 * Step 3:
++	 *   Prepare autocal for the clock change.
++	 */
++	emc_cc_dbg(STEPS, "Step 3\n");
++	emc_set_shadow_bypass(emc, ACTIVE);
++	emc_writel(emc, next_timing->emc_auto_cal_config2,
++		   EMC_AUTO_CAL_CONFIG2);
++	emc_writel(emc, next_timing->emc_auto_cal_config3,
++		   EMC_AUTO_CAL_CONFIG3);
++	emc_writel(emc, next_timing->emc_auto_cal_config4,
++		   EMC_AUTO_CAL_CONFIG4);
++	emc_writel(emc, next_timing->emc_auto_cal_config5,
++		   EMC_AUTO_CAL_CONFIG5);
++	emc_writel(emc, next_timing->emc_auto_cal_config6,
++		   EMC_AUTO_CAL_CONFIG6);
++	emc_writel(emc, next_timing->emc_auto_cal_config7,
++		   EMC_AUTO_CAL_CONFIG7);
++	emc_writel(emc, next_timing->emc_auto_cal_config8,
++		   EMC_AUTO_CAL_CONFIG8);
++	emc_set_shadow_bypass(emc, ASSEMBLY);
++
++	emc_auto_cal_config |=3D (EMC_AUTO_CAL_CONFIG_AUTO_CAL_COMPUTE_START |
++				auto_cal_en);
++	emc_writel(emc, emc_auto_cal_config, EMC_AUTO_CAL_CONFIG);
++
++	/*
++	 * Step 4:
++	 *   Update EMC_CFG. (??)
++	 */
++	emc_cc_dbg(STEPS, "Step 4\n");
++	if (source_clock_period > 50000 && dram_type =3D=3D DRAM_TYPE_LPDDR4)
++		ccfifo_writel(emc, 1, EMC_SELF_REF, 0);
++	else
++		emc_writel(emc, next_timing->emc_cfg_2, EMC_CFG_2);
++
++	/*
++	 * Step 5:
++	 *   Prepare reference variables for ZQCAL regs.
++	 */
++	emc_cc_dbg(STEPS, "Step 5\n");
++	emc_zcal_interval =3D 0;
++	emc_zcal_wait_cnt_old =3D
++		last_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX];
++	emc_zcal_wait_cnt_new =3D
++		next_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX];
++	emc_zcal_wait_cnt_old &=3D ~EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK;
++	emc_zcal_wait_cnt_new &=3D ~EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK;
++
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4)
++		zq_wait_long =3D max((u32)1,
++				   div_o3(1000000, destination_clock_period));
++	else if (dram_type =3D=3D DRAM_TYPE_LPDDR2 || is_lpddr3)
++		zq_wait_long =3D max(next_timing->min_mrs_wait,
++				   div_o3(360000, destination_clock_period)) +
++			       4;
++	else if (dram_type =3D=3D DRAM_TYPE_DDR3)
++		zq_wait_long =3D max((u32)256,
++				   div_o3(320000, destination_clock_period) +
++				   2);
++	else
++		zq_wait_long =3D 0;
++
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR2 || is_lpddr3)
++		zq_wait_short =3D max(max(next_timing->min_mrs_wait, (u32)6),
++				    div_o3(90000, destination_clock_period)) +
++				4;
++	else if (dram_type =3D=3D DRAM_TYPE_DDR3)
++		zq_wait_short =3D max((u32)64,
++				    div_o3(80000, destination_clock_period)) +
++				2;
++	else
++		zq_wait_short =3D 0;
++
++	/*
++	 * Step 6:
++	 *   Training code - removed.
++	 */
++	emc_cc_dbg(STEPS, "Step 6\n");
++
++	/*
++	 * Step 7:
++	 *   Program FSP reference registers and send MRWs to new FSPWR.
++	 */
++	emc_cc_dbg(STEPS, "Step 7\n");
++	emc_cc_dbg(SUB_STEPS, "Step 7.1: Bug 200024907 - Patch RP R2P");
++	if (opt_war_200024907) {
++		nRTP =3D 16;
++		if (source_clock_period >=3D 1000000/1866) /* 535.91 ps */
++			nRTP =3D 14;
++		if (source_clock_period >=3D 1000000/1600) /* 625.00 ps */
++			nRTP =3D 12;
++		if (source_clock_period >=3D 1000000/1333) /* 750.19 ps */
++			nRTP =3D 10;
++		if (source_clock_period >=3D 1000000/1066) /* 938.09 ps */
++			nRTP =3D 8;
++
++		deltaTWATM =3D max_t(u32, div_o3(7500, source_clock_period), 8);
++
++		/*
++		 * Originally there was a + .5 in the tRPST calculation.
++		 * However since we can't do FP in the kernel and the tRTM
++		 * computation was in a floating point ceiling function, adding
++		 * one to tRTP should be ok. There is no other source of non
++		 * integer values, so the result was always going to be
++		 * something for the form: f_ceil(N + .5) =3D N + 1;
++		 */
++		tRPST =3D ((last_timing->emc_mrw & 0x80) >> 7);
++		tRTM =3D fake_timing->dram_timings[RL] +
++		       div_o3(3600, source_clock_period) +
++		       max_t(u32, div_o3(7500, source_clock_period), 8) +
++		       tRPST + 1 + nRTP;
++
++		emc_cc_dbg(INFO, "tRTM =3D %u, EMC_RP =3D %u\n", tRTM,
++			   next_timing->burst_regs[EMC_RP_INDEX]);
++
++		if (last_timing->burst_regs[EMC_RP_INDEX] < tRTM) {
++			if (tRTM > (last_timing->burst_regs[EMC_R2P_INDEX] +
++				    last_timing->burst_regs[EMC_RP_INDEX])) {
++				R2P_war =3D tRTM -
++					  last_timing->burst_regs[EMC_RP_INDEX];
++				RP_war =3D last_timing->burst_regs[EMC_RP_INDEX];
++				TRPab_war =3D last_timing->burst_regs[
++					    EMC_TRPAB_INDEX];
++				if (R2P_war > 63) {
++					RP_war =3D R2P_war +
++						 last_timing->burst_regs[
++						 EMC_RP_INDEX] - 63;
++					if (TRPab_war < RP_war)
++						TRPab_war =3D RP_war;
++					R2P_war =3D 63;
++				}
++			} else {
++				R2P_war =3D last_timing->burst_regs[
++					  EMC_R2P_INDEX];
++				RP_war =3D last_timing->burst_regs[EMC_RP_INDEX];
++				TRPab_war =3D last_timing->burst_regs[
++					    EMC_TRPAB_INDEX];
++			}
++
++			if (RP_war < deltaTWATM) {
++				W2P_war =3D last_timing->burst_regs[EMC_W2P_INDEX]
++					  + deltaTWATM - RP_war;
++				if (W2P_war > 63) {
++					RP_war =3D RP_war + W2P_war - 63;
++					if (TRPab_war < RP_war)
++						TRPab_war =3D RP_war;
++					W2P_war =3D 63;
++				}
++			} else {
++				W2P_war =3D last_timing->burst_regs[
++					  EMC_W2P_INDEX];
++			}
++
++			if ((last_timing->burst_regs[EMC_W2P_INDEX] ^
++			     W2P_war) ||
++			    (last_timing->burst_regs[EMC_R2P_INDEX] ^
++			     R2P_war) ||
++			    (last_timing->burst_regs[EMC_RP_INDEX] ^
++			     RP_war) ||
++			    (last_timing->burst_regs[EMC_TRPAB_INDEX] ^
++			     TRPab_war)) {
++				emc_writel(emc, RP_war, EMC_RP);
++				emc_writel(emc, R2P_war, EMC_R2P);
++				emc_writel(emc, W2P_war, EMC_W2P);
++				emc_writel(emc, TRPab_war, EMC_TRPAB);
++			}
++			emc_timing_update(emc, DUAL_CHANNEL);
++		} else {
++			emc_cc_dbg(INFO, "Skipped WAR\n");
++		}
++	}
++
++	if (!fsp_for_next_freq) {
++		mr13_flip_fspwr =3D (next_timing->emc_mrw3 & 0xffffff3f) | 0x80;
++		mr13_flip_fspop =3D (next_timing->emc_mrw3 & 0xffffff3f) | 0x00;
++	} else {
++		mr13_flip_fspwr =3D (next_timing->emc_mrw3 & 0xffffff3f) | 0x40;
++		mr13_flip_fspop =3D (next_timing->emc_mrw3 & 0xffffff3f) | 0xc0;
++	}
++
++	mr13_catr_enable =3D (mr13_flip_fspwr & 0xFFFFFFFE) | 0x01;
++	if (dram_dev_num =3D=3D TWO_RANK)
++		mr13_catr_enable =3D (mr13_catr_enable & 0x3fffffff) | 0x80000000;
++
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++		emc_writel(emc, mr13_flip_fspwr, EMC_MRW3);
++		emc_writel(emc, next_timing->emc_mrw, EMC_MRW);
++		emc_writel(emc, next_timing->emc_mrw2, EMC_MRW2);
++	}
++
++	/*
++	 * Step 8:
++	 *   Program the shadow registers.
++	 */
++	emc_cc_dbg(STEPS, "Step 8\n");
++	emc_cc_dbg(SUB_STEPS, "Writing burst_regs\n");
++	for (i =3D 0; i < next_timing->num_burst; i++) {
++		u32 var;
++		u32 wval;
++
++		if (!burst_regs_off[i])
++			continue;
++
++		var =3D burst_regs_off[i];
++		wval =3D next_timing->burst_regs[i];
++
++		if (dram_type !=3D DRAM_TYPE_LPDDR4 &&
++		    (var =3D=3D EMC_MRW6      || var =3D=3D EMC_MRW7 ||
++		     var =3D=3D EMC_MRW8      || var =3D=3D EMC_MRW9 ||
++		     var =3D=3D EMC_MRW10     || var =3D=3D EMC_MRW11 ||
++		     var =3D=3D EMC_MRW12     || var =3D=3D EMC_MRW13 ||
++		     var =3D=3D EMC_MRW14     || var =3D=3D EMC_MRW15 ||
++		     var =3D=3D EMC_TRAINING_CTRL))
++			continue;
++
++		/* Pain... And suffering. */
++		if (var =3D=3D EMC_CFG) {
++			wval &=3D ~EMC_CFG_DRAM_ACPD;
++			wval &=3D ~EMC_CFG_DYN_SELF_REF;
++			if (dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++				wval &=3D ~EMC_CFG_DRAM_CLKSTOP_SR;
++				wval &=3D ~EMC_CFG_DRAM_CLKSTOP_PD;
++			}
++		} else if (var =3D=3D EMC_MRS_WAIT_CNT &&
++			   dram_type =3D=3D DRAM_TYPE_LPDDR2 &&
++			   opt_zcal_en_cc && !opt_cc_short_zcal &&
++			   opt_short_zcal) {
++			wval =3D (wval & ~(EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK <<
++					 EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT)) |
++			   ((zq_wait_long & EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK) <<
++			    EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT);
++		} else if (var =3D=3D EMC_ZCAL_WAIT_CNT &&
++			   dram_type =3D=3D DRAM_TYPE_DDR3 && opt_zcal_en_cc &&
++			   !opt_cc_short_zcal && opt_short_zcal) {
++			wval =3D (wval & ~(EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK <<
++					 EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_SHIFT))
++			       | ((zq_wait_long &
++				   EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK) <<
++				  EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT);
++		} else if (var =3D=3D EMC_ZCAL_INTERVAL && opt_zcal_en_cc) {
++			wval =3D 0; /* EMC_ZCAL_INTERVAL reset value. */
++		} else if (var =3D=3D EMC_PMACRO_AUTOCAL_CFG_COMMON) {
++			wval |=3D EMC_PMACRO_AUTOCAL_CFG_COMMON_E_CAL_BYPASS_DVFS;
++		} else if (var =3D=3D EMC_PMACRO_DATA_PAD_TX_CTRL) {
++			wval &=3D
++			     ~(EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSP_TX_E_DCC |
++			       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSN_TX_E_DCC |
++			       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_TX_E_DCC |
++			       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_CMD_TX_E_DCC);
++		} else if (var =3D=3D EMC_PMACRO_CMD_PAD_TX_CTRL) {
++			wval |=3D EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQ_TX_DRVFORCEON;
++			wval &=3D ~(EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQSP_TX_E_DCC |
++				  EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQSN_TX_E_DCC |
++				  EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQ_TX_E_DCC |
++				  EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_CMD_TX_E_DCC);
++		} else if (var =3D=3D EMC_PMACRO_BRICK_CTRL_RFU1) {
++			wval &=3D 0xf800f800;
++		} else if (var =3D=3D EMC_PMACRO_COMMON_PAD_TX_CTRL) {
++			wval &=3D 0xfffffff0;
++		}
++
++		emc_writel(emc, wval, var);
++	}
++
++	/* SW addition: do EMC refresh adjustment here. */
++	set_over_temp_timing(emc, next_timing, dram_over_temp_state);
++
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++		mrw_req =3D (23 << EMC_MRW_MRW_MA_SHIFT) |
++			  (next_timing->run_clocks & EMC_MRW_MRW_OP_MASK);
++		emc_writel(emc, mrw_req, EMC_MRW);
++	}
++
++	/* Per channel burst registers. */
++	emc_cc_dbg(SUB_STEPS, "Writing burst_regs_per_ch\n");
++	for (i =3D 0; i < next_timing->num_burst_per_ch; i++) {
++		if (!burst_regs_per_ch_off[i])
++			continue;
++
++		if (dram_type !=3D DRAM_TYPE_LPDDR4 &&
++		    (burst_regs_per_ch_off[i] =3D=3D EMC_MRW6 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW7 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW8 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW9 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW10 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW11 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW12 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW13 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW14 ||
++		     burst_regs_per_ch_off[i] =3D=3D EMC_MRW15))
++			continue;
++
++		/* Filter out second channel if not in DUAL_CHANNEL mode. */
++		if (channel_mode !=3D DUAL_CHANNEL &&
++		    burst_regs_per_ch_type[i] >=3D REG_EMC1)
++			continue;
++
++		emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n",
++			   i, next_timing->burst_reg_per_ch[i],
++			   burst_regs_per_ch_off[i]);
++		emc_writel_per_ch(emc, next_timing->burst_reg_per_ch[i],
++				  burst_regs_per_ch_type[i],
++				  burst_regs_per_ch_off[i]);
++	}
++
++	/* Vref regs. */
++	emc_cc_dbg(SUB_STEPS, "Writing vref_regs\n");
++	for (i =3D 0; i < next_timing->vref_num; i++) {
++		if (!vref_regs_per_ch_off[i])
++			continue;
++
++		if (channel_mode !=3D DUAL_CHANNEL &&
++			vref_regs_per_ch_type[i] >=3D REG_EMC1)
++			continue;
++
++		emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n",
++			   i, next_timing->vref_perch_regs[i],
++			   vref_regs_per_ch_off[i]);
++		emc_writel_per_ch(emc, next_timing->vref_perch_regs[i],
++				  vref_regs_per_ch_type[i],
++				  vref_regs_per_ch_off[i]);
++	}
++
++	/* Trimmers. */
++	emc_cc_dbg(SUB_STEPS, "Writing trim_regs\n");
++	for (i =3D 0; i < next_timing->num_trim; i++) {
++		u64 trim_reg;
++
++		if (!trim_regs_off[i])
++			continue;
++
++		trim_reg =3D trim_regs_off[i];
++		if (compensate_trimmer_applicable &&
++		    (trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3 ||
++		     trim_reg =3D=3D EMC_DATA_BRLSHFT_0 ||
++		     trim_reg =3D=3D EMC_DATA_BRLSHFT_1)) {
++			u32 reg =3D tegra210_apply_periodic_compensation_trimmer(
++				  next_timing, trim_reg);
++			emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n", i, reg,
++				   trim_regs_off[i]);
++			emc_cc_dbg(EMA_WRITES, "0x%08x <=3D 0x%08x\n",
++				   (u32)(u64)trim_regs_off[i], reg);
++			emc_writel(emc, reg, trim_regs_off[i]);
++		} else {
++			emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n",
++				   i, next_timing->trim_regs[i],
++				   trim_regs_off[i]);
++			emc_writel(emc, next_timing->trim_regs[i],
++				   trim_regs_off[i]);
++		}
++	}
++
++	/* Per channel trimmers. */
++	emc_cc_dbg(SUB_STEPS, "Writing trim_regs_per_ch\n");
++	for (i =3D 0; i < next_timing->num_trim_per_ch; i++) {
++		u32 trim_reg;
++
++		if (!trim_regs_per_ch_off[i])
++			continue;
++
++		if (channel_mode !=3D DUAL_CHANNEL &&
++			trim_regs_per_ch_type[i] >=3D REG_EMC1)
++			continue;
++
++		trim_reg =3D trim_regs_per_ch_off[i];
++		if (compensate_trimmer_applicable &&
++		    (trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2 ||
++		     trim_reg =3D=3D EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3 ||
++		     trim_reg =3D=3D EMC_DATA_BRLSHFT_0 ||
++		     trim_reg =3D=3D EMC_DATA_BRLSHFT_1)) {
++			u32 reg =3D
++				tegra210_apply_periodic_compensation_trimmer(
++						next_timing, trim_reg);
++			emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n",
++				   i, reg, trim_regs_per_ch_off[i]);
++			emc_cc_dbg(EMA_WRITES, "0x%08x <=3D 0x%08x\n",
++				   trim_regs_per_ch_off[i], reg);
++			emc_writel_per_ch(emc, reg, trim_regs_per_ch_type[i],
++					  trim_regs_per_ch_off[i]);
++		} else {
++			emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n",
++				   i, next_timing->trim_perch_regs[i],
++				   trim_regs_per_ch_off[i]);
++			emc_writel_per_ch(emc, next_timing->trim_perch_regs[i],
++					  trim_regs_per_ch_type[i],
++					  trim_regs_per_ch_off[i]);
++		}
++	}
++
++	emc_cc_dbg(SUB_STEPS, "Writing burst_mc_regs\n");
++	for (i =3D 0; i < next_timing->num_mc_regs; i++) {
++		emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n",
++			   i, next_timing->burst_mc_regs[i],
++			   burst_mc_regs_off[i]);
++		mc_writel(emc->mc, next_timing->burst_mc_regs[i],
++			  burst_mc_regs_off[i]);
++	}
++
++	/* Registers to be programmed on the faster clock. */
++	if (next_timing->rate < last_timing->rate) {
++		emc_cc_dbg(SUB_STEPS, "Writing la_scale_regs\n");
++		for (i =3D 0; i < next_timing->num_up_down; i++) {
++			emc_cc_dbg(REG_LISTS, "(%u) 0x%08x =3D> 0x%08x\n",
++				   i, next_timing->la_scale_regs[i],
++				   la_scale_regs_off[i]);
++			mc_writel(emc->mc, next_timing->la_scale_regs[i],
++				  la_scale_regs_off[i]);
++		}
++	}
++
++	/* Flush all the burst register writes. */
++	wmb();
++
++	/*
++	 * Step 9:
++	 *   LPDDR4 section A.
++	 */
++	emc_cc_dbg(STEPS, "Step 9\n");
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++		emc_writel(emc, emc_zcal_interval, EMC_ZCAL_INTERVAL);
++		emc_writel(emc, emc_zcal_wait_cnt_new, EMC_ZCAL_WAIT_CNT);
++
++		emc_dbg |=3D (EMC_DBG_WRITE_MUX_ACTIVE |
++			    EMC_DBG_WRITE_ACTIVE_ONLY);
++
++		emc_writel(emc, emc_dbg, EMC_DBG);
++		emc_writel(emc, emc_zcal_interval, EMC_ZCAL_INTERVAL);
++		emc_writel(emc, emc_dbg_o, EMC_DBG);
++	}
++
++	/*
++	 * Step 10:
++	 *   LPDDR4 and DDR3 common section.
++	 */
++	emc_cc_dbg(STEPS, "Step 10\n");
++	if (opt_dvfs_mode =3D=3D MAN_SR || dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++		if (dram_type =3D=3D DRAM_TYPE_LPDDR4)
++			ccfifo_writel(emc, 0x101, EMC_SELF_REF, 0);
++		else
++			ccfifo_writel(emc, 0x1, EMC_SELF_REF, 0);
++
++		if (dram_type =3D=3D DRAM_TYPE_LPDDR4 &&
++		    destination_clock_period <=3D zqcal_before_cc_cutoff) {
++			ccfifo_writel(emc, mr13_flip_fspwr ^ 0x40, EMC_MRW3, 0);
++			ccfifo_writel(emc,
++				      (next_timing->burst_regs[EMC_MRW6_INDEX] &
++				       0xFFFF3F3F) |
++				      (last_timing->burst_regs[EMC_MRW6_INDEX] &
++				       0x0000C0C0), EMC_MRW6, 0);
++			ccfifo_writel(emc,
++				      (next_timing->burst_regs[EMC_MRW14_INDEX]
++				       & 0xFFFF0707) |
++				      (last_timing->burst_regs[EMC_MRW14_INDEX]
++				       & 0x00003838), EMC_MRW14, 0);
++
++			if (dram_dev_num =3D=3D TWO_RANK) {
++				ccfifo_writel(emc,
++				      (next_timing->burst_regs[EMC_MRW7_INDEX] &
++				       0xFFFF3F3F) |
++				      (last_timing->burst_regs[EMC_MRW7_INDEX] &
++				       0x0000C0C0), EMC_MRW7, 0);
++				ccfifo_writel(emc,
++				     (next_timing->burst_regs[EMC_MRW15_INDEX] &
++				      0xFFFF0707) |
++				     (last_timing->burst_regs[EMC_MRW15_INDEX] &
++				      0x00003838), EMC_MRW15, 0);
++			}
++
++			if (opt_zcal_en_cc) {
++				if (dram_dev_num =3D=3D ONE_RANK)
++					ccfifo_writel(emc,
++						2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT
++						| EMC_ZQ_CAL_ZQ_CAL_CMD,
++						EMC_ZQ_CAL, 0);
++				else if (shared_zq_resistor)
++					ccfifo_writel(emc,
++						2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT
++						| EMC_ZQ_CAL_ZQ_CAL_CMD,
++						EMC_ZQ_CAL, 0);
++				else
++					ccfifo_writel(emc,
++						      EMC_ZQ_CAL_ZQ_CAL_CMD,
++						      EMC_ZQ_CAL, 0);
++			}
++		}
++	}
++
++	emc_dbg =3D emc_dbg_o;
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++		ccfifo_writel(emc, mr13_flip_fspop | 0x8, EMC_MRW3,
++			      (1000 * fake_timing->dram_timings[T_RP]) /
++			      source_clock_period);
++		ccfifo_writel(emc, 0, 0, tFC_lpddr4 / source_clock_period);
++	}
++
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4 || opt_dvfs_mode !=3D MAN_SR) {
++		u32 t =3D 30 + (cya_allow_ref_cc ?
++			(4000 * fake_timing->dram_timings[T_RFC]) +
++			((1000 * fake_timing->dram_timings[T_RP]) /
++			 source_clock_period) : 0);
++
++		ccfifo_writel(emc, emc_pin_o & ~(EMC_PIN_PIN_CKE_PER_DEV |
++			      EMC_PIN_PIN_CKEB | EMC_PIN_PIN_CKE),
++			      EMC_PIN, t);
++	}
++
++	ref_delay_mult =3D 1;
++	ref_b4_sref_en =3D 0;
++	cya_issue_pc_ref =3D 0;
++
++	ref_delay_mult +=3D ref_b4_sref_en   ? 1 : 0;
++	ref_delay_mult +=3D cya_allow_ref_cc ? 1 : 0;
++	ref_delay_mult +=3D cya_issue_pc_ref ? 1 : 0;
++	ref_delay =3D ref_delay_mult *
++		    ((1000 * fake_timing->dram_timings[T_RP] /
++		      source_clock_period) +
++		     (1000 * fake_timing->dram_timings[T_RFC] /
++		      source_clock_period)) + 20;
++
++	/*
++	 * Step 11:
++	 *   Ramp down.
++	 */
++	emc_cc_dbg(STEPS, "Step 11\n");
++	ccfifo_writel(emc, 0x0, EMC_CFG_SYNC,
++		      dram_type =3D=3D DRAM_TYPE_LPDDR4 ? 0 : ref_delay);
++
++	emc_dbg_active =3D emc_dbg | (EMC_DBG_WRITE_MUX_ACTIVE |
++			 EMC_DBG_WRITE_ACTIVE_ONLY);
++	ccfifo_writel(emc, emc_dbg_active, EMC_DBG, 0);
++
++	ramp_down_wait =3D tegra210_dvfs_power_ramp_down(emc,
++						       source_clock_period, 0);
++
++	/*
++	 * Step 12:
++	 *   And finally - trigger the clock change.
++	 */
++	emc_cc_dbg(STEPS, "Step 12\n");
++	ccfifo_writel(emc, 1, EMC_STALL_THEN_EXE_AFTER_CLKCHANGE, 0);
++	emc_dbg_active &=3D ~EMC_DBG_WRITE_ACTIVE_ONLY;
++	ccfifo_writel(emc, emc_dbg_active, EMC_DBG, 0);
++
++	/*
++	 * Step 13:
++	 *   Ramp up.
++	 */
++	emc_cc_dbg(STEPS, "Step 13\n");
++	ramp_up_wait =3D tegra210_dvfs_power_ramp_up(emc,
++						   destination_clock_period, 0);
++	ccfifo_writel(emc, emc_dbg, EMC_DBG, 0);
++
++	/*
++	 * Step 14:
++	 *   Bringup CKE pins.
++	 */
++	emc_cc_dbg(STEPS, "Step 14\n");
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++		u32 r =3D emc_pin_o | EMC_PIN_PIN_CKE;
++
++		if (dram_dev_num =3D=3D TWO_RANK)
++			ccfifo_writel(emc, r | EMC_PIN_PIN_CKEB |
++				      EMC_PIN_PIN_CKE_PER_DEV, EMC_PIN, 0);
++		else
++			ccfifo_writel(emc, r & ~(EMC_PIN_PIN_CKEB |
++				      EMC_PIN_PIN_CKE_PER_DEV), EMC_PIN, 0);
++	}
++
++	/*
++	 * Step 15: (two step 15s ??)
++	 *   Calculate zqlatch wait time; has dependency on ramping times.
++	 */
++	emc_cc_dbg(STEPS, "Step 15\n");
++
++	if (destination_clock_period <=3D zqcal_before_cc_cutoff) {
++		s32 t =3D (s32)(ramp_up_wait + ramp_down_wait) /
++			(s32)destination_clock_period;
++		zq_latch_dvfs_wait_time =3D (s32)tZQCAL_lpddr4_fc_adj - t;
++	} else {
++		zq_latch_dvfs_wait_time =3D tZQCAL_lpddr4_fc_adj -
++			div_o3(1000 * next_timing->dram_timings[T_PDEX],
++			       destination_clock_period);
++	}
++
++	emc_cc_dbg(INFO, "tZQCAL_lpddr4_fc_adj =3D %u\n", tZQCAL_lpddr4_fc_adj);
++	emc_cc_dbg(INFO, "destination_clock_period =3D %u\n",
++		   destination_clock_period);
++	emc_cc_dbg(INFO, "next_timing->dram_timings[T_PDEX] =3D %u\n",
++		   next_timing->dram_timings[T_PDEX]);
++	emc_cc_dbg(INFO, "zq_latch_dvfs_wait_time =3D %d\n",
++		   max_t(s32, 0, zq_latch_dvfs_wait_time));
++
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4 && opt_zcal_en_cc) {
++		if (dram_dev_num =3D=3D ONE_RANK) {
++			if (destination_clock_period > zqcal_before_cc_cutoff)
++				ccfifo_writel(emc,
++					      2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
++					      EMC_ZQ_CAL_ZQ_CAL_CMD, EMC_ZQ_CAL,
++					      div_o3(1000 *
++						     next_timing->dram_timings
++						     [T_PDEX],
++						     destination_clock_period));
++
++			ccfifo_writel(emc, (mr13_flip_fspop & 0xFFFFFFF7) |
++				      0x0C000000, EMC_MRW3,
++				      div_o3(1000 *
++					     next_timing->dram_timings[T_PDEX],
++					     destination_clock_period));
++			ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
++			ccfifo_writel(emc, 0, EMC_REF, 0);
++			ccfifo_writel(emc, 2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
++				      EMC_ZQ_CAL_ZQ_LATCH_CMD,
++				      EMC_ZQ_CAL,
++				      max_t(s32, 0, zq_latch_dvfs_wait_time));
++		} else if (shared_zq_resistor) {
++			if (destination_clock_period > zqcal_before_cc_cutoff)
++				ccfifo_writel(emc,
++					      2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
++					      EMC_ZQ_CAL_ZQ_CAL_CMD, EMC_ZQ_CAL,
++					      div_o3(1000 *
++						     next_timing->dram_timings
++						     [T_PDEX],
++						     destination_clock_period));
++
++			ccfifo_writel(emc, 2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
++				      EMC_ZQ_CAL_ZQ_LATCH_CMD, EMC_ZQ_CAL,
++				      max_t(s32, 0, zq_latch_dvfs_wait_time) +
++				      div_o3(1000 *
++					     next_timing->dram_timings[T_PDEX],
++					     destination_clock_period));
++			ccfifo_writel(emc, 1UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
++				      EMC_ZQ_CAL_ZQ_LATCH_CMD,
++				      EMC_ZQ_CAL, 0);
++
++			ccfifo_writel(emc, (mr13_flip_fspop & 0xfffffff7) |
++				      0x0c000000, EMC_MRW3, 0);
++			ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
++			ccfifo_writel(emc, 0, EMC_REF, 0);
++
++			ccfifo_writel(emc, 1UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
++				      EMC_ZQ_CAL_ZQ_LATCH_CMD, EMC_ZQ_CAL,
++				      tZQCAL_lpddr4 / destination_clock_period);
++		} else {
++			if (destination_clock_period > zqcal_before_cc_cutoff)
++				ccfifo_writel(emc, EMC_ZQ_CAL_ZQ_CAL_CMD,
++					      EMC_ZQ_CAL,
++					      div_o3(1000 *
++						     next_timing->dram_timings
++						     [T_PDEX],
++						     destination_clock_period));
++
++			ccfifo_writel(emc, (mr13_flip_fspop & 0xfffffff7) |
++				      0x0c000000, EMC_MRW3,
++				      div_o3(1000 *
++					     next_timing->dram_timings[T_PDEX],
++					     destination_clock_period));
++			ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
++			ccfifo_writel(emc, 0, EMC_REF, 0);
++
++			ccfifo_writel(emc, EMC_ZQ_CAL_ZQ_LATCH_CMD, EMC_ZQ_CAL,
++				      max_t(s32, 0, zq_latch_dvfs_wait_time));
++		}
++	}
++
++	/* WAR: delay for zqlatch */
++	ccfifo_writel(emc, 0, 0, 10);
++
++	/*
++	 * Step 16:
++	 *   LPDDR4 Conditional Training Kickoff. Removed.
++	 */
++
++	/*
++	 * Step 17:
++	 *   MANSR exit self refresh.
++	 */
++	emc_cc_dbg(STEPS, "Step 17\n");
++	if (opt_dvfs_mode =3D=3D MAN_SR && dram_type !=3D DRAM_TYPE_LPDDR4)
++		ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
++
++	/*
++	 * Step 18:
++	 *   Send MRWs to LPDDR3/DDR3.
++	 */
++	emc_cc_dbg(STEPS, "Step 18\n");
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR2) {
++		ccfifo_writel(emc, next_timing->emc_mrw2, EMC_MRW2, 0);
++		ccfifo_writel(emc, next_timing->emc_mrw,  EMC_MRW,  0);
++		if (is_lpddr3)
++			ccfifo_writel(emc, next_timing->emc_mrw4, EMC_MRW4, 0);
++	} else if (dram_type =3D=3D DRAM_TYPE_DDR3) {
++		if (opt_dll_mode =3D=3D DLL_ON)
++			ccfifo_writel(emc, next_timing->emc_emrs &
++				      ~EMC_EMRS_USE_EMRS_LONG_CNT, EMC_EMRS, 0);
++		ccfifo_writel(emc, next_timing->emc_emrs2 &
++			      ~EMC_EMRS2_USE_EMRS2_LONG_CNT, EMC_EMRS2, 0);
++		ccfifo_writel(emc, next_timing->emc_mrs |
++			      EMC_EMRS_USE_EMRS_LONG_CNT, EMC_MRS, 0);
++	}
++
++	/*
++	 * Step 19:
++	 *   ZQCAL for LPDDR3/DDR3
++	 */
++	emc_cc_dbg(STEPS, "Step 19\n");
++	if (opt_zcal_en_cc) {
++		if (dram_type =3D=3D DRAM_TYPE_LPDDR2) {
++			u32 r;
++
++			zq_op =3D opt_cc_short_zcal  ? 0x56 : 0xAB;
++			zcal_wait_time_ps =3D opt_cc_short_zcal  ? 90000 : 360000;
++			zcal_wait_time_clocks =3D div_o3(zcal_wait_time_ps,
++						destination_clock_period);
++			r =3D zcal_wait_time_clocks <<
++			    EMC_MRS_WAIT_CNT2_MRS_EXT2_WAIT_CNT_SHIFT |
++			    zcal_wait_time_clocks <<
++			    EMC_MRS_WAIT_CNT2_MRS_EXT1_WAIT_CNT_SHIFT;
++			ccfifo_writel(emc, r, EMC_MRS_WAIT_CNT2, 0);
++			ccfifo_writel(emc, 2 << EMC_MRW_MRW_DEV_SELECTN_SHIFT |
++				      EMC_MRW_USE_MRW_EXT_CNT |
++				      10 << EMC_MRW_MRW_MA_SHIFT |
++				      zq_op << EMC_MRW_MRW_OP_SHIFT,
++				      EMC_MRW, 0);
++			if (dram_dev_num =3D=3D TWO_RANK) {
++				r =3D 1 << EMC_MRW_MRW_DEV_SELECTN_SHIFT |
++				    EMC_MRW_USE_MRW_EXT_CNT |
++				    10 << EMC_MRW_MRW_MA_SHIFT |
++				    zq_op << EMC_MRW_MRW_OP_SHIFT;
++				ccfifo_writel(emc, r, EMC_MRW, 0);
++			}
++		} else if (dram_type =3D=3D DRAM_TYPE_DDR3) {
++			zq_op =3D opt_cc_short_zcal ? 0 : EMC_ZQ_CAL_LONG;
++			ccfifo_writel(emc, zq_op | 2 <<
++				      EMC_ZQ_CAL_DEV_SEL_SHIFT |
++				      EMC_ZQ_CAL_ZQ_CAL_CMD, EMC_ZQ_CAL, 0);
++			if (dram_dev_num =3D=3D TWO_RANK)
++				ccfifo_writel(emc, zq_op |
++					      1 << EMC_ZQ_CAL_DEV_SEL_SHIFT |
++					      EMC_ZQ_CAL_ZQ_CAL_CMD,
++					      EMC_ZQ_CAL, 0);
++		}
++	}
++
++	if (bg_regulator_mode_change) {
++		emc_set_shadow_bypass(emc, ACTIVE);
++		bg_regulator_switch_complete_wait_clks =3D
++			ramp_up_wait > 1250000 ? 0 :
++			(1250000 - ramp_up_wait) / destination_clock_period;
++		ccfifo_writel(emc, next_timing->burst_regs
++			      [EMC_PMACRO_BG_BIAS_CTRL_0_INDEX],
++			      EMC_PMACRO_BG_BIAS_CTRL_0,
++			      bg_regulator_switch_complete_wait_clks);
++		emc_set_shadow_bypass(emc, ASSEMBLY);
++	}
++
++	/*
++	 * Step 20:
++	 *   Issue ref and optional QRST.
++	 */
++	emc_cc_dbg(STEPS, "Step 20\n");
++	if (dram_type !=3D DRAM_TYPE_LPDDR4)
++		ccfifo_writel(emc, 0, EMC_REF, 0);
++
++	if (opt_do_sw_qrst) {
++		ccfifo_writel(emc, 1, EMC_ISSUE_QRST, 0);
++		ccfifo_writel(emc, 0, EMC_ISSUE_QRST, 2);
++	}
++
++	/*
++	 * Step 21:
++	 *   Restore ZCAL and ZCAL interval.
++	 */
++	emc_cc_dbg(STEPS, "Step 21\n");
++	if (save_restore_clkstop_pd || opt_zcal_en_cc) {
++		ccfifo_writel(emc, emc_dbg_o | EMC_DBG_WRITE_MUX_ACTIVE,
++			      EMC_DBG, 0);
++		if (opt_zcal_en_cc && dram_type !=3D DRAM_TYPE_LPDDR4)
++			ccfifo_writel(emc, next_timing->burst_regs[
++				      EMC_ZCAL_INTERVAL_INDEX],
++				      EMC_ZCAL_INTERVAL, 0);
++
++		if (save_restore_clkstop_pd)
++			ccfifo_writel(emc,
++				      next_timing->burst_regs[EMC_CFG_INDEX] &
++				      ~EMC_CFG_DYN_SELF_REF, EMC_CFG, 0);
++		ccfifo_writel(emc, emc_dbg_o, EMC_DBG, 0);
++	}
++
++	/*
++	 * Step 22:
++	 *   Restore EMC_CFG_PIPE_CLK.
++	 */
++	emc_cc_dbg(STEPS, "Step 22\n");
++	ccfifo_writel(emc, emc_cfg_pipe_clk_o, EMC_CFG_PIPE_CLK, 0);
++
++	if (bg_regulator_mode_change) {
++		if (enable_bg_regulator)
++			emc_writel(emc, next_timing->burst_regs[
++				   EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++				   ~EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD,
++				   EMC_PMACRO_BG_BIAS_CTRL_0);
++		else
++			emc_writel(emc, next_timing->burst_regs[
++				   EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
++				   ~EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD,
++				   EMC_PMACRO_BG_BIAS_CTRL_0);
++	}
++
++	/*
++	 * Step 23:
++	 */
++	emc_cc_dbg(STEPS, "Step 23\n");
++
++	tmp =3D emc_readl(emc, EMC_CFG_DIG_DLL);
++	tmp |=3D EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_TRAFFIC;
++	tmp &=3D ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_RW_UNTIL_LOCK;
++	tmp &=3D ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_UNTIL_LOCK;
++	tmp &=3D ~EMC_CFG_DIG_DLL_CFG_DLL_EN;
++	tmp =3D (tmp & ~EMC_CFG_DIG_DLL_CFG_DLL_MODE_MASK) |
++		(2 << EMC_CFG_DIG_DLL_CFG_DLL_MODE_SHIFT);
++	emc_writel(emc, tmp, EMC_CFG_DIG_DLL);
++
++	do_clock_change(emc, clksrc);
++
++	/*
++	 * Step 24:
++	 *   Save training results. Removed.
++	 */
++
++	/*
++	 * Step 25:
++	 *   Program MC updown registers.
++	 */
++	emc_cc_dbg(STEPS, "Step 25\n");
++
++	if (next_timing->rate > last_timing->rate) {
++		for (i =3D 0; i < next_timing->num_up_down; i++)
++			mc_writel(emc->mc, next_timing->la_scale_regs[i],
++				  la_scale_regs_off[i]);
++		emc_timing_update(emc, channel_mode);
++	}
++
++	/*
++	 * Step 26:
++	 *   Restore ZCAL registers.
++	 */
++	emc_cc_dbg(STEPS, "Step 26\n");
++	if (dram_type =3D=3D DRAM_TYPE_LPDDR4) {
++		emc_set_shadow_bypass(emc, ACTIVE);
++		emc_writel(emc, next_timing->burst_regs[
++			   EMC_ZCAL_WAIT_CNT_INDEX], EMC_ZCAL_WAIT_CNT);
++		emc_writel(emc, next_timing->burst_regs[
++			   EMC_ZCAL_INTERVAL_INDEX], EMC_ZCAL_INTERVAL);
++		emc_set_shadow_bypass(emc, ASSEMBLY);
++	}
++
++	if (dram_type !=3D DRAM_TYPE_LPDDR4 &&
++	    opt_zcal_en_cc && !opt_short_zcal && opt_cc_short_zcal) {
++		udelay(2);
++
++		emc_set_shadow_bypass(emc, ACTIVE);
++		if (dram_type =3D=3D DRAM_TYPE_LPDDR2)
++			emc_writel(emc, next_timing->burst_regs[
++				   EMC_MRS_WAIT_CNT_INDEX], EMC_MRS_WAIT_CNT);
++		else if (dram_type =3D=3D DRAM_TYPE_DDR3)
++			emc_writel(emc, next_timing->burst_regs[
++				   EMC_ZCAL_WAIT_CNT_INDEX], EMC_ZCAL_WAIT_CNT);
++		emc_set_shadow_bypass(emc, ASSEMBLY);
++	}
++
++	/*
++	 * Step 27:
++	 *   Restore EMC_CFG, FDPD registers.
++	 */
++	emc_cc_dbg(STEPS, "Step 27\n");
++	emc_set_shadow_bypass(emc, ACTIVE);
++	emc_writel(emc, next_timing->burst_regs[EMC_CFG_INDEX], EMC_CFG);
++	emc_set_shadow_bypass(emc, ASSEMBLY);
++	emc_writel(emc, next_timing->emc_fdpd_ctrl_cmd_no_ramp,
++		   EMC_FDPD_CTRL_CMD_NO_RAMP);
++	emc_writel(emc, next_timing->emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
++
++	/*
++	 * Step 28:
++	 *   Training recover. Removed.
++	 */
++	emc_cc_dbg(STEPS, "Step 28\n");
++
++	emc_set_shadow_bypass(emc, ACTIVE);
++	emc_writel(emc,
++		   next_timing->burst_regs[EMC_PMACRO_AUTOCAL_CFG_COMMON_INDEX],
++		   EMC_PMACRO_AUTOCAL_CFG_COMMON);
++	emc_set_shadow_bypass(emc, ASSEMBLY);
++
++	/*
++	 * Step 29:
++	 *   Power fix WAR.
++	 */
++	emc_cc_dbg(STEPS, "Step 29\n");
++	emc_writel(emc, EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE0 |
++		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE1 |
++		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE2 |
++		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE3 |
++		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE4 |
++		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE5 |
++		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE6 |
++		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE7,
++		   EMC_PMACRO_CFG_PM_GLOBAL_0);
++	emc_writel(emc, EMC_PMACRO_TRAINING_CTRL_0_CH0_TRAINING_E_WRPTR,
++		   EMC_PMACRO_TRAINING_CTRL_0);
++	emc_writel(emc, EMC_PMACRO_TRAINING_CTRL_1_CH1_TRAINING_E_WRPTR,
++		   EMC_PMACRO_TRAINING_CTRL_1);
++	emc_writel(emc, 0, EMC_PMACRO_CFG_PM_GLOBAL_0);
++
++	/*
++	 * Step 30:
++	 *   Re-enable autocal.
++	 */
++	emc_cc_dbg(STEPS, "Step 30: Re-enable DLL and AUTOCAL\n");
++	if (next_timing->burst_regs[EMC_CFG_DIG_DLL_INDEX] &
++	    EMC_CFG_DIG_DLL_CFG_DLL_EN) {
++		tmp =3D emc_readl(emc, EMC_CFG_DIG_DLL);
++		tmp |=3D  EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_TRAFFIC;
++		tmp |=3D  EMC_CFG_DIG_DLL_CFG_DLL_EN;
++		tmp &=3D ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_RW_UNTIL_LOCK;
++		tmp &=3D ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_UNTIL_LOCK;
++		tmp =3D  (tmp & ~EMC_CFG_DIG_DLL_CFG_DLL_MODE_MASK) |
++		       (2 << EMC_CFG_DIG_DLL_CFG_DLL_MODE_SHIFT);
++		emc_writel(emc, tmp, EMC_CFG_DIG_DLL);
++		emc_timing_update(emc, channel_mode);
++	}
++
++	emc_auto_cal_config =3D next_timing->emc_auto_cal_config;
++	emc_writel(emc, emc_auto_cal_config, EMC_AUTO_CAL_CONFIG);
++
++	/*
++	 * Step 31:
++	 *   Restore FSP to account for switch back. Only needed in training.
++	 */
++	emc_cc_dbg(STEPS, "Step 31\n");
++
++	/* Step 32:
++	 *   [SW] Update the alternative timing (derated vs normal) table with
++	 * the periodic training values computed during the clock change
++	 * pre-amble.
++	 */
++	emc_cc_dbg(STEPS, "Step 32: Update alt timing\n");
++	tegra210_update_emc_alt_timing(emc, next_timing);
++
++	/* Done! Yay. */
 +}
+diff --git a/drivers/memory/tegra/tegra210-emc-reg.h b/drivers/memory/tegra=
+/tegra210-emc-reg.h
+index 31a69e718dbc..b474b0810e52 100644
+--- a/drivers/memory/tegra/tegra210-emc-reg.h
++++ b/drivers/memory/tegra/tegra210-emc-reg.h
+@@ -107,7 +107,16 @@
+ #define EMC_INTSTATUS_CLKCHANGE_COMPLETE			BIT(4)
+ #define EMC_DBG							0x8
+ #define EMC_DBG_WRITE_MUX_ACTIVE				BIT(1)
++#define EMC_DBG_WRITE_ACTIVE_ONLY				BIT(30)
+ #define EMC_CFG							0xc
++#define EMC_CFG_DRAM_CLKSTOP_PD					BIT(31)
++#define EMC_CFG_DRAM_CLKSTOP_SR					BIT(30)
++#define EMC_CFG_DRAM_ACPD					BIT(29)
++#define EMC_CFG_DYN_SELF_REF					BIT(28)
++#define EMC_PIN							0x24
++#define EMC_PIN_PIN_CKE						BIT(0)
++#define EMC_PIN_PIN_CKEB					BIT(1)
++#define EMC_PIN_PIN_CKE_PER_DEV					BIT(2)
+ #define EMC_TIMING_CONTROL					0x28
+ #define EMC_RC							0x2c
+ #define EMC_RFC							0x30
+@@ -147,7 +156,35 @@
+ #define EMC_WEXT						0xb8
+ #define EMC_RFC_SLR						0xc0
+ #define EMC_MRS_WAIT_CNT2					0xc4
++#define EMC_MRS_WAIT_CNT2_MRS_EXT2_WAIT_CNT_SHIFT		16
++#define EMC_MRS_WAIT_CNT2_MRS_EXT1_WAIT_CNT_SHIFT		0
+ #define EMC_MRS_WAIT_CNT					0xc8
++#define EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT			0
++#define EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK			\
++	(0x3FF << EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT)
 +
-+static const struct dev_pm_ops tegra210_emc_pm_ops =3D {
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra210_emc_suspend, tegra210_emc_resume)
++#define EMC_MRS							0xcc
++#define EMC_EMRS						0xd0
++#define EMC_EMRS_USE_EMRS_LONG_CNT				BIT(26)
++#define EMC_REF							0xd4
++#define EMC_SELF_REF						0xe0
++#define EMC_MRW							0xe8
++#define EMC_MRW_MRW_OP_SHIFT					0
++#define EMC_MRW_MRW_OP_MASK					\
++	(0xff << EMC_MRW_MRW_OP_SHIFT)
++#define EMC_MRW_MRW_MA_SHIFT					16
++#define EMC_MRW_USE_MRW_EXT_CNT					27
++#define EMC_MRW_MRW_DEV_SELECTN_SHIFT				30
++
++#define EMC_MRR							0xec
++#define EMC_MRR_DEV_SEL_SHIFT					30
++#define EMC_MRR_MA_SHIFT					16
++#define EMC_MRR_MA_MASK						\
++	(0xff << EMC_MRR_MA_SHIFT)
++#define EMC_MRR_DATA_SHIFT					0
++#define EMC_MRR_DATA_MASK					\
++	(0xffff << EMC_MRR_DATA_SHIFT)
++
+ #define EMC_FBIO_SPARE						0x100
+ #define EMC_FBIO_CFG5						0x104
+ #define EMC_FBIO_CFG5_DRAM_TYPE_SHIFT				0
+@@ -158,14 +195,34 @@
+ #define EMC_PDEX2CKE						0x118
+ #define EMC_CKE2PDEN						0x11c
+ #define EMC_MPC							0x128
++#define EMC_EMRS2						0x12c
++#define EMC_EMRS2_USE_EMRS2_LONG_CNT				BIT(26)
++#define EMC_MRW2						0x134
++#define EMC_MRW3						0x138
++#define EMC_MRW4						0x13c
+ #define EMC_R2R							0x144
+ #define EMC_EINPUT						0x14c
+ #define EMC_EINPUT_DURATION					0x150
+ #define EMC_PUTERM_EXTRA					0x154
+ #define EMC_TCKESR						0x158
+ #define EMC_TPD							0x15c
++#define EMC_AUTO_CAL_CONFIG					0x2a4
++#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_COMPUTE_START		BIT(0)
++#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_MEASURE_STALL		BIT(9)
++#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_UPDATE_STALL		BIT(10)
++#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_ENABLE			BIT(29)
++#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_START			BIT(31)
+ #define EMC_EMC_STATUS						0x2b4
++#define EMC_EMC_STATUS_MRR_DIVLD				BIT(20)
+ #define EMC_EMC_STATUS_TIMING_UPDATE_STALLED			BIT(23)
++#define EMC_EMC_STATUS_DRAM_IN_POWERDOWN_SHIFT			4
++#define EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK			\
++	(0x3 << EMC_EMC_STATUS_DRAM_IN_POWERDOWN_SHIFT)
++#define EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_SHIFT		8
++#define EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK		\
++	(0x3 << EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_SHIFT)
++
++#define EMC_CFG_2						0x2b8
+ #define EMC_CFG_DIG_DLL						0x2bc
+ #define EMC_CFG_DIG_DLL_CFG_DLL_EN				BIT(0)
+ #define EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_UNTIL_LOCK		BIT(1)
+@@ -191,8 +248,17 @@
+ #define EMC_WDV_MASK						0x2d0
+ #define EMC_RDV_EARLY_MASK					0x2d4
+ #define EMC_RDV_EARLY						0x2d8
++#define EMC_AUTO_CAL_CONFIG8					0x2dc
+ #define EMC_ZCAL_INTERVAL					0x2e0
+ #define EMC_ZCAL_WAIT_CNT					0x2e4
++#define EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK			0x7ff
++#define EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_SHIFT			0
++
++#define EMC_ZQ_CAL						0x2ec
++#define EMC_ZQ_CAL_DEV_SEL_SHIFT				30
++#define EMC_ZQ_CAL_LONG						BIT(4)
++#define EMC_ZQ_CAL_ZQ_LATCH_CMD					BIT(1)
++#define EMC_ZQ_CAL_ZQ_CAL_CMD					BIT(0)
+ #define EMC_FDPD_CTRL_DQ					0x310
+ #define EMC_FDPD_CTRL_CMD					0x314
+ #define EMC_PMACRO_CMD_BRICK_CTRL_FDPD				0x318
+@@ -202,6 +268,13 @@
+ #define EMC_TR_TIMING_0						0x3b4
+ #define EMC_TR_CTRL_1						0x3bc
+ #define EMC_TR_RDV						0x3c4
++#define EMC_STALL_THEN_EXE_AFTER_CLKCHANGE			0x3cc
++#define EMC_SEL_DPD_CTRL					0x3d8
++#define EMC_SEL_DPD_CTRL_DATA_SEL_DPD_EN			BIT(8)
++#define EMC_SEL_DPD_CTRL_ODT_SEL_DPD_EN				BIT(5)
++#define EMC_SEL_DPD_CTRL_RESET_SEL_DPD_EN			BIT(4)
++#define EMC_SEL_DPD_CTRL_CA_SEL_DPD_EN				BIT(3)
++#define EMC_SEL_DPD_CTRL_CLK_SEL_DPD_EN				BIT(2)
+ #define EMC_PRE_REFRESH_REQ_CNT					0x3dc
+ #define EMC_DYN_SELF_REF_CONTROL				0x3e0
+ #define EMC_TXSRDLL						0x3e4
+@@ -211,6 +284,9 @@
+ #define EMC_TR_RDV_MASK						0x3f8
+ #define EMC_TR_QSAFE						0x3fc
+ #define EMC_TR_QRST						0x400
++#define EMC_ISSUE_QRST						0x428
++#define EMC_AUTO_CAL_CONFIG2					0x458
++#define EMC_AUTO_CAL_CONFIG3					0x45c
+ #define EMC_TR_DVFS						0x460
+ #define EMC_AUTO_CAL_CHANNEL					0x464
+ #define EMC_IBDLY						0x468
+@@ -224,19 +300,26 @@
+ #define EMC_MRW6						0x4a4
+ #define EMC_MRW7						0x4a8
+ #define EMC_MRW8						0x4ac
++#define EMC_MRW9						0x4b0
+ #define EMC_MRW10						0x4b4
+ #define EMC_MRW11						0x4b8
+ #define EMC_MRW12						0x4bc
+ #define EMC_MRW13						0x4c0
+ #define EMC_MRW14						0x4c4
+ #define EMC_MRW15						0x4d0
++#define EMC_CFG_SYNC						0x4d4
++#define EMC_FDPD_CTRL_CMD_NO_RAMP				0x4d8
++#define EMC_FDPD_CTRL_CMD_NO_RAMP_CMD_DPD_NO_RAMP_ENABLE	BIT(0)
+ #define EMC_WDV_CHK						0x4e0
+ #define EMC_CFG_PIPE_2						0x554
++#define EMC_CFG_PIPE_CLK					0x558
++#define EMC_CFG_PIPE_CLK_CLK_ALWAYS_ON				BIT(0)
+ #define EMC_CFG_PIPE_1						0x55c
+ #define EMC_CFG_PIPE						0x560
+ #define EMC_QPOP						0x564
+ #define EMC_QUSE_WIDTH						0x568
+ #define EMC_PUTERM_WIDTH					0x56c
++#define EMC_AUTO_CAL_CONFIG7					0x574
+ #define EMC_REFCTRL2						0x580
+ #define EMC_FBIO_CFG7						0x584
+ #define EMC_FBIO_CFG7_CH0_ENABLE				BIT(1)
+@@ -301,10 +384,13 @@
+ #define EMC_CMD_BRLSHFT_2					0x5a4
+ #define EMC_CMD_BRLSHFT_3					0x5a8
+ #define EMC_QUSE_BRLSHFT_0					0x5ac
++#define EMC_AUTO_CAL_CONFIG4					0x5b0
++#define EMC_AUTO_CAL_CONFIG5					0x5b4
+ #define EMC_QUSE_BRLSHFT_1					0x5b8
+ #define EMC_QUSE_BRLSHFT_2					0x5bc
+ #define EMC_CCDMW						0x5c0
+ #define EMC_QUSE_BRLSHFT_3					0x5c4
++#define EMC_AUTO_CAL_CONFIG6					0x5cc
+ #define EMC_DLL_CFG_0						0x5e4
+ #define EMC_DLL_CFG_1						0x5e8
+ #define EMC_DLL_CFG_1_DDLLCAL_CTRL_START_TRIM_SHIFT		10
+@@ -312,6 +398,11 @@
+ 	(0x7ff << EMC_DLL_CFG_1_DDLLCAL_CTRL_START_TRIM_SHIFT)
+=20
+ #define EMC_CONFIG_SAMPLE_DELAY					0x5f0
++#define EMC_CFG_UPDATE						0x5f4
++#define EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_SHIFT		9
++#define EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_MASK		\
++	(0x3 << EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_SHIFT)
++
+ #define EMC_PMACRO_QUSE_DDLL_RANK0_0				0x600
+ #define EMC_PMACRO_QUSE_DDLL_RANK0_1				0x604
+ #define EMC_PMACRO_QUSE_DDLL_RANK0_2				0x608
+@@ -620,9 +711,20 @@
+ #define EMC_PMACRO_DDLL_SHORT_CMD_0				0xc20
+ #define EMC_PMACRO_DDLL_SHORT_CMD_1				0xc24
+ #define EMC_PMACRO_DDLL_SHORT_CMD_2				0xc28
++#define EMC_PMACRO_CFG_PM_GLOBAL_0				0xc30
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE0		BIT(16)
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE1		BIT(17)
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE2		BIT(18)
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE3		BIT(19)
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE4		BIT(20)
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE5		BIT(21)
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE6		BIT(22)
++#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE7		BIT(23)
+ #define EMC_PMACRO_VTTGEN_CTRL_0				0xc34
+ #define EMC_PMACRO_VTTGEN_CTRL_1				0xc38
+ #define EMC_PMACRO_BG_BIAS_CTRL_0				0xc3c
++#define EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD			BIT(0)
++#define EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD			BIT(2)
+ #define EMC_PMACRO_PAD_CFG_CTRL					0xc40
+ #define EMC_PMACRO_ZCTRL					0xc44
+ #define EMC_PMACRO_CMD_PAD_RX_CTRL				0xc50
+@@ -637,15 +739,22 @@
+ #define EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQ_TX_DRVFORCEON		BIT(26)
+=20
+ #define EMC_PMACRO_DATA_PAD_TX_CTRL				0xc64
++#define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF		BIT(0)
+ #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_TX_E_DCC		BIT(1)
++#define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF		BIT(8)
+ #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSP_TX_E_DCC		BIT(9)
+ #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSN_TX_E_DCC		BIT(16)
+ #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_CMD_TX_E_DCC		BIT(24)
+=20
+ #define EMC_PMACRO_COMMON_PAD_TX_CTRL				0xc68
+ #define EMC_PMACRO_AUTOCAL_CFG_COMMON				0xc78
++#define EMC_PMACRO_AUTOCAL_CFG_COMMON_E_CAL_BYPASS_DVFS		BIT(16)
+ #define EMC_PMACRO_VTTGEN_CTRL_2				0xcf0
+ #define EMC_PMACRO_IB_RXRT					0xcf4
++#define EMC_PMACRO_TRAINING_CTRL_0				0xcf8
++#define EMC_PMACRO_TRAINING_CTRL_0_CH0_TRAINING_E_WRPTR		BIT(3)
++#define EMC_PMACRO_TRAINING_CTRL_1				0xcfc
++#define EMC_PMACRO_TRAINING_CTRL_1_CH1_TRAINING_E_WRPTR		BIT(3)
+ #define EMC_TRAINING_CTRL					0xe04
+ #define EMC_TRAINING_QUSE_CORS_CTRL				0xe0c
+ #define EMC_TRAINING_QUSE_FINE_CTRL				0xe10
+@@ -1173,6 +1282,29 @@ enum {
+ 	DLL_ON
+ };
+=20
++enum {
++	ONE_RANK =3D 1,
++	TWO_RANK =3D 2
 +};
-+#endif
 +
-+static const struct of_device_id tegra210_emc_of_match[] =3D {
-+	{ .compatible =3D "nvidia,tegra210-emc", },
-+	{ },
++enum {
++	T_RP =3D 0,
++	T_FC_LPDDR4,
++	T_RFC,
++	T_PDEX,
++	RL
 +};
 +
-+static struct platform_driver tegra210_emc_driver =3D {
-+	.driver	=3D {
-+		.name =3D "tegra210-emc",
-+		.of_match_table =3D tegra210_emc_of_match,
-+		.pm =3D &tegra210_emc_pm_ops,
++enum {
++	AUTO_PD =3D 0,
++	MAN_SR  =3D 2
++};
++
++enum {
++	ASSEMBLY =3D 0,
++	ACTIVE
++};
++
+ struct emc_table {
+ 	u32 rev;
+ 	char dvfs_ver[60];
+@@ -1315,7 +1447,9 @@ void emc_writel_per_ch(struct tegra_emc *emc, u32 val=
+, int type,
+ 		       unsigned long offset);
+ u32  emc1_readl(struct tegra_emc *emc, unsigned long offset);
+=20
++u32 __do_periodic_emc_compensation_r21021(struct tegra_emc *emc);
+ void do_clock_change(struct tegra_emc *emc, u32 clksrc);
++void emc_set_clock_r21021(struct tegra_emc *emc, u32 clksrc);
+ void emc_set_shadow_bypass(struct tegra_emc *emc, int set);
+ void emc_timing_update(struct tegra_emc *emc, int dual_chan);
+ u32 get_dll_state(struct emc_table *next_timing);
+diff --git a/drivers/memory/tegra/tegra210-emc.c b/drivers/memory/tegra/teg=
+ra210-emc.c
+index 26d0de0ab319..9afab67b1a3d 100644
+--- a/drivers/memory/tegra/tegra210-emc.c
++++ b/drivers/memory/tegra/tegra210-emc.c
+@@ -103,6 +103,11 @@ static const char *emc_src_names[TEGRA_EMC_SRC_COUNT] =
+=3D {
+ };
+ static struct emc_stats emc_stats;
+ static struct supported_sequence supported_seqs[] =3D {
++	{
++		0x7,
++		emc_set_clock_r21021,
++		__do_periodic_emc_compensation_r21021,
 +	},
-+	.probe =3D tegra210_emc_probe,
-+};
-+
-+static int __init tegra210_emc_init(void)
-+{
-+	return platform_driver_register(&tegra210_emc_driver);
-+}
-+subsys_initcall(tegra210_emc_init);
+ 	{
+ 		0,
+ 		NULL,
 --=20
 2.21.0
 
