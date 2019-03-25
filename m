@@ -2,147 +2,727 @@ Return-Path: <SRS0=mYc5=R4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C26C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B78CC43381
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E5A2085A
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 250822085A
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 07:45:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kI3EjYrw"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZDw4Hv6d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbfCYHpe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Mar 2019 03:45:34 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8980 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729720AbfCYHpe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 03:45:34 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c9887180000>; Mon, 25 Mar 2019 00:45:28 -0700
+        id S1729847AbfCYHpg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Mar 2019 03:45:36 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:19782 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729720AbfCYHpg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 03:45:36 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c9887210000>; Mon, 25 Mar 2019 00:45:37 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 25 Mar 2019 00:45:32 -0700
+  Mon, 25 Mar 2019 00:45:34 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 25 Mar 2019 00:45:32 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Mar
- 2019 07:45:32 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Mar
- 2019 07:45:31 +0000
+        by hqpgpgate102.nvidia.com on Mon, 25 Mar 2019 00:45:34 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Mar
+ 2019 07:45:34 +0000
 Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 25 Mar 2019 07:45:31 +0000
+ Transport; Mon, 25 Mar 2019 07:45:34 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c9887190000>; Mon, 25 Mar 2019 00:45:30 -0700
+        id <B5c98871b0000>; Mon, 25 Mar 2019 00:45:33 -0700
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rob Herring" <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 0/8] Add EMC scaling support for Tegra210
-Date:   Mon, 25 Mar 2019 15:45:15 +0800
-Message-ID: <20190325074523.26456-1-josephl@nvidia.com>
+Subject: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
+Date:   Mon, 25 Mar 2019 15:45:16 +0800
+Message-ID: <20190325074523.26456-2-josephl@nvidia.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190325074523.26456-1-josephl@nvidia.com>
+References: <20190325074523.26456-1-josephl@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1553499928; bh=eDKfvymPODbXseh5PJR3dt/y5H+YJ7LevxZ5PwjWeIw=;
+        t=1553499937; bh=ZHiGK8Y8cp6BHCDDoxVPH3jhIEc9OqWFw2X1FftmZ9E=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=kI3EjYrwZ7Snry7XdeuSTEHoNlcIm7rAvqoaJYJj+s52WHB4cUH8XZ6mshqiX+VZO
-         GtroCJxj/1VWFfa9oA0txI1B8EOqCOTi+qKKd+oa+cpYeyty5Ltyu6a0CS7cu9yZVh
-         oB9NP/Sf4CrlfEnNuCsmo+Pq3g4tSDS3O1LcRE2c26L0XqmVUuLVrtdsxoR8muEPbq
-         h7+hFUDG4lSO5fdw6T6TGQqx9r/W5Jutg376bUrhzFYdELWa5GeIpMEZbfH+3464ti
-         YD+rWMnTpOpu9NC0HU+A0dZAyGcrLeiWj7yy9FiQlgkg2qWf86yB+ucQ/cQekPT0Xb
-         enPy8gUNyV7sQ==
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=ZDw4Hv6d+x4g6547ugWqTmR0N0UMtAsJWC7VQhilwe8Zhells4Gha1k43Lnpq5QcV
+         uQ+qDlOxRWsKjnbKBE9oOKvUDtWWtAvNixVLZkRds6Yd+B+/1ganGdMpvk1dd/+QKb
+         5SAi9AR1eLU1908OuxXT6zz5f0/R9EG0H+bhhRIHe6R2+ICnJsMWlyRYQxzupSBrwa
+         h9yzjBlBY+iVa7DVjHNMcliCHfFDHd6u6DIyjNHSrmINELPOvj3OGrHxRr2ESMtzZn
+         PneczkPrqMSyS8E88XrbNF+QFSNVzq7mMjQyxFDjxwcadF5sDQGvSAOgUKz7zIPO7J
+         GSgAUFBooirVQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series introduces the EMC clock scaling support for Tegra210. There
-are three parts of this series.
+Add the binding document for the external memory controller (EMC) which
+communicates with external LPDDR4 devices. It includes the bindings of
+the EMC node and the EMC table of different rates.
 
-i. The DT bindings of the EMC table and how to deal with them.
-To support LPDDR4 DRAM devices, the EMC table with timing data must be
-trained before it can be used. The bootloader firmware will help to do
-that at the early boot stage. And help to merge the trained timing data
-into the DTB that EMC driver in the kernel will use later for EMC clock
-scaling.
+To support high rates for LPDDR4, the EMC table must be trained before
+it can be used for runtime clock switching. It has been done by firmware
+and merged to the table that Linux kernel uses. For backward
+compatibility with the devices that had been launched on the market, like
+Shield and Jetson platforms, the bindings in the EMC table should remain
+the same. So the firmware can recognize them and merge the trained EMC
+table for the kernel.
 
-And for backward compatibility to support the upstreaming devices, like
-Jetson TX1 and Shield, the bindings should remain the same. Which means
-we may not able to change the bindings currently.
+Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
 
-ii. The EMC driver will use the trained EMC table with the ram code that
-the platform used to update the EMC registers for clock scaling. And to
-support higher rates (above 800MHz), periodic training is needed. This
-will be done by a timer. And two EMC sources will be used (PLL_M and
-		PLL_MB) for the rate switching above or equal to 665MHz.
-It will check the current source and switch to another one dynamically.
-
-iii. The detail sequence for EMC scaling support, this includes how we
-update the table to EMC registers and the periodic training support.
-
-Here are the details and dependency of these patches.
-Patch 1 is the binding document of the EMC node and table.
-Patch 2 is the clock driver update for EMC scaling support. Need to note
-that with the update of the MC clock, the patch 3 (EMC clock driver) and
-patch 6 (EMC node in DT) will be needed to make MC clock to work
-normally.
-Patch 3 is the EMC clock driver. It can get the trained table from the
-firmware and know the current EMC status, like the rate and source
-clock.
-Patch 4 adds more APIs and support code. Tha will be needed for the EMC
-scaling sequence.
-Patch 5 adds the EMC scaling sequence code. With this, we can support
-EMC clock scaling now.
-Patch 6 introduces the EMC node in DT.
-Patch 7 adds EMC table of ram code 0.
-Patch 8 adds EMC table of ram code 1.
-
-Joseph Lo (8):
-  dt-bindings: memory: tegra: Add Tegra210 EMC bindings
-  clk: tegra: clock changes for emc scaling support on Tegra210
-  memory: tegra: Add Tegra210 EMC clock driver
-  memory: tegra: add EMC scaling support code for Tegra210
-  memory: tegra: Add EMC scaling sequence code for Tegra210
-  arm64: tegra: Add external memory controller node for Tegra210
-  arm64: tegra: Add EMC table of ram code 0 for Tegra210 Shield platform
-  arm64: tegra: Add EMC table of ram code 1 for Tegra210 Shield platform
-
- .../nvidia,tegra210-emc.txt                   |   605 +
- .../boot/dts/nvidia/tegra210-p2894-emc.dtsi   | 24851 ++++++++++++++++
- .../arm64/boot/dts/nvidia/tegra210-p2894.dtsi |     1 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |    23 +
- drivers/clk/tegra/clk-tegra210.c              |   112 +-
- drivers/memory/tegra/Kconfig                  |    10 +
- drivers/memory/tegra/Makefile                 |     1 +
- drivers/memory/tegra/tegra210-dt-parse.c      |   340 +
- drivers/memory/tegra/tegra210-emc-cc-r21021.c |  1962 ++
- drivers/memory/tegra/tegra210-emc-reg.h       |  1482 +
- drivers/memory/tegra/tegra210-emc.c           |  1814 ++
- include/dt-bindings/clock/tegra210-car.h      |     4 +-
- include/linux/clk/tegra.h                     |     5 +
- 13 files changed, 31192 insertions(+), 18 deletions(-)
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+---
+ .../nvidia,tegra210-emc.txt                   | 605 ++++++++++++++++++
+ 1 file changed, 605 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nv=
 idia,tegra210-emc.txt
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-p2894-emc.dtsi
- create mode 100644 drivers/memory/tegra/tegra210-dt-parse.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-reg.h
- create mode 100644 drivers/memory/tegra/tegra210-emc.c
 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,te=
+gra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidi=
+a,tegra210-emc.txt
+new file mode 100644
+index 000000000000..1f6b6df6d37b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-=
+emc.txt
+@@ -0,0 +1,605 @@
++NVIDIA Tegra210 SoC EMC (external memory controller)
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
++
++Required properties :
++- compatible : should be "nvidia,tegra21-emc", "nvidia,tegra210-emc".
++- reg : physical base address and length of the controller's registers.
++- clocks : phandles of the possible source clocks
++- clock-names : names of the possible source clocks
++- #address-cells : should be 1
++- #size-cells : should be 0
++- nvidia,memory-controller : phandle of the memory controller.
++- nvidia,use-ram-code : boolean, indicates whether we should use RAM_CODE =
+in
++		        the register to find matching emc-table nodes
++
++The node should contain a "emc-table" subnode for each supported RAM type
++(see field RAM_CODE in register APB_MISC_PP_STRAPPING_OPT_A), with its uni=
+t
++address being its RAM_CODE.
++
++Required properties for "emc-table" nodes :
++- nvidia,ram-code : Should contain the value of RAM_CODE this timing set i=
+s
++		    used for.
++
++Each "emc-table" node should contain a "emc-table" subnode for every suppo=
+rted
++EMC clock rate. The "emc-table" subnodes should have the clock rate in
++kilohertz  as their unit address.
++
++Required properties for "emc-table" nodes :
++- compatible :  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
++- nvidia,revision : revision of the parameter set used for this node. All
++                    nodes in the same "emc-table" should have the same rev=
+ision
++- nvidia,dvfs-version : string for the DVFS version of this table
++- clock-frequency : frequency in kilohertz
++- nvidia,emc-min-mv : minimum voltage in millivolt for this rate
++- nvidia,gk20a-min-mv : minimum GPU voltage in millivolt for this rate
++- nvidia,source : name of clock source to be used for this rate
++- nvidia,src-sel-reg : value of EMC CAR register to be used for this rate
++- nvidia,needs-training : 1 if needs training at boot, 0 otherwise
++- nvidia,trained : 1 if initial training has been done by firmware, 0 othe=
+rwise
++- nvidia,periodic_training : 1 if needs periodic training, 0 otherwise
++- nvidia,trained_dram_clktree_c0d0u0 : training data word
++- nvidia,trained_dram_clktree_c0d0u1 : training data word
++- nvidia,trained_dram_clktree_c0d1u0 : training data word
++- nvidia,trained_dram_clktree_c0d1u1 : training data word
++- nvidia,trained_dram_clktree_c1d0u0 : training data word
++- nvidia,trained_dram_clktree_c1d0u1 : training data word
++- nvidia,trained_dram_clktree_c1d1u0 : training data word
++- nvidia,trained_dram_clktree_c1d1u1 : training data word
++- nvidia,current_dram_clktree_c0d0u0 : training data word
++- nvidia,current_dram_clktree_c0d0u1 : training data word
++- nvidia,current_dram_clktree_c0d1u0 : training data word
++- nvidia,current_dram_clktree_c0d1u1 : training data word
++- nvidia,current_dram_clktree_c1d0u0 : training data word
++- nvidia,current_dram_clktree_c1d0u1 : training data word
++- nvidia,current_dram_clktree_c1d1u0 : training data word
++- nvidia,current_dram_clktree_c1d1u1 : training data word
++- nvidia,run_clocks : training data
++- nvidia,tree_margin : training data
++- nvidia,burst-regs-num : number of values in nvidia,emc-registers
++- nvidia,burst-regs-per-ch-num : number of values in
++				 nvidia,emc-burst-regs-per-ch
++- nvidia,trim-regs-num : number of values in nvidia,emc-trim-regs
++- nvidia,trim-regs-per-ch-num : number of values in nvidia,emc-trim-regs-p=
+er-ch
++- nvidia,burst-mc-regs-num : number of values in nvidia,emc-burst-mc-regs
++- nvidia,la-scale-regs-num : number of values in nvidia,emc-la-scale-regs
++- nvidia,vref-regs-num : number of values in nvidia,emc-vref-regs
++- nvidia,dram-timing-regs-num : number of values in nvidia,emc-dram-timing=
+-regs
++- nvidia,min-mrs-wait : value of the EMC_MRS register
++- nvidia,emc-mrw : value of the EMC_MRW register
++- nvidia,emc-mrw2 : value of the EMC_MRW2 register
++- nvidia,emc-mrw3 : value of the EMC_MRW3 register
++- nvidia,emc-mrw4 : value of the EMC_MRW4 register
++- nvidia,emc-mrw9 : value of the EMC_MRW4 register
++- nvidia,emc-mrs : value of the EMC_MRS register
++- nvidia,emc-emrs : value of the EMC_EMRS register
++- nvidia,emc-emrs2 : value of the EMC_EMRS2 register
++- nvidia,emc-auto-cal-config : value of the EMC_AUTO_CAL_CONFIG register
++- nvidia,emc-auto-cal-config2 : value of the EMC_AUTO_CAL_CONFIG2 register
++- nvidia,emc-auto-cal-config3 : value of the EMC_AUTO_CAL_CONFIG3 register
++- nvidia,emc-auto-cal-config4 : value of the EMC_AUTO_CAL_CONFIG4 register
++- nvidia,emc-auto-cal-config5 : value of the EMC_AUTO_CAL_CONFIG5 register
++- nvidia,emc-auto-cal-config6 : value of the EMC_AUTO_CAL_CONFIG6 register
++- nvidia,emc-auto-cal-config7 : value of the EMC_AUTO_CAL_CONFIG7 register
++- nvidia,emc-auto-cal-config8 : value of the EMC_AUTO_CAL_CONFIG8 register
++- nvidia,emc-cfg-2 : value of the EMC_CFG_2 register
++- nvidia,emc-sel-dpd-ctrl : value of the EMC_SEL_DPD_CTRL register
++- nvidia,emc-fdpd-ctrl-cmd-no-ramp : value of the EMC_FDPD_CTRL_CMD_NO_RAM=
+P
++				     register
++- nvidia,dll-clk-src : value of the CLK_RST_CONTROLLER_CLK_SOURCE_EMC_DLL
++		       register
++- nvidia,clk-out-enb-x-0-clk-enb-emc-dll : boolean, enable EMC_DLL in the
++					   CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET,
++					   or clear in the
++					   CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR
++- nvidia,emc-clock-latency-change : clock latency value in micro seconds
++- nvidia,ptfv : control data for periodic training
++- nvidia,emc-registers :
++- nvidia,emc-shadow-regs-ca-train :
++- nvidia,emc-shadow-regs-quse-train :
++- nvidia,emc-shadow-regs-rdwr-train :
++  values for the following registers (See TRM 18.10.2 for register descrip=
+tions)
++	EMC_RC
++	EMC_RFC
++	EMC_RFCPB
++	EMC_REFCTRL2
++	EMC_RFC_SLR
++	EMC_RAS
++	EMC_RP
++	EMC_R2W
++	EMC_W2R
++	EMC_R2P
++	EMC_W2P
++	EMC_R2R
++	EMC_TPPD
++	EMC_CCDMW
++	EMC_RD_RCD
++	EMC_WR_RCD
++	EMC_RRD
++	EMC_REXT
++	EMC_WEXT
++	EMC_WDV_CHK
++	EMC_WDV
++	EMC_WSV
++	EMC_WEV
++	EMC_WDV_MASK
++	EMC_WS_DURATION
++	EMC_WE_DURATION
++	EMC_QUSE
++	EMC_QUSE_WIDTH
++	EMC_IBDLY
++	EMC_OBDLY
++	EMC_EINPUT
++	EMC_MRW6
++	EMC_EINPUT_DURATION
++	EMC_PUTERM_EXTRA
++	EMC_PUTERM_WIDTH
++	EMC_QRST
++	EMC_QSAFE
++	EMC_RDV
++	EMC_RDV_MASK
++	EMC_RDV_EARLY
++	EMC_RDV_EARLY_MASK
++	EMC_REFRESH
++	EMC_BURST_REFRESH_NUM
++	EMC_PRE_REFRESH_REQ_CNT
++	EMC_PDEX2WR
++	EMC_PDEX2RD
++	EMC_PCHG2PDEN
++	EMC_ACT2PDEN
++	EMC_AR2PDEN
++	EMC_RW2PDEN
++	EMC_CKE2PDEN
++	EMC_PDEX2CKE
++	EMC_PDEX2MRR
++	EMC_TXSR
++	EMC_TXSRDLL
++	EMC_TCKE
++	EMC_TCKESR
++	EMC_TPD
++	EMC_TFAW
++	EMC_TRPAB
++	EMC_TCLKSTABLE
++	EMC_TCLKSTOP
++	EMC_MRW7
++	EMC_TREFBW
++	EMC_ODT_WRITE
++	EMC_FBIO_CFG5
++	EMC_FBIO_CFG7
++	EMC_CFG_DIG_DLL
++	EMC_CFG_DIG_DLL_PERIOD
++	EMC_PMACRO_IB_RXRT
++	EMC_CFG_PIPE_1
++	EMC_CFG_PIPE_2
++	EMC_PMACRO_QUSE_DDLL_RANK0_4
++	EMC_PMACRO_QUSE_DDLL_RANK0_5
++	EMC_PMACRO_QUSE_DDLL_RANK1_4
++	EMC_PMACRO_QUSE_DDLL_RANK1_5
++	EMC_MRW8
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_4
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_5
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_0
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_1
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_2
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_3
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_4
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_5
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_0
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_1
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_2
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_3
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_4
++	EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_5
++	EMC_PMACRO_DDLL_LONG_CMD_0
++	EMC_PMACRO_DDLL_LONG_CMD_1
++	EMC_PMACRO_DDLL_LONG_CMD_2
++	EMC_PMACRO_DDLL_LONG_CMD_3
++	EMC_PMACRO_DDLL_LONG_CMD_4
++	EMC_PMACRO_DDLL_SHORT_CMD_0
++	EMC_PMACRO_DDLL_SHORT_CMD_1
++	EMC_PMACRO_DDLL_SHORT_CMD_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_3
++	EMC_TXDSRVTTGEN
++	EMC_FDPD_CTRL_DQ
++	EMC_FDPD_CTRL_CMD
++	EMC_FBIO_SPARE
++	EMC_ZCAL_INTERVAL
++	EMC_ZCAL_WAIT_CNT
++	EMC_MRS_WAIT_CNT
++	EMC_MRS_WAIT_CNT2
++	EMC_AUTO_CAL_CHANNEL
++	EMC_DLL_CFG_0
++	EMC_DLL_CFG_1
++	EMC_PMACRO_AUTOCAL_CFG_COMMON
++	EMC_PMACRO_ZCTRL
++	EMC_CFG
++	EMC_CFG_PIPE
++	EMC_DYN_SELF_REF_CONTROL
++	EMC_QPOP
++	EMC_DQS_BRLSHFT_0
++	EMC_DQS_BRLSHFT_1
++	EMC_CMD_BRLSHFT_2
++	EMC_CMD_BRLSHFT_3
++	EMC_PMACRO_PAD_CFG_CTRL
++	EMC_PMACRO_DATA_PAD_RX_CTRL
++	EMC_PMACRO_CMD_PAD_RX_CTRL
++	EMC_PMACRO_DATA_RX_TERM_MODE
++	EMC_PMACRO_CMD_RX_TERM_MODE
++	EMC_PMACRO_CMD_PAD_TX_CTRL
++	EMC_PMACRO_DATA_PAD_TX_CTRL
++	EMC_PMACRO_COMMON_PAD_TX_CTRL
++	EMC_PMACRO_VTTGEN_CTRL_0
++	EMC_PMACRO_VTTGEN_CTRL_1
++	EMC_PMACRO_VTTGEN_CTRL_2
++	EMC_PMACRO_BRICK_CTRL_RFU1
++	EMC_PMACRO_CMD_BRICK_CTRL_FDPD
++	EMC_PMACRO_BRICK_CTRL_RFU2
++	EMC_PMACRO_DATA_BRICK_CTRL_FDPD
++	EMC_PMACRO_BG_BIAS_CTRL_0
++	EMC_CFG_3
++	EMC_PMACRO_TX_PWRD_0
++	EMC_PMACRO_TX_PWRD_1
++	EMC_PMACRO_TX_PWRD_2
++	EMC_PMACRO_TX_PWRD_3
++	EMC_PMACRO_TX_PWRD_4
++	EMC_PMACRO_TX_PWRD_5
++	EMC_CONFIG_SAMPLE_DELAY
++	EMC_PMACRO_TX_SEL_CLK_SRC_0
++	EMC_PMACRO_TX_SEL_CLK_SRC_1
++	EMC_PMACRO_TX_SEL_CLK_SRC_2
++	EMC_PMACRO_TX_SEL_CLK_SRC_3
++	EMC_PMACRO_TX_SEL_CLK_SRC_4
++	EMC_PMACRO_TX_SEL_CLK_SRC_5
++	EMC_PMACRO_DDLL_BYPASS
++	EMC_PMACRO_DDLL_PWRD_0
++	EMC_PMACRO_DDLL_PWRD_1
++	EMC_PMACRO_DDLL_PWRD_2
++	EMC_PMACRO_CMD_CTRL_0
++	EMC_PMACRO_CMD_CTRL_1
++	EMC_PMACRO_CMD_CTRL_2
++	EMC_TR_TIMING_0
++	EMC_TR_DVFS
++	EMC_TR_CTRL_1
++	EMC_TR_RDV
++	EMC_TR_QPOP
++	EMC_TR_RDV_MASK
++	EMC_MRW14
++	EMC_TR_QSAFE
++	EMC_TR_QRST
++	EMC_TRAINING_CTRL
++	EMC_TRAINING_SETTLE
++	EMC_TRAINING_VREF_SETTLE
++	EMC_TRAINING_CA_FINE_CTRL
++	EMC_TRAINING_CA_CTRL_MISC
++	EMC_TRAINING_CA_CTRL_MISC1
++	EMC_TRAINING_CA_VREF_CTRL
++	EMC_TRAINING_QUSE_CORS_CTRL
++	EMC_TRAINING_QUSE_FINE_CTRL
++	EMC_TRAINING_QUSE_CTRL_MISC
++	EMC_TRAINING_QUSE_VREF_CTRL
++	EMC_TRAINING_READ_FINE_CTRL
++	EMC_TRAINING_READ_CTRL_MISC
++	EMC_TRAINING_READ_VREF_CTRL
++	EMC_TRAINING_WRITE_FINE_CTRL
++	EMC_TRAINING_WRITE_CTRL_MISC
++	EMC_TRAINING_WRITE_VREF_CTRL
++	EMC_TRAINING_MPC
++	EMC_MRW15
++- nvidia,emc-burst-regs-per-ch : values for the following registers (See T=
+RM
++				 18.10.2 for register descriptions) the array
++				 containts 2 values for each register, one per
++				 channel.
++	EMC_MRW10
++	EMC_MRW11
++	EMC_MRW12
++	EMC_MRW13
++- nvidia,emc-trim-regs : values for the following registers (See TRM 18.10=
+.2
++			 for register descriptions)
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_0
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_1
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_2
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_3
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_0
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_1
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_2
++	EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_3
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_2
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_0
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_1
++	EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_2
++	EMC_PMACRO_IB_VREF_DQS_0
++	EMC_PMACRO_IB_VREF_DQS_1
++	EMC_PMACRO_IB_VREF_DQ_0
++	EMC_PMACRO_IB_VREF_DQ_1
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_4
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_5
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2
++	EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_2
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_0
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_1
++	EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_2
++	EMC_PMACRO_QUSE_DDLL_RANK0_0
++	EMC_PMACRO_QUSE_DDLL_RANK0_1
++	EMC_PMACRO_QUSE_DDLL_RANK0_2
++	EMC_PMACRO_QUSE_DDLL_RANK0_3
++	EMC_PMACRO_QUSE_DDLL_RANK1_0
++	EMC_PMACRO_QUSE_DDLL_RANK1_1
++	EMC_PMACRO_QUSE_DDLL_RANK1_2
++	EMC_PMACRO_QUSE_DDLL_RANK1_3
++- nvidia,emc-trim-regs-per-ch : values for the following registers (See TR=
+M
++				18.10.2 for register descriptions)
++	EMC_CMD_BRLSHFT_0
++	EMC_CMD_BRLSHFT_1
++	EMC_DATA_BRLSHFT_0 (channel 0)
++	EMC_DATA_BRLSHFT_0 (channel 1)
++	EMC_DATA_BRLSHFT_1 (channel 0)
++	EMC_DATA_BRLSHFT_1 (channel 1)
++	EMC_QUSE_BRLSHFT_0
++	EMC_QUSE_BRLSHFT_1
++	EMC_QUSE_BRLSHFT_2
++	EMC_QUSE_BRLSHFT_3
++- nvidia,emc-vref-regs : values for the following registers (See TRM 18.10=
+.2
++			 for register descriptions) the array containts 2
++			 values for each register, one per channel.
++	 EMC_TRAINING_OPT_DQS_IB_VREF_RANK0
++	 EMC_TRAINING_OPT_DQS_IB_VREF_RANK1
++- nvidia,emc-dram-timing-regs : DRAM timing values. These are not written =
+to
++				registers but used during the sequence.
++	T_RP : row pre-charge delay
++	T_FC_LPDDR4 : frequency change time
++	T_RFC : refresh cycle time
++	T_PDEX : power down exit delay
++	RL : mode register read latency
++- nvidia,emc-training-mod-regs :
++- nvidia,emc-save-restore-mod-regs :
++	deprecated, keep for for backward compatibility
++- nvidia,emc-burst-mc-regs : values for the following registers
++			     (See TRM 18.10.1 for register descriptions)
++	MC_EMEM_ARB_CFG
++	MC_EMEM_ARB_OUTSTANDING_REQ
++	MC_EMEM_ARB_REFPB_HP_CTRL
++	MC_EMEM_ARB_REFPB_BANK_CTRL
++	MC_EMEM_ARB_TIMING_RCD
++	MC_EMEM_ARB_TIMING_RP
++	MC_EMEM_ARB_TIMING_RC
++	MC_EMEM_ARB_TIMING_RAS
++	MC_EMEM_ARB_TIMING_FAW
++	MC_EMEM_ARB_TIMING_RRD
++	MC_EMEM_ARB_TIMING_RAP2PRE
++	MC_EMEM_ARB_TIMING_WAP2PRE
++	MC_EMEM_ARB_TIMING_R2R
++	MC_EMEM_ARB_TIMING_W2W
++	MC_EMEM_ARB_TIMING_R2W
++	MC_EMEM_ARB_TIMING_CCDMW
++	MC_EMEM_ARB_TIMING_W2R
++	MC_EMEM_ARB_TIMING_RFCPB
++	MC_EMEM_ARB_DA_TURNS
++	MC_EMEM_ARB_DA_COVERS
++	MC_EMEM_ARB_MISC0
++	MC_EMEM_ARB_MISC1
++	MC_EMEM_ARB_MISC2
++	MC_EMEM_ARB_RING1_THROTTLE
++	MC_EMEM_ARB_DHYST_CTRL
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6
++	MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7
++- nvidia,emc-la-scale-regs : values for the following registers
++			     (See TRM 18.10.1 for register descriptions)
++	MC_MLL_MPCORER_PTSA_RATE
++	MC_FTOP_PTSA_RATE
++	MC_PTSA_GRANT_DECREMENT
++	MC_LATENCY_ALLOWANCE_XUSB_0
++	MC_LATENCY_ALLOWANCE_XUSB_1
++	MC_LATENCY_ALLOWANCE_TSEC_0
++	MC_LATENCY_ALLOWANCE_SDMMCA_0
++	MC_LATENCY_ALLOWANCE_SDMMCAA_0
++	MC_LATENCY_ALLOWANCE_SDMMC_0
++	MC_LATENCY_ALLOWANCE_SDMMCAB_0
++	MC_LATENCY_ALLOWANCE_PPCS_0
++	MC_LATENCY_ALLOWANCE_PPCS_1
++	MC_LATENCY_ALLOWANCE_MPCORE_0
++	MC_LATENCY_ALLOWANCE_HC_0
++	MC_LATENCY_ALLOWANCE_HC_1
++	MC_LATENCY_ALLOWANCE_AVPC_0
++	MC_LATENCY_ALLOWANCE_GPU_0
++	MC_LATENCY_ALLOWANCE_GPU2_0
++	MC_LATENCY_ALLOWANCE_NVENC_0
++	MC_LATENCY_ALLOWANCE_NVDEC_0
++	MC_LATENCY_ALLOWANCE_VIC_0
++	MC_LATENCY_ALLOWANCE_VI2_0
++	MC_LATENCY_ALLOWANCE_ISP2_0
++	MC_LATENCY_ALLOWANCE_ISP2_1
++
++Example:
++	external-memory-controller@7001b000 {
++		compatible =3D "nvidia,tegra21-emc", "nvidia,tegra210-emc";
++		reg =3D <0x0 0x7001b000 0x0 0x1000>,
++		      <0x0 0x7001e000 0x0 0x1000>,
++		      <0x0 0x7001f000 0x0 0x1000>;
++		clocks =3D <&tegra_car TEGRA210_CLK_EMC>,
++		         <&tegra_car TEGRA210_CLK_PLL_M>,
++			 <&tegra_car TEGRA210_CLK_PLL_C>,
++			 <&tegra_car TEGRA210_CLK_PLL_P>,
++			 <&tegra_car TEGRA210_CLK_CLK_M>,
++			 <&tegra_car TEGRA210_CLK_PLL_M_UD>,
++			 <&tegra_car TEGRA210_CLK_PLL_MB_UD>,
++			 <&tegra_car TEGRA210_CLK_PLL_MB>,
++			 <&tegra_car TEGRA210_CLK_PLL_P_UD>;
++		clock-names =3D "emc", "pll_m", "pll_c", "pll_p", "clk_m",
++			      "pll_m_ud", "pll_mb_ud", "pll_mb", "pll_p_ud";
++		#address-cells =3D <1>;
++		#size-cells =3D <0>;
++
++		nvidia,memory-controller =3D <&mc>;
++		nvidia,use-ram-code;
++
++		emc-table@0 {
++			nvidia,ram-code =3D <0>;
++			emc-table@40800 {
++				compatible =3D "nvidia,tegra21-emc-table";
++				...
++			};
++			emc-table@204000 {
++				...
++			};
++			...
++		};
++
++		emc-table@1 {
++			nvidia,ram-code =3D <1>;
++			emc-table@40800 {
++				compatible =3D "nvidia,tegra21-emc-table";
++				...
++			};
++			emc-table@204000 {
++				...
++			};
++			...
++		};
++	};
 --=20
 2.21.0
 
