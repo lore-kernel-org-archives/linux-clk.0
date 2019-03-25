@@ -2,99 +2,78 @@ Return-Path: <SRS0=mYc5=R4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CC0C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A179C4360F
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB2F2087C
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553533821;
-	bh=mjxygTOz0VfXyEdP437l5ZjPaHMvCuH2ypZNPL35xTk=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=zFcYH2T8tYeqBChyS0LcjvQsPLXOVnfB3b4OkNmkI0D+jdaC04LCLmRC+rE2H1iR0
-	 UbSGPQCp8UIg8HktBrBep3/5kqVA2xE52XP7xFkez+Kbr1q1q44nsNRBDeVlOFjZ9B
-	 qsOUg9xd1w50x4jJSxJ5eyFgN5JUO5INTCqqX0pA=
+	by mail.kernel.org (Postfix) with ESMTP id 5ABDF2087E
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 17:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfCYRKU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Mar 2019 13:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729095AbfCYRKU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 25 Mar 2019 13:10:20 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F3F3207DD;
-        Mon, 25 Mar 2019 17:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553533819;
-        bh=mjxygTOz0VfXyEdP437l5ZjPaHMvCuH2ypZNPL35xTk=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=X+d7VbyuaMdwdPzusjaMKEp7d/Z9+OKyt6GTmtaX3hLJQBpw/+bkF+lEpfazRgZlI
-         ihs4fTc6CjUy3/JITKtxz42md16cfO+/WXiG1bJnwCsZ5B/10yo9T7WkZRI9EGUecQ
-         bpMLRyNBxwLBLmgi7wTV45/9Z4oAH1n96p/6UoaE=
-Content-Type: text/plain; charset="utf-8"
+        id S1729204AbfCYRt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Mar 2019 13:49:26 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:33465 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbfCYRt0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 13:49:26 -0400
+Received: by mail-vk1-f193.google.com with SMTP id r189so2164280vkb.0;
+        Mon, 25 Mar 2019 10:49:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g8poUT5jrgrFbGbozVkeY1e12rLHI1zhr/ehr01/n9I=;
+        b=DWqjxtHQY6kOnCusXSOqu48dQPCzfdD0iMJ/Pf7zgyzI4klcH47FIk+SbAHqKmCXZh
+         gyO2tiJbRkDr3y5rbSFIk497Ud51Bp135HvmpYmyS8btmU3VKvgNk4H+TG3tZOGj45z1
+         DL8QgRCVry6mJxTaGk0ZFP57uzY5l3/j19OHOBp2k7KjdatEIYNKQQ4zjDFr9vT7a2R0
+         h3ubTfaaISt1F3Rf4Cskue2TsctRgiBCe7N4MQRwAFoIUMCzp9/jcOVDWO31K7RnINfN
+         /79RdENQ7uGx7QhCvEFWJoowm6o7qJcU5mcy1tY3vZFFJhWxwY1I+FGFkmCoIBnBcnH3
+         HiBA==
+X-Gm-Message-State: APjAAAUo6J8tyIoTEc5crWajt2up+TxtDfXZG1CWjPNAappEZmD4qKxz
+        NsCVy3wGHkerK/1InO0LlIU35h/f7ksPrKeiUok=
+X-Google-Smtp-Source: APXvYqwP5wQ5oCopjcjeIjjTTFYTralEFvYqCEKlrMuns1qZc9YKl12uS7KnXXcFf9q3kg6aYVL6AzJ+7xYRUjjEp+s=
+X-Received: by 2002:a1f:1284:: with SMTP id 126mr2443159vks.72.1553536165382;
+ Mon, 25 Mar 2019 10:49:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190325111200.15940-2-jbrunet@baylibre.com>
-References: <20190325111200.15940-1-jbrunet@baylibre.com> <20190325111200.15940-2-jbrunet@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/4] clk: meson: mpll: add init callback and regs
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <155353381842.20095.17915880223118004926@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Mon, 25 Mar 2019 10:10:18 -0700
+References: <20190325163556.22025-1-horms+renesas@verge.net.au> <20190325163556.22025-4-horms+renesas@verge.net.au>
+In-Reply-To: <20190325163556.22025-4-horms+renesas@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 25 Mar 2019 18:49:13 +0100
+Message-ID: <CAMuHMdWFZTq3TyTOROpYmVvso_6Buc1tha-PUfTs3cqNreZHow@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] clk: renesas: rcar-gen3: Remove CLK_TYPE_GEN3_Z2
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-03-25 04:11:57)
-> @@ -138,6 +129,27 @@ static int mpll_set_rate(struct clk_hw *hw,
->         return 0;
->  }
-> =20
-> +static void mpll_init(struct clk_hw *hw)
-> +{
-> +       struct clk_regmap *clk =3D to_clk_regmap(hw);
-> +       struct meson_clk_mpll_data *mpll =3D meson_clk_mpll_data(clk);
-> +
-> +       if (mpll->init_count)
-> +               regmap_multi_reg_write(clk->map, mpll->init_regs,
-> +                                      mpll->init_count);
-> +
-> +       /* Enable the fractional part */
-> +       meson_parm_write(clk->map, &mpll->sdm_en, 1);
-> +
-> +       /* Set additional fractional part enable if required */
-> +       if (MESON_PARM_APPLICABLE(&mpll->ssen))
-> +               meson_parm_write(clk->map, &mpll->ssen, 1);
-> +
-> +       /* Set the magic misc bit if required */
-> +       if (MESON_PARM_APPLICABLE(&mpll->misc))
-> +               meson_parm_write(clk->map, &mpll->misc, 1);
-> +}
-> +
->  const struct clk_ops meson_clk_mpll_ro_ops =3D {
->         .recalc_rate    =3D mpll_recalc_rate,
->         .round_rate     =3D mpll_round_rate,
-> @@ -148,6 +160,7 @@ const struct clk_ops meson_clk_mpll_ops =3D {
->         .recalc_rate    =3D mpll_recalc_rate,
->         .round_rate     =3D mpll_round_rate,
->         .set_rate       =3D mpll_set_rate,
-> +       .init           =3D mpll_init,
+On Mon, Mar 25, 2019 at 5:36 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> After recent reworking of Z and Z2 clk handling
+> CLK_TYPE_GEN3_Z and CLK_TYPE_GEN3_Z2 have come to have precisely
+> the same meaning. Remove this redundancy by eliminating the latter.
+>
+> This is not expected to have any run-time effect.
+>
+> As suggested by Geert Uytterhoeven.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-We actively discourage using init callbacks. Can you do this some other
-way?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->  };
->  EXPORT_SYMBOL_GPL(meson_clk_mpll_ops);
-> =20
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
