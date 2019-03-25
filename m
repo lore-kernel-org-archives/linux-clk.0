@@ -4,64 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4BCC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB3BC4360F
 	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 11:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F33C520863
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 11:12:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B119220863
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 11:12:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ob4wr/p7"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="r3pB7Xyg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730785AbfCYLM2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1730942AbfCYLM2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 25 Mar 2019 07:12:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39992 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730896AbfCYLML (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 07:12:11 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t5so9571941wri.7
-        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2019 04:12:10 -0700 (PDT)
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40128 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730749AbfCYLMM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 07:12:12 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z24so5288756wmi.5
+        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2019 04:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ni9wuRQYti+VN96MUqmtZken5FIKCN6vt8HcbUKOpXk=;
-        b=Ob4wr/p7CWJ0/0rb9BiX/8sfRVwR/RvMNb1rQR4KEx5nw/PtNynhStx9LaWhSq0GIP
-         xR+C5qFlH4eONwWVhTSqBRlO5OzIDe11Xop0RGfFTLs/8fMOUKuIXIbK1ciFfnkhs0iN
-         V6RXmZbqDSOg6MeWgSp6ICBq9mmNE5q8pgR2Zv72oiXpvVphSuXMbBQoZWlTMAQ3gfIm
-         xi8bDZS2bD3NZuCZWfJiS95K96NVuddvWL3LoNaAmKDR9lbmL+y7hA2n1TTPBStgBuTw
-         YuM/hqcL6Jc7VKb6YlJT4Qfmq6jh8gakcKYYua1swt8xgKWBqIJ9DC2cXnfb/HQyvDin
-         XO7w==
+        bh=qSTs5pvYtXziAiN+RG5xFnEp9XYC2fpG75vZzF22hfs=;
+        b=r3pB7Xygzu97DmUwohN4so1YlPfsLTJ88ye6r8Q2iVezfT/WFu9hwCEU1PXM1tjKII
+         PxuYgGCi4bDjes2TRQ4hQQHItbg62/GmXe9EKrvRDG1PArBeWJaO7zjKj4AyUao8kS2o
+         wkdmW4+IaPU1bd8yO74i685YPAtjkUqGMBwqDwNCHtKDFtvbKsmZ0OfmlWU8bNx025Md
+         G0IFYc1IrmdqROt6L2exGp7vHh1pHrosX/x7TGxpWzh+AOWsCWXlN5n2Oz9b3HqKNLOm
+         ltljs3l5jY4xRBTlvZiWcD+AVvy0QMgnAl1+aP34cu+46Qkn6UUH4H6lUw1yILBgWxCG
+         OlUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ni9wuRQYti+VN96MUqmtZken5FIKCN6vt8HcbUKOpXk=;
-        b=FtEKNhLCF8xaDfZuianRNb5RnXkynTvshhsNwxKx/x8NKmag9R9DnAtizd0nsknI1K
-         XHAMiNhRuccuvKaGhjwc0BGT6YGBKiRM8cBxont47GVAuU6W0mD5cKTHuZFLo22Fny0w
-         yJQPKzF29qzLwgFo/xU58YH7vNdDy8UGbrb5YczT1SqslFNtr08adhuOHZif5fytQfx3
-         djhJRSt2+hJEyF8dz1JNeUoq/me+Gh6Jqz0Q+bMkVnBKzCAPr0EnJz4D/4nYhRE9kv5r
-         dA2LF02Yr7a3nHDke96nGhOx8m9INZu/WAb+QoXGWJnArXZi/mrti3gEM1EsZ4d6/I6o
-         LJ3g==
-X-Gm-Message-State: APjAAAXzJ1yuQIjr+xK5uWeIqLqHY4TrIldbn46/D+rvFiHlJXNTPSYK
-        tuBKqMu78qHGjMwDlrzf/OZLlg==
-X-Google-Smtp-Source: APXvYqwcFxJqyNOkSqAjk6X+AhxICLKJQREHSLxv7WELpuv38fpDdjQoI7dcc0hb9DhLMJnBEaY8XQ==
-X-Received: by 2002:a5d:68cf:: with SMTP id p15mr11536669wrw.301.1553512329569;
-        Mon, 25 Mar 2019 04:12:09 -0700 (PDT)
+        bh=qSTs5pvYtXziAiN+RG5xFnEp9XYC2fpG75vZzF22hfs=;
+        b=UdvpBw6cvRGVrgLPXq7N6nnM2ErsUO0TPRXtG8k6otF185ssxSyEUtcZMOjGO4/CKa
+         +FTaQdK1mm5nhimkYF4OqzXga6C+H5wfg7JtCSyW6RMh3deMleG17FTljVTrRg2jiGv9
+         t2qogYcCtnk6IY3Vok/nTbobRHniVs7fNEBBqJZ0UdCMPFxcqx1kE6R3DFN0m0bLHgZb
+         jaY4ny8pJoV2GLWYvzWd6ogt43QPn+y+7WbXyLTG0+TswU7b5UDAiaJ8euApE2fEJNQ7
+         PK4xVp3/OTYrBPj1XkrmZWplWx1HXHf12UbgwNc8+fy2YL7ot4lMVjwc8lIfm87zlxk/
+         fwog==
+X-Gm-Message-State: APjAAAUgib3lH1oDpsRVCHdN7VlK7QkqwGZjJxGspCloKRhfWNdrlCKb
+        6Be9JWPfbjST30mrzJ6/dWn/RA==
+X-Google-Smtp-Source: APXvYqwbT8APELDi6g2qSkQz94txZgo1z92evuBUYL68fQZejF9n6rSg43J6ivlL4CwiNuv+RYquIA==
+X-Received: by 2002:a7b:cd9a:: with SMTP id y26mr5392149wmj.31.1553512330909;
+        Mon, 25 Mar 2019 04:12:10 -0700 (PDT)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id n188sm15134301wme.13.2019.03.25.04.12.08
+        by smtp.googlemail.com with ESMTPSA id n188sm15134301wme.13.2019.03.25.04.12.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Mar 2019 04:12:08 -0700 (PDT)
+        Mon, 25 Mar 2019 04:12:10 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] clk: meson: mpll: add init callback and regs
-Date:   Mon, 25 Mar 2019 12:11:57 +0100
-Message-Id: <20190325111200.15940-2-jbrunet@baylibre.com>
+Subject: [PATCH 2/4] clk: meson: g12a: add mpll register init sequences
+Date:   Mon, 25 Mar 2019 12:11:58 +0100
+Message-Id: <20190325111200.15940-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190325111200.15940-1-jbrunet@baylibre.com>
 References: <20190325111200.15940-1-jbrunet@baylibre.com>
@@ -72,98 +71,97 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Until now (gx and axg), the mpll setting on boot (whatever the
-bootloader) was good enough generate a clean fractional division.
-
-It is not the case on the g12a. While moving away from the vendor u-boot,
-it was noticed the fractional part of the divider was no longer applied.
-Like on the pll, some magic settings need to applied on the mpll
-register.
-
-This change adds the ability to do that on the mpll driver.
+Add the required init of each MPLL of the g12a.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/clk-mpll.c | 33 +++++++++++++++++++++++----------
- drivers/clk/meson/clk-mpll.h |  2 ++
- 2 files changed, 25 insertions(+), 10 deletions(-)
+ drivers/clk/meson/g12a.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index f76850d99e59..64d31c8ba3d0 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -115,21 +115,12 @@ static int mpll_set_rate(struct clk_hw *hw,
- 	else
- 		__acquire(mpll->lock);
- 
--	/* Enable and set the fractional part */
-+	/* Set the fractional part */
- 	meson_parm_write(clk->map, &mpll->sdm, sdm);
--	meson_parm_write(clk->map, &mpll->sdm_en, 1);
--
--	/* Set additional fractional part enable if required */
--	if (MESON_PARM_APPLICABLE(&mpll->ssen))
--		meson_parm_write(clk->map, &mpll->ssen, 1);
- 
- 	/* Set the integer divider part */
- 	meson_parm_write(clk->map, &mpll->n2, n2);
- 
--	/* Set the magic misc bit if required */
--	if (MESON_PARM_APPLICABLE(&mpll->misc))
--		meson_parm_write(clk->map, &mpll->misc, 1);
--
- 	if (mpll->lock)
- 		spin_unlock_irqrestore(mpll->lock, flags);
- 	else
-@@ -138,6 +129,27 @@ static int mpll_set_rate(struct clk_hw *hw,
- 	return 0;
- }
- 
-+static void mpll_init(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
-+
-+	if (mpll->init_count)
-+		regmap_multi_reg_write(clk->map, mpll->init_regs,
-+				       mpll->init_count);
-+
-+	/* Enable the fractional part */
-+	meson_parm_write(clk->map, &mpll->sdm_en, 1);
-+
-+	/* Set additional fractional part enable if required */
-+	if (MESON_PARM_APPLICABLE(&mpll->ssen))
-+		meson_parm_write(clk->map, &mpll->ssen, 1);
-+
-+	/* Set the magic misc bit if required */
-+	if (MESON_PARM_APPLICABLE(&mpll->misc))
-+		meson_parm_write(clk->map, &mpll->misc, 1);
-+}
-+
- const struct clk_ops meson_clk_mpll_ro_ops = {
- 	.recalc_rate	= mpll_recalc_rate,
- 	.round_rate	= mpll_round_rate,
-@@ -148,6 +160,7 @@ const struct clk_ops meson_clk_mpll_ops = {
- 	.recalc_rate	= mpll_recalc_rate,
- 	.round_rate	= mpll_round_rate,
- 	.set_rate	= mpll_set_rate,
-+	.init		= mpll_init,
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index d3f53a9b97dc..6a01f8fd8114 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -577,6 +577,10 @@ static struct clk_fixed_factor g12a_mpll_prediv = {
+ 	},
  };
- EXPORT_SYMBOL_GPL(meson_clk_mpll_ops);
  
-diff --git a/drivers/clk/meson/clk-mpll.h b/drivers/clk/meson/clk-mpll.h
-index cf79340006dd..2925fb939fdd 100644
---- a/drivers/clk/meson/clk-mpll.h
-+++ b/drivers/clk/meson/clk-mpll.h
-@@ -18,6 +18,8 @@ struct meson_clk_mpll_data {
- 	struct parm n2;
- 	struct parm ssen;
- 	struct parm misc;
-+	const struct reg_sequence *init_regs;
-+	unsigned int init_count;
- 	spinlock_t *lock;
- 	u8 flags;
++static const struct reg_sequence g12a_mpll0_init_regs[] = {
++	{ .reg = HHI_MPLL_CNTL2,	.def = 0x40000033 },
++};
++
+ static struct clk_regmap g12a_mpll0_div = {
+ 	.data = &(struct meson_clk_mpll_data){
+ 		.sdm = {
+@@ -600,6 +604,8 @@ static struct clk_regmap g12a_mpll0_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.init_regs = g12a_mpll0_init_regs,
++		.init_count = ARRAY_SIZE(g12a_mpll0_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -623,6 +629,10 @@ static struct clk_regmap g12a_mpll0 = {
+ 	},
  };
+ 
++static const struct reg_sequence g12a_mpll1_init_regs[] = {
++	{ .reg = HHI_MPLL_CNTL4,	.def = 0x40000033 },
++};
++
+ static struct clk_regmap g12a_mpll1_div = {
+ 	.data = &(struct meson_clk_mpll_data){
+ 		.sdm = {
+@@ -646,6 +656,8 @@ static struct clk_regmap g12a_mpll1_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.init_regs = g12a_mpll1_init_regs,
++		.init_count = ARRAY_SIZE(g12a_mpll1_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -669,6 +681,10 @@ static struct clk_regmap g12a_mpll1 = {
+ 	},
+ };
+ 
++static const struct reg_sequence g12a_mpll2_init_regs[] = {
++	{ .reg = HHI_MPLL_CNTL6,	.def = 0x40000033 },
++};
++
+ static struct clk_regmap g12a_mpll2_div = {
+ 	.data = &(struct meson_clk_mpll_data){
+ 		.sdm = {
+@@ -692,6 +708,8 @@ static struct clk_regmap g12a_mpll2_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.init_regs = g12a_mpll2_init_regs,
++		.init_count = ARRAY_SIZE(g12a_mpll2_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
+@@ -715,6 +733,10 @@ static struct clk_regmap g12a_mpll2 = {
+ 	},
+ };
+ 
++static const struct reg_sequence g12a_mpll3_init_regs[] = {
++	{ .reg = HHI_MPLL_CNTL8,	.def = 0x40000033 },
++};
++
+ static struct clk_regmap g12a_mpll3_div = {
+ 	.data = &(struct meson_clk_mpll_data){
+ 		.sdm = {
+@@ -738,6 +760,8 @@ static struct clk_regmap g12a_mpll3_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.init_regs = g12a_mpll3_init_regs,
++		.init_count = ARRAY_SIZE(g12a_mpll3_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll3_div",
 -- 
 2.20.1
 
