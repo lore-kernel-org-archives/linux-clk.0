@@ -2,62 +2,48 @@ Return-Path: <SRS0=mYc5=R4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A999C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 08:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C658EC4360F
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 08:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF3D20830
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 08:02:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FFPvFDh6"
+	by mail.kernel.org (Postfix) with ESMTP id A121F2087E
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Mar 2019 08:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729963AbfCYICM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Mar 2019 04:02:12 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36640 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729812AbfCYICL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 04:02:11 -0400
-Received: by mail-wm1-f66.google.com with SMTP id h18so7915264wml.1
-        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2019 01:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=DtFA6qhgHmfe8jfD+WzaOVrPs09twP3dnTsyB25BXDA=;
-        b=FFPvFDh6MIyj8SKRNQTwFecYOmUhv/XelXhgOIlin3zWhX+b+LUQ2zoR5L8vxphroo
-         CmYRq2mxSjkDOM1ZxUM3q2OL8EZECNZGzWfjeQboagqUKpKCf/uDqIi9Seq2u6+ylY7u
-         X84uOlBcBJXPBLl2Cntey0yFS6fU2TW1vftk+CDOtpDfgEvEF1s3VFXfQkFizhlfpWJD
-         L4hJAaHpgUVM4qjHi9hVRN4woSu+4tx1oGzHKDuYw6Rbnuxy+YDF0O40Nr8KRrcL81at
-         NcgTPIMh9aiyYCZRNH5+v+QSaunZdffg3c12a5LbC5rB5zuLkWAYt+orsB5EEAWjA221
-         AH+Q==
+        id S1729988AbfCYIUV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Mar 2019 04:20:21 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43410 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729914AbfCYIUU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Mar 2019 04:20:20 -0400
+Received: by mail-lf1-f67.google.com with SMTP id g7so5318185lfh.10;
+        Mon, 25 Mar 2019 01:20:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=DtFA6qhgHmfe8jfD+WzaOVrPs09twP3dnTsyB25BXDA=;
-        b=KT4F/drnyTHRnuZjPdqlGAEOPdUR+nRcpggSk6P9lTkVZn5bUswWqiJiWLsQ+AjA+C
-         PsVgVfEe2XiBqdZc5yFKi8PS+z9AuaMFp9QYCEz9D8Cl1BtKlGyJk/zaM8+vDOX2r5kZ
-         qrNKL6FHJsek5IxwOLRS32YabLjgqnGXwNNCoR/pBpuHlBy6B72Ap5ySDsvkO0F50LdS
-         Pnmz9D7E3bO36wK7g+fSot0VViSvIGU0CMuOxzRrrPTpQFPUhR9w/Ymj+dMuvWvfultd
-         a5etQtuKvIviHq8A7Jjyokc4GYs4B/lbMd2mdUa19yC0F962LHPPyQXIBS5UYe9FKkew
-         J4Rg==
-X-Gm-Message-State: APjAAAUVVzUO+XgXVn3j+U1aWn62R8qvx0QrFxzlJO3ZY0a30hkznkXc
-        DW0wpR6VHhbWMsZKHgE6TzZCsg==
-X-Google-Smtp-Source: APXvYqxm/tyX+0u/SnSNLlV7ar2/RNF1sAHIamradKZlDr69QuEaX23uoT3kd3UwFD0tFLm+y+0zlg==
-X-Received: by 2002:a1c:f510:: with SMTP id t16mr10157065wmh.105.1553500929763;
-        Mon, 25 Mar 2019 01:02:09 -0700 (PDT)
-Received: from dell ([2.27.167.37])
-        by smtp.gmail.com with ESMTPSA id s130sm19477743wms.13.2019.03.25.01.02.08
+        bh=BJddPsDT6Xxkykv78AYxD44iyP8eDarxxuSjlGhekj0=;
+        b=sX2w8cbt+/4zj55uDOoqbxMueD+wBnY85B4vvgtFg8xSzOFHiBxQbQs0YRIDXjv/iV
+         yblvVVU0Az2Bj/uPFiDxaYlWTkgHU2Jeeo60TF+aUrb5XKopdnJFMe+CXPB1+avlkuyV
+         5hcDEngIS4163WhqssUcJZmHXUoeLclR6UA0BqaYCQkFP87NcFDXbZYVY9TqMLlK2YBE
+         c7hInT7uHfoIHahbEtHxWlVPPjFx7lkM+pxTHiiApR1vH2CchsZmH4H2RSZOb0hO5gQl
+         G/ySrFNMCGWyGUo5n3hEK9ekAFh/uko0N6GTeQpklUuKFOgXjn27No1KsIt0cUN/k6GI
+         JwHA==
+X-Gm-Message-State: APjAAAXqnIidG8+/+NmfUxwxGhnbX0Y+UF8XW01rB7+eG76TqJDIeKLs
+        uuNswPuk1eI6oqHXjmLyDUU=
+X-Google-Smtp-Source: APXvYqzupmHvDS2mzH1gn0X9n9IAldskGkrJ07jy9HeNaAg01FAal5yaacl7O0E2pAXFhAPXq8UPNg==
+X-Received: by 2002:ac2:447a:: with SMTP id y26mr12505568lfl.169.1553502017628;
+        Mon, 25 Mar 2019 01:20:17 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id e18sm3011607ljb.12.2019.03.25.01.20.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Mar 2019 01:02:09 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 08:02:06 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+        Mon, 25 Mar 2019 01:20:16 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 10:20:13 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Lee Jones <lee.jones@linaro.org>
 Cc:     mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>,
         heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
         robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
@@ -71,76 +57,68 @@ Cc:     mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>,
         linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
         linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
 Subject: Re: [PATCH v10 0/9] support ROHM BD70528 PMIC
-Message-ID: <20190325080206.GZ4731@dell>
+Message-ID: <20190325082013.GC6208@localhost.localdomain>
 References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
  <20190228070450.GB3773@localhost.localdomain>
  <20190228081055.GL4118@dell>
  <20190228082248.GC3773@localhost.localdomain>
  <20190325073640.GB6208@localhost.localdomain>
+ <20190325080206.GZ4731@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190325073640.GB6208@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190325080206.GZ4731@dell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 25 Mar 2019, Matti Vaittinen wrote:
-
-> Hello again Lee & all,
+On Mon, Mar 25, 2019 at 08:02:06AM +0000, Lee Jones wrote:
+> On Mon, 25 Mar 2019, Matti Vaittinen wrote:
 > 
-> On Thu, Feb 28, 2019 at 10:22:48AM +0200, Matti Vaittinen wrote:
-> > On Thu, Feb 28, 2019 at 08:10:55AM +0000, Lee Jones wrote:
-> > > On Thu, 28 Feb 2019, Matti Vaittinen wrote:
-> > > 
-> > > > Hello Lee and Mark,
-> > > > 
-> > > > On Thu, Feb 14, 2019 at 03:02:37PM +0200, Matti Vaittinen wrote:
-> > > > > Patch series introducing support for ROHM BD70528 PMIC
-> 
-> //snip
-> 
-> > > > 
-> > > > The MFD part depends on the regmap-irq changes and I think that most
-> > > > other subsystems want to have the MFD changes in before taking rest of
-> > > > the driver in their trees. So it will be a while untill all the changes
-> > > > are in. It would really be nice to have the drive in-tree sooner - hence
-> > > > I ask if theres a way. (I don't want to push, just ask if it is possible :])
-> > > 
-> > > It's possible, so long as there aren't any build-time dependencies
-> > > between the subsystems.  Immediate acceptance however isn't possible
-> > > due to the impending merge-window which opens in 3 days.
+> > Hello again Lee & all,
 > > 
-> > Thanks for reply Lee. So merge-window is opening - meaning the 5.1 is
-> > being baked now(?) 
+> > On Thu, Feb 28, 2019 at 10:22:48AM +0200, Matti Vaittinen wrote:
+> > > On Thu, Feb 28, 2019 at 08:10:55AM +0000, Lee Jones wrote:
+> > > > On Thu, 28 Feb 2019, Matti Vaittinen wrote:
+> > > > 
+> > > > > Hello Lee and Mark,
+> > > > > 
+> > > > > On Thu, Feb 14, 2019 at 03:02:37PM +0200, Matti Vaittinen wrote:
+> > > > > > Patch series introducing support for ROHM BD70528 PMIC
 > > 
-> > Anyays to make it clear - there is build time dependency between MFD and
-> > regmap-irq changes. MFD part won't compile without the changes in regmap
-> > tree. And theres no new Kconfig to depend on or other compile time
-> > checks. So REGMAP changes are required for this MFD portion to compile.
+> > I see the 5.1-rc1 and 5.1-rc2 are out. Those contain the regmap-irq
+> > changes the BD70528 MFD driver depends on. Would you like me to rebase
+> > the series to some other tree (which tree/branch? I don't see updated
+> > for-mfd-next branch in kernel.org yet) and resend it? Original patch
+> > series was created on top of the regulator tree.
 > 
-> //snip
+> If you could rebase and resend, that would be great.
 > 
-> > Rest of the subsystems (regulator, clk, watchdog, gpio) do all depend on
-> > MFD - but they should have 'depends on' KConfig to MFD meaning they
-> > won't be built without MFD.
-> 
-> I see the 5.1-rc1 and 5.1-rc2 are out. Those contain the regmap-irq
-> changes the BD70528 MFD driver depends on. Would you like me to rebase
-> the series to some other tree (which tree/branch? I don't see updated
-> for-mfd-next branch in kernel.org yet) and resend it? Original patch
-> series was created on top of the regulator tree.
+> You should (very nearly) always base on an upstream tag, so v5.1-rc2
+> would be best in this case.
 
-If you could rebase and resend, that would be great.
+So always use tag from "kernel/git/torvalds/linux.git" tree? Thanks for
+this guidance :) I'll try getting this rebased and resent today or
+tomorrow.
 
-You should (very nearly) always base on an upstream tag, so v5.1-rc2
-would be best in this case.
+Br,
+	Matti Vaittinen
+
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
