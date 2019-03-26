@@ -2,71 +2,106 @@ Return-Path: <SRS0=qH24=R5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423F0C43381
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Mar 2019 08:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E0EC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Mar 2019 10:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111FF20857
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Mar 2019 08:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553590246;
-	bh=4sZI6hzMJn/kJR1eUOgb31e3FFfD4suHGkOxmSNodPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bi7PSm6k09Zmw6Sn3JATAg8g+ZXv7WU8Zx9Vgs7crbzVnsc1DeuEKdm4kHPIM7LHX
-	 E8dB4i4dp1Pp5pLyGagJWJliqfou96YnpuTlBqSIdSN82V/n1+nZ/vT/+BEEby5nG6
-	 jXxfAqrz8KmlwjE1fLn5YW5PX354fF5dgjK7RmHQ=
+	by mail.kernel.org (Postfix) with ESMTP id F2A3120830
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Mar 2019 10:33:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfCZIul (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Mar 2019 04:50:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34814 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfCZIuk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Mar 2019 04:50:40 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C342120856;
-        Tue, 26 Mar 2019 08:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553590240;
-        bh=4sZI6hzMJn/kJR1eUOgb31e3FFfD4suHGkOxmSNodPk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WzVfMuUmPJOygMx97dtW6C66lUPGN6FsyFTrD/H4cc4PGEfs/hScEBAb/Jf2cQQuQ
-         YpXa+aR+JG6BhF5SZO0tK+1ac2ClT7+1I2kMWroBeJl+UkRTwpZWVoYlhJ9eO3Enw6
-         XYla9K6ZxIf0w+EkRLMTSjcRMiLGyuAeXoXE3lsU=
-Date:   Tue, 26 Mar 2019 16:50:02 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        id S1726285AbfCZKd3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Mar 2019 06:33:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:26823 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726266AbfCZKd3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Mar 2019 06:33:29 -0400
+X-UUID: 79f4725e715a4ff086b75836e5093e7e-20190326
+X-UUID: 79f4725e715a4ff086b75836e5093e7e-20190326
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <seiya.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1488152924; Tue, 26 Mar 2019 18:33:22 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 26 Mar 2019 18:33:21 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by mtkcas07.mediatek.inc
+ (172.21.101.84) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 26 Mar
+ 2019 18:33:21 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 26 Mar 2019 18:33:20 +0800
+Message-ID: <1553596401.24277.4.camel@mtksdaap41>
+Subject: Re: [PATCH v2 1/2] arm64: dts: mt8173: correct cpu type of cpu2 and
+ cpu3 to cortex-a72
+From:   Seiya Wang <seiya.wang@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rob Herring" <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx: Remove unused imx_get_clk_hw_fixed
-Message-ID: <20190326085001.GJ12513@dragon>
-References: <1553181943-24123-1-git-send-email-abel.vesa@nxp.com>
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Date:   Tue, 26 Mar 2019 18:33:21 +0800
+In-Reply-To: <20190225065112.3400-1-seiya.wang@mediatek.com>
+References: <20190225065112.3400-1-seiya.wang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1553181943-24123-1-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 21, 2019 at 03:25:54PM +0000, Abel Vesa wrote:
-> This is never used and the imx_clk_hw_fixed does the same thing.
+On Mon, 2019-02-25 at 14:51 +0800, Seiya Wang wrote:
+> The cpu type of cpu2 and cpu3 should be cortex-a72, not cortex-a57.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> ---
+>  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> index 44374c506a1c..99675c51577a 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> @@ -178,12 +178,12 @@
+>  
+>  		cpu2: cpu@100 {
+>  			device_type = "cpu";
+> -			compatible = "arm,cortex-a57";
+> +			compatible = "arm,cortex-a72";
+>  			reg = <0x100>;
+>  			enable-method = "psci";
+>  			cpu-idle-states = <&CPU_SLEEP_0>;
+>  			#cooling-cells = <2>;
+> -			clocks = <&infracfg CLK_INFRA_CA57SEL>,
+> +			clocks = <&infracfg CLK_INFRA_CA72SEL>,
+>  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+>  			clock-names = "cpu", "intermediate";
+>  			operating-points-v2 = <&cluster1_opp>;
+> @@ -191,12 +191,12 @@
+>  
+>  		cpu3: cpu@101 {
+>  			device_type = "cpu";
+> -			compatible = "arm,cortex-a57";
+> +			compatible = "arm,cortex-a72";
+>  			reg = <0x101>;
+>  			enable-method = "psci";
+>  			cpu-idle-states = <&CPU_SLEEP_0>;
+>  			#cooling-cells = <2>;
+> -			clocks = <&infracfg CLK_INFRA_CA57SEL>,
+> +			clocks = <&infracfg CLK_INFRA_CA72SEL>,
+>  				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+>  			clock-names = "cpu", "intermediate";
+>  			operating-points-v2 = <&cluster1_opp>;
 
-Applied, thanks.
+Since CLK_INFRA_CA72SEL has been added in mt8173-clk.h , please review
+this patch. Thanks.
+
+
