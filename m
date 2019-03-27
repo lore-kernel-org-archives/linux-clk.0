@@ -2,111 +2,179 @@ Return-Path: <SRS0=c6wZ=R6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BACC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0978C4360F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58AB52075C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:33:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553715217;
-	bh=rEYuKFJ2Cscjzc31Ovq2NcrqoB0i5CBvRuOemQu/+7o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bIeNNZRustMr18odKwKOCEYoS7lbwI+wdhLtu/iHTjydZh+QT7daBtdyHPVo6n2wI
-	 srZzXd9/b0q0ZLqMCqsedSZCPBnq2XVk90V5Pxm/f17XVg2hLwBTkDejMrbhlP6Rqp
-	 z24zlmGd0QA7xs6awVXofajT0Oo/McwKqVvlCI+4=
+	by mail.kernel.org (Postfix) with ESMTP id AEAE42082F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:17:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="nsn3hskc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731356AbfC0Tdg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 15:33:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730522AbfC0SC2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:02:28 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBE1821738;
-        Wed, 27 Mar 2019 18:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553709747;
-        bh=rEYuKFJ2Cscjzc31Ovq2NcrqoB0i5CBvRuOemQu/+7o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rb10KEBDqVovp5sYjvewhd+OPbf/P4LbUkxzQlMohxRabjdWuEF6UEvazonEijqRM
-         ZJlRNG6p8BkioMbUnHW5gmln6gNxIuF1yvQWlZ3BJVGDGEtLJki2oI4CsAIzS5vIXV
-         5nRcz8Bpkfn7HQ8qm8ecYHiiPB48DX67Y8k+kVQs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 017/262] clk: ti: clkctrl: Fix clkdm_name regression for TI_CLK_CLKCTRL_COMPAT
-Date:   Wed, 27 Mar 2019 13:57:52 -0400
-Message-Id: <20190327180158.10245-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
-References: <20190327180158.10245-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1729941AbfC0XQ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 19:16:57 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:58334 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfC0XQ4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:16:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1553728613; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=CJm+6uSaS9KkHcCaxucqPKa1Tl1yOPtFMNkO2p4W1zI=;
+        b=nsn3hskcwuTIc7Cyjk5XtjpYZ6Cu1VTo12n2r53fxDID+/XBq3qpPJCI+jvf78atSnNe5w
+        GBJIGzlSjZXS4ArhvdBPqxa7DLCKyoi7eoux78oh95vKFYZmkDakoSTcwXMoUMawKukg+f
+        s84voI2wTDlzedLjTjERwUnHGWUNcPA=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v11 02/27] doc: Add doc for the Ingenic TCU hardware
+Date:   Thu, 28 Mar 2019 00:16:06 +0100
+Message-Id: <20190327231631.15708-3-paul@crapouillou.net>
+In-Reply-To: <20190327231631.15708-1-paul@crapouillou.net>
+References: <20190327231631.15708-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+Add a documentation file about the Timer/Counter Unit (TCU) present in
+the Ingenic JZ47xx SoCs.
 
-[ Upstream commit d17a718db40df2548e99a62dc3d7e5e2b38143cc ]
+The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
+hardware block. It features up to to eight channels, that can be used as
+counters, timers, or PWM.
 
-Commit a72d785021cb ("clk: ti: Prepare for remove of OF node name")
-changed the code to use kasprintf() for provider->clkdm_name but also
-changed the offset used later on by three. We don't need to change the
-offset as we already have the extra three characters in the format for
-kasprintf with "%pOFnxxx".
+- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
+  have eight channels.
 
-This caused the clocks with TI_CLK_CLKCTRL_COMPAT to have NULL
-clk->clkdm_name for omap4 and 5. And null clkdm_name can cause module
-reset, enable, and idle to fail.
+- JZ4725B introduced a separate channel, called Operating System Timer
+  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
+  64-bit.
 
-The issue can also be seen also when enabling DEBUG for clkctrl.c
-and then we start seeing "clock: could not associate" messages for
-omap4 and 5 as the generated name is something like "l4_wkclkdm" instead
-of "l4_wkup_clkdm" that's needed.
+- Each one of the TCU channels has its own clock, which can be reparented
+  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
+  their TCSR register.
+  * The watchdog and OST hardware blocks also feature a TCSR register with
+    the same format in their register space.
+  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
+    and OST clocks.
 
-Let's fix the issue with a partial revert of commit a72d785021cb ("clk:
-ti: Prepare for remove of OF node name").
+- Each TCU channel works in one of two modes:
+  * mode TCU1: channels cannot work in sleep mode, but are easier to
+    operate.
+  * mode TCU2: channels can work in sleep mode, but the operation is a bit
+    more complicated than with TCU1 channels.
 
-ALso note that in general code should not depend on the dts node names.
-And the node names should be generic types like clock-domain in this case.
-This could be fixed later by using separate compatible properties for the
-clockdomains, or by adding soc_device_match() table with reg offsets
-to the driver. But let's fix the regression first.
+- The mode of each TCU channel depends on the SoC used:
+  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
+    TCU1 mode.
+  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
+  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
+    others operate as TCU1.
 
-Fixes: a72d785021cb ("clk: ti: Prepare for remove of OF node name")
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+- Each channel can generate an interrupt. Some channels share an interrupt
+  line, some don't, and this changes between SoC versions:
+  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
+    own interrupt line; channels 2-7 share the last interrupt line.
+  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
+    interrupt line; the OST uses the last interrupt line.
+  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
+    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
+    the OST uses the last interrupt line.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Tested-by: Artur Rojek <contact@artur-rojek.eu>
 ---
- drivers/clk/ti/clkctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/mips/ingenic-tcu.txt | 60 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/mips/ingenic-tcu.txt
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 40630eb950fc..85d7f301149b 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -530,7 +530,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 		 * Create default clkdm name, replace _cm from end of parent
- 		 * node name with _clkdm
- 		 */
--		provider->clkdm_name[strlen(provider->clkdm_name) - 5] = 0;
-+		provider->clkdm_name[strlen(provider->clkdm_name) - 2] = 0;
- 	} else {
- 		provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFn", node);
- 		if (!provider->clkdm_name) {
+diff --git a/Documentation/mips/ingenic-tcu.txt b/Documentation/mips/ingenic-tcu.txt
+new file mode 100644
+index 000000000000..0ea35b2a46da
+--- /dev/null
++++ b/Documentation/mips/ingenic-tcu.txt
+@@ -0,0 +1,60 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit hardware
++-----------------------------------------------
++
++The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
++hardware block. It features up to to eight channels, that can be used as
++counters, timers, or PWM.
++
++- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
++  have eight channels.
++
++- JZ4725B introduced a separate channel, called Operating System Timer
++  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
++  64-bit.
++
++- Each one of the TCU channels has its own clock, which can be reparented
++  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
++  their TCSR register.
++  * The watchdog and OST hardware blocks also feature a TCSR register with
++    the same format in their register space.
++  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
++    and OST clocks.
++
++- Each TCU channel works in one of two modes:
++  * mode TCU1: channels cannot work in sleep mode, but are easier to
++    operate.
++  * mode TCU2: channels can work in sleep mode, but the operation is a bit
++    more complicated than with TCU1 channels.
++
++- The mode of each TCU channel depends on the SoC used:
++  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
++    TCU1 mode.
++  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
++  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
++    others operate as TCU1.
++
++- Each channel can generate an interrupt. Some channels share an interrupt
++  line, some don't, and this changes between SoC versions:
++  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
++    own interrupt line; channels 2-7 share the last interrupt line.
++  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
++    interrupt line; the OST uses the last interrupt line.
++  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
++    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
++    the OST uses the last interrupt line.
++
++Implementation
++--------------
++
++The functionalities of the TCU hardware are spread across multiple drivers:
++- clocks/irq/timer: drivers/clocksource/ingenic-timer.c
++- PWM:              drivers/pwm/pwm-jz4740.c
++- watchdog:         drivers/watchdog/jz4740_wdt.c
++- OST:              drivers/clocksource/ingenic-ost.c
++
++Because various functionalities of the TCU that belong to different drivers
++and frameworks can be controlled from the same registers, all of these
++drivers access their registers through the same regmap.
++
++For more information regarding the devicetree bindings of the TCU drivers,
++have a look at Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
 -- 
-2.19.1
+2.11.0
 
