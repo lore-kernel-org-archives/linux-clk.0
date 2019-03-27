@@ -2,119 +2,92 @@ Return-Path: <SRS0=c6wZ=R6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271BAC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 10:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7853C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 11:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2B8220811
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 10:51:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 851DB2070D
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 11:53:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="cgDzqEBl"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="W6M8ycUy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbfC0Kvs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 06:51:48 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41250 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732026AbfC0Kvs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 06:51:48 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r4so10275524wrq.8
-        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2019 03:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=whkKhI+tBkxQ3DBj/1BujfBmXUt+Yvq0OEuaSpUdaxU=;
-        b=cgDzqEBlkFT09bW3V4y+a0i+SLRqvC7ch6Lofmji0KkEcPv1p5eOBK6cOfu/hQ2k2n
-         +0WoU/Q8Kn1A3vnA11vMaBhed9zkgkEm5HRh/TajARE9KARPaVldIFtyxVaha0VlFaMm
-         TDWR1f0w3TxtCvXvKQ5Cm4Hrza365zLwp+EuVYIXTzOz5YeH8yYLoBLd3p7x4DInbHw3
-         sgProb3it7GVP7iT1aEUrqNr7vf/lVQP6KYzPFaeV2+NU+H4gEpLcQqXlq1Vch7RNvQE
-         PLy0hdnUyKEazJnd9xP0O5q0HCjxtxobqEqXbR28wY/WVYOBDK3xAJXBCFmEuIqOTQjf
-         c74A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=whkKhI+tBkxQ3DBj/1BujfBmXUt+Yvq0OEuaSpUdaxU=;
-        b=OCjJJ75SBvgxYDLzoM6y3rnyOzQfNT2rRSICsy1RCD0sosnDYryJnqtFDr9VI4r9Ce
-         mKuaEiP+GAbg1nAnW/ita93n8maqWAOdfQmAzWZs9TPeXq7NSL2as5/aAlLGjSU1jXLU
-         kAaOjBiBHJPGpE5RfjQo8SG/QWGElACaQfe6npYfVvOChzu1zRKfxqbw2l8D5mkbf+eL
-         Srxrr9NPjLmAXSZtJ3MPfHnWjOVfi9i/hAYhGBPsBT240FhIqTFcW7Y3W+yww2pUHQy1
-         spWeJfXuxNLJcD3HkQ2XW0PQmQvWB2KCY9rpaH52BAOerekxRuGHXYoesZ83KBTeqTg7
-         g2BA==
-X-Gm-Message-State: APjAAAXKK8iYZzNnxWpagkRxid+eyfwsAAYPvXO3XKFsIG3YXUd+LdLZ
-        ANSMsix8YeqWNk5Sm97A4gl4uw==
-X-Google-Smtp-Source: APXvYqxGefO8AtgH30eo/0x87l2ofD2BKnceDI9gln8NsdNB7wdd/mruh3hD/f1eKcJNPAp9twAFGg==
-X-Received: by 2002:adf:d84d:: with SMTP id k13mr25301283wrl.154.1553683906216;
-        Wed, 27 Mar 2019 03:51:46 -0700 (PDT)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id n189sm33090938wmb.28.2019.03.27.03.51.44
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 27 Mar 2019 03:51:45 -0700 (PDT)
-Message-ID: <345dd7e287ed07f4a84847ff024fce237c1380a1.camel@baylibre.com>
-Subject: Re: [PATCH RFC 3/6] clk: meson: g12a: mark fclk_div3 as critical
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Date:   Wed, 27 Mar 2019 11:51:42 +0100
-In-Reply-To: <20190327103308.25058-4-narmstrong@baylibre.com>
-References: <20190327103308.25058-1-narmstrong@baylibre.com>
-         <20190327103308.25058-4-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1726319AbfC0LxT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 07:53:19 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:56042 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbfC0LxS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 07:53:18 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 3D28025B78D;
+        Wed, 27 Mar 2019 22:53:16 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1553687596; bh=kyzriu/maV8aDVjgCM5xM51v55JKMzgspv5c7AiQdYM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=W6M8ycUycBVMyK4e4GgunO1Ezp8kgAd7s9c554FNFGE6NifJA7VYaM/d8OgbzW0c+
+         /xamNSgkz/LeB39ud0UKwxzhbHsx25ee4VWo+pA+5PgZHuBklBVvBF9Ymuvan/k78+
+         9H2IBSZ0tA2Ch2Q7HiNMotcT2Go0IGLTQwC8A6D8=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 78BCD940376; Wed, 27 Mar 2019 12:53:14 +0100 (CET)
+Date:   Wed, 27 Mar 2019 12:53:14 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r7s9210: Always use readl()
+Message-ID: <20190327115314.7lkw5pv5y43uixfd@verge.net.au>
+References: <20190320102512.19677-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190320102512.19677-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2019-03-27 at 11:33 +0100, Neil Armstrong wrote:
-> On Amlogic Meson G12b platform, the fclk_div3 seems to be necessary for
-> the system to operate correctly.
+On Wed, Mar 20, 2019 at 11:25:12AM +0100, Geert Uytterhoeven wrote:
+> On arm32, there is no reason to use the (soon deprecated) clk_readl().
+> Hence use the generic readl() instead.
 > 
-> Disabling it cause the entire system to freeze, including peripherals.
-> 
-> This patch patch marks this clock as critical, fixing boot on G12b platforms.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/clk/meson/g12a.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> To be queued in clk-renesas-for-v5.2.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 > 
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 03b4c78f558f..d62ebcd2162d 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -1062,6 +1062,16 @@ static struct clk_fixed_factor g12a_fclk_div3_div = {
->  		.ops = &clk_fixed_factor_ops,
->  		.parent_names = (const char *[]){ "fixed_pll" },
->  		.num_parents = 1,
-> +		/*
-> +		 * This clock is used by the resident firmware and is required
-> +		 * by the platform to operate correctly.
-> +		 * Until the following condition are met, we need this clock to
-> +		 * be marked as critical:
-> +		 * a) Mark the clock used by a firmware resource, if possible
-> +		 * b) CCF has a clock hand-off mechanism to make the sure the
-> +		 *    clock stays on until the proper driver comes along
-> +		 */
-> +		.flags = CLK_IS_CRITICAL,
-
-The gate should be critical then, not the fixed_divider clock.
-the fdiv3 gate is a child of this clock, so fdiv3 should still be able to gate
-with this
-
-
->  	},
->  };
+>  drivers/clk/renesas/r7s9210-cpg-mssr.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> index 57c49fe8829567e1..cf65d4e0e1166647 100644
+> --- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> @@ -11,6 +11,7 @@
 >  
-
-Could you CC me of the whole series next time, I prefer getting the all
-context.
-
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/io.h>
+>  #include <dt-bindings/clock/r7s9210-cpg-mssr.h>
+>  #include "renesas-cpg-mssr.h"
+>  
+> @@ -119,7 +120,7 @@ static void __init r7s9210_update_clk_table(struct clk *extal_clk,
+>  	if (clk_get_rate(extal_clk) > 12000000)
+>  		cpg_mode = 1;
+>  
+> -	frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
+> +	frqcr = readl(base + CPG_FRQCR) & 0xFFF;
+>  	if (frqcr == 0x012)
+>  		index = 0;
+>  	else if (frqcr == 0x112)
+> -- 
+> 2.17.1
+> 
