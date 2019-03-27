@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3685C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A5FC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A212075C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7CF62075C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="hhg8u4LG"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="OtVcgFSh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733263AbfC0XSP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 19:18:15 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:59726 "EHLO
+        id S1733199AbfC0XSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 19:18:07 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:59590 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729245AbfC0XSO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:18:14 -0400
+        with ESMTP id S1733164AbfC0XSH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:18:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1553728692; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1553728684; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=DH0RBuCyaUcwEdmMa6NQzCrm92kH4f4vPKoN8rRVzzE=;
-        b=hhg8u4LGxyQth35qkAHoslLPJRmUYSdyXgMupktjBfXSAewZZQjF+qlbEXLzejkq0LCaQV
-        bXLpsxrPDGBZKp8Q3E8dIoBcSQAkPqUHRQB/InHBsCLsUFnyx/CYxReJNG9c00dOhDLrDR
-        rATIw/XOKXTEw3Jn+TWUnRtXuXCA2uY=
+        bh=ka4onLI32P6QSiyTqTOYiXU4C2Q8s1zZFk8NMlE3pt4=;
+        b=OtVcgFShqVChYyu8E9BLzG5mDVbgSnJDYx/rEVlhIEBXAbJYsNUyUvUudSb5E6nzzbfuLQ
+        WTJjdQPZqy+B0c87BxHn9mGIKJAW2j1F2aePZjT59R7oIVgwR0PjFoRnGCz0k9HYeFW5/H
+        b3NYk5xnjqNfGICBr5uIXX54gIo18rI=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -46,9 +46,9 @@ Cc:     Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v11 26/27] MIPS: GCW0: defconfig: Enable OST, watchdog, PWM drivers
-Date:   Thu, 28 Mar 2019 00:16:30 +0100
-Message-Id: <20190327231631.15708-27-paul@crapouillou.net>
+Subject: [PATCH v11 24/27] MIPS: CI20: defconfig: enable OST driver
+Date:   Thu, 28 Mar 2019 00:16:28 +0100
+Message-Id: <20190327231631.15708-25-paul@crapouillou.net>
 In-Reply-To: <20190327231631.15708-1-paul@crapouillou.net>
 References: <20190327231631.15708-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
@@ -63,27 +63,21 @@ Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 Tested-by: Artur Rojek <contact@artur-rojek.eu>
 ---
- arch/mips/configs/gcw0_defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/mips/configs/ci20_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
-index a3e3eb3c5a8b..7116400e8cbf 100644
---- a/arch/mips/configs/gcw0_defconfig
-+++ b/arch/mips/configs/gcw0_defconfig
-@@ -20,8 +20,13 @@ CONFIG_SERIAL_8250=y
- # CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
- CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_INGENIC=y
-+CONFIG_WATCHDOG=y
-+CONFIG_JZ4740_WDT=y
- CONFIG_USB=y
- CONFIG_USB_OHCI_HCD=y
- CONFIG_USB_OHCI_HCD_PLATFORM=y
- CONFIG_NOP_USB_XCEIV=y
+diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
+index 412800d5d7e0..2f101c7c1749 100644
+--- a/arch/mips/configs/ci20_defconfig
++++ b/arch/mips/configs/ci20_defconfig
+@@ -105,6 +105,7 @@ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_JZ4740=y
+ CONFIG_DMADEVICES=y
+ CONFIG_DMA_JZ4780=y
 +CONFIG_INGENIC_OST=y
-+CONFIG_PWM=y
-+CONFIG_PWM_JZ4740=y
- CONFIG_TMPFS=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_MEMORY=y
+ CONFIG_EXT4_FS=y
 -- 
 2.11.0
 
