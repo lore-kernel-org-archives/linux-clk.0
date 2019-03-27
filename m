@@ -2,33 +2,32 @@ Return-Path: <SRS0=c6wZ=R6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73421C10F06
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4E2C10F13
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A5D2075C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3EBB2082F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="lPDcbnnW"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="jgoZsvoc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732774AbfC0XRw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 19:17:52 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:59222 "EHLO
+        id S1732657AbfC0XRq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 19:17:46 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:59176 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732628AbfC0XRq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:17:46 -0400
+        with ESMTP id S1732572AbfC0XRo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:17:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1553728664; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1553728661; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Xjf4DrrtmSZT3xvRmQjVzrD+mdW5u5tnY/n+24Z5NZk=;
-        b=lPDcbnnW5sOTHZbgIiELh/TmzQdiOUgyihxHOkJn1WVGaZDCUii4U2ufFGob/POt4k2Qu1
-        IYBm4Yo/MoonSw6/DIRbGdub1fngJpiMdJt13QbUeM5l6S33/vOJAEEqMsm5inmu+KTlKa
-        SDEgJb78dIg7c2TtveFWCLG3elzeDUU=
+        bh=LaBZgQfRycafkqZkxA0KQOxGTobHePRrAgEM3XkEjFQ=;
+        b=jgoZsvocN306f74/spp3hXET5Vp2umbTJKJaHkj2+YNuDEsJrLS5dXWKdGi/eT7ciF8ip3
+        wQQ/JhAzpQ98zPdv6tXwqu7TaheVyvUJz1KGDUYeziiW/MbZiFUrtRbr3v2rNhallNg2vT
+        AmRgxCzdj9uOUQYEP+diU6AhTRB95io=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -47,9 +46,9 @@ Cc:     Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v11 18/27] clk: jz4740: Add TCU clock
-Date:   Thu, 28 Mar 2019 00:16:22 +0100
-Message-Id: <20190327231631.15708-19-paul@crapouillou.net>
+Subject: [PATCH v11 17/27] pwm: jz4740: Remove unused devicetree compatible strings
+Date:   Thu, 28 Mar 2019 00:16:21 +0100
+Message-Id: <20190327231631.15708-18-paul@crapouillou.net>
 In-Reply-To: <20190327231631.15708-1-paul@crapouillou.net>
 References: <20190327231631.15708-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
@@ -57,47 +56,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the missing TCU clock to the list of clocks supplied by the CGU for
-the JZ4740 SoC.
+Right now none of the Ingenic-based boards probe this driver from
+devicetree. This driver defined three compatible strings for the exact
+same behaviour. Before these strings are used, we can remove two of
+them.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 Tested-by: Artur Rojek <contact@artur-rojek.eu>
 ---
- drivers/clk/ingenic/jz4740-cgu.c       | 6 ++++++
- include/dt-bindings/clock/jz4740-cgu.h | 1 +
- 2 files changed, 7 insertions(+)
+ drivers/pwm/pwm-jz4740.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index b86edd328249..5d0d5be1e6a7 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -211,6 +211,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 5 },
- 	},
-+
-+	[JZ4740_CLK_TCU] = {
-+		"tcu", CGU_CLK_GATE,
-+		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 1 },
-+	},
+diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
+index c874a387c1d9..47d891bd22c7 100644
+--- a/drivers/pwm/pwm-jz4740.c
++++ b/drivers/pwm/pwm-jz4740.c
+@@ -233,8 +233,6 @@ static int jz4740_pwm_remove(struct platform_device *pdev)
+ #ifdef CONFIG_OF
+ static const struct of_device_id jz4740_pwm_dt_ids[] = {
+ 	{ .compatible = "ingenic,jz4740-pwm", },
+-	{ .compatible = "ingenic,jz4770-pwm", },
+-	{ .compatible = "ingenic,jz4780-pwm", },
+ 	{},
  };
- 
- static void __init jz4740_cgu_init(struct device_node *np)
-diff --git a/include/dt-bindings/clock/jz4740-cgu.h b/include/dt-bindings/clock/jz4740-cgu.h
-index 6ed83f926ae7..e82d77028581 100644
---- a/include/dt-bindings/clock/jz4740-cgu.h
-+++ b/include/dt-bindings/clock/jz4740-cgu.h
-@@ -34,5 +34,6 @@
- #define JZ4740_CLK_ADC		19
- #define JZ4740_CLK_I2C		20
- #define JZ4740_CLK_AIC		21
-+#define JZ4740_CLK_TCU		22
- 
- #endif /* __DT_BINDINGS_CLOCK_JZ4740_CGU_H__ */
+ MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
 -- 
 2.11.0
 
