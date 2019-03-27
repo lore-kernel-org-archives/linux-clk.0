@@ -3,90 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0268DC4360F
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0A4C4360F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4A7F2146F
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DC9F20651
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553730407;
-	bh=/vRu2Cp01wKkvgSPO9ehViu3HPHJB4DJR44emvKa7xM=;
+	s=default; t=1553730458;
+	bh=sjID6mqsUCCT+ummR96JrZy7L8kcQtW4EKILQQjNCMY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=S8oyx2RaGEsT3r6N+Suiu+fIosDz3BOTay5V/m8rpDNmxgKvguHW6tu/+mS3vAPKk
-	 tUdL9MIAUNWMi7L9WCD0IF5oSX0TpurYaVmGt8N+kOcTp+xAnjT+QZRJry9qjqMYW2
-	 YS2U0KRXAKHsugBSt/fHbl7NG3GW/hgg7vDxxsHg=
+	b=y+/2pgt0l2TlaiyzwI1TxtcAraxPsL6TuB/L8t7AKG5VkAgRXf07mQVKSEUKz3Cwm
+	 Q+xDYYcLnwJDQ1XAyDL5CWRbc3jTprzp/5v+dmROY67zDQ+iPMKrxF0tDnurBMdMsy
+	 ojmM9c0VMG97kkd4OwguySe+3tJn7p/VbPAvKfSc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387653AbfC0Xqm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 19:46:42 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38286 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728360AbfC0Xql (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:46:41 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w137so14359644oiw.5;
-        Wed, 27 Mar 2019 16:46:41 -0700 (PDT)
+        id S1731673AbfC0XrQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 19:47:16 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43841 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387531AbfC0XrP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:47:15 -0400
+Received: by mail-oi1-f194.google.com with SMTP id 67so14288296oif.10;
+        Wed, 27 Mar 2019 16:47:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nRkh3JyGRKrv1S0DM23KOqhAgJpc9dHWvKG/HZWzlw4=;
-        b=bV3IEgGjYeF/HJ681EKJA6WkESWOIQ1KMwTv8X4R/xv/900mbcrv4E/M4znjAJovaR
-         kJ3jutPgvuZdyRR4py3D3qzNa8kgGWGVq49bv4T1tlaDccipOdUWTFcYKSUlR0W/I0F1
-         bCHowoLsPmXqqzU0R8GBwPZSmdwdA8L+51loh6PLWB4NLZWY66Urp2MHAY7PYSyZtnNY
-         30tBV9rREIYPYmLqpQlRlqj55/rG/o+s79fz2QyTlcRaBa6ciccPGIB7Z2WzlIsO123I
-         Ut7MO909dwwJrsFjN1ObadCW8Pguiuok016r3PrEDVN9YC3ljtVWLucABfzh51SEoeXB
-         pTJQ==
-X-Gm-Message-State: APjAAAULx2DKYOZu/0HMWEMLTy7J/+ho5v/z1mbTXO5ueOn8Lt8y/0oy
-        jMSzccaw4b+anLdiZij+cw==
-X-Google-Smtp-Source: APXvYqyG4fMWDzw47ShVy4QxBFb0eqZGRs0d4G+qJbBJjB6Ioe3VLBtoG4tamlvcODFK63Wx1q2oyA==
-X-Received: by 2002:aca:3f84:: with SMTP id m126mr3162588oia.164.1553730400968;
-        Wed, 27 Mar 2019 16:46:40 -0700 (PDT)
+        bh=aF8UbrX+SHdnXSF1IP9nWwxcy7seC6lQAeUB+2U8+8I=;
+        b=oZD3lUubDKFeAIoBsbzjH8fODAHJk0kNcAjLkpqKsozlF9+fgena823+rLNFjhP1g7
+         dIuIFyCARAD/JSNoO7k4l061KPuzvj9ISRKSyd26j5zByf+B+NjxotN7rOjUIXkV1wSb
+         GEigSLRMRBkTgDALEq2xtY55F8aYF4RXZSuNUXtBRbEU0CcFgjrY1C80sEU+L+mgT4x7
+         Sjs84kH4mEDYFreOvU9jhfANgEH7g8nQ9zByACWkTY9gawZrEPmkArveQO26kczlw6+0
+         /oqrwlEx6Broq8bDJbcwE3uJiqW3AgidaekCHQNRaH1zdX454pdWA/9Pea3XRL3sskry
+         ow1w==
+X-Gm-Message-State: APjAAAXEGiLgMqyMqgJUb0l5DA/E2TRR7Ef8JBjwlqIDSlMxfGy5GZz7
+        sPZILGd+8fHTpRfIVRFSRg==
+X-Google-Smtp-Source: APXvYqysBvd7Yy0P+PgpYw/gwpTPVSBRLPuFFs7atAhUyRGAZQ4mlZHlhN9NbJIY93sUucTLndbOZQ==
+X-Received: by 2002:aca:c68b:: with SMTP id w133mr21225939oif.58.1553730434872;
+        Wed, 27 Mar 2019 16:47:14 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 66sm10506879otc.25.2019.03.27.16.46.40
+        by smtp.gmail.com with ESMTPSA id h68sm9714796otb.1.2019.03.27.16.47.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Mar 2019 16:46:40 -0700 (PDT)
-Date:   Wed, 27 Mar 2019 18:46:39 -0500
+        Wed, 27 Mar 2019 16:47:14 -0700 (PDT)
+Date:   Wed, 27 Mar 2019 18:47:07 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: imx8mq: add hdmi phy 27m clock
-Message-ID: <20190327234639.GA24736@bogus>
-References: <1551929772-22633-1-git-send-email-Anson.Huang@nxp.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: clk: g12a-clkc: add PCIE PLL clock ID
+Message-ID: <20190327234707.GA25542@bogus>
+References: <20190307141455.23879-1-narmstrong@baylibre.com>
+ <20190307141455.23879-3-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1551929772-22633-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <20190307141455.23879-3-narmstrong@baylibre.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 7 Mar 2019 03:40:57 +0000, Anson Huang wrote:
-> Add IMX8MQ_CLK_HDMI_PHY_27M clock for i.MX8MQ clock tree.
+On Thu,  7 Mar 2019 15:14:54 +0100, Neil Armstrong wrote:
+> Add a clock ID for the reference clock feeding the USB3+PCIe Combo PHY.
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
->  include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  include/dt-bindings/clock/g12a-clkc.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
