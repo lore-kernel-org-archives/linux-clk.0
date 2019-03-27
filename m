@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3BEC4360F
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BACC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F22DE206C0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58AB52075C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:33:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553714763;
-	bh=zlw0UccfFZnuPav6pLKsJ6QMtiJdSdnO1wqwCPqPk7Q=;
+	s=default; t=1553715217;
+	bh=rEYuKFJ2Cscjzc31Ovq2NcrqoB0i5CBvRuOemQu/+7o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TrSWmWrmVJte9zJAqFwlUZdgeg+a+SX1hrMx/vLdVjkSivve5lE5xG0I8888vrnO6
-	 vnr2Z/4Ggfh4ZrfWV+sIFaPTF9JHaOVO76Y5ShS6nny3i5yNrKzM19WB2+SdDweqFf
-	 8UinCOxjd42vSKcZdYyMJpReDUyMTdaIWY7j3a6Y=
+	b=bIeNNZRustMr18odKwKOCEYoS7lbwI+wdhLtu/iHTjydZh+QT7daBtdyHPVo6n2wI
+	 srZzXd9/b0q0ZLqMCqsedSZCPBnq2XVk90V5Pxm/f17XVg2hLwBTkDejMrbhlP6Rqp
+	 z24zlmGd0QA7xs6awVXofajT0Oo/McwKqVvlCI+4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387593AbfC0SFJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 14:05:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46148 "EHLO mail.kernel.org"
+        id S1731356AbfC0Tdg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 15:33:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731950AbfC0SFI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:05:08 -0400
+        id S1730522AbfC0SC2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 Mar 2019 14:02:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66686218D9;
-        Wed, 27 Mar 2019 18:05:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBE1821738;
+        Wed, 27 Mar 2019 18:02:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553709907;
-        bh=zlw0UccfFZnuPav6pLKsJ6QMtiJdSdnO1wqwCPqPk7Q=;
+        s=default; t=1553709747;
+        bh=rEYuKFJ2Cscjzc31Ovq2NcrqoB0i5CBvRuOemQu/+7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ctrU0wKtscCLC1dnbpJVfyLimUndnzMIsfcCkL4KQDTOLxL8nLB6ZUOAqjCe5RbRV
-         uwGLN6flxhMsRhzJGWqcE0ZHd1cHYHpTg3EXNH3J6HPQ2VWAdW+TvJKwCYiRDmJ2UA
-         vmus0PPewsf7dPG/TsZjHYzo1dzd/8anSBHuHdHo=
+        b=rb10KEBDqVovp5sYjvewhd+OPbf/P4LbUkxzQlMohxRabjdWuEF6UEvazonEijqRM
+         ZJlRNG6p8BkioMbUnHW5gmln6gNxIuF1yvQWlZ3BJVGDGEtLJki2oI4CsAIzS5vIXV
+         5nRcz8Bpkfn7HQ8qm8ecYHiiPB48DX67Y8k+kVQs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+Cc:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 104/262] clk: fractional-divider: check parent rate only if flag is set
-Date:   Wed, 27 Mar 2019 13:59:19 -0400
-Message-Id: <20190327180158.10245-104-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 017/262] clk: ti: clkctrl: Fix clkdm_name regression for TI_CLK_CLKCTRL_COMPAT
+Date:   Wed, 27 Mar 2019 13:57:52 -0400
+Message-Id: <20190327180158.10245-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
@@ -57,104 +57,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit d13501a2bedfbea0983cc868d3f1dc692627f60d ]
+[ Upstream commit d17a718db40df2548e99a62dc3d7e5e2b38143cc ]
 
-Custom approximation of fractional-divider may not need parent clock
-rate checking. For example Rockchip SoCs work fine using grand parent
-clock rate even if target rate is greater than parent.
+Commit a72d785021cb ("clk: ti: Prepare for remove of OF node name")
+changed the code to use kasprintf() for provider->clkdm_name but also
+changed the offset used later on by three. We don't need to change the
+offset as we already have the extra three characters in the format for
+kasprintf with "%pOFnxxx".
 
-This patch checks parent clock rate only if CLK_SET_RATE_PARENT flag
-is set.
+This caused the clocks with TI_CLK_CLKCTRL_COMPAT to have NULL
+clk->clkdm_name for omap4 and 5. And null clkdm_name can cause module
+reset, enable, and idle to fail.
 
-For detailed example, clock tree of Rockchip I2S audio hardware.
-  - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
-  - i2s1_div is integer divider can divide N (N is 1~128).
-    Input clock is CPLL or GPLL. Initial divider value is N = 1.
-    Ex) PLL = CPLL, N = 10, i2s1_div output rate is
-      CPLL / 10 = 1.2GHz / 10 = 120MHz
-  - i2s1_frac is fractional divider can divide input to x/y, x and
-    y are 16bit integer.
+The issue can also be seen also when enabling DEBUG for clkctrl.c
+and then we start seeing "clock: could not associate" messages for
+omap4 and 5 as the generated name is something like "l4_wkclkdm" instead
+of "l4_wkup_clkdm" that's needed.
 
-CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
-GPLL --> |          | ,--------------'    |          |
-                      `--> i2s1_frac ---> |          |
+Let's fix the issue with a partial revert of commit a72d785021cb ("clk:
+ti: Prepare for remove of OF node name").
 
-Clock mux system try to choose suitable one from i2s1_div and
-i2s1_frac for master clock (MCLK) of I2S1.
+ALso note that in general code should not depend on the dts node names.
+And the node names should be generic types like clock-domain in this case.
+This could be fixed later by using separate compatible properties for the
+clockdomains, or by adding soc_device_match() table with reg offsets
+to the driver. But let's fix the regression first.
 
-Bad scenario as follows:
-  - Try to set MCLK to 8.192MHz (32kHz audio replay)
-    Candidate setting is
-    - i2s1_div: GPLL / 60 = 8.192MHz
-    i2s1_div candidate is exactly same as target clock rate, so mux
-    choose this clock source. i2s1_div output rate is changed
-    491.52MHz -> 8.192MHz
-
-  - After that try to set to 11.2896MHz (44.1kHz audio replay)
-    Candidate settings are
-    - i2s1_div : CPLL / 107 = 11.214945MHz
-    - i2s1_frac: i2s1_div   = 8.192MHz
-      This is because clk_fd_round_rate() thinks target rate
-      (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
-      and returns parent clock rate.
-
-Above is current upstreamed behavior. Clock mux system choose
-i2s1_div, but this clock rate is not acceptable for I2S driver, so
-users cannot replay audio.
-
-Expected behavior is:
-  - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
-    Candidate settings are
-    - i2s1_div : CPLL / 107          = 11.214945MHz
-    - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
-                 Change i2s1_div to GPLL / 1 = 491.52MHz at same
-                 time.
-
-If apply this commit, clk_fd_round_rate() calls custom approximate
-function of Rockchip even if target rate is higher than parent.
-Custom function changes both grand parent (i2s1_div) and parent
-(i2s_frac) settings at same time. Clock mux system can choose
-i2s1_frac and audio works fine.
-
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-[sboyd@kernel.org: Make function into a macro instead]
+Fixes: a72d785021cb ("clk: ti: Prepare for remove of OF node name")
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-fractional-divider.c | 2 +-
- include/linux/clk-provider.h         | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/ti/clkctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 545dceec0bbf..fdfe2e423d15 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -79,7 +79,7 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long m, n;
- 	u64 ret;
- 
--	if (!rate || rate >= *parent_rate)
-+	if (!rate || (!clk_hw_can_set_rate_parent(hw) && rate >= *parent_rate))
- 		return *parent_rate;
- 
- 	if (fd->approximation)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index e443fa9fa859..b7cf80a71293 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -792,6 +792,9 @@ unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
- unsigned long clk_hw_get_flags(const struct clk_hw *hw);
-+#define clk_hw_can_set_rate_parent(hw) \
-+	(clk_hw_get_flags((hw)) & CLK_SET_RATE_PARENT)
-+
- bool clk_hw_is_prepared(const struct clk_hw *hw);
- bool clk_hw_rate_is_protected(const struct clk_hw *hw);
- bool clk_hw_is_enabled(const struct clk_hw *hw);
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 40630eb950fc..85d7f301149b 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -530,7 +530,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 		 * Create default clkdm name, replace _cm from end of parent
+ 		 * node name with _clkdm
+ 		 */
+-		provider->clkdm_name[strlen(provider->clkdm_name) - 5] = 0;
++		provider->clkdm_name[strlen(provider->clkdm_name) - 2] = 0;
+ 	} else {
+ 		provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFn", node);
+ 		if (!provider->clkdm_name) {
 -- 
 2.19.1
 
