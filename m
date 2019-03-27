@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4788C10F00
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2F0C10F00
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A72B82075C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E941B2075C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="YXcP/R4G"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Rc+YFeB5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732722AbfC0XRv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 19:17:51 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:59276 "EHLO
+        id S1728437AbfC0XS6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 19:18:58 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:59118 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732572AbfC0XRv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:17:51 -0400
+        with ESMTP id S1728062AbfC0XRm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:17:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1553728668; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1553728659; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=NjQ2F08kMImKzahKxPvopZlS77+2wWI9m9V/KZlaiA0=;
-        b=YXcP/R4GPbq8hsKtPtul+l1iPGHFyzdOQgOZzDZThZtuIlXjq0H0XkkA5Tnhn6mhSgNbDf
-        MwJo/8BtxoL4BJN2N0kvWAQZOy+SCVhf8ZNcLuCBQ2Szet5JB0yj0QypSRRwV65vhq2sqe
-        DJWgRXs5erMmL/tpBjZs1NB9CzRKr4Q=
+        bh=i7nXZc2dagRgFRfMyZHWXJxqtg8BMbqF+6N1Dzaibgs=;
+        b=Rc+YFeB50ozbmFA6ZyQpQTqO63FcyjAH/wYcdEnZ1VYSTUtvwspSSDJSKlgt6iUPwQHHyP
+        0iH7rKy6haua6j+8GVXHnYbvnh5glYLZb30tQLSTM4AtYC7NU8l/fhDrrKzzWC/xFp3yob
+        +nWXHHrj7yg5z7V9ENQdEaGPT0SaVFk=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -46,9 +46,9 @@ Cc:     Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v11 19/27] MIPS: Kconfig: Select TCU timer driver when MACH_INGENIC is set
-Date:   Thu, 28 Mar 2019 00:16:23 +0100
-Message-Id: <20190327231631.15708-20-paul@crapouillou.net>
+Subject: [PATCH v11 16/27] pwm: jz4740: Drop dependency on MACH_INGENIC, use COMPILE_TEST
+Date:   Thu, 28 Mar 2019 00:16:20 +0100
+Message-Id: <20190327231631.15708-17-paul@crapouillou.net>
 In-Reply-To: <20190327231631.15708-1-paul@crapouillou.net>
 References: <20190327231631.15708-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
@@ -56,29 +56,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We cannot boot to userspace (not even initramfs) if the timer driver is
-not present; so it makes sense to enable it unconditionally when
-MACH_INGENIC is set.
+Depending on MACH_INGENIC prevent us from creating a generic kernel that
+works on more than one MIPS board. Instead, we just depend on MIPS being
+set.
+
+On other architectures, this driver can still be built, thanks to
+COMPILE_TEST. This is used by automated tools to find bugs, for
+instance.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 Tested-by: Artur Rojek <contact@artur-rojek.eu>
 ---
- arch/mips/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pwm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 4a5f5b0ee9a9..eca480d43d93 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -393,6 +393,7 @@ config MACH_INGENIC
- 	select BUILTIN_DTB if MIPS_NO_APPENDED_DTB
- 	select USE_OF
- 	select LIBFDT
-+	select INGENIC_TIMER
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index a1aba52793ee..e73e744a7a71 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -212,7 +212,7 @@ config PWM_IMX27
  
- config LANTIQ
- 	bool "Lantiq based platforms"
+ config PWM_JZ4740
+ 	tristate "Ingenic JZ47xx PWM support"
+-	depends on MACH_INGENIC
++	depends on MIPS || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	select INGENIC_TIMER
+ 	help
 -- 
 2.11.0
 
