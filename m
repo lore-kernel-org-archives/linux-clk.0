@@ -2,93 +2,83 @@ Return-Path: <SRS0=c6wZ=R6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D8FC10F06
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B16C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 767002075C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:19:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="ntZt3ItW"
+	by mail.kernel.org (Postfix) with ESMTP id 71FFC2082F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 23:26:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553729195;
+	bh=Kt5WhaLwvc84TMMwvo8c7AoPJ5DrQgfy1yzZHHEL83U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iOgYleonkwdk8jO3Q4BoRsahfk03AXcnzXuym+BeRyKkrTttUHals8UgKMVPOWGlX
+	 O1/tYWxVr8uil9gD2W2Dy5nsO11+vRVJ/HbhvsO1KQ0wh0MDeZYAavcbd946q4X8Nm
+	 yJDOepl5+WV1KyV5eqSqQG8ghjXwGA4vdOccQ0Dg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfC0XQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 19:16:51 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:58242 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbfC0XQv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:16:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1553728605; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:references;
-        bh=7BJ4f6f4KSXZ2UB72pVKzoiNiNiDKzYQfLyTLCI0a94=;
-        b=ntZt3ItW3sK8UFQ2SOk3B6wUW4M7nlEaO++UJP0lYPkntRN9pP00q0WaEnsoEo6949ptY+
-        H1VDZ5Dg7cV4PUVwychNTTtCFkyyo5KAs0pXWoDKCf5AJ5vSeMwxZeza1PC+AkZoWK5GdK
-        DPU8iZVrATScTrdsYW5pgd4yJNUIg/8=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Rob Herring <robh+dt@kernel.org>,
+        id S1726100AbfC0X0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 19:26:35 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37480 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfC0X0f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Mar 2019 19:26:35 -0400
+Received: by mail-ot1-f65.google.com with SMTP id c16so16609601otn.4;
+        Wed, 27 Mar 2019 16:26:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RQfbRX8EJp2T+hqOvLn/A6KiU4EtoBpG3kNcgNvy9lo=;
+        b=FcRrxOfTcu9Fa5tO1V12kjxeUGc8pBOr+0ZWT1VAhWhrqpScVeR5Ws6uTdivKYYAZd
+         QVyPUJdmJmFqS6ol7rDEtOj0or66kgD08fRFEiHjKYysNCNhj8X/oMkqfG1sLyH49QhH
+         lF6QACNHiBqm9r6x6HIsnbncXTjPLD+k6PBVuHx8PltUcYflO8OEh2M6QOT5v8dhZYyO
+         K4AI639K/j563OaiuK/2NZd68m3+SyUhpvHLVhv0Hek9anUMGMIH/lYwLW2e11YpDs7o
+         7SSfRdqm5eioIP8nR/Oa2xC5mORjRrnHXy/zvbO0euvmQe6a7EMMlYVlVLAy4optltLo
+         14+w==
+X-Gm-Message-State: APjAAAWhLGia7gcTWMhmSH00w9N+BwBLV35NQZj4splC1DMZ4u9CPzB5
+        SmEAts/PVP2Gv6WjXAQWIg==
+X-Google-Smtp-Source: APXvYqwy2lumT29QcpPRNGiIrY2K1eEY32EIJ2An9+PqBhdHX10UmGJPHNpsKp9vLnp27qTgG/XgXQ==
+X-Received: by 2002:a9d:7847:: with SMTP id c7mr18939604otm.164.1553729194150;
+        Wed, 27 Mar 2019 16:26:34 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d34sm2328321otb.31.2019.03.27.16.26.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Mar 2019 16:26:33 -0700 (PDT)
+Date:   Wed, 27 Mar 2019 18:26:32 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v11 00/27] Ingenic JZ47xx TCU pachset v11
-Date:   Thu, 28 Mar 2019 00:16:04 +0100
-Message-Id: <20190327231631.15708-1-paul@crapouillou.net>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-qcs404: Add CDSP related clocks and resets
+Message-ID: <20190327232632.GA26636@bogus>
+References: <20190306055148.10823-1-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190306055148.10823-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Tue, Mar 05, 2019 at 09:51:48PM -0800, Bjorn Andersson wrote:
+> Add the clocks and resets need in order to control the Turing
+> remoteproc.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-qcs404.c               | 90 +++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-qcs404.h |  5 ++
 
-This is the v11 of my patchset that adds support to the Timer/Counter
-Unit (TCU) present in the JZ47xx SoCs from Ingenic.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Changes from v10:
-
-[03/27]: Fix info about default value of ingenic,pwm-channels-mask
-
-[04/27]: - Change prototype of exported function
-           ingenic_tcu_pwm_can_use_chn(), use a struct device * as first
-	   argument.
-	 - Read clocksource using the regmap instead of bypassing it.
-	   Bypassing the regmap makes sense only for the sched_clock where
-	   the read operation must be as fast as possible.
-	 - Fix incorrect format in pr_crit() macro
-
-[05/27]: Use regmap inside the clocksource read functions. Keep bypassing the
-         regmap inside the sched_clock read functions.
-
-[12/27]: Add note about abrupt shutdown
-
-[13/27]: - Use pwm_set_chip_data() to hold the clock pointers
-         - Remove unused variable 'jz' in jz4740_pwm_request()
-
-[14/27]: - Use proper block-comment style.
-         - Modify commit message to fit the new algorithm used.
-
-[15/27]: Use new version of ingenic_tcu_pwm_can_use_chn()
-
-The other patches have not been modified since v10.
-
-If this patchset passes review, I'd like it to be merged in the MIPS
-tree.
-
-Thanks,
--Paul
-
+>  2 files changed, 95 insertions(+)
