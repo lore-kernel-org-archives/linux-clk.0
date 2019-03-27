@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB144C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD462C10F00
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88424204FD
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:06:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A06872177E
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Mar 2019 19:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553713584;
-	bh=pY3sqJTrXeIpvAdywDAVsE79ly4q8wvGhTNHP5E/1g8=;
+	s=default; t=1553714022;
+	bh=k54kCTv1u60xloHCbK3Ff8ZrJjnxpilCWaadgutsJpM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nzj2rwi4/dplxGP3TU5uG5luZZczU0BYnqPY5CarAqfNXfcS0L8zk/d8kne+AnfYX
-	 LnUt5tXBY0l2v3nd4wof7z2Zl+ANkcOjJ1L59pmrG8nHnlwmln+gS+9U3v5LMTDs9z
-	 3soYqYLi0HHpDs0ySH2+z1pureWr0Y4Yqrudm28Q=
+	b=B+NEZTW6EBzz0Is32B+Np6LcDs3xq2dJW+7EKul0avwfolAeTIjkIjDAiyHBV05Uk
+	 2dw+SGlAAw3IkwEs+zDZ9mFoE8s7KjmP4mZNsKoIz1KL83qRuktBFzhNK5qKk0nzJA
+	 tzs71M0fz4zvp+4Ns1nQR170NROlR8LypfmtTIwo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388975AbfC0SMa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Mar 2019 14:12:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54872 "EHLO mail.kernel.org"
+        id S2388825AbfC0TNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Mar 2019 15:13:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389203AbfC0SM1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:12:27 -0400
+        id S2388734AbfC0SKH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 Mar 2019 14:10:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33011217D9;
-        Wed, 27 Mar 2019 18:12:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECAE221741;
+        Wed, 27 Mar 2019 18:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553710345;
-        bh=pY3sqJTrXeIpvAdywDAVsE79ly4q8wvGhTNHP5E/1g8=;
+        s=default; t=1553710206;
+        bh=k54kCTv1u60xloHCbK3Ff8ZrJjnxpilCWaadgutsJpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DBi78RMZVCZh85wAnfVKgkU80AxMwRZa1VcQIHlJ0CDUiwQYZapJ9o5lV/ZSha3NL
-         MUP1JTvtZEJbqmMkS5XflR9phomFDcIdKvn8fxtPHxM+Pax1TFVBmBCx1otasK1lRt
-         ZvTITfHhZy8jv3gWEHLVTnrJeJruKAmCVmPO5CV8=
+        b=aFHRZownGUvXlspDT2lo077zi1aIb7+Xb4cqDMhYuhALmT8Q7w3iQChZwG+A9093Y
+         VjNEFmasMbs/N3tdK0/EfcHY3slF4jhw4dz2vEXLrD7aIHxQ4T+cp0/Merydyj62dF
+         vUbevPK4lVrDZCUNYxNi7dNlRjHr+Ri54Ivg+1qY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 070/192] clk: fractional-divider: check parent rate only if flag is set
-Date:   Wed, 27 Mar 2019 14:08:22 -0400
-Message-Id: <20190327181025.13507-70-sashal@kernel.org>
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.0 251/262] clk: rockchip: fix frac settings of GPLL clock for rk3328
+Date:   Wed, 27 Mar 2019 14:01:46 -0400
+Message-Id: <20190327180158.10245-251-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
-References: <20190327181025.13507-1-sashal@kernel.org>
+In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
+References: <20190327180158.10245-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,102 +60,63 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 
-[ Upstream commit d13501a2bedfbea0983cc868d3f1dc692627f60d ]
+[ Upstream commit a0e447b0c50240a90ab84b7126b3c06b0bab4adc ]
 
-Custom approximation of fractional-divider may not need parent clock
-rate checking. For example Rockchip SoCs work fine using grand parent
-clock rate even if target rate is greater than parent.
+This patch fixes settings of GPLL frequency in fractional mode for
+rk3328. In this mode, FOUTVCO is calcurated by following formula:
+  FOUTVCO = FREF * FBDIV / REFDIV + ((FREF * FRAC / REFDIV) >> 24)
 
-This patch checks parent clock rate only if CLK_SET_RATE_PARENT flag
-is set.
+The problem is in FREF * FRAC >> 24 term. This result always lacks
+one from target value is specified by rate member. For example first
+itme of rk3328_pll_frac_rate originally has
+  - rate  : 1016064000
+  - refdiv: 3
+  - fbdiv : 127
+  - frac  : 134217
+  - FREF * FBDIV / REFDIV        = 1016000000
+  - (FREF * FRAC / REFDIV) >> 24 = 63999
+Thus calculated rate is 1016063999. It seems wrong.
 
-For detailed example, clock tree of Rockchip I2S audio hardware.
-  - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
-  - i2s1_div is integer divider can divide N (N is 1~128).
-    Input clock is CPLL or GPLL. Initial divider value is N = 1.
-    Ex) PLL = CPLL, N = 10, i2s1_div output rate is
-      CPLL / 10 = 1.2GHz / 10 = 120MHz
-  - i2s1_frac is fractional divider can divide input to x/y, x and
-    y are 16bit integer.
-
-CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
-GPLL --> |          | ,--------------'    |          |
-                      `--> i2s1_frac ---> |          |
-
-Clock mux system try to choose suitable one from i2s1_div and
-i2s1_frac for master clock (MCLK) of I2S1.
-
-Bad scenario as follows:
-  - Try to set MCLK to 8.192MHz (32kHz audio replay)
-    Candidate setting is
-    - i2s1_div: GPLL / 60 = 8.192MHz
-    i2s1_div candidate is exactly same as target clock rate, so mux
-    choose this clock source. i2s1_div output rate is changed
-    491.52MHz -> 8.192MHz
-
-  - After that try to set to 11.2896MHz (44.1kHz audio replay)
-    Candidate settings are
-    - i2s1_div : CPLL / 107 = 11.214945MHz
-    - i2s1_frac: i2s1_div   = 8.192MHz
-      This is because clk_fd_round_rate() thinks target rate
-      (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
-      and returns parent clock rate.
-
-Above is current upstreamed behavior. Clock mux system choose
-i2s1_div, but this clock rate is not acceptable for I2S driver, so
-users cannot replay audio.
-
-Expected behavior is:
-  - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
-    Candidate settings are
-    - i2s1_div : CPLL / 107          = 11.214945MHz
-    - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
-                 Change i2s1_div to GPLL / 1 = 491.52MHz at same
-                 time.
-
-If apply this commit, clk_fd_round_rate() calls custom approximate
-function of Rockchip even if target rate is higher than parent.
-Custom function changes both grand parent (i2s1_div) and parent
-(i2s_frac) settings at same time. Clock mux system can choose
-i2s1_frac and audio works fine.
+If frac has 134218 (it is increased 1 from original value), second
+term is 64000. All other items have same situation. So this patch
+adds 1 to frac member in all items of rk3328_pll_frac_rate.
 
 Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-[sboyd@kernel.org: Make function into a macro instead]
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-fractional-divider.c | 2 +-
- include/linux/clk-provider.h         | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-rk3328.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index fdf625fb10fa..083daa293280 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -77,7 +77,7 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long m, n;
- 	u64 ret;
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index faa94adb2a37..65ab5c2f48b0 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -78,17 +78,17 @@ static struct rockchip_pll_rate_table rk3328_pll_rates[] = {
  
--	if (!rate || rate >= *parent_rate)
-+	if (!rate || (!clk_hw_can_set_rate_parent(hw) && rate >= *parent_rate))
- 		return *parent_rate;
- 
- 	if (fd->approximation)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 08b1aa70a38d..d1b6d2c3ada6 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -782,6 +782,9 @@ unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
- unsigned long clk_hw_get_flags(const struct clk_hw *hw);
-+#define clk_hw_can_set_rate_parent(hw) \
-+	(clk_hw_get_flags((hw)) & CLK_SET_RATE_PARENT)
-+
- bool clk_hw_is_prepared(const struct clk_hw *hw);
- bool clk_hw_rate_is_protected(const struct clk_hw *hw);
- bool clk_hw_is_enabled(const struct clk_hw *hw);
+ static struct rockchip_pll_rate_table rk3328_pll_frac_rates[] = {
+ 	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
+-	RK3036_PLL_RATE(1016064000, 3, 127, 1, 1, 0, 134217),
++	RK3036_PLL_RATE(1016064000, 3, 127, 1, 1, 0, 134218),
+ 	/* vco = 1016064000 */
+-	RK3036_PLL_RATE(983040000, 24, 983, 1, 1, 0, 671088),
++	RK3036_PLL_RATE(983040000, 24, 983, 1, 1, 0, 671089),
+ 	/* vco = 983040000 */
+-	RK3036_PLL_RATE(491520000, 24, 983, 2, 1, 0, 671088),
++	RK3036_PLL_RATE(491520000, 24, 983, 2, 1, 0, 671089),
+ 	/* vco = 983040000 */
+-	RK3036_PLL_RATE(61440000, 6, 215, 7, 2, 0, 671088),
++	RK3036_PLL_RATE(61440000, 6, 215, 7, 2, 0, 671089),
+ 	/* vco = 860156000 */
+-	RK3036_PLL_RATE(56448000, 12, 451, 4, 4, 0, 9797894),
++	RK3036_PLL_RATE(56448000, 12, 451, 4, 4, 0, 9797895),
+ 	/* vco = 903168000 */
+-	RK3036_PLL_RATE(40960000, 12, 409, 4, 5, 0, 10066329),
++	RK3036_PLL_RATE(40960000, 12, 409, 4, 5, 0, 10066330),
+ 	/* vco = 819200000 */
+ 	{ /* sentinel */ },
+ };
 -- 
 2.19.1
 
