@@ -2,104 +2,143 @@ Return-Path: <SRS0=OKnm=R7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF73C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 14:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 493F8C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 14:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAFF12173C
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 14:36:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="XAEQVJUb"
+	by mail.kernel.org (Postfix) with ESMTP id 22DF9217F9
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 14:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfC1Ogb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Mar 2019 10:36:31 -0400
-Received: from mout.gmx.net ([212.227.15.15]:40633 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725849AbfC1Oga (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Mar 2019 10:36:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1553783746;
-        bh=TN6b9b0S/9+xjWzdRP6B3DLNgpB2Qyy1B0J2sUZsRZA=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=XAEQVJUbtngqCiIUWDNEuho2v+fd3xjfJDZtubZgAjD6NRyviMP7yA1tpsTNp+lWy
-         Mc5EdDD/A/lMKEmfGHV7GkHX9P8YzXZjtKR3quqAWU6Su3VT8IVSz0ur4st6aICyBJ
-         kFcQrd+EOhG83fZyvyZRGHA5xottpaxQxDoPfLsI=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.11.10] ([185.137.174.251]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MILxX-1h72E91Kmd-004CVm; Thu, 28
- Mar 2019 15:35:46 +0100
+        id S1725939AbfC1OsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Mar 2019 10:48:07 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39701 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725849AbfC1OsH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Mar 2019 10:48:07 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p20so16975950eds.6
+        for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2019 07:48:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VrZPrAXBf8+KeKNgUhd/K7rHyQGYDT1Vm8qRXj0q5EY=;
+        b=jiEHiH8efqbCqCG0wubq0mKXNOQcd1Aeyq5XFGYMjzNWgsbZZCryp6MyjKod9BpSWO
+         mFwEdoFvT5n+DydjQP6zP+QnOvx8nJM5PV7jRLp4UmJKdrrmo4qKqlsz32wZgValRcLQ
+         SClMwhPxxVPYT1zXK+HKzXsxzUqKeNfAt4xMns49UvXXeUFfm6YYB56BWJ7SsiQoRwbg
+         mm83suBm0lry8yPR8v+m8UQ9xGcaphLCsYbaHIy61qJF6n3efXeWSIXdR4haj+m1qyDl
+         zhS6wh2NHRjYW6CBmPWrvo8Llp8bD7G1/G/Ic2A9JanUa6qoGk1FyqH+OE3OK2YXwWuq
+         LdKQ==
+X-Gm-Message-State: APjAAAUT/PLFKwxwTf3HjGi8GvmdmSar6gBRSNXUp3NVVrHJwjvOVY9B
+        KMnCVGVj1kj6Z1u5J1H7Jg4tdA==
+X-Google-Smtp-Source: APXvYqxy4ckstZsN1GtQUuPJi9ItLKbzKE8PNO8GtM8QlVOQOn7fGtJTaDi6rGEX/hsf/8aUH+ul9g==
+X-Received: by 2002:a50:ac71:: with SMTP id w46mr28668072edc.95.1553784485800;
+        Thu, 28 Mar 2019 07:48:05 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id t52sm3304033edd.54.2019.03.28.07.48.03
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Mar 2019 07:48:04 -0700 (PDT)
 Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        "Fujinaka, Todd" <todd.fujinaka@intel.com>,
+Cc:     "Fujinaka, Todd" <todd.fujinaka@intel.com>,
+        Semyon Verchenko <semverchenko@factor-ts.ru>,
         "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
         "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>,
+        linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>
 References: <1c433bef-055e-2ac3-990c-325aa2d3899e@factor-ts.ru>
  <9B4A1B1917080E46B64F07F2989DADD69AF4DDE7@ORSMSX115.amr.corp.intel.com>
  <0d0b97cc-2871-6a81-11ad-4dbb8a6b652e@redhat.com>
  <20190327164748.GO9224@smile.fi.intel.com>
- <907ab1ec-ae46-a678-4f0e-87af5069f2eb@gmx.ch>
- <20190327191925.GP9224@smile.fi.intel.com>
-From:   =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>
-Organization: Privat
-Message-ID: <5dd6a6ac-94de-07ad-df5a-2601cbc7e9d0@gmx.ch>
-Date:   Thu, 28 Mar 2019 15:35:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
- SeaMonkey/2.49.4
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <c6cf3052-786f-9022-44d9-ad2b5c8a7c31@redhat.com>
+Date:   Thu, 28 Mar 2019 15:48:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-In-Reply-To: <20190327191925.GP9224@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2IZUbd8WfQbkrpyOCzvQ8z+pvuHR9rIOYglj17E8poFDZlJobfb
- XQ4140F0PjiLsm3D5X9FIqGjXzK5nbuPBRcz9sJMG7LXzddeo3xJW48T43u9pA6pk/3OEz8
- xvosuwEb9jxbw1QsE9jjOvV65ASs8Vfm85n22G8EdwREwz58tHewQlwC+DE+epoychZdPEf
- NX2Fp5anMdVIaO0RFmyqg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1yY3HTmMdCg=:pvxwlGuaiICcBBjzfw0g51
- KxTPWBgasg85PJ20UADqJxZ/yKBFHx/R1xAaRVtRXk/+ebCAh8ruiVFTOaPm8vMsHTj4sOCQM
- R0oBWN3gymTtmFCjcJu1cw/wo+BOYEBcdjNfjuS6S8zBfighI+glQjPR1NlYm5H45r5vG0nIp
- 6cgcLUXCavIEwjyHRwdvS+7Kdb3/VbfSFA6vk0r0Sqb80nEXvLlTm5t9SjJt2Mr1ifHMwReL5
- zCMwcM5ml4MTxHsAGc1k/q0QiJ+SAn2FKrGq3YaYroIrAhYhsc0bTE+8ICkZ9SWnnEIWSg16M
- KUZj/OT+Cgy/t0qqUBqKILO2yTeZQlEvu9nnskh6F2I6lkMLUnmEDGsRjDY1rRaFObdL3uKcK
- V37KvZK7w37cXrs7Add8+lOLKOm9TBJTyfwaw5mxdwH/1RNtEzengfw6RdvPCi6bLtnQlsu+b
- 1GMPv72FJmnk/iP+SPqXmiHcP71ei4HvRg+bKPxFx3APlrXSgslLacHhw2p+0pHWWlQrLEUZx
- xXcjcajNhn6uiRQ/SgKJRvhA9OUfUxgRPqfguKfBss2v+N16Y30oRYaIDU7FqRUT6/Gtxq3S0
- 6zDfwBU4tTE1fzVFYGlvfkvmlCBa1Hcx83gWFlXGots270p8hKfboE7lkVTZoguOPFjes5XCq
- 1kvW2o3b08+Mqbec/srNTVmfoQlPMaKs6NOrBMa6t21gWK2RGFVXfz+em4KscIvZKrEBl1Z/D
- qDoXreCynAN5k2YMBgwpRg0clEGrUWJPq2WQKjowfxoi6rVNfLd5swSdMNFTMDhsPoBGp4Wdx
- dKM8yNmXbwSu0/AGf3TY5OyUp8WEHf1XQbCD66rulK0g1QrkFopTx/OpgzoSi0mvdPLbNSigC
- sMLSwPVQ+9+7R1dtfhgVAqIKGR+luhJcODFZ4bOs/B9HgQ9RA20Gedg1pPtbQiyFXn8Y3nHNa
- FUoecMMcOIQ==
+In-Reply-To: <20190327164748.GO9224@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello
+Hi,
 
-Andy Shevchenko wrote:
-> On Wed, Mar 27, 2019 at 06:31:19PM +0100, David M=C3=BCller wrote:
->> The pmc_plt_clks may also be used for external hardware purposes withou=
-t
->> the need for a driver involved. So I'm afraid a fix similar to the r816=
-9
->> approach will not suit all needs. Please see
->> https://www.spinics.net/lists/linux-clk/msg35800.html for details.
->
-> Any driver for device which is using PMC clock should take it into
-> consideration.
+On 27-03-19 17:47, Andy Shevchenko wrote:
+> On Wed, Mar 27, 2019 at 05:02:31PM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 3/25/19 9:12 PM, Fujinaka, Todd wrote:
+>>> This is going to take a bit of time to see what we need to do. The attachments were stripped but I think just figuring out what they had to change in the Realtek driver will tell us what we need to know.
+>>
+>> I'm not sure fixing this in the ethernet driver is the best way to go,
+>> the board in question is an embedded PC and I've also recently received
+>> a bug report about a similar problem with the consumer not requesting
+>> the pmc clocks causing a HSIC usb hub to not work.
+>>
+>> I think that it might be better to restore the CLK_IS_CRITICAL workaround
+>> for this, but then only on select boards, based on DMI matching.
+>>
+>> I've added a bunch of relevant people / lists to the Cc.
+>>
+>> Andy, Stephen, what is your take on this ?
+> 
+> I'm afraid I forgot all details about that (semi-)famous issue. Though, looking
+> into your patch against r8169 and taking into account DT practice, it would be
+> not bad to fix a driver, we have by the way devm_clk_get_optional() now, so, it
+> would be not a big deal.
 
-I agree that each driver should properly request the clocks and other
-resources needed.
+This assumes that the machine with the igb ethernet problem is using
+the same pmc clk as the other device I fixed and that it is using one
+and the same clock for all 4 of its ethernet controllers.
 
-But what if the PMC clock is used by hardware for which no driver is
-being loaded or needed?
+IMHO the not controlling of the clock as an ACPI resource on Bay Trail
+models as is normal on x86 really is a firmware bug (shared by the
+entire Bay Trail generation). I'm not in favor of adding workarounds to
+drivers all over the place because of this.
 
+And in case of the problem with David Müller's system, the problem
+is that the clock is needed for an external USB hub connected via
+HSIC. The USB subsystem assumes that HUBs will just work without
+needing to request resources for them and in this case there really
+is no good place to do the devm_clk_get_optional().
 
-Dave
+So I believe that we are going to need the DMI based approach for
+David's case anyway, at which point we might just as well also fix
+the igb problem that way, at least until more boards using the igb
+driver and showing the same problem pop up.
+
+The reasons I patched the r8169 driver for this are:
+1) In principle I agree that this is the right thing to do
+(but see above)
+
+2) I expect more Cherry Trail based devices (yes this is a Cherry
+Trail device, so here it really really is a firmware bug) to
+use the r8169 (cheap SoC + cheap ethernet chip)
+
+3) This is a laptop where being able to reach S0i3 is important,
+which the CLK_IS_CRITICAL workaround will break
+
+>> I'm myself starting to believe the DMI based applying of the
+>> CLK_IS_CRITICAL workaround is the best solution here.
+> 
+> DMI quirk table tends to grow in mysterious ways. I would prefer in this case
+> logical solution — if platform has an optional clock, then use it.
+
+I'm afraid that otherwise instead of a growing DMI table in a
+single place we will get extra coded added for niche cases to
+a bunch of different drivers, in which case I prefer the "central"
+DMI quirk database.
+
+Regards,
+
+Hans
+
