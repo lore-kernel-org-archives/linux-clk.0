@@ -2,125 +2,92 @@ Return-Path: <SRS0=OKnm=R7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B87C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 17:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6130DC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1348720823
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 17:39:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3438C20811
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:09:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553794768;
-	bh=wBsyo3nDuPTBwGgVWSG9805Qn9gDNN4O5soEfYx4iSg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nnFuqqXIoJDj7dTuadETtuWkaKm/ThmY+kTVKbzikkhWsGUCXP2iak7JtkjNPnBt+
-	 68beyVdkf+7cN5it4ZEAllK6fuJs4sA7HX+m54eD0sbLb/iyS84NHmrvQoUYKLb+VX
-	 riaURzh0IQq20kM46bMpRWMBLA4a+/hJbUcwttdo=
+	s=default; t=1553800157;
+	bh=YM0FDythSmRXaoeiDaMk/3/dGc984JP5wlb+G0V2XTg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=utZQ+KCOLwZPMayIwJzqvL0nUI6lzbmX+MQnAgpIVXRZAjprj8LJ8yC3paWkeiSFO
+	 H/s5FQtHlAMg0d3SLdqjwY/Um2fmgh6AzsNHBMGS0yKv+AT64UF3AacyzLrlOHfKAK
+	 nVYk4CXcsLw+nVON/a/ohsPc8U/V+MENhUoOFlSE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfC1Rj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Mar 2019 13:39:27 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38642 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfC1Rj1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Mar 2019 13:39:27 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w137so16454936oiw.5;
-        Thu, 28 Mar 2019 10:39:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X8T2Mq9pFzdl/B0J7bAykbJ2mPCP8DjHSrnwsePCTHQ=;
-        b=MzQwYMSTH1XK5FQOfGjKmL54vggzMqyWZ2xdKAXk0r8/Zyv0+SrQQ9iwjngZQZmDna
-         z4NQqkzPHbDLsc9QPIKTCzzt8Qpi+e9gBlMribxKO+2rT8TkXfUmuKZwMswnOwQmInTg
-         e2fi/2gZHmV61sPGPpmHN+myPMqWrlxKVOQbSItsziLkRJHInSvwaagRqoukCYarXi+P
-         pHymcElk7YITF/2k9x4uZVlnEnhLerjjsdIwjQAnnT7tHPOyShd4ISQ6qzfSaQE708xE
-         QpUMfW1DIwaxsTWkniQZyjAj+KsfCf7RJZqp0BDrXY+XrsLkKeJdOMoVy49IgdiAsVTC
-         Bapw==
-X-Gm-Message-State: APjAAAUrjezHiAdtLwNS4U3JQDEJz6buCKdsdfVQo9qJ0DTyp6Y5sVUL
-        Wp1A8kLR/lk+lhmd17UEOw==
-X-Google-Smtp-Source: APXvYqz8Es3V63WBpwwjWRlpdI5C+DnnKkvdzjK03MWI7E/au2UaS2fOpWvL9ib03xWPVagYZJbBqQ==
-X-Received: by 2002:aca:c505:: with SMTP id v5mr781576oif.111.1553794766065;
-        Thu, 28 Mar 2019 10:39:26 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 42sm6629241otg.10.2019.03.28.10.39.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Mar 2019 10:39:25 -0700 (PDT)
-Date:   Thu, 28 Mar 2019 12:39:24 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH v4 1/6] dt-bindings: ap806: add the cluster clock node in
- the syscon file
-Message-ID: <20190328173924.GB26680@bogus>
-References: <20190325124803.28904-1-gregory.clement@bootlin.com>
- <20190325124803.28904-2-gregory.clement@bootlin.com>
- <20190328171350.GA26680@bogus>
- <87k1gioqrp.fsf@FE-laptop>
+        id S1726076AbfC1TJQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Mar 2019 15:09:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48204 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725852AbfC1TJQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 Mar 2019 15:09:16 -0400
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74B2B2184D;
+        Thu, 28 Mar 2019 19:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553800155;
+        bh=YM0FDythSmRXaoeiDaMk/3/dGc984JP5wlb+G0V2XTg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sEgWcI/zI+Ajx6aFyOyvnVAbTLa3/8QpNmBvEUO1XqyO6NVdnyJzDYP/K+oHpT4Gj
+         ddFwEI34jN9WJ3vJ1mVgyBYWTLdUrLyvDrmVIZrcOpy5oPBzl+NeeIOuyp9zyjA0WX
+         bOiHVN1BTDDlR97bYGgPUWyEiXOiWIKcnAasowf0=
+Received: by mail-qk1-f176.google.com with SMTP id c189so12853519qke.6;
+        Thu, 28 Mar 2019 12:09:15 -0700 (PDT)
+X-Gm-Message-State: APjAAAWaz8g+rIlhS2B5sfigXZwqq/mxZneHcUoiFrXPtfThwRKB5yVE
+        EiP8clllTB8q71kus8u6ShGM1tXVBkIySpoP8g==
+X-Google-Smtp-Source: APXvYqzNYuLs7TyK5Cdwyhq0msjygssh3VHr7+WEh0gZ4K+rWIsLFSl/gO6BjI6tPg4LxpqOoteFNtRvXcrvTXVFwcU=
+X-Received: by 2002:a37:9186:: with SMTP id t128mr7357627qkd.326.1553800154674;
+ Thu, 28 Mar 2019 12:09:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1gioqrp.fsf@FE-laptop>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-4-fparent@baylibre.com>
+In-Reply-To: <20190323211612.860-4-fparent@baylibre.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 28 Mar 2019 14:09:03 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKr=SNqcFGQ53L6HVV1ec+aP_n_SZwtkTa3O8HqHhW51w@mail.gmail.com>
+Message-ID: <CAL_JsqKr=SNqcFGQ53L6HVV1ec+aP_n_SZwtkTa3O8HqHhW51w@mail.gmail.com>
+Subject: Re: [PATCH 03/24] dt-bindings: pwrap: mediatek: add pwrap support for MT8516
+To:     Fabien Parent <fparent@baylibre.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Wenzhen Yu <wenzhen.yu@mediatek.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Yong Mao <yong.mao@mediatek.com>, jjian.zhou@mediatek.com,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        stephane.leprovost@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 06:25:14PM +0100, Gregory CLEMENT wrote:
-> Hi Rob,
->  
->  On jeu., mars 28 2019, Rob Herring <robh@kernel.org> wrote:
-> 
-> > On Mon, Mar 25, 2019 at 01:47:58PM +0100, Gregory CLEMENT wrote:
-> >> Document the device tree binding for the cluster clock controllers found
-> >> in the Armada 7K/8K SoCs.
-> >> 
-> >> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> >> ---
-> >>  .../arm/marvell/ap806-system-controller.txt   | 25 +++++++++++++++++++
-> >>  1 file changed, 25 insertions(+)
-> >> 
-> >> diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> >> index 7b8b8eb0191f..ceeba18b4ac3 100644
-> >> --- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> >> +++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> >> @@ -143,3 +143,28 @@ ap_syscon1: system-controller@6f8000 {
-> >>  		#thermal-sensor-cells = <1>;
-> >>  	};
-> >>  };
-> >> +
-> >> +Cluster clocks:
-> >> +---------------
-> >> +
-> >> +Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
-> >> +cluster contain up to 2 CPUs running at the same frequency.
-> >> +
-> >> +Required properties:
-> >> +- compatible: must be  "marvell,ap806-cpu-clock";
-> >> +- #clock-cells : should be set to 1.
-> >> +- clocks : shall be the input parents clock phandle for the clock.
-> >> +
-> >> +Optional property:
-> >> + - reg: register range associated the cluser clocks
-> >
-> > reg can be optional to use, but should either be there or not.
-> 
-> OK so let's remove it!
+On Sat, Mar 23, 2019 at 4:16 PM Fabien Parent <fparent@baylibre.com> wrote:
+>
+> Add binding documentation of pwrap for MT8516 SoCs.
+>
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-If you can define what the registers are, then you should have it even 
-if Linux happens to not care.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
