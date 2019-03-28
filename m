@@ -2,96 +2,128 @@ Return-Path: <SRS0=OKnm=R7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98660C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 16:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1A4C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 17:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 696A92183E
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 16:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FBA3206B6
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 17:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553793234;
+	bh=VosJJsvAijZFo4pN9YC/8nciusGgK9mvdANx4wy9OCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=QTj5azxp3zX/F1Lqt04Zugf9MUifMslYqODtwNiOeccf9jUOKodxDL/QHFFw3onDl
+	 gzjXKFJ1pI8yREBNRCSUde8OX4E10PmKGfOTJM8k+C0FCoc4DgeSevdMhpqe+ChM1p
+	 rgtRYuIJm2eCL6KRHP2pVFj9OGXgoZzMRAy6DwEY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfC1Q1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Mar 2019 12:27:02 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:46294 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbfC1Q1B (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Mar 2019 12:27:01 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id D69341FF78;
-        Thu, 28 Mar 2019 17:26:59 +0100 (CET)
-Received: from [192.168.108.8] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 795E21FF4B;
-        Thu, 28 Mar 2019 17:26:59 +0100 (CET)
-Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for
- 8998
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>
-References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
-Message-ID: <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr>
-Date:   Thu, 28 Mar 2019 17:26:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        id S1727413AbfC1RNx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Mar 2019 13:13:53 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44569 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfC1RNw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Mar 2019 13:13:52 -0400
+Received: by mail-ot1-f65.google.com with SMTP id d24so4530224otl.11;
+        Thu, 28 Mar 2019 10:13:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oG5jHi4YxWkaT7WEpBMD91KRCE92RCx2jKSw1WWZNG0=;
+        b=jWWH8XCPZuMWWTH2zOylmOginJ8wUfsbzLFvu10rHzz4vZU+CPO+2YR/v5ITyV2GBy
+         QvcCX7bo3x4flC9a5ScU6HJCnyAEM8dXrhRmwKTsU3rq82LjAM09iHcytrbJlEOCBKYC
+         QgerOqVj4RaWTL3GfygKijCzO13Lh0MfP01hK24smGTe6lR3ZGuxww/IlJ2jZaF/02Ua
+         fjv+k/Oi3KyuR02aayQWer2A7TJT+9Hx2fZh+smw/leqdrRi9A5QM2s+M8wBAPybGiGS
+         ml4v7Kk8q1FagtLo6TM+H65cibdi7o/dhT9cqd17tWAGsxJzSgcT4AwWTlq+gXO72pNs
+         ERLA==
+X-Gm-Message-State: APjAAAUAUwW53JYvLRd2uDWB7GkkeUzsfCtD+x6EhENk2bPKOGDSy43A
+        qw7LD7kIq4OnTFGsDVOI1g==
+X-Google-Smtp-Source: APXvYqyXV81/UQTnLuXAhp8zNPRE08uBnV6G8EQHClGRx2t2aUDgygsF2BXGJTeRKO6nRqx53mXxaA==
+X-Received: by 2002:a9d:6e88:: with SMTP id a8mr14351125otr.117.1553793231742;
+        Thu, 28 Mar 2019 10:13:51 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v24sm2860323oic.32.2019.03.28.10.13.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Mar 2019 10:13:50 -0700 (PDT)
+Date:   Thu, 28 Mar 2019 12:13:50 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v4 1/6] dt-bindings: ap806: add the cluster clock node in
+ the syscon file
+Message-ID: <20190328171350.GA26680@bogus>
+References: <20190325124803.28904-1-gregory.clement@bootlin.com>
+ <20190325124803.28904-2-gregory.clement@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Mar 28 17:26:59 2019 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190325124803.28904-2-gregory.clement@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/03/2019 14:49, Marc Gonzalez wrote:
-
-> See similar issue solved by commit 5f2420ed2189
-> ("clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998")
+On Mon, Mar 25, 2019 at 01:47:58PM +0100, Gregory CLEMENT wrote:
+> Document the device tree binding for the cluster clock controllers found
+> in the Armada 7K/8K SoCs.
 > 
-> Without this patch, PCIe PHY init fails:
-> 
-> qcom-qmp-phy 1c06000.phy: pipe_clk enable failed err=-16
-> phy phy-1c06000.phy.0: phy init failed --> -16
-> 
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 > ---
->  drivers/clk/qcom/gcc-msm8998.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../arm/marvell/ap806-system-controller.txt   | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-> index c240fba794c7..033688264c7b 100644
-> --- a/drivers/clk/qcom/gcc-msm8998.c
-> +++ b/drivers/clk/qcom/gcc-msm8998.c
-> @@ -2161,7 +2161,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
->  
->  static struct clk_branch gcc_pcie_0_pipe_clk = {
->  	.halt_reg = 0x6b018,
-> -	.halt_check = BRANCH_HALT,
-> +	.halt_check = BRANCH_HALT_SKIP,
->  	.clkr = {
->  		.enable_reg = 0x6b018,
->  		.enable_mask = BIT(0),
+> diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+> index 7b8b8eb0191f..ceeba18b4ac3 100644
+> --- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+> +++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+> @@ -143,3 +143,28 @@ ap_syscon1: system-controller@6f8000 {
+>  		#thermal-sensor-cells = <1>;
+>  	};
+>  };
+> +
+> +Cluster clocks:
+> +---------------
+> +
+> +Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
+> +cluster contain up to 2 CPUs running at the same frequency.
+> +
+> +Required properties:
+> +- compatible: must be  "marvell,ap806-cpu-clock";
+> +- #clock-cells : should be set to 1.
+> +- clocks : shall be the input parents clock phandle for the clock.
+> +
+> +Optional property:
+> + - reg: register range associated the cluser clocks
 
-Actually, 5f2420ed2189 is not the only similar instance.
+reg can be optional to use, but should either be there or not.
 
-$ git log --oneline -G BRANCH_HALT_SKIP drivers/clk/qcom | grep -v controller
-924a86bf9793 clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 8998
-5f2420ed2189 clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
-2abf856202fd clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
-5f75b78d3d67 clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
-12d807cd34b8 clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
-096abdc296f1 clk: msm8996-gcc: Mark halt check as no-op for USB/PCIE pipe_clk
-7d99ced8f4c6 clk: qcom: Add support for BRANCH_HALT_SKIP flag for branch clocks
+And there's a typo.
 
-Regards.
+> +
+> +ap_syscon1: system-controller@6f8000 {
+> +	compatible = "syscon", "simple-mfd";
+> +	reg = <0x6f8000 0x1000>;
+> +
+> +	cpu_clk: clock-cpu {
+> +		compatible = "marvell,ap806-cpu-clock";
+> +		clocks = <&ap_clk 0>, <&ap_clk 1>;
+> +		#clock-cells = <1>;
+> +	};
+> +};
+> -- 
+> 2.20.1
+> 
