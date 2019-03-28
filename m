@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5C6C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 13:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9CCC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 13:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D922075E
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 13:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31342075E
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 13:29:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553779689;
-	bh=R2qNDLFzl17nbW3UuWzM29+spzfo2oq6sIadhkWYKNQ=;
+	s=default; t=1553779783;
+	bh=JFGx6fL7N4q7qQbDZ3nQuWMlMabjwD0gxdVOk0+N5O8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SGrTZBaxMH0C6PJ2M1mJSbezT3HrYVr3xq1+mTuyRLbS9tCqkUg+gxBL+SnwHFl1f
-	 +gxrFgOplx/euPtgLBDA/v/qwEY1/qJuPo7ixaHLKbHZlc5+gHfTWx4ICLAwjF5pwQ
-	 Kvh1N/8a1X8N9eIYzc4oBmUMoAPgwua9aVpHf+xk=
+	b=VXwD2/IwPdcCuZufY1o3kkZFaPk0+7AOv6Gl3zTzOEXTgz70p58kgbhaTsCuEqtH0
+	 qwM8HLpIoCG8ltg1OMxY2B9KE8NzMDdpVls9Ks59nOQ8mZY6c/UWsF3Dwq6TqsY2By
+	 mB5SfRZgrqthtO/LEvJf7dvRqMZ0HmAqZg+tPkUU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfC1N2J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Mar 2019 09:28:09 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33868 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfC1N2J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Mar 2019 09:28:09 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v10so11396304oib.1;
-        Thu, 28 Mar 2019 06:28:08 -0700 (PDT)
+        id S1726281AbfC1N3m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Mar 2019 09:29:42 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42977 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfC1N3m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Mar 2019 09:29:42 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w139so15747727oie.9;
+        Thu, 28 Mar 2019 06:29:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SbmoDSU7o/QZaadaHrYila3fYQJvHJA05JDc3ABJrgc=;
-        b=sfRmCK3lKELZpJQn5Cz6HYOq75szaJRosl+1SrvOsbJsXzRek4lfBI/beuE6xHittW
-         myVaSK1VueO2JUK/Hn2UsXud47miMPcZMia+g4E3PpCEgw6JyuIHsTTthl4i7UjChjTQ
-         kYm/GwAU3eTzcdcbtsaSKcaCyzLz8pQw2IA/SRjo3tCuuYeIS92q4OIMoPAFeP5Q37AZ
-         9322tQLKQYGtUPD7XntQ7eBVonrz/fJPT0vtxg13u+eqZmD1lKPzCSogLLUE5g1Z19xR
-         6pIYMVR0kb1PvvAn8HxP5DmMicL2ldQu7+jaUF6YunwovIJIMYUmUOyblSGrqkFmSUQP
-         EAsw==
-X-Gm-Message-State: APjAAAWb7VOcbXVlckxrXLoSe3KbU8DZcBxRq76DamRMrgq4jexLZ3di
-        8xNKJrX6iWCcv5HwMrnWBQ==
-X-Google-Smtp-Source: APXvYqxvrqOfsWh5OU1XP+UQTW9Y8CM/C5Mg2oeeBpGleK9QU54wdQa3O/EZd9AWY7ZDyalEiB+5lQ==
-X-Received: by 2002:aca:bdc4:: with SMTP id n187mr428oif.140.1553779682055;
-        Thu, 28 Mar 2019 06:28:02 -0700 (PDT)
+        bh=MREodbzACfJGNnJ9L2RQGgclTJjV6ULvmeQxDNyf73Y=;
+        b=HkB5zA+LZ6+iw/DJqcCxKlAP9JWQ1dsxPMCPbS4ciyD3PTmNAzxkHnR3il9OLY0Rgn
+         HDYOYQvxOAawyILG5EJJBwxyip6i04tETnjLhc29DQFrUwRDUoYDR3rVKb4ZtPdTM7Js
+         z7lbWZ6yt6bCXCWekHLEuvbdXiWENjEr/ngDirG1XswFuQ39f5Hj2ELbeLyvdm5GySmp
+         2zlaH3cl+rLrQ7A5RwDyZ5oCzahB9zvXR46zgUZW4cx7J7rRP+V5LK3d0AHhtXOy2s8+
+         L0GIQxaZK/m2w84HSMvHgIQnEIIVG6MspQFVejD0/n96ikF4h/Uhgw43XfKjfR2aTFgZ
+         bQHA==
+X-Gm-Message-State: APjAAAWmpaAXo+v4l+mWfRgNk6lTN9uGhBoujVdCejRwWZivIbqNIjwd
+        /K0M6s+pQHhLO2kQ3m/bpg==
+X-Google-Smtp-Source: APXvYqx7KSFoygOsDxKDhKSvdAcs9TVpUlCKdpslkErx6UlDXj0rauVnCzcHCMtdtE1sHQyCbRN3sA==
+X-Received: by 2002:aca:a894:: with SMTP id r142mr10357oie.112.1553779780688;
+        Thu, 28 Mar 2019 06:29:40 -0700 (PDT)
 Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id 4sm8203250ois.5.2019.03.28.06.28.01
+        by smtp.gmail.com with ESMTPSA id t24sm8081611otk.16.2019.03.28.06.29.39
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Mar 2019 06:28:01 -0700 (PDT)
-Date:   Thu, 28 Mar 2019 08:28:01 -0500
+        Thu, 28 Mar 2019 06:29:39 -0700 (PDT)
+Date:   Thu, 28 Mar 2019 08:29:39 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Icenowy Zheng <icenowy@aosc.io>
 Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -58,31 +58,33 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH 09/14] dt-bindings: vendor-prefixes: add SoChip
-Message-ID: <20190328132801.GA11253@bogus>
+Subject: Re: [PATCH 10/14] dt-bindings: arm: sunxi: add compatible string for
+ V3/S3/S3L SoCs
+Message-ID: <20190328132939.GA13841@bogus>
 References: <20190312152256.35574-1-icenowy@aosc.io>
- <20190312152256.35574-10-icenowy@aosc.io>
+ <20190312152256.35574-11-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190312152256.35574-10-icenowy@aosc.io>
+In-Reply-To: <20190312152256.35574-11-icenowy@aosc.io>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 12 Mar 2019 23:22:51 +0800, Icenowy Zheng wrote:
-> Shenzhen SoChip Technology Co., Ltd. is a hardware vendor that produces
-> EVBs with Allwinner chips. There's also a SoC named S3 that is developed
-> by Allwinner (based on Allwinner V3/V3s) but branded SoChip.
+On Tue, 12 Mar 2019 23:22:52 +0800, Icenowy Zheng wrote:
+> Allwinner V3/V3s/S3L and SoChip S3 SoCs share the same die, but with
+> different package (V3 is BGA, without co-packaged DRAM, V3s is QFP,
+> with co-packaged DDR2, S3 is BGA, with co-packaged DDR3, S3L is BGA
+> pin-compatible with S3, but with co-packaged DDR2).
 > 
-> Add the vendor prefix for SoChip.
+> Add compatible strings for Allwinner V3/S3L and SoChip S3 SoCs.
 > 
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/arm/sunxi.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
