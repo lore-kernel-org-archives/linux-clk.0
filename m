@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAD5C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0659C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1794220811
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4EC820811
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553800410;
-	bh=wFaDwmBv6jmWy+vqRYQXtUepNQD/BQsMcXesl1mfmY4=;
+	s=default; t=1553800430;
+	bh=S0xqiGopewc41zOGwtFXADfl3x4rKg+SVzdXw2QLN4s=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CKrS5d0LTDY4IsJSMaWYYuyCZ0Pq8feGmXCIr+pEYBNgLAMNrk9LlT4zczQoQQwKt
-	 Sx1BPXBIzxs9Ani/GsnGbuGF7rQrgjaHovSE16uHDqVQJ9CgIDnjy0cjNtOEIE4UfC
-	 BJnbSHmAhOZF+5jFAe9dLZYc/mwPj7teGzHj8TWY=
+	b=FbZ+FK+GQ/ho0ZSMwF3OF2kpjVdF2mfBHx+qyI/ldfyLZmPv1OFhd1PQ8Z6yClVFp
+	 acYj2ZUXV05lVlr7E/GuMTbTPaw65wOWRixiUxKgpVSqPeA25O3F+dU+v8a8mG03QO
+	 8sADnTOxs8LKbnL12KxcNrq57YvSPJgviYC9Fdw4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfC1TNZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Mar 2019 15:13:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50140 "EHLO mail.kernel.org"
+        id S1726136AbfC1TNu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Mar 2019 15:13:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfC1TNY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Mar 2019 15:13:24 -0400
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        id S1726088AbfC1TNu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 Mar 2019 15:13:50 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5FA32184E;
-        Thu, 28 Mar 2019 19:13:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F03BB20811;
+        Thu, 28 Mar 2019 19:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553800403;
-        bh=wFaDwmBv6jmWy+vqRYQXtUepNQD/BQsMcXesl1mfmY4=;
+        s=default; t=1553800429;
+        bh=S0xqiGopewc41zOGwtFXADfl3x4rKg+SVzdXw2QLN4s=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B+v2pdb4bsrbTSmkRrI5MwI8Hq50TtAtyS5hMhXRSiFbQofBnwFn6LKJuLsqJ6WJV
-         m7x5f3BkLOeevYri4b/7MegkjcT1Yl0mMOFQCB4RsD7hzKWEVgCLIsS7v81h0EWbah
-         N/1nETF9dZMY5L/ixmjC8lV7zIO8iU4NglEjwaWQ=
-Received: by mail-qt1-f176.google.com with SMTP id z17so24413788qts.13;
-        Thu, 28 Mar 2019 12:13:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAU2eibKTl8I0mTKYF5NqKymVyO9H5YNj5+FD0Xm2qSSuOIhW73A
-        WNzUd8ln+C3Bzz7OOZS7DbTX54DTGsVmUdwuqw==
-X-Google-Smtp-Source: APXvYqxZUuTEinKqI6WYezygREEiOELOF+PDRk4PAC1s07fzo7f5dg2gw1zxtMn4VkuBO+ukON5qx/P44sIjL1H7tjM=
-X-Received: by 2002:ac8:267c:: with SMTP id v57mr36954786qtv.76.1553800403021;
- Thu, 28 Mar 2019 12:13:23 -0700 (PDT)
+        b=ouGhTfmkqOh1Sqj9SzZ5sbanW2KgU/3l1eFDXkNTUY6xeukLmarQsgvWH5GtuViq8
+         okMTdg9oXV+WrERxeZOyC6NWVMFPy9mHxYy9fp2KdrrXwu6lZdK8eGtKfMOLpP/KaG
+         WykBe27HC277mArQXCsf4bIjWirtX2wiAPvUxBb4=
+Received: by mail-qt1-f174.google.com with SMTP id d13so19765914qth.5;
+        Thu, 28 Mar 2019 12:13:48 -0700 (PDT)
+X-Gm-Message-State: APjAAAWfkE0+ObS3PsI3Xd70FWeT6RUPuu0mji+LpRaZlOZNKbwUE1LI
+        5VIFtrcujZVWW+wiKWxpOfPuAvgBxaeX38vOcQ==
+X-Google-Smtp-Source: APXvYqyqMfDr2h7irGSA5ranGZ+H3Z/m8kHd6laXKoslFeWyTp52BebRzntK3v4BqaSVmSZ3ZDLkKShXE9dO4/QrgTc=
+X-Received: by 2002:a0c:c11c:: with SMTP id f28mr35558863qvh.106.1553800428277;
+ Thu, 28 Mar 2019 12:13:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-22-fparent@baylibre.com>
-In-Reply-To: <20190323211612.860-22-fparent@baylibre.com>
+References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-23-fparent@baylibre.com>
+In-Reply-To: <20190323211612.860-23-fparent@baylibre.com>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 28 Mar 2019 14:13:11 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJzhhTPpyzQKMMuVu7JfP3tnr81xRa23Fk5_22+B1meZw@mail.gmail.com>
-Message-ID: <CAL_JsqJzhhTPpyzQKMMuVu7JfP3tnr81xRa23Fk5_22+B1meZw@mail.gmail.com>
-Subject: Re: [PATCH 21/24] dt-bindings: irq: mtk,sysirq: add support for MT8516
+Date:   Thu, 28 Mar 2019 14:13:37 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKHgPmNtgObc4y98ZNDac937KwwKhXbs+ebH1khswMyCg@mail.gmail.com>
+Message-ID: <CAL_JsqKHgPmNtgObc4y98ZNDac937KwwKhXbs+ebH1khswMyCg@mail.gmail.com>
+Subject: Re: [PATCH 22/24] dt-bindings: i2c: i2c-mtk: add support for MT8516
 To:     Fabien Parent <fparent@baylibre.com>
 Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -83,11 +83,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Sat, Mar 23, 2019 at 4:17 PM Fabien Parent <fparent@baylibre.com> wrote:
 >
-> Add binding documentation of mediatek,sysirq for MT8516 SoC.
+> Add binding documentation of i2c-mtk for MT8516 SoC.
 >
 > Signed-off-by: Fabien Parent <fparent@baylibre.com>
 > ---
->  .../bindings/interrupt-controller/mediatek,sysirq.txt          | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/i2c/i2c-mtk.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
 Acked-by: Rob Herring <robh@kernel.org>
