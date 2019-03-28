@@ -2,138 +2,202 @@ Return-Path: <SRS0=OKnm=R7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88770C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 12:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E07C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 12:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 548D521773
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 12:31:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553776305;
-	bh=Ji8JYbWFowMaTNuL2GSoDtJ512goMzV1R54gT6ymYHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0Veadqg6iI74xL+a5TSXm+3tl9bYmWDq3JDfJMHh51vYGqUtaRhC3BaD3xJrxtKmM
-	 ojn3ev7LFtqlwe/Q67PdC8Bpk7paBY8ObURC9jswoeN9k4K/mkm2BiB/DTna6etV7w
-	 vLfzTn2V6G4X31vGnVJXqUTjRB/Cd+u3ShAoDfm8=
+	by mail.kernel.org (Postfix) with ESMTP id E3106206B8
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 12:50:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="jfBgw17p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726082AbfC1Mbo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Mar 2019 08:31:44 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37734 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbfC1Mbo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Mar 2019 08:31:44 -0400
-Received: by mail-oi1-f194.google.com with SMTP id v84so15612168oif.4;
-        Thu, 28 Mar 2019 05:31:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jN8VQLeLdPeuegt50wtXSE6gSv0rp96DGEtnOqgjROQ=;
-        b=O7OobHuI54p3Lkqh3KZfHXhGJ7tegSegCEgA96BODPbWZmpW92jG0rP6ImeFS/8ATa
-         K5HII8yBQ1bmXh8Lk76rLfFcF4ErnUwkrbNygb6FKxh+/IX/nloB6un95QExGVpTw2wd
-         DSL/MwmZhHolEPzjbV7f1P+pZRGlbgrNmaB+aQxUGy/gNCrH9FriEb2mM+RIuj0JU1B5
-         eBx7NyFAsXBVAJgyexoGvoI2yViEucXuodPOKMPoJ9myl3V+hlT1Bo7YzVZnAIjTshxF
-         jGi1k3zgcn9vP8PZ5pqkB2N5cyct77IEBcJTcG24TcAlXFALgWRcdgpIlR48q94dFbnM
-         JVSg==
-X-Gm-Message-State: APjAAAXBD9loNPWt+3t87Pi8sMQRFh3j2dPtZG5w82DZVjE/dzelyxyN
-        Zpun0Qy/VGROD5Av7UwUfQ==
-X-Google-Smtp-Source: APXvYqyGb73TxAyiiyfso7eXaTYs1Imz4/C4sgsy0qfl0SOsjFtTIr6P+sC9Z9dMA28VUj6FmnfEcg==
-X-Received: by 2002:aca:ef82:: with SMTP id n124mr18264730oih.177.1553776303770;
-        Thu, 28 Mar 2019 05:31:43 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o16sm6788665ota.15.2019.03.28.05.31.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Mar 2019 05:31:42 -0700 (PDT)
-Date:   Thu, 28 Mar 2019 07:31:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726117AbfC1MuP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Mar 2019 08:50:15 -0400
+Received: from mout.gmx.net ([212.227.15.15]:55999 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbfC1MuP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 Mar 2019 08:50:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1553777396;
+        bh=iLfNBwVWtiSsTOcGOC8Pe221q29uVdCJbSNyZT+LsmE=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=jfBgw17pDbcMSu4uJ1izprhXlFcUU8ddzmLZpt3mmtxh5NkfJNyi+ViPj6dqSx2jK
+         olrSgDRbo4IqwyreexnpZ3XhCCoO7pgMXtKGiFqsLCSn1zUP/GXELkWzifqAX0M8aH
+         zLuojWX5xD/ErfFC6iia6BHjEIhNkrHMSZ1yNjOI=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from openbmc-devel.mpl.loc ([185.137.174.251]) by mail.gmx.com
+ (mrgmx003 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 0LeuUB-1gc8vD0c8t-00qnBC; Thu, 28 Mar 2019 13:49:56 +0100
+From:   =?UTF-8?q?David=20M=C3=BCller?= <dave.mueller@gmx.ch>
+To:     linux-clk@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
- syscon gate clock
-Message-ID: <20190328123142.GA6229@bogus>
-References: <20190312090518.28666-1-vigneshr@ti.com>
- <20190312090518.28666-2-vigneshr@ti.com>
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH] clk: x86: Add system specific quirk to mark clocks as critical
+Date:   Thu, 28 Mar 2019 13:49:39 +0100
+Message-Id: <20190328124939.23139-1-dave.mueller@gmx.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190312090518.28666-2-vigneshr@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DamLuXO27RBDX9Z2yApqucus5yYovgwLjvO8ix7HUm5W513T4Ey
+ P4Xd6APbDauG3Fn/IYZtK84M5Z6JhI0OvNCuBGRWkwhX5JgB5B8hT1larg2zRvSy9Y7P+F8
+ xHGjJOthAKMi2jzOcl52LaWHxdmedU9yriH43aSxE+fFEYBh/hm6+zo+4yZNY6dH8XjwdoC
+ Q7HghUz7ixL3VXXPvEoPA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:eHx5js6EF/s=:JvUVmhUOrH7pJ8JehUGjQM
+ eQr99GBDte1qSGRw8tWc9ycrPSYLfZT3KlKrZmyU98XNS+/2KKFXYjkm7mwdUIUA3a2Kt8G2e
+ rl9zOLgupFdRS8qzGbcoAp5Tz2i1eqJ8Hjiby//m/5RfLXm+zzoMPcQKxAYbo2Je/yftp0eaK
+ EZI54M18XfRXIhF2i0nCCBensXnmTFfSMbtqsbUSYyFaD35jGTQNtBksvj4lLOwm4FkC/MLZ8
+ SwJ/IZKGDLqhVpc3omdj3y0MWOv30s+UPPTSP6OMqo6wpFsestkWdezPrnKh49udxNqTmfkYU
+ bt3Ivu0I7MOAjyquWb0s/ukS3j8YU89iCwp34oy2hV8TgJotFTi9GnP0JVZWuWN9pOg1N82P+
+ Ulw8YdWyDs5i5XQCxbJKicA0Z9RfzDFU1C/8nFG/Hf7b2mj2+LucegtH17dr/umuNgXj5Ktss
+ rna5zQqi7JxBVwkNLHOc/mMOwFPm8qrJ+4WxEeykygPl+d/Spf/PLVUxG964Mkjw3s4YhlHOU
+ Nvo2YO2EkFG7HNaTGGqGVpx7NxUD1XLumka7mYsqDrvMr2jgDStT8yg01J0gyc+uW40U4EXaG
+ e6mHS7g9b/Eqt1jUVFHSFshhcGYAM85BSBh30R4WKFWpRAfclJ1k0GGEYgjZLBubBRVEWF1nk
+ Qcn7e49PanLog6Zz+eJKcdVDeUjrVMmpHDRxDjcQsRETeKMO3794VZ2w/+BsSxPQPXoXUs2A7
+ jZ+i1mK9nEpoh7+pmxbOCvNQyoAytP5i6WDdqf1Vz6wLcGj7+fqDHwJBtgkn06mtUiRvBbUUx
+ rFfOTgJgdvqVhdFzJS5BtBF/W5JFrh5hYOlgZwO+0EKpIIFj//rYZiR5JuTalBrC1/fyTFKvd
+ FLMI61K31FNLeef3ZopTePs0GGR6kyk1tVEcNJGHHzRi/cKdEsjxjWnZ6OnpEO/G06DPQ6MVA
+ SlRhSieTd5w==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 02:35:17PM +0530, Vignesh Raghavendra wrote:
-> Add dt bindings for TI syscon gate clock.
-> 
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-> ---
->  .../bindings/clock/ti,syscon-gate-clock.txt   | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
-> new file mode 100644
-> index 000000000000..f2bc4281ddba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
-> @@ -0,0 +1,35 @@
-> +TI syscon gate clock
-> +
-> +The gate clock node must be provided inside a system controller node.
-> +
-> +Required:
-> +- comaptible: Must be "ti,syscon-gate-clock"
-> +- reg: Offset of register that controls the clock within syscon regmap
-> +- ti,clock-bit-idx: bit index that control gate/ungating of clock
-> +- clocks: phandle to the clock parent
-> +- #clock-cells: must be <0>
-> +
-> +Example:
-> +	ctrlmmr_epwm_ctrl: syscon@104140{
-> +		compatible = "syscon", "simple-bus";
+Since commit 648e921888ad ("clk: x86: Stop marking clocks as
+CLK_IS_CRITICAL"), the pmc_plt_clocks of the Bay Trail SoC are
+unconditionally gated off. Unfortunately this will break systems
+where these clocks are used for external purposes beyond the kernel's
+knowledge.
+Fix it by implementing a system specific quirk to mark the necessary
+pmc_plt_clks as critical.
 
-Can't be both of these...
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Signed-off-by: David M=C3=BCller <dave.mueller@gmx.ch>
+=2D--
+ drivers/clk/x86/clk-pmc-atom.c                |  9 +++++---
+ drivers/platform/x86/pmc_atom.c               | 22 +++++++++++++++++++
+ .../linux/platform_data/x86/clk-pmc-atom.h    |  2 ++
+ 3 files changed, 30 insertions(+), 3 deletions(-)
 
-> +		reg = <0x0 0x104140 0x0 0x18>;
-> +		ranges = <0x0 0x0 0x104140>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ehrpwm0_tbclk: clk@0 {
-> +			compatible = "ti,syscon-gate-clock";
-> +			reg = <0x0>;
-> +			#clock-cells = <0>;
-> +			clocks = <&k3_clks 40 0>;
-> +			ti,clock-bit-idx = <0>;
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom=
+.c
+index d977193842df..882ea0c4c050 100644
+=2D-- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -165,7 +165,7 @@ static const struct clk_ops plt_clk_ops =3D {
+ };
 
-This would imply you have multiple nodes at one address which is 
-discouraged.
+ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int=
+ id,
+-					void __iomem *base,
++					const struct pmc_clk_data *pmc_data,
+ 					const char **parent_names,
+ 					int num_parents)
+ {
+@@ -183,8 +183,11 @@ static struct clk_plt *plt_clk_register(struct platfo=
+rm_device *pdev, int id,
+ 	init.parent_names =3D parent_names;
+ 	init.num_parents =3D num_parents;
 
-> +		};
++	if (test_bit(id, &pmc_data->critclk))
++		init.flags |=3D CLK_IS_CRITICAL;
++
+ 	pclk->hw.init =3D &init;
+-	pclk->reg =3D base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
++	pclk->reg =3D pmc_data->base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZ=
+E;
+ 	spin_lock_init(&pclk->lock);
 
-We generally don't describe clocks as 1 clock per node. Give the parent 
-a specific compatible and make it a clock provider.
+ 	ret =3D devm_clk_hw_register(&pdev->dev, &pclk->hw);
+@@ -332,7 +335,7 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(parent_names);
 
-> +
-> +		ehrpwm1_tbclk: clk@4 {
-> +			compatible = "ti,syscon-gate-clock";
-> +			reg = <0x4>;
-> +			#clock-cells = <0>;
-> +			clocks = <&k3_clks 41 0>;
-> +			ti,clock-bit-idx = <0>;
-> +		};
-> +	};
-> -- 
-> 2.21.0
-> 
+ 	for (i =3D 0; i < PMC_CLK_NUM; i++) {
+-		data->clks[i] =3D plt_clk_register(pdev, i, pmc_data->base,
++		data->clks[i] =3D plt_clk_register(pdev, i, pmc_data,
+ 						 parent_names, data->nparents);
+ 		if (IS_ERR(data->clks[i])) {
+ 			err =3D PTR_ERR(data->clks[i]);
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_at=
+om.c
+index 8f018b3f3cd4..d25b2423afe0 100644
+=2D-- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -17,6 +17,7 @@
+
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/platform_data/x86/clk-pmc-atom.h>
+@@ -391,11 +392,28 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+ }
+ #endif /* CONFIG_DEBUG_FS */
+
++/*
++ * Some systems need one or more of their pmc_plt_clks to be
++ * marked as critical
++ */
++static const struct dmi_system_id critclk_systems[] __initconst =3D {
++	{
++		.ident =3D "MPL CEC1x",
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "MPL AG"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
++		},
++		/* on this platform, pmc_plt_clk_0 is a critical clock */
++		.driver_data =3D (void *)BIT(0),
++	},
++};
++
+ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
+ 			  const struct pmc_data *pmc_data)
+ {
+ 	struct platform_device *clkdev;
+ 	struct pmc_clk_data *clk_data;
++	const struct dmi_system_id *d =3D dmi_first_match(critclk_systems);
+
+ 	clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+@@ -403,6 +421,10 @@ static int pmc_setup_clks(struct pci_dev *pdev, void =
+__iomem *pmc_regmap,
+
+ 	clk_data->base =3D pmc_regmap; /* offset is added by client */
+ 	clk_data->clks =3D pmc_data->clks;
++	if (d) {
++		clk_data->critclk =3D (uintptr_t)d->driver_data;
++		pr_info("%s critclk quirk enabled\n", d->ident);
++	}
+
+ 	clkdev =3D platform_device_register_data(&pdev->dev, "clk-pmc-atom",
+ 					       PLATFORM_DEVID_NONE,
+diff --git a/include/linux/platform_data/x86/clk-pmc-atom.h b/include/linu=
+x/platform_data/x86/clk-pmc-atom.h
+index 3ab892208343..8d00b6bd83b4 100644
+=2D-- a/include/linux/platform_data/x86/clk-pmc-atom.h
++++ b/include/linux/platform_data/x86/clk-pmc-atom.h
+@@ -35,10 +35,12 @@ struct pmc_clk {
+  *
+  * @base:	PMC clock register base offset
+  * @clks:	pointer to set of registered clocks, typically 0..5
++ * @clkcrit:	bit mask of pmc_plt_clks which are to be marked as critical
+  */
+ struct pmc_clk_data {
+ 	void __iomem *base;
+ 	const struct pmc_clk *clks;
++	unsigned long critclk;
+ };
+
+ #endif /* __PLATFORM_DATA_X86_CLK_PMC_ATOM_H */
+=2D-
+2.20.1
+
