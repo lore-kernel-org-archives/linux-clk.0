@@ -2,100 +2,73 @@ Return-Path: <SRS0=ZsbM=SA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FE7C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE833C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEFB22184D
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BE262184D
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553899697;
-	bh=NGweQ1I5s8Jq+objqslkHJmBFpAoDR+aQ5oCqiMIn7M=;
+	s=default; t=1553899748;
+	bh=GV+izptyYmo+vlcN/98TyLqJg7ve6KpDouC2W+axdyM=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=D8h2ARLsA44O82/YIYlqIB2jDKAi3C30tliCUKwUac4AUaoUlMRin3zDHapcSgEgr
-	 KusH2tcENdK1QRsF/CzltTCXKxs8lwdaZjhBdZ40dj7PxkgdGO8aEzuroFX6W4a4cL
-	 OTpwYGeWsDkrK5axivzyWwdyHZC1SRJc7Kp4fr5Y=
+	b=Ot0Snl9PCP0j1v9zhMNPDPhbc6LvmUceXoZahE7MRaJY06gfNzbsnRhXnP6S/Droe
+	 zrp1W8davmW2dx1hqad29xDjGIpTdTrfbaYpTa1fh1OX7qIHT5g3gbVS10j1uH4t8x
+	 aou9pc/wclkNDQqgpdeA9RZrm4ip2zNfltr89LTk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbfC2WsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Mar 2019 18:48:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54820 "EHLO mail.kernel.org"
+        id S1730456AbfC2WtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 18:49:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730456AbfC2WsQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Mar 2019 18:48:16 -0400
+        id S1730352AbfC2WtH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Mar 2019 18:49:07 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96FF0217F5;
-        Fri, 29 Mar 2019 22:48:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C4C5217F5;
+        Fri, 29 Mar 2019 22:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553899695;
-        bh=NGweQ1I5s8Jq+objqslkHJmBFpAoDR+aQ5oCqiMIn7M=;
+        s=default; t=1553899747;
+        bh=GV+izptyYmo+vlcN/98TyLqJg7ve6KpDouC2W+axdyM=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=fMlU3a7o0IYXKQmkQSOzYhjULpZDkTDT3JEwUwTWDf9mtnn2WkeYZn/Vu6WS7u56r
-         T8FOXiC9u8J+Z0h5jyLT5Tf+jV4yeipjO78AUPNF641p+WVtjLlqA0Sr3HOjJKLj+3
-         Ukn/1O5o9bRnnpEMmUHbzIrYCOaV8QMYBGVfxdNI=
+        b=dMYvwXkMfyAM1GROMXbRWYZQbjDTKyJjjdpqpEdabutrJ8ffqDwDkT0FH5AIIJvXs
+         4VH4B9Zp9lp77IrvVs9+PbjmJHhMVDOBf5DcQrNA0pTLxirSMtOZfeLh18SvQsVDnx
+         Bd0Io7raMqZFkpEOmmBgrnxRMaIIHHD6RMPcSd44=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1553859960-31501-1-git-send-email-nixiaoming@huawei.com>
-References: <1553859960-31501-1-git-send-email-nixiaoming@huawei.com>
+In-Reply-To: <20190329141512.29867-3-jbrunet@baylibre.com>
+References: <20190329141512.29867-1-jbrunet@baylibre.com> <20190329141512.29867-3-jbrunet@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk:mmp: clk-mix.c fix divide-by-zero
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     chao.xie@marvell.com, mturquette@baylibre.com,
-        nixiaoming@huawei.com
-Message-ID: <155389969479.20095.682832622477946593@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH net-next v2 2/3] net: phy: add amlogic g12a mdio mux support
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, netdev@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Message-ID: <155389974643.20095.8059052762611235333@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Fri, 29 Mar 2019 15:48:14 -0700
+Date:   Fri, 29 Mar 2019 15:49:06 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting nixiaoming (2019-03-29 04:46:00)
-> The _get_div function has a branch with a return value of 0
-> Add a check on the return value of _get_div to avoid divide-by-zero
+Quoting Jerome Brunet (2019-03-29 07:15:11)
+> Add support for the mdio mux and internal phy glue of the g12a SoC family
 >=20
-> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+> [for the clock part]
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Similar questions apply here as they do on the generic divider patch you
-sent.
+I think you should write it like:
 
-> ---
->  drivers/clk/mmp/clk-mix.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
-> index 90814b2..9d152c2 100644
-> --- a/drivers/clk/mmp/clk-mix.c
-> +++ b/drivers/clk/mmp/clk-mix.c
-> @@ -245,6 +245,8 @@ static int mmp_clk_mix_determine_rate(struct clk_hw *=
-hw,
->                         div_val_max =3D _get_maxdiv(mix);
->                         for (j =3D 0; j < div_val_max; j++) {
->                                 div =3D _get_div(mix, j);
-> +                               if (!div) /* avoid divide-by-zero */
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com> # clk parts
 
-Why can't we return 1 for the divider value here?
-
-> +                                       continue;
->                                 mix_rate =3D parent_rate / div;
->                                 gap =3D abs(mix_rate - req->rate);
->                                 if (!parent_best || gap < gap_best) {
-> @@ -341,6 +343,8 @@ static unsigned long mmp_clk_mix_recalc_rate(struct c=
-lk_hw *hw,
->         shift =3D mix->reg_info.shift_div;
-> =20
->         div =3D _get_div(mix, MMP_CLK_BITS_GET_VAL(mux_div, width, shift)=
-);
-> +       if (!div) /* avoid divide-by-zero */
-
-Same question.
-
-> +               return -EINVAL;
-> =20
->         return parent_rate / div;
->  }
