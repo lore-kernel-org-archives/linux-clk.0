@@ -2,71 +2,70 @@ Return-Path: <SRS0=ZsbM=SA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B83C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4F1C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 23:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13CD4218A6
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2427218A2
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 23:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="O1+9x8z1"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="l0JaSuV0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730558AbfC2W6o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Mar 2019 18:58:44 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37304 "EHLO
+        id S1729941AbfC2XIC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 19:08:02 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40546 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730537AbfC2W6o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 18:58:44 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v14so4567968wmf.2
-        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 15:58:43 -0700 (PDT)
+        with ESMTP id S1729932AbfC2XH6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 19:07:58 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z24so4613314wmi.5
+        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 16:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=AbYcJ8DH6nLuqJUtYFNn6epLSrCdfxCkTbk1Rsz2IkE=;
-        b=O1+9x8z15LbHJIhGHnrXuH0mgSS7u6SUXyhCAJZS/5qsn/1pT31WszOjeLHbvPL0HQ
-         fc3H95FB08kndVgvCKi8f5v4RFVV5vHtmk6Q+WDCd0Ukkxm1rmriXP8xKrTvdlrm6yIw
-         eCdp3h+p9hfsrbAb/rb4kIo40gZjSOkj/TqwSN+RyCFiB6plL0l7m97e4VFiIEakchLI
-         1RVH44NJDVZd2YxbjgsxzCx9J63fYYLgxm0pg1btYRx7pdY4VR1D+Ow1/9Q0TgxwK/4e
-         FlNkGW+a46r2SlvrL/SDIgEuUMsjJ7XMZa5RKTLSLqysY0I3q0RY55QUja7kqNtaMV/l
-         T6LQ==
+        bh=X4WzdP2nQiMGjUzeIIS1XDNpuU8ZsZnm39niZjc4DUg=;
+        b=l0JaSuV0w/PCUENbmYzE5FTbbDOwumvyyTq3Ua7Xx6VHtPxsR5sxSHDPy5So6b4/rf
+         MUWKDhO/cL375Lqp7BToC9tvVmfe2aFAsYsBz4hAq3EU5ZPCTZpQt9780R+tWyatGbIK
+         J6vX2XZFtcAHXvsv+d8JTtAMhpkZkC3tRiQPIqmsX1qUnIm+Fl22L7yY2vXRmnydFuYT
+         ibnRiNdv7D9WOecp8XghGz9L0ZNtBLsF8sPT/3vTSmlW5k0pSaaRB39vuNCjaRrFYiPx
+         GLv8xx9fwPoqLti0eL15I6VBYZ9R+nlcFbYNjW+lyU/ljrsRjqSwy9hWaUqHD5EolKOo
+         mUTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=AbYcJ8DH6nLuqJUtYFNn6epLSrCdfxCkTbk1Rsz2IkE=;
-        b=bY+iRJsefUvepl3O1XZiyAA3NdJ2IwtWGLCaCploiPKLA19Ebh5pYiT2l9thVQtpJZ
-         rTSazkvY6DQrIYtvyj8zaeTEXtS6OOxb4Ui4ZHmTjr17+rhiu9q6G50xlYdgjHj1SWYZ
-         xLuoMfx6nbJSt1xlBQgvVnCRHccrY/4Z0GWf7IhF3/05ke4JPEjXARmLUn4Oxqq/2F3a
-         EwJTfm5PgHBgulE9KCNjKKvQudmhuEteS3dYw4JN4vO4dwvmT97ybjwhpqUcb7wSUxp1
-         8HhyrVPhNz74pP/bjVglaNehcYAfzZAumzeJWGDKHdkDesT8bOjcdRpm9IsSMOZBmWz3
-         aa1Q==
-X-Gm-Message-State: APjAAAVGqakmlRpVuvrnNB62OE82EXqXd9z7dEczR7m06eU77cYriIfP
-        sDaFYiUPGxbNHOk7AcJHOGFsqkmiPhU=
-X-Google-Smtp-Source: APXvYqxh/CnUJ0IzIgJQ8XJFuV7DZQQxrck6TbKAen/kt4PLyG41r3KGuHKaKheF1cFEPxcaqbKGVg==
-X-Received: by 2002:a1c:a186:: with SMTP id k128mr5023420wme.54.1553900322601;
-        Fri, 29 Mar 2019 15:58:42 -0700 (PDT)
+        bh=X4WzdP2nQiMGjUzeIIS1XDNpuU8ZsZnm39niZjc4DUg=;
+        b=GWDCwpBceXYFpPGTpwtWQW6waQ0Lncc3veAQdcv1xMknWvhsX19hdQbD2v3hzcK2MK
+         ENU4yUCj2UmPMK9EUKBHLJC4lJClVBU3HvIePBtGaoLeXm6CJOvk/+7yLp8cjeIg0spR
+         Gt4bTh/qM9vSGfBuglDVA1AR+dkg4JKetCF8BvXkwlWI0MfBh/fCzXmQq57R1q0VdRKZ
+         Qk/IVilauArk9tV9L74+TbRngcOVxgLzT2+KLDYtB6mhPjZHdHOIwk3qULwVyC03FbUW
+         eeQtarAtpHNkgSAHKZ88H+zn6OyTQmoLq3EWKp9IAvjlYnsmlsmCF7/Mbp9H179PD7e/
+         ISXQ==
+X-Gm-Message-State: APjAAAUMmErsgEa24aMaoc5hwnDeUIyNZBzah388uefsR2ASR2o3PIDV
+        QebAgu+3xJJwuij+xLKuk4AP8w==
+X-Google-Smtp-Source: APXvYqwQ8yPsEvN9BsHL6fs8bVGHRAZAnJMewzitTxvw/imFpZ/mWe5MdRSiM+QuoxU7QVhffjGOFw==
+X-Received: by 2002:a1c:ce:: with SMTP id 197mr4956859wma.105.1553900875884;
+        Fri, 29 Mar 2019 16:07:55 -0700 (PDT)
 Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id r196sm3355854wmf.22.2019.03.29.15.58.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 29 Mar 2019 15:58:41 -0700 (PDT)
-Message-ID: <6ef984dabf626760ae606567facdc5245fbba984.camel@baylibre.com>
-Subject: Re: [PATCH 1/4] clk: meson: mpll: add init callback and regs
+        by smtp.gmail.com with ESMTPSA id u19sm4487071wmc.7.2019.03.29.16.07.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Mar 2019 16:07:55 -0700 (PDT)
+Message-ID: <3bef1bb26e9eff0cfc20cd4bb78a5d7cea4c5076.camel@baylibre.com>
+Subject: Re: [PATCH 1/3] clk: meson: mpll: properly handle spread spectrum
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 29 Mar 2019 23:58:39 +0100
-In-Reply-To: <155389767798.20095.10570017301900287354@swboyd.mtv.corp.google.com>
-References: <20190325111200.15940-1-jbrunet@baylibre.com>
-         <20190325111200.15940-2-jbrunet@baylibre.com>
-         <155353381842.20095.17915880223118004926@swboyd.mtv.corp.google.com>
-         <8b6f0bc6210834af2aff2de7dc95692dd87db539.camel@baylibre.com>
-         <155389767798.20095.10570017301900287354@swboyd.mtv.corp.google.com>
+Date:   Sat, 30 Mar 2019 00:07:53 +0100
+In-Reply-To: <CAFBinCDnoY41ZcoHqsngR4WTeczkmOu93R=2G_JOXbdUmHSjMw@mail.gmail.com>
+References: <20190329153325.23869-1-jbrunet@baylibre.com>
+         <20190329153325.23869-2-jbrunet@baylibre.com>
+         <CAFBinCDnoY41ZcoHqsngR4WTeczkmOu93R=2G_JOXbdUmHSjMw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
@@ -76,36 +75,74 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2019-03-29 at 15:14 -0700, Stephen Boyd wrote:
-> > > We actively discourage using init callbacks. Can you do this some other
-> > > way?
-> > 
-> > Yes I'm aware of that but init it the right place to do this.
-> > To be clear, this is not initializing the clock to some particular rate, the
-> > rate is preserved.
-> > 
-> > It just applies the necessary settings that needs to be done only once to make
-> > sure the clock is in working order and that the rate calculated is actually
-> > accurate. 
+On Fri, 2019-03-29 at 20:39 +0100, Martin Blumenstingl wrote:
+> Hi Jerome,
 > 
-> Ok, but can you do that in your driver's probe routine instead of
-> attaching to the init callback? We want to get rid of "init" at some
-> point so throwing the init sequence stuff into the driver probe around
-> registration is a solution. Or we should think about not discouraging
-> the init callback
+> On Fri, Mar 29, 2019 at 4:34 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > The bit 'SSEN' available on some MPLL DSS outputs is not related to the
+> > fractional part of the divider but to the function called
+> > 'Spread Spectrum'.
+> > 
+> > This function might be used to solve EM issues by adding a jitter on
+> > clock signal. This widens the signal spectrum and weakens the peaks in it.
+> > 
+> > While spread spectrum might be useful for some application, it is
+> > problematic for others, such as audio.
+> > 
+> > This patch introduce a new flag to the MPLL driver to enable (or not) the
+> > spread spectrum function.
+> > 
+> > Fixes: 1f737ffa13ef ("clk: meson: mpll: fix mpll0 fractional part ignored")
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/clk/meson/clk-mpll.c | 9 ++++++---
+> >  drivers/clk/meson/clk-mpll.h | 1 +
+> >  2 files changed, 7 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+> > index 64d31c8ba3d0..2d39a8bc367c 100644
+> > --- a/drivers/clk/meson/clk-mpll.c
+> > +++ b/drivers/clk/meson/clk-mpll.c
+> > @@ -141,9 +141,12 @@ static void mpll_init(struct clk_hw *hw)
+> >         /* Enable the fractional part */
+> >         meson_parm_write(clk->map, &mpll->sdm_en, 1);
+> > 
+> > -       /* Set additional fractional part enable if required */
+> > -       if (MESON_PARM_APPLICABLE(&mpll->ssen))
+> > -               meson_parm_write(clk->map, &mpll->ssen, 1);
+> > +       /* Set spread spectrum if possible */
+> > +       if (MESON_PARM_APPLICABLE(&mpll->ssen)) {
+> > +               unsigned int ss =
+> > +                       mpll->flags & CLK_MESON_MPLL_SPREAD_SPECTRUM ? 1 : 0;
+> > +               meson_parm_write(clk->map, &mpll->ssen, ss);
+> > +       }
+> this changes the "ssen" flag on all supported clocks from 1 (before
+> this patch) to 0 (after this patch).
+> is this on purpose and how does it affect existing clocks?
 
-Is is callback really a problem after all ?
-I think we should actively prevent using it to set a particular rate.
+Yes, none of our application require spread spectrum
 
-Here, the goal is put the clock in working order. The bootloader does not
-always do that for us. I could put this in controller driver, but I would have
-to repeat the init pattern for each instance of the clock...not nice 
-Using the callback clearly shows the relationship between the init and the
-clock. I think it is a lot better.
+The fact is that only 2 MPLL had this bit, mpll0 on gx (without effect) and
+mpll0 on axg: actually spread spectrum impacts mpll2, making it unusable, as
+explained in the related patch
 
-In the same series, I have added some init for the controller. In this case
-the init target a group of clocks, so having the init in the controller makes
-sense for that
+> 
+> based on the original commit 1f737ffa13ef ("clk: meson: mpll: fix
+> mpll0 fractional part ignored") it seems that
+> CLK_MESON_MPLL_SPREAD_SPECTRUM should be set for mpll0 (at least on
+> GXBB and Meson8b)
+> 
 
+There a patch specifically targeting gxbb.
+I have checked on GXL and this bit had no effect (fractional part still on, no
+spread spectrum)
+
+So either we fixed something since then or I messed up when doing the patch
+initially.
+
+Feel free to cross check
+
+> 
+> Martin
 
 
