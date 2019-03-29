@@ -2,71 +2,100 @@ Return-Path: <SRS0=ZsbM=SA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B159C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FE7C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270492184D
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:44:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEFB22184D
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:48:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553899487;
-	bh=BYv/zL2J7g4n3oAFeloCkQo1HtprwDhDhvxPLIAa02E=;
+	s=default; t=1553899697;
+	bh=NGweQ1I5s8Jq+objqslkHJmBFpAoDR+aQ5oCqiMIn7M=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=EJcxaevz15+vNQUKUdpmqGgCTrKAC6NWTS8Xp4K2EOI7LyrdC4ZvzktQlahuQcgRr
-	 01k4cUjUxih6PDarq54Ov2fDKzl3CY/ZYmHmkm/9VxEFkvW9WJ6nX+Z4wG6eGBbeGV
-	 nKwtPEok7gOJCAKkFXqKnLiazS1bXLWQK2gLC4WY=
+	b=D8h2ARLsA44O82/YIYlqIB2jDKAi3C30tliCUKwUac4AUaoUlMRin3zDHapcSgEgr
+	 KusH2tcENdK1QRsF/CzltTCXKxs8lwdaZjhBdZ40dj7PxkgdGO8aEzuroFX6W4a4cL
+	 OTpwYGeWsDkrK5axivzyWwdyHZC1SRJc7Kp4fr5Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730500AbfC2Woq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Mar 2019 18:44:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53918 "EHLO mail.kernel.org"
+        id S1730473AbfC2WsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 18:48:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730476AbfC2Woq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Mar 2019 18:44:46 -0400
+        id S1730456AbfC2WsQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Mar 2019 18:48:16 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21F8E217F5;
-        Fri, 29 Mar 2019 22:44:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96FF0217F5;
+        Fri, 29 Mar 2019 22:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553899486;
-        bh=BYv/zL2J7g4n3oAFeloCkQo1HtprwDhDhvxPLIAa02E=;
+        s=default; t=1553899695;
+        bh=NGweQ1I5s8Jq+objqslkHJmBFpAoDR+aQ5oCqiMIn7M=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=CYiLZffA80afx371M7mZxL8chGutlkobzIoBaRMj83ahbDdInMooQ5cZ3bSlbnpIc
-         Wgh8spvwmlohbmIp6H0hJ60hr9lKxaNWw9rIO9kVi2VAFjwrB2OnQLZwfPBd1GcDhn
-         3xdATUtfN+H7x/Njus8qFHateNG9BGkwxxHENW+g=
+        b=fMlU3a7o0IYXKQmkQSOzYhjULpZDkTDT3JEwUwTWDf9mtnn2WkeYZn/Vu6WS7u56r
+         T8FOXiC9u8J+Z0h5jyLT5Tf+jV4yeipjO78AUPNF641p+WVtjLlqA0Sr3HOjJKLj+3
+         Ukn/1O5o9bRnnpEMmUHbzIrYCOaV8QMYBGVfxdNI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d47276b2-73fe-3046-84d1-84d7a08b248b@baylibre.com>
-References: <d47276b2-73fe-3046-84d1-84d7a08b248b@baylibre.com>
+In-Reply-To: <1553859960-31501-1-git-send-email-nixiaoming@huawei.com>
+References: <1553859960-31501-1-git-send-email-nixiaoming@huawei.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] clk: meson: fixes for v5.1, second round
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <155389948536.20095.9385568409537349896@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk:mmp: clk-mix.c fix divide-by-zero
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     chao.xie@marvell.com, mturquette@baylibre.com,
+        nixiaoming@huawei.com
+Message-ID: <155389969479.20095.682832622477946593@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Fri, 29 Mar 2019 15:44:45 -0700
+Date:   Fri, 29 Mar 2019 15:48:14 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Neil Armstrong (2019-03-29 02:14:07)
-> Dear clock maintainers,
+Quoting nixiaoming (2019-03-29 04:46:00)
+> The _get_div function has a branch with a return value of 0
+> Add a check on the return value of _get_div to avoid divide-by-zero
 >=20
-> Below is a second request to pull amlogic clock fixes for v5.1
-> These changes fixes meson8b booting where a wrong PLL frequency is select=
-ed
-> when updated by cpufreq, and removes an annoying warning and invalid retu=
-rn on
-> an unconfigured vid-pll-div recalc_rate.
+> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 
-Thanks. Pulled into clk-fixes.
+Similar questions apply here as they do on the generic divider patch you
+sent.
 
+> ---
+>  drivers/clk/mmp/clk-mix.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+> index 90814b2..9d152c2 100644
+> --- a/drivers/clk/mmp/clk-mix.c
+> +++ b/drivers/clk/mmp/clk-mix.c
+> @@ -245,6 +245,8 @@ static int mmp_clk_mix_determine_rate(struct clk_hw *=
+hw,
+>                         div_val_max =3D _get_maxdiv(mix);
+>                         for (j =3D 0; j < div_val_max; j++) {
+>                                 div =3D _get_div(mix, j);
+> +                               if (!div) /* avoid divide-by-zero */
+
+Why can't we return 1 for the divider value here?
+
+> +                                       continue;
+>                                 mix_rate =3D parent_rate / div;
+>                                 gap =3D abs(mix_rate - req->rate);
+>                                 if (!parent_best || gap < gap_best) {
+> @@ -341,6 +343,8 @@ static unsigned long mmp_clk_mix_recalc_rate(struct c=
+lk_hw *hw,
+>         shift =3D mix->reg_info.shift_div;
+> =20
+>         div =3D _get_div(mix, MMP_CLK_BITS_GET_VAL(mux_div, width, shift)=
+);
+> +       if (!div) /* avoid divide-by-zero */
+
+Same question.
+
+> +               return -EINVAL;
+> =20
+>         return parent_rate / div;
+>  }
