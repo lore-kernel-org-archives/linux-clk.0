@@ -4,145 +4,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4F1C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 23:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC57C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 23:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2427218A2
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 23:08:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D9BC217F5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 23:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="l0JaSuV0"
+	dkim=pass (2048-bit key) header.d=vanguardiasur-com-ar.20150623.gappssmtp.com header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.b="0SVwoqOY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729941AbfC2XIC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Mar 2019 19:08:02 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40546 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729932AbfC2XH6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 19:07:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z24so4613314wmi.5
-        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 16:07:56 -0700 (PDT)
+        id S1730028AbfC2X2R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 19:28:17 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:43561 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730007AbfC2X2Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 19:28:16 -0400
+Received: by mail-vs1-f66.google.com with SMTP id i207so2271185vsd.10
+        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 16:28:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=X4WzdP2nQiMGjUzeIIS1XDNpuU8ZsZnm39niZjc4DUg=;
-        b=l0JaSuV0w/PCUENbmYzE5FTbbDOwumvyyTq3Ua7Xx6VHtPxsR5sxSHDPy5So6b4/rf
-         MUWKDhO/cL375Lqp7BToC9tvVmfe2aFAsYsBz4hAq3EU5ZPCTZpQt9780R+tWyatGbIK
-         J6vX2XZFtcAHXvsv+d8JTtAMhpkZkC3tRiQPIqmsX1qUnIm+Fl22L7yY2vXRmnydFuYT
-         ibnRiNdv7D9WOecp8XghGz9L0ZNtBLsF8sPT/3vTSmlW5k0pSaaRB39vuNCjaRrFYiPx
-         GLv8xx9fwPoqLti0eL15I6VBYZ9R+nlcFbYNjW+lyU/ljrsRjqSwy9hWaUqHD5EolKOo
-         mUTQ==
+        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+JtnuU29EdY9D4FrIJN6PNOqz5gfVF3nZGn0l9m1fUc=;
+        b=0SVwoqOY8HAf1EO+n+FhSeIgPTLwZgG88y07dzUT/PSGEUmlXLoSPAI9BoYjVlTLEN
+         LXXQ1noQFUySvCG0QoOJpeNg7t3+2F36MgeqeIlg+3xuQOV1wE2mbjea7/IjbdTJTXl0
+         m+Dw7Gcik1UsrbXNt06jtHxDhtLypP76ornC/j8FOHyvbzDp7NvE809mWlnN2USNRmvc
+         SABj7MOsHqx29GNOOGFlTFJHQxooMGuSfurpYqOSi7cEou9iWbB8FuTsNu5tCeac94+3
+         r5zxZ+9r1RRJxj/BrkuLJcSOs7A/J5tbwJnEBUg+c8GPEVIdnatxJiTo8T5fiR0N9U8V
+         XqiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=X4WzdP2nQiMGjUzeIIS1XDNpuU8ZsZnm39niZjc4DUg=;
-        b=GWDCwpBceXYFpPGTpwtWQW6waQ0Lncc3veAQdcv1xMknWvhsX19hdQbD2v3hzcK2MK
-         ENU4yUCj2UmPMK9EUKBHLJC4lJClVBU3HvIePBtGaoLeXm6CJOvk/+7yLp8cjeIg0spR
-         Gt4bTh/qM9vSGfBuglDVA1AR+dkg4JKetCF8BvXkwlWI0MfBh/fCzXmQq57R1q0VdRKZ
-         Qk/IVilauArk9tV9L74+TbRngcOVxgLzT2+KLDYtB6mhPjZHdHOIwk3qULwVyC03FbUW
-         eeQtarAtpHNkgSAHKZ88H+zn6OyTQmoLq3EWKp9IAvjlYnsmlsmCF7/Mbp9H179PD7e/
-         ISXQ==
-X-Gm-Message-State: APjAAAUMmErsgEa24aMaoc5hwnDeUIyNZBzah388uefsR2ASR2o3PIDV
-        QebAgu+3xJJwuij+xLKuk4AP8w==
-X-Google-Smtp-Source: APXvYqwQ8yPsEvN9BsHL6fs8bVGHRAZAnJMewzitTxvw/imFpZ/mWe5MdRSiM+QuoxU7QVhffjGOFw==
-X-Received: by 2002:a1c:ce:: with SMTP id 197mr4956859wma.105.1553900875884;
-        Fri, 29 Mar 2019 16:07:55 -0700 (PDT)
-Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id u19sm4487071wmc.7.2019.03.29.16.07.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Mar 2019 16:07:55 -0700 (PDT)
-Message-ID: <3bef1bb26e9eff0cfc20cd4bb78a5d7cea4c5076.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: mpll: properly handle spread spectrum
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 30 Mar 2019 00:07:53 +0100
-In-Reply-To: <CAFBinCDnoY41ZcoHqsngR4WTeczkmOu93R=2G_JOXbdUmHSjMw@mail.gmail.com>
-References: <20190329153325.23869-1-jbrunet@baylibre.com>
-         <20190329153325.23869-2-jbrunet@baylibre.com>
-         <CAFBinCDnoY41ZcoHqsngR4WTeczkmOu93R=2G_JOXbdUmHSjMw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+JtnuU29EdY9D4FrIJN6PNOqz5gfVF3nZGn0l9m1fUc=;
+        b=JTjrlsLE7P0F4Impo8jQ6mWz9SoUW7rCPL3ZXviw73paFQxLKPZ0JIl8q8QlCQ7hkB
+         YqNMzMF4zCXiEgVQR7cbK8/+8GmbRDqb6Y0Z/EuUyjN3dL+6fJZTktfyIeJoUSDRq5cj
+         HHUjyx/UxaEnhYiTqAgpArKw4fDrrUWrjKIjAMyzZ+SVjgTCbPObKXHLgoxmmnHXWyAQ
+         Okn3e3+lJS9OaU0wrvPgHOEImfyg64TQ26ZpwC2c7Q5opV6Kjw5fhoQ0gQl6iERGtURj
+         3lTqmC96tKIK1UahhyJTYrgjJd8ulGkrx9OibuTHKRXPQn9WDVVc1qaXPxAGZ0NipBem
+         QzoQ==
+X-Gm-Message-State: APjAAAWod1oVE3i32dcHvBlLLWux6HHc6LzoUyDv4NrqmfbsUqzsZxjV
+        YtjQQY73KQl4YhfXcW1cjKpXbtX/p2vMEJoOoQPaEA==
+X-Google-Smtp-Source: APXvYqyi0lTZgMz8oW1UdC2H57E/xYz7jsBaRc9Yr1bQDqABm3+bG07HdtxhvhLlnv/5SkSpGykalNOXYPRvpBYtl+E=
+X-Received: by 2002:a67:6991:: with SMTP id e139mr30379607vsc.80.1553902095669;
+ Fri, 29 Mar 2019 16:28:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190329215455.159717-1-dianders@chromium.org>
+In-Reply-To: <20190329215455.159717-1-dianders@chromium.org>
+From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date:   Fri, 29 Mar 2019 20:28:04 -0300
+Message-ID: <CAAEAJfCvZ_y-No6vQbf_3kUSyuPYujTjW8XhZHiB=-GU2_NWHQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: Fix video codec clocks on rk3288
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>, Tomasz Figa <tfiga@chromium.org>,
+        Ziyuan Xu <xzy.xu@rock-chips.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        ryandcase@chromium.org, Elaine Zhang <zhangqing@rock-chips.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-clk@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2019-03-29 at 20:39 +0100, Martin Blumenstingl wrote:
-> Hi Jerome,
-> 
-> On Fri, Mar 29, 2019 at 4:34 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > The bit 'SSEN' available on some MPLL DSS outputs is not related to the
-> > fractional part of the divider but to the function called
-> > 'Spread Spectrum'.
-> > 
-> > This function might be used to solve EM issues by adding a jitter on
-> > clock signal. This widens the signal spectrum and weakens the peaks in it.
-> > 
-> > While spread spectrum might be useful for some application, it is
-> > problematic for others, such as audio.
-> > 
-> > This patch introduce a new flag to the MPLL driver to enable (or not) the
-> > spread spectrum function.
-> > 
-> > Fixes: 1f737ffa13ef ("clk: meson: mpll: fix mpll0 fractional part ignored")
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  drivers/clk/meson/clk-mpll.c | 9 ++++++---
-> >  drivers/clk/meson/clk-mpll.h | 1 +
-> >  2 files changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-> > index 64d31c8ba3d0..2d39a8bc367c 100644
-> > --- a/drivers/clk/meson/clk-mpll.c
-> > +++ b/drivers/clk/meson/clk-mpll.c
-> > @@ -141,9 +141,12 @@ static void mpll_init(struct clk_hw *hw)
-> >         /* Enable the fractional part */
-> >         meson_parm_write(clk->map, &mpll->sdm_en, 1);
-> > 
-> > -       /* Set additional fractional part enable if required */
-> > -       if (MESON_PARM_APPLICABLE(&mpll->ssen))
-> > -               meson_parm_write(clk->map, &mpll->ssen, 1);
-> > +       /* Set spread spectrum if possible */
-> > +       if (MESON_PARM_APPLICABLE(&mpll->ssen)) {
-> > +               unsigned int ss =
-> > +                       mpll->flags & CLK_MESON_MPLL_SPREAD_SPECTRUM ? 1 : 0;
-> > +               meson_parm_write(clk->map, &mpll->ssen, ss);
-> > +       }
-> this changes the "ssen" flag on all supported clocks from 1 (before
-> this patch) to 0 (after this patch).
-> is this on purpose and how does it affect existing clocks?
+On Fri, 29 Mar 2019 at 18:55, Douglas Anderson <dianders@chromium.org> wrot=
+e:
+>
+> It appears that there is a typo in the rk3288 TRM.  For
+> GRF_SOC_CON0[7] it says that 0 means "vepu" and 1 means "vdpu".  It's
+> the other way around.
+>
+> How do I know?  Here's my evidence:
+>
+> 1. Prior to commit 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec
+>    using the new muxgrf type on rk3288") we always pretended that we
+>    were using "aclk_vdpu" and the comment in the code said that this
+>    matched the default setting in the system.  In fact the default
+>    setting is 0 according to the TRM and according to reading memory
+>    at bootup.  In addition rk3288-based Chromebooks ran like this and
+>    the video codecs worked.
+> 2. With the existing clock code if you boot up and try to enable the
+>    new VIDEO_ROCKCHIP_VPU as a module (and without "clk_ignore_unused"
+>    on the command line), you get errors like "failed to get ack on
+>    domain 'pd_video', val=3D0x80208".  After flipping vepu/vdpu things
+>    init OK.
+> 3. If I export and add both the vepu and vdpu to the list of clocks
+>    for RK3288_PD_VIDEO I can get past the power domain errors, but now
+>    I freeze when the vpu_mmu gets initted.
+> 4. If I just mark the "vdpu" as IGNORE_UNUSED then everything boots up
+>    and probes OK showing that somehow the "vdpu" was important to keep
+>    enabled.  This is because we were actually using it as a parent.
+> 5. After this change I can hack "aclk_vcodec_pre" to parent from
+>    "aclk_vepu" using assigned-clocks and the video codec still probes
+>    OK.
+>
+> Fixes: 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec using the new m=
+uxgrf type on rk3288")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> I currently have no way to test the JPEG mem2mem driver, so hopefully
+> others can test this and make sure it's happy for them.  I'm just
+> happy not to get strange errors at boot anymore.
+>
 
-Yes, none of our application require spread spectrum
+I won't have access to this hardware for a few days, but I am happy
+to provide a simple test tool.
 
-The fact is that only 2 MPLL had this bit, mpll0 on gx (without effect) and
-mpll0 on axg: actually spread spectrum impacts mpll2, making it unusable, as
-explained in the related patch
+Still haven't reviewed this, but thanks for chasing it down!
 
-> 
-> based on the original commit 1f737ffa13ef ("clk: meson: mpll: fix
-> mpll0 fractional part ignored") it seems that
-> CLK_MESON_MPLL_SPREAD_SPECTRUM should be set for mpll0 (at least on
-> GXBB and Meson8b)
-> 
+EZe
 
-There a patch specifically targeting gxbb.
-I have checked on GXL and this bit had no effect (fractional part still on, no
-spread spectrum)
+>  drivers/clk/rockchip/clk-rk3288.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk=
+-rk3288.c
+> index 5a67b7869960..4d767f9c3a80 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -219,7 +219,7 @@ PNAME(mux_hsadcout_p)       =3D { "hsadc_src", "ext_h=
+sadc" };
+>  PNAME(mux_edp_24m_p)   =3D { "ext_edp_24m", "xin24m" };
+>  PNAME(mux_tspout_p)    =3D { "cpll", "gpll", "npll", "xin27m" };
+>
+> -PNAME(mux_aclk_vcodec_pre_p)   =3D { "aclk_vepu", "aclk_vdpu" };
+> +PNAME(mux_aclk_vcodec_pre_p)   =3D { "aclk_vdpu", "aclk_vepu" };
+>  PNAME(mux_usbphy480m_p)                =3D { "sclk_otgphy1_480m", "sclk_=
+otgphy2_480m",
+>                                     "sclk_otgphy0_480m" };
+>  PNAME(mux_hsicphy480m_p)       =3D { "cpll", "gpll", "usbphy480m_src" };
+> --
+> 2.21.0.392.gf8f6787159e-goog
+>
 
-So either we fixed something since then or I messed up when doing the patch
-initially.
 
-Feel free to cross check
-
-> 
-> Martin
-
-
+--=20
+Ezequiel Garc=C3=ADa, VanguardiaSur
+www.vanguardiasur.com.ar
