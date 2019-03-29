@@ -2,68 +2,71 @@ Return-Path: <SRS0=ZsbM=SA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB631C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 16:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 254ADC10F05
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 16:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE032070B
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 16:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E24BB2070B
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 16:07:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="o4g5APBz"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HYwajoy1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbfC2QHB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Mar 2019 12:07:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40904 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729604AbfC2QHA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 12:07:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z24so3451230wmi.5
-        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 09:06:59 -0700 (PDT)
+        id S1729383AbfC2QHR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 12:07:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35581 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729808AbfC2QHQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 12:07:16 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w1so3267097wrp.2
+        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 09:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XCTUbKrBIzwZK7i4F3iyqIemr9Qt0Oo1bG7f71jNIlc=;
-        b=o4g5APBzpMItecjvqZQk6zPyuisef3kZhlLRxTYpaQpxs82NebKm2AiD0va9/2QBhQ
-         OYDwU42Grn4P0D7PgD8zGH8n9mhT21pmUSNkc2YkF8Hwx7Es8zpbIDEqRcGiiUrVsL76
-         HbSvMh8b95fz6DMieoSKZGtsU5df23zs91atAErhuTAC8Z85eH0xzOaH8blA834UMfhv
-         erSQSoZX0p0LVM2759Shgnu+EWY0/nU5rZ6tstQx4/6BYMipMVvmovcS7wjJ37LgMSI6
-         NcjdFSemgOzzcSPpIIHyputZ+1rH1AtFzLRu1o/8GuhirQgG8/TbEfjwB41PpZFDpBHD
-         yTmg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7KlYp6/k26xnENJTFiwIdQi0DBB9OfCNGpZRk2olexc=;
+        b=HYwajoy1UwhJVUpjvAeyb9J4RcSoguTbUf78IgT8ikX+3SkQVnEZz14xCW9bvDNGZ1
+         nHmjfXkqi+Fw7ghCGOQCSMpnW54zUSdAiRXNTVK5F54Ubv7yZTu8+I2qzzGdVi0xLTHQ
+         Pdr8o1c7OQ+eO5iT21kJVzqHUlLdCsE79HKYrzbH2wiwRFY1rQUgh2bqChl/DV4drRdu
+         ZN66HnslUD3YmUDUmxuN0lfa+IBaLV+1eBCTHHyYgrbtG6V65RVboFdUlU7tVV/bK23U
+         uCrb4O1V3nU5gI1VWvPH8Rg2Nt5H4um8uYgWxTPL7ktEgvUmXvj0UrnrBTD4XZqJ31zo
+         iRaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XCTUbKrBIzwZK7i4F3iyqIemr9Qt0Oo1bG7f71jNIlc=;
-        b=DeyDTURY5kWXLZ85NBr9uvkZwNGWxjzdjJ6Na2w9DEmSusaUFRQTD2H9rRRE9AJa3l
-         CPApan3zLmujifQ7yhMNoCFPB04WGLYjPI0yC4iNQZqSYg0ynxp4kgbjBR/ADqMGe+Kk
-         EXZBWtsspqEsjt4X7IYbGCNJf6jxlhTPYM1+fC0ae9VtC8v/BEyZItRKgARXYBZ25gSS
-         kU794SHcDsODvfv3Yp8I8/P2SRU9GWfsHsEYuzyTTjXFVttPR1pILkndBrIdX7HqJ+IT
-         hVOdgdyOuKGsQXCKAtRn+vhP44/5qWLs6+9wGxKPafI7xSg9hwSYbc4V5KXrWsN5w/L3
-         6MQA==
-X-Gm-Message-State: APjAAAXEFe2SmGoRbM/4oxruQea/izk0k754l+ZyiIgBdi6NiK6qmaqY
-        GPhvRLUSLj7Opl9bMHwwAT9ynA==
-X-Google-Smtp-Source: APXvYqxmjLzqna2DG01+kc4RUY3h0WrjjA95K3GJ2AWxZq+lIcLJnr71FcSK/XGCVdkMvy16B+PJ4g==
-X-Received: by 2002:a1c:804c:: with SMTP id b73mr3989566wmd.116.1553875619010;
-        Fri, 29 Mar 2019 09:06:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7KlYp6/k26xnENJTFiwIdQi0DBB9OfCNGpZRk2olexc=;
+        b=qlFzuEmFA+0nbCYCP7V/xgsXB2WDXF7y8x/JszXPvflQZmRv6liQtpeoMJsmRV85Ek
+         nIa8A2ciUhYDeUbAYS3P1q9aGZ3jqZoNg3Beu3rXwhxTu4A+7+y4texE9aTn9Z8TsSvo
+         tHr6hZH3iT+b7NUTaGe5mkdKcM1uHjKhqjsOpLlefJMesF/7ptrfKov6wVf3hCwpeWI+
+         9SUbA5zp4TeQCw/C/Do4M4KMbcDsLpwGsd1hExVungnRksimiw7JrNiqmFHfDDMPOAV5
+         wfytu3eHsaP0HB7NNMk8W08TvWJtljvLPfQ0qF5rT9PeaOcs0kCpMSoaq5XnH6VoD0cD
+         F5Lw==
+X-Gm-Message-State: APjAAAXi6nUr7NSdrwucEluT+BgqHBQyN8FmfNfskn8YsnTbTKB5ll98
+        XtHDw4RkeN6rap/SDihXWkfX+BauNP8=
+X-Google-Smtp-Source: APXvYqzCQZdS+bVD0jig9DnLr2i8yb4yAAgvkhsDZ/GT6qg7lmczj2vwOncqrffdBXNTjWyygM6gXQ==
+X-Received: by 2002:adf:df08:: with SMTP id y8mr6013061wrl.91.1553875632809;
+        Fri, 29 Mar 2019 09:07:12 -0700 (PDT)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id c10sm3329527wrt.65.2019.03.29.09.06.57
+        by smtp.googlemail.com with ESMTPSA id c10sm3329527wrt.65.2019.03.29.09.07.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Mar 2019 09:06:58 -0700 (PDT)
+        Fri, 29 Mar 2019 09:07:12 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Maxime Jourdan <mjourdan@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 0/4] clk: meson: g12a audio clock controller support
-Date:   Fri, 29 Mar 2019 17:06:45 +0100
-Message-Id: <20190329160649.31603-1-jbrunet@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 4/4] clk: meson: axg-audio: add g12a support
+Date:   Fri, 29 Mar 2019 17:06:49 +0100
+Message-Id: <20190329160649.31603-5-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190329160649.31603-1-jbrunet@baylibre.com>
+References: <20190329160649.31603-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -71,23 +74,395 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset updates the axg audio controller to support the audio
-controller of the g12a SoC family.
+From: Maxime Jourdan <mjourdan@baylibre.com>
 
-Jerome Brunet (3):
-  dt-bindings: clk: axg-audio: add g12a support
-  clk: meson: axg_audio: replace prefix axg by aud
-  clk: meson: axg-audio: don't register inputs in the onecell data
+The g12a audio clock controller is largely similar to the existing axg
+controller, with the addition of the spdif output B and TDM pad clocks.
 
-Maxime Jourdan (1):
-  clk: meson: axg-audio: add g12a support
+This commit extends the existing axg audio clock controller driver
+to work with multiple compatibles and add the g12a specific clocks
 
- .../bindings/clock/amlogic,axg-audio-clkc.txt |    3 +-
- drivers/clk/meson/axg-audio.c                 | 1219 ++++++++++-------
- drivers/clk/meson/axg-audio.h                 |   36 +-
- include/dt-bindings/clock/axg-audio-clkc.h    |   10 +
- 4 files changed, 736 insertions(+), 532 deletions(-)
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg-audio.c | 240 +++++++++++++++++++++++++++++++++-
+ drivers/clk/meson/axg-audio.h |   7 +-
+ 2 files changed, 239 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index e8516f9c03d3..8028ff6f6610 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -97,6 +97,7 @@ static AUD_PCLK_GATE(spdifin,	   16);
+ static AUD_PCLK_GATE(spdifout,	   17);
+ static AUD_PCLK_GATE(resample,	   18);
+ static AUD_PCLK_GATE(power_detect, 19);
++static AUD_PCLK_GATE(spdifout_b,   21);
+ 
+ /* Audio Master Clocks */
+ static const char * const mst_mux_parent_names[] = {
+@@ -124,6 +125,7 @@ static AUD_MST_MCLK_MUX(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
+ static AUD_MST_MCLK_MUX(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
+ static AUD_MST_SYS_MUX(spdifin_clk,   AUDIO_CLK_SPDIFIN_CTRL);
+ static AUD_MST_SYS_MUX(pdm_sysclk,    AUDIO_CLK_PDMIN_CTRL1);
++static AUD_MST_MCLK_MUX(spdifout_b_clk, AUDIO_CLK_SPDIFOUT_B_CTRL);
+ 
+ #define AUD_MST_DIV(_name, _reg, _flag)				\
+ 	AUD_DIV(_name##_div, _reg, 0, 16, _flag,		\
+@@ -145,6 +147,7 @@ static AUD_MST_MCLK_DIV(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
+ static AUD_MST_MCLK_DIV(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
+ static AUD_MST_SYS_DIV(spdifin_clk,   AUDIO_CLK_SPDIFIN_CTRL);
+ static AUD_MST_SYS_DIV(pdm_sysclk,    AUDIO_CLK_PDMIN_CTRL1);
++static AUD_MST_MCLK_DIV(spdifout_b_clk, AUDIO_CLK_SPDIFOUT_B_CTRL);
+ 
+ #define AUD_MST_MCLK_GATE(_name, _reg)				\
+ 	AUD_GATE(_name, _reg, 31,  "aud_"#_name"_div",	\
+@@ -160,6 +163,7 @@ static AUD_MST_MCLK_GATE(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
+ static AUD_MST_MCLK_GATE(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
+ static AUD_MST_MCLK_GATE(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
+ static AUD_MST_MCLK_GATE(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++static AUD_MST_MCLK_GATE(spdifout_b_clk, AUDIO_CLK_SPDIFOUT_B_CTRL);
+ 
+ /* Sample Clocks */
+ #define AUD_MST_SCLK_PRE_EN(_name, _reg)			\
+@@ -377,6 +381,45 @@ static AUD_TDM_LRLCK(out_a, AUDIO_CLK_TDMOUT_A_CTRL);
+ static AUD_TDM_LRLCK(out_b, AUDIO_CLK_TDMOUT_B_CTRL);
+ static AUD_TDM_LRLCK(out_c, AUDIO_CLK_TDMOUT_C_CTRL);
+ 
++/* G12a Pad control */
++#define AUD_TDM_PAD_CTRL(_name, _reg, _shift, _parents)		\
++	AUD_MUX(tdm_##_name, _reg, 0x7, _shift, 0, _parents,	\
++		CLK_SET_RATE_NO_REPARENT)
++
++static const char * const mclk_pad_ctrl_parent_names[] = {
++	"aud_mst_a_mclk", "aud_mst_b_mclk", "aud_mst_c_mclk",
++	"aud_mst_d_mclk", "aud_mst_e_mclk", "aud_mst_f_mclk",
++};
++
++static AUD_TDM_PAD_CTRL(mclk_pad_0, AUDIO_MST_PAD_CTRL0, 0,
++			mclk_pad_ctrl_parent_names);
++static AUD_TDM_PAD_CTRL(mclk_pad_1, AUDIO_MST_PAD_CTRL0, 4,
++			mclk_pad_ctrl_parent_names);
++
++static const char * const lrclk_pad_ctrl_parent_names[] = {
++	"aud_mst_a_lrclk", "aud_mst_b_lrclk", "aud_mst_c_lrclk",
++	"aud_mst_d_lrclk", "aud_mst_e_lrclk", "aud_mst_f_lrclk",
++};
++
++static AUD_TDM_PAD_CTRL(lrclk_pad_0, AUDIO_MST_PAD_CTRL1, 16,
++			lrclk_pad_ctrl_parent_names);
++static AUD_TDM_PAD_CTRL(lrclk_pad_1, AUDIO_MST_PAD_CTRL1, 20,
++			lrclk_pad_ctrl_parent_names);
++static AUD_TDM_PAD_CTRL(lrclk_pad_2, AUDIO_MST_PAD_CTRL1, 24,
++			lrclk_pad_ctrl_parent_names);
++
++static const char * const sclk_pad_ctrl_parent_names[] = {
++	"aud_mst_a_sclk", "aud_mst_b_sclk", "aud_mst_c_sclk",
++	"aud_mst_d_sclk", "aud_mst_e_sclk", "aud_mst_f_sclk",
++};
++
++static AUD_TDM_PAD_CTRL(sclk_pad_0, AUDIO_MST_PAD_CTRL1, 0,
++			sclk_pad_ctrl_parent_names);
++static AUD_TDM_PAD_CTRL(sclk_pad_1, AUDIO_MST_PAD_CTRL1, 4,
++			sclk_pad_ctrl_parent_names);
++static AUD_TDM_PAD_CTRL(sclk_pad_2, AUDIO_MST_PAD_CTRL1, 8,
++			sclk_pad_ctrl_parent_names);
++
+ /*
+  * Array of all clocks provided by this provider
+  * The input clocks of the controller will be populated at runtime
+@@ -509,7 +552,156 @@ static struct clk_hw_onecell_data axg_audio_hw_onecell_data = {
+ 	.num = NR_CLKS,
+ };
+ 
+-/* Convenience table to populate regmap in .probe() */
++/*
++ * Array of all G12A clocks provided by this provider
++ * The input clocks of the controller will be populated at runtime
++ */
++static struct clk_hw_onecell_data g12a_audio_hw_onecell_data = {
++	.hws = {
++		[AUD_CLKID_DDR_ARB]		= &aud_ddr_arb.hw,
++		[AUD_CLKID_PDM]			= &aud_pdm.hw,
++		[AUD_CLKID_TDMIN_A]		= &aud_tdmin_a.hw,
++		[AUD_CLKID_TDMIN_B]		= &aud_tdmin_b.hw,
++		[AUD_CLKID_TDMIN_C]		= &aud_tdmin_c.hw,
++		[AUD_CLKID_TDMIN_LB]		= &aud_tdmin_lb.hw,
++		[AUD_CLKID_TDMOUT_A]		= &aud_tdmout_a.hw,
++		[AUD_CLKID_TDMOUT_B]		= &aud_tdmout_b.hw,
++		[AUD_CLKID_TDMOUT_C]		= &aud_tdmout_c.hw,
++		[AUD_CLKID_FRDDR_A]		= &aud_frddr_a.hw,
++		[AUD_CLKID_FRDDR_B]		= &aud_frddr_b.hw,
++		[AUD_CLKID_FRDDR_C]		= &aud_frddr_c.hw,
++		[AUD_CLKID_TODDR_A]		= &aud_toddr_a.hw,
++		[AUD_CLKID_TODDR_B]		= &aud_toddr_b.hw,
++		[AUD_CLKID_TODDR_C]		= &aud_toddr_c.hw,
++		[AUD_CLKID_LOOPBACK]		= &aud_loopback.hw,
++		[AUD_CLKID_SPDIFIN]		= &aud_spdifin.hw,
++		[AUD_CLKID_SPDIFOUT]		= &aud_spdifout.hw,
++		[AUD_CLKID_RESAMPLE]		= &aud_resample.hw,
++		[AUD_CLKID_POWER_DETECT]	= &aud_power_detect.hw,
++		[AUD_CLKID_SPDIFOUT_B]		= &aud_spdifout_b.hw,
++		[AUD_CLKID_MST_A_MCLK_SEL]	= &aud_mst_a_mclk_sel.hw,
++		[AUD_CLKID_MST_B_MCLK_SEL]	= &aud_mst_b_mclk_sel.hw,
++		[AUD_CLKID_MST_C_MCLK_SEL]	= &aud_mst_c_mclk_sel.hw,
++		[AUD_CLKID_MST_D_MCLK_SEL]	= &aud_mst_d_mclk_sel.hw,
++		[AUD_CLKID_MST_E_MCLK_SEL]	= &aud_mst_e_mclk_sel.hw,
++		[AUD_CLKID_MST_F_MCLK_SEL]	= &aud_mst_f_mclk_sel.hw,
++		[AUD_CLKID_MST_A_MCLK_DIV]	= &aud_mst_a_mclk_div.hw,
++		[AUD_CLKID_MST_B_MCLK_DIV]	= &aud_mst_b_mclk_div.hw,
++		[AUD_CLKID_MST_C_MCLK_DIV]	= &aud_mst_c_mclk_div.hw,
++		[AUD_CLKID_MST_D_MCLK_DIV]	= &aud_mst_d_mclk_div.hw,
++		[AUD_CLKID_MST_E_MCLK_DIV]	= &aud_mst_e_mclk_div.hw,
++		[AUD_CLKID_MST_F_MCLK_DIV]	= &aud_mst_f_mclk_div.hw,
++		[AUD_CLKID_MST_A_MCLK]		= &aud_mst_a_mclk.hw,
++		[AUD_CLKID_MST_B_MCLK]		= &aud_mst_b_mclk.hw,
++		[AUD_CLKID_MST_C_MCLK]		= &aud_mst_c_mclk.hw,
++		[AUD_CLKID_MST_D_MCLK]		= &aud_mst_d_mclk.hw,
++		[AUD_CLKID_MST_E_MCLK]		= &aud_mst_e_mclk.hw,
++		[AUD_CLKID_MST_F_MCLK]		= &aud_mst_f_mclk.hw,
++		[AUD_CLKID_SPDIFOUT_CLK_SEL]	= &aud_spdifout_clk_sel.hw,
++		[AUD_CLKID_SPDIFOUT_CLK_DIV]	= &aud_spdifout_clk_div.hw,
++		[AUD_CLKID_SPDIFOUT_CLK]	= &aud_spdifout_clk.hw,
++		[AUD_CLKID_SPDIFOUT_B_CLK_SEL]	= &aud_spdifout_b_clk_sel.hw,
++		[AUD_CLKID_SPDIFOUT_B_CLK_DIV]	= &aud_spdifout_b_clk_div.hw,
++		[AUD_CLKID_SPDIFOUT_B_CLK]	= &aud_spdifout_b_clk.hw,
++		[AUD_CLKID_SPDIFIN_CLK_SEL]	= &aud_spdifin_clk_sel.hw,
++		[AUD_CLKID_SPDIFIN_CLK_DIV]	= &aud_spdifin_clk_div.hw,
++		[AUD_CLKID_SPDIFIN_CLK]		= &aud_spdifin_clk.hw,
++		[AUD_CLKID_PDM_DCLK_SEL]	= &aud_pdm_dclk_sel.hw,
++		[AUD_CLKID_PDM_DCLK_DIV]	= &aud_pdm_dclk_div.hw,
++		[AUD_CLKID_PDM_DCLK]		= &aud_pdm_dclk.hw,
++		[AUD_CLKID_PDM_SYSCLK_SEL]	= &aud_pdm_sysclk_sel.hw,
++		[AUD_CLKID_PDM_SYSCLK_DIV]	= &aud_pdm_sysclk_div.hw,
++		[AUD_CLKID_PDM_SYSCLK]		= &aud_pdm_sysclk.hw,
++		[AUD_CLKID_MST_A_SCLK_PRE_EN]	= &aud_mst_a_sclk_pre_en.hw,
++		[AUD_CLKID_MST_B_SCLK_PRE_EN]	= &aud_mst_b_sclk_pre_en.hw,
++		[AUD_CLKID_MST_C_SCLK_PRE_EN]	= &aud_mst_c_sclk_pre_en.hw,
++		[AUD_CLKID_MST_D_SCLK_PRE_EN]	= &aud_mst_d_sclk_pre_en.hw,
++		[AUD_CLKID_MST_E_SCLK_PRE_EN]	= &aud_mst_e_sclk_pre_en.hw,
++		[AUD_CLKID_MST_F_SCLK_PRE_EN]	= &aud_mst_f_sclk_pre_en.hw,
++		[AUD_CLKID_MST_A_SCLK_DIV]	= &aud_mst_a_sclk_div.hw,
++		[AUD_CLKID_MST_B_SCLK_DIV]	= &aud_mst_b_sclk_div.hw,
++		[AUD_CLKID_MST_C_SCLK_DIV]	= &aud_mst_c_sclk_div.hw,
++		[AUD_CLKID_MST_D_SCLK_DIV]	= &aud_mst_d_sclk_div.hw,
++		[AUD_CLKID_MST_E_SCLK_DIV]	= &aud_mst_e_sclk_div.hw,
++		[AUD_CLKID_MST_F_SCLK_DIV]	= &aud_mst_f_sclk_div.hw,
++		[AUD_CLKID_MST_A_SCLK_POST_EN]	= &aud_mst_a_sclk_post_en.hw,
++		[AUD_CLKID_MST_B_SCLK_POST_EN]	= &aud_mst_b_sclk_post_en.hw,
++		[AUD_CLKID_MST_C_SCLK_POST_EN]	= &aud_mst_c_sclk_post_en.hw,
++		[AUD_CLKID_MST_D_SCLK_POST_EN]	= &aud_mst_d_sclk_post_en.hw,
++		[AUD_CLKID_MST_E_SCLK_POST_EN]	= &aud_mst_e_sclk_post_en.hw,
++		[AUD_CLKID_MST_F_SCLK_POST_EN]	= &aud_mst_f_sclk_post_en.hw,
++		[AUD_CLKID_MST_A_SCLK]		= &aud_mst_a_sclk.hw,
++		[AUD_CLKID_MST_B_SCLK]		= &aud_mst_b_sclk.hw,
++		[AUD_CLKID_MST_C_SCLK]		= &aud_mst_c_sclk.hw,
++		[AUD_CLKID_MST_D_SCLK]		= &aud_mst_d_sclk.hw,
++		[AUD_CLKID_MST_E_SCLK]		= &aud_mst_e_sclk.hw,
++		[AUD_CLKID_MST_F_SCLK]		= &aud_mst_f_sclk.hw,
++		[AUD_CLKID_MST_A_LRCLK_DIV]	= &aud_mst_a_lrclk_div.hw,
++		[AUD_CLKID_MST_B_LRCLK_DIV]	= &aud_mst_b_lrclk_div.hw,
++		[AUD_CLKID_MST_C_LRCLK_DIV]	= &aud_mst_c_lrclk_div.hw,
++		[AUD_CLKID_MST_D_LRCLK_DIV]	= &aud_mst_d_lrclk_div.hw,
++		[AUD_CLKID_MST_E_LRCLK_DIV]	= &aud_mst_e_lrclk_div.hw,
++		[AUD_CLKID_MST_F_LRCLK_DIV]	= &aud_mst_f_lrclk_div.hw,
++		[AUD_CLKID_MST_A_LRCLK]		= &aud_mst_a_lrclk.hw,
++		[AUD_CLKID_MST_B_LRCLK]		= &aud_mst_b_lrclk.hw,
++		[AUD_CLKID_MST_C_LRCLK]		= &aud_mst_c_lrclk.hw,
++		[AUD_CLKID_MST_D_LRCLK]		= &aud_mst_d_lrclk.hw,
++		[AUD_CLKID_MST_E_LRCLK]		= &aud_mst_e_lrclk.hw,
++		[AUD_CLKID_MST_F_LRCLK]		= &aud_mst_f_lrclk.hw,
++		[AUD_CLKID_TDMIN_A_SCLK_SEL]	= &aud_tdmin_a_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_B_SCLK_SEL]	= &aud_tdmin_b_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_C_SCLK_SEL]	= &aud_tdmin_c_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK_SEL]	= &aud_tdmin_lb_sclk_sel.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK_SEL]	= &aud_tdmout_a_sclk_sel.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK_SEL]	= &aud_tdmout_b_sclk_sel.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK_SEL]	= &aud_tdmout_c_sclk_sel.hw,
++		[AUD_CLKID_TDMIN_A_SCLK_PRE_EN]	= &aud_tdmin_a_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_B_SCLK_PRE_EN]	= &aud_tdmin_b_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_C_SCLK_PRE_EN]	= &aud_tdmin_c_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK_PRE_EN] = &aud_tdmin_lb_sclk_pre_en.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK_PRE_EN] = &aud_tdmout_a_sclk_pre_en.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK_PRE_EN] = &aud_tdmout_b_sclk_pre_en.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK_PRE_EN] = &aud_tdmout_c_sclk_pre_en.hw,
++		[AUD_CLKID_TDMIN_A_SCLK_POST_EN] = &aud_tdmin_a_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_B_SCLK_POST_EN] = &aud_tdmin_b_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_C_SCLK_POST_EN] = &aud_tdmin_c_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK_POST_EN] = &aud_tdmin_lb_sclk_post_en.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK_POST_EN] = &aud_tdmout_a_sclk_post_en.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK_POST_EN] = &aud_tdmout_b_sclk_post_en.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK_POST_EN] = &aud_tdmout_c_sclk_post_en.hw,
++		[AUD_CLKID_TDMIN_A_SCLK]	= &aud_tdmin_a_sclk.hw,
++		[AUD_CLKID_TDMIN_B_SCLK]	= &aud_tdmin_b_sclk.hw,
++		[AUD_CLKID_TDMIN_C_SCLK]	= &aud_tdmin_c_sclk.hw,
++		[AUD_CLKID_TDMIN_LB_SCLK]	= &aud_tdmin_lb_sclk.hw,
++		[AUD_CLKID_TDMOUT_A_SCLK]	= &aud_tdmout_a_sclk.hw,
++		[AUD_CLKID_TDMOUT_B_SCLK]	= &aud_tdmout_b_sclk.hw,
++		[AUD_CLKID_TDMOUT_C_SCLK]	= &aud_tdmout_c_sclk.hw,
++		[AUD_CLKID_TDMIN_A_LRCLK]	= &aud_tdmin_a_lrclk.hw,
++		[AUD_CLKID_TDMIN_B_LRCLK]	= &aud_tdmin_b_lrclk.hw,
++		[AUD_CLKID_TDMIN_C_LRCLK]	= &aud_tdmin_c_lrclk.hw,
++		[AUD_CLKID_TDMIN_LB_LRCLK]	= &aud_tdmin_lb_lrclk.hw,
++		[AUD_CLKID_TDMOUT_A_LRCLK]	= &aud_tdmout_a_lrclk.hw,
++		[AUD_CLKID_TDMOUT_B_LRCLK]	= &aud_tdmout_b_lrclk.hw,
++		[AUD_CLKID_TDMOUT_C_LRCLK]	= &aud_tdmout_c_lrclk.hw,
++		[AUD_CLKID_TDM_MCLK_PAD0]	= &aud_tdm_mclk_pad_0.hw,
++		[AUD_CLKID_TDM_MCLK_PAD1]	= &aud_tdm_mclk_pad_1.hw,
++		[AUD_CLKID_TDM_LRCLK_PAD0]	= &aud_tdm_lrclk_pad_0.hw,
++		[AUD_CLKID_TDM_LRCLK_PAD1]	= &aud_tdm_lrclk_pad_1.hw,
++		[AUD_CLKID_TDM_LRCLK_PAD2]	= &aud_tdm_lrclk_pad_2.hw,
++		[AUD_CLKID_TDM_SCLK_PAD0]	= &aud_tdm_sclk_pad_0.hw,
++		[AUD_CLKID_TDM_SCLK_PAD1]	= &aud_tdm_sclk_pad_1.hw,
++		[AUD_CLKID_TDM_SCLK_PAD2]	= &aud_tdm_sclk_pad_2.hw,
++		[NR_CLKS] = NULL,
++	},
++	.num = NR_CLKS,
++};
++
++/* Convenience table to populate regmap in .probe()
++ * Note that this table is shared between both AXG and G12A,
++ * with spdifout_b clocks being exclusive to G12A. Since those
++ * clocks are not declared within the AXG onecell table, we do not
++ * feel the need to have separate AXG/G12A regmap tables.
++ */
+ static struct clk_regmap *const aud_clk_regmaps[] = {
+ 	&aud_ddr_arb,
+ 	&aud_pdm,
+@@ -531,6 +723,7 @@ static struct clk_regmap *const aud_clk_regmaps[] = {
+ 	&aud_spdifout,
+ 	&aud_resample,
+ 	&aud_power_detect,
++	&aud_spdifout_b,
+ 	&aud_mst_a_mclk_sel,
+ 	&aud_mst_b_mclk_sel,
+ 	&aud_mst_c_mclk_sel,
+@@ -632,6 +825,17 @@ static struct clk_regmap *const aud_clk_regmaps[] = {
+ 	&aud_tdmout_a_lrclk,
+ 	&aud_tdmout_b_lrclk,
+ 	&aud_tdmout_c_lrclk,
++	&aud_spdifout_b_clk_sel,
++	&aud_spdifout_b_clk_div,
++	&aud_spdifout_b_clk,
++	&aud_tdm_mclk_pad_0,
++	&aud_tdm_mclk_pad_1,
++	&aud_tdm_lrclk_pad_0,
++	&aud_tdm_lrclk_pad_1,
++	&aud_tdm_lrclk_pad_2,
++	&aud_tdm_sclk_pad_0,
++	&aud_tdm_sclk_pad_1,
++	&aud_tdm_sclk_pad_2,
+ };
+ 
+ static int devm_clk_get_enable(struct device *dev, char *id)
+@@ -719,15 +923,24 @@ static const struct regmap_config axg_audio_regmap_cfg = {
+ 	.max_register	= AUDIO_CLK_PDMIN_CTRL1,
+ };
+ 
++struct audioclk_data {
++	struct clk_hw_onecell_data *hw_onecell_data;
++};
++
+ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	const struct audioclk_data *data;
+ 	struct regmap *map;
+ 	struct resource *res;
+ 	void __iomem *regs;
+ 	struct clk_hw *hw;
+ 	int ret, i;
+ 
++	data = of_device_get_match_data(dev);
++	if (!data)
++		return -EINVAL;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	regs = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(regs))
+@@ -778,8 +991,8 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ 		aud_clk_regmaps[i]->map = map;
+ 
+ 	/* Take care to skip the registered input clocks */
+-	for (i = AUD_CLKID_DDR_ARB; i < axg_audio_hw_onecell_data.num; i++) {
+-		hw = axg_audio_hw_onecell_data.hws[i];
++	for (i = AUD_CLKID_DDR_ARB; i < data->hw_onecell_data->num; i++) {
++		hw = data->hw_onecell_data->hws[i];
+ 		/* array might be sparse */
+ 		if (!hw)
+ 			continue;
+@@ -793,12 +1006,25 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+-					   &axg_audio_hw_onecell_data);
++					   data->hw_onecell_data);
+ }
+ 
++static const struct audioclk_data axg_audioclk_data = {
++	.hw_onecell_data = &axg_audio_hw_onecell_data,
++};
++
++static const struct audioclk_data g12a_audioclk_data = {
++	.hw_onecell_data = &g12a_audio_hw_onecell_data,
++};
++
+ static const struct of_device_id clkc_match_table[] = {
+-	{ .compatible = "amlogic,axg-audio-clkc" },
+-	{}
++	{
++		.compatible = "amlogic,axg-audio-clkc",
++		.data = &axg_audioclk_data
++	}, {
++		.compatible = "amlogic,g12a-audio-clkc",
++		.data = &g12a_audioclk_data
++	}, {}
+ };
+ MODULE_DEVICE_TABLE(of, clkc_match_table);
+ 
+@@ -811,6 +1037,6 @@ static struct platform_driver axg_audio_driver = {
+ };
+ module_platform_driver(axg_audio_driver);
+ 
+-MODULE_DESCRIPTION("Amlogic A113x Audio Clock driver");
++MODULE_DESCRIPTION("Amlogic AXG/G12A Audio Clock driver");
+ MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
+index 9644c2ff0b3b..5d972d55d6c7 100644
+--- a/drivers/clk/meson/axg-audio.h
++++ b/drivers/clk/meson/axg-audio.h
+@@ -20,6 +20,8 @@
+ #define AUDIO_MCLK_D_CTRL	0x010
+ #define AUDIO_MCLK_E_CTRL	0x014
+ #define AUDIO_MCLK_F_CTRL	0x018
++#define AUDIO_MST_PAD_CTRL0	0x01c
++#define AUDIO_MST_PAD_CTRL1	0x020
+ #define AUDIO_MST_A_SCLK_CTRL0	0x040
+ #define AUDIO_MST_A_SCLK_CTRL1	0x044
+ #define AUDIO_MST_B_SCLK_CTRL0	0x048
+@@ -45,6 +47,7 @@
+ #define AUDIO_CLK_LOCKER_CTRL	0x0A8
+ #define AUDIO_CLK_PDMIN_CTRL0	0x0AC
+ #define AUDIO_CLK_PDMIN_CTRL1	0x0B0
++#define AUDIO_CLK_SPDIFOUT_B_CTRL 0x0B4
+ 
+ /*
+  * CLKID index values
+@@ -109,10 +112,12 @@
+ #define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	148
+ #define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	149
+ #define AUD_CLKID_TDMOUT_C_SCLK_POST_EN	150
++#define AUD_CLKID_SPDIFOUT_B_CLK_SEL	153
++#define AUD_CLKID_SPDIFOUT_B_CLK_DIV	154
+ 
+ /* include the CLKIDs which are part of the DT bindings */
+ #include <dt-bindings/clock/axg-audio-clkc.h>
+ 
+-#define NR_CLKS	151
++#define NR_CLKS	163
+ 
+ #endif /*__AXG_AUDIO_CLKC_H */
 -- 
 2.20.1
 
