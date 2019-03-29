@@ -2,114 +2,138 @@ Return-Path: <SRS0=ZsbM=SA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 117EEC10F05
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD3EC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D41C4218A5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8171218A5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 22:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553897679;
-	bh=OTehbauQ08ahn/ZeqU6byAs8bHQqgTQZkfksTL07/k8=;
+	s=default; t=1553897881;
+	bh=R34pwDUDjO8Se0nDAvzs0GYjVuxUVhNdHGVyuJkeUBA=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=UA23BxtI8wPH2tHvMX3K9FlhqYEnTQEs4o/XPQrjUCcYyDlSyhVN6DEq5pk+A3AT4
-	 oHTrzSGbOqt+cDIPaPwQC9nc8r8TOD2jx/ErgvlVXCf9Pq8Kt0hCu73SAwKrE0FLow
-	 WS7JeJm8KvCSzfnfUQY8vzkEdJUfWfccAzMZVEPo=
+	b=BQ3C1gqdnjAI9TPtsdFxmPoT5piZ/E1Zfnr7uEW2dPfLTwfGwYkLbCAFYB0Tmo9on
+	 GYXsBQxR4Ajd8U3h/Hioy2xMaSmjWR2d6NmLAB+3IDM0mFBq+MO4cl/FgzXYh7hVpj
+	 903HAK3OmPIPOC83y0hAdBMMrwT3CJGgbEaijCk4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730489AbfC2WOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Mar 2019 18:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46274 "EHLO mail.kernel.org"
+        id S1730233AbfC2WSB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 18:18:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730240AbfC2WOj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Mar 2019 18:14:39 -0400
+        id S1730062AbfC2WSB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Mar 2019 18:18:01 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC5B5218A2;
-        Fri, 29 Mar 2019 22:14:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 723B4218A2;
+        Fri, 29 Mar 2019 22:18:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553897678;
-        bh=OTehbauQ08ahn/ZeqU6byAs8bHQqgTQZkfksTL07/k8=;
+        s=default; t=1553897880;
+        bh=R34pwDUDjO8Se0nDAvzs0GYjVuxUVhNdHGVyuJkeUBA=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=HQuQ68VReNeDXM9JzyFwxJ2G4qiblnGkk3Ay3WGAOBxGzwvYKdsDJOkxcvILJv/dT
-         1UfdPf7nmXFmBIyyndHqKZrYizTJKsIOKroL/hmlPEXzX/2VQmJ8+CPfqBb/cU0Nq+
-         EH6yoU8NCbeXfi8XZa1lRFwgq2+6znBQr/gvolUk=
+        b=N+/kEMSi+/ZJwR+oObY31YOkUzAsdfAzH/tbW6vi8lWSs0dz4Up/khi3EaPqfhMse
+         Pqbj2xoHGQn417+aqu43iarGLEjCmfG16wxRk1il7OVR9fT3PsdrbGvH2SGe7iy6hW
+         MXndbiTzNkf4galwQzCLBAYfkXyfKJ563Vl7gja4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8b6f0bc6210834af2aff2de7dc95692dd87db539.camel@baylibre.com>
-References: <20190325111200.15940-1-jbrunet@baylibre.com> <20190325111200.15940-2-jbrunet@baylibre.com> <155353381842.20095.17915880223118004926@swboyd.mtv.corp.google.com> <8b6f0bc6210834af2aff2de7dc95692dd87db539.camel@baylibre.com>
+In-Reply-To: <1553350115-2614-1-git-send-email-qiaozhou@asrmicro.com>
+References: <1553350115-2614-1-git-send-email-qiaozhou@asrmicro.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/4] clk: meson: mpll: add init callback and regs
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <155389767798.20095.10570017301900287354@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: asr: clock driver support for ASR AquilaC Soc
+Cc:     Qiao Zhou <qiaozhou@asrmicro.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qiaozhou <qiaozhou@asrmicro.com>
+Message-ID: <155389787963.20095.9145169286940814698@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Fri, 29 Mar 2019 15:14:37 -0700
+Date:   Fri, 29 Mar 2019 15:17:59 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-03-26 00:53:15)
-> On Mon, 2019-03-25 at 10:10 -0700, Stephen Boyd wrote:
-> > Quoting Jerome Brunet (2019-03-25 04:11:57)
-> > > @@ -138,6 +129,27 @@ static int mpll_set_rate(struct clk_hw *hw,
-> > >         return 0;
-> > >  }
-> > > =20
-> > > +static void mpll_init(struct clk_hw *hw)
-> > > +{
-> > > +       struct clk_regmap *clk =3D to_clk_regmap(hw);
-> > > +       struct meson_clk_mpll_data *mpll =3D meson_clk_mpll_data(clk);
-> > > +
-> > > +       if (mpll->init_count)
-> > > +               regmap_multi_reg_write(clk->map, mpll->init_regs,
-> > > +                                      mpll->init_count);
-> > > +
-> > > +       /* Enable the fractional part */
-> > > +       meson_parm_write(clk->map, &mpll->sdm_en, 1);
-> > > +
-> > > +       /* Set additional fractional part enable if required */
-> > > +       if (MESON_PARM_APPLICABLE(&mpll->ssen))
-> > > +               meson_parm_write(clk->map, &mpll->ssen, 1);
-> > > +
-> > > +       /* Set the magic misc bit if required */
-> > > +       if (MESON_PARM_APPLICABLE(&mpll->misc))
-> > > +               meson_parm_write(clk->map, &mpll->misc, 1);
-> > > +}
-> > > +
-> > >  const struct clk_ops meson_clk_mpll_ro_ops =3D {
-> > >         .recalc_rate    =3D mpll_recalc_rate,
-> > >         .round_rate     =3D mpll_round_rate,
-> > > @@ -148,6 +160,7 @@ const struct clk_ops meson_clk_mpll_ops =3D {
-> > >         .recalc_rate    =3D mpll_recalc_rate,
-> > >         .round_rate     =3D mpll_round_rate,
-> > >         .set_rate       =3D mpll_set_rate,
-> > > +       .init           =3D mpll_init,
-> >=20
-> > We actively discourage using init callbacks. Can you do this some other
-> > way?
+Quoting qiaozhou (2019-03-23 07:08:35)
+> From: Qiao Zhou <qiaozhou@asrmicro.com>
 >=20
-> Yes I'm aware of that but init it the right place to do this.
-> To be clear, this is not initializing the clock to some particular rate, =
-the
-> rate is preserved.
+> add clock driver support for ASR AquilaC SoC.
 >=20
-> It just applies the necessary settings that needs to be done only once to=
- make
-> sure the clock is in working order and that the rate calculated is actual=
-ly
-> accurate.=20
+> We add clk-gate, clk-mix, and clk-pll drivers:
+> 1. clk-gate driver is for regisers which have different enable/disable bi=
+ts
+> to control gating.
+> 2. clk-mix driver is for registers which request to set div and mux
+> bits at the same time.
+> 3. clk-pll driver is for pll configuration.
+>=20
+> Signed-off-by: qiaozhou <qiaozhou@asrmicro.com>
 
-Ok, but can you do that in your driver's probe routine instead of
-attaching to the init callback? We want to get rid of "init" at some
-point so throwing the init sequence stuff into the driver probe around
-registration is a solution. Or we should think about not discouraging
-the init callback.
+Please make this match your "From" line above.
+
+> +
+> +static void __init aquilac_clk_init(struct device_node *np)
+> +{
+> +       int ret;
+> +       struct asr_clk_data *clock_data;
+> +
+> +       clock_data =3D kzalloc(sizeof(*clock_data), GFP_KERNEL);
+> +       if (!clock_data)
+> +               return;
+> +
+> +       ret =3D aquilac_clk_of_iomap(np, clock_data);
+> +       if (ret < 0)
+> +               goto out;
+> +
+> +       ret =3D asr_clk_init(np, &clock_data->unit, ASR_NR_CLKS);
+> +       if (ret < 0)
+> +               goto out;
+> +
+> +       aquilac_general_clk_init(clock_data);
+> +
+> +       aquilac_pll_init(clock_data);
+> +
+> +       aquilac_mix_clk_init(clock_data);
+> +
+> +       aquilac_periph_clk_init(clock_data);
+> +
+> +       asr_clks_enable((const char **)keep_on_clocks_tbl, ARRAY_SIZE(kee=
+p_on_clocks_tbl));
+> +
+> +       return;
+> +out:
+> +       kfree(clock_data);
+> +}
+> +CLK_OF_DECLARE(aquilac_clk, "asr,8751c-clock", aquilac_clk_init);
+
+Any reason this can't be a platform driver?
+
+> diff --git a/drivers/clk/asr/clk-gate.c b/drivers/clk/asr/clk-gate.c
+> new file mode 100644
+> index 0000000..4ba5587
+> --- /dev/null
+> +++ b/drivers/clk/asr/clk-gate.c
+> @@ -0,0 +1,151 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * asr gate clock operation source file
+> + *
+> + * Copyright (C) 2019 ASR Microelectronics(Shanghai) Co., Ltd.
+> + * Gang Wu <gangwu@asrmicro.com>
+> + * Qiao Zhou <qiaozhou@asrmicro.com>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2. This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+
+Please only have the SPDX tag and not this above paragraph.
+
+> + */
+> +
+
+I'm not going to review anymore as I'll wait for a resend for Dan's
+comments.
 
