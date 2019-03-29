@@ -2,66 +2,67 @@ Return-Path: <SRS0=ZsbM=SA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD34FC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 08:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D5DC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 08:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9259621773
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 08:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE47C2082F
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 08:40:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="J6+lE5u4"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xrAQ8kL4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729073AbfC2Ijv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Mar 2019 04:39:51 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52966 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728398AbfC2Ijv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 04:39:51 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a184so1589766wma.2
-        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 01:39:49 -0700 (PDT)
+        id S1729153AbfC2IkX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 04:40:23 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36026 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729114AbfC2IkX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Mar 2019 04:40:23 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y13so1527496wrd.3
+        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2019 01:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:openpgp:autocrypt:organization
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=JrX7JZpY9K2FVQ7gjYTRFqwQZY33/GEbsty4Pb4irxQ=;
-        b=J6+lE5u4lfax8+ChNG6LpIqRT6TsNImNIC/xmheBM/WCjvFIRiNBVfe4kVaZTnXOke
-         xVAqvheB51PHd4CpaTYkd2XI3j6KpeTXajeqIIYZQMeuTDTF0Cr3EQZKx1nCQF7US6dH
-         v480h3+IFV98bmp3MVV3xnDbH681Hc7ksr7IthOZzj9oxRAC6oIqba0lQBZRIWanZKuk
-         8H6OlBPTkzeAC3guLUJsHHyRe4v4JxrWIFE+R4SUb3//dYk9i8Zk0SyWd5vRNj7uFTxq
-         LtS6E8D0bkbDX2bd5nzF5bMdXWQvCs6WS5uRRjvvDYDANNuPQstuoG12rsRAkRlwBmQ7
-         oj/A==
+        bh=suRuMrEI46TPzEKSCaSx29a3adixJLg1G9ePOcSzWME=;
+        b=xrAQ8kL4UgRPHFG4c2xvEirzwJ6As7z/Iwt+BnHECnrX6+IB+zqghzYMHTyEUCsAaM
+         Ba1IhZdxZpzt73n55glUHYG2gxKl/NYoHTKaQda7x73G8A12jwHGav1YaruYESVmsN7u
+         JwxuYv3nOffP/Z0WEYFzFhEUCokYrUopedz+97IfL3oDlJ0GjoatgM5FBXo8j+y2/mud
+         c2C8e+ydEfvWnxGfqL/IVT3EUjZGhSd2GO2502KcB2JyD4Vdn+fhp2vxeDXqPonNuGQD
+         BL74oiPKc/0x4eD2WbfxEYsnVaSQXqqvoCe7SVo0awooE6sZFhk0+1Zw3YUtmRiuC3e7
+         JtRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=JrX7JZpY9K2FVQ7gjYTRFqwQZY33/GEbsty4Pb4irxQ=;
-        b=cvLb8ZQCHr9XL159cRguINh65KCMA0NtID++LbPmCfWT21A4m3Cp99p2wShPWimSd+
-         ex2idKbkcc2xtNQFQfrpFnrE6BB9MEhoTJ5jeNkkzi205zVS3PdW6IkUjdARPmEyx2Bw
-         c99/Ie/aRnhuQFeBPJr+u4NSCOPCwFXbQRNF0VCuc66MtU5gg+c23UP1u6UlAZwM+kUr
-         5FvMgPjrj8DOXgYj2cvaJXw/y685lFNCXQapvotAWs6HbckZnn8qwcVp52bVPBLu5fOE
-         uRR8p7YBpV5Yt1a7wMM5mVVaczb8nuc+9YoQS3o6H4sy5SR2iG08atqlRy6dDp7ihbXA
-         4JWw==
-X-Gm-Message-State: APjAAAX1iSLtL2ORZ74uZrMqSHaffBA46G5r8hbdAENNUSTFoh+ejL4y
-        0zOteGtQTUerQrG2eVDlIcLhg1uHrBCJyA==
-X-Google-Smtp-Source: APXvYqzw6qa+92bI2vZlYxYtcOR5zhl9LeOBclcJYAvd23HKXJ3+u1iphzveIPRdmKnm/h9mC8ENHw==
-X-Received: by 2002:a1c:d0c7:: with SMTP id h190mr2832459wmg.17.1553848787925;
-        Fri, 29 Mar 2019 01:39:47 -0700 (PDT)
+        bh=suRuMrEI46TPzEKSCaSx29a3adixJLg1G9ePOcSzWME=;
+        b=XTkQNhCEanop02sk32YMfpLsBA0/0RRcolKi/0B7CB+SmYgRJVR77PQJInX6gboRR4
+         ERo6ZsiYOM3UaQfT5hn3IgHl/buH5auxcC8D1egzL4RJP3eZZbpy5ttIDG872KWFSDNS
+         PUaLnSL2fCvIh+wWLeGAJlpnHwvWZNtXmEptNxY9NykVB11f4lrXdtn7rwRtBwA42s6j
+         Bkh1k6u8gkRGhUSYfKYrroOCju6+JHMGS0vz4UcxiJmdAARhuqDdL7YNIvyz81XBBBIk
+         mEnjnptAQOchDfIfNk4hDOxEJTcdN0Sjq8BeUjVwJw46ffJmUxRsif0HWrvpySGCp5Di
+         XHww==
+X-Gm-Message-State: APjAAAU+dDfvzbw9Zg644eegANbCh3EaOVlJpeeNs3xicTsAenpzNX1f
+        MPnWdJ4fINrtJKnM9HtEnN/C5zBxKS4OeQ==
+X-Google-Smtp-Source: APXvYqzD2nEALM1xeZTQtUfkOB4AzwdSnWR3rvVqDBxLaL2NJQiYddmYTq9fmrcyLjxB/d28v+cV1g==
+X-Received: by 2002:adf:e50d:: with SMTP id j13mr30166225wrm.165.1553848820557;
+        Fri, 29 Mar 2019 01:40:20 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 3sm1688567wrk.68.2019.03.29.01.39.47
+        by smtp.gmail.com with ESMTPSA id w11sm3805593wre.15.2019.03.29.01.40.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Mar 2019 01:39:47 -0700 (PDT)
-Subject: Re: [PATCH] clk: meson: g12a: fix gp0 and hifi ranges
-From:   Neil Armstrong <narmstrong@baylibre.com>
+        Fri, 29 Mar 2019 01:40:19 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson: vid-pll-div: remove warning and return 0 on
+ invalid config
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190325104230.11245-1-jbrunet@baylibre.com>
- <823ef5d3-3da8-2be0-5bef-ed9b601d287b@baylibre.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190327151348.27402-1-narmstrong@baylibre.com>
+ <e8360360029a29296b98586f1d1a440996d89947.camel@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -113,12 +114,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <0a5fb4a3-7835-e15a-b5c3-586378cc2c6b@baylibre.com>
-Date:   Fri, 29 Mar 2019 09:39:46 +0100
+Message-ID: <578c47b1-ea60-f9a7-8cb9-9554ceb9eff9@baylibre.com>
+Date:   Fri, 29 Mar 2019 09:40:19 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <823ef5d3-3da8-2be0-5bef-ed9b601d287b@baylibre.com>
+In-Reply-To: <e8360360029a29296b98586f1d1a440996d89947.camel@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,42 +128,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/03/2019 13:18, Neil Armstrong wrote:
-> On 25/03/2019 11:42, Jerome Brunet wrote:
->> While some SoC samples are able to lock with a PLL factor of 55, others
->> samples can't. ATM, a minimum of 60 appears to work on all the samples
->> I have tried, so lets use this value until we have a good reason to put
->> something else.
+On 29/03/2019 09:39, Jerome Brunet wrote:
+> On Wed, 2019-03-27 at 16:13 +0100, Neil Armstrong wrote:
+>> The vid_pll_div is a programmable fractional divider, but vendor gives a
+>> limited of known configuration value and it's corresponding fraction.
 >>
->> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> Thus when at reset value (0) or unknown value, we cannot determine the
+>> result rate.
+>>
+>> The initial behaviour was to print a warning, but the warning triggers
+>> at each boot and when the clock tree is refreshed.
+>>
+>> This patch moves the print to debug and returns 0 instead of the
+>> parent rate.
+>>
+>> Fixes: 72dbb8c94d0d ("clk: meson: Add vid_pll divider driver")
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 >> ---
->>  drivers/clk/meson/g12a.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> index 0e1ce8c03259..d3f53a9b97dc 100644
->> --- a/drivers/clk/meson/g12a.c
->> +++ b/drivers/clk/meson/g12a.c
->> @@ -151,7 +151,7 @@ static struct clk_regmap g12a_sys_pll = {
->>  };
->>  
->>  static const struct pll_mult_range g12a_gp0_pll_mult_range = {
->> -	.min = 55,
->> +	.min = 60,
->>  	.max = 255,
->>  };
->>  
->>
+>>  drivers/clk/meson/vid-pll-div.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> And applied to fixes/drivers !
-> 
-> Neil
+> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
 
-Seems this will need more work,
-unapplied from fixes/drivers
+Thanks,
+
+Applied to fixes/drivers
 
 Neil
