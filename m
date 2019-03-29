@@ -1,101 +1,99 @@
-Return-Path: <SRS0=OKnm=R7=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ZsbM=SA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7524FC10F06
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A991BC43381
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 04:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ADCA206B7
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Mar 2019 19:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553800952;
-	bh=K+gwKGzqQARAaXOLz90I/Z/+A6iJ1UiZQQE5zJ2BzsM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xyDEHxDmGvW4L3qpoWxFT1KGpoRy0cRZ0f2uoK5ngqw3H4UxBJ0fh+EAbprzKunz7
-	 RxjotFNX7MvqrkP6TfkdtkYB+UixXbmDDt4fjEA1msM0shNinOR1qyE3DoG1yR/2hP
-	 A/eGkE8wIf0uRVvzwM0TcTSDFJ4DiWKAjgboSFrg=
+	by mail.kernel.org (Postfix) with ESMTP id 7912A217F5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Mar 2019 04:52:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfC1TW0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Mar 2019 15:22:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52838 "EHLO mail.kernel.org"
+        id S1725830AbfC2Ewv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Mar 2019 00:52:51 -0400
+Received: from mail.i8u.org ([75.148.87.25]:21088 "EHLO chris.i8u.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfC1TWZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Mar 2019 15:22:25 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5131206B7;
-        Thu, 28 Mar 2019 19:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553800944;
-        bh=K+gwKGzqQARAaXOLz90I/Z/+A6iJ1UiZQQE5zJ2BzsM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=z4isrTAIm3Pn7Mbrh/sQHkUdJwopEcAwBcZDxotZbQ/usH1x3tDRtNGyPkIetW/hg
-         XTaS+tF5lra0AHpbbmWvldhxo0KByenLD559vL3EQlULjYvBq+B+kF02eXebSEKIEn
-         22ujsCjJeeMZjrNqv9Yg0ttiaMTKDW6nFHw3Zi88=
-Received: by mail-qt1-f175.google.com with SMTP id z17so24449108qts.13;
-        Thu, 28 Mar 2019 12:22:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAUAR/FD/dCMvRHiWyvVhvJ9/g4jvvLAZFZ+Fbc7JHNIWHY1WaFh
-        6fHe47NzCMkM5CwLTOJgrtFzOGU+7pWdtccgxw==
-X-Google-Smtp-Source: APXvYqzQHiylD1g/X2+qiXuMZjxX0Xk5odu/QGqdW7lTJGavIV8lF4iP0fTc41YVwzuDqcqmmBj5kQI4PE0WhpluEvo=
-X-Received: by 2002:a0c:c11c:: with SMTP id f28mr35598760qvh.106.1553800943228;
- Thu, 28 Mar 2019 12:22:23 -0700 (PDT)
+        id S1725861AbfC2Ewu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Mar 2019 00:52:50 -0400
+X-Greylist: delayed 382 seconds by postgrey-1.27 at vger.kernel.org; Fri, 29 Mar 2019 00:52:50 EDT
+Received: by chris.i8u.org (Postfix, from userid 1000)
+        id 6CC5816C9926; Thu, 28 Mar 2019 21:46:26 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by chris.i8u.org (Postfix) with ESMTP id 6B14216C9493;
+        Thu, 28 Mar 2019 21:46:26 -0700 (PDT)
+Date:   Thu, 28 Mar 2019 21:46:26 -0700 (PDT)
+From:   Hisashi T Fujinaka <htodd@twofifty.com>
+X-X-Sender: htodd@chris.i8u.org
+Reply-To: todd.fujinaka@intel.com
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc:     Hans de Goede <hdegoede@redhat.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
+        linux-clk@vger.kernel.org
+Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
+In-Reply-To: <20190328154931.GK9224@smile.fi.intel.com>
+Message-ID: <alpine.NEB.2.21.9999.1903282138420.979@chris.i8u.org>
+References: <9B4A1B1917080E46B64F07F2989DADD69AF4DDE7@ORSMSX115.amr.corp.intel.com> <0d0b97cc-2871-6a81-11ad-4dbb8a6b652e@redhat.com> <20190327164748.GO9224@smile.fi.intel.com> <907ab1ec-ae46-a678-4f0e-87af5069f2eb@gmx.ch> <20190327191925.GP9224@smile.fi.intel.com>
+ <5dd6a6ac-94de-07ad-df5a-2601cbc7e9d0@gmx.ch> <20190328145827.GI9224@smile.fi.intel.com> <e01bb9da-0dde-4bfa-5693-eb4c02a1d696@redhat.com> <20190328152421.GJ9224@smile.fi.intel.com> <26800a0e-c309-1e69-c5b4-e11b761c7b40@redhat.com>
+ <20190328154931.GK9224@smile.fi.intel.com>
+User-Agent: Alpine 2.21.9999 (NEB 324 2019-01-20)
 MIME-Version: 1.0
-References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-24-fparent@baylibre.com>
-In-Reply-To: <20190323211612.860-24-fparent@baylibre.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 28 Mar 2019 14:22:12 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+Q06O84-MTpgTWGG312VXm_vGOkjMCjtWuS0eZ-j_0yw@mail.gmail.com>
-Message-ID: <CAL_Jsq+Q06O84-MTpgTWGG312VXm_vGOkjMCjtWuS0eZ-j_0yw@mail.gmail.com>
-Subject: Re: [PATCH 23/24] arm64: dts: mediatek: add dtsi for MT8516
-To:     Fabien Parent <fparent@baylibre.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        Wenzhen Yu <wenzhen.yu@mediatek.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Yong Mao <yong.mao@mediatek.com>, jjian.zhou@mediatek.com,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        stephane.leprovost@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Mar 23, 2019 at 4:17 PM Fabien Parent <fparent@baylibre.com> wrote:
->
-> The MT8516 SoC provides the following peripherals: GPIO, UART, USB2,
-> SPI, eMMC, SDIO, NAND, Flash, ADC, I2C, PWM, Timers, IR, Ethernet, and
-> Audio (I2S, SPDIF, TDM).
->
-> This commit is adding the basic dtsi file with the support of the
-> following IOs: GPIO, UART, SPI, eMMC, I2C, Timers.
->
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt8516-pinfunc.h | 663 ++++++++++++++++++
->  arch/arm64/boot/dts/mediatek/mt8516.dtsi      | 409 +++++++++++
->  2 files changed, 1072 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8516-pinfunc.h
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8516.dtsi
+On Thu, 28 Mar 2019, Andy Shevchenko wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> On Thu, Mar 28, 2019 at 04:32:27PM +0100, Hans de Goede wrote:
+>> On 28-03-19 16:24, Andy Shevchenko wrote:
+>>> On Thu, Mar 28, 2019 at 04:01:37PM +0100, Hans de Goede wrote:
+>>>> On 28-03-19 15:58, Andy Shevchenko wrote:
+>>>>> On Thu, Mar 28, 2019 at 03:35:58PM +0100, David M?ller wrote:
+>>>>>> Andy Shevchenko wrote:
+>>>>>>> On Wed, Mar 27, 2019 at 06:31:19PM +0100, David M?ller wrote:
+>
+>>>>>>> Any driver for device which is using PMC clock should take it into
+>>>>>>> consideration.
+>>>>>>
+>>>>>> I agree that each driver should properly request the clocks and other
+>>>>>> resources needed.
+>
+>>>>> Can you elaborate a bit more the case you are talking about?
+>
+>>>> I think the board with igb ethernet controllers might
+>>>> just as well be handled the same way (I already checked it has usable
+>>>> DMI identifying info).
+>>>
+>>> But am I right that in the case of igb we will loose power at suspend? Wouldn't
+>>> be better to patch the driver?
+>>
+>> This is an industrial embedded PC, so it is not running on battery and
+>> I doubt it typically spends a lot of time in suspend at all.
+>
+> Okay, but still from logical point of view wouldn't be better to fix the driver
+> for such case? At least I see benefits out of this approach: a) less hackish,
+> less quirk code; b) if this happens on non-industrial case it would be better
+> to have in the driver due to power consumption.
+
+Sorry for replying from home. It's either that or top-posting with
+Outlook.
+
+It sounds to me like Andriy's arguments are counter to what he suggests
+since we'd have to fix the USB and the Ethernet and that would add more
+special case code, right? However, I'm just the old igb bug fixer and
+not a clock guy, and I've spent little time outside of the Ethernet
+drivers.
+
+It really sounded like there were going to be changes to the clock code
+that would resolve the issue. Were those done? Do I still need to change
+the igb driver to change the clocks used?
+
+-- 
+Todd Fujinaka <todd.fujinaka@intel.com>
+
