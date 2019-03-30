@@ -2,70 +2,71 @@ Return-Path: <SRS0=tl1f=SB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18807C43381
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Mar 2019 13:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE719C43381
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Mar 2019 13:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB32C2183F
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Mar 2019 13:40:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58BF2184D
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Mar 2019 13:52:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbfC3Nkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Mar 2019 09:40:46 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:51280 "EHLO huawei.com"
+        id S1730831AbfC3NwT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Mar 2019 09:52:19 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52500 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730831AbfC3Nkq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 30 Mar 2019 09:40:46 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id DAF708276B325FDA99FB;
-        Sat, 30 Mar 2019 21:40:42 +0800 (CST)
-Received: from DGGEMM527-MBS.china.huawei.com ([169.254.5.15]) by
- DGGEMM406-HUB.china.huawei.com ([10.3.20.214]) with mapi id 14.03.0415.000;
- Sat, 30 Mar 2019 21:40:39 +0800
-From:   Nixiaoming <nixiaoming@huawei.com>
-To:     Mukesh Ojha <mojha@codeaurora.org>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "soren.brinkmann@xilinx.com" <soren.brinkmann@xilinx.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 1/2] clk:Fix divide-by-zero in
- divider_ro_round_rate_parent
-Thread-Topic: [PATCH v2 1/2] clk:Fix divide-by-zero in
- divider_ro_round_rate_parent
-Thread-Index: AQHU5qBJh9LbArp11Eqpo8yyxj7a96YjZuMAgADHXeA=
-Date:   Sat, 30 Mar 2019 13:40:38 +0000
-Message-ID: <E490CD805F7529488761C40FD9D26EF12AAC8ED0@DGGEMM527-MBS.china.huawei.com>
-References: <1553913085-51237-1-git-send-email-nixiaoming@huawei.com>
- <fcbcceb2-e59b-465a-ec36-cde354425898@codeaurora.org>
-In-Reply-To: <fcbcceb2-e59b-465a-ec36-cde354425898@codeaurora.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.57.88.168]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730823AbfC3NwT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 Mar 2019 09:52:19 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D9C36D101AD6E7DE13A7;
+        Sat, 30 Mar 2019 21:52:07 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.189.174) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 30 Mar 2019 21:51:57 +0800
+From:   nixiaoming <nixiaoming@huawei.com>
+To:     <jbrunet@baylibre.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <soren.brinkmann@xilinx.com>,
+        <nixiaoming@huawei.com>, <mojha@codeaurora.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 1/2] clk:Fix divide-by-zero in divider_ro_round_rate_parent
+Date:   Sat, 30 Mar 2019 21:54:50 +0800
+Message-ID: <1553954090-65470-1-git-send-email-nixiaoming@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
 X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMy8zMC8yMDE5IDU6NDQgUE0sIE11a2VzaCBPamhhIHdyb3RlOg0KPk9uIDMvMzAvMjAxOSA4
-OjAxIEFNLCBuaXhpYW9taW5nIHdyb3RlOg0KPj4gSW4gdGhlIGZ1bmN0aW9uIGRpdmlkZXJfcmVj
-YWxjX3JhdGUoKSBUaGUganVkZ21lbnQgb2YgdGhlIHJldHVybiB2YWx1ZSBvZg0KPj4gX2dldF9k
-aXYoKSBpbmRpY2F0ZXMgdGhhdCB0aGUgcmV0dXJuIHZhbHVlIG9mIF9nZXRfZGl2KCkgbWF5IGJl
-IDAuDQo+DQo+cy9tYXkgYmUvY2FuIGJlDQoNClRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50cy4N
-Ckkgd2lsbCBmaXggaXQgaW4gYSBsYXRlciBwYXRjaC4NCj4NCj4+IEluIG9yZGVyIHRvIGF2b2lk
-IHRoZSBkaXZpZGUtYnktemVybyBlcnJvciwgYWRkIGNoZWNrIHRoZSByZXR1cm4gdmFsdWVzLg0K
-PnMvYWRkIGNoZWNrIHRoZS9hZGQgY2hlY2sgZm9yDQo+DQpUaGFuayB5b3UgZm9yIHlvdXIgY29t
-bWVudHMuDQpJIHdpbGwgZml4IGl0IGluIGEgbGF0ZXIgcGF0Y2guDQoNCj4+IG9mIF9nZXRfZGl2
-KCkgaW4gdGhlIGRpdmlkZXJfcm9fcm91bmRfcmF0ZV9wYXJlbnQoKQ0KPj4NCj4+IFNpZ25lZC1v
-ZmYtYnk6IG5peGlhb21pbmcgPG5peGlhb21pbmdAaHVhd2VpLmNvbT4NCj4NCj4NCj5QbGVhc2Ug
-Zml4IHRoZSBjb21taXQgdGV4dC4NCj5SZXZpZXdlZC1ieTogTXVrZXNoIE9qaGEgPG1vamhhQGNv
-ZGVhdXJvcmEub3JnPg0KPg0KPkNoZWVycywNCj4tTXVrZXNoDQo+DQoNClRoYW5rcw0K
+In the function divider_recalc_rate() The judgment of the return value of
+_get_div() indicates that the return value of _get_div() can be 0.
+In order to avoid the divide-by-zero error, add check for return value
+of _get_div() in the divider_ro_round_rate_parent()
+
+Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+---
+ drivers/clk/clk-divider.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index e5a1726..f4bf7a4 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -347,6 +347,9 @@ long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+ 	int div;
+ 
+ 	div = _get_div(table, val, flags, width);
++	/* avoid divide-by-zero */
++	if (!div)
++		return -EINVAL;
+ 
+ 	/* Even a read-only clock can propagate a rate change */
+ 	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+-- 
+1.8.5.6
+
