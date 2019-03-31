@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D67C43381
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE36EC43381
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5B9920882
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B9E120882
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:43:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554014621;
-	bh=3gItHPBr1si87K2467kpGscCl11mz+rRRp4XV1ES+5g=;
+	s=default; t=1554014631;
+	bh=LDOAMkCDQzCABJY+q0dZ0XFTSULwIwiUkJcDbggiLDE=;
 	h=Date:From:Subject:References:In-Reply-To:Cc:Cc:To:List-ID:From;
-	b=U+7gYv5y1xAEiRP0uc0wKag+2NUmk5+xfR4JbmvvihIq9l3+1C53WX2HJNWQZJTrd
-	 Atmfjsp/mS60sZmLyLjHWlkL66P6tO5Nhoj0hAU69pnDoGa/CfC+UsSeul5GGhV7t0
-	 LrUxiwd2mLCxTbiZWy2aEI4Z/1PEySwm64Femwpo=
+	b=1vp/Jwoyn7/vQeVxD6eAk90bKuc8XXp+EKSC5lA6KJCojJxkNMbumvuPZTKEaz/0F
+	 kcQYX0LJHWYzQVDLNRTjoVMQ9Uimt14uudR/HKDClfP5jpg5bFA7+JeBYiJG69Q0z6
+	 ClQRdm98cS/cDSKzs52UsbDV2LIKx4nfgy4kn0oQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfCaGlw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 Mar 2019 02:41:52 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38040 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbfCaGlu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Mar 2019 02:41:50 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g37so2931158plb.5;
-        Sat, 30 Mar 2019 23:41:50 -0700 (PDT)
+        id S1726852AbfCaGno (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 Mar 2019 02:43:44 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38037 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731265AbfCaGls (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Mar 2019 02:41:48 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g37so2931137plb.5;
+        Sat, 30 Mar 2019 23:41:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:subject:references
          :in-reply-to:cc:cc:to;
-        bh=sgFc6uE0XsqlrZed6OMYcuIFTo1ZGmRUyoxq+EubJfs=;
-        b=RRVc0GtMbksOXxqCh2PNnBOUoN7VuZFhFxdGuejKzhiuqjIai8B8dO6+FJYEwNbftN
-         3dQ8UZRFlfFs5/zZjaUpYmt+ZJcRSw2BMNKcnh1mY4V0TqIa3iIpPQxQOH3zZRbEriHo
-         ZVn9S+6jepilqlGE+WDNKZ2ErjMnCeB3dqYkIK9sxS4kC2zPCRBl8ONAPevYrkt/E14L
-         pdghHVOvwqXQnwE39dXQEfQ/SWzMjPUt0pq+cdvoMKtL2mQKq9JJay4Frg1JS86M74Pa
-         +aGfbq4icVgiz86P/gIgoTaYC+kRq+EzdXWxjWRLNsMShUuAFIRhPZPU/w4Hsed7mY7d
-         nppQ==
-X-Gm-Message-State: APjAAAUZeS14LEL5nHxDumpP8YYV9H4RTBkP5WXrOdqQM0jEiIEfYUzb
-        MTyO5awv0/1TsZKw7n0h4w==
-X-Google-Smtp-Source: APXvYqzrEThhPbhnirOCnsgTPqKYfsebpjhFZ4QUuZGzWxOV3nBokcR0YgqsQf5VD5iTgqN0lr4zfw==
-X-Received: by 2002:a17:902:d211:: with SMTP id t17mr22652332ply.214.1554014509967;
-        Sat, 30 Mar 2019 23:41:49 -0700 (PDT)
+        bh=8stkG2HqfVF6xNg5tRXaJQ0/Dizn3Nd32xCs772cOZM=;
+        b=OonOzbOW0GPqxD5xPXeAjSkowrmSOY9YAAybcDExW82Ab91nM3FeKl1Swux2FbGIK8
+         Gzi8biqxzdPN18j+R+RUIw/xKHAY1bYrMhfTw+i1ZB+oCraf9cyPWvz5uyEtq4PiQk1k
+         Tdl9pQaXTIk4VR8zvGOWekvmZ9ERDGXDdD83qayvnxi3p+mx46eYlvYs9RS0/EDe3dJM
+         FQjs2x7Igok52kX0gjPePGJUY7sBnVugOs8IA4ggcVOCEAUclOOSUyqOUwkaceAT1OUL
+         bcPK26sAQBri6q6urdO9TN7TuXXtyIM3Hr+WcOBXYUmPD8ck8rzaXp8F5fpTAgiCHkj/
+         G0GQ==
+X-Gm-Message-State: APjAAAUyse21Fo20FUoBpVaqW+W+8hCUdz+AutCgCET/C+tu8NxbL4ih
+        we85tFuZEcdLY2yl+YFK1A==
+X-Google-Smtp-Source: APXvYqwozQYVPk8Fkon4b0p7OOBNRJwyFfHtg+jtrtreLRfwY6SYj9oAyrmTrA4+ZgN6aDWZfE+d8w==
+X-Received: by 2002:a17:902:2947:: with SMTP id g65mr57595543plb.258.1554014507452;
+        Sat, 30 Mar 2019 23:41:47 -0700 (PDT)
 Received: from localhost ([210.160.217.68])
-        by smtp.gmail.com with ESMTPSA id k26sm8759588pfo.111.2019.03.30.23.41.48
+        by smtp.gmail.com with ESMTPSA id j6sm8593798pfe.107.2019.03.30.23.41.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 30 Mar 2019 23:41:49 -0700 (PDT)
-Message-ID: <5ca0612d.1c69fb81.96e6a.76a9@mx.google.com>
-Date:   Sun, 31 Mar 2019 01:41:47 -0500
+        Sat, 30 Mar 2019 23:41:46 -0700 (PDT)
+Message-ID: <5ca0612a.1c69fb81.9bbef.7249@mx.google.com>
+Date:   Sun, 31 Mar 2019 01:41:45 -0500
 From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: meson8b: export the video decoder clocks
-References: <20190324151423.19063-1-martin.blumenstingl@googlemail.com> <20190324151423.19063-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20190324151423.19063-2-martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: meson8b: export the VPU clock
+References: <20190324151104.18397-1-martin.blumenstingl@googlemail.com> <20190324151104.18397-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20190324151104.18397-2-martin.blumenstingl@googlemail.com>
 Cc:     narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org, mjourdan@baylibre.com
+        linux-amlogic@lists.infradead.org
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
@@ -64,18 +64,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 24 Mar 2019 16:14:22 +0100, Martin Blumenstingl wrote:
-> Export the four video decoder clocks so they can be used by the video
-> decoder driver:
-> - VDEC_1
-> - VDEC_HCODEC
-> - VDEC_2
-> - VDEC_HEVC
+On Sun, 24 Mar 2019 16:11:01 +0100, Martin Blumenstingl wrote:
+> The VPU clock is an input the the "VPU" (Video Processing Unit), which is
+> one of the components of the display controller.
 > 
 > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
->  include/dt-bindings/clock/meson8b-clkc.h | 4 ++++
->  1 file changed, 4 insertions(+)
+>  include/dt-bindings/clock/meson8b-clkc.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
