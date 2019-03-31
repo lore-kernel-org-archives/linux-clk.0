@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD038C43381
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFD9C43381
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69E020850
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B268C2146F
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554014662;
-	bh=OStGJ8eOpj9uJ5dUrrkETRJ40Ymwlnvu+vtU40SDhoY=;
+	s=default; t=1554014671;
+	bh=NC6j/qgQ9XcikVYvzZzPH1zcjP9b2Xj4b8lfWymsOJo=;
 	h=Date:From:Subject:References:In-Reply-To:Cc:Cc:To:List-ID:From;
-	b=BGTvX58hCJy4vw71lpQfmbvWH2VI+9J5Ltg8RYK6qEbJzcLZirFWsaetBSn3fBt73
-	 YzCmeCebD1mVVIAi+XivZwU1T6GnNB4OwVRe3P/Ffubw12Hn40ibAe+AQ2IEQ+oD4q
-	 zkWJ+jWAyw+io+oMNGmLu6NGUkQjT60tiNg9ZLHs=
+	b=q09Fn83lHfHnF7QmlBnbnC3yo+3x87vyX/bezgQptcPWRC7/lZCnyX6vAvf01Ldyg
+	 QbqRwajz8mXWOAgDhrTvjurLcawF8SsxKHQvZXLfUtK9PQdYEEWOCbGL2YD0axs7uJ
+	 V6GYRciNkGDP3zG75g7UNZ+3ECiJRvf6oWkXZgHo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfCaGkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 Mar 2019 02:40:52 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36154 "EHLO
+        id S1726565AbfCaGoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 Mar 2019 02:44:24 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45282 "EHLO
         mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbfCaGkv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Mar 2019 02:40:51 -0400
-Received: by mail-pf1-f193.google.com with SMTP id z5so1957794pfn.3;
-        Sat, 30 Mar 2019 23:40:50 -0700 (PDT)
+        with ESMTP id S1726668AbfCaGks (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Mar 2019 02:40:48 -0400
+Received: by mail-pf1-f193.google.com with SMTP id e24so2967754pfi.12;
+        Sat, 30 Mar 2019 23:40:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:subject:references
          :in-reply-to:cc:cc:to;
-        bh=vnwJGbYlgDPVZiLKucJRGJPu/mDr1cgq3SNO77LXu30=;
-        b=eRkpq8rzLx/ReU8YZkt1OTvrMa238tX6rN4R3+2YAsMIjsnOnUSl2zaa91Ham91pVW
-         op954Wr5fMXwlDzZETlCxaR7+lbXgS1L2EdGhzuDy2sXMe+v05+8KU2e4eadfVIThr6m
-         7CZOT38a//CKE4D+LWA7P0sziFFNZY66wmFoOKJwi94WH5OJF87ccDPAy3Um2cnH4/gu
-         YYeptatu+/VgaajBnyBggdMWZBxoTm5nRVW6u4/hQ2FNAzIuylQzt8B3PEfOnemhx3IM
-         3L4YnTjVjp6v45dC/pMhEc3R4FtP3VdbuPLnTJn9wlsQ2/ySXsIW+zDNLDk9tg9U2SNY
-         hydQ==
-X-Gm-Message-State: APjAAAWzZ8UkT9stC3bHyj0l8Wsa84noso3XkV77b86s4l5llS0YmdFC
-        J4Iv3ZZeKciOBsdpaNExhw==
-X-Google-Smtp-Source: APXvYqy/ph6FKY3FdCp5K4q2nRy+HxFwFTqo5XZrugdsa8lIv/64uVtFI8JovpvxslKQfWT8N6Oz1w==
-X-Received: by 2002:aa7:8453:: with SMTP id r19mr28711514pfn.44.1554014450149;
-        Sat, 30 Mar 2019 23:40:50 -0700 (PDT)
+        bh=x2jpiFyGUJq6LVOJZy0rKzOLMszc5llnvmRLJkRVUTs=;
+        b=F9F0j6XNJ1Rr+wBNYiO02a7h8cIK9zQMbjzxU9OEh1CZ57cSnu95q26Rbmx+3lBO/l
+         KGQKbh9KYJF7QE9oaJDOg8u/A5lOphPWywOsrDm3YYUlXYrQcwWmkOledgvoATbvYWIx
+         xy8Xph0nu5IcCC5HAhnRDxylIe+Ob+hUP+JE75fqyBUQmwI1g6DdlQlGZs8KUklvnHZG
+         9IkuasjcdXcSuc9vPHwFdFMPVVHv77n8wFxx7Rt3BpsL6hcf9ZWR9u/FgjBtWD/WDnMw
+         yY6BU0xPmiI1n24VoCQmWf3QCjB/JXyIVtEQeNjX+PYl56T6yciqn1tpSzxvcxP1xV+G
+         aoIQ==
+X-Gm-Message-State: APjAAAXzAWBV/FJWDEukmCFnN3ZgMI4vZHMtsFu5jWe2YDwbVZlEK+J4
+        iTFu80s3nIgN7yK9p4+HbQ==
+X-Google-Smtp-Source: APXvYqwAms/QBgPg9MeqoGR7IizZbeeogCpYE49gltAC5S+hUQGjXSMJuoJFUwiDhusHnO6an/g2ag==
+X-Received: by 2002:a65:5249:: with SMTP id q9mr34044597pgp.104.1554014447906;
+        Sat, 30 Mar 2019 23:40:47 -0700 (PDT)
 Received: from localhost ([210.160.217.68])
-        by smtp.gmail.com with ESMTPSA id h10sm9915697pfj.79.2019.03.30.23.40.49
+        by smtp.gmail.com with ESMTPSA id d129sm4049531pfa.142.2019.03.30.23.40.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 30 Mar 2019 23:40:49 -0700 (PDT)
-Message-ID: <5ca060f1.1c69fb81.2165c.a731@mx.google.com>
-Date:   Sun, 31 Mar 2019 01:40:48 -0500
+        Sat, 30 Mar 2019 23:40:47 -0700 (PDT)
+Message-ID: <5ca060ef.1c69fb81.60281.9a9f@mx.google.com>
+Date:   Sun, 31 Mar 2019 01:40:45 -0500
 From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v1 5/6] dt-bindings: reset: hisilicon: Add ao reset controller
-References: <1552937931-23050-1-git-send-email-peter.griffin@linaro.org> <1552937931-23050-6-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1552937931-23050-6-git-send-email-peter.griffin@linaro.org>
+Subject: Re: [PATCH v1 2/6] dt-bindings: reset: hisilicon: Update compatible documentation
+References: <1552937931-23050-1-git-send-email-peter.griffin@linaro.org> <1552937931-23050-3-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1552937931-23050-3-git-send-email-peter.griffin@linaro.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
         mark.rutland@arm.com, p.zabel@pengutronix.de, xuwei5@hisilicon.com,
@@ -66,13 +66,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 18 Mar 2019 19:38:50 +0000, Peter Griffin wrote:
-> This is required to bring Mali450 gpu out of reset.
+On Mon, 18 Mar 2019 19:38:47 +0000, Peter Griffin wrote:
+> The reset driver now supports the ao reset controller, so update the
+> documentation to match.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  include/dt-bindings/reset/hisi,hi6220-resets.h | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  Documentation/devicetree/bindings/reset/hisilicon,hi6220-reset.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
