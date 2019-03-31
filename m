@@ -6,72 +6,77 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE36EC43381
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1408C43381
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B9E120882
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A05D820850
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Mar 2019 06:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554014631;
-	bh=LDOAMkCDQzCABJY+q0dZ0XFTSULwIwiUkJcDbggiLDE=;
+	s=default; t=1554014657;
+	bh=Koqqnz53dz+5g9HvlLNg5i2qjPky4tBcM4ZuU5l8S2s=;
 	h=Date:From:Subject:References:In-Reply-To:Cc:Cc:To:List-ID:From;
-	b=1vp/Jwoyn7/vQeVxD6eAk90bKuc8XXp+EKSC5lA6KJCojJxkNMbumvuPZTKEaz/0F
-	 kcQYX0LJHWYzQVDLNRTjoVMQ9Uimt14uudR/HKDClfP5jpg5bFA7+JeBYiJG69Q0z6
-	 ClQRdm98cS/cDSKzs52UsbDV2LIKx4nfgy4kn0oQ=
+	b=2Bh/6aPtNveTbZ6lEBfuz/VcNuoXHBnvTGUl3H/e6vWuGvDHYj/xpJc9dIynUxdm7
+	 +nXQkiYH0CwEp9t/PbUUPETZVO4cb5efyr8wiBMmVaUZ6jZ3rdxSWz1mMfIfcQx+5o
+	 ARl1EwalhbdyMR6qtGfqPsV6ZKY1N2ZSa6XgDBF0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfCaGno (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 Mar 2019 02:43:44 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38037 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731265AbfCaGls (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Mar 2019 02:41:48 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g37so2931137plb.5;
-        Sat, 30 Mar 2019 23:41:47 -0700 (PDT)
+        id S1727038AbfCaGlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 Mar 2019 02:41:08 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45751 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbfCaGlI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Mar 2019 02:41:08 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y3so3143954pgk.12;
+        Sat, 30 Mar 2019 23:41:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:subject:references
          :in-reply-to:cc:cc:to;
-        bh=8stkG2HqfVF6xNg5tRXaJQ0/Dizn3Nd32xCs772cOZM=;
-        b=OonOzbOW0GPqxD5xPXeAjSkowrmSOY9YAAybcDExW82Ab91nM3FeKl1Swux2FbGIK8
-         Gzi8biqxzdPN18j+R+RUIw/xKHAY1bYrMhfTw+i1ZB+oCraf9cyPWvz5uyEtq4PiQk1k
-         Tdl9pQaXTIk4VR8zvGOWekvmZ9ERDGXDdD83qayvnxi3p+mx46eYlvYs9RS0/EDe3dJM
-         FQjs2x7Igok52kX0gjPePGJUY7sBnVugOs8IA4ggcVOCEAUclOOSUyqOUwkaceAT1OUL
-         bcPK26sAQBri6q6urdO9TN7TuXXtyIM3Hr+WcOBXYUmPD8ck8rzaXp8F5fpTAgiCHkj/
-         G0GQ==
-X-Gm-Message-State: APjAAAUyse21Fo20FUoBpVaqW+W+8hCUdz+AutCgCET/C+tu8NxbL4ih
-        we85tFuZEcdLY2yl+YFK1A==
-X-Google-Smtp-Source: APXvYqwozQYVPk8Fkon4b0p7OOBNRJwyFfHtg+jtrtreLRfwY6SYj9oAyrmTrA4+ZgN6aDWZfE+d8w==
-X-Received: by 2002:a17:902:2947:: with SMTP id g65mr57595543plb.258.1554014507452;
-        Sat, 30 Mar 2019 23:41:47 -0700 (PDT)
+        bh=ZpgGUCqxuQpGk62dSSiHph6XjK8orHXc7xsRUZLJqe0=;
+        b=mss7/BOwsJxLk1XtALUI6F4LRKbWxBRCICOs1ZD9Nhijcqyx9epQ1IilDsrH4ALMso
+         LYitSiMgn7T2RCoHtDXpm1wuYCnekiAQkKwziMKp779YKQdOwbp1qVWD/Q43iT6uePsh
+         Mfnf42qtHJ8AYS/crdRXgeZlt3L/MoDkGo9GKDocjuhOW6zRggKuV+gPuTwcq3e4+gXf
+         Iq5hsP/jy7E1dxZb6g/4cLOnUbpE3PJi5CNEMQYEEDqAy2BZ99DNtAgWQnmIVAUMOkWd
+         q9M7WSYlRWt/qQ5NK4+FQ5MVioMrnzXxuxrBDRSZkwcyWmRCVV2UX/R3b3dfGubGCFWT
+         PGYQ==
+X-Gm-Message-State: APjAAAUuIeOVgF9kzbvb8QyEiJjOvVup019Gsm2S5oADS0eOWTojVUQC
+        Ag1MwQC3zejRdDHe5qPlKw==
+X-Google-Smtp-Source: APXvYqx4ec9vIlEG1P5IUKGvPeDJPyE1Qu/jLVu/rNLVCtlqDBLGihx9cHUceIT5YrzIi+XzGD720g==
+X-Received: by 2002:a63:84c7:: with SMTP id k190mr54559022pgd.255.1554014467266;
+        Sat, 30 Mar 2019 23:41:07 -0700 (PDT)
 Received: from localhost ([210.160.217.68])
-        by smtp.gmail.com with ESMTPSA id j6sm8593798pfe.107.2019.03.30.23.41.46
+        by smtp.gmail.com with ESMTPSA id 20sm8982861pfn.131.2019.03.30.23.41.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 30 Mar 2019 23:41:46 -0700 (PDT)
-Message-ID: <5ca0612a.1c69fb81.9bbef.7249@mx.google.com>
-Date:   Sun, 31 Mar 2019 01:41:45 -0500
+        Sat, 30 Mar 2019 23:41:06 -0700 (PDT)
+Message-ID: <5ca06102.1c69fb81.44711.7b74@mx.google.com>
+Date:   Sun, 31 Mar 2019 01:41:04 -0500
 From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: meson8b: export the VPU clock
-References: <20190324151104.18397-1-martin.blumenstingl@googlemail.com> <20190324151104.18397-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20190324151104.18397-2-martin.blumenstingl@googlemail.com>
-Cc:     narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH] dt-bindings: clock: g12a-aoclk: expose CLKID_AO_CTS_OSCIN
+References: <20190321092010.14382-1-narmstrong@baylibre.com>
+In-Reply-To: <20190321092010.14382-1-narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To:     Neil Armstrong <narmstrong@baylibre.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 24 Mar 2019 16:11:01 +0100, Martin Blumenstingl wrote:
-> The VPU clock is an input the the "VPU" (Video Processing Unit), which is
-> one of the components of the display controller.
+On Thu, 21 Mar 2019 10:20:10 +0100, Neil Armstrong wrote:
+> When submitted v2 of the G12A AO-CLK IDs, the CLKID_AO_CTS_OSCIN was moved
+> to the internal non-exported bindings, but this clock is necessary for
+> the second AO-CEC-B module since it embeds the 32768Hz dual-divider
+> clock generator unlike the AO-CEC-A module.
 > 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Export it back to the public bindings.
+> 
+> Fixes: be3d960b0aeb ("dt-bindings: clk: add G12A AO Clock and Reset Bindings")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
->  include/dt-bindings/clock/meson8b-clkc.h | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/meson/g12a-aoclk.h          | 1 -
+>  include/dt-bindings/clock/g12a-aoclkc.h | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
