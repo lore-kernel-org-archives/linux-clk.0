@@ -2,66 +2,65 @@ Return-Path: <SRS0=OKLv=SD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B558DC43381
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F659C43381
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 762792086C
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BBBB2086C
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:37:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="2CKSfon5"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bgrGLdsP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731862AbfDAIei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Apr 2019 04:34:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34818 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731882AbfDAIei (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Apr 2019 04:34:38 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w1so10807153wrp.2
-        for <linux-clk@vger.kernel.org>; Mon, 01 Apr 2019 01:34:36 -0700 (PDT)
+        id S1731919AbfDAIhO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Apr 2019 04:37:14 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38575 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfDAIhN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Apr 2019 04:37:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id k11so10810895wro.5
+        for <linux-clk@vger.kernel.org>; Mon, 01 Apr 2019 01:37:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=0ha7KRKiYpFb40ODM4X/wlohVcBUuz4tyyTGkMt+8kA=;
-        b=2CKSfon5eMRVktrc/e2PeJs8fYgaAlyNFl3UduiTW4Q9ZCSQgpE+xTwHodZIXNLwLA
-         Zu1uHc+FyTAOmVCjSH8FMDCNc6ow/mcjHXPCza/vb8TnlRoSJh4QpjMxwmnugfNgEFPt
-         MeHYZRnVWnFEsEarOz6BI2R9N/VT8wT9Z/2XCggmrSlgi0uEPiOCnbEU8VKJpTdREAVe
-         HCtT6FyJE0Prmr6hqb+iHa1U0AsEfpB0UPzS+H9CAsiMoEjdWPw1tQBvIZu7xW0cr4sf
-         YySd4nNgzzeDLezJpkG5kYYNOBQ/xP0YE/SreoSdZ54IbdsWyW6Ru87jAFLg6rc10TSR
-         mGJg==
+        bh=WFCq4gNBUM+CP6IcclbvUBWab0MZryOHzOl6NgAnf6g=;
+        b=bgrGLdsPbaLSHFB3vfJ4AGswPEMZtVb84rz7Xz8KN/ZiqtLi1v1ylOg0pGDV8A1bhf
+         qv/Sk7uyoPbK07k6H0L9ZsjE7UD7VKbE/8y159JzJuFSdWe184OiU3XUZQMG1LI0HSR9
+         ZjDSc2jkkf2zlGkOJh7TSotB8AcXTA518SdEGHh2oK8cIBSU4J26NFci7pPpzt616kPb
+         1aHNzAEqvE5SNAkYBY+4WcK53YyUa8idcYfYNUJzaeuNWDxOT4f0DjAOS9g+mVUWjsVp
+         2OWEb6k0HtZBlS1Y4J1e26/odsifBbLIehdGClReExV8q0b/CIoqU7zJh6FeN0L+kzPR
+         I5CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=0ha7KRKiYpFb40ODM4X/wlohVcBUuz4tyyTGkMt+8kA=;
-        b=LxxS/16/keEGsy1JTZIKUQTDwR6jPJOuUNrsWNXLlIOqRSBEnekeM+VfpFqodL0g3L
-         vx4yi1OuGYOGt0zyXjljo+kMghd6dROEtrbqCUGw8zNpKbY1MtzOMLq8WaL8cWtC2KvE
-         tlG955XXjREMyRi9cjjJp2F4z5IoJLkkOpRzm5LFE7lYsbnNkFkv9pnLfa7Yt2AkJw9h
-         ZULj5fysSGSz6W1qQhmSWoZDWCXaxFpGsp1IdsYWmfTpszjBSiU2/U1PW0n0YLTiPxW+
-         nDfmgo+vAdc5pKo28J68hMfkbkwjPp3NBj8LTq+oMbqZHzEtXbrEYJR8S3NcjchgvEKU
-         ukwg==
-X-Gm-Message-State: APjAAAWVtgVmEXs1Nlel48n62ZkVqu2QDfDdpQDagdO/h5c8z0/kfJBC
-        FJz2o7R+VPXSJmfmUAs4ESUJXcgGm0tqkA==
-X-Google-Smtp-Source: APXvYqwa5wxIxm4G49/HlraddghKMeVCWSQSszHe8knduemM8ibF0V53DoBu+Q2L2mt3d3UXrAhnHw==
-X-Received: by 2002:adf:8bc5:: with SMTP id w5mr34989715wra.226.1554107676010;
-        Mon, 01 Apr 2019 01:34:36 -0700 (PDT)
+        bh=WFCq4gNBUM+CP6IcclbvUBWab0MZryOHzOl6NgAnf6g=;
+        b=iGr5+Aq7gOk2Zn7hCj9a5ToDqFg6CS7yiISoalWs/8Qof0YyEqFiivm2JZ3pTexqXU
+         BHfwgsmLIY5wjWh9XCPvhKb1KiobCLf6ovD2ClnJ4j9qv0kSPgdrfkO8xa/3TqJRyPty
+         SjIVt2HCAjGaQjAkvln1xay//t+LdljKcYL17xgN48bhS0WLayjoMV77ldgGbW2R6N3S
+         de8THX28EfI2jEJMHzJNOOT81XbkwwAi3/V2kyO1utgUBnHCopRDBn+2Jca78CQyvf57
+         Gn+kycqCYrO8ZEbBg1GbvD4AyYpWO6z8fvgsNp/6atKq0r1b8j2rj9TUOFuktAd2w0FH
+         e7zw==
+X-Gm-Message-State: APjAAAUqu5m7PCNlXDQYI17aYbkzRp5FwQdhlRtnGBm9dYNpiRlx8Lug
+        OZe0bmlqAXqds6Ke9L53Fdt6Sg==
+X-Google-Smtp-Source: APXvYqyDEL0F7MREuOHEZ/MmDVtQnHgXWLSeV4gTaT4Z7tR/8RIx+VQRM+tchoTXq4kTOhmf4D0IsA==
+X-Received: by 2002:adf:db05:: with SMTP id s5mr38403470wri.247.1554107831582;
+        Mon, 01 Apr 2019 01:37:11 -0700 (PDT)
 Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id f11sm10447887wrm.30.2019.04.01.01.34.34
+        by smtp.gmail.com with ESMTPSA id s189sm14308906wmf.45.2019.04.01.01.37.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Apr 2019 01:34:35 -0700 (PDT)
-Subject: Re: [PATCH 0/1] clk: meson8b: remove CLKID with typo ("ABP" -> "APB")
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        jbrunet@baylibre.com, linux-amlogic@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-References: <20190319214123.27219-1-martin.blumenstingl@googlemail.com>
+        Mon, 01 Apr 2019 01:37:10 -0700 (PDT)
+Subject: Re: [PATCH] dt-bindings: clock: g12a-aoclk: expose CLKID_AO_CTS_OSCIN
+To:     jbrunet@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20190321092010.14382-1-narmstrong@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -114,12 +113,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <9b7b7257-0c33-35bc-c383-5350d1640ca2@baylibre.com>
-Date:   Mon, 1 Apr 2019 10:34:34 +0200
+Message-ID: <b6b984ff-6825-1e99-ff5c-9afc4258f0f7@baylibre.com>
+Date:   Mon, 1 Apr 2019 10:37:09 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190319214123.27219-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20190321092010.14382-1-narmstrong@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -128,22 +127,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/03/2019 22:41, Martin Blumenstingl wrote:
-> This is a follow-up of my previous series from [0]:
->   clk: meson8b: fix typo "ABP" -> "APB"
+On 21/03/2019 10:20, Neil Armstrong wrote:
+> When submitted v2 of the G12A AO-CLK IDs, the CLKID_AO_CTS_OSCIN was moved
+> to the internal non-exported bindings, but this clock is necessary for
+> the second AO-CEC-B module since it embeds the 32768Hz dual-divider
+> clock generator unlike the AO-CEC-A module.
 > 
-> The previous series introduced a fixed CLKID. Nothing uses the CLKID
-> with the typo anymore so it's removed with this patch.
+> Export it back to the public bindings.
 > 
+> Fixes: be3d960b0aeb ("dt-bindings: clk: add G12A AO Clock and Reset Bindings")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/clk/meson/g12a-aoclk.h          | 1 -
+>  include/dt-bindings/clock/g12a-aoclkc.h | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
 > 
-> [0] https://patchwork.kernel.org/cover/10804943/
-> 
-> 
-> Martin Blumenstingl (1):
->   dt-bindings: clock: meson8b: drop the "ABP" clock definition
-> 
->  include/dt-bindings/clock/meson8b-clkc.h | 1 -
->  1 file changed, 1 deletion(-)
+> diff --git a/drivers/clk/meson/g12a-aoclk.h b/drivers/clk/meson/g12a-aoclk.h
+> index 666b4493822c..a67c8a7cd7c4 100644
+> --- a/drivers/clk/meson/g12a-aoclk.h
+> +++ b/drivers/clk/meson/g12a-aoclk.h
+> @@ -17,7 +17,6 @@
+>   * will remain defined here.
+>   */
+>  #define CLKID_AO_SAR_ADC_DIV	17
+> -#define CLKID_AO_CTS_OSCIN	19
+>  #define CLKID_AO_32K_PRE	20
+>  #define CLKID_AO_32K_DIV	21
+>  #define CLKID_AO_32K_SEL	22
+> diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-bindings/clock/g12a-aoclkc.h
+> index 5ac66a2eee0f..e916e49ff288 100644
+> --- a/include/dt-bindings/clock/g12a-aoclkc.h
+> +++ b/include/dt-bindings/clock/g12a-aoclkc.h
+> @@ -28,6 +28,7 @@
+>  #define CLKID_AO_CLK81		15
+>  #define CLKID_AO_SAR_ADC_SEL	16
+>  #define CLKID_AO_SAR_ADC_CLK	18
+> +#define CLKID_AO_CTS_OSCIN	19
+>  #define CLKID_AO_32K		23
+>  #define CLKID_AO_CEC		27
+>  #define CLKID_AO_CTS_RTC_OSCIN	28
 > 
 
 Applied to next/headers for Linux 5.2-rc1
