@@ -2,197 +2,121 @@ Return-Path: <SRS0=OKLv=SD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC89C43381
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 15:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B24EC10F05
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 17:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B61852133D
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 15:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A7A62196E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 17:13:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hjJxvs/w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfDAPNb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Apr 2019 11:13:31 -0400
-Received: from foss.arm.com ([217.140.101.70]:36350 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbfDAPNb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 1 Apr 2019 11:13:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3653BA78;
-        Mon,  1 Apr 2019 08:13:30 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAB813F690;
-        Mon,  1 Apr 2019 08:13:27 -0700 (PDT)
-Date:   Mon, 1 Apr 2019 16:13:24 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] PCI: qcom: Add QCS404 PCIe controller support
-Message-ID: <20190401151324.GB6234@e107981-ln.cambridge.arm.com>
-References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
- <20190219060407.15263-7-bjorn.andersson@linaro.org>
+        id S1729666AbfDARNj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Apr 2019 13:13:39 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33998 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730597AbfDARNi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Apr 2019 13:13:38 -0400
+Received: by mail-oi1-f195.google.com with SMTP id v10so7949218oib.1;
+        Mon, 01 Apr 2019 10:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I9KG8YRsGRGrU2T58TvsypKkYeTkXfM4zE288zWPThs=;
+        b=hjJxvs/wvcrWjAdsN1P7VS9K5C7ulw6tB4fUYHEB0wh86hBXHPJRCWMM/Fc+HU8UMk
+         ZQA1Ikqz62U3StGyhS1Dy0+Ns9dFhslkMTP8w5Eexx51ofACfr+24qnloQu31bEbpZSI
+         LYSqXgyijvJ7SltzHhLyF6CctlYgTtuZlTTQAYzEhfuzjmgaSAboYcLCmtusx2EZyP8L
+         QzNz3lS99Jx3AZeEnTyYoFUKdFfsRI9CbEywAvr058lkeb1KpIbhs23OPnalvYtvUZs0
+         S8xkA0fj6oBgps0jJOv9ZMiVLmjkBkTB52yP7J3wAK5wcWeWDbfPL6ivmIj+oeyTriCA
+         86xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I9KG8YRsGRGrU2T58TvsypKkYeTkXfM4zE288zWPThs=;
+        b=L64p3kiuyB8WO9j2sebpQ2qeWcGzSd6YJPL7BchwUeYLpqxeEN86ZHa7GQ9IJk8dre
+         Nq3b46Cb26J3QI8e6bzSkuHoHGJJj8+dW2g8zoJV62OurVCQQycPpyfmcNi5+SoOKAzJ
+         bTtJbAWajC+C9lVFkaz8LX7wm4Ff2D7qgMa4Ii4JCQabvtr2T5PPYJ+EJrbCnND62/7p
+         HyUphMmFRparYNryiXd8Nz//pt65ktkAgtqIoyDq/Qp4RGguj3OQWNrGiCIgsq4NLWOv
+         tqa/QVEFY102O4Gcut/N4yFO5JXtSQmYc+5qn2hUPIPjx/Qm8M+ADz0Auh7yBciaUR+X
+         gu5w==
+X-Gm-Message-State: APjAAAVooOW9ShGwiE4pMmguYCA1ppkuLIOcgpniSL318tOodr/6Ur5m
+        2y5YrGZ9s+KMYCD/TTztaXlALwB9REq3vpvWO4fbULE4
+X-Google-Smtp-Source: APXvYqz0Zo1b/yxQsg5oeaOOOvDi5tYiySBQK96I/pncHVnMsjHJOyvO9dsGUWWxO661wefLruYAoSQe0CrODg+n2D4=
+X-Received: by 2002:aca:bdc4:: with SMTP id n187mr13875749oif.140.1554138817395;
+ Mon, 01 Apr 2019 10:13:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190219060407.15263-7-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190329153325.23869-1-jbrunet@baylibre.com> <20190329153325.23869-2-jbrunet@baylibre.com>
+ <CAFBinCDnoY41ZcoHqsngR4WTeczkmOu93R=2G_JOXbdUmHSjMw@mail.gmail.com>
+ <3bef1bb26e9eff0cfc20cd4bb78a5d7cea4c5076.camel@baylibre.com>
+ <CAFBinCCUrKGPWpTu_u3okaHVfMY4CN5F5qaRcKdTRbg35xrMEQ@mail.gmail.com> <63fc525faf2d82cb2436a17ab2206293aeef6c31.camel@baylibre.com>
+In-Reply-To: <63fc525faf2d82cb2436a17ab2206293aeef6c31.camel@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 1 Apr 2019 19:13:26 +0200
+Message-ID: <CAFBinCB7iqg17-YM4R_X0UidxzAi7xH-jAKC05NnWw1zRaQm3A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: meson: mpll: properly handle spread spectrum
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 10:04:06PM -0800, Bjorn Andersson wrote:
-> The QCS404 platform contains a PCIe controller of version 2.4.0 and a
-> Qualcomm PCIe2 PHY. The driver already supports version 2.4.0, for the
-> IPQ4019, but this support touches clocks and resets related to the PHY
-> as well, and there's no upstream driver for the PHY.
-> 
-> On QCS404 we must initialize the PHY, so a separate PHY driver is
-> implemented to take care of this and the controller driver is updated to
-> not require the PHY related resources. This is done by relying on the
-> fact that operations in both the clock and reset framework are nops when
-> passed NULL, so we can isolate this change to only the get_resource
-> function.
-> 
-> For QCS404 we also need to enable the AHB (iface) clock, in order to
-> access the register space of the controller, but as this is not part of
-> the IPQ4019 DT binding this is only added for new users of the 2.4.0
-> controller.
-> 
-> Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 64 +++++++++++++++-----------
->  1 file changed, 38 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index b4d8bcf6eb77..3724ab5de956 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -113,7 +113,7 @@ struct qcom_pcie_resources_2_3_2 {
->  };
->  
->  struct qcom_pcie_resources_2_4_0 {
-> -	struct clk_bulk_data clks[3];
-> +	struct clk_bulk_data clks[4];
->  	int num_clks;
->  	struct reset_control *axi_m_reset;
->  	struct reset_control *axi_s_reset;
-> @@ -637,13 +637,16 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
->  	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
->  	struct dw_pcie *pci = pcie->pci;
->  	struct device *dev = pci->dev;
-> +	bool is_ipq = of_device_is_compatible(dev->of_node, "qcom,pcie-ipq4019");
+Hi Jerome,
 
-Just a question: other host controller drivers resorted to .data
-structures (ie struct of_device_id.data) to sort out per-SOC
-parameters I was wondering if you want to do the same, maybe
-not just yet but I noticed so I am asking.
+On Mon, Apr 1, 2019 at 10:40 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> On Sat, 2019-03-30 at 16:56 +0100, Martin Blumenstingl wrote:
+> > Hi Jerome,
+> >
+> > On Sat, Mar 30, 2019 at 12:07 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > > On Fri, 2019-03-29 at 20:39 +0100, Martin Blumenstingl wrote:
+> > > > Hi Jerome,
+> > > >
+> > > > On Fri, Mar 29, 2019 at 4:34 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > > > > The bit 'SSEN' available on some MPLL DSS outputs is not related to the
+> > > > > fractional part of the divider but to the function called
+> > > > > 'Spread Spectrum'.
+> > > > >
+> > > > > This function might be used to solve EM issues by adding a jitter on
+> > > > > clock signal. This widens the signal spectrum and weakens the peaks in it.
+> > > > >
+> > > > > While spread spectrum might be useful for some application, it is
+> > > > > problematic for others, such as audio.
+> > > > >
+> > > > > This patch introduce a new flag to the MPLL driver to enable (or not) the
+> > > > > spread spectrum function.
+> > > > >
+> > > > > Fixes: 1f737ffa13ef ("clk: meson: mpll: fix mpll0 fractional part ignored")
+> > > > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > > > ---
+> > > > >  drivers/clk/meson/clk-mpll.c | 9 ++++++---
+> > > > >  drivers/clk/meson/clk-mpll.h | 1 +
+> > > > >  2 files changed, 7 insertions(+), 3 deletions(-)
+> > > > >
+>
+> [...]
+>
+> > >
+> > > Yes, none of our application require spread spectrum
+> > thank you for the explanation. can you please add it to the patch description?
+>
+> I think I described spread spectrum already in the commit description.
+I haven't been clear about this one -  let me do it better this time:
+if you have to re-send the patches can you please add a note stating
+that "none of our application require spread spectrum" to the
+description so it's clear that you're disabling spread spectrum on
+purpose.
+your explanation about spread spectrum itself is perfectly fine
 
-Lorenzo
 
->  	int ret;
->  
->  	res->clks[0].id = "aux";
->  	res->clks[1].id = "master_bus";
->  	res->clks[2].id = "slave_bus";
-> +	res->clks[3].id = "iface";
->  
-> -	res->num_clks = 3;
-> +	/* qcom,pcie-ipq4019 is defined without "iface" */
-> +	res->num_clks = is_ipq ? 3 : 4;
->  
->  	ret = devm_clk_bulk_get(dev, res->num_clks, res->clks);
->  	if (ret < 0)
-> @@ -657,27 +660,33 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
->  	if (IS_ERR(res->axi_s_reset))
->  		return PTR_ERR(res->axi_s_reset);
->  
-> -	res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
-> -	if (IS_ERR(res->pipe_reset))
-> -		return PTR_ERR(res->pipe_reset);
-> -
-> -	res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
-> -								 "axi_m_vmid");
-> -	if (IS_ERR(res->axi_m_vmid_reset))
-> -		return PTR_ERR(res->axi_m_vmid_reset);
-> -
-> -	res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
-> -								"axi_s_xpu");
-> -	if (IS_ERR(res->axi_s_xpu_reset))
-> -		return PTR_ERR(res->axi_s_xpu_reset);
-> -
-> -	res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
-> -	if (IS_ERR(res->parf_reset))
-> -		return PTR_ERR(res->parf_reset);
-> -
-> -	res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
-> -	if (IS_ERR(res->phy_reset))
-> -		return PTR_ERR(res->phy_reset);
-> +	if (is_ipq) {
-> +		/*
-> +		 * These resources relates to the PHY or are secure clocks, but
-> +		 * are controlled here for IPQ4019
-> +		 */
-> +		res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
-> +		if (IS_ERR(res->pipe_reset))
-> +			return PTR_ERR(res->pipe_reset);
-> +
-> +		res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
-> +									 "axi_m_vmid");
-> +		if (IS_ERR(res->axi_m_vmid_reset))
-> +			return PTR_ERR(res->axi_m_vmid_reset);
-> +
-> +		res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
-> +									"axi_s_xpu");
-> +		if (IS_ERR(res->axi_s_xpu_reset))
-> +			return PTR_ERR(res->axi_s_xpu_reset);
-> +
-> +		res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
-> +		if (IS_ERR(res->parf_reset))
-> +			return PTR_ERR(res->parf_reset);
-> +
-> +		res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
-> +		if (IS_ERR(res->phy_reset))
-> +			return PTR_ERR(res->phy_reset);
-> +	}
->  
->  	res->axi_m_sticky_reset = devm_reset_control_get_exclusive(dev,
->  								   "axi_m_sticky");
-> @@ -697,9 +706,11 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
->  	if (IS_ERR(res->ahb_reset))
->  		return PTR_ERR(res->ahb_reset);
->  
-> -	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
-> -	if (IS_ERR(res->phy_ahb_reset))
-> -		return PTR_ERR(res->phy_ahb_reset);
-> +	if (is_ipq) {
-> +		res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
-> +		if (IS_ERR(res->phy_ahb_reset))
-> +			return PTR_ERR(res->phy_ahb_reset);
-> +	}
->  
->  	return 0;
->  }
-> @@ -1284,6 +1295,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-msm8996", .data = &ops_2_3_2 },
->  	{ .compatible = "qcom,pcie-ipq8074", .data = &ops_2_3_3 },
->  	{ .compatible = "qcom,pcie-ipq4019", .data = &ops_2_4_0 },
-> +	{ .compatible = "qcom,pcie-qcs404", .data = &ops_2_4_0 },
->  	{ }
->  };
->  
-> -- 
-> 2.18.0
-> 
+Regards
+Martin
