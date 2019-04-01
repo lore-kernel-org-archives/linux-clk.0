@@ -4,143 +4,195 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABF3C43381
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 14:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC89C43381
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 15:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B0320857
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 14:59:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B61852133D
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 15:13:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfDAO7C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Apr 2019 10:59:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:36150 "EHLO foss.arm.com"
+        id S1726841AbfDAPNb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Apr 2019 11:13:31 -0400
+Received: from foss.arm.com ([217.140.101.70]:36350 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbfDAO7C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 1 Apr 2019 10:59:02 -0400
+        id S1726617AbfDAPNb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 1 Apr 2019 11:13:31 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE77EA78;
-        Mon,  1 Apr 2019 07:59:01 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3653BA78;
+        Mon,  1 Apr 2019 08:13:30 -0700 (PDT)
 Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E9153F690;
-        Mon,  1 Apr 2019 07:58:59 -0700 (PDT)
-Date:   Mon, 1 Apr 2019 15:58:54 +0100
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAB813F690;
+        Mon,  1 Apr 2019 08:13:27 -0700 (PDT)
+Date:   Mon, 1 Apr 2019 16:13:24 +0100
 From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
         Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: phy: Add binding for Qualcomm PCIe2
- PHY
-Message-ID: <20190401145854.GA6234@e107981-ln.cambridge.arm.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] PCI: qcom: Add QCS404 PCIe controller support
+Message-ID: <20190401151324.GB6234@e107981-ln.cambridge.arm.com>
 References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
- <20190219060407.15263-3-bjorn.andersson@linaro.org>
- <20190222195758.GA26984@bogus>
- <20190227042545.GE5511@minitux>
+ <20190219060407.15263-7-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190227042545.GE5511@minitux>
+In-Reply-To: <20190219060407.15263-7-bjorn.andersson@linaro.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 08:25:45PM -0800, Bjorn Andersson wrote:
-> On Fri 22 Feb 11:57 PST 2019, Rob Herring wrote:
+On Mon, Feb 18, 2019 at 10:04:06PM -0800, Bjorn Andersson wrote:
+> The QCS404 platform contains a PCIe controller of version 2.4.0 and a
+> Qualcomm PCIe2 PHY. The driver already supports version 2.4.0, for the
+> IPQ4019, but this support touches clocks and resets related to the PHY
+> as well, and there's no upstream driver for the PHY.
 > 
-> > On Mon, Feb 18, 2019 at 10:04:02PM -0800, Bjorn Andersson wrote:
-> > > The Qualcomm PCIe2 PHY is a Synopsys based PCIe PHY found in a number of
-> > > Qualcomm platforms, add a binding to describe this.
-> > > 
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > ---
-> > >  .../bindings/phy/qcom-pcie2-phy.txt           | 40 +++++++++++++++++++
-> > >  1 file changed, 40 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-> > > new file mode 100644
-> > > index 000000000000..7da02f9d78c7
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-> > > @@ -0,0 +1,40 @@
-> > > +Qualcomm PCIe2 PHY controller
-> > > +=============================
-> > > +
-> > > +The Qualcomm PCIe2 PHY is a Synopsys based phy found in a number of Qualcomm
-> > > +platforms.
-> > > +
-> > > +Required properties:
-> > > + - compatible: compatible list, should be:
-> > > +	       "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy"
-> > > +
-> > > + - reg: offset and length of the PHY register set.
-> > > + - #phy-cells: must be 0.
-> > > +
-> > > + - clocks: a clock-specifier pair for the "pipe" clock
-> > > +
-> > > + - vdda-vp-supply: phandle to low voltage regulator
-> > > + - vdda-vph-supply: phandle to high voltage regulator
-> > > +
-> > > + - resets: reset-specifier pairs for the "phy" and "pipe" resets
-> > > + - reset-names: list of resets, should contain:
-> > > +		"phy" and "pipe"
-> > > +
-> > > + - clock-output-names: name of the outgoing clock signal from the PHY PLL
-> > 
-> > Not valid to have this without '#clock-cells'.
-> > 
+> On QCS404 we must initialize the PHY, so a separate PHY driver is
+> implemented to take care of this and the controller driver is updated to
+> not require the PHY related resources. This is done by relying on the
+> fact that operations in both the clock and reset framework are nops when
+> passed NULL, so we can isolate this change to only the get_resource
+> function.
 > 
-> This happens to work today as we don't describe &gcc's dependency on
-> this, but just rely on the global clock namespace. But it should be
-> there, so I'll respin this.
+> For QCS404 we also need to enable the AHB (iface) clock, in order to
+> access the register space of the controller, but as this is not part of
+> the IPQ4019 DT binding this is only added for new users of the 2.4.0
+> controller.
+> 
+> Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 64 +++++++++++++++-----------
+>  1 file changed, 38 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index b4d8bcf6eb77..3724ab5de956 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -113,7 +113,7 @@ struct qcom_pcie_resources_2_3_2 {
+>  };
+>  
+>  struct qcom_pcie_resources_2_4_0 {
+> -	struct clk_bulk_data clks[3];
+> +	struct clk_bulk_data clks[4];
+>  	int num_clks;
+>  	struct reset_control *axi_m_reset;
+>  	struct reset_control *axi_s_reset;
+> @@ -637,13 +637,16 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> +	bool is_ipq = of_device_is_compatible(dev->of_node, "qcom,pcie-ipq4019");
 
-Should I drop this series from the PCI queue waiting for v3 then ?
+Just a question: other host controller drivers resorted to .data
+structures (ie struct of_device_id.data) to sort out per-SOC
+parameters I was wondering if you want to do the same, maybe
+not just yet but I noticed so I am asking.
 
-Thanks,
 Lorenzo
 
-> > Though I'm confused how this and the input clock name seem to match.
-> > 
+>  	int ret;
+>  
+>  	res->clks[0].id = "aux";
+>  	res->clks[1].id = "master_bus";
+>  	res->clks[2].id = "slave_bus";
+> +	res->clks[3].id = "iface";
+>  
+> -	res->num_clks = 3;
+> +	/* qcom,pcie-ipq4019 is defined without "iface" */
+> +	res->num_clks = is_ipq ? 3 : 4;
+>  
+>  	ret = devm_clk_bulk_get(dev, res->num_clks, res->clks);
+>  	if (ret < 0)
+> @@ -657,27 +660,33 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
+>  	if (IS_ERR(res->axi_s_reset))
+>  		return PTR_ERR(res->axi_s_reset);
+>  
+> -	res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
+> -	if (IS_ERR(res->pipe_reset))
+> -		return PTR_ERR(res->pipe_reset);
+> -
+> -	res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
+> -								 "axi_m_vmid");
+> -	if (IS_ERR(res->axi_m_vmid_reset))
+> -		return PTR_ERR(res->axi_m_vmid_reset);
+> -
+> -	res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
+> -								"axi_s_xpu");
+> -	if (IS_ERR(res->axi_s_xpu_reset))
+> -		return PTR_ERR(res->axi_s_xpu_reset);
+> -
+> -	res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
+> -	if (IS_ERR(res->parf_reset))
+> -		return PTR_ERR(res->parf_reset);
+> -
+> -	res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
+> -	if (IS_ERR(res->phy_reset))
+> -		return PTR_ERR(res->phy_reset);
+> +	if (is_ipq) {
+> +		/*
+> +		 * These resources relates to the PHY or are secure clocks, but
+> +		 * are controlled here for IPQ4019
+> +		 */
+> +		res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
+> +		if (IS_ERR(res->pipe_reset))
+> +			return PTR_ERR(res->pipe_reset);
+> +
+> +		res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
+> +									 "axi_m_vmid");
+> +		if (IS_ERR(res->axi_m_vmid_reset))
+> +			return PTR_ERR(res->axi_m_vmid_reset);
+> +
+> +		res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
+> +									"axi_s_xpu");
+> +		if (IS_ERR(res->axi_s_xpu_reset))
+> +			return PTR_ERR(res->axi_s_xpu_reset);
+> +
+> +		res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
+> +		if (IS_ERR(res->parf_reset))
+> +			return PTR_ERR(res->parf_reset);
+> +
+> +		res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
+> +		if (IS_ERR(res->phy_reset))
+> +			return PTR_ERR(res->phy_reset);
+> +	}
+>  
+>  	res->axi_m_sticky_reset = devm_reset_control_get_exclusive(dev,
+>  								   "axi_m_sticky");
+> @@ -697,9 +706,11 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
+>  	if (IS_ERR(res->ahb_reset))
+>  		return PTR_ERR(res->ahb_reset);
+>  
+> -	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
+> -	if (IS_ERR(res->phy_ahb_reset))
+> -		return PTR_ERR(res->phy_ahb_reset);
+> +	if (is_ipq) {
+> +		res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
+> +		if (IS_ERR(res->phy_ahb_reset))
+> +			return PTR_ERR(res->phy_ahb_reset);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1284,6 +1295,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>  	{ .compatible = "qcom,pcie-msm8996", .data = &ops_2_3_2 },
+>  	{ .compatible = "qcom,pcie-ipq8074", .data = &ops_2_3_3 },
+>  	{ .compatible = "qcom,pcie-ipq4019", .data = &ops_2_4_0 },
+> +	{ .compatible = "qcom,pcie-qcs404", .data = &ops_2_4_0 },
+>  	{ }
+>  };
+>  
+> -- 
+> 2.18.0
 > 
-> The PHY generates the clock we call "pcie_0_pipe_clk" which is fed into
-> the global clock controller (gcc), where it can be gated (and divided)
-> and then fed back to both the PHY and the controller as
-> "gcc_pcie_0_pipe_clk".
-> 
-> 
-> Thanks for the review Rob.
-> 
-> Regards,
-> Bjorn
-> 
-> > > +
-> > > +Example:
-> > > + phy@7786000 {
-> > > +	compatible = "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy";
-> > > +	reg = <0x07786000 0xb8>;
-> > > +
-> > > +	clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
-> > > +	resets = <&gcc GCC_PCIEPHY_0_PHY_BCR>,
-> > > +	         <&gcc GCC_PCIE_0_PIPE_ARES>;
-> > > +	reset-names = "phy", "pipe";
-> > > +
-> > > +	vdda-vp-supply = <&vreg_l3_1p05>;
-> > > +	vdda-vph-supply = <&vreg_l5_1p8>;
-> > > +
-> > > +	clock-output-names = "pcie_0_pipe_clk";
-> > > +	#phy-cells = <0>;
-> > > + };
-> > > -- 
-> > > 2.18.0
-> > > 
