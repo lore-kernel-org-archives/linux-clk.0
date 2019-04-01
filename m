@@ -4,63 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F39C43381
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B558DC43381
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF2820857
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 762792086C
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Apr 2019 08:34:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UF0HA8Gr"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="2CKSfon5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732167AbfDAIbw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Apr 2019 04:31:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42983 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731861AbfDAIbw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Apr 2019 04:31:52 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g3so10749870wrx.9
-        for <linux-clk@vger.kernel.org>; Mon, 01 Apr 2019 01:31:50 -0700 (PDT)
+        id S1731862AbfDAIei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Apr 2019 04:34:38 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34818 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731882AbfDAIei (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Apr 2019 04:34:38 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w1so10807153wrp.2
+        for <linux-clk@vger.kernel.org>; Mon, 01 Apr 2019 01:34:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=UEFYIyW+Boh+Q8qRPYwnNMs8K2sfoZRZzSlmD/8BMIc=;
-        b=UF0HA8Grmk27Z04B4L2FsMo4uXm+UrWZIloe6cjJ9e/6vTovQqsr13a1HpZBMyTuv0
-         WAquKgEbR7qwqb64FewPKIkp9lx2UoiWrwBxakRZ3Ab0ajlzB5fW3hTOZvSpA3nKejx9
-         oHBGcGtnl+xAi/IKObgc8hIsa43Fe5rFY6UsEMYdDlXf4c2G7zCz9vNWPtIQX/yDBfLx
-         6VL+svZ1u2YSuLcW5Mk5ny7vPx2wrx0EE/N1UNv2HlOsS5j/bsXmf9HnMUgE1ozMxkzx
-         7F2u971e68eEFlqyvZQ2W4D+oTpmmDY/9gWfUU4YC0hLr+rP+IBls3o1GkksZiSvte/7
-         7wWQ==
+        bh=0ha7KRKiYpFb40ODM4X/wlohVcBUuz4tyyTGkMt+8kA=;
+        b=2CKSfon5eMRVktrc/e2PeJs8fYgaAlyNFl3UduiTW4Q9ZCSQgpE+xTwHodZIXNLwLA
+         Zu1uHc+FyTAOmVCjSH8FMDCNc6ow/mcjHXPCza/vb8TnlRoSJh4QpjMxwmnugfNgEFPt
+         MeHYZRnVWnFEsEarOz6BI2R9N/VT8wT9Z/2XCggmrSlgi0uEPiOCnbEU8VKJpTdREAVe
+         HCtT6FyJE0Prmr6hqb+iHa1U0AsEfpB0UPzS+H9CAsiMoEjdWPw1tQBvIZu7xW0cr4sf
+         YySd4nNgzzeDLezJpkG5kYYNOBQ/xP0YE/SreoSdZ54IbdsWyW6Ru87jAFLg6rc10TSR
+         mGJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=UEFYIyW+Boh+Q8qRPYwnNMs8K2sfoZRZzSlmD/8BMIc=;
-        b=dtFB8fp0ESQtggD4zXkqqTmGR3bH+Uy9+cypfQHPo+pn0w/Bz8SyhFKtBCC64fzHwI
-         DzbZyoBUGaUJMIqUVK7NIbXLKgQB7A8BV8mu21/nFqmRQ+AShrVYWGjgvyw5BGABkuwu
-         IAtodBR8xRxoZH5+NpEPJkBVZ/dDWHV7qZotinzJh+ov6xTRBzkZHQq7QD7TZ9f26uBc
-         v7hLIHcN1wLn5A4w7yEgdZ2uGmJDp5mFZTp3u3lSyXjynQ07oCGf2DXcScgQ2k8wP9XS
-         x+TI/iQisncrQlWYunaHiQML8OLpM1WkGI98DJ3rSbtn4J4Y9QO3id62vbh3aX5xKzQK
-         VY5Q==
-X-Gm-Message-State: APjAAAXwKJG5bKfzhY3jBcTPH8AR7VpZgDDfYrOkur6Are5ELL0QSRTb
-        O/Oaoj87aNckXtbFdhv4xSTBMw==
-X-Google-Smtp-Source: APXvYqzelv1XDMD/y/GPOavDy6DrL+vi2gVE0quFIhjmXLQshVQIZYfRloukcpo6bCvtMa4pR9i2LQ==
-X-Received: by 2002:adf:cd06:: with SMTP id w6mr41678334wrm.52.1554107509418;
-        Mon, 01 Apr 2019 01:31:49 -0700 (PDT)
+        bh=0ha7KRKiYpFb40ODM4X/wlohVcBUuz4tyyTGkMt+8kA=;
+        b=LxxS/16/keEGsy1JTZIKUQTDwR6jPJOuUNrsWNXLlIOqRSBEnekeM+VfpFqodL0g3L
+         vx4yi1OuGYOGt0zyXjljo+kMghd6dROEtrbqCUGw8zNpKbY1MtzOMLq8WaL8cWtC2KvE
+         tlG955XXjREMyRi9cjjJp2F4z5IoJLkkOpRzm5LFE7lYsbnNkFkv9pnLfa7Yt2AkJw9h
+         ZULj5fysSGSz6W1qQhmSWoZDWCXaxFpGsp1IdsYWmfTpszjBSiU2/U1PW0n0YLTiPxW+
+         nDfmgo+vAdc5pKo28J68hMfkbkwjPp3NBj8LTq+oMbqZHzEtXbrEYJR8S3NcjchgvEKU
+         ukwg==
+X-Gm-Message-State: APjAAAWVtgVmEXs1Nlel48n62ZkVqu2QDfDdpQDagdO/h5c8z0/kfJBC
+        FJz2o7R+VPXSJmfmUAs4ESUJXcgGm0tqkA==
+X-Google-Smtp-Source: APXvYqwa5wxIxm4G49/HlraddghKMeVCWSQSszHe8knduemM8ibF0V53DoBu+Q2L2mt3d3UXrAhnHw==
+X-Received: by 2002:adf:8bc5:: with SMTP id w5mr34989715wra.226.1554107676010;
+        Mon, 01 Apr 2019 01:34:36 -0700 (PDT)
 Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id n6sm6641362wmn.48.2019.04.01.01.31.48
+        by smtp.gmail.com with ESMTPSA id f11sm10447887wrm.30.2019.04.01.01.34.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Apr 2019 01:31:48 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] clk: meson: add video decoder clocks for G12A
-To:     Maxime Jourdan <mjourdan@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190319101138.27520-1-mjourdan@baylibre.com>
+        Mon, 01 Apr 2019 01:34:35 -0700 (PDT)
+Subject: Re: [PATCH 0/1] clk: meson8b: remove CLKID with typo ("ABP" -> "APB")
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        jbrunet@baylibre.com, linux-amlogic@lists.infradead.org
+Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <20190319214123.27219-1-martin.blumenstingl@googlemail.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -113,12 +114,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <5becd0fc-0cdf-12df-d7f0-35c83b3d2b2c@baylibre.com>
-Date:   Mon, 1 Apr 2019 10:31:48 +0200
+Message-ID: <9b7b7257-0c33-35bc-c383-5350d1640ca2@baylibre.com>
+Date:   Mon, 1 Apr 2019 10:34:34 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190319101138.27520-1-mjourdan@baylibre.com>
+In-Reply-To: <20190319214123.27219-1-martin.blumenstingl@googlemail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,27 +128,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/03/2019 11:11, Maxime Jourdan wrote:
-> This patch series adds the clocks related to the video decoder on G12A:
-> VDEC_1, VDEC_HEVC and VDEC_HEVCF.
+On 19/03/2019 22:41, Martin Blumenstingl wrote:
+> This is a follow-up of my previous series from [0]:
+>   clk: meson8b: fix typo "ABP" -> "APB"
 > 
-> As to not conflict with the IDs, this patch series is based on Neil's
-> last unmerged patch series: "clk: meson: add support for PCIE PLL" [0]
+> The previous series introduced a fixed CLKID. Nothing uses the CLKID
+> with the typo anymore so it's removed with this patch.
 > 
-> Changes since v1 [1]:
->  - Apply ROUND_CLOSEST to the dividers in addition to the muxes
 > 
-> [0] https://patchwork.kernel.org/cover/10842969/
-> [1] https://patchwork.kernel.org/cover/10859115/
+> [0] https://patchwork.kernel.org/cover/10804943/
 > 
-> Maxime Jourdan (2):
->   dt-bindings: clk: g12a-clkc: add VDEC clock IDs
->   clk: meson-g12a: add video decoder clocks
 > 
->  drivers/clk/meson/g12a.c              | 163 ++++++++++++++++++++++++++
->  drivers/clk/meson/g12a.h              |   8 +-
->  include/dt-bindings/clock/g12a-clkc.h |   3 +
->  3 files changed, 173 insertions(+), 1 deletion(-)
+> Martin Blumenstingl (1):
+>   dt-bindings: clock: meson8b: drop the "ABP" clock definition
+> 
+>  include/dt-bindings/clock/meson8b-clkc.h | 1 -
+>  1 file changed, 1 deletion(-)
 > 
 
-Applied to next/drivers for Linux 5.2-rc1
+Applied to next/headers for Linux 5.2-rc1
