@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB130C4360F
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E73C4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF82E2084C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B570F2084C
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554246079;
-	bh=cFHoZ0qooyyRKWWYFoL9kskxTOV856KIA6x49uFmMoI=;
+	s=default; t=1554246089;
+	bh=wb5hHeJ6wRMHMCIoLbx190AyCDTefryBJkqwy0zDlno=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XPmwsJh7CCWgBDGhk0Mqex7nFERH2M5loVJARQXfABNIo6RRrJgHtqWYDgo63Cetr
-	 MoSKw6gvsuoG8nMnt1U844ekjOVYK/6vVYGD7GK9R0+dQQ2E++djMyl20u9AB+ORiq
-	 XavXQ7ad9KzdZxpsFiGmrgw7ZpGtfzQhrJA16wUM=
+	b=1QqQauo6aL0WgX91oiO68l4UlJSJol5dZlGnZTkpPQqG2tTUY/n8hVpt8Q8d8g64i
+	 gTzjsshGYbiVsLQP5tKtLXHFSz8NpY1XIEdC62GC4ZtvLO9lQXiy55wV5JsSNpkClt
+	 f0pNIKoGvNksbcuLz8NtbuU4GbVBs06KObjJzTig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfDBXBO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 19:01:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49906 "EHLO mail.kernel.org"
+        id S1726607AbfDBXBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 19:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbfDBXBI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Apr 2019 19:01:08 -0400
+        id S1726495AbfDBXBH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Apr 2019 19:01:07 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7E4A20882;
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B89720856;
         Tue,  2 Apr 2019 23:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554246068;
-        bh=cFHoZ0qooyyRKWWYFoL9kskxTOV856KIA6x49uFmMoI=;
+        s=default; t=1554246067;
+        bh=wb5hHeJ6wRMHMCIoLbx190AyCDTefryBJkqwy0zDlno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HURoqVsKcPU6gXOrddrcOny9gq2Psbsfsq9bVzeUDaDBHhStLRuyb7P9gC9RILchi
-         jpSsQxmPqzLE6kDTR5lh6FbQCWsnI4pPfH/bx7cgyoFy4jOLdlOLlXOUrLEMPed8D2
-         5lIMTDIBkmLlYmXZ8eckF67YaQkeTI+4UAaAcl6I=
+        b=Lf2gLtRZD8P06cfZTsw0RTbBbPRhA4sesSoi1m6eKD/gDAalWmeQ1Xgd5t2f+Yjzn
+         hNwA6YEatBN1C6pBsN+cX96KO325ucGewi+1LPqr6bKLkHclaWJ/2mfR6rdQeuua8T
+         gqbjR7X/g4sKQdtW2vVHZqp5FoLc4k0SPA7ql3ic=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 8/8] clk: Drop duplicate clk_register() documentation
-Date:   Tue,  2 Apr 2019 16:01:04 -0700
-Message-Id: <20190402230104.105845-9-sboyd@kernel.org>
+Subject: [PATCH 6/8] clk: Remove 'flags' member of struct clk_fixed_rate
+Date:   Tue,  2 Apr 2019 16:01:02 -0700
+Message-Id: <20190402230104.105845-7-sboyd@kernel.org>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 In-Reply-To: <20190402230104.105845-1-sboyd@kernel.org>
 References: <20190402230104.105845-1-sboyd@kernel.org>
@@ -54,37 +54,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_register() isn't the main way to register a clk anymore. Developers
-should use clk_hw_register() instead. Furthermore, this whole chunk of
-documentation duplicates what's in the C file, so let's just use that.
+This member is never used nor documented in the kerneldoc. Remove it.
 
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- include/linux/clk-provider.h | 11 -----------
- 1 file changed, 11 deletions(-)
+ include/linux/clk-provider.h | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a1705a0f08c7..677df7865ac8 100644
+index edff3c5883bc..a1705a0f08c7 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -751,17 +751,6 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
- 		unsigned long flags);
- void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
+@@ -307,7 +307,6 @@ struct clk_fixed_rate {
+ 	struct		clk_hw hw;
+ 	unsigned long	fixed_rate;
+ 	unsigned long	fixed_accuracy;
+-	u8		flags;
+ };
  
--/**
-- * clk_register - allocate a new clock, register it and return an opaque cookie
-- * @dev: device that is registering this clock
-- * @hw: link to hardware-specific clock data
-- *
-- * clk_register is the primary interface for populating the clock tree with new
-- * clock nodes.  It returns a pointer to the newly allocated struct clk which
-- * cannot be dereferenced by driver code but may be used in conjuction with the
-- * rest of the clock API.  In the event of an error clk_register will return an
-- * error code; drivers must test for an error code after calling clk_register.
-- */
- struct clk *clk_register(struct device *dev, struct clk_hw *hw);
- struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
- 
+ #define to_clk_fixed_rate(_hw) container_of(_hw, struct clk_fixed_rate, hw)
 -- 
 Sent by a computer through tubes
 
