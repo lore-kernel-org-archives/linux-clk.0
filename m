@@ -2,61 +2,61 @@ Return-Path: <SRS0=qU15=SE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B65BBC10F00
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 13:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA22C4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 13:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 865C62133D
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 13:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ED5920883
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 13:34:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mHKCkswu"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="j4PsAVhf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731397AbfDBNdx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 09:33:53 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54190 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731391AbfDBNdv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 09:33:51 -0400
-Received: by mail-it1-f194.google.com with SMTP id y204so5076459itf.3
-        for <linux-clk@vger.kernel.org>; Tue, 02 Apr 2019 06:33:51 -0700 (PDT)
+        id S1730624AbfDBNen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 09:34:43 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43507 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfDBNem (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 09:34:42 -0400
+Received: by mail-io1-f68.google.com with SMTP id x3so10866190iol.10
+        for <linux-clk@vger.kernel.org>; Tue, 02 Apr 2019 06:34:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dUIlCm4o7H0B+jroFyOFWZukTrGH3BevBvJsnu2hNHY=;
-        b=mHKCkswuLdAr+fHuGeGcTI8sWZaxTXOVlUfWx5o2HXq0Yi2jra+oxBJsTTEHPTXoZb
-         NCTz+IOByetunLwFPCULWeDDEdtfE/jVm0AmZqRL8BAr8UGy3H5d9Er+mxtbxn6BFFO9
-         hM6EJ278CWTE1ESVNmQGsAzsovn3pwBK6gcyg=
+        bh=NzwaModfMrO6JsV2pjEKJScrv/U9qiF3UHNREeBewKE=;
+        b=j4PsAVhfC72vz57HQmiLjnKkev0PnMZ19jaSVAL3Zy5ScTHC35ifWr0iZY+6pf11yM
+         tiQRY6ySFhaJGWpJXc5985XWnosVZ4ICCWQoGFDYik3tffr4l2DNw3+NqWauhl2h7vyU
+         sun80LLy7i4BJKRKjlOAMbQD6YGmWs7xZbbfY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dUIlCm4o7H0B+jroFyOFWZukTrGH3BevBvJsnu2hNHY=;
-        b=ISkrRQfj8H70qT8pJZwYv6MLOD9BrB5YR9p1W40emPvWH1TArYZIZBUD9MtT0ZTCqJ
-         QRQUzF6jFbNLjQSXbSF2C3zqTWeq+QrWDP9WVAUL7hROSg1ZIZ8dSqWOIG6xl9WD9o0e
-         GGxdut8/+z3Str6Ed8tgQ8/NzzUS4a+O5Q4uC8XWnqJnJaBAaCnMjJfc1fQIEtcjEU3j
-         HRFOIQQ9Iani4Y+N43Fj9eEfanPyy7AnXO+Z8WLxkEwsCgEhBrA8dN6k/9aZ29EEhLnM
-         ElsovUxt10kslJCx4ptwLowiU1F+FiGB1642aFSqoPmu4gIcaX39sErprvDVsLVYF7Nt
-         Fs3g==
-X-Gm-Message-State: APjAAAWUJUjsnj8r5MsIfaYgUdZjFsAMxo8JHmy7/feoaq2N2g55X98F
-        5jMqSF4dWV+ud14BZU0/hYDwsGf/NkLUtcILg0I74A==
-X-Google-Smtp-Source: APXvYqwUUsW38UrSkwXJ4S0Jm3pC4KTXrbDLNNc6+iHf7WGCVxEZQepelSG8T8TTBEMuZ2HHkuv9mC3fRfGojc1uu9Y=
-X-Received: by 2002:a24:1cc4:: with SMTP id c187mr4328464itc.85.1554212030866;
- Tue, 02 Apr 2019 06:33:50 -0700 (PDT)
+        bh=NzwaModfMrO6JsV2pjEKJScrv/U9qiF3UHNREeBewKE=;
+        b=d4ZvudfFgZVsvIbL+HPD0HKbakd91Tfic9Sr7tpZXPotxVC4uPupnuz6uKmU1MoeJH
+         yYi+IuV6+b5MXWtnyDZL0NVEQ7GTsvZJlBhFLsm+lPycg2l12xLO85vVy6gvnZOqlzNp
+         6nKlpbw58a0ME7El8lyoflce5Fl6nByxmh3hmLgcEtaJ3WDBDgLKs7WNjqcFXy8gQraZ
+         SiABVZFz34iu1m+ar13GgJcxu5zHb/KCv4nExkC8Yj1kvxTaNGAwLMAFWG8k/5BresX2
+         aYUQjpc8UV0X44ka+0Yj4FZ/MshJ4yIZYbdsDKVVPMqCeDgztxSK1xKCcQ4z9+WgL9ms
+         vfmg==
+X-Gm-Message-State: APjAAAWU8dbqy7EPPKw8zC6IUSE0wR4kLA6hSk0MyryI0001/PmRnL2p
+        wOCtdJlVYVuRAnCxs9cx9osNApPcbYA8c26qIdisyA==
+X-Google-Smtp-Source: APXvYqxO1BdPHlCGT19+/GZVwZWaFTywYA5hGVKHx1w6VOKs6qxz4Ns0w7qUhT9RWWPjU1ozwQTDWgeZRCLrgKBjx84=
+X-Received: by 2002:a6b:7601:: with SMTP id g1mr50159844iom.108.1554212081888;
+ Tue, 02 Apr 2019 06:34:41 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190311133637.18334-1-jagan@amarulasolutions.com>
- <20190311133637.18334-3-jagan@amarulasolutions.com> <20190311153847.oz6ruqmptaq2befn@flea>
- <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
- <20190319105307.omowzyhqu33e3pzy@flea> <CAMty3ZCjTLLw+zAfPKD3qZx_o9yti4MD0XL0Ve7VG1_6ToJ=pg@mail.gmail.com>
-In-Reply-To: <CAMty3ZCjTLLw+zAfPKD3qZx_o9yti4MD0XL0Ve7VG1_6ToJ=pg@mail.gmail.com>
+ <20190311133637.18334-2-jagan@amarulasolutions.com> <20190311153734.izg44ijwqqh2vpxc@flea>
+ <CAMty3ZDDARP02qMJZ9CXeiMv=kghoiUHgEAV9b4q+SrbLss40Q@mail.gmail.com>
+ <20190319102520.ldgjtyzrphuib3td@flea> <CAMty3ZC+dTVuc2TWR=cqKNbrZe6j2vnwfXAqg6RbvduvY_63LA@mail.gmail.com>
+In-Reply-To: <CAMty3ZC+dTVuc2TWR=cqKNbrZe6j2vnwfXAqg6RbvduvY_63LA@mail.gmail.com>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 2 Apr 2019 19:03:39 +0530
-Message-ID: <CAMty3ZD7yPg9hJNw9Yy1SYKPMPsmt3n1PD6PkyE9KJNpcTyZVA@mail.gmail.com>
-Subject: Re: [PATCH v8 02/15] drm/sun4i: tcon: Compute DCLK dividers based on
- format, lanes
+Date:   Tue, 2 Apr 2019 19:04:30 +0530
+Message-ID: <CAMty3ZA9x356e1y_aajSpviycnPR8GA0794BCR6dKMRYuw=zOg@mail.gmail.com>
+Subject: Re: [PATCH v8 01/15] drm/sun4i: dsi: Fix video start delay computation
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -79,73 +79,116 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Maxime,
 
-On Thu, Mar 21, 2019 at 7:40 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+On Thu, Mar 21, 2019 at 8:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
 >
-> On Tue, Mar 19, 2019 at 4:23 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Tue, Mar 19, 2019 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > >
-> > On Mon, Mar 11, 2019 at 09:36:27PM +0530, Jagan Teki wrote:
-> > > On Mon, Mar 11, 2019 at 9:08 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > On Mon, Mar 11, 2019 at 09:31:11PM +0530, Jagan Teki wrote:
+> > > On Mon, Mar 11, 2019 at 9:07 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > > > >
-> > > > On Mon, Mar 11, 2019 at 07:06:24PM +0530, Jagan Teki wrote:
-> > > > > pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
-> > > > > MIPI clock topology in Allwinner DSI controller.
+> > > > On Mon, Mar 11, 2019 at 07:06:23PM +0530, Jagan Teki wrote:
+> > > > > Vertical video start delay is computed by excluding vertical front
+> > > > > porch value from total vertical timings.
 > > > > >
-> > > > > TCON dotclock driver is computing the desired DCLK divider based on
-> > > > > panel pixel clock along with input DCLK min, max divider values from
-> > > > > tcon driver and that would eventually set the pll-mipi clock rate.
+> > > > > This clearly confirmed from BSP code and here how it computed,
 > > > > >
-> > > > > The current code allows the TCON clock divider to have a default 4
-> > > > > for min, max ranges that would fail to compute the desired pll-mipi
-> > > > > rate while supporting new panels.
+> > > > > (drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > > > > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > > > > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > > > > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> > > > >    - panel->lcd_y - (panel->lcd_vbp)
+> > > > > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> > > > >                            - panel->lcd_y - panel->lcd_vbp
+> > > > > => timmings->ver_front_porch
 > > > > >
-> > > > > So, add the computation logic 'format/lanes' to dclk min and max dividers
-> > > > > and instead of default 4. This computation logic align with Allwinner A64
-> > > > > BSP, hoping that would work even for A33.
+> > > > > But the current driver is assuming it can exclude vertical front
+> > > > > porch along with vertical sync values from total vertical timings,
+> > > > > which resulting wrong start delay indeed wrong picture rendering
+> > > > > in the panel.
 > > > >
-> > > > Last time we discussed this, we found out that this wasn't the case,
-> > > > even in the BSP.
+> > > > Same story here: which panel, which datasheet, which "wrong picture
+> > > > rendering"?
 > > >
-> > > This was the case for BSP to compute pll-mipi not for TCON_DSI clock
-> > > register, SUN4I_TCON0_DCLK_REG, which marked the divider 4 by default.
-> > >
-> > > > What compelling evidence have you found that makes you say otherwise?
-> > >
-> > > divider 4 isn't worked, this I would mentioned before as well.
-> >
-> > Maybe you mentionned it before, but it's nowhere to be found in your
-> > commit log.
+> > > It's bananapi,s070wv20-ct16 DSI
 >
-> I have added it in 3rd paragraph in commit message, may be you missed
-> it or you may look for different text.
+> 2. as I said before, it is the same panel for both RGB and DSI, and
+> ICN6211 bridge is converter for RGB-to-DSI. we don't have any specific
+> programming or detailed datasheet from this except BSP DSI panel
+> sequence along with BSP panel timings which are similar to RGB one.
 >
-> "The current code allows the TCON clock divider to have a default 4
-> for min, max ranges that would fail to compute the desired pll-mipi
-> rate while supporting new panels."
+> 3. wrong picture rendering is something sprightliness followed by
+> colors jerks, which I couldn't explain it properly ie reason I
+> mentioned some generic term for understanding.
 >
 > >
-> > > Tested this on 4 different panels, and below are the desired divider values
-> > > and pll-mipi clock rate with respect to pixel clock frequency.
-> > >
-> > > - 55MHz pixel clock with 4-lane panel, and the desired DSI clock divider
-> > >   is 6 with the output parent clock rate of 330MHz.
-> > > - 30MHz pixel clock with 4-lane panel, and the desired DSI clock divider
-> > >   is 6 with parent clock rate of 180MHz.
-> > > - 27.5Mhz pixel clock with 2-lane pane, and the desired DSI clock divider
-> > >   is 12 with the output parent clock rate of 330MHz.
-> > > - 147MHz pixel clock with 4-lane panel, and the desired DSI clock divider
-> > >   is 6 with the output parent clock rate of 882MHz.
-> > >
-> > > BSP trying to use this format/lane to compute dsi divider that in-turn
-> > > using pll-mipi set_rate but TCON0_DCLK_REG keep constant 4.
+> > You're answering one out of three questions.
 > >
-> > Feel free to reply to
-> > http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/629596.html
+> > > > > Example: timings, where it produces the issue.
+> > > > > {
+> > > > >       .vdisplay       = 600,
+> > > > >       .vsync_start    = 600 + 12,
+> > > > >       .vsync_end      = 600 + 12 + 2,
+> > > > >       .vtotal         = 600 + 12 + 2 + 21,
+> > > > > }
+> > > >
+> > > > Can you 100% trust those timings?
+> > >
+> > > ie. reason, I have given the Mainline timings [1]. The above timings
+> > > are wrongly mentioned actual timings are from [1]
+> >
+> > You're still answering partially here. Those timings are working for
+> > RGB, you have no proof that we need to make the same adjustments for
+> > DSI.
 >
-> Yes, I have replied at that time itself, please check.
+> It is RGB to DSI bridge on the same panel, as I explained above and it
+> would shared same timings. I can confirm or proved it from BSP panel
+> timings which are working. indeed same timings are been in Mainline
+> tree, we can trust them atleast.
 >
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/629673.html
+> >
+> > > > > It produces the desired start delay value as 19 but the correct working
+> > > > > value should be 513.
+> > > > >
+> > > > > So, Fix it by computing proper video start delay.
+> > > > >
+> > > > > Fixes: 69006ef0ecb1 ("drm/sun4i: dsi: Change the start delay calculation")
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 10 ++++++++--
+> > > > >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > index 62a508420227..8d6292c0158b 100644
+> > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > @@ -364,8 +364,14 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+> > > > >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+> > > > >                                          struct drm_display_mode *mode)
+> > > > >  {
+> > > > > -     u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
+> > > > > -     u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
+> > > > > +     u16 delay = mode->vtotal - (mode->vsync_start - mode->vdisplay);
+> > > > > +
+> > > > > +     /**
+> > > > > +      * BSP comment:
+> > > > > +      * put start_delay to tcon. set ready sync early to dramfreq,
+> > > > > +      * so set start_delay 1
+> > > > > +      */
+> > > >
+> > > > That doesn't make any sense to me... What does it mean?
+> > >
+> > > Which is meaning as above stated as "BSP comment" from here[2]
+> >
+> > It doesn't matter where you took it from. If you cannot explain what
+> > happen, putting a random label that doesn't explain anything will not
+> > help.
 >
-> Here I have taken the pixel clock to 30Mhz for example in Bananapi
-> panel, and the above gist the pixel is 148Mhz from another panel.
+> I have no idea or document to refer why this 1 would be added. so I
+> used same comment from BSP like many places on sun4i does. w/o this +1
+> the delay is computed to 512 which is not working and with this the
+> desired delay is 513 which is perfectly working.
+>
+> If you have any idea on this, please share so-that I can add it in
+> comment otherwise.
 
 Any further comments?
