@@ -3,43 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3427CC4360F
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 21:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D6BC4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 21:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C65D2084C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 21:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D17BF2084B
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 21:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbfDBVGk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 17:06:40 -0400
-Received: from mailoutvs25.siol.net ([185.57.226.216]:37328 "EHLO
+        id S1726628AbfDBVGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 17:06:39 -0400
+Received: from mailoutvs58.siol.net ([185.57.226.249]:37305 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725822AbfDBVGk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 17:06:40 -0400
+        with ESMTP id S1726584AbfDBVGi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 17:06:38 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 5A76D521B51;
-        Tue,  2 Apr 2019 23:06:37 +0200 (CEST)
+        by mail.siol.net (Zimbra) with ESMTP id 1D8B3521AA0;
+        Tue,  2 Apr 2019 23:06:35 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id rtWZJx-gHcoo; Tue,  2 Apr 2019 23:06:37 +0200 (CEST)
+        with ESMTP id 7aHKU8lrfJUg; Tue,  2 Apr 2019 23:06:34 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 15230521B5F;
-        Tue,  2 Apr 2019 23:06:37 +0200 (CEST)
+        by mail.siol.net (Zimbra) with ESMTPS id BF215521A6C;
+        Tue,  2 Apr 2019 23:06:34 +0200 (CEST)
 Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id C6117521B51;
-        Tue,  2 Apr 2019 23:06:34 +0200 (CEST)
+        by mail.siol.net (Zimbra) with ESMTPSA id 7BB10521AA0;
+        Tue,  2 Apr 2019 23:06:32 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, jernej.skrabec@siol.net
-Subject: [PATCH 3/3] clk: sunxi-ng: h6: Allow video & vpu clocks to change parent rate
-Date:   Tue,  2 Apr 2019 23:06:23 +0200
-Message-Id: <20190402210623.14988-4-jernej.skrabec@siol.net>
+Subject: [PATCH 2/3] clk: sunxi-ng: h6: Preset hdmi-cec clock parent
+Date:   Tue,  2 Apr 2019 23:06:22 +0200
+Message-Id: <20190402210623.14988-3-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190402210623.14988-1-jernej.skrabec@siol.net>
 References: <20190402210623.14988-1-jernej.skrabec@siol.net>
@@ -50,54 +50,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Video related clocks need to set rate as close as possible to the
-requested one, so they should be able to change parent clock rate.
+H6 manual and BSP clock driver both states that hdmi-cec clock has two
+possible parents, osc32k and pll-periph0-2x with 36621 predivider.
+Because pll-periph0-2x is always 1.2 GHz, both parents give same
+hdmi-cec rate - 32768 Hz, which is exactly the rate needed for HDMI CEC
+controller to operate correctly.
 
-VPU clock sometimes has to be set to higher than default parent clock
-rate. This is requ
+However, for some reason, HDMI CEC controller doesn't work if default
+parent (osc32k) is used. BSP HDMI driver also always use pll-periph0-2x
+as hdmi-cec clock parent.
 
-Add CLK_SET_RATE_PARENT flag to tcon-lcd0, tcon-tv0 and ve.
+In order to solve the issue, preset hdmi-cec clock parent to
+pll-periph0-2x.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/=
 ccu-sun50i-h6.c
-index 33980067b06e..3c32d7798f27 100644
+index daf78966555e..33980067b06e 100644
 --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
 +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -311,7 +311,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(ve_clk, "ve", ve_par=
-ents, 0x690,
- 				       0, 3,	/* M */
- 				       24, 1,	/* mux */
- 				       BIT(31),	/* gate */
--				       0);
-+				       CLK_SET_RATE_PARENT);
+@@ -656,6 +656,8 @@ static const char * const hdmi_cec_parents[] =3D { "o=
+sc32k", "pll-periph0-2x" };
+ static const struct ccu_mux_fixed_prediv hdmi_cec_predivs[] =3D {
+ 	{ .index =3D 1, .div =3D 36621 },
+ };
++
++#define SUN50I_H6_HDMI_CEC_CLK_REG		0xb10
+ static struct ccu_mux hdmi_cec_clk =3D {
+ 	.enable		=3D BIT(31),
 =20
- static SUNXI_CCU_GATE(bus_ve_clk, "bus-ve", "psi-ahb1-ahb2",
- 		      0x69c, BIT(0), 0);
-@@ -691,7 +691,7 @@ static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-l=
-cd0",
- 			       tcon_lcd0_parents, 0xb60,
- 			       24, 3,	/* mux */
- 			       BIT(31),	/* gate */
--			       0);
-+			       CLK_SET_RATE_PARENT);
+@@ -1200,6 +1202,15 @@ static int sun50i_h6_ccu_probe(struct platform_dev=
+ice *pdev)
+ 	val &=3D ~(GENMASK(21, 16) | BIT(0));
+ 	writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
 =20
- static SUNXI_CCU_GATE(bus_tcon_lcd0_clk, "bus-tcon-lcd0", "ahb3",
- 		      0xb7c, BIT(0), 0);
-@@ -706,7 +706,7 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(tcon_tv0_clk, "tcon=
--tv0",
- 				  8, 2,		/* P */
- 				  24, 3,	/* mux */
- 				  BIT(31),	/* gate */
--				  0);
-+				  CLK_SET_RATE_PARENT);
++	/*
++	 * First clock parent (osc32K) is unusable for CEC. But since there
++	 * is no good way to force parent switch (both run with same frequency)=
+,
++	 * just set second clock parent here.
++	 */
++	val =3D readl(reg + SUN50I_H6_HDMI_CEC_CLK_REG);
++	val |=3D BIT(24);
++	writel(val, reg + SUN50I_H6_HDMI_CEC_CLK_REG);
++
+ 	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_h6_ccu_desc);
+ }
 =20
- static SUNXI_CCU_GATE(bus_tcon_tv0_clk, "bus-tcon-tv0", "ahb3",
- 		      0xb9c, BIT(0), 0);
 --=20
 2.21.0
 
