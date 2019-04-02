@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E87C10F00
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDE0C4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E15982084C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C30B32084C
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554246091;
-	bh=otocyZ8EE5uT+/ItK2KIBynGeViv0DJrRj3jkb2Xq2Y=;
+	s=default; t=1554246095;
+	bh=dzd7PCwRRfPfuAc/7nvl9MamfV8T+7jn8AD1EHfUI04=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pV2d4pqgx2nK7L+aLYHi6mewzlUvCU3YHrU6SdtUB4m2aAdSlF8kut9Gf3bJkNoXa
-	 X33Bb1Qm88tOIYUfexImG0RC0/fDyBFtl3qssW1mvuLE6PXXcn2RdKebefog4+HqCm
-	 s3HXvYGewH7iNv0491iS6A0+9snJmscS8ysjGtJU=
+	b=zFwKSlJCLAgVdIaFUlpECrFc4ouRRKsU2uIzhzbNAKm70JVubG4evST9XW1o02UA1
+	 WpgERB2cFhhdHRtyTzyQ4xytDamDiEp9x0J4hAqy1ipXt6RnMETqBqtZbEmUfJOYYM
+	 rsMyU5W3jUqycsebLnFPeW0DMJ5iH7rgJXWswLe8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfDBXBH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 19:01:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49934 "EHLO mail.kernel.org"
+        id S1726071AbfDBXBb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 19:01:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726471AbfDBXBH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726486AbfDBXBH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 2 Apr 2019 19:01:07 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B2F521473;
+        by mail.kernel.org (Postfix) with ESMTPSA id BE16520882;
         Tue,  2 Apr 2019 23:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1554246066;
-        bh=otocyZ8EE5uT+/ItK2KIBynGeViv0DJrRj3jkb2Xq2Y=;
+        bh=dzd7PCwRRfPfuAc/7nvl9MamfV8T+7jn8AD1EHfUI04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kXQNXfh3ghlpTIyAb4vKjoy1Ch0uQ16aMz5BNTElzRHYEJIJFKsUhG0uuqJ0VSt/K
-         7KBxkEig8fYAaOy65OFLzyHSDgWwjwUakERKMdZvEk8VAg8GCf+WcE/9nkHpMGIpOS
-         EwkVQri69QvwJGiyUhGAD15j6rUKGAJLTPra9xps=
+        b=1l7rqJhaxVp3TDDQ9XgOLXoz7K6Vif2Z31tuFnPRWusg7++JThajA3NcbTy00Y5yK
+         FnnOrzsKmC92RxQkcbXDRTLqicP6D0hCVtsZUI1n7iXQ5FwmToNRdKSHHDEMkf5xjx
+         5lShOWBPUOLzNEkaP5hp3T6arNLojkz04aR8Vwew=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 4/8] clk: Document __clk_mux_determine_rate()
-Date:   Tue,  2 Apr 2019 16:01:00 -0700
-Message-Id: <20190402230104.105845-5-sboyd@kernel.org>
+Subject: [PATCH 5/8] clk: nxp: Drop 'flags' on fixed_rate clk macro
+Date:   Tue,  2 Apr 2019 16:01:01 -0700
+Message-Id: <20190402230104.105845-6-sboyd@kernel.org>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 In-Reply-To: <20190402230104.105845-1-sboyd@kernel.org>
 References: <20190402230104.105845-1-sboyd@kernel.org>
@@ -54,34 +54,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It had some documentation, but not kerneldoc style so it wasn't getting
-picked up. Add some docs so scripts can pick this function out.
+The flags argument here is always 0, and we want to get rid of the flags
+member of the clk_fixed_rate struct. So remove this here and just pass 0
+when it's used.
 
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/nxp/clk-lpc32xx.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 592e315f7cfd..c9860074899b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -519,9 +519,15 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
- EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 5eeecee17b69..7524d19fe60b 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -1085,13 +1085,12 @@ struct clk_hw_proto {
+ 	};
+ };
  
- /*
-+ * __clk_mux_determine_rate - clk_ops::determine_rate implementation for a mux type clk
-+ * @hw: mux type clk to determine rate on
-+ * @req: rate request, also used to return preferred parent and frequencies
-+ *
-  * Helper for finding best parent to provide a given frequency. This can be used
-  * directly as a determine_rate callback (e.g. for a mux), or from a more
-  * complex clock that may combine a mux with other operations.
-+ *
-+ * Returns: 0 on success, -EERROR value on error
-  */
- int __clk_mux_determine_rate(struct clk_hw *hw,
- 			     struct clk_rate_request *req)
+-#define LPC32XX_DEFINE_FIXED(_idx, _rate, _flags)			\
++#define LPC32XX_DEFINE_FIXED(_idx, _rate)			\
+ [CLK_PREFIX(_idx)] = {							\
+ 	.type = CLK_FIXED,						\
+ 	{								\
+ 		.f = {							\
+ 			.fixed_rate = (_rate),				\
+-			.flags = (_flags),				\
+ 		},							\
+ 	},								\
+ }
+@@ -1225,7 +1224,7 @@ struct clk_hw_proto {
+ }
+ 
+ static struct clk_hw_proto clk_hw_proto[LPC32XX_CLK_HW_MAX] = {
+-	LPC32XX_DEFINE_FIXED(RTC, 32768, 0),
++	LPC32XX_DEFINE_FIXED(RTC, 32768),
+ 	LPC32XX_DEFINE_PLL(PLL397X, pll_397x, HCLKPLL_CTRL, BIT(1)),
+ 	LPC32XX_DEFINE_PLL(HCLK_PLL, hclk_pll, HCLKPLL_CTRL, PLL_CTRL_ENABLE),
+ 	LPC32XX_DEFINE_PLL(USB_PLL, usb_pll, USB_CTRL, PLL_CTRL_ENABLE),
+@@ -1468,7 +1467,7 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
+ 		struct clk_fixed_rate *fixed = &clk_hw->f;
+ 
+ 		clk = clk_register_fixed_rate(NULL, lpc32xx_clk->name,
+-			parents[0], fixed->flags, fixed->fixed_rate);
++			parents[0], 0, fixed->fixed_rate);
+ 		break;
+ 	}
+ 	default:
 -- 
 Sent by a computer through tubes
 
