@@ -2,121 +2,134 @@ Return-Path: <SRS0=qU15=SE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7039C4360F
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2945C4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DE92084C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554246106;
-	bh=mtOhSACUkKmGbH0M8QNgAFkjuCtDEJwQy80mdxplswI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mQABm5ZT3ydf9uBbC2WSHmWjF4ZqlESokONHnl5pa5BZUC2OMB3Hswx4iIPddg083
-	 bwKeH9GCiTr1nkzAcgs6M9UoAmqQgHkqK82RBt7Ksvj23WKfYQnTQp8IaTEG+vOFHV
-	 GxY7pncERFaMtY+MZ11ibUoOXDbW/brFiWM02yjQ=
+	by mail.kernel.org (Postfix) with ESMTP id 8B4E12084C
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfDBXBh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 19:01:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726412AbfDBXBG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Apr 2019 19:01:06 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC1812146E;
-        Tue,  2 Apr 2019 23:01:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554246065;
-        bh=mtOhSACUkKmGbH0M8QNgAFkjuCtDEJwQy80mdxplswI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bCX6nxLGL6fOqQ51vWXnpBBSwPCrtGQI9/lVSknLa2j4shoP+pLXdyRJSl2HeVT2n
-         AAmfZxEm6EMytqPygbxNe49R20wWpTVcx3u1/S5R5W8h0mraIyIikP0yK3pZhGoG9t
-         2dTrirzljsRHAxD8QgvPLca2ZnDwGvp7QAPb5Iwo=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 2/8] clk: Document deprecated things
-Date:   Tue,  2 Apr 2019 16:00:58 -0700
-Message-Id: <20190402230104.105845-3-sboyd@kernel.org>
-X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-In-Reply-To: <20190402230104.105845-1-sboyd@kernel.org>
-References: <20190402230104.105845-1-sboyd@kernel.org>
+        id S1726316AbfDBXFc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 19:05:32 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44990 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbfDBXFc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 19:05:32 -0400
+Received: by mail-oi1-f194.google.com with SMTP id i21so11957119oib.11;
+        Tue, 02 Apr 2019 16:05:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FNGeNmpMXmbmbGQ8XUlYBSMpsJzpAXQAXL/ACI9Obp8=;
+        b=Ev2fkpBvfCJyBe6bJrpEBdCxczs//8eMuCPxs/BFF6qSHzuBHU4/TVjfhvDS4i8KZx
+         f5Xirh+IdrGMaROlSt7V5RMGNUFGggc6F0xPDgztZaUZlW5jAiGLh0CpxTTgo3FyRFS+
+         5RBkynTuNG7gzJpADIvFXvEa+yFQktYHj0qcZoAyLFGf3frrgR9fu5Odint6YG2ngy9u
+         nKAkFIaFn0Bvv6EBReFh9YT+0+Yd72FC5s3JBBO5VPD+e+qvwHfmDn03rlGtlmircdek
+         Wf835dXefITIe9kJdq2IyBMA0Sp7b95BbAz9VyPwcXSyR+UcC3Pu2JabWuy/CxW0/3DT
+         YD6g==
+X-Gm-Message-State: APjAAAU3sZB/eVRuCdjIDXxHj9Qw0ev2QcLaCl/5x7XDrknlYh+SgDvk
+        mo7SCnp83wYR8YL6+MxnWGFyuBHqKsg=
+X-Google-Smtp-Source: APXvYqxFYoMjRSkD8WuoscEFjLHD05z//XpzPEO6cQL/gT2y1CHSA4zpx8gjKy2axPO5slwJ++76tA==
+X-Received: by 2002:a05:6808:650:: with SMTP id z16mr19166461oih.100.1554246330858;
+        Tue, 02 Apr 2019 16:05:30 -0700 (PDT)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
+        by smtp.gmail.com with ESMTPSA id p132sm5889224oig.37.2019.04.02.16.05.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Apr 2019 16:05:30 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id y84so11961896oia.12;
+        Tue, 02 Apr 2019 16:05:29 -0700 (PDT)
+X-Received: by 2002:aca:d984:: with SMTP id q126mr12607185oig.108.1554246329538;
+ Tue, 02 Apr 2019 16:05:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1551132245-6089-1-git-send-email-vabhav.sharma@nxp.com> <1551132245-6089-3-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1551132245-6089-3-git-send-email-vabhav.sharma@nxp.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Tue, 2 Apr 2019 18:05:18 -0500
+X-Gmail-Original-Message-ID: <CADRPPNTcY6fMJZDmsWzPzkn1hMzsoJh15-Gchepg_vJLxL=zcw@mail.gmail.com>
+Message-ID: <CADRPPNTcY6fMJZDmsWzPzkn1hMzsoJh15-Gchepg_vJLxL=zcw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] soc/fsl/guts: Add definition for LX2160A
+To:     Vabhav Sharma <vabhav.sharma@nxp.com>
+Cc:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "oss@buserror.net" <oss@buserror.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel-owner@vger.kernel.org" 
+        <linux-kernel-owner@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Yinbo Zhu <yinbo.zhu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We don't want driver authors to use the struct clk based registration
-and provider APIs. Instead, they should use the clk_hw based APIs. Add
-some notes in the kerneldoc to this effect.
+On Tue, Feb 26, 2019 at 4:12 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
+>
+> Adding compatible string "lx2160a-dcfg" to
+> initialize guts driver for lx2160 and SoC die
+> attribute definition for LX2160A
 
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c            | 15 ++++++++++-----
- include/linux/clk-provider.h |  2 +-
- 2 files changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 75d13c0eff12..592e315f7cfd 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3240,8 +3240,10 @@ void __clk_free_clk(struct clk *clk)
-  * @dev: device that is registering this clock
-  * @hw: link to hardware-specific clock data
-  *
-- * clk_register is the primary interface for populating the clock tree with new
-- * clock nodes.  It returns a pointer to the newly allocated struct clk which
-+ * clk_register is the *deprecated* interface for populating the clock tree with
-+ * new clock nodes. Use clk_hw_register() instead.
-+ *
-+ * Returns: a pointer to the newly allocated struct clk which
-  * cannot be dereferenced by driver code but may be used in conjunction with the
-  * rest of the clock API.  In the event of an error clk_register will return an
-  * error code; drivers must test for an error code after calling clk_register.
-@@ -3486,9 +3488,10 @@ static void devm_clk_hw_release(struct device *dev, void *res)
-  * @dev: device that is registering this clock
-  * @hw: link to hardware-specific clock data
-  *
-- * Managed clk_register(). Clocks returned from this function are
-- * automatically clk_unregister()ed on driver detach. See clk_register() for
-- * more information.
-+ * Managed clk_register(). This function is *deprecated*, use devm_clk_hw_register() instead.
-+ *
-+ * Clocks returned from this function are automatically clk_unregister()ed on
-+ * driver detach. See clk_register() for more information.
-  */
- struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw)
- {
-@@ -3820,6 +3823,8 @@ EXPORT_SYMBOL_GPL(of_clk_hw_onecell_get);
-  * @np: Device node pointer associated with clock provider
-  * @clk_src_get: callback for decoding clock
-  * @data: context pointer for @clk_src_get callback.
-+ *
-+ * This function is *deprecated*. Use of_clk_add_hw_provider() instead.
-  */
- int of_clk_add_provider(struct device_node *np,
- 			struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index b65b48cc31f1..adb8a58e213c 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -24,7 +24,7 @@
- #define CLK_SET_RATE_PARENT	BIT(2) /* propagate rate change up one level */
- #define CLK_IGNORE_UNUSED	BIT(3) /* do not gate even if unused */
- 				/* unused */
--#define CLK_IS_BASIC		BIT(5) /* Basic clk, can't do a to_clk_foo() */
-+#define CLK_IS_BASIC		BIT(5) /* deprecated, don't use */
- #define CLK_GET_RATE_NOCACHE	BIT(6) /* do not use the cached clk rate */
- #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
- #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
--- 
-Sent by a computer through tubes
+Applied to branch next.  Thanks.
 
+Regards,
+Leo
+>
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+> Acked-by: Li Yang <leoyang.li@nxp.com>
+> ---
+>  drivers/soc/fsl/guts.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+> index 302e0c8..bcab1ee 100644
+> --- a/drivers/soc/fsl/guts.c
+> +++ b/drivers/soc/fsl/guts.c
+> @@ -100,6 +100,11 @@ static const struct fsl_soc_die_attr fsl_soc_die[] = {
+>           .svr          = 0x87000000,
+>           .mask         = 0xfff70000,
+>         },
+> +       /* Die: LX2160A, SoC: LX2160A/LX2120A/LX2080A */
+> +       { .die          = "LX2160A",
+> +         .svr          = 0x87360000,
+> +         .mask         = 0xff3f0000,
+> +       },
+>         { },
+>  };
+>
+> @@ -222,6 +227,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
+>         { .compatible = "fsl,ls1088a-dcfg", },
+>         { .compatible = "fsl,ls1012a-dcfg", },
+>         { .compatible = "fsl,ls1046a-dcfg", },
+> +       { .compatible = "fsl,lx2160a-dcfg", },
+>         {}
+>  };
+>  MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
+> --
+> 2.7.4
+>
