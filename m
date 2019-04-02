@@ -2,26 +2,28 @@ Return-Path: <SRS0=qU15=SE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2521AC4360F
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 12:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC05C4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 12:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9C6B206B8
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 12:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B7AD20883
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 12:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730321AbfDBMkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 08:40:25 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:35827 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfDBMkZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 08:40:25 -0400
+        id S1729625AbfDBMpl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 08:45:41 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52881 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729165AbfDBMpk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 08:45:40 -0400
+X-Originating-IP: 109.213.83.19
 Received: from localhost (alyon-652-1-60-19.w109-213.abo.wanadoo.fr [109.213.83.19])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 3DF18100002;
-        Tue,  2 Apr 2019 12:40:22 +0000 (UTC)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 3647A60003;
+        Tue,  2 Apr 2019 12:45:37 +0000 (UTC)
+Date:   Tue, 2 Apr 2019 14:45:36 +0200
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -29,69 +31,71 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/10] clk: at91: sckc: add support for SAM9X60
-Date:   Tue,  2 Apr 2019 14:40:08 +0200
-Message-Id: <20190402124016.20558-3-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190402124016.20558-1-alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH v2 00/10]
+Message-ID: <20190402124536.GC3430@piout.net>
 References: <20190402124016.20558-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190402124016.20558-1-alexandre.belloni@bootlin.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+Please disregard that series as this doesn't include the proper patches.
 
-Add support for SAM9X60.
+On 02/04/2019 14:40:06+0200, Alexandre Belloni wrote:
+> This series add support for the sam9x60 clocks handled by the PMC.
+> 
+> The first four patches are preparatory patches to handle register layout
+> and offset differences. Then, a driver for the new interface for PLLs is
+> added and the final patch is the driver for the sam9x60 PMC.
+> 
+> changes in v2:
+>  - rebased on v5.1-rc1
+>  - changed the PLL_ACR handling to conform to the datasheet errata
+> 
+> Alexandre Belloni (7):
+>   clk: at91: allow configuring peripheral PCR layout
+>   clk: at91: allow configuring generated PCR layout
+>   clk: at91: usb: Add sam9x60 support
+>   clk: at91: master: Add sam9x60 support
+>   clk: at91: add sam9x60 PLL driver
+>   dt-bindings: clk: at91: add bindings for SAM9X60 pmc
+>   clk: at91: add sam9x60 pmc driver
+> 
+> Claudiu Beznea (3):
+>   clk: at91: sckc: add support to specify registers bit offsets
+>   clk: at91: sckc: add support for SAM9X60
+>   dt-bindings: clk: at91: add bindings for SAM9X60's slow clock
+>     controller
+> 
+>  .../devicetree/bindings/clock/at91-clock.txt  |   6 +-
+>  drivers/clk/at91/Makefile                     |   2 +
+>  drivers/clk/at91/at91sam9x5.c                 |   9 +
+>  drivers/clk/at91/clk-generated.c              |  48 +--
+>  drivers/clk/at91/clk-master.c                 |   8 +-
+>  drivers/clk/at91/clk-peripheral.c             |  46 +--
+>  drivers/clk/at91/clk-sam9x60-pll.c            | 330 ++++++++++++++++++
+>  drivers/clk/at91/clk-usb.c                    |  33 +-
+>  drivers/clk/at91/dt-compat.c                  |  12 +-
+>  drivers/clk/at91/pmc.h                        |  23 ++
+>  drivers/clk/at91/sam9x60.c                    | 307 ++++++++++++++++
+>  drivers/clk/at91/sama5d2.c                    |  10 +
+>  drivers/clk/at91/sama5d4.c                    |   8 +
+>  drivers/clk/at91/sckc.c                       | 142 ++++++--
+>  include/linux/clk/at91_pmc.h                  |  12 +-
+>  15 files changed, 895 insertions(+), 101 deletions(-)
+>  create mode 100644 drivers/clk/at91/clk-sam9x60-pll.c
+>  create mode 100644 drivers/clk/at91/sam9x60.c
+> 
+> -- 
+> 2.20.1
+> 
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/sckc.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index b7163d3a2269..b3075c51d260 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -459,6 +459,36 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
- CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
- 	       of_at91sam9x5_sckc_setup);
- 
-+static const struct clk_slow_offsets at91sam9x60_offsets = {
-+	.cr_rcen = AT91_SCKC_OFFSET_INVALID,
-+	.cr_osc32en = 1,
-+	.cr_osc32byp = 2,
-+	.cr_oscsel = 24,
-+};
-+
-+static void __init of_at91sam9x60_sckc_setup(struct device_node *np)
-+{
-+	struct device_node *childnp;
-+	void (*clk_setup)(struct device_node *np, void __iomem *io,
-+			  const struct clk_slow_offsets *offsets);
-+	const struct of_device_id *clk_id;
-+	void __iomem *regbase = of_iomap(np, 0);
-+
-+	if (!regbase)
-+		return;
-+
-+	for_each_child_of_node(np, childnp) {
-+		clk_id = of_match_node(sckc_clk_ids, childnp);
-+		if (!clk_id)
-+			continue;
-+		clk_setup = clk_id->data;
-+		clk_setup(childnp, regbase, &at91sam9x60_offsets);
-+	}
-+}
-+
-+CLK_OF_DECLARE(at91sam9x60_clk_sckc, "microchip,sam9x60-sckc",
-+	       of_at91sam9x60_sckc_setup);
-+
- static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
 -- 
-2.20.1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
