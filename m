@@ -2,28 +2,27 @@ Return-Path: <SRS0=qU15=SE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2A1C4360F
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 14:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D777BC4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 14:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A972133D
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 14:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A20CB20693
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 14:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbfDBOkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 10:40:03 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38259 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729541AbfDBOkD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 10:40:03 -0400
-X-Originating-IP: 90.88.30.125
+        id S1731636AbfDBOpZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 10:45:25 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:54479 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729526AbfDBOpZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 10:45:25 -0400
 Received: from localhost (aaubervilliers-681-1-89-125.w90-88.abo.wanadoo.fr [90.88.30.125])
         (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id B431760028;
-        Tue,  2 Apr 2019 14:39:56 +0000 (UTC)
-Date:   Tue, 2 Apr 2019 16:39:56 +0200
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 23E0B100015;
+        Tue,  2 Apr 2019 14:45:18 +0000 (UTC)
+Date:   Tue, 2 Apr 2019 16:45:18 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
@@ -39,20 +38,20 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com,
         linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v8 02/15] drm/sun4i: tcon: Compute DCLK dividers based on
- format, lanes
-Message-ID: <20190402143956.xu2yuyfditx5pbvw@flea>
+Subject: Re: [PATCH v8 01/15] drm/sun4i: dsi: Fix video start delay
+ computation
+Message-ID: <20190402144518.bevb2vg64mprhtjt@flea>
 References: <20190311133637.18334-1-jagan@amarulasolutions.com>
- <20190311133637.18334-3-jagan@amarulasolutions.com>
- <20190311153847.oz6ruqmptaq2befn@flea>
- <CAMty3ZChz=s7gdQyX9KnsAp1t5FrpouXGK74-r0SKJ89yJN67Q@mail.gmail.com>
- <20190319105307.omowzyhqu33e3pzy@flea>
- <CAMty3ZCjTLLw+zAfPKD3qZx_o9yti4MD0XL0Ve7VG1_6ToJ=pg@mail.gmail.com>
+ <20190311133637.18334-2-jagan@amarulasolutions.com>
+ <20190311153734.izg44ijwqqh2vpxc@flea>
+ <CAMty3ZDDARP02qMJZ9CXeiMv=kghoiUHgEAV9b4q+SrbLss40Q@mail.gmail.com>
+ <20190319102520.ldgjtyzrphuib3td@flea>
+ <CAMty3ZC+dTVuc2TWR=cqKNbrZe6j2vnwfXAqg6RbvduvY_63LA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bq55zguk5gxjx22z"
+        protocol="application/pgp-signature"; boundary="udtxcv6c7reia3ri"
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZCjTLLw+zAfPKD3qZx_o9yti4MD0XL0Ve7VG1_6ToJ=pg@mail.gmail.com>
+In-Reply-To: <CAMty3ZC+dTVuc2TWR=cqKNbrZe6j2vnwfXAqg6RbvduvY_63LA@mail.gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -60,84 +59,131 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---bq55zguk5gxjx22z
+--udtxcv6c7reia3ri
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Mar 21, 2019 at 07:40:32PM +0530, Jagan Teki wrote:
-> On Tue, Mar 19, 2019 at 4:23 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Thu, Mar 21, 2019 at 08:08:58PM +0530, Jagan Teki wrote:
+> On Tue, Mar 19, 2019 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > >
-> > On Mon, Mar 11, 2019 at 09:36:27PM +0530, Jagan Teki wrote:
-> > > On Mon, Mar 11, 2019 at 9:08 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > On Mon, Mar 11, 2019 at 09:31:11PM +0530, Jagan Teki wrote:
+> > > On Mon, Mar 11, 2019 at 9:07 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > > > >
-> > > > On Mon, Mar 11, 2019 at 07:06:24PM +0530, Jagan Teki wrote:
-> > > > > pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
-> > > > > MIPI clock topology in Allwinner DSI controller.
+> > > > On Mon, Mar 11, 2019 at 07:06:23PM +0530, Jagan Teki wrote:
+> > > > > Vertical video start delay is computed by excluding vertical front
+> > > > > porch value from total vertical timings.
 > > > > >
-> > > > > TCON dotclock driver is computing the desired DCLK divider based on
-> > > > > panel pixel clock along with input DCLK min, max divider values from
-> > > > > tcon driver and that would eventually set the pll-mipi clock rate.
+> > > > > This clearly confirmed from BSP code and here how it computed,
 > > > > >
-> > > > > The current code allows the TCON clock divider to have a default 4
-> > > > > for min, max ranges that would fail to compute the desired pll-mipi
-> > > > > rate while supporting new panels.
+> > > > > (drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > > > > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > > > > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > > > > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> > > > >    - panel->lcd_y - (panel->lcd_vbp)
+> > > > > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> > > > >                            - panel->lcd_y - panel->lcd_vbp
+> > > > > => timmings->ver_front_porch
 > > > > >
-> > > > > So, add the computation logic 'format/lanes' to dclk min and max dividers
-> > > > > and instead of default 4. This computation logic align with Allwinner A64
-> > > > > BSP, hoping that would work even for A33.
+> > > > > But the current driver is assuming it can exclude vertical front
+> > > > > porch along with vertical sync values from total vertical timings,
+> > > > > which resulting wrong start delay indeed wrong picture rendering
+> > > > > in the panel.
 > > > >
-> > > > Last time we discussed this, we found out that this wasn't the case,
-> > > > even in the BSP.
+> > > > Same story here: which panel, which datasheet, which "wrong picture
+> > > > rendering"?
 > > >
-> > > This was the case for BSP to compute pll-mipi not for TCON_DSI clock
-> > > register, SUN4I_TCON0_DCLK_REG, which marked the divider 4 by default.
-> > >
-> > > > What compelling evidence have you found that makes you say otherwise?
-> > >
-> > > divider 4 isn't worked, this I would mentioned before as well.
+> > > It's bananapi,s070wv20-ct16 DSI
+>
+> 2. as I said before, it is the same panel for both RGB and DSI, and
+> ICN6211 bridge is converter for RGB-to-DSI. we don't have any specific
+> programming or detailed datasheet from this except BSP DSI panel
+> sequence along with BSP panel timings which are similar to RGB one.
+>
+> 3. wrong picture rendering is something sprightliness followed by
+> colors jerks, which I couldn't explain it properly ie reason I
+> mentioned some generic term for understanding.
+
+Some generic term doesn't explain anything, it barely makes a
+statement.
+
+> > You're answering one out of three questions.
 > >
-> > Maybe you mentionned it before, but it's nowhere to be found in your
-> > commit log.
->
-> I have added it in 3rd paragraph in commit message, may be you missed
-> it or you may look for different text.
->
-> "The current code allows the TCON clock divider to have a default 4
-> for min, max ranges that would fail to compute the desired pll-mipi
-> rate while supporting new panels."
-
-And you're still not explaining *why* that is an issue, and what makes
-you think that your solution is the right one.
-
-Seriously, I feel like this discussion is going in circles. I've been
-asking for that since your very first version.
-
-> > > Tested this on 4 different panels, and below are the desired divider values
-> > > and pll-mipi clock rate with respect to pixel clock frequency.
+> > > > > Example: timings, where it produces the issue.
+> > > > > {
+> > > > >       .vdisplay       = 600,
+> > > > >       .vsync_start    = 600 + 12,
+> > > > >       .vsync_end      = 600 + 12 + 2,
+> > > > >       .vtotal         = 600 + 12 + 2 + 21,
+> > > > > }
+> > > >
+> > > > Can you 100% trust those timings?
 > > >
-> > > - 55MHz pixel clock with 4-lane panel, and the desired DSI clock divider
-> > >   is 6 with the output parent clock rate of 330MHz.
-> > > - 30MHz pixel clock with 4-lane panel, and the desired DSI clock divider
-> > >   is 6 with parent clock rate of 180MHz.
-> > > - 27.5Mhz pixel clock with 2-lane pane, and the desired DSI clock divider
-> > >   is 12 with the output parent clock rate of 330MHz.
-> > > - 147MHz pixel clock with 4-lane panel, and the desired DSI clock divider
-> > >   is 6 with the output parent clock rate of 882MHz.
-> > >
-> > > BSP trying to use this format/lane to compute dsi divider that in-turn
-> > > using pll-mipi set_rate but TCON0_DCLK_REG keep constant 4.
+> > > ie. reason, I have given the Mainline timings [1]. The above timings
+> > > are wrongly mentioned actual timings are from [1]
 > >
-> > Feel free to reply to
-> > http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/629596.html
+> > You're still answering partially here. Those timings are working for
+> > RGB, you have no proof that we need to make the same adjustments for
+> > DSI.
 >
-> Yes, I have replied at that time itself, please check.
->
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/629673.html
->
-> Here I have taken the pixel clock to 30Mhz for example in Bananapi
-> panel, and the above gist the pixel is 148Mhz from another panel.
+> It is RGB to DSI bridge on the same panel, as I explained above and it
+> would shared same timings. I can confirm or proved it from BSP panel
+> timings which are working. indeed same timings are been in Mainline
+> tree, we can trust them atleast.
 
-Again, without providing any reference, just making vague statements.
+You're missing the point. If the bridge has a different tolerance
+range to DSI timings for example, then you're screwed, even though the
+timings work in RGB.
+
+> > > > > It produces the desired start delay value as 19 but the correct working
+> > > > > value should be 513.
+> > > > >
+> > > > > So, Fix it by computing proper video start delay.
+> > > > >
+> > > > > Fixes: 69006ef0ecb1 ("drm/sun4i: dsi: Change the start delay calculation")
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 10 ++++++++--
+> > > > >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > index 62a508420227..8d6292c0158b 100644
+> > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > @@ -364,8 +364,14 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+> > > > >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+> > > > >                                          struct drm_display_mode *mode)
+> > > > >  {
+> > > > > -     u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
+> > > > > -     u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
+> > > > > +     u16 delay = mode->vtotal - (mode->vsync_start - mode->vdisplay);
+> > > > > +
+> > > > > +     /**
+> > > > > +      * BSP comment:
+> > > > > +      * put start_delay to tcon. set ready sync early to dramfreq,
+> > > > > +      * so set start_delay 1
+> > > > > +      */
+> > > >
+> > > > That doesn't make any sense to me... What does it mean?
+> > >
+> > > Which is meaning as above stated as "BSP comment" from here[2]
+> >
+> > It doesn't matter where you took it from. If you cannot explain what
+> > happen, putting a random label that doesn't explain anything will not
+> > help.
+>
+> I have no idea or document to refer why this 1 would be added. so I
+> used same comment from BSP like many places on sun4i does. w/o this +1
+> the delay is computed to 512 which is not working and with this the
+> desired delay is 513 which is perfectly working.
+>
+> If you have any idea on this, please share so-that I can add it in
+> comment otherwise.
+
+You're the one with the panel, the issue and apparently a solution,
+and the whole problem we're having is because I don't have any idea on
+what that issue is precisely, and neither why your solution makes sense.
+
+I'm not sure I'm the best to write a comment in that situation.
 
 Maxime
 
@@ -146,15 +192,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---bq55zguk5gxjx22z
+--udtxcv6c7reia3ri
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKN0OwAKCRDj7w1vZxhR
-xVZbAP96ZzoBDc0Pt7lVSk9TviBgP7GCQGg3+WuSAYt9gqUgzgEAlxzjZ38oRP0f
-FML4gjhqwD8TrJt2HZ3R2m0zWQrMLAM=
-=qO40
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKN1fgAKCRDj7w1vZxhR
+xeE/APwJ6P50rKOZvJ71IaZ0Ft7qfzWfSI5WNwoLRnca/X4A2AEAsVv6PNIshCT/
+RHPgyAEnrnIKEDiwoUN3EHaYWHjnMAg=
+=pFtn
 -----END PGP SIGNATURE-----
 
---bq55zguk5gxjx22z--
+--udtxcv6c7reia3ri--
