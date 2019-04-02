@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDE0C4360F
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6271DC4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30B32084C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2621B2084C
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:01:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554246095;
-	bh=dzd7PCwRRfPfuAc/7nvl9MamfV8T+7jn8AD1EHfUI04=;
+	s=default; t=1554246097;
+	bh=FI6J8+tdBZyUTPiLwuqOYFPSkuwFYL9r3/sySYSKvjM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zFwKSlJCLAgVdIaFUlpECrFc4ouRRKsU2uIzhzbNAKm70JVubG4evST9XW1o02UA1
-	 WpgERB2cFhhdHRtyTzyQ4xytDamDiEp9x0J4hAqy1ipXt6RnMETqBqtZbEmUfJOYYM
-	 rsMyU5W3jUqycsebLnFPeW0DMJ5iH7rgJXWswLe8=
+	b=yvxiepbdIaVq4IYPHjslsco3Lyr8/+KHzeZAczAYSBHyZQYqM95SdEAN/ZQobg+B1
+	 aqJpsiFpz0t7qniDm4pn5jvB7udc2J/UC0zpmz6FctYs7nHuMxRqoacLCz2R90mNYk
+	 JQuiDCmNpH+jT/PYECBNMRoPKkg7oJca1zX66LCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726071AbfDBXBb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 19:01:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49906 "EHLO mail.kernel.org"
+        id S1726486AbfDBXBg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 19:01:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726486AbfDBXBH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Apr 2019 19:01:07 -0400
+        id S1726074AbfDBXBG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Apr 2019 19:01:06 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE16520882;
+        by mail.kernel.org (Postfix) with ESMTPSA id 19A3F20856;
         Tue,  2 Apr 2019 23:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1554246066;
-        bh=dzd7PCwRRfPfuAc/7nvl9MamfV8T+7jn8AD1EHfUI04=;
+        bh=FI6J8+tdBZyUTPiLwuqOYFPSkuwFYL9r3/sySYSKvjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1l7rqJhaxVp3TDDQ9XgOLXoz7K6Vif2Z31tuFnPRWusg7++JThajA3NcbTy00Y5yK
-         FnnOrzsKmC92RxQkcbXDRTLqicP6D0hCVtsZUI1n7iXQ5FwmToNRdKSHHDEMkf5xjx
-         5lShOWBPUOLzNEkaP5hp3T6arNLojkz04aR8Vwew=
+        b=AgII9M9DeZ668CSAHnIAv+SyFo0Bu2LUVTlP/1f1kb145J14RuORzUYzQZx4OVyww
+         MjInEg/VnivF8cI5ns+uDYjCw1xmhNUE1yM9v+QbGq1Idga1WVMfkfZ3jqeBB+wsac
+         NPymgWKSCK4mG2cKz83EjAnsi68VRRsOJh2t7088=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 5/8] clk: nxp: Drop 'flags' on fixed_rate clk macro
-Date:   Tue,  2 Apr 2019 16:01:01 -0700
-Message-Id: <20190402230104.105845-6-sboyd@kernel.org>
+Subject: [PATCH 3/8] clk: Document CLK_MUX_READ_ONLY mux flag
+Date:   Tue,  2 Apr 2019 16:00:59 -0700
+Message-Id: <20190402230104.105845-4-sboyd@kernel.org>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 In-Reply-To: <20190402230104.105845-1-sboyd@kernel.org>
 References: <20190402230104.105845-1-sboyd@kernel.org>
@@ -54,52 +54,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The flags argument here is always 0, and we want to get rid of the flags
-member of the clk_fixed_rate struct. So remove this here and just pass 0
-when it's used.
+This flag isn't documented. Document it.
 
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/nxp/clk-lpc32xx.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ include/linux/clk-provider.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 5eeecee17b69..7524d19fe60b 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -1085,13 +1085,12 @@ struct clk_hw_proto {
- 	};
- };
- 
--#define LPC32XX_DEFINE_FIXED(_idx, _rate, _flags)			\
-+#define LPC32XX_DEFINE_FIXED(_idx, _rate)			\
- [CLK_PREFIX(_idx)] = {							\
- 	.type = CLK_FIXED,						\
- 	{								\
- 		.f = {							\
- 			.fixed_rate = (_rate),				\
--			.flags = (_flags),				\
- 		},							\
- 	},								\
- }
-@@ -1225,7 +1224,7 @@ struct clk_hw_proto {
- }
- 
- static struct clk_hw_proto clk_hw_proto[LPC32XX_CLK_HW_MAX] = {
--	LPC32XX_DEFINE_FIXED(RTC, 32768, 0),
-+	LPC32XX_DEFINE_FIXED(RTC, 32768),
- 	LPC32XX_DEFINE_PLL(PLL397X, pll_397x, HCLKPLL_CTRL, BIT(1)),
- 	LPC32XX_DEFINE_PLL(HCLK_PLL, hclk_pll, HCLKPLL_CTRL, PLL_CTRL_ENABLE),
- 	LPC32XX_DEFINE_PLL(USB_PLL, usb_pll, USB_CTRL, PLL_CTRL_ENABLE),
-@@ -1468,7 +1467,7 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
- 		struct clk_fixed_rate *fixed = &clk_hw->f;
- 
- 		clk = clk_register_fixed_rate(NULL, lpc32xx_clk->name,
--			parents[0], fixed->flags, fixed->fixed_rate);
-+			parents[0], 0, fixed->fixed_rate);
- 		break;
- 	}
- 	default:
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index adb8a58e213c..edff3c5883bc 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -499,6 +499,8 @@ void clk_hw_unregister_divider(struct clk_hw *hw);
+  *	register, and mask of mux bits are in higher 16-bit of this register.
+  *	While setting the mux bits, higher 16-bit should also be updated to
+  *	indicate changing mux bits.
++ * CLK_MUX_READ_ONLY - The mux registers can't be written, only read in the
++ * 	.get_parent clk_op.
+  * CLK_MUX_ROUND_CLOSEST - Use the parent rate that is closest to the desired
+  *	frequency.
+  */
 -- 
 Sent by a computer through tubes
 
