@@ -2,83 +2,88 @@ Return-Path: <SRS0=qU15=SE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F1FC10F0B
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 20:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6900C4360F
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 21:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987F62084C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 20:32:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554237125;
-	bh=qSfAGRL8HC7tvGvlO0NgoiQufS2iepqp86Yb9DRd6fA=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=2CwTKISOeNArkPLmiNGpqMKcICmDKlfMUa90SpED9zoW7+3/Pk3dF6ZqEKfsms8bT
-	 pt2TBVFATl8+0/lC9Ar9ufDhURR7zQVqPSEcPLzgTfc5C0U9KR30Nf66X10Q0Nupx0
-	 aLawichWP3RJ3Phhr8env0ehyIAYhZS65KAXME6Y=
+	by mail.kernel.org (Postfix) with ESMTP id 9CD7020674
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 21:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbfDBUcF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 16:32:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51212 "EHLO mail.kernel.org"
+        id S1726130AbfDBVFv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Apr 2019 17:05:51 -0400
+Received: from mga01.intel.com ([192.55.52.88]:61983 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbfDBUcE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Apr 2019 16:32:04 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23BCB2075E;
-        Tue,  2 Apr 2019 20:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554237124;
-        bh=qSfAGRL8HC7tvGvlO0NgoiQufS2iepqp86Yb9DRd6fA=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=PeOu2vIab04tRW7C7DJM6LhTdkMKplZ6lgyPpTVo9w2jxu6Kvsnwcpb47MsC4E10Z
-         lPvHPAMkZz2ruqb8lRrV0sqQFMk2mBktu0XZtzDV5bJovdibud9gNPCRJDNtZLERuW
-         crzqFyFAIhtud+2CkmryCxAwIyPVD273wAfT5kyw=
-Content-Type: text/plain; charset="utf-8"
+        id S1725822AbfDBVFu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Apr 2019 17:05:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Apr 2019 14:05:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,302,1549958400"; 
+   d="scan'208";a="147488993"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.149]) ([10.7.153.149])
+  by orsmga002.jf.intel.com with ESMTP; 02 Apr 2019 14:05:49 -0700
+Subject: Re: [PATCH 3/5] media: dt-bindings: aspeed-video: Add missing
+ memory-region property
+To:     Eddie James <eajames@linux.ibm.com>, linux-media@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, robh+dt@kernel.org,
+        mchehab@kernel.org, linux-clk@vger.kernel.org
+References: <1554229504-5661-1-git-send-email-eajames@linux.ibm.com>
+ <1554229504-5661-4-git-send-email-eajames@linux.ibm.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <c715fe6d-d443-c9b4-0a58-29941e0ed539@linux.intel.com>
+Date:   Tue, 2 Apr 2019 14:05:49 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190330123317.16821-6-drvlabo@gmail.com>
-References: <20190330123317.16821-1-drvlabo@gmail.com> <20190330123317.16821-6-drvlabo@gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC 5/5] mips: ralink: mt7620: add nodes for clock provider
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        NOGUCHI Hiroshi <drvlabo@gmail.com>
-To:     John Crispin <john@phrozen.org>,
-        NOGUCHI Hiroshi <drvlabo@gmail.com>
-Message-ID: <155423712332.20095.11826731258979770295@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Tue, 02 Apr 2019 13:32:03 -0700
+In-Reply-To: <1554229504-5661-4-git-send-email-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting NOGUCHI Hiroshi (2019-03-30 05:33:17)
-> @@ -17,6 +27,18 @@
->                 compatible =3D "mti,cpu-interrupt-controller";
->         };
-> =20
-> +       pll: pll {
-> +               compatible =3D "mediatek,mt7620-pll", "syscon";
+Hi Eddie,
 
-This binding looks wrong. It's making a node per clk in DT when we
-should be making nodes only for the clk controller. The use of syscon is
-also a sign that things are heading in the wrong direction.
-
-> +               #clock-cells =3D <1>;
-> +               clock-output-names =3D "cpu", "sys", "periph", "pcmi2s", =
-"xtal";
-> +       };
+On 4/2/2019 11:25 AM, Eddie James wrote:
+> Missed documenting this property in the initial commit.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>   Documentation/devicetree/bindings/media/aspeed-video.txt | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/aspeed-video.txt b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> index 78b464a..346c2d3 100644
+> --- a/Documentation/devicetree/bindings/media/aspeed-video.txt
+> +++ b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> @@ -14,6 +14,11 @@ Required properties:
+>   			the VE
+>    - interrupts:		the interrupt associated with the VE on this platform
+>   
+> +Optional properties:
+> + - memory-region:
+> +	phandle to a memory region to allocate from, as defined in
+> +	Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
 > +
-> +       clkctrl: clkctrl {
-> +               compatible =3D "mediatek,mt7620-clock", "ralink,rt2880-cl=
-ock";
-> +               #clock-cells =3D <1>;
-> +               ralink,sysctl =3D <&sysc>;
-> +       };
+>   Example:
+>   
+>   video-engine@1e700000 {
+> @@ -23,4 +28,5 @@ video-engine@1e700000 {
+>       clock-names = "vclk", "eclk";
+>       resets = <&syscon ASPEED_RESET_VIDEO>;
+>       interrupts = <7>;
+> +    memory-region = <&video_engine_memory>
+
+nit: a semicolon at the end of the line.
+
+>   };
+> 
