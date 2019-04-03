@@ -2,159 +2,82 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAB8C4360F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDC2C10F0B
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9C621473
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 808FE21473
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:32:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wepfVLKE"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="FQhMN//2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725940AbfDCJbP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 05:31:15 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59436 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfDCJbP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 05:31:15 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x339V4ib011292;
-        Wed, 3 Apr 2019 04:31:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1554283864;
-        bh=mmudK46J15CJFT4qMmYeR4xgQWqPuI4jG+nU4vhcOjs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=wepfVLKEqZwkoO40p7KHsugofYqTPMaZCem4wi77kshSc2M2EK+K7k6bFlR0ZP9rT
-         tOr3AG9remTdeAZSG/3x3Shtt7h1jMl9Si6zPjFP3BCan/EWWqdvWpD3n5qlfr+n5j
-         KrDOUGDI41KBioczfdwu0MkcUaMwlWMgrhxdMblw=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x339V4nB103943
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 3 Apr 2019 04:31:04 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 3 Apr
- 2019 04:31:03 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 3 Apr 2019 04:31:03 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x339Uvam012755;
-        Wed, 3 Apr 2019 04:30:58 -0500
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
- syscon gate clock
-To:     Rob Herring <robh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-References: <20190312090518.28666-1-vigneshr@ti.com>
- <20190312090518.28666-2-vigneshr@ti.com> <20190328123142.GA6229@bogus>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <a998b977-99ef-876e-a226-4f1738392f9f@ti.com>
-Date:   Wed, 3 Apr 2019 12:30:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        id S1726183AbfDCJcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 05:32:10 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:35994 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfDCJcJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 05:32:09 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E5C4025AD6C;
+        Wed,  3 Apr 2019 20:32:07 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554283928; bh=zFhPSrrsHYmP0uY0sJYnD3RpalcG1S/o012vEEn/L1c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FQhMN//2e6Z+h3BpfTHgQwBA/wa1UDkgXL9k3PbuYw6ZI7x+mUW7GkbztP1PvucgW
+         xQukSOhmv+HEKIYyalpg2zR1aRrjMQESlk2auHNqkGc3ngO5npMEwqQuw+AgtDkBuc
+         lgV5IPBoeLAmdIqNgewSZLolX+SXX62TC3jHKjZk=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 06513940361; Wed,  3 Apr 2019 11:32:05 +0200 (CEST)
+Date:   Wed, 3 Apr 2019 11:32:05 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH v2] clk: renesas: rcar-gen3: Fix
+ cpg_sd_clock_round_rate() return value
+Message-ID: <20190403093205.bhdjpvicuo5vqsgl@verge.net.au>
+References: <20190402070856.28066-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20190328123142.GA6229@bogus>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190402070856.28066-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/03/2019 14:31, Rob Herring wrote:
-> On Tue, Mar 12, 2019 at 02:35:17PM +0530, Vignesh Raghavendra wrote:
->> Add dt bindings for TI syscon gate clock.
->>
->> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
->> ---
->>   .../bindings/clock/ti,syscon-gate-clock.txt   | 35 +++++++++++++++++++
->>   1 file changed, 35 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
->> new file mode 100644
->> index 000000000000..f2bc4281ddba
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
->> @@ -0,0 +1,35 @@
->> +TI syscon gate clock
->> +
->> +The gate clock node must be provided inside a system controller node.
->> +
->> +Required:
->> +- comaptible: Must be "ti,syscon-gate-clock"
->> +- reg: Offset of register that controls the clock within syscon regmap
->> +- ti,clock-bit-idx: bit index that control gate/ungating of clock
->> +- clocks: phandle to the clock parent
->> +- #clock-cells: must be <0>
->> +
->> +Example:
->> +	ctrlmmr_epwm_ctrl: syscon@104140{
->> +		compatible = "syscon", "simple-bus";
+On Tue, Apr 02, 2019 at 09:08:56AM +0200, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> Can't be both of these...
-
-Is this a hard requirement? We seem to have few instances in the various 
-DTS files for various vendors where this is done, syscon is paired with 
-simple-mfd or simple-bus, or something else.
-
-Basically, syscon by itself does not probe its children, and you can't 
-have the simple syscon support from kernel side if you don't have the 
-syscon compatible. Alternative is that we don't add any of the syscon 
-children under the syscon but add them as separate nodes outside it.
-
-The above is not an issue for this patch itself if we ditch the separate 
-clock nodes, but it is more of a question about the syscon functionality 
-itself.
-
--Tero
-
+> cpg_sd_clock_round_rate() may return an unsupported clock rate for the
+> requested clock rate. Therefore, when cpg_sd_clock_set_rate() sets the
+> clock rate acquired by cpg_sd_clock_round_rate(), an error may occur.
 > 
->> +		reg = <0x0 0x104140 0x0 0x18>;
->> +		ranges = <0x0 0x0 0x104140>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		ehrpwm0_tbclk: clk@0 {
->> +			compatible = "ti,syscon-gate-clock";
->> +			reg = <0x0>;
->> +			#clock-cells = <0>;
->> +			clocks = <&k3_clks 40 0>;
->> +			ti,clock-bit-idx = <0>;
+> This is not conform the clk API design.
 > 
-> This would imply you have multiple nodes at one address which is
-> discouraged.
+> This patch fixes that by making sure cpg_sd_clock_calc_div() considers
+> only the division values defined in cpg_sd_div_table[].
+> With this fix, the cpg_sd_clock_round_rate() always return a support
+> clock rate.
 > 
->> +		};
-> 
-> We generally don't describe clocks as 1 clock per node. Give the parent
-> a specific compatible and make it a clock provider.
-> 
->> +
->> +		ehrpwm1_tbclk: clk@4 {
->> +			compatible = "ti,syscon-gate-clock";
->> +			reg = <0x4>;
->> +			#clock-cells = <0>;
->> +			clocks = <&k3_clks 41 0>;
->> +			ti,clock-bit-idx = <0>;
->> +		};
->> +	};
->> -- 
->> 2.21.0
->>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Use "<" instead of "<=" to use first match (doesn't matter, though,
+>     but is more aligned with the behavior of cpg_sd_clock_calc_div()),
+>   - Keep best_div instead of best_rate, to avoid extra
+>     DIV_ROUND_CLOSEST().
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thanks for the updates.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
