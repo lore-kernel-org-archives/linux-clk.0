@@ -2,169 +2,159 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BF3C10F0B
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAB8C4360F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 575752082C
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF9C621473
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:31:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HwASyjou"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wepfVLKE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfDCJa1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 05:30:27 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42473 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfDCJa1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 05:30:27 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p6so8011533pgh.9
-        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2019 02:30:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3vxzr4YfdSL7AqcSy++jBefiyTCDVXxP9wZEc/HTMuA=;
-        b=HwASyjou6/pDYEPvknboGzq4ZzH7Q7M6hOXJTjhBz5K4z0DoN016La99LxAMg57R7w
-         HuA2ex0ZJnl30krj9S67GKgUGGeQAKqBIw1DMHQG1rxtLfwiVGLFIp3G9o8uzo8Xrl/c
-         LZmnGKaYR8G71htzsOnZ1pQfST6ROxOESCkVi44/gnBtawR+pVJU0wz9nwS7wX4sILBo
-         5pd6sYvkmX9D2mq5hAUWRiKAZp2S0se2njuGcHvNSvt9mPSw/W3JcD33w75VLveYPwY6
-         jVWrUxWogP7On1U7WYDYLGljIaAA6xzNCMEEo8SJQkaoMh+aWOUhL8MuybrRz7D+8Fpb
-         frUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3vxzr4YfdSL7AqcSy++jBefiyTCDVXxP9wZEc/HTMuA=;
-        b=OWNxNXUhznLf37gRVtOTVLVNyZmSyQy+0heZeWst0rPGxa/E5l+d+xa4puzXxb9XaX
-         iP4YKJhHPR2Ge0Gbp+mH8h5d1AbMl23LPR7Wba4h/Kdt/hfx7n8N3cSVG1JL1WvlzcWI
-         jYBilewKk1GdmGMTkGyB67446j/VHKMtA6d+90RPj8dDJvNWjHEq1y/uXJ3QmsolP2iT
-         wj0a1q8JNn/HO3z+8vC6m4SYYSqz3yAnJQKJtye5fz3+Mq5UcRr/0KnaEE4CtL4noRCI
-         12z1AytJUXNXu06KMmxg/iWAPGMsaktCZSXjPztl8EdvC5D2ESknc4rmprCgoO5cFRu/
-         9hUQ==
-X-Gm-Message-State: APjAAAWlDtzkehyaQKjuaTvf2a6BBOL7BUeQ3RiJ8oRMSZ22jPxODuJf
-        WsMTh3wZjmy6t7/NpzL2I11CYg==
-X-Google-Smtp-Source: APXvYqyuQRAGZADbiPD5QCi5D7GYfyZQXTBs9s6gFT9Ed48AXWS980uJiyfLCvKQr+//tVGeNERZ6g==
-X-Received: by 2002:a62:1385:: with SMTP id 5mr73688099pft.221.1554283826227;
-        Wed, 03 Apr 2019 02:30:26 -0700 (PDT)
-Received: from dell ([147.50.13.10])
-        by smtp.gmail.com with ESMTPSA id i15sm18573221pfd.162.2019.04.03.02.30.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Apr 2019 02:30:25 -0700 (PDT)
-Date:   Wed, 3 Apr 2019 10:30:15 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1725940AbfDCJbP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 05:31:15 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59436 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfDCJbP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 05:31:15 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x339V4ib011292;
+        Wed, 3 Apr 2019 04:31:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1554283864;
+        bh=mmudK46J15CJFT4qMmYeR4xgQWqPuI4jG+nU4vhcOjs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=wepfVLKEqZwkoO40p7KHsugofYqTPMaZCem4wi77kshSc2M2EK+K7k6bFlR0ZP9rT
+         tOr3AG9remTdeAZSG/3x3Shtt7h1jMl9Si6zPjFP3BCan/EWWqdvWpD3n5qlfr+n5j
+         KrDOUGDI41KBioczfdwu0MkcUaMwlWMgrhxdMblw=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x339V4nB103943
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 3 Apr 2019 04:31:04 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 3 Apr
+ 2019 04:31:03 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 3 Apr 2019 04:31:03 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x339Uvam012755;
+        Wed, 3 Apr 2019 04:30:58 -0500
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
+ syscon gate clock
+To:     Rob Herring <robh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH v11 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Message-ID: <20190403093015.GJ11301@dell>
-References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
- <39efebe0396dd42de30d37c6f3c1ef2926c90210.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
- <20190403073152.GM4187@dell>
- <20190403084732.GA3493@localhost.localdomain>
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <20190312090518.28666-1-vigneshr@ti.com>
+ <20190312090518.28666-2-vigneshr@ti.com> <20190328123142.GA6229@bogus>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <a998b977-99ef-876e-a226-4f1738392f9f@ti.com>
+Date:   Wed, 3 Apr 2019 12:30:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190403084732.GA3493@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190328123142.GA6229@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 03 Apr 2019, Matti Vaittinen wrote:
+On 28/03/2019 14:31, Rob Herring wrote:
+> On Tue, Mar 12, 2019 at 02:35:17PM +0530, Vignesh Raghavendra wrote:
+>> Add dt bindings for TI syscon gate clock.
+>>
+>> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+>> ---
+>>   .../bindings/clock/ti,syscon-gate-clock.txt   | 35 +++++++++++++++++++
+>>   1 file changed, 35 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
+>> new file mode 100644
+>> index 000000000000..f2bc4281ddba
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
+>> @@ -0,0 +1,35 @@
+>> +TI syscon gate clock
+>> +
+>> +The gate clock node must be provided inside a system controller node.
+>> +
+>> +Required:
+>> +- comaptible: Must be "ti,syscon-gate-clock"
+>> +- reg: Offset of register that controls the clock within syscon regmap
+>> +- ti,clock-bit-idx: bit index that control gate/ungating of clock
+>> +- clocks: phandle to the clock parent
+>> +- #clock-cells: must be <0>
+>> +
+>> +Example:
+>> +	ctrlmmr_epwm_ctrl: syscon@104140{
+>> +		compatible = "syscon", "simple-bus";
+> 
+> Can't be both of these...
 
-> Hello Lee,
-> 
-> Thanks for taking a look on this again =) I agree with most of the
-> comments and correct them at next version.
-> 
-> On Wed, Apr 03, 2019 at 08:31:52AM +0100, Lee Jones wrote:
-> > On Mon, 25 Mar 2019, Matti Vaittinen wrote:
-> > 
-> > > ROHM BD70528MWV is an ultra-low quiescent current general
-> > > purpose single-chip power management IC for battery-powered
-> > > portable devices.
-> > > 
-> > > Add MFD core which enables chip access for following subdevices:
-> > > 	- regulators/LED drivers
-> > > 	- battery-charger
-> > > 	- gpios
-> > > 	- 32.768kHz clk
-> > > 	- RTC
-> > > 	- watchdog
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > + * Mapping of main IRQ register bits to sub irq register offsets so
-> > 
-> > "sub-IRQ"
-> > 
-> > > + * that we can access corect sub IRQ registers based on bits that
-> > 
-> > "sub IRQ" is also fine, but please standardise.
-> > 
-> > I do prefer "sub-IRQ" though.
-> 
-> I'll go with "sub-IRQ" then
-> 
-> > > +
-> > > +#define WD_CTRL_MAGIC1 0x55
-> > > +#define WD_CTRL_MAGIC2 0xAA
-> > > +/**
-> > > + * bd70528_wdt_set - arm or disarm watchdog timer
-> > > + *
-> > > + * @data:	device data for the PMIC instance we want to operate on
-> > > + * @enable:	new state of WDT. zero to disable, non zero to enable
-> > > + * @old_state:	previous state of WDT will be filled here
-> > > + *
-> > > + * Arm or disarm WDT on BD70528 PMIC. Expected to be called only by
-> > > + * BD70528 RTC and BD70528 WDT drivers. The rtc_timer_lock must be taken
-> > > + * by calling bd70528_wdt_lock before calling bd70528_wdt_set.
-> > > + */
-> > > +int bd70528_wdt_set(struct rohm_regmap_dev *data, int enable, int *old_state)
-> > 
-> > Why doesn't this reside in the watchdog driver?
-> 
-> If my memory serves me right we shortly discussed this already during v8
-> review ;) Cant blame you though as I have seen some of the mail traffic
-> going through your inbox :D
-> 
-> The motivation to have the functions exported from MFD is to not create
-> sirect dependency between RTC and WDT. There may be cases where we want
-> to leave either RTC or WDT out of compilation. MFD is always needed so
-> the dependency from MFD to RTC/WDT does not harm.
-> 
-> (Here's some discussion necromancy if you are interested in re-reading
-> how we did end up with this implementation:
-> https://lore.kernel.org/lkml/20190212091723.GZ20638@dell/)
-> 
-> I hope you are still Ok with having the WDT control functions in MFD.
+Is this a hard requirement? We seem to have few instances in the various 
+DTS files for various vendors where this is done, syscon is paired with 
+simple-mfd or simple-bus, or something else.
 
-OOI, why does the RTC need to control the WDT?
+Basically, syscon by itself does not probe its children, and you can't 
+have the simple syscon support from kernel side if you don't have the 
+syscon compatible. Alternative is that we don't add any of the syscon 
+children under the syscon but add them as separate nodes outside it.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The above is not an issue for this patch itself if we ditch the separate 
+clock nodes, but it is more of a question about the syscon functionality 
+itself.
+
+-Tero
+
+> 
+>> +		reg = <0x0 0x104140 0x0 0x18>;
+>> +		ranges = <0x0 0x0 0x104140>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		ehrpwm0_tbclk: clk@0 {
+>> +			compatible = "ti,syscon-gate-clock";
+>> +			reg = <0x0>;
+>> +			#clock-cells = <0>;
+>> +			clocks = <&k3_clks 40 0>;
+>> +			ti,clock-bit-idx = <0>;
+> 
+> This would imply you have multiple nodes at one address which is
+> discouraged.
+> 
+>> +		};
+> 
+> We generally don't describe clocks as 1 clock per node. Give the parent
+> a specific compatible and make it a clock provider.
+> 
+>> +
+>> +		ehrpwm1_tbclk: clk@4 {
+>> +			compatible = "ti,syscon-gate-clock";
+>> +			reg = <0x4>;
+>> +			#clock-cells = <0>;
+>> +			clocks = <&k3_clks 41 0>;
+>> +			ti,clock-bit-idx = <0>;
+>> +		};
+>> +	};
+>> -- 
+>> 2.21.0
+>>
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
