@@ -1,135 +1,117 @@
-Return-Path: <SRS0=qU15=SE=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2945C4360F
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A557C4360F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 04:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4E12084C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Apr 2019 23:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1852B206B7
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 04:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554265608;
+	bh=5nEs65n22BWPNmTlbcsE451hcELAvEwA4lAN2tfwRYc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kV+/MJEgHkYm/Ec7TReaHnl4nF0jxD73bK23y8wdGLRHNrN6rMklm9XTUVnTJAucM
+	 Cqh17UFZIKI7W3BMFNfW/bWSHMXO25BGpudtaY4sik1sC7IxupR6cmXAAQcapL4/ta
+	 SBeuCS/F7kVTdXbYELUecJ14QhjRjEenxT26gqBU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbfDBXFc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Apr 2019 19:05:32 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44990 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbfDBXFc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Apr 2019 19:05:32 -0400
-Received: by mail-oi1-f194.google.com with SMTP id i21so11957119oib.11;
-        Tue, 02 Apr 2019 16:05:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FNGeNmpMXmbmbGQ8XUlYBSMpsJzpAXQAXL/ACI9Obp8=;
-        b=Ev2fkpBvfCJyBe6bJrpEBdCxczs//8eMuCPxs/BFF6qSHzuBHU4/TVjfhvDS4i8KZx
-         f5Xirh+IdrGMaROlSt7V5RMGNUFGggc6F0xPDgztZaUZlW5jAiGLh0CpxTTgo3FyRFS+
-         5RBkynTuNG7gzJpADIvFXvEa+yFQktYHj0qcZoAyLFGf3frrgR9fu5Odint6YG2ngy9u
-         nKAkFIaFn0Bvv6EBReFh9YT+0+Yd72FC5s3JBBO5VPD+e+qvwHfmDn03rlGtlmircdek
-         Wf835dXefITIe9kJdq2IyBMA0Sp7b95BbAz9VyPwcXSyR+UcC3Pu2JabWuy/CxW0/3DT
-         YD6g==
-X-Gm-Message-State: APjAAAU3sZB/eVRuCdjIDXxHj9Qw0ev2QcLaCl/5x7XDrknlYh+SgDvk
-        mo7SCnp83wYR8YL6+MxnWGFyuBHqKsg=
-X-Google-Smtp-Source: APXvYqxFYoMjRSkD8WuoscEFjLHD05z//XpzPEO6cQL/gT2y1CHSA4zpx8gjKy2axPO5slwJ++76tA==
-X-Received: by 2002:a05:6808:650:: with SMTP id z16mr19166461oih.100.1554246330858;
-        Tue, 02 Apr 2019 16:05:30 -0700 (PDT)
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
-        by smtp.gmail.com with ESMTPSA id p132sm5889224oig.37.2019.04.02.16.05.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Apr 2019 16:05:30 -0700 (PDT)
-Received: by mail-oi1-f177.google.com with SMTP id y84so11961896oia.12;
-        Tue, 02 Apr 2019 16:05:29 -0700 (PDT)
-X-Received: by 2002:aca:d984:: with SMTP id q126mr12607185oig.108.1554246329538;
- Tue, 02 Apr 2019 16:05:29 -0700 (PDT)
+        id S1726640AbfDCE0r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 00:26:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbfDCE0r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Apr 2019 00:26:47 -0400
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2107C20882;
+        Wed,  3 Apr 2019 04:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554265606;
+        bh=5nEs65n22BWPNmTlbcsE451hcELAvEwA4lAN2tfwRYc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wZwzLbbbOCH43YxRkQuNSC/+D7oIAEjWIx++eai8q9NbgIZ2TbAU8z/yNauV5kO8w
+         zyxJ1CNud9OLjJC1u7icNqp/8zEiNVTxFs3BPzzd+sp5hMe7uSIgU6wR5ApvSwai4I
+         okhnTyZDEsjASwixP/kfAILKUXl8JmuaMA9Wlsgo=
+Received: by mail-qk1-f173.google.com with SMTP id c1so9366964qkk.4;
+        Tue, 02 Apr 2019 21:26:46 -0700 (PDT)
+X-Gm-Message-State: APjAAAVCmPxv5h7w4PXiIPwvhEBvnxSClrLuUcGogXUJfT8lbevUBm1p
+        fcF1Plv8rOcSKyl9uURwDdVEDq85gOL84MsNGQ==
+X-Google-Smtp-Source: APXvYqx0kC8CrDmDtHIJHeCX3D9HiBvCpBlJuxrUwS+/0q4h+yN7jGcgGkjrvgpo97rZARChx3TVe4May3Y0Mid9Pt0=
+X-Received: by 2002:a37:9e0d:: with SMTP id h13mr58034293qke.135.1554265605359;
+ Tue, 02 Apr 2019 21:26:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <1551132245-6089-1-git-send-email-vabhav.sharma@nxp.com> <1551132245-6089-3-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1551132245-6089-3-git-send-email-vabhav.sharma@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 2 Apr 2019 18:05:18 -0500
-X-Gmail-Original-Message-ID: <CADRPPNTcY6fMJZDmsWzPzkn1hMzsoJh15-Gchepg_vJLxL=zcw@mail.gmail.com>
-Message-ID: <CADRPPNTcY6fMJZDmsWzPzkn1hMzsoJh15-Gchepg_vJLxL=zcw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] soc/fsl/guts: Add definition for LX2160A
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+References: <20190325074523.26456-1-josephl@nvidia.com> <20190325074523.26456-2-josephl@nvidia.com>
+ <5ca06133.1c69fb81.11ebf.91ce@mx.google.com> <7d680700-d2f2-7b6c-a8bf-dca6d54dbf2c@nvidia.com>
+In-Reply-To: <7d680700-d2f2-7b6c-a8bf-dca6d54dbf2c@nvidia.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 2 Apr 2019 23:26:33 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLL5g7vGNmwcNQw5KBXFP4tE69zGyWd0msP3sexve_sNQ@mail.gmail.com>
+Message-ID: <CAL_JsqLL5g7vGNmwcNQw5KBXFP4tE69zGyWd0msP3sexve_sNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
+To:     Joseph Lo <josephl@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Yinbo Zhu <yinbo.zhu@nxp.com>
+        linux-tegra@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 4:12 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
+On Mon, Apr 1, 2019 at 2:58 AM Joseph Lo <josephl@nvidia.com> wrote:
 >
-> Adding compatible string "lx2160a-dcfg" to
-> initialize guts driver for lx2160 and SoC die
-> attribute definition for LX2160A
+> On 3/31/19 2:41 PM, Rob Herring wrote:
+> > On Mon, Mar 25, 2019 at 03:45:16PM +0800, Joseph Lo wrote:
+> >> Add the binding document for the external memory controller (EMC) which
+> >> communicates with external LPDDR4 devices. It includes the bindings of
+> >> the EMC node and the EMC table of different rates.
+> >>
+> >> To support high rates for LPDDR4, the EMC table must be trained before
+> >> it can be used for runtime clock switching. It has been done by firmware
+> >> and merged to the table that Linux kernel uses. For backward
+> >> compatibility with the devices that had been launched on the market, like
+> >> Shield and Jetson platforms, the bindings in the EMC table should remain
+> >> the same. So the firmware can recognize them and merge the trained EMC
+> >> table for the kernel.
+>
+> Hi Rob,
+>
+> Thanks for reviewing.
+>
+> >
+> > Overall seems pretty bloated. How much of this really varies by board
+> > vs. just being a dump of all the register values to stuff?
+>
+> Most of them are register values. And by different SDRAM devices that
+> could be used on the same platform (use ram code to identify them), the
+> value could be different.
+>
+> >
+> > Primarily, I'm leary of getting a similar binding for every vendor's DDR
+> > setup.
+> >
+> > Some mostly trivial comments follow.
+>
+> Really sorry about that. I understand these basic rules for DT bindings,
+> but the case here is that these un-reviewed bindings have been used in
+> the firmware on the shipped products. To support the same with the
+> upstream kernel and consider the firmware blob may not be updated, we
+> have no choice to just use the same bindings in the upstream kernel.
+>
+> How can we deal with this case?
 
+Simply, we do not accept bindings as-is. If we did, then there would
+be no point in documenting and reviewing bindings. NVidia chose this
+path and now gets to live with it.
 
-Applied to branch next.  Thanks.
-
-Regards,
-Leo
->
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> Acked-by: Li Yang <leoyang.li@nxp.com>
-> ---
->  drivers/soc/fsl/guts.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> index 302e0c8..bcab1ee 100644
-> --- a/drivers/soc/fsl/guts.c
-> +++ b/drivers/soc/fsl/guts.c
-> @@ -100,6 +100,11 @@ static const struct fsl_soc_die_attr fsl_soc_die[] = {
->           .svr          = 0x87000000,
->           .mask         = 0xfff70000,
->         },
-> +       /* Die: LX2160A, SoC: LX2160A/LX2120A/LX2080A */
-> +       { .die          = "LX2160A",
-> +         .svr          = 0x87360000,
-> +         .mask         = 0xff3f0000,
-> +       },
->         { },
->  };
->
-> @@ -222,6 +227,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
->         { .compatible = "fsl,ls1088a-dcfg", },
->         { .compatible = "fsl,ls1012a-dcfg", },
->         { .compatible = "fsl,ls1046a-dcfg", },
-> +       { .compatible = "fsl,lx2160a-dcfg", },
->         {}
->  };
->  MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
-> --
-> 2.7.4
->
+Rob
