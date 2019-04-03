@@ -2,85 +2,169 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F3EC4360F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BF3C10F0B
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8A921473
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554283799;
-	bh=zGUF1m3WA3VUPWVAWSmHHzvHP1squaALr8SRgKwuNRU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=HCd7Zgd1UzhPnmlLBDHXc/G6nst+cJSHz5r8B7zQlMXBz192qf9jC8selTxd4SmGx
-	 0FP0v6YsXw2YUXCuNghqlIbxnRDlqryZAhty56f1B8ZayHlArx0oMb6pw6WxCAHV9K
-	 PYiSkMOX8EMOupnb5WPCs+WDctb8rvVqn+HxbCmc=
+	by mail.kernel.org (Postfix) with ESMTP id 575752082C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:30:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HwASyjou"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfDCJ36 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 05:29:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfDCJ36 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Apr 2019 05:29:58 -0400
-Received: from X250.imgcgcw.net (unknown [147.50.13.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 679BF2082C;
-        Wed,  3 Apr 2019 09:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554283798;
-        bh=zGUF1m3WA3VUPWVAWSmHHzvHP1squaALr8SRgKwuNRU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=abRYNAEDodhdBstF0uB08QLPaqyBW6gw68TFmTDeRcczNQPk62FiX+0SjqwfGCDi1
-         J9LFV5v68RA2HWrSDsR5Ddzl1PKB8X7Jjd72d+V5XlAzYaBJA2hBzlBjlTcVfp74VU
-         S3XytVS/QBiwcVUrWv4/ywCzz6nOqv0wMCg1pb+8=
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
+        id S1726425AbfDCJa1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 05:30:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42473 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbfDCJa1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 05:30:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p6so8011533pgh.9
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2019 02:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3vxzr4YfdSL7AqcSy++jBefiyTCDVXxP9wZEc/HTMuA=;
+        b=HwASyjou6/pDYEPvknboGzq4ZzH7Q7M6hOXJTjhBz5K4z0DoN016La99LxAMg57R7w
+         HuA2ex0ZJnl30krj9S67GKgUGGeQAKqBIw1DMHQG1rxtLfwiVGLFIp3G9o8uzo8Xrl/c
+         LZmnGKaYR8G71htzsOnZ1pQfST6ROxOESCkVi44/gnBtawR+pVJU0wz9nwS7wX4sILBo
+         5pd6sYvkmX9D2mq5hAUWRiKAZp2S0se2njuGcHvNSvt9mPSw/W3JcD33w75VLveYPwY6
+         jVWrUxWogP7On1U7WYDYLGljIaAA6xzNCMEEo8SJQkaoMh+aWOUhL8MuybrRz7D+8Fpb
+         frUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3vxzr4YfdSL7AqcSy++jBefiyTCDVXxP9wZEc/HTMuA=;
+        b=OWNxNXUhznLf37gRVtOTVLVNyZmSyQy+0heZeWst0rPGxa/E5l+d+xa4puzXxb9XaX
+         iP4YKJhHPR2Ge0Gbp+mH8h5d1AbMl23LPR7Wba4h/Kdt/hfx7n8N3cSVG1JL1WvlzcWI
+         jYBilewKk1GdmGMTkGyB67446j/VHKMtA6d+90RPj8dDJvNWjHEq1y/uXJ3QmsolP2iT
+         wj0a1q8JNn/HO3z+8vC6m4SYYSqz3yAnJQKJtye5fz3+Mq5UcRr/0KnaEE4CtL4noRCI
+         12z1AytJUXNXu06KMmxg/iWAPGMsaktCZSXjPztl8EdvC5D2ESknc4rmprCgoO5cFRu/
+         9hUQ==
+X-Gm-Message-State: APjAAAWlDtzkehyaQKjuaTvf2a6BBOL7BUeQ3RiJ8oRMSZ22jPxODuJf
+        WsMTh3wZjmy6t7/NpzL2I11CYg==
+X-Google-Smtp-Source: APXvYqyuQRAGZADbiPD5QCi5D7GYfyZQXTBs9s6gFT9Ed48AXWS980uJiyfLCvKQr+//tVGeNERZ6g==
+X-Received: by 2002:a62:1385:: with SMTP id 5mr73688099pft.221.1554283826227;
+        Wed, 03 Apr 2019 02:30:26 -0700 (PDT)
+Received: from dell ([147.50.13.10])
+        by smtp.gmail.com with ESMTPSA id i15sm18573221pfd.162.2019.04.03.02.30.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Apr 2019 02:30:25 -0700 (PDT)
+Date:   Wed, 3 Apr 2019 10:30:15 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>, kernel@pengutronix.de,
-        linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH] clk: imx: rename clk-imx51-imx53.c to clk-imx5.c
-Date:   Wed,  3 Apr 2019 16:29:48 +0700
-Message-Id: <20190403092948.26186-1-shawnguo@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [PATCH v11 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
+Message-ID: <20190403093015.GJ11301@dell>
+References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+ <39efebe0396dd42de30d37c6f3c1ef2926c90210.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190403073152.GM4187@dell>
+ <20190403084732.GA3493@localhost.localdomain>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190403084732.GA3493@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As the driver is handling all i.MX5 series SoCs inlcuding i.MX50, rather
-than just i.MX51 and i.MX53, let's rename it to clk-imx5.c.
+On Wed, 03 Apr 2019, Matti Vaittinen wrote:
 
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
----
- drivers/clk/imx/Makefile                          | 2 +-
- drivers/clk/imx/{clk-imx51-imx53.c => clk-imx5.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/clk/imx/{clk-imx51-imx53.c => clk-imx5.c} (100%)
+> Hello Lee,
+> 
+> Thanks for taking a look on this again =) I agree with most of the
+> comments and correct them at next version.
+> 
+> On Wed, Apr 03, 2019 at 08:31:52AM +0100, Lee Jones wrote:
+> > On Mon, 25 Mar 2019, Matti Vaittinen wrote:
+> > 
+> > > ROHM BD70528MWV is an ultra-low quiescent current general
+> > > purpose single-chip power management IC for battery-powered
+> > > portable devices.
+> > > 
+> > > Add MFD core which enables chip access for following subdevices:
+> > > 	- regulators/LED drivers
+> > > 	- battery-charger
+> > > 	- gpios
+> > > 	- 32.768kHz clk
+> > > 	- RTC
+> > > 	- watchdog
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > + * Mapping of main IRQ register bits to sub irq register offsets so
+> > 
+> > "sub-IRQ"
+> > 
+> > > + * that we can access corect sub IRQ registers based on bits that
+> > 
+> > "sub IRQ" is also fine, but please standardise.
+> > 
+> > I do prefer "sub-IRQ" though.
+> 
+> I'll go with "sub-IRQ" then
+> 
+> > > +
+> > > +#define WD_CTRL_MAGIC1 0x55
+> > > +#define WD_CTRL_MAGIC2 0xAA
+> > > +/**
+> > > + * bd70528_wdt_set - arm or disarm watchdog timer
+> > > + *
+> > > + * @data:	device data for the PMIC instance we want to operate on
+> > > + * @enable:	new state of WDT. zero to disable, non zero to enable
+> > > + * @old_state:	previous state of WDT will be filled here
+> > > + *
+> > > + * Arm or disarm WDT on BD70528 PMIC. Expected to be called only by
+> > > + * BD70528 RTC and BD70528 WDT drivers. The rtc_timer_lock must be taken
+> > > + * by calling bd70528_wdt_lock before calling bd70528_wdt_set.
+> > > + */
+> > > +int bd70528_wdt_set(struct rohm_regmap_dev *data, int enable, int *old_state)
+> > 
+> > Why doesn't this reside in the watchdog driver?
+> 
+> If my memory serves me right we shortly discussed this already during v8
+> review ;) Cant blame you though as I have seen some of the mail traffic
+> going through your inbox :D
+> 
+> The motivation to have the functions exported from MFD is to not create
+> sirect dependency between RTC and WDT. There may be cases where we want
+> to leave either RTC or WDT out of compilation. MFD is always needed so
+> the dependency from MFD to RTC/WDT does not harm.
+> 
+> (Here's some discussion necromancy if you are interested in re-reading
+> how we did end up with this implementation:
+> https://lore.kernel.org/lkml/20190212091723.GZ20638@dell/)
+> 
+> I hope you are still Ok with having the WDT control functions in MFD.
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 0d5180fbe988..05641c64b317 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -35,7 +35,7 @@ obj-$(CONFIG_SOC_IMX25)  += clk-imx25.o
- obj-$(CONFIG_SOC_IMX27)  += clk-imx27.o
- obj-$(CONFIG_SOC_IMX31)  += clk-imx31.o
- obj-$(CONFIG_SOC_IMX35)  += clk-imx35.o
--obj-$(CONFIG_SOC_IMX5)   += clk-imx51-imx53.o
-+obj-$(CONFIG_SOC_IMX5)   += clk-imx5.o
- obj-$(CONFIG_SOC_IMX6Q)  += clk-imx6q.o
- obj-$(CONFIG_SOC_IMX6SL) += clk-imx6sl.o
- obj-$(CONFIG_SOC_IMX6SLL) += clk-imx6sll.o
-diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx5.c
-similarity index 100%
-rename from drivers/clk/imx/clk-imx51-imx53.c
-rename to drivers/clk/imx/clk-imx5.c
+OOI, why does the RTC need to control the WDT?
+
 -- 
-2.19.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
