@@ -2,86 +2,84 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EC9C4360F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 13:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E73C10F06
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 13:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC062147C
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 13:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5DD12084C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 13:26:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=in.bosch.com header.i=@in.bosch.com header.b="M2jU7Og1"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=in.bosch.com header.i=@in.bosch.com header.b="rHTFE/AY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfDCN0C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 09:26:02 -0400
-Received: from de-deferred1.bosch-org.com ([139.15.180.216]:41966 "EHLO
+        id S1726155AbfDCNZp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 09:25:45 -0400
+Received: from de-deferred1.bosch-org.com ([139.15.180.216]:41768 "EHLO
         de-deferred1.bosch-org.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726396AbfDCNZq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 09:25:46 -0400
+        by vger.kernel.org with ESMTP id S1726167AbfDCNZp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 09:25:45 -0400
+X-Greylist: delayed 593 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Apr 2019 09:25:42 EDT
 Received: from de-out1.bosch-org.com (unknown [139.15.180.215])
-        by si0vms0224.rbdmz01.com (Postfix) with ESMTPS id 44Z65n1lNKz2Ds;
-        Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
-Received: from fe0vm1650.rbesz01.com (unknown [139.15.230.188])
-        by si0vms0216.rbdmz01.com (Postfix) with ESMTPS id 44Z65l46hPz1XLG70;
-        Wed,  3 Apr 2019 15:15:55 +0200 (CEST)
+        by si0vms0224.rbdmz01.com (Postfix) with ESMTPS id 44Z65b6D5Vz27W;
+        Wed,  3 Apr 2019 15:15:47 +0200 (CEST)
+Received: from si0vm1947.rbesz01.com (unknown [139.15.230.188])
+        by fe0vms0186.rbdmz01.com (Postfix) with ESMTPS id 44Z65Y5xc8z1XLFk0;
+        Wed,  3 Apr 2019 15:15:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=in.bosch.com;
-        s=2015-01-21; t=1554297355;
+        s=2015-01-21; t=1554297345;
         bh=5JmXTCA8402bhLcSZ4Bm03a+Df0e1eFcN7hmyjl8vSI=; l=10;
         h=From:From:Reply-To:Sender;
-        b=M2jU7Og1ZG8Gdo5PJ/y7h07M7tj3Rlvhi92DMIejYLlRT63V2aryyraRz11473yCg
-         5PG9nf7n+zm5uOtZU4pFqCI5J25T2KtP60g3t9MTGEiIRgXHKBW3M9ZBRWBsCtV722
-         RbbTnH5zK0iP+pVbiySB7o6cT+ZsmSeSLwQzLX/w=
-Received: from si0vm4642.rbesz01.com (unknown [10.58.172.176])
-        by fe0vm1650.rbesz01.com (Postfix) with ESMTPS id 44Z65l3pzdz1Cj;
-        Wed,  3 Apr 2019 15:15:55 +0200 (CEST)
-X-AuditID: 0a3aad12-be3ff70000006e39-60-5ca4b20b87e7
-Received: from fe0vm1652.rbesz01.com ( [10.58.173.29])
+        b=rHTFE/AY8tcQA0PDs1XzSr3a0ADUMDG36Ch055y8SHKxCFbJbpGkBUj+Xk/RJc5mP
+         3rMmT/rA1Tn0TB4zNczgWxbd90YcIDlr9Qk8k4rQ2bmiLxtstGqVutsmAi6xFSatl9
+         JZYAr046sVcCf7MzfSSuAqP2LUdtuqSyjnLyOPxs=
+Received: from fe0vm02900.rbesz01.com (unknown [10.58.172.176])
+        by si0vm1947.rbesz01.com (Postfix) with ESMTPS id 44Z65Y5bYtz6CjQSM;
+        Wed,  3 Apr 2019 15:15:45 +0200 (CEST)
+X-AuditID: 0a3aad0c-d19ff700000039d6-24-5ca4b2018399
+Received: from si0vm1949.rbesz01.com ( [10.58.173.29])
         (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by si0vm4642.rbesz01.com (SMG Outbound) with SMTP id E5.3D.28217.B02B4AC5; Wed,  3 Apr 2019 15:15:55 +0200 (CEST)
+        by fe0vm02900.rbesz01.com (SMG Outbound) with SMTP id 1D.AF.14806.102B4AC5; Wed,  3 Apr 2019 15:15:45 +0200 (CEST)
 Received: from SI-HUB2000.de.bosch.com (si-hub2000.de.bosch.com [10.4.103.108])
-        by fe0vm1652.rbesz01.com (Postfix) with ESMTPS id 44Z65l29NyzVv5;
-        Wed,  3 Apr 2019 15:15:55 +0200 (CEST)
+        by si0vm1949.rbesz01.com (Postfix) with ESMTPS id 44Z65Y3cpVz6CjZqt;
+        Wed,  3 Apr 2019 15:15:45 +0200 (CEST)
 Received: from localhost.localdomain (10.47.103.88) by SI-HUB2000.de.bosch.com
  (10.4.103.108) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Wed, 3 Apr 2019
- 15:15:53 +0200
+ 15:15:44 +0200
 From:   <VenkataRajesh.Kalakodima@in.bosch.com>
 To:     <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <dri-devel@lists.freedesktop.org>
-CC:     kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>,
-        Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
-Subject: [PATCH 5/8] drm: rcar-du: Implement interfaces to set clu and lut using drm data structures
-Date:   Wed, 3 Apr 2019 18:44:41 +0530
-Message-ID: <1554297284-14009-6-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+CC:     kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+Subject: [PATCH 0/8] v4.19.0 Added Color Management Module
+Date:   Wed, 3 Apr 2019 18:44:36 +0530
+Message-ID: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
-References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="n"
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.47.103.88]
-X-Brightmail-Tracker: H4sIAAAAAAAAA21SbUwTZxzvc3dtj9Ibx0Hhv4Jku5moMzhERjpnzJLtg9tiJEs0hnRZD3vS
-        ur6wXsuE+ULcFlmhKHHZZqdUBBNngElhKkwlNDpXJQzrhjZBS5GRwhasbGbMaPRuBdsP+/Y8
-        v9fnfjkSZ/qVWtJsc/IOG2dhFSpCtbZzSWG6v11fdPki6HyXhuW6Xx/cU+juN96R6270H1Ho
-        fpiexd6Qb4g0XME2/OUvKMPKVeuMvMVczTteWW9QmRoueImq6Y07IxemsDo0td6N0kigS+DI
-        L5cJN1KRDP0NBpG503jich7B5MgQlrj8iaBn/HO5ZFHQhTDQ3a2UiGz6OwQNs2cxicDpXeA5
-        1K6Uzlm0EfyN58VckiTopRCa3SjBFL0ZJs48ViSqCyA8/AUundPoLeD7efI/nBE1vvk5eUKf
-        CcHDk0QiHmAwFsOlSKBfgL5WxUFEe1NU3hTVMYSdQhrBXFRtLSktKV7lqOCF2qLVq7bZrX6U
-        mJM5h7pHtwcQTSJWTV0/3K5n5Fy1UGMNoFdJjNVQpXtE6LkKu7HGxAmmDxwuCy+wWip/5B09
-        k/UMFlwVVrMgmO22AAISZ7OpoQPH9Axl5GpqeYc9YQugPJJgc6lKcpOeoSs5J/8hz1fxjkX2
-        dZJkgcruFgszHXwlv3O72eJcpNklFJLJZExOKpNai5FpAbSGVIvdmBRBCVWcVTBXLtifT9iZ
-        RTRpvYreJAf/iR7FGcJmt/HaXKpM8tOS0uSyPXuBNp+S/d6iZzQpRDJlBt1E4oZZ1OPvRbNa
-        /GuT3UDlSXNlLoBJU3Gb6KHj2dAzsQWCY7then8dAu/1FgQt5x4geOT/FIMvI1EM4rGf5HB/
-        sF4Bsc+uKiDU71VCJHwmDToiB9RwY+ahGuInPRT0zlyhwHdrnoLY/L4MaJm/mQH/eo5mQl8w
-        xMCTtqBGlAxpoLkrpIGBr8MacHvuaKCprSkHet1dOeD9Y18ufHVqIhfGGm/lwdhIKH9GnBUT
-        Z9W5fNKsTs75P7MuoMlv09aht47PfRvbvPbi1mjBu8teNDwcd+lal1bv7agKD/dG40rD3a35
-        60aNhrsrrpWX3espdaf3lIfff+30o7/r9wY7Px612vp+/OQl1a6PNvVFdwh4K9l0Qra7uXm8
-        sKPj7YFOg2UyIx6OCqb3hoj9x9NH6j3LbtcOT+05WFbctfzQb232lTaWEEzc6pdxh8A9BZg+
-        VqFNBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA22SbUxTVxzGe+5tL5fKHbeXin8KRXJhy6Yi1QoWncZ9ML4u8kG3ZGkyL+PS
+        NlJKelsCbjOsbJiCopJI0toIRj6Idgo3Ksh8wW7qNI4gouJGqDFoFDd8KSzgC9ktBdsP+/Y/
+        z/P/nSfnySFxpi1OQ1pKHby9lCthCaVcueJnbTYSW4w6/68fGZp+61EY+sefE4aXe4YUhttd
+        PsJw5ukotkaxPlh3DVsfEtMLsK+UnxbxJZZy3p6zervSPNX6Bisb0VacHfqiCg0n16J4Euhl
+        0OV5TtQiJcnQHgw6HrsUkcMlBEMHj6HI4W8EwZtXURgh6Gy41N4eFzbUdCuCutEOLGzg9Fqo
+        PuGbXkqiV4BrtGZ6ltNZ4Ho2Nj1T9DZwnb5DRLLT4X6PG4/oKrjuGZZH7vkQgv6TM/N8qD5z
+        SNohpf0MOHeE2I8SvTGEN4bwxhDNCD+Okot5XblVtzRfp1tsL+SFnboli7+xWUUU6TOhE11p
+        MQUQTSI2gXrlaTEyCq5cqLQGUC6JsXOpvF2S9EGhrajSzAnmr+3OEl5gNVRa70Yjk/ReFpyF
+        VosgWGylAQQkzqqpm/uajQxVxFXu5O22CBZAqaScnUeZyC1GhjZxDn4Hz5fx9ll3JUmyQKnb
+        pUCVnTfxFcWWEseszWopJJPJmORYJzYWI+MDSE8mSNlY+ApKKOOsgsU0g6dEcGZWjaI30HLN
+        PKogzNBh1+wsfZ+qSaNkjw4bmbkxRpQcQQNI6i2JendKghOkrxrNAyo1XJFqRoxCS1skhn4X
+        D27/Lni6uwrB4c5xBCHfOA4vnlxVQH3vEQKGL4sE7HOfJ6CvyxsH/e6zc2Dywq1EuDLcpQLx
+        3h41uEMNahj8vS0Z/uoJpsCfE22pIN6YTAPxj38yoO/10UzodT3MhKm7tVlwztWXBf7zvk/g
+        hHhxAQx4Hi6EsTeti0A8MJ4DU43+ZVDv68yFH0PVeXCyrTFvROoSk7o0OJvCXTo4x/90OaNG
+        H6epQmk1fRObG57guf75p9dd3/ty07bQl59bsn8q4LoPZfzSI3d02ww1dId+a82/4qr8lEWO
+        2uP3F2rWERMjmintZMPY8ms/eFS7gxe83cLFipwDsm8VGYX1/W8fyJs+e1uXPpj5sX7iVTFv
+        ve0a0H/fPqi/5wys/G7StEEbh+e/HtyKrWXlgplbsgC3C9x/LgzJWkMEAAA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -89,358 +87,64 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
 
-Impelement interfaces in cmm to set clu and lut tables using standard
-drm data structures as input.
+This patchset adds rcar- display unit color management module (CMM) function feature, Which allows correction and adjustment of the display data, through updating Look up table (gamma) and  Cubic look up table (CTM)  property values 
 
-Signed-off-by: Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
+Base color management module reference code taken from below link,
+https://github.com/renesas-rcar/du_cmm .
+-	In above code, modified variable namingâ€™s and removed un used functionalities.
+-	Introduce new functions for queueing cubic look up table and look up table events.
 
-      - Resolved checkpatch errors
-      - Resolved merge conflicts according to latest version
+-	Implemented interfaces in color management module to set CLU /LUT table using standard DRM data structures as input.
+	Look up table is a 1D-LUT that converts each of three-color components by using a lookup table. LUT is used for gamma correction.							
+	Cubic look up table is a three-dimensional LUT (3D-LUT) that converts the input three-color-component data into desired three color Components by using a lookup table
 
-Signed-off-by: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_cmm.c  | 256 +++++++++++++++++++++++++++++++--
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  11 ++
- 2 files changed, 254 insertions(+), 13 deletions(-)
+-	Implemented atomic check helper functions for enable/disable LUT and CLU (Gamma and Color Transformation Matrix properties).
+-	Allocated memory necessary for cubic look up table and look up table and added mode fix up callback function
+-	Added update gamma and color transformation matrix properties in commit tail function, If any change in property values.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_cmm.c b/drivers/gpu/drm/rcar-du/rcar_du_cmm.c
-index 7983039..af4668f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_cmm.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_cmm.c
-@@ -114,6 +114,8 @@ struct rcar_du_cmm_pending_event {
- 	struct drm_gem_object *gem_obj;
- 	struct rcar_du_cmm *du_cmm;
- 	struct rcar_du_cmm_file_priv *fpriv;
-+	unsigned int *lut_buf;
-+	unsigned int *clu_buf;
- };
- 
- struct cmm_module_t {
-@@ -238,14 +240,6 @@ static long long diff_timevals(struct timeval *start, struct timeval *end)
- }
- #endif
- 
--static void du_cmm_clk(struct rcar_du_cmm *du_cmm, bool on)
--{
--	if (on)
--		clk_prepare_enable(du_cmm->clock);
--	else
--		clk_disable_unprepare(du_cmm->clock);
--}
--
- static void rcar_du_cmm_queue_lut_update(struct rcar_du_cmm_pending_event *p)
- {
- 	mutex_lock(&cmm_event_lock);
-@@ -284,6 +278,223 @@ static void rcar_du_cmm_queue_clu_update(struct rcar_du_cmm_pending_event *p)
- 	drm_crtc_vblank_get(&p->du_cmm->rcrtc->crtc);
- }
- 
-+static s64 rcar_du_cmm_multiply_coeff(unsigned int color, s64 coeff)
-+{
-+	s64 r_val;
-+	bool is_neg = false;
-+
-+	if (coeff & BIT_ULL(63)) {
-+		is_neg = true;
-+		coeff &= ~BIT_ULL(63);
-+	}
-+
-+	r_val = DIV_ROUND_CLOSEST(((s64)(color * coeff)), BIT_ULL(32));
-+
-+	if (is_neg)
-+		return -r_val;
-+
-+	return r_val;
-+}
-+
-+static unsigned int rcar_du_cmm_scalar_product(unsigned int r, unsigned int g,
-+					       unsigned int b, s64 coeff1,
-+					       s64 coeff2, s64 coeff3)
-+{
-+	s64 product;
-+
-+	product = rcar_du_cmm_multiply_coeff(r, coeff1)
-+			+ rcar_du_cmm_multiply_coeff(g, coeff2)
-+			+ rcar_du_cmm_multiply_coeff(b, coeff3);
-+
-+	return (unsigned int)clamp_val(product, 0, U8_MAX);
-+}
-+
-+#ifdef DEBUG_PROCE_TIME
-+static long long diff_timevals(struct timeval *start, struct timeval *end)
-+{
-+	return (end->tv_sec * 1000000LL + end->tv_usec) -
-+		(start->tv_sec * 1000000LL + start->tv_usec);
-+}
-+#endif
-+
-+void *rcar_du_cmm_alloc_lut(void *cmm_handle)
-+{
-+	struct rcar_du_cmm_pending_event *p;
-+
-+	if (!cmm_handle)
-+		return NULL;
-+
-+	p = kzalloc(sizeof(*p), GFP_KERNEL);
-+	if (!p)
-+		return NULL;
-+
-+	p->gem_obj = NULL;
-+	p->event = CMM_EVENT_LUT_DONE;
-+	p->stat = QUE_STAT_PENDING;
-+	p->callback_data = 0;
-+	p->du_cmm = cmm_handle;
-+	p->fpriv = NULL;
-+	p->lut_buf = kmalloc(CMM_LUT_NUM * 4, GFP_KERNEL);
-+	if (!p->lut_buf) {
-+		kfree(p);
-+		return NULL;
-+	}
-+
-+	return p;
-+}
-+
-+void rcar_du_cmm_free_lut(void *lut_handle)
-+{
-+	struct rcar_du_cmm_pending_event *p =
-+			(struct rcar_du_cmm_pending_event *)lut_handle;
-+
-+	kfree(p->lut_buf);
-+	kfree(p);
-+}
-+
-+int rcar_du_cmm_lut_valid(unsigned int lut_length)
-+{
-+	return (lut_length == CMM_LUT_NUM) ? 0 : -EINVAL;
-+}
-+
-+void rcar_du_cmm_update_lut_and_free(void *lut_handle,
-+				     struct drm_color_lut *lut,
-+				     unsigned int lut_length)
-+{
-+	struct rcar_du_cmm_pending_event *p =
-+			(struct rcar_du_cmm_pending_event *)lut_handle;
-+	unsigned int color;
-+
-+	if (!p)
-+		return;
-+
-+	if (rcar_du_cmm_lut_valid(lut_length))
-+		return;
-+
-+	/* Convert drm_color_lut to the format handled by hardware */
-+	for (color = 0; color < lut_length; color++) {
-+		p->lut_buf[color] = 0;
-+		p->lut_buf[color] |= drm_color_lut_extract(lut[color].red, 8)
-+					<< 16;
-+		p->lut_buf[color] |= drm_color_lut_extract(lut[color].green, 8)
-+					<< 8;
-+		p->lut_buf[color] |= drm_color_lut_extract(lut[color].blue, 8);
-+	}
-+	rcar_du_cmm_queue_lut_update(p);
-+}
-+
-+void *rcar_du_cmm_alloc_clu(void *cmm_handle)
-+{
-+	struct rcar_du_cmm_pending_event *p;
-+
-+	if (!cmm_handle)
-+		return NULL;
-+
-+	p = kzalloc(sizeof(*p), GFP_KERNEL);
-+	if (!p)
-+		return NULL;
-+
-+	p->gem_obj = NULL;
-+	p->event = CMM_EVENT_CLU_DONE;
-+	p->stat = QUE_STAT_PENDING;
-+	p->callback_data = 0;
-+	p->du_cmm = cmm_handle;
-+	p->fpriv = NULL;
-+	p->clu_buf = kmalloc(CMM_CLU_NUM * 4, GFP_KERNEL);
-+	if (!p->clu_buf) {
-+		kfree(p);
-+		return NULL;
-+	}
-+
-+	return p;
-+}
-+
-+void rcar_du_cmm_free_clu(void *clu_handle)
-+{
-+	struct rcar_du_cmm_pending_event *p =
-+			(struct rcar_du_cmm_pending_event *)clu_handle;
-+
-+	kfree(p->clu_buf);
-+	kfree(p);
-+}
-+
-+void rcar_du_cmm_update_clu_and_free(void *clu_handle,
-+				     struct drm_color_ctm *ctm)
-+{
-+	struct rcar_du_cmm_pending_event *p =
-+			(struct rcar_du_cmm_pending_event *)clu_handle;
-+	unsigned int r_loop;
-+	unsigned int g_loop;
-+	unsigned int b_loop;
-+	unsigned int step_size;
-+	unsigned int step_fraction;
-+	unsigned int clu_index = 0;
-+
-+	if (!p)
-+		return;
-+
-+	step_size = U8_MAX / (CMM_CLU_SAMPLES - 1);
-+	step_fraction = U8_MAX % (CMM_CLU_SAMPLES - 1);
-+
-+	/*Update clu table*/
-+	for (b_loop = 0; b_loop < CMM_CLU_SAMPLES; b_loop++) {
-+		unsigned int b;
-+
-+		b = (b_loop * step_size) +
-+		    DIV_ROUND_CLOSEST((b_loop * step_fraction),
-+				      (CMM_CLU_SAMPLES - 1));
-+
-+		for (g_loop = 0; g_loop < CMM_CLU_SAMPLES; g_loop++) {
-+			unsigned int g;
-+
-+			g = (g_loop * step_size) +
-+			    DIV_ROUND_CLOSEST((g_loop * step_fraction),
-+					      (CMM_CLU_SAMPLES - 1));
-+
-+			for (r_loop = 0; r_loop < CMM_CLU_SAMPLES; r_loop++) {
-+				unsigned int r;
-+				unsigned int r_val;
-+				unsigned int g_val;
-+				unsigned int b_val;
-+
-+				r = (r_loop * step_size) +
-+				    DIV_ROUND_CLOSEST((r_loop * step_fraction),
-+						      (CMM_CLU_SAMPLES - 1));
-+
-+				p->clu_buf[clu_index] = 0;
-+
-+				r_val =	rcar_du_cmm_scalar_product
-+						(r, g, b,
-+						 ctm->matrix[0], ctm->matrix[1],
-+						 ctm->matrix[2]);
-+
-+				g_val =	rcar_du_cmm_scalar_product
-+						(r, g, b,
-+						 ctm->matrix[3], ctm->matrix[4],
-+						 ctm->matrix[5]);
-+
-+				b_val =	rcar_du_cmm_scalar_product
-+						(r, g, b,
-+						 ctm->matrix[6], ctm->matrix[7],
-+						 ctm->matrix[8]);
-+
-+				p->clu_buf[clu_index++] = (r_val << 16) |
-+							  (g_val << 8) | b_val;
-+			}
-+		}
-+	}
-+
-+	rcar_du_cmm_queue_clu_update(p);
-+}
-+
-+static void du_cmm_clk(struct rcar_du_cmm *du_cmm, bool on)
-+{
-+	if (on)
-+		clk_prepare_enable(du_cmm->clock);
-+	else
-+		clk_disable_unprepare(du_cmm->clock);
-+}
-+
- int rcar_du_cmm_start_stop(struct rcar_du_crtc *rcrtc, bool on)
- {
- 	struct rcar_du_cmm *du_cmm = rcrtc->cmm_handle;
-@@ -424,8 +635,16 @@ static inline void _event_done_locked(struct rcar_du_cmm_pending_event *p)
- 		list_add_tail(&p->link, cmm_done_list(p->du_cmm, p->fpriv));
- 		wake_up_interruptible(&p->fpriv->event_wait);
- 	} else {
--		/* link deleted by rcar_du_cmm_postclose */
--		kfree(p);
-+		/* link deleted by rcar_du_cmm_postclose
-+		 * OR it could also be due to set of ctm and gamma
-+		 * properties through drm APIs.
-+		 */
-+		if (p->event == CMM_EVENT_LUT_DONE)
-+			rcar_du_cmm_free_lut(p);
-+		else if (p->event == CMM_EVENT_CLU_DONE)
-+			rcar_du_cmm_free_clu(p);
-+		else
-+			kfree(p);
- 	}
- }
- 
-@@ -479,7 +698,8 @@ event_pop_locked(struct cmm_module_t *module)
- 
- 	p->stat = QUE_STAT_ACTIVE;
- 	list_del(&p->link); /* delete from du_cmm->[lut|clu|hgo].list */
--	list_add_tail(&p->link, &p->fpriv->active_list);
-+	if (p->fpriv)
-+		list_add_tail(&p->link, &p->fpriv->active_list);
- 	cmm_vblank_put(p);
- 
- 	return p;
-@@ -605,7 +825,11 @@ static int lut_set(struct rcar_du_cmm *du_cmm,
- 		return -EINVAL;
- 	}
- 
--	lut_buf = gem_to_vaddr(stat->p->gem_obj);
-+	if (stat->p->gem_obj)
-+		lut_buf = gem_to_vaddr(stat->p->gem_obj);
-+	else
-+		lut_buf = stat->p->lut_buf;
-+
- 	for (i = 0; i < CMM_LUT_NUM; i++)
- 		rcar_du_cmm_write(du_cmm, lut_base + i * 4, lut_buf[i]);
- 
-@@ -723,7 +947,11 @@ static int clu_set(struct rcar_du_cmm *du_cmm,
- 		return -EINVAL;
- 	}
- 
--	clu_buf = gem_to_vaddr(stat->p->gem_obj);
-+	if (stat->p->gem_obj)
-+		clu_buf = gem_to_vaddr(stat->p->gem_obj);
-+	else
-+		clu_buf = stat->p->clu_buf;
-+
- 	rcar_du_cmm_write(du_cmm, addr_reg, 0);
- 	for (i = 0; i < CMM_CLU_NUM; i++)
- 		rcar_du_cmm_write(du_cmm, data_reg, clu_buf[i]);
-@@ -1222,6 +1450,8 @@ int rcar_du_cmm_init(struct rcar_du_crtc *rcrtc)
- 
- 	rcrtc->cmm_handle = du_cmm;
- 
-+	drm_crtc_enable_color_mgmt(&rcrtc->crtc, 0, true, CMM_LUT_NUM);
-+
- 	dev_info(rcdu->dev, "DU%d use CMM(%s buffer)\n",
- 		 rcrtc->index, du_cmm->dbuf ? "Double" : "Single");
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 74e0a22..5b85de4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -115,6 +115,17 @@ void rcar_du_cmm_postclose(struct drm_device *dev, struct drm_file *file_priv);
- int rcar_du_cmm_start_stop(struct rcar_du_crtc *rcrtc, bool on);
- void rcar_du_cmm_kick(struct rcar_du_crtc *rcrtc);
- 
-+void *rcar_du_cmm_alloc_lut(void *cmm_handle);
-+void rcar_du_cmm_free_lut(void *lut_handle);
-+int rcar_du_cmm_lut_valid(unsigned int lut_length);
-+void rcar_du_cmm_update_lut_and_free(void *lut_handle,
-+				     struct drm_color_lut *lut,
-+				     unsigned int lut_length);
-+
-+void *rcar_du_cmm_alloc_clu(void *cmm_handle);
-+void rcar_du_cmm_free_clu(void *clu_handle);
-+void rcar_du_cmm_update_clu_and_free(void *clu_handle,
-+				     struct drm_color_ctm *ctm);
- #ifdef CONFIG_PM_SLEEP
- int rcar_du_cmm_pm_suspend(struct rcar_du_crtc *rcrtc);
- int rcar_du_cmm_pm_resume(struct rcar_du_crtc *rcrtc);
+kalakodima venkata rajesh (8):
+  drm: Add DU CMM support functions
+  drm: Add DU CMM support boot and clk changes
+  drm: rcar-du: Give a name to clu table samples
+  drm: rcar-du: Refactor the code with new functions
+  drm: rcar-du: Implement interfaces to set clu and lut using drm data
+    structures
+  drm: rcar-du: Implement atomic_check to check for gamma and ctm
+    properties
+  drm: rcar-du: update gamma and ctm properties in commit tail
+  drm: rcar-du: Add shutdown callback function in platform_driver
+
+ .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |    5 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |    5 +
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |    5 +
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   29 +-
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |    6 +-
+ .../arm64/boot/dts/renesas/r8a7796-salvator-xs.dts |    4 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |   25 +-
+ .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |    7 +-
+ .../boot/dts/renesas/r8a77965-salvator-xs.dts      |    7 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi          |   27 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |    4 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |    3 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |  106 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |   35 +
+ drivers/gpu/drm/rcar-du/Makefile                   |    2 +
+ drivers/gpu/drm/rcar-du/rcar_du_cmm.c              | 1470 ++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c             |   82 ++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   28 +
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c              |   85 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   16 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |    2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |    1 +
+ drivers/gpu/drm/rcar-du/rcar_du_group.c            |    5 +
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c              |   25 +
+ drivers/gpu/drm/rcar-du/rcar_du_regs.h             |   92 ++
+ include/drm/bridge/dw_hdmi.h                       |    1 +
+ include/drm/drm_atomic.h                           |   25 +
+ include/drm/drm_ioctl.h                            |    7 +
+ 28 files changed, 2082 insertions(+), 27 deletions(-)
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_cmm.c
+
 -- 
 2.7.4
 
