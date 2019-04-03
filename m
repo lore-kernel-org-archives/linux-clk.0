@@ -2,88 +2,78 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814D6C4360F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 14:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D1DC4360F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 15:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470C120830
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 14:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 904412084C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 15:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbfDCOm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 10:42:57 -0400
-Received: from mailoutvs11.siol.net ([185.57.226.202]:41349 "EHLO
+        id S1726314AbfDCPOP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 11:14:15 -0400
+Received: from mailoutvs29.siol.net ([185.57.226.220]:52236 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726151AbfDCOm4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 10:42:56 -0400
+        with ESMTP id S1725990AbfDCPOO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 11:14:14 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 9DD64522607;
-        Wed,  3 Apr 2019 16:42:48 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id A21945228C2;
+        Wed,  3 Apr 2019 17:14:12 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 2mcf2bfoh02e; Wed,  3 Apr 2019 16:42:48 +0200 (CEST)
+        with ESMTP id qR1CkoV3zC6F; Wed,  3 Apr 2019 17:14:12 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 4FB225226A7;
-        Wed,  3 Apr 2019 16:42:48 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id D0198522607;
-        Wed,  3 Apr 2019 16:42:47 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] clk: sunxi-ng: h6: Allow video & vpu clocks to change parent rate
-Date:   Wed, 03 Apr 2019 16:42:47 +0200
-Message-ID: <2186906.YMnZ6ufn7o@jernej-laptop>
-In-Reply-To: <CAGb2v67dDAun7rnvOEFzGiqY-xpxRm=oe99ktq_+MORxp0Wteg@mail.gmail.com>
-References: <20190402210623.14988-1-jernej.skrabec@siol.net> <20190403075430.4j7sw5vxqop6ptkj@flea> <CAGb2v67dDAun7rnvOEFzGiqY-xpxRm=oe99ktq_+MORxp0Wteg@mail.gmail.com>
+        by mail.siol.net (Postfix) with ESMTPS id 3E3E452298E;
+        Wed,  3 Apr 2019 17:14:12 +0200 (CEST)
+Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id E19E25228C2;
+        Wed,  3 Apr 2019 17:14:11 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jernej.skrabec@siol.net
+Subject: [PATCH v2 0/2] clk: sunxi-ng: H6 related clock fixes
+Date:   Wed,  3 Apr 2019 17:14:02 +0200
+Message-Id: <20190403151404.26542-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sreda, 03. april 2019 ob 15:22:52 CEST je Chen-Yu Tsai napisal(a):
-> On Wed, Apr 3, 2019 at 3:54 PM Maxime Ripard <maxime.ripard@bootlin.com> 
-wrote:
-> > On Tue, Apr 02, 2019 at 11:06:23PM +0200, Jernej Skrabec wrote:
-> > > Video related clocks need to set rate as close as possible to the
-> > > requested one, so they should be able to change parent clock rate.
-> > > 
-> > > VPU clock sometimes has to be set to higher than default parent clock
-> > > rate. This is requ
-> 
-> The commit log looks unfinished. Can you and Jernej fix this up?
+During linux-next testing on Allwinner H6, I found several issues with
+clock driver. This patch series fixes them.
 
-Ah, sorry. I will send v2 with this commit message fixed and additional patch 
-as requested by Maxime.
+Patch 1 allows video and vpu related clocks to set parent rate.
+Patch 2 adds a comment with short explanation why zero width check is
+needed.
+
+Please take a look.
 
 Best regards,
 Jernej
 
-> 
-> > > Add CLK_SET_RATE_PARENT flag to tcon-lcd0, tcon-tv0 and ve.
-> > > 
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > 
-> > Applied, thanks!
-> > Maxime
-> > 
-> > --
-> > Maxime Ripard, Bootlin
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
+Changes from v1:
+- removed already applied patches
+- fixed commit message
+- added new patch which adds comment with explanation why zero width
+  check is needed
 
+Jernej Skrabec (2):
+  clk: sunxi-ng: h6: Allow video & vpu clocks to change parent rate
+  clk: sunxi-ng: nkmp: Explain why zero width check is needed
 
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 6 +++---
+ drivers/clk/sunxi-ng/ccu_nkmp.c      | 6 ++++++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
+--=20
+2.21.0
 
