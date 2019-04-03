@@ -2,128 +2,76 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021E3C10F0B
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32519C4360F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF73214AF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:04:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB07E21473
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:14:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554282892;
+	bh=GJB+gVTbTg05re/OdMC/st+WTlhT765qsRoqYLMhxhs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hjJedvP7E1e5kovwV3q4HnGBCRhFG6sDbfDgr7DnPFDcRNfNlHlkLmR7Ze0YCesP/
+	 zDfSIjLw5Z+NWIG9fvcfvMgXEwyb4su/XpsUHG+p/PxEoz5gdEJAWAAfeO00lwBomf
+	 2mQXxnIa6HVC+/jEBZ7oTIMPJvB4OT3YgUiBfuRI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbfDCJEM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 05:04:12 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39462 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbfDCJEM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 05:04:12 -0400
-Received: by mail-lf1-f65.google.com with SMTP id m13so11108515lfb.6;
-        Wed, 03 Apr 2019 02:04:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yvh8D9pqYZ7qDKwQ/mIum3pVVgIu4bmSWSk7/XWJxNc=;
-        b=WRvcgda/DfhYFi40Sq9q7RiViIapFaYOXp9Wdq3XuZDULD6BdvMeQYXljTKE5/8d9w
-         apHNH0KRmU5ExbTJxnYB7efLph6XOMzJvHAOqnN+w6Ouo+Ayli4hoA7NsQjzDBiqjaRk
-         NP8Zh/VhWs2ldG4WoyHZ2fBe8eyBkT6EP6+1IL0gW5ACvB8hMvKk7onBIjkIIszHqFlH
-         tE2dH+g3Vx3hdPbDCOMGUHp8Hx2Du5GOE08yFtekJ7BAlNvwhGCLlG64+hFWrK4rXOUU
-         sxomtrebidwYDzwaIPPFtNB73hvD7757I2Cj1U+t5P9J+dPvRHOw8jzF6czILNKIJz/d
-         2tyA==
-X-Gm-Message-State: APjAAAULkqybtfROocorWzcDbZSZHEYzFx1+eqEh6dTu72B7AGHTxCOm
-        qlKvKtWb7mxqJgjJQHRG8fQ=
-X-Google-Smtp-Source: APXvYqzU0fUqMBL8w2QcSyeInGNqfOMwSdoWEeL8Jio4DxpxmYEcSrrT/evMdYpEte58h35Awx0RVQ==
-X-Received: by 2002:ac2:5479:: with SMTP id e25mr2584442lfn.121.1554282249501;
-        Wed, 03 Apr 2019 02:04:09 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id i24sm2844879lfl.73.2019.04.03.02.04.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Apr 2019 02:04:08 -0700 (PDT)
-Date:   Wed, 3 Apr 2019 12:04:06 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1725941AbfDCJOv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 05:14:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725940AbfDCJOv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Apr 2019 05:14:51 -0400
+Received: from X250 (unknown [147.50.13.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1690220830;
+        Wed,  3 Apr 2019 09:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554282890;
+        bh=GJB+gVTbTg05re/OdMC/st+WTlhT765qsRoqYLMhxhs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DzSgJkEKZZRdvSgP0MhqVJ0krI1o0vtZCmb45PJFjJHu3TrnVbLlAjLoDh65T10wO
+         g+BSVlZ6+cJ+6coGRbR1p2JEnRi/S0Hnh5Tgr/yyx9sCiQkJV9pzCc5Hl4pdbbnbqv
+         uyzo2TLwfvrrQE2n74EdIhjieShHUANx2Uu/mMEo=
+Date:   Wed, 3 Apr 2019 16:14:42 +0700
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH v11 4/8] dt-bindings: mfd: Document first ROHM BD70528
- bindings
-Message-ID: <20190403090406.GB3493@localhost.localdomain>
-References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
- <c674ef76ca0a3298e6b13ade4ab29775edf36a76.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
- <20190403073426.GN4187@dell>
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v2 0/2] clk: imx5: Fix i.MX50 clock registers
+Message-ID: <20190403091440.GB7932@X250>
+References: <20190326182258.21945-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190403073426.GN4187@dell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190326182258.21945-1-j.neuschaefer@gmx.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-And thanks again for fixing the language. Appreciated!
-
-On Wed, Apr 03, 2019 at 08:34:26AM +0100, Lee Jones wrote:
-> On Mon, 25 Mar 2019, Matti Vaittinen wrote:
+On Tue, Mar 26, 2019 at 07:22:56PM +0100, Jonathan Neuschäfer wrote:
+> There are a few differences between the i.MX50 clock tree and those of
+> i.MX51 and i.MX53 that are not yet handled in clk-imx51-imx53.c.  This
+> series handles two of them.
 > 
-> > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> > drivers) and 4 GPIO pins which can be configured for I/O or
-> > as interrupt sources withe configurable trigger levels.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> >  .../bindings/mfd/rohm,bd70528-pmic.txt        | 102 ++++++++++++++++++
-> >  1 file changed, 102 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > new file mode 100644
-> > index 000000000000..120462c17904
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > @@ -0,0 +1,102 @@
-> > +* ROHM BD70528 Power Management Integrated Circuit bindings
-> > +
-> > +BD70528MWV is an ultra-low quiescet current general purpose single-chip
-> 
-> What does 'quiescet' mean?
+> Jonathan Neuschäfer (2):
+>   clk: imx5: Fix i.MX50 mainbus clock registers
+>   clk: imx5: Fix i.MX50 ESDHC clock registers
 
-I guess you knew what I meant =) Quiescent - I'll fix the typo.
-
-> "general purpose, single-chip,"
-
-Rules for using commas are far beyond my skills. I was bad in it at
-Finnish classes. Not to even mention English. Actually, the teacher
-suggested us to rather leave out the commas than trying to place them
-correctly in English sentences. Guess the rules are not that simple =)
-
-So I'll just add them as you suggested =)
-
-Br,
-	Matti Vaittinen
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Applied both, thanks.
