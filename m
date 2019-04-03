@@ -2,76 +2,262 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32519C4360F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C620DC4360F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB07E21473
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554282892;
-	bh=GJB+gVTbTg05re/OdMC/st+WTlhT765qsRoqYLMhxhs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hjJedvP7E1e5kovwV3q4HnGBCRhFG6sDbfDgr7DnPFDcRNfNlHlkLmR7Ze0YCesP/
-	 zDfSIjLw5Z+NWIG9fvcfvMgXEwyb4su/XpsUHG+p/PxEoz5gdEJAWAAfeO00lwBomf
-	 2mQXxnIa6HVC+/jEBZ7oTIMPJvB4OT3YgUiBfuRI=
+	by mail.kernel.org (Postfix) with ESMTP id 83C0020830
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 09:22:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrfElmID"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbfDCJOv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 05:14:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbfDCJOv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Apr 2019 05:14:51 -0400
-Received: from X250 (unknown [147.50.13.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1690220830;
-        Wed,  3 Apr 2019 09:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554282890;
-        bh=GJB+gVTbTg05re/OdMC/st+WTlhT765qsRoqYLMhxhs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DzSgJkEKZZRdvSgP0MhqVJ0krI1o0vtZCmb45PJFjJHu3TrnVbLlAjLoDh65T10wO
-         g+BSVlZ6+cJ+6coGRbR1p2JEnRi/S0Hnh5Tgr/yyx9sCiQkJV9pzCc5Hl4pdbbnbqv
-         uyzo2TLwfvrrQE2n74EdIhjieShHUANx2Uu/mMEo=
-Date:   Wed, 3 Apr 2019 16:14:42 +0700
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726018AbfDCJWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 05:22:55 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39584 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfDCJWy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 05:22:54 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j9so20330732wrn.6;
+        Wed, 03 Apr 2019 02:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2JG4ol+c13HoyA5+3kwzvKPoFgiCLtScm3f1sxd9MQY=;
+        b=VrfElmID2SxSpYXKaH4g2fbNm0md/eJKYKbD/hMCuJhYtxzn46T466w/YHYFlvr0WR
+         PqgWEFFKRu1LpySOsntI7YcaKbJtE8phcihiMslLpns65SP1CIkY38Fs1VN1TNAoQBlb
+         ld4ZAMpdZvhr2zxVEtpPh+HTNrlnFSbRHrNHQOWnyF/2UUThTJseUl7p5tNEJ/z5AwGL
+         ymUa73nXKWrOBhQ6owsjIArTQ5kN5wDYs5GZEjX5H28rul+Fwi9w3mHD1zNxPfC0MWxb
+         lxklZhnwwEGLdbzYy5flhg+bAh/Oatj4+iC/lJfmG3npQrDGoBSciVYiDpgZ+a8+iR9V
+         suiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2JG4ol+c13HoyA5+3kwzvKPoFgiCLtScm3f1sxd9MQY=;
+        b=mVKc7eWoJPNfg9YXDb/RiYHvHHVBpZmTUlO7+WkYr9SPTRRsm8xWwU7/Ko6FwChlWA
+         POEspH2TiGZbrIFip1bfOOZzG4/hGyN7pyqk49X0ysn6GPlhpahRUeJF34L3jGRoKroL
+         EdlAORSeGNPvHUIfbSDyj03Fw0P/sUlRVFO4rYh1kfMypeHMpp2pXtCScrLSZXNnJDrD
+         qasqpRvtFCWuM6Pz0rHVuQe22ugACnJ60qk70KKeGYOmK1OvogbuVYggxR+SExU3Ll0p
+         sovVVR44piZ5aXlPNVjDc5kHeV1O0q445v7XSVlm1okN0WKD9egYkzmX4KB98UKzgjvU
+         PTvw==
+X-Gm-Message-State: APjAAAWhaXFQyZdQsPwAirtDuK5JKY0T+QgM5tWbnOMiTJ3Uddntcugf
+        2eLvFJSm3QYvYFfKgL92N4Q=
+X-Google-Smtp-Source: APXvYqy7o4qDBsr/5cXaLtFXaeAiwre6duAht4l4jVrjydnza2tNteCeZnAKLVP+owDHl0Mupx3bzw==
+X-Received: by 2002:adf:dc88:: with SMTP id r8mr42487842wrj.28.1554283372060;
+        Wed, 03 Apr 2019 02:22:52 -0700 (PDT)
+Received: from localhost (pD9E51B25.dip0.t-ipconnect.de. [217.229.27.37])
+        by smtp.gmail.com with ESMTPSA id s18sm15181739wmc.41.2019.04.03.02.22.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Apr 2019 02:22:51 -0700 (PDT)
+Date:   Wed, 3 Apr 2019 11:22:50 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Joseph Lo <josephl@nvidia.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v2 0/2] clk: imx5: Fix i.MX50 clock registers
-Message-ID: <20190403091440.GB7932@X250>
-References: <20190326182258.21945-1-j.neuschaefer@gmx.net>
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/8] clk: tegra: clock changes for emc scaling support on
+ Tegra210
+Message-ID: <20190403092250.GG5238@ulmo>
+References: <20190325074523.26456-1-josephl@nvidia.com>
+ <20190325074523.26456-3-josephl@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xjyYRNSh/RebjC6o"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190326182258.21945-1-j.neuschaefer@gmx.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190325074523.26456-3-josephl@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 26, 2019 at 07:22:56PM +0100, Jonathan Neuschäfer wrote:
-> There are a few differences between the i.MX50 clock tree and those of
-> i.MX51 and i.MX53 that are not yet handled in clk-imx51-imx53.c.  This
-> series handles two of them.
-> 
-> Jonathan Neuschäfer (2):
->   clk: imx5: Fix i.MX50 mainbus clock registers
->   clk: imx5: Fix i.MX50 ESDHC clock registers
 
-Applied both, thanks.
+--xjyYRNSh/RebjC6o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Mar 25, 2019 at 03:45:17PM +0800, Joseph Lo wrote:
+> 1) Introduce low jitter paths for pllp and pll_mb used by the EMC driver.
+> 2) Remove the old emc_mux clock and don't use the common EMC clock
+>    definition. This will be replaced by a new clock defined in the EMC
+>    driver.
+> 3) Export functions to allow accessing the CAR register required for EMC
+>    clock scaling. These functions will be used to access the CAR register
+>    as part of the scaling sequence.
+
+The fact that you can enumerate 3 logical changes made by this commit
+indicates that it should be split up into smaller patches.
+
+> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+>=20
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c         | 112 +++++++++++++++++++----
+>  include/dt-bindings/clock/tegra210-car.h |   4 +-
+>  include/linux/clk/tegra.h                |   5 +
+>  3 files changed, 103 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-teg=
+ra210.c
+> index 7545af763d7a..e17b5279ea69 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -47,6 +47,7 @@
+>  #define CLK_SOURCE_LA 0x1f8
+>  #define CLK_SOURCE_SDMMC2 0x154
+>  #define CLK_SOURCE_SDMMC4 0x164
+> +#define CLK_SOURCE_EMC_DLL 0x664
+> =20
+>  #define PLLC_BASE 0x80
+>  #define PLLC_OUT 0x84
+> @@ -234,6 +235,10 @@
+>  #define RST_DFLL_DVCO 0x2f4
+>  #define DVFS_DFLL_RESET_SHIFT 0
+> =20
+> +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
+> +#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
+> +#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
+> +
+>  #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+>  #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+> =20
+> @@ -319,12 +324,6 @@ static unsigned long tegra210_input_freq[] =3D {
+>  	[8] =3D 12000000,
+>  };
+> =20
+> -static const char *mux_pllmcp_clkm[] =3D {
+> -	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
+> -	"pll_p",
+> -};
+> -#define mux_pllmcp_clkm_idx NULL
+> -
+>  #define PLL_ENABLE			(1 << 30)
+> =20
+>  #define PLLCX_MISC1_IDDQ		(1 << 27)
+> @@ -2310,7 +2309,7 @@ static struct tegra_clk tegra210_clks[tegra_clk_max=
+] __initdata =3D {
+>  	[tegra_clk_i2c2] =3D { .dt_id =3D TEGRA210_CLK_I2C2, .present =3D true =
+},
+>  	[tegra_clk_uartc_8] =3D { .dt_id =3D TEGRA210_CLK_UARTC, .present =3D t=
+rue },
+>  	[tegra_clk_mipi_cal] =3D { .dt_id =3D TEGRA210_CLK_MIPI_CAL, .present =
+=3D true },
+> -	[tegra_clk_emc] =3D { .dt_id =3D TEGRA210_CLK_EMC, .present =3D true },
+> +	[tegra_clk_emc] =3D { .dt_id =3D TEGRA210_CLK_EMC, .present =3D false },
+>  	[tegra_clk_usb2] =3D { .dt_id =3D TEGRA210_CLK_USB2, .present =3D true =
+},
+>  	[tegra_clk_bsev] =3D { .dt_id =3D TEGRA210_CLK_BSEV, .present =3D true =
+},
+>  	[tegra_clk_uartd_8] =3D { .dt_id =3D TEGRA210_CLK_UARTD, .present =3D t=
+rue },
+> @@ -2921,6 +2920,82 @@ static int tegra210_init_pllu(void)
+>  	return 0;
+>  }
+> =20
+> +void tegra210_clk_emc_dll_enable(bool flag)
+> +{
+> +	unsigned long flags =3D 0;
+> +	u32 offset =3D flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
+> +		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
+> +
+> +	spin_lock_irqsave(&emc_lock, flags);
+> +
+> +	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
+> +	readl(clk_base + offset);
+> +
+> +	spin_unlock_irqrestore(&emc_lock, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
+> +
+> +void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
+
+Do we really want to pass the whole register value through this
+function? The register has three fields, so perhaps it's safer to pass
+the fields individually? Or perhaps we only need to modify a subset of
+the fields and can reduce the number of parameters we pass? Letting a
+different driver pass any arbitrary value here takes away any means of
+checking for validity.
+
+> +{
+> +	unsigned long flags =3D 0;
+> +
+> +	spin_lock_irqsave(&emc_lock, flags);
+> +
+> +	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
+> +	readl(clk_base + CLK_SOURCE_EMC_DLL);
+
+Could we not just use a writel() here and do away with the flushing
+readl()?
+
+Also, it doesn't look like that spinlock actually protects anything.
+You're just writing a value. If anyone else is holding that lock they
+will either overwrite our value after we release the lock, or we
+overwrite their value when they release the lock.
+
+> +
+> +	spin_unlock_irqrestore(&emc_lock, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
+> +
+> +void tegra210_clk_emc_update_setting(u32 emc_src_value)
+> +{
+> +	unsigned long flags =3D 0;
+> +
+> +	spin_lock_irqsave(&emc_lock, flags);
+> +
+> +	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
+> +	readl(clk_base + CLK_SOURCE_EMC);
+> +
+> +	spin_unlock_irqrestore(&emc_lock, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
+
+Same comments as above.
+
+> +
+> +u32 tegra210_clk_emc_get_setting(void)
+> +{
+> +	unsigned long flags =3D 0;
+> +	u32 val;
+> +
+> +	spin_lock_irqsave(&emc_lock, flags);
+> +
+> +	val =3D readl_relaxed(clk_base + CLK_SOURCE_EMC);
+> +
+> +	spin_unlock_irqrestore(&emc_lock, flags);
+
+Similar to the above, the spinlock doesn't protect anything here.
+
+Thierry
+
+--xjyYRNSh/RebjC6o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlyke2cACgkQ3SOs138+
+s6HcexAAjdntzTF9Lg+OwqPGMuiDMaSTErqBKWtmU3dAnAgx29Ktd2qWaKsqe26d
+/zOaivSzsvblsSw2oIi1qnTqjLVlF8sm4i3lAQL53fBLnSl0aKpGiIEXKMTQ9wJh
+4I35H2t9dtgRpNkwo3zR+rZihel6QtUXltXeDCR58IzcfNmBfs5xvFDai3sYgp5v
+xU3HDOHkkTa1oP8UQbg9eTYEC+5updYs9VhU8nqcOT/vkQ6DhNHmeLZvs/vNzl/t
+xAsaT0M1pLgk3L/WGDYaX5NI/SYwAiX+FiBBB9RJajS/e9Nzvu657Tn29UNXJZjq
+33sVvWnLrOOmJWibq39Lq/y3iNHN6TSz3YtTcXVjLNfymPSxBZ2qrpc45naPTUld
+JYO/np6gofh57bPRUOhDkFbaEcWNizldMTybYk87FWTwuO8Z6MfNQkwpLdmnfrka
+S7hs+MN5V+Tsx1EujYYn5JngB5kMSfKtdWbRwjevXSImNx4HhoU+CFx6ZTw9paTM
+PiH0gabA5qDa9GZLGf35rJI9gpQ6tVWNvEEeK/zB/daLYD6oyU5bXpepeIun+/PK
+ickY0m1Y0r9iM1Ju7+U/UwTL+Rwf97at/UoxL9Fhf/YuLLcmYwi1Csyf6U+UBTvy
+3F7Md5dgiPisgs9ELy+YTMg5wIahhDW8jtnaGMFbFbPR4W7+uNI=
+=RMCa
+-----END PGP SIGNATURE-----
+
+--xjyYRNSh/RebjC6o--
