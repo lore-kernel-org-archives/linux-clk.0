@@ -2,195 +2,219 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 176F1C4360F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 13:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD55C4360F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 14:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D279E20830
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 13:27:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 006022084C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 14:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=in.bosch.com header.i=@in.bosch.com header.b="KsSr5mfZ"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="lf7y7nEm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbfDCNZl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 09:25:41 -0400
-Received: from de-deferred2.bosch-org.com ([139.15.180.217]:46288 "EHLO
-        de-deferred2.bosch-org.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726099AbfDCNZl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 09:25:41 -0400
-Received: from de-out1.bosch-org.com (unknown [139.15.180.215])
-        by fe0vms0193.rbdmz01.com (Postfix) with ESMTPS id 44Z65q10h0z2Zt;
-        Wed,  3 Apr 2019 15:15:59 +0200 (CEST)
-Received: from si0vm1947.rbesz01.com (unknown [139.15.230.188])
-        by fe0vms0187.rbdmz01.com (Postfix) with ESMTPS id 44Z65n3R47z1XLDQt;
-        Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=in.bosch.com;
-        s=2015-01-21; t=1554297357;
-        bh=5JmXTCA8402bhLcSZ4Bm03a+Df0e1eFcN7hmyjl8vSI=; l=10;
-        h=From:From:Reply-To:Sender;
-        b=KsSr5mfZkWC84xy343neKHvYjnHU2ZDc0SrPG3doa1ZabNcvuZ6zwN+afLtGaTfO0
-         HUCBcfrjmBLT+dMMaxG/+5u37sztMO4g5rJL0x0gT2H/UHLVwTol6W3apedsquw822
-         ZH05RnQPtngcH3/QeSgbm/Z/LsbpT3kjj2FElSwk=
-Received: from fe0vm7918.rbesz01.com (unknown [10.58.172.176])
-        by si0vm1947.rbesz01.com (Postfix) with ESMTPS id 44Z65n2q3fz6CjQSN;
-        Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
-X-AuditID: 0a3aad10-03fff70000007f88-86-5ca4b20d2a59
-Received: from fe0vm1652.rbesz01.com ( [10.58.173.29])
-        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by fe0vm7918.rbesz01.com (SMG Outbound) with SMTP id C1.BF.32648.D02B4AC5; Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
-Received: from SI-HUB2000.de.bosch.com (si-hub2000.de.bosch.com [10.4.103.108])
-        by fe0vm1652.rbesz01.com (Postfix) with ESMTPS id 44Z65n0R74zVv1;
-        Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
-Received: from localhost.localdomain (10.47.103.88) by SI-HUB2000.de.bosch.com
- (10.4.103.108) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Wed, 3 Apr 2019
- 15:15:55 +0200
-From:   <VenkataRajesh.Kalakodima@in.bosch.com>
-To:     <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC:     kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>,
-        Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
-Subject: [PATCH 6/8] drm: rcar-du: Implement atomic_check to check for gamma and ctm properties
-Date:   Wed, 3 Apr 2019 18:44:42 +0530
-Message-ID: <1554297284-14009-7-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
-References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+        id S1725990AbfDCOJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 10:09:57 -0400
+Received: from mout.gmx.net ([212.227.15.19]:36017 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbfDCOJ5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Apr 2019 10:09:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1554300580;
+        bh=/iDDh982zt8Z8Y9qPYjW039QMc4wPXC/sgf3jD9owGo=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=lf7y7nEmZHQeUG2Hi2hyKG6S0NxJTVK9a6q3KBgRgcDb8oauFpqhOgSiFDyjNDLNQ
+         mS8NPmBt4KiU2+txZR1a2jUAkQRKr2OADf96srJfDMGPdFXy4IsRsNohmpXosh6zuT
+         3A5llqkVpxmC1wMHhlB01lL3lg4z08jGvTqmCHUk=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from openbmc-devel.mpl.loc ([185.137.174.251]) by mail.gmx.com
+ (mrgmx002 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 0LomJ1-1gjkQZ2HUZ-00gr9D; Wed, 03 Apr 2019 16:09:40 +0200
+From:   =?UTF-8?q?David=20M=C3=BCller?= <dave.mueller@gmx.ch>
+To:     linux-clk@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v2] clk: x86: Add system specific quirk to mark clocks as critical
+Date:   Wed,  3 Apr 2019 16:08:57 +0200
+Message-Id: <20190403140857.1130-1-dave.mueller@gmx.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190328124939.23139-1-dave.mueller@gmx.ch>
+References: <20190328124939.23139-1-dave.mueller@gmx.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.47.103.88]
-X-Brightmail-Tracker: H4sIAAAAAAAAA22Sb0xTVxjGObf/bjuOOVwovBZqzA2OZBEHDMfdnyzbPqhZtmkyXRbThd3C
-        hXZSSnpbIsyYus2RYakuZkYqaYGx+ScYoHNCcYHQKU7sCKIfwCywISaFMdQBCS4Bd68F2w/7
-        9ub5ned9znlyaAXToTHQ1kqn4KjkK1i1Tql79aIxFwfbTHm9D3Vc4Oqwiruz9EDNPfJMqLjb
-        vU1q7qeZeepN1a7JY9epXQvBTXuo/brXS4UKa7XgePGNT3SWxSYvqvom82BPw4rKjfrT65GW
-        BlIIRwO/oHqkoxlymoL2kRWFDBjyM4I+z6cxMIcgWOdXykBNcqG/q0sjgzRyHsGx+W5KBgpy
-        CBpOtmnkOZUUQ4unRS3PSpINkbN3pK00jck+GDtSGEveBOPDXz8N05IPIfDrtDoWvA8Cy/+o
-        5BmTFLjROK2MrQcYiEafrgGyGUIt6hOI+BJO+RJONSPqAtKXCXnVtqJX8rltDrMg1ublbyux
-        24Io1ibpQaGhsjAiNGKT8URjm4lR8dVijS2MttMUq8cvH5akDWZ7aY2FFy3FDleFILIGnDXy
-        jolJfSaLLrPNKopWe2UYAa1g03DkeLOJwaV8Ta3gsMdsYZRJK9kMXE7vNjGknHcKBwShSnCs
-        09domgWc1iUFpjiEcuFgmbXCuY5ZI0ZJSUlMeiJJjKVobRi9RCdL2aEOaQUWq3ibaC1fs2+M
-        2Zl1NW4dQkWGDPxcp+QhMrW4Kp+lGrJw0n2/idEngLhzFo0jqbdUvCIHJksfNZ4HOFOuKGVN
-        jJsKvpc85LwWZurcCBY8Ywj8PUsIlqe+pGB1epYC/93PlTDa69PAwsUlDXhb/TRMjl/WwsNz
-        DRguzV7H0H92joHTS0/SoO+rBj0Ehx5nwfyNR0bw915j4Zb3NgvRPk829Ize3ALewboc6Dh5
-        LgciPw7mQHRxPgd+H/FvhcblK1sh9GQ0FyYenMmDK981F8DqqfZC6Qa+olmpTEoqk3MF5DKd
-        vPN/ylxT468zuNF2pTFzgGwuee/jel/y4cvRqx+8u3Pli8BMRmtZcMO/5v3dd4883/hXraeE
-        DhVX7XyMplbv2Rdr9kx1csY/WgcK718am9vtm/7MPKz3uE/s/XsyZUdJtDb6NlX354DG2546
-        Gck+dO/9Ld0fcQU/HP3t2qmbM+4db7k6jx/41tp0azCSvpFVihY+/wWFQ+T/A3Fq90ZCBAAA
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Oig04ai+enGEwlvBycUQDspRCPX6O8fUrgsXGmLrXsrvxmDq1+w
+ dspzO5GyPjo5TILYtaSfhq12HhYuPpD2Z+tzFSh76PYzMrhjNbMcJO/iVoZ0hcbcrZsGVmd
+ x7VXCcGASABprWRJpQwsmRDDEHu5C0T2+r3/UWPlWQ7J8Hqwa1Og0BjH0qQshO/SutgbJsz
+ UEafsFEydcfNWKQTrXWBg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nVt1sOKEcWg=:iaXeGi0CbdxLnTQLoS+AxK
+ 64li3D33+K9wKvF5I6Z3dV4+gtnSoNim9svqV684B75U8Rb5DpwzDCTILU29BTNEWEDX4uGkM
+ pvIb6lh4/ysPfSmGNDEt6HAclGdTGvvh41X+dbKMUTalEwPOK3FVM0r3fwyHEFpw0V93Er2rn
+ 1Nollx46Tm8xB4oL+GFNclopmnD2/PDmndbQjzVtpMCVjUaLDp1I4n6Ig3P2NueVsQP6pykE9
+ CUvbsfpSM/m4TzfoxTOIUW1WM6OUyVQFQyc5g4BhU8dm0QCWRnI/u8rSZEpfhguhXGCEY3I9E
+ ZMn0dKzJzxXxhLSsVtLYzcs061ZH139muYKA6KJ+rBOQs/IWl2coZ6bdBV1Kqn4MGiiDAiFv+
+ S6xzSC1Dla9D+0RZIZX0G0Kd+r/2AihEst2z4jF0CFw+4fhJ5Vvh+qynhhsQuOGWcf0ThKSVI
+ m6dzeeuPtJNG2WvfStrWwzSeYj9EEHKFpbqRqSWu/Y3QDZXJOAK4ubCkvIX7oMZRQtoFsbY86
+ fWqmVv2RimibEKEcYUHXFjob3/v82lo2m4ttShpH97n4fSYxf8nez8yRvU3hHgpFOS9ftEydf
+ /8zk/ecOADV1bIqlJl9KtDxUYXKWm9GbEkC3+RWC/FW5OORSXeGSEjzm6QaPRksXx5oSazV3n
+ 83vL6sDvSbsB65WJjRB2u5B2aXL6V9iZOyvVt3Le/ZXTK2wO/6S+Fl2f07weZbMZW3rCYVXnP
+ t6EKcywqEV4h+lm3TwBg+T7Jew832P4VY1QqXtI5pRByThVb8t+8WDbIxk+qIfp9J50vKI+xU
+ OR50OQaJJRQQeBnLUwo86gopY0cVKNEiBuovLCToChHg/Ukv51PPBjcTuOFplBlp6yBTUeVZh
+ fm0RNH1tRvucxguMOvoyLyHWr6MXpQYzL0W7GwJhCODomR0s2ybpaUnyWPOxMb+dQoHiL2cM1
+ 8Xrhf4oO9Iw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+Since commit 648e921888ad ("clk: x86: Stop marking clocks as
+CLK_IS_CRITICAL"), the pmc_plt_clocks of the Bay Trail SoC are
+unconditionally gated off. Unfortunately this will break systems where the=
+se
+clocks are used for external purposes beyond the kernel's knowledge. Fix i=
+t
+by implementing a system specific quirk to mark the necessary pmc_plt_clks=
+ as
+critical.
 
-    Implement atomic helper check and allocate memory necessary for
-    lut and clu tables
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Signed-off-by: David M=C3=BCller <dave.mueller@gmx.ch>
+=2D--
+Changes in v2:
+- restore previous clk detection logic as suggested by Hans de Goede
 
-Signed-off-by: Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
+ drivers/clk/x86/clk-pmc-atom.c                | 14 ++++++++++---
+ drivers/platform/x86/pmc_atom.c               | 20 +++++++++++++++++++
+ .../linux/platform_data/x86/clk-pmc-atom.h    |  7 +++++--
+ 3 files changed, 36 insertions(+), 5 deletions(-)
 
-      - Resolved checkpatch errors
-      - Resolved merge conflicts according to latest version
-Signed-off-by: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 58 ++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  3 +-
- 2 files changed, 60 insertions(+), 1 deletion(-)
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom=
+.c
+index d977193842df..e909720cc2e3 100644
+=2D-- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -165,7 +165,7 @@ static const struct clk_ops plt_clk_ops =3D {
+ };
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 864fb94..a00b7a7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -622,6 +622,63 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
-  * CRTC Functions
-  */
- 
-+static bool rcar_du_crtc_is_ctm_updated(struct drm_crtc *crtc,
-+					struct drm_crtc_state *state)
-+{
-+	return (state->color_mgmt_changed && state->ctm &&
-+		crtc->state->ctm &&
-+		(crtc->state->ctm->base.id != state->ctm->base.id));
-+}
-+
-+static bool rcar_du_crtc_is_gamma_updated(struct drm_crtc *crtc,
-+					  struct drm_crtc_state *state)
-+{
-+	return (state->color_mgmt_changed && state->gamma_lut &&
-+		crtc->state->gamma_lut &&
-+		(crtc->state->gamma_lut->base.id != state->gamma_lut->base.id));
-+}
-+
-+static int rcar_du_crtc_cmm_atomic_check(struct drm_crtc *crtc,
-+					 struct drm_crtc_state *state)
-+{
-+	int ret = 0;
-+	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+
-+	/*Check gamma update and allocate memory*/
-+	if (rcar_du_crtc_is_gamma_updated(crtc, state) &&
-+	    !rcrtc->lut_handle) {
-+		ret = rcar_du_cmm_lut_valid((crtc->state->gamma_lut->length /
-+					     sizeof(struct drm_color_lut)));
-+		if (ret >= 0) {
-+			rcrtc->lut_handle =
-+				rcar_du_cmm_alloc_lut(rcrtc->cmm_handle);
-+			if (!rcrtc->lut_handle)
-+				ret = -ENOMEM;
-+		}
-+	}
-+
-+	/*Check update of ctm and allocate memory*/
-+	if (ret >= 0 && rcar_du_crtc_is_ctm_updated(crtc, state) &&
-+	    !rcrtc->clu_handle) {
-+		rcrtc->clu_handle = rcar_du_cmm_alloc_clu(rcrtc->cmm_handle);
-+		if (!rcrtc->clu_handle) {
-+			if (!rcrtc->lut_handle) {
-+				rcar_du_cmm_free_lut(rcrtc->lut_handle);
-+				rcrtc->lut_handle = NULL;
-+			}
-+			ret = -ENOMEM;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
-+				     struct drm_crtc_state *state)
-+{
-+	return rcar_du_crtc_cmm_atomic_check(crtc, state);
-+}
-+
- static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
- 				       struct drm_crtc_state *old_state)
+ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int=
+ id,
+-					void __iomem *base,
++					const struct pmc_clk_data *pmc_data,
+ 					const char **parent_names,
+ 					int num_parents)
  {
-@@ -708,6 +765,7 @@ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
- 	.atomic_flush = rcar_du_crtc_atomic_flush,
- 	.atomic_enable = rcar_du_crtc_atomic_enable,
- 	.atomic_disable = rcar_du_crtc_atomic_disable,
-+	.atomic_check = rcar_du_crtc_atomic_check,
+@@ -184,9 +184,17 @@ static struct clk_plt *plt_clk_register(struct platfo=
+rm_device *pdev, int id,
+ 	init.num_parents =3D num_parents;
+
+ 	pclk->hw.init =3D &init;
+-	pclk->reg =3D base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
++	pclk->reg =3D pmc_data->base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZ=
+E;
+ 	spin_lock_init(&pclk->lock);
+
++	/*
++	 * On some systems, the pmc_plt_clocks already enabled by the
++	 * firmware are being marked as critical to avoid them being
++	 * gated by the clock framework
++	 */
++	if (pmc_data->chk_critclks && plt_clk_is_enabled(&pclk->hw))
++		init.flags |=3D CLK_IS_CRITICAL;
++
+ 	ret =3D devm_clk_hw_register(&pdev->dev, &pclk->hw);
+ 	if (ret) {
+ 		pclk =3D ERR_PTR(ret);
+@@ -332,7 +340,7 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(parent_names);
+
+ 	for (i =3D 0; i < PMC_CLK_NUM; i++) {
+-		data->clks[i] =3D plt_clk_register(pdev, i, pmc_data->base,
++		data->clks[i] =3D plt_clk_register(pdev, i, pmc_data,
+ 						 parent_names, data->nparents);
+ 		if (IS_ERR(data->clks[i])) {
+ 			err =3D PTR_ERR(data->clks[i]);
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_at=
+om.c
+index 8f018b3f3cd4..559b2fdf1419 100644
+=2D-- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -17,6 +17,7 @@
+
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/platform_data/x86/clk-pmc-atom.h>
+@@ -391,11 +392,26 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+ }
+ #endif /* CONFIG_DEBUG_FS */
+
++/*
++ * Some systems need one or more of their pmc_plt_clks to be
++ * marked as critical
++ */
++static const struct dmi_system_id critclk_systems[] __initconst =3D {
++	{
++		.ident =3D "MPL CEC1x",
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "MPL AG"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
++		},
++	},
++};
++
+ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
+ 			  const struct pmc_data *pmc_data)
+ {
+ 	struct platform_device *clkdev;
+ 	struct pmc_clk_data *clk_data;
++	const struct dmi_system_id *d =3D dmi_first_match(critclk_systems);
+
+ 	clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+@@ -403,6 +419,10 @@ static int pmc_setup_clks(struct pci_dev *pdev, void =
+__iomem *pmc_regmap,
+
+ 	clk_data->base =3D pmc_regmap; /* offset is added by client */
+ 	clk_data->clks =3D pmc_data->clks;
++	if (d) {
++		clk_data->chk_critclks =3D true;
++		pr_info("%s critclks quirk enabled\n", d->ident);
++	}
+
+ 	clkdev =3D platform_device_register_data(&pdev->dev, "clk-pmc-atom",
+ 					       PLATFORM_DEVID_NONE,
+diff --git a/include/linux/platform_data/x86/clk-pmc-atom.h b/include/linu=
+x/platform_data/x86/clk-pmc-atom.h
+index 3ab892208343..497575a42353 100644
+=2D-- a/include/linux/platform_data/x86/clk-pmc-atom.h
++++ b/include/linux/platform_data/x86/clk-pmc-atom.h
+@@ -33,12 +33,15 @@ struct pmc_clk {
+ /**
+  * struct pmc_clk_data - common PMC clock configuration
+  *
+- * @base:	PMC clock register base offset
+- * @clks:	pointer to set of registered clocks, typically 0..5
++ * @base:		PMC clock register base offset
++ * @clks:		pointer to set of registered clocks, typically 0..5
++ * @chk_critclks:	flag to indicate if firmware enabled pmc_plt_clks
++ *			should be marked as critial or not
+  */
+ struct pmc_clk_data {
+ 	void __iomem *base;
+ 	const struct pmc_clk *clks;
++	bool chk_critclks;
  };
- 
- static struct drm_crtc_state *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 5b85de4..b79080e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -70,7 +70,8 @@ struct rcar_du_crtc {
- 	int lvds_ch;
- 
- 	void *cmm_handle;
--
-+	void *lut_handle;
-+	void *clu_handle;
- };
- 
- #define to_rcar_crtc(c)	container_of(c, struct rcar_du_crtc, crtc)
--- 
-2.7.4
+
+ #endif /* __PLATFORM_DATA_X86_CLK_PMC_ATOM_H */
+=2D-
+2.20.1
 
