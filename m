@@ -2,109 +2,105 @@ Return-Path: <SRS0=fESv=SF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE8FC4360F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 11:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C44C4360F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 11:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 831E32147A
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 11:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D3892084B
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Apr 2019 11:56:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SxiNvdVn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="er6p/Xoq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbfDCLed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 07:34:33 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40913 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfDCLed (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 07:34:33 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z24so7812693wmi.5;
-        Wed, 03 Apr 2019 04:34:29 -0700 (PDT)
+        id S1726436AbfDCLz7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 07:55:59 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35994 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfDCLz7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 07:55:59 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r24so14604427ljg.3;
+        Wed, 03 Apr 2019 04:55:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LT4VrdvVUqEG5x8r99vd9woigjjDK4AXNAEUYLy/jWo=;
-        b=SxiNvdVnuzoCI9xoN5qxb8tS3FGWjV36IvXTNPee4acte7TeJxXCg3cudXu3ujcEvu
-         k/0ycB1kgszKtEoO28zYfQ9CRWSLM3XFk3oqNnNyfCqdakNj80ijV4xCtwTATgD5F/1L
-         mkzM+nDDJI3Sgt7hWnn+YBXYdoipgaz/L0dPIkyl6iOWtawrhBLi/9/FJPszAjhEWypu
-         w8oOJ+m7wRFukPDxbnfQrp3HGvw674Ts9lcUt3LMIvzVUP9MmcuyDLp/hlkDdHgvTLbp
-         XzuhWGrP3wM8RMloO+08i1FjkIchMVBbSBYK1IMhj6bmpso1DUz+kAtcMB4qDJVjTVNE
-         N2kQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YSn9LHoyZ3jftWrvAFFCi5l3MrU0tPng58wuulDrtjk=;
+        b=er6p/Xoq4AnduuQkrqef5kgzvvX0/JdESv61Ny24z1i4zDkM3dk3wodBrXcpejr0vW
+         KX2SONZNL/rsNPDSjShklpCTvBWjbQtkI2+YW7zunXoefFwbZW6nU4P5EMaT22D4MCUJ
+         sscsiz+FGAfCep/TMya5LOlGqFDDSBtrtcBCpZ6Msi539r7FFG8AS3KiiOe8/AnOOD9T
+         2iCpzxv8jC8EnT75mdKA3Mj9aNw9C2fC9nrl042y+1tso8SVQSNkA4r6LCZjSBJq9KMI
+         imV7xeMekuhuhukWFgTH0ae52VpyJvD7tLIl3ZUipPA6ZCKIF8EEfKot/mV7WACf7/Ir
+         /KGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LT4VrdvVUqEG5x8r99vd9woigjjDK4AXNAEUYLy/jWo=;
-        b=r8KbE3ZMLeol5BnpuCvg/P5pgrC3Q1/UhOo2xZpUnxyva+SZT2NoSwZnOOnDY7Ol+w
-         9YVBRABqUpArPm7mJkDJ2Rm3zcXo2CeeFpOvpGl/P9Jk3Z2auCuvjQs+GH7o5/4TVQSB
-         w/+W8RqdCpVn5SzOiLxM+M9aY2X9nOxgHwF7NbWQDcseyXOpXMxBTvZxvgxEb/ej9UI/
-         6/+xf3+6Omo/BB5BJ+z/kVC68/G1Thusdl/qsTRZxrrSposGo0zxbTl15icAy+7yKWMP
-         /igDwUFruBl+qmCsB2ctasR7EVQ0/HK78EyUj7G91C9WFEmaHeT8OZv5NeHYhk8yX7/t
-         XRaQ==
-X-Gm-Message-State: APjAAAUck9DcN1OrzxnGq1BuSE/f4p7e9lfpgMnwx3FkCU3A4ZZ8i9wy
-        CYaphdErhsiNEO4feznPAnw=
-X-Google-Smtp-Source: APXvYqySdXQIplWovT2OjeLhBwexwoKyfDONzhcr74ydYVAOfVQ7kAbGab4DRV1yy6CfUM6wUbeDDQ==
-X-Received: by 2002:a05:600c:2293:: with SMTP id 19mr118521wmf.77.1554291268337;
-        Wed, 03 Apr 2019 04:34:28 -0700 (PDT)
-Received: from localhost (pD9E51B25.dip0.t-ipconnect.de. [217.229.27.37])
-        by smtp.gmail.com with ESMTPSA id c6sm16741846wmb.21.2019.04.03.04.34.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Apr 2019 04:34:27 -0700 (PDT)
-Date:   Wed, 3 Apr 2019 13:34:26 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joseph Lo <josephl@nvidia.com>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YSn9LHoyZ3jftWrvAFFCi5l3MrU0tPng58wuulDrtjk=;
+        b=Ui1qkLWkkFdysgLlq/P4jjouVXUjhTXyLbhcXi8m99QDvhKx9uNixuXgGbI2TsH5Q3
+         MqCR/uMaWiEfOs1HQlZ8wbvYu6/mHfnZaqT+d368EKpn82VdjQzrcGEa/fATKmdiY7cm
+         igGvl/41tV3TTgbDbJsGbKJJWDb8UAii2dRSnMAMQRBBaWkGJ9zYjcmP2OkeU+pqiZQa
+         OK70bV9mVIZ8kI+Pe4nk2a+8KVsOuv/3UqCPk0HTfOmXOxQxLawMPUA7mj4/Ruk3pXEY
+         mejW13rcc1DOvagx9KWyk++4anyd/Tcn+HZmHZ6Mkk97M63fqfnH2dshJQr+Eqzgodh/
+         k/1A==
+X-Gm-Message-State: APjAAAWm3or/72JEFGiit289GWCXar+AAx3d6gpCfR/38//tj1skkgYj
+        g/oKPqX9zpkXOaNPcdqrDlYcMwsT
+X-Google-Smtp-Source: APXvYqxxTCVHxvyxZkIyDjMqYvYd65xuomoW6NOVPMFQVTBeFx+4CtPandJpoShlk4TB1eiR9foCXA==
+X-Received: by 2002:a2e:5bcc:: with SMTP id m73mr41715257lje.100.1554292551182;
+        Wed, 03 Apr 2019 04:55:51 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id q2sm2908654lfc.76.2019.04.03.04.55.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Apr 2019 04:55:49 -0700 (PDT)
+Subject: Re: [PATCH 3/8] memory: tegra: Add Tegra210 EMC clock driver
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/8] memory: tegra: Add Tegra210 EMC clock driver
-Message-ID: <20190403113426.GH5238@ulmo>
 References: <20190325074523.26456-1-josephl@nvidia.com>
  <20190325074523.26456-4-josephl@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <89f6b360-d1d5-d1b9-6b0f-f5e694b1b105@gmail.com>
+Date:   Wed, 3 Apr 2019 14:55:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zhtSGe8h3+lMyY1M"
-Content-Disposition: inline
 In-Reply-To: <20190325074523.26456-4-josephl@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---zhtSGe8h3+lMyY1M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 25, 2019 at 03:45:18PM +0800, Joseph Lo wrote:
+25.03.2019 10:45, Joseph Lo пишет:
 > This is the initial patch for Tegra210 EMC clock driver, which doesn't
 > include the support code and detail sequence for clock scaling yet.
->=20
+> 
 > The driver is designed to support LPDDR4 SDRAMs. Because of the LPDDR4
 > devices need to do initial time training before it can be used, the
 > firmware will help to do that at early boot stage. The trained table for
 > the rates that we will support in the kernel will be merged to the
 > kernel DTB. So the driver can get the trained table for clock scaling
 > support.
->=20
+> 
 > For the higher rate support (above 800MHz), the periodic training is
 > needed for the timing compensation. So basically, two methodologies for
 > clock scaling support, one is following the clock changing sequence to
 > update the EMC table to EMC registers and another is if the rate needs
 > periodic training, then we will start a timer to do that periodically
 > until it leaves the rate that doesn't need that.
->=20
+> 
 > Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
->=20
+> 
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
 >  drivers/memory/tegra/Kconfig             |   10 +
@@ -116,7 +112,7 @@ On Mon, Mar 25, 2019 at 03:45:18PM +0800, Joseph Lo wrote:
 >  create mode 100644 drivers/memory/tegra/tegra210-dt-parse.c
 >  create mode 100644 drivers/memory/tegra/tegra210-emc-reg.h
 >  create mode 100644 drivers/memory/tegra/tegra210-emc.c
->=20
+> 
 > diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
 > index 34e0b70f5c5f..614e9b370183 100644
 > --- a/drivers/memory/tegra/Kconfig
@@ -139,14 +135,13 @@ On Mon, Mar 25, 2019 at 03:45:18PM +0800, Joseph Lo wrote:
 > index 3971a6b7c487..36a835620bbd 100644
 > --- a/drivers/memory/tegra/Makefile
 > +++ b/drivers/memory/tegra/Makefile
-> @@ -12,4 +12,5 @@ obj-$(CONFIG_TEGRA_MC) +=3D tegra-mc.o
-> =20
->  obj-$(CONFIG_TEGRA20_EMC)  +=3D tegra20-emc.o
->  obj-$(CONFIG_TEGRA124_EMC) +=3D tegra124-emc.o
-> +obj-$(CONFIG_TEGRA210_EMC) +=3D tegra210-emc.o tegra210-dt-parse.o
->  obj-$(CONFIG_ARCH_TEGRA_186_SOC) +=3D tegra186.o
-> diff --git a/drivers/memory/tegra/tegra210-dt-parse.c b/drivers/memory/te=
-gra/tegra210-dt-parse.c
+> @@ -12,4 +12,5 @@ obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
+>  
+>  obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
+>  obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
+> +obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o tegra210-dt-parse.o
+>  obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
+> diff --git a/drivers/memory/tegra/tegra210-dt-parse.c b/drivers/memory/tegra/tegra210-dt-parse.c
 > new file mode 100644
 > index 000000000000..6a3a3a28ac64
 > --- /dev/null
@@ -167,102 +162,47 @@ gra/tegra210-dt-parse.c
 > +
 > +static struct device_node *tegra_emc_ramcode_devnode(
 > +	struct device_node *np)
-
-This is weirdly wrapped. Typically if it doesn't all fit on one line
-you'd break after the return type, like so:
-
-    static struct device_node *tegra_emc_ramcode_devnode(struct device_node=
- *np)
-
-That said, the above does seem to fit on a single line, so there'n no
-reason to wrap at all. You could still try to make it a little shorter
-by using the _node suffix instead of _devnode.
-
 > +{
 > +	struct device_node *iter;
 > +	u32 reg;
-
-I think this is confusingly named. This makes it sound like you're going
-to store a register offset in it. "value" would be be more appropriate
-here, I think.
-
 > +
 > +	for_each_child_of_node(np, iter) {
 > +		if (of_property_read_u32(iter, "nvidia,ram-code", &reg))
 > +			continue;
-> +		if (reg =3D=3D tegra_read_ram_code())
-
-Looks like there are quite a few places where you read the RAM code.
-Perhaps it'd be better to cache that in ->probe() and pass it to this
-function so we avoid rereading that register over and over again.
-
-Maybe also make it explicit in the name that this looks up the node
-corresponding to the RAM code:
-
-    static struct device_node *
-    tegra_emc_find_ramcode_node(struct device_node *np, u32 ramcode)
-
-?
-
+> +		if (reg == tegra_read_ram_code())
 > +			return of_node_get(iter);
-
-I think this is wrong. of_get_next_child() (via for_each_child_of_node)
-already takes a reference to the child node.
-
 > +	}
 > +
 > +	return NULL;
 > +}
 > +
 > +static void *tegra_emc_dt_parse_pdata_comp(const char *emc_mode,
-
-We know that this function returns struct emc_table *, why not use that
-as the return type?
-
-Also, you're not parsing "platform" data here, so I think the _pdata
-suffix (and the _comp suffix for that matter) is somewhat misleading.
-Why not just call this what it is: tegra_emc_dt_parse_tables()?
-
-Also, emc_mode seems to be unused.
-
 > +					   const char *comp,
 > +					   void *pdata,
-
-This seems to be unused.
-
 > +					   struct device_node *tnp,
 > +					   struct platform_device *pdev,
-
-You seem to be only using this for log output, so may as well just make
-it struct device *dev. Also, it's unusual to see this passed as the
-fourth parameter. It's more typical to pass the object that you're
-operating on as the first argument.
-
 > +					   int num_tables, int *table_count)
-
-num_tables and table_count can be unsigned int.
-
 > +{
 > +#define PNE_U32(node, entry, tbl_entry)					\
 > +	do {								\
 > +		int __ret__;						\
 > +		u32 __tmp__;						\
 > +									\
-> +		__ret__ =3D of_property_read_u32((node), (entry), &__tmp__); \
+> +		__ret__ = of_property_read_u32((node), (entry), &__tmp__); \
 > +		if (__ret__) {						\
 > +			dev_err(&pdev->dev, "Failed to parse %s in %s: %d\n", \
 > +				(entry), (node)->full_name, __ret__);	\
 > +			continue;					\
 > +		}							\
 > +									\
-> +		tables[i].tbl_entry =3D __tmp__;				\
+> +		tables[i].tbl_entry = __tmp__;				\
 > +	} while (0)
 > +
 > +#define PNE_U32_ARRAY(node, entry, tbl_entry, length)			\
 > +	do {								\
 > +		int __ret__;						\
 > +									\
-> +		__ret__ =3D of_property_read_u32_array((node), (entry),	\
+> +		__ret__ = of_property_read_u32_array((node), (entry),	\
 > +						     (tbl_entry), (length)); \
 > +		if (__ret__) {						\
 > +			dev_err(&pdev->dev, "Failed to parse %s in %s: %d\n", \
@@ -270,28 +210,12 @@ num_tables and table_count can be unsigned int.
 > +			continue;					\
 > +		}							\
 > +	} while (0)
-
-You're going to be generating a lot of code here. Could we instead turn
-this around and have a table that defines the entries and which fields
-they will be read into and then just use a loop to iterate over that
-table? That should reduce code size for only a slight increase of the
-read-only data.
-
-I think you wouldn't even have to special case fields vs. arrays in such
-a setup. Instead you could just consider fields a single-element arrays,
-which is what of_property_read_u32() does anyway.
-
-Also, use %pOF to print the name of a device tree node.
-
 > +
-> +	int i =3D 0, ret =3D 0;
-
-i can be unsigned.
-
+> +	int i = 0, ret = 0;
 > +	struct device_node *iter;
 > +	struct emc_table *tables;
 > +
-> +	tables =3D devm_kzalloc(&pdev->dev, sizeof(*tables) * num_tables,
+> +	tables = devm_kzalloc(&pdev->dev, sizeof(*tables) * num_tables,
 > +			      GFP_KERNEL);
 > +
 > +	if (!tables) {
@@ -303,12 +227,8 @@ i can be unsigned.
 > +		if (of_device_is_compatible(iter, comp)) {
 > +			const char *source_name;
 > +			const char *dvfs_ver;
-
-The level of indentation is getting pretty high here. Perhaps split the
-contents of the innermost loop into a separate function?
-
 > +
-> +			ret =3D of_property_read_string(iter, "nvidia,source",
+> +			ret = of_property_read_string(iter, "nvidia,source",
 > +						      &source_name);
 > +			if (ret) {
 > +				dev_err(&pdev->dev, "no source name in %s\n",
@@ -318,7 +238,7 @@ contents of the innermost loop into a separate function?
 > +			strlcpy(tables[i].clock_src, source_name,
 > +				sizeof(tables[i].clock_src));
 > +
-> +			ret =3D of_property_read_string(iter,
+> +			ret = of_property_read_string(iter,
 > +						      "nvidia,dvfs-version",
 > +						      &dvfs_ver);
 > +			if (ret) {
@@ -429,7 +349,7 @@ contents of the innermost loop into a separate function?
 > +			PNE_U32(iter, "nvidia,clk-out-enb-x-0-clk-enb-emc-dll",
 > +				clk_out_enb_x_0_clk_enb_emc_dll);
 > +
-> +			if (tables[i].rev >=3D 0x7)
+> +			if (tables[i].rev >= 0x7)
 > +				PNE_U32_ARRAY(iter, "nvidia,ptfv",
 > +					      tables[i].ptfv_list,
 > +					      sizeof(tables[i].ptfv_list)
@@ -469,19 +389,19 @@ contents of the innermost loop into a separate function?
 > +		}
 > +	}
 > +
-> +	*table_count =3D i;
+> +	*table_count = i;
 > +
 > +	return tables;
 > +}
 > +
-> +static const struct of_device_id emc_table_match[] =3D {
+> +static const struct of_device_id emc_table_match[] = {
 > +	{
-> +		.compatible =3D "nvidia,tegra210-emc-table",
-> +		.data =3D "nvidia,tegra210-emc-table-derated",
+> +		.compatible = "nvidia,tegra210-emc-table",
+> +		.data = "nvidia,tegra210-emc-table-derated",
 > +	},
 > +	{
-> +		.compatible =3D "nvidia,tegra21-emc-table",
-> +		.data =3D "nvidia,tegra21-emc-table-derated",
+> +		.compatible = "nvidia,tegra21-emc-table",
+> +		.data = "nvidia,tegra21-emc-table-derated",
 > +	},
 > +	{ },
 > +};
@@ -490,36 +410,26 @@ contents of the innermost loop into a separate function?
 > +			     struct emc_table **tables,
 > +			     struct emc_table **derated_tables,
 > +			     int *num_entries)
-
-You don't seem to be parsing any "platform data" here, so I'd just leave
-out the _pdata suffix.
-
-Also: unsigned int *num_entries
-
 > +{
-> +	struct device_node *np =3D pdev->dev.of_node;
+> +	struct device_node *np = pdev->dev.of_node;
 > +	struct device_node *tnp, *iter;
 > +	int num_tables, table_count;
 > +	u32 tegra_bct_strapping;
-> +	const char *emc_mode =3D "nvidia,emc-mode-0";
-> +	struct tegra21_emc_pdata *pdata =3D NULL;
-> +	const char *comp =3D NULL;
-> +	const char *comp_derated =3D NULL;
+> +	const char *emc_mode = "nvidia,emc-mode-0";
+> +	struct tegra21_emc_pdata *pdata = NULL;
+> +	const char *comp = NULL;
+> +	const char *comp_derated = NULL;
 > +
 > +	if (!np) {
 > +		dev_err(&pdev->dev,
 > +			"Unable to find external-memory-controller node\n");
 > +		return -ENODEV;
 > +	}
-
-I think you can remove this check. This driver is OF-only, so by
-definition the device tree node must exist.
-
 > +
-> +	tegra_bct_strapping =3D tegra_read_ram_code();
+> +	tegra_bct_strapping = tegra_read_ram_code();
 > +
 > +	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
-> +		tnp =3D tegra_emc_ramcode_devnode(np);
+> +		tnp = tegra_emc_ramcode_devnode(np);
 > +
 > +		if (!tnp) {
 > +			dev_warn(&pdev->dev,
@@ -528,16 +438,16 @@ definition the device tree node must exist.
 > +			return -ENODEV;
 > +		}
 > +	} else
-> +		tnp =3D of_node_get(np);
+> +		tnp = of_node_get(np);
 > +
-> +	num_tables =3D 0;
+> +	num_tables = 0;
 > +	for_each_child_of_node(tnp, iter) {
 > +		if (!comp) {
-> +			const struct of_device_id *m =3D
+> +			const struct of_device_id *m =
 > +				of_match_node(emc_table_match, iter);
 > +			if (m) {
-> +				comp =3D m->compatible;
-> +				comp_derated =3D m->data;
+> +				comp = m->compatible;
+> +				comp_derated = m->data;
 > +				num_tables++;
 > +			}
 > +			continue;
@@ -545,34 +455,29 @@ definition the device tree node must exist.
 > +		if (of_device_is_compatible(iter, comp))
 > +			num_tables++;
 > +	}
-
-This seems to require that all tables be of the same type. Should it be
-considered a DT error if that's not the case? Should we warn if that's
-encountered in a DT?
-
 > +
 > +	if (!num_tables) {
-> +		*tables =3D NULL;
+> +		*tables = NULL;
 > +		goto out;
 > +	}
 > +
-> +	*tables =3D tegra_emc_dt_parse_pdata_comp(emc_mode, comp, pdata, tnp,
+> +	*tables = tegra_emc_dt_parse_pdata_comp(emc_mode, comp, pdata, tnp,
 > +						pdev, num_tables, &table_count);
-> +	*num_entries =3D table_count;
+> +	*num_entries = table_count;
 > +
 > +	/* populate the derated tables */
-> +	num_tables =3D 0;
+> +	num_tables = 0;
 > +	for_each_child_of_node(tnp, iter) {
 > +		if (of_device_is_compatible(iter, comp_derated))
 > +			num_tables++;
 > +	}
 > +
 > +	if (!num_tables) {
-> +		*derated_tables =3D NULL;
+> +		*derated_tables = NULL;
 > +		goto out;
 > +	}
 > +
-> +	*derated_tables =3D tegra_emc_dt_parse_pdata_comp(emc_mode,
+> +	*derated_tables = tegra_emc_dt_parse_pdata_comp(emc_mode,
 > +							comp_derated,
 > +							pdata, tnp, pdev,
 > +							num_tables,
@@ -582,8 +487,7 @@ encountered in a DT?
 > +	of_node_put(tnp);
 > +	return 0;
 > +}
-> diff --git a/drivers/memory/tegra/tegra210-emc-reg.h b/drivers/memory/teg=
-ra/tegra210-emc-reg.h
+> diff --git a/drivers/memory/tegra/tegra210-emc-reg.h b/drivers/memory/tegra/tegra210-emc-reg.h
 > new file mode 100644
 > index 000000000000..84fcc85f3b6d
 > --- /dev/null
@@ -603,7 +507,454 @@ ra/tegra210-emc-reg.h
 > +
 > +#include "mc.h"
 > +
-[...]
+> +#define MC_EMEM_ARB_CFG						0x90
+> +#define MC_EMEM_ARB_OUTSTANDING_REQ				0x94
+> +#define MC_EMEM_ARB_TIMING_RCD					0x98
+> +#define MC_EMEM_ARB_TIMING_RP					0x9c
+> +#define MC_EMEM_ARB_TIMING_RC					0xa0
+> +#define MC_EMEM_ARB_TIMING_RAS					0xa4
+> +#define MC_EMEM_ARB_TIMING_FAW					0xa8
+> +#define MC_EMEM_ARB_TIMING_RRD					0xac
+> +#define MC_EMEM_ARB_TIMING_RAP2PRE				0xb0
+> +#define MC_EMEM_ARB_TIMING_WAP2PRE				0xb4
+> +#define MC_EMEM_ARB_TIMING_R2R					0xb8
+> +#define MC_EMEM_ARB_TIMING_W2W					0xbc
+> +#define MC_EMEM_ARB_TIMING_R2W					0xc0
+> +#define MC_EMEM_ARB_TIMING_W2R					0xc4
+> +#define MC_EMEM_ARB_MISC2					0xc8
+> +#define MC_EMEM_ARB_DA_TURNS					0xd0
+> +#define MC_EMEM_ARB_DA_COVERS					0xd4
+> +#define MC_EMEM_ARB_MISC0					0xd8
+> +#define MC_EMEM_ARB_MISC0_EMC_SAME_FREQ				BIT(27)
+> +#define MC_EMEM_ARB_MISC1					0xdc
+> +#define MC_EMEM_ARB_RING1_THROTTLE				0xe0
+> +#define MC_LATENCY_ALLOWANCE_AVPC_0				0x2e4
+> +#define MC_LATENCY_ALLOWANCE_HC_0				0x310
+> +#define MC_LATENCY_ALLOWANCE_HC_1				0x314
+> +#define MC_LATENCY_ALLOWANCE_MPCORE_0				0x320
+> +#define MC_LATENCY_ALLOWANCE_NVENC_0				0x328
+> +#define MC_LATENCY_ALLOWANCE_PPCS_0				0x344
+> +#define MC_LATENCY_ALLOWANCE_PPCS_1				0x348
+> +#define MC_LATENCY_ALLOWANCE_ISP2_0				0x370
+> +#define MC_LATENCY_ALLOWANCE_ISP2_1				0x374
+> +#define MC_LATENCY_ALLOWANCE_XUSB_0				0x37c
+> +#define MC_LATENCY_ALLOWANCE_XUSB_1				0x380
+> +#define MC_LATENCY_ALLOWANCE_TSEC_0				0x390
+> +#define MC_LATENCY_ALLOWANCE_VIC_0				0x394
+> +#define MC_LATENCY_ALLOWANCE_VI2_0				0x398
+> +#define MC_LATENCY_ALLOWANCE_GPU_0				0x3ac
+> +#define MC_LATENCY_ALLOWANCE_SDMMCA_0				0x3b8
+> +#define MC_LATENCY_ALLOWANCE_SDMMCAA_0				0x3bc
+> +#define MC_LATENCY_ALLOWANCE_SDMMC_0				0x3c0
+> +#define MC_LATENCY_ALLOWANCE_SDMMCAB_0				0x3c4
+> +#define MC_LATENCY_ALLOWANCE_GPU2_0				0x3e8
+> +#define MC_LATENCY_ALLOWANCE_NVDEC_0				0x3d8
+> +#define MC_MLL_MPCORER_PTSA_RATE				0x44c
+> +#define MC_FTOP_PTSA_RATE					0x50c
+> +#define MC_EMEM_ARB_TIMING_RFCPB				0x6c0
+> +#define MC_EMEM_ARB_TIMING_CCDMW				0x6c4
+> +#define MC_EMEM_ARB_REFPB_HP_CTRL				0x6f0
+> +#define MC_EMEM_ARB_REFPB_BANK_CTRL				0x6f4
+> +#define MC_PTSA_GRANT_DECREMENT					0x960
+> +#define MC_EMEM_ARB_DHYST_CTRL					0xbcc
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0			0xbd0
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1			0xbd4
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2			0xbd8
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3			0xbdc
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4			0xbe0
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5			0xbe4
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6			0xbe8
+> +#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7			0xbec
+> +
+> +#define CLK_RST_CONTROLLER_CLK_SOURCE_EMC			0x19c
+> +#define EMC_CLK_EMC_2X_CLK_SRC_SHIFT				29
+> +#define EMC_CLK_EMC_2X_CLK_SRC_MASK				\
+> +	(0x7 << EMC_CLK_EMC_2X_CLK_SRC_SHIFT)
+> +#define	EMC_CLK_MC_EMC_SAME_FREQ				BIT(16)
+> +#define EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT			0
+> +#define EMC_CLK_EMC_2X_CLK_DIVISOR_MASK				\
+> +	(0xff << EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT)
+> +
+> +#define EMC_CFG							0xc
+> +#define EMC_RC							0x2c
+> +#define EMC_RFC							0x30
+> +#define EMC_RAS							0x34
+> +#define EMC_RP							0x38
+> +#define EMC_R2W							0x3c
+> +#define EMC_W2R							0x40
+> +#define EMC_R2P							0x44
+> +#define EMC_W2P							0x48
+> +#define EMC_RD_RCD						0x4c
+> +#define EMC_WR_RCD						0x50
+> +#define EMC_RRD							0x54
+> +#define EMC_REXT						0x58
+> +#define EMC_WDV							0x5c
+> +#define EMC_QUSE						0x60
+> +#define EMC_QRST						0x64
+> +#define EMC_QSAFE						0x68
+> +#define EMC_RDV							0x6c
+> +#define EMC_REFRESH						0x70
+> +#define EMC_BURST_REFRESH_NUM					0x74
+> +#define EMC_PDEX2WR						0x78
+> +#define EMC_PDEX2RD						0x7c
+> +#define EMC_PCHG2PDEN						0x80
+> +#define EMC_ACT2PDEN						0x84
+> +#define EMC_AR2PDEN						0x88
+> +#define EMC_RW2PDEN						0x8c
+> +#define EMC_TXSR						0x90
+> +#define EMC_TCKE						0x94
+> +#define EMC_TFAW						0x98
+> +#define EMC_TRPAB						0x9c
+> +#define EMC_TCLKSTABLE						0xa0
+> +#define EMC_TCLKSTOP						0xa4
+> +#define EMC_TREFBW						0xa8
+> +#define EMC_TPPD						0xac
+> +#define EMC_ODT_WRITE						0xb0
+> +#define EMC_PDEX2MRR						0xb4
+> +#define EMC_WEXT						0xb8
+> +#define EMC_RFC_SLR						0xc0
+> +#define EMC_MRS_WAIT_CNT2					0xc4
+> +#define EMC_MRS_WAIT_CNT					0xc8
+> +#define EMC_FBIO_SPARE						0x100
+> +#define EMC_FBIO_CFG5						0x104
+> +#define EMC_FBIO_CFG5_DRAM_TYPE_SHIFT				0
+> +#define EMC_FBIO_CFG5_DRAM_TYPE_MASK				\
+> +	(0x3 <<	EMC_FBIO_CFG5_DRAM_TYPE_SHIFT)
+> +#define EMC_PDEX2CKE						0x118
+> +#define EMC_CKE2PDEN						0x11c
+> +#define EMC_R2R							0x144
+> +#define EMC_EINPUT						0x14c
+> +#define EMC_EINPUT_DURATION					0x150
+> +#define EMC_PUTERM_EXTRA					0x154
+> +#define EMC_TCKESR						0x158
+> +#define EMC_TPD							0x15c
+> +#define EMC_CFG_DIG_DLL						0x2bc
+> +#define EMC_CFG_DIG_DLL_PERIOD					0x2c0
+> +#define EMC_RDV_MASK						0x2cc
+> +#define EMC_WDV_MASK						0x2d0
+> +#define EMC_RDV_EARLY_MASK					0x2d4
+> +#define EMC_RDV_EARLY						0x2d8
+> +#define EMC_ZCAL_INTERVAL					0x2e0
+> +#define EMC_ZCAL_WAIT_CNT					0x2e4
+> +#define EMC_FDPD_CTRL_DQ					0x310
+> +#define EMC_FDPD_CTRL_CMD					0x314
+> +#define EMC_PMACRO_CMD_BRICK_CTRL_FDPD				0x318
+> +#define EMC_PMACRO_DATA_BRICK_CTRL_FDPD				0x31c
+> +#define EMC_PMACRO_BRICK_CTRL_RFU1				0x330
+> +#define EMC_PMACRO_BRICK_CTRL_RFU2				0x334
+> +#define EMC_TR_TIMING_0						0x3b4
+> +#define EMC_TR_CTRL_1						0x3bc
+> +#define EMC_TR_RDV						0x3c4
+> +#define EMC_PRE_REFRESH_REQ_CNT					0x3dc
+> +#define EMC_DYN_SELF_REF_CONTROL				0x3e0
+> +#define EMC_TXSRDLL						0x3e4
+> +#define EMC_TR_QPOP						0x3f4
+> +#define EMC_TR_RDV_MASK						0x3f8
+> +#define EMC_TR_QSAFE						0x3fc
+> +#define EMC_TR_QRST						0x400
+> +#define EMC_TR_DVFS						0x460
+> +#define EMC_AUTO_CAL_CHANNEL					0x464
+> +#define EMC_IBDLY						0x468
+> +#define EMC_OBDLY						0x46c
+> +#define EMC_TXDSRVTTGEN						0x480
+> +#define EMC_WE_DURATION						0x48c
+> +#define EMC_WS_DURATION						0x490
+> +#define EMC_WEV							0x494
+> +#define EMC_WSV							0x498
+> +#define EMC_CFG_3						0x49c
+> +#define EMC_MRW6						0x4a4
+> +#define EMC_MRW7						0x4a8
+> +#define EMC_MRW8						0x4ac
+> +#define EMC_MRW10						0x4b4
+> +#define EMC_MRW11						0x4b8
+> +#define EMC_MRW12						0x4bc
+> +#define EMC_MRW13						0x4c0
+> +#define EMC_MRW14						0x4c4
+> +#define EMC_MRW15						0x4d0
+> +#define EMC_WDV_CHK						0x4e0
+> +#define EMC_CFG_PIPE_2						0x554
+> +#define EMC_CFG_PIPE_1						0x55c
+> +#define EMC_CFG_PIPE						0x560
+> +#define EMC_QPOP						0x564
+> +#define EMC_QUSE_WIDTH						0x568
+> +#define EMC_PUTERM_WIDTH					0x56c
+> +#define EMC_REFCTRL2						0x580
+> +#define EMC_FBIO_CFG7						0x584
+> +#define EMC_DATA_BRLSHFT_0					0x588
+> +#define EMC_DATA_BRLSHFT_1					0x58c
+> +#define EMC_RFCPB						0x590
+> +#define EMC_DQS_BRLSHFT_0					0x594
+> +#define EMC_DQS_BRLSHFT_1					0x598
+> +#define EMC_CMD_BRLSHFT_0					0x59c
+> +#define EMC_CMD_BRLSHFT_1					0x5a0
+> +#define EMC_CMD_BRLSHFT_2					0x5a4
+> +#define EMC_CMD_BRLSHFT_3					0x5a8
+> +#define EMC_QUSE_BRLSHFT_0					0x5ac
+> +#define EMC_QUSE_BRLSHFT_1					0x5b8
+> +#define EMC_QUSE_BRLSHFT_2					0x5bc
+> +#define EMC_CCDMW						0x5c0
+> +#define EMC_QUSE_BRLSHFT_3					0x5c4
+> +#define EMC_DLL_CFG_0						0x5e4
+> +#define EMC_DLL_CFG_1						0x5e8
+> +#define EMC_CONFIG_SAMPLE_DELAY					0x5f0
+> +#define EMC_PMACRO_QUSE_DDLL_RANK0_0				0x600
+> +#define EMC_PMACRO_QUSE_DDLL_RANK0_1				0x604
+> +#define EMC_PMACRO_QUSE_DDLL_RANK0_2				0x608
+> +#define EMC_PMACRO_QUSE_DDLL_RANK0_3				0x60c
+> +#define EMC_PMACRO_QUSE_DDLL_RANK0_4				0x610
+> +#define EMC_PMACRO_QUSE_DDLL_RANK0_5				0x614
+> +#define EMC_PMACRO_QUSE_DDLL_RANK1_0				0x620
+> +#define EMC_PMACRO_QUSE_DDLL_RANK1_1				0x624
+> +#define EMC_PMACRO_QUSE_DDLL_RANK1_2				0x628
+> +#define EMC_PMACRO_QUSE_DDLL_RANK1_3				0x62c
+> +#define EMC_PMACRO_QUSE_DDLL_RANK1_4				0x630
+> +#define EMC_PMACRO_QUSE_DDLL_RANK1_5				0x634
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0			0x640
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1			0x644
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2			0x648
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3			0x64c
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_4			0x650
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_5			0x654
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0			0x660
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1			0x664
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2			0x668
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3			0x66c
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_4			0x670
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_5			0x674
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_0			0x680
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_1			0x684
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_2			0x688
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_3			0x68c
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_4			0x690
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_5			0x694
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_0			0x6a0
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_1			0x6a4
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_2			0x6a8
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_3			0x6ac
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_4			0x6b0
+> +#define EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_5			0x6b4
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_0			0x6c0
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_1			0x6c4
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_2			0x6c8
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_3			0x6cc
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_0			0x6e0
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_1			0x6e4
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_2			0x6e8
+> +#define EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_3			0x6ec
+> +#define EMC_PMACRO_TX_PWRD_0					0x720
+> +#define EMC_PMACRO_TX_PWRD_1					0x724
+> +#define EMC_PMACRO_TX_PWRD_2					0x728
+> +#define EMC_PMACRO_TX_PWRD_3					0x72c
+> +#define EMC_PMACRO_TX_PWRD_4					0x730
+> +#define EMC_PMACRO_TX_PWRD_5					0x734
+> +#define EMC_PMACRO_TX_SEL_CLK_SRC_0				0x740
+> +#define EMC_PMACRO_TX_SEL_CLK_SRC_1				0x744
+> +#define EMC_PMACRO_TX_SEL_CLK_SRC_3				0x74c
+> +#define EMC_PMACRO_TX_SEL_CLK_SRC_2				0x748
+> +#define EMC_PMACRO_TX_SEL_CLK_SRC_4				0x750
+> +#define EMC_PMACRO_TX_SEL_CLK_SRC_5				0x754
+> +#define EMC_PMACRO_DDLL_BYPASS					0x760
+> +#define EMC_PMACRO_DDLL_PWRD_0					0x770
+> +#define EMC_PMACRO_DDLL_PWRD_1					0x774
+> +#define EMC_PMACRO_DDLL_PWRD_2					0x778
+> +#define EMC_PMACRO_CMD_CTRL_0					0x780
+> +#define EMC_PMACRO_CMD_CTRL_1					0x784
+> +#define EMC_PMACRO_CMD_CTRL_2					0x788
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_0		0x800
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_1		0x804
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_2		0x808
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_3		0x80c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_0		0x810
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_1		0x814
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_2		0x818
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_3		0x81c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_0		0x820
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_1		0x824
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_2		0x828
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_3		0x82c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_0		0x830
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_1		0x834
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_2		0x838
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_3		0x83c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_0		0x840
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_1		0x844
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_2		0x848
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_3		0x84c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_0		0x850
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_1		0x854
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_2		0x858
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_3		0x85c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_0		0x860
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_1		0x864
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_2		0x868
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_3		0x86c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_0		0x870
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_1		0x874
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_2		0x878
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_3		0x87c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_0		0x880
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_1		0x884
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_2		0x888
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_3		0x88c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_0		0x890
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_1		0x894
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_2		0x898
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_3		0x89c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_0		0x8a0
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_1		0x8a4
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_2		0x8a8
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_3		0x8ac
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_0		0x8b0
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_1		0x8b4
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_2		0x8b8
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_3		0x8bc
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_0		0x900
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_1		0x904
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_2		0x908
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_3		0x90c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_0		0x910
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_1		0x914
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_2		0x918
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_3		0x91c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_0		0x920
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_1		0x924
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_2		0x928
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_3		0x92c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_0		0x930
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_1		0x934
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_2		0x938
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_3		0x93c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_0		0x940
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_1		0x944
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_2		0x948
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_3		0x94c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_0		0x950
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_1		0x954
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_2		0x958
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_3		0x95c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_0		0x960
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_1		0x964
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_2		0x968
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_3		0x96c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_0		0x970
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_1		0x974
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_2		0x978
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_3		0x97c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_0		0x980
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_1		0x984
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_2		0x988
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_3		0x98c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_0		0x990
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_1		0x994
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_2		0x998
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_3		0x99c
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_0		0x9a0
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_1		0x9a4
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_2		0x9a8
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_3		0x9ac
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_0		0x9b0
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_1		0x9b4
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_2		0x9b8
+> +#define EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_3		0x9bc
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_0		0xa00
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_1		0xa04
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_2		0xa08
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_0		0xa10
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_1		0xa14
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_2		0xa18
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_0		0xa20
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_1		0xa24
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_2		0xa28
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_0		0xa30
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_1		0xa34
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_2		0xa38
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_0		0xa40
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_1		0xa44
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_2		0xa48
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_0		0xa50
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_1		0xa54
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_2		0xa58
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_0		0xa60
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_1		0xa64
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_2		0xa68
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_0		0xa70
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_1		0xa74
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_2		0xa78
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_0		0xb00
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_1		0xb04
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_2		0xb08
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_0		0xb10
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_1		0xb14
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_2		0xb18
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_0		0xb20
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_1		0xb24
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_2		0xb28
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_0		0xb30
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_1		0xb34
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_2		0xb38
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_0		0xb40
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_1		0xb44
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_2		0xb48
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_0		0xb50
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_1		0xb54
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_2		0xb58
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_0		0xb60
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_1		0xb64
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_2		0xb68
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_0		0xb70
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_1		0xb74
+> +#define EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_2		0xb78
+> +#define EMC_PMACRO_IB_VREF_DQ_0					0xbe0
+> +#define EMC_PMACRO_IB_VREF_DQ_1					0xbe4
+> +#define EMC_PMACRO_IB_VREF_DQS_0				0xbf0
+> +#define EMC_PMACRO_IB_VREF_DQS_1				0xbf4
+> +#define EMC_PMACRO_DDLL_LONG_CMD_0				0xc00
+> +#define EMC_PMACRO_DDLL_LONG_CMD_1				0xc04
+> +#define EMC_PMACRO_DDLL_LONG_CMD_2				0xc08
+> +#define EMC_PMACRO_DDLL_LONG_CMD_3				0xc0c
+> +#define EMC_PMACRO_DDLL_LONG_CMD_4				0xc10
+> +#define EMC_PMACRO_DDLL_LONG_CMD_5				0xc14
+> +#define EMC_PMACRO_DDLL_SHORT_CMD_0				0xc20
+> +#define EMC_PMACRO_DDLL_SHORT_CMD_1				0xc24
+> +#define EMC_PMACRO_DDLL_SHORT_CMD_2				0xc28
+> +#define EMC_PMACRO_VTTGEN_CTRL_0				0xc34
+> +#define EMC_PMACRO_VTTGEN_CTRL_1				0xc38
+> +#define EMC_PMACRO_BG_BIAS_CTRL_0				0xc3c
+> +#define EMC_PMACRO_PAD_CFG_CTRL					0xc40
+> +#define EMC_PMACRO_ZCTRL					0xc44
+> +#define EMC_PMACRO_CMD_PAD_RX_CTRL				0xc50
+> +#define EMC_PMACRO_DATA_PAD_RX_CTRL				0xc54
+> +#define EMC_PMACRO_CMD_RX_TERM_MODE				0xc58
+> +#define EMC_PMACRO_DATA_RX_TERM_MODE				0xc5c
+> +#define EMC_PMACRO_CMD_PAD_TX_CTRL				0xc60
+> +#define EMC_PMACRO_DATA_PAD_TX_CTRL				0xc64
+> +#define EMC_PMACRO_COMMON_PAD_TX_CTRL				0xc68
+> +#define EMC_PMACRO_AUTOCAL_CFG_COMMON				0xc78
+> +#define EMC_PMACRO_VTTGEN_CTRL_2				0xcf0
+> +#define EMC_PMACRO_IB_RXRT					0xcf4
+> +#define EMC_TRAINING_CTRL					0xe04
+> +#define EMC_TRAINING_QUSE_CORS_CTRL				0xe0c
+> +#define EMC_TRAINING_QUSE_FINE_CTRL				0xe10
+> +#define EMC_TRAINING_QUSE_CTRL_MISC				0xe14
+> +#define EMC_TRAINING_WRITE_FINE_CTRL				0xe18
+> +#define EMC_TRAINING_WRITE_CTRL_MISC				0xe1c
+> +#define EMC_TRAINING_WRITE_VREF_CTRL				0xe20
+> +#define EMC_TRAINING_READ_FINE_CTRL				0xe24
+> +#define EMC_TRAINING_READ_CTRL_MISC				0xe28
+> +#define EMC_TRAINING_READ_VREF_CTRL				0xe2c
+> +#define EMC_TRAINING_CA_FINE_CTRL				0xe30
+> +#define EMC_TRAINING_CA_CTRL_MISC				0xe34
+> +#define EMC_TRAINING_CA_CTRL_MISC1				0xe38
+> +#define EMC_TRAINING_CA_VREF_CTRL				0xe3c
+> +#define EMC_TRAINING_SETTLE					0xe44
+> +#define EMC_TRAINING_MPC					0xe5c
+> +#define EMC_TRAINING_VREF_SETTLE				0xe6c
+> +#define EMC_TRAINING_QUSE_VREF_CTRL				0xed0
+> +#define EMC_TRAINING_OPT_DQS_IB_VREF_RANK0			0xed4
+> +#define EMC_TRAINING_OPT_DQS_IB_VREF_RANK1			0xed8
+> +
+> +#define EMC_COPY_TABLE_PARAM_PERIODIC_FIELDS			BIT(0)
+> +#define EMC_COPY_TABLE_PARAM_TRIM_REGS				BIT(1)
 > +
 > +enum {
 > +	REG_MC,
@@ -623,18 +974,461 @@ ra/tegra210-emc-reg.h
 > +	DEFINE_REG(REG_EMC0, EMC_MRW13),				\
 > +	DEFINE_REG(REG_EMC1, EMC_MRW13),				\
 > +}
-
-I'm not at all a fan of this type of list definition where the content
-depends on how the DEFINE_REG macro is defined at the time where the
-list macro is used.
-
-It also seems like you're later on generating a couple of different
-tables based on these lists and using different definitions of
-DEFINE_REG to construct them.
-
-Why can't we have a single table that contains everything? That's a lot
-easier to maintain and the code becomes a lot easier to follow.
-
+> +
+> +#define BURST_REGS_LIST							\
+> +{									\
+> +	DEFINE_REG(REG_EMC, EMC_RC),					\
+> +	DEFINE_REG(REG_EMC, EMC_RFC),					\
+> +	DEFINE_REG(REG_EMC, EMC_RFCPB),					\
+> +	DEFINE_REG(REG_EMC, EMC_REFCTRL2),				\
+> +	DEFINE_REG(REG_EMC, EMC_RFC_SLR),				\
+> +	DEFINE_REG(REG_EMC, EMC_RAS),					\
+> +	DEFINE_REG(REG_EMC, EMC_RP),					\
+> +	DEFINE_REG(REG_EMC, EMC_R2W),					\
+> +	DEFINE_REG(REG_EMC, EMC_W2R),					\
+> +	DEFINE_REG(REG_EMC, EMC_R2P),					\
+> +	DEFINE_REG(REG_EMC, EMC_W2P),					\
+> +	DEFINE_REG(REG_EMC, EMC_R2R),					\
+> +	DEFINE_REG(REG_EMC, EMC_TPPD),					\
+> +	DEFINE_REG(REG_EMC, EMC_CCDMW),					\
+> +	DEFINE_REG(REG_EMC, EMC_RD_RCD),				\
+> +	DEFINE_REG(REG_EMC, EMC_WR_RCD),				\
+> +	DEFINE_REG(REG_EMC, EMC_RRD),					\
+> +	DEFINE_REG(REG_EMC, EMC_REXT),					\
+> +	DEFINE_REG(REG_EMC, EMC_WEXT),					\
+> +	DEFINE_REG(REG_EMC, EMC_WDV_CHK),				\
+> +	DEFINE_REG(REG_EMC, EMC_WDV),					\
+> +	DEFINE_REG(REG_EMC, EMC_WSV),					\
+> +	DEFINE_REG(REG_EMC, EMC_WEV),					\
+> +	DEFINE_REG(REG_EMC, EMC_WDV_MASK),				\
+> +	DEFINE_REG(REG_EMC, EMC_WS_DURATION),				\
+> +	DEFINE_REG(REG_EMC, EMC_WE_DURATION),				\
+> +	DEFINE_REG(REG_EMC, EMC_QUSE),					\
+> +	DEFINE_REG(REG_EMC, EMC_QUSE_WIDTH),				\
+> +	DEFINE_REG(REG_EMC, EMC_IBDLY),					\
+> +	DEFINE_REG(REG_EMC, EMC_OBDLY),					\
+> +	DEFINE_REG(REG_EMC, EMC_EINPUT),				\
+> +	DEFINE_REG(REG_EMC, EMC_MRW6),					\
+> +	DEFINE_REG(REG_EMC, EMC_EINPUT_DURATION),			\
+> +	DEFINE_REG(REG_EMC, EMC_PUTERM_EXTRA),				\
+> +	DEFINE_REG(REG_EMC, EMC_PUTERM_WIDTH),				\
+> +	DEFINE_REG(REG_EMC, EMC_QRST),					\
+> +	DEFINE_REG(REG_EMC, EMC_QSAFE),					\
+> +	DEFINE_REG(REG_EMC, EMC_RDV),					\
+> +	DEFINE_REG(REG_EMC, EMC_RDV_MASK),				\
+> +	DEFINE_REG(REG_EMC, EMC_RDV_EARLY),				\
+> +	DEFINE_REG(REG_EMC, EMC_RDV_EARLY_MASK),			\
+> +	DEFINE_REG(REG_EMC, EMC_REFRESH),				\
+> +	DEFINE_REG(REG_EMC, EMC_BURST_REFRESH_NUM),			\
+> +	DEFINE_REG(REG_EMC, EMC_PRE_REFRESH_REQ_CNT),			\
+> +	DEFINE_REG(REG_EMC, EMC_PDEX2WR),				\
+> +	DEFINE_REG(REG_EMC, EMC_PDEX2RD),				\
+> +	DEFINE_REG(REG_EMC, EMC_PCHG2PDEN),				\
+> +	DEFINE_REG(REG_EMC, EMC_ACT2PDEN),				\
+> +	DEFINE_REG(REG_EMC, EMC_AR2PDEN),				\
+> +	DEFINE_REG(REG_EMC, EMC_RW2PDEN),				\
+> +	DEFINE_REG(REG_EMC, EMC_CKE2PDEN),				\
+> +	DEFINE_REG(REG_EMC, EMC_PDEX2CKE),				\
+> +	DEFINE_REG(REG_EMC, EMC_PDEX2MRR),				\
+> +	DEFINE_REG(REG_EMC, EMC_TXSR),					\
+> +	DEFINE_REG(REG_EMC, EMC_TXSRDLL),				\
+> +	DEFINE_REG(REG_EMC, EMC_TCKE),					\
+> +	DEFINE_REG(REG_EMC, EMC_TCKESR),				\
+> +	DEFINE_REG(REG_EMC, EMC_TPD),					\
+> +	DEFINE_REG(REG_EMC, EMC_TFAW),					\
+> +	DEFINE_REG(REG_EMC, EMC_TRPAB),					\
+> +	DEFINE_REG(REG_EMC, EMC_TCLKSTABLE),				\
+> +	DEFINE_REG(REG_EMC, EMC_TCLKSTOP),				\
+> +	DEFINE_REG(REG_EMC, EMC_MRW7),					\
+> +	DEFINE_REG(REG_EMC, EMC_TREFBW),				\
+> +	DEFINE_REG(REG_EMC, EMC_ODT_WRITE),				\
+> +	DEFINE_REG(REG_EMC, EMC_FBIO_CFG5),				\
+> +	DEFINE_REG(REG_EMC, EMC_FBIO_CFG7),				\
+> +	DEFINE_REG(REG_EMC, EMC_CFG_DIG_DLL),				\
+> +	DEFINE_REG(REG_EMC, EMC_CFG_DIG_DLL_PERIOD),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_RXRT),			\
+> +	DEFINE_REG(REG_EMC, EMC_CFG_PIPE_1),				\
+> +	DEFINE_REG(REG_EMC, EMC_CFG_PIPE_2),				\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_4),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_5),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_4),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_5),		\
+> +	DEFINE_REG(REG_EMC, EMC_MRW8),					\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_4),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_5),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_4),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_5),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_4),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_5),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_0),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_1),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_2),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_3),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_LONG_CMD_4),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_SHORT_CMD_0),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_SHORT_CMD_1),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_SHORT_CMD_2),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_TXDSRVTTGEN),				\
+> +	DEFINE_REG(REG_EMC, EMC_FDPD_CTRL_DQ),				\
+> +	DEFINE_REG(REG_EMC, EMC_FDPD_CTRL_CMD),				\
+> +	DEFINE_REG(REG_EMC, EMC_FBIO_SPARE),				\
+> +	DEFINE_REG(REG_EMC, EMC_ZCAL_INTERVAL),				\
+> +	DEFINE_REG(REG_EMC, EMC_ZCAL_WAIT_CNT),				\
+> +	DEFINE_REG(REG_EMC, EMC_MRS_WAIT_CNT),				\
+> +	DEFINE_REG(REG_EMC, EMC_MRS_WAIT_CNT2),				\
+> +	DEFINE_REG(REG_EMC, EMC_AUTO_CAL_CHANNEL),			\
+> +	DEFINE_REG(REG_EMC, EMC_DLL_CFG_0),				\
+> +	DEFINE_REG(REG_EMC, EMC_DLL_CFG_1),				\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_AUTOCAL_CFG_COMMON),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_ZCTRL),				\
+> +	DEFINE_REG(REG_EMC, EMC_CFG),					\
+> +	DEFINE_REG(REG_EMC, EMC_CFG_PIPE),				\
+> +	DEFINE_REG(REG_EMC, EMC_DYN_SELF_REF_CONTROL),			\
+> +	DEFINE_REG(REG_EMC, EMC_QPOP),					\
+> +	DEFINE_REG(REG_EMC, EMC_DQS_BRLSHFT_0),				\
+> +	DEFINE_REG(REG_EMC, EMC_DQS_BRLSHFT_1),				\
+> +	DEFINE_REG(REG_EMC, EMC_CMD_BRLSHFT_2),				\
+> +	DEFINE_REG(REG_EMC, EMC_CMD_BRLSHFT_3),				\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_PAD_CFG_CTRL),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_PAD_RX_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_PAD_RX_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_RX_TERM_MODE),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_RX_TERM_MODE),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_PAD_TX_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_PAD_TX_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_COMMON_PAD_TX_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_VTTGEN_CTRL_0),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_VTTGEN_CTRL_1),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_VTTGEN_CTRL_2),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_BRICK_CTRL_RFU1),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_BRICK_CTRL_FDPD),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_BRICK_CTRL_RFU2),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DATA_BRICK_CTRL_FDPD),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_BG_BIAS_CTRL_0),			\
+> +	DEFINE_REG(REG_EMC, EMC_CFG_3),					\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_0),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_1),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_2),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_3),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_4),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_PWRD_5),			\
+> +	DEFINE_REG(REG_EMC, EMC_CONFIG_SAMPLE_DELAY),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_0),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_1),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_2),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_3),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_4),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_TX_SEL_CLK_SRC_5),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_BYPASS),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_PWRD_0),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_PWRD_1),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_DDLL_PWRD_2),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_CTRL_0),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_CTRL_1),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_CMD_CTRL_2),			\
+> +	DEFINE_REG(REG_EMC, EMC_TR_TIMING_0),				\
+> +	DEFINE_REG(REG_EMC, EMC_TR_DVFS),				\
+> +	DEFINE_REG(REG_EMC, EMC_TR_CTRL_1),				\
+> +	DEFINE_REG(REG_EMC, EMC_TR_RDV),				\
+> +	DEFINE_REG(REG_EMC, EMC_TR_QPOP),				\
+> +	DEFINE_REG(REG_EMC, EMC_TR_RDV_MASK),				\
+> +	DEFINE_REG(REG_EMC, EMC_MRW14),					\
+> +	DEFINE_REG(REG_EMC, EMC_TR_QSAFE),				\
+> +	DEFINE_REG(REG_EMC, EMC_TR_QRST),				\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_CTRL),				\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_SETTLE),			\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_VREF_SETTLE),			\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_FINE_CTRL),			\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_CTRL_MISC),			\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_CTRL_MISC1),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_CA_VREF_CTRL),			\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_CORS_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_FINE_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_CTRL_MISC),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_QUSE_VREF_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_READ_FINE_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_READ_CTRL_MISC),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_READ_VREF_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_WRITE_FINE_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_WRITE_CTRL_MISC),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_WRITE_VREF_CTRL),		\
+> +	DEFINE_REG(REG_EMC, EMC_TRAINING_MPC),				\
+> +	DEFINE_REG(REG_EMC, EMC_MRW15),					\
+> +}
+> +
+> +#define TRIM_REGS_PER_CH_LIST						\
+> +{									\
+> +	DEFINE_REG(REG_EMC0, EMC_CMD_BRLSHFT_0),			\
+> +	DEFINE_REG(REG_EMC1, EMC_CMD_BRLSHFT_1),			\
+> +	DEFINE_REG(REG_EMC0, EMC_DATA_BRLSHFT_0),			\
+> +	DEFINE_REG(REG_EMC1, EMC_DATA_BRLSHFT_0),			\
+> +	DEFINE_REG(REG_EMC0, EMC_DATA_BRLSHFT_1),			\
+> +	DEFINE_REG(REG_EMC1, EMC_DATA_BRLSHFT_1),			\
+> +	DEFINE_REG(REG_EMC0, EMC_QUSE_BRLSHFT_0),			\
+> +	DEFINE_REG(REG_EMC1, EMC_QUSE_BRLSHFT_1),			\
+> +	DEFINE_REG(REG_EMC0, EMC_QUSE_BRLSHFT_2),			\
+> +	DEFINE_REG(REG_EMC1, EMC_QUSE_BRLSHFT_3),			\
+> +}
+> +
+> +#define TRIM_REGS_LIST							\
+> +{									\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQS_0),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQS_1),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQ_0),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_IB_VREF_DQ_1),			\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_4),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_5),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_0),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_1),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_2),	\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_0),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_1),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_2),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK0_3),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_0),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_1),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_2),		\
+> +	DEFINE_REG(REG_EMC, EMC_PMACRO_QUSE_DDLL_RANK1_3),		\
+> +}
+> +
+> +#define BURST_MC_REGS_LIST						\
+> +{									\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_CFG),				\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_OUTSTANDING_REQ),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_REFPB_HP_CTRL),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_REFPB_BANK_CTRL),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RCD),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RP),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RC),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RAS),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_FAW),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RRD),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RAP2PRE),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_WAP2PRE),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_R2R),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_W2W),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_R2W),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_CCDMW),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_W2R),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_TIMING_RFCPB),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DA_TURNS),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DA_COVERS),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_MISC0),				\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_MISC1),				\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_MISC2),				\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_RING1_THROTTLE),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_CTRL),			\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6),		\
+> +	DEFINE_REG(REG_MC, MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7),		\
+> +}
+> +
+> +#define BURST_UP_DOWN_REGS_LIST						\
+> +{									\
+> +	DEFINE_REG(REG_MC, MC_MLL_MPCORER_PTSA_RATE),			\
+> +	DEFINE_REG(REG_MC, MC_FTOP_PTSA_RATE),				\
+> +	DEFINE_REG(REG_MC, MC_PTSA_GRANT_DECREMENT),			\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_XUSB_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_XUSB_1),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_TSEC_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMCA_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMCAA_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMC_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_SDMMCAB_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_PPCS_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_PPCS_1),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_MPCORE_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_HC_0),			\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_HC_1),			\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_AVPC_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_GPU_0),			\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_GPU2_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_NVENC_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_NVDEC_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_VIC_0),			\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_VI2_0),			\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_ISP2_0),		\
+> +	DEFINE_REG(REG_MC, MC_LATENCY_ALLOWANCE_ISP2_1),		\
+> +}
+> +
+> +#define VREF_REGS_PER_CH_LIST						\
+> +{									\
+> +	DEFINE_REG(REG_EMC0, EMC_TRAINING_OPT_DQS_IB_VREF_RANK0),	\
+> +	DEFINE_REG(REG_EMC1, EMC_TRAINING_OPT_DQS_IB_VREF_RANK0),	\
+> +	DEFINE_REG(REG_EMC0, EMC_TRAINING_OPT_DQS_IB_VREF_RANK1),	\
+> +	DEFINE_REG(REG_EMC1, EMC_TRAINING_OPT_DQS_IB_VREF_RANK1),	\
+> +}
+> +
 > +#define DEFINE_REG(type, reg)	reg##_INDEX
 > +enum BURST_REGS_LIST;
 > +enum TRIM_REGS_LIST;
@@ -649,60 +1443,25 @@ easier to maintain and the code becomes a lot easier to follow.
 > +#undef DEFINE_REG
 > +
 > +enum {
-> +	DRAM_TYPE_DDR3   =3D 0,
-
-Use consistent padding. Single space around '=3D' will do.
-
-> +	DRAM_TYPE_LPDDR4 =3D 1,
-> +	DRAM_TYPE_LPDDR2 =3D 2,
-> +	DRAM_TYPE_DDR2 =3D 3,
+> +	DRAM_TYPE_DDR3   = 0,
+> +	DRAM_TYPE_LPDDR4 = 1,
+> +	DRAM_TYPE_LPDDR2 = 2,
+> +	DRAM_TYPE_DDR2 = 3,
 > +};
 > +
 > +struct emc_table {
-
-This structure doesn't really have anything to do with registers, so
-perhaps move this to tegra210-emc.c?
-
 > +	u32 rev;
 > +	char dvfs_ver[60];
-
-Could this just be a const char * pointing to the device tree property?
-
 > +	u32 rate;
-
-Clock rates are usually stored as unsigned long.
-
 > +	u32 min_volt;
 > +	u32 gpu_min_volt;
-
-Maybe make these unsigned int, to match the type used for regulator
-voltages?
-
 > +	char clock_src[32];
-
-Same comment as for dvfs_ver.
-
 > +	u32 clk_src_emc;
-
-As I mentioned elsewhere, I think it'd be nicer if we could split this
-up into individual fields so that the value can be sanity checked.
-
 > +	u32 needs_training;
-
-bool?
-
 > +	u32 training_parttern;
-
-s/parttern/pattern/
-
 > +	u32 trained;
-
-bool?
-
+> +
 > +	u32 periodic_training;
-
-bool?
-
 > +	u32 trained_dram_clktree_c0d0u0;
 > +	u32 trained_dram_clktree_c0d0u1;
 > +	u32 trained_dram_clktree_c0d1u0;
@@ -719,9 +1478,6 @@ bool?
 > +	u32 current_dram_clktree_c1d0u1;
 > +	u32 current_dram_clktree_c1d1u0;
 > +	u32 current_dram_clktree_c1d1u1;
-
-There's definitely a pattern here. Could these be arrays?
-
 > +	u32 run_clocks;
 > +	u32 tree_margin;
 > +
@@ -736,9 +1492,6 @@ There's definitely a pattern here. Could these be arrays?
 > +	u32 dram_timing_num;
 > +
 > +	u32  ptfv_list[12];
-
-Gratuitous space.
-
 > +
 > +	u32 burst_regs[221];
 > +	u32 burst_reg_per_ch[8];
@@ -756,12 +1509,6 @@ Gratuitous space.
 > +	u32 save_restore_mod_regs[12];
 > +	u32 burst_mc_regs[33];
 > +	u32 la_scale_regs[24];
-
-Looks like these are all fixed in length. Why do we ened the
-corresponding num_* fields? Same goes for the properties in DT. If they
-are always of a fixed length, then let's document that in the bindings
-and sanity check it when parsing the tables.
-
 > +
 > +	u32 min_mrs_wait;
 > +	u32 emc_mrw;
@@ -789,10 +1536,6 @@ and sanity check it when parsing the tables.
 > +};
 > +
 > +struct tegra_emc {
-
-This is also not related to registers, so maybe move it out into
-tegra210-emc.c?
-
 > +	struct clk_hw hw;
 > +	struct clk *emc_clk;
 > +	struct device *dev;
@@ -802,65 +1545,30 @@ tegra210-emc.c?
 > +	void __iomem *emc_base;
 > +	void __iomem *emc0_base;
 > +	void __iomem *emc1_base;
-
-Should this be an array? Seems like that could make it easier to write
-the tables to these registers later on.
-
 > +
 > +	struct emc_table *current_timing;
 > +	struct emc_table *next_timing;
 > +	struct emc_table start_timing;
-
-Why is start_timing not a pointer? It looks to me like that's basically
-a copy of emc_table[0], so why not just point it at that?
-
 > +
 > +	struct emc_table *emc_table;
 > +	struct emc_table *emc_table_normal;
 > +	struct emc_table *emc_table_derated;
-
-Seems like emc_table will always point at emc_table_normal, so why have
-a second copy?
-
 > +
 > +	unsigned int emc_table_size;
-
-Is this the number of entries in emc_table?
-
 > +
 > +	int dram_dev_num;
-
-What is this?
-
 > +	u32 dram_type;
-
-Should this perhaps be an enum? All in all, I think it'd be good to add
-some kerneldoc to this structure explaining what these fields are.
-
 > +	u32 ram_code;
 > +	u32 clk_setting;
 > +};
 > +#define to_emc(_hw) container_of(_hw, struct tegra_emc, hw)
-
-I prefer static inline functions for this. Error reporting is better for
-those.
-
 > +
 > +struct supported_sequence {
 > +	u8     table_rev;
 > +	void (*set_clock)(struct tegra_emc *emc, u32 clksrc);
 > +	u32  (*periodic_compensation)(struct tegra_emc *emc);
 > +	char  *seq_rev;
-
-Use consistent padding. Either pad everything to the same column, or,
-better yet, use a single space for padding.
-
 > +};
-
-Looks like this is mostly unused. Is this something that's more widely
-used in a later patch? It could be useful to move this to that later
-patch so that it doesn't look out of place.
-
 > +
 > +int tegra_emc_dt_parse_pdata(struct platform_device *pdev,
 > +			     struct emc_table **tables,
@@ -868,8 +1576,7 @@ patch so that it doesn't look out of place.
 > +			     int *num_entries);
 > +
 > +#endif
-> diff --git a/drivers/memory/tegra/tegra210-emc.c b/drivers/memory/tegra/t=
-egra210-emc.c
+> diff --git a/drivers/memory/tegra/tegra210-emc.c b/drivers/memory/tegra/tegra210-emc.c
 > new file mode 100644
 > index 000000000000..0c20bcd0e6de
 > --- /dev/null
@@ -895,26 +1602,9 @@ egra210-emc.c
 > +#include "tegra210-emc-reg.h"
 > +
 > +#define TEGRA_EMC_TABLE_MAX_SIZE		16
-
-Looks like this is only used for the statistics, so the _TABLE in there
-is somewhat confusing. Perhaps make this TEGRA_EMC_MAX_STATS? Or
-TEGRA_EMC_MAX_FREQS?
-
 > +#define TEGRA210_EMC_SUSPEND_RATE		204000000
-
-What exactly does this mean? Is this the lowest frequency that is
-supported? Or just some default value that was determined to be a good
-frequency for EMC during suspend?
-
-What if this doesn't actually feature is the set of supported
-frequencies by one set of tables?
-
 > +
 > +enum TEGRA_EMC_SOURCE {
-
-enum name should be all lowercase. Or just drop it altogether if you
-don't use the name anywhere anyway.
-
 > +	TEGRA_EMC_SRC_PLLM,
 > +	TEGRA_EMC_SRC_PLLC,
 > +	TEGRA_EMC_SRC_PLLP,
@@ -935,12 +1625,6 @@ don't use the name anywhere anyway.
 > +	u32 value_b;
 > +	unsigned long input_rate_b;
 > +};
-
-What's the difference between the two sets of values? Seems like they
-could maybe form an array? Or perhaps make each set a structure and
-instantiate it twice. I find that suffixes are a poor way of describing
-structure.
-
 > +
 > +struct emc_stats {
 > +	u64 time_at_clock[TEGRA_EMC_TABLE_MAX_SIZE];
@@ -952,18 +1636,18 @@ structure.
 > +
 > +static struct emc_sel *emc_clk_sel;
 > +static struct clk *emc_src[TEGRA_EMC_SRC_COUNT];
-> +static const char *emc_src_names[TEGRA_EMC_SRC_COUNT] =3D {
-> +	[TEGRA_EMC_SRC_PLLM] =3D "pll_m",
-> +	[TEGRA_EMC_SRC_PLLC] =3D "pll_c",
-> +	[TEGRA_EMC_SRC_PLLP] =3D "pll_p",
-> +	[TEGRA_EMC_SRC_CLKM] =3D "clk_m",
-> +	[TEGRA_EMC_SRC_PLLM_UD] =3D "pll_m_ud",
-> +	[TEGRA_EMC_SRC_PLLMB_UD] =3D "pll_mb_ud",
-> +	[TEGRA_EMC_SRC_PLLMB] =3D "pll_mb",
-> +	[TEGRA_EMC_SRC_PLLP_UD] =3D "pll_p_ud",
+> +static const char *emc_src_names[TEGRA_EMC_SRC_COUNT] = {
+> +	[TEGRA_EMC_SRC_PLLM] = "pll_m",
+> +	[TEGRA_EMC_SRC_PLLC] = "pll_c",
+> +	[TEGRA_EMC_SRC_PLLP] = "pll_p",
+> +	[TEGRA_EMC_SRC_CLKM] = "clk_m",
+> +	[TEGRA_EMC_SRC_PLLM_UD] = "pll_m_ud",
+> +	[TEGRA_EMC_SRC_PLLMB_UD] = "pll_mb_ud",
+> +	[TEGRA_EMC_SRC_PLLMB] = "pll_mb",
+> +	[TEGRA_EMC_SRC_PLLP_UD] = "pll_p_ud",
 > +};
 > +static struct emc_stats emc_stats;
-> +static struct supported_sequence supported_seqs[] =3D {
+> +static struct supported_sequence supported_seqs[] = {
 > +	{
 > +		0,
 > +		NULL,
@@ -971,65 +1655,38 @@ structure.
 > +		NULL
 > +	}
 > +};
-
-I haven't gone through the later patches, but is this going to be filled
-with data? If it does, it seems to me like the data would end up being
-static, in which case this should be const.
-
 > +static struct supported_sequence *seq;
-
-Some here.
-
 > +static struct tegra_emc *tegra_emc;
-
-It seems like you only need this in order to get at struct tegra_emc in
-the emc_train() function below. If you move the emc_training_timer below
-into struct tegra_emc, you should be able to use container_of() to get
-at it and you can remove the global variable.
-
 > +static DEFINE_SPINLOCK(emc_access_lock);
 > +static ktime_t clkchange_time;
-> +static int clkchange_delay =3D 100;
+> +static int clkchange_delay = 100;
 > +
 > +static void emc_train(struct timer_list *tmr);
 > +DEFINE_TIMER(emc_training_timer, emc_train);
-> +static u32 timer_period_training =3D 100;
-
-Why are these all global? Can they not be moved into struct tegra_emc?
-
+> +static u32 timer_period_training = 100;
+> +
 > +#define DEFINE_REG(type, reg) (reg)
-> +u32 burst_regs_per_ch_off[] =3D BURST_REGS_PER_CH_LIST;
-> +u32 burst_regs_off[] =3D BURST_REGS_LIST;
-> +u32 burst_mc_regs_off[] =3D BURST_MC_REGS_LIST;
-> +u32 la_scale_regs_off[] =3D BURST_UP_DOWN_REGS_LIST;
-> +u32 trim_regs_per_ch_off[] =3D TRIM_REGS_PER_CH_LIST;
-> +u32 trim_regs_off[] =3D TRIM_REGS_LIST;
-> +u32 vref_regs_per_ch_off[] =3D VREF_REGS_PER_CH_LIST;
+> +u32 burst_regs_per_ch_off[] = BURST_REGS_PER_CH_LIST;
+> +u32 burst_regs_off[] = BURST_REGS_LIST;
+> +u32 burst_mc_regs_off[] = BURST_MC_REGS_LIST;
+> +u32 la_scale_regs_off[] = BURST_UP_DOWN_REGS_LIST;
+> +u32 trim_regs_per_ch_off[] = TRIM_REGS_PER_CH_LIST;
+> +u32 trim_regs_off[] = TRIM_REGS_LIST;
+> +u32 vref_regs_per_ch_off[] = VREF_REGS_PER_CH_LIST;
 > +#undef DEFINE_REG
 > +
 > +#define DEFINE_REG(type, reg) (type)
-> +u32 burst_regs_per_ch_type[] =3D BURST_REGS_PER_CH_LIST;
-> +u32 trim_regs_per_ch_type[] =3D TRIM_REGS_PER_CH_LIST;
-> +u32 vref_regs_per_ch_type[] =3D VREF_REGS_PER_CH_LIST;
+> +u32 burst_regs_per_ch_type[] = BURST_REGS_PER_CH_LIST;
+> +u32 trim_regs_per_ch_type[] = TRIM_REGS_PER_CH_LIST;
+> +u32 vref_regs_per_ch_type[] = VREF_REGS_PER_CH_LIST;
 > +#undef DEFINE_REG
-
-Should these all be static const? Like I said earlier, I'd prefer a
-single table with all the values rather than splitting this up into
-a large number of arrays.
-
 > +
 > +#ifdef CONFIG_PM_SLEEP
 > +static bool emc_suspend;
 > +static unsigned long emc_resume_rate;
 > +#endif
-
-Why are these global? Shouldn't they be part of struct tegra_emc?
-
 > +
 > +inline u32 emc_readl(struct tegra_emc *emc, unsigned long offset)
-
-static, please.
-
 > +{
 > +	return readl(emc->emc_base + offset);
 > +}
@@ -1037,23 +1694,15 @@ static, please.
 > +inline u32 emc_readl_per_ch(struct tegra_emc *emc, int type,
 > +			    unsigned long offset)
 > +{
-> +	u32 val =3D 0;
+> +	u32 val = 0;
 > +
 > +	switch (type) {
 > +	case REG_EMC:
 > +	case REG_EMC0:
-> +		val =3D readl(emc->emc_base + offset);
-
-So if REG_EMC and REG_EMC0 are the same thing, why not define one in
-terms of the other? Why use different enum values for them?
-
-If they are the same, you could define emc_base as an array and use the
-type as an index into that array and avoid the need for the complicated
-switch here. Also, should "type" really be called "channel"?
-
+> +		val = readl(emc->emc_base + offset);
 > +		break;
 > +	case REG_EMC1:
-> +		val =3D readl(emc->emc1_base + offset);
+> +		val = readl(emc->emc1_base + offset);
 > +		break;
 > +	}
 > +
@@ -1071,23 +1720,17 @@ switch here. Also, should "type" really be called "channel"?
 > +	return (val & EMC_CLK_EMC_2X_CLK_DIVISOR_MASK) >>
 > +		EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT;
 > +}
-
-Seems like this is mostly similar to the macros defined in
-include/linux/bitfield.h? Could those not be used here instead?
-
 > +
 > +static void emc_train(struct timer_list *tmr)
 > +{
 > +	unsigned long flags;
-> +	struct tegra_emc *emc =3D tegra_emc;
+> +	struct tegra_emc *emc = tegra_emc;
+
+Looks like you could embed timer into "struct tegra_emc" and then the global variable won't be needed.
+
 > +
 > +	if (!emc->current_timing)
 > +		return;
-
-It seems like this can never happen. Training happens as a result of the
-EMC clock rate getting set and part of setting the EMC clock rate is to
-set emc->current_timing to a valid table.
-
 > +
 > +	spin_lock_irqsave(&emc_access_lock, flags);
 > +	if (seq->periodic_compensation)
@@ -1107,9 +1750,6 @@ set emc->current_timing to a valid table.
 > +static void emc_training_timer_stop(void)
 > +{
 > +	del_timer(&emc_training_timer);
-
-del_timer_sync()?
-
 > +}
 > +
 > +static void emc_set_clock(struct tegra_emc *emc, u32 clksrc)
@@ -1121,10 +1761,6 @@ del_timer_sync()?
 > +	else
 > +		emc_training_timer_stop();
 > +}
-
-Given that you only use emc_training_timer_{start,stop}() once, I think
-you can fold them into the emc_set_clock() function.
-
 > +
 > +static inline void emc_get_timing(struct tegra_emc *emc,
 > +				  struct emc_table *timing)
@@ -1133,166 +1769,129 @@ you can fold them into the emc_set_clock() function.
 > +	u32 val;
 > +	unsigned long rate;
 > +
-> +	for (i =3D 0; i < timing->num_burst; i++) {
+> +	for (i = 0; i < timing->num_burst; i++) {
 > +		if (burst_regs_off[i])
-> +			timing->burst_regs[i] =3D emc_readl(emc,
+> +			timing->burst_regs[i] = emc_readl(emc,
 > +							  burst_regs_off[i]);
 > +		else
-> +			timing->burst_regs[i] =3D 0;
+> +			timing->burst_regs[i] = 0;
 > +	}
 > +
-> +	for (i =3D 0; i < timing->num_burst_per_ch; i++)
-> +		timing->burst_reg_per_ch[i] =3D emc_readl_per_ch(emc,
+> +	for (i = 0; i < timing->num_burst_per_ch; i++)
+> +		timing->burst_reg_per_ch[i] = emc_readl_per_ch(emc,
 > +			burst_regs_per_ch_type[i], burst_regs_per_ch_off[i]);
 > +
-> +	for (i =3D 0; i < timing->num_trim; i++)
-> +		timing->trim_regs[i] =3D emc_readl(emc, trim_regs_off[i]);
+> +	for (i = 0; i < timing->num_trim; i++)
+> +		timing->trim_regs[i] = emc_readl(emc, trim_regs_off[i]);
 > +
-> +	for (i =3D 0; i < timing->num_trim_per_ch; i++)
-> +		timing->trim_perch_regs[i] =3D emc_readl_per_ch(emc,
+> +	for (i = 0; i < timing->num_trim_per_ch; i++)
+> +		timing->trim_perch_regs[i] = emc_readl_per_ch(emc,
 > +			trim_regs_per_ch_type[i], trim_regs_per_ch_off[i]);
 > +
-> +	for (i =3D 0; i < timing->vref_num; i++)
-> +		timing->vref_perch_regs[i] =3D emc_readl_per_ch(emc,
+> +	for (i = 0; i < timing->vref_num; i++)
+> +		timing->vref_perch_regs[i] = emc_readl_per_ch(emc,
 > +			vref_regs_per_ch_type[i], vref_regs_per_ch_off[i]);
 > +
-> +	for (i =3D 0; i < timing->num_mc_regs; i++)
-> +		timing->burst_mc_regs[i] =3D mc_readl(emc->mc,
+> +	for (i = 0; i < timing->num_mc_regs; i++)
+> +		timing->burst_mc_regs[i] = mc_readl(emc->mc,
 > +						    burst_mc_regs_off[i]);
 > +
-> +	for (i =3D 0; i < timing->num_up_down; i++)
-> +		timing->la_scale_regs[i] =3D mc_readl(emc->mc,
+> +	for (i = 0; i < timing->num_up_down; i++)
+> +		timing->la_scale_regs[i] = mc_readl(emc->mc,
 > +						    la_scale_regs_off[i]);
 > +
-> +	val =3D tegra210_clk_emc_get_setting();
-> +	rate =3D clk_get_rate(emc_src[emc_src_val(val)]);
-
-I thought we implemented the EMC clock as a CCF clock, in which case we
-could just use clk_get_parent() to retrieve the parent clock, couldn't
-we?
-
-> +	div =3D emc_div_val(val);
-> +	div +=3D 2;
-> +	rate *=3D 2;
-> +	rate +=3D div - 1;
+> +	val = tegra210_clk_emc_get_setting();
+> +	rate = clk_get_rate(emc_src[emc_src_val(val)]);
+> +	div = emc_div_val(val);
+> +	div += 2;
+> +	rate *= 2;
+> +	rate += div - 1;
 > +	do_div(rate, div);
-> +	timing->rate =3D rate / 1000;
-
-And couldn't we implement a ->recalc_rate() callback to get at the rate?
-Looks like we do already implement those, so perhaps I don't understand
-how this is being used. Can you clarify?
-
+> +	timing->rate = rate / 1000;
 > +}
 > +
 > +static void __emc_copy_table_params(struct emc_table *src,
 > +				    struct emc_table *dst, int flags)
-
-Flags are typically unsigned long.
-
 > +{
 > +	int i;
-
-unsigned int
-
 > +
 > +	if (flags & EMC_COPY_TABLE_PARAM_PERIODIC_FIELDS) {
-> +		dst->trained_dram_clktree_c0d0u0 =3D
+> +		dst->trained_dram_clktree_c0d0u0 =
 > +			src->trained_dram_clktree_c0d0u0;
-> +		dst->trained_dram_clktree_c0d0u1 =3D
+> +		dst->trained_dram_clktree_c0d0u1 =
 > +			src->trained_dram_clktree_c0d0u1;
-> +		dst->trained_dram_clktree_c0d1u0 =3D
+> +		dst->trained_dram_clktree_c0d1u0 =
 > +			src->trained_dram_clktree_c0d1u0;
-> +		dst->trained_dram_clktree_c0d1u1 =3D
+> +		dst->trained_dram_clktree_c0d1u1 =
 > +			src->trained_dram_clktree_c0d1u1;
-> +		dst->trained_dram_clktree_c1d0u0 =3D
+> +		dst->trained_dram_clktree_c1d0u0 =
 > +			src->trained_dram_clktree_c1d0u0;
-> +		dst->trained_dram_clktree_c1d0u1 =3D
+> +		dst->trained_dram_clktree_c1d0u1 =
 > +			src->trained_dram_clktree_c1d0u1;
-> +		dst->trained_dram_clktree_c1d1u0 =3D
+> +		dst->trained_dram_clktree_c1d1u0 =
 > +			src->trained_dram_clktree_c1d1u0;
-> +		dst->trained_dram_clktree_c1d1u1 =3D
+> +		dst->trained_dram_clktree_c1d1u1 =
 > +			src->trained_dram_clktree_c1d1u1;
-> +		dst->current_dram_clktree_c0d0u0 =3D
+> +		dst->current_dram_clktree_c0d0u0 =
 > +			src->current_dram_clktree_c0d0u0;
-> +		dst->current_dram_clktree_c0d0u1 =3D
+> +		dst->current_dram_clktree_c0d0u1 =
 > +			src->current_dram_clktree_c0d0u1;
-> +		dst->current_dram_clktree_c0d1u0 =3D
+> +		dst->current_dram_clktree_c0d1u0 =
 > +			src->current_dram_clktree_c0d1u0;
-> +		dst->current_dram_clktree_c0d1u1 =3D
+> +		dst->current_dram_clktree_c0d1u1 =
 > +			src->current_dram_clktree_c0d1u1;
-> +		dst->current_dram_clktree_c1d0u0 =3D
+> +		dst->current_dram_clktree_c1d0u0 =
 > +			src->current_dram_clktree_c1d0u0;
-> +		dst->current_dram_clktree_c1d0u1 =3D
+> +		dst->current_dram_clktree_c1d0u1 =
 > +			src->current_dram_clktree_c1d0u1;
-> +		dst->current_dram_clktree_c1d1u0 =3D
+> +		dst->current_dram_clktree_c1d1u0 =
 > +			src->current_dram_clktree_c1d1u0;
-> +		dst->current_dram_clktree_c1d1u1 =3D
+> +		dst->current_dram_clktree_c1d1u1 =
 > +			src->current_dram_clktree_c1d1u1;
 > +	}
-
-Yeah, this definitely should be an array.
-
 > +
 > +	if (flags & EMC_COPY_TABLE_PARAM_TRIM_REGS) {
-> +		for (i =3D 0; i < src->num_trim_per_ch; i++)
-> +			dst->trim_perch_regs[i] =3D src->trim_perch_regs[i];
+> +		for (i = 0; i < src->num_trim_per_ch; i++)
+> +			dst->trim_perch_regs[i] = src->trim_perch_regs[i];
 > +
-> +		for (i =3D 0; i < src->num_trim; i++)
-> +			dst->trim_regs[i] =3D src->trim_regs[i];
+> +		for (i = 0; i < src->num_trim; i++)
+> +			dst->trim_regs[i] = src->trim_regs[i];
 > +
-> +		for (i =3D 0; i < src->num_burst_per_ch; i++)
-> +			dst->burst_reg_per_ch[i] =3D src->burst_reg_per_ch[i];
+> +		for (i = 0; i < src->num_burst_per_ch; i++)
+> +			dst->burst_reg_per_ch[i] = src->burst_reg_per_ch[i];
 > +
-> +		dst->trained =3D src->trained;
+> +		dst->trained = src->trained;
 > +	}
 > +}
 > +
 > +static void emc_copy_table_params(struct emc_table *src,
 > +				  struct emc_table *dst,
 > +				  int table_size,
-
-unsigned int
-
 > +				  int flags)
-
-unsigned long
-
 > +{
 > +	int i;
-
-unsigned int
-
 > +
-> +	for (i =3D 0; i < table_size; i++)
+> +	for (i = 0; i < table_size; i++)
 > +		__emc_copy_table_params(&src[i], &dst[i], flags);
 > +}
 > +
 > +static void emc_last_stats_update(int last_sel)
-
-unsigned int last_sel
-
-Maybe also pass in struct tegra_emc * here so that you can store the
-stats in the EMC instance instead of having a global variable for it.
-
 > +{
 > +	unsigned long flags;
-> +	u64 cur_jiffies =3D get_jiffies_64();
+> +	u64 cur_jiffies = get_jiffies_64();
 > +
 > +	spin_lock_irqsave(&emc_stats.spinlock, flags);
 > +
 > +	if (emc_stats.last_sel < TEGRA_EMC_TABLE_MAX_SIZE)
-> +		emc_stats.time_at_clock[emc_stats.last_sel] =3D
+> +		emc_stats.time_at_clock[emc_stats.last_sel] =
 > +			emc_stats.time_at_clock[emc_stats.last_sel]
 > +			+ (cur_jiffies - emc_stats.last_update);
-
-Maybe use +=3D here?
-
 > +
-> +	emc_stats.last_update =3D cur_jiffies;
+> +	emc_stats.last_update = cur_jiffies;
 > +
 > +	if (last_sel < TEGRA_EMC_TABLE_MAX_SIZE) {
 > +		emc_stats.clkchange_count++;
-> +		emc_stats.last_sel =3D last_sel;
+> +		emc_stats.last_sel = last_sel;
 > +	}
 > +
 > +	spin_unlock_irqrestore(&emc_stats.spinlock, flags);
@@ -1301,15 +1900,12 @@ Maybe use +=3D here?
 > +static int emc_table_lookup(struct tegra_emc *emc, unsigned long rate)
 > +{
 > +	int i;
-
-unsigned int
-
 > +
-> +	for (i =3D 0; i < emc->emc_table_size; i++) {
-> +		if (emc_clk_sel[i].input =3D=3D NULL)
+> +	for (i = 0; i < emc->emc_table_size; i++) {
+> +		if (emc_clk_sel[i].input == NULL)
 > +			continue;
 > +
-> +		if (emc->emc_table[i].rate =3D=3D rate)
+> +		if (emc->emc_table[i].rate == rate)
 > +			return i;
 > +	}
 > +
@@ -1323,24 +1919,21 @@ unsigned int
 > +	unsigned long parent_rate;
 > +	int idx;
 > +
-> +	idx =3D emc_table_lookup(emc, rate / 1000);
+> +	idx = emc_table_lookup(emc, rate / 1000);
 > +	if (idx < 0)
 > +		return ERR_PTR(-EINVAL);
-
-Propagate idx
-
 > +
-> +	parent_rate =3D emc_clk_sel[idx].input_rate * 1000;
-> +	new_parent =3D emc_clk_sel[idx].input;
-> +	old_parent =3D clk_get_parent(emc->emc_clk);
+> +	parent_rate = emc_clk_sel[idx].input_rate * 1000;
+> +	new_parent = emc_clk_sel[idx].input;
+> +	old_parent = clk_get_parent(emc->emc_clk);
 > +
-> +	if (parent_rate =3D=3D clk_get_rate(old_parent))
+> +	if (parent_rate == clk_get_rate(old_parent))
 > +		return old_parent;
 > +
 > +	if (clk_is_match(new_parent, old_parent))
-> +		new_parent =3D emc_clk_sel[idx].input_b;
+> +		new_parent = emc_clk_sel[idx].input_b;
 > +
-> +	if (parent_rate !=3D clk_get_rate(new_parent))
+> +	if (parent_rate != clk_get_rate(new_parent))
 > +		clk_set_rate(new_parent, parent_rate);
 > +
 > +	return new_parent;
@@ -1354,47 +1947,34 @@ Propagate idx
 > +	struct clk *parent;
 > +
 > +	if (emc_suspend)
-> +		rate =3D TEGRA210_EMC_SUSPEND_RATE;
+> +		rate = TEGRA210_EMC_SUSPEND_RATE;
 > +
-> +	if (rate =3D=3D emc->current_timing->rate)
+> +	if (rate == emc->current_timing->rate)
 > +		return 0;
 > +
-> +	i =3D emc_table_lookup(emc, rate / 1000);
+> +	i = emc_table_lookup(emc, rate / 1000);
 > +
 > +	if (i < 0)
-
-No need for a blank line between the above two.
-
 > +		return i;
 > +
 > +	if (rate > 204000000 && !emc->emc_table[i].trained)
 > +		return -EINVAL;
-
-Where does that 204 MHz come from? Maybe that should be a parameter? Is
-it coincidence that it's the same as TEGRA210_EMC_SUSPEND_RATE?
-
 > +
-> +	parent =3D emc_predict_parent(emc, rate);
+> +	parent = emc_predict_parent(emc, rate);
 > +	if (clk_is_match(parent, emc_clk_sel[i].input))
-
-Could use a blank line between the above two lines for readability.
-
-> +		emc->clk_setting =3D emc_clk_sel[i].value;
+> +		emc->clk_setting = emc_clk_sel[i].value;
 > +	else
-> +		emc->clk_setting =3D emc_clk_sel[i].value_b;
+> +		emc->clk_setting = emc_clk_sel[i].value_b;
 > +
-> +	emc->next_timing =3D &emc->emc_table[i];
-> +	last_change_delay =3D ktime_us_delta(ktime_get(), clkchange_time);
-> +	if ((last_change_delay >=3D 0) && (last_change_delay < clkchange_delay))
-
-Could also use a blank line for readability.
-
+> +	emc->next_timing = &emc->emc_table[i];
+> +	last_change_delay = ktime_us_delta(ktime_get(), clkchange_time);
+> +	if ((last_change_delay >= 0) && (last_change_delay < clkchange_delay))
 > +		udelay(clkchange_delay - (int)last_change_delay);
 > +
 > +	spin_lock_irqsave(&emc_access_lock, flags);
 > +	emc_set_clock(emc, emc->clk_setting);
-> +	clkchange_time =3D ktime_get();
-> +	emc->current_timing =3D &emc->emc_table[i];
+> +	clkchange_time = ktime_get();
+> +	emc->current_timing = &emc->emc_table[i];
 > +	spin_unlock_irqrestore(&emc_access_lock, flags);
 > +
 > +	emc_last_stats_update(i);
@@ -1406,27 +1986,16 @@ Could also use a blank line for readability.
 > +static int emc_stats_show(struct seq_file *s, void *data)
 > +{
 > +	int i;
-
-unsigned int.
-
-> +	struct tegra_emc *emc =3D (struct tegra_emc *)s->private;
-
-I don't think the cast is needed here. s->private is void *.
-
+> +	struct tegra_emc *emc = (struct tegra_emc *)s->private;
 > +
 > +	if (!emc->emc_table_size || !seq)
 > +		return 0;
 > +
 > +	emc_last_stats_update(TEGRA_EMC_TABLE_MAX_SIZE);
-
-Isn't this going to falsify the statistics? This causes the last update
-time to be captured, which effectively resets to 0 the duration for
-which the current timing was applied, doesn't it?
-
 > +
 > +	seq_printf(s, "%-10s %-10s\n", "rate kHz", "time");
-> +	for (i =3D 0; i < emc->emc_table_size; i++) {
-> +		if (emc_clk_sel[i].input =3D=3D NULL)
+> +	for (i = 0; i < emc->emc_table_size; i++) {
+> +		if (emc_clk_sel[i].input == NULL)
 > +			continue;
 > +
 > +		seq_printf(s, "%-10u %-10llu\n",
@@ -1447,25 +2016,25 @@ which the current timing was applied, doesn't it?
 > +	return single_open(file, emc_stats_show, inode->i_private);
 > +}
 > +
-> +static const struct file_operations emc_stats_fops =3D {
-> +	.open		=3D emc_stats_open,
-> +	.read		=3D seq_read,
-> +	.llseek		=3D seq_lseek,
-> +	.release	=3D single_release,
+> +static const struct file_operations emc_stats_fops = {
+> +	.open		= emc_stats_open,
+> +	.read		= seq_read,
+> +	.llseek		= seq_lseek,
+> +	.release	= single_release,
 > +};
 > +
 > +static int debug_emc_get_rate(void *data, u64 *val)
 > +{
-> +	struct clk *c =3D data;
+> +	struct clk *c = data;
 > +
-> +	*val =3D clk_get_rate(c);
+> +	*val = clk_get_rate(c);
 > +
 > +	return 0;
 > +}
 > +
 > +static int debug_emc_set_rate(void *data, u64 val)
 > +{
-> +	struct clk *c =3D data;
+> +	struct clk *c = data;
 > +
 > +	return clk_set_rate(c, val);
 > +}
@@ -1476,7 +2045,7 @@ which the current timing was applied, doesn't it?
 > +{
 > +	struct dentry *emc_debugfs_root;
 > +
-> +	emc_debugfs_root =3D debugfs_create_dir("tegra_emc", NULL);
+> +	emc_debugfs_root = debugfs_create_dir("tegra_emc", NULL);
 > +	if (!emc_debugfs_root)
 > +		return -ENOMEM;
 > +
@@ -1495,13 +2064,15 @@ which the current timing was applied, doesn't it?
 > +	return -ENOMEM;
 > +}
 > +#endif /* CONFIG_DEBUG_FS */
-> +
+
+Every downstream EMC driver has this debugfs, but is it useful for upstream? I think it should be generalized and made re-usable by all of the EMC drivers if it has a real value, otherwise it could be dropped.
+
 > +static u8 clk_emc_get_parent(struct clk_hw *hw)
 > +{
-> +	struct tegra_emc *emc =3D to_emc(hw);
+> +	struct tegra_emc *emc = to_emc(hw);
 > +
 > +	if (!emc->clk_setting)
-> +		emc->clk_setting =3D tegra210_clk_emc_get_setting();
+> +		emc->clk_setting = tegra210_clk_emc_get_setting();
 > +
 > +	return emc_src_val(emc->clk_setting);
 > +}
@@ -1509,30 +2080,25 @@ which the current timing was applied, doesn't it?
 > +static unsigned long clk_emc_recalc_rate(struct clk_hw *hw,
 > +					 unsigned long parent_rate)
 > +{
-> +	struct tegra_emc *emc =3D to_emc(hw);
+> +	struct tegra_emc *emc = to_emc(hw);
 > +
 > +	if (!emc->emc_table_size || !seq) {
-> +		u32 emc_setting =3D tegra210_clk_emc_get_setting();
+> +		u32 emc_setting = tegra210_clk_emc_get_setting();
 > +
 > +		return clk_get_rate(emc_src[emc_src_val(emc_setting)]);
 > +	}
 > +
 > +	return emc->current_timing->rate * 1000;
-
-There's a lot of conversion between CCF rates and timing rates. Can we
-not settle on the timing rates to be stored in Hz (rather than kHz) as
-well?
-
 > +}
 > +
 > +static long clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
 > +			       unsigned long *prate)
 > +{
-> +	struct tegra_emc *emc =3D to_emc(hw);
+> +	struct tegra_emc *emc = to_emc(hw);
 > +	int i;
 > +
 > +	if (!emc->emc_table_size || !seq) {
-> +		u32 emc_setting =3D tegra210_clk_emc_get_setting();
+> +		u32 emc_setting = tegra210_clk_emc_get_setting();
 > +
 > +		return clk_get_rate(emc_src[emc_src_val(emc_setting)]);
 > +	}
@@ -1540,10 +2106,10 @@ well?
 > +	if (emc_suspend)
 > +		return TEGRA210_EMC_SUSPEND_RATE;
 > +
-> +	rate /=3D 1000;
+> +	rate /= 1000;
 > +
-> +	for (i =3D 0; i < emc->emc_table_size; i++) {
-> +		if (emc->emc_table[i].rate >=3D rate)
+> +	for (i = 0; i < emc->emc_table_size; i++) {
+> +		if (emc->emc_table[i].rate >= rate)
 > +			return emc->emc_table[i].rate * 1000;
 > +	}
 > +
@@ -1553,27 +2119,27 @@ well?
 > +static int clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
 > +			    unsigned long parent_rate)
 > +{
-> +	struct tegra_emc *emc =3D to_emc(hw);
+> +	struct tegra_emc *emc = to_emc(hw);
 > +	struct clk *old_parent, *new_parent;
-> +	int ret =3D -EINVAL;
+> +	int ret = -EINVAL;
 > +
 > +	if (!emc->emc_table_size || !seq)
 > +		return ret;
 > +
 > +	if (emc_suspend)
-> +		rate =3D TEGRA210_EMC_SUSPEND_RATE;
+> +		rate = TEGRA210_EMC_SUSPEND_RATE;
 > +
-> +	old_parent =3D clk_get_parent(hw->clk);
-> +	new_parent =3D emc_predict_parent(emc, rate);
+> +	old_parent = clk_get_parent(hw->clk);
+> +	new_parent = emc_predict_parent(emc, rate);
 > +	if (IS_ERR(new_parent))
 > +		goto out;
 > +
 > +	if (!clk_is_match(new_parent, old_parent))
 > +		clk_prepare_enable(new_parent);
 > +
-> +	ret =3D emc_set_rate(emc, rate);
+> +	ret = emc_set_rate(emc, rate);
 > +	if (ret) {
-> +		if (new_parent !=3D old_parent)
+> +		if (new_parent != old_parent)
 > +			clk_disable_unprepare(new_parent);
 > +		goto out;
 > +	}
@@ -1587,23 +2153,25 @@ well?
 > +	return ret;
 > +}
 > +
-> +static const struct clk_ops tegra_clk_emc_ops =3D {
-> +	.get_parent =3D clk_emc_get_parent,
-> +	.recalc_rate =3D clk_emc_recalc_rate,
-> +	.round_rate =3D clk_emc_round_rate,
-> +	.set_rate =3D clk_emc_set_rate,
+> +static const struct clk_ops tegra_clk_emc_ops = {
+> +	.get_parent = clk_emc_get_parent,
+> +	.recalc_rate = clk_emc_recalc_rate,
+> +	.round_rate = clk_emc_round_rate,
+> +	.set_rate = clk_emc_set_rate,
 > +};
+
+Couldn't the "best parent" be selected using the determine_rate() callback and then the rate and parent be applied using set_rate_and_parent(), replacing the set_rate()? It looks like you're re-implementing something that CLK framework already has support for.
+
 > +
-> +static int find_matching_input(struct emc_table *table, struct emc_sel *=
-sel)
+> +static int find_matching_input(struct emc_table *table, struct emc_sel *sel)
 > +{
 > +	u32 div_value;
 > +	u32 src_value;
-> +	unsigned long input_rate =3D 0;
+> +	unsigned long input_rate = 0;
 > +	struct clk *input_clk;
 > +
-> +	div_value =3D emc_div_val(table->clk_src_emc);
-> +	src_value =3D emc_src_val(table->clk_src_emc);
+> +	div_value = emc_div_val(table->clk_src_emc);
+> +	src_value = emc_src_val(table->clk_src_emc);
 > +
 > +	if (div_value & 0x1) {
 > +		pr_warn("Tegra EMC: invalid odd divider for EMC rate %u\n",
@@ -1611,7 +2179,7 @@ sel)
 > +		return -EINVAL;
 > +	}
 > +
-> +	if (!(table->clk_src_emc & EMC_CLK_MC_EMC_SAME_FREQ) !=3D
+> +	if (!(table->clk_src_emc & EMC_CLK_MC_EMC_SAME_FREQ) !=
 > +	    !(MC_EMEM_ARB_MISC0_EMC_SAME_FREQ &
 > +	    table->burst_regs[MC_EMEM_ARB_MISC0_INDEX])) {
 > +		pr_warn("Tegra EMC: ambiguous EMC to MC ratio for rate %u\n",
@@ -1619,39 +2187,39 @@ sel)
 > +		return -EINVAL;
 > +	}
 > +
-> +	input_clk =3D emc_src[src_value];
-> +	if (input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM]
-> +		|| input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM_UD]) {
-> +		input_rate =3D table->rate * (1 + div_value / 2);
+> +	input_clk = emc_src[src_value];
+> +	if (input_clk == emc_src[TEGRA_EMC_SRC_PLLM]
+> +		|| input_clk == emc_src[TEGRA_EMC_SRC_PLLM_UD]) {
+> +		input_rate = table->rate * (1 + div_value / 2);
 > +	} else {
-> +		input_rate =3D clk_get_rate(input_clk) / 1000;
-> +		if (input_rate !=3D (table->rate * (1 + div_value / 2))) {
+> +		input_rate = clk_get_rate(input_clk) / 1000;
+> +		if (input_rate != (table->rate * (1 + div_value / 2))) {
 > +			pr_warn("Tegra EMC: rate %u doesn't match input\n",
 > +				table->rate);
 > +			return -EINVAL;
 > +		}
 > +	}
 > +
-> +	sel->input =3D input_clk;
-> +	sel->input_rate =3D input_rate;
-> +	sel->value =3D table->clk_src_emc;
-> +	sel->input_b =3D input_clk;
-> +	sel->input_rate_b =3D input_rate;
-> +	sel->value_b =3D table->clk_src_emc;
+> +	sel->input = input_clk;
+> +	sel->input_rate = input_rate;
+> +	sel->value = table->clk_src_emc;
+> +	sel->input_b = input_clk;
+> +	sel->input_rate_b = input_rate;
+> +	sel->value_b = table->clk_src_emc;
 > +
-> +	if (input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM]) {
-> +		sel->input_b =3D emc_src[TEGRA_EMC_SRC_PLLMB];
-> +		sel->value_b =3D table->clk_src_emc &
+> +	if (input_clk == emc_src[TEGRA_EMC_SRC_PLLM]) {
+> +		sel->input_b = emc_src[TEGRA_EMC_SRC_PLLMB];
+> +		sel->value_b = table->clk_src_emc &
 > +			       ~EMC_CLK_EMC_2X_CLK_SRC_MASK;
-> +		sel->value_b |=3D TEGRA_EMC_SRC_PLLMB <<
+> +		sel->value_b |= TEGRA_EMC_SRC_PLLMB <<
 > +				EMC_CLK_EMC_2X_CLK_SRC_SHIFT;
 > +	}
 > +
-> +	if (input_clk =3D=3D emc_src[TEGRA_EMC_SRC_PLLM_UD]) {
-> +		sel->input_b =3D emc_src[TEGRA_EMC_SRC_PLLMB_UD];
-> +		sel->value_b =3D table->clk_src_emc &
+> +	if (input_clk == emc_src[TEGRA_EMC_SRC_PLLM_UD]) {
+> +		sel->input_b = emc_src[TEGRA_EMC_SRC_PLLMB_UD];
+> +		sel->value_b = table->clk_src_emc &
 > +			       ~EMC_CLK_EMC_2X_CLK_SRC_MASK;
-> +		sel->value_b |=3D TEGRA_EMC_SRC_PLLMB_UD <<
+> +		sel->value_b |= TEGRA_EMC_SRC_PLLMB_UD <<
 > +				EMC_CLK_EMC_2X_CLK_SRC_SHIFT;
 > +	}
 > +
@@ -1661,9 +2229,6 @@ sel)
 > +static int tegra210_emc_probe(struct platform_device *pdev)
 > +{
 > +	int i, div;
-
-i and div can be unsigned int.
-
 > +	unsigned long table_rate;
 > +	unsigned long current_rate;
 > +	struct device_node *np;
@@ -1674,233 +2239,199 @@ i and div can be unsigned int.
 > +	struct resource *r;
 > +	u32 emc_setting;
 > +
-> +	emc =3D devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+> +	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
 > +	if (!emc)
 > +		return -ENOMEM;
 > +
-> +	np =3D of_parse_phandle(pdev->dev.of_node, "nvidia,memory-controller", =
-0);
+> +	np = of_parse_phandle(pdev->dev.of_node, "nvidia,memory-controller", 0);
 > +	if (!np) {
 > +		dev_err(&pdev->dev, "could not get memory controller\n");
 > +		return -ENOENT;
 > +	}
 > +
-> +	mc =3D of_find_device_by_node(np);
+> +	mc = of_find_device_by_node(np);
 > +	of_node_put(np);
 > +	if (!mc)
 > +		return -ENOENT;
 > +
-> +	emc->mc =3D platform_get_drvdata(mc);
+> +	emc->mc = platform_get_drvdata(mc);
 > +	if (!emc->mc)
 > +		return -EPROBE_DEFER;
 > +
-> +	emc->ram_code =3D tegra_read_ram_code();
-
-Oh, we do already cache the value here. Might as well reuse this
-everywhere instead of calling tegra_read_ram_code() over and over again.
-
-> +	r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	emc->emc_base =3D devm_ioremap_resource(&pdev->dev, r);
-> +	r =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	emc->emc0_base =3D devm_ioremap_resource(&pdev->dev, r);
-> +	r =3D platform_get_resource(pdev, IORESOURCE_MEM, 2);
-> +	emc->emc1_base =3D devm_ioremap_resource(&pdev->dev, r);
-
-That's odd. In emc_readl_per_ch() you use emc->emc_base to access
-registers pertaining to the EMC0 channel. Why do we have different
-apertures listed here? emc->emc0_base is not at all used right now.
-
+> +	emc->ram_code = tegra_read_ram_code();
+> +	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	emc->emc_base = devm_ioremap_resource(&pdev->dev, r);
+> +	r = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	emc->emc0_base = devm_ioremap_resource(&pdev->dev, r);
+> +	r = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> +	emc->emc1_base = devm_ioremap_resource(&pdev->dev, r);
 > +
-> +	for (i =3D 0; i < TEGRA_EMC_SRC_COUNT; i++) {
-> +		emc_src[i] =3D devm_clk_get(&pdev->dev,
+> +	for (i = 0; i < TEGRA_EMC_SRC_COUNT; i++) {
+> +		emc_src[i] = devm_clk_get(&pdev->dev,
 > +						emc_src_names[i]);
-
-No need to split this across multiple lines.
-
 > +		if (IS_ERR(emc_src[i])) {
 > +			dev_err(&pdev->dev, "Can not find EMC source clock\n");
 > +			return -ENODATA;
-
-Propagate the error store in emc_src[i].
-
 > +		}
 > +	}
 > +
 > +	/* Init EMC rate statistic data */
-> +	emc_stats.clkchange_count =3D 0;
+> +	emc_stats.clkchange_count = 0;
 > +	spin_lock_init(&emc_stats.spinlock);
-> +	emc_stats.last_update =3D get_jiffies_64();
-> +	emc_stats.last_sel =3D TEGRA_EMC_TABLE_MAX_SIZE;
+> +	emc_stats.last_update = get_jiffies_64();
+> +	emc_stats.last_sel = TEGRA_EMC_TABLE_MAX_SIZE;
 > +
-> +	emc->dram_type =3D (emc_readl(emc, EMC_FBIO_CFG5) &
+> +	emc->dram_type = (emc_readl(emc, EMC_FBIO_CFG5) &
 > +			  EMC_FBIO_CFG5_DRAM_TYPE_MASK) >>
 > +			  EMC_FBIO_CFG5_DRAM_TYPE_SHIFT;
-> +	if (emc->dram_type !=3D DRAM_TYPE_DDR3 &&
-> +	    emc->dram_type !=3D DRAM_TYPE_LPDDR2 &&
-> +	    emc->dram_type !=3D DRAM_TYPE_LPDDR4) {
+> +	if (emc->dram_type != DRAM_TYPE_DDR3 &&
+> +	    emc->dram_type != DRAM_TYPE_LPDDR2 &&
+> +	    emc->dram_type != DRAM_TYPE_LPDDR4) {
 > +		dev_err(&pdev->dev, "DRAM not supported\n");
 > +		return -ENODATA;
-
-This is not a very good error code for this situation. Perhaps use
-something like -ENODEV or -ENXIO.
-
 > +	}
 > +
-> +	emc->dram_dev_num =3D tegra_mc_get_emem_device_count(emc->mc);
+> +	emc->dram_dev_num = tegra_mc_get_emem_device_count(emc->mc);
 > +
 > +	tegra_emc_dt_parse_pdata(pdev, &emc->emc_table_normal,
 > +				 &emc->emc_table_derated,
 > +				 &emc->emc_table_size);
-
-Don't you want to handle errors from this function?
-
 > +	if (!emc->emc_table_size ||
 > +	    emc->emc_table_size > TEGRA_EMC_TABLE_MAX_SIZE) {
 > +		dev_err(&pdev->dev, "Invalid table size %d\n",
 > +			emc->emc_table_size);
 > +		goto emc_clk_register;
+
+Why do you want to continue and not to error out?
+
 > +	}
-> +	emc->emc_table =3D emc->emc_table_normal;
+> +	emc->emc_table = emc->emc_table_normal;
 > +
 > +	/*
 > +	 * Copy trained trimmers from the normal table to the derated
 > +	 * table for LP4. Bootloader trains only the normal table.
 > +	 * Trimmers are the same for derated and normal tables.
 > +	 */
-> +	if (emc->emc_table_derated && emc->dram_type =3D=3D DRAM_TYPE_LPDDR4)
+> +	if (emc->emc_table_derated && emc->dram_type == DRAM_TYPE_LPDDR4)
 > +		emc_copy_table_params(emc->emc_table_normal,
 > +				      emc->emc_table_derated,
 > +				      emc->emc_table_size,
 > +				      EMC_COPY_TABLE_PARAM_PERIODIC_FIELDS |
 > +				      EMC_COPY_TABLE_PARAM_TRIM_REGS);
 > +
-> +	seq =3D supported_seqs;
+> +	seq = supported_seqs;
 > +	while (seq->table_rev) {
-> +		if (seq->table_rev =3D=3D emc->emc_table[0].rev)
+> +		if (seq->table_rev == emc->emc_table[0].rev)
 > +			break;
 > +		seq++;
 > +	}
 > +	if (!seq->set_clock) {
-> +		seq =3D NULL;
+> +		seq = NULL;
 > +		dev_err(&pdev->dev, "Invalid EMC sequence for table Rev. %d\n",
 > +			emc->emc_table[0].rev);
 > +		goto emc_clk_register;
+
+Same as the above.
+
 > +	}
 > +
-> +	emc_clk_sel =3D devm_kcalloc(&pdev->dev,
+> +	emc_clk_sel = devm_kcalloc(&pdev->dev,
 > +				   emc->emc_table_size,
 > +				   sizeof(struct emc_sel),
 > +				   GFP_KERNEL);
 > +	if (!emc_clk_sel) {
 > +		dev_err(&pdev->dev, "Memory allocation failed\n");
-
-No need to output an error message in this case since the allocator will
-already be very noisy when this happens.
-
 > +		return -ENOMEM;
 > +	}
 > +
 > +	/* calculate the rate from source clock */
-> +	emc_setting =3D tegra210_clk_emc_get_setting();
-> +	current_rate =3D clk_get_rate(emc_src[emc_src_val(emc_setting)]);
-> +	div =3D emc_div_val(emc_setting);
-> +	div +=3D 2;
-> +	current_rate *=3D 2;
-> +	current_rate +=3D div - 1;
+> +	emc_setting = tegra210_clk_emc_get_setting();
+> +	current_rate = clk_get_rate(emc_src[emc_src_val(emc_setting)]);
+> +	div = emc_div_val(emc_setting);
+> +	div += 2;
+> +	current_rate *= 2;
+> +	current_rate += div - 1;
 > +	do_div(current_rate, div);
-> +	current_rate /=3D  1000;
+> +	current_rate /=  1000;
+
+The same is done in emc_get_timing(), hence it probably worth to factor out this hunk into a function.
+
 > +
-> +	for (i =3D 0; i < emc->emc_table_size; i++) {
-> +		table_rate =3D emc->emc_table[i].rate;
+> +	for (i = 0; i < emc->emc_table_size; i++) {
+> +		table_rate = emc->emc_table[i].rate;
 > +		if (!table_rate)
 > +			continue;
 > +
-> +		if (i && ((table_rate <=3D emc->emc_table[i-1].rate) ||
+> +		if (i && ((table_rate <= emc->emc_table[i-1].rate) ||
 > +		   (emc->emc_table[i].min_volt <
 > +		    emc->emc_table[i-1].min_volt)))
 > +			continue;
 > +
-> +		if (emc->emc_table[i].rev !=3D emc->emc_table[0].rev)
+> +		if (emc->emc_table[i].rev != emc->emc_table[0].rev)
 > +			continue;
 > +
 > +		if (find_matching_input(&emc->emc_table[i], &emc_clk_sel[i]))
 > +			continue;
 > +
-> +		if (table_rate =3D=3D current_rate)
-> +			emc_stats.last_sel =3D i;
+> +		if (table_rate == current_rate)
+> +			emc_stats.last_sel = i;
 > +	}
 > +
 > +	dev_info(&pdev->dev, "validated EMC DFS table\n");
 
-dev_dbg(). Be verbose when unexpected things happen. No need to let the
-user know if everything went as expected.
+It is not possible to fail the validation, hence remove this message?
 
-> +
 > +	/* Update the start_timing base on the settings from firmware */
-> +	emc->start_timing.num_burst =3D emc->emc_table[0].num_burst;
-> +	emc->start_timing.num_burst_per_ch =3D
+> +	emc->start_timing.num_burst = emc->emc_table[0].num_burst;
+> +	emc->start_timing.num_burst_per_ch =
 > +		emc->emc_table[0].num_burst_per_ch;
-> +	emc->start_timing.num_trim =3D emc->emc_table[0].num_trim;
-> +	emc->start_timing.num_trim_per_ch =3D
+> +	emc->start_timing.num_trim = emc->emc_table[0].num_trim;
+> +	emc->start_timing.num_trim_per_ch =
 > +		emc->emc_table[0].num_trim_per_ch;
-> +	emc->start_timing.num_mc_regs =3D emc->emc_table[0].num_mc_regs;
-> +	emc->start_timing.num_up_down =3D emc->emc_table[0].num_up_down;
-> +	emc->start_timing.vref_num =3D emc->emc_table[0].vref_num;
+> +	emc->start_timing.num_mc_regs = emc->emc_table[0].num_mc_regs;
+> +	emc->start_timing.num_up_down = emc->emc_table[0].num_up_down;
+> +	emc->start_timing.vref_num = emc->emc_table[0].vref_num;
 > +
 > +	emc_get_timing(emc, &emc->start_timing);
-> +	emc->current_timing =3D &emc->start_timing;
-> +	emc->clk_setting =3D emc_setting;
+> +	emc->current_timing = &emc->start_timing;
+> +	emc->clk_setting = emc_setting;
 > +
 > +emc_clk_register:
-> +	init.name =3D "emc";
-> +	init.ops =3D &tegra_clk_emc_ops;
-> +	init.flags =3D CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE;
-> +	init.parent_names =3D emc_src_names;
-> +	init.num_parents =3D ARRAY_SIZE(emc_src_names);
-> +	emc->hw.init =3D &init;
+> +	init.name = "emc";
+> +	init.ops = &tegra_clk_emc_ops;
+> +	init.flags = CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE;
+> +	init.parent_names = emc_src_names;
+> +	init.num_parents = ARRAY_SIZE(emc_src_names);
+> +	emc->hw.init = &init;
 > +
-> +	clk =3D clk_register(&pdev->dev, &emc->hw);
+> +	clk = clk_register(&pdev->dev, &emc->hw);
 > +	if (IS_ERR(clk))
 > +		return PTR_ERR(clk);
-> +	emc->emc_clk =3D clk;
-> +	emc->dev =3D &pdev->dev;
-> +	tegra_emc =3D emc;
+> +	emc->emc_clk = clk;
+> +	emc->dev = &pdev->dev;
+> +	tegra_emc = emc;
 > +	dev_set_drvdata(emc->dev, emc);
 > +
 > +	if (emc->emc_table_size && seq) {
-> +		for (i =3D 0; i < emc->emc_table_size; i++) {
-> +			table_rate =3D emc->emc_table[i].rate * 1000;
+> +		for (i = 0; i < emc->emc_table_size; i++) {
+> +			table_rate = emc->emc_table[i].rate * 1000;
 > +			if (clk_set_rate(clk, table_rate))
 > +				dev_info(&pdev->dev,
 > +					 "rate: %lu validation fail\n",
 > +					 table_rate);
 
-This should be dev_err() and you may want to exit at this point?
+dev_err()? Do you really want to continue in a error case? Is it realistic that clk_set_rate() may suddenly fail, maybe remove this "validation" if not..
 
+> +
 > +			dev_info(&pdev->dev, "rate: %lu validation success\n",
 > +				 table_rate);
-
-Again, no need to let the user know if everything went as expected. Also
-in the above error case, you'd be outputing that setting the rate failed
-and immediately report that it also succeeded.
-
-Also, do I understand correctly that the above will try to set each rate
-and keep the EMC rate set at the one in the last entry in the table? It
-would presumably be the highest and I think that's a good default. Just
-want to make sure I understand what's happening and that it is on
-purpose.
-
 > +		}
 > +	}
 > +
 > +	if (IS_ENABLED(CONFIG_DEBUG_FS))
 > +		tegra_emc_debug_init(emc);
 
-You'll have to decide whether you want to use #ifdef or a C conditional
-with IS_ENABLED(). If DEBUG_FS is disabled, the above will fail to build
-because tegra_emc_debug_init() won't be defined. I would recommend just
-dropping the #ifdef around the debugfs implementation and let the
-compiler's DCE pass remove debugfs support if DEBUG_FS=3Dn.
+Apparently compilation will fail if CONFIG_DEBUG_FS is disabled because tegra_emc_debug_init() will be undefined. Seems you should remove #ifdef CONFIG_DEBUG_FS and just allow tegra_emc_debug_init() to fail when CONFIG_DEBUG_FS=n and hence the condition "if (IS_ENABLED(CONFIG_DEBUG_FS))" won't be needed too.
 
 > +
 > +	return 0;
@@ -1909,21 +2440,15 @@ compiler's DCE pass remove debugfs support if DEBUG_FS=3Dn.
 > +#ifdef CONFIG_PM_SLEEP
 > +static int tegra210_emc_suspend(struct device *dev)
 > +{
-> +	struct tegra_emc *emc =3D dev_get_drvdata(dev);
+> +	struct tegra_emc *emc = dev_get_drvdata(dev);
 > +
 > +	if (!IS_ERR(emc->emc_clk)) {
-> +		emc_suspend =3D true;
-> +		emc_resume_rate =3D clk_get_rate(emc->emc_clk);
+> +		emc_suspend = true;
+> +		emc_resume_rate = clk_get_rate(emc->emc_clk);
 > +		clk_set_rate(emc->emc_clk, TEGRA210_EMC_SUSPEND_RATE);
 > +
 > +		pr_debug("%s at rate %lu\n", __func__,
 > +			 clk_get_rate(emc->emc_clk));
-
-Why not dev_dbg()? Also, perhaps use something like this for better
-readability:
-
-	dev_dbg(dev, "suspending at %lu Hz\n", clk_get_rate(emc->emc_clk));
-
 > +	}
 > +
 > +	return 0;
@@ -1931,10 +2456,13 @@ readability:
 > +
 > +static int tegra210_emc_resume(struct device *dev)
 > +{
-> +	struct tegra_emc *emc =3D dev_get_drvdata(dev);
+> +	struct tegra_emc *emc = dev_get_drvdata(dev);
 > +
 > +	if (!IS_ERR(emc->emc_clk)) {
-> +		emc_suspend =3D false;
+
+When emc->emc_clk may become a PTR_ERR?
+
+> +		emc_suspend = false;
 > +		clk_set_rate(emc->emc_clk, emc_resume_rate);
 > +
 > +		pr_debug("%s at rate %lu\n", __func__,
@@ -1943,32 +2471,29 @@ readability:
 > +
 > +	return 0;
 > +}
-
-Same comments as for suspend.
-
 > +
-> +static const struct dev_pm_ops tegra210_emc_pm_ops =3D {
+> +static const struct dev_pm_ops tegra210_emc_pm_ops = {
 > +	SET_SYSTEM_SLEEP_PM_OPS(tegra210_emc_suspend, tegra210_emc_resume)
 > +};
 > +#endif
 > +
-> +static const struct of_device_id tegra210_emc_of_match[] =3D {
-> +	{ .compatible =3D "nvidia,tegra210-emc", },
+> +static const struct of_device_id tegra210_emc_of_match[] = {
+> +	{ .compatible = "nvidia,tegra210-emc", },
 > +	{ },
 > +};
 > +
-> +static struct platform_driver tegra210_emc_driver =3D {
-> +	.driver	=3D {
-> +		.name =3D "tegra210-emc",
-> +		.of_match_table =3D tegra210_emc_of_match,
-> +		.pm =3D &tegra210_emc_pm_ops,
+> +static struct platform_driver tegra210_emc_driver = {
+> +	.driver	= {
+> +		.name = "tegra210-emc",
+> +		.of_match_table = tegra210_emc_of_match,
+> +		.pm = &tegra210_emc_pm_ops,
 
-This is going to fail if PM_SLEEP is unset. Better to always declare
-tegra210_emc_pm_ops, SET_SYSTEM_SLEEP_PM_OPS makes sure to replace the
-undefined symbols with NULL if PM_SLEEP is unset.
+Compilation will fail with CONFIG_PM_SLEEP=n, just remove the "#ifdef CONFIG_PM_SLEEP".
+
+.suppress_bind_attrs = true,
 
 > +	},
-> +	.probe =3D tegra210_emc_probe,
+> +	.probe = tegra210_emc_probe,
 > +};
 > +
 > +static int __init tegra210_emc_init(void)
@@ -1976,34 +2501,5 @@ undefined symbols with NULL if PM_SLEEP is unset.
 > +	return platform_driver_register(&tegra210_emc_driver);
 > +}
 > +subsys_initcall(tegra210_emc_init);
+> 
 
-Since this driver is not meant to be removed, you may want to prevent
-users from forcefully removing it using sysfs by setting:
-
-	.suppress_bind_attrs =3D true
-
-in the driver structure.
-
-Thierry
-
---zhtSGe8h3+lMyY1M
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlykmkAACgkQ3SOs138+
-s6GmfxAAucY8SoJEBBHKhIkyzOHcmoZwlTlkr42FSctV3VRnyQb+SCU5XiqQ4ltD
-gxeqwg5ydynxtBsPcpUCVMeFjrdkboZhLy5KgbrtPFNHfr0rZzweYC8/qaBSGuWC
-RKkT2BREcC4zjnJ0fvoNiU810BuL+8kmQ6UiJGP6L9UgFAxm7z50CxxcEdnqzOQW
-ISzxAsSaueAPTJjkr4K03+4/m/8utHCQ/YO+pMbVNRfsB1kD/48qOwjvhXO0IOmL
-DfwuzVYyKBe6q4O8aJZXxCXqAcW9odAlQMeKngr5XtpZzJG9NGLxBuqGd+YL6Cjp
-sxuK1b8uMMCAw1IGeNns/AAa1RfXVaWONeg+xZAXNxJJpSW5nkU0UWz88xwRtNqA
-l4T1mgEGM8fwsYc2y8eK+ggtRak8T+Cl0lVwzpbf97Qf5m1TlgyBvvKTJyBCUzTb
-rHYqVYMYwQwmJFBBqyOt0CRW1EKXNXoFVf7Z1Eo/jnwDNny+nMrgYNqYP6f06oU8
-nSJkvXFrfabj/WC72LTWLN1p7Vl/gn+l1ghcNAVejH2HHNgtsTUGZbqnGN1DfGM3
-xMs4Xmqx4IejGQX7gWUT3EX+Fe2GGlijHkQdqbfkLOp6bY1t9jNPngsjU1F3OgYz
-fUf49U8ZWPuGXagwWJGFSIPz0PZa6i+I+KPc2CLx2MnASsiHQyI=
-=v6o/
------END PGP SIGNATURE-----
-
---zhtSGe8h3+lMyY1M--
