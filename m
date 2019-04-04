@@ -2,115 +2,82 @@ Return-Path: <SRS0=Ee6+=SG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF74CC4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F83AC10F0C
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FF3E2075E
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z24GdO1l"
+	by mail.kernel.org (Postfix) with ESMTP id 774532075E
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbfDDIMb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 04:12:31 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45412 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfDDIMb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:12:31 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x348CRlf057260;
-        Thu, 4 Apr 2019 03:12:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1554365547;
-        bh=TFvauUWsWvA21ez6hWIFoAZOdX/CAGXhrmUlNUztKXU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Z24GdO1lsIsuMJlvjKUraOw9eogp1KxszBGR9HljCr1gmysoYOwveVrVeXO9CrZnp
-         6w39o5SkLdBGJWdMwbwt5igDn++BIRl4ARVBZd0TQy4ZZcNSnCt5MNA0PPVc+KfWJ3
-         GlFKOmQMZKw2iZTzDzReXVray3D310QLS9cJJjVw=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x348CRkR004977
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 4 Apr 2019 03:12:27 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 4 Apr
- 2019 03:12:25 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 4 Apr 2019 03:12:25 -0500
-Received: from gomoku.home (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x348C8GD093305;
-        Thu, 4 Apr 2019 03:12:24 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC:     <tony@atomide.com>, Eric Ruei <e-ruei1@ti.com>
-Subject: [PATCH 6/6] clk: ti: am43xx: drop idlest polling from gfx clkctrl clock
-Date:   Thu, 4 Apr 2019 11:11:07 +0300
-Message-ID: <1554365467-1325-7-git-send-email-t-kristo@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1554365467-1325-1-git-send-email-t-kristo@ti.com>
-References: <1554365467-1325-1-git-send-email-t-kristo@ti.com>
+        id S1727348AbfDDIQ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 04:16:26 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57933 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbfDDIQZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:16:25 -0400
+Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <m.tretter@pengutronix.de>)
+        id 1hBxXs-0003TK-78; Thu, 04 Apr 2019 10:16:24 +0200
+Date:   Thu, 4 Apr 2019 10:16:21 +0200
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>
+Subject: Re: [PATCH v2 0/4] clk: zynqmp: fix CLK_FRAC and various cleanups
+Message-ID: <20190404101621.7b88337c@litschi.hi.pengutronix.de>
+In-Reply-To: <20190319100147.4178-1-m.tretter@pengutronix.de>
+References: <20190319100147.4178-1-m.tretter@pengutronix.de>
+Organization: Pengutronix
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
+X-SA-Exim-Mail-From: m.tretter@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Eric Ruei <e-ruei1@ti.com>
+On Tue, 19 Mar 2019 11:01:43 +0100, Michael Tretter wrote:
+> This is v2 of the patchset to cleanup the ZynqMP clock driver.
 
-The GFX modules on AM43xx SoCs have a hardreset line and are controlled
-by a GFX reset line. Any clkctrl enable/disable operations cannot be
-checked for module enabled/disabled status independent of the reset
-operation, and this causes some unwanted timeouts in the kernel and
-unbalanced states for the GFX clocks. These details should be handled
-by the driver integration code itself.
+Gentle ping.
 
-Add the CLKF_NO_IDLEST flag to the GFX clkctrl clock so that these
-module status checks are skipped.
+Michael
 
-Signed-off-by: Eric Ruei <e-ruei1@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-43xx-compat.c | 2 +-
- drivers/clk/ti/clk-43xx.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-43xx-compat.c b/drivers/clk/ti/clk-43xx-compat.c
-index 5130398..ac8117d 100644
---- a/drivers/clk/ti/clk-43xx-compat.c
-+++ b/drivers/clk/ti/clk-43xx-compat.c
-@@ -65,7 +65,7 @@
- };
- 
- static const struct omap_clkctrl_reg_data am4_gfx_l3_clkctrl_regs[] __initconst = {
--	{ AM4_GFX_CLKCTRL, NULL, CLKF_SW_SUP, "gfx_fck_div_ck" },
-+	{ AM4_GFX_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "gfx_fck_div_ck" },
- 	{ 0 },
- };
- 
-diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
-index 2782d91..9882a9b 100644
---- a/drivers/clk/ti/clk-43xx.c
-+++ b/drivers/clk/ti/clk-43xx.c
-@@ -73,7 +73,7 @@
- };
- 
- static const struct omap_clkctrl_reg_data am4_gfx_l3_clkctrl_regs[] __initconst = {
--	{ AM4_GFX_L3_GFX_CLKCTRL, NULL, CLKF_SW_SUP, "gfx_fck_div_ck" },
-+	{ AM4_GFX_L3_GFX_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "gfx_fck_div_ck" },
- 	{ 0 },
- };
- 
--- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+> I introduced the new is_frac field in zynqmp_clk_divider. The driver uses this
+> field to flag fractional dividers instead of misusing the clk_hw::core::flags
+> field.
+> 
+> Furthermore, the driver uses structs for the query responses from the firmware
+> instead of passing arrays with implicit size.
+> 
+> Michael
+> 
+> v1 -> v2:
+> - remove export of zynqmp_clk_register_divider
+> - move CLK_FLAG to property in zynqmp_clk_divider
+> - merge and rewrite patches 4 and 5 to use structs for responses
+> 
+> Michael Tretter (4):
+>   clk: zynqmp: fix kerneldoc of __zynqmp_clock_get_parents
+>   clk: zynqmp: do not export zynqmp_clk_register_* functions
+>   clk: zynqmp: fix check for fractional clock
+>   clk: zynqmp: use structs for clk query responses
+> 
+>  drivers/clk/zynqmp/clk-mux-zynqmp.c |   1 -
+>  drivers/clk/zynqmp/clk-zynqmp.h     |   6 --
+>  drivers/clk/zynqmp/clkc.c           | 148 ++++++++++++++++------------
+>  drivers/clk/zynqmp/divider.c        |  10 +-
+>  4 files changed, 92 insertions(+), 73 deletions(-)
+> 
