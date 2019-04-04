@@ -2,82 +2,76 @@ Return-Path: <SRS0=Ee6+=SG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE030C4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 07:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F2CC4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 07:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF8F2147C
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 07:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85EAA20882
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 07:50:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Bx7jRVNr"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Afm//SO4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfDDHrM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 03:47:12 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41564 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbfDDHrM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 03:47:12 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a25so1251515edc.8
-        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2019 00:47:10 -0700 (PDT)
+        id S1726790AbfDDHux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 03:50:53 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40660 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbfDDHuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 03:50:52 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h22so1267578edw.7
+        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2019 00:50:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=sender:date:from:to:cc:subject:message-id:mail-followup-to
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gdxfcS2kGRaSjIP/SHS0OUrImmhlg820vTEjIpjlgm8=;
-        b=Bx7jRVNrM8BhvRmgbsK7uJMmhRZAjomw7B6mcbPSfYkr7al86sQ9Wjqy+SAYIs7E6f
-         SkJNR11Vf6vW3KlCBj61pj9YnxgGwtO2dNVSmItxiM3AHXFKmBzKEG2/1cL8k6XYmL6f
-         kQ2qTyIJI1HHrZWGyrzS9tW80T+xlOvhRKGyA=
+        bh=gCS4cWStNR49C8vTXgya2cvYaOQzJihlpuQbh9wUrXY=;
+        b=Afm//SO4m291X4+C0yDt2BfIqy7vxmbrAdQIO97sWECAurLjDQDOyQGOaIJCP5DNfk
+         e8L39Pmj05AbrsEfMIblC7W0PgxJgFjBwbW9T0vPxx6nCMiF2YHdKg2uJdGo/cYHypPZ
+         2eIX4SsWjn45glv/LApLiYQJWIbBEGrf8oxbI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to:user-agent;
-        bh=gdxfcS2kGRaSjIP/SHS0OUrImmhlg820vTEjIpjlgm8=;
-        b=ZDvXi3E0fTrTJGLYA14t3rT4lmMIA19c7a2BMtez15KAWDEOGrNrQUOH/F0pJ5I/qQ
-         f9PVKmmrIh0Ry7BS52j6vUBkOlgZhJMgFSkNoTtFKsEdx1oyzOfOeNah4PHjkqIHff4M
-         1MkPgZizAHfLpWkI9fmtdoCYGiY013AVzKlWh27N2Heq0+JahWqC4x1S5abJzvK8iydd
-         gWTrSst474oG8bx1KGMIN/ladmU3TLGAuQKNA97Wn3k2dOQ0sUCUPzrNQ9qz31ZZQwfI
-         KQ9OSjzp9z31NBnmLUehnhZ+OVlgqF9XoK8Pfli7wusa29eqQMnPLl6nlbIvwGMNNBGQ
-         ZScA==
-X-Gm-Message-State: APjAAAVmsGeXjSEI8rjcaV//s9UTH2vDjiUuRam8+1zZA8tArHHMQIxw
-        dqICPF50oaJNwAXs2UGndh+8Yw==
-X-Google-Smtp-Source: APXvYqyEevlJP1y8O/0u7aebO0Xw7LQgK7jGWZEgLNnpcmmGmacfu3kc83nQNRxKE0fkir4s0S3oPw==
-X-Received: by 2002:a17:906:3db1:: with SMTP id y17mr2667080ejh.90.1554364029551;
-        Thu, 04 Apr 2019 00:47:09 -0700 (PDT)
+        bh=gCS4cWStNR49C8vTXgya2cvYaOQzJihlpuQbh9wUrXY=;
+        b=fdOHvTT0cTDChtKoYcnJBJZcxFFLrzSa224C2qPiD7wFN7+q3OaUaxH0y+45zpyEoA
+         pP+dBwYAeq1uiIDwdu2jjChdB/leg29uBvpaEevGvuQZgDTMglq2P+p4fCUJHYRUxO/F
+         EXjfOPmDEgx+fH4Piak3ycoZeWKB0oqvlUZTaEST8frfu7EHvn8F2f948k3Xz7ufEh/u
+         0ChWf4wGsdcrH5aioa9EGemWVdUoyhn56yFIAvQru+IErncw7RxneMn8Tm5Jxr2K2hfo
+         5ElKJmsZ999S6ij8SfbRT0+d+73x0oWHcGRz9Ig8uQdO2IxSyoKWPy+Fl1SYiKsjhkwk
+         tznA==
+X-Gm-Message-State: APjAAAWwvjtsPlD/68wOaCcLHG6Zx92B0qD6Scy5CUgfyE9VG5ZQBJzA
+        awARfRV8Ha55D1GpjwaXh/e6rw==
+X-Google-Smtp-Source: APXvYqy3DtsN+2MzSLIGNF5etuS0mI0OyGtE26BYZVyRR9+pfsWvR9mltRM6UU25pvu2zBu0mLLngA==
+X-Received: by 2002:a17:906:7f9a:: with SMTP id f26mr2692775ejr.28.1554364250780;
+        Thu, 04 Apr 2019 00:50:50 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id ga13sm3444192ejb.9.2019.04.04.00.47.08
+        by smtp.gmail.com with ESMTPSA id b53sm1253448edc.76.2019.04.04.00.50.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Apr 2019 00:47:08 -0700 (PDT)
-Date:   Thu, 4 Apr 2019 09:47:06 +0200
+        Thu, 04 Apr 2019 00:50:49 -0700 (PDT)
+Date:   Thu, 4 Apr 2019 09:50:47 +0200
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     VenkataRajesh.Kalakodima@in.bosch.com
 Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         dri-devel@lists.freedesktop.org,
-        Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: Re: [PATCH 8/8] drm: rcar-du: Add shutdown callback function in
- platform_driver
-Message-ID: <20190404074706.GO2665@phenom.ffwll.local>
+        Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
+Subject: Re: [PATCH 5/8] drm: rcar-du: Implement interfaces to set clu and
+ lut using drm data structures
+Message-ID: <20190404075047.GP2665@phenom.ffwll.local>
 Mail-Followup-To: VenkataRajesh.Kalakodima@in.bosch.com,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         dri-devel@lists.freedesktop.org,
-        Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+        Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
 References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
- <1554297284-14009-9-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+ <1554297284-14009-6-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1554297284-14009-9-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+In-Reply-To: <1554297284-14009-6-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
 X-Operating-System: Linux phenom 4.19.0-1-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
@@ -85,247 +79,369 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 06:44:44PM +0530, VenkataRajesh.Kalakodima@in.bosch.com wrote:
+On Wed, Apr 03, 2019 at 06:44:41PM +0530, VenkataRajesh.Kalakodima@in.bosch.com wrote:
 > From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
 > 
-> When rebooting, the Display driver is accessing H/W (reading DDR).
-> Therefore, there is a problem of hanging when setting DDR to self
-> refresh mode.
+> Impelement interfaces in cmm to set clu and lut tables using standard
+> drm data structures as input.
 > 
-> This patch implement the shutdown function and solve this problem
-> by stopping H/W access.
-> 
-> In addtion, on the ulcb board, since initial values of versaclock
-> are used as they are, signals are not output when initializing to
-> 0 with shutdown, so this patch excludes processing to initialize
-> versaclock to 0.
-> drm: rcar-du: Add HDMI control clock when S2RAM
-> 
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> 
-> (cherry picked from horms/renesas-bsp commit 3cfda6331c4069800dd4434427284aba8e6f1ed6)
-> [slongerbeam: keep integer i in rcar_du_pm_shutdown(), needed because of
->  050e54d87f ("drm: rcar-du: drm: rcar-du: Add DU CMM support")]
-> 
-> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-
-Maybe look into drm_atomic_helper_shutdown instead of hand-rolling? That
-should disable all display related stuff for you.
--Daniel
-
-> 
-> drm: rcar-du: cmm: lut and clu backup not required during
->  shutdown
-> rcar_du_cmm_pm_suspend function copies LUT and CLU hardare
-> register values to memory. In the patch which adds DU CMM
-> support (https://github.com/renesas-rcar/du_cmm/commit/
-> 9a65d02119e4ae405a89a850463a6a0d0f2c1ecb), the intention of
-> the author was to backup the registers during suspend and
-> restore it on resume. But rcar_du_cmm_pm_suspend was also
-> called on system shutdown. Though it does not cause any harm,
-> it is not required during shutdown as it does not make sense
-> to backup. This patch ensures that rcar_du_cmm_pm_suspend is
-> called only during suspend
-> 
-> Fixes: https://github.com/renesas-rcar/du_cmm/commit/9a65d02119e4ae405a89a850463a6a0d0f2c1ecb
-> 
-> Signed-off-by: Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>
+> Signed-off-by: Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
 > 
 >       - Resolved checkpatch errors
 >       - Resolved merge conflicts according to latest version
 > 
 > Signed-off-by: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
 > ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 35 ++++++++++++++++++++
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 54 +++++++++++++++++++++++++------
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  2 +-
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  1 +
->  include/drm/bridge/dw_hdmi.h              |  1 +
->  5 files changed, 83 insertions(+), 10 deletions(-)
+>  drivers/gpu/drm/rcar-du/rcar_du_cmm.c  | 256 +++++++++++++++++++++++++++++++--
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  11 ++
+>  2 files changed, 254 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 5971976..aa257d7 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -2033,6 +2033,41 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
->  	mutex_unlock(&hdmi->mutex);
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_cmm.c b/drivers/gpu/drm/rcar-du/rcar_du_cmm.c
+> index 7983039..af4668f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_cmm.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_cmm.c
+> @@ -114,6 +114,8 @@ struct rcar_du_cmm_pending_event {
+>  	struct drm_gem_object *gem_obj;
+>  	struct rcar_du_cmm *du_cmm;
+>  	struct rcar_du_cmm_file_priv *fpriv;
+> +	unsigned int *lut_buf;
+> +	unsigned int *clu_buf;
+>  };
+>  
+>  struct cmm_module_t {
+> @@ -238,14 +240,6 @@ static long long diff_timevals(struct timeval *start, struct timeval *end)
+>  }
+>  #endif
+>  
+> -static void du_cmm_clk(struct rcar_du_cmm *du_cmm, bool on)
+> -{
+> -	if (on)
+> -		clk_prepare_enable(du_cmm->clock);
+> -	else
+> -		clk_disable_unprepare(du_cmm->clock);
+> -}
+> -
+>  static void rcar_du_cmm_queue_lut_update(struct rcar_du_cmm_pending_event *p)
+>  {
+>  	mutex_lock(&cmm_event_lock);
+> @@ -284,6 +278,223 @@ static void rcar_du_cmm_queue_clu_update(struct rcar_du_cmm_pending_event *p)
+>  	drm_crtc_vblank_get(&p->du_cmm->rcrtc->crtc);
 >  }
 >  
-> +/*
-> + * This function controls clocks of dw_hdmi through drm_bridge
-> + * at system suspend/resume.
-> + * Arguments:
-> + *  bridge: drm_bridge that contains dw_hdmi.
-> + *  flag: controlled flag.
-> + *		false: is used when suspend.
-> + *		true: is used when resume.
-> + */
-> +void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag)
+> +static s64 rcar_du_cmm_multiply_coeff(unsigned int color, s64 coeff)
 > +{
-> +	struct dw_hdmi *hdmi = bridge->driver_private;
+> +	s64 r_val;
+> +	bool is_neg = false;
 > +
-> +	if (!hdmi)
+> +	if (coeff & BIT_ULL(63)) {
+> +		is_neg = true;
+> +		coeff &= ~BIT_ULL(63);
+> +	}
+> +
+> +	r_val = DIV_ROUND_CLOSEST(((s64)(color * coeff)), BIT_ULL(32));
+> +
+> +	if (is_neg)
+> +		return -r_val;
+> +
+> +	return r_val;
+> +}
+> +
+> +static unsigned int rcar_du_cmm_scalar_product(unsigned int r, unsigned int g,
+> +					       unsigned int b, s64 coeff1,
+> +					       s64 coeff2, s64 coeff3)
+> +{
+> +	s64 product;
+> +
+> +	product = rcar_du_cmm_multiply_coeff(r, coeff1)
+> +			+ rcar_du_cmm_multiply_coeff(g, coeff2)
+> +			+ rcar_du_cmm_multiply_coeff(b, coeff3);
+> +
+> +	return (unsigned int)clamp_val(product, 0, U8_MAX);
+> +}
+> +
+> +#ifdef DEBUG_PROCE_TIME
+> +static long long diff_timevals(struct timeval *start, struct timeval *end)
+> +{
+> +	return (end->tv_sec * 1000000LL + end->tv_usec) -
+> +		(start->tv_sec * 1000000LL + start->tv_usec);
+> +}
+> +#endif
+> +
+> +void *rcar_du_cmm_alloc_lut(void *cmm_handle)
+> +{
+> +	struct rcar_du_cmm_pending_event *p;
+> +
+> +	if (!cmm_handle)
+> +		return NULL;
+> +
+> +	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> +	if (!p)
+> +		return NULL;
+> +
+> +	p->gem_obj = NULL;
+> +	p->event = CMM_EVENT_LUT_DONE;
+> +	p->stat = QUE_STAT_PENDING;
+> +	p->callback_data = 0;
+> +	p->du_cmm = cmm_handle;
+> +	p->fpriv = NULL;
+> +	p->lut_buf = kmalloc(CMM_LUT_NUM * 4, GFP_KERNEL);
+> +	if (!p->lut_buf) {
+> +		kfree(p);
+> +		return NULL;
+> +	}
+> +
+> +	return p;
+> +}
+> +
+> +void rcar_du_cmm_free_lut(void *lut_handle)
+> +{
+> +	struct rcar_du_cmm_pending_event *p =
+> +			(struct rcar_du_cmm_pending_event *)lut_handle;
+> +
+> +	kfree(p->lut_buf);
+> +	kfree(p);
+> +}
+> +
+> +int rcar_du_cmm_lut_valid(unsigned int lut_length)
+> +{
+> +	return (lut_length == CMM_LUT_NUM) ? 0 : -EINVAL;
+> +}
+> +
+> +void rcar_du_cmm_update_lut_and_free(void *lut_handle,
+> +				     struct drm_color_lut *lut,
+> +				     unsigned int lut_length)
+> +{
+> +	struct rcar_du_cmm_pending_event *p =
+> +			(struct rcar_du_cmm_pending_event *)lut_handle;
+> +	unsigned int color;
+> +
+> +	if (!p)
 > +		return;
 > +
-> +	if (flag) { /* enable clk */
-> +		if (hdmi->isfr_clk)
-> +			clk_prepare_enable(hdmi->isfr_clk);
-> +		if (hdmi->iahb_clk)
-> +			clk_prepare_enable(hdmi->iahb_clk);
+> +	if (rcar_du_cmm_lut_valid(lut_length))
+> +		return;
 > +
-> +		initialize_hdmi_ih_mutes(hdmi);
-> +		dw_hdmi_setup_i2c(hdmi);
-> +		dw_hdmi_i2c_init(hdmi);
-> +		dw_hdmi_phy_setup_hpd(hdmi, NULL);
-> +	} else { /* disable clk */
-> +		if (hdmi->isfr_clk)
-> +			clk_disable_unprepare(hdmi->isfr_clk);
-> +		if (hdmi->iahb_clk)
-> +			clk_disable_unprepare(hdmi->iahb_clk);
+> +	/* Convert drm_color_lut to the format handled by hardware */
+> +	for (color = 0; color < lut_length; color++) {
+> +		p->lut_buf[color] = 0;
+> +		p->lut_buf[color] |= drm_color_lut_extract(lut[color].red, 8)
+> +					<< 16;
+> +		p->lut_buf[color] |= drm_color_lut_extract(lut[color].green, 8)
+> +					<< 8;
+> +		p->lut_buf[color] |= drm_color_lut_extract(lut[color].blue, 8);
 > +	}
+> +	rcar_du_cmm_queue_lut_update(p);
 > +}
-> +EXPORT_SYMBOL_GPL(dw_hdmi_s2r_ctrl);
 > +
->  static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
->  	.attach = dw_hdmi_bridge_attach,
->  	.enable = dw_hdmi_bridge_enable,
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index 838b7c9..9eb63b0 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -21,6 +21,7 @@
->  #include <linux/slab.h>
->  #include <linux/wait.h>
->  
-> +#include <drm/bridge/dw_hdmi.h>
->  #include <drm/drmP.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc_helper.h>
-> @@ -368,18 +369,14 @@ static struct drm_driver rcar_du_driver = {
->   */
->  
->  #ifdef CONFIG_PM_SLEEP
-> -static int rcar_du_pm_suspend(struct device *dev)
-> +static int rcar_du_pm_shutdown(struct device *dev)
+> +void *rcar_du_cmm_alloc_clu(void *cmm_handle)
+> +{
+> +	struct rcar_du_cmm_pending_event *p;
+> +
+> +	if (!cmm_handle)
+> +		return NULL;
+> +
+> +	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> +	if (!p)
+> +		return NULL;
+> +
+> +	p->gem_obj = NULL;
+> +	p->event = CMM_EVENT_CLU_DONE;
+> +	p->stat = QUE_STAT_PENDING;
+> +	p->callback_data = 0;
+> +	p->du_cmm = cmm_handle;
+> +	p->fpriv = NULL;
+> +	p->clu_buf = kmalloc(CMM_CLU_NUM * 4, GFP_KERNEL);
+> +	if (!p->clu_buf) {
+> +		kfree(p);
+> +		return NULL;
+> +	}
+> +
+> +	return p;
+> +}
+> +
+> +void rcar_du_cmm_free_clu(void *clu_handle)
+> +{
+> +	struct rcar_du_cmm_pending_event *p =
+> +			(struct rcar_du_cmm_pending_event *)clu_handle;
+> +
+> +	kfree(p->clu_buf);
+> +	kfree(p);
+> +}
+> +
+> +void rcar_du_cmm_update_clu_and_free(void *clu_handle,
+> +				     struct drm_color_ctm *ctm)
+> +{
+> +	struct rcar_du_cmm_pending_event *p =
+> +			(struct rcar_du_cmm_pending_event *)clu_handle;
+> +	unsigned int r_loop;
+> +	unsigned int g_loop;
+> +	unsigned int b_loop;
+> +	unsigned int step_size;
+> +	unsigned int step_fraction;
+> +	unsigned int clu_index = 0;
+> +
+> +	if (!p)
+> +		return;
+> +
+> +	step_size = U8_MAX / (CMM_CLU_SAMPLES - 1);
+> +	step_fraction = U8_MAX % (CMM_CLU_SAMPLES - 1);
+> +
+> +	/*Update clu table*/
+> +	for (b_loop = 0; b_loop < CMM_CLU_SAMPLES; b_loop++) {
+> +		unsigned int b;
+> +
+> +		b = (b_loop * step_size) +
+> +		    DIV_ROUND_CLOSEST((b_loop * step_fraction),
+> +				      (CMM_CLU_SAMPLES - 1));
+> +
+> +		for (g_loop = 0; g_loop < CMM_CLU_SAMPLES; g_loop++) {
+> +			unsigned int g;
+> +
+> +			g = (g_loop * step_size) +
+> +			    DIV_ROUND_CLOSEST((g_loop * step_fraction),
+> +					      (CMM_CLU_SAMPLES - 1));
+> +
+> +			for (r_loop = 0; r_loop < CMM_CLU_SAMPLES; r_loop++) {
+> +				unsigned int r;
+> +				unsigned int r_val;
+> +				unsigned int g_val;
+> +				unsigned int b_val;
+> +
+> +				r = (r_loop * step_size) +
+> +				    DIV_ROUND_CLOSEST((r_loop * step_fraction),
+> +						      (CMM_CLU_SAMPLES - 1));
+> +
+> +				p->clu_buf[clu_index] = 0;
+> +
+> +				r_val =	rcar_du_cmm_scalar_product
+> +						(r, g, b,
+> +						 ctm->matrix[0], ctm->matrix[1],
+> +						 ctm->matrix[2]);
+> +
+> +				g_val =	rcar_du_cmm_scalar_product
+> +						(r, g, b,
+> +						 ctm->matrix[3], ctm->matrix[4],
+> +						 ctm->matrix[5]);
+> +
+> +				b_val =	rcar_du_cmm_scalar_product
+> +						(r, g, b,
+> +						 ctm->matrix[6], ctm->matrix[7],
+> +						 ctm->matrix[8]);
+> +
+> +				p->clu_buf[clu_index++] = (r_val << 16) |
+> +							  (g_val << 8) | b_val;
+> +			}
+> +		}
+> +	}
+> +
+> +	rcar_du_cmm_queue_clu_update(p);
+> +}
+
+Just quick drive-by: I think there's some interested (definitely from
+intel, I pinged the relevant people from our team) to expose a 3D LUT
+directly to userspace. I'm not sure whether we can do both 3D-LUT and
+color matrix, and I'm also not sure whether remapping the ctm to a 3d-lut
+is the best thing to do. Otoh adding new uapi is always a bunch more work.
+-Daniel
+
+> +
+> +static void du_cmm_clk(struct rcar_du_cmm *du_cmm, bool on)
+> +{
+> +	if (on)
+> +		clk_prepare_enable(du_cmm->clock);
+> +	else
+> +		clk_disable_unprepare(du_cmm->clock);
+> +}
+> +
+>  int rcar_du_cmm_start_stop(struct rcar_du_crtc *rcrtc, bool on)
 >  {
->  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
->  	struct drm_atomic_state *state;
-> -	int i;
-> -
-> -	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
-> -		for (i = 0; i < rcdu->num_crtcs; ++i)
-> -			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
-> -	}
-> -
-> -	drm_kms_helper_poll_disable(rcdu->ddev);
-> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
-> +	struct drm_encoder *encoder;
-> +#endif
-> +		drm_kms_helper_poll_disable(rcdu->ddev);
->  	drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
+>  	struct rcar_du_cmm *du_cmm = rcrtc->cmm_handle;
+> @@ -424,8 +635,16 @@ static inline void _event_done_locked(struct rcar_du_cmm_pending_event *p)
+>  		list_add_tail(&p->link, cmm_done_list(p->du_cmm, p->fpriv));
+>  		wake_up_interruptible(&p->fpriv->event_wait);
+>  	} else {
+> -		/* link deleted by rcar_du_cmm_postclose */
+> -		kfree(p);
+> +		/* link deleted by rcar_du_cmm_postclose
+> +		 * OR it could also be due to set of ctm and gamma
+> +		 * properties through drm APIs.
+> +		 */
+> +		if (p->event == CMM_EVENT_LUT_DONE)
+> +			rcar_du_cmm_free_lut(p);
+> +		else if (p->event == CMM_EVENT_CLU_DONE)
+> +			rcar_du_cmm_free_clu(p);
+> +		else
+> +			kfree(p);
+>  	}
+>  }
 >  
->  	state = drm_atomic_helper_suspend(rcdu->ddev);
-> @@ -389,11 +386,43 @@ static int rcar_du_pm_suspend(struct device *dev)
->  		return PTR_ERR(state);
+> @@ -479,7 +698,8 @@ event_pop_locked(struct cmm_module_t *module)
+>  
+>  	p->stat = QUE_STAT_ACTIVE;
+>  	list_del(&p->link); /* delete from du_cmm->[lut|clu|hgo].list */
+> -	list_add_tail(&p->link, &p->fpriv->active_list);
+> +	if (p->fpriv)
+> +		list_add_tail(&p->link, &p->fpriv->active_list);
+>  	cmm_vblank_put(p);
+>  
+>  	return p;
+> @@ -605,7 +825,11 @@ static int lut_set(struct rcar_du_cmm *du_cmm,
+>  		return -EINVAL;
 >  	}
 >  
-> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
-> +	list_for_each_entry(encoder,
-> +			    &rcdu->ddev->mode_config.encoder_list,
-> +			    head) {
-> +		struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
+> -	lut_buf = gem_to_vaddr(stat->p->gem_obj);
+> +	if (stat->p->gem_obj)
+> +		lut_buf = gem_to_vaddr(stat->p->gem_obj);
+> +	else
+> +		lut_buf = stat->p->lut_buf;
 > +
-> +		if (renc->bridge && (renc->output == RCAR_DU_OUTPUT_HDMI0 ||
-> +				     renc->output == RCAR_DU_OUTPUT_HDMI1))
-> +			dw_hdmi_s2r_ctrl(encoder->bridge, false);
-> +	}
-> +#endif
->  	rcdu->suspend_state = state;
+>  	for (i = 0; i < CMM_LUT_NUM; i++)
+>  		rcar_du_cmm_write(du_cmm, lut_base + i * 4, lut_buf[i]);
 >  
->  	return 0;
->  }
+> @@ -723,7 +947,11 @@ static int clu_set(struct rcar_du_cmm *du_cmm,
+>  		return -EINVAL;
+>  	}
 >  
-> +static int rcar_du_pm_suspend(struct device *dev)
-> +{
-> +	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> -	clu_buf = gem_to_vaddr(stat->p->gem_obj);
+> +	if (stat->p->gem_obj)
+> +		clu_buf = gem_to_vaddr(stat->p->gem_obj);
+> +	else
+> +		clu_buf = stat->p->clu_buf;
 > +
-> +	int i, ret;
-> +
-> +	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
-> +		for (i = 0; i < rcdu->num_crtcs; ++i)
-> +			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
-> +	}
-> +
-> +	ret = rcar_du_pm_shutdown(dev);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < rcdu->num_crtcs; ++i)
-> +		clk_set_rate(rcdu->crtcs[i].extclock, 0);
-> +	return 0;
-> +}
-> +
->  static int rcar_du_pm_resume(struct device *dev)
->  {
->  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> @@ -504,6 +533,12 @@ static int rcar_du_probe(struct platform_device *pdev)
->  	return ret;
->  }
+>  	rcar_du_cmm_write(du_cmm, addr_reg, 0);
+>  	for (i = 0; i < CMM_CLU_NUM; i++)
+>  		rcar_du_cmm_write(du_cmm, data_reg, clu_buf[i]);
+> @@ -1222,6 +1450,8 @@ int rcar_du_cmm_init(struct rcar_du_crtc *rcrtc)
 >  
-> +static void rcar_du_shutdown(struct platform_device *pdev)
-> +{
-> +#ifdef CONFIG_PM_SLEEP
-> +	rcar_du_pm_shutdown(&pdev->dev);
-> +#endif
-> +}
->  static struct platform_driver rcar_du_platform_driver = {
->  	.probe		= rcar_du_probe,
->  	.remove		= rcar_du_remove,
-> @@ -512,6 +547,7 @@ static struct platform_driver rcar_du_platform_driver = {
->  		.pm	= &rcar_du_pm_ops,
->  		.of_match_table = rcar_du_of_table,
->  	},
-> +	.shutdown       = rcar_du_shutdown,
->  };
+>  	rcrtc->cmm_handle = du_cmm;
 >  
->  static int __init rcar_du_init(void)
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> index f9c933d..98df8a2 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> @@ -62,7 +62,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+> +	drm_crtc_enable_color_mgmt(&rcrtc->crtc, 0, true, CMM_LUT_NUM);
+> +
+>  	dev_info(rcdu->dev, "DU%d use CMM(%s buffer)\n",
+>  		 rcrtc->index, du_cmm->dbuf ? "Double" : "Single");
 >  
->  	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
->  		enc_node, output);
-> -
-> +	renc->bridge = bridge;
->  	/* Locate the DRM bridge from the encoder DT node. */
->  	bridge = of_drm_find_bridge(enc_node);
->  	if (!bridge) {
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> index 2d2abca..cc5bfcb 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> @@ -23,6 +23,7 @@ struct rcar_du_device;
->  struct rcar_du_encoder {
->  	struct drm_encoder base;
->  	enum rcar_du_output output;
-> +	struct drm_bridge *bridge;
->  };
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> index 74e0a22..5b85de4 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> @@ -115,6 +115,17 @@ void rcar_du_cmm_postclose(struct drm_device *dev, struct drm_file *file_priv);
+>  int rcar_du_cmm_start_stop(struct rcar_du_crtc *rcrtc, bool on);
+>  void rcar_du_cmm_kick(struct rcar_du_crtc *rcrtc);
 >  
->  #define to_rcar_encoder(e) \
-> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> index ccb5aa8..36383cf4 100644
-> --- a/include/drm/bridge/dw_hdmi.h
-> +++ b/include/drm/bridge/dw_hdmi.h
-> @@ -171,5 +171,6 @@ enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
->  void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
->  			    bool force, bool disabled, bool rxsense);
->  void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
-> +void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag);
->  
->  #endif /* __IMX_HDMI_H__ */
+> +void *rcar_du_cmm_alloc_lut(void *cmm_handle);
+> +void rcar_du_cmm_free_lut(void *lut_handle);
+> +int rcar_du_cmm_lut_valid(unsigned int lut_length);
+> +void rcar_du_cmm_update_lut_and_free(void *lut_handle,
+> +				     struct drm_color_lut *lut,
+> +				     unsigned int lut_length);
+> +
+> +void *rcar_du_cmm_alloc_clu(void *cmm_handle);
+> +void rcar_du_cmm_free_clu(void *clu_handle);
+> +void rcar_du_cmm_update_clu_and_free(void *clu_handle,
+> +				     struct drm_color_ctm *ctm);
+>  #ifdef CONFIG_PM_SLEEP
+>  int rcar_du_cmm_pm_suspend(struct rcar_du_crtc *rcrtc);
+>  int rcar_du_cmm_pm_resume(struct rcar_du_crtc *rcrtc);
 > -- 
 > 2.7.4
 > 
