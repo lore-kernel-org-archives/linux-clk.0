@@ -2,175 +2,125 @@ Return-Path: <SRS0=Ee6+=SG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE81C4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF82C4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 09:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB9E2075E
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51CE320693
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 09:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TzHQPlIT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2+NZdv+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfDDIWF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 04:22:05 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36311 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfDDIWF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:22:05 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ck15so791979plb.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2019 01:22:04 -0700 (PDT)
+        id S2387636AbfDDJUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 05:20:22 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33907 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387423AbfDDJRj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 05:17:39 -0400
+Received: by mail-lf1-f65.google.com with SMTP id y18so1278383lfe.1;
+        Thu, 04 Apr 2019 02:17:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=12hS8ZME4eY09I7P2b5Cz7kHzlqMseQJaYDWtbbZJ1M=;
-        b=TzHQPlITAz/+I7HevKBz7wYkeIyyMCWsajTGK1IbPPDylknveFxv6/eW1g9qcaPeB5
-         ruYawHxIrf4oMsJcsrM4cL8U/EGfwAnxDzJyEKd66005H5UANB4JLJPsecVXBaqadKY6
-         VSjdJghh84+w6Wxulj/fnY8LQgvCJ1E0ixcs/uxOBQzl1APk8xuy6N7laPSb1XEIa8YV
-         vm27R7HICPSpso1Kwnl+X97DeTVogyt8sBM93DMILswb88AOfL/0FSpsup4i3rBBLqEp
-         Wri3BWbR0psqKn7l3WRGoD2WryJ7LC1kzcXGbVcLn/TmiaO9i3M9Jpog1j3BRolZpB/0
-         klXA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pt7bDW7Pd+FsGQCRCReCr6XjGTgHePJB8Lq3kYQNsEM=;
+        b=J2+NZdv+TlQmfNNfyWvEhQtoQbady34B5ox5vJamly3RiBPAO7gWWenhXcNLTtlw0k
+         pPkrXf/zxJWc+4KZcMKwE4yNfm+iJ6ZBc/FeUknzQEwXsKTHWkbGNM68iT8apbubuN93
+         pbk2YXsvx/jIadycwywmGJlg03IEgWzYDmmpZxbvMfHpTBuw70cMnA+Kxr6nwIfTHgeq
+         7TZ05FfdmOp6+ee7VJwjKa8IR9cbulN5VFv0BrjO5K8EEGSdBiWqVujTLCjieJUSZhPB
+         tLVLoMb4z91dd1l4zCe/aYKWc9yn+JfIV3c/kWrRU1dFfuUHfsjuApOtLdQARZyR3X24
+         8pEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=12hS8ZME4eY09I7P2b5Cz7kHzlqMseQJaYDWtbbZJ1M=;
-        b=P2U06dhpnzV8JPGIiFrLSmF8IcypvMLisyQg1G7yKIKPftHBkX4a2Ob6B84x5T0m02
-         pvgjV1Nbtvk6AVZJS0SyCkEYjshzv0YXxQeWQEG8SDB22436Hb2TaT54xLpGZWniA4c1
-         KBvhVf8quOOP+d4tsyVNNmxIe+bQINzagnVG9QeBNXgqa9ncIrJFKDyKAMVbKz18fdrF
-         YfqshytMQNG/gu4yUTvKaB2HQ5dQs3P+rewexcuDSXg1pWgx211ISEJn5Gn5T9vDt0G/
-         /9uDARDpMUKBW/kY76l+BAV86L2YXdyI7/WCqwqQh/BUgYcn6XhknnFScIeUy95hiXvc
-         bTmw==
-X-Gm-Message-State: APjAAAUA6yAFmvUjHnzosSTGfNaXnDYEKkaV1CE2sFc3hi+x+PG14Wqn
-        PRMt4tSG+V+M2/Q7Gvm2My4nMA==
-X-Google-Smtp-Source: APXvYqxwGVk1RYdrXXKNJVzzm8nPDfdTw2mo2TcvjwoSSciWIrQbWqMIWcTHUDYtBAKQjDhAljKv1Q==
-X-Received: by 2002:a17:902:526:: with SMTP id 35mr4976749plf.276.1554366124328;
-        Thu, 04 Apr 2019 01:22:04 -0700 (PDT)
-Received: from dell ([147.50.13.10])
-        by smtp.gmail.com with ESMTPSA id h65sm48972719pfd.108.2019.04.04.01.21.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Apr 2019 01:22:03 -0700 (PDT)
-Date:   Thu, 4 Apr 2019 09:21:53 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "sre@kernel.org" <sre@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH v11 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Message-ID: <20190404082153.GP6830@dell>
-References: <20190403093015.GJ11301@dell>
- <20190403101003.GC3493@localhost.localdomain>
- <20190403112559.GP11301@dell>
- <85b20828bb4fb51e6df1d5d9d1c1f667db3a7c48.camel@fi.rohmeurope.com>
- <20190404025234.GB6830@dell>
- <6775a75d1ee3ab96123d84b077881beedc358d12.camel@fi.rohmeurope.com>
- <20190404065452.GD6830@dell>
- <20190404072449.GE3493@localhost.localdomain>
- <20190404075640.GV22216@piout.net>
- <70a8a87a403eb2ab8f0aad2a26456de8a162f363.camel@fi.rohmeurope.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pt7bDW7Pd+FsGQCRCReCr6XjGTgHePJB8Lq3kYQNsEM=;
+        b=Jk9ZZfDWsXm4GFg9DD2gi4nX/ZepPxnlE2ejHDrPCBbw6j+SMnhRdy7/t40NY697Rj
+         gjr/nhdU//NIxIIiS7h4OLeJypih1xdDVm75yJB53XSE/dAEhFvuCPLB9o8U8O79YH3W
+         2/QXqHm1rF3m3UF/bF19/hURPgykW5Bre1gGB9BxrDot93aqQO28nUVYwPyGfMPT4R5e
+         9PyFz6I8y1yCcUBQZmoiGEFUDBWKrmRdRKbLFsRB6A7imEa43n7g/B3bSGCz0jFzHgH8
+         29D7+d+GpiZw0Fo3VDT0ctlLT+CVod7IKhBdVxT7vASBOmb13WRVlHtg8ALYDoNhEtSA
+         SkVw==
+X-Gm-Message-State: APjAAAX7CGyH147ol7V6QA/pAXag8iyDC08nef296+zAjuUlErqOyVRM
+        6iGHF8+PKmaq/+7RkD9zhQ2sd1FV
+X-Google-Smtp-Source: APXvYqwbMXd8ylusCELOgYNEDRhueq7FYEq4V1PFnt38IMj9Fum5LvYDKpU8/EudPJYyxtIxREzdKg==
+X-Received: by 2002:ac2:4554:: with SMTP id j20mr2771778lfm.112.1554369457061;
+        Thu, 04 Apr 2019 02:17:37 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id k15sm3860372lji.2.2019.04.04.02.17.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Apr 2019 02:17:36 -0700 (PDT)
+Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <20190325074523.26456-1-josephl@nvidia.com>
+ <20190325074523.26456-2-josephl@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6bd34a19-26e0-6bdd-ce89-4a30d35e9823@gmail.com>
+Date:   Thu, 4 Apr 2019 12:17:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190325074523.26456-2-josephl@nvidia.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <70a8a87a403eb2ab8f0aad2a26456de8a162f363.camel@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 04 Apr 2019, Vaittinen, Matti wrote:
-
-> Hello Alexandre,
+25.03.2019 10:45, Joseph Lo пишет:
+> Add the binding document for the external memory controller (EMC) which
+> communicates with external LPDDR4 devices. It includes the bindings of
+> the EMC node and the EMC table of different rates.
 > 
-> On Thu, 2019-04-04 at 09:56 +0200, Alexandre Belloni wrote:
-> > On 04/04/2019 10:24:49+0300, Matti Vaittinen wrote:
-> > > On Thu, Apr 04, 2019 at 07:54:52AM +0100, Lee Jones wrote:
-> > > > On Thu, 04 Apr 2019, Vaittinen, Matti wrote:
-> > > > 
-> > > > > Actually, now that I thik of it the right way to do this would
-> > > > > have
-> > > > > been the function pointer in parent data as was done in
-> > > > > original patch
-> > > > > set. HW-colleagues tend to re-use HW blocks, and we like to re-
-> > > > > use our
-> > > > > drivers. If the next PMIC from ROHM uses same RTC block but
-> > > > > does not
-> > > > > provide watchdog - then it is cleanest solution to fall back to
-> > > > > function pointer and leave it to NULL when there is no WDT or
-> > > > > when WDT
-> > > > > is unused. Another option is to export dummy function - which
-> > > > > is not so
-> > > > > nice.
-> > > > 
-> > > > I think the converse is true.
-> > > > 
-> > > > Pointers to functions outside of a subsystem API context are
-> > > > generally
-> > > > horrible.  It's much nicer to call a function which can be easily
-> > > > stubbed out in a header file based on a Kconfig option.  It's how
-> > > > most
-> > > > kernel APIs work.
-> > > 
-> > > I hate to admit but I see your point. This nicely solves any issues
-> > > in
-> > > syncronizing the startup for driver providing function pointer and
-> > > for
-> > > driver using it.
-> > > 
-> > 
-> > Wouldn't it be easier to register the watchdog driver as part of the
-> > RTC
-> > driver?
-> > 
-> > As I see it, the wdt is just a glorified RTC alarm.
+> To support high rates for LPDDR4, the EMC table must be trained before
+> it can be used for runtime clock switching. It has been done by firmware
+> and merged to the table that Linux kernel uses. For backward
+> compatibility with the devices that had been launched on the market, like
+> Shield and Jetson platforms, the bindings in the EMC table should remain
+> the same. So the firmware can recognize them and merge the trained EMC
+> table for the kernel.
 > 
-> Do you suggest me to put all the stuff now placed in
-> drivers/watchdog/bd70528_wdt.c into rtc driver? It would be doable -
-> but I'd rather kept the WDT independent module so that it can be left
-> out of config if WDT needs not to be used. And same with RTC. Also, re-
-> use of RTC driver in HW which does not include WDT is easier when WDT
-> is a separate module. To me it looks much cleaner to have the WDT as
-> own module than polluting the RTC driver with config ifdefs.
-
-I haven't looked at the code, but I agree with this in principle.
-
-I'm a firm believer of having functionality in the most appropriate
-subsystem.  IMHO, if a device can be neatly split 9/10 it should be.
-
-> But from HW perspective you are correct. The WDT in BD70528 seems to be
-> kind of RTC alarm which shuts of the PMIC if triggered.
+> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
 > 
-> Br,
-> 	Matti Vaittinen
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  .../nvidia,tegra210-emc.txt                   | 605 ++++++++++++++++++
+>  1 file changed, 605 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> new file mode 100644
+> index 000000000000..1f6b6df6d37b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> @@ -0,0 +1,605 @@
+> +NVIDIA Tegra210 SoC EMC (external memory controller)
+> +====================================================
+> +
+> +Required properties :
+> +- compatible : should be "nvidia,tegra21-emc", "nvidia,tegra210-emc".
+> +- reg : physical base address and length of the controller's registers.
+> +- clocks : phandles of the possible source clocks
+> +- clock-names : names of the possible source clocks
+> +- #address-cells : should be 1
+> +- #size-cells : should be 0
+> +- nvidia,memory-controller : phandle of the memory controller.
+> +- nvidia,use-ram-code : boolean, indicates whether we should use RAM_CODE in
+> +		        the register to find matching emc-table nodes
+> +
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The "interrupts" property is missing. You could use the CLK handshake event to wait for the clock rate change completion instead of polling the register if you didn't rely on the downstream binding, see T20 driver for the example. BTW, I'm wondering if you're going to push other downstream bindings to upstream.. apparently EMC won't be the only binding that that could diverge from the upstream and then it's not obvious whether the locked-down variant of T210 is supportable by upstream at all.
