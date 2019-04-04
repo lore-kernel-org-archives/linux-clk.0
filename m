@@ -2,145 +2,257 @@ Return-Path: <SRS0=Ee6+=SG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFD0C10F06
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 02:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01426C10F0B
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 02:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE4D2133D
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 02:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6FF0214AF
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 02:52:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="BrNRdPV4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="4qeP4U9D"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VPcIK+aV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbfDDCQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Apr 2019 22:16:38 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:60255 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726167AbfDDCQi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 22:16:38 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5B7F521D23;
-        Wed,  3 Apr 2019 22:16:37 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Wed, 03 Apr 2019 22:16:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm2; bh=r0+ySxPxczosFjZW0tVjVY7YxeyyP96
-        YtlNToKjzLcs=; b=BrNRdPV4PqYv1yfmwSvq43n5VWDUbmWRfVy+ZSwP2h52Ycu
-        EqKrfovi388Ru4TyleBAZNEs5vjhcvpLDfuRUp7aguhaX8YGREtDVxWArVcuacJh
-        R8ajAjrtnoGWRWo8m9rg39dP0noBKfJlmvjRTFV7tHPPgn6UVrBRQEbSzfqdj2Dq
-        ScnSJ4CwXuuQGFtlT9MZMr45N7OA6yTLP33lGSzrNQkgo1ClTpeobSzeXlVd2RDQ
-        /fNwShwfAtpApSqUYTDlFzZIl3BQ6Hs9dwa+7lNl0JGtBLN6sOzA+grVj7YTfsws
-        0ypkPnVeL+qWmK0h61Elt9U0xODaKeWS87oPghA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=r0+ySx
-        PxczosFjZW0tVjVY7YxeyyP96YtlNToKjzLcs=; b=4qeP4U9DD5PE5Ce1iwM3mm
-        mdN/pTxpq/K1WnabHhpmVl2RcC2b7qUqt+F3oQHn6OMtXFbgp2filffevuD01ODH
-        Q6/ZUafRyZlGiw0eps57lCpVOJw6rA1Szgy1RGkPTVA3P3woGQbzHa2fwN7vxnDU
-        KCe550imW6CT77bcsYUXecy/ura6QdxcoleHY6LJGoyRdoGQsI61DODv9BId8jF1
-        CVCU9lOhRBYixsT22GFc777fvpPkljmvqzM8F+JKfybEiv4n3BzjAPH0VuJsb8oa
-        ih2oW7A9vZlsbTWCHrYq92VEjmTMhUQRI7q557jN3dd2WdGUvjyvgK6u0Q5lS2og
-        ==
-X-ME-Sender: <xms:A2mlXPxoKHZTzUoa4jrt2Dhea0wnbbFJCbhAZZGeb_v2WeBx4xMUZQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrtdeggdehgeculddtuddrgedutddrtddtmd
-    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefofgggkfgjfhffhffvufgtsehttdertderreej
-    necuhfhrohhmpedftehnughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrd
-    hiugdrrghuqeenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgu
-    rdgruhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:A2mlXAUxSRPZIiuEaovUWxS7ZvBkPei1SWVUEh1nx5I1TCr4Q-clyA>
-    <xmx:A2mlXMRzcXGhPpkp6wa4d4UBSHYlMaCvib_tKVb6om8_8D9RVjYiQg>
-    <xmx:A2mlXGlyrk6KnM_fPHfHBmdfOpN8uctgZr6O1iGcK20h4o4XeHEEdg>
-    <xmx:BWmlXM_tgyUQ4B-lXdRGiviHoYFxsuBFMHkGmgmjyXRdLYbrixC4-g>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 672C77C1B9; Wed,  3 Apr 2019 22:16:35 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-329-gf4aae99-fmstable-20190329v1
-Mime-Version: 1.0
-X-Me-Personality: 52947553
-Message-Id: <e6bfc462-da83-4c2e-9f33-24727e5afd00@www.fastmail.com>
-In-Reply-To: <dd017f44-5d1d-d657-b159-c9dbaadd795f@linux.vnet.ibm.com>
-References: <1554229504-5661-1-git-send-email-eajames@linux.ibm.com>
- <1554229504-5661-3-git-send-email-eajames@linux.ibm.com>
- <7effb2de-cc91-47af-88a2-a0075262e9c4@www.fastmail.com>
- <dd017f44-5d1d-d657-b159-c9dbaadd795f@linux.vnet.ibm.com>
-Date:   Wed, 03 Apr 2019 22:16:34 -0400
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Eddie James" <eajames@linux.vnet.ibm.com>,
-        "Eddie James" <eajames@linux.ibm.com>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        "Joel Stanley" <joel@jms.id.au>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        linux-clk@vger.kernel.org, "Stephen Boyd" <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        "Rob Herring" <robh+dt@kernel.org>
-Subject: =?UTF-8?Q?Re:_[PATCH_2/5]_media:_platform:_Aspeed:_Make_reserved_memory_?=
- =?UTF-8?Q?optional?=
-Content-Type: text/plain
+        id S1726539AbfDDCwp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Apr 2019 22:52:45 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39591 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfDDCwp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Apr 2019 22:52:45 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i17so573917pfo.6
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2019 19:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=VRIJ8X5WvK/kgKb9Km3bq8sEPdqzpTtDdrdaKOlk/p8=;
+        b=VPcIK+aV5kEiQAzjoyH9V/iDlUlXEotSxwXG2abEA+4Zhg7NjB8A6mL3kb06+Q/xUE
+         WaB4eZ4IMj+XIcDM3/iaUCDgGuyIsC/jBX+uJsFMtHrBcSgwIW2Fj/iPFO7Qzjk1+sY3
+         /frq2DjUTR2S1o80f0i01iEr6dC7/6iQ00zuXY5tedJJN40VC8vK93F0Kc0/Fzi/pH3R
+         r8Xatj1DCa8960aPfdU6W4m1iqkZuv2oLSauwaJd3wINsAtl1g5TusOTQP+4T0wEg20U
+         f+0RoolXkfx941pgmwh+zPVsqjkAS++2TOWJ2j9P3NzFwDEsHdIl/U0guDTJiakHJHXr
+         QjJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=VRIJ8X5WvK/kgKb9Km3bq8sEPdqzpTtDdrdaKOlk/p8=;
+        b=HDs+piitoMpccZ9nQe/Hs6lSoJeXLgEtx20H996KcotLVyYYvQ1CDDf2Bk05nzp8Yv
+         6wrmPMu4/ig0ElA58nsp93wRZ2edEhk82VwNIOHx6cdMgwRX4DB1eS7LQi1JxgqQuZHl
+         YgB27f9U09GaBUDIwL3QHP/3fdk8lCvlfJv+fnPtNcqGaMQ6Z6CtKg7SUaJkjC0azAfH
+         QAZgBr5do9RxDpNP6FPJ4fMA83es8Edm7Q2bPrqTFTs4mzqfTjlF4IWPOSF2qO50MKvK
+         I64eIVFmrw3C7FTZxrkWZjiEC2M46c1NGzsYc1Ch3ntVnNC90+0JcqxY47gvJgGlK99S
+         +A6A==
+X-Gm-Message-State: APjAAAUhvZo21f379ho63FBtLWTYTUum9cjCFdlXVtQSs7shcQnxTigm
+        LfOvZEnPigW6xbS6CsR3gkbo5g==
+X-Google-Smtp-Source: APXvYqzkONlxJ9q1lOATqMHzdwfTmyw4XCKq/MyaZPLUW9fHiK1uCRuxY6q5Fs/8DDKZIYBGo6LADQ==
+X-Received: by 2002:a62:6985:: with SMTP id e127mr3200910pfc.188.1554346364181;
+        Wed, 03 Apr 2019 19:52:44 -0700 (PDT)
+Received: from dell ([147.50.13.10])
+        by smtp.gmail.com with ESMTPSA id g67sm27027290pfg.94.2019.04.03.19.52.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Apr 2019 19:52:43 -0700 (PDT)
+Date:   Thu, 4 Apr 2019 03:52:34 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "sre@kernel.org" <sre@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
+Message-ID: <20190404025234.GB6830@dell>
+References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+ <39efebe0396dd42de30d37c6f3c1ef2926c90210.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190403073152.GM4187@dell>
+ <20190403084732.GA3493@localhost.localdomain>
+ <20190403093015.GJ11301@dell>
+ <20190403101003.GC3493@localhost.localdomain>
+ <20190403112559.GP11301@dell>
+ <85b20828bb4fb51e6df1d5d9d1c1f667db3a7c48.camel@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85b20828bb4fb51e6df1d5d9d1c1f667db3a7c48.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 03 Apr 2019, Vaittinen, Matti wrote:
 
+> On Wed, 2019-04-03 at 12:25 +0100, Lee Jones wrote:
+> > On Wed, 03 Apr 2019, Matti Vaittinen wrote:
+> > 
+> > > On Wed, Apr 03, 2019 at 10:30:15AM +0100, Lee Jones wrote:
+> > > > On Wed, 03 Apr 2019, Matti Vaittinen wrote:
+> > > > 
+> > > > > Hello Lee,
+> > > > > 
+> > > > > Thanks for taking a look on this again =) I agree with most of
+> > > > > the
+> > > > > comments and correct them at next version.
+> > > > > 
+> > > > > On Wed, Apr 03, 2019 at 08:31:52AM +0100, Lee Jones wrote:
+> > > > > > On Mon, 25 Mar 2019, Matti Vaittinen wrote:
+> > > > > > 
+> > > > > > > ROHM BD70528MWV is an ultra-low quiescent current general
+> > > > > > > purpose single-chip power management IC for battery-powered
+> > > > > > > portable devices.
+> > > > > > > 
+> > > > > > > Add MFD core which enables chip access for following
+> > > > > > > subdevices:
+> > > > > > > 	- regulators/LED drivers
+> > > > > > > 	- battery-charger
+> > > > > > > 	- gpios
+> > > > > > > 	- 32.768kHz clk
+> > > > > > > 	- RTC
+> > > > > > > 	- watchdog
+> > > > > > > 
+> > > > > > > Signed-off-by: Matti Vaittinen <
+> > > > > > > matti.vaittinen@fi.rohmeurope.com>
+> > > > > > > + * Mapping of main IRQ register bits to sub irq register
+> > > > > > > offsets so
+> > > > > > 
+> > > > > > "sub-IRQ"
+> > > > > > 
+> > > > > > > + * that we can access corect sub IRQ registers based on
+> > > > > > > bits that
+> > > > > > 
+> > > > > > "sub IRQ" is also fine, but please standardise.
+> > > > > > 
+> > > > > > I do prefer "sub-IRQ" though.
+> > > > > 
+> > > > > I'll go with "sub-IRQ" then
+> > > > > 
+> > > > > > > +
+> > > > > > > +#define WD_CTRL_MAGIC1 0x55
+> > > > > > > +#define WD_CTRL_MAGIC2 0xAA
+> > > > > > > +/**
+> > > > > > > + * bd70528_wdt_set - arm or disarm watchdog timer
+> > > > > > > + *
+> > > > > > > + * @data:	device data for the PMIC instance we want to
+> > > > > > > operate on
+> > > > > > > + * @enable:	new state of WDT. zero to disable, non
+> > > > > > > zero to enable
+> > > > > > > + * @old_state:	previous state of WDT will be filled
+> > > > > > > here
+> > > > > > > + *
+> > > > > > > + * Arm or disarm WDT on BD70528 PMIC. Expected to be
+> > > > > > > called only by
+> > > > > > > + * BD70528 RTC and BD70528 WDT drivers. The rtc_timer_lock
+> > > > > > > must be taken
+> > > > > > > + * by calling bd70528_wdt_lock before calling
+> > > > > > > bd70528_wdt_set.
+> > > > > > > + */
+> > > > > > > +int bd70528_wdt_set(struct rohm_regmap_dev *data, int
+> > > > > > > enable, int *old_state)
+> > > > > > 
+> > > > > > Why doesn't this reside in the watchdog driver?
+> > > > > 
+> > > > > If my memory serves me right we shortly discussed this already
+> > > > > during v8
+> > > > > review ;) Cant blame you though as I have seen some of the mail
+> > > > > traffic
+> > > > > going through your inbox :D
+> > > > > 
+> > > > > The motivation to have the functions exported from MFD is to
+> > > > > not create
+> > > > > sirect dependency between RTC and WDT. There may be cases where
+> > > > > we want
+> > > > > to leave either RTC or WDT out of compilation. MFD is always
+> > > > > needed so
+> > > > > the dependency from MFD to RTC/WDT does not harm.
+> > > > > 
+> > > > > (Here's some discussion necromancy if you are interested in re-
+> > > > > reading
+> > > > > how we did end up with this implementation:
+> > > > > https://lore.kernel.org/lkml/20190212091723.GZ20638@dell/)
+> > > > > 
+> > > > > I hope you are still Ok with having the WDT control functions
+> > > > > in MFD.
+> > > > 
+> > > > OOI, why does the RTC need to control the WDT?
+> > > 
+> > > I thought I had a comment about this somewhere in code... O_o Must
+> > > have
+> > > been in some development branch I had :/
+> > > 
+> > > Anyways, setting the RTC counter may cause watchdog to trigger. It
+> > > is not
+> > > further explained why but I would guess watchdog uses RTC counter
+> > > to check
+> > > if it should've been pinged already. So RTC needs to disable watch
+> > > dog for
+> > > the duration of hwclock setting and enable it again after the new
+> > > time is
+> > > set. I can add a comment about this to MFD driver if it helps :)
+> > 
+> > How does the user select between using the RTC and the WDT?
+> > 
+> > Or are the generally both enabled at the same time?
+> > 
+> 
+> Both RTC and WDT can be enabled at the same time. But they are not
+> required to be used. When WDT is enabled, it uses current RTC time as
+> 'base' (and RTC time is running no matter if we have the RTC driver
+> here or not) - and time-out gets scheduled to specified amount of time
+> into future. (Same setting timeout into the future happens when WDT is
+> pinged).
+> 
+> When we set RTC, we disable WDT (if it was enabled), set clock and re-
+> enable WDT. This causes the previously used time-out value to be set to
+> WDT again. This works Ok because BD70528 does not support 'short ping
+> detection'. Only side-effect will be one 'prolonged' WDT feeding period
+> when RTC is set. (absolute time when RTC was set minus absolute time
+> when previous WD ping or enable was done) longer than reqular period.
+> 
+> So user should not need to care about this 'dependency'. Basically the
+> only possible problem I see is that someone could accidentally hang the
+> system with something that keeps setting the RTC time - this would then
+> prevent watch dog from doing the reset. This, I believe, is a corner
+> case which I don't consider now - and if this is considered to be an
+> issue then such a system may disable the RTC driver and do RTC setting
+> in a what-ever-manner sees practical.
+> 
+> I'm not sure if I answered to question you asked though =)
 
-On Thu, 4 Apr 2019, at 01:05, Eddie James wrote:
-> 
-> On 4/3/19 1:01 AM, Andrew Jeffery wrote:
-> >
-> > On Wed, 3 Apr 2019, at 04:55, Eddie James wrote:
-> >> Reserved memory doesn't need to be required; system memory would work
-> >> fine.
-> > I had to do a bit of legwork to understand what you were doing here. My
-> > understanding is that we allocate out of the default CMA region if the
-> > memory-region property isn't specified. Is that what you're expecting?
-> > Could be helpful to be a little less terse in the commit message.
-> 
-> 
-> Correct.
-> 
-> 
-> >
-> >> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> >> ---
-> >>   drivers/media/platform/aspeed-video.c | 6 +-----
-> >>   1 file changed, 1 insertion(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/media/platform/aspeed-video.c
-> >> b/drivers/media/platform/aspeed-video.c
-> >> index 55c55a6..8144fe3 100644
-> >> --- a/drivers/media/platform/aspeed-video.c
-> >> +++ b/drivers/media/platform/aspeed-video.c
-> >> @@ -1608,11 +1608,7 @@ static int aspeed_video_init(struct aspeed_video
-> >> *video)
-> >>   		return PTR_ERR(video->vclk);
-> >>   	}
-> >>   
-> >> -	rc = of_reserved_mem_device_init(dev);
-> >> -	if (rc) {
-> >> -		dev_err(dev, "Unable to reserve memory\n");
-> >> -		return rc;
-> >> -	}
-> >> +	of_reserved_mem_device_init(dev);
-> > You're ignoring *all* errors here with the expectation that the cause is the
-> > missing memory-region property. However, other errors can propagate
-> > out of of_reserved_mem_device_init() - e.g. ENOMEM. Rather than remove
-> > error checking, I think you should explicitly test for ENODEV, which is what is
-> > returned if the memory-region property is absent.
-> 
-> 
-> But it doesn't matter if it fails for any reason, any DMA allocation 
-> should fall back to default CMA memory. In the case of ENOMEM or other 
-> errors, then the later calls to allocate DMA may fail and we can deal 
-> with it then.
+I think you answered it just fine.
 
-Fair enough then. I think it deserves a comment, but up to you.
+So my suggestion is to have the RTC depend on the WRT via Kconfig, and
+place this WRT code in the WRT driver where it belongs.  These
+functions can be exported from the WRT driver and the RTC can call
+into them in the same way it calls into the MFD driver currently.
 
-Andrew
+Avoiding a dependency on the WRT would seem strange, because there is
+one.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
