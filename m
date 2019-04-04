@@ -3,67 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50103C4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 14:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49A1C4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 14:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2901C2147C
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 14:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE0882082E
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 14:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbfDDOGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 10:06:39 -0400
-Received: from muru.com ([72.249.23.125]:44314 "EHLO muru.com"
+        id S1727165AbfDDOHB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 10:07:01 -0400
+Received: from muru.com ([72.249.23.125]:44322 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbfDDOGj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Apr 2019 10:06:39 -0400
+        id S1726618AbfDDOHB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Apr 2019 10:07:01 -0400
 Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 5AED180D4;
-        Thu,  4 Apr 2019 14:06:53 +0000 (UTC)
-Date:   Thu, 4 Apr 2019 07:06:35 -0700
+        by muru.com (Postfix) with ESMTPS id D1F1C80D4;
+        Thu,  4 Apr 2019 14:07:15 +0000 (UTC)
+Date:   Thu, 4 Apr 2019 07:06:58 -0700
 From:   Tony Lindgren <tony@atomide.com>
 To:     Tero Kristo <t-kristo@ti.com>
 Cc:     linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com,
-        Eric Ruei <e-ruei1@ti.com>
-Subject: Re: [PATCH 5/6] clk: ti: am33xx: drop idlest polling from gfx
- clkctrl clock
-Message-ID: <20190404140635.GA49658@atomide.com>
+        sboyd@kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 2/6] ARM: omap2+: hwmod: drop CLK_IS_BASIC flag usage
+Message-ID: <20190404140658.GB49658@atomide.com>
 References: <1554365467-1325-1-git-send-email-t-kristo@ti.com>
- <1554365467-1325-6-git-send-email-t-kristo@ti.com>
+ <1554365467-1325-3-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1554365467-1325-6-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1554365467-1325-3-git-send-email-t-kristo@ti.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
 * Tero Kristo <t-kristo@ti.com> [190404 08:12]:
-> From: Eric Ruei <e-ruei1@ti.com>
-> 
-> The GFX modules on AM33xx SoCs have a hardreset line and are controlled
-> by a GFX reset line. Any clkctrl enable/disable operations cannot be
-> checked for module enabled/disabled status independent of the reset
-> operation, and this causes some unwanted timeouts in the kernel and
-> unbalanced states for the GFX clocks. These details should be handled
-> by the driver integration code itself.
+> CLK_IS_BASIC flag is about to get deprecated, and as such, can't be used.
+> Instead, the API call for checking whether a clock is of type hw_omap shall
+> be used, so convert the code to use this.
 
-These last two patches should no longer be needed with ti-sysc.
-Well, at least based on testing with the earlier reset-simple driver
-patch and a test for sgx register access on am335x.
-
-On init we deassert rstctrl if configured and in reset, then enable
-clocks, and read the module revision. And the module is ready for child
-device driver(s) to probe, and do what they want with the rstctrl via a
-reset driver. If no child device driver(s) are configured, ti-sysc will
-just put the module rstctrl back to reset using reset driver.
-
-Regards,
-
-Tony
+Acked-by: Tony Lindgren <tony@atomide.com>
