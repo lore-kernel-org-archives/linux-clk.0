@@ -2,124 +2,140 @@ Return-Path: <SRS0=Ee6+=SG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31ABCC4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EEBC4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1A120855
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:02:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CA5620882
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:06:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CAT/eN5G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfDDICb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 04:02:31 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45775 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbfDDICb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:02:31 -0400
-Received: by mail-ed1-f67.google.com with SMTP id m16so1271620edd.12
-        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2019 01:02:30 -0700 (PDT)
+        id S1726888AbfDDIGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 04:06:39 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:36177 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfDDIGi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:06:38 -0400
+Received: by mail-it1-f195.google.com with SMTP id y10so2278786itc.1
+        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2019 01:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=shJdvdGb88860d31wYHMujcMhegndt2m1bOdjIXO+xc=;
+        b=CAT/eN5GQvaUHT/B2oGu2uy902nw2xGiQS04eueuNNfsLLiZ2sZrq1djYQUxHf2ud/
+         n4+1n183QmzwuTPCPClOc+3NaDZIGu3NXptqhAeWzIfBCO4KxPmkBN7QdpGxr02T7WrS
+         5q5MxVvuAl8Hm1ON1Npt1S9VcGhvzKXMtlWpIe24EHTKYIYYcuGISN43xxMMhRiM9tmk
+         TIk2vubJ5B2kxfOOK+yASqUse32MZmoGeqyeS25U8XCv1D+SQIZI85Q6aWOrDxm0MjB4
+         xDf4yd/TjtKrulVw5KQ9WvR7RsC3GO5GQH/tEXLTJb3SlTvGxCp9FKYPkw6wHaP1wIcj
+         DsrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0X1LdjUtWLBunrWyunuKbgCrDDBfn96812gyeBcosxo=;
-        b=OYm5gP0DAQ5k65YNCULsSsGtWqnNBR9d1/ePameSeeCOZ5CAEJ5otejPqr6qReHV0D
-         0i+x5HDYCvfE7aYC1wq98m9eO54DUumLeEjiQs8ZCTb5IU637tAnE20Rhjb48oPMKyCz
-         YZ3Mc04tVxAQzwuq0ox0gqf4SCRgSN3c8R5engYiHnXk2rKPmeRH2HveED+oPNv/i+oZ
-         5ffWRAbh9X6kTcHO2PpEvMvaNy8yll4iXKPw2L4SvPiTobstie5VlPoL6ISJd52Yt9Dk
-         qBxl/W9YhBZuqVsPAtj4ktBD1SCM+bPkVpHaqzGEN7JDIGgc3iTW94VvU5CsAQCHwCyh
-         vkmQ==
-X-Gm-Message-State: APjAAAVQqAm6fLYcgk2jKRPJc9xEdoBqnKrRWIOfLa8alWrmyEXpKMry
-        qgWpcXBBhiOM8efM7b9H9DDHtQ==
-X-Google-Smtp-Source: APXvYqwLumaO7CppVrlnlUfoNxXDGVCXVww9dYoYp4DoY5LN4sESyioS6MLRexFk2zOeXUDr32+R+Q==
-X-Received: by 2002:a17:906:4bc3:: with SMTP id x3mr2630562ejv.150.1554364949574;
-        Thu, 04 Apr 2019 01:02:29 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id q3sm5362592edr.31.2019.04.04.01.02.28
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Apr 2019 01:02:28 -0700 (PDT)
-Subject: Re: [PATCH v2] clk: x86: Add system specific quirk to mark clocks as
- critical
-To:     =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-References: <20190328124939.23139-1-dave.mueller@gmx.ch>
- <20190403140857.1130-1-dave.mueller@gmx.ch>
- <ed8c07ff-5719-9179-424c-13b0891605f7@redhat.com>
- <CAHp75VdT_4e1F51YfRVtmPBmT+ZbwvjVGJAY5uhC=QMKxyANPQ@mail.gmail.com>
- <d8f96161-9ab8-2300-35fb-9e2b2e442c1d@redhat.com>
- <f0ec3df1-f142-29c6-5f1e-baab95f93665@gmx.ch>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <3c0c7d47-6cae-99c9-fa8f-2ebc956be2ba@redhat.com>
-Date:   Thu, 4 Apr 2019 10:02:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=shJdvdGb88860d31wYHMujcMhegndt2m1bOdjIXO+xc=;
+        b=dxEZVlq/w1Po89gPlDrkrbevPr4VdNeS5Z796Ixge/J6LkZ2aTqfxjQbY3WZR572ys
+         O+txzviaIOwRk551tGiAlBvPDOa7mJgFvZWHQpW9dAgrLnmxzad7qCdqeOIPJengkGl6
+         Vf/h9Z/6v/nysUhLT1ApdSrvvixRaWs32ggCFBfIzbak7vot5A3tpEoPeX80tLgAEixu
+         ZdWgYA2Z/iO17spyhQXCXVRPPisaiCYunxyccVyCuPAQonzwlCz9it1c/EWZRsg9270o
+         wPIDVMoo+aAvAReBosmDYJXfQGQ7u9y29GwI0BpGQB5VdderWIly/WA01+1YTri9ZP8q
+         ggRw==
+X-Gm-Message-State: APjAAAWq0/I1wZxyaGCKcBvR7H3xNJMKrKADSOlmpuy8M7PEDEWPXMy/
+        3rlUeKeHy11rSB0qpoIfCEGELw==
+X-Google-Smtp-Source: APXvYqxnNjN8K03nxu262Y9rYxDVOZyo44d73RJ8HFDjE227lUwvptExYSziV+j6FXd2h9oXxm68Mw==
+X-Received: by 2002:a02:1cc1:: with SMTP id c184mr3629232jac.97.1554365197844;
+        Thu, 04 Apr 2019 01:06:37 -0700 (PDT)
+Received: from dell ([147.50.13.10])
+        by smtp.gmail.com with ESMTPSA id u19sm8172086iol.16.2019.04.04.01.06.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Apr 2019 01:06:36 -0700 (PDT)
+Date:   Thu, 4 Apr 2019 09:06:23 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "sre@kernel.org" <sre@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
+Message-ID: <20190404080623.GJ6830@dell>
+References: <20190403073152.GM4187@dell>
+ <20190403084732.GA3493@localhost.localdomain>
+ <20190403093015.GJ11301@dell>
+ <20190403101003.GC3493@localhost.localdomain>
+ <20190403112559.GP11301@dell>
+ <85b20828bb4fb51e6df1d5d9d1c1f667db3a7c48.camel@fi.rohmeurope.com>
+ <20190404025234.GB6830@dell>
+ <6775a75d1ee3ab96123d84b077881beedc358d12.camel@fi.rohmeurope.com>
+ <20190404065452.GD6830@dell>
+ <20190404072449.GE3493@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <f0ec3df1-f142-29c6-5f1e-baab95f93665@gmx.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190404072449.GE3493@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On 04-04-19 10:00, David Müller wrote:
-
- > Is there a rule / recommendation how the sentinel entry should look
- > like? In the kernel sources I see a "{}", "{ }", "{ /*sentinel*/ }", ...
-
-Nope, no rule, you can use whatever feels good to you,
-although Andy might have a different opinion...
-
-> Hans de Goede wrote:
->> On 03-04-19 17:36, Andy Shevchenko wrote:
->>> On Wed, Apr 3, 2019 at 6:31 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>>> On 03-04-19 16:08, David Müller wrote:
->>>
->>>>>         clk_data->base = pmc_regmap; /* offset is added by client */
->>>>>         clk_data->clks = pmc_data->clks;
->>>>> +     if (d) {
->>>>> +             clk_data->chk_critclks = true;
->>>>> +             pr_info("%s critclks quirk enabled\n", d->ident);
->>>>> +     }
->>>>>
->>>>>         clkdev = platform_device_register_data(&pdev->dev,
->>>>> "clk-pmc-atom",
->>>>>                                                PLATFORM_DEVID_NONE,
->>>>
->>>> Normally I would be fine with your choice to use dmi_first_match(),
->>>> but since
->>>> you need to respin anyway, can you change this to:
->>>>
->>>>           if (dmi_check_system(critclk_systems)) {
->>>>                   clk_data->chk_critclks = true;
->>>>                   pr_info("%s critclks quirk enabled\n", d->ident);
->>>>           }
->>>>
->>>> That will allow you to drop the 'd' variable declaration all together
->>>> and is
->>>> somewhat cleaner IMHO.
->>>
->>> pr_info() relies on it AFAICS.
->>
->> Ah right I missed that, I would just do: pr_info("System is on critclks
->> quirk list, critclks quirk enabled\n");
->> but keeping the solution with ident is fine too.
+> > > ROHM. Also, I am not terribly excited about the option of changing this
+> > > back to function-pointer as I already removed the pointer from parent
+> > > data and this changed parent data is already adapted to all sub drivers
+> > > - so this is all just babbling. Maybe it is just my huge ego shouting
+> > > there - 'I was right, I must have the final say'.
+> > 
+> > No, a call-back function would be a back-step.
 > 
-> If it is OK, I will keep the "dmi_first_match()" implementation.
+> You are probably right.
+> 
+> > Ego or no ego, you're wrong. =:-D
+> 
+> I'd rephrase that as "It's not that I am wrong, but you are right." =)
 
-Sure that is fine.
+Works for me.
 
-Regards,
+> > > As a side note, I already did submit v12 with other styling fixes but
+> > > which left the WDT function in MFD. If you still see the WDT functions
+> > > should be exported from WDT - then please ignore the v12. I'll do v13
+> > > at the afternoon (my time, which is only a bit after noon your time I
+> > > guess) which will export these functions from WDT. (Well, I had to try
+> > > once more :D)
+> > 
+> > Please keep the WDT code in the WDT driver.  Create a little stub for
+> > the cases where the WDT driver is not enabled - job done.
+> 
+> Yes Sir.
 
-Hans
+=;-)
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
