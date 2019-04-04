@@ -2,310 +2,382 @@ Return-Path: <SRS0=Ee6+=SG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92E2C10F0E
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 10:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AEAC10F0C
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 10:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987652147C
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 10:26:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qwEOx3uw"
+	by mail.kernel.org (Postfix) with ESMTP id 709272147C
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 10:28:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbfDDK0a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 06:26:30 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49260 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfDDK03 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 06:26:29 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2D33954B;
-        Thu,  4 Apr 2019 12:26:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1554373587;
-        bh=3PpCzfq/kK+EXTTISTJR9NQOBZW/Sd363p6DuJzFnJ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qwEOx3uwqEG5W5NNvxvfMqy3/g1w8d+8znZjPcwXlDZly3xB1GhLWak53gmUiv4g7
-         MtfWus2f5n2DNluKYdJQzbg9fqpav5HcCALoKcz/9892+H4M6cG4TDe02VjYDWFtHB
-         BzbJ6eMa2qb/3IporJeuXhViXjrh0LHnQv6MFAk8=
-Date:   Thu, 4 Apr 2019 13:26:16 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     VenkataRajesh.Kalakodima@in.bosch.com
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        id S1727310AbfDDK2P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 06:28:15 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33933 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfDDK2P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 06:28:15 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j89so1620883ljb.1;
+        Thu, 04 Apr 2019 03:28:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aHE7fQArN3X0/wo8VSAGDCuy0SjLds/v+QvmhqAqXKk=;
+        b=Xl9vB8iJpFXuB3UJ3Pv++z1qowlTXu3bfQPz1ndatXO4mcVFldLIn6UVkuk6MijPVh
+         mlDsLk73upcVtmWOySUWIccHXQxL7QjRXKys8xk7l7P3/e3ER2SuTAXnSYqqHykQUEXK
+         HlpgW1wHne/uQkAHW9KMxWWFDfF9eElnAfUVBwKHDtj4ST828SNBpCWohKT3cpG3f4sZ
+         xGF+fkoxsoYRXi2U0iZyGuN36BNXK0KoDCJ+BtFag7HNCOJJqSM7nYNAXBAW4odfxS/Z
+         h+G6OnrzlQLbjeoYS2wTYjwTzAmUX9/Rui/ma0hxx9JtYc2955j5c7tbBaMy6oE6hX9l
+         5fdw==
+X-Gm-Message-State: APjAAAWZ/WjXYI6Pz/Xlo3eQB68AIrIg6JvzWcXkTeS0nCgkPJR/81Xz
+        r3hGTkyQIdHzDBKT7+xUTj8=
+X-Google-Smtp-Source: APXvYqyWMkd9y4CbBmryCYvP07gpMwnT5/F+NEtQtH87+tf7V0zoIDQRLBfxnoKhFTrp4ACKqMf45Q==
+X-Received: by 2002:a2e:5c7:: with SMTP id 190mr2923685ljf.108.1554373690806;
+        Thu, 04 Apr 2019 03:28:10 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id w28sm3576105lfk.95.2019.04.04.03.28.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Apr 2019 03:28:10 -0700 (PDT)
+Date:   Thu, 4 Apr 2019 13:27:57 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mazziesaccount@gmail.com
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: Re: [PATCH 8/8] drm: rcar-du: Add shutdown callback function in
- platform_driver
-Message-ID: <20190404102616.GH5800@pendragon.ideasonboard.com>
-References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
- <1554297284-14009-9-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        bogdan-petru.chircu-mare@nxp.com
+Subject: [PATCH v13 5/8] gpio: Initial support for ROHM bd70528 GPIO block
+Message-ID: <f13335eac4754ec9f49c606b18a0d8b5f56587b1.1554371464.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1554371464.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1554297284-14009-9-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+In-Reply-To: <cover.1554371464.git.matti.vaittinen@fi.rohmeurope.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Kalakodima,
+ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
+controlled by GPIO framework.
 
-Thank you for the patch.
+IRQs are handled by regmap-irq and GPIO driver is not
+aware of the irq usage.
 
-On Wed, Apr 03, 2019 at 06:44:44PM +0530, VenkataRajesh.Kalakodima@in.bosch.com wrote:
-> From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
-> 
-> When rebooting, the Display driver is accessing H/W (reading DDR).
-> Therefore, there is a problem of hanging when setting DDR to self
-> refresh mode.
-> 
-> This patch implement the shutdown function and solve this problem
-> by stopping H/W access.
-> 
-> In addtion, on the ulcb board, since initial values of versaclock
-> are used as they are, signals are not output when initializing to
-> 0 with shutdown, so this patch excludes processing to initialize
-> versaclock to 0.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Changelog v13:
+- No changes
 
-This seems like it should be fixed in the VC5 driver, not here.
+Changelog v12:
+- No functional changes
+- Styling fixes
 
-> drm: rcar-du: Add HDMI control clock when S2RAM
-> 
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> 
-> (cherry picked from horms/renesas-bsp commit 3cfda6331c4069800dd4434427284aba8e6f1ed6)
-> [slongerbeam: keep integer i in rcar_du_pm_shutdown(), needed because of
->  050e54d87f ("drm: rcar-du: drm: rcar-du: Add DU CMM support")]
-> 
-> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> 
-> drm: rcar-du: cmm: lut and clu backup not required during
->  shutdown
-> rcar_du_cmm_pm_suspend function copies LUT and CLU hardare
-> register values to memory. In the patch which adds DU CMM
-> support (https://github.com/renesas-rcar/du_cmm/commit/
-> 9a65d02119e4ae405a89a850463a6a0d0f2c1ecb), the intention of
-> the author was to backup the registers during suspend and
-> restore it on resume. But rcar_du_cmm_pm_suspend was also
-> called on system shutdown. Though it does not cause any harm,
-> it is not required during shutdown as it does not make sense
-> to backup. This patch ensures that rcar_du_cmm_pm_suspend is
-> called only during suspend
-> 
-> Fixes: https://github.com/renesas-rcar/du_cmm/commit/9a65d02119e4ae405a89a850463a6a0d0f2c1ecb
-> 
-> Signed-off-by: Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>
-> 
->       - Resolved checkpatch errors
->       - Resolved merge conflicts according to latest version
-> 
-> Signed-off-by: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
-> ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 35 ++++++++++++++++++++
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 54 +++++++++++++++++++++++++------
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  2 +-
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  1 +
->  include/drm/bridge/dw_hdmi.h              |  1 +
->  5 files changed, 83 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 5971976..aa257d7 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -2033,6 +2033,41 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
->  	mutex_unlock(&hdmi->mutex);
->  }
->  
-> +/*
-> + * This function controls clocks of dw_hdmi through drm_bridge
-> + * at system suspend/resume.
-> + * Arguments:
-> + *  bridge: drm_bridge that contains dw_hdmi.
-> + *  flag: controlled flag.
-> + *		false: is used when suspend.
-> + *		true: is used when resume.
-> + */
-> +void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag)
-> +{
-> +	struct dw_hdmi *hdmi = bridge->driver_private;
-> +
-> +	if (!hdmi)
-> +		return;
-> +
-> +	if (flag) { /* enable clk */
-> +		if (hdmi->isfr_clk)
-> +			clk_prepare_enable(hdmi->isfr_clk);
-> +		if (hdmi->iahb_clk)
-> +			clk_prepare_enable(hdmi->iahb_clk);
-> +
-> +		initialize_hdmi_ih_mutes(hdmi);
-> +		dw_hdmi_setup_i2c(hdmi);
-> +		dw_hdmi_i2c_init(hdmi);
-> +		dw_hdmi_phy_setup_hpd(hdmi, NULL);
-> +	} else { /* disable clk */
-> +		if (hdmi->isfr_clk)
-> +			clk_disable_unprepare(hdmi->isfr_clk);
-> +		if (hdmi->iahb_clk)
-> +			clk_disable_unprepare(hdmi->iahb_clk);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(dw_hdmi_s2r_ctrl);
-> +
->  static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
->  	.attach = dw_hdmi_bridge_attach,
->  	.enable = dw_hdmi_bridge_enable,
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index 838b7c9..9eb63b0 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -21,6 +21,7 @@
->  #include <linux/slab.h>
->  #include <linux/wait.h>
->  
-> +#include <drm/bridge/dw_hdmi.h>
->  #include <drm/drmP.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc_helper.h>
-> @@ -368,18 +369,14 @@ static struct drm_driver rcar_du_driver = {
->   */
->  
->  #ifdef CONFIG_PM_SLEEP
-> -static int rcar_du_pm_suspend(struct device *dev)
-> +static int rcar_du_pm_shutdown(struct device *dev)
->  {
->  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
->  	struct drm_atomic_state *state;
-> -	int i;
-> -
-> -	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
-> -		for (i = 0; i < rcdu->num_crtcs; ++i)
-> -			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
-> -	}
-> -
-> -	drm_kms_helper_poll_disable(rcdu->ddev);
-> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
-> +	struct drm_encoder *encoder;
-> +#endif
-> +		drm_kms_helper_poll_disable(rcdu->ddev);
->  	drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
->  
->  	state = drm_atomic_helper_suspend(rcdu->ddev);
-> @@ -389,11 +386,43 @@ static int rcar_du_pm_suspend(struct device *dev)
->  		return PTR_ERR(state);
->  	}
->  
-> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
-> +	list_for_each_entry(encoder,
-> +			    &rcdu->ddev->mode_config.encoder_list,
-> +			    head) {
-> +		struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
-> +
-> +		if (renc->bridge && (renc->output == RCAR_DU_OUTPUT_HDMI0 ||
-> +				     renc->output == RCAR_DU_OUTPUT_HDMI1))
-> +			dw_hdmi_s2r_ctrl(encoder->bridge, false);
+ drivers/gpio/Kconfig        |  11 ++
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-bd70528.c | 232 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 244 insertions(+)
+ create mode 100644 drivers/gpio/gpio-bd70528.c
 
-You can't call directly from the DU driver to the dw-hdmi driver, that's
-a big layering violation. As Daniel reported, using the shutdown helper
-will likely handle all this for you.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 3f50526a771f..2789530a93ae 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -979,6 +979,17 @@ config GPIO_ARIZONA
+ 	help
+ 	  Support for GPIOs on Wolfson Arizona class devices.
+ 
++config GPIO_BD70528
++	tristate "ROHM BD70528 GPIO support"
++	depends on MFD_ROHM_BD70528
++	help
++	  Support for GPIOs on ROHM BD70528 PMIC. There are four GPIOs
++	  available on the ROHM PMIC in total. The GPIOs can also
++	  generate interrupts.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called gpio-bd70528.
++
+ config GPIO_BD9571MWV
+ 	tristate "ROHM BD9571 GPIO support"
+ 	depends on MFD_BD9571MWV
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 54d55274b93a..e93e376bae0b 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -35,6 +35,7 @@ obj-$(CONFIG_GPIO_ATH79)	+= gpio-ath79.o
+ obj-$(CONFIG_GPIO_ASPEED)	+= gpio-aspeed.o
+ obj-$(CONFIG_GPIO_RASPBERRYPI_EXP)	+= gpio-raspberrypi-exp.o
+ obj-$(CONFIG_GPIO_BCM_KONA)	+= gpio-bcm-kona.o
++obj-$(CONFIG_GPIO_BD70528) 	+= gpio-bd70528.o
+ obj-$(CONFIG_GPIO_BD9571MWV)	+= gpio-bd9571mwv.o
+ obj-$(CONFIG_GPIO_BRCMSTB)	+= gpio-brcmstb.o
+ obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
+diff --git a/drivers/gpio/gpio-bd70528.c b/drivers/gpio/gpio-bd70528.c
+new file mode 100644
+index 000000000000..fd85605d2dab
+--- /dev/null
++++ b/drivers/gpio/gpio-bd70528.c
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 ROHM Semiconductors
++// gpio-bd70528.c ROHM BD70528MWV gpio driver
++
++#include <linux/gpio/driver.h>
++#include <linux/mfd/rohm-bd70528.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define GPIO_IN_REG(offset) (BD70528_REG_GPIO1_IN + (offset) * 2)
++#define GPIO_OUT_REG(offset) (BD70528_REG_GPIO1_OUT + (offset) * 2)
++
++struct bd70528_gpio {
++	struct rohm_regmap_dev chip;
++	struct gpio_chip gpio;
++};
++
++static int bd70528_set_debounce(struct bd70528_gpio *bdgpio,
++				unsigned int offset, unsigned int debounce)
++{
++	u8 val;
++
++	switch (debounce) {
++	case 0:
++		val = BD70528_DEBOUNCE_DISABLE;
++		break;
++	case 1 ... 15:
++		val = BD70528_DEBOUNCE_15MS;
++		break;
++	case 16 ... 30:
++		val = BD70528_DEBOUNCE_30MS;
++		break;
++	case 31 ... 50:
++		val = BD70528_DEBOUNCE_50MS;
++		break;
++	default:
++		dev_err(bdgpio->chip.dev,
++			"Invalid debouce value %u\n", debounce);
++		return -EINVAL;
++	}
++	return regmap_update_bits(bdgpio->chip.regmap, GPIO_IN_REG(offset),
++				 BD70528_DEBOUNCE_MASK, val);
++}
++
++static int bd70528_get_direction(struct gpio_chip *chip, unsigned int offset)
++{
++	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
++	int val, ret;
++
++	/* Do we need to do something to IRQs here? */
++	ret = regmap_read(bdgpio->chip.regmap, GPIO_OUT_REG(offset), &val);
++	if (ret) {
++		dev_err(bdgpio->chip.dev, "Could not read gpio direction\n");
++		return ret;
++	}
++
++	return !(val & BD70528_GPIO_OUT_EN_MASK);
++}
++
++static int bd70528_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
++				   unsigned long config)
++{
++	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
++
++	switch (pinconf_to_config_param(config)) {
++	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++		return regmap_update_bits(bdgpio->chip.regmap,
++					  GPIO_OUT_REG(offset),
++					  BD70528_GPIO_DRIVE_MASK,
++					  BD70528_GPIO_OPEN_DRAIN);
++		break;
++	case PIN_CONFIG_DRIVE_PUSH_PULL:
++		return regmap_update_bits(bdgpio->chip.regmap,
++					  GPIO_OUT_REG(offset),
++					  BD70528_GPIO_DRIVE_MASK,
++					  BD70528_GPIO_PUSH_PULL);
++		break;
++	case PIN_CONFIG_INPUT_DEBOUNCE:
++		return bd70528_set_debounce(bdgpio, offset,
++					    pinconf_to_config_argument(config));
++		break;
++	default:
++		break;
++	}
++	return -ENOTSUPP;
++}
++
++static int bd70528_direction_input(struct gpio_chip *chip, unsigned int offset)
++{
++	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
++
++	/* Do we need to do something to IRQs here? */
++	return regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
++				 BD70528_GPIO_OUT_EN_MASK,
++				 BD70528_GPIO_OUT_DISABLE);
++}
++
++static void bd70528_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			     int value)
++{
++	int ret;
++	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
++	u8 val = (value) ? BD70528_GPIO_OUT_HI : BD70528_GPIO_OUT_LO;
++
++	ret = regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
++				 BD70528_GPIO_OUT_MASK, val);
++	if (ret)
++		dev_err(bdgpio->chip.dev, "Could not set gpio to %d\n", value);
++}
++
++static int bd70528_direction_output(struct gpio_chip *chip, unsigned int offset,
++				    int value)
++{
++	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
++
++	bd70528_gpio_set(chip, offset, value);
++	return regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
++				 BD70528_GPIO_OUT_EN_MASK,
++				 BD70528_GPIO_OUT_ENABLE);
++}
++
++#define GPIO_IN_STATE_MASK(offset) (BD70528_GPIO_IN_STATE_BASE << (offset))
++
++static int bd70528_gpio_get_o(struct bd70528_gpio *bdgpio, unsigned int offset)
++{
++	int ret;
++	unsigned int val;
++
++	ret = regmap_read(bdgpio->chip.regmap, GPIO_OUT_REG(offset), &val);
++	if (!ret)
++		ret = !!(val & BD70528_GPIO_OUT_MASK);
++	else
++		dev_err(bdgpio->chip.dev, "GPIO (out) state read failed\n");
++
++	return ret;
++}
++
++static int bd70528_gpio_get_i(struct bd70528_gpio *bdgpio, unsigned int offset)
++{
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(bdgpio->chip.regmap, BD70528_REG_GPIO_STATE, &val);
++
++	if (!ret)
++		ret = !(val & GPIO_IN_STATE_MASK(offset));
++	else
++		dev_err(bdgpio->chip.dev, "GPIO (in) state read failed\n");
++
++	return ret;
++}
++
++static int bd70528_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	int ret = -EINVAL;
++	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
++
++	/*
++	 * There is a race condition where someone might be changing the
++	 * GPIO direction after we get it but before we read the value. But
++	 * application design where GPIO direction may be changed just when
++	 * we read GPIO value would be pointless as reader could not know
++	 * whether the returned high/low state is caused by input or output.
++	 * Or then there must be other ways to mitigate the issue. Thus
++	 * locking would make no sense.
++	 */
++	ret = bd70528_get_direction(chip, offset);
++	if (ret == 0)
++		ret = bd70528_gpio_get_o(bdgpio, offset);
++	else if (ret == 1)
++		ret = bd70528_gpio_get_i(bdgpio, offset);
++	else
++		dev_err(bdgpio->chip.dev, "failed to read GPIO direction\n");
++
++	return ret;
++}
++
++static int bd70528_probe(struct platform_device *pdev)
++{
++	struct bd70528_gpio *bdgpio;
++	struct rohm_regmap_dev *bd70528;
++	int ret;
++
++	bd70528 = dev_get_drvdata(pdev->dev.parent);
++	if (!bd70528) {
++		dev_err(&pdev->dev, "No MFD driver data\n");
++		return -EINVAL;
++	}
++
++	bdgpio = devm_kzalloc(&pdev->dev, sizeof(*bdgpio),
++			      GFP_KERNEL);
++	if (!bdgpio)
++		return -ENOMEM;
++	bdgpio->chip.dev = &pdev->dev;
++	bdgpio->gpio.parent = pdev->dev.parent;
++	bdgpio->gpio.label = "bd70528-gpio";
++	bdgpio->gpio.owner = THIS_MODULE;
++	bdgpio->gpio.get_direction = bd70528_get_direction;
++	bdgpio->gpio.direction_input = bd70528_direction_input;
++	bdgpio->gpio.direction_output = bd70528_direction_output;
++	bdgpio->gpio.set_config = bd70528_gpio_set_config;
++	bdgpio->gpio.can_sleep = true;
++	bdgpio->gpio.get = bd70528_gpio_get;
++	bdgpio->gpio.set = bd70528_gpio_set;
++	bdgpio->gpio.ngpio = 4;
++	bdgpio->gpio.base = -1;
++#ifdef CONFIG_OF_GPIO
++	bdgpio->gpio.of_node = pdev->dev.parent->of_node;
++#endif
++	bdgpio->chip.regmap = bd70528->regmap;
++
++	ret = devm_gpiochip_add_data(&pdev->dev, &bdgpio->gpio,
++				     bdgpio);
++	if (ret)
++		dev_err(&pdev->dev, "gpio_init: Failed to add bd70528-gpio\n");
++
++	return ret;
++}
++
++static struct platform_driver bd70528_gpio = {
++	.driver = {
++		.name = "bd70528-gpio"
++	},
++	.probe = bd70528_probe,
++};
++
++module_platform_driver(bd70528_gpio);
++
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("BD70528 voltage regulator driver");
++MODULE_LICENSE("GPL");
+-- 
+2.17.2
 
-> +	}
-> +#endif
->  	rcdu->suspend_state = state;
->  
->  	return 0;
->  }
->  
-> +static int rcar_du_pm_suspend(struct device *dev)
-> +{
-> +	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> +
-> +	int i, ret;
-> +
-> +	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
-> +		for (i = 0; i < rcdu->num_crtcs; ++i)
-> +			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
-> +	}
-> +
-> +	ret = rcar_du_pm_shutdown(dev);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < rcdu->num_crtcs; ++i)
-> +		clk_set_rate(rcdu->crtcs[i].extclock, 0);
-> +	return 0;
-> +}
-> +
->  static int rcar_du_pm_resume(struct device *dev)
->  {
->  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> @@ -504,6 +533,12 @@ static int rcar_du_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> +static void rcar_du_shutdown(struct platform_device *pdev)
-> +{
-> +#ifdef CONFIG_PM_SLEEP
-> +	rcar_du_pm_shutdown(&pdev->dev);
-> +#endif
-> +}
->  static struct platform_driver rcar_du_platform_driver = {
->  	.probe		= rcar_du_probe,
->  	.remove		= rcar_du_remove,
-> @@ -512,6 +547,7 @@ static struct platform_driver rcar_du_platform_driver = {
->  		.pm	= &rcar_du_pm_ops,
->  		.of_match_table = rcar_du_of_table,
->  	},
-> +	.shutdown       = rcar_du_shutdown,
->  };
->  
->  static int __init rcar_du_init(void)
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> index f9c933d..98df8a2 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> @@ -62,7 +62,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
->  
->  	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
->  		enc_node, output);
-> -
-> +	renc->bridge = bridge;
->  	/* Locate the DRM bridge from the encoder DT node. */
->  	bridge = of_drm_find_bridge(enc_node);
->  	if (!bridge) {
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> index 2d2abca..cc5bfcb 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> @@ -23,6 +23,7 @@ struct rcar_du_device;
->  struct rcar_du_encoder {
->  	struct drm_encoder base;
->  	enum rcar_du_output output;
-> +	struct drm_bridge *bridge;
->  };
->  
->  #define to_rcar_encoder(e) \
-> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> index ccb5aa8..36383cf4 100644
-> --- a/include/drm/bridge/dw_hdmi.h
-> +++ b/include/drm/bridge/dw_hdmi.h
-> @@ -171,5 +171,6 @@ enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
->  void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
->  			    bool force, bool disabled, bool rxsense);
->  void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
-> +void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag);
->  
->  #endif /* __IMX_HDMI_H__ */
 
 -- 
-Regards,
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-Laurent Pinchart
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
