@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CFEC4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 07:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3187AC4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6B2B20855
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 07:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3ABA20855
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:00:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="lN6MIJ8v"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="ISjZJrDl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfDDH7o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 03:59:44 -0400
-Received: from mout.gmx.net ([212.227.15.18]:39543 "EHLO mout.gmx.net"
+        id S1727096AbfDDIAE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 04:00:04 -0400
+Received: from mout.gmx.net ([212.227.15.18]:37907 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726031AbfDDH7o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Apr 2019 03:59:44 -0400
+        id S1726031AbfDDIAE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Apr 2019 04:00:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1554364772;
-        bh=4dryxbjqDuB2mQedf9JoKOfNokVuiMRomlk/hAQCRus=;
+        s=badeba3b8450; t=1554364795;
+        bh=tKaCWkj0cKu0yAMeQBYUolSuep7uqRa3nEpRf4rre8g=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=lN6MIJ8v2y4dvzu9yHwXtO0Hke9LgXfp8gYRJAke7MfxH30ctyP3haG3f9/AhEmUs
-         LLXmAyOaooqn+xBEuKABKHwbrhPgRrPOGSbyPA/B11kZq+wQgfjD2aWpEA0iyvCQO8
-         RAT19bwdOX2lgBvh3i1/kRXna02ZkNdEiweLqxyM=
+        b=ISjZJrDlrkkl9G2xt3HdheY7Prh+ZTshlpC3ZnTi5E85Jlmnza3B5pS8bloQNfsIY
+         6yPIbTZ/FLhwUzuTFlyaQnhd3dMRc/qkn3AjGZ3hIdSy7Na+d3t8yHqYUlCvuHlOsY
+         +BSkco87CDem1Xnk+9NbxL7GiAn5sCxsAWoLpbz8=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.11.10] ([185.137.174.251]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MZTP3-1hURTN07bx-00LBDp; Thu, 04
- Apr 2019 09:59:32 +0200
+Received: from [192.168.11.10] ([185.137.174.251]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MLeoF-1hCEP20KVn-000tie; Thu, 04
+ Apr 2019 09:59:55 +0200
 Subject: Re: [PATCH v2] clk: x86: Add system specific quirk to mark clocks as
  critical
-To:     Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org,
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Darren Hart <dvhart@infradead.org>,
@@ -42,71 +44,66 @@ Cc:     platform-driver-x86@vger.kernel.org,
 References: <20190328124939.23139-1-dave.mueller@gmx.ch>
  <20190403140857.1130-1-dave.mueller@gmx.ch>
  <ed8c07ff-5719-9179-424c-13b0891605f7@redhat.com>
+ <CAHp75VdT_4e1F51YfRVtmPBmT+ZbwvjVGJAY5uhC=QMKxyANPQ@mail.gmail.com>
+ <d8f96161-9ab8-2300-35fb-9e2b2e442c1d@redhat.com>
 From:   =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>
 Organization: Privat
-Message-ID: <6fdd8567-51fc-3931-9322-b71081b2b9ea@gmx.ch>
-Date:   Thu, 4 Apr 2019 10:00:03 +0200
+Message-ID: <f0ec3df1-f142-29c6-5f1e-baab95f93665@gmx.ch>
+Date:   Thu, 4 Apr 2019 10:00:26 +0200
 User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
  SeaMonkey/2.49.4
 MIME-Version: 1.0
-In-Reply-To: <ed8c07ff-5719-9179-424c-13b0891605f7@redhat.com>
+In-Reply-To: <d8f96161-9ab8-2300-35fb-9e2b2e442c1d@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JSijmQh/NYoHpLB/UqH24mJsxXdren9tuRl9vvFpsaXoQpnr+34
- xXcq5ZceSBK/fHODamY5W43+YanQYqxMOnF+nYQlxKtQ/FmbCNX8J/cSvyHqXS09muF8wx9
- 8+n4CpT0IkYj+TCPBwM66NKfelc80gH7drDB8MMyuyZJXOWTtgj1zON11q5siOuYCVCLCBi
- ZuVaU53clTcvedF3C0bCw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CMNg1GOsuvg=:yR1MpnTg0mI+DbR9SA14x8
- tmE4LrC+PI7JsZ8LajBz84FsS2lHrdcEMltN3qscgSKNubJZp5E9yurz4SGALwGbXed+U4qS6
- 6sRdgQEoPHq91cRgJ1twHvdwo4DFwkvrYJ/Vc8vMVTXUMgz+B3sXWBDymcyDBbok6INLT7VxJ
- 6+uqyHOOC2RiAZyULSbFIyJBdYVcvsvSNuMVTqxLZGO1NKZpZp8XxdhYbdOXfDw2WN/SiYnxx
- 995/aqVfsVh4/FOWezGtw+U3PIsewy4/oXF5RRejeGLEdNvQUpB0cyt3h+LKhaQYfqSU27JDP
- /+GPoIIO//pooFdZmQ4EaaKS+F7IoL10EeDBDv9XOPEkKBgAYJqILO+Gg8OnQIOLzNmtbnchK
- 7xVOWBCoZiTV2cHHTml9oCGf0isQa2ed5zYr2kFfMsmd4TtBUmdcVPzbVxDHb2tA8GCmusjLF
- 9udbSk2MwV6M2IbbWKUdVEvSZ8901bSFejrKRzo0K1gesSJ3oaU5BR49FcqX2Mh/xYKWkiwCX
- gqc8vxa5F2J6OGMoEbycsyw5knfteUQZnB2vj2e+It2LI5Z0kzrBi7F7oQ7yXgN5m+fzvNjIR
- nG8bfC5br3au+3mhwai5SEobUAdiZGh7E32ZEl/mWgwskSXE0rE/MoZv/f1xWPLXSehONYwJl
- 4wb0ptjxVZIA03PF80zGWEN5xeNiAWTx3Ed03MnAqi5IEwS8O2L4pxFTpex49ambeU3hGb5WD
- evgCCQqggqRpvp6OIsWr8ZxqQX4Gl/NGIw42Xdm4FsRHTxijUN4lzTI3SyUUYVLo5GbVo9zZK
- bvHUjeHmVo3WgNS6eZe9pgl3pcWKOlg0OWu5nfTcu/OxZCK4hiu7E0+/3jPLoyF3cVQzP91Px
- gaZ4do55+/DKtMxVc3iruXPQz/47hMLqLcEOV9w6pMjIqfsE6dNpLSh4hwPw4pPUZ5tKnjVjw
- SCLcm3FX14g==
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:CVcui8T+QxsxNXSMOfny90BWgWmfCRb6UlziYBMdxJ/2Fs+269X
+ IEDSm7kCJqmTVcq7an5qGttI8z3DLcdYWXUm+pIighgkz9G+lKX86RjRr4DxPqd5L1CuGFM
+ m6Lcu/gp3ANGe+Azxtmjjn45zQqXgcDqhaaTo0Jhomu9dR1iojgxPEGS1rmXnYwUQVljhmD
+ V2V3VvU5IcFRpKrBhG1Og==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:EdUh1UrSMdE=:Z0w0HmMvaw+oKEt+7nhFol
+ o7yMZwmuGYaB2E25870YSU5PpUSvIPaDBBUgl9iTnUnldFTrrlhV3G0jr6g0hmfKwOTdqrWO0
+ NOT4CMv7R+mEyyJc1By1z8VJ5F+gSZg9UjcDlf2U5vObZgz+8o9hg4Cxw/lX/83ThxCOgsqEa
+ hdvk76jCqaqc75pqy6DAkYx14SXTeoApEyEMu2pNSSnE0/GrC5QnED0HwNU4+MCb/gIwqFeYY
+ x8cHR25MXejd1CWJFUgJAbU/CP7ZS1n7AjCHzt6VvL4PXp/bos9BajNj7lhqd3KA72DHIxGmj
+ OFT1BWeCyjxOGmpTRUfyv+I1BAohNeTrHiRXeA6uUmaGbeKxICr9tQN9GACjiwLvg3/O8zLQs
+ GiU0Y3aGwweyPeM6za1+VOGGmhKJYk7cOZqTGq9GYuPs6ZMMt3Cn8Jd1VSDg2ivNDbt7biTUD
+ TVrHd1dfryQTgZzu0pEP/E13NpD28kyNOS2hifTKUWTbIxnZ+Z1sgtITXTvaXgufHWMueFhP1
+ LSLBsT396SeHKli+/6/uev11UhnkframwJtUUdi7DWJOTixQ8w3HmP3ZcuX0Ucr4bZ7LoBD6l
+ /LHrSI1P416Jl6vkSG3ckG+oRRAovgcT4QlIjeEo3OcpOMnyvJMXTgJSQFgOgDcHl9MKgKkbW
+ +/TllDGQ1YXoANkCCmY8QnhnHDu6dyxWLxDIgZ2to9RhASL27GSRWYuCCFxjzjKOe+mDMtqmc
+ r9Ma+K5cDB4jXRYyavc3Tvjp1s27khi8xazRTZ8qeQ3LchdLF7oBDTkvuJ3iL+6zkm9MatXu2
+ L8DPfPSsaKUtx+wMzR0CbzIjsvrZ4Oc8KMVofjIgyvYwkzKqCBcySX+qAfATxtteE3sDyrfrW
+ AkorCpNFh0fdwu7LNNsmPvB/HLlW08fELaeXSdhAaYIAIDsC/u3XjMYRtckA/QY+MDq80mgwX
+ a3pmUXIOHgw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello
-
-Thanks for the review.
-
-Hans de Goede wrote:
->> +/*
->> + * Some systems need one or more of their pmc_plt_clks to be
->> + * marked as critical
->> + */
->> +static const struct dmi_system_id critclk_systems[] __initconst =3D {
->> +=C2=A0=C2=A0=C2=A0 {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ident =3D "MPL CEC1x",
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .matches =3D {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DMI=
-_MATCH(DMI_SYS_VENDOR, "MPL AG"),
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DMI=
-_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
->> +=C2=A0=C2=A0=C2=A0 },
->
-> You need an empty terminating entry here, otherwise the dmi functions
-> will keep walking the array, so you need to add:
->
-> =C2=A0=C2=A0=C2=A0=C2=A0{}
->
-> here.
-
-Arrgh, shame on me.
-
-Is there a rule / recommendation how the sentinel entry should look
-like? In the kernel sources I see a "{}", "{ }", "{ /*sentinel*/ }", ...
-
-
-Dave
+SGFucyBkZSBHb2VkZSB3cm90ZToNCj4gT24gMDMtMDQtMTkgMTc6MzYsIEFuZHkgU2hldmNoZW5r
+byB3cm90ZToNCj4+IE9uIFdlZCwgQXByIDMsIDIwMTkgYXQgNjozMSBQTSBIYW5zIGRlIEdvZWRl
+IDxoZGVnb2VkZUByZWRoYXQuY29tPiB3cm90ZToNCj4+PiBPbiAwMy0wNC0xOSAxNjowOCwgRGF2
+aWQgTcO8bGxlciB3cm90ZToNCj4+DQo+Pj4+IMKgwqDCoMKgwqDCoCBjbGtfZGF0YS0+YmFzZSA9
+IHBtY19yZWdtYXA7IC8qIG9mZnNldCBpcyBhZGRlZCBieSBjbGllbnQgKi8NCj4+Pj4gwqDCoMKg
+wqDCoMKgIGNsa19kYXRhLT5jbGtzID0gcG1jX2RhdGEtPmNsa3M7DQo+Pj4+ICvCoMKgwqDCoCBp
+ZiAoZCkgew0KPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNsa19kYXRhLT5jaGtfY3Jp
+dGNsa3MgPSB0cnVlOw0KPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHByX2luZm8oIiVz
+IGNyaXRjbGtzIHF1aXJrIGVuYWJsZWRcbiIsIGQtPmlkZW50KTsNCj4+Pj4gK8KgwqDCoMKgIH0N
+Cj4+Pj4NCj4+Pj4gwqDCoMKgwqDCoMKgIGNsa2RldiA9IHBsYXRmb3JtX2RldmljZV9yZWdpc3Rl
+cl9kYXRhKCZwZGV2LT5kZXYsDQo+Pj4+ICJjbGstcG1jLWF0b20iLA0KPj4+PiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgUExBVEZPUk1fREVWSURfTk9ORSwNCj4+Pg0KPj4+IE5v
+cm1hbGx5IEkgd291bGQgYmUgZmluZSB3aXRoIHlvdXIgY2hvaWNlIHRvIHVzZSBkbWlfZmlyc3Rf
+bWF0Y2goKSwNCj4+PiBidXQgc2luY2UNCj4+PiB5b3UgbmVlZCB0byByZXNwaW4gYW55d2F5LCBj
+YW4geW91IGNoYW5nZSB0aGlzIHRvOg0KPj4+DQo+Pj4gwqDCoMKgwqDCoMKgwqDCoCBpZiAoZG1p
+X2NoZWNrX3N5c3RlbShjcml0Y2xrX3N5c3RlbXMpKSB7DQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgY2xrX2RhdGEtPmNoa19jcml0Y2xrcyA9IHRydWU7DQo+Pj4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcHJfaW5mbygiJXMgY3JpdGNsa3MgcXVpcmsgZW5h
+YmxlZFxuIiwgZC0+aWRlbnQpOw0KPj4+IMKgwqDCoMKgwqDCoMKgwqAgfQ0KPj4+DQo+Pj4gVGhh
+dCB3aWxsIGFsbG93IHlvdSB0byBkcm9wIHRoZSAnZCcgdmFyaWFibGUgZGVjbGFyYXRpb24gYWxs
+IHRvZ2V0aGVyDQo+Pj4gYW5kIGlzDQo+Pj4gc29tZXdoYXQgY2xlYW5lciBJTUhPLg0KPj4NCj4+
+IHByX2luZm8oKSByZWxpZXMgb24gaXQgQUZBSUNTLg0KPiANCj4gQWggcmlnaHQgSSBtaXNzZWQg
+dGhhdCwgSSB3b3VsZCBqdXN0IGRvOiBwcl9pbmZvKCJTeXN0ZW0gaXMgb24gY3JpdGNsa3MNCj4g
+cXVpcmsgbGlzdCwgY3JpdGNsa3MgcXVpcmsgZW5hYmxlZFxuIik7DQo+IGJ1dCBrZWVwaW5nIHRo
+ZSBzb2x1dGlvbiB3aXRoIGlkZW50IGlzIGZpbmUgdG9vLg0KDQpJZiBpdCBpcyBPSywgSSB3aWxs
+IGtlZXAgdGhlICJkbWlfZmlyc3RfbWF0Y2goKSIgaW1wbGVtZW50YXRpb24uDQoNCg0KRGF2ZQ0K
