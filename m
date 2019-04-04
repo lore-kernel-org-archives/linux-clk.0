@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA92C10F05
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF47C4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 279622075E
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 697C52075E
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="go4HWrF6"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wNV8mdkL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfDDIMW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 04:12:22 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53002 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727441AbfDDIMW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:12:22 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x348CJt4038576;
-        Thu, 4 Apr 2019 03:12:19 -0500
+        id S1727310AbfDDIM0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 04:12:26 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45356 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfDDIM0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:12:26 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x348CMS0057230;
+        Thu, 4 Apr 2019 03:12:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1554365539;
-        bh=c/jFE4H+RDbXA+RxZ0DS/oxFw6yjzvGOoogluh+TCZ8=;
+        s=ti-com-17Q1; t=1554365542;
+        bh=GwjGrX+awpRwIvOKB/u2mBhh41tqKddpveT+XCA7POY=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=go4HWrF6kptP3w6JtTkQDukOcUSiTEKGWM4pJkhjpFcXU2/Xf3t4ocR7W65XS8Z//
-         MnYX8Ehh+twdmHiJ43wyu0LCy9WEciOW9o4kkMd6guO3plrDDD/Sd+UGyell2O6K0a
-         UhRNgOMauPzPKJF2IuhKpzoPbNelKclezmV1vxZk=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x348CJQQ004684
+        b=wNV8mdkL7qq6iteV9heV1oVmdwveu+RuSXlQANZvvu+oVWW3I3yLPCxNyEKRz7NcE
+         AePiXM9ihSRSUeH3i6s4eabKNnqJQeh5lSW0l9T7zn2R2AEjp6tHFuW7dFtq0PQmQ5
+         njL3svJRIUKNyerdiTMZbEBCBCZmmW7sI3nl6vdQ=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x348CLZ9052877
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 4 Apr 2019 03:12:19 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 4 Apr 2019 03:12:21 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 4 Apr
- 2019 03:12:16 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 03:12:21 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 4 Apr 2019 03:12:16 -0500
+ Frontend Transport; Thu, 4 Apr 2019 03:12:20 -0500
 Received: from gomoku.home (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x348C8GA093305;
-        Thu, 4 Apr 2019 03:12:15 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x348C8GB093305;
+        Thu, 4 Apr 2019 03:12:17 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <sboyd@kernel.org>, <mturquette@baylibre.com>
 CC:     <tony@atomide.com>
-Subject: [PATCH 3/6] clk: ti: dra7x: prevent non-existing clkctrl clocks from registering
-Date:   Thu, 4 Apr 2019 11:11:04 +0300
-Message-ID: <1554365467-1325-4-git-send-email-t-kristo@ti.com>
+Subject: [PATCH 4/6] clk: ti: dra7: disable the RNG and TIMER12 clkctrl clocks on HS devices
+Date:   Thu, 4 Apr 2019 11:11:05 +0300
+Message-ID: <1554365467-1325-5-git-send-email-t-kristo@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1554365467-1325-1-git-send-email-t-kristo@ti.com>
 References: <1554365467-1325-1-git-send-email-t-kristo@ti.com>
@@ -64,101 +64,125 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Certain clkctrl clocks (like the USB_OTG_SS4) do not exist on some
-variants of the dra7x SoC. Append a flag for these clocks and skip
-the registration in cases where the clocks do not exist.
+RNG and TIMER12 are reserved for secure side usage only on HS devices,
+so disable their clkctrl clocks on HS SoCs also.
 
-Reported-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Tested-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/clk/ti/clk-7xx-compat.c |  2 +-
- drivers/clk/ti/clk-7xx.c        |  2 +-
- drivers/clk/ti/clkctrl.c        | 14 ++++++++++++++
- drivers/clk/ti/clock.h          |  6 ++++++
- 4 files changed, 22 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap2/clock.c     | 3 +++
+ drivers/clk/ti/clk-7xx-compat.c | 4 ++--
+ drivers/clk/ti/clk-7xx.c        | 4 ++--
+ drivers/clk/ti/clkctrl.c        | 3 +++
+ drivers/clk/ti/clock.h          | 9 +++++----
+ include/linux/clk/ti.h          | 1 +
+ 6 files changed, 16 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 42881f2..3e0f09c 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -119,6 +119,9 @@ void __init ti_clk_init_features(void)
+ 	if (cpu_is_omap343x())
+ 		features.flags |= TI_CLK_DPLL_HAS_FREQSEL;
+ 
++	if (omap_type() == OMAP2_DEVICE_TYPE_GP)
++		features.flags |= TI_CLK_DEVICE_TYPE_GP;
++
+ 	/* Idlest value for interface clocks.
+ 	 * 24xx uses 0 to indicate not ready, and 1 to indicate ready.
+ 	 * 34xx reverses this, just to keep us on our toes
 diff --git a/drivers/clk/ti/clk-7xx-compat.c b/drivers/clk/ti/clk-7xx-compat.c
-index e3cb7f0..0d53bd0 100644
+index 0d53bd0..b3cd229 100644
 --- a/drivers/clk/ti/clk-7xx-compat.c
 +++ b/drivers/clk/ti/clk-7xx-compat.c
-@@ -362,7 +362,7 @@
- 	{ DRA7_MMC2_CLKCTRL, dra7_mmc2_bit_data, CLKF_SW_SUP, "l3init_cm:clk:0010:25" },
- 	{ DRA7_USB_OTG_SS2_CLKCTRL, dra7_usb_otg_ss2_bit_data, CLKF_HW_SUP, "dpll_core_h13x2_ck" },
- 	{ DRA7_USB_OTG_SS3_CLKCTRL, NULL, CLKF_HW_SUP, "dpll_core_h13x2_ck" },
--	{ DRA7_USB_OTG_SS4_CLKCTRL, NULL, CLKF_HW_SUP, "dpll_core_h13x2_ck" },
-+	{ DRA7_USB_OTG_SS4_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_DRA74 | CLKF_SOC_DRA76, "dpll_core_h13x2_ck" },
- 	{ DRA7_SATA_CLKCTRL, dra7_sata_bit_data, CLKF_SW_SUP, "func_48m_fclk" },
- 	{ DRA7_PCIE1_CLKCTRL, dra7_pcie1_bit_data, CLKF_SW_SUP, "l4_root_clk_div", "pcie_clkdm" },
- 	{ DRA7_PCIE2_CLKCTRL, dra7_pcie2_bit_data, CLKF_SW_SUP, "l4_root_clk_div", "pcie_clkdm" },
+@@ -662,7 +662,7 @@
+ 	{ DRA7_AES1_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div", "l4sec_clkdm" },
+ 	{ DRA7_AES2_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div", "l4sec_clkdm" },
+ 	{ DRA7_DES_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div", "l4sec_clkdm" },
+-	{ DRA7_RNG_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div", "l4sec_clkdm" },
++	{ DRA7_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "l3_iclk_div", "l4sec_clkdm" },
+ 	{ DRA7_SHAM_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div", "l4sec_clkdm" },
+ 	{ DRA7_UART7_CLKCTRL, dra7_uart7_bit_data, CLKF_SW_SUP, "l4per_cm:clk:01d0:24", "l4per2_clkdm" },
+ 	{ DRA7_UART8_CLKCTRL, dra7_uart8_bit_data, CLKF_SW_SUP, "l4per_cm:clk:01e0:24", "l4per2_clkdm" },
+@@ -704,7 +704,7 @@
+ 	{ DRA7_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ DRA7_GPIO1_CLKCTRL, dra7_gpio1_bit_data, CLKF_HW_SUP, "wkupaon_iclk_mux" },
+ 	{ DRA7_TIMER1_CLKCTRL, dra7_timer1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0020:24" },
+-	{ DRA7_TIMER12_CLKCTRL, NULL, 0, "secure_32k_clk_src_ck" },
++	{ DRA7_TIMER12_CLKCTRL, NULL, CLKF_SOC_NONSEC, "secure_32k_clk_src_ck" },
+ 	{ DRA7_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ DRA7_UART10_CLKCTRL, dra7_uart10_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0060:24" },
+ 	{ DRA7_DCAN1_CLKCTRL, dra7_dcan1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0068:24" },
 diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index 597fb4a..098c342 100644
+index 098c342..79186b9 100644
 --- a/drivers/clk/ti/clk-7xx.c
 +++ b/drivers/clk/ti/clk-7xx.c
-@@ -348,7 +348,7 @@
- 	{ DRA7_L3INIT_MMC2_CLKCTRL, dra7_mmc2_bit_data, CLKF_SW_SUP, "l3init-clkctrl:0010:25" },
- 	{ DRA7_L3INIT_USB_OTG_SS2_CLKCTRL, dra7_usb_otg_ss2_bit_data, CLKF_HW_SUP, "dpll_core_h13x2_ck" },
- 	{ DRA7_L3INIT_USB_OTG_SS3_CLKCTRL, NULL, CLKF_HW_SUP, "dpll_core_h13x2_ck" },
--	{ DRA7_L3INIT_USB_OTG_SS4_CLKCTRL, NULL, CLKF_HW_SUP, "dpll_core_h13x2_ck" },
-+	{ DRA7_L3INIT_USB_OTG_SS4_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_DRA74 | CLKF_SOC_DRA76, "dpll_core_h13x2_ck" },
- 	{ DRA7_L3INIT_SATA_CLKCTRL, dra7_sata_bit_data, CLKF_SW_SUP, "func_48m_fclk" },
- 	{ DRA7_L3INIT_OCP2SCP1_CLKCTRL, NULL, CLKF_HW_SUP, "l4_root_clk_div" },
- 	{ DRA7_L3INIT_OCP2SCP3_CLKCTRL, NULL, CLKF_HW_SUP, "l4_root_clk_div" },
+@@ -590,7 +590,7 @@
+ 	{ DRA7_L4SEC_AES1_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
+ 	{ DRA7_L4SEC_AES2_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
+ 	{ DRA7_L4SEC_DES_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
+-	{ DRA7_L4SEC_RNG_CLKCTRL, NULL, CLKF_HW_SUP, "" },
++	{ DRA7_L4SEC_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "" },
+ 	{ DRA7_L4SEC_SHAM_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
+ 	{ 0 },
+ };
+@@ -757,7 +757,7 @@
+ 	{ DRA7_WKUPAON_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ DRA7_WKUPAON_GPIO1_CLKCTRL, dra7_gpio1_bit_data, CLKF_HW_SUP, "wkupaon_iclk_mux" },
+ 	{ DRA7_WKUPAON_TIMER1_CLKCTRL, dra7_timer1_bit_data, CLKF_SW_SUP, "wkupaon-clkctrl:0020:24" },
+-	{ DRA7_WKUPAON_TIMER12_CLKCTRL, NULL, 0, "secure_32k_clk_src_ck" },
++	{ DRA7_WKUPAON_TIMER12_CLKCTRL, NULL, CLKF_SOC_NONSEC, "secure_32k_clk_src_ck" },
+ 	{ DRA7_WKUPAON_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ DRA7_WKUPAON_UART10_CLKCTRL, dra7_uart10_bit_data, CLKF_SW_SUP, "wkupaon-clkctrl:0060:24" },
+ 	{ DRA7_WKUPAON_DCAN1_CLKCTRL, dra7_dcan1_bit_data, CLKF_SW_SUP, "wkupaon-clkctrl:0068:24" },
 diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 639f515..4cdeb8d 100644
+index 4cdeb8d..96d65a1 100644
 --- a/drivers/clk/ti/clkctrl.c
 +++ b/drivers/clk/ti/clkctrl.c
-@@ -446,6 +446,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 	u32 addr;
- 	int ret;
- 	char *c;
-+	u16 soc_mask = 0;
- 
- 	if (!(ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) &&
- 	    of_node_name_eq(node, "clk"))
-@@ -469,6 +470,13 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 		else
- 			data = dra7_clkctrl_data;
- 	}
-+
-+	if (of_machine_is_compatible("ti,dra72"))
-+		soc_mask = CLKF_SOC_DRA72;
-+	if (of_machine_is_compatible("ti,dra74"))
-+		soc_mask = CLKF_SOC_DRA74;
-+	if (of_machine_is_compatible("ti,dra76"))
-+		soc_mask = CLKF_SOC_DRA76;
+@@ -509,6 +509,9 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 		data = dm816_clkctrl_data;
  #endif
- #ifdef CONFIG_SOC_AM33XX
- 	if (of_machine_is_compatible("ti,am33xx")) {
-@@ -562,6 +570,12 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 	reg_data = data->regs;
  
- 	while (reg_data->parent) {
-+		if ((reg_data->flags & CLKF_SOC_MASK) &&
-+		    (reg_data->flags & soc_mask) == 0) {
-+			reg_data++;
-+			continue;
-+		}
++	if (ti_clk_get_features()->flags & TI_CLK_DEVICE_TYPE_GP)
++		soc_mask |= CLKF_SOC_NONSEC;
 +
- 		hw = kzalloc(sizeof(*hw), GFP_KERNEL);
- 		if (!hw)
- 			return;
+ 	while (data->addr) {
+ 		if (addr == data->addr)
+ 			break;
 diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 4223a39..773e2c4 100644
+index 773e2c4..e4b8392 100644
 --- a/drivers/clk/ti/clock.h
 +++ b/drivers/clk/ti/clock.h
-@@ -83,6 +83,12 @@ enum {
+@@ -83,11 +83,12 @@ enum {
  #define CLKF_HW_SUP			BIT(6)
  #define CLKF_NO_IDLEST			BIT(7)
  
-+#define CLKF_SOC_MASK			GENMASK(10, 8)
-+
-+#define CLKF_SOC_DRA72			BIT(8)
-+#define CLKF_SOC_DRA74			BIT(9)
-+#define CLKF_SOC_DRA76			BIT(10)
-+
+-#define CLKF_SOC_MASK			GENMASK(10, 8)
++#define CLKF_SOC_MASK			GENMASK(11, 8)
+ 
+-#define CLKF_SOC_DRA72			BIT(8)
+-#define CLKF_SOC_DRA74			BIT(9)
+-#define CLKF_SOC_DRA76			BIT(10)
++#define CLKF_SOC_NONSEC			BIT(8)
++#define CLKF_SOC_DRA72			BIT(9)
++#define CLKF_SOC_DRA74			BIT(10)
++#define CLKF_SOC_DRA76			BIT(11)
+ 
  #define CLK(dev, con, ck)		\
  	{				\
- 		.lk = {			\
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 2821f7c..1e8ef96 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -294,6 +294,7 @@ struct ti_clk_features {
+ #define TI_CLK_DISABLE_CLKDM_CONTROL		BIT(2)
+ #define TI_CLK_ERRATA_I810			BIT(3)
+ #define TI_CLK_CLKCTRL_COMPAT			BIT(4)
++#define TI_CLK_DEVICE_TYPE_GP			BIT(5)
+ 
+ void ti_clk_setup_features(struct ti_clk_features *features);
+ const struct ti_clk_features *ti_clk_get_features(void);
 -- 
 1.9.1
 
