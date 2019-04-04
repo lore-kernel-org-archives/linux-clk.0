@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61927C4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA73C4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25BD42075E
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C0342075E
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 08:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N8TEA4hR"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZHhZsnLr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfDDIMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 04:12:19 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35248 "EHLO
+        id S1727314AbfDDIMW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 04:12:22 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:35304 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbfDDIMT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:12:19 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x348CGf2105650;
-        Thu, 4 Apr 2019 03:12:16 -0500
+        with ESMTP id S1727321AbfDDIMV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 04:12:21 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x348CJ6r105729;
+        Thu, 4 Apr 2019 03:12:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1554365536;
-        bh=Q2946IrUmlnaEqB0iIRGBbIKN7zWtT1klPpYZLnTdzs=;
+        s=ti-com-17Q1; t=1554365539;
+        bh=zIf/X6VrPJCu25i6tJISEyLUL/53b+r8hYLAt8o0Gd4=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=N8TEA4hRxEzTo+iZ0AiQvugUQV7KW2zpTsoPeqXoaKjPzDvWPyO4OSkcBSsEZu/cS
-         RaeHA17m3qHkZXEyx2f7pGcbdFLJHK9DoElYEfx43ReKpsNz3DUlCXU92o8Wy/osxl
-         0QdqfJzGqsvWuEZt/UjLobDB5dHwtL5fq6wn4YZQ=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x348CGjE073317
+        b=ZHhZsnLru7MxVVMKxVPNp2fRTjqKei6On40D0gV+S5ZWYIFU7QDcBnkuX5/nYN9I3
+         9DLaFxedxaG6ZzT2kSv1Qib1RySVsMRhDZ6apgxQbDdztiCg9uzxKLUIRf+niotmeD
+         LsAXcUV+3r3mP2TTk2q3KzkxAShTx2lB2HE9d5LE=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x348CIfV004647
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 4 Apr 2019 03:12:16 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 4 Apr 2019 03:12:19 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 4 Apr
- 2019 03:12:14 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 03:12:12 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 4 Apr 2019 03:12:14 -0500
+ Frontend Transport; Thu, 4 Apr 2019 03:12:12 -0500
 Received: from gomoku.home (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x348C8G9093305;
-        Thu, 4 Apr 2019 03:12:13 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x348C8G8093305;
+        Thu, 4 Apr 2019 03:12:11 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <sboyd@kernel.org>, <mturquette@baylibre.com>
 CC:     <tony@atomide.com>
-Subject: [PATCH 2/6] ARM: omap2+: hwmod: drop CLK_IS_BASIC flag usage
-Date:   Thu, 4 Apr 2019 11:11:03 +0300
-Message-ID: <1554365467-1325-3-git-send-email-t-kristo@ti.com>
+Subject: [PATCH 1/6] clk: ti: export the omap2_clk_is_hw_omap call
+Date:   Thu, 4 Apr 2019 11:11:02 +0300
+Message-ID: <1554365467-1325-2-git-send-email-t-kristo@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1554365467-1325-1-git-send-email-t-kristo@ti.com>
 References: <1554365467-1325-1-git-send-email-t-kristo@ti.com>
@@ -64,32 +64,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CLK_IS_BASIC flag is about to get deprecated, and as such, can't be used.
-Instead, the API call for checking whether a clock is of type hw_omap shall
-be used, so convert the code to use this.
+There is one instance outside the TI clock driver that needs the info
+whether a clock is an OMAP HW clock or not. Thus, move the function
+declaration into the public header.
 
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- arch/arm/mach-omap2/omap_hwmod.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/ti/clock.h | 1 -
+ include/linux/clk/ti.h | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 3a04c73..baadddf 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -648,10 +648,10 @@ static struct clockdomain *_get_clkdm(struct omap_hwmod *oh)
- 	if (oh->clkdm) {
- 		return oh->clkdm;
- 	} else if (oh->_clk) {
--		if (__clk_get_flags(oh->_clk) & CLK_IS_BASIC)
-+		if (!omap2_clk_is_hw_omap(__clk_get_hw(oh->_clk)))
- 			return NULL;
- 		clk = to_clk_hw_omap(__clk_get_hw(oh->_clk));
--		return  clk->clkdm;
-+		return clk->clkdm;
- 	}
- 	return NULL;
- }
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 1c0fac5..4223a39 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -303,7 +303,6 @@ long omap4_dpll_regm4xen_round_rate(struct clk_hw *hw,
+ int omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
+ 				       struct clk_rate_request *req);
+ int omap2_clk_for_each(int (*fn)(struct clk_hw_omap *hw));
+-bool omap2_clk_is_hw_omap(struct clk_hw *hw);
+ 
+ extern struct ti_clk_ll_ops *ti_clk_ll_ops;
+ 
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 78872ef..2821f7c 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -243,6 +243,7 @@ struct ti_clk_ll_ops {
+ 
+ #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
+ 
++bool omap2_clk_is_hw_omap(struct clk_hw *hw);
+ int omap2_clk_disable_autoidle_all(void);
+ int omap2_clk_enable_autoidle_all(void);
+ int omap2_clk_allow_idle(struct clk *clk);
 -- 
 1.9.1
 
