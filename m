@@ -2,130 +2,140 @@ Return-Path: <SRS0=Ee6+=SG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD4CC4360F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 09:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E581C4360F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 09:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74BF20855
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 09:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E667206B7
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Apr 2019 09:46:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQsfTC1h"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Rf/JZyTr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732260AbfDDJao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 05:30:44 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45294 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732514AbfDDJam (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 05:30:42 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y6so1421511ljd.12;
-        Thu, 04 Apr 2019 02:30:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8NNLJi045b3pBVLneT+xr6DUXUmaWTf4rVzpG/sxtGE=;
-        b=NQsfTC1hHIW3YhQ8dArUzR5kRDWUfKGP0nIfV4oh5psrkW8KHvQFUranPExXAbaFly
-         cVR8uQbxuZhC8aVe7F8AyqtOFN8IcKFW38UdA+vMw2VPCMVyW/5u5q8j75M+TBJAWXl3
-         xJ9xKM4cDlO4e7wlUp7dZNpmyRwmwaZ4b15RwmL4MxPzGaK4gt4KWLn+pUSaYA7DU3gf
-         GPrDX5XA3NmWTpwhrG2TDyvNB3s1JqYnsQ3GI7+rsPAzx9BMnCwi8mlYow+Ird4g3ijW
-         N8E4Um7EDiJawObmaTKoHGusM7BoAEoykSZeKvtD+uEHTwC84fB9jt6P88Ar8ixTUyqT
-         hDwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8NNLJi045b3pBVLneT+xr6DUXUmaWTf4rVzpG/sxtGE=;
-        b=ArJ0wKIbDuVr95Pc0NwSd/BBaIts8/G/iPp9n/nl9ORPM0OI4asE1++kP1QMue3AoK
-         lt6Cs+vLgq8bzWdq3umLhunmkMOE5OHRhCuiK708NnTpAzy765RM72rTNaVV4nzLraXi
-         2WE04XdtXCdDUNYObIfUET94vp53CUV3UfDWVVBoQl3sXEUjSYoVsajCrOj3e+9bEe9k
-         RbukmKhRvw4oBlrHBptNAi7aA3BHmvbK2kDOUyBSBSP8/Engfhu/hx55JRkHpncTXvWZ
-         YReZAHQQdAuyr4rm2qjZn8l6L2ACHa7j0LqCmKVB0UqlhHErzOZ2yBVxG2/6aj6Ot5o3
-         en0A==
-X-Gm-Message-State: APjAAAWeDFsHWO0x2Mc6pZ2uTlWxxUIGctjwcvSDbv/PqW5IFaa1Enqn
-        WNg+MWtjj1Hlcik0uzGi+wqJ90yd
-X-Google-Smtp-Source: APXvYqzRwvpCPtmkkSsCQItAhErItFPfkq+cJn5IAgWuT33bhMTLmZz81RcS1JeOh1g2CXx6kF+gZw==
-X-Received: by 2002:a2e:7007:: with SMTP id l7mr2734832ljc.101.1554370239504;
-        Thu, 04 Apr 2019 02:30:39 -0700 (PDT)
-Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.googlemail.com with ESMTPSA id z17sm899853lja.26.2019.04.04.02.30.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Apr 2019 02:30:38 -0700 (PDT)
-Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20190325074523.26456-1-josephl@nvidia.com>
- <20190325074523.26456-2-josephl@nvidia.com>
- <6bd34a19-26e0-6bdd-ce89-4a30d35e9823@gmail.com>
-Message-ID: <8118ea70-df97-8050-ae12-b2cd4843960b@gmail.com>
-Date:   Thu, 4 Apr 2019 12:30:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1731126AbfDDJps (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Apr 2019 05:45:48 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48438 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730837AbfDDJpo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 05:45:44 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 532EE54B;
+        Thu,  4 Apr 2019 11:45:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1554371142;
+        bh=J0rRRri8U7uPMaAxN1CMsB//nXwnULKtdskoS5st3EE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rf/JZyTrIbKcNv+0eNrigPLBPUliwJNUhykCkJLM7Lw/jLJcj2+KE5mABgVwua2kH
+         kVQ1yqMa1X8qryFw8+IffNX9JEUS9w+cnBqKt4crtY+DWcOM0qw8yoFMtWlQ7BchMe
+         WcLlDxls1A8xHmlC6ttA3BkjQoxNFBM/thuvDAZM=
+Date:   Thu, 4 Apr 2019 12:45:31 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     VenkataRajesh.Kalakodima@in.bosch.com
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 0/8] v4.19.0 Added Color Management Module
+Message-ID: <20190404094531.GB5800@pendragon.ideasonboard.com>
+References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
 MIME-Version: 1.0
-In-Reply-To: <6bd34a19-26e0-6bdd-ce89-4a30d35e9823@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-04.04.2019 12:17, Dmitry Osipenko пишет:
-> 25.03.2019 10:45, Joseph Lo пишет:
->> Add the binding document for the external memory controller (EMC) which
->> communicates with external LPDDR4 devices. It includes the bindings of
->> the EMC node and the EMC table of different rates.
->>
->> To support high rates for LPDDR4, the EMC table must be trained before
->> it can be used for runtime clock switching. It has been done by firmware
->> and merged to the table that Linux kernel uses. For backward
->> compatibility with the devices that had been launched on the market, like
->> Shield and Jetson platforms, the bindings in the EMC table should remain
->> the same. So the firmware can recognize them and merge the trained EMC
->> table for the kernel.
->>
->> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->>  .../nvidia,tegra210-emc.txt                   | 605 ++++++++++++++++++
->>  1 file changed, 605 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
->> new file mode 100644
->> index 000000000000..1f6b6df6d37b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
->> @@ -0,0 +1,605 @@
->> +NVIDIA Tegra210 SoC EMC (external memory controller)
->> +====================================================
->> +
->> +Required properties :
->> +- compatible : should be "nvidia,tegra21-emc", "nvidia,tegra210-emc".
->> +- reg : physical base address and length of the controller's registers.
->> +- clocks : phandles of the possible source clocks
->> +- clock-names : names of the possible source clocks
->> +- #address-cells : should be 1
->> +- #size-cells : should be 0
->> +- nvidia,memory-controller : phandle of the memory controller.
->> +- nvidia,use-ram-code : boolean, indicates whether we should use RAM_CODE in
->> +		        the register to find matching emc-table nodes
->> +
-> 
-> The "interrupts" property is missing. You could use the CLK handshake event to wait for the clock rate change completion instead of polling the register if you didn't rely on the downstream binding, see T20 driver for the example. BTW, I'm wondering if you're going to push other downstream bindings to upstream.. apparently EMC won't be the only binding that that could diverge from the upstream and then it's not obvious whether the locked-down variant of T210 is supportable by upstream at all.
-> 
+Hi Kalakodima,
 
-One solution could be to use a multi-stage bootloader, where the last stage is an opensource part that will take the downstream binding and convert it into a proper one.
+Thank you for the patch.
+
+On Wed, Apr 03, 2019 at 06:44:36PM +0530, VenkataRajesh.Kalakodima@in.bosch.com wrote:
+> From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+> 
+> This patchset adds rcar- display unit color management module (CMM)
+> function feature, Which allows correction and adjustment of the
+> display data, through updating Look up table (gamma) and  Cubic look
+> up table (CTM)  property values 
+> 
+> Base color management module reference code taken from below link,
+> https://github.com/renesas-rcar/du_cmm .
+> - In above code, modified variable namingâ€™s and removed un used
+>   functionalities.
+> - Introduce new functions for queueing cubic look up table and look up
+>   table events.
+> 
+> - Implemented interfaces in color management module to set CLU /LUT
+>   table using standard DRM data structures as input.
+>   Look up table is a 1D-LUT that converts each of three-color
+>   components by using a lookup table. LUT is used for gamma
+>   correction.							
+>   Cubic look up table is a three-dimensional LUT (3D-LUT) that
+>   converts the input three-color-component data into desired three
+>   color Components by using a lookup table
+> 
+> - Implemented atomic check helper functions for enable/disable LUT and
+>   CLU (Gamma and Color Transformation Matrix properties).
+> - Allocated memory necessary for cubic look up table and look up table
+>   and added mode fix up callback function
+> - Added update gamma and color transformation matrix properties in
+>   commit tail function, If any change in property values.
+> 
+> kalakodima venkata rajesh (8):
+>   drm: Add DU CMM support functions
+>   drm: Add DU CMM support boot and clk changes
+>   drm: rcar-du: Give a name to clu table samples
+>   drm: rcar-du: Refactor the code with new functions
+>   drm: rcar-du: Implement interfaces to set clu and lut using drm data
+>     structures
+>   drm: rcar-du: Implement atomic_check to check for gamma and ctm
+>     properties
+>   drm: rcar-du: update gamma and ctm properties in commit tail
+>   drm: rcar-du: Add shutdown callback function in platform_driver
+> 
+>  .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |    5 +
+>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |    5 +
+>  .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |    5 +
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   29 +-
+>  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |    6 +-
+>  .../arm64/boot/dts/renesas/r8a7796-salvator-xs.dts |    4 +
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi           |   25 +-
+>  .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |    7 +-
+>  .../boot/dts/renesas/r8a77965-salvator-xs.dts      |    7 +-
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi          |   27 +-
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c             |    4 +
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c             |    3 +
+>  drivers/clk/renesas/r8a77965-cpg-mssr.c            |  106 +-
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |   35 +
+>  drivers/gpu/drm/rcar-du/Makefile                   |    2 +
+>  drivers/gpu/drm/rcar-du/rcar_du_cmm.c              | 1470 ++++++++++++++++++++
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c             |   82 ++
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   28 +
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c              |   85 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   16 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |    2 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |    1 +
+>  drivers/gpu/drm/rcar-du/rcar_du_group.c            |    5 +
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c              |   25 +
+>  drivers/gpu/drm/rcar-du/rcar_du_regs.h             |   92 ++
+>  include/drm/bridge/dw_hdmi.h                       |    1 +
+>  include/drm/drm_atomic.h                           |   25 +
+>  include/drm/drm_ioctl.h                            |    7 +
+>  28 files changed, 2082 insertions(+), 27 deletions(-)
+>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_cmm.c
+
+First of all, please split changes to DT, to the clock drivers, to the
+dw-hdmi driver, to the DRM core and to the R-Car DU driver in separate
+patches, with appropriate subject lines prefixes for each of them. As
+you're modifying DT bindngs, you also need to update the bindings
+documentation, which should go to a patch of its own.
+
+-- 
+Regards,
+
+Laurent Pinchart
