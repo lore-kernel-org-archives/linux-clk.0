@@ -2,102 +2,123 @@ Return-Path: <SRS0=2G6t=SH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263CFC4360F
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 14:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B83ADC4360F
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 15:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E026421852
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 14:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E27B2175B
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 15:19:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PziBWv9+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PziBWv9+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="luuB6phm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbfDEOez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Apr 2019 10:34:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57364 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbfDEOez (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Apr 2019 10:34:55 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7E51C60159; Fri,  5 Apr 2019 14:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1554474894;
-        bh=VIsPEdtxk39u4KfwGH468mcKyXqkrGIDNNiAHYHYGxI=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=PziBWv9+fnznGMfsNkaLjZT4jp1uS3d1N75byVLGWvDfiOm09LkGmr705pLh2LLKx
-         EJbzP4lDLiyseT7dY5rvVt5ruOfmavoxkGCJnPX3Yi/Rwk0DYFivyCJdB+Q2eO2Fon
-         6Jrdo/nXm8IE/hwBIEaeHd8keybPbppvQ6j8a6Q8=
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A6526030E;
-        Fri,  5 Apr 2019 14:34:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1554474894;
-        bh=VIsPEdtxk39u4KfwGH468mcKyXqkrGIDNNiAHYHYGxI=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=PziBWv9+fnznGMfsNkaLjZT4jp1uS3d1N75byVLGWvDfiOm09LkGmr705pLh2LLKx
-         EJbzP4lDLiyseT7dY5rvVt5ruOfmavoxkGCJnPX3Yi/Rwk0DYFivyCJdB+Q2eO2Fon
-         6Jrdo/nXm8IE/hwBIEaeHd8keybPbppvQ6j8a6Q8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A6526030E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v1] clk: Probe defer clk_get() on orphans
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
-Cc:     bjorn.andersson@linaro.org, georgi.djakov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1549911467-2465-1-git-send-email-jhugo@codeaurora.org>
- <873279a6-0755-2094-ec99-d9e5f6c963dd@codeaurora.org>
- <155191438574.20095.6161802248500300707@swboyd.mtv.corp.google.com>
- <29112c43-790e-e7e4-9e4b-9eda8f5bdb78@codeaurora.org>
-Message-ID: <5eaebfd5-6c46-62ac-e04a-bf68a5bccefc@codeaurora.org>
-Date:   Fri, 5 Apr 2019 08:34:51 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.3
+        id S1730329AbfDEPTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Apr 2019 11:19:39 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43166 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbfDEPTj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Apr 2019 11:19:39 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c8so3448554pfd.10;
+        Fri, 05 Apr 2019 08:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RN1Lrg83FfIWkxdnourqDl71W3vXZvLTSWqnA7ilcK4=;
+        b=luuB6phms8cPAsuYidZ0K9F4qHQZH6g9A8U1Z3v52sm4wsiOjSAgnSrTG4MbcnlxrH
+         OKo5hrq39EKTs9XFdN8P8ZkGCwMyj9XmuGBKfPVwtEiwrtnXX9VW6eCntdDinB7m/KcL
+         djk67HBWkmKkmZ9bSsykYX/sq9kw7UrYu7JXJlc0eoKsGar/dGFnMuFAUZkCA2Qwf9iu
+         x9NAdzTjc4fJxZmQPB8iaUVMWFuO/VuoKVouWP28iykUqRnBpxIjiHLqdO0e/+X9UBDc
+         k/aBlzUjozo9en7Yw0BXInhxJAjRE8aFm0YWn+x9qmE/fWV1qrL1teBTbZN2LpDJT4BJ
+         Iuuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RN1Lrg83FfIWkxdnourqDl71W3vXZvLTSWqnA7ilcK4=;
+        b=KlIcp5EOU32NH2gs6gCs7xesEbFrpyaBiWmS8+qu/q03c2XbQvNt4O1B4l7T25NFsq
+         2aFUaReRGtphDwM1KnqHjFpFnfv1qceTq6Rx/b9oiXhcTo6RbXRg/Iqco6sHDlMEGAmN
+         KXnz7SM5xVzePewH+HPH2tz/z6w0pevAT5DVfzw5LfRO4GFNkO+C2+USyF8Wj3KCrD4C
+         Iu6BDPzDw8XZUUWoOXRuhwkj/YucJRmYc+Nk3qnKqdaa4WelssO4lHbTqAOzBsx9V2tu
+         nKBueXMYqB6xDr3eje02V5cI9/dYMATtXo5LezDEYkXZssqzZtxzykqqArIFWF4Eb8Zm
+         uxBA==
+X-Gm-Message-State: APjAAAV0QKSJ5vCBYVCkPEmnvqzF/QgVSzK+PW2aq614S52EEkTUlYbS
+        yXJFnczDW8NDqTROXf7tBOIZuHdcErpo1nYtpIY=
+X-Google-Smtp-Source: APXvYqzpf1MXwvXN3iMSXlKJsp0bdbFR/cmaTzCDIcv5qg8LDA/hjLoa3DSEV5BtrLTAemuYzTdbt3AF0A9yfbY7JIw=
+X-Received: by 2002:a65:4302:: with SMTP id j2mr12036150pgq.291.1554477578182;
+ Fri, 05 Apr 2019 08:19:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <29112c43-790e-e7e4-9e4b-9eda8f5bdb78@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190328124939.23139-1-dave.mueller@gmx.ch> <20190404141325.21952-1-dave.mueller@gmx.ch>
+In-Reply-To: <20190404141325.21952-1-dave.mueller@gmx.ch>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 5 Apr 2019 18:19:26 +0300
+Message-ID: <CAHp75VeaWLW4GdknPHeh69enOFc_3izcwwpAhKXGJfk45QMLgw@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: x86: Add system specific quirk to mark clocks as critical
+To:     =?UTF-8?Q?David_M=C3=BCller?= <dave.mueller@gmx.ch>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/21/2019 8:50 AM, Jeffrey Hugo wrote:
-> On 3/6/2019 4:19 PM, Stephen Boyd wrote:
->> Quoting Jeffrey Hugo (2019-03-06 13:48:13)
->>> Ping?
->>>
->>> Stephen, I know as this depends on your clock parent handling series
->>> (happens to apply just fine to v2), its not going to be accepted until
->>> that gets sorted out, but do you have any thoughts on if this seems like
->>> an appropriate thing to do, or if you'd like to see a different 
->>> solution?
->>
->> Please don't ping during the merge window. I'll probably look at this
->> patch next week.
->>
-> 
-> Sorry about pinging during the merge window.  At the time, I just 
-> realized the patch has been on list for several weeks with no response, 
-> but hadn't connected the dots that it happened to be the merge window at 
-> that particular moment.
-> 
-> Any update on when you think you might get around to having a look at this?
-> 
+On Thu, Apr 4, 2019 at 5:14 PM David M=C3=BCller <dave.mueller@gmx.ch> wrot=
+e:
+>
+> Since commit 648e921888ad ("clk: x86: Stop marking clocks as
+> CLK_IS_CRITICAL"), the pmc_plt_clocks of the Bay Trail SoC are
+> unconditionally gated off. Unfortunately this will break systems where th=
+ese
+> clocks are used for external purposes beyond the kernel's knowledge. Fix =
+it
+> by implementing a system specific quirk to mark the necessary pmc_plt_clk=
+s
+> as critical.
+>
+> Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+> Signed-off-by: David M=C3=BCller <dave.mueller@gmx.ch>
 
-Ping? (again)
+I'm fine with the patch, though few minor comments below.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> +       /*
+> +        * On some systems, the pmc_plt_clocks already enabled by the
+> +        * firmware are being marked as critical to avoid them being
+> +        * gated by the clock framework
+
+Period would be nice to have at the end.
+
+> +        */
+
+> +       if (d) {
+> +               clk_data->chk_critclks =3D true;
+> +               pr_info("%s critclks quirk enabled\n", d->ident);
+> +       }
+
+I would go with callback, but for now this is okay as well.
+
+> - * @base:      PMC clock register base offset
+> - * @clks:      pointer to set of registered clocks, typically 0..5
+> + * @base:              PMC clock register base offset
+> + * @clks:              pointer to set of registered clocks, typically 0.=
+.5
+
+> + * @chk_critclks:      flag to indicate if firmware enabled pmc_plt_clks
+> + *                     should be marked as critial or not
+
+Perhaps simple critical? And do not touch the rest here.
+
+>   */
+
+--=20
+With Best Regards,
+Andy Shevchenko
