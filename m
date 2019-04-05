@@ -2,174 +2,101 @@ Return-Path: <SRS0=2G6t=SH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1C9C10F0F
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 00:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB677C4360F
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 06:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB24217D9
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 00:02:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBpbr14C"
+	by mail.kernel.org (Postfix) with ESMTP id C27F620700
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 06:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbfDEACT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Apr 2019 20:02:19 -0400
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:46571 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbfDEACT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Apr 2019 20:02:19 -0400
-Received: by mail-pf1-f178.google.com with SMTP id 9so2188874pfj.13;
-        Thu, 04 Apr 2019 17:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wwXPdnH5ICk6KssGxyPxjOp8avxPzVDiI6ehncX/2eo=;
-        b=fBpbr14C8U3Br5BwKSATJ6fSFq9xlTv7JNMcPG4bfSfEf62jhUHJRWPNZpTKZ8d3Si
-         kzVQX337JLvEaN9ODbpNnEMrXS5J1VQGCe2uycRtOENueADd+VRO4nZIfONmJqYe2vDg
-         u0ZA1+Yr+EuD+rCaXbBrSJ2YC45j1A6x4uAVHndCl3kDCFEDKXjt7xds2QuQZECAe9yG
-         gnijSpL103isnV9yQ34aTKHz8XXlrm+dwPKsmI7/b1j8NauUu651jPiBro3opbAdrMtW
-         FHSVrBMhCNnYOBE/KCynR4CMu9m7+sT5JNC5pcxX2bQfi6hha1vWTORlcQOiVeXdD6qb
-         71nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wwXPdnH5ICk6KssGxyPxjOp8avxPzVDiI6ehncX/2eo=;
-        b=PZil6IpFlEJQ/Vqe7z2a1Ht25smIBirZUUPwFWTMgGVstKqqwR881Jrh/GWSGgz0AJ
-         H6rbl6EUlkYG4C1KN9IfIGnvdB5TDUI5aVTC17iW8Ib4CqJJUHYjDbsvRsj882BqBK+A
-         T+NPM+AtrEI0ZF/clQGSgmHSPnT8+ooVZmyXu0rhFdt+urueM6a2MH4iir4TxrKRfXHe
-         dNOFpuWFTzertrXSOxFyywSqJqDadsTuzY2hcXLdWdj7iZ9HtkGZz4GXA17ywX4DI/D3
-         8aFGmWoKtYsXMD6vcrCAtj3Gw0uDm6zc3ZRfLWirSb4ZP+oHzJhOv4tCbI20MLLbXDr3
-         VB3g==
-X-Gm-Message-State: APjAAAWXHc9sqHolyU4/ISEVzy9xzWWMYUCoyktQsBXoheZ4d3EE/Qi7
-        IOKIm59yf4VoTN/kqRBZHM0=
-X-Google-Smtp-Source: APXvYqxS6AfqkDwkcYgBs9jaAxPNwpXZcMfmC19ifYt6kCpP3BDCIzghHo3DTdVqyzlQ3ONB3lPHmw==
-X-Received: by 2002:a63:28c:: with SMTP id 134mr8913056pgc.278.1554422538971;
-        Thu, 04 Apr 2019 17:02:18 -0700 (PDT)
-Received: from localhost.localdomain ([2409:251:20c0:100:fe80:8e59:9ae1:e028])
-        by smtp.gmail.com with ESMTPSA id p26sm43755664pfa.49.2019.04.04.17.02.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Apr 2019 17:02:18 -0700 (PDT)
-From:   NOGUCHI Hiroshi <drvlabo@gmail.com>
-To:     John Crispin <john@phrozen.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        NOGUCHI Hiroshi <drvlabo@gmail.com>
-Subject: [RFC v2 5/5] mips: ralink: mt7620: add nodes for clocks
-Date:   Fri,  5 Apr 2019 09:01:29 +0900
-Message-Id: <20190405000129.19331-6-drvlabo@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190405000129.19331-1-drvlabo@gmail.com>
-References: <20190405000129.19331-1-drvlabo@gmail.com>
+        id S1726694AbfDEGvu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Apr 2019 02:51:50 -0400
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:57390 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbfDEGvu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Apr 2019 02:51:50 -0400
+X-AuditID: c0a8fbf4-519ff700000014c1-2c-5ca6fb04cd18
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 47.48.05313.40BF6AC5; Fri,  5 Apr 2019 08:51:48 +0200 (CEST)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Fri, 5 Apr 2019 08:51:44 +0200
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "jhugo@codeaurora.org" <jhugo@codeaurora.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "jbrunet@baylibre.com" <jbrunet@baylibre.com>
+Subject: Re: [PATCH v3 1/7] clkdev: Hold clocks_mutex while iterating clocks
+ list
+Thread-Topic: [PATCH v3 1/7] clkdev: Hold clocks_mutex while iterating
+ clocks list
+Thread-Index: AQHU6zDhsEv70ksLMUWTxM/SG851haYtACOA
+Date:   Fri, 5 Apr 2019 06:51:43 +0000
+Message-ID: <b3a3052056b787bde94178ed371417359a941f2d.camel@fi.rohmeurope.com>
+References: <20190404215344.6330-1-sboyd@kernel.org>
+         <20190404215344.6330-2-sboyd@kernel.org>
+In-Reply-To: <20190404215344.6330-2-sboyd@kernel.org>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <754FC85CFB2A034C9293C1B78B81256A@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SaUgUURznzcyu4zH1Wq+XltBSQkaWkTYftKwlWL+EYJ9iS0cdd8U9bHbX
+        1MyElPKoDDRxUwvzqjwXsggtXaXSgoiVLcMCj5I8OsywTbNmdvL49P7vd/x//8f7k7jstjSA
+        TNWbWE7PaOVSD6KnabFjN7HYoNp7w+5Bz4z14/TQuJr+XvJBQtsfVUlpW3k3oPsuPpbQrweP
+        0suODoJ22l5h0e5Ku+M1rvz6tsBNWdN8Vmm/chlTto/dkyitdwulyh/WoFi3E56RiYwpIy5V
+        rd9zMMFTM9RSKU3vh5nz5TZpHiiBRcCdRHA/elNwFRQBD1IGHQB1dv8hxMszgEovvMSKAElK
+        YSQqGnYTDD4wAdVf/4ELGhzOYujjbLOL8IZx6P3INC6KjqNfD6aBWO9D+ZMzmFATcDt6VtHn
+        wil4DPVOTblwGd+0z1Hv6uMOw1He/TqXBsCtqDDvi0uDQ39k/bQgEaeGqK7rFS7Wvujz+PJ/
+        XI66naOEMDMOd6K2R3tEazSaG2wnxHobKisedRNH2IQGKieIUuBnWZdgWXNb1rkt69yWde5b
+        QHIXIB2TqlUzJjYslGPNoZxBo+OPJIPOCsRvnn8I/tpibACSQO5FnRxvUMkkTIYxS2cDm0lM
+        7kvFVvDQhkRDcpaGMWriObOWNdoAInG5DxV0h+eoZCYrm+UMK1QgScj9qTONZSoZFJLTWDad
+        5VbYLSQpRxTzmzdu4lg1m5mSqjWt0RjpLjT3CPAxsvpklmPMJk28sC3xRn5dBMqLzz3nFHKN
+        6YyOR0XrINhF9tSOVuPkbO9kNS4j9AY9G+BPHRGSoCDVmPWrQVPAn3+vN1UosF785q/2meIj
+        MD6CNt8UIkzMGhWQB9C30aUBekiSs2AKPuDTOefp7KuKwiaSPA8/CSRa25oqAjf6KSJys08t
+        1OQMa1tQD/nwZ8yhOqfjRYQyeDZBZTV5b097N56x93TlluKq5zvCryH7+drGlIjJ+JElSf5T
+        xZ2vrSpF6+6U0lyFYl4TVa6eCcu8NL3QlUTVlx1RhMgJo4YJC8E5I/MPPB2zJLYDAAA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: NOGUCHI Hiroshi <drvlabo@gmail.com>
----
- arch/mips/boot/dts/ralink/mt7620a.dtsi | 46 ++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 3 deletions(-)
-
-diff --git a/arch/mips/boot/dts/ralink/mt7620a.dtsi b/arch/mips/boot/dts/ralink/mt7620a.dtsi
-index 1f6e5320f486..7c98cb6bb5b9 100644
---- a/arch/mips/boot/dts/ralink/mt7620a.dtsi
-+++ b/arch/mips/boot/dts/ralink/mt7620a.dtsi
-@@ -1,15 +1,27 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <dt-bindings/clock/mt7620-clk.h>
-+
- / {
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 	compatible = "ralink,mtk7620a-soc";
- 
- 	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
- 		cpu@0 {
- 			compatible = "mips,mips24KEc";
-+			device_type = "cpu";
-+			reg = <0>;
- 		};
- 	};
- 
-+	resetc: reset-controller {
-+		compatible = "ralink,rt2880-reset";
-+		#reset-cells = <1>;
-+	};
-+
- 	cpuintc: cpuintc {
- 		#address-cells = <0>;
- 		#interrupt-cells = <1>;
-@@ -17,6 +29,28 @@
- 		compatible = "mti,cpu-interrupt-controller";
- 	};
- 
-+	pll: pll {
-+		compatible = "mediatek,mt7620-pll";
-+		#clock-cells = <1>;
-+		clock-output-names = "cpu", "sys", "periph", "pcmi2s", "xtal";
-+	};
-+
-+	clkctrl: clkctrl {
-+		compatible = "ralink,rt2880-clock";
-+		#clock-cells = <1>;
-+		ralink,sysctl = <&sysc>;
-+
-+		clock-indices =
-+				<12>,
-+				<16>, <17>, <18>, <19>;
-+		clock-output-names =
-+				"uart",
-+				"i2c", "i2s", "spi", "uartl";
-+		clocks =
-+				<&pll MT7620_CLK_PERIPH>,
-+				<&pll MT7620_CLK_PERIPH>, <&pll MT7620_CLK_PCMI2S>, <&pll MT7620_CLK_SYS>, <&pll MT7620_CLK_PERIPH>;
-+	};
-+
- 	palmbus@10000000 {
- 		compatible = "palmbus";
- 		reg = <0x10000000 0x200000>;
-@@ -25,8 +59,8 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 
--		sysc@0 {
--			compatible = "ralink,mt7620a-sysc";
-+		sysc: sysc@0 {
-+			compatible = "ralink,mt7620a-sysc", "syscon";
- 			reg = <0x0 0x100>;
- 		};
- 
-@@ -46,10 +80,16 @@
- 			reg = <0x300 0x100>;
- 		};
- 
--		uartlite@c00 {
-+		uartlite: uartlite@c00 {
- 			compatible = "ralink,mt7620a-uart", "ralink,rt2880-uart", "ns16550a";
- 			reg = <0xc00 0x100>;
- 
-+			clocks = <&clkctrl 19>;
-+			clock-names = "uartl";
-+
-+			resets = <&resetc 19>;
-+			reset-names = "uartl";
-+
- 			interrupt-parent = <&intc>;
- 			interrupts = <12>;
- 
--- 
-2.20.1
-
+SGVsbG8gU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0YWtpbmcgY2FyZSBvZiB0aGlzIQ0KDQpPbiBU
+aHUsIDIwMTktMDQtMDQgYXQgMTQ6NTMgLTA3MDAsIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gV2Ug
+cmVjZW50bHkgaW50cm9kdWNlZCBhIGNoYW5nZSB0byBzdXBwb3J0IGRldm0gY2xrIGxvb2t1cHMu
+IFRoYXQNCj4gY2hhbmdlDQo+IGludHJvZHVjZWQgYSBjb2RlLXBhdGggdGhhdCB1c2VkIGNsa19m
+aW5kKCkgd2l0aG91dCBob2xkaW5nIHRoZQ0KPiAnY2xvY2tzX211dGV4Jy4gVW5mb3J0dW5hdGVs
+eSwgY2xrX2ZpbmQoKSBpdGVyYXRlcyBvdmVyIHRoZSAnY2xvY2tzJw0KPiBsaXN0IGFuZCBzbyB3
+ZSBuZWVkIHRvIHByZXZlbnQgdGhlIGxpc3QgZnJvbSBiZWluZyBtb2RpZmllZCB3aGlsZQ0KPiBp
+dGVyYXRpbmcgb3ZlciBpdCBieSBob2xkaW5nIHRoZSBtdXRleC4gU2ltaWxhcmx5LCB3ZSBkb24n
+dCBuZWVkIHRvDQo+IGhvbGQNCj4gdGhlICdjbG9ja3NfbXV0ZXgnIGJlc2lkZXMgd2hlbiB3ZSdy
+ZSBkZXJlZmVyZW5jaW5nIHRoZSBjbGtfbG9va3VwDQo+IHBvaW50ZXINCg0KLy8vIFNuaXANCg0K
+PiAtb3V0Og0KPiArc3RhdGljIHN0cnVjdCBjbGtfbG9va3VwICpjbGtfZmluZChjb25zdCBjaGFy
+ICpkZXZfaWQsIGNvbnN0IGNoYXINCj4gKmNvbl9pZCkNCj4gK3sNCj4gKwlzdHJ1Y3QgY2xrX2xv
+b2t1cCAqY2w7DQo+ICsNCj4gKwltdXRleF9sb2NrKCZjbG9ja3NfbXV0ZXgpOw0KPiArCWNsID0g
+X19jbGtfZmluZChkZXZfaWQsIGNvbl9pZCk7DQo+ICAJbXV0ZXhfdW5sb2NrKCZjbG9ja3NfbXV0
+ZXgpOw0KPiAgDQo+IC0JcmV0dXJuIGNsID8gY2xrIDogRVJSX1BUUigtRU5PRU5UKTsNCj4gKwly
+ZXR1cm4gY2w7DQo+ICt9DQoNCkkgYW0gbm90IGFuIGV4cGVydCBvbiB0aGlzIGJ1dCByZWFkaW5n
+IGNvbW1pdCBtZXNzYWdlIGFib3dlIGFuZCBzZWVpbmcNCnRoZSBjb2RlIGZvciBjbGtfZmluZCgp
+IGxvb2tzIGEgYml0IHNjYXJ5LiBJZiBJIHVuZGVyc3RhbmQgaXQNCmNvcnJlY3RseSwgdGhlIGNs
+b2Nrc19tdXRleCBzaG91bGQgYmUgaGVsZCB3aGVuIGRlcmVmZXJlbmNpbmcgdGhlDQpjbGtfbG9v
+a3VwIHJldHVybmVkIGJ5IGNsa19maW5kLiBUaGUgY2xrX2ZpbmQgaW1wbGVtZW50YXRpb24gZHJv
+cHMgdGhlDQpsb2NrIGJlZm9yZSByZXR1cm5pbmcgLSB3aGljaCBtYWtlcyBtZSB0aGluayBJIG1p
+c3Mgc29tZXRoaW5nIGhlcmUuIEhvdw0KY2FuIHRoZSBjYWxsZXIgZXZlciBzYWZlbHkgZGVyZWZl
+cmVuY2UgcmV0dXJuZWQgY2xrX2xvb2t1cCBwb2ludGVyPw0KSnVzdCByZWFkaW5nIGFib3dlIG1h
+a2VzIG1lIHRoaW5rIHRoYXQgbG9jayBzaG91bGQgYmUgdGFrZW4gYnkgd2hvZXZlcg0KaXMgY2Fs
+bGluZyB0aGUgY2xrX2ZpbmQsIGFuZCBkcm9wcGVkIG9ubHkgYWZ0ZXIgY2FsbGVyIGhhcyB1c2Vk
+IHRoZQ0KZm91bmQgY2xrX2xvb2t1cCBmb3Igd2hhdGV2ZXIgY2FsbGVyIGludGVuZHMgdG8gdXNl
+IGl0LiBNYXliZSBJIGFtDQptaXNzaW5nIHNvbWV0aGluZz8NCg0KQnIsDQoJTWF0dGkgVmFpdHRp
+bmVuDQo=
