@@ -2,122 +2,77 @@ Return-Path: <SRS0=2G6t=SH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B96ABC282CE
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 20:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BDDC282DC
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 20:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5CF21855
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 20:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554497015;
-	bh=EQcquGL/H8j873Qtr/IVEBdcoXwlt+4bAMRlTfGo12s=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=Ey0iKSPrqcnHYzPl1Mtzcnqc5uLWCK8I/b1F1tpprsWc9r8YKCpcXETlgT2qXIdg5
-	 f38cJhnxLmnOqcCmHLB26jb4lfKs7dRZZLN8Jx9QLasb4nBo4pZuQmZxfgLgNMiB/d
-	 vWJ4v/zUekCtNn2dBgNFs0KQqyl8PME9JpAESVys=
+	by mail.kernel.org (Postfix) with ESMTP id D81B221855
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 20:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbfDEUnf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Apr 2019 16:43:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725967AbfDEUnf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Apr 2019 16:43:35 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1922C206BA;
-        Fri,  5 Apr 2019 20:43:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554497014;
-        bh=EQcquGL/H8j873Qtr/IVEBdcoXwlt+4bAMRlTfGo12s=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=wJ04X2qGwrxWuRA5ZaXcwkyxpSqJzNPOQSWve20yqQjwfyNo9+LJ/CZA25Ua+mBAM
-         shl/v/8tCBD1zGHkJs/9tbu390a5iKAo+OcDVrHuvi372nF42VdGMc65jwwvIzhC4Q
-         CeuJGQqlyhxmtTGXsyEG+hrUDGuQv6afz730JTYg=
-Content-Type: text/plain; charset="utf-8"
+        id S1725973AbfDEUos (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Apr 2019 16:44:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49821 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725967AbfDEUos (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Apr 2019 16:44:48 -0400
+Received: from p5492e2fc.dip0.t-ipconnect.de ([84.146.226.252] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hCVhP-0004OB-Qx; Fri, 05 Apr 2019 22:44:31 +0200
+Date:   Fri, 5 Apr 2019 22:44:31 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paul Cercueil <paul@crapouillou.net>
+cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v11 04/27] clocksource: Add a new timer-ingenic driver
+In-Reply-To: <20190327231631.15708-5-paul@crapouillou.net>
+Message-ID: <alpine.DEB.2.21.1904052241240.1802@nanos.tec.linutronix.de>
+References: <20190327231631.15708-1-paul@crapouillou.net> <20190327231631.15708-5-paul@crapouillou.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAEG3pNCrANkLBeEA_wVU7n4U57X3sd-1EzhUZ_PHBryqPHoAaQ@mail.gmail.com>
-References: <20190325111200.15940-1-jbrunet@baylibre.com> <20190325111200.15940-2-jbrunet@baylibre.com> <155353381842.20095.17915880223118004926@swboyd.mtv.corp.google.com> <8b6f0bc6210834af2aff2de7dc95692dd87db539.camel@baylibre.com> <155389767798.20095.10570017301900287354@swboyd.mtv.corp.google.com> <6ef984dabf626760ae606567facdc5245fbba984.camel@baylibre.com> <CAEG3pNCrANkLBeEA_wVU7n4U57X3sd-1EzhUZ_PHBryqPHoAaQ@mail.gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/4] clk: meson: mpll: add init callback and regs
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez
-        <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk
-        <linux-clk@vger.kernel.org>, linux-arm-kernel" 
-        <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Message-ID: <155449701325.20095.2265240732374772927@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 05 Apr 2019 13:43:33 -0700
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Turquette (2019-04-05 08:43:40)
-> Hi Jerome,
->=20
-> On Fri, Mar 29, 2019 at 3:58 PM Jerome Brunet <jbrunet@baylibre.com> wrot=
-e:
-> >
-> > On Fri, 2019-03-29 at 15:14 -0700, Stephen Boyd wrote:
-> > > > > We actively discourage using init callbacks. Can you do this some=
- other
-> > > > > way?
-> > > >
-> > > > Yes I'm aware of that but init it the right place to do this.
-> > > > To be clear, this is not initializing the clock to some particular =
-rate, the
-> > > > rate is preserved.
-> > > >
-> > > > It just applies the necessary settings that needs to be done only o=
-nce to make
-> > > > sure the clock is in working order and that the rate calculated is =
-actually
-> > > > accurate.
-> > >
-> > > Ok, but can you do that in your driver's probe routine instead of
-> > > attaching to the init callback? We want to get rid of "init" at some
-> > > point so throwing the init sequence stuff into the driver probe around
-> > > registration is a solution. Or we should think about not discouraging
-> > > the init callback
-> >
-> > Is is callback really a problem after all ?
->=20
-> It is a problem, insofar as Stephen and I want to remove .init some day.
->=20
-> > I think we should actively prevent using it to set a particular rate.
-> >
-> > Here, the goal is put the clock in working order. The bootloader does n=
-ot
-> > always do that for us.
->=20
-> The above two sentences make it sound like this sequence belongs in .prep=
-are().
->=20
-> I know that you're concerned with setting rate, but I guess it is safe
-> to assume that you'll always complete .prepare() before you begin to
-> execute .set_rate(), no? This also avoids the ugliness of putting it
-> in the .probe(), which I agree doesn't feel like an accurate thing to
-> do for a clock's own programming sequence.
->=20
-> .probe() is an OK place to put policy (turn these clocks on or set
-> them to this rate, for a known-good configuration).
->=20
+On Thu, 28 Mar 2019, Paul Cercueil wrote:
 
-Following along with this reasoning, maybe we need a 'prepare_once'
-callback that does this the first time the clk is prepared or set_rate
-is called on it. The problem I have with the init callback is that the
-semantics of when it's called and what has happened before it's called
-isn't clearly defined. I'm afraid to remove it and also afraid to move
-around where it's called from. I've been itching to get it out of under
-all the locks we're holding at registration time, but I don't know if
-that's feasible, for example.
+> This driver handles the TCU (Timer Counter Unit) present on the Ingenic
+> JZ47xx SoCs, and provides the kernel with a system timer, and optionally
+> with a clocksource and a sched_clock.
+> 
+> It also provides clocks and interrupt handling to client drivers.
 
+Why on earth has a timer driver clock and interrupt chip drivers in it?
+
+We have different subsystems for good reasons. Please split this apart and
+add the support to the appropriate subsystems, clocksource, irqchip, clk
+
+Thanks,
+
+	tglx
+
+
+ 
