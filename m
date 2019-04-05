@@ -2,109 +2,107 @@ Return-Path: <SRS0=2G6t=SH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA87C282CE
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 17:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7495EC282CE
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 20:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB1D2184B
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 17:19:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="hr/dN2+e"
+	by mail.kernel.org (Postfix) with ESMTP id 35A942173C
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Apr 2019 20:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554496647;
+	bh=lkXfXLb6Nio46/ZeLdZm/xm+RmZFUfnRAf6GLw8hUmk=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=ghNEa3EGnRsBRxpqGwCkO30hBIa9i1W0oBSsul9UqLcv7M4oBWQmxn5b2z09APhCm
+	 wLrQ20EuyQELyDlu9IGHzVts65+ddrklWGQmCgCIk0zSe79jh1pMB1J+VBzDbAtD/n
+	 yxI58KSy1yyvvw+QtIkHu47vblibQWe1LlPp+0Cc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731087AbfDERTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Apr 2019 13:19:39 -0400
-Received: from mout.gmx.net ([212.227.15.19]:53595 "EHLO mout.gmx.net"
+        id S1726199AbfDEUh0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Apr 2019 16:37:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730870AbfDERTi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Apr 2019 13:19:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1554484761;
-        bh=XCB652qUdPHwNv5ml4SqPR351vUhbY1m7Ohr6r4qVQk=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=hr/dN2+eT/qRf85XUPveWy00yc9D2INl010ghKRv+1gi3RY1eZk98yF47QSqq+2rB
-         8AO3eJTGzV0j4UdmShcplqqX5J03uLL+4vDxeRkid+rWlfah8sPhiYd2l1s/X2MEld
-         nOCnlwm9+zjeW8WLmt0CZCAkkb7qMDKNZwUfR2E8=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.178.38] ([46.127.221.103]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0M3S2C-1gun9d02FM-00qwM0; Fri, 05
- Apr 2019 19:19:21 +0200
-Subject: Re: [PATCH v3] clk: x86: Add system specific quirk to mark clocks as
- critical
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>
-References: <20190328124939.23139-1-dave.mueller@gmx.ch>
- <20190404141325.21952-1-dave.mueller@gmx.ch>
- <CAHp75VeaWLW4GdknPHeh69enOFc_3izcwwpAhKXGJfk45QMLgw@mail.gmail.com>
-From:   =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>
-Organization: Privat
-Message-ID: <cf20b8b1-2061-6133-d764-3241d5d9acdf@gmx.ch>
-Date:   Fri, 5 Apr 2019 19:19:23 +0200
-User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101 Firefox/52.0
- SeaMonkey/2.49.4
+        id S1726124AbfDEUh0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Apr 2019 16:37:26 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 690402146F;
+        Fri,  5 Apr 2019 20:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554496645;
+        bh=lkXfXLb6Nio46/ZeLdZm/xm+RmZFUfnRAf6GLw8hUmk=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=AYw4Tlw3wIBCb1rniLIcUhH+HKbKkRZvODn1sHsUfGEiFPZtVGQn4c4ElYolsIhw/
+         OxsUqqV/R6CzTMiOerbeD34pR/oCkG2V9JfiW6XaH/Gyn86WNCG+QueQELTR8dPEPG
+         fmbqODGYWD8TVvi1IMKRh4tCNAvQWye4PpBfwW28=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeaWLW4GdknPHeh69enOFc_3izcwwpAhKXGJfk45QMLgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:T9VMoIoUhX0M7NTtieAiYCF0JMvbvTn+cHXT27H2l07g8sutGs3
- TQcwqpsT2mych2Wj3tRAS1KuaxOC7zyFo1DbWykFIr2a4UgADknHBV7HvhZZUACWZWMvcVT
- KSD2F3E98b9kvOa84BLGiV9m+kvTGDhlVZAiiNfhdGn6eQTshAFocCDct1lbmGFZ2YqGzCm
- QrHIwwqjlVW1hKv9Qofxw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xCXKJlujJyk=:cXDO3pcG8gS/FOzPQ8djri
- XGYJ9fI5ZUmEzh4Cdd12U5QQEO379qH64LAarYLZnckIeFQF3ZALMQkWfql13ZDihw4AWF6O0
- rxnkcRLElOulglnoQ8nLtPhcAQlYLnkV0+8fNLPCXSqeR2OMpyvwE4RiEVmeM9MLYTtVUwkcR
- hwveOQk2iXqSNBV0SuxllhhZMCjxScKuqH7LPJ/O9Vf0gmoe3ty8xSmk5xhzMbdKR2q19JhQv
- PYZx/QZ9U4Gs+4JltFkwcF5EeYp/TLRido7wrb7uJxHCTi/+l584mx9eSwXQuVuUjxo3Qwh4P
- kg2FjoBCDPExOYnee400AgcxxMPb2CgRtLUQV52oejG3IF1X/f78+CF/QQ9aHiurYcybsZyFk
- YrW6+3sRFZeEU6vyWdtvMNP8gG2FCUxAFchurcgm77QlHHtC5Iy5v98eBx4C8+bBw1mo+wlaQ
- pweBZIF1aQd0mnJ0GSecgsiJIDTY0wRazEFRtfoMyVFBUxw9/xATuZ8DIduefCHZETgeHnm/7
- 0rt0diGKxf+keCG9sQsGSPCU0cghfXzY012a2WLlk1aad/y9beW/DK9gTsKnYXmFQTEMvXOlZ
- M4uOXJ2eaXyUpvHbNlKTa+bTNpI4IJbzQAjM7ai7ouoBcmvZ6OZ5IQap92A8tUeHmzC3m2IXT
- Tphh5ji6Bse98jaQjE211XjWMM1w6yYAhCSS98IWdGA/rlTUlZQnURxuFNoKCosBaeJYTW6PB
- JS7C0FGzp5XCD6UNys4yWiluAXvJsPnZuT8ag3AFXY6dtFCwn7KGaJut+yJoDjvOxysvewcem
- ECKXqAeueVmtXb8egrSpw2aICJpjfm6px7KBvFOyCeNaCOw9kCUcv+qnUI6FnTMQcdWlZXbTj
- Sn9O23oaJyP+hgvr9Y0NUSDav7amPTUGndlJUkPjnxDGGkLZyO9PUrHRev/ItFslbRDolrTwh
- wt52PUFscLw==
+In-Reply-To: <b3a3052056b787bde94178ed371417359a941f2d.camel@fi.rohmeurope.com>
+References: <20190404215344.6330-1-sboyd@kernel.org> <20190404215344.6330-2-sboyd@kernel.org> <b3a3052056b787bde94178ed371417359a941f2d.camel@fi.rohmeurope.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/7] clkdev: Hold clocks_mutex while iterating clocks list
+Cc:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "jhugo@codeaurora.org" <jhugo@codeaurora.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "jbrunet@baylibre.com" <jbrunet@baylibre.com>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+Message-ID: <155449664462.20095.10904772826291270300@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Fri, 05 Apr 2019 13:37:24 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello
+Quoting Vaittinen, Matti (2019-04-04 23:51:43)
+> On Thu, 2019-04-04 at 14:53 -0700, Stephen Boyd wrote:
+> > We recently introduced a change to support devm clk lookups. That
+> > change
+> > introduced a code-path that used clk_find() without holding the
+> > 'clocks_mutex'. Unfortunately, clk_find() iterates over the 'clocks'
+> > list and so we need to prevent the list from being modified while
+> > iterating over it by holding the mutex. Similarly, we don't need to
+> > hold
+> > the 'clocks_mutex' besides when we're dereferencing the clk_lookup
+> > pointer
+>=20
+> /// Snip
+>=20
+> > -out:
+> > +static struct clk_lookup *clk_find(const char *dev_id, const char
+> > *con_id)
+> > +{
+> > +     struct clk_lookup *cl;
+> > +
+> > +     mutex_lock(&clocks_mutex);
+> > +     cl =3D __clk_find(dev_id, con_id);
+> >       mutex_unlock(&clocks_mutex);
+> > =20
+> > -     return cl ? clk : ERR_PTR(-ENOENT);
+> > +     return cl;
+> > +}
+>=20
+> I am not an expert on this but reading commit message abowe and seeing
+> the code for clk_find() looks a bit scary. If I understand it
+> correctly, the clocks_mutex should be held when dereferencing the
+> clk_lookup returned by clk_find. The clk_find implementation drops the
+> lock before returning - which makes me think I miss something here. How
+> can the caller ever safely dereference returned clk_lookup pointer?
+> Just reading abowe makes me think that lock should be taken by whoever
+> is calling the clk_find, and dropped only after caller has used the
+> found clk_lookup for whatever caller intends to use it. Maybe I am
+> missing something?
+>=20
 
-Thanks for the review.
+The only user after this patch (devm) is doing a pointer comparison so
+it looks OK. But yes, in general there shouldn't be users of clk_find()
+that dereference the pointer because there isn't any protection besides
+the mutex.
 
-Andy Shevchenko wrote:
-
->> +       /*
->> +        * On some systems, the pmc_plt_clocks already enabled by the
->> +        * firmware are being marked as critical to avoid them being
->> +        * gated by the clock framework
->
-> Period would be nice to have at the end.
-
-Ok.
-
->> - * @base:      PMC clock register base offset
->> - * @clks:      pointer to set of registered clocks, typically 0..5
->> + * @base:              PMC clock register base offset
->> + * @clks:              pointer to set of registered clocks, typically =
-0..5
->
->> + * @chk_critclks:      flag to indicate if firmware enabled pmc_plt_cl=
-ks
->> + *                     should be marked as critial or not
->
-> Perhaps simple critical? And do not touch the rest here.
-
-Ok, I will rename the field.
-
-Dave
