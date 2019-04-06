@@ -3,77 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0221C10F06
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Apr 2019 06:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA46C10F06
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Apr 2019 06:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED0A21855
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Apr 2019 06:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37D7321871
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Apr 2019 06:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554530780;
-	bh=A8fs4XyKMRiqc8FsiJVZjtdvBKHdxp2STQz7SW1gyGk=;
+	s=default; t=1554530816;
+	bh=3HgEj3Ujv7ZcHHeyG0mqcpx3M5niOEcpcy28loowDtk=;
 	h=Date:From:Subject:References:In-Reply-To:Cc:Cc:To:List-ID:From;
-	b=Fuqw8MMG43HpnIdMtfPagydfDsH/gvfzx3UvvPf7eC+f3OC08WGRNmicfyQcshMZ6
-	 jfJdap97l4C3HmPpKDGPpTR5BaK5+ZZ23SHsukxHEGEGwyH4OLnMVK6dUdI7VPEctl
-	 XUq4JiY8IS4UKG8WuXWrt5IC9PDO7lGfI+fEHtv8=
+	b=iBrcl5J1F/XMaeUL59Za321iohYi+gtuGNcrhp2+AIXyoUzjrHyj4tHssKuP1Eyd4
+	 MymBMs6Ro5UVs8RLp8yVDI/7+A836gr6j59/5wGhA5NFTqqN6hHAOcA2ojdIoKRD1K
+	 MNZhIZThVvLLsxjQuvlq3ugTJXsBIvye5vOq+3Sk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfDFGFz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 Apr 2019 02:05:55 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38581 "EHLO
+        id S1726808AbfDFGGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 Apr 2019 02:06:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33559 "EHLO
         mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbfDFGFz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Apr 2019 02:05:55 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 10so4457468pfo.5;
-        Fri, 05 Apr 2019 23:05:54 -0700 (PDT)
+        with ESMTP id S1726791AbfDFGGu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Apr 2019 02:06:50 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i19so4467698pfd.0;
+        Fri, 05 Apr 2019 23:06:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:subject:references
          :in-reply-to:cc:cc:to;
-        bh=Y2LNPDDgAWFMTxjrphq8l1ZkmN7zBDhbLgoLv2GUpQI=;
-        b=ZL+I6pR3VUCJ3g41EY/imZ/e7ht2Ux+aLqPr37sO03UyalFN/Ie55akZ+4xOxAQO6C
-         XH8DDKA7rCbv8m163vOD+pjd6JNngFNM4bOOXjxveGLBSeu75CdT6VeBwsDzqWTlyJrD
-         WgS8mOLwiZJf/SsJMg8ILvx8r8prE2opICgvbj6MA8evRvgt/Wl+LYnyn+d2WB5BtHdQ
-         qpIqaNLlo0GwXy0czT3azVBHV9OHV8bFZHJ+4X0xaG+Xe7vXs5wGC5Vhrdi4SJOjymZG
-         6CiB2tdejT+7QD2P5UnH561aOnH1VbSDCptDjufuyH+ElkuUEfYKWjZRFK+Dn5PZazQT
-         0tEw==
-X-Gm-Message-State: APjAAAXXobN83GycwLiv3W0/0HXnmNGVDpVGKMZ1XmCaBzSN1MwZZPyO
-        UF7qPaUyH4YoJHdqQkRWyQ==
-X-Google-Smtp-Source: APXvYqzxH1SLJcGx7X0hbQGNI/T13FsW1H6PxA4ICO1KCBgoxCNQBOen/bGkVuwDPeTOEjmbWr9oVA==
-X-Received: by 2002:aa7:8719:: with SMTP id b25mr17011728pfo.90.1554530754485;
-        Fri, 05 Apr 2019 23:05:54 -0700 (PDT)
+        bh=sA/AuC+EvgS8q1EmEqG5/iUfmidgbX/r7KPJNDbEing=;
+        b=CoIlRoeGSXAQsVgMzHVrPPKVSiRWnMDcVxQPfpUp4RtP7fj0DG14F+ltg2UxCXCqqT
+         imQOpQinXBrLG2nmjytdIywslU7oz/4m2p9JzNmENHBYWH1cY7Vb5eW0i+VjLddsrv6G
+         QRbrND/Hy5yfBTjHB+1Ynvs0nTk0YshkqQDCtK3aV0HHX4rq55b22VdN71t3B9WxVdG0
+         z3SGNTSkRRrYAt4sAgqNn2tnVtC2X8h4xAhGn0pHrxWTjkMZyqv7MDIwiVZHjo7A23d8
+         WLOO0/8YirEA1M3FK4YwzUt9wsIGUukBRGQTE0U9cJnGaMIxSr75OPQavvV96bnga7R/
+         rHRA==
+X-Gm-Message-State: APjAAAVAikOt2PLYuStTip8Y0TvNYItpGmxznM7Msd1kFPItEi/Y5rsA
+        0+rJZtA15Qj50x3sHjIz+G1e9+N0Dg==
+X-Google-Smtp-Source: APXvYqyWYaAMQp2FrgYSuzfThzpTe2wfAO5ZLYGHTyv8ZmnDhST80NjB2d8uLF7sijdtB3ZXbYJZJQ==
+X-Received: by 2002:a62:12c9:: with SMTP id 70mr17225504pfs.156.1554530809765;
+        Fri, 05 Apr 2019 23:06:49 -0700 (PDT)
 Received: from localhost ([210.160.217.71])
-        by smtp.gmail.com with ESMTPSA id v82sm56318833pfa.170.2019.04.05.23.05.53
+        by smtp.gmail.com with ESMTPSA id c189sm36545451pfg.24.2019.04.05.23.06.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Apr 2019 23:05:53 -0700 (PDT)
-Message-ID: <5ca841c1.1c69fb81.44d14.3a88@mx.google.com>
-Date:   Sat, 06 Apr 2019 01:05:51 -0500
+        Fri, 05 Apr 2019 23:06:49 -0700 (PDT)
+Message-ID: <5ca841f9.1c69fb81.70acb.c159@mx.google.com>
+Date:   Sat, 06 Apr 2019 01:06:46 -0500
 From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: clk: axg-audio: add g12a support
-References: <20190329160649.31603-1-jbrunet@baylibre.com> <20190329160649.31603-2-jbrunet@baylibre.com>
-In-Reply-To: <20190329160649.31603-2-jbrunet@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Jourdan <mjourdan@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 3/5] media: dt-bindings: aspeed-video: Add missing memory-region property
+References: <1554229504-5661-1-git-send-email-eajames@linux.ibm.com> <1554229504-5661-4-git-send-email-eajames@linux.ibm.com>
+In-Reply-To: <1554229504-5661-4-git-send-email-eajames@linux.ibm.com>
+Cc:     linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        joel@jms.id.au, andrew@aj.id.au, mchehab@kernel.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org
+To:     Eddie James <eajames@linux.ibm.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 29 Mar 2019 17:06:46 +0100, Jerome Brunet wrote:
-> Add a new compatible string and additional clock ids for audio clock
-> controller of the g12a SoC family.
+On Tue,  2 Apr 2019 18:25:02 +0000, Eddie James wrote:
+> Missed documenting this property in the initial commit.
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
 > ---
->  .../bindings/clock/amlogic,axg-audio-clkc.txt          |  3 ++-
->  include/dt-bindings/clock/axg-audio-clkc.h             | 10 ++++++++++
->  2 files changed, 12 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/media/aspeed-video.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
