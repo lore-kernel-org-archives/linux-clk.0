@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40891C10F13
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 10:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5172EC10F13
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 10:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 156AA20833
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 10:21:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C7420833
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 10:21:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d17i09sr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rBKVd9DP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbfDHKU7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Apr 2019 06:20:59 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34849 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfDHKU7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Apr 2019 06:20:59 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y197so14099323wmd.0
-        for <linux-clk@vger.kernel.org>; Mon, 08 Apr 2019 03:20:58 -0700 (PDT)
+        id S1726060AbfDHKVA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Apr 2019 06:21:00 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53556 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfDHKVA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Apr 2019 06:21:00 -0400
+Received: by mail-wm1-f65.google.com with SMTP id q16so13681743wmj.3
+        for <linux-clk@vger.kernel.org>; Mon, 08 Apr 2019 03:20:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uos6Ss4ukbBTFHAWbjMX+2nhjoQLM7lIBz4DiklN5mM=;
-        b=d17i09sroO1+C8AnLcntaK5z4ZZl5PI/HhpnTM5AwjEf0+Xt5dZFPZzmoOP6DcAFx7
-         bgpQhjwSXHQ7XZyB+WSomVPsLl1Q77MdG4r5H8PW0ousSNEiZYBv4sRrpTN6phuq05Ei
-         fkVDQWpH54nWEqu5xEzUeaHGSN6fbca1qUKH0mB87cWxQ5VnO3f1BvvtfKHphi2k6tQg
-         orVnZCizLIbuD6fmhZtXxzsiuEHBHBIea5dQ2yXck7XVX1SfR6Au0m+C1+YuHi6nIsCH
-         HB3Sb3anmwVg8MZxlA+//VSxf8c1mHJ28xLb7wm3+vI167mf5hJG8ab0UG/v9KXXJMeN
-         MJ4A==
+        bh=AefBW/AvMar/umpkSgBRCO6SDsmqV5F3Ia9cimceqxI=;
+        b=rBKVd9DPN9C+GpT4mA+99KIovJ/1lf/0okwLnzSckfuq9z+AlsO3MVB80fkDjmZfyp
+         18yWGCqSSFJZpykilQm/w+KHTVOYmtOefiKgFUgS8pUf7Fze69TT3Up0HqrTOX5cq9f7
+         j63WmBuk6Zw8bIlkIc4Nz4JNiSRS30SNfeHKdW37JH41FbowYzPfVmkUvqjCk4BUdzzC
+         pi3Cmhqwg4gt5Q4eh6qTsDLjb5fQqtwuCz88sEjREWSJ6dzC+ROhvPo0UGOar5EcwKZT
+         bxlHYp/n76TDy6XpwOwyJMOXKwSz9NgyHzj49odmJt2LD35JjJuMQZoVuZ61Rue4rc4l
+         w+Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=uos6Ss4ukbBTFHAWbjMX+2nhjoQLM7lIBz4DiklN5mM=;
-        b=BMwlPoMNobVMaz4rS0G1lcwUEl53cbzGlmUt1QjN21uMTbP3ZdSOKVGmUb46udgM9/
-         ZRlKBG4We8hUTGux9K/QwVqmprjEl9wD9BjUN1fl5VA75CoeZQYVbpdmG6eR01GDQ08b
-         XCNYPaacWllM0+iB2Y3L9rdiUMoGHL3ENdGrQgjbgmxZxf73DjKYuV8+2Z4sZUDNYPWI
-         vTp7TWDGWbm3T5yrXNkn+Bpj4HiOWD3Oy8N9s552eA9DkT2kLutmjErgTxg0rHZKKH9e
-         HJQvORYesXs55CkgiQGQDumVNT60xG3xGUxVZHlM4Wmx7lSWdRpPUUb8pm0WZveFsSpt
-         ma8Q==
-X-Gm-Message-State: APjAAAVhHlh2kfYlb5yARJqLwNrinGhhZ8zqkY8cudTldYiWGkCDjBhk
-        k19eGM1vnt9+JgEsssjyvjgdENPP
-X-Google-Smtp-Source: APXvYqy/e+I3FKRmUAEVmK3w9u/9ZjxjvsC+m463esRFcYln100KieuofO9WNZlnXC6P+AXSXH5itA==
-X-Received: by 2002:a1c:208c:: with SMTP id g134mr17366615wmg.70.1554718857505;
-        Mon, 08 Apr 2019 03:20:57 -0700 (PDT)
+        bh=AefBW/AvMar/umpkSgBRCO6SDsmqV5F3Ia9cimceqxI=;
+        b=i9l5XdvQVo0pEt4rXJSCQOAcHJMW3jtYtWplokVMPbVqT04h64RVhP+3rkoKu2Cc94
+         C2ujZlIH0NzxyD1aE7WxO/Q57P9xayx8L2n0knk3NY2a3hA3uf5sx8fWoyjtB24IAVad
+         MdwMmhBzhmuNDGOsyP4FehaOfrfwdaHIiUo4GzQsjXIodzg+xROfsc7atgjrPZt8l91s
+         FNL0qh+yMq5MpBdUO8688NlsncVDLCfRnVquFfUBdBzwWwwsrUSa/j1qjeT/nRiesPTE
+         lfkNkfrBbtLYpebsPeL2p0DTw4liS8ueoMp1tzFbJMGfW9FRojcrjuxqmtMsVxbJ6zxE
+         LGLA==
+X-Gm-Message-State: APjAAAXo5rlNKu2CPP6me5Ml8xlhTVaZFEA2+jo+Mp3clypIgSNe5McJ
+        zr+BD8LPKehsnNUP2jXR8SDb01HY
+X-Google-Smtp-Source: APXvYqyV30JZzAhFnNQyJv71EJs1kxMjta4LpfNnB+rvTsETu8FlIbM5jEnyxcRN8oeWMEaWfdqT2A==
+X-Received: by 2002:a1c:be0e:: with SMTP id o14mr15950501wmf.11.1554718858833;
+        Mon, 08 Apr 2019 03:20:58 -0700 (PDT)
 Received: from localhost.localdomain ([2001:470:9e39::64])
-        by smtp.gmail.com with ESMTPSA id d6sm39336069wrx.62.2019.04.08.03.20.56
+        by smtp.gmail.com with ESMTPSA id d6sm39336069wrx.62.2019.04.08.03.20.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Apr 2019 03:20:56 -0700 (PDT)
+        Mon, 08 Apr 2019 03:20:58 -0700 (PDT)
 From:   Jonas Gorski <jonas.gorski@gmail.com>
 To:     linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 Cc:     Anatolij Gustschin <agust@denx.de>,
@@ -61,9 +61,9 @@ Cc:     Anatolij Gustschin <agust@denx.de>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH RFC/RFT 4/6] clk: mux: make endian aware
-Date:   Mon,  8 Apr 2019 12:20:37 +0200
-Message-Id: <20190408102039.6366-5-jonas.gorski@gmail.com>
+Subject: [PATCH RFC/RFT 5/6] powerpc/512x: mark clocks as big endian
+Date:   Mon,  8 Apr 2019 12:20:38 +0200
+Message-Id: <20190408102039.6366-6-jonas.gorski@gmail.com>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20190408102039.6366-1-jonas.gorski@gmail.com>
 References: <20190408102039.6366-1-jonas.gorski@gmail.com>
@@ -72,42 +72,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch clk-mux to the endianness aware accessors to allow big endian
-mux clocks on a per device level.
+These clocks' registers are accessed as big endian, so mark them as
+such.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
- drivers/clk/clk-mux.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/512x/clock-commonclk.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 2ad2df2e8909..4a02db06eb29 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -73,7 +73,7 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	u32 val;
+diff --git a/arch/powerpc/platforms/512x/clock-commonclk.c b/arch/powerpc/platforms/512x/clock-commonclk.c
+index b3097fe6441b..af86a65128f1 100644
+--- a/arch/powerpc/platforms/512x/clock-commonclk.c
++++ b/arch/powerpc/platforms/512x/clock-commonclk.c
+@@ -239,8 +239,9 @@ static inline struct clk *mpc512x_clk_divider(
+ 	const char *name, const char *parent_name, u8 clkflags,
+ 	u32 __iomem *reg, u8 pos, u8 len, int divflags)
+ {
+-	return clk_register_divider(NULL, name, parent_name, clkflags,
+-				    reg, pos, len, divflags, &clklock);
++	return clk_register_divider(NULL, name, parent_name,
++				    clkflags | CLK_IS_BIG_ENDIAN, reg, pos, len,
++				    divflags, &clklock);
+ }
  
--	val = clk_readl(mux->reg) >> mux->shift;
-+	val = clk_hw_readl(hw, mux->reg) >> mux->shift;
- 	val &= mux->mask;
+ static inline struct clk *mpc512x_clk_divtable(
+@@ -248,10 +249,12 @@ static inline struct clk *mpc512x_clk_divtable(
+ 	u32 __iomem *reg, u8 pos, u8 len,
+ 	const struct clk_div_table *divtab)
+ {
++	int clkflags;
+ 	u8 divflags;
  
- 	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-@@ -94,12 +94,12 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
- 		reg = mux->mask << (mux->shift + 16);
- 	} else {
--		reg = clk_readl(mux->reg);
-+		reg = clk_hw_readl(hw, mux->reg);
- 		reg &= ~(mux->mask << mux->shift);
- 	}
- 	val = val << mux->shift;
- 	reg |= val;
--	clk_writel(reg, mux->reg);
-+	clk_hw_writel(hw, reg, mux->reg);
++	clkflags = CLK_IS_BIG_ENDIAN;
+ 	divflags = 0;
+-	return clk_register_divider_table(NULL, name, parent_name, 0,
++	return clk_register_divider_table(NULL, name, parent_name, clkflags,
+ 					  reg, pos, len, divflags,
+ 					  divtab, &clklock);
+ }
+@@ -262,7 +265,7 @@ static inline struct clk *mpc512x_clk_gated(
+ {
+ 	int clkflags;
  
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
+-	clkflags = CLK_SET_RATE_PARENT;
++	clkflags = CLK_SET_RATE_PARENT | CLK_IS_BIG_ENDIAN;
+ 	return clk_register_gate(NULL, name, parent_name, clkflags,
+ 				 reg, pos, 0, &clklock);
+ }
+@@ -274,7 +277,7 @@ static inline struct clk *mpc512x_clk_muxed(const char *name,
+ 	int clkflags;
+ 	u8 muxflags;
+ 
+-	clkflags = CLK_SET_RATE_PARENT;
++	clkflags = CLK_SET_RATE_PARENT | CLK_IS_BIG_ENDIAN;
+ 	muxflags = 0;
+ 	return clk_register_mux(NULL, name,
+ 				parent_names, parent_count, clkflags,
 -- 
 2.13.2
 
