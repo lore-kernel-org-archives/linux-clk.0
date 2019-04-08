@@ -2,81 +2,97 @@ Return-Path: <SRS0=sViq=SK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D6AC10F13
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 20:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EA9C10F14
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 20:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A33D2148E
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 20:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554754358;
-	bh=g4bO8v2UP3YEdIEgMgrotlGpLG4j0/B5hvlmYf6SHrY=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=e+SLeqBf5mNfEwHFKYY9uklJzJ5DEopiT5BvydIg+esy5UMPQr/79CodoSl0LoIOk
-	 FqdmPgTYgcVZSCdc0OzSGmNuU8auigKGz8oI2r9zbs5M0V0BtVEhX0EooV6kwDnfml
-	 XI+LjJtWzkjHYKX54v1jx6h59RUiD1DBDkvSu1rw=
+	by mail.kernel.org (Postfix) with ESMTP id 7B0B920857
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 20:45:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/bBTkcV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbfDHUMi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Apr 2019 16:12:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726615AbfDHUMh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Apr 2019 16:12:37 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4851C2084F;
-        Mon,  8 Apr 2019 20:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554754357;
-        bh=g4bO8v2UP3YEdIEgMgrotlGpLG4j0/B5hvlmYf6SHrY=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=z8CxYuQt05iDTjya+Pt27E5lgJ6Af0nPzpWxY8bXDo/a0MbhwXVEGdtAh9YsBdVjB
-         0vPo0Co1epFU9HdmeEU5+XXFNMB/dyreI6DbwlEL6vEfZKlMBlaxT9EEAGpi8tDBPg
-         /yeDXN3+hc2a3DzB9WMqmmaJxVchBhUaz94V7J/o=
-Content-Type: text/plain; charset="utf-8"
+        id S1726752AbfDHUpN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Apr 2019 16:45:13 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38381 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726753AbfDHUpM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Apr 2019 16:45:12 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p14so12507275ljg.5
+        for <linux-clk@vger.kernel.org>; Mon, 08 Apr 2019 13:45:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cW18gb8JokVDQ7+KXr9n9rPMx9uHcP2wB83oXVmU9QY=;
+        b=L/bBTkcVtk15xOyveNlUvlynUmAXMVa6bchdC/nGlHmKCgheVL8IAA8YA2qJDIpTXr
+         +2UOs+gqzvbLzPvjSLKwg17Ams0hvIF061SuJxZp6JOYBNMx1dJiOz+IN0tm7VPtGSD9
+         ab4ThCixOOTFDW+NPcKCZhgbTlpz1X9bWrxBDzPDnGflexxzcsr1jFn4+EPKe1+Lijnb
+         hY9PFe0KCABLxSW2Ibf2hblmvuo2eP0I4xpkoSA2ttjwgsmoZ+cmggmU+a4VtukaTCbl
+         +Z3Nn6ouYLLbeUcCVbCVCYST9UmZhCOKDFMrM36NS2OKa7ftRhboEWVv/Qfr0/vCkuPx
+         RoXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cW18gb8JokVDQ7+KXr9n9rPMx9uHcP2wB83oXVmU9QY=;
+        b=Wg2P3BHbMYeKXy+KTWYWfXnck5Kev7h92Mhk8TLWLHaFAfByn8rGFvZ6K993DtfRN6
+         T5uF2jx7jJaPrifeINl44VU+dHA+m3dw5iJfynxx75eMvMk4ujM77fpHp9reF3hCjp9b
+         7RzBKGmdPqHQ53yg3uTT+RQv0PvcCWulWnMm8LNSjKxXjjZfWgi29CBp4BaNfRvFSpH/
+         sfGektxaqt5HNdV7SKHjJSIa5970vRdgNKIOSEfCqn8cATp29itXy4bPpxyC4h04pLjw
+         EIlZh93xjUxzaJ3SngkQy4yPGAO7+zgD6hp6x+yIAT+aza0x8I/bSoEAVTMvgzVT3Kwz
+         4aPw==
+X-Gm-Message-State: APjAAAWVoa2/CSG0j+DirBTikQMcaRujsaCczyC+Se8sD2/1sM3pZc+d
+        mIF6nmYbDBjx5KTAKsSY0/+A/WTc8rNGpasHa1dcPg==
+X-Google-Smtp-Source: APXvYqykzjSK0A7nElMNFElazNkND86ZDIvpxzQ/em44P4JYuXvKWjoXtS+HZP0pK6EVN5Y479IuAUq6wZiqESVd+Eg=
+X-Received: by 2002:a2e:808e:: with SMTP id i14mr18032369ljg.103.1554756310830;
+ Mon, 08 Apr 2019 13:45:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190408102039.6366-2-jonas.gorski@gmail.com>
-References: <20190408102039.6366-1-jonas.gorski@gmail.com> <20190408102039.6366-2-jonas.gorski@gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH RFC/RFT 1/6] clk: core: add support for generic big endian accesses
-Cc:     Anatolij Gustschin <agust@denx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Turquette <mturquette@baylibre.com>
-To:     Jonas Gorski <jonas.gorski@gmail.com>, linux-clk@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Message-ID: <155475435645.20095.12989201302431823558@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Mon, 08 Apr 2019 13:12:36 -0700
+References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-16-fparent@baylibre.com>
+In-Reply-To: <20190323211612.860-16-fparent@baylibre.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 8 Apr 2019 22:44:59 +0200
+Message-ID: <CACRpkdZZ6-+MVdK4bOP4SHxQ8uQ8zENcir7DSteHy4g+B5uySQ@mail.gmail.com>
+Subject: Re: [PATCH 15/24] dt-bindings: pinctrl: pinctrl-mt65xx: add support
+ for MT8516
+To:     Fabien Parent <fparent@baylibre.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        hsin-hsiung.wang@mediatek.com, wenzhen.yu@mediatek.com,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Yong Mao <yong.mao@mediatek.com>, jjian.zhou@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-i2c@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        linux-spi <linux-spi@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        stephane.leprovost@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonas Gorski (2019-04-08 03:20:34)
-> Add a generic flag to mark a clock as big endian register based, and add
-> accessors following these.
+On Sat, Mar 23, 2019 at 10:17 PM Fabien Parent <fparent@baylibre.com> wrote:
 
-I like the idea of getting rid of clk_readl() and clk_writel(), but I'd
-rather see that this flag is per-basic clk type instead of global to all
-clks. Mostly because I don't see it as a clk property that's applicable
-in general. So we would either have a flag for dividers and gates that
-goes into the respective CLK_{GATE,DIVIDER}_* flag space, or some
-wrapper functions like:
+> Add binding documentation of pinctrl-mt65xx for MT8516 SoC.
+>
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
 
-	clk_gate_register_be()
-	clk_divider_register_be()
+Patch applied with Rob's ACK.
 
-that passes this information through to the basic clk types somehow.
-Then if there's no other user left of clk_readl() and clk_writel() I'd
-just slam in a patch to all the files that use it to convert them to
-readl() and writel(). After that, it would be great to drop the io.h
-include from clk-provider.h and push that include out to any code that's
-relying on it implicitly.
-
+Yours,
+Linus Walleij
