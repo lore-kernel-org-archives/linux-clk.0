@@ -2,119 +2,114 @@ Return-Path: <SRS0=sViq=SK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492CEC10F13
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 17:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB42C10F13
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 18:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 142AF21473
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 17:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554742806;
-	bh=y4/V2zu09CDwajaerydJz2FxWhvpZjBBW3M/NvKWtPk=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=H+yJHhNGm0TMyVNlR+JLGCToCtwpFIrS3LrGgZIEOQT46darnY0Wznr42ZFaRzUZp
-	 oPCNa2hLc5lmdDtZE1O+FFrFVxmTD8W4fhb/yzgI6psMkM4lOf8e1RJ9pOE5Cix9PC
-	 y02hu0kSZLVnlfMjQxxaQkzL0WqFJsiCn7c1XV/A=
+	by mail.kernel.org (Postfix) with ESMTP id 7230A20833
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 18:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbfDHRAF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Apr 2019 13:00:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729134AbfDHRAF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Apr 2019 13:00:05 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74C1D20880;
-        Mon,  8 Apr 2019 17:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554742804;
-        bh=y4/V2zu09CDwajaerydJz2FxWhvpZjBBW3M/NvKWtPk=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=JqSY3Qz3ubyu+TKWxdRQD2TSvBvcNKT+imWhmZ8vize83tZWRNPTArw6AYUQD3+WM
-         eUjEvVu4ZWKMxNrKasRHdyPfqlshi+YuYftuVye5ORSO31iUJZF6neJw4olG2DhkpZ
-         IjpkDzd3xaz9Opr/kxucW5MqxSQMPM1s8VoHn+yE=
-Content-Type: text/plain; charset="utf-8"
+        id S1727190AbfDHSnO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Apr 2019 14:43:14 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43886 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfDHSnO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Apr 2019 14:43:14 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w3so3449557edu.10
+        for <linux-clk@vger.kernel.org>; Mon, 08 Apr 2019 11:43:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qOuHPchuOdn1XJ7GtbXDKH3QSd4JJfWWEvKGQmffLIM=;
+        b=e8I0KNtmGTLTcD5opcGrHu7kTOAwgDLoVFo6+0lDhkQyxnD+1JvZlONRZwVTSqWZKy
+         kd9WtkmVSpvfKDdyhNGaPfOSnO43E6yDqbRprymDZICxYarthUReBXKYBRiSG0im3Vl6
+         8AHcKpY8ePEg/HbmuBrOKVm9zt2QQGl5Tek5Yma9EZirwnnaU4rg1m5TB7RqDo8W55re
+         hpCJu/YIsfLBjoCoGZshbHV398aV0rYwIE4Y7IdL+qTasz8ltTM5UCED8tWV6CeFc7pT
+         b8UR/WeOF+Mn/oANGwoF6ngvrpAQICKdNhuO+iHk2EKiXbdYR56eP1MciuV78vKM3FYp
+         szuw==
+X-Gm-Message-State: APjAAAWd4Ef4tPcPM1qocWJ1cSspQ9bVETg2pfeeRdSKAEG+TIWcLPEN
+        /TScH94RN2s1XF/dw38pAeOjTw==
+X-Google-Smtp-Source: APXvYqzf0NzZXkENIU1qjLGAhSlA8PWm1pUgj57cI4VXefPXxJsjj2exCYuuJgdcCYofQ/2506LXSA==
+X-Received: by 2002:aa7:d784:: with SMTP id s4mr20555438edq.177.1554748992255;
+        Mon, 08 Apr 2019 11:43:12 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id j15sm2495089edt.47.2019.04.08.11.43.11
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Apr 2019 11:43:11 -0700 (PDT)
+Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     =?UTF-8?B?0KHQtdC80LXQvSDQktC10YDRh9C10L3QutC+?= 
+        <semverchenko@factor-ts.ru>,
+        =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>,
+        "Fujinaka, Todd" <todd.fujinaka@intel.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <5dd6a6ac-94de-07ad-df5a-2601cbc7e9d0@gmx.ch>
+ <20190328145827.GI9224@smile.fi.intel.com>
+ <e01bb9da-0dde-4bfa-5693-eb4c02a1d696@redhat.com>
+ <20190328152421.GJ9224@smile.fi.intel.com>
+ <26800a0e-c309-1e69-c5b4-e11b761c7b40@redhat.com>
+ <20190328154931.GK9224@smile.fi.intel.com>
+ <d4c44bc8-ae0c-a6ff-3042-ae3185ceb33e@redhat.com>
+ <ef893b2e-121a-d395-9843-47d0c9f1515a@factor-ts.ru>
+ <942808d6-e2c1-cc8c-4aed-9b44a7ce4c76@redhat.com>
+ <c5ebcf73-1706-48d8-6904-ae6a89c44151@redhat.com>
+ <20190408172111.GX9224@smile.fi.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
+Date:   Mon, 8 Apr 2019 20:43:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190408104941.GB17594@localhost.localdomain>
-References: <20190404215344.6330-1-sboyd@kernel.org> <20190404215344.6330-2-sboyd@kernel.org> <b3a3052056b787bde94178ed371417359a941f2d.camel@fi.rohmeurope.com> <155449664462.20095.10904772826291270300@swboyd.mtv.corp.google.com> <20190408104941.GB17594@localhost.localdomain>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/7] clkdev: Hold clocks_mutex while iterating clocks list
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "jhugo@codeaurora.org" <jhugo@codeaurora.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Message-ID: <155474280295.20095.182612336816713159@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Mon, 08 Apr 2019 10:00:02 -0700
+In-Reply-To: <20190408172111.GX9224@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matti Vaittinen (2019-04-08 03:49:41)
-> On Fri, Apr 05, 2019 at 01:37:24PM -0700, Stephen Boyd wrote:
-> > Quoting Vaittinen, Matti (2019-04-04 23:51:43)
-> > > On Thu, 2019-04-04 at 14:53 -0700, Stephen Boyd wrote:
-> > > > We recently introduced a change to support devm clk lookups. That
-> > > > change
-> > > > introduced a code-path that used clk_find() without holding the
-> > > > 'clocks_mutex'. Unfortunately, clk_find() iterates over the 'clocks'
-> > > > list and so we need to prevent the list from being modified while
-> > > > iterating over it by holding the mutex. Similarly, we don't need to
-> > > > hold
-> > > > the 'clocks_mutex' besides when we're dereferencing the clk_lookup
-> > > > pointer
-> > >=20
-> > > /// Snip
-> > >=20
-> > > > -out:
-> > > > +static struct clk_lookup *clk_find(const char *dev_id, const char
-> > > > *con_id)
-> > > > +{
-> > > > +     struct clk_lookup *cl;
-> > > > +
-> > > > +     mutex_lock(&clocks_mutex);
-> > > > +     cl =3D __clk_find(dev_id, con_id);
-> > > >       mutex_unlock(&clocks_mutex);
-> > > > =20
-> > > > -     return cl ? clk : ERR_PTR(-ENOENT);
-> > > > +     return cl;
-> > > > +}
-> > >=20
-> > > I am not an expert on this but reading commit message abowe and seeing
-> > > the code for clk_find() looks a bit scary. If I understand it
-> > > correctly, the clocks_mutex should be held when dereferencing the
-> > > clk_lookup returned by clk_find. The clk_find implementation drops the
-> > > lock before returning - which makes me think I miss something here. H=
-ow
-> > > can the caller ever safely dereference returned clk_lookup pointer?
-> > > Just reading abowe makes me think that lock should be taken by whoever
-> > > is calling the clk_find, and dropped only after caller has used the
-> > > found clk_lookup for whatever caller intends to use it. Maybe I am
-> > > missing something?
-> > >=20
-> >=20
-> > The only user after this patch (devm) is doing a pointer comparison so
-> > it looks OK. But yes, in general there shouldn't be users of clk_find()
-> > that dereference the pointer because there isn't any protection besides
-> > the mutex.
->=20
-> If the only (intended) user for clk_find is devm_clk_release_clkdev,
-> then we might want to write it in devm_clk_release_clkdev - just to
-> avoid similar errors (as I did with devm) in the future? I might even
-> consider renaming __clk_find to clk_find or to clk_find_unsafe - but
-> that's all just nitpicking :) Go with what you like to maintain :D
->=20
+Hi,
 
-Sure. I was thinking along the same lines after you asked.
+On 08-04-19 19:21, Andy Shevchenko wrote:
+> On Thu, Apr 04, 2019 at 04:43:03PM +0200, Hans de Goede wrote:
+>> On 29-03-19 16:53, Hans de Goede wrote:
+>>> On 3/29/19 2:59 PM, Семен Верченко wrote:
+> 
+>>> Hmm, so 4 ethernet cards and 4 enabled / marked as critical clocks.
+>>>
+>>> Supporting this through get_clk is going to require a DMI table in the igb driver
+>>> combined with checking which PCI "slot" the card is to get the correct clock
+>>> for each ethernet controller.
+>>>
+>>> I believe tht just restoring the old behavior to mark all clocks enabled
+>>> on boot as critical, but then limited to this system based on a dmi match,
+>>> is the best solution here.
+>>>
+>>> Andy?
+>>
+>> Andy? Now that we've the patch ready for the other system which needs to
+>> have the CLK_IS_CRITICAL workaround and enables this based on DMI info,
+>> I believe the best fix for this system is to simply add it to that DMI
+>> table?
+> 
+> I reviewed v4, supposed to go via CLK tree.
 
+Right, but that patch adds the quirk for the system with the USB hub,
+do you agree, that given that each ethernet controller seems to be
+using its own clock, it is best to use a DMI quirk for this case too?
+
+If you agree then someone needs to prepare a follow-up patch on top of
+v4 which adds the DMI info for this board to the table.
+
+Regards,
+
+Hans
