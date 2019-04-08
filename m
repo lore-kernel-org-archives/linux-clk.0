@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161CAC10F14
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 633B4C282CE
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAAE2214C6
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C54A20880
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554742705;
-	bh=aLDWI6a42D7Kyns5Sux+zcY9NLKh04IUALnRk9wzjqo=;
+	s=default; t=1554742715;
+	bh=GXdADwZEBjuvQpjX+3cVw4RFiPjdVdX7ULLcRI1Ssrw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SKtqiTSj4pt3ZBF5TvyZbtbgX4Xaay8U/AluSEY+vHOrkXg9RGTOqKHpLJrC4aJwG
-	 13qudfrjWMPazm8OloNCTD3yOHZJ9LdC1dPZ5ezV6aMGLbFEyqdvrPKyhTZji9P5sj
-	 qHGIk06jYwhU8ixBs+xpEEmAaLu8A9Aoe4vi1ZDc=
+	b=Uvc+V/i/vYQEV8vdcD3bmNicL+Gc8j/5BWe9fsKQKj1CnBw7HKEKkSXi4sm/JkFSC
+	 vMUYdsRwxuvbY4npypDa4n/flLBzQse6+ezD1XixU8WMYEFrcoLDgIN1mXqyuQA7LH
+	 VXUWrPBGWooMwa3NL4jm4diZHK37ju6gwF6ACiAU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729020AbfDHQ5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728698AbfDHQ5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 8 Apr 2019 12:57:49 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:43706 "EHLO
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:43720 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727289AbfDHQ5t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726726AbfDHQ5t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Mon, 8 Apr 2019 12:57:49 -0400
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id ABD5E5FD0F; Tue,  9 Apr 2019 00:57:46 +0800 (CST)
+        id AE7EC5FD53; Tue,  9 Apr 2019 00:57:46 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -39,9 +39,9 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH 3/6] media: sun6i: Support A83T variant
-Date:   Tue,  9 Apr 2019 00:57:41 +0800
-Message-Id: <20190408165744.11672-4-wens@kernel.org>
+Subject: [PATCH 1/6] clk: sunxi-ng: a83t: Add pll-video0 as parent of csi-mclk
+Date:   Tue,  9 Apr 2019 00:57:39 +0800
+Message-Id: <20190408165744.11672-2-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190408165744.11672-1-wens@kernel.org>
 References: <20190408165744.11672-1-wens@kernel.org>
@@ -54,30 +54,35 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-The A83T SoC has a camera sensor interface (known as CSI in Allwinner
-lingo), which is similar to the one found on the A64 and H3. The only
-difference seems to be that support of MIPI CSI through a connected
-MIPI CSI-2 bridge.
+Allwinner's BSP for the A83T lists pll-video0 as the first parent to
+csi-mclk with index 0. This parent is not listed in the datasheet, but
+actually works, and makes more sense considering the index is the
+default value out of reset.
 
-Add support for this variant.
+Add pll-video0 as a parent to csi-mclk with index 0.
 
+Fixes: 05359be1176b ("clk: sunxi-ng: Add driver for A83T CCU")
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-index 4c79eb64a7a7..6e0e894154f4 100644
---- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-@@ -924,6 +924,7 @@ static int sun6i_csi_remove(struct platform_device *pdev)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index 2d6555d73170..5f714b4d8ee4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -513,8 +513,9 @@ static SUNXI_CCU_GATE(csi_misc_clk, "csi-misc", "osc24M", 0x130, BIT(16), 0);
  
- static const struct of_device_id sun6i_csi_of_match[] = {
- 	{ .compatible = "allwinner,sun6i-a31-csi", },
-+	{ .compatible = "allwinner,sun8i-a83t-csi", },
- 	{ .compatible = "allwinner,sun8i-h3-csi", },
- 	{ .compatible = "allwinner,sun8i-v3s-csi", },
- 	{ .compatible = "allwinner,sun50i-a64-csi", },
+ static SUNXI_CCU_GATE(mipi_csi_clk, "mipi-csi", "osc24M", 0x130, BIT(31), 0);
+ 
+-static const char * const csi_mclk_parents[] = { "pll-de", "osc24M" };
+-static const u8 csi_mclk_table[] = { 3, 5 };
++static const char * const csi_mclk_parents[] = { "pll-video0", "pll-de",
++						 "osc24M" };
++static const u8 csi_mclk_table[] = { 0, 3, 5 };
+ static SUNXI_CCU_M_WITH_MUX_TABLE_GATE(csi_mclk_clk, "csi-mclk",
+ 				       csi_mclk_parents, csi_mclk_table,
+ 				       0x134,
 -- 
 2.20.1
 
