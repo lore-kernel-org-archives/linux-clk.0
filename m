@@ -2,31 +2,32 @@ Return-Path: <SRS0=sViq=SK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B7FC282DE
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7944C282CE
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD1521473
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A34E20880
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554742697;
-	bh=Ovbk5NnERGD9eHR7BB7c9vkrIGTKLOik64wPRDbJKJU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=R4Rs9xs184aA42zVvbL76JaueLuAWdTq7dA0dv/U0W2GfL/Rhw0G72q7o9fAA1cA9
-	 2/3fF6KicyITy79ErKXO2aq65nMkG+x4qTpF3YZ/lysKm3MRwU6HeoXtfx8nOt1Lff
-	 FfSuZHzt9eTmrV3E/gRxKfQbMz66GJ+nY18siKP4=
+	s=default; t=1554742705;
+	bh=WUhXHJXtBBOOHJfV9e27Xl89wCf7Toeord7PvhzbQOk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=q3iKiz1JKrUrUe/WE+l1T3qTsvD8RbsyiQ0+vyQMDWu5Ua45viDDKgw4NFmnEgy/z
+	 yC9XbSkhL30/sCRv5i96kz/AUJqC/ePSsN7ppP+DJc/mIXy9RcPKLwo4Q+zvB56pdv
+	 H36MmvBR1xjd2zt4PhioWApSxNkfJxCp8CKqoyW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbfDHQ6G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Apr 2019 12:58:06 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:43692 "EHLO
+        id S1729176AbfDHQ6T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Apr 2019 12:58:19 -0400
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:43714 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728635AbfDHQ5u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Apr 2019 12:57:50 -0400
+        id S1728654AbfDHQ5t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Apr 2019 12:57:49 -0400
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 96D4B5FCC3; Tue,  9 Apr 2019 00:57:46 +0800 (CST)
+        id A192E5F87D; Tue,  9 Apr 2019 00:57:46 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -39,10 +40,12 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH 0/6] ARM: sun8i: a83t: Support Camera Sensor Interface controller
-Date:   Tue,  9 Apr 2019 00:57:38 +0800
-Message-Id: <20190408165744.11672-1-wens@kernel.org>
+Subject: [PATCH 2/6] dt-bindings: media: sun6i-csi: Add compatible string for A83T variant
+Date:   Tue,  9 Apr 2019 00:57:40 +0800
+Message-Id: <20190408165744.11672-3-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190408165744.11672-1-wens@kernel.org>
+References: <20190408165744.11672-1-wens@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -52,56 +55,30 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-Hi everyone,
+The A83T SoC has a camera sensor interface (known as CSI in Allwinner
+lingo), which is similar to the one found on the A64 and H3. The only
+difference seems to be that support of MIPI CSI through a connected
+MIPI CSI-2 bridge.
 
-This series adds support for the camera sensor interface controller
-found on the Allwinner A83T SoC. The controller is similar to the one
-found on  the H3, with the addition of a MIPI CSI-2 interface. However,
-this series only supports parallel and BT.656 interfaces, based on the
-existing driver.
+Add a compatible string for this variant.
 
-Patch 1 adds an undocumented clock parent of the CSI MCLK. This was
-found after finding the default value to sometimes work and sometimes
-not, and then comparing against BSP code.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch 2 adds a compatible string for the A83T variant.
-
-Patch 3 adds support for the A83T variant to the existing sun6i-csi
-driver.
-
-Patch 4 adds a device node for the controller, as well as commonly
-used pin muxing options.
-
-Patch 5 adds a pin muxing option for I2C1 on the PE pins, used in
-conjunction with the CSI pins.
-
-Patch 6 provides an example usage of the CSI controller: the Bananapi M3
-with its camera module attached.
-
-Please have a look.
-
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (6):
-  clk: sunxi-ng: a83t: Add pll-video0 as parent of csi-mclk
-  dt-bindings: media: sun6i-csi: Add compatible string for A83T variant
-  media: sun6i: Support A83T variant
-  ARM: dts: sun8i: a83t: Add device node for CSI (Camera Sensor
-    Interface)
-  ARM: dts: sun8i: a83t: Add I2C2 pinmux setting for PE pins
-  [DO NOT MERGE] ARM: dts: sun8i: a83t: bananapi-m3: Enable BPI OV5640
-    camera
-
- .../devicetree/bindings/media/sun6i-csi.txt   |   1 +
- arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts  | 101 ++++++++++++++++++
- arch/arm/boot/dts/sun8i-a83t.dtsi             |  37 +++++++
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c         |   5 +-
- .../platform/sunxi/sun6i-csi/sun6i_csi.c      |   1 +
- 5 files changed, 143 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+index 0dd540bb03db..a2e3e56f0257 100644
+--- a/Documentation/devicetree/bindings/media/sun6i-csi.txt
++++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+@@ -6,6 +6,7 @@ Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
+ Required properties:
+   - compatible: value must be one of:
+     * "allwinner,sun6i-a31-csi"
++    * "allwinner,sun8i-a83t-csi"
+     * "allwinner,sun8i-h3-csi"
+     * "allwinner,sun8i-v3s-csi"
+     * "allwinner,sun50i-a64-csi"
 -- 
 2.20.1
 
