@@ -1,78 +1,167 @@
-Return-Path: <SRS0=9A7L=SJ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=sViq=SK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B40C10F0E
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Apr 2019 03:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACE8C282CE
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 03:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3444020B1F
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Apr 2019 03:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B12320880
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 03:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfDGDVF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 Apr 2019 23:21:05 -0400
-Received: from www.osadl.org ([62.245.132.105]:39362 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfDGDVF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 6 Apr 2019 23:21:05 -0400
-X-Greylist: delayed 391 seconds by postgrey-1.27 at vger.kernel.org; Sat, 06 Apr 2019 23:21:05 EDT
-Received: from localhost.localdomain (178.115.242.59.static.drei.at [178.115.242.59])
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id x373DS4n003372;
-        Sun, 7 Apr 2019 05:13:28 +0200
-From:   Nicholas Mc Guire <hofrat@opentech.at>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726511AbfDHDx2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Apr 2019 23:53:28 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34174 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726464AbfDHDx1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Apr 2019 23:53:27 -0400
+X-UUID: ac7cb0f2f5524fb69318d01e9c274bcc-20190408
+X-UUID: ac7cb0f2f5524fb69318d01e9c274bcc-20190408
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1106134830; Mon, 08 Apr 2019 11:53:21 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 8 Apr 2019 11:53:20 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 8 Apr 2019 11:53:20 +0800
+Message-ID: <1554695600.25248.1.camel@mtksdaap41>
+Subject: Re: [PATCH V8 1/5] drm/mediatek: remove flag CLK_SET_RATE_PARENT
+ for mt2701 hdmi phy to not propagate rate change to parent
+From:   CK Hu <ck.hu@mediatek.com>
+To:     wangyan wang <wangyan.wang@mediatek.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@opentech.at>
-Subject: [PATCH RFC] clk: ux500: add range to usleep_range
-Date:   Sun,  7 Apr 2019 05:13:24 +0200
-Message-Id: <1554606804-29453-1-git-send-email-hofrat@opentech.at>
-X-Mailer: git-send-email 2.1.4
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        "Ryder Lee" <ryder.lee@mediatek.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
+Date:   Mon, 8 Apr 2019 11:53:20 +0800
+In-Reply-To: <20190402093605.82004-2-wangyan.wang@mediatek.com>
+References: <20190402093605.82004-1-wangyan.wang@mediatek.com>
+         <20190402093605.82004-2-wangyan.wang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Providing a range for usleep_range() allows the hrtimer subsystem to
-coalesce timers - the delay is runtime configurable so a factor 2
-is taken to provide the range.
+Hi, Wangyan:
 
-Signed-off-by: Nicholas Mc Guire <hofrat@opentech.at>
----
+On Tue, 2019-04-02 at 17:36 +0800, wangyan wang wrote:
+> From: Wangyan Wang <wangyan.wang@mediatek.com>
+> 
+> This is the first step to make MT2701 hdmi stable.
+> The parent rate of hdmi phy had set by DPI driver.
+> We should not set or change the parent rate of MT2701 hdmi phy,
+> as a result we should remove the flags of "CLK_SET_RATE_PARENT"
+> from the clock of MT2701 hdmi phy.
+> 
+> Signed-off-by: Wangyan Wang <wangyan.wang@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 13 +++++--------
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  1 +
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c |  1 +
+>  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c |  1 +
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> index 4ef9c57ffd44..13bbaf997819 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> @@ -110,13 +110,11 @@ mtk_hdmi_phy_dev_get_ops(const struct mtk_hdmi_phy *hdmi_phy)
+>  		return NULL;
+>  }
+>  
+> -static void mtk_hdmi_phy_clk_get_ops(struct mtk_hdmi_phy *hdmi_phy,
+> -				     const struct clk_ops **ops)
+> +static void mtk_hdmi_phy_clk_get_data(struct mtk_hdmi_phy *hdmi_phy,
+> +				     struct clk_init_data *clk_init)
 
-Problem located with an experimental coccinelle script                                       
-                                                                                             
-Q: Basically usleep_range() with min == max never makes much sense notably                      
-   in non-atomic context. If the factor of 2 is tolerable or a fixed
-   offset of e.g. 1000 would be more suitable is not clear to me - maybe
-   someone familiar with that driver can clarify this.
-                                                                                             
-Patch was compile tested with: u8500_defconfig (implies COMMON_CLK=y)
-(with some sparse warnings about not implemented system calls)                               
-                                                                                             
-Patch is against 5.1-rc3 (localversion-next is next=20190405)                                
+Align the first character to the right of '('.
 
- drivers/clk/ux500/clk-sysctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
+CK
 
-diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-index 7c0403b..a1fa3fb 100644
---- a/drivers/clk/ux500/clk-sysctrl.c
-+++ b/drivers/clk/ux500/clk-sysctrl.c
-@@ -42,7 +42,7 @@ static int clk_sysctrl_prepare(struct clk_hw *hw)
- 				clk->reg_bits[0]);
- 
- 	if (!ret && clk->enable_delay_us)
--		usleep_range(clk->enable_delay_us, clk->enable_delay_us);
-+		usleep_range(clk->enable_delay_us, clk->enable_delay_us*2);
- 
- 	return ret;
- }
--- 
-2.1.4
+>  {
+> -	if (hdmi_phy && hdmi_phy->conf && hdmi_phy->conf->hdmi_phy_clk_ops)
+> -		*ops = hdmi_phy->conf->hdmi_phy_clk_ops;
+> -	else
+> -		dev_err(hdmi_phy->dev, "Failed to get clk ops of phy\n");
+> +	clk_init->flags = hdmi_phy->conf->flags;
+> +	clk_init->ops = hdmi_phy->conf->hdmi_phy_clk_ops;
+>  }
+>  
+>  static int mtk_hdmi_phy_probe(struct platform_device *pdev)
+> @@ -129,7 +127,6 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
+>  	struct clk_init_data clk_init = {
+>  		.num_parents = 1,
+>  		.parent_names = (const char * const *)&ref_clk_name,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	};
+>  
+>  	struct phy *phy;
+> @@ -167,7 +164,7 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
+>  	hdmi_phy->dev = dev;
+>  	hdmi_phy->conf =
+>  		(struct mtk_hdmi_phy_conf *)of_device_get_match_data(dev);
+> -	mtk_hdmi_phy_clk_get_ops(hdmi_phy, &clk_init.ops);
+> +	mtk_hdmi_phy_clk_get_data(hdmi_phy, &clk_init);
+>  	hdmi_phy->pll_hw.init = &clk_init;
+>  	hdmi_phy->pll = devm_clk_register(dev, &hdmi_phy->pll_hw);
+>  	if (IS_ERR(hdmi_phy->pll)) {
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> index f39b1fc66612..0045824c1be9 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> @@ -21,6 +21,7 @@ struct mtk_hdmi_phy;
+>  
+>  struct mtk_hdmi_phy_conf {
+>  	bool tz_disabled;
+> +	unsigned long flags;
+>  	const struct clk_ops *hdmi_phy_clk_ops;
+>  	void (*hdmi_phy_enable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
+>  	void (*hdmi_phy_disable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> index fcc42dc6ea7f..67a814649e19 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -202,6 +202,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+>  
+>  struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf = {
+>  	.tz_disabled = true,
+> +	.flags = CLK_SET_RATE_GATE,
+>  	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
+>  	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
+>  	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> index ed5916b27658..f44066875dcd 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> @@ -309,6 +309,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+>  }
+>  
+>  struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf = {
+> +	.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
+>  	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
+>  	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
+
 
