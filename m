@@ -2,107 +2,102 @@ Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B27AC10F0E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 15:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C26DC10F0E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 20:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 321B1206B7
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 15:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C9F2084B
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 20:47:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XljQDyAy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbfDIPba (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Apr 2019 11:31:30 -0400
-Received: from mga03.intel.com ([134.134.136.65]:60507 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726396AbfDIPb3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Apr 2019 11:31:29 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Apr 2019 08:31:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,329,1549958400"; 
-   d="scan'208";a="162759031"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Apr 2019 08:31:25 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hDsib-0004lm-9w; Tue, 09 Apr 2019 18:31:25 +0300
-Date:   Tue, 9 Apr 2019 18:31:25 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     =?utf-8?B?0KHQtdC80LXQvSDQktC10YDRh9C10L3QutC+?= 
-        <semverchenko@factor-ts.ru>,
-        David =?iso-8859-1?Q?M=FCller?= <dave.mueller@gmx.ch>,
-        "Fujinaka, Todd" <todd.fujinaka@intel.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
-Message-ID: <20190409153125.GU9224@smile.fi.intel.com>
-References: <e01bb9da-0dde-4bfa-5693-eb4c02a1d696@redhat.com>
- <20190328152421.GJ9224@smile.fi.intel.com>
- <26800a0e-c309-1e69-c5b4-e11b761c7b40@redhat.com>
- <20190328154931.GK9224@smile.fi.intel.com>
- <d4c44bc8-ae0c-a6ff-3042-ae3185ceb33e@redhat.com>
- <ef893b2e-121a-d395-9843-47d0c9f1515a@factor-ts.ru>
- <942808d6-e2c1-cc8c-4aed-9b44a7ce4c76@redhat.com>
- <c5ebcf73-1706-48d8-6904-ae6a89c44151@redhat.com>
- <20190408172111.GX9224@smile.fi.intel.com>
- <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
+        id S1726570AbfDIUr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Apr 2019 16:47:28 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47007 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbfDIUr2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 16:47:28 -0400
+Received: by mail-pg1-f193.google.com with SMTP id q1so55111pgv.13
+        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2019 13:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c4AxUe5BjFjvYjkfSjcTE2lgIYaizWHbT0gUVT2RB9Q=;
+        b=XljQDyAyembEd8Lrph1XKfDzoQCfmhtOZHTOgi0Zpc2fCv0MzbLGqFpvNi8GtOecrj
+         LQoKgVnH/IekdTg8RPGMRkGH76wnXEKYcyAIjGgzQUYjomMUY8HOcEPf1x0Wka20zvZn
+         vigSn6uspOtwOFJ5Ya2UPl1X4FpSAaNWhCyvM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c4AxUe5BjFjvYjkfSjcTE2lgIYaizWHbT0gUVT2RB9Q=;
+        b=BjEj789E2Cv2pTFnPRuz0lhdSJ/dKmO1JhijZxlDUaAJ5rLLw9hp9x7t7ioALO29Oh
+         m6vqlALBSpEiaXRn54IFZLu3GzxPuu60dVE7UUYBZ2/4JWRRHdM+Tths9K++DtGp+E+X
+         pwXth9EYdI5deXSVnm1u3PAMbqICKJApR0hf/hVIwhyspJdsfCEPuoLKTojkWYGWfwfA
+         fUkIipeCI5gvErB6X2fwU0FGiBU5i0ad/gqKG29z6PaNCvC3Wg5/UFWmyvvD5bLOG/Mq
+         BLCof/ACPTwTa/mzeu4PVO9xx8TetKYNdq7VKQtGYJ+Q86gYza3fJ6wsaus6Lpm14tOX
+         OKag==
+X-Gm-Message-State: APjAAAUCGlnIo4WvN0byinzf+u8qJY1Z2yOqk8lEW41KS3nHHvolOGWl
+        RSze35yTyJZmqk0m3LMO8oGK5g==
+X-Google-Smtp-Source: APXvYqzC7ww/OYSAGpxDprLV20WG2ANh+jaUa303EaKd2qLxOQjVuAA6nPilvXjv+Jlz0nIZqRMSbw==
+X-Received: by 2002:a63:c61:: with SMTP id 33mr33925892pgm.293.1554842847481;
+        Tue, 09 Apr 2019 13:47:27 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id x28sm35014016pgl.38.2019.04.09.13.47.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Apr 2019 13:47:26 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Caesar Wang <caesar.wang@rock-chips.com>,
+        linux-rockchip@lists.infradead.org, mka@chromium.org,
+        ryandcase@chromium.org, Elaine Zhang <zhangqing@rock-chips.com>,
+        linux-clk@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/3] rockchip: A few clock cleanups for rk3288
+Date:   Tue,  9 Apr 2019 13:47:04 -0700
+Message-Id: <20190409204707.150347-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 08, 2019 at 08:43:10PM +0200, Hans de Goede wrote:
-> On 08-04-19 19:21, Andy Shevchenko wrote:
-> > On Thu, Apr 04, 2019 at 04:43:03PM +0200, Hans de Goede wrote:
-> > > On 29-03-19 16:53, Hans de Goede wrote:
-> > > > On 3/29/19 2:59 PM, Семен Верченко wrote:
-> > 
-> > > > Hmm, so 4 ethernet cards and 4 enabled / marked as critical clocks.
-> > > > 
-> > > > Supporting this through get_clk is going to require a DMI table in the igb driver
-> > > > combined with checking which PCI "slot" the card is to get the correct clock
-> > > > for each ethernet controller.
-> > > > 
-> > > > I believe tht just restoring the old behavior to mark all clocks enabled
-> > > > on boot as critical, but then limited to this system based on a dmi match,
-> > > > is the best solution here.
-> > > > 
-> > > > Andy?
-> > > 
-> > > Andy? Now that we've the patch ready for the other system which needs to
-> > > have the CLK_IS_CRITICAL workaround and enables this based on DMI info,
-> > > I believe the best fix for this system is to simply add it to that DMI
-> > > table?
-> > 
-> > I reviewed v4, supposed to go via CLK tree.
-> 
-> Right, but that patch adds the quirk for the system with the USB hub,
-> do you agree, that given that each ethernet controller seems to be
-> using its own clock, it is best to use a DMI quirk for this case too?
-> 
-> If you agree then someone needs to prepare a follow-up patch on top of
-> v4 which adds the DMI info for this board to the table.
 
-I hope we may find a better solution in the future, but for now as a quick fix
-the proposed can be done.
+This series contains a few misc clock cleanups for Rockchip rk3288
+found by comparing to what's in the downstream Chrome OS 3.14 kernel.
+
+NOTES:
+* The PWM patches could go in separately from the revert but that
+  would cause a merge conflict which is why they're together in a
+  series.
+* Having the PWM marked as a critical clock _definitely_ needs to land
+  before switching the clock in the device tree.
+
+
+Caesar Wang (1):
+  ARM: dts: rockchip: fix PWM clock found on RK3288 Socs
+
+Douglas Anderson (2):
+  Revert "clk: rockchip: mark noc and some special clk as critical on
+    rk3288"
+  clk: rockchip: Make rkpwm a critical clock on rk3288
+
+ arch/arm/boot/dts/rk3288.dtsi     |  8 ++++----
+ drivers/clk/rockchip/clk-rk3288.c | 17 ++++++-----------
+ 2 files changed, 10 insertions(+), 15 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.21.0.392.gf8f6787159e-goog
 
