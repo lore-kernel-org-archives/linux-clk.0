@@ -2,162 +2,170 @@ Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCF6C10F0E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 08:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB90C10F0E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 08:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1EC721473
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 08:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554799263;
-	bh=lCYFy+l9aaH2Ie6+hy59R5nimLfZVzVRkgfRf9dhzTQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=DyBuPbJxHwuAws5e8pE86CtWpKQ1UDQxurgTylqyFr8z/CR8K5PzDlvcZnrtmxEpw
-	 rF0VUMYK0SdYJNtpfMUCafglbs9NshGtsQJ5JMc1lDGxxRqb4cfzvvYad1bmUAB9Bq
-	 sjTP4Fd78U2hBNziKwl3dBHhG/VXSGRJHTra+mX8=
+	by mail.kernel.org (Postfix) with ESMTP id 42EC220883
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 08:57:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="OyxosXHQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbfDIIk5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Apr 2019 04:40:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726493AbfDIIk5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Apr 2019 04:40:57 -0400
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EAB920833;
-        Tue,  9 Apr 2019 08:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554799255;
-        bh=lCYFy+l9aaH2Ie6+hy59R5nimLfZVzVRkgfRf9dhzTQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Gs7fNFW628tOd+BoyJERW47BzPlEeeE7XNxXtrjMqPJPgtWF0R+rBl+q2An7evkI2
-         L9ezKn/lieXJEerRPQhXwTNtGXCNyYJ4C3dVm+6ifZPGC0OQFTCyd7On2zvJAZxrp1
-         cAB3AWK8sZYm9VfhP62nXGbjH5H49fbyN808SrZk=
-Received: by mail-wm1-f54.google.com with SMTP id z24so2279291wmi.5;
-        Tue, 09 Apr 2019 01:40:55 -0700 (PDT)
-X-Gm-Message-State: APjAAAXoWBak0fDWXN4eY+t3vPu8kx2zRuw9LcaJtBECKXU4QBtp6KM0
-        bIV30O/Oq2rncZ4e84cWh4tvumxoFzp/yP+gfm4=
-X-Google-Smtp-Source: APXvYqzX6Ahfxoj2ItPmYqhsJMHobIiDIxNq71DX2zXCKsGgbKcRi1So8xKDzwZt/RaJMYLXmJa0MPZ/1W/Y4DbJDNs=
-X-Received: by 2002:a05:600c:2118:: with SMTP id u24mr20863891wml.24.1554799253809;
- Tue, 09 Apr 2019 01:40:53 -0700 (PDT)
+        id S1726035AbfDII5Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Apr 2019 04:57:24 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:44266 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfDII5Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 04:57:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7AvcGG11AZVIwBXsaMwvHO+S93qpkM4EoNfUPzLqGvc=; b=OyxosXHQtKi/QjmmBT4leOxJB
+        NauaYVCtVpZPJrslgc3mdNbxZ8K0E12EhWRedfgh5IMNZK8gozDZlcnxKDjA3brBYExVDTtQEDAEK
+        Ax4PkaWtHwJ/kIfur7KPG60zNb3DOrOmhtwPQeZnoca5MqHiq82kspYZLaLpfuC1DhHd5efN+pTZx
+        Zjsbpvcco+bbb0ETzQpUPpSu37Jdtv8g6tPWDBUj1g7dg6sfK6kpGwp0o8/dpx+/u6mxE3moAMeA1
+        5M81IWmTNhV9V598mD6qV3rbiwbtLKWEOMOrPmXNcJDgdt+o1cJMgLMM2XjobU+6/8Qo/7F4tNPmC
+        4On6O9t3w==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:37690)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1hDmZE-0005sh-Aw; Tue, 09 Apr 2019 09:57:20 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1hDmZB-00025c-LU; Tue, 09 Apr 2019 09:57:17 +0100
+Date:   Tue, 9 Apr 2019 09:57:17 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "jhugo@codeaurora.org" <jhugo@codeaurora.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "jbrunet@baylibre.com" <jbrunet@baylibre.com>
+Subject: Re: [PATCH v3 1/7] clkdev: Hold clocks_mutex while iterating clocks
+ list
+Message-ID: <20190409085717.d24c636fuzpoxume@shell.armlinux.org.uk>
+References: <20190404215344.6330-1-sboyd@kernel.org>
+ <20190404215344.6330-2-sboyd@kernel.org>
+ <b3a3052056b787bde94178ed371417359a941f2d.camel@fi.rohmeurope.com>
+ <155449664462.20095.10904772826291270300@swboyd.mtv.corp.google.com>
+ <20190408104941.GB17594@localhost.localdomain>
+ <155474280295.20095.182612336816713159@swboyd.mtv.corp.google.com>
+ <20190408222106.ect7nwjsklzhmdwj@shell.armlinux.org.uk>
+ <4e63d42b27bc5bdf7d991c00f9105ba96a34dc8a.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20190408165744.11672-1-wens@kernel.org> <20190408165744.11672-5-wens@kernel.org>
- <20190409075804.4zrwjil7ie2gjigu@flea> <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
- <20190409082818.z33mq2qrxethldzf@flea>
-In-Reply-To: <20190409082818.z33mq2qrxethldzf@flea>
-From:   Chen-Yu Tsai <wens@kernel.org>
-Date:   Tue, 9 Apr 2019 16:40:40 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67pX+7ccihmGEWPKrXg8mMhht-vh37p2auWYgt=qGDA6A@mail.gmail.com>
-Message-ID: <CAGb2v67pX+7ccihmGEWPKrXg8mMhht-vh37p2auWYgt=qGDA6A@mail.gmail.com>
-Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
- (Camera Sensor Interface)
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e63d42b27bc5bdf7d991c00f9105ba96a34dc8a.camel@fi.rohmeurope.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 9, 2019 at 4:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Apr 09, 2019 at 04:07:34PM +0800, Chen-Yu Tsai wrote:
-> > On Tue, Apr 9, 2019 at 3:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > On Tue, Apr 09, 2019 at 12:57:42AM +0800, Chen-Yu Tsai wrote:
-> > > > From: Chen-Yu Tsai <wens@csie.org>
-> > > >
-> > > > The A83T SoC has a camera sensor interface (known as CSI in Allwinner
-> > > > lingo), which is similar to the one found on the A64 and H3. The only
-> > > > difference seems to be that support of MIPI CSI through a connected
-> > > > MIPI CSI-2 bridge.
-> > > >
-> > > > Add a device node for it, and pinctrl nodes for the commonly used MCLK
-> > > > and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
-> > > > the pinctrl nodes to keep the device tree blob size down if they are
-> > > > unused.
-> > > >
-> > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > > ---
-> > > >  arch/arm/boot/dts/sun8i-a83t.dtsi | 31 +++++++++++++++++++++++++++++++
-> > > >  1 file changed, 31 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > index f739b88efb53..0c52f945fd5f 100644
-> > > > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > @@ -682,6 +682,20 @@
-> > > >                       #interrupt-cells = <3>;
-> > > >                       #gpio-cells = <3>;
-> > > >
-> > > > +                     /omit-if-no-ref/
-> > > > +                     csi_8bit_parallel_pins: csi-8bit-parallel-pins {
-> > > > +                             pins = "PE0", "PE2", "PE3", "PE6", "PE7",
-> > > > +                                    "PE8", "PE9", "PE10", "PE11",
-> > > > +                                    "PE12", "PE13";
-> > > > +                             function = "csi";
-> > > > +                     };
-> > > > +
-> > > > +                     /omit-if-no-ref/
-> > > > +                     csi_mclk_pin: csi-mclk-pin {
-> > > > +                             pins = "PE1";
-> > > > +                             function = "csi";
-> > > > +                     };
-> > > > +
-> > > >                       emac_rgmii_pins: emac-rgmii-pins {
-> > > >                               pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
-> > > >                                      "PD11", "PD12", "PD13", "PD14", "PD18",
-> > > > @@ -994,6 +1008,23 @@
-> > > >                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-> > > >               };
-> > > >
-> > > > +             csi: camera@1cb0000 {
-> > > > +                     compatible = "allwinner,sun8i-a83t-csi";
-> > > > +                     reg = <0x01cb0000 0x1000>;
-> > > > +                     interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > > > +                     clocks = <&ccu CLK_BUS_CSI>,
-> > > > +                              <&ccu CLK_CSI_SCLK>,
-> > > > +                              <&ccu CLK_DRAM_CSI>;
-> > > > +                     clock-names = "bus", "mod", "ram";
-> > > > +                     resets = <&ccu RST_BUS_CSI>;
-> > > > +                     status = "disabled";
-> > > > +
-> > > > +                     csi_in: port {
-> > > > +                             #address-cells = <1>;
-> > > > +                             #size-cells = <0>;
-> > >
-> > > If we expect a single enpoint, then we don't need the address-cells
-> > > and size-cells properties.
-> >
-> > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
-> > is kind of genius if not very hacky. They have two "identical" sensors
-> > on the same I2C bus and CSI bus, with shared reset line but separate
-> > shutdown lines. Since they are identical, they also have the same I2C
-> > address. I haven't figured out how to model this in the device tree.
-> >
-> > The point is, it's perfectly possible to have two or more sensors use
-> > the same controller, provided only one be active at a time.
->
-> Right, but I guess the common case would be to have a single sensor,
-> where that wouldn't be needed.
->
-> In odd cases, we can always specify it in the DTS, and if it becomes
-> common enough, we can move it to the DTSI.
+On Tue, Apr 09, 2019 at 05:31:48AM +0000, Vaittinen, Matti wrote:
+> On Mon, 2019-04-08 at 23:21 +0100, Russell King - ARM Linux admin
+> wrote:
+> > On Mon, Apr 08, 2019 at 10:00:02AM -0700, Stephen Boyd wrote:
+> > > Quoting Matti Vaittinen (2019-04-08 03:49:41)
+> > > > On Fri, Apr 05, 2019 at 01:37:24PM -0700, Stephen Boyd wrote:
+> > > > > Quoting Vaittinen, Matti (2019-04-04 23:51:43)
+> > > > > > On Thu, 2019-04-04 at 14:53 -0700, Stephen Boyd wrote:
+> > > > > > > We recently introduced a change to support devm clk
+> > > > > > > lookups. That
+> > > > > > > change
+> > > > > > > introduced a code-path that used clk_find() without holding
+> > > > > > > the
+> > > > > > > 'clocks_mutex'. Unfortunately, clk_find() iterates over the
+> > > > > > > 'clocks'
+> > > > > > > list and so we need to prevent the list from being modified
+> > > > > > > while
+> > > > > > > iterating over it by holding the mutex. Similarly, we don't
+> > > > > > > need to
+> > > > > > > hold
+> > > > > > > the 'clocks_mutex' besides when we're dereferencing the
+> > > > > > > clk_lookup
+> > > > > > > pointer
+> > > > > > 
+> > > > > > /// Snip
+> > > > > > 
+> > > > > > > -out:
+> > > > > > > +static struct clk_lookup *clk_find(const char *dev_id,
+> > > > > > > const char
+> > > > > > > *con_id)
+> > > > > > > +{
+> > > > > > > +     struct clk_lookup *cl;
+> > > > > > > +
+> > > > > > > +     mutex_lock(&clocks_mutex);
+> > > > > > > +     cl = __clk_find(dev_id, con_id);
+> > > > > > >       mutex_unlock(&clocks_mutex);
+> > > > > > >  
+> > > > > > > -     return cl ? clk : ERR_PTR(-ENOENT);
+> > > > > > > +     return cl;
+> > > > > > > +}
+> > > > > > 
+> > > > > > I am not an expert on this but reading commit message abowe
+> > > > > > and seeing
+> > > > > > the code for clk_find() looks a bit scary. If I understand it
+> > > > > > correctly, the clocks_mutex should be held when dereferencing
+> > > > > > the
+> > > > > > clk_lookup returned by clk_find. The clk_find implementation
+> > > > > > drops the
+> > > > > > lock before returning - which makes me think I miss something
+> > > > > > here. How
+> > > > > > can the caller ever safely dereference returned clk_lookup
+> > > > > > pointer?
+> > > > > > Just reading abowe makes me think that lock should be taken
+> > > > > > by whoever
+> > > > > > is calling the clk_find, and dropped only after caller has
+> > > > > > used the
+> > > > > > found clk_lookup for whatever caller intends to use it. Maybe
+> > > > > > I am
+> > > > > > missing something?
+> > > > > > 
+> > > > > 
+> > > > > The only user after this patch (devm) is doing a pointer
+> > > > > comparison so
+> > > > > it looks OK. But yes, in general there shouldn't be users of
+> > > > > clk_find()
+> > > > > that dereference the pointer because there isn't any protection
+> > > > > besides
+> > > > > the mutex.
+> > > > 
+> > > > If the only (intended) user for clk_find is
+> > > > devm_clk_release_clkdev,
+> > > > then we might want to write it in devm_clk_release_clkdev - just
+> > > > to
+> > > > avoid similar errors (as I did with devm) in the future? I might
+> > > > even
+> > > > consider renaming __clk_find to clk_find or to clk_find_unsafe -
+> > > > but
+> > > > that's all just nitpicking :) Go with what you like to maintain
+> > > > :D
+> > > > 
+> > > 
+> > > Sure. I was thinking along the same lines after you asked.
+> > 
+> > This is rubbish.  The reason clk_find() doesn't take the lock is that
+> > you _need_ to hold the lock while you dereference the clk_lookup
+> > data.
+> 
+> I think we all agreed on this already. Stephen pointed out that the
+> current user(s) of clk_find() do _not_ dereference the pointer.
 
-Makes sense. Do you want me to re-spin?
+Which is actually another incorrect statement - clk_get_sys()
+dereferences it, but Stephen's patch does rearrange the code there.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
