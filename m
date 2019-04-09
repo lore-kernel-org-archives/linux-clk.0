@@ -2,110 +2,187 @@ Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8D5C282CE
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 06:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5500AC10F0E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 07:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9DB92133D
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 06:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19FBD20883
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 07:56:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q0vzZ83l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726205AbfDIGx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Apr 2019 02:53:57 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:47478 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726081AbfDIGx5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 02:53:57 -0400
-X-UUID: 5cf32289ffdc4524948b1c5951c464b0-20190409
-X-UUID: 5cf32289ffdc4524948b1c5951c464b0-20190409
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <wangyan.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 239497021; Tue, 09 Apr 2019 14:53:12 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 9 Apr
- 2019 14:53:11 +0800
-Received: from mszsdclx1067.gcn.mediatek.inc (172.27.4.253) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Tue, 9 Apr 2019 14:53:10 +0800
-From:   wangyan wang <wangyan.wang@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
-CC:     wangyan wang <wangyan.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH V10 0/5] make mt7623 clock of hdmi stable
-Date:   Tue, 9 Apr 2019 14:53:02 +0800
-Message-ID: <20190409065307.82280-1-wangyan.wang@mediatek.com>
-X-Mailer: git-send-email 2.14.1
+        id S1726486AbfDIH4Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Apr 2019 03:56:16 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40024 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfDIH4Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 03:56:16 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x397u9lL041949;
+        Tue, 9 Apr 2019 02:56:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1554796569;
+        bh=zAcf4fCcOgvmZlb5eO6ddeQrvo02mJchoj1ROcf5pK8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Q0vzZ83l6sCiUIAyhRHTppFJtnKYzxxHgaMzER0OumvSd5whuc+uE0nmo9oZY++Eb
+         EktaRlys+LZzl/E2Bdo7DRehvsea5ncytNqZu7D5C8eabcgMI+Un9chv4a1WkYxnQm
+         cADEwJKdGyWcwpnZAvtxl5hDI4CacTNNyvV9TJMI=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x397u9iK079295
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 9 Apr 2019 02:56:09 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 9 Apr
+ 2019 02:56:09 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 9 Apr 2019 02:56:09 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x397u5ad064157;
+        Tue, 9 Apr 2019 02:56:06 -0500
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
+ syscon gate clock
+To:     Rob Herring <robh@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Menon, Nishanth" <nm@ti.com>, "Kristo, Tero" <t-kristo@ti.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <20190312090518.28666-1-vigneshr@ti.com>
+ <20190312090518.28666-2-vigneshr@ti.com> <20190328123142.GA6229@bogus>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <33f6bc53-a361-c12b-1c21-3c34b101e67a@ti.com>
+Date:   Tue, 9 Apr 2019 13:27:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20190328123142.GA6229@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Wangyan Wang <wangyan.wang@mediatek.com>
+Hi Rob,
 
-V10 adopt maintainer's suggestion.
-Here is the change list between V9 & V10
+On 28/03/19 6:01 PM, Rob Herring wrote:
+> On Tue, Mar 12, 2019 at 02:35:17PM +0530, Vignesh Raghavendra wrote:
+>> Add dt bindings for TI syscon gate clock.
+>>
+>> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+>> ---
+>>  .../bindings/clock/ti,syscon-gate-clock.txt   | 35 +++++++++++++++++++
+>>  1 file changed, 35 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
+>> new file mode 100644
+>> index 000000000000..f2bc4281ddba
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/ti,syscon-gate-clock.txt
+>> @@ -0,0 +1,35 @@
+>> +TI syscon gate clock
+>> +
+>> +The gate clock node must be provided inside a system controller node.
+>> +
+>> +Required:
+>> +- comaptible: Must be "ti,syscon-gate-clock"
+>> +- reg: Offset of register that controls the clock within syscon regmap
+>> +- ti,clock-bit-idx: bit index that control gate/ungating of clock
+>> +- clocks: phandle to the clock parent
+>> +- #clock-cells: must be <0>
+>> +
+>> +Example:
+>> +	ctrlmmr_epwm_ctrl: syscon@104140{
+>> +		compatible = "syscon", "simple-bus";
+> 
+> Can't be both of these...
+> 
 
-1. Align the first character to the right of '(' in
-mtk_hdmi_phy_clk_get_data() of "drm/mediatek: remove flag ..."
-2. Align the first character to the right of '(' in
-mtk_hdmi_pll_recalc_rate() of "drm/mediatek: make implementation ..." 
-3. Align the first character to the right of '(' in
-mtk_hdmi_pll_round_rate() of "drm/mediatek: no change ..."
-4. move patch " drm/mediatek: make implementation ..." before
-patch "drm/mediatek: no change parent ..." 
-5. To make MT2701 HDMI stable, TVDPLL should not be adjusted and
-it's the parent clock of HDMI phy, so HDMI phy could not adjust parent
-rate. there are 3 steps to make MT2701 HDMI stable.
-    1). remove flag CLK_SET_RATE_PARENT for mt2701 hdmi phy to not propagate
-rate change to parent in "drm/mediatek: remove flag ...".
-    2). Using new factor for tvdpll in mt2701 to match divider of DPI in
-mt2701 in "drm/mediatek: using new...".
-    3). No change parent rate in round_rate() for mt2701 hdmi phy in
-"drm/mediatek: no change parent...".
+These registers have bits that control other functionalities apart from
+PWM clocks. Therefore, I modeled them as "syscon", "simple-bus";
 
-6. Recalculate the rate of this clock, by querying hardware to
-make implementation of recalc_rate() to match the definition.
+Or is it recommended to use:
+ compatible = "syscon", "simple-mfd";
 
-Wangyan Wang (5):
-  drm/mediatek: remove flag CLK_SET_RATE_PARENT for mt2701 hdmi phy
-  drm/mediatek: fix the rate and divder of hdmi phy for MT2701
-  drm/mediatek: using new factor for tvdpll in MT2701
-  drm/mediatek: make implementation of recalc_rate() to match the definition
-  drm/mediatek: no change parent rate in round_rate() for mt2701 hdmi phy
 
- 03_27_ck.diff                                  | 91 ++++++++++++++++++++++++
- drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 +--
- drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 35 ++--------
- drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  5 +-
- drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 50 ++++++++++++--
- drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++
- patch1.diff                                    | 75 ++++++++++++++++++++
- patch_5_4.diff                                 | 95 ++++++++++++++++++++++++++
- remove_parent_flag.diff                        | 75 ++++++++++++++++++++
- 9 files changed, 412 insertions(+), 45 deletions(-)
- create mode 100644 03_27_ck.diff
- create mode 100644 patch1.diff
- create mode 100644 patch_5_4.diff
- create mode 100644 remove_parent_flag.diff
+>> +		reg = <0x0 0x104140 0x0 0x18>;
+>> +		ranges = <0x0 0x0 0x104140>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		ehrpwm0_tbclk: clk@0 {
+>> +			compatible = "ti,syscon-gate-clock";
+>> +			reg = <0x0>;
+>> +			#clock-cells = <0>;
+>> +			clocks = <&k3_clks 40 0>;
+>> +			ti,clock-bit-idx = <0>;
+> 
+> This would imply you have multiple nodes at one address which is 
+> discouraged.
+> 
+>> +		};
+> 
+> We generally don't describe clocks as 1 clock per node. Give the parent 
+> a specific compatible and make it a clock provider.
+> 
 
--- 
-2.14.1
+Ok, I can change this to single clock node and use #clock-cells to pass
+register offset of and bit index from each consumer:
+
+       ctrlmmr_epwm_ctrl: syscon@104140{
+               compatible = "syscon", "simple-mfd";
+               reg = <0x0 0x104140 0x0 0x18>;
+               ranges = <0x0 0x0 0x104140>;
+               #address-cells = <1>;
+               #size-cells = <0>;
+
+               ehrpwm_tbclk: clk {
+                       compatible = "ti,syscon-gate-clock";
+                       #clock-cells = <2>;
+               };
+	};
+
+And consumer node:
+
+       ehrpwm1: pwm@3010000 {
+               compatible = "ti,am654-ehrpwm", "ti,am3352-ehrpwm";
+               #pwm-cells = <3>;
+               reg = <0x0 0x3000000 0x0 0x100>;
+               power-domains = <&k3_pds 40>;
+               clocks = <&ehrpwm_tbclk 4 0>; /* offset 4, bit 0 */
+	       clock-names = "tbclk";
+       };
+
+
+Would that be acceptable?
+
+Regards
+Vignesh
+
+>> +
+>> +		ehrpwm1_tbclk: clk@4 {
+>> +			compatible = "ti,syscon-gate-clock";
+>> +			reg = <0x4>;
+>> +			#clock-cells = <0>;
+>> +			clocks = <&k3_clks 41 0>;
+>> +			ti,clock-bit-idx = <0>;
+>> +		};
+>> +	};
+>> -- 
+>> 2.21.0
+>>
+
 
