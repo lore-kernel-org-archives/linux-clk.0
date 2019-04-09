@@ -2,127 +2,217 @@ Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A580C10F0E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 09:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C708C10F0E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 11:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5362520830
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 09:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15AA120857
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 11:36:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="p4lYenqK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfDIJzG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Apr 2019 05:55:06 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:48239 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726091AbfDIJzG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 05:55:06 -0400
-X-UUID: 9d811f41075f4480b6f030b159cf0e77-20190409
-X-UUID: 9d811f41075f4480b6f030b159cf0e77-20190409
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1393709304; Tue, 09 Apr 2019 17:55:02 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 9 Apr 2019 17:55:00 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 9 Apr 2019 17:55:00 +0800
-Message-ID: <1554803700.4573.2.camel@mtksdaap41>
-Subject: Re: [PATCH V10 0/5] make mt7623 clock of hdmi stable
-From:   CK Hu <ck.hu@mediatek.com>
-To:     wangyan wang <wangyan.wang@mediatek.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        "Daniel Vetter" <daniel@ffwll.ch>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        "Ryder Lee" <ryder.lee@mediatek.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
-Date:   Tue, 9 Apr 2019 17:55:00 +0800
-In-Reply-To: <20190409065307.82280-1-wangyan.wang@mediatek.com>
-References: <20190409065307.82280-1-wangyan.wang@mediatek.com>
+        id S1726908AbfDILgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Apr 2019 07:36:18 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38702 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfDILgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 07:36:18 -0400
+Received: by mail-wr1-f65.google.com with SMTP id k11so20460038wro.5
+        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2019 04:36:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=J2G8itL6On7XrTj4IGeUKtu8uuc7mhO20zhj78qvweE=;
+        b=p4lYenqK99tT+pYGYZhJ48Jb6j33SCV5epzBTrTaL92xw/td44gqLpZWDn3bXbNLxE
+         6ACZfZLFKbgBS5kFzhMh2QXD1AQTB2rtmKUA2ssvRtCi1B8mbG9ynGJlnevKOTLJrjLn
+         0bkoT5/KQaw8FyPtE6ggqd16+dgP00nFw3u2mehvdRzIlrhRNg49PsDNZqOTuhtSt4ww
+         dP13KdATPJjncf1amoVEfq0ZEbHE7z9xBSiOKRcKQb2L/3tfJVLH8De6la7K7tAu/d6W
+         Am/zWf3x1oZntTTzgRHocNwAuMFMkwyUiGFWn7mgsPs+as0Oct0m7rdhRYnEJLI/kSEO
+         Gwtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=J2G8itL6On7XrTj4IGeUKtu8uuc7mhO20zhj78qvweE=;
+        b=OYV9Z96ODForLYusaT0ImDjDfUenIyJRuzRHn9/JwnSrRMc+r5125bgg13VArOMvRR
+         a8HL0mPXsXSws3t8OYIItXmTNapBrG0PGNN5Xup6b448jTkw2PNtsYpbttw/U/tutgm3
+         AFqIWRYsdGXJXvoyj5LDvtmQsP+YJRzUPB5fe/khp8Hq6AQiMyLJyIE+GJrd1sp2yC90
+         MzsIOPmeP7D/2Y/JtQsxLWGagSKKgRuj5O/EqnHmCLlHNSmKBGuXcFNXSRds4Z8sHRZI
+         HiXzQU2YOAbkmvoHjRfEofjj/mRmKnvMYHi8XF+iM0CBOtnGrgNzR+xRHvrQOsmOlzRd
+         jCzA==
+X-Gm-Message-State: APjAAAUupRKFbH9zwRBcrl7HnoHcNmzx4INZ4P9lxVLmML8zvHVSNMnJ
+        iW35NfnaLDwpA8xAixmZnoxMSQ==
+X-Google-Smtp-Source: APXvYqyOav8eVbZIzeuuDcu8S0m5tQQjnYPEId2xZ7DfLy40syxbR1wafBmcXOSR096S1UU2+tghZw==
+X-Received: by 2002:a5d:6b02:: with SMTP id v2mr12450408wrw.84.1554809776032;
+        Tue, 09 Apr 2019 04:36:16 -0700 (PDT)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id w11sm96427814wre.15.2019.04.09.04.36.14
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Apr 2019 04:36:15 -0700 (PDT)
+Message-ID: <c79c89b5a0cb1b132543aea70ff1c16872b6f6e7.camel@baylibre.com>
+Subject: Re: stable/linux-5.0.y boot bisection: v5.0.7 on
+ meson-gxl-s805x-p241
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     "kernelci.org bot" <bot@kernelci.org>, tomeu.vizoso@collabora.com,
+        Sasha Levin <sashal@kernel.org>,
+        guillaume.tucker@collabora.com, mgalka@collabora.com,
+        Neil Armstrong <narmstrong@baylibre.com>, broonie@kernel.org,
+        matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 09 Apr 2019 13:36:12 +0200
+In-Reply-To: <5ca84614.1c69fb81.e2ab3.2e61@mx.google.com>
+References: <5ca84614.1c69fb81.e2ab3.2e61@mx.google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: A9E3ABC3D003D8A67525A74E6C1333482FF6F4303CB99A21F1AB2EC1BD8EE2BD2000:8
-X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Wangyan:
+On Fri, 2019-04-05 at 23:24 -0700, kernelci.org bot wrote:
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> 
+> stable/linux-5.0.y boot bisection: v5.0.7 on meson-gxl-s805x-p241
+> 
+> Summary:
+>   Start:      8b298d3a0bd5 Linux 5.0.7
+>   Details:    https://kernelci.org/boot/id/5ca7df3959b5141abafe6036
+>   Plain log:  https://storage.kernelci.org//stable/linux-5.0.y/v5.0.7/arm64/defconfig/gcc-7/lab-baylibre/boot-meson-gxl-s805x-p241.txt
+>   HTML log:   https://storage.kernelci.org//stable/linux-5.0.y/v5.0.7/arm64/defconfig/gcc-7/lab-baylibre/boot-meson-gxl-s805x-p241.html
+>   Result:     9b0f430450cf clk: meson: clean-up clock registration
+> 
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       stable
+>   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+>   Branch:     linux-5.0.y
+>   Target:     meson-gxl-s805x-p241
+>   CPU arch:   arm64
+>   Lab:        lab-baylibre
+>   Compiler:   gcc-7
+>   Config:     defconfig
+>   Test suite: boot
+> 
+> Breaking commit found:
 
-This version still has alignment problem, but I've fixed it and for this
-series,
+The problem is that one of the clock (the cec clock) is registered twice.
 
-Applied to mediatek-drm-fixes-5.1 [1], thanks.
+> gxbb-aoclkc c8100000.sys-ctrl:clock-controller: Clock registration failed
+> gxbb-aoclkc: probe of c8100000.sys-ctrl:clock-controller failed with error
+-17
 
-[1]
-https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-fixes-5.1
+It is not a problem on mainline because there has been some rework on AO clock
+controller before this particular patch.
 
-Regards,
-CK
+It is safe to drop this patch from the stable branch, it does fix anything. It
+is a clean up.
 
-On Tue, 2019-04-09 at 14:53 +0800, wangyan wang wrote:
-> From: Wangyan Wang <wangyan.wang@mediatek.com>
+If you prefer, I can try to submit a fixup to keep the patch in stable.
+
+Status is the same for the stable/linux-4.19.y.
+
 > 
-> V10 adopt maintainer's suggestion.
-> Here is the change list between V9 & V10
+> -------------------------------------------------------------------------------
+> commit 9b0f430450cf230e736bc40f95bf34fbdb99cead
+> Author: Jerome Brunet <jbrunet@baylibre.com>
+> Date:   Fri Dec 21 17:02:36 2018 +0100
 > 
-> 1. Align the first character to the right of '(' in
-> mtk_hdmi_phy_clk_get_data() of "drm/mediatek: remove flag ..."
-> 2. Align the first character to the right of '(' in
-> mtk_hdmi_pll_recalc_rate() of "drm/mediatek: make implementation ..." 
-> 3. Align the first character to the right of '(' in
-> mtk_hdmi_pll_round_rate() of "drm/mediatek: no change ..."
-> 4. move patch " drm/mediatek: make implementation ..." before
-> patch "drm/mediatek: no change parent ..." 
-> 5. To make MT2701 HDMI stable, TVDPLL should not be adjusted and
-> it's the parent clock of HDMI phy, so HDMI phy could not adjust parent
-> rate. there are 3 steps to make MT2701 HDMI stable.
->     1). remove flag CLK_SET_RATE_PARENT for mt2701 hdmi phy to not propagate
-> rate change to parent in "drm/mediatek: remove flag ...".
->     2). Using new factor for tvdpll in mt2701 to match divider of DPI in
-> mt2701 in "drm/mediatek: using new...".
->     3). No change parent rate in round_rate() for mt2701 hdmi phy in
-> "drm/mediatek: no change parent...".
+>     clk: meson: clean-up clock registration
+>     
+>     [ Upstream commit 8d9981efbcab066d17af4d3c85c169200f6f78df ]
+>     
+>     Order, ids and size  between the table of regmap clocks and the onecell
+>     data table could be different.
+>     
+>     Set regmap pointer in all the regmap clocks before starting the
+>     registration using the onecell data, to make sure we don't
+>     get into an incoherent situation.
+>     
+>     Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>     Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+>     Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>     Link: https://lkml.kernel.org/r/20181221160239.26265-3-jbrunet@baylibre.com
+>     Signed-off-by: Sasha Levin <sashal@kernel.org>
 > 
-> 6. Recalculate the rate of this clock, by querying hardware to
-> make implementation of recalc_rate() to match the definition.
+> diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+> index f965845917e3..258c8d259ea1 100644
+> --- a/drivers/clk/meson/meson-aoclk.c
+> +++ b/drivers/clk/meson/meson-aoclk.c
+> @@ -65,15 +65,20 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	/*
+> -	 * Populate regmap and register all clks
+> -	 */
+> -	for (clkid = 0; clkid < data->num_clks; clkid++) {
+> +	/* Populate regmap */
+> +	for (clkid = 0; clkid < data->num_clks; clkid++)
+>  		data->clks[clkid]->map = regmap;
+>  
+> +	/* Register all clks */
+> +	for (clkid = 0; clkid < data->hw_data->num; clkid++) {
+> +		if (!data->hw_data->hws[clkid])
+> +			continue;
+> +
+>  		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
+> -		if (ret)
+> +		if (ret) {
+> +			dev_err(dev, "Clock registration failed\n");
+>  			return ret;
+> +		}
+>  	}
+>  
+>  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> -------------------------------------------------------------------------------
 > 
-> Wangyan Wang (5):
->   drm/mediatek: remove flag CLK_SET_RATE_PARENT for mt2701 hdmi phy
->   drm/mediatek: fix the rate and divder of hdmi phy for MT2701
->   drm/mediatek: using new factor for tvdpll in MT2701
->   drm/mediatek: make implementation of recalc_rate() to match the definition
->   drm/mediatek: no change parent rate in round_rate() for mt2701 hdmi phy
 > 
->  03_27_ck.diff                                  | 91 ++++++++++++++++++++++++
->  drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 +--
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 35 ++--------
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  5 +-
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 50 ++++++++++++--
->  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++
->  patch1.diff                                    | 75 ++++++++++++++++++++
->  patch_5_4.diff                                 | 95 ++++++++++++++++++++++++++
->  remove_parent_flag.diff                        | 75 ++++++++++++++++++++
->  9 files changed, 412 insertions(+), 45 deletions(-)
->  create mode 100644 03_27_ck.diff
->  create mode 100644 patch1.diff
->  create mode 100644 patch_5_4.diff
->  create mode 100644 remove_parent_flag.diff
+> Git bisection log:
 > 
+> -------------------------------------------------------------------------------
+> git bisect start
+> # good: [820c1fa515010d280551075da59fc2668ba8b3ae] Linux 5.0.6
+> git bisect good 820c1fa515010d280551075da59fc2668ba8b3ae
+> # bad: [8b298d3a0bd5feeb47129c4889356b38b78ab231] Linux 5.0.7
+> git bisect bad 8b298d3a0bd5feeb47129c4889356b38b78ab231
+> # good: [55d7152d37dccfa9add45df82fd45c373e032f46] cgroup, rstat: Don't flush subtree root unless necessary
+> git bisect good 55d7152d37dccfa9add45df82fd45c373e032f46
+> # good: [8b3b22aa7c558e713a179710a6f1e2fdbef44b20] block, bfq: fix queue removal from weights tree
+> git bisect good 8b3b22aa7c558e713a179710a6f1e2fdbef44b20
+> # good: [ebd0f3066c35bd27d3a4b224135e638eeaf70b8d] netfilter: physdev: relax br_netfilter dependency
+> git bisect good ebd0f3066c35bd27d3a4b224135e638eeaf70b8d
+> # bad: [9b0f430450cf230e736bc40f95bf34fbdb99cead] clk: meson: clean-up clock registration
+> git bisect bad 9b0f430450cf230e736bc40f95bf34fbdb99cead
+> # good: [bfb59eabe2c940c6869f128200f2047d46215845] drm: Auto-set allow_fb_modifiers when given modifiers at plane init
+> git bisect good bfb59eabe2c940c6869f128200f2047d46215845
+> # good: [ab79dc3ef0244c9b3d712d0cef17b74c363d6069] brcmfmac: Use firmware_request_nowarn for the clm_blob
+> git bisect good ab79dc3ef0244c9b3d712d0cef17b74c363d6069
+> # good: [c8a8dd1d85ca715ec65169feac54a7a06b8d2a29] x86/build: Mark per-CPU symbols as absolute explicitly for LLD
+> git bisect good c8a8dd1d85ca715ec65169feac54a7a06b8d2a29
+> # good: [a644d2d28baf8472368903b28823cf85c9a13a1d] drm/fb-helper: fix leaks in error path of drm_fb_helper_fbdev_setup
+> git bisect good a644d2d28baf8472368903b28823cf85c9a13a1d
+> # first bad commit: [9b0f430450cf230e736bc40f95bf34fbdb99cead] clk: meson: clean-up clock registration
+> -------------------------------------------------------------------------------
 
 
