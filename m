@@ -2,54 +2,55 @@ Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C26DC10F0E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 20:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0585C10F0E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 20:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C9F2084B
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 20:47:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F422147C
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 20:47:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XljQDyAy"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vxr3Ka6p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbfDIUr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Apr 2019 16:47:28 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47007 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726337AbfDIUr2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 16:47:28 -0400
-Received: by mail-pg1-f193.google.com with SMTP id q1so55111pgv.13
-        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2019 13:47:27 -0700 (PDT)
+        id S1726636AbfDIUra (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Apr 2019 16:47:30 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39685 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfDIUr3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 16:47:29 -0400
+Received: by mail-pl1-f194.google.com with SMTP id a96so5443952pla.6
+        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2019 13:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c4AxUe5BjFjvYjkfSjcTE2lgIYaizWHbT0gUVT2RB9Q=;
-        b=XljQDyAyembEd8Lrph1XKfDzoQCfmhtOZHTOgi0Zpc2fCv0MzbLGqFpvNi8GtOecrj
-         LQoKgVnH/IekdTg8RPGMRkGH76wnXEKYcyAIjGgzQUYjomMUY8HOcEPf1x0Wka20zvZn
-         vigSn6uspOtwOFJ5Ya2UPl1X4FpSAaNWhCyvM=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=hQtEpFr/2QLJJRhgfs3xG1fw3zbFUfL+gsBwRn2FRiU=;
+        b=Vxr3Ka6p31s9x4dd+PrU3fntx+g16qjSfCMXIEspakxskDnqurocM5WnuYakx6KOV0
+         yHe3K1tHjILdPNGwuQDwV2qP5psDPm/RbPKZdEB2FuDsoUwanlWkd9AbqgpLb/HT0Fqr
+         KLLckLDp8uyS4EFkJpK6x/83eswdMi3p+4ZWA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c4AxUe5BjFjvYjkfSjcTE2lgIYaizWHbT0gUVT2RB9Q=;
-        b=BjEj789E2Cv2pTFnPRuz0lhdSJ/dKmO1JhijZxlDUaAJ5rLLw9hp9x7t7ioALO29Oh
-         m6vqlALBSpEiaXRn54IFZLu3GzxPuu60dVE7UUYBZ2/4JWRRHdM+Tths9K++DtGp+E+X
-         pwXth9EYdI5deXSVnm1u3PAMbqICKJApR0hf/hVIwhyspJdsfCEPuoLKTojkWYGWfwfA
-         fUkIipeCI5gvErB6X2fwU0FGiBU5i0ad/gqKG29z6PaNCvC3Wg5/UFWmyvvD5bLOG/Mq
-         BLCof/ACPTwTa/mzeu4PVO9xx8TetKYNdq7VKQtGYJ+Q86gYza3fJ6wsaus6Lpm14tOX
-         OKag==
-X-Gm-Message-State: APjAAAUCGlnIo4WvN0byinzf+u8qJY1Z2yOqk8lEW41KS3nHHvolOGWl
-        RSze35yTyJZmqk0m3LMO8oGK5g==
-X-Google-Smtp-Source: APXvYqzC7ww/OYSAGpxDprLV20WG2ANh+jaUa303EaKd2qLxOQjVuAA6nPilvXjv+Jlz0nIZqRMSbw==
-X-Received: by 2002:a63:c61:: with SMTP id 33mr33925892pgm.293.1554842847481;
-        Tue, 09 Apr 2019 13:47:27 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hQtEpFr/2QLJJRhgfs3xG1fw3zbFUfL+gsBwRn2FRiU=;
+        b=O5UYoQscvLJZc75gNRS96k3wC8kfNgIVDptKyz24x02hqnPnIZ1McWfpjg2fjH7FSY
+         lcATrmNJYTszahMXe2rABSopcI4az3AWUy+At+2T0pkD9CDyAS57/aIDTZde+mpM8Vyt
+         9XJeDyyyBS+hrGV86BX4hCCHDFP81ChKZhMycrgFH1raE4p5GjNU7ZQM+z59Vp/PMGhH
+         UjX8lxk8PtgNwhF29V64abfvv592TQfYjllHhTl+fN5akInmjrUhl4H1R82LdylyNHWO
+         0BZRdSYyjX+UxRoIufyWR8EntEEZRnHqvGhe5l6Oy3AhGPa01GJPwS8FsQBRtlHgRjHW
+         CaCA==
+X-Gm-Message-State: APjAAAX42NuNuzjMZ+R7Ewb0tzBdH7volv6VUXXOlQRe+KeL8VQTHice
+        uYrGuFy/v1codXjzAYrsKsLO+w==
+X-Google-Smtp-Source: APXvYqyuMD3gSme+CuuouGXSlNmkP4JX+ynXAbAEWa8G9WeOBvo3pVFWxQjDCZTk5zyU9r4fD8SvMg==
+X-Received: by 2002:a17:902:1105:: with SMTP id d5mr15107160pla.311.1554842848669;
+        Tue, 09 Apr 2019 13:47:28 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id x28sm35014016pgl.38.2019.04.09.13.47.26
+        by smtp.gmail.com with ESMTPSA id x28sm35014016pgl.38.2019.04.09.13.47.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Apr 2019 13:47:26 -0700 (PDT)
+        Tue, 09 Apr 2019 13:47:28 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -59,14 +60,13 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         ryandcase@chromium.org, Elaine Zhang <zhangqing@rock-chips.com>,
         linux-clk@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] rockchip: A few clock cleanups for rk3288
-Date:   Tue,  9 Apr 2019 13:47:04 -0700
-Message-Id: <20190409204707.150347-1-dianders@chromium.org>
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/3] Revert "clk: rockchip: mark noc and some special clk as critical on rk3288"
+Date:   Tue,  9 Apr 2019 13:47:05 -0700
+Message-Id: <20190409204707.150347-2-dianders@chromium.org>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+In-Reply-To: <20190409204707.150347-1-dianders@chromium.org>
+References: <20190409204707.150347-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -74,30 +74,105 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This reverts commit 55bb6a633c33caf68ab470907ecf945289cb733d.
 
-This series contains a few misc clock cleanups for Rockchip rk3288
-found by comparing to what's in the downstream Chrome OS 3.14 kernel.
+The clocks that were enabled by that patch are pretty questionable.
+Specifically looking at what has been shipping on rk3288-veyron
+Chromebooks almost all of these clocks are safely turned off and cause
+no apparent problems.  If some boards need these clocks turned on for
+some reason then it seems like we should figure out how to do that at
+a board level.
 
-NOTES:
-* The PWM patches could go in separately from the revert but that
-  would cause a merge conflict which is why they're together in a
-  series.
-* Having the PWM marked as a critical clock _definitely_ needs to land
-  before switching the clock in the device tree.
+NOTE: turning these clocks off doesn't seem to do a whole lot in terms
+of power savings (checking the power on the logic rail).  It appears
+to save maybe 1-2mW.  ...but still it seems like we should turn the
+clocks off if they aren't needed.
 
+Digging into the clocks here to describe why they shouldn't need to be
+left on:
 
-Caesar Wang (1):
-  ARM: dts: rockchip: fix PWM clock found on RK3288 Socs
+atclk: No documentation about this clock other than that it goes to
+the CPU.  CPU functions fine without it on.
 
-Douglas Anderson (2):
-  Revert "clk: rockchip: mark noc and some special clk as critical on
-    rk3288"
-  clk: rockchip: Make rkpwm a critical clock on rk3288
+jtag: Presumably this clock is only needed if you're debugging with
+JTAG.  It doesn't seem like it makes sense to waste power for every
+rk3288 user.  Perhaps this could be turned on with a CONFIG option?
 
- arch/arm/boot/dts/rk3288.dtsi     |  8 ++++----
- drivers/clk/rockchip/clk-rk3288.c | 17 ++++++-----------
- 2 files changed, 10 insertions(+), 15 deletions(-)
+pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
+clocks on only during kernel panics in order to access some coresight
+registers.  Since nothing in the upstream kernel does this we should
+be able to leave them off safely.
 
+hsicphy12m_xin12m: There is no indication of why this clock would need
+to be turned on for boards that don't use HSIC.
+
+pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
+these 4 clocks on only when doing DDR transitions and they are off
+otherwise.  I see no reason why they'd need to be on in the upstream
+kernel which doesn't support DDRFreq.
+
+pmu_hclk_otg0: A "chip design defect" is mentioned in the original
+patch but no details.  This clock has always been gated in shipping
+veyron Chromebooks so presumably this chip defect doesn't affect all
+boards.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+ drivers/clk/rockchip/clk-rk3288.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 5a67b7869960..06287810474e 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -313,13 +313,13 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
+ 			RK3288_CLKGATE_CON(12), 6, GFLAGS),
+-	COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
++	COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
+ 			RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
+ 			RK3288_CLKGATE_CON(12), 7, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
+ 			RK3288_CLKGATE_CON(12), 8, GFLAGS),
+-	GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
++	GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
+ 			RK3288_CLKGATE_CON(12), 9, GFLAGS),
+ 	GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKGATE_CON(12), 10, GFLAGS),
+@@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
+ 			RK3288_CLKSEL_CON(22), 7, IFLAGS),
+ 
+-	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
++	GATE(0, "jtag", "ext_jtag", 0,
+ 			RK3288_CLKGATE_CON(4), 14, GFLAGS),
+ 
+ 	COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy480m_p, 0,
+@@ -656,7 +656,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy480m_p, 0,
+ 			RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
+ 			RK3288_CLKGATE_CON(3), 6, GFLAGS),
+-	GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
++	GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
+ 			RK3288_CLKGATE_CON(13), 9, GFLAGS),
+ 	DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
+ 			RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
+@@ -837,12 +837,6 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"pclk_alive_niu",
+ 	"pclk_pd_pmu",
+ 	"pclk_pmu_niu",
+-	"pclk_core_niu",
+-	"pclk_ddrupctl0",
+-	"pclk_publ0",
+-	"pclk_ddrupctl1",
+-	"pclk_publ1",
+-	"pmu_hclk_otg0",
+ };
+ 
+ static void __iomem *rk3288_cru_base;
 -- 
 2.21.0.392.gf8f6787159e-goog
 
