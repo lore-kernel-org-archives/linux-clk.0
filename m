@@ -2,173 +2,107 @@ Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F946C10F0E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 14:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B27AC10F0E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 15:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1517A2084F
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 14:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 321B1206B7
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 15:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfDIOwb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Apr 2019 10:52:31 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:58687 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfDIOwb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 10:52:31 -0400
-X-Originating-IP: 90.88.18.121
-Received: from localhost (aaubervilliers-681-1-63-121.w90-88.abo.wanadoo.fr [90.88.18.121])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id A34D91BF212;
-        Tue,  9 Apr 2019 14:52:25 +0000 (UTC)
-Date:   Tue, 9 Apr 2019 16:52:25 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
- (Camera Sensor Interface)
-Message-ID: <20190409145225.2ltluiyqa5xha4zd@flea>
-References: <20190408165744.11672-1-wens@kernel.org>
- <20190408165744.11672-5-wens@kernel.org>
- <20190409075804.4zrwjil7ie2gjigu@flea>
- <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
- <20190409082818.z33mq2qrxethldzf@flea>
- <CAGb2v67pX+7ccihmGEWPKrXg8mMhht-vh37p2auWYgt=qGDA6A@mail.gmail.com>
+        id S1726446AbfDIPba (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Apr 2019 11:31:30 -0400
+Received: from mga03.intel.com ([134.134.136.65]:60507 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726396AbfDIPb3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Apr 2019 11:31:29 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Apr 2019 08:31:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,329,1549958400"; 
+   d="scan'208";a="162759031"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Apr 2019 08:31:25 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hDsib-0004lm-9w; Tue, 09 Apr 2019 18:31:25 +0300
+Date:   Tue, 9 Apr 2019 18:31:25 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     =?utf-8?B?0KHQtdC80LXQvSDQktC10YDRh9C10L3QutC+?= 
+        <semverchenko@factor-ts.ru>,
+        David =?iso-8859-1?Q?M=FCller?= <dave.mueller@gmx.ch>,
+        "Fujinaka, Todd" <todd.fujinaka@intel.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
+Message-ID: <20190409153125.GU9224@smile.fi.intel.com>
+References: <e01bb9da-0dde-4bfa-5693-eb4c02a1d696@redhat.com>
+ <20190328152421.GJ9224@smile.fi.intel.com>
+ <26800a0e-c309-1e69-c5b4-e11b761c7b40@redhat.com>
+ <20190328154931.GK9224@smile.fi.intel.com>
+ <d4c44bc8-ae0c-a6ff-3042-ae3185ceb33e@redhat.com>
+ <ef893b2e-121a-d395-9843-47d0c9f1515a@factor-ts.ru>
+ <942808d6-e2c1-cc8c-4aed-9b44a7ce4c76@redhat.com>
+ <c5ebcf73-1706-48d8-6904-ae6a89c44151@redhat.com>
+ <20190408172111.GX9224@smile.fi.intel.com>
+ <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="opeshs6swmdpxgen"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGb2v67pX+7ccihmGEWPKrXg8mMhht-vh37p2auWYgt=qGDA6A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Apr 08, 2019 at 08:43:10PM +0200, Hans de Goede wrote:
+> On 08-04-19 19:21, Andy Shevchenko wrote:
+> > On Thu, Apr 04, 2019 at 04:43:03PM +0200, Hans de Goede wrote:
+> > > On 29-03-19 16:53, Hans de Goede wrote:
+> > > > On 3/29/19 2:59 PM, Семен Верченко wrote:
+> > 
+> > > > Hmm, so 4 ethernet cards and 4 enabled / marked as critical clocks.
+> > > > 
+> > > > Supporting this through get_clk is going to require a DMI table in the igb driver
+> > > > combined with checking which PCI "slot" the card is to get the correct clock
+> > > > for each ethernet controller.
+> > > > 
+> > > > I believe tht just restoring the old behavior to mark all clocks enabled
+> > > > on boot as critical, but then limited to this system based on a dmi match,
+> > > > is the best solution here.
+> > > > 
+> > > > Andy?
+> > > 
+> > > Andy? Now that we've the patch ready for the other system which needs to
+> > > have the CLK_IS_CRITICAL workaround and enables this based on DMI info,
+> > > I believe the best fix for this system is to simply add it to that DMI
+> > > table?
+> > 
+> > I reviewed v4, supposed to go via CLK tree.
+> 
+> Right, but that patch adds the quirk for the system with the USB hub,
+> do you agree, that given that each ethernet controller seems to be
+> using its own clock, it is best to use a DMI quirk for this case too?
+> 
+> If you agree then someone needs to prepare a follow-up patch on top of
+> v4 which adds the DMI info for this board to the table.
 
---opeshs6swmdpxgen
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I hope we may find a better solution in the future, but for now as a quick fix
+the proposed can be done.
 
-On Tue, Apr 09, 2019 at 04:40:40PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Apr 9, 2019 at 4:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Tue, Apr 09, 2019 at 04:07:34PM +0800, Chen-Yu Tsai wrote:
-> > > On Tue, Apr 9, 2019 at 3:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > On Tue, Apr 09, 2019 at 12:57:42AM +0800, Chen-Yu Tsai wrote:
-> > > > > From: Chen-Yu Tsai <wens@csie.org>
-> > > > >
-> > > > > The A83T SoC has a camera sensor interface (known as CSI in Allwinner
-> > > > > lingo), which is similar to the one found on the A64 and H3. The only
-> > > > > difference seems to be that support of MIPI CSI through a connected
-> > > > > MIPI CSI-2 bridge.
-> > > > >
-> > > > > Add a device node for it, and pinctrl nodes for the commonly used MCLK
-> > > > > and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
-> > > > > the pinctrl nodes to keep the device tree blob size down if they are
-> > > > > unused.
-> > > > >
-> > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > > > ---
-> > > > >  arch/arm/boot/dts/sun8i-a83t.dtsi | 31 +++++++++++++++++++++++++++++++
-> > > > >  1 file changed, 31 insertions(+)
-> > > > >
-> > > > > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > > index f739b88efb53..0c52f945fd5f 100644
-> > > > > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > > @@ -682,6 +682,20 @@
-> > > > >                       #interrupt-cells = <3>;
-> > > > >                       #gpio-cells = <3>;
-> > > > >
-> > > > > +                     /omit-if-no-ref/
-> > > > > +                     csi_8bit_parallel_pins: csi-8bit-parallel-pins {
-> > > > > +                             pins = "PE0", "PE2", "PE3", "PE6", "PE7",
-> > > > > +                                    "PE8", "PE9", "PE10", "PE11",
-> > > > > +                                    "PE12", "PE13";
-> > > > > +                             function = "csi";
-> > > > > +                     };
-> > > > > +
-> > > > > +                     /omit-if-no-ref/
-> > > > > +                     csi_mclk_pin: csi-mclk-pin {
-> > > > > +                             pins = "PE1";
-> > > > > +                             function = "csi";
-> > > > > +                     };
-> > > > > +
-> > > > >                       emac_rgmii_pins: emac-rgmii-pins {
-> > > > >                               pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
-> > > > >                                      "PD11", "PD12", "PD13", "PD14", "PD18",
-> > > > > @@ -994,6 +1008,23 @@
-> > > > >                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-> > > > >               };
-> > > > >
-> > > > > +             csi: camera@1cb0000 {
-> > > > > +                     compatible = "allwinner,sun8i-a83t-csi";
-> > > > > +                     reg = <0x01cb0000 0x1000>;
-> > > > > +                     interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > +                     clocks = <&ccu CLK_BUS_CSI>,
-> > > > > +                              <&ccu CLK_CSI_SCLK>,
-> > > > > +                              <&ccu CLK_DRAM_CSI>;
-> > > > > +                     clock-names = "bus", "mod", "ram";
-> > > > > +                     resets = <&ccu RST_BUS_CSI>;
-> > > > > +                     status = "disabled";
-> > > > > +
-> > > > > +                     csi_in: port {
-> > > > > +                             #address-cells = <1>;
-> > > > > +                             #size-cells = <0>;
-> > > >
-> > > > If we expect a single enpoint, then we don't need the address-cells
-> > > > and size-cells properties.
-> > >
-> > > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
-> > > is kind of genius if not very hacky. They have two "identical" sensors
-> > > on the same I2C bus and CSI bus, with shared reset line but separate
-> > > shutdown lines. Since they are identical, they also have the same I2C
-> > > address. I haven't figured out how to model this in the device tree.
-> > >
-> > > The point is, it's perfectly possible to have two or more sensors use
-> > > the same controller, provided only one be active at a time.
-> >
-> > Right, but I guess the common case would be to have a single sensor,
-> > where that wouldn't be needed.
-> >
-> > In odd cases, we can always specify it in the DTS, and if it becomes
-> > common enough, we can move it to the DTSI.
->
-> Makes sense. Do you want me to re-spin?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-If there's no other comment, we'll fix it when applying.
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---opeshs6swmdpxgen
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKyxqAAKCRDj7w1vZxhR
-xQqgAPoCwGE+02LeS5CqpwNkNGyMU+On6b/GFxOR2vtPx16ypwEA42TEbPqw9AfF
-r31IMk7MKBdc6HAcaoxwGTv23e1kfgU=
-=Fr2o
------END PGP SIGNATURE-----
-
---opeshs6swmdpxgen--
