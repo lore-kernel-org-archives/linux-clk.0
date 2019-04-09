@@ -1,141 +1,111 @@
-Return-Path: <SRS0=sViq=SK=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A978CC10F13
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 22:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25364C10F13
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 03:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788D321473
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Apr 2019 22:21:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bXd/J4j1"
+	by mail.kernel.org (Postfix) with ESMTP id EE90820883
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 03:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbfDHWVY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Apr 2019 18:21:24 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35840 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbfDHWVY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Apr 2019 18:21:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9404zG5Mey352Oli4qhYASTVbszYTAXe3u6LsYDlhXU=; b=bXd/J4j1dkOVh6Ru9bRKKsTnK
-        9wWbBzq4pNDwdaka/5pF+ylB0SWFQilNKPMPJl4+WJ9W7vjv8VCe+sZN/RQYtnMUBva9TRWfGOkej
-        U2y569cQOmsCoe3Q9C/zlAXPkB9GwjkkJa0f5svnZBwuMUQRaFJ/8PHsE/RXD3C8ABr9Lb1p64di+
-        vSODMYC1uLuzrHm7RQKLDj47xz+MO0F6/AY4nL7lsdhnCh0AbOuno+n84pO0S7ScYEjwzX4RVHpJH
-        dGIKK0i1XI+ng7g1Z75MRye4oA8IAy8GY4SnHxqWL8y1J9FwERAeaqRffFdxm5SMmng51cEjXF37b
-        R3BNc6ZFw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52022)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hDcdb-0001ms-A5; Mon, 08 Apr 2019 23:21:15 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hDcdW-0001Ln-K8; Mon, 08 Apr 2019 23:21:06 +0100
-Date:   Mon, 8 Apr 2019 23:21:06 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "jhugo@codeaurora.org" <jhugo@codeaurora.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>
-Subject: Re: [PATCH v3 1/7] clkdev: Hold clocks_mutex while iterating clocks
- list
-Message-ID: <20190408222106.ect7nwjsklzhmdwj@shell.armlinux.org.uk>
-References: <20190404215344.6330-1-sboyd@kernel.org>
- <20190404215344.6330-2-sboyd@kernel.org>
- <b3a3052056b787bde94178ed371417359a941f2d.camel@fi.rohmeurope.com>
- <155449664462.20095.10904772826291270300@swboyd.mtv.corp.google.com>
- <20190408104941.GB17594@localhost.localdomain>
- <155474280295.20095.182612336816713159@swboyd.mtv.corp.google.com>
+        id S1726461AbfDIDIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Apr 2019 23:08:09 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:51241 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726081AbfDIDIJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Apr 2019 23:08:09 -0400
+X-UUID: 3e1d05f2c3374925a14bf825498522c5-20190409
+X-UUID: 3e1d05f2c3374925a14bf825498522c5-20190409
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <wangyan.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 2116267685; Tue, 09 Apr 2019 11:08:01 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 9 Apr
+ 2019 11:07:59 +0800
+Received: from mszsdclx1067.gcn.mediatek.inc (172.27.4.253) by
+ MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Tue, 9 Apr 2019 11:07:58 +0800
+From:   wangyan wang <wangyan.wang@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
+CC:     wangyan wang <wangyan.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH V9 0/5] make mt7623 clock of hdmi stable
+Date:   Tue, 9 Apr 2019 11:07:51 +0800
+Message-ID: <20190409030756.69496-1-wangyan.wang@mediatek.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155474280295.20095.182612336816713159@swboyd.mtv.corp.google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 08, 2019 at 10:00:02AM -0700, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2019-04-08 03:49:41)
-> > On Fri, Apr 05, 2019 at 01:37:24PM -0700, Stephen Boyd wrote:
-> > > Quoting Vaittinen, Matti (2019-04-04 23:51:43)
-> > > > On Thu, 2019-04-04 at 14:53 -0700, Stephen Boyd wrote:
-> > > > > We recently introduced a change to support devm clk lookups. That
-> > > > > change
-> > > > > introduced a code-path that used clk_find() without holding the
-> > > > > 'clocks_mutex'. Unfortunately, clk_find() iterates over the 'clocks'
-> > > > > list and so we need to prevent the list from being modified while
-> > > > > iterating over it by holding the mutex. Similarly, we don't need to
-> > > > > hold
-> > > > > the 'clocks_mutex' besides when we're dereferencing the clk_lookup
-> > > > > pointer
-> > > > 
-> > > > /// Snip
-> > > > 
-> > > > > -out:
-> > > > > +static struct clk_lookup *clk_find(const char *dev_id, const char
-> > > > > *con_id)
-> > > > > +{
-> > > > > +     struct clk_lookup *cl;
-> > > > > +
-> > > > > +     mutex_lock(&clocks_mutex);
-> > > > > +     cl = __clk_find(dev_id, con_id);
-> > > > >       mutex_unlock(&clocks_mutex);
-> > > > >  
-> > > > > -     return cl ? clk : ERR_PTR(-ENOENT);
-> > > > > +     return cl;
-> > > > > +}
-> > > > 
-> > > > I am not an expert on this but reading commit message abowe and seeing
-> > > > the code for clk_find() looks a bit scary. If I understand it
-> > > > correctly, the clocks_mutex should be held when dereferencing the
-> > > > clk_lookup returned by clk_find. The clk_find implementation drops the
-> > > > lock before returning - which makes me think I miss something here. How
-> > > > can the caller ever safely dereference returned clk_lookup pointer?
-> > > > Just reading abowe makes me think that lock should be taken by whoever
-> > > > is calling the clk_find, and dropped only after caller has used the
-> > > > found clk_lookup for whatever caller intends to use it. Maybe I am
-> > > > missing something?
-> > > > 
-> > > 
-> > > The only user after this patch (devm) is doing a pointer comparison so
-> > > it looks OK. But yes, in general there shouldn't be users of clk_find()
-> > > that dereference the pointer because there isn't any protection besides
-> > > the mutex.
-> > 
-> > If the only (intended) user for clk_find is devm_clk_release_clkdev,
-> > then we might want to write it in devm_clk_release_clkdev - just to
-> > avoid similar errors (as I did with devm) in the future? I might even
-> > consider renaming __clk_find to clk_find or to clk_find_unsafe - but
-> > that's all just nitpicking :) Go with what you like to maintain :D
-> > 
-> 
-> Sure. I was thinking along the same lines after you asked.
+From: Wangyan Wang <wangyan.wang@mediatek.com>
 
-This is rubbish.  The reason clk_find() doesn't take the lock is that
-you _need_ to hold the lock while you dereference the clk_lookup data.
-The lock isn't protecting just the lookup, it protects what you do with
-the result of the lookup as well.
+V9 adopt maintainer's suggestion.
+Here is the change list between V8 & V9
 
-So, as I say, adding locking inside clk_find() is completely
-misunderstanding the locking here.
+1. Align the first character to the right of '(' in
+mtk_hdmi_phy_clk_get_data() of "drm/mediatek: remove flag ..."
+2. Align the first character to the right of '(' in
+mtk_hdmi_pll_recalc_rate() of "drm/mediatek: make implementation ..." 
+3. Align the first character to the right of '(' in
+mtk_hdmi_pll_round_rate() of "drm/mediatek: no change ..."
+4. move patch " drm/mediatek: make implementation ..." before
+patch "drm/mediatek: no change parent ..." 
+5. To make MT2701 HDMI stable, TVDPLL should not be adjusted and
+it's the parent clock of HDMI phy, so HDMI phy could not adjust parent
+rate. there are 3 steps to make MT2701 HDMI stable.
+    1). remove flag CLK_SET_RATE_PARENT for mt2701 hdmi phy to not propagate
+rate change to parent in "drm/mediatek: remove flag ...".
+    2). Using new factor for tvdpll in mt2701 to match divider of DPI in
+mt2701 in "drm/mediatek: using new...".
+    3). No change parent rate in round_rate() for mt2701 hdmi phy in
+"drm/mediatek: no change parent...".
+
+6. Recalculate the rate of this clock, by querying hardware to
+make implementation of recalc_rate() to match the definition.
+
+Wangyan Wang (5):
+  drm/mediatek: remove flag CLK_SET_RATE_PARENT for mt2701 hdmi phy
+  drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+  drm/mediatek: using new factor for tvdpll in MT2701
+  drm/mediatek: make implementation of recalc_rate() to match the definition
+  drm/mediatek: no change parent rate in round_rate() for mt2701 hdmi phy
+
+ 03_27_ck.diff                                  | 91 ++++++++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 +--
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 35 ++--------
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  5 +-
+ drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 50 ++++++++++++--
+ drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++
+ patch1.diff                                    | 75 ++++++++++++++++++++
+ patch_5_4.diff                                 | 95 ++++++++++++++++++++++++++
+ remove_parent_flag.diff                        | 75 ++++++++++++++++++++
+ 9 files changed, 412 insertions(+), 45 deletions(-)
+ create mode 100644 03_27_ck.diff
+ create mode 100644 patch1.diff
+ create mode 100644 patch_5_4.diff
+ create mode 100644 remove_parent_flag.diff
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.14.1
+
