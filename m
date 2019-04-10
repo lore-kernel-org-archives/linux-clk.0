@@ -2,198 +2,245 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC95FC282CE
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D77A0C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7338F20820
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:25:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UvhWXmuQ"
+	by mail.kernel.org (Postfix) with ESMTP id 9E30020818
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554910341;
+	bh=8Uiu8jPrASJzDfP74Z0RIV0stXadfnYo6fsMAplIiBk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=bZXR1tdUKNfi60zVZ/M7x6kKtAMUr9TRTslspCGTUpaGja3EuqkUpjpNE8dowZN2A
+	 /MnZ6oAB6WL53BjWlgsNW9BlhWzt5kSWKUlsU6kW+lRSDdOgXxV7cDzcl3P+x2LAqM
+	 LNfxJApcCDD6RyCTZc9N7ZXWvwg4EE88qbF5valM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733261AbfDJPZx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 11:25:53 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42984 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733198AbfDJPZx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 11:25:53 -0400
-Received: by mail-vs1-f67.google.com with SMTP id f15so1589558vsk.9
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OzPOJAHOY1IvQ7ONFgPVHtkhwMD/ZoVgoxvD6uZ6JQ0=;
-        b=UvhWXmuQVl2/q9WBKj5DU0VRsfwKuwFrdNjgoreC6YPlSiyFIi2bgUZFFOlULEX/be
-         7oKcU/H2zCBWoLsLvK78H6ZbUhrVnxSBFyn7snB5kTWQcqU3LwQJgSphUyb19yhCO07O
-         uixQ5xzkLeXODi8kIfJ8ZJs/UoZORMgXZKEvg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OzPOJAHOY1IvQ7ONFgPVHtkhwMD/ZoVgoxvD6uZ6JQ0=;
-        b=sZqBfmRLUyz311lMwAb/5t7azxihM4K23eM2+ccwufL5VN63arh4xiH/8J6pQ85/u0
-         Ybs1S4ASKiqgS7eIp4LrHxNNgeVjAFbF3DON7JeOet0X0BPy42LRFKKXDc+IiM27Gz5Q
-         4V0agxI3JKguhUYX2LQpMgCmnY4++bKKFIQigoYLX7yRAn+MMG6WNRNkZBfe+ye2FUzS
-         mAzLJZqEgTq9aXPCNZAKzKJx15iZhs+9Oo1ZZkAbXeh8FF80FgDm1lxglfei2btynBuq
-         knlKMTVYGx2a7xc9B0PDmPCex8QIYsRNOvkwZldpDagzvHgWrxZ4iFpWM8y7IYHdjmsI
-         VXGw==
-X-Gm-Message-State: APjAAAW/67BzMGmMU1fTdqlyFHzCF1R3cyRLszzchZ61sDJrzooDZeJI
-        B1Pg6iU8iDjyDCfotXSEMe/lK0Gy6xs=
-X-Google-Smtp-Source: APXvYqy8i6Kop6/Euxx5/l+OiGiIKKwTsq7JyHDQ9eNJ3pf2ua78sy9eV4Z+T91ME9HJj6syWsUicw==
-X-Received: by 2002:a67:ea53:: with SMTP id r19mr26019945vso.12.1554909951629;
-        Wed, 10 Apr 2019 08:25:51 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id b197sm42578925vkd.9.2019.04.10.08.25.50
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 08:25:50 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id b8so905305uaq.7
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:25:50 -0700 (PDT)
-X-Received: by 2002:ab0:7212:: with SMTP id u18mr22117478uao.32.1554909949608;
- Wed, 10 Apr 2019 08:25:49 -0700 (PDT)
+        id S1730626AbfDJPcV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 11:32:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730505AbfDJPcV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Apr 2019 11:32:21 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BBEF20854;
+        Wed, 10 Apr 2019 15:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554910339;
+        bh=8Uiu8jPrASJzDfP74Z0RIV0stXadfnYo6fsMAplIiBk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=plCebfehFp72++RZ/i+YzJj4HoTRA0FwCiWJ6w24EeLMMmepQ24/z1pThASiqPMNU
+         w2RTgk5F60/j39C/wZh7AHejAo/pPfi1Po+YYd3WqRHcnfejttHBWwNGq6ILqMsEAu
+         zmyBFL1N7xSfsovIdd8CGDpaU1aYhX+KPMGn152A=
+Received: by mail-qk1-f178.google.com with SMTP id z76so1460298qkb.12;
+        Wed, 10 Apr 2019 08:32:19 -0700 (PDT)
+X-Gm-Message-State: APjAAAVnw2huBFicOZ31OK0K5u6lOpQ1iF43XpzcxQ96h7zCjCThK+JL
+        NDDJOHrpfqKOLBNPwMUC0LNBdKNNARkVxTMqPA==
+X-Google-Smtp-Source: APXvYqzGWuK3B+0h61dMUsiokgzg4wJMmQH4fLlHsiqT5Uw156wRyLJcUJAoX/AT8LgIOm04r4R/aqLaM3uzVMiuMrs=
+X-Received: by 2002:a37:5805:: with SMTP id m5mr33957016qkb.136.1554910338346;
+ Wed, 10 Apr 2019 08:32:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190409204707.150347-1-dianders@chromium.org>
- <20190409204707.150347-3-dianders@chromium.org> <50b744cd-b8d9-79ca-ba2d-6765808aa5e5@rock-chips.com>
-In-Reply-To: <50b744cd-b8d9-79ca-ba2d-6765808aa5e5@rock-chips.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 10 Apr 2019 08:25:37 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vyy4bNJV=t2yALP3dAnm0-QsR55F5B==uUoi-Tp6b7Vg@mail.gmail.com>
-Message-ID: <CAD=FV=Vyy4bNJV=t2yALP3dAnm0-QsR55F5B==uUoi-Tp6b7Vg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: rockchip: Make rkpwm a critical clock on rk3288
-To:     "elaine.zhang" <zhangqing@rock-chips.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Caesar Wang <caesar.wang@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1550771836-10014-1-git-send-email-aisheng.dong@nxp.com>
+ <1550771836-10014-2-git-send-email-aisheng.dong@nxp.com> <20190326134715.GA4055@bogus>
+ <AM0PR04MB42110F1F251243A165DB9EC680580@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB42110F1F251243A165DB9EC680580@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 10 Apr 2019 10:32:06 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK9xkR3P7_cfhpr3kQBEF_wGgZO4oHpoDW+3ybpqYoXNw@mail.gmail.com>
+Message-ID: <CAL_JsqK9xkR3P7_cfhpr3kQBEF_wGgZO4oHpoDW+3ybpqYoXNw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: firmware: imx-scu: new binding to parse
+ clocks from device tree
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On Tue, Apr 9, 2019 at 11:42 PM elaine.zhang <zhangqing@rock-chips.com> wro=
-te:
+On Wed, Mar 27, 2019 at 9:35 AM Aisheng Dong <aisheng.dong@nxp.com> wrote:
 >
-> hi,
->
-> =E5=9C=A8 2019/4/10 =E4=B8=8A=E5=8D=884:47, Douglas Anderson =E5=86=99=E9=
-=81=93:
-> > Most rk3288-based boards are derived from the EVB and thus use a PWM
-> > regulator for the logic rail.  However, most rk3288-based boards don't
-> > specify the PWM regulator in their device tree.  We'll deal with that
-> > by making it critical.
+> > From: Rob Herring [mailto:robh@kernel.org]
+> > Sent: Tuesday, March 26, 2019 9:47 PM
+> > On Thu, Feb 21, 2019 at 06:03:43PM +0000, Aisheng Dong wrote:
+> > > There's a few limitations on one cell clock binding (#clock-cells =
+> > > <1>) that we have to define all clock IDs for device tree to reference.
+> > > This may cause troubles if we want to use common clock IDs for multi
+> > > platforms support when the clock of those platforms are mostly the same.
+> > > e.g. Current clock IDs name are defined with SS prefix. However the
+> > > device may reside in different SS across CPUs, that means the SS
+> > > prefix may not valid anymore for a new SoC. Furthermore, the device
+> > > availability of those clocks may also vary a bit.
+> > >
+> > > For such situation, We formerly planned to add all new IDs for each SS
+> > > and dynamically check availability for different SoC in driver. That
+> > > can be done but that may involve a lot effort and may result in more
+> > > changes and duplicated code in driver, also make device tree
+> > > upstreaming hard which depends on Clock IDs.
+> > >
+> > > To relief this situation, we want to move the clock definition into
+> > > device tree which can fully decouple the dependency of Clock ID
+> > > definition from device tree. And no frequent changes required in clock driver
+> > any more.
+> > >
+> > > Then we can use the existence of clock nodes in device tree to address
+> > > the device and clock availability differences across different SoCs.
+> > >
+> > > For SCU clocks, only two params required, thus two new property created:
+> > > rsrc-id = <IMX_SC_R_UART_0>;
+> > > clk-type = <IMX_SC_PM_CLK_PER>;
+> > >
+> > > And as we want to support clock set parent function, 'clocks' property
+> > > is also used to pass all the possible input parents.
+> > >
+> > > Cc: Rob Herring <robh@kernel.org>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: Shawn Guo <shawnguo@kernel.org>
+> > > Cc: Sascha Hauer <kernel@pengutronix.de>
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Cc: devicetree@vger.kernel.org
+> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > > ---
+> > >  .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 29
+> > ++++++++++++++++------
+> > >  include/dt-bindings/firmware/imx/rsrc.h            | 17
+> > +++++++++++++
+> > >  2 files changed, 38 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > > b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > > index 72d481c..2816789 100644
+> > > --- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > > @@ -78,6 +78,19 @@ Required properties:
+> > >                       "fsl,imx8qm-clock"
+> > >                       "fsl,imx8qxp-clock"
+> > >                     followed by "fsl,scu-clk"
+> > > +- #clock-cells:            Should be 0.
+> > > +- rsrc-id:         Resource ID associated with this clock
+> > > +- clk-type:                Type of this clock.
+> > > +                   Refer to <include/dt-bindings/firmware/imx/rsrc.h> for
+> > > +                   available clock types supported by SCU.
 > >
-> > NOTE: it's important to make it critical and not just IGNORE_UNUSED
-> > because all PWMs in the system share the same clock.  We don't want
-> > another PWM user to turn the clock on and off and kill the logic rail.
+> > Can't you just make these 2 values clock cells? I'm all for getting rid of made
+> > up clock numbers.
 > >
-> > This change is in preparation for actually having the PWMs in the
-> > rk3288 device tree actually point to the proper PWM clock.  Up until
-> > now they've all pointed to the clock for the old IP block and they've
-> > all worked due to the fact that rkpwm was IGNORE_UNUSED and that the
-> > clock rates for both clocks were the same.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> >
-> >   drivers/clk/rockchip/clk-rk3288.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/c=
-lk-rk3288.c
-> > index 06287810474e..c3321eade23e 100644
-> > --- a/drivers/clk/rockchip/clk-rk3288.c
-> > +++ b/drivers/clk/rockchip/clk-rk3288.c
-> > @@ -697,7 +697,7 @@ static struct rockchip_clk_branch rk3288_clk_branch=
-es[] __initdata =3D {
-> >       GATE(PCLK_TZPC, "pclk_tzpc", "pclk_cpu", 0, RK3288_CLKGATE_CON(11=
-), 3, GFLAGS),
-> >       GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK3288_CLKGATE_CON(=
-11), 9, GFLAGS),
-> >       GATE(PCLK_EFUSE256, "pclk_efuse_256", "pclk_cpu", 0, RK3288_CLKGA=
-TE_CON(11), 10, GFLAGS),
-> > -     GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", CLK_IGNORE_UNUSED, RK3=
-288_CLKGATE_CON(11), 11, GFLAGS),
-> > +     GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", 0, RK3288_CLKGATE_CON(=
-11), 11, GFLAGS),
-> >
-> >       /* ddrctrl [DDR Controller PHY clock] gates */
-> >       GATE(0, "nclk_ddrupctl0", "ddrphy", CLK_IGNORE_UNUSED, RK3288_CLK=
-GATE_CON(11), 4, GFLAGS),
-> > @@ -837,6 +837,7 @@ static const char *const rk3288_critical_clocks[] _=
-_initconst =3D {
-> >       "pclk_alive_niu",
-> >       "pclk_pd_pmu",
-> >       "pclk_pmu_niu",
-> > +     "pclk_rkpwm",
 >
-> pwm have device node, can enable and disable it in the pwm drivers.
+> Thanks for the agreement to remove clock IDs.
 >
-> pwm regulator use pwm node as:
->
-> pwms =3D <&pwm2 0 25000 1>
->
-> when set Logic voltage:
->
-> pwm_regulator_set_voltage()
->
->      --> pwm_apply_state()
->
->          -->clk_enable()
->
->          -->pwm_enable()
->
->          -->pwm_config()
->
->          -->pinctrl_select()
->
->          --....
->
-> For mark pclk_rkpwm as critical,do you have any questions, or provides
-> some log or more information.
+> The 2 values clock cell seems not the best approach for i.MX because it still needs
+> to define all clocks in the driver which is exactly we want to avoid now due to some
+> special HW characteristic:
 
-Right, if we actually specify the PWM used for the PWM regulator in
-the device tree then there is no need to mark it as a critical clock.
-In fact rk3288-veyron devices boot absolutely fine without marking
-this clock as critical.  Actually, it seems like the way the PWM
-framework works (IIRC it was designed this way specifically to support
-PWM regulators) is that even just specifying that pwm1 is "okay" is
-enough to keep the clock on even if the PWM regulator isn't specified.
+Why's that? You can walk the DT and extract the 2 cells for each clock
+present. That's not any different than walking child nodes here and
+getting the resource ids and type. That's not really fast, but if
+speed is really an issue we can consider addressing that in ways that
+extend rather than change the binding.
 
-...however...
+> 1. clock resources may be allocated to different SW execution partition by firmware
+> and A core may not have access rights for those clocks not belong to its partition.
+> So we want to describe them in DT according to the partition configuration.
 
-Take a look at, for instance, the rk3288-evb device tree file.
-Nowhere in there does it specify that the PWM used for the PWM
-regulator should be on.  Presumably that means that if we don't mark
-the clock as critical then rk3288-evb will fail to boot.  That's easy
-for me to fix since I have the rk3288-evb schematics, but what about
-other rk3288 boards?  We could make educated guesses about each of
-them and/or fix things are we hear about breakages.
+Do you have an example? I'd assume you assign peripherals to different
+partitions and resource assignment simply follows that. Can clocks not
+be available when a peripheral still is?
 
-...but...
+> 2. Each clock is associated with a different power domain which is better to be
+> described in device tree. And clock state will be lost and need restore after power cycle
+> of the domain.
+>
+> Based on above requirements, do you think we can do as below?
 
-All the above would only be worth doing if we thought someone would
-get some benefit out of it.  I'd bet that pretty much all rk3288-based
-boards use a PWM regulator.  Thus, in reality, everyone will want the
-rkpwm clock on all the time anyway.  In that case going through all
-that extra work / potentially breaking other boards doesn't seem worth
-it.  Just mark the clock as critical.
+Can you provide an example that shows the whole hierarchy for a
+peripheral. Here you have FSPI, PWM, and MMC. Reviewing SCU clocks and
+LPCG clocks separately is not helpful.
 
+>
+> //LSIO SS
+> lsio_scu_clk: lsio-scu-clock-controller {
+>         compatible = "fsl,imx8qxp-clock", "fsl,scu-clk";
+>
+>         fspi0_clk: clock-fspi0{
+>                 #clock-cells = <0>;
+>                 rsrc-id = <IMX_SC_R_FSPI_0>;
+>                 clk-type = <IMX_SC_PM_CLK_PER>;
+>                 power-domains = <&pd IMX_SC_R_FSPI_0>;
 
+Are the power domain ID and rsrc-id always the same for a clock?
 
+>         };
+>
+>                 fspi1_clk: clock-fspi1{
+>                         ...
+>                 };
+>         ...
+> };
+>
+> /* LPCG clocks */
+> lsio_lpcg_clk: lsio-lpcg-clock-controller {
+>         compatible = "fsl,imx8qxp-lpcg";
 
--Doug
+I think this wrapper node should be removed and the compatible moved
+into the child nodes.
+
+>         pwm0_lpcg: clock-controller@5d400000 {
+>                 reg = <0x5d400000 0x10000>;
+>                 #clock-cells = <1>;
+>                 clocks = <&pwm0_clk>, <&pwm0_clk>, <&pwm0_clk>,
+>                          <&lsio_bus_clk>, <&pwm0_clk>;
+>                 bit-offset = <0 4 16 20 24>;
+
+Are all LPCG instances the same, but some clocks are missing if the
+child peripheral doesn't use certain clocks? IOW, bit 0 is always
+ipg_clk, bit 24 is always ipg_mstr_clk?
+
+Assuming so, 'bit-offset' should be removed and you should either have
+a fixed number of clock entries with 0 entries for non-connected
+clocks or use clock-names to define which clocks are present (with the
+same set of defined names for all LPCG instances).
+
+>                 clock-output-names = "pwm0_lpcg_ipg_clk",
+>                                      "pwm0_lpcg_ipg_hf_clk",
+>                                      "pwm0_lpcg_ipg_s_clk",
+>                                      "pwm0_lpcg_ipg_slv_clk",
+>                                      "pwm0_lpcg_ipg_mstr_clk";
+
+IMO, this is wrong as the names should be relative to the module. So
+'ipg_clk', 'ipg_hf_clk', etc.
+
+>                 power-domains = <&pd IMX_SC_R_PWM_0>;
+>                 status = "disabled";
+>         };
+>
+>                 pwm1_lpcg: clock-controller@5d410000 {
+>                                 ...
+>                 }
+>         ...
+> };
+>
+> And for users, it could simply be:
+> usdhc1: mmc@5b010000 {
+>         clocks = <&sdhc0_lpcg 1>,
+>                  <&sdhc0_lpcg 0>,
+>                  <&sdhc0_lpcg 2>;
+>         clock-names = "ipg", "per", "ahb";
+>         assigned-clocks = <&sdhc0_clk>;
+>         assigned-clock-rates = <200000000>;
+>                 ....
+> };
