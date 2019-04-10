@@ -2,147 +2,124 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E941C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 18:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD760C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 19:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315272082A
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 18:39:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A60F20674
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 19:39:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xi32IiVC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KjGcnu5q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731444AbfDJSjA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 14:39:00 -0400
-Received: from mail-oln040092070040.outbound.protection.outlook.com ([40.92.70.40]:61924
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727583AbfDJSjA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Apr 2019 14:39:00 -0400
-Received: from DB5EUR03FT062.eop-EUR03.prod.protection.outlook.com
- (10.152.20.60) by DB5EUR03HT120.eop-EUR03.prod.protection.outlook.com
- (10.152.21.158) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1771.16; Wed, 10 Apr
- 2019 18:38:53 +0000
-Received: from AM3PR03MB0966.eurprd03.prod.outlook.com (10.152.20.60) by
- DB5EUR03FT062.mail.protection.outlook.com (10.152.20.197) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1771.16 via Frontend Transport; Wed, 10 Apr 2019 18:38:53 +0000
-Received: from AM3PR03MB0966.eurprd03.prod.outlook.com
- ([fe80::c89:4e52:34c1:7009]) by AM3PR03MB0966.eurprd03.prod.outlook.com
- ([fe80::c89:4e52:34c1:7009%5]) with mapi id 15.20.1771.016; Wed, 10 Apr 2019
- 18:38:53 +0000
-From:   Jonas Karlman <jonas@kwiboo.se>
-To:     Doug Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-CC:     Tomasz Figa <tfiga@chromium.org>,
-        Ziyuan Xu <xzy.xu@rock-chips.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Ryan Case <ryandcase@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: rockchip: Fix video codec clocks on rk3288
-Thread-Topic: [PATCH] clk: rockchip: Fix video codec clocks on rk3288
-Thread-Index: AQHU5nomoS9eFvWRsEGSh6TEO1HQL6Y1m/eAgAAwWoA=
-Date:   Wed, 10 Apr 2019 18:38:52 +0000
-Message-ID: <AM3PR03MB09665B2755982816D2FC37E4AC2E0@AM3PR03MB0966.eurprd03.prod.outlook.com>
-References: <20190329215455.159717-1-dianders@chromium.org>
- <CAD=FV=V22Z2ziNZs5syzd1wpT4AwpXtTHP52wKvN5drgf06Z8Q@mail.gmail.com>
-In-Reply-To: <CAD=FV=V22Z2ziNZs5syzd1wpT4AwpXtTHP52wKvN5drgf06Z8Q@mail.gmail.com>
-Accept-Language: sv-SE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR05CA0181.eurprd05.prod.outlook.com
- (2603:10a6:3:f8::29) To AM3PR03MB0966.eurprd03.prod.outlook.com
- (2a01:111:e400:884c::23)
-x-incomingtopheadermarker: OriginalChecksum:9A80DC33085167426D554C10F32300CF669974193FB14F2304B808DC5A07921A;UpperCasedChecksum:10D4D1FC8AC30B819F735BDE5214F8CECC772B24E50AA895123BCC4E16226FEE;SizeAsReceived:8090;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [oDh2yREvbAQzgzkSJG6wAV44JGxB0K5r]
-x-microsoft-original-message-id: <a394b664-a8bb-3a00-0632-629227aacb52@kwiboo.se>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:DB5EUR03HT120;
-x-ms-traffictypediagnostic: DB5EUR03HT120:
-x-ms-exchange-purlcount: 3
-x-microsoft-antispam-message-info: W9OY4DRsN5QzQbex3a3ayL5GzqpCU8yYfh7e6Lsx8ttqb0kjEUebEoL3ynond0mfNY16q85D6oTKy0FY+hGz43C3cOYsQRL6npR/YAMOpw4vColnDR7fhmZ2NPoDTqDYaKvjdrPCsT3JbQ9z85L6TON9YWJ8VrpqNHTh1IYMv/oOgQcZJgD1HwegUhfOajyO
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E2F0DD6E8F33E84C932599DB5F0FF22E@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726230AbfDJTjV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 15:39:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47816 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfDJTjU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 15:39:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A63BF60EA5; Wed, 10 Apr 2019 19:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1554925159;
+        bh=1CqUlb/pNdeHXthhjIHIfH/EP/L6Rud9NCGiCk6hDgw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Xi32IiVCKNCQksbBa/iiaOnkaet1Xnew1bD2ai5P7Zyzb2KMC1xTq8byc6f9o99Y6
+         SSU31c6u+2bS71aT/5erzezZ7cxRTmKgFiASE7J2WgsKrn4Qq4w82ZOdlT6wlYyNw6
+         YETEzeWjrzHgZLCcrSnLN3k4s6KM/ZUaMK+omWZk=
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C3C9E60392;
+        Wed, 10 Apr 2019 19:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1554925158;
+        bh=1CqUlb/pNdeHXthhjIHIfH/EP/L6Rud9NCGiCk6hDgw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KjGcnu5qgVcKOxXuYcRuNGtWsZhgVpSarsFkVhi0WD8VOETcxy3UjNFbOymwHmtqr
+         Gyhhi9Ol728oiiKUbSW5uar7eXk4KE5KsgXKReEDgNMhhdTFjhrlSF1Nn52ssweRhM
+         Clw7+iTdmBcqiPhrlRpGF42+JrP+iW47f9EQsjfU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3C9E60392
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v3 3/7] clk: Add of_clk_hw_register() API for early clk
+ drivers
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
+References: <20190404215344.6330-1-sboyd@kernel.org>
+ <20190404215344.6330-4-sboyd@kernel.org>
+ <f989942c-89fc-76cf-af1b-2ac352d6e60c@codeaurora.org>
+ <155491520049.20095.15953237372852019635@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <c529d12b-5212-7198-4f70-a3f771c0901f@codeaurora.org>
+Date:   Wed, 10 Apr 2019 13:39:16 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.3
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3eeb3d1a-0987-4bbd-751b-08d6bde3c764
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2019 18:38:52.9656
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR03HT120
+In-Reply-To: <155491520049.20095.15953237372852019635@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMjAxOS0wNC0xMCAxNzo0NSwgRG91ZyBBbmRlcnNvbiB3cm90ZToNCj4gSGksDQo+DQo+IE9u
-IEZyaSwgTWFyIDI5LCAyMDE5IGF0IDI6NTUgUE0gRG91Z2xhcyBBbmRlcnNvbiA8ZGlhbmRlcnNA
-Y2hyb21pdW0ub3JnPiB3cm90ZToNCj4+IEl0IGFwcGVhcnMgdGhhdCB0aGVyZSBpcyBhIHR5cG8g
-aW4gdGhlIHJrMzI4OCBUUk0uICBGb3INCj4+IEdSRl9TT0NfQ09OMFs3XSBpdCBzYXlzIHRoYXQg
-MCBtZWFucyAidmVwdSIgYW5kIDEgbWVhbnMgInZkcHUiLiAgSXQncw0KPj4gdGhlIG90aGVyIHdh
-eSBhcm91bmQuDQo+Pg0KPj4gSG93IGRvIEkga25vdz8gIEhlcmUncyBteSBldmlkZW5jZToNCj4+
-DQo+PiAxLiBQcmlvciB0byBjb21taXQgNGQzZTg0Zjk5NjI4ICgiY2xrOiByb2NrY2hpcDogZGVz
-Y3JpYmUgYWNsa192Y29kZWMNCj4+ICAgIHVzaW5nIHRoZSBuZXcgbXV4Z3JmIHR5cGUgb24gcmsz
-Mjg4Iikgd2UgYWx3YXlzIHByZXRlbmRlZCB0aGF0IHdlDQo+PiAgICB3ZXJlIHVzaW5nICJhY2xr
-X3ZkcHUiIGFuZCB0aGUgY29tbWVudCBpbiB0aGUgY29kZSBzYWlkIHRoYXQgdGhpcw0KPj4gICAg
-bWF0Y2hlZCB0aGUgZGVmYXVsdCBzZXR0aW5nIGluIHRoZSBzeXN0ZW0uICBJbiBmYWN0IHRoZSBk
-ZWZhdWx0DQo+PiAgICBzZXR0aW5nIGlzIDAgYWNjb3JkaW5nIHRvIHRoZSBUUk0gYW5kIGFjY29y
-ZGluZyB0byByZWFkaW5nIG1lbW9yeQ0KPj4gICAgYXQgYm9vdHVwLiAgSW4gYWRkaXRpb24gcmsz
-Mjg4LWJhc2VkIENocm9tZWJvb2tzIHJhbiBsaWtlIHRoaXMgYW5kDQo+PiAgICB0aGUgdmlkZW8g
-Y29kZWNzIHdvcmtlZC4NCj4+IDIuIFdpdGggdGhlIGV4aXN0aW5nIGNsb2NrIGNvZGUgaWYgeW91
-IGJvb3QgdXAgYW5kIHRyeSB0byBlbmFibGUgdGhlDQo+PiAgICBuZXcgVklERU9fUk9DS0NISVBf
-VlBVIGFzIGEgbW9kdWxlIChhbmQgd2l0aG91dCAiY2xrX2lnbm9yZV91bnVzZWQiDQo+PiAgICBv
-biB0aGUgY29tbWFuZCBsaW5lKSwgeW91IGdldCBlcnJvcnMgbGlrZSAiZmFpbGVkIHRvIGdldCBh
-Y2sgb24NCj4+ICAgIGRvbWFpbiAncGRfdmlkZW8nLCB2YWw9MHg4MDIwOCIuICBBZnRlciBmbGlw
-cGluZyB2ZXB1L3ZkcHUgdGhpbmdzDQo+PiAgICBpbml0IE9LLg0KPj4gMy4gSWYgSSBleHBvcnQg
-YW5kIGFkZCBib3RoIHRoZSB2ZXB1IGFuZCB2ZHB1IHRvIHRoZSBsaXN0IG9mIGNsb2Nrcw0KPj4g
-ICAgZm9yIFJLMzI4OF9QRF9WSURFTyBJIGNhbiBnZXQgcGFzdCB0aGUgcG93ZXIgZG9tYWluIGVy
-cm9ycywgYnV0IG5vdw0KPj4gICAgSSBmcmVlemUgd2hlbiB0aGUgdnB1X21tdSBnZXRzIGluaXR0
-ZWQuDQo+PiA0LiBJZiBJIGp1c3QgbWFyayB0aGUgInZkcHUiIGFzIElHTk9SRV9VTlVTRUQgdGhl
-biBldmVyeXRoaW5nIGJvb3RzIHVwDQo+PiAgICBhbmQgcHJvYmVzIE9LIHNob3dpbmcgdGhhdCBz
-b21laG93IHRoZSAidmRwdSIgd2FzIGltcG9ydGFudCB0byBrZWVwDQo+PiAgICBlbmFibGVkLiAg
-VGhpcyBpcyBiZWNhdXNlIHdlIHdlcmUgYWN0dWFsbHkgdXNpbmcgaXQgYXMgYSBwYXJlbnQuDQo+
-PiA1LiBBZnRlciB0aGlzIGNoYW5nZSBJIGNhbiBoYWNrICJhY2xrX3Zjb2RlY19wcmUiIHRvIHBh
-cmVudCBmcm9tDQo+PiAgICAiYWNsa192ZXB1IiB1c2luZyBhc3NpZ25lZC1jbG9ja3MgYW5kIHRo
-ZSB2aWRlbyBjb2RlYyBzdGlsbCBwcm9iZXMNCj4+ICAgIE9LLg0KPj4NCj4+IEZpeGVzOiA0ZDNl
-ODRmOTk2MjggKCJjbGs6IHJvY2tjaGlwOiBkZXNjcmliZSBhY2xrX3Zjb2RlYyB1c2luZyB0aGUg
-bmV3IG11eGdyZiB0eXBlIG9uIHJrMzI4OCIpDQo+PiBTaWduZWQtb2ZmLWJ5OiBEb3VnbGFzIEFu
-ZGVyc29uIDxkaWFuZGVyc0BjaHJvbWl1bS5vcmc+DQo+PiAtLS0NCj4+IEkgY3VycmVudGx5IGhh
-dmUgbm8gd2F5IHRvIHRlc3QgdGhlIEpQRUcgbWVtMm1lbSBkcml2ZXIsIHNvIGhvcGVmdWxseQ0K
-Pj4gb3RoZXJzIGNhbiB0ZXN0IHRoaXMgYW5kIG1ha2Ugc3VyZSBpdCdzIGhhcHB5IGZvciB0aGVt
-LiAgSSdtIGp1c3QNCj4+IGhhcHB5IG5vdCB0byBnZXQgc3RyYW5nZSBlcnJvcnMgYXQgYm9vdCBh
-bnltb3JlLg0KPj4NCj4+ICBkcml2ZXJzL2Nsay9yb2NrY2hpcC9jbGstcmszMjg4LmMgfCAyICst
-DQo+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IEFu
-eSB0aG91Z2h0cyBhYm91dCB0aGlzIHBhdGNoPyAgSSdtIDk5LjklIGNlcnRhaW4gaXQncyBjb3Jy
-ZWN0IGFuZA0KPiBpdCdkIGJlIG5pY2UgdG8gZ2V0IGl0IGxhbmRlZC4gIEhlaWtvOiBJIGFzc3Vt
-ZSB5b3UncmUgc3RpbGwNCj4gY29sbGVjdGluZyBSb2NrY2hpcCBjbG9jayBwYXRjaGVzIGFuZCB3
-b3VsZCBiZSB0aGUgb25lIHRvIGFwcGx5IGl0IGFuZA0KPiAoYXQgc29tZSBwb2ludCkgc2VuZCBh
-IHB1bGwgcmVxdWVzdCB0byB0aGUgY2xvY2sgdHJlZT8NCj4NCj4gLURvdWcNCg0KVGhpcyBjbGsg
-Zml4IGlzIG5lZWRlZCB0byBtYWtlIE1QRUctMiBkZWNvZGluZyB3b3JrIG9uIG15IFJLMzI4OCBU
-aW5rZXIgQm9hcmQgdXNpbmcgdGhlDQpyb2NrY2hpcCB2cHUgcGF0Y2hzZXQgYW5kIGEgcGF0Y2gg
-dG8gYWRkIFJLMzI4OCBzcGVjaWZpYyBNUEVHLTIgY29kZSBbMV0uDQoNCkFsc28gbm90ZSB0aGF0
-IHRoZSBzYW1lIGNoYW5nZSB3YXMgc3VnZ2VzdGVkIGluIGEgcHJldmlvdXMgcGF0Y2ggWzJdIGZy
-b20gYnkgYXlha2EuDQoNCklmIHBvc3NpYmxlIHBsZWFzZSBhbHNvIGFkZCB0aGUgQ0xLX1NFVF9S
-QVRFX1BBUkVOVCBjaGFuZ2UgZnJvbSBbM10gaW4gYSBwb3NzaWJsZSB2MiwNCnRoYXQgZml4ZXMg
-YXNzaWduaW5nIHRoZSBhY2xrX3Zjb2RlYyBjbGsgdG8gNDAwTWh6IGluIHRoZSByb2NrY2hpcCB2
-cHUgZHJpdmVyLg0KDQpbMV0gaHR0cHM6Ly9naXRodWIuY29tL0t3aWJvby9saW51eC1yb2NrY2hp
-cC9jb21taXQvMWY3ODA5M2UwNWM3MzYwNTE1YTE4NWY0OGI3YzVjYjhiYTFlM2UxNQ0KWzJdIGh0
-dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTcyNTU1My8NClszXSBodHRwczovL2dp
-dGh1Yi5jb20vS3dpYm9vL2xpbnV4LXJvY2tjaGlwL2NvbW1pdC85MjE2ZGEzZjE1MjFhMGJlNTg4
-OTIzNWFiZTdmYTA5M2E0ODk0MTYwDQoNClJlZ2FyZHMsDQpKb25hcw0KDQo=
+On 4/10/2019 10:53 AM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-04-08 14:46:11)
+>> On 4/4/2019 3:53 PM, Stephen Boyd wrote:
+>>> In some circumstances drivers register clks early and don't have access
+>>> to a struct device because the device model isn't initialized yet. Add
+>>> an API to let drivers register clks associated with a struct device_node
+>>> so that these drivers can participate in getting parent clks through DT.
+>>
+>> NACK.  This patch broke boot for me.  I had to pull the below from JTAG.
+>>    What do you need to debug this?
+>>
+> 
+> Here's a patch to try to squash in:
+
+No dice.  Same issue.
+
+> 
+> ---8<----
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 709492d901a1..040ce083c89e 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3662,7 +3662,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+>    */
+>   struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>   {
+> -	return __clk_register(dev, dev->of_node, hw);
+> +	return __clk_register(dev, dev_of_node(dev), hw);
+>   }
+>   EXPORT_SYMBOL_GPL(clk_register);
+>   
+> @@ -3678,7 +3678,7 @@ EXPORT_SYMBOL_GPL(clk_register);
+>    */
+>   int clk_hw_register(struct device *dev, struct clk_hw *hw)
+>   {
+> -	return PTR_ERR_OR_ZERO(__clk_register(dev, dev->of_node, hw));
+> +	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
+>   }
+>   EXPORT_SYMBOL_GPL(clk_hw_register);
+>   
+> 
+
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
