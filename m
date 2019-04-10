@@ -2,83 +2,83 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C84DC10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6DEC282CE
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10DA820818
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D78520830
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:46:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cjj1sAkn"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LWqo7Qid"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbfDJPed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 11:34:33 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41307 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730445AbfDJPec (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 11:34:32 -0400
-Received: by mail-vs1-f66.google.com with SMTP id g187so1607561vsc.8
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:34:32 -0700 (PDT)
+        id S2387427AbfDJPqG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 11:46:06 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43038 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727057AbfDJPqE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 11:46:04 -0400
+Received: by mail-vs1-f67.google.com with SMTP id i207so1633386vsd.10
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DCkgmuJRyXZdE3VExrSJZpNpCAX0uOVpMW/NjqlufYQ=;
-        b=Cjj1sAknmWgsaL0lBeZZ31ZanLoyXQoCqqGjuVNf6EhXJVksBOhVEgab8NURbkqxcp
-         myXEhssN6Vwwgme6iiddFEsvtVTi67B2ClsnNnHqigSLxYLEqlkhvET4oIJ5Jb0PK+vn
-         KZIuc26LgklnpfNcpIg2vYVtRaZlohooZi6SU=
+         :cc;
+        bh=7rM2Xb5bvaCYqv/GYA2T4EsMhLOKel6c4Pw0xAVHAFw=;
+        b=LWqo7QidHmF1YBjaNV21+LPNMH9dYea9L4eLRMdT0wXBjt813SxTTOE3Zvr6eozrkb
+         Nw+arz7aUJ0jTWNgOfIpuOW67HsY11jZzmR3pCAjc63Z+eDSnj4RUHuL6D7J8nN71HGh
+         DG5CNUsiS3VdGepWvvJDhL4E8TvTSlUyuG6uE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DCkgmuJRyXZdE3VExrSJZpNpCAX0uOVpMW/NjqlufYQ=;
-        b=hbiessYsvQh8kttxT3SnoJ1DRY0oQuekEEnvSmrZw+Hoyz8qZrojE7SQUn69Wgskfx
-         2uMLb6hovQ9BkJPd3ytcgcETSrGmlVZGc5aA5urHbuqJql9H5PzAht6C5v/8B8tYPwzt
-         BfVMlaTHkZdYK8MEEhbvRycxwkGXyismBaWKm6iPhDbSQai8wGkz+Vkl1DCbcmdzP74/
-         0jxjn8RrXh8XaWo+8DGVKyDdATf9IRTdVsdPJOYRgT/dMnWlB1pup2ShbM2zfCPwlJb3
-         yuw6xkFZA+pBnp5+FBCu77JkjMo5Dn7SJWu0NA1x88JgLetUt3U4MgcoiBmxxGiCBVcd
-         p+kA==
-X-Gm-Message-State: APjAAAWSMXZqakkMm4glxUM6Wh1Nbd1HbihqYyiYINhS4IOIEv95IlrC
-        cPTcKkG0bX5Tbo5cGnHohAcO5TePUPw=
-X-Google-Smtp-Source: APXvYqzdYogZAA0kvr2NXB/QQXaOmjrCQ2YRMOXliL8j7A0MyJUu1/BmgDTXRmhd4tF2zeHaseRSBA==
-X-Received: by 2002:a67:f753:: with SMTP id w19mr23862385vso.27.1554910470488;
-        Wed, 10 Apr 2019 08:34:30 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id u6sm1973441vsu.12.2019.04.10.08.34.29
+         :message-id:subject:to:cc;
+        bh=7rM2Xb5bvaCYqv/GYA2T4EsMhLOKel6c4Pw0xAVHAFw=;
+        b=Z3qGEBejCMSh2PUeOC7bqqkmT8zbgz6tuLl7A87PqHF7V+M6aFQfiIJoJnNcQLk4Wr
+         DdHlxKAgI+RPXEAHtTE2E8H22WQXTDemwuggGZCzq/1vauSxgC8hdDVXTg+ZyOdf/jPb
+         hHb9ReWnnpOW7jrrQhw0hIcOWe29sqkLg0+wX5F5xDMp/o2hwHYXcT/bDB+RxbEV4dX3
+         67xzlRQpQgj0XyIA2rBfjMIK72oDdqD+efU4tYDtvb30d3OAvaClg8IXoDWtos2K/G5r
+         K5CnGbt6c7ORGG4nlcxZQPiUTq6NmIY6Uq7YLBoAqq4vYyPwyHKW4acxCSKvKuEsiqkn
+         iv+w==
+X-Gm-Message-State: APjAAAUO1c3eytGXVb4LyDqp0ZxPEiINmKv/rXgIBPayZZvox5KDhpXU
+        3TN+BoI1K6mLeXmfz8/bMTgGNsE3htE=
+X-Google-Smtp-Source: APXvYqz9JW5Wfllozq9xMpqUXp/GxwQoMVAMzV0/GbVu2+gHnKyxBuFvSAlFQegsZf0skPSvc69KQw==
+X-Received: by 2002:a67:cf84:: with SMTP id g4mr24458431vsm.67.1554911163528;
+        Wed, 10 Apr 2019 08:46:03 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id m39sm13362802uae.14.2019.04.10.08.46.00
         for <linux-clk@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 08:34:29 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id n16so915260uae.10
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:34:29 -0700 (PDT)
-X-Received: by 2002:ab0:474c:: with SMTP id i12mr23660228uac.9.1554910468758;
- Wed, 10 Apr 2019 08:34:28 -0700 (PDT)
+        Wed, 10 Apr 2019 08:46:01 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id w13so1649195vsc.4
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:46:00 -0700 (PDT)
+X-Received: by 2002:a67:ed84:: with SMTP id d4mr2160365vsp.207.1554911159811;
+ Wed, 10 Apr 2019 08:45:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190409204707.150347-1-dianders@chromium.org>
- <20190409204707.150347-2-dianders@chromium.org> <b7093a17-b30c-cdec-b02c-c6bc5a8d08c9@rock-chips.com>
-In-Reply-To: <b7093a17-b30c-cdec-b02c-c6bc5a8d08c9@rock-chips.com>
+References: <20190329215455.159717-1-dianders@chromium.org>
+In-Reply-To: <20190329215455.159717-1-dianders@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 10 Apr 2019 08:34:16 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WXWnYDzGUyyz--JBY6QBcYNEorgAqUAesnctXJqptSBw@mail.gmail.com>
-Message-ID: <CAD=FV=WXWnYDzGUyyz--JBY6QBcYNEorgAqUAesnctXJqptSBw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Revert "clk: rockchip: mark noc and some special clk
- as critical on rk3288"
-To:     "elaine.zhang" <zhangqing@rock-chips.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
+Date:   Wed, 10 Apr 2019 08:45:45 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V22Z2ziNZs5syzd1wpT4AwpXtTHP52wKvN5drgf06Z8Q@mail.gmail.com>
+Message-ID: <CAD=FV=V22Z2ziNZs5syzd1wpT4AwpXtTHP52wKvN5drgf06Z8Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: Fix video codec clocks on rk3288
+To:     Heiko Stuebner <heiko@sntech.de>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Ziyuan Xu <xzy.xu@rock-chips.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Ryan Case <ryandcase@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Caesar Wang <caesar.wang@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -86,146 +86,49 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-On Tue, Apr 9, 2019 at 11:23 PM elaine.zhang <zhangqing@rock-chips.com> wro=
-te:
+On Fri, Mar 29, 2019 at 2:55 PM Douglas Anderson <dianders@chromium.org> wrote:
 >
-> hi,
+> It appears that there is a typo in the rk3288 TRM.  For
+> GRF_SOC_CON0[7] it says that 0 means "vepu" and 1 means "vdpu".  It's
+> the other way around.
 >
-> =E5=9C=A8 2019/4/10 =E4=B8=8A=E5=8D=884:47, Douglas Anderson =E5=86=99=E9=
-=81=93:
-> > This reverts commit 55bb6a633c33caf68ab470907ecf945289cb733d.
-> >
-> > The clocks that were enabled by that patch are pretty questionable.
-> > Specifically looking at what has been shipping on rk3288-veyron
-> > Chromebooks almost all of these clocks are safely turned off and cause
-> > no apparent problems.  If some boards need these clocks turned on for
-> > some reason then it seems like we should figure out how to do that at
-> > a board level.
-> >
-> > NOTE: turning these clocks off doesn't seem to do a whole lot in terms
-> > of power savings (checking the power on the logic rail).  It appears
-> > to save maybe 1-2mW.  ...but still it seems like we should turn the
-> > clocks off if they aren't needed.
-> >
-> > Digging into the clocks here to describe why they shouldn't need to be
-> > left on:
-> >
-> > atclk: No documentation about this clock other than that it goes to
-> > the CPU.  CPU functions fine without it on.
-> >
-> > jtag: Presumably this clock is only needed if you're debugging with
-> > JTAG.  It doesn't seem like it makes sense to waste power for every
-> > rk3288 user.  Perhaps this could be turned on with a CONFIG option?
-> >
-> > pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
-> > clocks on only during kernel panics in order to access some coresight
-> > registers.  Since nothing in the upstream kernel does this we should
-> > be able to leave them off safely.
-> >
-> > hsicphy12m_xin12m: There is no indication of why this clock would need
-> > to be turned on for boards that don't use HSIC.
-> >
-> > pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
-> > these 4 clocks on only when doing DDR transitions and they are off
-> > otherwise.  I see no reason why they'd need to be on in the upstream
-> > kernel which doesn't support DDRFreq.
-> >
-> > pmu_hclk_otg0: A "chip design defect" is mentioned in the original
-> > patch but no details.  This clock has always been gated in shipping
-> > veyron Chromebooks so presumably this chip defect doesn't affect all
-> > boards.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> >
-> >   drivers/clk/rockchip/clk-rk3288.c | 14 ++++----------
-> >   1 file changed, 4 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/c=
-lk-rk3288.c
-> > index 5a67b7869960..06287810474e 100644
-> > --- a/drivers/clk/rockchip/clk-rk3288.c
-> > +++ b/drivers/clk/rockchip/clk-rk3288.c
-> > @@ -313,13 +313,13 @@ static struct rockchip_clk_branch rk3288_clk_bran=
-ches[] __initdata =3D {
-> >       COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
-> >                       RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_=
-READ_ONLY,
-> >                       RK3288_CLKGATE_CON(12), 6, GFLAGS),
-> > -     COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
-> > +     COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
-> >                       RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER=
-_READ_ONLY,
-> >                       RK3288_CLKGATE_CON(12), 7, GFLAGS),
-> >       COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
-> >                       RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER=
-_READ_ONLY,
-> >                       RK3288_CLKGATE_CON(12), 8, GFLAGS),
-> > -     GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
-> > +     GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
-> >                       RK3288_CLKGATE_CON(12), 9, GFLAGS),
-> >       GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
-> >                       RK3288_CLKGATE_CON(12), 10, GFLAGS),
-> > @@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branch=
-es[] __initdata =3D {
-> >       INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
-> >                       RK3288_CLKSEL_CON(22), 7, IFLAGS),
-> >
-> > -     GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
-> > +     GATE(0, "jtag", "ext_jtag", 0,
-> >                       RK3288_CLKGATE_CON(4), 14, GFLAGS),
-> CLK_IGNORE_UNUSED:
-> Whether to close the unused clk after clk init complete. not affect
-> there own enable/disable.
-> JTAG is not have device node, when need jtag to debug, may be the system
-> is crashed, there is no way to turn on this clk.
+> How do I know?  Here's my evidence:
+>
+> 1. Prior to commit 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec
+>    using the new muxgrf type on rk3288") we always pretended that we
+>    were using "aclk_vdpu" and the comment in the code said that this
+>    matched the default setting in the system.  In fact the default
+>    setting is 0 according to the TRM and according to reading memory
+>    at bootup.  In addition rk3288-based Chromebooks ran like this and
+>    the video codecs worked.
+> 2. With the existing clock code if you boot up and try to enable the
+>    new VIDEO_ROCKCHIP_VPU as a module (and without "clk_ignore_unused"
+>    on the command line), you get errors like "failed to get ack on
+>    domain 'pd_video', val=0x80208".  After flipping vepu/vdpu things
+>    init OK.
+> 3. If I export and add both the vepu and vdpu to the list of clocks
+>    for RK3288_PD_VIDEO I can get past the power domain errors, but now
+>    I freeze when the vpu_mmu gets initted.
+> 4. If I just mark the "vdpu" as IGNORE_UNUSED then everything boots up
+>    and probes OK showing that somehow the "vdpu" was important to keep
+>    enabled.  This is because we were actually using it as a parent.
+> 5. After this change I can hack "aclk_vcodec_pre" to parent from
+>    "aclk_vepu" using assigned-clocks and the video codec still probes
+>    OK.
+>
+> Fixes: 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec using the new muxgrf type on rk3288")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> I currently have no way to test the JPEG mem2mem driver, so hopefully
+> others can test this and make sure it's happy for them.  I'm just
+> happy not to get strange errors at boot anymore.
+>
+>  drivers/clk/rockchip/clk-rk3288.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-As I mentioned in the commit message this seems like the kind of thing
-that should be controlled by a CONFIG_ option.  It's a debug option
-that's fine to have on all the time but consumes resources so some
-people might want to turn it off.
-
-
-> >       COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy=
-480m_p, 0,
-> > @@ -656,7 +656,7 @@ static struct rockchip_clk_branch rk3288_clk_branch=
-es[] __initdata =3D {
-> >       COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy=
-480m_p, 0,
-> >                       RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
-> >                       RK3288_CLKGATE_CON(3), 6, GFLAGS),
-> > -     GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
-> > +     GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
-> >                       RK3288_CLKGATE_CON(13), 9, GFLAGS),
-> >       DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
-> >                       RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
-> > @@ -837,12 +837,6 @@ static const char *const rk3288_critical_clocks[] =
-__initconst =3D {
-> >       "pclk_alive_niu",
-> >       "pclk_pd_pmu",
-> >       "pclk_pmu_niu",
-> > -     "pclk_core_niu",
-> > -     "pclk_ddrupctl0",
-> > -     "pclk_publ0",
-> > -     "pclk_ddrupctl1",
-> > -     "pclk_publ1",
-> These clks needed enable, device node not use this clk, so we mark it as
-> critical.
-
-What breaks if you don't enable these clocks?  As far as I can tell
-these clocks only need to be enabled while touching memory controller
-registers (deep suspend/resume and DDRFreq transitions).  On
-Chromebooks everything works fine with these clocks only turned on
-when needed.
-
-
-> > -     "pmu_hclk_otg0",
-> It's a soc bug, pmu_hclk_otg0 must always on.
-
-So you said in your previous commit message.  However we've shipped
-lots and lots of Chromebooks with this clock off.  Can you explain
-what is broken?  Is this only needed for gadget mode (which we don't
-use), for instance?
-
+Any thoughts about this patch?  I'm 99.9% certain it's correct and
+it'd be nice to get it landed.  Heiko: I assume you're still
+collecting Rockchip clock patches and would be the one to apply it and
+(at some point) send a pull request to the clock tree?
 
 -Doug
