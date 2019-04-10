@@ -2,142 +2,114 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 918C6C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 06:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C66DC10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 13:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 638542083E
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 06:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1C5C20830
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 13:42:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="ASzuB41G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbfDJGm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 02:42:28 -0400
-Received: from regular1.263xmail.com ([211.150.70.199]:33798 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfDJGm2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 02:42:28 -0400
-Received: from zhangqing?rock-chips.com (unknown [192.168.167.154])
-        by regular1.263xmail.com (Postfix) with ESMTP id A66E83DD;
-        Wed, 10 Apr 2019 14:42:24 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from [172.16.12.236] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P23470T140084141602560S1554878540938362_;
-        Wed, 10 Apr 2019 14:42:22 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <201c2b2e56731f95e4aa6c62ecc02898>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH 2/3] clk: rockchip: Make rkpwm a critical clock on rk3288
-To:     Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Caesar Wang <caesar.wang@rock-chips.com>,
-        linux-rockchip@lists.infradead.org, mka@chromium.org,
-        ryandcase@chromium.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190409204707.150347-1-dianders@chromium.org>
- <20190409204707.150347-3-dianders@chromium.org>
-From:   "elaine.zhang" <zhangqing@rock-chips.com>
-Organization: rockchip
-Message-ID: <50b744cd-b8d9-79ca-ba2d-6765808aa5e5@rock-chips.com>
-Date:   Wed, 10 Apr 2019 14:42:21 +0800
+        id S1731723AbfDJNmR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 09:42:17 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22366 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728971AbfDJNmQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 09:42:16 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3ADaVhM005736;
+        Wed, 10 Apr 2019 15:42:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=wafYL0FxqT7aM5UWs8U7fdktRS4pG36Q7Mjllpl1zyM=;
+ b=ASzuB41GM71NIl5VxZyyrS6FTdo37Ooza94qhicvooNTk5NF6sCFBCEfcPPZC4AU94l7
+ 8Mrjl/jGnbQgw3DmwdFJ4ZfRM4A8uZ2vRfPyYTgZ2djybIbVAgnORwhihiKZDHZT9ZYI
+ 5prYTgiX5VBmtQrXeRgkcBKKBdDMqc2rMIdMcTLYaRmniZg/sDXe9FTiMc1l8noVsWSi
+ ue4dtsiyFkMWko+/vhFiX3lBO1KIkFTUQdlMSkBssyZFIBuZYp9d0PJcTVU3W3JhKa2I
+ krZNkFx1LlCa8fGA2vtIzwT8zuUYNBgK8e8TTc29wxXtjT2wtzp2lHnsYXEM8YvKInT2 Dw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2rprcfg7x4-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 10 Apr 2019 15:42:10 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DD04334;
+        Wed, 10 Apr 2019 13:42:09 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B0F0824D0;
+        Wed, 10 Apr 2019 13:42:09 +0000 (GMT)
+Received: from [10.48.0.204] (10.75.127.47) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 10 Apr
+ 2019 15:42:09 +0200
+Subject: Re: [PATCH 2/2] ARM: dts: stm32: Enable STM32F769 clock driver
+To:     Gabriel Fernandez <gabriel.fernandez@st.com>,
+        michael turquette <mturquette@baylibre.com>,
+        stephen boyd <sboyd@kernel.org>,
+        rob herring <robh+dt@kernel.org>,
+        mark rutland <mark.rutland@arm.com>,
+        maxime coquelin <mcoquelin.stm32@gmail.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20190405075332.28530-1-gabriel.fernandez@st.com>
+ <20190405075332.28530-3-gabriel.fernandez@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <5d6bc520-caa1-9dca-539d-e270562c4873@st.com>
+Date:   Wed, 10 Apr 2019 15:40:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <20190409204707.150347-3-dianders@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190405075332.28530-3-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-10_06:,,
+ signatures=0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-hi,
+Hi Gabriel
 
-在 2019/4/10 上午4:47, Douglas Anderson 写道:
-> Most rk3288-based boards are derived from the EVB and thus use a PWM
-> regulator for the logic rail.  However, most rk3288-based boards don't
-> specify the PWM regulator in their device tree.  We'll deal with that
-> by making it critical.
->
-> NOTE: it's important to make it critical and not just IGNORE_UNUSED
-> because all PWMs in the system share the same clock.  We don't want
-> another PWM user to turn the clock on and off and kill the logic rail.
->
-> This change is in preparation for actually having the PWMs in the
-> rk3288 device tree actually point to the proper PWM clock.  Up until
-> now they've all pointed to the clock for the old IP block and they've
-> all worked due to the fact that rkpwm was IGNORE_UNUSED and that the
-> clock rates for both clocks were the same.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On 4/5/19 9:53 AM, Gabriel Fernandez wrote:
+> This patch enables clocks for STM32F769 boards.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 > ---
->
->   drivers/clk/rockchip/clk-rk3288.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-> index 06287810474e..c3321eade23e 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -697,7 +697,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
->   	GATE(PCLK_TZPC, "pclk_tzpc", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 3, GFLAGS),
->   	GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 9, GFLAGS),
->   	GATE(PCLK_EFUSE256, "pclk_efuse_256", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 10, GFLAGS),
-> -	GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", CLK_IGNORE_UNUSED, RK3288_CLKGATE_CON(11), 11, GFLAGS),
-> +	GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 11, GFLAGS),
->   
->   	/* ddrctrl [DDR Controller PHY clock] gates */
->   	GATE(0, "nclk_ddrupctl0", "ddrphy", CLK_IGNORE_UNUSED, RK3288_CLKGATE_CON(11), 4, GFLAGS),
-> @@ -837,6 +837,7 @@ static const char *const rk3288_critical_clocks[] __initconst = {
->   	"pclk_alive_niu",
->   	"pclk_pd_pmu",
->   	"pclk_pmu_niu",
-> +	"pclk_rkpwm",
-
-pwm have device node, can enable and disable it in the pwm drivers.
-
-pwm regulator use pwm node as:
-
-pwms = <&pwm2 0 25000 1>
-
-when set Logic voltage:
-
-pwm_regulator_set_voltage()
-
-     --> pwm_apply_state()
-
-         -->clk_enable()
-
-         -->pwm_enable()
-
-         -->pwm_config()
-
-         -->pinctrl_select()
-
-         --....
-
-For mark pclk_rkpwm as critical,do you have any questions, or provides 
-some log or more information.
-
+>   arch/arm/boot/dts/stm32f769-disco.dts | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32f769-disco.dts b/arch/arm/boot/dts/stm32f769-disco.dts
+> index 3c7216844a9b..6f1d0ac8c31c 100644
+> --- a/arch/arm/boot/dts/stm32f769-disco.dts
+> +++ b/arch/arm/boot/dts/stm32f769-disco.dts
+> @@ -102,6 +102,10 @@
+>   	};
 >   };
 >   
->   static void __iomem *rk3288_cru_base;
+> +&rcc {
+> +	compatible = "st,stm32f769-rcc", "st,stm32f746-rcc", "st,stm32-rcc";
+> +};
+> +
+>   &cec {
+>   	pinctrl-0 = <&cec_pins_a>;
+>   	pinctrl-names = "default";
+> 
 
+Even if driver part is not yet merged, this DT part can be taken as we 
+will run with "st,stm32f746-rcc" compatible (the current one).
 
+So:
+
+Applied on stm32-next.
+
+Thanks.
+Alex
