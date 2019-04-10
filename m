@@ -2,41 +2,41 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70380C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D6CC10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 341E220854
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61E4820854
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554914970;
-	bh=7V+bH6UyqInzIrPCYj+uVJgo/SA0OEKcOvlOhP4Kr4s=;
+	s=default; t=1554915202;
+	bh=pBKCFBcbiZ3h7X8Aa+TYDLQ9aErDgSo/CCG2y62H7JU=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=BaLnSAhxaN96N8ypL80yBc0jHIuuQfasmY6ejlt5eN0h5cFeGlTzRjr9m//mF5S97
-	 CsiB4nO5x5CBlXwcn3lTyCfJp8LyQn2Yoc0weqF/+BBxdG0j9az2U+JdH3goV6oO4l
-	 0ANlPE/aD1ugY7OryR5kv8FJnGFhRjYFFJkE1/xE=
+	b=Ccl/9SfkA2s6SUHuM9uy0m4GPyyyCNekDWptyQAt9/OvJDIlAS3bIikdjwveKUmuy
+	 T7BnycuTGZWEEvVyON4oB8QZGCDVpLCfEnoGog8VnlcL3GlCzSFrCxT2TYPJiXObF6
+	 Y+NkDccGxztPGXhowULD5D47llDXPui1EzclQavo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732902AbfDJQta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 12:49:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58220 "EHLO mail.kernel.org"
+        id S1730237AbfDJQxW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 12:53:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729474AbfDJQt3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Apr 2019 12:49:29 -0400
+        id S1730235AbfDJQxV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Apr 2019 12:53:21 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0222E20818;
-        Wed, 10 Apr 2019 16:49:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4627820818;
+        Wed, 10 Apr 2019 16:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554914969;
-        bh=7V+bH6UyqInzIrPCYj+uVJgo/SA0OEKcOvlOhP4Kr4s=;
+        s=default; t=1554915201;
+        bh=pBKCFBcbiZ3h7X8Aa+TYDLQ9aErDgSo/CCG2y62H7JU=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=kkZGz6OgRWG1Ak0KZH1KZEp//lzIEU6ApNOKDMXyLTXhcx5Z79F3jrlH+wRkhZUJS
-         5bNZ3KFW+VWPhbIe0JDq8rnSnXHXkGVgc1/VHWumA0dVbKBY9YOQcPqC3QF/TdQNy5
-         I5o9fZBLHVpqcHZCGsNYL02FnC/DYTOTHp2dJBUw=
+        b=kfPlDLZujwr+z/gH5pXlsQd116EEoal72NZGY+WLyRt+YIEmqs129GBcJpDYbaNgy
+         ain2KlPgs8AL2Kd4ulj4aqBwxXmzDWcb3CovRjSp8yP1npjGPGAJuUBOl+8gDkuSkN
+         sNh9cacYXKmQ68bB+hWs9Vmnzk5eMOJAxMFBXb5c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,9 +51,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
 To:     Jeffrey Hugo <jhugo@codeaurora.org>,
         Michael Turquette <mturquette@baylibre.com>
-Message-ID: <155491496818.20095.15093722814125773505@swboyd.mtv.corp.google.com>
+Message-ID: <155491520049.20095.15953237372852019635@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Wed, 10 Apr 2019 09:49:28 -0700
+Date:   Wed, 10 Apr 2019 09:53:20 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -68,18 +68,32 @@ Quoting Jeffrey Hugo (2019-04-08 14:46:11)
 >=20
 > NACK.  This patch broke boot for me.  I had to pull the below from JTAG. =
 
-
-No early printk support on this board? Sadness.
-
 >   What do you need to debug this?
 >=20
 
-Hopefully nothing.
+Here's a patch to try to squash in:
 
-> [    0.000000] Unable to handle kernel read from unreadable memory at=20
-> virtual address 0000000000000280
-
-I guess you pass NULL as dev to clk_hw_register(). Will fix! Thanks for
-testing.
-
-> [    0.000000] Mem abort info:
+---8<----
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 709492d901a1..040ce083c89e 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3662,7 +3662,7 @@ __clk_register(struct device *dev, struct device_node=
+ *np, struct clk_hw *hw)
+  */
+ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return __clk_register(dev, dev->of_node, hw);
++	return __clk_register(dev, dev_of_node(dev), hw);
+ }
+ EXPORT_SYMBOL_GPL(clk_register);
+=20
+@@ -3678,7 +3678,7 @@ EXPORT_SYMBOL_GPL(clk_register);
+  */
+ int clk_hw_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return PTR_ERR_OR_ZERO(__clk_register(dev, dev->of_node, hw));
++	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register);
+=20
