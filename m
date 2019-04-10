@@ -1,184 +1,135 @@
-Return-Path: <SRS0=4wXd=SL=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D43C10F0E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 22:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF157C10F0E
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 02:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F422082A
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Apr 2019 22:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E1C6206B7
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 02:41:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="jmd7zXS4"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MpD60NwV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfDIWKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Apr 2019 18:10:24 -0400
-Received: from vps.xff.cz ([195.181.215.36]:47936 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbfDIWKY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Apr 2019 18:10:24 -0400
-X-Greylist: delayed 580 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Apr 2019 18:10:22 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1554847240; bh=qcNC0APQkwtDIo5GDKLxptbVItoD4PQj7iG6Im1qrow=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jmd7zXS4FWc5lI0dCbmS4VlBYIFxdlaHfMwXmxwQY5vMMvqkQkxJY5dkAMlGp2hSB
-         BazKByhSOfnjFlIoGHqTYwdoShSML3JHNmbvW7d84GqKundQuvnZQe/n7MC9zAhCMK
-         euNUfdev97vxhVgF6yKpG0yvPBLCYlNgwNcOxfDY=
-Date:   Wed, 10 Apr 2019 00:00:40 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        id S1726713AbfDJCla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Apr 2019 22:41:30 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13127 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfDJCla (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Apr 2019 22:41:30 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cad57dd0000>; Tue, 09 Apr 2019 19:41:33 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 09 Apr 2019 19:41:29 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 09 Apr 2019 19:41:29 -0700
+Received: from [10.19.108.132] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 10 Apr
+ 2019 02:41:26 +0000
+Subject: Re: [PATCH 1/8] dt-bindings: memory: tegra: Add Tegra210 EMC bindings
+To:     Rob Herring <robh@kernel.org>
+CC:     <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-tegra@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
- (Camera Sensor Interface)
-Message-ID: <20190409220040.3sx456gefmjq3t3g@core.my.home>
-Mail-Followup-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-References: <20190408165744.11672-1-wens@kernel.org>
- <20190408165744.11672-5-wens@kernel.org>
- <20190409075804.4zrwjil7ie2gjigu@flea>
- <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
- <20190409082818.z33mq2qrxethldzf@flea>
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190325074523.26456-1-josephl@nvidia.com>
+ <20190325074523.26456-2-josephl@nvidia.com>
+ <5ca06133.1c69fb81.11ebf.91ce@mx.google.com>
+ <7d680700-d2f2-7b6c-a8bf-dca6d54dbf2c@nvidia.com>
+ <CAL_JsqLL5g7vGNmwcNQw5KBXFP4tE69zGyWd0msP3sexve_sNQ@mail.gmail.com>
+From:   Joseph Lo <josephl@nvidia.com>
+Message-ID: <eec6680d-4d85-ac29-afea-dc64c99c637c@nvidia.com>
+Date:   Wed, 10 Apr 2019 10:41:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190409082818.z33mq2qrxethldzf@flea>
+In-Reply-To: <CAL_JsqLL5g7vGNmwcNQw5KBXFP4tE69zGyWd0msP3sexve_sNQ@mail.gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1554864094; bh=k88UGopJw4/bZvRV7iGLn3ImQi0U9f4cG5kiDw7b2MA=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=MpD60NwVgWVGtUhwDKKrScOpoT6Qs6tQ/IFlYf4HZMzLSiLD0HtBd8aEmbokuB5lo
+         La3RxCpd7uLrpCiCt/6KkHwHyyLEi0My6ERhCLh74m7wco9SZ+ycnhr5WVFRMnyQBc
+         ofTtfzLauXM0/s+uKEbJeUXrJy4dw1gialnpQ8yfjgc+NZSqwPESyYanlu2IafGDxW
+         LwYnUYEaLc/kgygHyG61rlKAEWpF7nJJdMiIpkVAm2+nZt3J0xKPCWjb3Sq3aI7UEb
+         rQzJ7a6nPrjuQrGbHZncJuTJzOLLcq01xVaZKKX6qIqnpmey1ZhEJD5SRMNpav2NuO
+         hmlAOUJGgNxfg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 09, 2019 at 10:28:18AM +0200, Maxime Ripard wrote:
-> On Tue, Apr 09, 2019 at 04:07:34PM +0800, Chen-Yu Tsai wrote:
-> > On Tue, Apr 9, 2019 at 3:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > On Tue, Apr 09, 2019 at 12:57:42AM +0800, Chen-Yu Tsai wrote:
-> > > > From: Chen-Yu Tsai <wens@csie.org>
-> > > >
-> > > > The A83T SoC has a camera sensor interface (known as CSI in Allwinner
-> > > > lingo), which is similar to the one found on the A64 and H3. The only
-> > > > difference seems to be that support of MIPI CSI through a connected
-> > > > MIPI CSI-2 bridge.
-> > > >
-> > > > Add a device node for it, and pinctrl nodes for the commonly used MCLK
-> > > > and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
-> > > > the pinctrl nodes to keep the device tree blob size down if they are
-> > > > unused.
-> > > >
-> > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > > ---
-> > > >  arch/arm/boot/dts/sun8i-a83t.dtsi | 31 +++++++++++++++++++++++++++++++
-> > > >  1 file changed, 31 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > index f739b88efb53..0c52f945fd5f 100644
-> > > > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > @@ -682,6 +682,20 @@
-> > > >                       #interrupt-cells = <3>;
-> > > >                       #gpio-cells = <3>;
-> > > >
-> > > > +                     /omit-if-no-ref/
-> > > > +                     csi_8bit_parallel_pins: csi-8bit-parallel-pins {
-> > > > +                             pins = "PE0", "PE2", "PE3", "PE6", "PE7",
-> > > > +                                    "PE8", "PE9", "PE10", "PE11",
-> > > > +                                    "PE12", "PE13";
-> > > > +                             function = "csi";
-> > > > +                     };
-> > > > +
-> > > > +                     /omit-if-no-ref/
-> > > > +                     csi_mclk_pin: csi-mclk-pin {
-> > > > +                             pins = "PE1";
-> > > > +                             function = "csi";
-> > > > +                     };
-> > > > +
-> > > >                       emac_rgmii_pins: emac-rgmii-pins {
-> > > >                               pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
-> > > >                                      "PD11", "PD12", "PD13", "PD14", "PD18",
-> > > > @@ -994,6 +1008,23 @@
-> > > >                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-> > > >               };
-> > > >
-> > > > +             csi: camera@1cb0000 {
-> > > > +                     compatible = "allwinner,sun8i-a83t-csi";
-> > > > +                     reg = <0x01cb0000 0x1000>;
-> > > > +                     interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > > > +                     clocks = <&ccu CLK_BUS_CSI>,
-> > > > +                              <&ccu CLK_CSI_SCLK>,
-> > > > +                              <&ccu CLK_DRAM_CSI>;
-> > > > +                     clock-names = "bus", "mod", "ram";
-> > > > +                     resets = <&ccu RST_BUS_CSI>;
-> > > > +                     status = "disabled";
-> > > > +
-> > > > +                     csi_in: port {
-> > > > +                             #address-cells = <1>;
-> > > > +                             #size-cells = <0>;
-> > >
-> > > If we expect a single enpoint, then we don't need the address-cells
-> > > and size-cells properties.
-> >
-> > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
-> > is kind of genius if not very hacky. They have two "identical" sensors
-> > on the same I2C bus and CSI bus, with shared reset line but separate
-> > shutdown lines. Since they are identical, they also have the same I2C
-> > address. I haven't figured out how to model this in the device tree.
-> >
-> > The point is, it's perfectly possible to have two or more sensors use
-> > the same controller, provided only one be active at a time.
+On 4/3/19 12:26 PM, Rob Herring wrote:
+> On Mon, Apr 1, 2019 at 2:58 AM Joseph Lo <josephl@nvidia.com> wrote:
+>>
+>> On 3/31/19 2:41 PM, Rob Herring wrote:
+>>> On Mon, Mar 25, 2019 at 03:45:16PM +0800, Joseph Lo wrote:
+>>>> Add the binding document for the external memory controller (EMC) which
+>>>> communicates with external LPDDR4 devices. It includes the bindings of
+>>>> the EMC node and the EMC table of different rates.
+>>>>
+>>>> To support high rates for LPDDR4, the EMC table must be trained before
+>>>> it can be used for runtime clock switching. It has been done by firmware
+>>>> and merged to the table that Linux kernel uses. For backward
+>>>> compatibility with the devices that had been launched on the market, like
+>>>> Shield and Jetson platforms, the bindings in the EMC table should remain
+>>>> the same. So the firmware can recognize them and merge the trained EMC
+>>>> table for the kernel.
+>>
+>> Hi Rob,
+>>
+>> Thanks for reviewing.
+>>
+>>>
+>>> Overall seems pretty bloated. How much of this really varies by board
+>>> vs. just being a dump of all the register values to stuff?
+>>
+>> Most of them are register values. And by different SDRAM devices that
+>> could be used on the same platform (use ram code to identify them), the
+>> value could be different.
+>>
+>>>
+>>> Primarily, I'm leary of getting a similar binding for every vendor's DDR
+>>> setup.
+>>>
+>>> Some mostly trivial comments follow.
+>>
+>> Really sorry about that. I understand these basic rules for DT bindings,
+>> but the case here is that these un-reviewed bindings have been used in
+>> the firmware on the shipped products. To support the same with the
+>> upstream kernel and consider the firmware blob may not be updated, we
+>> have no choice to just use the same bindings in the upstream kernel.
+>>
+>> How can we deal with this case?
 > 
-> Right, but I guess the common case would be to have a single sensor,
-> where that wouldn't be needed.
-> 
-> In odd cases, we can always specify it in the DTS, and if it becomes
-> common enough, we can move it to the DTSI.
+> Simply, we do not accept bindings as-is. If we did, then there would
+> be no point in documenting and reviewing bindings. NVidia chose this
+> path and now gets to live with it.
 
-I'm planning on having two sensors there, in a less arcane setup,
-though - no shared resets, and different I2C addresses.
+Hi Rob,
 
-Anyway, I can confirm that CSI driver works fine on A83T with just
-a DTSI patch, even without the clock patch in this series. I've been
-running it for quite a while that way without any issues (different
-camera chip than the ones being used by wens).
+Thanks for letting us know the criterion. We will follow up and continue 
+the reviewing process of the binding. Please help us to review.
 
-regards,
-	o.
+And we will fix the driver and firmware to use the reviewed bindings 
+later. Need to settle the binding first.
 
-> Maxime
-> 
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
-
-
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Joseph
 
