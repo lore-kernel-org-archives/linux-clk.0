@@ -2,245 +2,230 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77A0C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C84DC10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E30020818
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554910341;
-	bh=8Uiu8jPrASJzDfP74Z0RIV0stXadfnYo6fsMAplIiBk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=bZXR1tdUKNfi60zVZ/M7x6kKtAMUr9TRTslspCGTUpaGja3EuqkUpjpNE8dowZN2A
-	 /MnZ6oAB6WL53BjWlgsNW9BlhWzt5kSWKUlsU6kW+lRSDdOgXxV7cDzcl3P+x2LAqM
-	 LNfxJApcCDD6RyCTZc9N7ZXWvwg4EE88qbF5valM=
+	by mail.kernel.org (Postfix) with ESMTP id 10DA820818
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 15:34:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cjj1sAkn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbfDJPcV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 11:32:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45530 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730505AbfDJPcV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Apr 2019 11:32:21 -0400
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BBEF20854;
-        Wed, 10 Apr 2019 15:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554910339;
-        bh=8Uiu8jPrASJzDfP74Z0RIV0stXadfnYo6fsMAplIiBk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=plCebfehFp72++RZ/i+YzJj4HoTRA0FwCiWJ6w24EeLMMmepQ24/z1pThASiqPMNU
-         w2RTgk5F60/j39C/wZh7AHejAo/pPfi1Po+YYd3WqRHcnfejttHBWwNGq6ILqMsEAu
-         zmyBFL1N7xSfsovIdd8CGDpaU1aYhX+KPMGn152A=
-Received: by mail-qk1-f178.google.com with SMTP id z76so1460298qkb.12;
-        Wed, 10 Apr 2019 08:32:19 -0700 (PDT)
-X-Gm-Message-State: APjAAAVnw2huBFicOZ31OK0K5u6lOpQ1iF43XpzcxQ96h7zCjCThK+JL
-        NDDJOHrpfqKOLBNPwMUC0LNBdKNNARkVxTMqPA==
-X-Google-Smtp-Source: APXvYqzGWuK3B+0h61dMUsiokgzg4wJMmQH4fLlHsiqT5Uw156wRyLJcUJAoX/AT8LgIOm04r4R/aqLaM3uzVMiuMrs=
-X-Received: by 2002:a37:5805:: with SMTP id m5mr33957016qkb.136.1554910338346;
- Wed, 10 Apr 2019 08:32:18 -0700 (PDT)
+        id S1726630AbfDJPed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 11:34:33 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41307 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730445AbfDJPec (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 11:34:32 -0400
+Received: by mail-vs1-f66.google.com with SMTP id g187so1607561vsc.8
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DCkgmuJRyXZdE3VExrSJZpNpCAX0uOVpMW/NjqlufYQ=;
+        b=Cjj1sAknmWgsaL0lBeZZ31ZanLoyXQoCqqGjuVNf6EhXJVksBOhVEgab8NURbkqxcp
+         myXEhssN6Vwwgme6iiddFEsvtVTi67B2ClsnNnHqigSLxYLEqlkhvET4oIJ5Jb0PK+vn
+         KZIuc26LgklnpfNcpIg2vYVtRaZlohooZi6SU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DCkgmuJRyXZdE3VExrSJZpNpCAX0uOVpMW/NjqlufYQ=;
+        b=hbiessYsvQh8kttxT3SnoJ1DRY0oQuekEEnvSmrZw+Hoyz8qZrojE7SQUn69Wgskfx
+         2uMLb6hovQ9BkJPd3ytcgcETSrGmlVZGc5aA5urHbuqJql9H5PzAht6C5v/8B8tYPwzt
+         BfVMlaTHkZdYK8MEEhbvRycxwkGXyismBaWKm6iPhDbSQai8wGkz+Vkl1DCbcmdzP74/
+         0jxjn8RrXh8XaWo+8DGVKyDdATf9IRTdVsdPJOYRgT/dMnWlB1pup2ShbM2zfCPwlJb3
+         yuw6xkFZA+pBnp5+FBCu77JkjMo5Dn7SJWu0NA1x88JgLetUt3U4MgcoiBmxxGiCBVcd
+         p+kA==
+X-Gm-Message-State: APjAAAWSMXZqakkMm4glxUM6Wh1Nbd1HbihqYyiYINhS4IOIEv95IlrC
+        cPTcKkG0bX5Tbo5cGnHohAcO5TePUPw=
+X-Google-Smtp-Source: APXvYqzdYogZAA0kvr2NXB/QQXaOmjrCQ2YRMOXliL8j7A0MyJUu1/BmgDTXRmhd4tF2zeHaseRSBA==
+X-Received: by 2002:a67:f753:: with SMTP id w19mr23862385vso.27.1554910470488;
+        Wed, 10 Apr 2019 08:34:30 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id u6sm1973441vsu.12.2019.04.10.08.34.29
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Apr 2019 08:34:29 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id n16so915260uae.10
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2019 08:34:29 -0700 (PDT)
+X-Received: by 2002:ab0:474c:: with SMTP id i12mr23660228uac.9.1554910468758;
+ Wed, 10 Apr 2019 08:34:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <1550771836-10014-1-git-send-email-aisheng.dong@nxp.com>
- <1550771836-10014-2-git-send-email-aisheng.dong@nxp.com> <20190326134715.GA4055@bogus>
- <AM0PR04MB42110F1F251243A165DB9EC680580@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB42110F1F251243A165DB9EC680580@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 10 Apr 2019 10:32:06 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK9xkR3P7_cfhpr3kQBEF_wGgZO4oHpoDW+3ybpqYoXNw@mail.gmail.com>
-Message-ID: <CAL_JsqK9xkR3P7_cfhpr3kQBEF_wGgZO4oHpoDW+3ybpqYoXNw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: firmware: imx-scu: new binding to parse
- clocks from device tree
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20190409204707.150347-1-dianders@chromium.org>
+ <20190409204707.150347-2-dianders@chromium.org> <b7093a17-b30c-cdec-b02c-c6bc5a8d08c9@rock-chips.com>
+In-Reply-To: <b7093a17-b30c-cdec-b02c-c6bc5a8d08c9@rock-chips.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 10 Apr 2019 08:34:16 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WXWnYDzGUyyz--JBY6QBcYNEorgAqUAesnctXJqptSBw@mail.gmail.com>
+Message-ID: <CAD=FV=WXWnYDzGUyyz--JBY6QBcYNEorgAqUAesnctXJqptSBw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] Revert "clk: rockchip: mark noc and some special clk
+ as critical on rk3288"
+To:     "elaine.zhang" <zhangqing@rock-chips.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Caesar Wang <caesar.wang@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 9:35 AM Aisheng Dong <aisheng.dong@nxp.com> wrote:
+Hi,
+
+On Tue, Apr 9, 2019 at 11:23 PM elaine.zhang <zhangqing@rock-chips.com> wro=
+te:
 >
-> > From: Rob Herring [mailto:robh@kernel.org]
-> > Sent: Tuesday, March 26, 2019 9:47 PM
-> > On Thu, Feb 21, 2019 at 06:03:43PM +0000, Aisheng Dong wrote:
-> > > There's a few limitations on one cell clock binding (#clock-cells =
-> > > <1>) that we have to define all clock IDs for device tree to reference.
-> > > This may cause troubles if we want to use common clock IDs for multi
-> > > platforms support when the clock of those platforms are mostly the same.
-> > > e.g. Current clock IDs name are defined with SS prefix. However the
-> > > device may reside in different SS across CPUs, that means the SS
-> > > prefix may not valid anymore for a new SoC. Furthermore, the device
-> > > availability of those clocks may also vary a bit.
-> > >
-> > > For such situation, We formerly planned to add all new IDs for each SS
-> > > and dynamically check availability for different SoC in driver. That
-> > > can be done but that may involve a lot effort and may result in more
-> > > changes and duplicated code in driver, also make device tree
-> > > upstreaming hard which depends on Clock IDs.
-> > >
-> > > To relief this situation, we want to move the clock definition into
-> > > device tree which can fully decouple the dependency of Clock ID
-> > > definition from device tree. And no frequent changes required in clock driver
-> > any more.
-> > >
-> > > Then we can use the existence of clock nodes in device tree to address
-> > > the device and clock availability differences across different SoCs.
-> > >
-> > > For SCU clocks, only two params required, thus two new property created:
-> > > rsrc-id = <IMX_SC_R_UART_0>;
-> > > clk-type = <IMX_SC_PM_CLK_PER>;
-> > >
-> > > And as we want to support clock set parent function, 'clocks' property
-> > > is also used to pass all the possible input parents.
-> > >
-> > > Cc: Rob Herring <robh@kernel.org>
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: Shawn Guo <shawnguo@kernel.org>
-> > > Cc: Sascha Hauer <kernel@pengutronix.de>
-> > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > > ---
-> > >  .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 29
-> > ++++++++++++++++------
-> > >  include/dt-bindings/firmware/imx/rsrc.h            | 17
-> > +++++++++++++
-> > >  2 files changed, 38 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> > > b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> > > index 72d481c..2816789 100644
-> > > --- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> > > +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> > > @@ -78,6 +78,19 @@ Required properties:
-> > >                       "fsl,imx8qm-clock"
-> > >                       "fsl,imx8qxp-clock"
-> > >                     followed by "fsl,scu-clk"
-> > > +- #clock-cells:            Should be 0.
-> > > +- rsrc-id:         Resource ID associated with this clock
-> > > +- clk-type:                Type of this clock.
-> > > +                   Refer to <include/dt-bindings/firmware/imx/rsrc.h> for
-> > > +                   available clock types supported by SCU.
+> hi,
+>
+> =E5=9C=A8 2019/4/10 =E4=B8=8A=E5=8D=884:47, Douglas Anderson =E5=86=99=E9=
+=81=93:
+> > This reverts commit 55bb6a633c33caf68ab470907ecf945289cb733d.
 > >
-> > Can't you just make these 2 values clock cells? I'm all for getting rid of made
-> > up clock numbers.
+> > The clocks that were enabled by that patch are pretty questionable.
+> > Specifically looking at what has been shipping on rk3288-veyron
+> > Chromebooks almost all of these clocks are safely turned off and cause
+> > no apparent problems.  If some boards need these clocks turned on for
+> > some reason then it seems like we should figure out how to do that at
+> > a board level.
 > >
->
-> Thanks for the agreement to remove clock IDs.
->
-> The 2 values clock cell seems not the best approach for i.MX because it still needs
-> to define all clocks in the driver which is exactly we want to avoid now due to some
-> special HW characteristic:
+> > NOTE: turning these clocks off doesn't seem to do a whole lot in terms
+> > of power savings (checking the power on the logic rail).  It appears
+> > to save maybe 1-2mW.  ...but still it seems like we should turn the
+> > clocks off if they aren't needed.
+> >
+> > Digging into the clocks here to describe why they shouldn't need to be
+> > left on:
+> >
+> > atclk: No documentation about this clock other than that it goes to
+> > the CPU.  CPU functions fine without it on.
+> >
+> > jtag: Presumably this clock is only needed if you're debugging with
+> > JTAG.  It doesn't seem like it makes sense to waste power for every
+> > rk3288 user.  Perhaps this could be turned on with a CONFIG option?
+> >
+> > pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
+> > clocks on only during kernel panics in order to access some coresight
+> > registers.  Since nothing in the upstream kernel does this we should
+> > be able to leave them off safely.
+> >
+> > hsicphy12m_xin12m: There is no indication of why this clock would need
+> > to be turned on for boards that don't use HSIC.
+> >
+> > pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
+> > these 4 clocks on only when doing DDR transitions and they are off
+> > otherwise.  I see no reason why they'd need to be on in the upstream
+> > kernel which doesn't support DDRFreq.
+> >
+> > pmu_hclk_otg0: A "chip design defect" is mentioned in the original
+> > patch but no details.  This clock has always been gated in shipping
+> > veyron Chromebooks so presumably this chip defect doesn't affect all
+> > boards.
+> >
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >
+> >   drivers/clk/rockchip/clk-rk3288.c | 14 ++++----------
+> >   1 file changed, 4 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/c=
+lk-rk3288.c
+> > index 5a67b7869960..06287810474e 100644
+> > --- a/drivers/clk/rockchip/clk-rk3288.c
+> > +++ b/drivers/clk/rockchip/clk-rk3288.c
+> > @@ -313,13 +313,13 @@ static struct rockchip_clk_branch rk3288_clk_bran=
+ches[] __initdata =3D {
+> >       COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
+> >                       RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_=
+READ_ONLY,
+> >                       RK3288_CLKGATE_CON(12), 6, GFLAGS),
+> > -     COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
+> > +     COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
+> >                       RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER=
+_READ_ONLY,
+> >                       RK3288_CLKGATE_CON(12), 7, GFLAGS),
+> >       COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
+> >                       RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER=
+_READ_ONLY,
+> >                       RK3288_CLKGATE_CON(12), 8, GFLAGS),
+> > -     GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
+> > +     GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
+> >                       RK3288_CLKGATE_CON(12), 9, GFLAGS),
+> >       GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
+> >                       RK3288_CLKGATE_CON(12), 10, GFLAGS),
+> > @@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branch=
+es[] __initdata =3D {
+> >       INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
+> >                       RK3288_CLKSEL_CON(22), 7, IFLAGS),
+> >
+> > -     GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+> > +     GATE(0, "jtag", "ext_jtag", 0,
+> >                       RK3288_CLKGATE_CON(4), 14, GFLAGS),
+> CLK_IGNORE_UNUSED:
+> Whether to close the unused clk after clk init complete. not affect
+> there own enable/disable.
+> JTAG is not have device node, when need jtag to debug, may be the system
+> is crashed, there is no way to turn on this clk.
 
-Why's that? You can walk the DT and extract the 2 cells for each clock
-present. That's not any different than walking child nodes here and
-getting the resource ids and type. That's not really fast, but if
-speed is really an issue we can consider addressing that in ways that
-extend rather than change the binding.
+As I mentioned in the commit message this seems like the kind of thing
+that should be controlled by a CONFIG_ option.  It's a debug option
+that's fine to have on all the time but consumes resources so some
+people might want to turn it off.
 
-> 1. clock resources may be allocated to different SW execution partition by firmware
-> and A core may not have access rights for those clocks not belong to its partition.
-> So we want to describe them in DT according to the partition configuration.
 
-Do you have an example? I'd assume you assign peripherals to different
-partitions and resource assignment simply follows that. Can clocks not
-be available when a peripheral still is?
+> >       COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy=
+480m_p, 0,
+> > @@ -656,7 +656,7 @@ static struct rockchip_clk_branch rk3288_clk_branch=
+es[] __initdata =3D {
+> >       COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy=
+480m_p, 0,
+> >                       RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
+> >                       RK3288_CLKGATE_CON(3), 6, GFLAGS),
+> > -     GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
+> > +     GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
+> >                       RK3288_CLKGATE_CON(13), 9, GFLAGS),
+> >       DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
+> >                       RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
+> > @@ -837,12 +837,6 @@ static const char *const rk3288_critical_clocks[] =
+__initconst =3D {
+> >       "pclk_alive_niu",
+> >       "pclk_pd_pmu",
+> >       "pclk_pmu_niu",
+> > -     "pclk_core_niu",
+> > -     "pclk_ddrupctl0",
+> > -     "pclk_publ0",
+> > -     "pclk_ddrupctl1",
+> > -     "pclk_publ1",
+> These clks needed enable, device node not use this clk, so we mark it as
+> critical.
 
-> 2. Each clock is associated with a different power domain which is better to be
-> described in device tree. And clock state will be lost and need restore after power cycle
-> of the domain.
->
-> Based on above requirements, do you think we can do as below?
+What breaks if you don't enable these clocks?  As far as I can tell
+these clocks only need to be enabled while touching memory controller
+registers (deep suspend/resume and DDRFreq transitions).  On
+Chromebooks everything works fine with these clocks only turned on
+when needed.
 
-Can you provide an example that shows the whole hierarchy for a
-peripheral. Here you have FSPI, PWM, and MMC. Reviewing SCU clocks and
-LPCG clocks separately is not helpful.
 
->
-> //LSIO SS
-> lsio_scu_clk: lsio-scu-clock-controller {
->         compatible = "fsl,imx8qxp-clock", "fsl,scu-clk";
->
->         fspi0_clk: clock-fspi0{
->                 #clock-cells = <0>;
->                 rsrc-id = <IMX_SC_R_FSPI_0>;
->                 clk-type = <IMX_SC_PM_CLK_PER>;
->                 power-domains = <&pd IMX_SC_R_FSPI_0>;
+> > -     "pmu_hclk_otg0",
+> It's a soc bug, pmu_hclk_otg0 must always on.
 
-Are the power domain ID and rsrc-id always the same for a clock?
+So you said in your previous commit message.  However we've shipped
+lots and lots of Chromebooks with this clock off.  Can you explain
+what is broken?  Is this only needed for gadget mode (which we don't
+use), for instance?
 
->         };
->
->                 fspi1_clk: clock-fspi1{
->                         ...
->                 };
->         ...
-> };
->
-> /* LPCG clocks */
-> lsio_lpcg_clk: lsio-lpcg-clock-controller {
->         compatible = "fsl,imx8qxp-lpcg";
 
-I think this wrapper node should be removed and the compatible moved
-into the child nodes.
-
->         pwm0_lpcg: clock-controller@5d400000 {
->                 reg = <0x5d400000 0x10000>;
->                 #clock-cells = <1>;
->                 clocks = <&pwm0_clk>, <&pwm0_clk>, <&pwm0_clk>,
->                          <&lsio_bus_clk>, <&pwm0_clk>;
->                 bit-offset = <0 4 16 20 24>;
-
-Are all LPCG instances the same, but some clocks are missing if the
-child peripheral doesn't use certain clocks? IOW, bit 0 is always
-ipg_clk, bit 24 is always ipg_mstr_clk?
-
-Assuming so, 'bit-offset' should be removed and you should either have
-a fixed number of clock entries with 0 entries for non-connected
-clocks or use clock-names to define which clocks are present (with the
-same set of defined names for all LPCG instances).
-
->                 clock-output-names = "pwm0_lpcg_ipg_clk",
->                                      "pwm0_lpcg_ipg_hf_clk",
->                                      "pwm0_lpcg_ipg_s_clk",
->                                      "pwm0_lpcg_ipg_slv_clk",
->                                      "pwm0_lpcg_ipg_mstr_clk";
-
-IMO, this is wrong as the names should be relative to the module. So
-'ipg_clk', 'ipg_hf_clk', etc.
-
->                 power-domains = <&pd IMX_SC_R_PWM_0>;
->                 status = "disabled";
->         };
->
->                 pwm1_lpcg: clock-controller@5d410000 {
->                                 ...
->                 }
->         ...
-> };
->
-> And for users, it could simply be:
-> usdhc1: mmc@5b010000 {
->         clocks = <&sdhc0_lpcg 1>,
->                  <&sdhc0_lpcg 0>,
->                  <&sdhc0_lpcg 2>;
->         clock-names = "ipg", "per", "ahb";
->         assigned-clocks = <&sdhc0_clk>;
->         assigned-clock-rates = <200000000>;
->                 ....
-> };
+-Doug
