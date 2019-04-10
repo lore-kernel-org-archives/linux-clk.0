@@ -2,106 +2,85 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDA3C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 22:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2ABC10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 22:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098F62082E
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 22:18:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bfQFn5QW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TayPqBoC"
+	by mail.kernel.org (Postfix) with ESMTP id BB67A20850
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 22:53:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554936833;
+	bh=CovF7NPSaUf4wPavrIL9yXbYquKwUO53ecbE+/+hZig=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=YYJQE58ESM8c2CAgaN+M1l3Ssc512AHhjTesnNniZn9Uekr/1lDFFSxp63Z1GAuST
+	 di7ivKHLFoJ4BsSUZh0FA6bgBUM8rLP43c9GaJLH+4Gl/LfAUWYYtOV9/3MbKu4Rmr
+	 ZGW92OGcDtBPCAe4e9CCwDFVl8lJ80nvOZd1fbKA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726106AbfDJWS0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 18:18:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46980 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfDJWS0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Apr 2019 18:18:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8211C60FF3; Wed, 10 Apr 2019 22:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1554934705;
-        bh=L+Aguwy+/VoP56+p30M/SP5x+sGXp4ryUdg3EM1eE/M=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=bfQFn5QWkrEGqMhMqzx/JzFoqaBwOdOZeN0c4e5X7fNPjp1puwEo337UOSk/TXzaA
-         /NuNCKyDKxzzeDYcvehfKsf+nMXGtv7q8cEkfk+4pinb0MXcNzPbN9Z0W/UnkqYMeT
-         xihAxhE+95+fcBTbMh7Of0+Mbe9jWemartVPWKq4=
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726096AbfDJWxx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 18:53:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726026AbfDJWxx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Apr 2019 18:53:53 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0A36E6032C;
-        Wed, 10 Apr 2019 22:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1554934704;
-        bh=L+Aguwy+/VoP56+p30M/SP5x+sGXp4ryUdg3EM1eE/M=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TayPqBoCGkaBZD6pNglWdOLZ6Q/BvEKpH2sgApK1alWIP7pl1QspvmzzU/GzxBDSY
-         bddaYDoQe9sG7p0KljE5R9fRJ0f1lp6Y8HAIBpncTUUKaKzxrL7F2OrSny654X3e61
-         xkKFGYhNj5U6kt+HXCEv/U+0JwEG8ve60gBWHN68=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A36E6032C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v3 3/7] clk: Add of_clk_hw_register() API for early clk
- drivers
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
-References: <20190404215344.6330-1-sboyd@kernel.org>
- <20190404215344.6330-4-sboyd@kernel.org>
- <f989942c-89fc-76cf-af1b-2ac352d6e60c@codeaurora.org>
- <155491520049.20095.15953237372852019635@swboyd.mtv.corp.google.com>
- <c529d12b-5212-7198-4f70-a3f771c0901f@codeaurora.org>
- <155493274113.20095.6283192313107751284@swboyd.mtv.corp.google.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <bba463e8-c4f6-720d-5a38-ae29d0979a9e@codeaurora.org>
-Date:   Wed, 10 Apr 2019 16:18:23 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.3
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ACF320830;
+        Wed, 10 Apr 2019 22:53:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554936832;
+        bh=CovF7NPSaUf4wPavrIL9yXbYquKwUO53ecbE+/+hZig=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=oVg3/jksLKhu04X/K6Vpbso0C6OySfUNS1gkFiTMwJMq1z5JROecZp+k6wCXUOa45
+         b1gM22Lw1aX0GEFhuZEJvMCGCvxEXd2EVBRJyHo4H4K2rty/TEaLaPrRbd088HtRXz
+         M08MCqTkNWE3G2bojSKfSG9wbg3I541c+ZTbE64Y=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <155493274113.20095.6283192313107751284@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1554606804-29453-1-git-send-email-hofrat@opentech.at>
+References: <1554606804-29453-1-git-send-email-hofrat@opentech.at>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH RFC] clk: ux500: add range to usleep_range
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@opentech.at>
+To:     Nicholas Mc Guire <hofrat@opentech.at>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Message-ID: <155493683173.20095.12913107010666279046@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Wed, 10 Apr 2019 15:53:51 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/10/2019 3:45 PM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2019-04-10 12:39:16)
->> On 4/10/2019 10:53 AM, Stephen Boyd wrote:
->>> Quoting Jeffrey Hugo (2019-04-08 14:46:11)
->>>> On 4/4/2019 3:53 PM, Stephen Boyd wrote:
->>>>> In some circumstances drivers register clks early and don't have access
->>>>> to a struct device because the device model isn't initialized yet. Add
->>>>> an API to let drivers register clks associated with a struct device_node
->>>>> so that these drivers can participate in getting parent clks through DT.
->>>>
->>>> NACK.  This patch broke boot for me.  I had to pull the below from JTAG.
->>>>     What do you need to debug this?
->>>>
->>>
->>> Here's a patch to try to squash in:
->>
->> No dice.  Same issue.
-> 
-> Argh! dev_of_node() doesn't check for NULL device. :-/ I want to be
-> extremely lazy! Let's get this merged too. Thanks for the testing.
+Quoting Nicholas Mc Guire (2019-04-06 20:13:24)
+> Providing a range for usleep_range() allows the hrtimer subsystem to
+> coalesce timers - the delay is runtime configurable so a factor 2
+> is taken to provide the range.
+>=20
+> Signed-off-by: Nicholas Mc Guire <hofrat@opentech.at>
+> ---
 
-Fixed.  Will continue to test the rest of the series and let you know.
+I think this driver is in maintenance mode. I'll wait for Ulf to ack or
+review this change before applying.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysc=
+trl.c
+> index 7c0403b..a1fa3fb 100644
+> --- a/drivers/clk/ux500/clk-sysctrl.c
+> +++ b/drivers/clk/ux500/clk-sysctrl.c
+> @@ -42,7 +42,7 @@ static int clk_sysctrl_prepare(struct clk_hw *hw)
+>                                 clk->reg_bits[0]);
+> =20
+>         if (!ret && clk->enable_delay_us)
+> -               usleep_range(clk->enable_delay_us, clk->enable_delay_us);
+> +               usleep_range(clk->enable_delay_us, clk->enable_delay_us*2=
+);
+
+Please add space around that multiply.
+
