@@ -2,99 +2,84 @@ Return-Path: <SRS0=uxtc=SM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FD7C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 21:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF2AC10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 22:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3FF02084B
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 21:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C4F720830
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 22:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554932743;
-	bh=zLuqeFm5+1IIt2wLhyyKYP/R92yhvIHofnZ/EVHVzbg=;
+	s=default; t=1554933609;
+	bh=EUNMqByKjK+QIttPlTNdEbvE2O2+uFwFINYJBA43bhQ=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=HEL/5futc20BwNu5G7Ns/vxce7X+yCYcu19IizkL0JlT/3QHdx5QMGCySBP3KO5WF
-	 DPvSZg0ZhDYdhP33rJitr9Jbzg9bdJ4rUPVW6IdT1WcBlR2XARaOqwzczKU/YtEoDZ
-	 GuvLiX37iDutvuf/7AlCwOAXo8DTNQJI1w4E0yUc=
+	b=xbQNcgmmQ8GjWe/fg2owv5hA8dlNVpKR0BDu1CS1BRMA32GJoDlW7SC8PzQFxJkL6
+	 3qrTeWP315AKYcUDHwwa63K0GrCADdRYgWyv3Flry0PjDfsHImKWGoRHd6HqqchpcD
+	 bX1nUHYM5/3RjsMUXmAS7BSwDQqiPLudKUR8etHA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfDJVpn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 17:45:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55402 "EHLO mail.kernel.org"
+        id S1726118AbfDJWAJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 18:00:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbfDJVpm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Apr 2019 17:45:42 -0400
+        id S1725982AbfDJWAJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Apr 2019 18:00:09 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F354B20820;
-        Wed, 10 Apr 2019 21:45:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 839CD2082A;
+        Wed, 10 Apr 2019 22:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554932742;
-        bh=zLuqeFm5+1IIt2wLhyyKYP/R92yhvIHofnZ/EVHVzbg=;
+        s=default; t=1554933608;
+        bh=EUNMqByKjK+QIttPlTNdEbvE2O2+uFwFINYJBA43bhQ=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=TeiDB1AtD/CUBPHgpw/bGxhp3IXbjqtO94AbpsaNCaaSAsaMZD8eqsqeL21NMgpxo
-         1nOq/1+q5zPPRKnCtzYjcZ0s0znge4uDlLCZPFAalHTNOx7KZw5kQOo7/lpslmyFv/
-         ob0Q0OxoOVZZxpLg9mPpK3+dbMEOaObL4jOPI4Tg=
+        b=0OqW8VX7CDNe5jiTwFbNIJ1I2j5gvP5yDmqXpmyBrP4MOVuM0tsL8vxmfpzBpfQjb
+         WZbAFhYI1F0UYycaQ4V3yxYBDwdNjJmcU0d9sapgjTBtBeBJxeCljhhvqMjxRunr9h
+         DUFZNP4x26O690C/776dpjncFxyBANGmn5i1csh0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c529d12b-5212-7198-4f70-a3f771c0901f@codeaurora.org>
-References: <20190404215344.6330-1-sboyd@kernel.org> <20190404215344.6330-4-sboyd@kernel.org> <f989942c-89fc-76cf-af1b-2ac352d6e60c@codeaurora.org> <155491520049.20095.15953237372852019635@swboyd.mtv.corp.google.com> <c529d12b-5212-7198-4f70-a3f771c0901f@codeaurora.org>
+In-Reply-To: <CAOMZO5DWpu9irOWR3rux-vV1sihfsDkTs5SJ7XXy8MgRBCd-Gw@mail.gmail.com>
+References: <1553269010-15591-1-git-send-email-abel.vesa@nxp.com> <CAOMZO5DWpu9irOWR3rux-vV1sihfsDkTs5SJ7XXy8MgRBCd-Gw@mail.gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 3/7] clk: Add of_clk_hw_register() API for early clk drivers
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Message-ID: <155493274113.20095.6283192313107751284@swboyd.mtv.corp.google.com>
+Subject: Re: [RFC 00/19] clk: imx: Switch the imx6 and imx7 to clk_hw based API
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <festevam@gmail.com>
+Message-ID: <155493360763.20095.6174028293897341109@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Wed, 10 Apr 2019 14:45:41 -0700
+Date:   Wed, 10 Apr 2019 15:00:07 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-04-10 12:39:16)
-> On 4/10/2019 10:53 AM, Stephen Boyd wrote:
-> > Quoting Jeffrey Hugo (2019-04-08 14:46:11)
-> >> On 4/4/2019 3:53 PM, Stephen Boyd wrote:
-> >>> In some circumstances drivers register clks early and don't have acce=
-ss
-> >>> to a struct device because the device model isn't initialized yet. Add
-> >>> an API to let drivers register clks associated with a struct device_n=
-ode
-> >>> so that these drivers can participate in getting parent clks through =
-DT.
-> >>
-> >> NACK.  This patch broke boot for me.  I had to pull the below from JTA=
-G.
-> >>    What do you need to debug this?
-> >>
-> >=20
-> > Here's a patch to try to squash in:
+Quoting Fabio Estevam (2019-03-22 09:24:54)
+> Hi Abel,
 >=20
-> No dice.  Same issue.
+> On Fri, Mar 22, 2019 at 12:37 PM Abel Vesa <abel.vesa@nxp.com> wrote:
+> >
+> > This work is part of the effort of switching the entire imx clock drive=
+rs
+> > towards clk_hw based API. In order to do that, we have to keep the old
+>=20
+> Maybe I missed some earlier discussions on this topic, but let me ask
+> a fundamental question first: what is the motivation for this API
+> change?
+>=20
+> I could not find the reasoning inside the series.
 
-Argh! dev_of_node() doesn't check for NULL device. :-/ I want to be
-extremely lazy! Let's get this merged too. Thanks for the testing.
+The reasoning should be added to the series, but I would like to see clk
+providers only deal with clk_hw structures and not with clk structures.
+This clearly divides the line between clk consumers and clk providers so
+that we know if clk providers are using the clk API themselves. That's
+why I introduced clk_hw_register() in the first place.
 
----8<---
-diff --git a/include/linux/device.h b/include/linux/device.h
-index b425a7ee04ce..0370dd0b3ae7 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1231,7 +1231,7 @@ static inline void device_lock_assert(struct device *=
-dev)
-=20
- static inline struct device_node *dev_of_node(struct device *dev)
- {
--	if (!IS_ENABLED(CONFIG_OF))
-+	if (!IS_ENABLED(CONFIG_OF) || !dev)
- 		return NULL;
- 	return dev->of_node;
- }
