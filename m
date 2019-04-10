@@ -6,83 +6,80 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1069C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70380C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7150E20830
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 341E220854
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Apr 2019 16:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554914712;
-	bh=UNbQ8KAilo6jAPYgs/PtUDri4Ui/TV6dz5DwlBUrtP8=;
+	s=default; t=1554914970;
+	bh=7V+bH6UyqInzIrPCYj+uVJgo/SA0OEKcOvlOhP4Kr4s=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=LCA3Spnqhl6fZOUt/IunLiVni7z03lvgHxDxHiFGoyflfqMdr8WYSqDeRofS/CDoC
-	 1P6WZFnj/4KXKPxzeCR4YRPrOdvz0Vbhp9v3DnORAYhAXiCVDeI8Z/Ml7GZNmrtViK
-	 pAx9nflNlr94c8mH7u8Rput1ypOFQOHwhnIuS1cU=
+	b=BaLnSAhxaN96N8ypL80yBc0jHIuuQfasmY6ejlt5eN0h5cFeGlTzRjr9m//mF5S97
+	 CsiB4nO5x5CBlXwcn3lTyCfJp8LyQn2Yoc0weqF/+BBxdG0j9az2U+JdH3goV6oO4l
+	 0ANlPE/aD1ugY7OryR5kv8FJnGFhRjYFFJkE1/xE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbfDJQpM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Apr 2019 12:45:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54892 "EHLO mail.kernel.org"
+        id S1732902AbfDJQta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Apr 2019 12:49:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbfDJQpM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Apr 2019 12:45:12 -0400
+        id S1729474AbfDJQt3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Apr 2019 12:49:29 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14008206B6;
-        Wed, 10 Apr 2019 16:45:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0222E20818;
+        Wed, 10 Apr 2019 16:49:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554914711;
-        bh=UNbQ8KAilo6jAPYgs/PtUDri4Ui/TV6dz5DwlBUrtP8=;
+        s=default; t=1554914969;
+        bh=7V+bH6UyqInzIrPCYj+uVJgo/SA0OEKcOvlOhP4Kr4s=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=Ox42K1kd5MNawbGFUkre3dwpIUIQFYYt2C7sSHyc2BuF2JOeqv7gVMdiTTxIuAXG+
-         9TF7IIh8qAchN9m1q54hgd3UcGDZyacGe9+HKFQnT90zsVCPFXw4n+ybmyg9cjVLqm
-         OLGWHkKb0FIlPZ+5bF0JFgZ6SzZnOwhj8MHa27XE=
+        b=kkZGz6OgRWG1Ak0KZH1KZEp//lzIEU6ApNOKDMXyLTXhcx5Z79F3jrlH+wRkhZUJS
+         5bNZ3KFW+VWPhbIe0JDq8rnSnXHXkGVgc1/VHWumA0dVbKBY9YOQcPqC3QF/TdQNy5
+         I5o9fZBLHVpqcHZCGsNYL02FnC/DYTOTHp2dJBUw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190409085717.d24c636fuzpoxume@shell.armlinux.org.uk>
-References: <20190404215344.6330-1-sboyd@kernel.org> <20190404215344.6330-2-sboyd@kernel.org> <b3a3052056b787bde94178ed371417359a941f2d.camel@fi.rohmeurope.com> <155449664462.20095.10904772826291270300@swboyd.mtv.corp.google.com> <20190408104941.GB17594@localhost.localdomain> <155474280295.20095.182612336816713159@swboyd.mtv.corp.google.com> <20190408222106.ect7nwjsklzhmdwj@shell.armlinux.org.uk> <4e63d42b27bc5bdf7d991c00f9105ba96a34dc8a.camel@fi.rohmeurope.com> <20190409085717.d24c636fuzpoxume@shell.armlinux.org.uk>
+In-Reply-To: <f989942c-89fc-76cf-af1b-2ac352d6e60c@codeaurora.org>
+References: <20190404215344.6330-1-sboyd@kernel.org> <20190404215344.6330-4-sboyd@kernel.org> <f989942c-89fc-76cf-af1b-2ac352d6e60c@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/7] clkdev: Hold clocks_mutex while iterating clocks list
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "jhugo@codeaurora.org" <jhugo@codeaurora.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Message-ID: <155491471024.20095.7879335266054730921@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 3/7] clk: Add of_clk_hw_register() API for early clk drivers
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <155491496818.20095.15093722814125773505@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Wed, 10 Apr 2019 09:45:10 -0700
+Date:   Wed, 10 Apr 2019 09:49:28 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Russell King - ARM Linux admin (2019-04-09 01:57:17)
-> On Tue, Apr 09, 2019 at 05:31:48AM +0000, Vaittinen, Matti wrote:
-> > On Mon, 2019-04-08 at 23:21 +0100, Russell King - ARM Linux admin
-> > wrote:
-> > > On Mon, Apr 08, 2019 at 10:00:02AM -0700, Stephen Boyd wrote:
-> > > > >=20
-> > > >=20
-> > > > Sure. I was thinking along the same lines after you asked.
-> > >=20
-> > > This is rubbish.  The reason clk_find() doesn't take the lock is that
-> > > you _need_ to hold the lock while you dereference the clk_lookup
-> > > data.
-> >=20
-> > I think we all agreed on this already. Stephen pointed out that the
-> > current user(s) of clk_find() do _not_ dereference the pointer.
+Quoting Jeffrey Hugo (2019-04-08 14:46:11)
+> On 4/4/2019 3:53 PM, Stephen Boyd wrote:
+> > In some circumstances drivers register clks early and don't have access
+> > to a struct device because the device model isn't initialized yet. Add
+> > an API to let drivers register clks associated with a struct device_node
+> > so that these drivers can participate in getting parent clks through DT.
 >=20
-> Which is actually another incorrect statement - clk_get_sys()
-> dereferences it, but Stephen's patch does rearrange the code there.
+> NACK.  This patch broke boot for me.  I had to pull the below from JTAG. =
+
+
+No early printk support on this board? Sadness.
+
+>   What do you need to debug this?
 >=20
 
-I've split this patch into two. One to fix the locking of the new
-clk_find() user and the other to introduce a clk_find_hw() API that lets
-me use it later on in this series. I'll resend the series with this
-update.
+Hopefully nothing.
 
+> [    0.000000] Unable to handle kernel read from unreadable memory at=20
+> virtual address 0000000000000280
+
+I guess you pass NULL as dev to clk_hw_register(). Will fix! Thanks for
+testing.
+
+> [    0.000000] Mem abort info:
