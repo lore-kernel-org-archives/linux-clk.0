@@ -2,71 +2,69 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3519C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 18:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FAAC10F14
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 18:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F472173C
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 18:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5282083E
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 18:41:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555008060;
-	bh=GvSGqS7IvEPvkCpowl4tv8OBEVOYgkwvw3E5eSyGqKY=;
+	s=default; t=1555008067;
+	bh=4R0etKb8Gg9PgqltcjVvFpcEYLLV8bYOi3gKgaqWlms=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=cbgad1HHfyqr5KrDPrfZyK5N9ztUn6SuT6PoTE3Fik6OsHiilkt77opfTeiLcZ/1k
-	 09Eh2M0DQPvuvZaWij0sOntq4QvKKqS5NnM3MtRjZmHMBVeeUvmsTm3XzV3eqfSR3a
-	 Ep+c/NzoXnKW7TaIaUXlOTXaaZg5DEKPPUuQoGGI=
+	b=fK66kNidzCNbjCRY3AkrNxZkBjubSsBffc5OwROMFpBDqJIc/2nEWuyxkLb6XtYCa
+	 HgVqqP1+xOgNSUfLmvSYiURSfvsO7oyJ2V6uG+RlymdCA4m1gqf7tHPWS+r9BK5kI7
+	 7rklCIKd7bOoh20lCm/4zQqgpwYUcldNlFhxU2Mo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfDKSlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 14:41:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54066 "EHLO mail.kernel.org"
+        id S1726646AbfDKSlG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 14:41:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726603AbfDKSk7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 14:40:59 -0400
+        id S1726603AbfDKSlG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 14:41:06 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 412792083E;
-        Thu, 11 Apr 2019 18:40:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D6A52173C;
+        Thu, 11 Apr 2019 18:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555008059;
-        bh=GvSGqS7IvEPvkCpowl4tv8OBEVOYgkwvw3E5eSyGqKY=;
+        s=default; t=1555008066;
+        bh=4R0etKb8Gg9PgqltcjVvFpcEYLLV8bYOi3gKgaqWlms=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=fsBe2RBff6rHsqR8lYHVkpqVQHaWU46kTpPoJcFpH6meCZpZg26BlzgR6UHb192tK
-         12MNbGuWtIDUtjK2uBdg3Vy19x8Ivo1nw6pbn/uKQc4n3TrAQxEUdmJVuJoPZh3GY5
-         BjwaPed6o6zPE50Dl1eUdA+7B0q5cyBHW6Z4LAoM=
+        b=konDM6ottgp6wEqaB+W4m0Awje4m00XcmxVKt4kaFT8q8wNhzIcq9F3pOoepOVF41
+         skr8vSstwlQmXichqvou84Y3OyvqLPBl51PwFk5LJc6gnu3JRCMOfjVTBaYEhh3jR7
+         QfRXE7LxXsUPnX0R7PECl2XXRkMQ1elJQaxBjnAg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190404101621.7b88337c@litschi.hi.pengutronix.de>
-References: <20190319100147.4178-1-m.tretter@pengutronix.de> <20190404101621.7b88337c@litschi.hi.pengutronix.de>
+In-Reply-To: <20190319100147.4178-2-m.tretter@pengutronix.de>
+References: <20190319100147.4178-1-m.tretter@pengutronix.de> <20190319100147.4178-2-m.tretter@pengutronix.de>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 0/4] clk: zynqmp: fix CLK_FRAC and various cleanups
+Subject: Re: [PATCH v2 1/4] clk: zynqmp: fix kerneldoc of __zynqmp_clock_get_parents
 Cc:     kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
         Michal Simek <michal.simek@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Michael Tretter <m.tretter@pengutronix.de>
 To:     Michael Tretter <m.tretter@pengutronix.de>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Message-ID: <155500805844.20095.8423821269571777766@swboyd.mtv.corp.google.com>
+Message-ID: <155500806544.20095.508158087415837912@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 11 Apr 2019 11:40:58 -0700
+Date:   Thu, 11 Apr 2019 11:41:05 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Tretter (2019-04-04 01:16:21)
-> On Tue, 19 Mar 2019 11:01:43 +0100, Michael Tretter wrote:
-> > This is v2 of the patchset to cleanup the ZynqMP clock driver.
+Quoting Michael Tretter (2019-03-19 03:01:44)
+> The kerneldoc refers to __zynqmp_clock_get_topology(), but actually
+> documents __zynqmp_clock_get_parents(). Refer to the correct function
+> name in the kerneldoc.
 >=20
-> Gentle ping.
->=20
+> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> ---
 
-I could apply the first three, but the last one didn't work because
-Jolly Shah sent some changes that wrecked it. Can you resend the last
-patch reworked on top of it? You can use clk-zynq in clk.git if you need
-something to base it upon.
+Applied to clk-next
 
- https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-zynq
