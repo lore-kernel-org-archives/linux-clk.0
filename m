@@ -2,67 +2,102 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF36C10F14
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F3CC10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 21:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59DB12075B
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555015280;
-	bh=iUG93rEwjau9iO4ygIK55CfqQTZgMkWN6io2r8HZ+OA=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=sQayCI7ZWoYODraYX51dpkeU9eOmwR2N3hfT81r0lrUeSDucXc36knc6IVrTNYDlY
-	 ZBSrJBaUIspatnJdqKoLNim8WMnyr5DiRJ7A5ZEn7WtijPrdoNWpBx69KZTsyGcrCt
-	 PXUx2yLTygOzULPb0WFW1FsQGmgVkI7rnpDNxqfI=
+	by mail.kernel.org (Postfix) with ESMTP id 2B96F2146F
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 21:38:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="TvaDwhxf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726588AbfDKUlP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 16:41:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726655AbfDKUlO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 16:41:14 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D50BA2184B;
-        Thu, 11 Apr 2019 20:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555015273;
-        bh=iUG93rEwjau9iO4ygIK55CfqQTZgMkWN6io2r8HZ+OA=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=errk3Lo9CDUFil8Lv/wZ17uJIkT54XXyTo7bPS/XtdhiYK3jesiHaDNr6u/Xz1nDP
-         ssJbAOdKb4AC+vogYf6YQF9Y3wyxY6VBU4UpDcysSeLdqM0jh5mCzRNF9o0BppekZk
-         wpMp8oyZwm4rGirdlTFwyddK3WfndYkDPL0f+eVw=
-Content-Type: text/plain; charset="utf-8"
+        id S1726677AbfDKViz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 17:38:55 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36821 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfDKViz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 17:38:55 -0400
+Received: by mail-oi1-f196.google.com with SMTP id l203so6261946oia.3;
+        Thu, 11 Apr 2019 14:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c/Eaat6mJaApPXTKW9fxNSQtMRxRCGIGBY0z0WTwZsY=;
+        b=TvaDwhxfg26dt8H/AyPFMVm1oubn9ub7EVmMtB+QXJr+GfKype/hsuV1znFc5ueAUg
+         XNSe5y9xoMLQ21nUKsuVikIHiMtsr+ZA1aoNrhWiAILFzu0LT6UGrb/jIVQfFa65SpYU
+         R1OI79488ZvcxCSU0wYM4tA8tLETlnz6zhLMWghea0PWRlBx/SzlO/8TjNFXqKAaMhDK
+         by7GY5b9rNGKSqal9xQk98TnVcSMUWdCTyQ2nMSOw+Y6szke6WlY/ZWWD3TFDvgg+TEf
+         zA1aXbnfvOBaMHltAHsjvzs68MNyQLyYTztaRv4G7gesBJ71JXtet+ex5ahay4550GQ4
+         2UTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c/Eaat6mJaApPXTKW9fxNSQtMRxRCGIGBY0z0WTwZsY=;
+        b=LJuoyVt+hB6+Km7ljcrV4QH8nnYZ3ym94CBX6Re2hvDIFzbvyOTKmWSNQsxtcPZtxT
+         kvpiVNoPtPd3uzZOhoEvPbt/rBoQqdtowlZzqIHma+gdQxuEZKntRBb7FVTcLsit6NMD
+         qQ9cVsJ/nCoqj78gCNS7N/WtgJWttymyZnJ5a/HkNVbIs3cR0yJFQGDOEWNs+ROfO2HM
+         Uewgmlg6ykP6lb3lAEFcK2nWZM/3e1k71WKQvObuo4E0Kyy6hZKeYaGmJBggysebCkf6
+         GQeVTm6yTKihtpTdpPMPJ/mrST0VPMiLh1cgjOl1WuPq5HFP2gkKGAqba6w+kk3bx6+q
+         1K9A==
+X-Gm-Message-State: APjAAAU0vFJJj8wxVgK1+tzI9HsWnOgBP48RXPp4mQno/tNK11MPKZoC
+        xRRxJzgIP4B4O/8sCyryBwZdt3Vq3wUZZjOhccE=
+X-Google-Smtp-Source: APXvYqxpFjlc5TAR58LDBDGCS9RlzmCK78XSQeYEC3Z/MRTErq4S19jysbPYG23FDxcOpZ+8xZAKbsLGBGqwTHnXxxU=
+X-Received: by 2002:aca:4482:: with SMTP id r124mr8219082oia.39.1555018734440;
+ Thu, 11 Apr 2019 14:38:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190319140536.27945-2-paul@crapouillou.net>
-References: <20190319140536.27945-1-paul@crapouillou.net> <20190319140536.27945-2-paul@crapouillou.net>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 2/2] clk: ingenic: jz4725b: Add UDC PHY clock
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>
-Message-ID: <155501527313.20095.14993764415449049274@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Thu, 11 Apr 2019 13:41:13 -0700
+References: <20190411084537.30299-1-glaroque@baylibre.com> <20190411084537.30299-3-glaroque@baylibre.com>
+In-Reply-To: <20190411084537.30299-3-glaroque@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 11 Apr 2019 23:38:43 +0200
+Message-ID: <CAFBinCBVmPa5hi83B1ZTe-guassHxKQFrN5QOyMJc9s95LJ1cg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: meson-g12a: Add Temperature Sensor clock
+To:     Guillaume La Roque <glaroque@baylibre.com>
+Cc:     jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
+        khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2019-03-19 07:05:36)
-> Add clock for the USB Device Controller PHY.
->=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Hi Guillaume,
+
+On Thu, Apr 11, 2019 at 10:46 AM Guillaume La Roque
+<glaroque@baylibre.com> wrote:
+>
+> Add TS clock used by two temperature sensor
+thank you for working on this!
+
+> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
 > ---
+>  drivers/clk/meson/g12a.c | 31 +++++++++++++++++++++++++++++++
+>  drivers/clk/meson/g12a.h |  3 ++-
+>  2 files changed, 33 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 3a3134976534..e6d2af6ee8ea 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -2335,6 +2335,33 @@ static struct clk_regmap g12a_mali = {
+>         },
+>  };
+>
+> +static struct clk_regmap g12a_ts_div = {
+> +       .data = &(struct clk_regmap_div_data){
+> +               .offset = HHI_TS_CLK_CNTL,
+> +               .shift = 0,
+> +               .width = 7,
+buildroot_openlinux_kernel_4.9_fbdev_20180706 uses ".width = 8".
+That matches with the public S922X datasheet from hardkernel which
+states that HHI_TS_CLK_CNTL[7:0] is "ts_clk clk_div"
 
-Applied to clk-next
 
+Martin
