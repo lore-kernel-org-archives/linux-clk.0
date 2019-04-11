@@ -2,41 +2,41 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20CE5C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD53C282CE
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E029C2184B
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 988AD2184E
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555015007;
-	bh=2hZTeDPHsUZKMRSeYRQUv0YImMcbVfabacwiG/3s3TA=;
+	s=default; t=1555015023;
+	bh=KVRO4N+YmNSEwrAJxjB4DQbCD37K3bAaxfX/GXXqZD4=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=0cr6bntkcYCL4O5Nd1PuQRmqxv8MvcfMwzmNHexFwWeqV/yRqJuv+QZDbZFBlVpXJ
-	 /KftYtsBT9CVyX3dguzLC9Fq+Bg8sCEWshLeEykZxYweQ1bhczDbbHvGZFvfTCX9qd
-	 zBirYWBmvNUtJokaP+nenuJOuPyGOlYv7U3DE/NQ=
+	b=TYua2/8XwJbKG7Vu3EzjO+GSRaPB/qvngaAB/ZllL0MqrI9itFbfVEVRmkcor4Kjs
+	 VUh22BIHleq1rRocAon00dw9MDvufZ/29SxcZGZTPNQ21ChYEDV93HtewT41Kw+GoR
+	 q5HmpEVbveTFKtr360lk+I1aTy3hbtB9FxaM5umo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfDKUgq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 16:36:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55352 "EHLO mail.kernel.org"
+        id S1726938AbfDKUgv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 16:36:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726615AbfDKUgq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 16:36:46 -0400
+        id S1726615AbfDKUgu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 16:36:50 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B12652075B;
-        Thu, 11 Apr 2019 20:36:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E4432075B;
+        Thu, 11 Apr 2019 20:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555015005;
-        bh=2hZTeDPHsUZKMRSeYRQUv0YImMcbVfabacwiG/3s3TA=;
+        s=default; t=1555015009;
+        bh=KVRO4N+YmNSEwrAJxjB4DQbCD37K3bAaxfX/GXXqZD4=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=MKoiNZtD/gGWGVUEiInnosndNKy1rckcp/AQYRFU+e9C8fj4ihcjxQtrvad6x6QLz
-         Uoc5aBAHh2GtvHG2CR3VAkuG60mv1Mc5H4PKg546hpJrsw2l3oYqK9eFaBhGCMJY7R
-         1+iJ6Ks21wCxjkrISlXi1RUhoTeIks9OgOO0uE0I=
+        b=m8ZrUXQ40Y/Csqw86y4NHBJIoDr30sUZkU1rPQ4sc0mJbBf9wec66+ckFhCfHv0TU
+         rBbNFPf4R7w50h+d8ecHbwiHhQsG5pdzpAwbRZF5g1hdpxMeSw6O33ORMjIuHXbQDO
+         Is2ZYcsM9ApxjEQO9ATlr0kBtiVYNHKsUP+edMLc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,26 +52,24 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>
-Message-ID: <155501500497.20095.1440923707925089208@swboyd.mtv.corp.google.com>
+Message-ID: <155501500860.20095.12195621768250948176@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 11 Apr 2019 13:36:44 -0700
+Date:   Thu, 11 Apr 2019 13:36:48 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Quoting Bjorn Andersson (2019-03-06 09:47:58)
-> +
-> +static int turingcc_probe(struct platform_device *pdev)
-> +{
-> +       int ret;
-> +
-> +       pm_runtime_enable(&pdev->dev);
-> +       ret =3D pm_clk_create(&pdev->dev);
+> The Turing Clock Controller provides resources related to running the
+> Turing subsystem.
+>=20
+> PM runtime is used to ensure that the associated AHB clock is ticking
+> while the clock framework is accessing the registers in the Turing clock
+> controller.
+>=20
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-Neat solution. Thanks!
+Applied to clk-next
 
-> +       if (ret)
-> +               goto disable_pm_runtime;
-> +
-> +       ret =3D pm_clk_add(&pdev->dev, NULL);
