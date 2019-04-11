@@ -5,56 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D0BC10F14
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6CAC10F14
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE602084D
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D8692084D
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnBdangi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rBXlxXu1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfDKWE2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 18:04:28 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45050 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfDKWE1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 18:04:27 -0400
-Received: by mail-lj1-f195.google.com with SMTP id h16so6950791ljg.11;
-        Thu, 11 Apr 2019 15:04:25 -0700 (PDT)
+        id S1726661AbfDKWEq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 18:04:46 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40750 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfDKWE2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 18:04:28 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q66so6976640ljq.7;
+        Thu, 11 Apr 2019 15:04:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JtZAJxqkYiF84xbr7exvlCrl27ojp0oQWY4kT8UdML4=;
-        b=bnBdangi9STj29FectuS/aZA7VszLeetiilc3mMXgT+bATUhhjkvZPOSRc1F7zhFCJ
-         IAkUqhVOvR4LFkBH2fBe16e5UkAclyqtyfcl+/VRkWXnimxqt+7KOCc7YGfFEE3/ubQW
-         ZQCokjdSOH/2zSndb4gdvIfoRUxZYDuTCIsx7iQN2HFGlvFvCPjYAoND+n0M0rYhQJeF
-         OgjMaRnYY0kfLyuRxN7YPmYjm1fXiT5ALEb0UNHEnvFj8Q+MRkEvKA1OqMXc2FFYK/n5
-         bnxHHjOACk/VbGTzgeHIQZrz9cNaVO1/4mSNisYR5KsScvR8Ujdk2K7WrPVFaIgQSs1c
-         AU8Q==
+        bh=SUHPgW7dZuGazhrcakTZtDm+HbJ3DjUZGyh8GwQB52k=;
+        b=rBXlxXu1ngSTXolx+1g1Qbtc98vDj83c9p3TnOhgzb1aJsdBct67YPD7Z9Uv479cln
+         eEzqaQFWcqcZ70IAgZgfp7xpzirscZPo85WNsbKhOb2mUn0P8rLiGAbuA1FTHB3rCwJe
+         oZgUnRSyFHQ8DWdb6+CvD2E5Hyyxq8sVXGbCGKHGHfqJTS7R9e/UzA8rIkUgqrA6Rp0t
+         51005Vuyz67R+P9V6TyUNBJDdEVtjbKOfY2Li7tuxpjAL/t5XuuRMRGAx3NXcKhdrUU+
+         xNxTDzGd6ZgY1Vm+HD/Wg8jIzqJNfeJ+L6CE4/GR2bArLb9do9WDEW68hkYK2+bHkFew
+         SuYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JtZAJxqkYiF84xbr7exvlCrl27ojp0oQWY4kT8UdML4=;
-        b=hforqc/dR6E3L5pPl31uF6CKcoE58mtsJOkBvPQw9UdyYiCWAZ7FxtDX5x+RLcar+e
-         5W7j4teaT46fHKd0zMSSaMKQXOxFfnlvYQQfpgcVTz6Q+fcyoQsb/79RLzcVvs3/dCXN
-         7bRNUfa9mSlg+RUf6JvXS0UsUq7lOB/zy1rlSgDQgbXKe0rNFyICNWgToHJoiChoK5dw
-         gSirEOk2VMdrN5Pd8EhlUO/giB3GfsrQpe28/6E/HuFWvVJe6DXnnHQOzf1FazKb3XcT
-         otkwFVsfA+/G0zBAVa7Y1XcKpQUUwHuiZuwwwc2V+RpdO7QtXcTOsNFP777NltBUtKye
-         tWuA==
-X-Gm-Message-State: APjAAAXTIsDPEV798g93LkSNXkmRht1nL2tkh8Zoo40BNAJKfypKlu5B
-        HMFX4RK+CW/zvA9+mG2B2a4=
-X-Google-Smtp-Source: APXvYqzRsUFVQtnAsJK9dwtXr8chUndkpQKBJ6lgonrIKRvRGrwSWQiarmPQmwSrfkJEumiY11izgQ==
-X-Received: by 2002:a2e:810d:: with SMTP id d13mr15084016ljg.93.1555020264745;
-        Thu, 11 Apr 2019 15:04:24 -0700 (PDT)
+        bh=SUHPgW7dZuGazhrcakTZtDm+HbJ3DjUZGyh8GwQB52k=;
+        b=Pf19nd5F/KmEHomdF3/Er7QamoLoP2tKK6Q2VVmsTgoKudXgDduPKKFTX0u4l/5eCB
+         JputHijRJCK4wIgUKwERj/VI1CeB2pKE/cIizL2LoZNCI/Olf7MfoknMpgvDNPax0O+2
+         T+GktUVKwHweGvsiOXnsvf+neuGliQcJdK7yAtK1PXZIf0FGt47k5Pw/xv89vOsH1uJT
+         5VzBOYK5iizUYoFyejVDHORu/lRUH7okRD0XFFRbMOsBRBMAUCqHvzhOJpOCL2qiF+3R
+         pmhbgaWsyc/sy2+UZXDXCFsOCo7XaUnhz2ga5553BqCq6drxFOKnMS6V+uQdsTjjL8nu
+         4d0Q==
+X-Gm-Message-State: APjAAAXpt18GDXy0qiQBZ+Q2q39+bch29ZAs/0tKSHBCslenk/JUEvZN
+        4k81EYu6Yp0vgJ//oB8oGb4=
+X-Google-Smtp-Source: APXvYqy7gf7R3PaXZFHz6LIH8cHWlCsEVHbWo+4ffZQ7CYDryxGOfUgBP5k2b1hOMP/WjCm0Hu7ikw==
+X-Received: by 2002:a2e:9703:: with SMTP id r3mr18999423lji.88.1555020265933;
+        Thu, 11 Apr 2019 15:04:25 -0700 (PDT)
 Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.gmail.com with ESMTPSA id e18sm7887808ljb.12.2019.04.11.15.04.23
+        by smtp.gmail.com with ESMTPSA id e18sm7887808ljb.12.2019.04.11.15.04.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2019 15:04:24 -0700 (PDT)
+        Thu, 11 Apr 2019 15:04:25 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
@@ -65,9 +64,9 @@ To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Joseph Lo <josephl@nvidia.com>
 Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/5] clk: tegra: emc: Support multiple ram codes parsing
-Date:   Fri, 12 Apr 2019 01:02:27 +0300
-Message-Id: <20190411220230.21726-3-digetx@gmail.com>
+Subject: [PATCH v1 3/5] clk: tegra: emc: Fix EMC max-rate clamping
+Date:   Fri, 12 Apr 2019 01:02:28 +0300
+Message-Id: <20190411220230.21726-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190411220230.21726-1-digetx@gmail.com>
 References: <20190411220230.21726-1-digetx@gmail.com>
@@ -78,118 +77,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The timings parser doesn't append timings, but instead it parses only
-the first timing and hence doesn't store all of the timings when
-device-tree has timings for multiple ram codes. In a result EMC scaling
-doesn't work if timings are missing.
+When a clk user requests rate that is higher than the maximum possible,
+the rate shall be clamped to the maximum and not to the current value.
 
-Tested-by: Steev Klimaszewski <steev@kali.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-emc.c | 37 +++++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
+ drivers/clk/tegra/clk-emc.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 23416982e7c7..28068584ff6e 100644
+index 28068584ff6e..9a0179235939 100644
 --- a/drivers/clk/tegra/clk-emc.c
 +++ b/drivers/clk/tegra/clk-emc.c
-@@ -121,18 +121,23 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+@@ -121,7 +121,7 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
  	struct tegra_clk_emc *tegra;
  	u8 ram_code = tegra_read_ram_code();
  	struct emc_timing *timing = NULL;
--	int i;
-+	int i, k;
+-	int i, k;
++	int i, k, t;
  
  	tegra = container_of(hw, struct tegra_clk_emc, hw);
  
--	for (i = 0; i < tegra->num_timings; i++) {
-+	for (k = 0; k < tegra->num_timings; k++) {
-+		if (tegra->timings[k].ram_code == ram_code)
-+			break;
+@@ -130,12 +130,17 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ 			break;
+ 	}
+ 
+-	for (i = k; i < tegra->num_timings; i++) {
+-		if (tegra->timings[i].ram_code != ram_code)
++	for (t = k; t < tegra->num_timings; t++) {
++		if (tegra->timings[t].ram_code != ram_code)
+ 			break;
 +	}
-+
-+	for (i = k; i < tegra->num_timings; i++) {
- 		if (tegra->timings[i].ram_code != ram_code)
--			continue;
-+			break;
  
++	for (i = k; i < t; i++) {
  		timing = tegra->timings + i;
  
++		if (timing->rate < req->rate && i != t - 1)
++			continue;
++
  		if (timing->rate > req->max_rate) {
--			i = max(i, 1);
-+			i = max(i, k + 1);
+ 			i = max(i, k + 1);
  			req->rate = tegra->timings[i - 1].rate;
- 			return 0;
- 		}
-@@ -282,7 +287,7 @@ static struct emc_timing *get_backup_timing(struct tegra_clk_emc *tegra,
- 	for (i = timing_index+1; i < tegra->num_timings; i++) {
- 		timing = tegra->timings + i;
- 		if (timing->ram_code != ram_code)
--			continue;
-+			break;
+@@ -145,10 +150,8 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ 		if (timing->rate < req->min_rate)
+ 			continue;
  
- 		if (emc_parent_clk_sources[timing->parent_index] !=
- 		    emc_parent_clk_sources[
-@@ -293,7 +298,7 @@ static struct emc_timing *get_backup_timing(struct tegra_clk_emc *tegra,
- 	for (i = timing_index-1; i >= 0; --i) {
- 		timing = tegra->timings + i;
- 		if (timing->ram_code != ram_code)
--			continue;
-+			break;
- 
- 		if (emc_parent_clk_sources[timing->parent_index] !=
- 		    emc_parent_clk_sources[
-@@ -433,19 +438,23 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
- 				struct device_node *node,
- 				u32 ram_code)
- {
-+	struct emc_timing *timings_ptr;
- 	struct device_node *child;
- 	int child_count = of_get_child_count(node);
- 	int i = 0, err;
-+	size_t size;
-+
-+	size = (tegra->num_timings + child_count) * sizeof(struct emc_timing);
- 
--	tegra->timings = kcalloc(child_count, sizeof(struct emc_timing),
--				 GFP_KERNEL);
-+	tegra->timings = krealloc(tegra->timings, size, GFP_KERNEL);
- 	if (!tegra->timings)
- 		return -ENOMEM;
- 
--	tegra->num_timings = child_count;
-+	timings_ptr = tegra->timings + tegra->num_timings;
-+	tegra->num_timings += child_count;
- 
- 	for_each_child_of_node(node, child) {
--		struct emc_timing *timing = tegra->timings + (i++);
-+		struct emc_timing *timing = timings_ptr + (i++);
- 
- 		err = load_one_timing_from_dt(tegra, timing, child);
- 		if (err) {
-@@ -456,7 +465,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
- 		timing->ram_code = ram_code;
+-		if (timing->rate >= req->rate) {
+-			req->rate = timing->rate;
+-			return 0;
+-		}
++		req->rate = timing->rate;
++		return 0;
  	}
  
--	sort(tegra->timings, tegra->num_timings, sizeof(struct emc_timing),
-+	sort(timings_ptr, child_count, sizeof(struct emc_timing),
- 	     cmp_timings, NULL);
- 
- 	return 0;
-@@ -499,10 +508,10 @@ struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
- 		 * fuses until the apbmisc driver is loaded.
- 		 */
- 		err = load_timings_from_dt(tegra, node, node_ram_code);
--		of_node_put(node);
--		if (err)
-+		if (err) {
-+			of_node_put(node);
- 			return ERR_PTR(err);
--		break;
-+		}
- 	}
- 
- 	if (tegra->num_timings == 0)
+ 	if (timing) {
 -- 
 2.21.0
 
