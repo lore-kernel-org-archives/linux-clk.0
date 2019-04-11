@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB541C282CE
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20DBC10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A87C42184B
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEDB72084D
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/ZgkIVt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLV8eGoS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfDKWEa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 18:04:30 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40415 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbfDKWE3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 18:04:29 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a28so5890970lfo.7;
-        Thu, 11 Apr 2019 15:04:27 -0700 (PDT)
+        id S1726881AbfDKWEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 18:04:38 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38863 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726629AbfDKWEa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 18:04:30 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u24so5889615lfg.5;
+        Thu, 11 Apr 2019 15:04:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Pp1ylpAMq1DcvOKU5DqK7TZfKN1qmsD9XOpVBBwXOus=;
-        b=k/ZgkIVt47fcoPWCWBk5hWbdPSwH7zPChSsBld5ZnAcDy4qfLRjRhvrSqm8ShVwTTC
-         mWCYVTny/g8sSDxO40aHLUioU65rhw1eSAEjyLBBERgc9oez8C9+RNOHc4cZxTImO51s
-         81p+JOiTkzlP6HddyB1IHM1gVvmsupbX++L/1leqpi8MUKektvzxjXGt+opvArCHt5Sc
-         CTNLpWzlTLPrfrTq8jb9zL1oB2oRIJUHtFLKaccq0zCTgGVUjicsmTFQnbhrTJUrHTCU
-         17WKWuoA2aE+UVJxHpYCMIulS1rlfEmMsMyO+CRvgUZ9B9X4aGEjMnCcPSRhVDa0uMBn
-         qwLw==
+        bh=6GANWBDVM2KX1F8CGIb5rvHRK0fnuEyNN/3002XmRQg=;
+        b=mLV8eGoS9WVHaiAT/cTt29GwqAoiuaAZq1E6zRvLUfwjBRYGj08VnG8Ii7zNX2oQZh
+         OSktjqGL27hacGSfZUg9pHPCM4L38IHgjy1fZod2iYvKOgrsQ24Nc5VfJBMP9dAJ2V5u
+         2xAwsydlnGvWby5UlXbaLryzGyvUETYlnzPx+BZ9KkAo6kq5+GJHdKIVpvgeL5yXrjIC
+         xvJaV9MX/cfALSbuYaeP0gV44hXQgX6O49/v4z633OXQ5yKjcM7tZRzVmUVANEQoSZpe
+         RQrWPhNib+gLT21/96mmOyNLefSesN1TGIe/t2ET6ZyepdgZ/0kctQpgGV+mnOBA/CWn
+         RuyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Pp1ylpAMq1DcvOKU5DqK7TZfKN1qmsD9XOpVBBwXOus=;
-        b=LPXYRa0WAG6thLIGIODm7Q2ZFk/xBBqETn9w+rKj3Zsjj7wa3EPIKxnDli3WH3Cv8+
-         /Rql6OWcIh5LraXxTf6SSxo3r2jxWSkiiajvcbKAYg+U5XPUUpHFcqmVIDZQZ7iJRJUH
-         z2PJzUTeEBAhbFixRIAIwmX2JzKJmQnjD7lJVAV10RcHcWVM1EOFTyRkatl8WYfEx/QP
-         XfFPhSng1R/STh0BJNA1Ipn5ytgTgZeU5ufrqHUxG1V3E1bGFAesO3zYRaGPMisFYtMc
-         bf1/96+rwApKNAKnhEe+/OxPcEfdWYKoNATl5DJfXrSZAuiZn9e6T/s7rEXvp0oD0uNP
-         sfug==
-X-Gm-Message-State: APjAAAWIoNQZLbvGDnax+CTeEPJtaeIB8XK6HAjZVs6T/f7708u2icjs
-        JLB/6f69t5r/hcaoyE1j1G0=
-X-Google-Smtp-Source: APXvYqxn7l1uDjHXBCNStmQ/tsnv1FDCcDehm0NTAv93ql14E9ymak8RO1YNirI0uDOM7BxLZJCTiQ==
-X-Received: by 2002:a19:d1ce:: with SMTP id i197mr13997250lfg.149.1555020267137;
-        Thu, 11 Apr 2019 15:04:27 -0700 (PDT)
+        bh=6GANWBDVM2KX1F8CGIb5rvHRK0fnuEyNN/3002XmRQg=;
+        b=jmtlBxAopjkMFhoQy1oDYc6+tISBxAeXbSN346hetIZE+oiTUF+SO81nB4QDItLBKo
+         sipm503HpVs6cmc7QzKoEucnT4TOMo0ReFqWC87wQd/rrtEIvDOKekGNu0hu6Gb6T81b
+         9ad9E8Ec29qKvdX1VL/cTzNgltCg/FoPM1u61Q3sXMV5BSHV8WNgXIP6R0nPGy6gbbnw
+         CaqrK0sLhCeM0GDReSK/l2yJmga99CUs6529wJ+zLGQ7Mim2jTIMheJWvhB/+EwwcAx6
+         fiUf6v7SW+cdi/EaVWBVOxkJ/ub2bc3YDH4Nx3Q9VLfqLAhorbrwIUUZXuPUp18y+iYa
+         sTKA==
+X-Gm-Message-State: APjAAAWbo5pQfvZjTBv/+z0G0Zu45BCHPTgLIUuhyMiu87I6XXeYunuU
+        aa+mYydqnQNpUbufJxUZmWA=
+X-Google-Smtp-Source: APXvYqzMW6BwV6mmbIecSGpQekgBuTWyxqmkLx0KiSbcF9v/Xset+oMq/gGAgEfrOTIZ6ya3qCG3Og==
+X-Received: by 2002:ac2:50d8:: with SMTP id h24mr27193823lfm.7.1555020268360;
+        Thu, 11 Apr 2019 15:04:28 -0700 (PDT)
 Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.gmail.com with ESMTPSA id e18sm7887808ljb.12.2019.04.11.15.04.25
+        by smtp.gmail.com with ESMTPSA id e18sm7887808ljb.12.2019.04.11.15.04.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2019 15:04:26 -0700 (PDT)
+        Thu, 11 Apr 2019 15:04:27 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
@@ -64,9 +64,9 @@ To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Joseph Lo <josephl@nvidia.com>
 Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/5] clk: tegra: emc: Replace BUG() with WARN_ONCE()
-Date:   Fri, 12 Apr 2019 01:02:29 +0300
-Message-Id: <20190411220230.21726-5-digetx@gmail.com>
+Subject: [PATCH v1 5/5] clk: tegra: divider: Mark Memory Controller clock as read-only
+Date:   Fri, 12 Apr 2019 01:02:30 +0300
+Message-Id: <20190411220230.21726-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190411220230.21726-1-digetx@gmail.com>
 References: <20190411220230.21726-1-digetx@gmail.com>
@@ -77,29 +77,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no justification for the BUG() in this code.
+The Memory Controller clock rate can't be simply changed and nothing in
+kernel need to change the rate, hence let's make the clock read-only.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-emc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-divider.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 9a0179235939..93ecb538e59b 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -222,7 +222,10 @@ static int emc_set_timing(struct tegra_clk_emc *tegra,
- 
- 	if (emc_get_parent(&tegra->hw) == timing->parent_index &&
- 	    clk_get_rate(timing->parent) != timing->parent_rate) {
--		BUG();
-+		WARN_ONCE(1, "parent %s rate mismatch %lu %lu\n",
-+			  __clk_get_name(timing->parent),
-+			  clk_get_rate(timing->parent),
-+			  timing->parent_rate);
- 		return -EINVAL;
- 	}
- 
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 205fe8ff63f0..f891bbb0d06d 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -175,6 +175,7 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
+ 				  void __iomem *reg, spinlock_t *lock)
+ {
+ 	return clk_register_divider_table(NULL, name, parent_name,
+-					  CLK_IS_CRITICAL, reg, 16, 1, 0,
+-					  mc_div_table, lock);
++					  CLK_IS_CRITICAL |
++					  CLK_DIVIDER_READ_ONLY,
++					  reg, 16, 1, 0, mc_div_table, lock);
+ }
 -- 
 2.21.0
 
