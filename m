@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9353C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C94FC10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93AEF2146F
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:20:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10AA12146F
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555014000;
-	bh=TdkN/2BSkfk9sxN8tMNAmraD+u4bEwK+dCSSufpZwIY=;
+	s=default; t=1555014077;
+	bh=UIiOHtwWJTiwcVqvVfNwKJQL+vVjDCl5qohHfM7e/Fo=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=q1+BUALREYAiEV7TXpXDQC9EOrgbg3gCMoQI677Am6E2JDqHiyXTRCEkNWx7XaSbC
-	 3s9Mr6ADRB4yRuqsO69adWhWHADbNU/8x0c69mMebLtKWAy8UKIlGojVGeSDe9Pug1
-	 5IJAarODmyHZZ1Xh0SQs4TfGZlpaxZIdqxWs5dN8=
+	b=ZIMHrPpYBL9OoI66PmwSIj9dYw9pW8n2H3mX1cDcp+C2YrFYkjc6vFa5imgWLq59i
+	 pm1YUcLJuz8opqLeH1ZVcLvljDqrlvuM/78shPxIH058QfGLlFMixCp8/CJvXL/5JW
+	 v9c8guewaiSTXj9uv8Xv1sJsJo1tkSPGwTC+ssm4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfDKUUA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 16:20:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45426 "EHLO mail.kernel.org"
+        id S1726656AbfDKUVQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 16:21:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726615AbfDKUUA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 16:20:00 -0400
+        id S1726538AbfDKUVQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 16:21:16 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EC0720850;
-        Thu, 11 Apr 2019 20:19:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDAC120850;
+        Thu, 11 Apr 2019 20:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555013999;
-        bh=TdkN/2BSkfk9sxN8tMNAmraD+u4bEwK+dCSSufpZwIY=;
+        s=default; t=1555014076;
+        bh=UIiOHtwWJTiwcVqvVfNwKJQL+vVjDCl5qohHfM7e/Fo=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=EPRTwy7WQj0r1Htd4OkvLZaHyUKzelRlv9wvQi32UM7yVR6WUidu+mrZMNpu0r1mm
-         ohoYltIVfAmELEaAd19be4Q1RbvmN5NL7ey9oMLbr2CIkHlG/roe9fc/qinheT2mVx
-         qIjoLu7BzWJDLZaOIcxyHd5bMXXYYDCy0EPsqhos=
+        b=Gx5/qriMIVIlr6YU/ClRwbhTRaIdyJ3kg1VtkMK05hdiHpphs99ZrA+0SwmhzzJ9F
+         xWUw8aTyhxKGadACor2dF3YoYfZdrUyiaRBZB8arHJ4rkSoLR0OKC095CGX2hCfPmR
+         cwQZk8B/lwRl4CXzvHUAnYqKQ6135+ANUfUzb+zY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190305050546.23431-8-weiyi.lu@mediatek.com>
-References: <20190305050546.23431-1-weiyi.lu@mediatek.com> <20190305050546.23431-8-weiyi.lu@mediatek.com>
+In-Reply-To: <20190305050546.23431-9-weiyi.lu@mediatek.com>
+References: <20190305050546.23431-1-weiyi.lu@mediatek.com> <20190305050546.23431-9-weiyi.lu@mediatek.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 6/9] clk: mediatek: Add flags support for mtk_gate data
+Subject: Re: [PATCH v5 7/9] clk: mediatek: Add configurable pcw_chg_reg to mtk_pll_data
 Cc:     James Liao <jamesjj.liao@mediatek.com>,
         Fan Chen <fan.chen@mediatek.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -55,22 +55,25 @@ To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Weiyi Lu <weiyi.lu@mediatek.com>
-Message-ID: <155501399858.20095.16525048679717411283@swboyd.mtv.corp.google.com>
+Message-ID: <155501407511.20095.8651469793006948660@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 11 Apr 2019 13:19:58 -0700
+Date:   Thu, 11 Apr 2019 13:21:15 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Weiyi Lu (2019-03-04 21:05:43)
-> On some Mediatek platforms, there are critical clocks of
-> clock gate type.
-> To register clock gate with flags CLK_IS_CRITICAL,
-> we need to add the flags field in mtk_gate data and register APIs.
+Quoting Weiyi Lu (2019-03-04 21:05:44)
+> In previous MediaTek PLL design, it assumes the pcw change control
+> is always on the CON1 register.
+> However, the pcw change bit on MT8183 was moved onto CON0 because
+> the the PCW length of audio PLLs are extended to 32-bit.
+> Add configurable pcw_chg_reg to set the pcw change control register
+> address or using the default control register CON1 if without
+> setting in pll data.
 >=20
 > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
 
-This patch doesn't apply, because it's already there via commit
-5a1cc4c27ad2 ("clk: mediatek: Add flags to mtk_gate").
+Applied to clk-next
 
