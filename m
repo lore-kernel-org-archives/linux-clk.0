@@ -2,230 +2,99 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795A9C10F14
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 14:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE328C10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 15:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F532184E
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 14:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC8092173C
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 15:17:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EoZXmPKH"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yN0/QqWe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbfDKOmi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 10:42:38 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:42553 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfDKOmh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 10:42:37 -0400
-Received: by mail-ua1-f68.google.com with SMTP id h4so2100353uaj.9
-        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2019 07:42:36 -0700 (PDT)
+        id S1726767AbfDKPR6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 11:17:58 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41436 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfDKPR5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 11:17:57 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r4so7851382wrq.8
+        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2019 08:17:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xxMqs+pS5IYXSx3b84qH3v+S95G6HDau8KARz3TsU1w=;
-        b=EoZXmPKH7OUFf5sJpwrOuS1VM0j+mcxvjXOD5wQvpXu3DShEairOt2CVEs98zo41av
-         t8jDAYznj7kh3EYLyqCWQ1KNKTIG7VYjHaFpABSQzBp8T4fJWYFULFrrE4BIHKDzIzYT
-         M1eBVtkqsfmxlGpWBwDvVqEG7ATKu0fBt0NZw=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=/HPTyhpTZZCMQQkRclscxanz2gE7w747HH5mlULbwww=;
+        b=yN0/QqWeJt+slmF371F5HdeAuu9fGHHex6im5bxktcHl8m+zmlb57h52FUAiutOFIB
+         Bn4Tp/yBu4YqMzrIOGWCVd06VtrvaKt7r/+P05vqq5K9jFDPKW81MPQS4cQcKJd7IZCq
+         tUMs8UMv/b5Lw4lqFshe2uRVs4LTznrWjVPHr7G3YGlCcHwoWJGjT5rs3DSEPibvNOwd
+         xihG2TkjEPvh3Bm+Sg5ZHxOxcDbuLQ0DwpXQOxMkgz1MgD/odT581OsGONJChTXJH26Z
+         2kAAZD/r09BnyKbaVXXU5qarfFUNIPJE8GkUfv/ZiGTzwCkz7r4NtLSaDB47/FWfvnpu
+         x3NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xxMqs+pS5IYXSx3b84qH3v+S95G6HDau8KARz3TsU1w=;
-        b=auCjq8ONVGkqvO1Y041GQWveo27i952tLYKGV7w4qAR8DahPd+jqQ5Rw+s9TjRXTyR
-         3bjdGlOCHmmFKjy2Xv7Q7gDf1D2WlUjyK2YqSQZMLMz82hr9fBWzEtevXT1r0trv7pV3
-         X0hsh4IEFeMhI5cMSopWZJjxq9gy4Yko6E6FiAdv9EwCic+S+Q7KiHP9wIy/q/M2k03B
-         n3qfbK+/1t8EOx+yftWf6Rze1w+yT1LGAzhGAh/qqBtQqSDwYxDidTjI23NC/SkETbH5
-         ZaZ/xhamjazMpAKvMcv2TAfzrnV1ALfg+pZeP6B1Shz0rY4t8jjrStHZe06rOICr8IhA
-         Ly1g==
-X-Gm-Message-State: APjAAAWOypGwrWM/JLFaz45uq3kIyNVgGkQj9AoLLKG8fk+8WOg5qmIi
-        Jc96frQuV8MFjQ67sFHf5eWcg6gN21k=
-X-Google-Smtp-Source: APXvYqySn/UjSY5CZgVNWeWOp0LLL2PUzXkvyVrXvxbau6+SdpSQ8DeBhNCEQ3VC6Ozm/nseNE0e8g==
-X-Received: by 2002:ab0:21c5:: with SMTP id u5mr20209514uan.81.1554993755703;
-        Thu, 11 Apr 2019 07:42:35 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id w79sm13164017vkw.51.2019.04.11.07.42.34
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2019 07:42:34 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id t23so1188103vso.10
-        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2019 07:42:34 -0700 (PDT)
-X-Received: by 2002:a67:ed84:: with SMTP id d4mr5656142vsp.207.1554993753644;
- Thu, 11 Apr 2019 07:42:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190409204707.150347-1-dianders@chromium.org>
- <20190409204707.150347-3-dianders@chromium.org> <50b744cd-b8d9-79ca-ba2d-6765808aa5e5@rock-chips.com>
- <CAD=FV=Vyy4bNJV=t2yALP3dAnm0-QsR55F5B==uUoi-Tp6b7Vg@mail.gmail.com> <43b5ef8c-4617-bdc5-7109-35eac228b8f9@rock-chips.com>
-In-Reply-To: <43b5ef8c-4617-bdc5-7109-35eac228b8f9@rock-chips.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 11 Apr 2019 07:42:23 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VYYU1ZJfCaNdM--B_8jRRDR3prbmMzj2_3UJO9NbeaPw@mail.gmail.com>
-Message-ID: <CAD=FV=VYYU1ZJfCaNdM--B_8jRRDR3prbmMzj2_3UJO9NbeaPw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: rockchip: Make rkpwm a critical clock on rk3288
-To:     "elaine.zhang" <zhangqing@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Caesar Wang <caesar.wang@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=/HPTyhpTZZCMQQkRclscxanz2gE7w747HH5mlULbwww=;
+        b=PtcJhyn69HDdu4XJtraoG9oRfWAQ+5mpC9afOGOYFE4mGaJccsdIEgRxYrEBzxt5Uf
+         y+EKkgiARUHbEknshCzAfr5gEFMDRLWMGZBIqTvr4fhlIfDz762+nppdLHsvoK3ZL4jA
+         U9b2no9tLaTbBQfMMOlR1qm4EHa8Dr/ss9D5fFmI0nq948FtJpqYSda4Z7XN/Mrmnsev
+         pjQZODsxn0xIM6qa/KbOaaMBgY/POpU/Wu/xc9WIItxOCGhfERwB+VBevX8pSCvnqrHk
+         XZAhaOiMA6fORXhILZlulJpxlakHKLhrT192FafNKYSx/z/uqq458DhHdcy87EZSsxii
+         lq4Q==
+X-Gm-Message-State: APjAAAVRO6Xw/E+Gxfh/QeOyCxfh6YD6cGzPMZcGdP+boFYVTtZXo5+G
+        OLls/jts9FvvW5319nzeDa3UNA==
+X-Google-Smtp-Source: APXvYqxVbbpkE4iOg3B0fFO8Fh+S5yDFJmiW0seu6Z68ScGcYj/4Go6icoV2z4TLySMDWApKYVVskQ==
+X-Received: by 2002:adf:afd7:: with SMTP id y23mr30565080wrd.254.1554995876158;
+        Thu, 11 Apr 2019 08:17:56 -0700 (PDT)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id b9sm9177978wmc.9.2019.04.11.08.17.54
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Apr 2019 08:17:55 -0700 (PDT)
+Message-ID: <e5a67b62d6cecc456633a4017f321807894aea3d.camel@baylibre.com>
+Subject: Re: [PATCH stable 5.0] Revert "clk: meson: clean-up clock
+ registration"
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Sasha Levin <sashal@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     stable@vger.kernel.org, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Date:   Thu, 11 Apr 2019 17:17:53 +0200
+In-Reply-To: <20190411144043.GL11568@sasha-vm>
+References: <20190411101132.5513-1-narmstrong@baylibre.com>
+         <20190411144043.GL11568@sasha-vm>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu, 2019-04-11 at 10:40 -0400, Sasha Levin wrote:
+> On Thu, Apr 11, 2019 at 12:11:32PM +0200, Neil Armstrong wrote:
+> > This reverts commit 9b0f430450cf230e736bc40f95bf34fbdb99cead.
+> > 
+> > This patch was not initially a fix and is dependent on other
+> > changes which are not fixes eithers.
+> > 
+> > With this change, multiple Amlogic based boards fails to boot,
+> > as reported by kernelci.
+> 
+> I've queued this and the 4.19 one, thanks and sorry for the breakage.
 
-On Wed, Apr 10, 2019 at 8:42 PM elaine.zhang <zhangqing@rock-chips.com> wro=
-te:
->
-> hi,
->
-> =E5=9C=A8 2019/4/10 =E4=B8=8B=E5=8D=8811:25, Doug Anderson =E5=86=99=E9=
-=81=93:
-> > Hi,
-> >
-> > On Tue, Apr 9, 2019 at 11:42 PM elaine.zhang <zhangqing@rock-chips.com>=
- wrote:
-> >> hi,
-> >>
-> >> =E5=9C=A8 2019/4/10 =E4=B8=8A=E5=8D=884:47, Douglas Anderson =E5=86=99=
-=E9=81=93:
-> >>> Most rk3288-based boards are derived from the EVB and thus use a PWM
-> >>> regulator for the logic rail.  However, most rk3288-based boards don'=
-t
-> >>> specify the PWM regulator in their device tree.  We'll deal with that
-> >>> by making it critical.
-> >>>
-> >>> NOTE: it's important to make it critical and not just IGNORE_UNUSED
-> >>> because all PWMs in the system share the same clock.  We don't want
-> >>> another PWM user to turn the clock on and off and kill the logic rail=
-.
-> >>>
-> >>> This change is in preparation for actually having the PWMs in the
-> >>> rk3288 device tree actually point to the proper PWM clock.  Up until
-> >>> now they've all pointed to the clock for the old IP block and they've
-> >>> all worked due to the fact that rkpwm was IGNORE_UNUSED and that the
-> >>> clock rates for both clocks were the same.
-> >>>
-> >>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> >>> ---
-> >>>
-> >>>    drivers/clk/rockchip/clk-rk3288.c | 3 ++-
-> >>>    1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip=
-/clk-rk3288.c
-> >>> index 06287810474e..c3321eade23e 100644
-> >>> --- a/drivers/clk/rockchip/clk-rk3288.c
-> >>> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> >>> @@ -697,7 +697,7 @@ static struct rockchip_clk_branch rk3288_clk_bran=
-ches[] __initdata =3D {
-> >>>        GATE(PCLK_TZPC, "pclk_tzpc", "pclk_cpu", 0, RK3288_CLKGATE_CON=
-(11), 3, GFLAGS),
-> >>>        GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK3288_CLKGATE_C=
-ON(11), 9, GFLAGS),
-> >>>        GATE(PCLK_EFUSE256, "pclk_efuse_256", "pclk_cpu", 0, RK3288_CL=
-KGATE_CON(11), 10, GFLAGS),
-> >>> -     GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", CLK_IGNORE_UNUSED, R=
-K3288_CLKGATE_CON(11), 11, GFLAGS),
-> >>> +     GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", 0, RK3288_CLKGATE_CO=
-N(11), 11, GFLAGS),
-> >>>
-> >>>        /* ddrctrl [DDR Controller PHY clock] gates */
-> >>>        GATE(0, "nclk_ddrupctl0", "ddrphy", CLK_IGNORE_UNUSED, RK3288_=
-CLKGATE_CON(11), 4, GFLAGS),
-> >>> @@ -837,6 +837,7 @@ static const char *const rk3288_critical_clocks[]=
- __initconst =3D {
-> >>>        "pclk_alive_niu",
-> >>>        "pclk_pd_pmu",
-> >>>        "pclk_pmu_niu",
-> >>> +     "pclk_rkpwm",
-> >> pwm have device node, can enable and disable it in the pwm drivers.
-> >>
-> >> pwm regulator use pwm node as:
-> >>
-> >> pwms =3D <&pwm2 0 25000 1>
-> >>
-> >> when set Logic voltage:
-> >>
-> >> pwm_regulator_set_voltage()
-> >>
-> >>       --> pwm_apply_state()
-> >>
-> >>           -->clk_enable()
-> >>
-> >>           -->pwm_enable()
-> >>
-> >>           -->pwm_config()
-> >>
-> >>           -->pinctrl_select()
-> >>
-> >>           --....
-> >>
-> >> For mark pclk_rkpwm as critical,do you have any questions, or provides
-> >> some log or more information.
-> > Right, if we actually specify the PWM used for the PWM regulator in
-> > the device tree then there is no need to mark it as a critical clock.
-> > In fact rk3288-veyron devices boot absolutely fine without marking
-> > this clock as critical.  Actually, it seems like the way the PWM
-> > framework works (IIRC it was designed this way specifically to support
-> > PWM regulators) is that even just specifying that pwm1 is "okay" is
-> > enough to keep the clock on even if the PWM regulator isn't specified.
-> >
-> > ...however...
-> >
-> > Take a look at, for instance, the rk3288-evb device tree file.
-> > Nowhere in there does it specify that the PWM used for the PWM
-> > regulator should be on.  Presumably that means that if we don't mark
-> > the clock as critical then rk3288-evb will fail to boot.  That's easy
-> > for me to fix since I have the rk3288-evb schematics, but what about
-> > other rk3288 boards?  We could make educated guesses about each of
-> > them and/or fix things are we hear about breakages.
-> >
-> > ...but...
-> >
-> > All the above would only be worth doing if we thought someone would
-> > get some benefit out of it.  I'd bet that pretty much all rk3288-based
-> > boards use a PWM regulator.  Thus, in reality, everyone will want the
-> > rkpwm clock on all the time anyway.  In that case going through all
-> > that extra work / potentially breaking other boards doesn't seem worth
-> > it.  Just mark the clock as critical.
->
-> I have no problem with changing it like this, but I think it is better
-> to modify dts:
->
-> vdd_log: vdd-log {
->          compatible =3D "pwm-regulator";
->          rockchip,pwm_id =3D <2>; //for rk uboot
->          rockchip,pwm_voltage =3D <900000>; // for rk uboot
->          pwms =3D <&pwm2 0 25000 1>;
->          regulator-name =3D "vdd_log";
->          regulator-min-microvolt =3D <800000>;//hw logic min voltage
->          regulator-max-microvolt =3D <1400000>;//hw logic max voltage
->          regulator-always-on;
->          regulator-boot-on;
->      };
->
-> Maybe we did not push the modification of this part in rk3288-evb, I
-> will push to deal with this.(rk3229-evb.dts and rk3399 has been already
-> pushed)
+We thought it would be harmless when it was proposed, so guess this one is on
+us ;)
 
-Heiko: do you have advice for how you'd like this to proceed?  We
-could certainly land patch #3 in this series without patch #2 and then
-pick up the pieces as we find boards that no longer boot.  As I've
-argued I'm not sure that's worth the effort, but I'll leave it up to
-you.
+Thanks for maintaining stable !!
+Cheers
+
+> 
+> --
+> Thanks,
+> Sasha
 
 
--Doug
