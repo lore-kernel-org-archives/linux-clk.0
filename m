@@ -2,124 +2,155 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D29C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 13:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADA9C10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 13:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D683D20818
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 13:54:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95D462133D
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 13:56:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y+IULaGQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbfDKNyi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 09:54:38 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:38534 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbfDKNyi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 09:54:38 -0400
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id 2319E5C322D; Thu, 11 Apr 2019 15:53:50 +0200 (CEST)
-Date:   Thu, 11 Apr 2019 15:53:50 +0200
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Joe Perches <joe@perches.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Nicholas Mc Guire <hofrat@opentech.at>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        id S1726264AbfDKN40 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 09:56:26 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45128 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfDKN40 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 09:56:26 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bf11so3438054plb.12
+        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2019 06:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6ClUU+SVRlGfqKXGcUvbdevlNJHckubkDnT0pIeXVGo=;
+        b=Y+IULaGQZPcgXGJKaO5x/3c7/CS7b90tbNi6x4SdpFMvxU4a5RglgbAZVSN55QDhup
+         6GWTZmjKDYPmeU74rNmCh9Vqkhnvgfia5fespuvh1mJKf8h/E4GHD1I9X9QTCCZ7u515
+         zwqxIRaEvJv9z+w6CLpB0Bswnof/T2ORp5u0A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6ClUU+SVRlGfqKXGcUvbdevlNJHckubkDnT0pIeXVGo=;
+        b=VsrdVuMIUj5zSIQSvAUQXIRHbJJjTMogEM9riO+27UddRUHqs8ESnQADEraZKRSPej
+         ZmaE/SDFWEXUaUTBmPyTL08BjlgEZSXWHivLCYTpLRHRoSMb0JNaii4WlYJ2Mp1PS5T6
+         9DV84sW8eiN1FKMh7rlaOGQyojfvKalyVCDtdGMvvahvRCZ//igA4KU1mFKWEu5KDxzh
+         SrB1cwOZfoDqwFrgKBuhbMtuvoG5xXa5kPyfeImnR9SEaa0owphM71/wYX8LtUbfAWlp
+         TAye3xjhSHWqlRcyU95c+KrxNm9DUtcvu/juAUevE+X711DztR3KQPunMsJVA2Ty8rWD
+         1tVg==
+X-Gm-Message-State: APjAAAVsuMw7yszTXEuaDTvdAFxp+2Aty0uYAaY/6YLXK5awaFaIqLYv
+        Wa2XmYjGkR6jQeHSFDkMNwAPQQ==
+X-Google-Smtp-Source: APXvYqxdkm3c+ME8kedFIAhaOjckgUmY14dX6xlRAn1S2d2DSoin0DQYAjnnqNzJDm8fzIwl6ZRw/g==
+X-Received: by 2002:a17:902:4381:: with SMTP id j1mr48303199pld.75.1554990985257;
+        Thu, 11 Apr 2019 06:56:25 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id v189sm90797218pgd.77.2019.04.11.06.56.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Apr 2019 06:56:24 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Jonas Karlman <jonas@kwiboo.se>, Tomasz Figa <tfiga@chromium.org>,
+        Randy Li <ayaka@soulik.info>,
+        Ziyuan Xu <xzy.xu@rock-chips.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        ryandcase@chromium.org, Elaine Zhang <zhangqing@rock-chips.com>,
+        mka@chromium.org, Douglas Anderson <dianders@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] clk: ux500: add range to usleep_range
-Message-ID: <20190411135350.GA9420@osadl.at>
-References: <1554606804-29453-1-git-send-email-hofrat@opentech.at>
- <155493683173.20095.12913107010666279046@swboyd.mtv.corp.google.com>
- <20190411025602.GB5487@osadl.at>
- <c333da513d0e47af3fa91e735ecc6620658f5050.camel@perches.com>
- <20190411125918.GB8986@osadl.at>
- <d01faa59eea249323ac92c3c5598eb27650203c9.camel@perches.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] clk: rockchip: Fix video codec clocks on rk3288
+Date:   Thu, 11 Apr 2019 06:55:55 -0700
+Message-Id: <20190411135555.235625-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d01faa59eea249323ac92c3c5598eb27650203c9.camel@perches.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 11, 2019 at 06:12:49AM -0700, Joe Perches wrote:
-> On Thu, 2019-04-11 at 14:59 +0200, Nicholas Mc Guire wrote:
-> > On Thu, Apr 11, 2019 at 04:51:25AM -0700, Joe Perches wrote:
-> > > On Thu, 2019-04-11 at 04:56 +0200, Nicholas Mc Guire wrote:
-> > > > On Wed, Apr 10, 2019 at 03:53:51PM -0700, Stephen Boyd wrote:
-> > > > > Quoting Nicholas Mc Guire (2019-04-06 20:13:24)
-> > > > > > Providing a range for usleep_range() allows the hrtimer subsystem to
-> > > > > > coalesce timers - the delay is runtime configurable so a factor 2
-> > > > > > is taken to provide the range.
-> > > > > > 
-> > > > > > Signed-off-by: Nicholas Mc Guire <hofrat@opentech.at>
-> > > > > > ---
-> > > > > 
-> > > > > I think this driver is in maintenance mode. I'll wait for Ulf to ack or
-> > > > > review this change before applying.
-> > > > > 
-> > > > > > diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-> > > > > > index 7c0403b..a1fa3fb 100644
-> > > > > > --- a/drivers/clk/ux500/clk-sysctrl.c
-> > > > > > +++ b/drivers/clk/ux500/clk-sysctrl.c
-> > > > > > @@ -42,7 +42,7 @@ static int clk_sysctrl_prepare(struct clk_hw *hw)
-> > > > > >                                 clk->reg_bits[0]);
-> > > > > >  
-> > > > > >         if (!ret && clk->enable_delay_us)
-> > > > > > -               usleep_range(clk->enable_delay_us, clk->enable_delay_us);
-> > > > > > +               usleep_range(clk->enable_delay_us, clk->enable_delay_us*2);
-> > > > > 
-> > > > > Please add space around that multiply.
-> > > > > 
-> > > > I can do that but it does not seem common and also checkpatch
-> > > > did not complain about this - now a simple grep -re "\*10" on the
-> > > > kernel shows that it seems more common not to use spaces around *
-> > > > that to use them.
-> > > 
-> > > Not really
-> > > 
-> > > $ git grep -P '\*\s*10' | grep -oh -P '\*\s*10' | \
-> > >   sort | uniq -c | sort -rn | head 
-> > >   11800 * 10
-> > >    1705 *10
-> > >     179 *  10
-> > >      74 *   10
-> > >      67 *	10
-> > >      20 *     10
-> > >      20 *      10
-> > >      14 *    10
-> > >      14 *		10
-> > >      12 *         10
-> > 
-> > yup - my bad - If you restrict it to code lines - its 1:10
-> > not quite sure how I got the first numbers - sloppy check.
-> > 
-> > hofrat@debian:~/git/linux-next$ grep -re '.*\*\s*10.*;$' * | grep -oh '\*\s*10' | sort | uniq -c | sort -nr | more 
-> >    8568 * 10
-> >     860 *10
-> 
-> The ratio is about the same in any case.
-> 
-> > Anyway - is there a reason checkpatch will not flag this ?
-> 
-> Because the style is not mentioned in coding style.
-> checkpatch flags it only when using the --strict option
->
-hmm...It sees it is:
+It appears that there is a typo in the rk3288 TRM.  For
+GRF_SOC_CON0[7] it says that 0 means "vepu" and 1 means "vdpu".  It's
+the other way around.
 
-3.1) Spaces
-***********
-...
+How do I know?  Here's my evidence:
 
-Use one space around (on each side of) most binary and ternary operators,
-such as any of these::
+1. Prior to commit 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec
+   using the new muxgrf type on rk3288") we always pretended that we
+   were using "aclk_vdpu" and the comment in the code said that this
+   matched the default setting in the system.  In fact the default
+   setting is 0 according to the TRM and according to reading memory
+   at bootup.  In addition rk3288-based Chromebooks ran like this and
+   the video codecs worked.
+2. With the existing clock code if you boot up and try to enable the
+   new VIDEO_ROCKCHIP_VPU as a module (and without "clk_ignore_unused"
+   on the command line), you get errors like "failed to get ack on
+   domain 'pd_video', val=0x80208".  After flipping vepu/vdpu things
+   init OK.
+3. If I export and add both the vepu and vdpu to the list of clocks
+   for RK3288_PD_VIDEO I can get past the power domain errors, but now
+   I freeze when the vpu_mmu gets initted.
+4. If I just mark the "vdpu" as IGNORE_UNUSED then everything boots up
+   and probes OK showing that somehow the "vdpu" was important to keep
+   enabled.  This is because we were actually using it as a parent.
+5. After this change I can hack "aclk_vcodec_pre" to parent from
+   "aclk_vepu" using assigned-clocks and the video codec still probes
+   OK.
+6. Rockchip has said so on the mailing list [1].
 
-        =  +  -  <  >  *  /  %  |  &  ^  <=  >=  ==  !=  ?  :
+...so let's fix it.
 
-thx!
-hofrat 
+Let's also add CLK_SET_RATE_PARENT to "aclk_vcodec_pre" as suggested
+by Jonas Karlman.  Prior to the same commit you could do
+clk_set_rate() on "aclk_vcodec" and it would change "aclk_vdpu".
+That's because "aclk_vcodec" was a simple gate clock (always gets
+CLK_SET_RATE_PARENT) and its direct parent was "aclk_vdpu".  After
+that commit "aclk_vcodec_pre" gets in the way so we need to add
+CLK_SET_RATE_PARENT to it too.
+
+[1] https://lkml.kernel.org/r/1d17b015-9e17-34b9-baf8-c285dc1957aa@rock-chips.com
+
+Fixes: 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec using the new muxgrf type on rk3288")
+Suggested-by: Jonas Karlman <jonas@kwiboo.se>
+Suggested-by: Randy Li <ayaka@soulik.info>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+Changes in v2:
+- Now also has CLK_SET_RATE_PARENT for "aclk_vcodec_pre"
+- Added Suggested-by tags for prior work
+- Added link to Elaine saying that this is indeed correct
+
+ drivers/clk/rockchip/clk-rk3288.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 5a67b7869960..51e8e799debb 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -219,7 +219,7 @@ PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
+ PNAME(mux_edp_24m_p)	= { "ext_edp_24m", "xin24m" };
+ PNAME(mux_tspout_p)	= { "cpll", "gpll", "npll", "xin27m" };
+ 
+-PNAME(mux_aclk_vcodec_pre_p)	= { "aclk_vepu", "aclk_vdpu" };
++PNAME(mux_aclk_vcodec_pre_p)	= { "aclk_vdpu", "aclk_vepu" };
+ PNAME(mux_usbphy480m_p)		= { "sclk_otgphy1_480m", "sclk_otgphy2_480m",
+ 				    "sclk_otgphy0_480m" };
+ PNAME(mux_hsicphy480m_p)	= { "cpll", "gpll", "usbphy480m_src" };
+@@ -420,7 +420,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_usb480m_p, 0,
+ 			RK3288_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
+ 			RK3288_CLKGATE_CON(3), 11, GFLAGS),
+-	MUXGRF(0, "aclk_vcodec_pre", mux_aclk_vcodec_pre_p, 0,
++	MUXGRF(0, "aclk_vcodec_pre", mux_aclk_vcodec_pre_p, CLK_SET_RATE_PARENT,
+ 			RK3288_GRF_SOC_CON(0), 7, 1, MFLAGS),
+ 	GATE(ACLK_VCODEC, "aclk_vcodec", "aclk_vcodec_pre", 0,
+ 		RK3288_CLKGATE_CON(9), 0, GFLAGS),
+-- 
+2.21.0.392.gf8f6787159e-goog
+
