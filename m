@@ -2,117 +2,121 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599F2C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 17:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF88EC282CE
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 17:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0942084D
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 17:32:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NxxHNqDY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XaGfZB3K"
+	by mail.kernel.org (Postfix) with ESMTP id C2BEC217D4
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 17:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555004190;
+	bh=IPvJyUmzXw+pk/vM6Yk8yoye59NBr3V8GrRyr4FsJ3E=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=tuDXE9awlgWvwWpeBo2GoqYjAzwhCSg1q/Gma2a8co7lt/KKwyQg5H+UBC4fGbKLC
+	 YYn8WS1egIN8sA5CqF5kgaevbZ+TMnKhSl5lGPgi0hDQvC9T5J98oBKzdaoIOgVaix
+	 JPkjuUPPx2XCl/7XG7lrRJNtColad8WGiGpIAL58=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbfDKRcH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 13:32:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfDKRcH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 13:32:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3FB9960A0A; Thu, 11 Apr 2019 17:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1555003926;
-        bh=Y8QIDyqGuX+LhBf+jXS2iWpsGrQdhW/DlNjuABId5WM=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=NxxHNqDYzmiyxSKFJ+yH8Wbl/SfijJChKsauVzCcWqcugDTYdA36FUVzfcsv6htr+
-         lgDf1I9qPvpk1YtVI+sZnONAHF1c1FeAhjl5W+jsUEQAUjo5MY1YBZUJpCV9ckwA5j
-         C2UAQz4342Q3Vi5ZRRfebErnFdX3vz19Ril9ccBQ=
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726946AbfDKRga (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 13:36:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45792 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726912AbfDKRg3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 13:36:29 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D12866055C;
-        Thu, 11 Apr 2019 17:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1555003925;
-        bh=Y8QIDyqGuX+LhBf+jXS2iWpsGrQdhW/DlNjuABId5WM=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=XaGfZB3KcBoy47IxLzcrWTllZKt2wa4Gyhq8+x8Lgn0dZsZI/fnpebI+N+FhlXXch
-         bIDU7cHK4I/Imjf4JIsqsY2XRX9szsyKpop9zY6jip+SUvjDcLdRk1SJBOaL15yhpV
-         +gaT89O2TyDGt/6xc0RizpIiDEudGRMh5IAs7wfA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D12866055C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v3 3/7] clk: Add of_clk_hw_register() API for early clk
- drivers
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
-References: <20190404215344.6330-1-sboyd@kernel.org>
- <20190404215344.6330-4-sboyd@kernel.org>
- <f989942c-89fc-76cf-af1b-2ac352d6e60c@codeaurora.org>
- <155491520049.20095.15953237372852019635@swboyd.mtv.corp.google.com>
- <c529d12b-5212-7198-4f70-a3f771c0901f@codeaurora.org>
- <155493274113.20095.6283192313107751284@swboyd.mtv.corp.google.com>
- <bba463e8-c4f6-720d-5a38-ae29d0979a9e@codeaurora.org>
-Message-ID: <fd60da16-7531-ab0a-717f-bee1ca64e92d@codeaurora.org>
-Date:   Thu, 11 Apr 2019 11:32:04 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.3
+        by mail.kernel.org (Postfix) with ESMTPSA id EE8112084D;
+        Thu, 11 Apr 2019 17:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1555004189;
+        bh=IPvJyUmzXw+pk/vM6Yk8yoye59NBr3V8GrRyr4FsJ3E=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=UzBCcvCmgXJH/xMVyPFtAAlTlmtPbDs4SjSuYuQ+Hyw2x344ZDRTNCDL48GheRaas
+         0Nafmk5WTBHmXZyn7RjKaUGLf0OHWTJaR3LvGrG8oGcg8TDQQOOOQUc5cs/P2b6zic
+         XnBLECfnywGM0TaOkMneplyfCIoS0Lbco1ijRlQI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <bba463e8-c4f6-720d-5a38-ae29d0979a9e@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190404113722.20634-1-geert+renesas@glider.be>
+References: <20190404113722.20634-1-geert+renesas@glider.be>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [git pull] clk: renesas: Updates for v5.2
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <155500418814.20095.8564288702076959777@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Thu, 11 Apr 2019 10:36:28 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/10/2019 4:18 PM, Jeffrey Hugo wrote:
-> On 4/10/2019 3:45 PM, Stephen Boyd wrote:
->> Quoting Jeffrey Hugo (2019-04-10 12:39:16)
->>> On 4/10/2019 10:53 AM, Stephen Boyd wrote:
->>>> Quoting Jeffrey Hugo (2019-04-08 14:46:11)
->>>>> On 4/4/2019 3:53 PM, Stephen Boyd wrote:
->>>>>> In some circumstances drivers register clks early and don't have 
->>>>>> access
->>>>>> to a struct device because the device model isn't initialized yet. 
->>>>>> Add
->>>>>> an API to let drivers register clks associated with a struct 
->>>>>> device_node
->>>>>> so that these drivers can participate in getting parent clks 
->>>>>> through DT.
->>>>>
->>>>> NACK.  This patch broke boot for me.  I had to pull the below from 
->>>>> JTAG.
->>>>>     What do you need to debug this?
->>>>>
->>>>
->>>> Here's a patch to try to squash in:
->>>
->>> No dice.  Same issue.
->>
->> Argh! dev_of_node() doesn't check for NULL device. :-/ I want to be
->> extremely lazy! Let's get this merged too. Thanks for the testing.
-> 
-> Fixed.  Will continue to test the rest of the series and let you know.
-> 
+Quoting Geert Uytterhoeven (2019-04-04 04:37:22)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
+1b:
+>=20
+>   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v5.2-tag1
+>=20
+> for you to fetch changes up to b953eaaeb58efc944f51cffd3f6838657958f0f8:
+>=20
+>   clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value (20=
+19-04-04 11:54:46 +0200)
+>=20
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v5.2
+>=20
+>   - Add missing PCI USB clock on RZ/N1,
+>   - Add Z2 (Cortex-A53) clocks on R-Car E3 and RZ/G2E, incl. a new
+>     helper in <linux/math64.h>,
+>   - Small fixes and cleanups.
+>=20
 
-With the two changes we discussed, for the entire series:
-Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Thanks. Pulled into clk-next with the below fix squashed on top.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+----8<----
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH] clk: renesas: rcar-gen3: Remove unused variable
+
+This variable is no longer used and the compiler rightly complains that
+it should be removed. Drop it to silence the following:
+
+drivers/clk/renesas/rcar-gen3-cpg.c: In function 'cpg_sd_clk_register':
+drivers/clk/renesas/rcar-gen3-cpg.c:386:15: warning: unused variable 'i' [-=
+Wunused-variable]
+  unsigned int i;
+
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: b953eaaeb58e ("clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate(=
+) return value")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar=
+-gen3-cpg.c
+index dc62ed0dadc2..d25c8ba00a65 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -383,7 +383,6 @@ static struct clk * __init cpg_sd_clk_register(const ch=
+ar *name,
+ 	struct clk_init_data init;
+ 	struct sd_clock *clock;
+ 	struct clk *clk;
+-	unsigned int i;
+ 	u32 val;
+=20
+ 	clock =3D kzalloc(sizeof(*clock), GFP_KERNEL);
