@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60F1C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFADDC282DA
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1E020850
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FA8C20850
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 20:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555013792;
-	bh=mRAtumr2P7rdLJ1lOMzEBoLNKvE+b5PIYcMk60mOUYs=;
+	s=default; t=1555013793;
+	bh=JOtCFg0doBLjq4X/eQlclJA/YGvreDJl+MF1NoEmd8Q=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=lIdyGHBeFX2N4//VRixVLTgcKH8RXFpK0s1NzQxeuQbvHGfCGQeA3BgHNBwBCKSJH
-	 zbVdpsJXyCgxGWfrDL2+LndPX0l6FrPxyM/KQUYnEntI+Z+ElIWuCqf88mPub3YqJN
-	 iwoDJTeOzlZrvFwKnU5kCyUxkJGdnbL7UHDFAYig=
+	b=t1bV8bCDDm2GlFV5l6yXUsMraDLvrP1wbBlqi5G0VnpWnDqna1U/RzExWlDxdJuLH
+	 Kx+/q9VwvucTPH1d8NKOwT4nvuZCJlxElDUJB69KqM3ivQDE1kiLOpPjUYeaYrYOKo
+	 8Vj2GfGHA/gcMxUl0yzc8b3spq/REmwJ6APDUvT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfDKUQV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 16:16:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43500 "EHLO mail.kernel.org"
+        id S1726646AbfDKUQR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 16:16:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726538AbfDKUQV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 16:16:21 -0400
+        id S1726538AbfDKUQR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 16:16:17 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C052E20850;
-        Thu, 11 Apr 2019 20:16:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEFE920850;
+        Thu, 11 Apr 2019 20:16:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555013780;
-        bh=mRAtumr2P7rdLJ1lOMzEBoLNKvE+b5PIYcMk60mOUYs=;
+        s=default; t=1555013777;
+        bh=JOtCFg0doBLjq4X/eQlclJA/YGvreDJl+MF1NoEmd8Q=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=FI3BFwBozTe4SoaU5U/LCJTcZH2YXCiPs+AIIYSMp+ZaAyvB424iUhpNaYilxPtcx
-         g46L5GH/S2QOXiUtP1/0Einv5PzzKUJgKj0wsFthm5bGTedupEgdbprfjiqlsCBpW0
-         mi1a1O5i9DvbAE+BhMtX1JpWjDbdbqZJeScC4kt0=
+        b=qMe8oQCv/OsQ8cPpVB+MSv8EKP3JfxczfSVxn7DzzOX9hF5Om/eqD099W9setkTgn
+         zqjsFtv6dMzcEbdvs2BAC4RdvxWHDGVQZ/5BHKVIraJW+65zOztY87aO9cCjwjJ7xF
+         /FQEddusEAJrv3s0AAeyfNMy1QlTX9IzjUOQZFx0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190305050546.23431-4-weiyi.lu@mediatek.com>
-References: <20190305050546.23431-1-weiyi.lu@mediatek.com> <20190305050546.23431-4-weiyi.lu@mediatek.com>
+In-Reply-To: <20190305050546.23431-3-weiyi.lu@mediatek.com>
+References: <20190305050546.23431-1-weiyi.lu@mediatek.com> <20190305050546.23431-3-weiyi.lu@mediatek.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 2/9] clk: mediatek: Add new clkmux register API
+Subject: Re: [PATCH v5 1/9] clk: mediatek: Disable tuner_en before change PLL rate
 Cc:     James Liao <jamesjj.liao@mediatek.com>,
         Fan Chen <fan.chen@mediatek.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -56,23 +56,25 @@ To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Weiyi Lu <weiyi.lu@mediatek.com>
-Message-ID: <155501377988.20095.3921794940086690412@swboyd.mtv.corp.google.com>
+Message-ID: <155501377617.20095.15654973603515721887@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 11 Apr 2019 13:16:19 -0700
+Date:   Thu, 11 Apr 2019 13:16:16 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Weiyi Lu (2019-03-04 21:05:39)
+Quoting Weiyi Lu (2019-03-04 21:05:38)
 > From: Owen Chen <owen.chen@mediatek.com>
 >=20
-> On both MT8183 & MT6765, there add "set/clr" register for
-> each clkmux setting, and one update register to trigger value change.
-> It is designed to prevent read-modify-write racing issue.
-> The sw design need to add a new API to handle this hw change with
-> a new mtk_clk_mux/mtk_mux struct in new file "clk-mux.c", "clk-mux.h".
+> PLLs with tuner_en bit, such as APLL1, need to disable
+> tuner_en before apply new frequency settings, or the new frequency
+> settings (pcw) will not be applied.
+> The tuner_en bit will be disabled during changing PLL rate
+> and be restored after new settings applied.
 >=20
+> Fixes: e2f744a82d725 (clk: mediatek: Add MT2712 clock support)
+> Cc: <stable@vger.kernel.org>
 > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > ---
