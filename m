@@ -2,118 +2,93 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 703C9C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 10:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCB1C10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 10:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D290217D4
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 10:11:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="z3sf5GKx"
+	by mail.kernel.org (Postfix) with ESMTP id 686BE2084D
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 10:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbfDKKLh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 06:11:37 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34566 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfDKKLg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 06:11:36 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r186so1580274wmf.1
-        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2019 03:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2nTwodp6z8HTVF3WLduDXBgplOr8t5kebWwxmrLzwFs=;
-        b=z3sf5GKxcaXjnnizIA8gkhgYfaEjmadznrVU6yriIYGj9vKDIvxBfRDISAdDWel9UR
-         qVtBW0cpy4BG3DfGx9qikqp9dSIFSI+heizZtRDDSqu4HTPpNf4EoITrZ+v3+5c9ze0w
-         LG9N7tPb4AwDkR3XhJvkVrnEPIqBos+26hRrWdnawFvuyGJEICIE9WhfnS76+PgWZbpd
-         xUz6Fq+SVLCSv3n6+Be4pUhzLcNLvj3/IQew5q4npYmicR9NJ2edYsollQ8aql0IRWuO
-         KnydIFKqYkEeGRwO0pNmLz2cDaseFvGhqNnxsBAKF3S9sUV+kVSQmrzCQ/VnPUJTr8jR
-         DQKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2nTwodp6z8HTVF3WLduDXBgplOr8t5kebWwxmrLzwFs=;
-        b=WvNfmm2NF2tdj/5eHz1alYrOyZhAW+EqaTWBhUPdgdw/dLiiaLxXwdy95ztVMj4iPb
-         1aA4IQPHEdVJW8lMh+nfxUWnUxcF5K8uLt/686vW8yLyTR32op7XN7k1WL2M/uxSbi8E
-         ObNyLnWLgey8kVyL+xGb9JmxJIlZOQmrooMDAO+xzWi0fcgllwxEOmo9sRijbL2N3nlI
-         6lNNdjg1bM2PfD7NB2ZCa6Q942Yq5ceOuyyMOWcD/2wr6PShUK7AzUJwT9Y9mncLHxJ3
-         GXUHfBJUoZa2Lt02QLVvlM6ljQNcvxsgI161OpQy5HX2yZCBkWpkjYgi5A5IOnK2XkKb
-         7w0A==
-X-Gm-Message-State: APjAAAUF7/BC6bVPFUMDPiMgMWE2JzXLGHfVHzPuw7HoJ0lqrwr+6KuC
-        LGWkeZME/aU6Q9GTbxFsIhNIrJov6exPqA==
-X-Google-Smtp-Source: APXvYqyLMFOpEuSIXecxCV0uIkRP+oFuuDh/FySPAORzv449J10e6f4VKHxdTwh3tRyy+HlaSJgwdg==
-X-Received: by 2002:a1c:f413:: with SMTP id z19mr6188846wma.71.1554977494850;
-        Thu, 11 Apr 2019 03:11:34 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c20sm70235347wre.28.2019.04.11.03.11.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 11 Apr 2019 03:11:34 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     stable@vger.kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH stable 5.0] Revert "clk: meson: clean-up clock registration"
-Date:   Thu, 11 Apr 2019 12:11:32 +0200
-Message-Id: <20190411101132.5513-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726517AbfDKKjd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 06:39:33 -0400
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:38411 "EHLO
+        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbfDKKjc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 06:39:32 -0400
+Received: by mail.osadl.at (Postfix, from userid 1001)
+        id 8FEF75C29C8; Thu, 11 Apr 2019 12:38:44 +0200 (CEST)
+Date:   Thu, 11 Apr 2019 12:38:44 +0200
+From:   Nicholas Mc Guire <der.herr@hofr.at>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Nicholas Mc Guire <hofrat@opentech.at>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] clk: ux500: add range to usleep_range
+Message-ID: <20190411103844.GA8267@osadl.at>
+References: <1554606804-29453-1-git-send-email-hofrat@opentech.at>
+ <CAPDyKFp2yC88O3q6kO+tNVwzkJVySQW7PA0Cm5xjHEX31x275w@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPDyKFp2yC88O3q6kO+tNVwzkJVySQW7PA0Cm5xjHEX31x275w@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This reverts commit 9b0f430450cf230e736bc40f95bf34fbdb99cead.
+On Thu, Apr 11, 2019 at 11:36:45AM +0200, Ulf Hansson wrote:
+> On Sun, 7 Apr 2019 at 05:13, Nicholas Mc Guire <hofrat@opentech.at> wrote:
+> >
+> > Providing a range for usleep_range() allows the hrtimer subsystem to
+> > coalesce timers - the delay is runtime configurable so a factor 2
+> > is taken to provide the range.
+> >
+> > Signed-off-by: Nicholas Mc Guire <hofrat@opentech.at>
+> > ---
+> >
+> > Problem located with an experimental coccinelle script
+> >
+> > Q: Basically usleep_range() with min == max never makes much sense notably
+> >    in non-atomic context. If the factor of 2 is tolerable or a fixed
+> >    offset of e.g. 1000 would be more suitable is not clear to me - maybe
+> >    someone familiar with that driver can clarify this.
+> >
+> > Patch was compile tested with: u8500_defconfig (implies COMMON_CLK=y)
+> > (with some sparse warnings about not implemented system calls)
+> >
+> > Patch is against 5.1-rc3 (localversion-next is next=20190405)
+> >
+> >  drivers/clk/ux500/clk-sysctrl.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
+> > index 7c0403b..a1fa3fb 100644
+> > --- a/drivers/clk/ux500/clk-sysctrl.c
+> > +++ b/drivers/clk/ux500/clk-sysctrl.c
+> > @@ -42,7 +42,7 @@ static int clk_sysctrl_prepare(struct clk_hw *hw)
+> >                                 clk->reg_bits[0]);
+> >
+> >         if (!ret && clk->enable_delay_us)
+> > -               usleep_range(clk->enable_delay_us, clk->enable_delay_us);
+> > +               usleep_range(clk->enable_delay_us, clk->enable_delay_us*2);
+> 
+> The range being used is actually in ms, so not sure we actually need
+> to double it for the range.
+> 
+> How about adding ~25% instead, along the lines of below:
+> usleep_range(clk->enable_delay_us, clk->enable_delay_us +
+> (clk->enable_delay_us >> 2));
+>
+that would be perfectly sufficient for hrtimers - if the range is
+in ms - so I´ll send out a V2 shortly.
 
-This patch was not initially a fix and is dependent on other
-changes which are not fixes eithers.
-
-With this change, multiple Amlogic based boards fails to boot,
-as reported by kernelci.
-
-Cc: stable@vger.kernel.org # 5.0.7
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/meson-aoclk.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index 258c8d259ea1..f965845917e3 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -65,20 +65,15 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	/* Populate regmap */
--	for (clkid = 0; clkid < data->num_clks; clkid++)
-+	/*
-+	 * Populate regmap and register all clks
-+	 */
-+	for (clkid = 0; clkid < data->num_clks; clkid++) {
- 		data->clks[clkid]->map = regmap;
- 
--	/* Register all clks */
--	for (clkid = 0; clkid < data->hw_data->num; clkid++) {
--		if (!data->hw_data->hws[clkid])
--			continue;
--
- 		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
--		if (ret) {
--			dev_err(dev, "Clock registration failed\n");
-+		if (ret)
- 			return ret;
--		}
- 	}
- 
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
--- 
-2.21.0
-
+thx!
+hofrat 
