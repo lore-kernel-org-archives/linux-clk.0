@@ -2,89 +2,130 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A57C282CE
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 12:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4D4C282CE
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 13:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4D62184E
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 12:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9962B21852
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 13:00:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="NVF6Vt5i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfDKMxG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 08:53:06 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:58202 "EHLO gloria.sntech.de"
+        id S1726536AbfDKM74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 08:59:56 -0400
+Received: from vps.xff.cz ([195.181.215.36]:51654 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbfDKMxG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 08:53:06 -0400
-Received: from wf0380.dip.tu-dresden.de ([141.76.181.124] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hEZCC-0007yb-Ce; Thu, 11 Apr 2019 14:52:48 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Tony Xie <tony.xie@rock-chips.com>, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v7 2/6] mfd: rk808: Add RK817 and RK809 support
-Date:   Thu, 11 Apr 2019 14:52:47 +0200
-Message-ID: <518340124.P20tlEWT52@phil>
-In-Reply-To: <20190402063305.GZ4187@dell>
-References: <20190102102002.29245-1-tony.xie@rock-chips.com> <20190102102002.29245-3-tony.xie@rock-chips.com> <20190402063305.GZ4187@dell>
+        id S1726073AbfDKM7z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 08:59:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1554987592; bh=lswr7DRqlLLV3PFM/c9mstWRgIri4aJp4GC+V78od+o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NVF6Vt5iaEicBm2rfGaHzI/8nB9Pammvp+qkX1Y3XlATJDSgnaJEn322PWbS+c7Zz
+         UiVPaDEyGD9kaCG/xuNlKPQftvCuul6esUicafOxToSvkgkuAFAVARCpOYhuqKmu84
+         e07Ns17+p5w52srrCO0XsMiOBETJqUmnTXDDtu0c=
+Date:   Thu, 11 Apr 2019 14:59:51 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
+ (Camera Sensor Interface)
+Message-ID: <20190411125951.zkbubk3kqmtiidkr@core.my.home>
+Mail-Followup-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+References: <20190408165744.11672-1-wens@kernel.org>
+ <20190408165744.11672-5-wens@kernel.org>
+ <20190409075804.4zrwjil7ie2gjigu@flea>
+ <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
+ <20190409082818.z33mq2qrxethldzf@flea>
+ <20190409220040.3sx456gefmjq3t3g@core.my.home>
+ <4c9aa6a850d76533ff693a44ef95b68241836751.camel@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c9aa6a850d76533ff693a44ef95b68241836751.camel@bootlin.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lee,
-
-Am Dienstag, 2. April 2019, 08:33:05 CEST schrieb Lee Jones:
-> On Wed, 02 Jan 2019, Tony Xie wrote:
-> 
-> > The RK809 and RK817 are a Power Management IC (PMIC) for multimedia
-> > and handheld devices. They contains the following components:
-> >   - Regulators
-> >   - RTC
-> >   - Clocking
+On Thu, Apr 11, 2019 at 02:47:52PM +0200, Paul Kocialkowski wrote:
+> > > > > If we expect a single enpoint, then we don't need the address-cells
+> > > > > and size-cells properties.
+> > > > 
+> > > > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
+> > > > is kind of genius if not very hacky. They have two "identical" sensors
+> > > > on the same I2C bus and CSI bus, with shared reset line but separate
+> > > > shutdown lines. Since they are identical, they also have the same I2C
+> > > > address. I haven't figured out how to model this in the device tree.
+> > > > 
+> > > > The point is, it's perfectly possible to have two or more sensors use
+> > > > the same controller, provided only one be active at a time.
+> > > 
+> > > Right, but I guess the common case would be to have a single sensor,
+> > > where that wouldn't be needed.
+> > > 
+> > > In odd cases, we can always specify it in the DTS, and if it becomes
+> > > common enough, we can move it to the DTSI.
 > > 
-> > Both RK809 and RK817 chips are using a similar register map,
-> > so we can reuse the RTC and Clocking functionality.
-> > Most of regulators have a some implementation also.
+> > I'm planning on having two sensors there, in a less arcane setup,
+> > though - no shared resets, and different I2C addresses.
 > > 
-> > Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > ---
-> >  drivers/mfd/Kconfig       |   6 +-
-> >  drivers/mfd/rk808.c       | 192 +++++++++++++++++++++++++++++++++++++-
-> >  include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++
-> >  3 files changed, 364 insertions(+), 6 deletions(-)
+> > Anyway, I can confirm that CSI driver works fine on A83T with just
+> > a DTSI patch, even without the clock patch in this series. I've been
+> > running it for quite a while that way without any issues (different
+> > camera chip than the ones being used by wens).
 > 
-> For my own reference:
->   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> That's quite nice to hear! I would be interested in getting some
+> insight on which sensors are known to work and which are broken or have
+> limitations.
+> 
+> Would you happen to have a list of the sensors that you tested and
+> whether you encountered such issues with them?
 
-do you have some sort of merge plan for this or are you waiting for
-specific Acks? I guess if we're waiting for an Ack from Mark Brown,
-we'll need a resend of the patch.
+I wrote the driver for the sensor I'm using, so the issues were mostly
+during the development. It's Himax HM5065 sensor (not yet upstream).
 
-All other patches have Acks from their subsystem maintainers (rtc, clk)
-so you could pick up all patches except patch3 and I could just resend
-this one, which in turn could also go through the regulator tree.
+If you try using other mainline sensors, the issues you'll face will mostly
+be configuring the buses (CSI, I2C) correctly in DTS, or lack of support
+for some VSYNC/HSYNC combinations on the sensor driver side. Luckily, CSI
+controller is quite flexible, and will accomodate lack of configurability
+on the sensor side.
 
-Otherwise we'll probably need a resend of the series, as Mark most of
-the time doesn't keep old patch series around.
+regards,
+  o.
 
-
-Heiko
-
-
+> Cheers,
+> 
+> Paul
+> 
+> -- 
+> Paul Kocialkowski, Bootlin
+> Embedded Linux and kernel engineering
+> https://bootlin.com
+> 
