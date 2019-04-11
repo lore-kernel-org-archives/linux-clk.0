@@ -2,96 +2,270 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143F3C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60497C10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0F8C2084D
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:04:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEPnvYOn"
+	by mail.kernel.org (Postfix) with ESMTP id 2A46220693
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 22:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfDKWEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 18:04:24 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41413 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfDKWEY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 18:04:24 -0400
-Received: by mail-lj1-f193.google.com with SMTP id k8so6964791lja.8;
-        Thu, 11 Apr 2019 15:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8kOiHton9XjNoDME7TA4eAnGiiD7GSpxhZNjS2xvlUY=;
-        b=MEPnvYOnnKtFqUpgQM4ilIpHgLMR9E/d3tVcGf1J4tHnvR+3OAG9TrLf7548/pJNlu
-         nAbWoiwzv8nvu8zyFOpq8D6K76gxRo3ZpgC0/Q6m5c0ZTNbXLmczUG/o15ddA9304LAE
-         0ZA4CjP90DXGIR86GQNRq7GbMft78i5WEs5Khak5Pcaa5g5eSgJbrVd4iGPmZIPudFIZ
-         1/q+H0TSGUKbx/wEQ3WXwXpMnu/yDComAtXyRl8uRgDf2n15zoE/c8uxy0O5aj5kPtzi
-         jRSGwE3s65VK8siCXBx3LoW1XeS13cyBgNue8x7N84rK4y2cQiMA4CiD2jApCgcOim+A
-         b24Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8kOiHton9XjNoDME7TA4eAnGiiD7GSpxhZNjS2xvlUY=;
-        b=s+Nhn+ZSxBhKLQDFSJMRRo7WsVJjXzH+BmI07+ZC7L++iN44Uh7KAzOu38swDTKj34
-         PJ6I+fkn6X+OdIUr4ja3MIXKmqKZDB46OR8EUhfwP8BSJHT7h16kp5JUzcCZh7euV31G
-         Pu+OvdANn1sZU7qV6SX4H+RFE/TwB3h6A7BKbA7AgK0jGx4l0hBdAibfPXd8l+ZWYrfQ
-         nQ3ikT85sgdscediJKK6ieIA1iPn+JELYgQ8RyYESc3vxo21z1MW4SXRvqnykWQaslxe
-         /NzCkrNRwe9/RqD+qjHGuf6A0xGglP9ZUHiU7JmV34XTCDO0vqyzvZMR3NbqAcRuP+fN
-         sKZg==
-X-Gm-Message-State: APjAAAX8OH+CIsYQbrxmumY0uF5z0r/8O+23RQmog804X/sjW8d8Bnek
-        Htw6loj0HfYNauc2NR6REko=
-X-Google-Smtp-Source: APXvYqyobIY1Ezoe9o8hcuJMyWc/5zlAoTGgmYT+H/1aKuxfFjVMBBzBdoKIehf6e54ML/HnRwGUTw==
-X-Received: by 2002:a2e:864f:: with SMTP id i15mr29904580ljj.99.1555020262465;
-        Thu, 11 Apr 2019 15:04:22 -0700 (PDT)
-Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.gmail.com with ESMTPSA id e18sm7887808ljb.12.2019.04.11.15.04.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2019 15:04:21 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        id S1726732AbfDKWGN convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 18:06:13 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:33956 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726730AbfDKWGN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Apr 2019 18:06:13 -0400
+Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hEhpW-0001y4-FF; Fri, 12 Apr 2019 00:05:58 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     "elaine.zhang" <zhangqing@rock-chips.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joseph Lo <josephl@nvidia.com>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/5] clk: tegra: EMC/MC clock fixes and improvements
-Date:   Fri, 12 Apr 2019 01:02:25 +0300
-Message-Id: <20190411220230.21726-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Caesar Wang <caesar.wang@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/3] Revert "clk: rockchip: mark noc and some special clk as critical on rk3288"
+Date:   Fri, 12 Apr 2019 00:05:57 +0200
+Message-ID: <1820193.6uR021mFLB@diego>
+In-Reply-To: <CAD=FV=Ue3C3gMWx9hnQr=+LU77xdemLbsWozFZoCuQAACjiCUg@mail.gmail.com>
+References: <20190409204707.150347-1-dianders@chromium.org> <1491b5f1-e9f9-5718-76e5-0a49814ed76d@rock-chips.com> <CAD=FV=Ue3C3gMWx9hnQr=+LU77xdemLbsWozFZoCuQAACjiCUg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello, I was helping with fixing EMC clock scaling on T124 Nyan Big and
-in process found some weak points in the code. Primarily the ram code
-parsing didn't work if device-tree defines memory timings for multiple
-ram codes and after fixing that I spotted few other things that could be
-improved.
+Hi,
 
-Dmitry Osipenko (5):
-  clk: tegra: emc: Don't enable EMC clock manually
-  clk: tegra: emc: Support multiple ram codes parsing
-  clk: tegra: emc: Fix EMC max-rate clamping
-  clk: tegra: emc: Replace BUG() with WARN_ONCE()
-  clk: tegra: divider: Mark Memory Controller clock as read-only
+Am Donnerstag, 11. April 2019, 17:26:41 CEST schrieb Doug Anderson:
+> On Wed, Apr 10, 2019 at 8:27 PM elaine.zhang <zhangqing@rock-chips.com> wrote:
+> > 在 2019/4/10 下午11:34, Doug Anderson 写道:
+> > On Tue, Apr 9, 2019 at 11:23 PM elaine.zhang <zhangqing@rock-chips.com> wrote:
+> > 在 2019/4/10 上午4:47, Douglas Anderson 写道:
+> >
+> > This reverts commit 55bb6a633c33caf68ab470907ecf945289cb733d.
+> >
+> > The clocks that were enabled by that patch are pretty questionable.
+> > Specifically looking at what has been shipping on rk3288-veyron
+> > Chromebooks almost all of these clocks are safely turned off and cause
+> > no apparent problems.  If some boards need these clocks turned on for
+> > some reason then it seems like we should figure out how to do that at
+> > a board level.
+> >
+> > NOTE: turning these clocks off doesn't seem to do a whole lot in terms
+> > of power savings (checking the power on the logic rail).  It appears
+> > to save maybe 1-2mW.  ...but still it seems like we should turn the
+> > clocks off if they aren't needed.
+> >
+> > Digging into the clocks here to describe why they shouldn't need to be
+> > left on:
+> >
+> > atclk: No documentation about this clock other than that it goes to
+> > the CPU.  CPU functions fine without it on.
+> >
+> > jtag: Presumably this clock is only needed if you're debugging with
+> > JTAG.  It doesn't seem like it makes sense to waste power for every
+> > rk3288 user.  Perhaps this could be turned on with a CONFIG option?
+> >
+> > pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
+> > clocks on only during kernel panics in order to access some coresight
+> > registers.  Since nothing in the upstream kernel does this we should
+> > be able to leave them off safely.
+> >
+> > hsicphy12m_xin12m: There is no indication of why this clock would need
+> > to be turned on for boards that don't use HSIC.
+> >
+> > pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
+> > these 4 clocks on only when doing DDR transitions and they are off
+> > otherwise.  I see no reason why they'd need to be on in the upstream
+> > kernel which doesn't support DDRFreq.
+> >
+> > pmu_hclk_otg0: A "chip design defect" is mentioned in the original
+> > patch but no details.  This clock has always been gated in shipping
+> > veyron Chromebooks so presumably this chip defect doesn't affect all
+> > boards.
+> >
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >
+> >   drivers/clk/rockchip/clk-rk3288.c | 14 ++++----------
+> >   1 file changed, 4 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+> > index 5a67b7869960..06287810474e 100644
+> > --- a/drivers/clk/rockchip/clk-rk3288.c
+> > +++ b/drivers/clk/rockchip/clk-rk3288.c
+> > @@ -313,13 +313,13 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+> >       COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
+> >                       RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
+> >                       RK3288_CLKGATE_CON(12), 6, GFLAGS),
+> > -     COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
+> > +     COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
+> >                       RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
+> >                       RK3288_CLKGATE_CON(12), 7, GFLAGS),
+> >       COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
+> >                       RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
+> >                       RK3288_CLKGATE_CON(12), 8, GFLAGS),
+> > -     GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
+> > +     GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
+> >                       RK3288_CLKGATE_CON(12), 9, GFLAGS),
+> >       GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
+> >                       RK3288_CLKGATE_CON(12), 10, GFLAGS),
+> > @@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+> >       INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
+> >                       RK3288_CLKSEL_CON(22), 7, IFLAGS),
+> >
+> > -     GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+> > +     GATE(0, "jtag", "ext_jtag", 0,
+> >                       RK3288_CLKGATE_CON(4), 14, GFLAGS),
+> >
+> > CLK_IGNORE_UNUSED:
+> > Whether to close the unused clk after clk init complete. not affect
+> > there own enable/disable.
+> > JTAG is not have device node, when need jtag to debug, may be the system
+> > is crashed, there is no way to turn on this clk.
+> >
+> > As I mentioned in the commit message this seems like the kind of thing
+> > that should be controlled by a CONFIG_ option.  It's a debug option
+> > that's fine to have on all the time but consumes resources so some
+> > people might want to turn it off.
+> >
+> > Currently,  CONFIG_ option is not implemented. We will refer to this suggestion.
+> >
+> > For debug,  I don't hope to remove the flag CLK_IGNORE_UNUSED.(The clk static power is very small)
+> 
+> I'll leave it up to Heiko for what to do here.  I agree that it's not
+> tons of power (this whole patch saved 1-2 mW on the INT rail) but I'd
+> still prefer for clocks to be off if they can.  In general one could
+> also argue that keeping JTAG off by default could be good for
+> security.
+> 
+> ...but I guess I have to wonder how you're doing JTAG on upstream
+> kernels without any extra patches anyway.  Automatic JTAG switching is
+> turned off in "drivers/soc/rockchip/grf.c".  ...and by default the
+> JTAG signals are muxed as the SD Card.  So presumably you've already
+> got extra patches in order to make JTAG work.
+> 
+> I assume that the clocks that are important for JTAG are "atclk",
+> "jtag", "pclk_dbg", and "pclk_core_niu".
 
- drivers/clk/tegra/clk-divider.c |  5 +--
- drivers/clk/tegra/clk-emc.c     | 57 ++++++++++++++++++++-------------
- 2 files changed, 38 insertions(+), 24 deletions(-)
+Isn't JTAG part of the coresight package anyway? The whole coresight
+stuff, so in an upstream-context I'd somehow expect it to get activated
+through that. Or is it actually separate and only in the debug-diagram
+in the TRM mixed into coresight?
 
--- 
-2.21.0
+In any case I'm with Doug here, for jtag you need to modify your kernel
+anyway for pinctrl settings, so could also enable the clock in that case.
+
+
+> >       COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy480m_p, 0,
+> > @@ -656,7 +656,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+> >       COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy480m_p, 0,
+> >                       RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
+> >                       RK3288_CLKGATE_CON(3), 6, GFLAGS),
+> > -     GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
+> > +     GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
+> >                       RK3288_CLKGATE_CON(13), 9, GFLAGS),
+> >       DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
+> >                       RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
+> > @@ -837,12 +837,6 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+> >       "pclk_alive_niu",
+> >       "pclk_pd_pmu",
+> >       "pclk_pmu_niu",
+> > -     "pclk_core_niu",
+> > -     "pclk_ddrupctl0",
+> > -     "pclk_publ0",
+> > -     "pclk_ddrupctl1",
+> > -     "pclk_publ1",
+> >
+> > These clks needed enable, device node not use this clk, so we mark it as
+> > critical.
+> >
+> > What breaks if you don't enable these clocks?  As far as I can tell
+> > these clocks only need to be enabled while touching memory controller
+> > registers (deep suspend/resume and DDRFreq transitions).  On
+> > Chromebooks everything works fine with these clocks only turned on
+> > when needed.
+> >
+> > If need to enable these clks, ddrupctl0/ddrupctl1/publ0/publ1 clks no driver to handle them, so mark these clk as  critical.
+> 
+> Perhaps it's just a typo, but you say "If need to enable".  I see no
+> evidence that these clocks need to be enabled unless there is code
+> touching memory controller registers.  Thus we don't need to enable
+> them so they don't need to be critical.
+
+yep ... maybe Elaine can clarify in what other activities these clocks
+are needed ... I guess any ddr-scaling code would activate them
+before touching memory-controller-registers.
+
+
+> > -     "pmu_hclk_otg0",
+> >
+> > It's a soc bug, pmu_hclk_otg0 must always on.
+> >
+> > So you said in your previous commit message.  However we've shipped
+> > lots and lots of Chromebooks with this clock off.  Can you explain
+> > what is broken?  Is this only needed for gadget mode (which we don't
+> > use), for instance?
+> >
+> > test case:
+> >
+> > recovery test,  < 1 hour , system crash.
+> >
+> > log:
+> >
+> > [  127.569629] I[0:      swapper/0:    0] GOTGCTL        @0xFFFFFF8000B80000 : 0x00400010
+> > [  127.569644] I[0:      swapper/0:    0] GOTGINT        @0xFFFFFF8000B80004 : 0x00400010
+> > [  127.569659] I[0:      swapper/0:    0] GAHBCFG        @0xFFFFFF8000B80008 : 0x00400010
+> > [  127.569673] I[0:      swapper/0:    0] GUSBCFG        @0xFFFFFF8000B8000C : 0x00400010
+> > [  127.569688] I[0:      swapper/0:    0] GRSTCTL        @0xFFFFFF8000B80010 : 0x00400010
+> > [  127.569702] I[0:      swapper/0:    0] GINTSTS        @0xFFFFFF8000B80014 : 0x00400010
+> > [  127.569718] I[0:      swapper/0:    0] GINTMSK        @0xFFFFFF8000B80018 : 0x00400010
+> > [  127.569733] I[0:      swapper/0:    0] GRXSTSR        @0xFFFFFF8000B8001C : 0x00400010
+> > [  127.569748] I[0:      swapper/0:    0] GRXFSIZ        @0xFFFFFF8000B80024 : 0x00400010
+> 
+> I don't know what a "recovery test" is and I don't understand your logs.
+> 
+> Can you explain we do not run into this on Chromebooks?
+> 
+> 
+> > reason:
+> >
+> > USB OTG controller supports turning off most logic power, and then only one PMU module is left. This clock cannot be turned off, which is similar to the always on module in USB OTG.
+> 
+> Can't you just add a patch to the dwc2 driver to have it grab this
+> clock?  I assume this clock doesn't need to be turned on unless you're
+> using the OTG contoller in a certain way?
+
+So far we don't really know where the clock in question is sitting
+in the clock hirarchy. For example the kernel got a new interconnect
+framework recently, so handling non-device clocks in a device may haunt
+us later on.
+
+@Elaine: could you elaborate what pmu_hclk_otg0 actually is for please?
+
+
+> NOTE: nowhere in your responses did you talk about why
+> "hsicphy12m_xin12m" needed to be marked as IGNORE_UNUSED.  I guess
+> you're OK with removing that?
+
+
+Thanks
+Heiko
+
+
 
