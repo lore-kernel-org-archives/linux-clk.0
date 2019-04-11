@@ -4,104 +4,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FB5C10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 11:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA90C10F14
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 12:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F6952133D
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 11:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 991D42184E
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 12:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726106AbfDKLva (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 07:51:30 -0400
-Received: from smtprelay0240.hostedemail.com ([216.40.44.240]:43571 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726026AbfDKLva (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 07:51:30 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 86E61181D333D;
-        Thu, 11 Apr 2019 11:51:28 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: color20_46df008961057
-X-Filterd-Recvd-Size: 3009
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 11 Apr 2019 11:51:26 +0000 (UTC)
-Message-ID: <c333da513d0e47af3fa91e735ecc6620658f5050.camel@perches.com>
-Subject: Re: [PATCH RFC] clk: ux500: add range to usleep_range
-From:   Joe Perches <joe@perches.com>
-To:     Nicholas Mc Guire <der.herr@hofr.at>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicholas Mc Guire <hofrat@opentech.at>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        id S1727101AbfDKMsD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 08:48:03 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:48189 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfDKMsD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 08:48:03 -0400
+X-Originating-IP: 90.88.18.121
+Received: from aptenodytes (aaubervilliers-681-1-63-121.w90-88.abo.wanadoo.fr [90.88.18.121])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 81D9120018;
+        Thu, 11 Apr 2019 12:47:53 +0000 (UTC)
+Message-ID: <4c9aa6a850d76533ff693a44ef95b68241836751.camel@bootlin.com>
+Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
+ (Camera Sensor Interface)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     =?UTF-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 11 Apr 2019 04:51:25 -0700
-In-Reply-To: <20190411025602.GB5487@osadl.at>
-References: <1554606804-29453-1-git-send-email-hofrat@opentech.at>
-         <155493683173.20095.12913107010666279046@swboyd.mtv.corp.google.com>
-         <20190411025602.GB5487@osadl.at>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Date:   Thu, 11 Apr 2019 14:47:52 +0200
+In-Reply-To: <20190409220040.3sx456gefmjq3t3g@core.my.home>
+References: <20190408165744.11672-1-wens@kernel.org>
+         <20190408165744.11672-5-wens@kernel.org>
+         <20190409075804.4zrwjil7ie2gjigu@flea>
+         <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
+         <20190409082818.z33mq2qrxethldzf@flea>
+         <20190409220040.3sx456gefmjq3t3g@core.my.home>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.0 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2019-04-11 at 04:56 +0200, Nicholas Mc Guire wrote:
-> On Wed, Apr 10, 2019 at 03:53:51PM -0700, Stephen Boyd wrote:
-> > Quoting Nicholas Mc Guire (2019-04-06 20:13:24)
-> > > Providing a range for usleep_range() allows the hrtimer subsystem to
-> > > coalesce timers - the delay is runtime configurable so a factor 2
-> > > is taken to provide the range.
+Hi,
+
+Le mercredi 10 avril 2019 à 00:00 +0200, Ondřej Jirman a écrit :
+> On Tue, Apr 09, 2019 at 10:28:18AM +0200, Maxime Ripard wrote:
+> > On Tue, Apr 09, 2019 at 04:07:34PM +0800, Chen-Yu Tsai wrote:
+> > > On Tue, Apr 9, 2019 at 3:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > On Tue, Apr 09, 2019 at 12:57:42AM +0800, Chen-Yu Tsai wrote:
+> > > > > From: Chen-Yu Tsai <wens@csie.org>
+> > > > > 
+> > > > > The A83T SoC has a camera sensor interface (known as CSI in Allwinner
+> > > > > lingo), which is similar to the one found on the A64 and H3. The only
+> > > > > difference seems to be that support of MIPI CSI through a connected
+> > > > > MIPI CSI-2 bridge.
+> > > > > 
+> > > > > Add a device node for it, and pinctrl nodes for the commonly used MCLK
+> > > > > and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
+> > > > > the pinctrl nodes to keep the device tree blob size down if they are
+> > > > > unused.
+> > > > > 
+> > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > > > > ---
+> > > > >  arch/arm/boot/dts/sun8i-a83t.dtsi | 31 +++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 31 insertions(+)
+> > > > > 
+> > > > > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > index f739b88efb53..0c52f945fd5f 100644
+> > > > > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > @@ -682,6 +682,20 @@
+> > > > >                       #interrupt-cells = <3>;
+> > > > >                       #gpio-cells = <3>;
+> > > > > 
+> > > > > +                     /omit-if-no-ref/
+> > > > > +                     csi_8bit_parallel_pins: csi-8bit-parallel-pins {
+> > > > > +                             pins = "PE0", "PE2", "PE3", "PE6", "PE7",
+> > > > > +                                    "PE8", "PE9", "PE10", "PE11",
+> > > > > +                                    "PE12", "PE13";
+> > > > > +                             function = "csi";
+> > > > > +                     };
+> > > > > +
+> > > > > +                     /omit-if-no-ref/
+> > > > > +                     csi_mclk_pin: csi-mclk-pin {
+> > > > > +                             pins = "PE1";
+> > > > > +                             function = "csi";
+> > > > > +                     };
+> > > > > +
+> > > > >                       emac_rgmii_pins: emac-rgmii-pins {
+> > > > >                               pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
+> > > > >                                      "PD11", "PD12", "PD13", "PD14", "PD18",
+> > > > > @@ -994,6 +1008,23 @@
+> > > > >                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+> > > > >               };
+> > > > > 
+> > > > > +             csi: camera@1cb0000 {
+> > > > > +                     compatible = "allwinner,sun8i-a83t-csi";
+> > > > > +                     reg = <0x01cb0000 0x1000>;
+> > > > > +                     interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > +                     clocks = <&ccu CLK_BUS_CSI>,
+> > > > > +                              <&ccu CLK_CSI_SCLK>,
+> > > > > +                              <&ccu CLK_DRAM_CSI>;
+> > > > > +                     clock-names = "bus", "mod", "ram";
+> > > > > +                     resets = <&ccu RST_BUS_CSI>;
+> > > > > +                     status = "disabled";
+> > > > > +
+> > > > > +                     csi_in: port {
+> > > > > +                             #address-cells = <1>;
+> > > > > +                             #size-cells = <0>;
+> > > > 
+> > > > If we expect a single enpoint, then we don't need the address-cells
+> > > > and size-cells properties.
 > > > 
-> > > Signed-off-by: Nicholas Mc Guire <hofrat@opentech.at>
-> > > ---
+> > > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
+> > > is kind of genius if not very hacky. They have two "identical" sensors
+> > > on the same I2C bus and CSI bus, with shared reset line but separate
+> > > shutdown lines. Since they are identical, they also have the same I2C
+> > > address. I haven't figured out how to model this in the device tree.
+> > > 
+> > > The point is, it's perfectly possible to have two or more sensors use
+> > > the same controller, provided only one be active at a time.
 > > 
-> > I think this driver is in maintenance mode. I'll wait for Ulf to ack or
-> > review this change before applying.
+> > Right, but I guess the common case would be to have a single sensor,
+> > where that wouldn't be needed.
 > > 
-> > > diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-> > > index 7c0403b..a1fa3fb 100644
-> > > --- a/drivers/clk/ux500/clk-sysctrl.c
-> > > +++ b/drivers/clk/ux500/clk-sysctrl.c
-> > > @@ -42,7 +42,7 @@ static int clk_sysctrl_prepare(struct clk_hw *hw)
-> > >                                 clk->reg_bits[0]);
-> > >  
-> > >         if (!ret && clk->enable_delay_us)
-> > > -               usleep_range(clk->enable_delay_us, clk->enable_delay_us);
-> > > +               usleep_range(clk->enable_delay_us, clk->enable_delay_us*2);
-> > 
-> > Please add space around that multiply.
-> > 
-> I can do that but it does not seem common and also checkpatch
-> did not complain about this - now a simple grep -re "\*10" on the
-> kernel shows that it seems more common not to use spaces around *
-> that to use them.
-
-Not really
-
-$ git grep -P '\*\s*10' | grep -oh -P '\*\s*10' | \
-  sort | uniq -c | sort -rn | head 
-  11800 * 10
-   1705 *10
-    179 *  10
-     74 *   10
-     67 *	10
-     20 *     10
-     20 *      10
-     14 *    10
-     14 *		10
-     12 *         10
-
-> Greping specifically for cases using usleep_range()
-> (not that many) it seems more or less evenly devided between space
-> and no space - so the concern is overlooking that factor 2 ?
+> > In odd cases, we can always specify it in the DTS, and if it becomes
+> > common enough, we can move it to the DTSI.
 > 
-> thx!
-> hofrat 
+> I'm planning on having two sensors there, in a less arcane setup,
+> though - no shared resets, and different I2C addresses.
+> 
+> Anyway, I can confirm that CSI driver works fine on A83T with just
+> a DTSI patch, even without the clock patch in this series. I've been
+> running it for quite a while that way without any issues (different
+> camera chip than the ones being used by wens).
+
+That's quite nice to hear! I would be interested in getting some
+insight on which sensors are known to work and which are broken or have
+limitations.
+
+Would you happen to have a list of the sensors that you tested and
+whether you encountered such issues with them?
+
+Cheers,
+
+Paul
+
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
