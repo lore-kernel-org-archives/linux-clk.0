@@ -2,102 +2,109 @@ Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F3CC10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 21:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B36C10F13
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 21:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B96F2146F
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 21:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F37852184B
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 21:50:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="TvaDwhxf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHBcvhim"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfDKViz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 17:38:55 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36821 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfDKViz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 17:38:55 -0400
-Received: by mail-oi1-f196.google.com with SMTP id l203so6261946oia.3;
-        Thu, 11 Apr 2019 14:38:55 -0700 (PDT)
+        id S1726926AbfDKVuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 17:50:03 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46684 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbfDKVuD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 17:50:03 -0400
+Received: by mail-lf1-f68.google.com with SMTP id r25so5837336lfn.13;
+        Thu, 11 Apr 2019 14:50:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c/Eaat6mJaApPXTKW9fxNSQtMRxRCGIGBY0z0WTwZsY=;
-        b=TvaDwhxfg26dt8H/AyPFMVm1oubn9ub7EVmMtB+QXJr+GfKype/hsuV1znFc5ueAUg
-         XNSe5y9xoMLQ21nUKsuVikIHiMtsr+ZA1aoNrhWiAILFzu0LT6UGrb/jIVQfFa65SpYU
-         R1OI79488ZvcxCSU0wYM4tA8tLETlnz6zhLMWghea0PWRlBx/SzlO/8TjNFXqKAaMhDK
-         by7GY5b9rNGKSqal9xQk98TnVcSMUWdCTyQ2nMSOw+Y6szke6WlY/ZWWD3TFDvgg+TEf
-         zA1aXbnfvOBaMHltAHsjvzs68MNyQLyYTztaRv4G7gesBJ71JXtet+ex5ahay4550GQ4
-         2UTw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EJvVCUfvI6iyVQeoKBvB2Y47bXsmGbMgyBKCT2yiRNc=;
+        b=RHBcvhimU29csIHfKFn6lYG/9fbbh2UZ5H0WVhL2hjkxsT88Wx7R+r2/H+r8BGg4zB
+         I9daVi0nUh53BatD6ID3rocnH5letnM7Qi1zAT1jDbGUxLkip2/Tj08aDsh2RGqkR29B
+         YZl49HTJMsX3Z6qbZTpvwE4DBsFeB/yk0Hgr9bIVPdl/l1z5USM6soGetTyTls9dogfN
+         69Cy8xmm1c76JJSnVi7x+EdyUIrUHQIo1D9gjhiSvfGEw7izPnNqIDH01CoEncxlgYuC
+         GQuaQmAQ43lfrlWP8xa8/7J9Opj3Apt25JoqxEfVPRKltMbiAC8MNoNkIJsQjJy0ljoy
+         YxJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c/Eaat6mJaApPXTKW9fxNSQtMRxRCGIGBY0z0WTwZsY=;
-        b=LJuoyVt+hB6+Km7ljcrV4QH8nnYZ3ym94CBX6Re2hvDIFzbvyOTKmWSNQsxtcPZtxT
-         kvpiVNoPtPd3uzZOhoEvPbt/rBoQqdtowlZzqIHma+gdQxuEZKntRBb7FVTcLsit6NMD
-         qQ9cVsJ/nCoqj78gCNS7N/WtgJWttymyZnJ5a/HkNVbIs3cR0yJFQGDOEWNs+ROfO2HM
-         Uewgmlg6ykP6lb3lAEFcK2nWZM/3e1k71WKQvObuo4E0Kyy6hZKeYaGmJBggysebCkf6
-         GQeVTm6yTKihtpTdpPMPJ/mrST0VPMiLh1cgjOl1WuPq5HFP2gkKGAqba6w+kk3bx6+q
-         1K9A==
-X-Gm-Message-State: APjAAAU0vFJJj8wxVgK1+tzI9HsWnOgBP48RXPp4mQno/tNK11MPKZoC
-        xRRxJzgIP4B4O/8sCyryBwZdt3Vq3wUZZjOhccE=
-X-Google-Smtp-Source: APXvYqxpFjlc5TAR58LDBDGCS9RlzmCK78XSQeYEC3Z/MRTErq4S19jysbPYG23FDxcOpZ+8xZAKbsLGBGqwTHnXxxU=
-X-Received: by 2002:aca:4482:: with SMTP id r124mr8219082oia.39.1555018734440;
- Thu, 11 Apr 2019 14:38:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EJvVCUfvI6iyVQeoKBvB2Y47bXsmGbMgyBKCT2yiRNc=;
+        b=ODynIUPkBH+GoGV6HUV9M83DLlyL6vlef2XirUXn2AwNf1IYuOAcl4r6Gdm3l4Lcl/
+         pmL8gDp+pBtUAOHXC9IrV/+ALxwRuRNAtQgiPI/JIGEtryAEPh5NUiY+ZlhUceYbA04K
+         dHXuyBcIMvikOPlLERx4ArzKtxs7A4pNg62Ry5FxpQdO/FFEB1QG4I6r/mh4af3Oq1gQ
+         9c9fTClD0chhGpzqHIuWGY5LSUbrP4A5tBD7P2LNHon5cKoQkMVa+O8O1mM9dR/CxjNz
+         h1lt3MmjF8rnlST8INf9uj5g8OkvClwz9YOgq1+J/6qLPHKjsKeFmjtUG5XrUbx4VtTI
+         WLFQ==
+X-Gm-Message-State: APjAAAXOC7Qed1TDwQxsNPsGE264wzevrFpsjO9mhTmpkqzjWNEf9jC+
+        KLsq0aeHXK5hgKQjITq/e5k=
+X-Google-Smtp-Source: APXvYqwcIkIuskqLRvMzRykSyGjoNcttJMp8wh2/rRNU/ZrUj7kPMAUwWp+EgmO6N0Pd6WPu//oKvg==
+X-Received: by 2002:a19:6b14:: with SMTP id d20mr20531327lfa.152.1555019400600;
+        Thu, 11 Apr 2019 14:50:00 -0700 (PDT)
+Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.gmail.com with ESMTPSA id t29sm7819985ljd.82.2019.04.11.14.49.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Apr 2019 14:49:59 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+Date:   Fri, 12 Apr 2019 00:48:34 +0300
+Message-Id: <20190411214835.19947-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190411214835.19947-1-digetx@gmail.com>
+References: <20190411214835.19947-1-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20190411084537.30299-1-glaroque@baylibre.com> <20190411084537.30299-3-glaroque@baylibre.com>
-In-Reply-To: <20190411084537.30299-3-glaroque@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 11 Apr 2019 23:38:43 +0200
-Message-ID: <CAFBinCBVmPa5hi83B1ZTe-guassHxKQFrN5QOyMJc9s95LJ1cg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: meson-g12a: Add Temperature Sensor clock
-To:     Guillaume La Roque <glaroque@baylibre.com>
-Cc:     jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
-        khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Guillaume,
+There are wrongly set parenthesis in the code that are resulting in a
+wrong configuration being programmed for PLLM. The original fix was made
+by Danny Huang in the downstream kernel. The patch was tested on Nyan Big
+Tegra124 chromebook, PLLM rate changing works correctly now and system
+doesn't lock up after changing the PLLM rate due to EMC scaling.
 
-On Thu, Apr 11, 2019 at 10:46 AM Guillaume La Roque
-<glaroque@baylibre.com> wrote:
->
-> Add TS clock used by two temperature sensor
-thank you for working on this!
+Cc: <stable@vger.kernel.org>
+Tested-by: Steev Klimaszewski <steev@kali.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> ---
->  drivers/clk/meson/g12a.c | 31 +++++++++++++++++++++++++++++++
->  drivers/clk/meson/g12a.h |  3 ++-
->  2 files changed, 33 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 3a3134976534..e6d2af6ee8ea 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -2335,6 +2335,33 @@ static struct clk_regmap g12a_mali = {
->         },
->  };
->
-> +static struct clk_regmap g12a_ts_div = {
-> +       .data = &(struct clk_regmap_div_data){
-> +               .offset = HHI_TS_CLK_CNTL,
-> +               .shift = 0,
-> +               .width = 7,
-buildroot_openlinux_kernel_4.9_fbdev_20180706 uses ".width = 8".
-That matches with the public S922X datasheet from hardkernel which
-states that HHI_TS_CLK_CNTL[7:0] is "ts_clk clk_div"
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b50b7460014b..3e67cbcd80da 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -663,8 +663,8 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 		pll_override_writel(val, params->pmc_divp_reg, pll);
+ 
+ 		val = pll_override_readl(params->pmc_divnm_reg, pll);
+-		val &= ~(divm_mask(pll) << div_nmp->override_divm_shift) |
+-			~(divn_mask(pll) << div_nmp->override_divn_shift);
++		val &= ~((divm_mask(pll) << div_nmp->override_divm_shift) |
++			(divn_mask(pll) << div_nmp->override_divn_shift));
+ 		val |= (cfg->m << div_nmp->override_divm_shift) |
+ 			(cfg->n << div_nmp->override_divn_shift);
+ 		pll_override_writel(val, params->pmc_divnm_reg, pll);
+-- 
+2.21.0
 
-
-Martin
