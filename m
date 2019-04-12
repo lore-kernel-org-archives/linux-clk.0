@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AACEC10F0E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6876BC10F14
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D4B6218C3
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AFC6218A3
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555093945;
-	bh=zLRmPqxlLQc3AN/GbT8QG3oWhXh1GCS3AdlYegAqcRo=;
+	s=default; t=1555093952;
+	bh=9nrE2eN80xxKdJ9WieNmrYl4QLOjjhrAG6XUmVRgGZo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=thoha9001/xo3Pt49d4oOPpKfbGBkbuI0mX88EeipWqz6HotfvM+NsdV1W7V2yYAE
-	 ltC4JYwjio5vidP6mHom3Zgt0NB/iwNFmxeg/1YW3nhWqlbAyLWrLXWnlrrqeD1qX6
-	 5xllkPSFKQT+L/h87Sr7cGFlrrBxvChXnrVlGCrE=
+	b=qu+1IoO7oVOC6x0HVJz7KhVhcKxzMQ3aZfVey0xPHSOXJxfG7GWvceTAZrIycyrpK
+	 iKZ9I7OTZfCeiz3x/HmCjwBpMc82xHyjA2DZ3XDgQ2uvZXT3aaLuR6UBvm5mdMM902
+	 xPDZgkbQI83AFG5jB23kWzEX5b4FJiFlhNGxS5CA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfDLScU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 14:32:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50396 "EHLO mail.kernel.org"
+        id S1727019AbfDLSbx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 14:31:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727027AbfDLSby (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 14:31:54 -0400
+        id S1726914AbfDLSbx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Apr 2019 14:31:53 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BD47218FC;
-        Fri, 12 Apr 2019 18:31:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26064218C3;
+        Fri, 12 Apr 2019 18:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555093913;
-        bh=zLRmPqxlLQc3AN/GbT8QG3oWhXh1GCS3AdlYegAqcRo=;
+        s=default; t=1555093912;
+        bh=9nrE2eN80xxKdJ9WieNmrYl4QLOjjhrAG6XUmVRgGZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p9JmaqpgtwWfs0Y/DwXacpg/lotkuQDpJdkfcMMeA3b2fWgi6i4coXaYPZQwBbWKV
-         N3U6MLwCW5qdbi+59iWg6F15dt+XhA4a9Y+49CWjhYYkLmB6wosFgGD8lBRZ+bvceA
-         KCWy7PnvXORvl31kpYlmRcHTcltX3dWGgGjbdOos=
+        b=DclFyroe13Qb1lWk3Qx7ERAxnNpTSQ0uc2RtGeQxHrgB+l7h7OArWZ0ydeVjIAZ10
+         woko8Z0r7yUL+hrH2NsIqPX4R0FwtASEo2c8h9aJyblqCrMUtcGl7amsJcCW032pEI
+         FA5H72WRpQs89ZhySCLtBBiVQCz9nUFkL2rgNMd4=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -46,10 +46,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Jerome Brunet <jbrunet@baylibre.com>,
         Russell King <linux@armlinux.org.uk>,
         Jeffrey Hugo <jhugo@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 5/9] clk: Add of_clk_hw_register() API for early clk drivers
-Date:   Fri, 12 Apr 2019 11:31:46 -0700
-Message-Id: <20190412183150.102131-6-sboyd@kernel.org>
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v4 2/9] clkdev: Move clk creation outside of 'clocks_mutex'
+Date:   Fri, 12 Apr 2019 11:31:43 -0700
+Message-Id: <20190412183150.102131-3-sboyd@kernel.org>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 In-Reply-To: <20190412183150.102131-1-sboyd@kernel.org>
 References: <20190412183150.102131-1-sboyd@kernel.org>
@@ -60,10 +60,13 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In some circumstances drivers register clks early and don't have access
-to a struct device because the device model isn't initialized yet. Add
-an API to let drivers register clks associated with a struct device_node
-so that these drivers can participate in getting parent clks through DT.
+We don't need to hold the 'clocks_mutex' here when we're creating a clk
+pointer from a clk_lookup structure. Instead, we just need to make sure
+that the lookup doesn't go away while we dereference the lookup pointer
+to extract the clk_hw pointer out of it. Let's move things around
+slightly so that we have a new function to get the clk_hw out of the
+lookup with the right locking and then chain the two together for what
+used to be __clk_get_sys().
 
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>
@@ -71,93 +74,54 @@ Cc: Russell King <linux@armlinux.org.uk>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Jeffrey Hugo <jhugo@codeaurora.org>
 Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh@kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c            | 26 +++++++++++++++++++++++---
- include/linux/clk-provider.h |  1 +
- 2 files changed, 24 insertions(+), 3 deletions(-)
+ drivers/clk/clkdev.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d27775a73e67..ffa63ddcd408 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -45,6 +45,7 @@ struct clk_core {
- 	struct clk_hw		*hw;
- 	struct module		*owner;
- 	struct device		*dev;
-+	struct device_node	*of_node;
- 	struct clk_core		*parent;
- 	const char		**parent_names;
- 	struct clk_core		**parents;
-@@ -3313,7 +3314,8 @@ struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
- 	return clk;
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 6e787cc9e5b9..6f65bde696da 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -72,25 +72,26 @@ static struct clk_lookup *clk_find(const char *dev_id, const char *con_id)
+ 	return cl;
  }
  
--static struct clk *__clk_register(struct device *dev, struct clk_hw *hw)
-+static struct clk *
-+__clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+-static struct clk *__clk_get_sys(struct device *dev, const char *dev_id,
+-				 const char *con_id)
++static struct clk_hw *clk_find_hw(const char *dev_id, const char *con_id)
  {
- 	int i, ret;
- 	struct clk_core *core;
-@@ -3339,6 +3341,7 @@ static struct clk *__clk_register(struct device *dev, struct clk_hw *hw)
- 	if (dev && pm_runtime_enabled(dev))
- 		core->rpm_enabled = true;
- 	core->dev = dev;
-+	core->of_node = np;
- 	if (dev && dev->driver)
- 		core->owner = dev->driver->owner;
- 	core->hw = hw;
-@@ -3429,7 +3432,7 @@ static struct clk *__clk_register(struct device *dev, struct clk_hw *hw)
-  */
- struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- {
--	return __clk_register(dev, hw);
-+	return __clk_register(dev, dev_of_node(dev), hw);
- }
- EXPORT_SYMBOL_GPL(clk_register);
+ 	struct clk_lookup *cl;
+-	struct clk *clk = NULL;
++	struct clk_hw *hw = ERR_PTR(-ENOENT);
  
-@@ -3445,10 +3448,27 @@ EXPORT_SYMBOL_GPL(clk_register);
-  */
- int clk_hw_register(struct device *dev, struct clk_hw *hw)
- {
--	return PTR_ERR_OR_ZERO(__clk_register(dev, hw));
-+	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
- }
- EXPORT_SYMBOL_GPL(clk_hw_register);
+ 	mutex_lock(&clocks_mutex);
+-
+ 	cl = clk_find(dev_id, con_id);
+-	if (!cl)
+-		goto out;
+-
+-	clk = clk_hw_create_clk(dev, cl->clk_hw, dev_id, con_id);
+-	if (IS_ERR(clk))
+-		cl = NULL;
+-out:
++	if (cl)
++		hw = cl->clk_hw;
+ 	mutex_unlock(&clocks_mutex);
  
-+/*
-+ * of_clk_hw_register - register a clk_hw and return an error code
-+ * @node: device_node of device that is registering this clock
-+ * @hw: link to hardware-specific clock data
-+ *
-+ * of_clk_hw_register() is the primary interface for populating the clock tree
-+ * with new clock nodes when a struct device is not available, but a struct
-+ * device_node is. It returns an integer equal to zero indicating success or
-+ * less than zero indicating failure. Drivers must test for an error code after
-+ * calling of_clk_hw_register().
-+ */
-+int of_clk_hw_register(struct device_node *node, struct clk_hw *hw)
-+{
-+	return PTR_ERR_OR_ZERO(__clk_register(NULL, node, hw));
+-	return cl ? clk : ERR_PTR(-ENOENT);
++	return hw;
 +}
-+EXPORT_SYMBOL_GPL(of_clk_hw_register);
 +
- /* Free memory allocated for a clock. */
- static void __clk_release(struct kref *ref)
- {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index b7cf80a71293..7d2d97e15b76 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -773,6 +773,7 @@ struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
++static struct clk *__clk_get_sys(struct device *dev, const char *dev_id,
++				 const char *con_id)
++{
++	struct clk_hw *hw = clk_find_hw(dev_id, con_id);
++
++	return clk_hw_create_clk(dev, hw, dev_id, con_id);
+ }
  
- int __must_check clk_hw_register(struct device *dev, struct clk_hw *hw);
- int __must_check devm_clk_hw_register(struct device *dev, struct clk_hw *hw);
-+int __must_check of_clk_hw_register(struct device_node *node, struct clk_hw *hw);
- 
- void clk_unregister(struct clk *clk);
- void devm_clk_unregister(struct device *dev, struct clk *clk);
+ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
 -- 
 Sent by a computer through tubes
 
