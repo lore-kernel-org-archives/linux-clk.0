@@ -2,110 +2,208 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F14EC10F0E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 16:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF1BC10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 17:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02C9720869
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 16:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D09B72171F
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 17:29:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WDYhqQ1B"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NNAs4gTk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfDLQvl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 12:51:41 -0400
-Received: from mail-eopbgr140071.outbound.protection.outlook.com ([40.107.14.71]:13196
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726624AbfDLQvl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 12:51:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5DaptNJDwE1jCpjPQoUEAaxUJrkd56ltbIuHW8vRNOA=;
- b=WDYhqQ1BBHJPTLVGD0Ny/KcPWzUybQ5Qa5AyilMwJL7zWRtL245qs72imUXxAXey0dvvOm1IW4JlSvZUulbWVV0eK8/NhCje80HJZdHezfhMhQzNleMAi0hRkfNYGp2B5C8153+5DS2wgLV6dCimrvulTbMUKx9lFruRaOqLqY4=
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
- VI1PR04MB4814.eurprd04.prod.outlook.com (20.177.48.223) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1792.15; Fri, 12 Apr 2019 16:51:37 +0000
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::cca7:43cf:dc13:a822]) by VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::cca7:43cf:dc13:a822%4]) with mapi id 15.20.1792.016; Fri, 12 Apr 2019
- 16:51:37 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Jacky Bai <ping.bai@nxp.com>
-CC:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "linux-pm@lists.infradead.org" <linux-pm@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/4] clk: imx: Fix PLL_1416X not rounding rates
-Thread-Topic: [PATCH 1/4] clk: imx: Fix PLL_1416X not rounding rates
-Thread-Index: AQHU8U/+WE0bcFs32UiKWx2jnuEbaw==
-Date:   Fri, 12 Apr 2019 16:51:37 +0000
-Message-ID: <VI1PR04MB55330D9C5E2DE905333070F4EE280@VI1PR04MB5533.eurprd04.prod.outlook.com>
-References: <cover.1555077720.git.leonard.crestez@nxp.com>
- <7dd868d4673f155faa8c52d80a01d01aed2ea247.1555077720.git.leonard.crestez@nxp.com>
- <155508743438.20095.5061509575513490354@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e2650929-8e89-44be-bd2d-08d6bf6720ee
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600139)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4814;
-x-ms-traffictypediagnostic: VI1PR04MB4814:
-x-microsoft-antispam-prvs: <VI1PR04MB481446EC4EAC6644E89F3F65EE280@VI1PR04MB4814.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0005B05917
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(346002)(39860400002)(366004)(199004)(189003)(106356001)(71190400001)(229853002)(110136005)(305945005)(5660300002)(446003)(26005)(74316002)(81156014)(52536014)(53546011)(25786009)(7736002)(6636002)(186003)(81166006)(68736007)(66066001)(4326008)(86362001)(6116002)(102836004)(6506007)(44832011)(97736004)(478600001)(2906002)(3846002)(33656002)(8676002)(53936002)(256004)(14454004)(55016002)(105586002)(8936002)(6246003)(6436002)(4744005)(486006)(316002)(99286004)(476003)(9686003)(7696005)(76176011)(54906003)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4814;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: OVlU1Bj/PZff/ImNp1ZRwEw8Iy+Gbr6LqK+icas2I1kgS9bDqlvLVAyrke1wrN8BpS6Pcm3boxVqteiqbQxTEoAmBY28VI+Uc67S+/hKGLW6nY5ASQRfZY++LROSMfmi7piTMadncZJK033Jc+rGvWX//XhG0N+aG+9jK1FuleLoDaJCAmyCd3c2a+VZTQdnnPYpczo2rD7+V1mUdh8Ry4TCGCWuEQyDJJzUDEdMc6I7oDJ5lIc+DY9yXKpLEuxaAylOZ0yZitRn9QnpogIj50mnM83PCEpss/1Gp3oHxy8pbqVL6wkX+A0ztWKakaAhk6aEvLVoDaK+ByNcPXdzaOihDdGzuHlk7xbHYsf9YwQOFKmiqtaxUlBw6sfixCa56aSZaG+AbPWTJUYsC9TtVZg+62XA9eTdqBBNOQKTItc=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726851AbfDLR3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 13:29:09 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:40281 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbfDLR3J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 13:29:09 -0400
+Received: by mail-ua1-f65.google.com with SMTP id b8so3487398uaq.7
+        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2019 10:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XkWraLgMjYQXOFvMDPQ6BgisdR6SKwNuTLZ8CZqppKk=;
+        b=NNAs4gTkHhdy/FfBnG3wDOH1ZcHChfZQyqYvlq9tOX5svUQ3M0bLi5Mn24Vl1LR0Yr
+         fDeiLZaXkiUq6QHaFq7C0wBxE2sNshtExjoI7d2At4OTAz/XQS56j6TO+Zp56s1Lon4t
+         IgDYJz5E1CquWcC7pm2edW8HGCXzpF5M86lak=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XkWraLgMjYQXOFvMDPQ6BgisdR6SKwNuTLZ8CZqppKk=;
+        b=gPZjOSk5dBEPBDBdKVgj1uj0zr0SgtIAlka+Gq4/K2NzgfnuTZPA+1ehM/NMnCYQ4Z
+         3u7WAAE21Olse3Wu/lov1LHBf1KfTBrcPKiiZqyx4YJbYZdvhGCyd3ebvhS4y7ucBkMd
+         iQD5xsGFjhlcNMmCFpYuj31Wvj/jF3zIK/UGUG0FdWffJMGp3QkJLob10Lc0qE82q/FW
+         23mGYlu/rt7PHknJ7zhU7l7McZNRavLWgntt86krw5+EcufsMy9KqmYegTXyhqnmA8u2
+         hr0pAv5QiQKR5QrMU3GO6asFs4tzN8PIJh2xiGkXlH/8BIpF08ak8lcuargKLE51ueTL
+         /DcQ==
+X-Gm-Message-State: APjAAAURIn5OOmYx1AlZ2AhlEOZkgtRh3sVA6UdvZdN+d2Ca3pj7Kofd
+        XinmpqMhBrgNenPkhKo2HxlfqvKV9LI=
+X-Google-Smtp-Source: APXvYqzz1SUz52wlNCvel23+DYcTVapfFRRCoMpjI1yAb+y0i76uisKDVnUtfeDbAba/lXIHUiDuGw==
+X-Received: by 2002:ab0:61d3:: with SMTP id m19mr13985014uan.72.1555090147198;
+        Fri, 12 Apr 2019 10:29:07 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id r199sm12994596vke.30.2019.04.12.10.29.05
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Apr 2019 10:29:05 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id j184so5978569vsd.11
+        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2019 10:29:05 -0700 (PDT)
+X-Received: by 2002:a67:7f44:: with SMTP id a65mr12648937vsd.179.1555090145127;
+ Fri, 12 Apr 2019 10:29:05 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2650929-8e89-44be-bd2d-08d6bf6720ee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Apr 2019 16:51:37.2606
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4814
+References: <1554284549-24916-1-git-send-email-zhangqing@rock-chips.com>
+ <1554284649-26764-1-git-send-email-zhangqing@rock-chips.com> <5677286.2uEqRd8HI1@diego>
+In-Reply-To: <5677286.2uEqRd8HI1@diego>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 12 Apr 2019 10:28:53 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XzDZHX7q-h7jAGpoqXyz_C5RJhbZuXo2gM=1kZeAwRUQ@mail.gmail.com>
+Message-ID: <CAD=FV=XzDZHX7q-h7jAGpoqXyz_C5RJhbZuXo2gM=1kZeAwRUQ@mail.gmail.com>
+Subject: Re: [PATCH v1 5/6] clk: rockchip: add pll up and down when change pll freq
+To:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, xxx <xxx@rock-chips.com>,
+        xf@rock-chips.com, =?UTF-8?B?6buE5rab?= <huangtao@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/12/19 7:43 PM, Stephen Boyd wrote:=0A=
-> Quoting Leonard Crestez (2019-04-12 07:10:03)=0A=
->> Code which initializes the "clk_init_data.ops" checks pll->rate_table=0A=
->> before that field is ever assigned to so it always picks=0A=
->> "clk_pll1416x_min_ops".=0A=
->>=0A=
->> This breaks dynamic rate rounding for features such as cpufreq.=0A=
->>=0A=
->> Fix by checking pll_clk->rate_table instead, here pll_clk refers to=0A=
->> the constant initialization data coming from per-soc clk driver.=0A=
-> =0A=
-> Any Fixes tag here?=0A=
-=0A=
-Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")=0A=
-=0A=
-That's the only commit on this file, it's only for a very new SOC.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+Hi,
+
+On Fri, Apr 12, 2019 at 5:16 AM Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+>
+> Hi Elaine,
+>
+> Am Mittwoch, 3. April 2019, 11:44:09 CEST schrieb Elaine Zhang:
+> > set pll sequence:
+> >       ->set pll to slow mode or other plls
+> >       ->set pll down
+> >       ->set pll params
+> >       ->set pll up
+> >       ->wait pll lock status
+> >       ->set pll to normal mode
+> >
+> > To slove the system error:
+> > wait_pll_lock: timeout waiting for pll to lock
+> > pll_set_params: pll update unsucessful,
+> >               trying to restore old params
+>
+> Can you tell me on what soc this was experienced?
+>
+> The patch includes rk3399, but I don't think the CrOS kernel
+> does powerdown the pll when changing the cpu-frequency
+> [added Doug and Brian for clarification and possible testing :-) ]
+
+As far as I can tell you're right.  We don't seem to have it and I'm
+not aware of problems.
+
+
+> But I did find that the M0 code in ATF does actually power-down the
+> PLL and follow your outline from above. So essentially I'd just like
+> a thumbs up from chromeos people if they have the time.
+
+It does seem like it should be fine in general to do it.  It's one
+extra step but presumably it should be fine.
+
+In general the Rockchip PLL programming guidelines have always been a
+bit funny.  Looking at the version of the doc I have, I see phrases
+like "The PLL programming support changed on-the-fly and the PLL will
+simply slew to the new frequency" which makes me feel like you're
+supposed to be able to change the PLL frequency without powering down.
+This is repeated in another part of the manual which talks about the
+glitches that can happen when changing the PLL on the fly: it doesn't
+say not to do it, it just says to expect glitches (which can be
+avoided by changing the parent first).
+
+...but then in another section of the doc it talks about asserting PD
+before doing a frequency change!  :-P
+
+Though in that same section it says: "Release PD after no less than
+1us from the time it was asserted."  Even though probably 1 us has
+passed, I'd still expect a udelay(1) to be explicit here.
+
+
+One other thing that concerns me a little about this patch is that I
+wonder if it is legal to call rockchip_rk3399_pll_set_params() while
+the PLL is off.  AKA is it OK to change the rate of a PLL while it is
+not enabled?  I'm not saying that this would have worked before
+(actually, you might end up hitting the exact error "timeout waiting
+for pll to lock"), but now it seems even worse because we'll
+implicitly turning on the PLL.  ...a part of me wonders if this is the
+root cause of the problem Elaine's patch is trying to solve: that some
+code was trying to set the rate of a PLL before enabling it.
+
+
+So, tl; dr:
+* I doubt this patch is needed on rk3399, but it probably won't hurt.
+* If you're going to do the power down, you should add the udelay()
+* There's a bug on 3036.  See below.
+* You should change your patch so it doesn't enable the PLL if it
+wasn't already enabled.
+
+
+> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > ---
+> >  drivers/clk/rockchip/clk-pll.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-=
+pll.c
+> > index dd0433d4753e..9fe1227e77e9 100644
+> > --- a/drivers/clk/rockchip/clk-pll.c
+> > +++ b/drivers/clk/rockchip/clk-pll.c
+> > @@ -208,6 +208,11 @@ static int rockchip_rk3036_pll_set_params(struct r=
+ockchip_clk_pll *pll,
+> >               rate_change_remuxed =3D 1;
+> >       }
+> >
+> > +     /* set pll power down */
+> > +     writel(HIWORD_UPDATE(1,
+> > +                          RK3036_PLLCON1_PWRDOWN, 13),
+
+This does not do what you think it does.  It should be:
+
+HIWORD_UPDATE(RK3036_PLLCON1_PWRDOWN,
+     RK3036_PLLCON1_PWRDOWN, 0)
+
+...without that my compiler yells at me:
+
+signed shift result (0x40000000000) requires 44 bits to represent
+
+...and the compiler is, indeed, correct.
+
+
+> > +            pll->reg_base + RK3036_PLLCON(1));
+> > +
+> >       /* update pll values */
+> >       writel_relaxed(HIWORD_UPDATE(rate->fbdiv, RK3036_PLLCON0_FBDIV_MA=
+SK,
+> >                                         RK3036_PLLCON0_FBDIV_SHIFT) |
+> > @@ -229,6 +234,10 @@ static int rockchip_rk3036_pll_set_params(struct r=
+ockchip_clk_pll *pll,
+> >       pllcon |=3D rate->frac << RK3036_PLLCON2_FRAC_SHIFT;
+> >       writel_relaxed(pllcon, pll->reg_base + RK3036_PLLCON(2));
+> >
+> > +     /* set pll power up */
+> > +     writel(HIWORD_UPDATE(0, RK3036_PLLCON1_PWRDOWN, 13),
+> > +            pll->reg_base + RK3036_PLLCON(1));
+
+In a similar vein, the above should be:
+
+writel(HIWORD_UPDATE(0, RK3036_PLLCON1_PWRDOWN, 0),
+
+...since RK3036_PLLCON1_PWRDOWN already has the shift.
