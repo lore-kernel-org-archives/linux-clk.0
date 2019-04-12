@@ -2,81 +2,128 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E75C5C10F0E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 21:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F135CC10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 23:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB4C218C3
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 21:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA4F32084D
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 23:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555104118;
-	bh=VBeb4XKixVOeysz7qi56fRzr3k9ctSmF7LOS2g7rrdg=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=RQO+6QCKmS5n9NqE6tvVuqTA6Oh82Wz0WdwaSlnkOJ3coFwjsQPfHyZi5fwwuradb
-	 xMMiLeLW3VSxMbZA8VJC2x2Dq1Wpmi7I6Ntv7BbWJ6fVhI0E2QtEO/gXM6+VuLbMcX
-	 1+JF6A7KA/Fucyobu3ZO6HZI4QgMswZe9k5pJ44A=
+	s=default; t=1555111269;
+	bh=AE9f2pHcHkK0L4rZHgqYjhFucbpRz971YcYWLtEL7IE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=XJjhK3WGdZeSccSXAS6lzbsjzAou7XQjfVtJLOKyH5b86ZBv3PS9pw7kctOquVLA4
+	 8h0ortC1rLTvdhku5icmNCIVjNN5lOizpmExo3/LsrbwT63Rfz0BTt2iMZ1CM+5ItO
+	 XplGfc7gLDEhvIzUVR0ZafefUHVy4h67b8Jm19nY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfDLVV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 17:21:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59060 "EHLO mail.kernel.org"
+        id S1726898AbfDLXVJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 19:21:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726755AbfDLVV6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 17:21:58 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726624AbfDLXVJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Apr 2019 19:21:09 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BEBE2171F;
-        Fri, 12 Apr 2019 21:21:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C3582084D;
+        Fri, 12 Apr 2019 23:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555104117;
-        bh=VBeb4XKixVOeysz7qi56fRzr3k9ctSmF7LOS2g7rrdg=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=DBGhdnt+v591yZVmganrkWL9/iO62HE3qgu3ascsSCFJk9NYLORPgcW3bOXHNARwX
-         r4IWNBO2WuGsxHleyR5TjUBaJJ9KhxZr3pbn+tZorrqCRJ5TAtNy/RbaHJVFhFiITC
-         nBi2fK1M9XPIg9bJ3/NrHebChXxpUuaDoswY7tnQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7dd868d4673f155faa8c52d80a01d01aed2ea247.1555077720.git.leonard.crestez@nxp.com>
-References: <cover.1555077720.git.leonard.crestez@nxp.com> <7dd868d4673f155faa8c52d80a01d01aed2ea247.1555077720.git.leonard.crestez@nxp.com>
-Cc:     Robin Gong <yibin.gong@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "linux-pm@lists.infradead.org" <linux-pm@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>
+        s=default; t=1555111268;
+        bh=AE9f2pHcHkK0L4rZHgqYjhFucbpRz971YcYWLtEL7IE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Z5tcUlxGHYRlKeVNM5uuOV3KhTr+P2SMI3Ln93RBAP8aEFMBwDGiz7+lAMWGG35kj
+         FN6Ol+e47AyGXhQkx5YB+As2pOaRA/F6eajGxs/rnDfq7i3YNCTPacqGjrhydcpa2c
+         eKRf9olqk0ASq91lATuMT4F9AugX9ygLpZcE6pPo=
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/4] clk: imx: Fix PLL_1416X not rounding rates
-To:     Jacky Bai <ping.bai@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Message-ID: <155510411679.15276.16206154383783988279@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 12 Apr 2019 14:21:56 -0700
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.1-rc4
+Date:   Fri, 12 Apr 2019 16:21:07 -0700
+Message-Id: <20190412232107.26830-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Leonard Crestez (2019-04-12 07:10:03)
-> Code which initializes the "clk_init_data.ops" checks pll->rate_table
-> before that field is ever assigned to so it always picks
-> "clk_pll1416x_min_ops".
->=20
-> This breaks dynamic rate rounding for features such as cpufreq.
->=20
-> Fix by checking pll_clk->rate_table instead, here pll_clk refers to
-> the constant initialization data coming from per-soc clk driver.
->=20
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
+The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
-Applied to clk-fixes
+  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to f89b9e1be7da8bb0aac667a0206a00975cefe6d3:
+
+  clk: imx: Fix PLL_1416X not rounding rates (2019-04-12 14:21:43 -0700)
+
+----------------------------------------------------------------
+Here's more than a handful of clk driver fixes for changes that came in
+during the merge window:
+
+ - Fix the AT91 sama5d2 programmable clk prescaler formula
+
+ - A bunch of Amlogic meson clk driver fixes for the VPU clks
+
+ - A DMI quirk for Intel's Bay Trail SoC's driver to properly mark
+   pmc clks as critical only when really needed
+
+ - Stop overwriting CLK_SET_RATE_PARENT flag in mediatek's clk gate
+   implementation
+
+ - Use the right structure to test for a frequency table in i.MX's
+   PLL_1416x driver
+
+----------------------------------------------------------------
+David Müller (1):
+      clk: x86: Add system specific quirk to mark clocks as critical
+
+Leonard Crestez (1):
+      clk: imx: Fix PLL_1416X not rounding rates
+
+Martin Blumenstingl (1):
+      clk: meson: pll: fix rounding and setting a rate that matches precisely
+
+Matthias Wieloch (1):
+      clk: at91: fix programmable clock for sama5d2
+
+Maxime Jourdan (2):
+      clk: meson-gxbb: round the vdec dividers to closest
+      clk: meson: g12a: fix VPU clock muxes mask
+
+Neil Armstrong (2):
+      clk: meson-g12a: fix VPU clock parents
+      clk: meson: vid-pll-div: remove warning and return 0 on invalid config
+
+Stephen Boyd (3):
+      Merge tag 'meson-clk-fixes-for-5.1' of https://github.com/BayLibre/clk-meson into clk-fixes
+      Merge tag 'meson-clk-fixes-for-5.1-v2' of https://github.com/BayLibre/clk-meson into clk-fixes
+      platform/x86: pmc_atom: Drop __initconst on dmi table
+
+Weiyi Lu (1):
+      clk: mediatek: fix clk-gate flag setting
+
+ drivers/clk/at91/clk-programmable.c            | 57 +++++++++++++++++++-------
+ drivers/clk/at91/pmc.h                         |  2 +
+ drivers/clk/at91/sama5d2.c                     | 10 ++++-
+ drivers/clk/imx/clk-pll14xx.c                  |  2 +-
+ drivers/clk/mediatek/clk-gate.c                |  3 +-
+ drivers/clk/meson/clk-pll.c                    |  2 +-
+ drivers/clk/meson/g12a.c                       |  6 +--
+ drivers/clk/meson/gxbb.c                       |  2 +
+ drivers/clk/meson/vid-pll-div.c                |  4 +-
+ drivers/clk/x86/clk-pmc-atom.c                 | 14 +++++--
+ drivers/platform/x86/pmc_atom.c                | 21 ++++++++++
+ include/linux/platform_data/x86/clk-pmc-atom.h |  3 ++
+ 12 files changed, 99 insertions(+), 27 deletions(-)
+
+-- 
+Sent by a computer through tubes
