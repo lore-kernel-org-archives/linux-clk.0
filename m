@@ -2,126 +2,88 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEDCC10F14
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1392DC10F14
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC6F218A3
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFDBE218C3
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555093961;
-	bh=zFwgN1sOMDea7TNovxIY+gAobjB9y0e2myeBcykA46s=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=HxNP9xZKGTRLYVavy4jslWrApxBuC+KFIQHlLV9gfv9zoUju3YOUu+HpyIbNo0IEl
-	 PAsGclxctmLLIDprfNan+IA6DOGzu0Da/6P4fz9NdVRXvXqwy173iSebiE1ebxa9mF
-	 sB+uZv3oCqPm9Cgh25tBQciBCaWmbO9SHgxR75Pw=
+	s=default; t=1555094072;
+	bh=mVLYzy+Wnn/s1Slr78PSMcOBetd7m3L0tYhj6HdxCNY=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=VyQjpaK73z+AYZ4JGK5VGc4hQHFk4BjhoPg97rTHCssbXjuCEhd1d6rOROUsk/xl3
+	 fRiNsTAnTI7pFJ6M6TtnobzoH+Lj/bSMQuLWkgRQ1VTAmHVDz6+iLp7LTaai4kb6UQ
+	 zmSGouH+a/UKIDU6GFEyw9rZdYvrrZ2AzTNGGlPQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbfDLScc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 14:32:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50288 "EHLO mail.kernel.org"
+        id S1726829AbfDLSec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 14:34:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbfDLSbw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 14:31:52 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726797AbfDLSec (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Apr 2019 14:34:32 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0053B20818;
-        Fri, 12 Apr 2019 18:31:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B30B20652;
+        Fri, 12 Apr 2019 18:34:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555093911;
-        bh=zFwgN1sOMDea7TNovxIY+gAobjB9y0e2myeBcykA46s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xF4GNv8Nl+uviNc3A31GjGkwdCJZeJ402GCjEHUkgbrxskZqkwrVmQcBeNFWxts5y
-         ZkuzOXzBg7A+/KQNRbbSqmydHZ6AVOsGejGhoHSi62XCMqPjVx+aNSA08Y/6kxJzP9
-         q8a+z26L4Dr0C2wUTr6nL8WmrfaOhNvhqRzOxE2U=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v4 0/9] Rewrite clk parent handling
-Date:   Fri, 12 Apr 2019 11:31:41 -0700
-Message-Id: <20190412183150.102131-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+        s=default; t=1555094071;
+        bh=mVLYzy+Wnn/s1Slr78PSMcOBetd7m3L0tYhj6HdxCNY=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=JJB614w2Ntwcmu76Cy0o4sJWMZyUp84YBcrlKUhnaOMYvpttZc8Xww9/UOXJJ9XfV
+         pj9GWPdOAVjZriw6as+4c/kUNFbI9ly9hMfJuwIcsGbPx+IxPvlmnhglUQ+MLQupRH
+         9d3Bxnl7c30Tz8SWfVD/P3Qsrcud/kzS6ngfo1GE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <VI1PR04MB55330D9C5E2DE905333070F4EE280@VI1PR04MB5533.eurprd04.prod.outlook.com>
+References: <cover.1555077720.git.leonard.crestez@nxp.com> <7dd868d4673f155faa8c52d80a01d01aed2ea247.1555077720.git.leonard.crestez@nxp.com> <155508743438.20095.5061509575513490354@swboyd.mtv.corp.google.com> <VI1PR04MB55330D9C5E2DE905333070F4EE280@VI1PR04MB5533.eurprd04.prod.outlook.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/4] clk: imx: Fix PLL_1416X not rounding rates
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Robin Gong <yibin.gong@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "linux-pm@lists.infradead.org" <linux-pm@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>
+To:     Jacky Bai <ping.bai@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Message-ID: <155509407072.20095.14633592159299137519@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Fri, 12 Apr 2019 11:34:30 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are a couple warts with clk parent handling in the common clk
-framework. This patch series addresses one of those warts, parent-child
-linkages. We use strings for all parent-child linkages, and this leads
-to poorly written code that extracts clk names from struct clk pointers
-and makes clk provider drivers use clk consumer APIs. I've converted the
-fixed factor clk and I'm looking at converting users of other "basic"
-clk types in follow-up patches so we can start moving drivers away from
-string matching in the clk namespace.
+Quoting Leonard Crestez (2019-04-12 09:51:37)
+> On 4/12/19 7:43 PM, Stephen Boyd wrote:
+> > Quoting Leonard Crestez (2019-04-12 07:10:03)
+> >> Code which initializes the "clk_init_data.ops" checks pll->rate_table
+> >> before that field is ever assigned to so it always picks
+> >> "clk_pll1416x_min_ops".
+> >>
+> >> This breaks dynamic rate rounding for features such as cpufreq.
+> >>
+> >> Fix by checking pll_clk->rate_table instead, here pll_clk refers to
+> >> the constant initialization data coming from per-soc clk driver.
+> >=20
+> > Any Fixes tag here?
+>=20
+> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
+>=20
+> That's the only commit on this file, it's only for a very new SOC.
+>=20
 
-Changes from v3:
- * Split clkdev patch into two
- * New patch to let dev_of_node() accept NULL
- * Use dev_of_node() in of_clk_hw_register() to avoid NULL deref
-
-Changes from v2:
- * Dropped patches that got merged into v5.1-rc1
- * Introduced a new function of_clk_hw_register()
- * Introduced 'index' into clk_parent_data structure 
- * Converted fixed-factor basic type to new design
- * Fixed some bugs in a recent patch to clkdev, leading to
-   an essential API for clkdev based lookups working
-
-Changes from v1:
- * Dropped new get_parent_hw, we'll pick it up in a later series
- * Rebased to v5.0-rc6 to avoid conflicts with clk-fixes
- * Renamed 'fallback' to 'name' and 'name' to 'fw_name' in parent map
- * Made sure that clk_hw_get_parent_by_index() never sees an error pointer
-   so that we don't mistakenly try to defer an error pointer
- * Fixed index passing mistake on of_clk_get_hw_from_clkspec()
- * Copy over all the data from parent maps and free it correctly too
-
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jeffrey Hugo <jhugo@codeaurora.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>
-
-Stephen Boyd (9):
-  clkdev: Hold clocks_mutex while iterating clocks list
-  clkdev: Move clk creation outside of 'clocks_mutex'
-  clk: Prepare for clk registration API that uses DT nodes
-  driver core: Let dev_of_node() accept a NULL dev
-  clk: Add of_clk_hw_register() API for early clk drivers
-  clk: Allow parents to be specified without string names
-  clk: Look for parents with clkdev based clk_lookups
-  clk: Allow parents to be specified via clkspec index
-  clk: fixed-factor: Let clk framework find parent
-
- drivers/clk/clk-fixed-factor.c |  53 ++++--
- drivers/clk/clk.c              | 326 +++++++++++++++++++++++++--------
- drivers/clk/clk.h              |   2 +
- drivers/clk/clkdev.c           |  30 +--
- include/linux/clk-provider.h   |  22 +++
- include/linux/device.h         |   2 +-
- 6 files changed, 327 insertions(+), 108 deletions(-)
-
-
-base-commit: 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b
--- 
-Sent by a computer through tubes
+Ok. I take it I should push this into clk-fixes so it can fix badness in
+the v5.1 series?
 
