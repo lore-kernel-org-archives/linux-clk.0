@@ -3,72 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EF6C10F0E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 16:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86431C10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 16:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B0E20869
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 16:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5733120850
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 16:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555087317;
-	bh=fBkKq/VD/Aw0EkJyQYz3MKt6DHb/MUqbt1u3277+TKI=;
+	s=default; t=1555087436;
+	bh=JKpjrPy+HlbubBgwg5Yf66ZxMYj5a5mb6GNz6Bap5TY=;
 	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=bj3ZT+srL1LqXZCaEfqXd4H7k45SXSLP61zAbm38VIoT8W7FtcjJr/ZRCw2aiYtKd
-	 xAul0wCHu92uGOrNQySLEml2EzBK0rPVj/hUA5E7u7yXItxkDJWq22+B73BnbmjzcX
-	 u37O3gNE1fm5+pYe24LtV0rXOaSi/5Y2v2rcF6xM=
+	b=2fFJl5xalONhnPKMt5RHWOfpG+B8q1KLz8NoiBywxYVVoqdwzjgCeEGXAdUPFOHX2
+	 pFspp9mnbVwiIlT2kaB7ERM6SXx1CHjiIOKkpPQpp737vCPySZHdriAZud4LJsHtWM
+	 2/dXruu2+W1yyXQaXtBPh2mJgSTzp64GSsRM96i8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfDLQl5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 12:41:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37018 "EHLO mail.kernel.org"
+        id S1726788AbfDLQn4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 12:43:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbfDLQl5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 12:41:57 -0400
+        id S1726765AbfDLQnz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Apr 2019 12:43:55 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A4862077C;
-        Fri, 12 Apr 2019 16:41:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29AF32073F;
+        Fri, 12 Apr 2019 16:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555087316;
-        bh=fBkKq/VD/Aw0EkJyQYz3MKt6DHb/MUqbt1u3277+TKI=;
+        s=default; t=1555087435;
+        bh=JKpjrPy+HlbubBgwg5Yf66ZxMYj5a5mb6GNz6Bap5TY=;
         h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=ysw599tVKv5IAT0V069DFpQt92AtCfMmTuVFK+mVXN0ZU7xjcfeF9d5CGHG19NkP+
-         kK8iNsh/5aDy/U1WU1OuD5wRZg9BVQrCBv2fZyIzkcSckNeZFlVKVTN7aFGr+2LyOx
-         jtlX7ZxXL2p0Lm8vSWDG5fRSP5cXq2IazVCS4LPQ=
+        b=hT5Hn7Z9N6MlWPrUkhhtoMzVKH6TIo+CWuX2l0Y4aEw8PjCjtk1nYvge3kCfFU5bj
+         F++nzMBUODEZdx45Xn5oaFHearOoajYWTrq1paPdZ2OI4XCQFIxF6awgJ/d1InJKKp
+         8PHSz6FygXKXfye1J/evxcEb9ibtuN2rAh95HfMU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190412033027.3516-1-weiyi.lu@mediatek.com>
-References: <20190412033027.3516-1-weiyi.lu@mediatek.com>
+In-Reply-To: <7dd868d4673f155faa8c52d80a01d01aed2ea247.1555077720.git.leonard.crestez@nxp.com>
+References: <cover.1555077720.git.leonard.crestez@nxp.com> <7dd868d4673f155faa8c52d80a01d01aed2ea247.1555077720.git.leonard.crestez@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v1] clk: mediatek: fix clk-gate flag setting
-Cc:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, stable@vger.kernel.org,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh@kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
-Message-ID: <155508731571.20095.11067229428863866325@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/4] clk: imx: Fix PLL_1416X not rounding rates
+Cc:     Robin Gong <yibin.gong@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "linux-pm@lists.infradead.org" <linux-pm@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>
+To:     Jacky Bai <ping.bai@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Message-ID: <155508743438.20095.5061509575513490354@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Fri, 12 Apr 2019 09:41:55 -0700
+Date:   Fri, 12 Apr 2019 09:43:54 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Weiyi Lu (2019-04-11 20:30:27)
-> CLK_SET_RATE_PARENT would be dropped.
-> Merge two flag setting together to correct the error.
+Quoting Leonard Crestez (2019-04-12 07:10:03)
+> Code which initializes the "clk_init_data.ops" checks pll->rate_table
+> before that field is ever assigned to so it always picks
+> "clk_pll1416x_min_ops".
 >=20
-> Fixes: 5a1cc4c27ad2 ("clk: mediatek: Add flags to mtk_gate")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> This breaks dynamic rate rounding for features such as cpufreq.
+>=20
+> Fix by checking pll_clk->rate_table instead, here pll_clk refers to
+> the constant initialization data coming from per-soc clk driver.
+>=20
+
+Any Fixes tag here?
+
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 > ---
-
-Applied to clk-fixes
-
+>  drivers/clk/imx/clk-pll14xx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
