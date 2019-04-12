@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BBFC282CE
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C59EBC10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0932218A3
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92483218D2
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555093952;
-	bh=Lu/9VefXJAzydhxIjej1T+ELCdL9m/fzpv8TsunMCNs=;
+	s=default; t=1555093951;
+	bh=LZEUR8eiDUJq7nEmBI5Ou+kM+A9lWl2yePObSye2+60=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RaukB4fI85A6zqvAADcU897PrXE5k3/92HoZPtJmMB9HvmWMQ5xTY8IY9yLcGqURX
-	 UhA8lDis2MU9EnP+FEfRh5cPMCpOYASpdb2W/vhj7EUS/JtsOUopG7m64iNbuMTvzx
-	 C14fJ6gC+0jbk65DkSH2k44WOoixg0ijOdBaciOA=
+	b=ifcVn5pzeejyWV4weYxvdEqSxfvJQOIZz77+RRghhBFtgcZffzXKusRnd9aAMrsoA
+	 d1G12lEOmxSsvMgJ1zDqSs4cJaWYxpNQhQRqVOjNeHq1/I/+mf1H5FILeT8Bz7A8IW
+	 kBkQXXThnx+PDyb0IlEOujcxSJgRpzrzqLHCHIt8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbfDLScc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 14:32:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50366 "EHLO mail.kernel.org"
+        id S1727027AbfDLSc0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 14:32:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbfDLSbx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 14:31:53 -0400
+        id S1726905AbfDLSby (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Apr 2019 14:31:54 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07613218E2;
-        Fri, 12 Apr 2019 18:31:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DF4B218D2;
+        Fri, 12 Apr 2019 18:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555093913;
-        bh=Lu/9VefXJAzydhxIjej1T+ELCdL9m/fzpv8TsunMCNs=;
+        s=default; t=1555093912;
+        bh=LZEUR8eiDUJq7nEmBI5Ou+kM+A9lWl2yePObSye2+60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QvPLFGT1GXjOboeqPPBAcckRG30U7zHLFyGRg25ud38AwbhLZXd+ikeM5hKtX6JPH
-         7Uv5aBBMHFZMZ75QzI+OfTsIqt9AXYoe7fkrdrkyzbN9vnPQz4FJiGti4i/6Rg9L5B
-         LUNtqbaZpK02JuyCx2OdHXWRriPk8GSwuM5omh4c=
+        b=OHIBg7Hr26kVcuqViykm27cU+gZ4JgCKm1JSMHqjON69ChBm+n22PvKxW4PaZrr7U
+         5j6424nGaxkdl6wf5s9Zwa9v+3J/dfJ17MTnHQaxlqfryMQRYrlpg1gxpH1WxdtPED
+         iDKYVEMW5/sWeRNpvDpqKlBxOm3QyZYLxx8mQir8=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -46,12 +46,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Jerome Brunet <jbrunet@baylibre.com>,
         Russell King <linux@armlinux.org.uk>,
         Jeffrey Hugo <jhugo@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 4/9] driver core: Let dev_of_node() accept a NULL dev
-Date:   Fri, 12 Apr 2019 11:31:45 -0700
-Message-Id: <20190412183150.102131-5-sboyd@kernel.org>
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 3/9] clk: Prepare for clk registration API that uses DT nodes
+Date:   Fri, 12 Apr 2019 11:31:44 -0700
+Message-Id: <20190412183150.102131-4-sboyd@kernel.org>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 In-Reply-To: <20190412183150.102131-1-sboyd@kernel.org>
 References: <20190412183150.102131-1-sboyd@kernel.org>
@@ -62,8 +60,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We'd like to chain this in places where the 'dev' argument might be
-NULL. Let this function take a NULL 'dev' so this can work.
+Split out the body of the clk_register() function so it can be shared
+between the different types of registration APIs (DT, device).
 
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>
@@ -71,29 +69,68 @@ Cc: Russell King <linux@armlinux.org.uk>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Jeffrey Hugo <jhugo@codeaurora.org>
 Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Rob Herring <robh@kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
+ drivers/clk/clk.c | 31 ++++++++++++++++++-------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
-Please ack/review so I can take this through clk tree.
-
- include/linux/device.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/device.h b/include/linux/device.h
-index b425a7ee04ce..0370dd0b3ae7 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1231,7 +1231,7 @@ static inline void device_lock_assert(struct device *dev)
- 
- static inline struct device_node *dev_of_node(struct device *dev)
- {
--	if (!IS_ENABLED(CONFIG_OF))
-+	if (!IS_ENABLED(CONFIG_OF) || !dev)
- 		return NULL;
- 	return dev->of_node;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 96053a96fe2f..d27775a73e67 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3313,18 +3313,7 @@ struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
+ 	return clk;
  }
+ 
+-/**
+- * clk_register - allocate a new clock, register it and return an opaque cookie
+- * @dev: device that is registering this clock
+- * @hw: link to hardware-specific clock data
+- *
+- * clk_register is the primary interface for populating the clock tree with new
+- * clock nodes.  It returns a pointer to the newly allocated struct clk which
+- * cannot be dereferenced by driver code but may be used in conjunction with the
+- * rest of the clock API.  In the event of an error clk_register will return an
+- * error code; drivers must test for an error code after calling clk_register.
+- */
+-struct clk *clk_register(struct device *dev, struct clk_hw *hw)
++static struct clk *__clk_register(struct device *dev, struct clk_hw *hw)
+ {
+ 	int i, ret;
+ 	struct clk_core *core;
+@@ -3426,6 +3415,22 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ fail_out:
+ 	return ERR_PTR(ret);
+ }
++
++/**
++ * clk_register - allocate a new clock, register it and return an opaque cookie
++ * @dev: device that is registering this clock
++ * @hw: link to hardware-specific clock data
++ *
++ * clk_register is the primary interface for populating the clock tree with new
++ * clock nodes.  It returns a pointer to the newly allocated struct clk which
++ * cannot be dereferenced by driver code but may be used in conjunction with the
++ * rest of the clock API.  In the event of an error clk_register will return an
++ * error code; drivers must test for an error code after calling clk_register.
++ */
++struct clk *clk_register(struct device *dev, struct clk_hw *hw)
++{
++	return __clk_register(dev, hw);
++}
+ EXPORT_SYMBOL_GPL(clk_register);
+ 
+ /**
+@@ -3440,7 +3445,7 @@ EXPORT_SYMBOL_GPL(clk_register);
+  */
+ int clk_hw_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return PTR_ERR_OR_ZERO(clk_register(dev, hw));
++	return PTR_ERR_OR_ZERO(__clk_register(dev, hw));
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register);
+ 
 -- 
 Sent by a computer through tubes
 
