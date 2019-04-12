@@ -1,337 +1,133 @@
-Return-Path: <SRS0=5rVA=SN=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CDDC10F13
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 23:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685ADC10F13
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 00:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 069442064A
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Apr 2019 23:34:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555025660;
-	bh=HF6B0krY2yyaDuo/RkTrbW9Wr7QNtuOSxt5dZyroLQA=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=PyDQaXP8+KDLgvNfdTGCaTkPmd5rnUC5gGC0ibjt+5RN7ShaUesdqy3txhmg9Xc0U
-	 4VXnfh7vcLGN3p/VZJIaw/J8h1tt+TjQqADiPIZEA0d8U2xkeuJ7Bry2/gcA5/nnt8
-	 gDVU9mYuEjstWq1YdIBd5SuxEmtBnGl+kZK0lDPI=
+	by mail.kernel.org (Postfix) with ESMTP id 307AF2084D
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 00:17:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WrH4Tyuh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfDKXeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 19:34:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39728 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbfDKXeT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Apr 2019 19:34:19 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 995A420643;
-        Thu, 11 Apr 2019 23:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555025657;
-        bh=HF6B0krY2yyaDuo/RkTrbW9Wr7QNtuOSxt5dZyroLQA=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=t8XMgSRO3cU/iG/jB0wfYlzd+nALqkUk5sZXF2LfEQaExdvkCm2dfAg+ALEOBTWOS
-         hSXiYQuniLnc0+MWC6jogrjkRc1g/aoxi88d+amBFYRqdyPjoZiNmX1PpnXz0zJdiE
-         eGAU+dG6Q28CKtQEXZ40tt/ONCwplYNqkHibPNDM=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190108161940.4814-1-miquel.raynal@bootlin.com>
-References: <20190108161940.4814-1-miquel.raynal@bootlin.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v4 0/4] Add device links to clocks
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1726987AbfDLAQ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 20:16:59 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37486 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfDLAQ7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 20:16:59 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 8so4236343pfr.4
+        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2019 17:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=kiqyYUMZ9qVojpaA9oegXcRH8qxMfk04TQs34dsuglw=;
+        b=WrH4Tyuh/Frm/SaPPClTf3lHZKO3Niv/jPrE+khcFUrjtOl+helY6fffcwL2M7yF61
+         QpD2FXsbmkesOXIlNtcrLsUCP45M4ICT+4lzvaH8wSN79SnLnu8zbXEvH9iOFGs0L4X/
+         cs9M+ftOH3IaTsGozAOPKFMn6ieLDLiNZxJh0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=kiqyYUMZ9qVojpaA9oegXcRH8qxMfk04TQs34dsuglw=;
+        b=TpWJp0O63BqN7xSrFTCQNUSYVaj6XdLiwE6mxptqol2G9ErTYnjoTYEFyZzuQ8Cn3v
+         n1/1LgswJ5kACatny7MEiLnXWLrqWD0blSBzDa4nPfFBpKWH0VMV1pTE7w1Hp/U5A5Df
+         MX6g4GNDNdrQPZMeYnIfafEH1Mw28ruyMeHwWfOu23wdHnskSFHvZkeMEKt2Qd5sR1V9
+         6ocJ3X+lTkLCWez+EZ9h3rETM2G8SU1wmH/Djz3/0LLGOJm2+dcHeAopcklob+S1FJfw
+         VyVf0I8wNVD9rL1+t63QU2WnhdqgcDNiYrhEFWWtqUsoSsqm6YiY9TT7MghCx4UCq5zS
+         3tmw==
+X-Gm-Message-State: APjAAAVgI5f+EIR6JxLpyCd8zxePXdsQavO7uziCgYtAX7iv/F928NAn
+        ANymjWBtUd/z+jYisn6KJ303InlmVTjpbw==
+X-Google-Smtp-Source: APXvYqzH0FHYcedKZvjD7YGxSud4cMTjygbPHAJ91hQNTp7PGDU5OSK2qQYLscY76Hfb6mtFZ+IKow==
+X-Received: by 2002:a63:5ec2:: with SMTP id s185mr50792590pgb.27.1555028218606;
+        Thu, 11 Apr 2019 17:16:58 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id a85sm39198891pfa.166.2019.04.11.17.16.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Apr 2019 17:16:58 -0700 (PDT)
+Date:   Thu, 11 Apr 2019 17:16:57 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Message-ID: <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Thu, 11 Apr 2019 16:34:16 -0700
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] clk: rockchip: rk3288: Limit use of USB PHY clock to USB
+Message-ID: <20190412001657.GV112750@google.com>
+References: <20190411175917.173566-1-mka@chromium.org>
+ <3787637.WUkDPpUsF8@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3787637.WUkDPpUsF8@diego>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2019-01-08 08:19:36)
-> Hello,
->=20
-> While working on suspend to RAM feature, I ran into troubles multiple
-> times when clocks where not suspending/resuming at the desired time. I
-> had a look at the core and I think the same logic as in the
-> regulator's core may be applied here to (very easily) fix this issue:
-> using device links.
->=20
-> The only additional change I had to do was to always (when available)
-> populate the device entry of the core clock structure so that it could
-> be used later. This is the purpose of patch 1. Patch 2 actually adds
-> support for device links.
->=20
-> Here is a step-by-step explanation of how links are managed, following
-> Maxime Ripard's suggestion.
->=20
->=20
-> The order of probe has no importance because the framework already
-> handles orphaned clocks so let's be simple and say there are two root
-> clocks, not depending on anything, that are probed first: xtal0 and
-> xtal1. None of these clocks have a parent, there is no device link in
-> the game, yet.
->=20
->    +----------------+            +----------------+
->    |                |            |                |
->    |                |            |                |
->    |   xtal0 core   |            |   xtal1 core   |
->    |                |            |                |
->    |                |            |                |
->    +-------^^-------+            +-------^^-------+
->            ||                            ||
->            ||                            ||
->    +----------------+            +----------------+
->    |                |            |                |
->    |   xtal0 clk    |            |   xtal1 clk    |
->    |                |            |                |
->    +----------------+            +----------------+
->=20
-> Then, a peripheral clock periph0 is probed. His parent is xtal1. The
-> clock_register_*() call will run __clk_init_parent() and a link between
-> periph0's core and xtal1's core will be created and stored in
-> periph0's core->parent_clk_link entry.
->=20
->    +----------------+            +----------------+
->    |                |            |                |
->    |                |            |                |
->    |   xtal0 core   |            |   xtal1 core   |
->    |                |            |                |
->    |                |            |                |
->    +-------^^-------+            +-------^^-------+
->            ||                            ||
->            ||                            ||
->    +----------------+            +----------------+
->    |                |            |                |
->    |   xtal0 clk    |            |   xtal1 clk    |
->    |                |            |                |
->    +----------------+            +-------^--------+
->                                          |
->                                          |
->                           +--------------+
->                           |   ->parent_clk_link
->                           |
->                   +----------------+
->                   |                |
->                   |                |
->                   |  periph0 core  |
->                   |                |
->                   |                |
->                   +-------^^-------+
->                           ||
->                           ||
->                   +----------------+
->                   |                |
->                   |  periph0 clk 0 |
->                   |                |
->                   +----------------+
->=20
-> Then, device0 is probed and "get" the periph0 clock. clk_get() will be
-> called and a struct clk will be instantiated for device0 (called in
-> the figure clk 1). A link between device0 and the new clk 1 instance of
-> periph0 will be created and stored in the clk->consumer_link entry.
->=20
->    +----------------+            +----------------+
->    |                |            |                |
->    |                |            |                |
->    |   xtal0 core   |            |   xtal1 core   |
->    |                |            |                |
->    |                |            |                |
->    +-------^^-------+            +-------^^-------+
->            ||                            ||
->            ||                            ||
->    +----------------+            +----------------+
->    |                |            |                |
->    |   xtal0 clk    |            |   xtal1 clk    |
->    |                |            |                |
->    +----------------+            +-------^--------+
->                                          |
->                                          |
->                           +--------------+
->                           |   ->parent_clk_link
->                           |
->                   +----------------+
->                   |                |
->                   |                |
->                   |  periph0 core  |
->                   |                <-------------+
->                   |                <-------------|
->                   +-------^^-------+            ||
->                           ||                    ||
->                           ||                    ||
->                   +----------------+    +----------------+
->                   |                |    |                |
->                   |  periph0 clk 0 |    |  periph0 clk 1 |
->                   |                |    |                |
->                   +----------------+    +----------------+
->                                                 |
->                                                 | ->consumer_link
->                                                 |
->                                                 |
->                                                 |
->                                         +-------v--------+
->                                         |    device0     |
->                                         +----------------+
->=20
-> Right now, device0 is linked to periph0, itself linked to xtal1 so
-> everything is fine.
->=20
-> Now let's get some fun: the new parent of periph0 is xtal1. The process
-> will call clk_reparent(), periph0's core->parent_clk_link will be
-> destroyed and a new link to xtal1 will be setup and stored. The
-> situation is now that device0 is linked to periph0 and periph0 is
-> linked to xtal1, so the dependency between device0 and xtal1 is still
-> clear.
->=20
->    +----------------+            +----------------+
->    |                |            |                |
->    |                |            |                |
->    |   xtal0 core   |            |   xtal1 core   |
->    |                |            |                |
->    |                |            |                |
->    +-------^^-------+            +-------^^-------+
->            ||                            ||
->            ||                            ||
->    +----------------+            +----------------+
->    |                |            |                |
->    |   xtal0 clk    |            |   xtal1 clk    |
->    |                |            |                |
->    +-------^--------+            +----------------+
->            |
->            |                           \ /
->            +----------------------------x
->       ->parent_clk_link   |            / \
->                           |
->                   +----------------+
->                   |                |
->                   |                |
->                   |  periph0 core  |
->                   |                <-------------+
->                   |                <-------------|
->                   +-------^^-------+            ||
->                           ||                    ||
->                           ||                    ||
->                   +----------------+    +----------------+
->                   |                |    |                |
->                   |  periph0 clk 0 |    |  periph0 clk 1 |
->                   |                |    |                |
->                   +----------------+    +----------------+
->                                                 |
->                                                 | ->consumer_link
->                                                 |
->                                                 |
->                                                 |
->                                         +-------v--------+
->                                         |    device0     |
->                                         +----------------+
->=20
-> I assume periph0 cannot be removed while there are devices using it,
-> same for xtal0.
->=20
-> What can happen is that device0 'put' the clock periph0. The relevant
-> link is deleted and the clk instance dropped.
->=20
->    +----------------+            +----------------+
->    |                |            |                |
->    |                |            |                |
->    |   xtal0 core   |            |   xtal1 core   |
->    |                |            |                |
->    |                |            |                |
->    +-------^^-------+            +-------^^-------+
->            ||                            ||
->            ||                            ||
->    +----------------+            +----------------+
->    |                |            |                |
->    |   xtal0 clk    |            |   xtal1 clk    |
->    |                |            |                |
->    +-------^--------+            +----------------+
->            |
->            |                           \ /
->            +----------------------------x
->       ->parent_clk_link   |            / \
->                           |
->                   +----------------+
->                   |                |
->                   |                |
->                   |  periph0 core  |
->                   |                |
->                   |                |
->                   +-------^^-------+
->                           ||
->                           ||
->                   +----------------+
->                   |                |
->                   |  periph0 clk 0 |
->                   |                |
->                   +----------------+
->=20
-> Now we can unregister periph0: link with the parent will be destroyed
-> and the clock may be safely removed.
->=20
->    +----------------+            +----------------+
->    |                |            |                |
->    |                |            |                |
->    |   xtal0 core   |            |   xtal1 core   |
->    |                |            |                |
->    |                |            |                |
->    +-------^^-------+            +-------^^-------+
->            ||                            ||
->            ||                            ||
->    +----------------+            +----------------+
->    |                |            |                |
->    |   xtal0 clk    |            |   xtal1 clk    |
->    |                |            |                |
->    +----------------+            +----------------+
->=20
->=20
-> This is my understanding of the common clock framework and how links
-> can be added to it.
->=20
-> As a result, here are the links created during the boot of an
-> ESPRESSObin:
->=20
+Hi Heiko,
 
-Sorry this patch series is taking way too long to get merged. It's
-already mid-April!
+On Thu, Apr 11, 2019 at 09:03:07PM +0200, Heiko Stübner wrote:
+> Hi Matthias,
+> 
+> Am Donnerstag, 11. April 2019, 19:59:17 CEST schrieb Matthias Kaehlcke:
+> > The USB PHY clock can be configured as (grand) parent of uart0_sclk and
+> > sclk_gpu. It has been observed that UART0 doesn't work reliably in high
+> > speed mode with the PHY clock as input when certain USB devices are
+> > plugged to the USB HOST1 port (see https://crrev.com/c/320543).
+> > 
+> > Prefix the name of the PHY clock with a '.' in the non-USB muxes to
+> > effectively remove the clock as input from these muxes.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  drivers/clk/rockchip/clk-rk3288.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+> > index 5a67b7869960..677bc5485201 100644
+> > --- a/drivers/clk/rockchip/clk-rk3288.c
+> > +++ b/drivers/clk/rockchip/clk-rk3288.c
+> > @@ -200,8 +200,8 @@ PNAME(mux_aclk_cpu_src_p)	= { "cpll_aclk_cpu", "gpll_aclk_cpu" };
+> >  PNAME(mux_pll_src_cpll_gpll_p)		= { "cpll", "gpll" };
+> >  PNAME(mux_pll_src_npll_cpll_gpll_p)	= { "npll", "cpll", "gpll" };
+> >  PNAME(mux_pll_src_cpll_gpll_npll_p)	= { "cpll", "gpll", "npll" };
+> > -PNAME(mux_pll_src_cpll_gpll_usb480m_p)	= { "cpll", "gpll", "usbphy480m_src" };
+> > -PNAME(mux_pll_src_cpll_gll_usb_npll_p)	= { "cpll", "gpll", "usbphy480m_src", "npll" };
+> > +PNAME(mux_pll_src_cpll_gpll_usb480m_p)	= { "cpll", "gpll", ".usbphy480m_src" };
+> > +PNAME(mux_pll_src_cpll_gll_usb_npll_p)	= { "cpll", "gpll", ".usbphy480m_src", "npll" };
+> 
+> In general I like to have things like the clock-tree described fully
+> and let the kernel handle correct sourcing ... but:
+> 
+> As you write this seems like a systemic problem when just connecting
+> random peripherals can create unstable clock source frequencies,
+> so I tend to agree here ... but:
+> 
+> Can we please find a more "talking" name for this ... because as with the
+> above someone will find the "." and submit a fix for it ;-) .
+> 
+> So just name it "unstable_dummy" or so?
 
-So I still have some of the original questions I had from before, mostly
-around circular parent chains between clk providers. For example, there
-are clk providers that both provide clks to other providers and consume
-clks from those providers. Does device links work gracefully here?
+I looked for some common pattern, but couldn't find one. I liked the
+'.' since it leaves the name of the clock mostly intact, just hiding
+it (similar to a leading '.' in a Linux file system). But I agree that
+it might not be expressive enough. I still like the idea to keep the
+clock name around for reference, maybe we could name it
+"unstable:usbphy480m_src" or similar. If you don't object I'll send a
+patch with this some time tomorrow.
 
-Just speaking from my own qcom experience, I can point to the PCIe PHY
-that's a provider of a clk to GCC and a consumer of a clk in GCC. In
-block diagram form this is:
+Thanks
 
-
-      PCIE PHY                        GCC
-   +--------------+          +-------------------------+
-   |              |          |                         |
-   |     PHY clk ->----------+---- gcc_pipe_clk ---+   |
-   |              |          |                     |   |
-   |              |          |                     |   |
-   | pci_pipe_clk <----------|---------------------+   |
-   |              |          |                         |
-   +--------------+          +-------------------------+
-
-The end result is that the PCIe PHY is a clk controller that provides
-the PHY clk to GCC's gcc_pipe_clk and then it gets the same clk signal
-back from GCC and uses it on the PCIe PHY's pci_pipe_clk input.
-
-So is this is a problem?
-
+Matthias
