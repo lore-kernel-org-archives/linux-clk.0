@@ -2,156 +2,90 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB24C282CE
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 01:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46DDC10F13
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 02:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D5320869
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 01:57:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 969C020869
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 02:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfDLB5F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Apr 2019 21:57:05 -0400
-Received: from regular1.263xmail.com ([211.150.70.206]:43350 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfDLB5E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 21:57:04 -0400
-Received: from zhangqing?rock-chips.com (unknown [192.168.167.233])
-        by regular1.263xmail.com (Postfix) with ESMTP id 782242B9;
-        Fri, 12 Apr 2019 09:56:59 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from [172.16.12.236] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P30989T139769707656960S1555034217136668_;
-        Fri, 12 Apr 2019 09:56:58 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <17317645d7da87014d296fcc409dd801>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH 1/5] clk: rockchip: Turn on "aclk_dmac1" for suspend
-To:     Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     dbasehore@chromium.org, amstan@chromium.org,
-        linux-rockchip@lists.infradead.org, briannorris@chromium.org,
-        mka@chromium.org, ryandcase@chromium.org,
-        Chris Zhong <zyw@rock-chips.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190411232157.55125-1-dianders@chromium.org>
-From:   "elaine.zhang" <zhangqing@rock-chips.com>
-Organization: rockchip
-Message-ID: <3ae87289-a359-16cb-69fd-ecf48c17fb8d@rock-chips.com>
-Date:   Fri, 12 Apr 2019 09:56:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726678AbfDLCma (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Apr 2019 22:42:30 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56692 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726661AbfDLCma (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Apr 2019 22:42:30 -0400
+X-UUID: 66d88c511ae54b0db42b8d4c3e9155bc-20190412
+X-UUID: 66d88c511ae54b0db42b8d4c3e9155bc-20190412
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1157262839; Fri, 12 Apr 2019 10:42:22 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 12 Apr 2019 10:42:17 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 12 Apr 2019 10:42:17 +0800
+Message-ID: <1555036937.2654.5.camel@mtksdaap41>
+Subject: Re: [PATCH v5 6/9] clk: mediatek: Add flags support for mtk_gate
+ data
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Fan Chen <fan.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 12 Apr 2019 10:42:17 +0800
+In-Reply-To: <155501399858.20095.16525048679717411283@swboyd.mtv.corp.google.com>
+References: <20190305050546.23431-1-weiyi.lu@mediatek.com>
+         <20190305050546.23431-8-weiyi.lu@mediatek.com>
+         <155501399858.20095.16525048679717411283@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20190411232157.55125-1-dianders@chromium.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-hi,
+On Thu, 2019-04-11 at 13:19 -0700, Stephen Boyd wrote:
+> Quoting Weiyi Lu (2019-03-04 21:05:43)
+> > On some Mediatek platforms, there are critical clocks of
+> > clock gate type.
+> > To register clock gate with flags CLK_IS_CRITICAL,
+> > we need to add the flags field in mtk_gate data and register APIs.
+> > 
+> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> 
+> This patch doesn't apply, because it's already there via commit
+> 5a1cc4c27ad2 ("clk: mediatek: Add flags to mtk_gate").
+> 
+Got it, but just catch a minor defect by 5a1cc4c27ad2 ("clk: mediatek:
+Add flags to mtk_gate").
 
-ÔÚ 2019/4/12 ÉÏÎç7:21, Douglas Anderson Ð´µÀ:
-> Experimentally it can be seen that going into deep sleep (specifically
-> setting PMU_CLR_DMA and PMU_CLR_BUS in RK3288_PMU_PWRMODE_CON1)
-> appears to fail unless "aclk_dmac1" is on.  The failure is that the
-> system never signals that it made it into suspend on the GLOBAL_PWROFF
-> pin and it just hangs.
->
-> NOTE that it's confirmed that it's the actual suspend that fails, not
-> one of the earlier calls to read/write registers.  Specifically if you
-> comment out the "PMU_GLOBAL_INT_DISABLE" setting in
-> rk3288_slp_mode_set() and then comment out the "cpu_do_idle()" call in
-> rockchip_lpmode_enter() then you can exercise the whole suspend path
-> without any crashing.
->
-> This is currently not a problem with suspend upstream because there is
-> no current way to exercise the deep suspend code.  However, anyone
-> trying to make it work will run into this issue.
->
-> This was not a problem on shipping rk3288-based Chromebooks because
-> those devices all ran on an old kernel based on 3.14.  On that kernel
-> "aclk_dmac1" appears to be left on all the time.
->
-> There are several ways to skin this problem.
->
-> A) We could add "aclk_dmac1" to the list of critical clocks and that
-> apperas to work, but presumably that wastes power.
->
-> B) We could keep a list of "struct clk" objects to enable at suspend
-> time in clk-rk3288.c and use the standard clock APIs.
->
-> C) We could make the rk3288-pmu driver keep a list of clocks to enable
-> at suspend time.  Presumably this would require a dts and bindings
-> change.
->
-> D) We could just whack the clock on in the existing syscore suspend
-> function where we whack a bunch of other clocks.  This is particularly
-> easy because we know for sure that the clock's only parent
-> ("aclk_cpu") is a critical clock so we don't need to do anything more
-> than ungate it.
->
-> In this case I have chosen D) because it seemed like the least work,
-> but any of the other options would presumably also work fine.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
->   drivers/clk/rockchip/clk-rk3288.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-> index 5a67b7869960..b245367393cd 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -859,6 +859,9 @@ static const int rk3288_saved_cru_reg_ids[] = {
->   	RK3288_CLKSEL_CON(10),
->   	RK3288_CLKSEL_CON(33),
->   	RK3288_CLKSEL_CON(37),
-> +
-> +	/* We turn aclk_dmac1 on for suspend; this will restore it */
-> +	RK3288_CLKGATE_CON(10),
->   };
->   
->   static u32 rk3288_saved_cru_regs[ARRAY_SIZE(rk3288_saved_cru_reg_ids)];
-> @@ -874,6 +877,14 @@ static int rk3288_clk_suspend(void)
->   				readl_relaxed(rk3288_cru_base + reg_id);
->   	}
->   
-> +	/*
-> +	 * Going into deep sleep (specifically setting PMU_CLR_DMA in
-> +	 * RK3288_PMU_PWRMODE_CON1) appears to fail unless
-> +	 * "aclk_dmac1" is on.
-> +	 */
-> +	writel_relaxed(1 << (12 + 16),
-> +		       rk3288_cru_base + RK3288_CLKGATE_CON(10));
-> +
->   	/*
->   	 * Switch PLLs other than DPLL (for SDRAM) to slow mode to
->   	 * avoid crashes on resume. The Mask ROM on the system will
+init.flags = CLK_SET_RATE_PARENT;
+...
+init.flags = flags;
 
-Thank you for your correction.
+I'll send a fix later.
 
-Reviewed-by: Elaine Zhang<zhangqing@rock-chips.com>
+Thanks for the help on the MT8183 clk series.
 
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
