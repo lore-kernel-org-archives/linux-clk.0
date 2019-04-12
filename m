@@ -2,190 +2,145 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28441C10F0E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 17:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6ABC10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82C62086D
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 17:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95D0F2171F
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:02:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eyhVxxo1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfDLR6j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 13:58:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37680 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726755AbfDLR6j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 13:58:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58592374;
-        Fri, 12 Apr 2019 10:58:38 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6403B3F718;
-        Fri, 12 Apr 2019 10:58:36 -0700 (PDT)
-Subject: Re: [PATCH v2] clk: rockchip: undo several noc and special clocks as
- critical on rk3288
-To:     Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        mka@chromium.org, ryandcase@chromium.org,
-        Caesar Wang <caesar.wang@rock-chips.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190412161747.107107-1-dianders@chromium.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6d877246-c59a-151c-973e-ad1161417d39@arm.com>
-Date:   Fri, 12 Apr 2019 18:58:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726933AbfDLSC5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 14:02:57 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39018 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbfDLSC5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 14:02:57 -0400
+Received: by mail-pg1-f194.google.com with SMTP id k3so5554018pga.6
+        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2019 11:02:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=S+H4OZ/XxRElDLqv3IW/VMLs9qpYjEmorStnxnx/F4Y=;
+        b=eyhVxxo1dKssj7vGt0KmlMi87MjvK2GDOC5vfU5whsJKeom/a2LaJNYwnkYhyHop21
+         YbxAidjVfLdicVm0lsHOarTJNePejS2UY3+eM5ROyxDylX4I40KuNGt6dBzrpEuS/bAo
+         CeU5HUMFBHAA5NPMI8lfMPde13IPcvY2EgvtY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=S+H4OZ/XxRElDLqv3IW/VMLs9qpYjEmorStnxnx/F4Y=;
+        b=S39FBQ2IaTILgxYXxmQUA2VTutQNv4zo9RRgA3cPNxUFJRY61VURdxCb3e3+4kJq4P
+         BBmadDjBApyOrMOt8q/UdRe8ThtHlRdUeGEBsbx1smEwovhmtLUOSSDhLpZsQwUydPJ3
+         jCS5mlL40amEF7KeOGKX2gg6lhFf5SvJA0yYN5Lrd/9jHJmKupJEIm7iR8Fp5LRWFtTI
+         ZdKAn1awQzLbgHAG0pEA3lVcq5uDGJHBapsUSESYpxUgA9IKQBwYx+CNGOBJRvigwafA
+         n1KULG73UIe4hLudguSHf6dvMWJQTfvDcP12HTc86RMk/8YUiqpQdS8y8VPw+ur/tv2b
+         nODA==
+X-Gm-Message-State: APjAAAUUu+Hhxlzb6Wien0T37ueRrCAvWumqsfoSiznEoi4HCQaRh8np
+        MY0kLQ7xEpcZ2AXArsI+XenSADbvWCqn1g==
+X-Google-Smtp-Source: APXvYqy6XIB4V6b5SYJngjhgqRFGiAB+cNvpjz2//g7Hrl4xUmISqdzEjHjWAqq/zAPIf2dpm9Rwbg==
+X-Received: by 2002:a63:c84c:: with SMTP id l12mr54921891pgi.287.1555092176367;
+        Fri, 12 Apr 2019 11:02:56 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id v1sm68363079pff.81.2019.04.12.11.02.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Apr 2019 11:02:55 -0700 (PDT)
+Date:   Fri, 12 Apr 2019 11:02:55 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] clk: rockchip: rk3288: Limit use of USB PHY clock to USB
+Message-ID: <20190412180255.GW112750@google.com>
+References: <20190411175917.173566-1-mka@chromium.org>
+ <3787637.WUkDPpUsF8@diego>
+ <20190412001657.GV112750@google.com>
+ <2029012.W0xZ3ly3fY@diego>
 MIME-Version: 1.0
-In-Reply-To: <20190412161747.107107-1-dianders@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2029012.W0xZ3ly3fY@diego>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/04/2019 17:17, Douglas Anderson wrote:
-> This is mostly a revert of commit 55bb6a633c33 ("clk: rockchip: mark
-> noc and some special clk as critical on rk3288") except that we're
-> keeping "pmu_hclk_otg0" as critical still.
+On Fri, Apr 12, 2019 at 11:30:37AM +0200, Heiko Stübner wrote:
+> Am Freitag, 12. April 2019, 02:16:57 CEST schrieb Matthias Kaehlcke:
+> > Hi Heiko,
+> > 
+> > On Thu, Apr 11, 2019 at 09:03:07PM +0200, Heiko Stübner wrote:
+> > > Hi Matthias,
+> > > 
+> > > Am Donnerstag, 11. April 2019, 19:59:17 CEST schrieb Matthias Kaehlcke:
+> > > > The USB PHY clock can be configured as (grand) parent of uart0_sclk and
+> > > > sclk_gpu. It has been observed that UART0 doesn't work reliably in high
+> > > > speed mode with the PHY clock as input when certain USB devices are
+> > > > plugged to the USB HOST1 port (see https://crrev.com/c/320543).
+> > > > 
+> > > > Prefix the name of the PHY clock with a '.' in the non-USB muxes to
+> > > > effectively remove the clock as input from these muxes.
+> > > > 
+> > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > > ---
+> > > >  drivers/clk/rockchip/clk-rk3288.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+> > > > index 5a67b7869960..677bc5485201 100644
+> > > > --- a/drivers/clk/rockchip/clk-rk3288.c
+> > > > +++ b/drivers/clk/rockchip/clk-rk3288.c
+> > > > @@ -200,8 +200,8 @@ PNAME(mux_aclk_cpu_src_p)	= { "cpll_aclk_cpu", "gpll_aclk_cpu" };
+> > > >  PNAME(mux_pll_src_cpll_gpll_p)		= { "cpll", "gpll" };
+> > > >  PNAME(mux_pll_src_npll_cpll_gpll_p)	= { "npll", "cpll", "gpll" };
+> > > >  PNAME(mux_pll_src_cpll_gpll_npll_p)	= { "cpll", "gpll", "npll" };
+> > > > -PNAME(mux_pll_src_cpll_gpll_usb480m_p)	= { "cpll", "gpll", "usbphy480m_src" };
+> > > > -PNAME(mux_pll_src_cpll_gll_usb_npll_p)	= { "cpll", "gpll", "usbphy480m_src", "npll" };
+> > > > +PNAME(mux_pll_src_cpll_gpll_usb480m_p)	= { "cpll", "gpll", ".usbphy480m_src" };
+> > > > +PNAME(mux_pll_src_cpll_gll_usb_npll_p)	= { "cpll", "gpll", ".usbphy480m_src", "npll" };
+> > > 
+> > > In general I like to have things like the clock-tree described fully
+> > > and let the kernel handle correct sourcing ... but:
+> > > 
+> > > As you write this seems like a systemic problem when just connecting
+> > > random peripherals can create unstable clock source frequencies,
+> > > so I tend to agree here ... but:
+> > > 
+> > > Can we please find a more "talking" name for this ... because as with the
+> > > above someone will find the "." and submit a fix for it ;-) .
+> > > 
+> > > So just name it "unstable_dummy" or so?
+> > 
+> > I looked for some common pattern, but couldn't find one. I liked the
+> > '.' since it leaves the name of the clock mostly intact, just hiding
+> > it (similar to a leading '.' in a Linux file system). But I agree that
+> > it might not be expressive enough. I still like the idea to keep the
+> > clock name around for reference, maybe we could name it
+> > "unstable:usbphy480m_src" or similar. If you don't object I'll send a
+> > patch with this some time tomorrow.
 > 
-> NOTE: turning these clocks off doesn't seem to do a whole lot in terms
-> of power savings (checking the power on the logic rail).  It appears
-> to save maybe 1-2mW.  ...but still it seems like we should turn the
-> clocks off if they aren't needed.
-> 
-> About "pmu_hclk_otg0" (the one clock from the original commit we're
-> still keeping critical) from an email thread:
-> 
->> pmu ahb clock
->>
->> Function: Clock to pmu module when hibernation and/or ADP is
->> enabled. Must be greater than or equal to 30 MHz.
->>
->> If the SOC design does not support hibernation/ADP function, only have
->> hclk_otg, this clk can be switched according to the usage of otg.
->> If the SOC design support hibernation/ADP, has two clocks, hclk_otg and
->> pmu_hclk_otg0.
->> Hclk_otg belongs to the closed part of otg logic, which can be switched
->> according to the use of otg.
->>
->> pmu_hclk_otg0 belongs to the always on part.
->>
->> As for whether pmu_hclk_otg0 can be turned off when otg is not in use,
->> we have not tested. IC suggest make pmu_hclk_otg0 always on.
-> 
-> For the rest of the clocks:
-> 
-> atclk: No documentation about this clock other than that it goes to
-> the CPU.  CPU functions fine without it on.  Maybe needed for JTAG?
+> I've just adapted the patch to use the new parent-name you suggested
+> and applied it for 5.2 So no need to resend :-) .
 
-FWIW, the two brief references in the TRM imply that's the ATB clock, 
-which would make it part of the CoreSight tracing gubbins[1] - I can't 
-see any evidence that RK3288 has an ETR or ETB for self-hosted tracing, 
-so it may well only be relevant for external trace hardware (wherein 
-GRF_SOC_CON7 suggests that it might spew trace data out of the parallel 
-LCD interface pins).
+Pefect, thanks!
 
-> jtag: Presumably this clock is only needed if you're debugging with
-> JTAG.  It doesn't seem like it makes sense to waste power for every
-> rk3288 user.  In any case to do JTAG you'd need private patches to
-> adjust the pinctrl the mux the JTAG out anyway.
-> 
-> pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
-> clocks on only during kernel panics in order to access some coresight
-> registers.  Since nothing in the upstream kernel does this we should
-> be able to leave them off safely.  Maybe also needed for JTAG?
+I don't see the patch in the git.kernel.org repo (nor
+https://lore.kernel.org/patchwork/patch/1060781/), looks like the push
+is still pending.
 
-Similarly, pclk_dbg sounds like the APB clock for the CPU external debug 
-interface[2] (which I suspect is probably somewhere in that "A17_Debug" 
-region at 0xffb80000 that the DT doesn't even go near).
+Cheers
 
-I would imagine that as long as a hardware debugger can establish a 
-JTAG/SWD connection to the DAP, it would then have an initialisation 
-script which knows what values to poke where in order to configure 
-additional pinmux/clocks/CoreSight components/etc. to the appropriate 
-state, so I'd hope that Linux shouldn't have to care about those details 
-either way.
-
-Robin.
-
-[1] http://infocenter.arm.com/help/topic/com.arm.doc.ddi0535b/CHDJFFCH.html
-[2] http://infocenter.arm.com/help/topic/com.arm.doc.ddi0535b/BABBCDGE.html
-
-> hsicphy12m_xin12m: There is no indication of why this clock would need
-> to be turned on for boards that don't use HSIC.
-> 
-> pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
-> these 4 clocks on only when doing DDR transitions and they are off
-> otherwise.  I see no reason why they'd need to be on in the upstream
-> kernel which doesn't support DDRFreq.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - Now keep pmu_hclk_otg0 as critical.
-> - Updated description since this isn't a clean revert.
-> - PWM patches have landed, so just one patch in the series now.
-> 
->   drivers/clk/rockchip/clk-rk3288.c | 13 ++++---------
->   1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-> index f47d514cba36..13668ad59f2e 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -313,13 +313,13 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
->   	COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
->   			RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
->   			RK3288_CLKGATE_CON(12), 6, GFLAGS),
-> -	COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
-> +	COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
->   			RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
->   			RK3288_CLKGATE_CON(12), 7, GFLAGS),
->   	COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
->   			RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
->   			RK3288_CLKGATE_CON(12), 8, GFLAGS),
-> -	GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
-> +	GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
->   			RK3288_CLKGATE_CON(12), 9, GFLAGS),
->   	GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
->   			RK3288_CLKGATE_CON(12), 10, GFLAGS),
-> @@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
->   	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
->   			RK3288_CLKSEL_CON(22), 7, IFLAGS),
->   
-> -	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
-> +	GATE(0, "jtag", "ext_jtag", 0,
->   			RK3288_CLKGATE_CON(4), 14, GFLAGS),
->   
->   	COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy480m_p, 0,
-> @@ -656,7 +656,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
->   	COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy480m_p, 0,
->   			RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
->   			RK3288_CLKGATE_CON(3), 6, GFLAGS),
-> -	GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
-> +	GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
->   			RK3288_CLKGATE_CON(13), 9, GFLAGS),
->   	DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
->   			RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
-> @@ -837,11 +837,6 @@ static const char *const rk3288_critical_clocks[] __initconst = {
->   	"pclk_alive_niu",
->   	"pclk_pd_pmu",
->   	"pclk_pmu_niu",
-> -	"pclk_core_niu",
-> -	"pclk_ddrupctl0",
-> -	"pclk_publ0",
-> -	"pclk_ddrupctl1",
-> -	"pclk_publ1",
->   	"pmu_hclk_otg0",
->   	/* pwm-regulators on some boards, so handoff-critical later */
->   	"pclk_rkpwm",
-> 
+Matthias
