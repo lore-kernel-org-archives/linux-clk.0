@@ -2,105 +2,74 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB705C10F0E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 09:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632A6C10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 09:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA69F2171F
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 09:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 372B5205F4
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 09:36:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfDLJap convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 05:30:45 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:37168 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726327AbfDLJap (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Apr 2019 05:30:45 -0400
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id S1726753AbfDLJgx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 05:36:53 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39897 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726709AbfDLJgx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 05:36:53 -0400
+Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hEsW6-0004Ou-7u; Fri, 12 Apr 2019 11:30:38 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] clk: rockchip: rk3288: Limit use of USB PHY clock to USB
-Date:   Fri, 12 Apr 2019 11:30:37 +0200
-Message-ID: <2029012.W0xZ3ly3fY@diego>
-In-Reply-To: <20190412001657.GV112750@google.com>
-References: <20190411175917.173566-1-mka@chromium.org> <3787637.WUkDPpUsF8@diego> <20190412001657.GV112750@google.com>
+        (envelope-from <m.tretter@pengutronix.de>)
+        id 1hEsc6-0004Pw-CV; Fri, 12 Apr 2019 11:36:50 +0200
+Date:   Fri, 12 Apr 2019 11:36:46 +0200
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>
+Subject: Re: [PATCH v2 0/4] clk: zynqmp: fix CLK_FRAC and various cleanups
+Message-ID: <20190412113646.56187dc8@litschi.hi.pengutronix.de>
+In-Reply-To: <155500805844.20095.8423821269571777766@swboyd.mtv.corp.google.com>
+References: <20190319100147.4178-1-m.tretter@pengutronix.de>
+        <20190404101621.7b88337c@litschi.hi.pengutronix.de>
+        <155500805844.20095.8423821269571777766@swboyd.mtv.corp.google.com>
+Organization: Pengutronix
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
+X-SA-Exim-Mail-From: m.tretter@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Freitag, 12. April 2019, 02:16:57 CEST schrieb Matthias Kaehlcke:
-> Hi Heiko,
+On Thu, 11 Apr 2019 11:40:58 -0700, Stephen Boyd wrote:
+> Quoting Michael Tretter (2019-04-04 01:16:21)
+> > On Tue, 19 Mar 2019 11:01:43 +0100, Michael Tretter wrote:  
+> > > This is v2 of the patchset to cleanup the ZynqMP clock driver.  
+> > 
+> > Gentle ping.
+> >   
 > 
-> On Thu, Apr 11, 2019 at 09:03:07PM +0200, Heiko Stübner wrote:
-> > Hi Matthias,
-> > 
-> > Am Donnerstag, 11. April 2019, 19:59:17 CEST schrieb Matthias Kaehlcke:
-> > > The USB PHY clock can be configured as (grand) parent of uart0_sclk and
-> > > sclk_gpu. It has been observed that UART0 doesn't work reliably in high
-> > > speed mode with the PHY clock as input when certain USB devices are
-> > > plugged to the USB HOST1 port (see https://crrev.com/c/320543).
-> > > 
-> > > Prefix the name of the PHY clock with a '.' in the non-USB muxes to
-> > > effectively remove the clock as input from these muxes.
-> > > 
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > ---
-> > >  drivers/clk/rockchip/clk-rk3288.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-> > > index 5a67b7869960..677bc5485201 100644
-> > > --- a/drivers/clk/rockchip/clk-rk3288.c
-> > > +++ b/drivers/clk/rockchip/clk-rk3288.c
-> > > @@ -200,8 +200,8 @@ PNAME(mux_aclk_cpu_src_p)	= { "cpll_aclk_cpu", "gpll_aclk_cpu" };
-> > >  PNAME(mux_pll_src_cpll_gpll_p)		= { "cpll", "gpll" };
-> > >  PNAME(mux_pll_src_npll_cpll_gpll_p)	= { "npll", "cpll", "gpll" };
-> > >  PNAME(mux_pll_src_cpll_gpll_npll_p)	= { "cpll", "gpll", "npll" };
-> > > -PNAME(mux_pll_src_cpll_gpll_usb480m_p)	= { "cpll", "gpll", "usbphy480m_src" };
-> > > -PNAME(mux_pll_src_cpll_gll_usb_npll_p)	= { "cpll", "gpll", "usbphy480m_src", "npll" };
-> > > +PNAME(mux_pll_src_cpll_gpll_usb480m_p)	= { "cpll", "gpll", ".usbphy480m_src" };
-> > > +PNAME(mux_pll_src_cpll_gll_usb_npll_p)	= { "cpll", "gpll", ".usbphy480m_src", "npll" };
-> > 
-> > In general I like to have things like the clock-tree described fully
-> > and let the kernel handle correct sourcing ... but:
-> > 
-> > As you write this seems like a systemic problem when just connecting
-> > random peripherals can create unstable clock source frequencies,
-> > so I tend to agree here ... but:
-> > 
-> > Can we please find a more "talking" name for this ... because as with the
-> > above someone will find the "." and submit a fix for it ;-) .
-> > 
-> > So just name it "unstable_dummy" or so?
+> I could apply the first three, but the last one didn't work because
+> Jolly Shah sent some changes that wrecked it. Can you resend the last
+> patch reworked on top of it? You can use clk-zynq in clk.git if you need
+> something to base it upon.
+
+Thanks. The changes in clk-zynq look really fragile to me, because the
+fields from the firmware response are reused to build the clock id. I
+will send a v3 of the patch anyway to properly get the fields of the
+firmware responses.
+
+Michael
+
 > 
-> I looked for some common pattern, but couldn't find one. I liked the
-> '.' since it leaves the name of the clock mostly intact, just hiding
-> it (similar to a leading '.' in a Linux file system). But I agree that
-> it might not be expressive enough. I still like the idea to keep the
-> clock name around for reference, maybe we could name it
-> "unstable:usbphy480m_src" or similar. If you don't object I'll send a
-> patch with this some time tomorrow.
-
-I've just adapted the patch to use the new parent-name you suggested
-and applied it for 5.2 So no need to resend :-) .
-
-Thanks
-Heiko
-
-
+>  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-zynq
+> 
