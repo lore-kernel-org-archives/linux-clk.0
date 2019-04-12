@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184A5C282CE
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC263C282CE
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA89E218C3
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A026120869
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 18:22:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QAS2lV2H"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RXLjqTWE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfDLSWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 14:22:45 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46532 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbfDLSWp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 14:22:45 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3CIMcTk101094;
-        Fri, 12 Apr 2019 13:22:38 -0500
+        id S1726832AbfDLSWu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 14:22:50 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:49482 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfDLSWu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 14:22:50 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3CIMhcf088372;
+        Fri, 12 Apr 2019 13:22:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1555093358;
-        bh=xT1JLxedLCnPoPyGzV6/VOQlGCZBRVZ5YEZbPKntjq0=;
+        s=ti-com-17Q1; t=1555093364;
+        bh=tDG44Vt4584Rd2sNRDh0O70euESEC+9ovgb60TrmNzk=;
         h=From:To:Subject:Date:In-Reply-To:References;
-        b=QAS2lV2HfHN5r2YIt7d7svODku06IB1q6qSvSQoYEPLbLjjkY3FwRPn5/+BbhDaYi
-         AVY/oTmgepI4lN1w59o0aWbb6esYi7XnydcXb7yAarzGsSyTNiqdf8jBsO0FE/QLkI
-         LZZaKqWlCVz5G1BIVL3EZcdt1sKJbsA47/gisZhU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3CIMcIG109575
+        b=RXLjqTWEhOD4RtykYQHjWnxp8MlWk/guTJfJEGytOEztQzBkaQqMF3MnMUWYPumdc
+         bq5g9M4GbT/ZJsmJvfMtpS2jFtQ5YwboKpQghkN3ph+ZzKy7gJFqzrEzQUK+p9Zbtm
+         OX1sga1gZmRdHZ+1fNF0RN7wY+ynnPY/TggVlSMo=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3CIMhad029737
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 12 Apr 2019 13:22:38 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 12 Apr 2019 13:22:43 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 12
- Apr 2019 13:22:38 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2019 13:22:42 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 12 Apr 2019 13:22:38 -0500
+ Frontend Transport; Fri, 12 Apr 2019 13:22:42 -0500
 Received: from gomoku.home (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3CIMYYj060123;
-        Fri, 12 Apr 2019 13:22:36 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3CIMYYk060123;
+        Fri, 12 Apr 2019 13:22:38 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <sboyd@kernel.org>,
         <mturquette@baylibre.com>
-Subject: [PATCH 1/3] clk: keystone: sci-clk: cut down the clock name length
-Date:   Fri, 12 Apr 2019 21:22:20 +0300
-Message-ID: <1555093342-428-2-git-send-email-t-kristo@ti.com>
+Subject: [PATCH 2/3] clk: keystone: sci-clk: split out the fw clock parsing to own function
+Date:   Fri, 12 Apr 2019 21:22:21 +0300
+Message-ID: <1555093342-428-3-git-send-email-t-kristo@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1555093342-428-1-git-send-email-t-kristo@ti.com>
 References: <1555093342-428-1-git-send-email-t-kristo@ti.com>
@@ -64,40 +64,108 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no need to store the full node name to the individual clocks,
-as this will just consome memory and make the clock debug entries
-unnecessary long. Just shorten this to "clk" for now.
+This makes it both easier to see what the probe does, and also makes it
+possible to add alternative implementations for the clock data source.
 
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/keystone/sci-clk.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/clk/keystone/sci-clk.c | 68 +++++++++++++++++++++++++-----------------
+ 1 file changed, 41 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index 4cb70be..e737f24 100644
+index e737f24..1e465de 100644
 --- a/drivers/clk/keystone/sci-clk.c
 +++ b/drivers/clk/keystone/sci-clk.c
-@@ -280,8 +280,8 @@ static int _sci_clk_build(struct sci_clk_provider *provider,
- 	int i;
- 	int ret = 0;
+@@ -403,22 +403,8 @@ static int ti_sci_init_clocks(struct sci_clk_provider *p)
+ };
+ MODULE_DEVICE_TABLE(of, ti_sci_clk_of_match);
  
--	name = kasprintf(GFP_KERNEL, "%s:%d:%d", dev_name(provider->dev),
--			 sci_clk->dev_id, sci_clk->clk_id);
-+	name = kasprintf(GFP_KERNEL, "clk:%d:%d", sci_clk->dev_id,
-+			 sci_clk->clk_id);
+-/**
+- * ti_sci_clk_probe - Probe function for the TI SCI clock driver
+- * @pdev: platform device pointer to be probed
+- *
+- * Probes the TI SCI clock device. Allocates a new clock provider
+- * and registers this to the common clock framework. Also applies
+- * any required flags to the identified clocks via clock lists
+- * supplied from DT. Returns 0 for success, negative error value
+- * for failure.
+- */
+-static int ti_sci_clk_probe(struct platform_device *pdev)
++static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
+ {
+-	struct device *dev = &pdev->dev;
+-	struct device_node *np = dev->of_node;
+-	struct sci_clk_provider *provider;
+-	const struct ti_sci_handle *handle;
+ 	int ret;
+ 	int num_clks = 0;
+ 	struct sci_clk **clks = NULL;
+@@ -429,18 +415,7 @@ static int ti_sci_clk_probe(struct platform_device *pdev)
+ 	int dev_id = 0;
+ 	u8 num_parents;
+ 	int gap_size = 0;
+-
+-	handle = devm_ti_sci_get_handle(dev);
+-	if (IS_ERR(handle))
+-		return PTR_ERR(handle);
+-
+-	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
+-	if (!provider)
+-		return -ENOMEM;
+-
+-	provider->sci = handle;
+-	provider->ops = &handle->ops.clk_ops;
+-	provider->dev = dev;
++	struct device *dev = provider->dev;
  
- 	init.name = name;
+ 	while (1) {
+ 		ret = provider->ops->get_num_parents(provider->sci, dev_id,
+@@ -501,6 +476,45 @@ static int ti_sci_clk_probe(struct platform_device *pdev)
  
-@@ -306,8 +306,7 @@ static int _sci_clk_build(struct sci_clk_provider *provider,
- 		for (i = 0; i < sci_clk->num_parents; i++) {
- 			char *parent_name;
+ 	devm_kfree(dev, clks);
  
--			parent_name = kasprintf(GFP_KERNEL, "%s:%d:%d",
--						dev_name(provider->dev),
-+			parent_name = kasprintf(GFP_KERNEL, "clk:%d:%d",
- 						sci_clk->dev_id,
- 						sci_clk->clk_id + 1 + i);
- 			if (!parent_name) {
++	return 0;
++}
++
++/**
++ * ti_sci_clk_probe - Probe function for the TI SCI clock driver
++ * @pdev: platform device pointer to be probed
++ *
++ * Probes the TI SCI clock device. Allocates a new clock provider
++ * and registers this to the common clock framework. Also applies
++ * any required flags to the identified clocks via clock lists
++ * supplied from DT. Returns 0 for success, negative error value
++ * for failure.
++ */
++static int ti_sci_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct sci_clk_provider *provider;
++	const struct ti_sci_handle *handle;
++	int ret;
++
++	handle = devm_ti_sci_get_handle(dev);
++	if (IS_ERR(handle))
++		return PTR_ERR(handle);
++
++	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
++	if (!provider)
++		return -ENOMEM;
++
++	provider->sci = handle;
++	provider->ops = &handle->ops.clk_ops;
++	provider->dev = dev;
++
++	ret = ti_sci_scan_clocks_from_fw(provider);
++	if (ret) {
++		dev_err(dev, "scan clocks from FW failed: %d\n", ret);
++		return ret;
++	}
++
+ 	ret = ti_sci_init_clocks(provider);
+ 	if (ret) {
+ 		pr_err("ti-sci-init-clocks failed.\n");
 -- 
 1.9.1
 
