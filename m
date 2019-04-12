@@ -2,107 +2,135 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAECCC10F0E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 07:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54623C10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 07:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9393B2082E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 07:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B76A2064A
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 07:47:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qRch6MLy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfDLHPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 03:15:43 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45429 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbfDLHPn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 03:15:43 -0400
-Received: by mail-ed1-f67.google.com with SMTP id o26so7374940edv.12
-        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2019 00:15:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=13wQ/vIEQV4DmOqwYRy34cBX+EyJikzd0euuned94A0=;
-        b=m+y+0TozpbCllnBMNE8UH+oRWlYS6xO1rJbqfMlb0O1eNtoHuOTebgYjXyZqMWaBw+
-         wq3R5BtmnQCosACjDJ89pGL8BZ5vVsmCXDAFtoftJVKtTGHD2OrQ6eJ7W7V/XMeHDUiR
-         pm/arVkPn/F4SHJHM/m/Q/4BdXQrVWOBy1ZTEO0OXjQ8YFdJOrWO7nc8z6jZEFqUd20I
-         LOP5o0tqIT+ux7A9ZbJZu+r1W4agLfP0KXrN+Nhy86Fc5iVzLUceboMY5xjNsqjKfPiT
-         +puwIG8MOqZjuxtxh/cP8Ldyv2qZ6cQ/fIQSFHRhFX92cCv2ldc0Bt+2doHfjXUD7oNc
-         tlKQ==
-X-Gm-Message-State: APjAAAURIRDt7qno16oe997/ddh366aPifweET9d68BGBtYwkh9iTfEk
-        Up0DE660l/PAL11RTV//UcdzVw==
-X-Google-Smtp-Source: APXvYqzK/6fuXxE6062s4/zCLdjxlM/5d+nmRe3+teiJn9SHzjGZIeRDGp7rsK/mthyg0CEJe7SFRA==
-X-Received: by 2002:a17:906:b202:: with SMTP id p2mr30002206ejz.266.1555053341419;
-        Fri, 12 Apr 2019 00:15:41 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id g6sm11725674edp.4.2019.04.12.00.15.40
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Apr 2019 00:15:40 -0700 (PDT)
-Subject: Re: [PATCH] platform/x86: pmc_atom: Drop __initconst on dmi table
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     kbuild-all@01.org, kbuild test robot <lkp@intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <201904111738.Ncw2Vf01%lkp@intel.com>
- <20190411172807.57796-1-sboyd@kernel.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <4c95e469-c5fc-f043-8d54-f85ac812493b@redhat.com>
-Date:   Fri, 12 Apr 2019 09:15:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726690AbfDLHrB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 03:47:01 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12819 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726682AbfDLHrB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 03:47:01 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cb042790000>; Fri, 12 Apr 2019 00:47:05 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 12 Apr 2019 00:47:00 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 12 Apr 2019 00:47:00 -0700
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 12 Apr
+ 2019 07:47:00 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 2BBC941B97; Fri, 12 Apr 2019 10:46:58 +0300 (EEST)
+Date:   Fri, 12 Apr 2019 10:46:58 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] clk: tegra20/30: Add custom EMC clock implementation
+Message-ID: <20190412074658.GF12975@pdeschrijver-desktop.Nvidia.com>
+References: <20190411224708.29103-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190411172807.57796-1-sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190411224708.29103-1-digetx@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1555055225; bh=wai0/O1OOC7HFu1FkJi782os2EEBhi6VCUNQkuqnmZc=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=qRch6MLywuGK7J60SBrUvFBH9ldjXIGyJh86NHq/N4f006mVDE0GQZuf5E5OoXXgD
+         ZxhiEWyHIVfxNj36hXQLwR/AWWLx05JT1+F9ND5GVpTPdSOuKOCOrbeuox7K6Oh4WX
+         CSOd+W2hsmKm2IEW6FSUeMwQKAj5oez5Rp7b1x19FccZ03LEy2Nl0qDk5chfobedLn
+         xl3gR5KTdIHO8bA9rHhPo/vJttrCjrW25Nn564DR+2NO+iLGohX33hh9R4x263zUFo
+         xIVbK8bNfofNMpQs2n0TzQ9Sd8/lCDN9LSE1j49+VyZ2ehRTTtZlI+5sIVzDW9oqow
+         klNNUB9E4snng==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On 11-04-19 19:28, Stephen Boyd wrote:
-> It's used by probe and that isn't an init function. Drop this so that we
-> don't get a section mismatch.
+On Fri, Apr 12, 2019 at 01:47:08AM +0300, Dmitry Osipenko wrote:
+> A proper External Memory Controller clock rounding and parent selection
+> functionality is required by the EMC drivers. It is not available using
+> the generic clock implementation, hence add a custom one. The clock rate
+> rounding shall be done by the EMC drivers because they have information
+> about available memory timings, so the drivers will have to register a
+> callback that will round the requested rate. EMC clock users won't be able
+> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
+> and the callback is set up. The functionality is somewhat similar to the
+> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
+> more parent clock sources and the HW configuration and integration with
+> the EMC drivers differs a tad from the older gens, hence it's not really
+> worth to try to squash everything into a single source file.
 > 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Cc: David Müller <dave.mueller@gmx.ch>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Fixes: 7c2e07130090 ("clk: x86: Add system specific quirk to mark clocks as critical")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+..
 
-Thank you for fixing this, I agree that this is the correct fix:
+> +	val = readl_relaxed(emc->ioaddr);
+> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+> +	val |= div;
+> +
+> +	parent = val >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+> +
+> +	if (parent == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
+> +		val |= USE_PLLM_UD;
+> +	else
+> +		val &= ~USE_PLLM_UD;
+> +
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Note that low jitter means the divider is bypassed, so you can only use
+this when div == 1.
 
-Regards,
+> +	writel_relaxed(val, emc->ioaddr);
+> +
+> +	return 0;
+> +}
+> +
+> +static int emc_set_rate_and_parent(struct clk_hw *hw,
+> +				   unsigned long rate,
+> +				   unsigned long parent_rate,
+> +				   u8 index)
+> +{
+> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
+> +	u32 val, div;
+> +
+> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
+> +
+> +	val = readl_relaxed(emc->ioaddr);
+> +
+> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
+> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+> +
+> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+> +	val |= div;
+> +
+> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
+> +		val |= USE_PLLM_UD;
+> +	else
+> +		val &= ~USE_PLLM_UD;
+> +
 
-Hans
+Same here ofcourse.
 
-
-> ---
->   drivers/platform/x86/pmc_atom.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-> index eaec2d306481..c7039f52ad51 100644
-> --- a/drivers/platform/x86/pmc_atom.c
-> +++ b/drivers/platform/x86/pmc_atom.c
-> @@ -396,7 +396,7 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
->    * Some systems need one or more of their pmc_plt_clks to be
->    * marked as critical.
->    */
-> -static const struct dmi_system_id critclk_systems[] __initconst = {
-> +static const struct dmi_system_id critclk_systems[] = {
->   	{
->   		.ident = "MPL CEC1x",
->   		.matches = {
-> 
+Peter.
