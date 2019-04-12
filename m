@@ -2,123 +2,86 @@ Return-Path: <SRS0=khTx=SO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2F0C10F14
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 08:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CF7C10F0E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 08:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF73F2083E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 08:26:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BC872084D
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Apr 2019 08:37:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WBBikcoZ"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="E7OJ647N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfDLI0A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Apr 2019 04:26:00 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42626 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726850AbfDLI0A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 04:26:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g3so10750763wrx.9
-        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2019 01:25:59 -0700 (PDT)
+        id S1727321AbfDLIhb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Apr 2019 04:37:31 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56003 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbfDLIhb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Apr 2019 04:37:31 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o25so10121633wmf.5
+        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2019 01:37:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=UOW41HO6lrsR+5mvtCNU1KtBZgKhCRxtYa63HbUZJOU=;
-        b=WBBikcoZHOSXicIGtDHTwg2RtoqwmlvNRR8voCOgFOeKSjFXhUaAYc0hlVR30kAOE2
-         PA0zGiHNtsyhL1McDLJgBWv+ARyItcgfrYFPgn77HX5iUWuYzkZn/WYTxqTA+ZlUwU1h
-         qUNhk1PCBt7qepZvER6Tli1XgueXEIHwnYE2P0kml+STzjWIazH82s+fGYUCkC5BKl60
-         0B9eeuKca2rgQSwZm0dYrMSEjonFSA8fj1xofijZ4+Ydnd9ZGfnmuYGZ886BfFMLl10F
-         51YfyeZSYQx22O0g3I3HGD7nsuVEFsf172MWdN/u1omoEbs5hl6xb2w/nFhx+c96PO2e
-         UQyQ==
+        h=from:to:subject:date:message-id;
+        bh=ZKz/3nG67GwzsaV3N/YB/TEMllMIJbbub9F4fg+aT+k=;
+        b=E7OJ647NESDimD3WKwbgRxMKtoGjQWH/13iE09HHdhS1NjNGM5sC+NKvZ6wo3f6hqo
+         CxmgWTTURAyXJbOealiDSnk44TQ3JBtVa/QN5zI5yb+uYN9lJFS4WXhXxsyRysCuFNHl
+         v5Y4D5TQE8DKVC+PqN8adRVATAuBWDryP9ooWLv8cJLyaDvrajRbxAd9f6alWe+kfVF1
+         y1jW0UBWNPcRShpSlaGWrbx/vC9SPBM6XLL4QKxLG/lZxVpFe09MtNTy9dk8lPaeFfn4
+         VOYCecqvu8sjAM4hWIggsDd64SrgSUF39uTVSreVTz3n/WqX92ynejAUMLDmZc/pkD4j
+         f9mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=UOW41HO6lrsR+5mvtCNU1KtBZgKhCRxtYa63HbUZJOU=;
-        b=iZrFTe6xAdceXlgW2dI6WESbMeGAuflWJRuwBXxNlCvRyJfoRbJqA1VOtA6ZapD/al
-         o+meq+G1+XAu9Q5djvwmDv64C76p1h63guad58fKmujDfuP0MyzOwVQSqpx1gEHGzYIE
-         0YmuAlbxIRdlEBJHK66TANOuKHPDTikquvNqTOnD5XcVGUXRMB9GIIs6Nfo4wmd4FcMV
-         +nZ0mquTMP/VGtN0FRjqAgHf9a04Vqit16es1HpN1r1SpVT7PEumoy9Mkoqt/AUitlIs
-         v71thRyQ2KUQkJUz2WyFH/ATnvbA2z3oQlW1xM7/M30/JyZRfiUbZiJjFbaQWu7Ln5Vi
-         uZ8g==
-X-Gm-Message-State: APjAAAXO4+xbks001o42qTrS70h6TzmQaN0ULiLYQAefO1EYfoSBxLuV
-        mi355cQvD0JpBfKhNsMwE9HSrg==
-X-Google-Smtp-Source: APXvYqxXnP+B81+W5eB+L4owjsY8VobAmLyuh5RAdQ9I0t2cV8IAAjIvYGOKGN9XPftPTh3+tAepTQ==
-X-Received: by 2002:a05:6000:2:: with SMTP id h2mr17178944wrx.76.1555057558348;
-        Fri, 12 Apr 2019 01:25:58 -0700 (PDT)
-Received: from [10.1.4.98] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id e7sm9375295wme.37.2019.04.12.01.25.57
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=ZKz/3nG67GwzsaV3N/YB/TEMllMIJbbub9F4fg+aT+k=;
+        b=rpfhzxKaFHSCtPX4XMo7KNXzNDVGReJTMLSmZ+2SvniRuoNPolk1LnkmsIlLfz8ztX
+         ogz0Hd/XUoj6wBAyNy7SEkqOHmgmfatHrlOkSMD0ffXyP1JNY9VBCOiNGK47bHMo8DNS
+         XThy8wVTYKYDqD3BkRn6wvG8CEzeW0jdwYmnDIx/IHwilX6yFoNkdKy5oV0rgGA/dWgj
+         k5+YAPL8VhYKeooUP6sKIAe8jNa2Co6h54/kjPTBnvLtMQK5XLx7NIVs2TgGRp/TJXt5
+         7k38hdtKlya7SXRCqHGxCCOGBxy/ro0BH+E3PCZby2YggCd/d4V/s/YPmytFZY9yEfki
+         xaLw==
+X-Gm-Message-State: APjAAAVqezmIiWewJ0igFC2AzEwk5ZhjRrhlaCSgMqU8Ek4FYj2GXd1M
+        pWYm8u0xX+XKJQ/5zFf5RmwDbh3RsAg=
+X-Google-Smtp-Source: APXvYqy4rYbzVamG2wJvJxJQyRgXoKvrpKngk2aUZpY2KevlOpHB4AqVU/KMioKi6uLemMfT9m/wzw==
+X-Received: by 2002:a1c:208c:: with SMTP id g134mr10133283wmg.70.1555058249935;
+        Fri, 12 Apr 2019 01:37:29 -0700 (PDT)
+Received: from glaroque-ThinkPad-T480.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id y125sm12124318wmc.39.2019.04.12.01.37.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Apr 2019 01:25:57 -0700 (PDT)
-Subject: Re: [PATCH 2/2] clk: meson-g12a: Add Temperature Sensor clock
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
+        Fri, 12 Apr 2019 01:37:29 -0700 (PDT)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     jbrunet@baylibre.com, narmstrong@baylibre.com,
         khilman@baylibre.com, linux-amlogic@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20190411084537.30299-1-glaroque@baylibre.com>
- <20190411084537.30299-3-glaroque@baylibre.com>
- <CAFBinCBVmPa5hi83B1ZTe-guassHxKQFrN5QOyMJc9s95LJ1cg@mail.gmail.com>
-From:   guillaume La Roque <glaroque@baylibre.com>
-Message-ID: <fc4e0fbd-2643-2f37-9cdb-2ec162826e76@baylibre.com>
-Date:   Fri, 12 Apr 2019 10:25:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAFBinCBVmPa5hi83B1ZTe-guassHxKQFrN5QOyMJc9s95LJ1cg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Subject: [PATCH v2 0/2] Add support of Temperature sensor Clock for G12 SoC
+Date:   Fri, 12 Apr 2019 10:37:26 +0200
+Message-Id: <20190412083728.21029-1-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-hi martin,
+This patch series add support of Clock for temperature sensor
+on Amlogic G12a SoC.
 
+Guillaume
 
-On 4/11/19 11:38 PM, Martin Blumenstingl wrote:
-> Hi Guillaume,
->
-> On Thu, Apr 11, 2019 at 10:46 AM Guillaume La Roque
-> <glaroque@baylibre.com> wrote:
->> Add TS clock used by two temperature sensor
-> thank you for working on this!
->
->> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
->> ---
->>  drivers/clk/meson/g12a.c | 31 +++++++++++++++++++++++++++++++
->>  drivers/clk/meson/g12a.h |  3 ++-
->>  2 files changed, 33 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> index 3a3134976534..e6d2af6ee8ea 100644
->> --- a/drivers/clk/meson/g12a.c
->> +++ b/drivers/clk/meson/g12a.c
->> @@ -2335,6 +2335,33 @@ static struct clk_regmap g12a_mali = {
->>         },
->>  };
->>
->> +static struct clk_regmap g12a_ts_div = {
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_TS_CLK_CNTL,
->> +               .shift = 0,
->> +               .width = 7,
-> buildroot_openlinux_kernel_4.9_fbdev_20180706 uses ".width = 8".
-> That matches with the public S922X datasheet from hardkernel which
-> states that HHI_TS_CLK_CNTL[7:0] is "ts_clk clk_div"
+changes since v1:
+- fix .width value
 
-sorry for this error i'll fix it
+Guillaume La Roque (2):
+  dt-bindings: clk: g12a-clkc: add Temperature Sensor clock ID
+  clk: meson-g12a: Add Temperature Sensor clock
 
->
-> Martin
+ drivers/clk/meson/g12a.c              | 31 +++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.h              |  3 ++-
+ include/dt-bindings/clock/g12a-clkc.h |  1 +
+ 3 files changed, 34 insertions(+), 1 deletion(-)
 
-Thanks
-
-guillqume
+-- 
+2.17.1
 
