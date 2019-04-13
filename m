@@ -2,76 +2,68 @@ Return-Path: <SRS0=BYUi=SP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7D7C10F11
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Apr 2019 11:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D880CC10F11
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Apr 2019 22:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6E72084D
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Apr 2019 11:43:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="X3w8IXwa"
+	by mail.kernel.org (Postfix) with ESMTP id A6880218C3
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Apr 2019 22:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555192821;
+	bh=WjG4qqkjedloJq3kWZnCNdSQTagkG7dbdQQpfd48EjA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=QhQ8r+lCjUMVshLRPwJJVo+1JmPYmWrr06S6w08I8dAe5N+qGuosSwFxGkv1i42cf
+	 cCKBdj23kegf35h/9hksi5OYMj5/+r8rToDjk+wKpSCFUtQ0+LBMqYLw12wIzDJbU0
+	 c//3A0HK8/q+OPlxn/EvEKzJByFIylGix6+uFD0Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfDMLnX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Apr 2019 07:43:23 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38134 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbfDMLnX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Apr 2019 07:43:23 -0400
-Received: by mail-oi1-f194.google.com with SMTP id a6so10135097oie.5;
-        Sat, 13 Apr 2019 04:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8PhNdP0asdVObS6Xc/5QPUT8gFKo5WEOH+jVFHzdyF0=;
-        b=X3w8IXwa+SzR5FfzM9rOMzxd4hw8y+kSdy6o78ko467+SvDzG1kvjZP9lrs1c2Dhnw
-         Iv6GYbYxl32ta2f+S90yzujPiPggs4XH2TZLFcaQ6EHV09gN/tJBnYi17bqBIubR2Fzm
-         +5OEDDkZuZairFfga1GZpwZaxvULbunu0gtGJMgLDu2DDJidU42NyU92ptmh+z/2HdoN
-         f00KlPIpQS8G6NJbL6e1BUihId4CxNNGQMpaEpbrBdAvh/M0g4JcFqM9e1KbD2ipdtpD
-         h9j4ZBx19cCWBvyi3/1OW1rCUMALF90fAAuzDWiVwy62ATAgTKHAbUsZ6Y/ThNKqEQCk
-         XgPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8PhNdP0asdVObS6Xc/5QPUT8gFKo5WEOH+jVFHzdyF0=;
-        b=s3JVDaQwGO0tII92pULp/fYKdvxVwUJz2iEWI9X+3Q5YM/rVi/gXBJVJmzDpjX1KGR
-         pBOqlHLXg4loNc75aESo6xvVpnwgKdb9xLSh1pGcDWN1oloOvBhDp6Z0SBLmgozEG4Kc
-         wAqGZODqnHepjIesxi5KbQ91RNrCeQV38z4pIXiKixNlMGSmNT0B6rtFxg5pMnfL/K6o
-         7RK7junNRX94uNvjrVsHXngYj12h8Lnc0WNqMSTiqg2XnLaCLcQGgSLJxldP4fPX+fdW
-         FiPUb+7uFQbdSG1GJv1Ocl481mFeS2553b2AhfbC01PjkKkuRZ7MFVPAZYsSCyA7otNN
-         MJHg==
-X-Gm-Message-State: APjAAAXjnS7ppwFmqXjEtqpBZ4HdODj4m/73m3oWXhIM/5UF4eGLJBgn
-        dW4HElgjb8ytEx27FbdvA/nQrGieCSOlozWv9G0=
-X-Google-Smtp-Source: APXvYqxqXFZDeb3MD3FPgVmZ4ZsFdh+cixd6uEq+e7w+qpemMnK54guuTIMepO8ZQ/3ObliIu7U2Wb6CvLTe+yJydVg=
-X-Received: by 2002:aca:d487:: with SMTP id l129mr14029433oig.129.1555155802759;
- Sat, 13 Apr 2019 04:43:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190412100221.26740-1-glaroque@baylibre.com> <20190412100221.26740-3-glaroque@baylibre.com>
-In-Reply-To: <20190412100221.26740-3-glaroque@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 13 Apr 2019 13:43:12 +0200
-Message-ID: <CAFBinCAhf0EpnvUnYFEvAHo44a7OBoD-Hasx60Aow6ZfvWWEpw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: meson-g12a: Add Temperature Sensor clock
-To:     Guillaume La Roque <glaroque@baylibre.com>
-Cc:     jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
-        khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1727206AbfDMWAQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Apr 2019 18:00:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727197AbfDMWAH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Apr 2019 18:00:07 -0400
+Subject: Re: [GIT PULL] clk fixes for v5.1-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1555192806;
+        bh=WjG4qqkjedloJq3kWZnCNdSQTagkG7dbdQQpfd48EjA=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=OIhWrUTOrcO4snUj7A5kVLiEjLGHc8poVWLhBHvRsrsqq1B5LeHy9jhpC0gR1IEV5
+         p/gy21FZL4VwneS+1+ai7aVE8CKJQadUMcT/ablDLMlm/HrA1FJ3uyNmjbaNQkUl+S
+         QJd5S2HA1ZfMisdrOtlcUKRzr699X/uE1/9gWs6k=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190412232107.26830-1-sboyd@kernel.org>
+References: <20190412232107.26830-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190412232107.26830-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: f89b9e1be7da8bb0aac667a0206a00975cefe6d3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 09bad0df3974ef9e682447f48bb7fd55c48513f3
+Message-Id: <155519280652.8399.1697359705697560259.pr-tracker-bot@kernel.org>
+Date:   Sat, 13 Apr 2019 22:00:06 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 12, 2019 at 12:03 PM Guillaume La Roque
-<glaroque@baylibre.com> wrote:
->
-> Add TS clock used by two temperature sensor
->
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-Reviewed-by: Martin Blumenstingl<martin.blumenstingl@googlemail.com>
+The pull request you sent on Fri, 12 Apr 2019 16:21:07 -0700:
+
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/09bad0df3974ef9e682447f48bb7fd55c48513f3
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
