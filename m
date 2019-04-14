@@ -2,109 +2,111 @@ Return-Path: <SRS0=NtHV=SQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F485C10F13
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Apr 2019 15:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C862FC10F13
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Apr 2019 19:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FC7620693
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Apr 2019 15:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 966FE2084D
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Apr 2019 19:24:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p9rs+Q2g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikqTmUR8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfDNP1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Apr 2019 11:27:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41138 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfDNP1x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Apr 2019 11:27:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f6so7378950pgs.8;
-        Sun, 14 Apr 2019 08:27:52 -0700 (PDT)
+        id S1726127AbfDNTYs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Apr 2019 15:24:48 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43329 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbfDNTYr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Apr 2019 15:24:47 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c8so7488436pfd.10;
+        Sun, 14 Apr 2019 12:24:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=q3iypn555McbAcE3yoICWRpRh2ucW+vk+bBTuDr2NPw=;
-        b=p9rs+Q2gjsQDNvfwiJiNecaGCCI3naRVRc2PVKa/VK+na0dJKcbwL4qVTWb/ipeUHq
-         Zex9nEzzKBvstN87mxckK25z+2iF5h/kgZbuhtPLM5ln61tOwhgTlXkgYTrrYv0FrID/
-         yYu5d4hYeynlQciUWv94JC5rguc29d0Gph6I0bWBMk4Gu5xXa/iTBlSFUN3hG8fQAoj8
-         2PQuHz2DVPGPRcYzO6bBNFqHk1HYATCzShGtw1EtbmRP4kfCSFCqZz6S9nXfzj4CjdI7
-         IQflaSs8xNb+YavTNAH5joAwZ7CqwR7K6VH2FbCjY6+Sq2SNilzY5rl3boJ1tn0vYJ+Y
-         bfIA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4Iv/AiYklJqnq9LxBDUHpc9lxvbh33d/3LijVMJ7970=;
+        b=ikqTmUR8a85B9A4fTcwVgvYrD6ZYo6eB+bKYk7tMyKphQYC+t3hzQJblMzRiGWsLT7
+         TCApufnFOpt3dXuqBnq9t/n9Hiuj4UXY1SnXDLTPP8QWju9FcVT+I2Uucwwv34GdIiQh
+         MsjmcDHeu0lJLlR6URXNfNVU9MLHx5WkbtoZHxFqs52jrF9z3qDbbSKWepwgy5OqK8aL
+         CVDJK79hGACwtEdWZEXb9eEJwRyd7oBVt5o+h/0eg8e9KBxMeNFDCO0Iw7DmvCE5QM9u
+         wZ2CbToJ5TLbT8nC6Bp8UTTC3VG2uqCGCDkgolS/fOweVu2nkxhjHvg0Vx84waLMG1Xb
+         FVlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=q3iypn555McbAcE3yoICWRpRh2ucW+vk+bBTuDr2NPw=;
-        b=rYUWVKIOBVKLiumXBYM4ApbKWpQwsv8Ng+y8ZWH07eYvjOEZ3xR1QpTLu6Fr+IJgxZ
-         +lYwqxyCSQ1n7/6BgooEVyoBwvk68QqdIi9n0i2uf1a2tPKGov6yW896BP1J5hVBKko1
-         iHsyBV3XHzT72WaYBIqVLIlcZDY+f2N0lg7ZfR83yOLQeI29RC6tiGdE4T4Z2YONApnl
-         vudxqHcU4UR1PpWKO9eLoFIQLfFfZXWfTB/wVpJefa588QXq++Dk2ET9TLGLvGzTm/bo
-         3XEyTMQk6jKr+rZiUjTCw4VtH9sQYYhiGQtw9o9GCZHwV7XbuLzPAB2dkTUWRph1Yrg3
-         ZqNw==
-X-Gm-Message-State: APjAAAWwQfC6h8Jm7QMx0YziT4USqKuIYWWUFOdAe4ynQkw/tKnGPSEF
-        6rPkqyuRpAhaUPqA4BvGiKZzHm36
-X-Google-Smtp-Source: APXvYqwJg+x21fjQnaTcn/dD+rZg+5lB0fYmLq+FpegpSPcklW48PcN7k65OExA3TDs0ucanv5+p4w==
-X-Received: by 2002:aa7:9116:: with SMTP id 22mr70308664pfh.165.1555255672205;
-        Sun, 14 Apr 2019 08:27:52 -0700 (PDT)
-Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.googlemail.com with ESMTPSA id c18sm123252663pfc.0.2019.04.14.08.27.46
+        bh=4Iv/AiYklJqnq9LxBDUHpc9lxvbh33d/3LijVMJ7970=;
+        b=qyjE81BL4fBtcLYdRRYfA/CVc0WvQfTKAT4SPvEoD97OQsPd1rt7OgvUdcgBacizcA
+         Uwp77mR0pm4JQoiufjVXzpZ4JHDw0oyx4jX0HUQkzZ4sG0hsAEfoy/00Iqc0TtqXueHn
+         90ZVZYc6OI9pK9mIBkUrrFulXTBnFU4HbcN3F3TRBmY1VzEMRVK092RkonRFW4pzF+tA
+         /oJHqXgqLpG30rQbvDkl6Ny1TyMj8efXhDIEbwFXISXbbltzZj65T1RXCbSIQwUOP7z8
+         X1tVUKSjH3JMEV1/WbkKpoQT6p6xnF1ZXSlZWwiNxQi4EOkFtCH/DDxGxe1S9H/iwzvD
+         H1zw==
+X-Gm-Message-State: APjAAAWyMhFywf3ko27TqwX71b8ECe+yf+tweDc/uG2pR9fkYb2/9bqc
+        yeknnNUniUuQEb5bkJQmjJE=
+X-Google-Smtp-Source: APXvYqy2w8gxbwMP8ta9y/Lke5CYmOx1KgPMtxT936BN9/CUKnNZoByoVOZDYY0roVJyvKdQeW5Ntg==
+X-Received: by 2002:a62:19c3:: with SMTP id 186mr72112401pfz.172.1555269887208;
+        Sun, 14 Apr 2019 12:24:47 -0700 (PDT)
+Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.gmail.com with ESMTPSA id j4sm17837398pgi.71.2019.04.14.12.24.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Apr 2019 08:27:51 -0700 (PDT)
-Subject: Re: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
+        Sun, 14 Apr 2019 12:24:46 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Joseph Lo <josephl@nvidia.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20190224153222.8142-1-digetx@gmail.com>
- <b64760b5-0d37-ae05-9c8e-9e6d47293c92@gmail.com>
- <20190304081857.GE21084@pdeschrijver-desktop.Nvidia.com>
- <9171e4f6-1ede-ab3a-caa6-83a2d9033650@gmail.com>
-Message-ID: <45e82026-3240-1c98-758b-d41fcc404377@gmail.com>
-Date:   Sun, 14 Apr 2019 18:27:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+Subject: [PATCH v2 0/5] clk: tegra: EMC/MC clock fixes and improvements
+Date:   Sun, 14 Apr 2019 22:23:16 +0300
+Message-Id: <20190414192321.23294-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <9171e4f6-1ede-ab3a-caa6-83a2d9033650@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-04.03.2019 16:42, Dmitry Osipenko пишет:
-> 04.03.2019 11:18, Peter De Schrijver пишет:
->> On Wed, Feb 27, 2019 at 06:15:04PM +0300, Dmitry Osipenko wrote:
->>> 24.02.2019 18:32, Dmitry Osipenko пишет:
->>>> Initially Common Clock Framework isn't aware of the clock-enable status,
->>>> this results in enabling of clocks that were enabled by bootloader. This
->>>> is not a big deal for a regular clock-gates, but for PLL's it may have
->>>> some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
->>>> clock) may result in extra long period of PLL re-locking.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>
->>> Peter (and everyone else), yours r-b and ACK will be appreciated since you kinda already took a look at this patch in the past and were okay with it (IIRC, we had some brief discussion on the #tegra IRC a few months ago), thanks. 
->>>
->>
->> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
->>
-> 
-> Awesome, thanks again!
-> 
+Hello,
 
-Hello Stephen and Michael,
+I was helping with fixing EMC clock scaling on T124 Nyan Big and
+in process found some weak points in the code. Primarily the ram code
+parsing didn't work if device-tree defines memory timings for multiple
+ram codes and after fixing that I spotted few other things that could be
+improved.
 
-Could you please pick up this patch to get it into linux-next to get some more testing exposure before it will hit upstream? Thanks in advance.
+Changelog:
+
+v2: Corrected "Mark Memory Controller clock as read-only" patch that
+    had the "read-only divider" flag being set in a wrong place. Note
+    it also turned out that this patch is needed for a proper EMC freq
+    scaling on Tegra30 because some of memory timings may have
+    configuration where MC clock configuration should be changed
+    simultaneously with the EMC change and currently CLK framework
+    reconfigure the divider back to /2 mode after EMC clock changes
+    since it's the parent clock for MC. Although it's not really critical
+    since system remains fully functional if MC clock configuration
+    doesn't match the memory arbitration configuration.
+
+Dmitry Osipenko (5):
+  clk: tegra: emc: Don't enable EMC clock manually
+  clk: tegra: emc: Support multiple RAM codes
+  clk: tegra: emc: Fix EMC max-rate clamping
+  clk: tegra: emc: Replace BUG() with WARN_ONCE()
+  clk: tegra: divider: Mark Memory Controller clock as read-only
+
+ drivers/clk/tegra/clk-divider.c |  3 +-
+ drivers/clk/tegra/clk-emc.c     | 57 ++++++++++++++++++++-------------
+ 2 files changed, 37 insertions(+), 23 deletions(-)
+
+-- 
+2.21.0
+
