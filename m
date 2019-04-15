@@ -2,164 +2,295 @@ Return-Path: <SRS0=I40h=SR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6405C10F0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 14:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17624C10F0E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 17:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D0D2075B
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 14:37:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="G5yz4zcR"
+	by mail.kernel.org (Postfix) with ESMTP id DC9F02073F
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 17:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbfDOOhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Apr 2019 10:37:39 -0400
-Received: from mail-eopbgr140044.outbound.protection.outlook.com ([40.107.14.44]:30438
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726094AbfDOOhj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 15 Apr 2019 10:37:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jn0ddURuP9S3Jp1RKHYOG3eYTBy+QOfVj6jXDwUc2jk=;
- b=G5yz4zcRtc11FL90g27MsQe4Sv+yRb7qAfsQ3yRaCApVlqikM8Q35LMGsrZy7FztwJrdvMze+Bubt0/9sDaUITAppWa/KsidJhc6XEdoIiqxuXo1OXm9IJbQOCcn6eYjBOYz2efL9RFL/6K4WUcKtQvFRw/wbjp6r6BycTVZ/io=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
- AM0PR04MB5219.eurprd04.prod.outlook.com (20.177.42.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1792.18; Mon, 15 Apr 2019 14:37:34 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::8cda:4e52:8e87:8f0e]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::8cda:4e52:8e87:8f0e%2]) with mapi id 15.20.1792.018; Mon, 15 Apr 2019
- 14:37:34 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        id S1727456AbfDOReO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Apr 2019 13:34:14 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52735 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbfDOReO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Apr 2019 13:34:14 -0400
+Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <m.tretter@pengutronix.de>)
+        id 1hG5Uf-0001DW-Sj; Mon, 15 Apr 2019 19:34:09 +0200
+Date:   Mon, 15 Apr 2019 19:34:08 +0200
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Jolly Shah <JOLLYS@xilinx.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Tejas Patel <TEJASP@xilinx.com>,
+        Rajan Vaja <RAJANV@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: firmware: imx-scu: new binding to parse
- clocks from device tree
-Thread-Topic: [PATCH 1/4] dt-bindings: firmware: imx-scu: new binding to parse
- clocks from device tree
-Thread-Index: AdTzlZg/sk/rCKUERDyjyk7LRmmqqQ==
-Date:   Mon, 15 Apr 2019 14:37:34 +0000
-Message-ID: <AM0PR04MB4211C417490D2245BFFEB63A802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9c068d60-b257-439d-cf4e-08d6c1afe675
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600140)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5219;
-x-ms-traffictypediagnostic: AM0PR04MB5219:
-x-microsoft-antispam-prvs: <AM0PR04MB5219DA3A94FC1AB50228DA8E802B0@AM0PR04MB5219.eurprd04.prod.outlook.com>
-x-forefront-prvs: 000800954F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(366004)(396003)(51914003)(199004)(189003)(53936002)(105586002)(55016002)(186003)(106356001)(9686003)(5660300002)(33656002)(8676002)(256004)(81166006)(81156014)(52536014)(14444005)(8936002)(6436002)(68736007)(66066001)(6506007)(6246003)(4326008)(102836004)(25786009)(486006)(44832011)(476003)(305945005)(54906003)(316002)(74316002)(99286004)(97736004)(7736002)(7696005)(14454004)(86362001)(6116002)(3846002)(6916009)(2906002)(478600001)(229853002)(26005)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5219;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eTI8gru9v9Kacr27G41j7jeUNVPZ0OQd8wrChQoz5k3lBbD4MxZA3a7avK53iY3w6TaKiOopaqYR2wKEFrOGMYuCnWxJlBsb0NuYlKfZzI4Ku0PsPrZ7oUwnYpiwNQ7QBUQBFLwUP+Bp6RdxySJGF+IH62+M04sIjAtmGK4e2JobWukw11HoHmw3bCiYCkratuwOVqpJ0Hv7pn9l53IPNktMizQvi3YDrtV5x7FMIU2F2N8I4HQ7q5MLMNvZmvM3H15teRZgy+R6A3QmzptsS+RfNWSw0XAl3n4eKwcybM9fFnmG5MgLpfu9kR2uCug8NuXDugpe/oCvueazD0CVYzz1jDrUK3MKCIxY+EnmvZfTpHQTPpSDJnPnL/OvsM2TFuPkSvBUtxS119y0aZpZW/tSqPqM9SU7ccVWZQq5Ouk=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH] drivers: clk: Update clock driver to handle clock
+ attribute
+Message-ID: <20190415193408.2a385113@litschi.hi.pengutronix.de>
+In-Reply-To: <BYAPR02MB59920087C354B84C9CFED2E0B8280@BYAPR02MB5992.namprd02.prod.outlook.com>
+References: <1551741550-10315-1-git-send-email-jollys@xilinx.com>
+ <20190412110044.194666db@litschi.hi.pengutronix.de>
+ <BYAPR02MB59920087C354B84C9CFED2E0B8280@BYAPR02MB5992.namprd02.prod.outlook.com>
+Organization: Pengutronix
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c068d60-b257-439d-cf4e-08d6c1afe675
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2019 14:37:34.8100
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5219
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
+X-SA-Exim-Mail-From: m.tretter@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgUm9iLA0KDQo+ID4gPiA+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Fy
-bS9mcmVlc2NhbGUvZnNsLHNjdS50eHQNCj4gPiA+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4dA0KPiA+ID4gPiBpbmRleCA3MmQ0
-ODFjLi4yODE2Nzg5IDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4dA0KPiA+ID4gPiArKysgYi9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4dA0K
-PiA+ID4gPiBAQCAtNzgsNiArNzgsMTkgQEAgUmVxdWlyZWQgcHJvcGVydGllczoNCj4gPiA+ID4g
-ICAgICAgICAgICAgICAgICAgICAgICJmc2wsaW14OHFtLWNsb2NrIg0KPiA+ID4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgImZzbCxpbXg4cXhwLWNsb2NrIg0KPiA+ID4gPiAgICAgICAgICAgICAg
-ICAgICAgIGZvbGxvd2VkIGJ5ICJmc2wsc2N1LWNsayINCj4gPiA+ID4gKy0gI2Nsb2NrLWNlbGxz
-OiAgICAgICAgICAgIFNob3VsZCBiZSAwLg0KPiA+ID4gPiArLSByc3JjLWlkOiAgICAgICAgIFJl
-c291cmNlIElEIGFzc29jaWF0ZWQgd2l0aCB0aGlzIGNsb2NrDQo+ID4gPiA+ICstIGNsay10eXBl
-OiAgICAgICAgICAgICAgICBUeXBlIG9mIHRoaXMgY2xvY2suDQo+ID4gPiA+ICsgICAgICAgICAg
-ICAgICAgICAgUmVmZXIgdG8gPGluY2x1ZGUvZHQtYmluZGluZ3MvZmlybXdhcmUvaW14L3JzcmMu
-aD4NCj4gZm9yDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgYXZhaWxhYmxlIGNsb2NrIHR5
-cGVzIHN1cHBvcnRlZCBieSBTQ1UuDQo+ID4gPg0KPiA+ID4gQ2FuJ3QgeW91IGp1c3QgbWFrZSB0
-aGVzZSAyIHZhbHVlcyBjbG9jayBjZWxscz8gSSdtIGFsbCBmb3IgZ2V0dGluZw0KPiA+ID4gcmlk
-IG9mIG1hZGUgdXAgY2xvY2sgbnVtYmVycy4NCj4gPiA+DQo+ID4NCj4gPiBUaGFua3MgZm9yIHRo
-ZSBhZ3JlZW1lbnQgdG8gcmVtb3ZlIGNsb2NrIElEcy4NCj4gPg0KPiA+IFRoZSAyIHZhbHVlcyBj
-bG9jayBjZWxsIHNlZW1zIG5vdCB0aGUgYmVzdCBhcHByb2FjaCBmb3IgaS5NWCBiZWNhdXNlDQo+
-ID4gaXQgc3RpbGwgbmVlZHMgdG8gZGVmaW5lIGFsbCBjbG9ja3MgaW4gdGhlIGRyaXZlciB3aGlj
-aCBpcyBleGFjdGx5IHdlDQo+ID4gd2FudCB0byBhdm9pZCBub3cgZHVlIHRvIHNvbWUgc3BlY2lh
-bCBIVyBjaGFyYWN0ZXJpc3RpYzoNCj4gDQo+IFdoeSdzIHRoYXQ/IFlvdSBjYW4gd2FsayB0aGUg
-RFQgYW5kIGV4dHJhY3QgdGhlIDIgY2VsbHMgZm9yIGVhY2ggY2xvY2sgcHJlc2VudC4NCj4gVGhh
-dCdzIG5vdCBhbnkgZGlmZmVyZW50IHRoYW4gd2Fsa2luZyBjaGlsZCBub2RlcyBoZXJlIGFuZCBn
-ZXR0aW5nIHRoZSByZXNvdXJjZQ0KPiBpZHMgYW5kIHR5cGUuIFRoYXQncyBub3QgcmVhbGx5IGZh
-c3QsIGJ1dCBpZiBzcGVlZCBpcyByZWFsbHkgYW4gaXNzdWUgd2UgY2FuDQo+IGNvbnNpZGVyIGFk
-ZHJlc3NpbmcgdGhhdCBpbiB3YXlzIHRoYXQgZXh0ZW5kIHJhdGhlciB0aGFuIGNoYW5nZSB0aGUg
-YmluZGluZy4NCj4gDQoNCkR1ZSB0byBzZWFyY2hpbmcgdGhlICdjbG9ja3MnIHByb3BlcnR5IG9m
-IGFsbCBkZXZpY2Ugbm9kZXMgaW5kaXJlY3RseSB0byANCmV4YWN0IHRoZSAyIGNlbGwgdmFsdWUg
-Y2F1c2VzIG11Y2ggdHJvdWJsZXMgaW4gZHJpdmVyIGltcGxlbWVudGF0aW9uIGFuZA0KbG9va3Mg
-YSBiaXQgd2VpcmQgYW5kIGlzIHZlcnkgbG93IGVmZmljaWVuY3kgKCB0aGUgcGVyZm9ybWFuY2Ug
-d2lsbCBhbHNvIHBvdGVudGlhbGx5DQpiZSBhZmZlY3RlZCBieSBhZGRpbmcgbmV3IHVucmVsZXZh
-bnQgbm9kZXMgd2hpY2ggaXMgYmFkKSwgd2UgZm91bmQgdGhlIGJlbG93DQphbHRlcm5hdGl2ZSB3
-YXkgdG8gZG8gdGhlIHNhbWUgMiBjZWxsIGJpbmRpbmcsIGJ1dCBoYXZpbmcgbm8gcGVyZm9ybWFu
-Y2UgaXNzdWUuDQpJdCdzIG11Y2ggc2ltaWxhciB0byB0aGUgQVJNIFNDUEkgY2xvY2sgYmluZGlu
-Zy4NCkRvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vYXJtLHNjcGkudHh0DQoN
-CkRvIHlvdSB0aGluayBpZiBpdCdzIG9rYXkgdG8geW91Pw0KDQpJZiB3ZSBoYXZlIHRvIHVzZSAy
-IGNlbGwgYmluZGluZywgd2UgcHJvYmFibHkgd291bGQgcHJlZmVyIHRvIHVzZSB0aGlzIHdheQ0K
-YXMgaXQgY2FuIHJlbGllZiB1cyBhIGxvdCBmcm9tIGluZGlyZWN0bHkgc2VhcmNoaW5nIHRoZSAn
-Y2xvY2tzJyBwcm9wZXJ0eS4gDQoNCklmIHlvdSdyZSBvaywgcGxlYXNlIGxldCBtZSBrbm93LCBJ
-IHdpbGwgbWFrZSBpdCBpbiBWMiBmb3IgdGhlIHJldmlldy4NCg0KZW5ldDBfY2xrOiBjbG9jay1l
-bmV0MCB7DQogICAgICAgIGNvbXBhdGlibGUgPSAiZnNsLGlteDhxeHAtY2xvY2siLCAiZnNsLHNj
-dS1jbGsiOw0KICAgICAgICAjY2xvY2stY2VsbHMgPSA8Mj47DQogICAgICAgIGNsb2NrLWluZGlj
-ZSA9IDxJTVhfU0NfUE1fQ0xLX1BFUj4sCQkvLyBjbG9jayBjZWxsIDIgdmFsdWUNCiAgICAgICAg
-ICAgICAgICAgICAgICAgPElNWF9TQ19QTV9DTEtfQllQQVNTPiwNCiAgICAgICAgICAgICAgICAg
-ICAgICAgPElNWF9TQ19QTV9DTEtfTUlTQzA+Ow0KICAgICAgICBjbG9jay1vdXRwdXQtbmFtZXMg
-PSAiZW5ldDBfY2xrIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgImVuZXQwX2J5cGFz
-c19jbGsiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiZW5ldDBfcmdtaWlfY2xrIjsN
-CgkJLy8gd2UgY2FuIHVzZSB0aGUgc2FtZSByZXNvdXJjZSBpZCBmb3IgY2xvY2sgY2VsbHMgMSB2
-YWx1ZQ0KCQkvLyBvciBwcm9iYWJseSBlbmNvZGVkIGluIG5vZGVAcmVnPw0KICAgICAgICBwb3dl
-ci1kb21haW5zID0gPCZwZCBJTVhfU0NfUl9FTkVUXzA+OyANCn07DQoNCmVuZXQwX2xwY2c6IGNs
-b2NrLWNvbnRyb2xsZXJANWIyMzAwMDAgew0KICAgICAgICBjb21wYXRpYmxlID0gImZzbCxpbXg4
-cXhwLWxwY2ciOw0KICAgICAgICByZWcgPSA8MHg1YjIzMDAwMCAweDEwMDAwPjsNCiAgICAgICAg
-I2Nsb2NrLWNlbGxzID0gPDE+Ow0KICAgICAgICBjbG9ja3MgPSA8JmVuZXQwX2NsayBJTVhfU0Nf
-Ul9FTkVUXzAgSU1YX1NDX1BNX0NMS19QRVI+LA0KICAgICAgICAgICAgICAgICA8JmVuZXQwX2Ns
-ayBJTVhfU0NfUl9FTkVUXzAgSU1YX1NDX1BNX0NMS19QRVI+LA0KICAgICAgICAgICAgICAgICA8
-JmNvbm5fYXhpX2Nsaz4sIDwmY29ubl9pcGdfY2xrPiwgPCZjb25uX2lwZ19jbGs+Ow0KICAgICAg
-ICBiaXQtb2Zmc2V0ID0gPDAgNCA4IDE2IDIwPjsNCiAgICAgICAgY2xvY2stb3V0cHV0LW5hbWVz
-ID0gImVuZXQwX2lwZ19yb290X2NsayIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICJl
-bmV0MF90eF9jbGsiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiZW5ldDBfYWhiX2Ns
-ayIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICJlbmV0MF9pcGdfY2xrIiwNCiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgImVuZXQwX2lwZ19zX2NsayI7DQogICAgICAgIHBvd2Vy
-LWRvbWFpbnMgPSA8JnBkIElNWF9TQ19SX0VORVRfMD47DQp9Ow0KDQpmZWMxOiBldGhlcm5ldEA1
-YjA0MDAwMCB7DQogICAgICAgIHJlZyA9IDwweDViMDQwMDAwIDB4MTAwMDA+Ow0KICAgICAgICBp
-bnRlcnJ1cHRzID0gPEdJQ19TUEkgMjU4IElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KICAgICAgICAg
-ICAgICAgICAgICAgPEdJQ19TUEkgMjU2IElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KICAgICAgICAg
-ICAgICAgICAgICAgPEdJQ19TUEkgMjU3IElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KICAgICAgICAg
-ICAgICAgICAgICAgPEdJQ19TUEkgMjU5IElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KICAgICAgICBj
-bG9ja3MgPSA8JmVuZXQwX2xwY2cgMz4sDQogICAgICAgICAgICAgICAgIDwmZW5ldDBfbHBjZyAy
-PiwNCiAgICAgICAgICAgICAgICAgPCZlbmV0MF9scGNnIDE+LA0KICAgICAgICAgICAgICAgICA8
-JmVuZXQwX2xwY2cgMD47DQogICAgICAgIGNsb2NrLW5hbWVzID0gImlwZyIsICJhaGIiLCAiZW5l
-dF9jbGtfcmVmIiwgInB0cCI7DQogICAgICAgIGZzbCxudW0tdHgtcXVldWVzPTwzPjsNCiAgICAg
-ICAgZnNsLG51bS1yeC1xdWV1ZXM9PDM+Ow0KICAgICAgICBwb3dlci1kb21haW5zID0gPCZwZCBJ
-TVhfU0NfUl9FTkVUXzA+Ow0KICAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOw0KfTsNCg0KUmVn
-YXJkcw0KRG9uZyBBaXNoZW5nDQo=
+On Fri, 12 Apr 2019 17:50:12 +0000, Jolly Shah wrote:
+> Hi Michael,
+> 
+> > -----Original Message-----
+> > From: Michael Tretter <m.tretter@pengutronix.de>
+> > Sent: Friday, April 12, 2019 2:01 AM
+> > To: Jolly Shah <JOLLYS@xilinx.com>
+> > Cc: mturquette@baylibre.com; sboyd@codeaurora.org; Michal Simek
+> > <michals@xilinx.com>; linux-clk@vger.kernel.org; Tejas Patel
+> > <TEJASP@xilinx.com>; Rajan Vaja <RAJANV@xilinx.com>; linux-
+> > kernel@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>; Rajan Vaja
+> > <RAJANV@xilinx.com>; linux-arm-kernel@lists.infradead.org;
+> > kernel@pengutronix.de
+> > Subject: Re: [PATCH] drivers: clk: Update clock driver to handle clock attribute
+> > 
+> > On Mon, 04 Mar 2019 15:19:10 -0800, Jolly Shah wrote:  
+> > > From: Rajan Vaja <rajan.vaja@xilinx.com>
+> > >
+> > > Versal EEMI APIs uses clock device ID which is combination of class,
+> > > subclass, type and clock index (e.g. 0x8104006 in which 0-13 bits are
+> > > for index(6 in given example), 14-19 bits are for clock type (i.e pll,
+> > > out or ref, 1 in given example), 20-25 bits are for subclass which is
+> > > nothing but clock type only), 26-32 bits are for device class, which
+> > > is clock(0x2) for all clocks) while zynqmp firmware uses clock ID
+> > > which is index only (e.g 0, 1, to n, where n is max_clock id).
+> > >
+> > > To use zynqmp clock driver for versal platform also, extend use
+> > > of QueryAttribute API to fetch device class, subclass and clock type
+> > > to create clock device ID. In case of zynqmp this attributes would be
+> > > 0 only, so there won't be any effect on clock id as it would use
+> > > clock index only.
+> > >
+> > > Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
+> > > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> > > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > > Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> > > ---
+> > >  drivers/clk/zynqmp/clkc.c | 42 +++++++++++++++++++++++++++++-------------
+> > >  1 file changed, 29 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+> > > index f65cc0f..c13b014 100644
+> > > --- a/drivers/clk/zynqmp/clkc.c
+> > > +++ b/drivers/clk/zynqmp/clkc.c
+> > > @@ -53,6 +53,10 @@
+> > >  #define RESERVED_CLK_NAME		""
+> > >
+> > >  #define CLK_VALID_MASK			0x1
+> > > +#define NODE_CLASS_SHIFT		26U
+> > > +#define NODE_SUBCLASS_SHIFT		20U
+> > > +#define NODE_TYPE_SHIFT			14U
+> > > +#define NODE_INDEX_SHIFT		0U
+> > >
+> > >  enum clk_type {
+> > >  	CLK_TYPE_OUTPUT,
+> > > @@ -80,6 +84,7 @@ struct clock_parent {
+> > >   * @num_nodes:		Number of nodes present in topology
+> > >   * @parent:		Parent of clock
+> > >   * @num_parents:	Number of parents of clock
+> > > + * @clk_id:		Clock id
+> > >   */
+> > >  struct zynqmp_clock {
+> > >  	char clk_name[MAX_NAME_LEN];
+> > > @@ -89,6 +94,7 @@ struct zynqmp_clock {
+> > >  	u32 num_nodes;
+> > >  	struct clock_parent parent[MAX_PARENT];
+> > >  	u32 num_parents;
+> > > +	u32 clk_id;
+> > >  };
+> > >
+> > >  static const char clk_type_postfix[][10] = {
+> > > @@ -396,7 +402,8 @@ static int zynqmp_clock_get_topology(u32 clk_id,
+> > >
+> > >  	*num_nodes = 0;
+> > >  	for (j = 0; j <= MAX_NODES; j += 3) {
+> > > -		ret = zynqmp_pm_clock_get_topology(clk_id, j, pm_resp);
+> > > +		ret = zynqmp_pm_clock_get_topology(clock[clk_id].clk_id, j,
+> > > +						   pm_resp);  
+> > 
+> > I think, having clk_id as the index in the array of clock descriptors
+> > and each descriptor having a clk_id, which might be equal to the clk_id
+> > (on zynqmp), but might be different from the index (versal) is really
+> > confusing. It would be better if there would be a clear separation
+> > between the driver internal id and the id that is used at the interface
+> > with the firmware.  
+> 
+> If we use different ids, we will need to hard code some mappings to
+> convert them to one being used by firmware. For user, both are clock
+> ids but id values are different compared to zynqmp where it was
+> sequential starting from 0. 
+
+We don't need to hardcode the mapping, because this patch already adds
+a mapping by adding the clk_id as a field of zynqmp_clock. What I am
+suggesting in to never refer to the index in clock[] as clk_id, but as
+index, i or whatever. This would emphasize when we are dealing with a
+clock id that can be used to communicate with the firmware and an index
+that can be used within the driver.
+
+> 
+> >   
+> > >  		if (ret)
+> > >  			return ret;
+> > >  		ret = __zynqmp_clock_get_topology(topology, pm_resp,  
+> > num_nodes);  
+> > > @@ -459,7 +466,8 @@ static int zynqmp_clock_get_parents(u32 clk_id, struct  
+> > clock_parent *parents,  
+> > >  	*num_parents = 0;
+> > >  	do {
+> > >  		/* Get parents from firmware */
+> > > -		ret = zynqmp_pm_clock_get_parents(clk_id, j, pm_resp);
+> > > +		ret = zynqmp_pm_clock_get_parents(clock[clk_id].clk_id, j,
+> > > +						  pm_resp);
+> > >  		if (ret)
+> > >  			return ret;
+> > >
+> > > @@ -528,13 +536,14 @@ static struct clk_hw  
+> > *zynqmp_register_clk_topology(int clk_id, char *clk_name,  
+> > >  						   const char **parent_names)
+> > >  {
+> > >  	int j;
+> > > -	u32 num_nodes;
+> > > +	u32 num_nodes, clk_dev_id;
+> > >  	char *clk_out = NULL;
+> > >  	struct clock_topology *nodes;
+> > >  	struct clk_hw *hw = NULL;
+> > >
+> > >  	nodes = clock[clk_id].node;
+> > >  	num_nodes = clock[clk_id].num_nodes;
+> > > +	clk_dev_id = clock[clk_id].clk_id;
+> > >
+> > >  	for (j = 0; j < num_nodes; j++) {
+> > >  		/*
+> > > @@ -551,13 +560,14 @@ static struct clk_hw  
+> > *zynqmp_register_clk_topology(int clk_id, char *clk_name,  
+> > >  		if (!clk_topology[nodes[j].type])
+> > >  			continue;
+> > >
+> > > -		hw = (*clk_topology[nodes[j].type])(clk_out, clk_id,
+> > > +		hw = (*clk_topology[nodes[j].type])(clk_out, clk_dev_id,
+> > >  						    parent_names,
+> > >  						    num_parents,
+> > >  						    &nodes[j]);
+> > >  		if (IS_ERR(hw))
+> > > -			pr_warn_once("%s() %s register fail with %ld\n",
+> > > -				     __func__, clk_name, PTR_ERR(hw));
+> > > +			pr_warn_once("%s() 0x%x: %s register fail with %ld\n",
+> > > +				     __func__,  clk_dev_id, clk_name,
+> > > +				     PTR_ERR(hw));
+> > >
+> > >  		parent_names[0] = clk_out;
+> > >  	}
+> > > @@ -621,20 +631,26 @@ static int zynqmp_register_clocks(struct  
+> > device_node *np)  
+> > >  static void zynqmp_get_clock_info(void)
+> > >  {
+> > >  	int i, ret;
+> > > -	u32 attr, type = 0;
+> > > +	u32 attr, type = 0, nodetype, subclass, class;
+> > >
+> > >  	for (i = 0; i < clock_max_idx; i++) {
+> > > -		zynqmp_pm_clock_get_name(i, clock[i].clk_name);
+> > > -		if (!strcmp(clock[i].clk_name, RESERVED_CLK_NAME))
+> > > -			continue;
+> > > -
+> > >  		ret = zynqmp_pm_clock_get_attributes(i, &attr);
+> > >  		if (ret)
+> > >  			continue;
+> > >
+> > >  		clock[i].valid = attr & CLK_VALID_MASK;
+> > > -		clock[i].type = attr >> CLK_TYPE_SHIFT ? CLK_TYPE_EXTERNAL :
+> > > -							CLK_TYPE_OUTPUT;
+> > > +		clock[i].type = ((attr >> CLK_TYPE_SHIFT) & 0x1) ?
+> > > +				CLK_TYPE_EXTERNAL : CLK_TYPE_OUTPUT;
+> > > +		nodetype = (attr >> NODE_TYPE_SHIFT) & 0x3F;
+> > > +		subclass = (attr >> NODE_SUBCLASS_SHIFT) & 0x3F;
+> > > +		class = (attr >> NODE_CLASS_SHIFT) & 0x3F;
+> > > +
+> > > +		clock[i].clk_id = (class << NODE_CLASS_SHIFT) |
+> > > +				  (subclass << NODE_SUBCLASS_SHIFT) |
+> > > +				  (nodetype << NODE_TYPE_SHIFT) |
+> > > +				  (i << NODE_INDEX_SHIFT);  
+> > 
+> > In the commit message you write that on versal the index is returned in
+> > bits 13..0 of the get_attr response from the firmware. However, the code uses
+> > the index that is used in the get_attr call and ignores the index in
+> > the response.
+> >   
+> 
+> Yes index is from bit 0:13. Attributes response doesn't contain index
+> as it is same for what attribute is being queried for which is i.
+
+If the index i is sufficient for retrieving the class, subclass and
+type which will be used to construct the clk_id, then why do you need
+the class, subclass and type in the clk_id anyway?
+
+> 
+> > Moreover, on zynqmp bits 0 and 2 of the response are already in use,
+> > but would be part of the index on versal. Therefore, as I
+> > understand, the response formats of zynqmp and versal are actually
+> > different formats and should be distinguished more clearly.
+> >   
+> 
+> Bits 0 to 2 are same bot Zynqmp and Versal as versal doesn't contain
+> index in attribute response. Only new attribute fields for versal are
+> class, subclass and type. Driver reconstructs clock id using those
+> value and index as i.
+
+OK. So the get_attributes call will never contain the clock index, but
+only the class, subclass and type fields. On the other hand, the clk_id
+contains the same class, subclass and type fields, but also the index
+of the clock. Therefore, the clk_id and the get_attr formats differ and
+e.g. NODE_CLASS_SHIFT, which is used to read from get_attr shouldn't be
+reused to write to the clk_id, because the clk_id and the get_attr
+response essentially have different formats.
+
+Maybe have a look at my other patch [0], which changes how the firmware
+responses are unmarshaled and makes the difference between the
+attributes and the clock id more obvious.
+
+Michael
+
+[0] https://lore.kernel.org/linux-clk/20190412095220.22855-1-m.tretter@pengutronix.de/T/#u
+
+> 
+> Thanks,
+> Jolly Shah
+> 
+> 
+> > Michael
+> >   
+> > > +
+> > > +		zynqmp_pm_clock_get_name(clock[i].clk_id,  
+> > clock[i].clk_name);  
+> > >  	}
+> > >
+> > >  	/* Get topology of all clock */  
+> 
