@@ -2,96 +2,89 @@ Return-Path: <SRS0=I40h=SR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B8FC10F0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 04:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46CAC10F0E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 05:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DBC220833
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 04:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8E7520825
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 05:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725806AbfDOE6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Apr 2019 00:58:23 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:47518 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfDOE6X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Apr 2019 00:58:23 -0400
-X-AuditID: c0a8fbf4-501ff700000014c1-2f-5cb40f6d7620
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 76.84.05313.D6F04BC5; Mon, 15 Apr 2019 06:58:21 +0200 (CEST)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Mon, 15 Apr 2019 06:58:10 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "leonard.crestez@nxp.com" <leonard.crestez@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "ping.bai@nxp.com" <ping.bai@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "abel.vesa@nxp.com" <abel.vesa@nxp.com>,
-        "linux-pm@lists.infradead.org" <linux-pm@lists.infradead.org>,
-        "yibin.gong@nxp.com" <yibin.gong@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 4/4] arm64: dts: imx8mm-evk: Add BD71847 PMIC
-Thread-Topic: [PATCH 4/4] arm64: dts: imx8mm-evk: Add BD71847 PMIC
-Thread-Index: AQHU8TlrwuMWcWl100aOAwTGOBl6vKY8i7WA
-Date:   Mon, 15 Apr 2019 04:58:09 +0000
-Message-ID: <f3341e61076f91d163f1eb48d5ee55267d1d5c57.camel@fi.rohmeurope.com>
-References: <cover.1555077720.git.leonard.crestez@nxp.com>
-         <7df309d19cf7f311afe736c95666afe8697e1e5a.1555077720.git.leonard.crestez@nxp.com>
-In-Reply-To: <7df309d19cf7f311afe736c95666afe8697e1e5a.1555077720.git.leonard.crestez@nxp.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [82.203.185.94]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <264703FD2064DA42BC775DA1B8FD36ED@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1725779AbfDOFWY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Apr 2019 01:22:24 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41845 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbfDOFWY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Apr 2019 01:22:24 -0400
+Received: by mail-lf1-f65.google.com with SMTP id t30so11993955lfd.8;
+        Sun, 14 Apr 2019 22:22:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4wAcsf0wOxTH+Mt/WXogNO8tVzfvRlR57HDInWFiJx8=;
+        b=G27v/5BqVLYlrGJBgqU/dXHMitDlrMpQ32fRYUWbHJWY1grUajgKXwHB/z8xAd4xVZ
+         lSBGwGK4fiWxamuQV7rh/5P5k5XLxI3Hab+YbjgZrDdMY3gA79JFV/PHrGABKcjEW1Vr
+         cjsuH8q4ZR539sXi7TS9jxfyHsF6roSGKiK2hzWFeItTBmum0T9yC0Al0f1yKPE3qfOm
+         sm6LlPCEvrMMLP5x4mjgXTJtSY6n8MVzvu+j7dCDtDYEZVDq9P/2m3rJuAt1YmGkJBZ9
+         ToNyg7s33mLqyjn6EtT/CxpZtWNEddzAJzob+3IXxF7OgZnSqeaZDULT8g+3HU+xDT7Y
+         laZg==
+X-Gm-Message-State: APjAAAUWzqftsNDW7C9dJ8NONZUmu6X7IureaGQFqjswsoC3siAGDCpr
+        O7VGznoS+Avc3Q6ARA9HohI=
+X-Google-Smtp-Source: APXvYqx0h4FkERuF1NmoVIJCeiBL3A3v8uDlfMCHKk3wx5Opn5sv/LYxHiRFqiN0vR1CvxA2FudPXg==
+X-Received: by 2002:a19:3845:: with SMTP id d5mr4456759lfj.77.1555305742304;
+        Sun, 14 Apr 2019 22:22:22 -0700 (PDT)
+Received: from localhost.localdomain (dyttpvnw7fb6wy5z8v7dt-4.rev.dnainternet.fi. [2001:14bb:420:c8ae:5b20:7520:669c:8ec7])
+        by smtp.gmail.com with ESMTPSA id c17sm2630765lfm.42.2019.04.14.22.22.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 14 Apr 2019 22:22:21 -0700 (PDT)
+Date:   Mon, 15 Apr 2019 08:22:14 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v4 1/9] clkdev: Hold clocks_mutex while iterating clocks
+ list
+Message-ID: <20190415052214.GA31948@localhost.localdomain>
+References: <20190412183150.102131-1-sboyd@kernel.org>
+ <20190412183150.102131-2-sboyd@kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0hTURzHOTt36+q8dlraTisD14PeahRcIsqEYtmDoH8iJLu1m9P2kLvN
-        XJHuDyOdke8eI6Nk1FqtdLPWi9JRVEYPJIa1NMzwRQ3tZVpp926l/nV/9/d9fDjcc0koc0sU
-        ZLbexHJ6RquURBNNzl+eZbqpjRnJvk4RfbH1EaC/1dyBdNf7IKAbvEGCdtXcJmhn+6CYHjze
-        IaZtI5ch3XyCo6+8aJbQo4EGgu5tlNOl9c9BKqWqsTmByuMqkai8jkJVQ+iWSFX2J1n11TNn
-        u2SXdM1expS3IztLn7R2j1TjH6qAuS5pfl2V2QqKpDZAkhitxL6fc20gmpShAMD1A69ENhDF
-        vzwB+ORVs+CRoDXY9maKsI5DNwG+YM8X/BD5ID7WfhYKwnS0Hj/8YoURUxo+VxkSR+YVeNDR
-        AIUeAs3HFR8swkihbbjtuyKCLQPYGRwJY6PQbtxf7A3XAJSAS6yh8B4iOfZ0D4UrMULYce8l
-        jMzxuK9r9N8+EQ/3VoVREC3C1+8kRaKpuNvVJonMibi6tDN8FApNw0/PfCTKwQz7JIJ9Im2f
-        lLZPStsnpc8DsQtgHZOtzWJMbMpyjjUv5wwaHf/YZ9B5QOSDf7sFxvyb/ACRQBlDlfzwZsjE
-        TJ7RovODmaRIGU9tJhozZLF7DWqLhjFqMjmzljX6ASahMo5CxbydUjOWQyxn+C/NIgmlnDp4
-        qTpDhgTyAZbNZbn/6mySVGIqGMuXTuPYLDZ/f7bWNCGLyCihPFoRZ2T1apZjzCZNpnBTMo38
-        VRGkGJ67UYhTxlxGx28j0RawhGyq66yF5OfmnlooI/QGPauQUwMUb0WCVWPWj4P6gZw/73Rq
-        WFBj+H9gvKefR4h4RPXSKwLCxExICitYPNs7K3C0wLl6/gXHjRPW9PvRO25Tac6RtVUFr6TP
-        0lc58tQP7zGhU0+aOtxHE65V/u6rfbzux5aRwn2PzpXnOxf6dUdyTMEFwxY6gAO58e53Y28f
-        DLbSRE5RH9dW1OJzlyYlb91gO0O/1t5Q98RDYh68+6nutLU+6+rhy60FO5WEUcOkLIackfkL
-        RF5MisADAAA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190412183150.102131-2-sboyd@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTA0LTEyIGF0IDE0OjEwICswMDAwLCBMZW9uYXJkIENyZXN0ZXogd3JvdGU6
-DQo+IFRoZSBCVUNLMiByZWd1bGF0b3IgaXMgdXNlZCBmb3IgY3B1ZnJlcSB2b2x0YWdlIGNvbnRy
-b2wsIG90aGVyd2lzZQ0KPiBjb25maWd1cmF0aW9uIGlzIG1vc3RseSBzdGF0aWMuDQo+IA0KPiBU
-aGlzIHVzZXMgdGhlIG5ld2x5LWltcGxlbWVudGVkIHJvaG0scmVzZXQtc252cy1wb3dlcmVkIHBy
-b3BlcnR5IHRvDQo+IHByb3Blcmx5IGhhbmRsZSB0aGUgU05WUyBzdGF0ZSBvZiBpbXg4bW0uDQo+
-IA0KPiBCZXR3ZWVuIEJENzE4MzcgYW5kIEJENzE4NDcgdGhlIEJVQ0szLzQgcmVndWxhdG9ycyB3
-ZXJlIHJlbW92ZWQgYnV0DQo+IGRhdGFzaGVldCBhbmQgYm9hcmQgc2NoZW1hdGljcyBrZXB0IHRo
-ZSBuYW1lcyBmb3IgQlVDSzUvNi83LzguIFRoZQ0KPiBkcml2ZXIgaG93ZXZlciByZW51bWJlcmVk
-IDUvNi83LzggdG8gMy80LzUvNi4gVXNlIHRoZSBuYW1lcyBmcm9tIERUDQo+IGJpbmRpbmdzIGFu
-ZCBhZGQgY29tbWVudHMgdG8gc2lnbmFsIHRoaXMuDQoNClllcC4gSSBoYWQgaGFyZCB0aW1lIHdo
-ZW4gZGVjaWRpbmcgdGhlIG5hbWluZyBmb3IgYnVja3MuIEJ1dCBJIGZvdW5kDQpsZWF2aW5nIHRo
-ZSBnYXAgaW4gYnVjayBuYW1lcyBjb25mdXNpbmcsIGl0IG1ha2VzIG9ubHkgc2Vuc2UgaWYgQkQ3
-MTg0Nw0KdXNlciBhbHNvIGtub3dzIHRoZSBCRDcxODM3LiBBbHNvLCBJIGhhZCBvbmx5IHNlZW4g
-dGhlIGRyYWZ0IHZlcnNpb24gb2YNCkJENzE4NDcgZGF0YS1zaGVldCAoZHJhZnQgZGVyaXZlZCBm
-cm9tIEJENzE4MzcgZGF0YS1zaGVldCkgYmFjayB0aGVuLiBJDQp0aG91Z2h0IHRoZSBuYW1pbmcg
-b2YgYnVja3Mgd291bGQgYmUgY2hhbmdlZCBpbiBmaW5hbCB2ZXJzaW9uLi4uDQoNCj4gU2lnbmVk
-LW9mZi1ieTogTGVvbmFyZCBDcmVzdGV6IDxsZW9uYXJkLmNyZXN0ZXpAbnhwLmNvbT4NCkFja2Vk
-LUJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4N
-Cg0KQnIsDQogICAgTWF0dGkgVmFpdHRpbmVuDQoNCg==
+On Fri, Apr 12, 2019 at 11:31:42AM -0700, Stephen Boyd wrote:
+> We recently introduced a change to support devm clk lookups. That change
+> introduced a code-path that used clk_find() without holding the
+> 'clocks_mutex'. Unfortunately, clk_find() iterates over the 'clocks'
+> list and so we need to prevent the list from being modified at the same
+> time. Do this by holding the mutex and checking to make sure it's held
+> while iterating the list.
+> 
+> Note, we don't really care if the lookup is freed after we find it with
+> clk_find() because we're just doing a pointer comparison, but if we did
+> care we would need to keep holding the mutex while we dereference the
+> clk_lookup pointer.
+> 
+> Fixes: 3eee6c7d119c ("clkdev: add managed clkdev lookup registration")
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Jeffrey Hugo <jhugo@codeaurora.org>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Acked-By: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
