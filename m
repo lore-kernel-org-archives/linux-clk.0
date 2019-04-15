@@ -2,684 +2,164 @@ Return-Path: <SRS0=I40h=SR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82952C10F0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 10:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6405C10F0E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 14:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32FAB20684
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 10:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80D0D2075B
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 14:37:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PIlJe2iO"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="G5yz4zcR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfDOKLK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Apr 2019 06:11:10 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39019 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbfDOKLJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Apr 2019 06:11:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j9so21126893wrn.6;
-        Mon, 15 Apr 2019 03:11:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NL96trJbiwYCBdqnquCsPKm1HUfK4513ScI5kVI9UD8=;
-        b=PIlJe2iOhXwvyxtXNx0Or4odI/mFDMxzmnrNfovensv1XvcqjKcZh/wuhKn28gFGOS
-         ftumgTRmAW4nh+j7IDu318XOGA4kIFbFWoy0hCJ+XUgn6sb3vHGwSwcIRXDWfHscx0QX
-         cfOYh5EPfF6sCO3XugPwXuw2nvBE+ieAkTKrNzLdLkp48bGiI3bpTFC1zlY5UCwZSMVh
-         R8RlHWMhlFmKV0b7sKbgHIhu8ZOJAO1szJM6hcgF3jBqlctfS1o9LM+v3WESprq634aA
-         +O+fihtjJt9azIvQh3p+DgrEoKJJ1EnUi42rJC19uAcHZnIDG8fj1SpEe3BlxwjETlkv
-         XiIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NL96trJbiwYCBdqnquCsPKm1HUfK4513ScI5kVI9UD8=;
-        b=RhbnZcEZIs83lwBDmW7772lVKkAcc4fIpkh00Oc8Xd1NsELF92+Kyvr+YJ85ECUzzU
-         rpK2ynz6DeQI3kcWowiX4hSPWqzYRa/3RgSEX/VbfXs3639KxBfAKYAJc8DPX/lXksQh
-         vA6+rhd86AykAIHg4D+L7y9iFuO0A9jWs6qpX6I8pegORJMp+siqoYnLZPieKJ+iODOA
-         WtoLtcBeziFrqvo4EJv/Yz+BM06cLT3vfS6lId9Qt6lN3n0zzOYVTNN74hc/bl3nXXs3
-         1E/jlLcnHyWr1fVEP4v4i/GtymFzPK3ilL2RGrMIg7wE+p/ml3GEPJ4ppnysoTG9qH92
-         DlYA==
-X-Gm-Message-State: APjAAAV24Kwgn2yg0ZuwVBhvpssaJpQROFK3HcmRhmQyFJUA1vxiQZ2/
-        Qi48nuYFLn743mR7W2o3q3+MHSLVtCk=
-X-Google-Smtp-Source: APXvYqwlhiXEcQf7qfIC0HInLTEYTS6FRF6Wi4NVfwfUY1rWDTwJ8PH1PbpnikjHSQLQkx9p/iqcAg==
-X-Received: by 2002:adf:f48d:: with SMTP id l13mr41212394wro.2.1555323066409;
-        Mon, 15 Apr 2019 03:11:06 -0700 (PDT)
-Received: from localhost.localdomain ([2001:470:9e39::64])
-        by smtp.gmail.com with ESMTPSA id d6sm11592214wrp.9.2019.04.15.03.11.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Apr 2019 03:11:05 -0700 (PDT)
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-To:     linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
-Cc:     Anatolij Gustschin <agust@denx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH RFT V2 8/8] clk: core: replace clk_{readl,writel} with {readl,writel}
-Date:   Mon, 15 Apr 2019 12:10:46 +0200
-Message-Id: <20190415101046.5872-9-jonas.gorski@gmail.com>
-X-Mailer: git-send-email 2.13.2
-In-Reply-To: <20190415101046.5872-1-jonas.gorski@gmail.com>
-References: <20190415101046.5872-1-jonas.gorski@gmail.com>
+        id S1726102AbfDOOhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Apr 2019 10:37:39 -0400
+Received: from mail-eopbgr140044.outbound.protection.outlook.com ([40.107.14.44]:30438
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726094AbfDOOhj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Apr 2019 10:37:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jn0ddURuP9S3Jp1RKHYOG3eYTBy+QOfVj6jXDwUc2jk=;
+ b=G5yz4zcRtc11FL90g27MsQe4Sv+yRb7qAfsQ3yRaCApVlqikM8Q35LMGsrZy7FztwJrdvMze+Bubt0/9sDaUITAppWa/KsidJhc6XEdoIiqxuXo1OXm9IJbQOCcn6eYjBOYz2efL9RFL/6K4WUcKtQvFRw/wbjp6r6BycTVZ/io=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB5219.eurprd04.prod.outlook.com (20.177.42.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1792.18; Mon, 15 Apr 2019 14:37:34 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::8cda:4e52:8e87:8f0e]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::8cda:4e52:8e87:8f0e%2]) with mapi id 15.20.1792.018; Mon, 15 Apr 2019
+ 14:37:34 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: firmware: imx-scu: new binding to parse
+ clocks from device tree
+Thread-Topic: [PATCH 1/4] dt-bindings: firmware: imx-scu: new binding to parse
+ clocks from device tree
+Thread-Index: AdTzlZg/sk/rCKUERDyjyk7LRmmqqQ==
+Date:   Mon, 15 Apr 2019 14:37:34 +0000
+Message-ID: <AM0PR04MB4211C417490D2245BFFEB63A802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9c068d60-b257-439d-cf4e-08d6c1afe675
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600140)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5219;
+x-ms-traffictypediagnostic: AM0PR04MB5219:
+x-microsoft-antispam-prvs: <AM0PR04MB5219DA3A94FC1AB50228DA8E802B0@AM0PR04MB5219.eurprd04.prod.outlook.com>
+x-forefront-prvs: 000800954F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(366004)(396003)(51914003)(199004)(189003)(53936002)(105586002)(55016002)(186003)(106356001)(9686003)(5660300002)(33656002)(8676002)(256004)(81166006)(81156014)(52536014)(14444005)(8936002)(6436002)(68736007)(66066001)(6506007)(6246003)(4326008)(102836004)(25786009)(486006)(44832011)(476003)(305945005)(54906003)(316002)(74316002)(99286004)(97736004)(7736002)(7696005)(14454004)(86362001)(6116002)(3846002)(6916009)(2906002)(478600001)(229853002)(26005)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5219;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: eTI8gru9v9Kacr27G41j7jeUNVPZ0OQd8wrChQoz5k3lBbD4MxZA3a7avK53iY3w6TaKiOopaqYR2wKEFrOGMYuCnWxJlBsb0NuYlKfZzI4Ku0PsPrZ7oUwnYpiwNQ7QBUQBFLwUP+Bp6RdxySJGF+IH62+M04sIjAtmGK4e2JobWukw11HoHmw3bCiYCkratuwOVqpJ0Hv7pn9l53IPNktMizQvi3YDrtV5x7FMIU2F2N8I4HQ7q5MLMNvZmvM3H15teRZgy+R6A3QmzptsS+RfNWSw0XAl3n4eKwcybM9fFnmG5MgLpfu9kR2uCug8NuXDugpe/oCvueazD0CVYzz1jDrUK3MKCIxY+EnmvZfTpHQTPpSDJnPnL/OvsM2TFuPkSvBUtxS119y0aZpZW/tSqPqM9SU7ccVWZQq5Ouk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c068d60-b257-439d-cf4e-08d6c1afe675
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2019 14:37:34.8100
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5219
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that clk_{readl,writel} is just an alias for {readl,writel}, we can
-switch all users of clk_* to use the accessors directly and remove the
-helpers.
-
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
----
-V1 -> V2:
- * newly added patch
-
- drivers/clk/clk-divider.c               |  4 ++--
- drivers/clk/clk-fractional-divider.c    |  4 ++--
- drivers/clk/clk-gate.c                  |  4 ++--
- drivers/clk/clk-multiplier.c            |  4 ++--
- drivers/clk/clk-mux.c                   |  4 ++--
- drivers/clk/clk-xgene.c                 |  6 +++---
- drivers/clk/hisilicon/clk-hisi-phase.c  |  4 ++--
- drivers/clk/imx/clk-divider-gate.c      | 20 ++++++++++----------
- drivers/clk/imx/clk-sccg-pll.c          | 12 ++++++------
- drivers/clk/nxp/clk-lpc18xx-ccu.c       |  6 +++---
- drivers/clk/nxp/clk-lpc18xx-cgu.c       | 24 ++++++++++++------------
- drivers/clk/rockchip/clk-ddr.c          |  2 +-
- drivers/clk/rockchip/clk-half-divider.c |  6 +++---
- drivers/clk/tegra/clk-tegra124.c        |  4 ++--
- drivers/clk/tegra/clk-tegra210.c        |  6 +++---
- drivers/clk/zynq/clkc.c                 |  6 +++---
- drivers/clk/zynq/pll.c                  | 18 +++++++++---------
- include/linux/clk-provider.h            | 15 ---------------
- 18 files changed, 67 insertions(+), 82 deletions(-)
-
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index ff791a7a5e9e..bb49dbf05a64 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -30,7 +30,7 @@ static inline u32 clk_div_readl(struct clk_divider *divider)
- 	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
- 		return ioread32be(divider->reg);
- 	else
--		return clk_readl(divider->reg);
-+		return readl(divider->reg);
- }
- 
- static inline void clk_div_writel(struct clk_divider *divider, u32 val)
-@@ -38,7 +38,7 @@ static inline void clk_div_writel(struct clk_divider *divider, u32 val)
- 	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
- 		iowrite32be(val, divider->reg);
- 	else
--		clk_writel(val, divider->reg);
-+		writel(val, divider->reg);
- }
- 
- #define div_mask(width)	((1 << (width)) - 1)
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index b9988d3b3828..99133554466f 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -18,7 +18,7 @@ static inline u32 clk_fd_readl(struct clk_fractional_divider *fd)
- 	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
- 		return ioread32be(fd->reg);
- 	else
--		return clk_readl(fd->reg);
-+		return readl(fd->reg);
- }
- 
- static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
-@@ -26,7 +26,7 @@ static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
- 	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
- 		iowrite32be(val, fd->reg);
- 	else
--		clk_writel(val, fd->reg);
-+		writel(val, fd->reg);
- }
- 
- static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 521e112ef5b5..bd201eaa99df 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -28,7 +28,7 @@ static inline u32 clk_gate_readl(struct clk_gate *gate)
- 	if (gate->flags & CLK_GATE_BIG_ENDIAN)
- 		return ioread32be(gate->reg);
- 	else
--		return clk_readl(gate->reg);
-+		return readl(gate->reg);
- }
- 
- static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
-@@ -36,7 +36,7 @@ static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
- 	if (gate->flags & CLK_GATE_BIG_ENDIAN)
- 		iowrite32be(val, gate->reg);
- 	else
--		clk_writel(val, gate->reg);
-+		writel(val, gate->reg);
- }
- 
- /*
-diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-index fb032f7dd407..a433442a1fa6 100644
---- a/drivers/clk/clk-multiplier.c
-+++ b/drivers/clk/clk-multiplier.c
-@@ -16,7 +16,7 @@ static inline u32 clk_mult_readl(struct clk_multiplier *mult)
- 	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
- 		return ioread32be(mult->reg);
- 	else
--		return clk_readl(mult->reg);
-+		return readl(mult->reg);
- }
- 
- static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
-@@ -24,7 +24,7 @@ static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
- 	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
- 		iowrite32be(val, mult->reg);
- 	else
--		clk_writel(val, mult->reg);
-+		writel(val, mult->reg);
- }
- 
- static unsigned long __get_mult(struct clk_multiplier *mult,
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 47f6f4f55f08..9ae3a4c17ed5 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -28,7 +28,7 @@ static inline u32 clk_mux_readl(struct clk_mux *mux)
- 	if (mux->flags & CLK_MUX_BIG_ENDIAN)
- 		return ioread32be(mux->reg);
- 	else
--		return clk_readl(mux->reg);
-+		return readl(mux->reg);
- }
- 
- static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
-@@ -36,7 +36,7 @@ static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
- 	if (mux->flags & CLK_MUX_BIG_ENDIAN)
- 		iowrite32be(val, mux->reg);
- 	else
--		clk_writel(val, mux->reg);
-+		writel(val, mux->reg);
- }
- 
- int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index 531b030d4d4e..d975465fe2a8 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -262,7 +262,7 @@ static unsigned long xgene_clk_pmd_recalc_rate(struct clk_hw *hw,
- 	else
- 		__acquire(fd->lock);
- 
--	val = clk_readl(fd->reg);
-+	val = readl(fd->reg);
- 
- 	if (fd->lock)
- 		spin_unlock_irqrestore(fd->lock, flags);
-@@ -333,10 +333,10 @@ static int xgene_clk_pmd_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		__acquire(fd->lock);
- 
--	val = clk_readl(fd->reg);
-+	val = readl(fd->reg);
- 	val &= ~fd->mask;
- 	val |= (scale << fd->shift);
--	clk_writel(val, fd->reg);
-+	writel(val, fd->reg);
- 
- 	if (fd->lock)
- 		spin_unlock_irqrestore(fd->lock, flags);
-diff --git a/drivers/clk/hisilicon/clk-hisi-phase.c b/drivers/clk/hisilicon/clk-hisi-phase.c
-index 5fdc267bb2da..ba6afad66a2b 100644
---- a/drivers/clk/hisilicon/clk-hisi-phase.c
-+++ b/drivers/clk/hisilicon/clk-hisi-phase.c
-@@ -75,10 +75,10 @@ static int hisi_clk_set_phase(struct clk_hw *hw, int degrees)
- 
- 	spin_lock_irqsave(phase->lock, flags);
- 
--	val = clk_readl(phase->reg);
-+	val = readl(phase->reg);
- 	val &= ~phase->mask;
- 	val |= regval << phase->shift;
--	clk_writel(val, phase->reg);
-+	writel(val, phase->reg);
- 
- 	spin_unlock_irqrestore(phase->lock, flags);
- 
-diff --git a/drivers/clk/imx/clk-divider-gate.c b/drivers/clk/imx/clk-divider-gate.c
-index df1f8429fe16..2a8352a316c7 100644
---- a/drivers/clk/imx/clk-divider-gate.c
-+++ b/drivers/clk/imx/clk-divider-gate.c
-@@ -29,7 +29,7 @@ static unsigned long clk_divider_gate_recalc_rate_ro(struct clk_hw *hw,
- 	struct clk_divider *div = to_clk_divider(hw);
- 	unsigned int val;
- 
--	val = clk_readl(div->reg) >> div->shift;
-+	val = readl(div->reg) >> div->shift;
- 	val &= clk_div_mask(div->width);
- 	if (!val)
- 		return 0;
-@@ -51,7 +51,7 @@ static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
- 	if (!clk_hw_is_enabled(hw)) {
- 		val = div_gate->cached_val;
- 	} else {
--		val = clk_readl(div->reg) >> div->shift;
-+		val = readl(div->reg) >> div->shift;
- 		val &= clk_div_mask(div->width);
- 	}
- 
-@@ -87,10 +87,10 @@ static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
- 	spin_lock_irqsave(div->lock, flags);
- 
- 	if (clk_hw_is_enabled(hw)) {
--		val = clk_readl(div->reg);
-+		val = readl(div->reg);
- 		val &= ~(clk_div_mask(div->width) << div->shift);
- 		val |= (u32)value << div->shift;
--		clk_writel(val, div->reg);
-+		writel(val, div->reg);
- 	} else {
- 		div_gate->cached_val = value;
- 	}
-@@ -114,9 +114,9 @@ static int clk_divider_enable(struct clk_hw *hw)
- 
- 	spin_lock_irqsave(div->lock, flags);
- 	/* restore div val */
--	val = clk_readl(div->reg);
-+	val = readl(div->reg);
- 	val |= div_gate->cached_val << div->shift;
--	clk_writel(val, div->reg);
-+	writel(val, div->reg);
- 
- 	spin_unlock_irqrestore(div->lock, flags);
- 
-@@ -133,10 +133,10 @@ static void clk_divider_disable(struct clk_hw *hw)
- 	spin_lock_irqsave(div->lock, flags);
- 
- 	/* store the current div val */
--	val = clk_readl(div->reg) >> div->shift;
-+	val = readl(div->reg) >> div->shift;
- 	val &= clk_div_mask(div->width);
- 	div_gate->cached_val = val;
--	clk_writel(0, div->reg);
-+	writel(0, div->reg);
- 
- 	spin_unlock_irqrestore(div->lock, flags);
- }
-@@ -146,7 +146,7 @@ static int clk_divider_is_enabled(struct clk_hw *hw)
- 	struct clk_divider *div = to_clk_divider(hw);
- 	u32 val;
- 
--	val = clk_readl(div->reg) >> div->shift;
-+	val = readl(div->reg) >> div->shift;
- 	val &= clk_div_mask(div->width);
- 
- 	return val ? 1 : 0;
-@@ -206,7 +206,7 @@ struct clk_hw *imx_clk_divider_gate(const char *name, const char *parent_name,
- 	div_gate->divider.hw.init = &init;
- 	div_gate->divider.flags = CLK_DIVIDER_ONE_BASED | clk_divider_flags;
- 	/* cache gate status */
--	val = clk_readl(reg) >> shift;
-+	val = readl(reg) >> shift;
- 	val &= clk_div_mask(width);
- 	div_gate->cached_val = val;
- 
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
-index 9dfd03a95557..991bbe63f156 100644
---- a/drivers/clk/imx/clk-sccg-pll.c
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -348,7 +348,7 @@ static unsigned long clk_sccg_pll_recalc_rate(struct clk_hw *hw,
- 
- 	temp64 = parent_rate;
- 
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	if (val & SSCG_PLL_BYPASS2_MASK) {
- 		temp64 = parent_rate;
- 	} else if (val & SSCG_PLL_BYPASS1_MASK) {
-@@ -371,10 +371,10 @@ static int clk_sccg_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 val;
- 
- 	/* set bypass here too since the parent might be the same */
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	val &= ~SSCG_PLL_BYPASS_MASK;
- 	val |= FIELD_PREP(SSCG_PLL_BYPASS_MASK, setup->bypass);
--	clk_writel(val, pll->base + PLL_CFG0);
-+	writel(val, pll->base + PLL_CFG0);
- 
- 	val = readl_relaxed(pll->base + PLL_CFG2);
- 	val &= ~(PLL_DIVF1_MASK | PLL_DIVF2_MASK);
-@@ -395,7 +395,7 @@ static u8 clk_sccg_pll_get_parent(struct clk_hw *hw)
- 	u32 val;
- 	u8 ret = pll->parent;
- 
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	if (val & SSCG_PLL_BYPASS2_MASK)
- 		ret = pll->bypass2;
- 	else if (val & SSCG_PLL_BYPASS1_MASK)
-@@ -408,10 +408,10 @@ static int clk_sccg_pll_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
- 	u32 val;
- 
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	val &= ~SSCG_PLL_BYPASS_MASK;
- 	val |= FIELD_PREP(SSCG_PLL_BYPASS_MASK, pll->setup.bypass);
--	clk_writel(val, pll->base + PLL_CFG0);
-+	writel(val, pll->base + PLL_CFG0);
- 
- 	return clk_sccg_pll_wait_lock(pll);
- }
-diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-index 27781b49eb82..5969f620607a 100644
---- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-@@ -142,7 +142,7 @@ static int lpc18xx_ccu_gate_endisable(struct clk_hw *hw, bool enable)
- 	 * Divider field is write only, so divider stat field must
- 	 * be read so divider field can be set accordingly.
- 	 */
--	val = clk_readl(gate->reg);
-+	val = readl(gate->reg);
- 	if (val & LPC18XX_CCU_DIVSTAT)
- 		val |= LPC18XX_CCU_DIV;
- 
-@@ -155,12 +155,12 @@ static int lpc18xx_ccu_gate_endisable(struct clk_hw *hw, bool enable)
- 		 * and the next write should clear the RUN bit.
- 		 */
- 		val |= LPC18XX_CCU_AUTO;
--		clk_writel(val, gate->reg);
-+		writel(val, gate->reg);
- 
- 		val &= ~LPC18XX_CCU_RUN;
- 	}
- 
--	clk_writel(val, gate->reg);
-+	writel(val, gate->reg);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-index 2531174b399e..f5bc8bd192b7 100644
---- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-@@ -352,9 +352,9 @@ static unsigned long lpc18xx_pll0_recalc_rate(struct clk_hw *hw,
- 	struct lpc18xx_pll *pll = to_lpc_pll(hw);
- 	u32 ctrl, mdiv, msel, npdiv;
- 
--	ctrl = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
--	mdiv = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
--	npdiv = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
-+	ctrl = readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	mdiv = readl(pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
-+	npdiv = readl(pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
- 
- 	if (ctrl & LPC18XX_PLL0_CTRL_BYPASS)
- 		return parent_rate;
-@@ -415,25 +415,25 @@ static int lpc18xx_pll0_set_rate(struct clk_hw *hw, unsigned long rate,
- 	m |= lpc18xx_pll0_msel2seli(m) << LPC18XX_PLL0_MDIV_SELI_SHIFT;
- 
- 	/* Power down PLL, disable clk output and dividers */
--	ctrl = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	ctrl = readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 	ctrl |= LPC18XX_PLL0_CTRL_PD;
- 	ctrl &= ~(LPC18XX_PLL0_CTRL_BYPASS | LPC18XX_PLL0_CTRL_DIRECTI |
- 		  LPC18XX_PLL0_CTRL_DIRECTO | LPC18XX_PLL0_CTRL_CLKEN);
--	clk_writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 
- 	/* Configure new PLL settings */
--	clk_writel(m, pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
--	clk_writel(LPC18XX_PLL0_NP_DIVS_1, pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
-+	writel(m, pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
-+	writel(LPC18XX_PLL0_NP_DIVS_1, pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
- 
- 	/* Power up PLL and wait for lock */
- 	ctrl &= ~LPC18XX_PLL0_CTRL_PD;
--	clk_writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 	do {
- 		udelay(10);
--		stat = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_STAT);
-+		stat = readl(pll->reg + LPC18XX_CGU_PLL0USB_STAT);
- 		if (stat & LPC18XX_PLL0_STAT_LOCK) {
- 			ctrl |= LPC18XX_PLL0_CTRL_CLKEN;
--			clk_writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+			writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 
- 			return 0;
- 		}
-@@ -458,8 +458,8 @@ static unsigned long lpc18xx_pll1_recalc_rate(struct clk_hw *hw,
- 	bool direct, fbsel;
- 	u32 stat, ctrl;
- 
--	stat = clk_readl(pll->reg + LPC18XX_CGU_PLL1_STAT);
--	ctrl = clk_readl(pll->reg + LPC18XX_CGU_PLL1_CTRL);
-+	stat = readl(pll->reg + LPC18XX_CGU_PLL1_STAT);
-+	ctrl = readl(pll->reg + LPC18XX_CGU_PLL1_CTRL);
- 
- 	direct = (ctrl & LPC18XX_PLL1_CTRL_DIRECT) ? true : false;
- 	fbsel = (ctrl & LPC18XX_PLL1_CTRL_FBSEL) ? true : false;
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index ebce5260068b..09ede6920593 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -82,7 +82,7 @@ static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
- 	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
- 	u32 val;
- 
--	val = clk_readl(ddrclk->reg_base +
-+	val = readl(ddrclk->reg_base +
- 			ddrclk->mux_offset) >> ddrclk->mux_shift;
- 	val &= GENMASK(ddrclk->mux_width - 1, 0);
- 
-diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
-index b8da6e799423..784b81e1ea7c 100644
---- a/drivers/clk/rockchip/clk-half-divider.c
-+++ b/drivers/clk/rockchip/clk-half-divider.c
-@@ -24,7 +24,7 @@ static unsigned long clk_half_divider_recalc_rate(struct clk_hw *hw,
- 	struct clk_divider *divider = to_clk_divider(hw);
- 	unsigned int val;
- 
--	val = clk_readl(divider->reg) >> divider->shift;
-+	val = readl(divider->reg) >> divider->shift;
- 	val &= div_mask(divider->width);
- 	val = val * 2 + 3;
- 
-@@ -124,11 +124,11 @@ static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
- 		val = div_mask(divider->width) << (divider->shift + 16);
- 	} else {
--		val = clk_readl(divider->reg);
-+		val = readl(divider->reg);
- 		val &= ~(div_mask(divider->width) << divider->shift);
- 	}
- 	val |= value << divider->shift;
--	clk_writel(val, divider->reg);
-+	writel(val, divider->reg);
- 
- 	if (divider->lock)
- 		spin_unlock_irqrestore(divider->lock, flags);
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index df0018f7bf7e..abc0c4bea740 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1466,9 +1466,9 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
- 	tegra_pmc_clk_init(pmc_base, tegra124_clks);
- 
- 	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
--	plld_base = clk_readl(clk_base + PLLD_BASE);
-+	plld_base = readl(clk_base + PLLD_BASE);
- 	plld_base &= ~BIT(25);
--	clk_writel(plld_base, clk_base + PLLD_BASE);
-+	writel(plld_base, clk_base + PLLD_BASE);
- }
- 
- /**
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 7545af763d7a..ed3c7df75d1e 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3557,7 +3557,7 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	if (!clks)
- 		return;
- 
--	value = clk_readl(clk_base + SPARE_REG0) >> CLK_M_DIVISOR_SHIFT;
-+	value = readl(clk_base + SPARE_REG0) >> CLK_M_DIVISOR_SHIFT;
- 	clk_m_div = (value & CLK_M_DIVISOR_MASK) + 1;
- 
- 	if (tegra_osc_clk_init(clk_base, tegra210_clks, tegra210_input_freq,
-@@ -3574,9 +3574,9 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	tegra_pmc_clk_init(pmc_base, tegra210_clks);
- 
- 	/* For Tegra210, PLLD is the only source for DSIA & DSIB */
--	value = clk_readl(clk_base + PLLD_BASE);
-+	value = readl(clk_base + PLLD_BASE);
- 	value &= ~BIT(25);
--	clk_writel(value, clk_base + PLLD_BASE);
-+	writel(value, clk_base + PLLD_BASE);
- 
- 	tegra_clk_apply_init_table = tegra210_clock_apply_init_table;
- 
-diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-index d7b53ac8ad11..4b9d5c14c400 100644
---- a/drivers/clk/zynq/clkc.c
-+++ b/drivers/clk/zynq/clkc.c
-@@ -158,7 +158,7 @@ static void __init zynq_clk_register_fclk(enum zynq_clk fclk,
- 	clks[fclk] = clk_register_gate(NULL, clk_name,
- 			div1_name, CLK_SET_RATE_PARENT, fclk_gate_reg,
- 			0, CLK_GATE_SET_TO_DISABLE, fclk_gate_lock);
--	enable_reg = clk_readl(fclk_gate_reg) & 1;
-+	enable_reg = readl(fclk_gate_reg) & 1;
- 	if (enable && !enable_reg) {
- 		if (clk_prepare_enable(clks[fclk]))
- 			pr_warn("%s: FCLK%u enable failed\n", __func__,
-@@ -287,7 +287,7 @@ static void __init zynq_clk_setup(struct device_node *np)
- 			SLCR_IOPLL_CTRL, 4, 1, 0, &iopll_lock);
- 
- 	/* CPU clocks */
--	tmp = clk_readl(SLCR_621_TRUE) & 1;
-+	tmp = readl(SLCR_621_TRUE) & 1;
- 	clk = clk_register_mux(NULL, "cpu_mux", cpu_parents, 4,
- 			CLK_SET_RATE_NO_REPARENT, SLCR_ARM_CLK_CTRL, 4, 2, 0,
- 			&armclk_lock);
-@@ -510,7 +510,7 @@ static void __init zynq_clk_setup(struct device_node *np)
- 			&dbgclk_lock);
- 
- 	/* leave debug clocks in the state the bootloader set them up to */
--	tmp = clk_readl(SLCR_DBG_CLK_CTRL);
-+	tmp = readl(SLCR_DBG_CLK_CTRL);
- 	if (tmp & DBG_CLK_CTRL_CLKACT_TRC)
- 		if (clk_prepare_enable(clks[dbg_trc]))
- 			pr_warn("%s: trace clk enable failed\n", __func__);
-diff --git a/drivers/clk/zynq/pll.c b/drivers/clk/zynq/pll.c
-index 00d72fb5c036..800b70ee19b3 100644
---- a/drivers/clk/zynq/pll.c
-+++ b/drivers/clk/zynq/pll.c
-@@ -90,7 +90,7 @@ static unsigned long zynq_pll_recalc_rate(struct clk_hw *hw,
- 	 * makes probably sense to redundantly save fbdiv in the struct
- 	 * zynq_pll to save the IO access.
- 	 */
--	fbdiv = (clk_readl(clk->pll_ctrl) & PLLCTRL_FBDIV_MASK) >>
-+	fbdiv = (readl(clk->pll_ctrl) & PLLCTRL_FBDIV_MASK) >>
- 			PLLCTRL_FBDIV_SHIFT;
- 
- 	return parent_rate * fbdiv;
-@@ -112,7 +112,7 @@ static int zynq_pll_is_enabled(struct clk_hw *hw)
- 
- 	spin_lock_irqsave(clk->lock, flags);
- 
--	reg = clk_readl(clk->pll_ctrl);
-+	reg = readl(clk->pll_ctrl);
- 
- 	spin_unlock_irqrestore(clk->lock, flags);
- 
-@@ -138,10 +138,10 @@ static int zynq_pll_enable(struct clk_hw *hw)
- 	/* Power up PLL and wait for lock */
- 	spin_lock_irqsave(clk->lock, flags);
- 
--	reg = clk_readl(clk->pll_ctrl);
-+	reg = readl(clk->pll_ctrl);
- 	reg &= ~(PLLCTRL_RESET_MASK | PLLCTRL_PWRDWN_MASK);
--	clk_writel(reg, clk->pll_ctrl);
--	while (!(clk_readl(clk->pll_status) & (1 << clk->lockbit)))
-+	writel(reg, clk->pll_ctrl);
-+	while (!(readl(clk->pll_status) & (1 << clk->lockbit)))
- 		;
- 
- 	spin_unlock_irqrestore(clk->lock, flags);
-@@ -168,9 +168,9 @@ static void zynq_pll_disable(struct clk_hw *hw)
- 	/* shut down PLL */
- 	spin_lock_irqsave(clk->lock, flags);
- 
--	reg = clk_readl(clk->pll_ctrl);
-+	reg = readl(clk->pll_ctrl);
- 	reg |= PLLCTRL_RESET_MASK | PLLCTRL_PWRDWN_MASK;
--	clk_writel(reg, clk->pll_ctrl);
-+	writel(reg, clk->pll_ctrl);
- 
- 	spin_unlock_irqrestore(clk->lock, flags);
- }
-@@ -223,9 +223,9 @@ struct clk *clk_register_zynq_pll(const char *name, const char *parent,
- 
- 	spin_lock_irqsave(pll->lock, flags);
- 
--	reg = clk_readl(pll->pll_ctrl);
-+	reg = readl(pll->pll_ctrl);
- 	reg &= ~PLLCTRL_BPQUAL_MASK;
--	clk_writel(reg, pll->pll_ctrl);
-+	writel(reg, pll->pll_ctrl);
- 
- 	spin_unlock_irqrestore(pll->lock, flags);
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 479e616ce7f5..46d5fc3057b5 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -996,21 +996,6 @@ static inline int of_clk_detect_critical(struct device_node *np, int index,
- }
- #endif /* CONFIG_OF */
- 
--/*
-- * wrap access to peripherals in accessor routines
-- * for improved portability across platforms
-- */
--
--static inline u32 clk_readl(u32 __iomem *reg)
--{
--	return readl(reg);
--}
--
--static inline void clk_writel(u32 val, u32 __iomem *reg)
--{
--	writel(val, reg);
--}
--
- void clk_gate_restore_context(struct clk_hw *hw);
- 
- #endif /* CONFIG_COMMON_CLK */
--- 
-2.13.2
-
+SGkgUm9iLA0KDQo+ID4gPiA+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Fy
+bS9mcmVlc2NhbGUvZnNsLHNjdS50eHQNCj4gPiA+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4dA0KPiA+ID4gPiBpbmRleCA3MmQ0
+ODFjLi4yODE2Nzg5IDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4dA0KPiA+ID4gPiArKysgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4dA0K
+PiA+ID4gPiBAQCAtNzgsNiArNzgsMTkgQEAgUmVxdWlyZWQgcHJvcGVydGllczoNCj4gPiA+ID4g
+ICAgICAgICAgICAgICAgICAgICAgICJmc2wsaW14OHFtLWNsb2NrIg0KPiA+ID4gPiAgICAgICAg
+ICAgICAgICAgICAgICAgImZzbCxpbXg4cXhwLWNsb2NrIg0KPiA+ID4gPiAgICAgICAgICAgICAg
+ICAgICAgIGZvbGxvd2VkIGJ5ICJmc2wsc2N1LWNsayINCj4gPiA+ID4gKy0gI2Nsb2NrLWNlbGxz
+OiAgICAgICAgICAgIFNob3VsZCBiZSAwLg0KPiA+ID4gPiArLSByc3JjLWlkOiAgICAgICAgIFJl
+c291cmNlIElEIGFzc29jaWF0ZWQgd2l0aCB0aGlzIGNsb2NrDQo+ID4gPiA+ICstIGNsay10eXBl
+OiAgICAgICAgICAgICAgICBUeXBlIG9mIHRoaXMgY2xvY2suDQo+ID4gPiA+ICsgICAgICAgICAg
+ICAgICAgICAgUmVmZXIgdG8gPGluY2x1ZGUvZHQtYmluZGluZ3MvZmlybXdhcmUvaW14L3JzcmMu
+aD4NCj4gZm9yDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgYXZhaWxhYmxlIGNsb2NrIHR5
+cGVzIHN1cHBvcnRlZCBieSBTQ1UuDQo+ID4gPg0KPiA+ID4gQ2FuJ3QgeW91IGp1c3QgbWFrZSB0
+aGVzZSAyIHZhbHVlcyBjbG9jayBjZWxscz8gSSdtIGFsbCBmb3IgZ2V0dGluZw0KPiA+ID4gcmlk
+IG9mIG1hZGUgdXAgY2xvY2sgbnVtYmVycy4NCj4gPiA+DQo+ID4NCj4gPiBUaGFua3MgZm9yIHRo
+ZSBhZ3JlZW1lbnQgdG8gcmVtb3ZlIGNsb2NrIElEcy4NCj4gPg0KPiA+IFRoZSAyIHZhbHVlcyBj
+bG9jayBjZWxsIHNlZW1zIG5vdCB0aGUgYmVzdCBhcHByb2FjaCBmb3IgaS5NWCBiZWNhdXNlDQo+
+ID4gaXQgc3RpbGwgbmVlZHMgdG8gZGVmaW5lIGFsbCBjbG9ja3MgaW4gdGhlIGRyaXZlciB3aGlj
+aCBpcyBleGFjdGx5IHdlDQo+ID4gd2FudCB0byBhdm9pZCBub3cgZHVlIHRvIHNvbWUgc3BlY2lh
+bCBIVyBjaGFyYWN0ZXJpc3RpYzoNCj4gDQo+IFdoeSdzIHRoYXQ/IFlvdSBjYW4gd2FsayB0aGUg
+RFQgYW5kIGV4dHJhY3QgdGhlIDIgY2VsbHMgZm9yIGVhY2ggY2xvY2sgcHJlc2VudC4NCj4gVGhh
+dCdzIG5vdCBhbnkgZGlmZmVyZW50IHRoYW4gd2Fsa2luZyBjaGlsZCBub2RlcyBoZXJlIGFuZCBn
+ZXR0aW5nIHRoZSByZXNvdXJjZQ0KPiBpZHMgYW5kIHR5cGUuIFRoYXQncyBub3QgcmVhbGx5IGZh
+c3QsIGJ1dCBpZiBzcGVlZCBpcyByZWFsbHkgYW4gaXNzdWUgd2UgY2FuDQo+IGNvbnNpZGVyIGFk
+ZHJlc3NpbmcgdGhhdCBpbiB3YXlzIHRoYXQgZXh0ZW5kIHJhdGhlciB0aGFuIGNoYW5nZSB0aGUg
+YmluZGluZy4NCj4gDQoNCkR1ZSB0byBzZWFyY2hpbmcgdGhlICdjbG9ja3MnIHByb3BlcnR5IG9m
+IGFsbCBkZXZpY2Ugbm9kZXMgaW5kaXJlY3RseSB0byANCmV4YWN0IHRoZSAyIGNlbGwgdmFsdWUg
+Y2F1c2VzIG11Y2ggdHJvdWJsZXMgaW4gZHJpdmVyIGltcGxlbWVudGF0aW9uIGFuZA0KbG9va3Mg
+YSBiaXQgd2VpcmQgYW5kIGlzIHZlcnkgbG93IGVmZmljaWVuY3kgKCB0aGUgcGVyZm9ybWFuY2Ug
+d2lsbCBhbHNvIHBvdGVudGlhbGx5DQpiZSBhZmZlY3RlZCBieSBhZGRpbmcgbmV3IHVucmVsZXZh
+bnQgbm9kZXMgd2hpY2ggaXMgYmFkKSwgd2UgZm91bmQgdGhlIGJlbG93DQphbHRlcm5hdGl2ZSB3
+YXkgdG8gZG8gdGhlIHNhbWUgMiBjZWxsIGJpbmRpbmcsIGJ1dCBoYXZpbmcgbm8gcGVyZm9ybWFu
+Y2UgaXNzdWUuDQpJdCdzIG11Y2ggc2ltaWxhciB0byB0aGUgQVJNIFNDUEkgY2xvY2sgYmluZGlu
+Zy4NCkRvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vYXJtLHNjcGkudHh0DQoN
+CkRvIHlvdSB0aGluayBpZiBpdCdzIG9rYXkgdG8geW91Pw0KDQpJZiB3ZSBoYXZlIHRvIHVzZSAy
+IGNlbGwgYmluZGluZywgd2UgcHJvYmFibHkgd291bGQgcHJlZmVyIHRvIHVzZSB0aGlzIHdheQ0K
+YXMgaXQgY2FuIHJlbGllZiB1cyBhIGxvdCBmcm9tIGluZGlyZWN0bHkgc2VhcmNoaW5nIHRoZSAn
+Y2xvY2tzJyBwcm9wZXJ0eS4gDQoNCklmIHlvdSdyZSBvaywgcGxlYXNlIGxldCBtZSBrbm93LCBJ
+IHdpbGwgbWFrZSBpdCBpbiBWMiBmb3IgdGhlIHJldmlldy4NCg0KZW5ldDBfY2xrOiBjbG9jay1l
+bmV0MCB7DQogICAgICAgIGNvbXBhdGlibGUgPSAiZnNsLGlteDhxeHAtY2xvY2siLCAiZnNsLHNj
+dS1jbGsiOw0KICAgICAgICAjY2xvY2stY2VsbHMgPSA8Mj47DQogICAgICAgIGNsb2NrLWluZGlj
+ZSA9IDxJTVhfU0NfUE1fQ0xLX1BFUj4sCQkvLyBjbG9jayBjZWxsIDIgdmFsdWUNCiAgICAgICAg
+ICAgICAgICAgICAgICAgPElNWF9TQ19QTV9DTEtfQllQQVNTPiwNCiAgICAgICAgICAgICAgICAg
+ICAgICAgPElNWF9TQ19QTV9DTEtfTUlTQzA+Ow0KICAgICAgICBjbG9jay1vdXRwdXQtbmFtZXMg
+PSAiZW5ldDBfY2xrIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgImVuZXQwX2J5cGFz
+c19jbGsiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiZW5ldDBfcmdtaWlfY2xrIjsN
+CgkJLy8gd2UgY2FuIHVzZSB0aGUgc2FtZSByZXNvdXJjZSBpZCBmb3IgY2xvY2sgY2VsbHMgMSB2
+YWx1ZQ0KCQkvLyBvciBwcm9iYWJseSBlbmNvZGVkIGluIG5vZGVAcmVnPw0KICAgICAgICBwb3dl
+ci1kb21haW5zID0gPCZwZCBJTVhfU0NfUl9FTkVUXzA+OyANCn07DQoNCmVuZXQwX2xwY2c6IGNs
+b2NrLWNvbnRyb2xsZXJANWIyMzAwMDAgew0KICAgICAgICBjb21wYXRpYmxlID0gImZzbCxpbXg4
+cXhwLWxwY2ciOw0KICAgICAgICByZWcgPSA8MHg1YjIzMDAwMCAweDEwMDAwPjsNCiAgICAgICAg
+I2Nsb2NrLWNlbGxzID0gPDE+Ow0KICAgICAgICBjbG9ja3MgPSA8JmVuZXQwX2NsayBJTVhfU0Nf
+Ul9FTkVUXzAgSU1YX1NDX1BNX0NMS19QRVI+LA0KICAgICAgICAgICAgICAgICA8JmVuZXQwX2Ns
+ayBJTVhfU0NfUl9FTkVUXzAgSU1YX1NDX1BNX0NMS19QRVI+LA0KICAgICAgICAgICAgICAgICA8
+JmNvbm5fYXhpX2Nsaz4sIDwmY29ubl9pcGdfY2xrPiwgPCZjb25uX2lwZ19jbGs+Ow0KICAgICAg
+ICBiaXQtb2Zmc2V0ID0gPDAgNCA4IDE2IDIwPjsNCiAgICAgICAgY2xvY2stb3V0cHV0LW5hbWVz
+ID0gImVuZXQwX2lwZ19yb290X2NsayIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICJl
+bmV0MF90eF9jbGsiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiZW5ldDBfYWhiX2Ns
+ayIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICJlbmV0MF9pcGdfY2xrIiwNCiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgImVuZXQwX2lwZ19zX2NsayI7DQogICAgICAgIHBvd2Vy
+LWRvbWFpbnMgPSA8JnBkIElNWF9TQ19SX0VORVRfMD47DQp9Ow0KDQpmZWMxOiBldGhlcm5ldEA1
+YjA0MDAwMCB7DQogICAgICAgIHJlZyA9IDwweDViMDQwMDAwIDB4MTAwMDA+Ow0KICAgICAgICBp
+bnRlcnJ1cHRzID0gPEdJQ19TUEkgMjU4IElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KICAgICAgICAg
+ICAgICAgICAgICAgPEdJQ19TUEkgMjU2IElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KICAgICAgICAg
+ICAgICAgICAgICAgPEdJQ19TUEkgMjU3IElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KICAgICAgICAg
+ICAgICAgICAgICAgPEdJQ19TUEkgMjU5IElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KICAgICAgICBj
+bG9ja3MgPSA8JmVuZXQwX2xwY2cgMz4sDQogICAgICAgICAgICAgICAgIDwmZW5ldDBfbHBjZyAy
+PiwNCiAgICAgICAgICAgICAgICAgPCZlbmV0MF9scGNnIDE+LA0KICAgICAgICAgICAgICAgICA8
+JmVuZXQwX2xwY2cgMD47DQogICAgICAgIGNsb2NrLW5hbWVzID0gImlwZyIsICJhaGIiLCAiZW5l
+dF9jbGtfcmVmIiwgInB0cCI7DQogICAgICAgIGZzbCxudW0tdHgtcXVldWVzPTwzPjsNCiAgICAg
+ICAgZnNsLG51bS1yeC1xdWV1ZXM9PDM+Ow0KICAgICAgICBwb3dlci1kb21haW5zID0gPCZwZCBJ
+TVhfU0NfUl9FTkVUXzA+Ow0KICAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOw0KfTsNCg0KUmVn
+YXJkcw0KRG9uZyBBaXNoZW5nDQo=
