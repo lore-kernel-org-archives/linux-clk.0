@@ -2,295 +2,147 @@ Return-Path: <SRS0=I40h=SR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17624C10F0E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 17:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5B3C10F12
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 18:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9F02073F
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 17:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6AFB218A1
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Apr 2019 18:06:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cK2xQfhl";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iKiOAPmB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfDOReO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Apr 2019 13:34:14 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52735 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726956AbfDOReO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Apr 2019 13:34:14 -0400
-Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <m.tretter@pengutronix.de>)
-        id 1hG5Uf-0001DW-Sj; Mon, 15 Apr 2019 19:34:09 +0200
-Date:   Mon, 15 Apr 2019 19:34:08 +0200
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Jolly Shah <JOLLYS@xilinx.com>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        Michal Simek <michals@xilinx.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Tejas Patel <TEJASP@xilinx.com>,
-        Rajan Vaja <RAJANV@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH] drivers: clk: Update clock driver to handle clock
- attribute
-Message-ID: <20190415193408.2a385113@litschi.hi.pengutronix.de>
-In-Reply-To: <BYAPR02MB59920087C354B84C9CFED2E0B8280@BYAPR02MB5992.namprd02.prod.outlook.com>
-References: <1551741550-10315-1-git-send-email-jollys@xilinx.com>
- <20190412110044.194666db@litschi.hi.pengutronix.de>
- <BYAPR02MB59920087C354B84C9CFED2E0B8280@BYAPR02MB5992.namprd02.prod.outlook.com>
-Organization: Pengutronix
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1727692AbfDOSGE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Apr 2019 14:06:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52450 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbfDOSGD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Apr 2019 14:06:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 34B11619C7; Mon, 15 Apr 2019 18:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1555351562;
+        bh=RbEGLvx6PixpimFTy6lztMRh+o94+kQDSZx1j7kCmj8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cK2xQfhlifExa5Y6jsyudVVJXKC1GZDx+EYKzBvuLjmPJ65wNxOMWWFif/W5FRKVQ
+         EH4BZ2hV6wNOA3v/L40nmma0brj2XOjcpWsLvGLq7mbPq8jhZH1XhicPYrd0sJ4kKM
+         e/vtqu7QboA9GMPrmZcm9Olq7LPksmw+BEEaVFko=
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A438860FEB;
+        Mon, 15 Apr 2019 18:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1555351559;
+        bh=RbEGLvx6PixpimFTy6lztMRh+o94+kQDSZx1j7kCmj8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iKiOAPmB0Ce9doZkFM4fxycgOZ9tI+4wX58uzA1WEWDaNt1yYNYLekqYpJfxJnKYY
+         cZeDhMoW4UTmxV+BAlLIbWzwthoWLM+jpMfhro/j6fwY5ua6c6epmpFZIXA79kEhEz
+         IALuQcO9cP6pB/MORlMvSf6wALJlsWeJfKJxMc1g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A438860FEB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v4 0/9] Rewrite clk parent handling
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+References: <20190412183150.102131-1-sboyd@kernel.org>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <d7164804-7bee-de79-42b0-22b10cf96eaa@codeaurora.org>
+Date:   Mon, 15 Apr 2019 12:05:56 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190412183150.102131-1-sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
-X-SA-Exim-Mail-From: m.tretter@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 12 Apr 2019 17:50:12 +0000, Jolly Shah wrote:
-> Hi Michael,
+On 4/12/2019 12:31 PM, Stephen Boyd wrote:
+> There are a couple warts with clk parent handling in the common clk
+> framework. This patch series addresses one of those warts, parent-child
+> linkages. We use strings for all parent-child linkages, and this leads
+> to poorly written code that extracts clk names from struct clk pointers
+> and makes clk provider drivers use clk consumer APIs. I've converted the
+> fixed factor clk and I'm looking at converting users of other "basic"
+> clk types in follow-up patches so we can start moving drivers away from
+> string matching in the clk namespace.
 > 
-> > -----Original Message-----
-> > From: Michael Tretter <m.tretter@pengutronix.de>
-> > Sent: Friday, April 12, 2019 2:01 AM
-> > To: Jolly Shah <JOLLYS@xilinx.com>
-> > Cc: mturquette@baylibre.com; sboyd@codeaurora.org; Michal Simek
-> > <michals@xilinx.com>; linux-clk@vger.kernel.org; Tejas Patel
-> > <TEJASP@xilinx.com>; Rajan Vaja <RAJANV@xilinx.com>; linux-
-> > kernel@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>; Rajan Vaja
-> > <RAJANV@xilinx.com>; linux-arm-kernel@lists.infradead.org;
-> > kernel@pengutronix.de
-> > Subject: Re: [PATCH] drivers: clk: Update clock driver to handle clock attribute
-> > 
-> > On Mon, 04 Mar 2019 15:19:10 -0800, Jolly Shah wrote:  
-> > > From: Rajan Vaja <rajan.vaja@xilinx.com>
-> > >
-> > > Versal EEMI APIs uses clock device ID which is combination of class,
-> > > subclass, type and clock index (e.g. 0x8104006 in which 0-13 bits are
-> > > for index(6 in given example), 14-19 bits are for clock type (i.e pll,
-> > > out or ref, 1 in given example), 20-25 bits are for subclass which is
-> > > nothing but clock type only), 26-32 bits are for device class, which
-> > > is clock(0x2) for all clocks) while zynqmp firmware uses clock ID
-> > > which is index only (e.g 0, 1, to n, where n is max_clock id).
-> > >
-> > > To use zynqmp clock driver for versal platform also, extend use
-> > > of QueryAttribute API to fetch device class, subclass and clock type
-> > > to create clock device ID. In case of zynqmp this attributes would be
-> > > 0 only, so there won't be any effect on clock id as it would use
-> > > clock index only.
-> > >
-> > > Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
-> > > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> > > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> > > Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> > > ---
-> > >  drivers/clk/zynqmp/clkc.c | 42 +++++++++++++++++++++++++++++-------------
-> > >  1 file changed, 29 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-> > > index f65cc0f..c13b014 100644
-> > > --- a/drivers/clk/zynqmp/clkc.c
-> > > +++ b/drivers/clk/zynqmp/clkc.c
-> > > @@ -53,6 +53,10 @@
-> > >  #define RESERVED_CLK_NAME		""
-> > >
-> > >  #define CLK_VALID_MASK			0x1
-> > > +#define NODE_CLASS_SHIFT		26U
-> > > +#define NODE_SUBCLASS_SHIFT		20U
-> > > +#define NODE_TYPE_SHIFT			14U
-> > > +#define NODE_INDEX_SHIFT		0U
-> > >
-> > >  enum clk_type {
-> > >  	CLK_TYPE_OUTPUT,
-> > > @@ -80,6 +84,7 @@ struct clock_parent {
-> > >   * @num_nodes:		Number of nodes present in topology
-> > >   * @parent:		Parent of clock
-> > >   * @num_parents:	Number of parents of clock
-> > > + * @clk_id:		Clock id
-> > >   */
-> > >  struct zynqmp_clock {
-> > >  	char clk_name[MAX_NAME_LEN];
-> > > @@ -89,6 +94,7 @@ struct zynqmp_clock {
-> > >  	u32 num_nodes;
-> > >  	struct clock_parent parent[MAX_PARENT];
-> > >  	u32 num_parents;
-> > > +	u32 clk_id;
-> > >  };
-> > >
-> > >  static const char clk_type_postfix[][10] = {
-> > > @@ -396,7 +402,8 @@ static int zynqmp_clock_get_topology(u32 clk_id,
-> > >
-> > >  	*num_nodes = 0;
-> > >  	for (j = 0; j <= MAX_NODES; j += 3) {
-> > > -		ret = zynqmp_pm_clock_get_topology(clk_id, j, pm_resp);
-> > > +		ret = zynqmp_pm_clock_get_topology(clock[clk_id].clk_id, j,
-> > > +						   pm_resp);  
-> > 
-> > I think, having clk_id as the index in the array of clock descriptors
-> > and each descriptor having a clk_id, which might be equal to the clk_id
-> > (on zynqmp), but might be different from the index (versal) is really
-> > confusing. It would be better if there would be a clear separation
-> > between the driver internal id and the id that is used at the interface
-> > with the firmware.  
+> Changes from v3:
+>   * Split clkdev patch into two
+>   * New patch to let dev_of_node() accept NULL
+>   * Use dev_of_node() in of_clk_hw_register() to avoid NULL deref
 > 
-> If we use different ids, we will need to hard code some mappings to
-> convert them to one being used by firmware. For user, both are clock
-> ids but id values are different compared to zynqmp where it was
-> sequential starting from 0. 
+> Changes from v2:
+>   * Dropped patches that got merged into v5.1-rc1
+>   * Introduced a new function of_clk_hw_register()
+>   * Introduced 'index' into clk_parent_data structure
+>   * Converted fixed-factor basic type to new design
+>   * Fixed some bugs in a recent patch to clkdev, leading to
+>     an essential API for clkdev based lookups working
+> 
+> Changes from v1:
+>   * Dropped new get_parent_hw, we'll pick it up in a later series
+>   * Rebased to v5.0-rc6 to avoid conflicts with clk-fixes
+>   * Renamed 'fallback' to 'name' and 'name' to 'fw_name' in parent map
+>   * Made sure that clk_hw_get_parent_by_index() never sees an error pointer
+>     so that we don't mistakenly try to defer an error pointer
+>   * Fixed index passing mistake on of_clk_get_hw_from_clkspec()
+>   * Copy over all the data from parent maps and free it correctly too
+> 
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jeffrey Hugo <jhugo@codeaurora.org>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Russell King <linux@armlinux.org.uk>
+> 
+> Stephen Boyd (9):
+>    clkdev: Hold clocks_mutex while iterating clocks list
+>    clkdev: Move clk creation outside of 'clocks_mutex'
+>    clk: Prepare for clk registration API that uses DT nodes
+>    driver core: Let dev_of_node() accept a NULL dev
+>    clk: Add of_clk_hw_register() API for early clk drivers
+>    clk: Allow parents to be specified without string names
+>    clk: Look for parents with clkdev based clk_lookups
+>    clk: Allow parents to be specified via clkspec index
+>    clk: fixed-factor: Let clk framework find parent
+> 
+>   drivers/clk/clk-fixed-factor.c |  53 ++++--
+>   drivers/clk/clk.c              | 326 +++++++++++++++++++++++++--------
+>   drivers/clk/clk.h              |   2 +
+>   drivers/clk/clkdev.c           |  30 +--
+>   include/linux/clk-provider.h   |  22 +++
+>   include/linux/device.h         |   2 +-
+>   6 files changed, 327 insertions(+), 108 deletions(-)
+> 
+> 
+> base-commit: 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b
+> 
 
-We don't need to hardcode the mapping, because this patch already adds
-a mapping by adding the clk_id as a field of zynqmp_clock. What I am
-suggesting in to never refer to the index in clock[] as clk_id, but as
-index, i or whatever. This would emphasize when we are dealing with a
-clock id that can be used to communicate with the firmware and an index
-that can be used within the driver.
+Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
 
-> 
-> >   
-> > >  		if (ret)
-> > >  			return ret;
-> > >  		ret = __zynqmp_clock_get_topology(topology, pm_resp,  
-> > num_nodes);  
-> > > @@ -459,7 +466,8 @@ static int zynqmp_clock_get_parents(u32 clk_id, struct  
-> > clock_parent *parents,  
-> > >  	*num_parents = 0;
-> > >  	do {
-> > >  		/* Get parents from firmware */
-> > > -		ret = zynqmp_pm_clock_get_parents(clk_id, j, pm_resp);
-> > > +		ret = zynqmp_pm_clock_get_parents(clock[clk_id].clk_id, j,
-> > > +						  pm_resp);
-> > >  		if (ret)
-> > >  			return ret;
-> > >
-> > > @@ -528,13 +536,14 @@ static struct clk_hw  
-> > *zynqmp_register_clk_topology(int clk_id, char *clk_name,  
-> > >  						   const char **parent_names)
-> > >  {
-> > >  	int j;
-> > > -	u32 num_nodes;
-> > > +	u32 num_nodes, clk_dev_id;
-> > >  	char *clk_out = NULL;
-> > >  	struct clock_topology *nodes;
-> > >  	struct clk_hw *hw = NULL;
-> > >
-> > >  	nodes = clock[clk_id].node;
-> > >  	num_nodes = clock[clk_id].num_nodes;
-> > > +	clk_dev_id = clock[clk_id].clk_id;
-> > >
-> > >  	for (j = 0; j < num_nodes; j++) {
-> > >  		/*
-> > > @@ -551,13 +560,14 @@ static struct clk_hw  
-> > *zynqmp_register_clk_topology(int clk_id, char *clk_name,  
-> > >  		if (!clk_topology[nodes[j].type])
-> > >  			continue;
-> > >
-> > > -		hw = (*clk_topology[nodes[j].type])(clk_out, clk_id,
-> > > +		hw = (*clk_topology[nodes[j].type])(clk_out, clk_dev_id,
-> > >  						    parent_names,
-> > >  						    num_parents,
-> > >  						    &nodes[j]);
-> > >  		if (IS_ERR(hw))
-> > > -			pr_warn_once("%s() %s register fail with %ld\n",
-> > > -				     __func__, clk_name, PTR_ERR(hw));
-> > > +			pr_warn_once("%s() 0x%x: %s register fail with %ld\n",
-> > > +				     __func__,  clk_dev_id, clk_name,
-> > > +				     PTR_ERR(hw));
-> > >
-> > >  		parent_names[0] = clk_out;
-> > >  	}
-> > > @@ -621,20 +631,26 @@ static int zynqmp_register_clocks(struct  
-> > device_node *np)  
-> > >  static void zynqmp_get_clock_info(void)
-> > >  {
-> > >  	int i, ret;
-> > > -	u32 attr, type = 0;
-> > > +	u32 attr, type = 0, nodetype, subclass, class;
-> > >
-> > >  	for (i = 0; i < clock_max_idx; i++) {
-> > > -		zynqmp_pm_clock_get_name(i, clock[i].clk_name);
-> > > -		if (!strcmp(clock[i].clk_name, RESERVED_CLK_NAME))
-> > > -			continue;
-> > > -
-> > >  		ret = zynqmp_pm_clock_get_attributes(i, &attr);
-> > >  		if (ret)
-> > >  			continue;
-> > >
-> > >  		clock[i].valid = attr & CLK_VALID_MASK;
-> > > -		clock[i].type = attr >> CLK_TYPE_SHIFT ? CLK_TYPE_EXTERNAL :
-> > > -							CLK_TYPE_OUTPUT;
-> > > +		clock[i].type = ((attr >> CLK_TYPE_SHIFT) & 0x1) ?
-> > > +				CLK_TYPE_EXTERNAL : CLK_TYPE_OUTPUT;
-> > > +		nodetype = (attr >> NODE_TYPE_SHIFT) & 0x3F;
-> > > +		subclass = (attr >> NODE_SUBCLASS_SHIFT) & 0x3F;
-> > > +		class = (attr >> NODE_CLASS_SHIFT) & 0x3F;
-> > > +
-> > > +		clock[i].clk_id = (class << NODE_CLASS_SHIFT) |
-> > > +				  (subclass << NODE_SUBCLASS_SHIFT) |
-> > > +				  (nodetype << NODE_TYPE_SHIFT) |
-> > > +				  (i << NODE_INDEX_SHIFT);  
-> > 
-> > In the commit message you write that on versal the index is returned in
-> > bits 13..0 of the get_attr response from the firmware. However, the code uses
-> > the index that is used in the get_attr call and ignores the index in
-> > the response.
-> >   
-> 
-> Yes index is from bit 0:13. Attributes response doesn't contain index
-> as it is same for what attribute is being queried for which is i.
-
-If the index i is sufficient for retrieving the class, subclass and
-type which will be used to construct the clk_id, then why do you need
-the class, subclass and type in the clk_id anyway?
-
-> 
-> > Moreover, on zynqmp bits 0 and 2 of the response are already in use,
-> > but would be part of the index on versal. Therefore, as I
-> > understand, the response formats of zynqmp and versal are actually
-> > different formats and should be distinguished more clearly.
-> >   
-> 
-> Bits 0 to 2 are same bot Zynqmp and Versal as versal doesn't contain
-> index in attribute response. Only new attribute fields for versal are
-> class, subclass and type. Driver reconstructs clock id using those
-> value and index as i.
-
-OK. So the get_attributes call will never contain the clock index, but
-only the class, subclass and type fields. On the other hand, the clk_id
-contains the same class, subclass and type fields, but also the index
-of the clock. Therefore, the clk_id and the get_attr formats differ and
-e.g. NODE_CLASS_SHIFT, which is used to read from get_attr shouldn't be
-reused to write to the clk_id, because the clk_id and the get_attr
-response essentially have different formats.
-
-Maybe have a look at my other patch [0], which changes how the firmware
-responses are unmarshaled and makes the difference between the
-attributes and the clock id more obvious.
-
-Michael
-
-[0] https://lore.kernel.org/linux-clk/20190412095220.22855-1-m.tretter@pengutronix.de/T/#u
-
-> 
-> Thanks,
-> Jolly Shah
-> 
-> 
-> > Michael
-> >   
-> > > +
-> > > +		zynqmp_pm_clock_get_name(clock[i].clk_id,  
-> > clock[i].clk_name);  
-> > >  	}
-> > >
-> > >  	/* Get topology of all clock */  
-> 
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
