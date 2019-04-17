@@ -2,69 +2,77 @@ Return-Path: <SRS0=liI3=ST=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B328DC282DA
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Apr 2019 23:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AC0C282DA
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Apr 2019 23:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80DAC2184B
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Apr 2019 23:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555544940;
-	bh=Ngut8Zra1tNBDucFICW5oi5hzvpBUalr/ubinIxWQgw=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=YPUDlNNHXNUtVvTkIOSdDqmxkPZ1ePGDKvkh+dboo4X0wc42L+V+Ms63rKSUk/8u1
-	 NoGEvvCYrcyQQt9DWiWMZT/Mm0LYA04Vlhxqgc7e5/kW541rHs3DJBWsZsIgEwOEmo
-	 14vSy0yXF6gJH5JP8ZBNLJhe3WSremIDruVbQm8w=
+	by mail.kernel.org (Postfix) with ESMTP id 9A705214DA
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Apr 2019 23:54:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="DuNfx7Kr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfDQXs4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Apr 2019 19:48:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729331AbfDQXs4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Apr 2019 19:48:56 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F949217FA;
-        Wed, 17 Apr 2019 23:48:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555544935;
-        bh=Ngut8Zra1tNBDucFICW5oi5hzvpBUalr/ubinIxWQgw=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=zczi+fYXLOXozwL8Lz2ntNKi3YyDwxLeSc5GG4OXraXsCsDkKmTwtPVa3zisxLBex
-         45/bytSwfCkszVcYUmwu3v0IR0vc/UTKH0FgCKPbSfXclD0ZUyYFzpxVsqJs9lFPNJ
-         8f5ACK9o/5MEio2kbwVG0miJsbeOsMGE6Beq32Vg=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190417112420.3034-1-paul@crapouillou.net>
-References: <20190417112420.3034-1-paul@crapouillou.net>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
+        id S1730037AbfDQXyA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Apr 2019 19:54:00 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:40548 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729331AbfDQXyA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Apr 2019 19:54:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1555545238; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hLmmM439FFJveY4UvXXQncIQ+cI3VQgKJJz3bcNnSqo=;
+        b=DuNfx7Krxg0GUrGcKl7oBKlHrQ9ddpdHng3nF0Wv7V+JXX0zguIWcERrXY5OLQnRzHGmC2
+        n4SfM1EWkvDMRjh53c/0uFG3s4klWcVr0coy7e8EWkMeCFVDHquUqkoZApcW+V0UCJeENz
+        h679HJBjGNB1vOEWdONp8wcnirc1G8I=
+Date:   Thu, 18 Apr 2019 01:53:53 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
 Subject: Re: [PATCH] clk: ingenic/jz4725b: Fix parent of pixel clock
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Message-ID: <155554493444.15276.2577888773542833089@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Wed, 17 Apr 2019 16:48:54 -0700
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Message-Id: <1555545233.9064.0@crapouillou.net>
+In-Reply-To: <155554493444.15276.2577888773542833089@swboyd.mtv.corp.google.com>
+References: <20190417112420.3034-1-paul@crapouillou.net>
+        <155554493444.15276.2577888773542833089@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2019-04-17 04:24:20)
-> The pixel clock is directly connected to the output of the PLL, and not
-> to the /2 divider.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 226dfa4726eb ("clk: Add Ingenic jz4725b CGU driver")
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+Hi Stephen,
 
-Is this breaking something in 5.1-rc series? Or just found by
-inspection? I'm trying to understand the priority of this patch.
+Le jeu. 18 avril 2019 =E0 1:48, Stephen Boyd <sboyd@kernel.org> a =E9crit=20
+:
+> Quoting Paul Cercueil (2019-04-17 04:24:20)
+>>  The pixel clock is directly connected to the output of the PLL, and=20
+>> not
+>>  to the /2 divider.
+>>=20
+>>  Cc: stable@vger.kernel.org
+>>  Fixes: 226dfa4726eb ("clk: Add Ingenic jz4725b CGU driver")
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>=20
+> Is this breaking something in 5.1-rc series? Or just found by
+> inspection? I'm trying to understand the priority of this patch.
+
+I verified it with the hardware. It fixes a bug that has been present
+since the introduction of this driver.
+
+However until now nothing uses this particular clock so it can go to=20
+5.2.
+
+-Paul
+
+=
 
