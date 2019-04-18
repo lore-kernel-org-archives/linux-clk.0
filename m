@@ -2,98 +2,121 @@ Return-Path: <SRS0=WJeD=SU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16304C10F0B
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 04:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE27C10F0B
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 05:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B1F2184B
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 04:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555563565;
-	bh=aBWFqnOszc1YlYn/I/d3ekW+xuK8MYtaiTOKWIDKDFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RaqCk1L9bcvU8Aulf48nVa1XncNwBaKV9z556+3lX22wS5IP+uzjhnJLVQzL99W1u
-	 o068RF08/Hao0RqBDZicQgInXSv02iG8O5jNQj0oXHkQtSwq4MzmcIuYrxgMt6DD+7
-	 gJS+9Xm0A1Wf2Flv5J+UqoTatGS2CVeFKjTSJapQ=
+	by mail.kernel.org (Postfix) with ESMTP id DD7D321479
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 05:33:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JIDM6AJ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbfDRE7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 00:59:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbfDRE7Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Apr 2019 00:59:25 -0400
-Received: from localhost (unknown [171.61.90.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A13DF2083D;
-        Thu, 18 Apr 2019 04:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555563564;
-        bh=aBWFqnOszc1YlYn/I/d3ekW+xuK8MYtaiTOKWIDKDFk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fRgAUtrpIn5sAPLWjJQuUN+LOPNMSqZwFMALxc8RnO6hGiGSzPSDm3aL05tT/k/GY
-         2KBdWOQfJvZqwZLzkI7BQZCglgmZKXW5Wya4afgtj68QiGQJuTgok4HKfFSc1dXaBB
-         HSyfQOPTzCEG0kSGXknGLwqAbdENCse5iGv+Lhfo=
-Date:   Thu, 18 Apr 2019 10:29:18 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] phy: qcom: Add Qualcomm PCIe2 PHY driver
-Message-ID: <20190418045918.GV28103@vkoul-mobl>
-References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
- <20190219060407.15263-4-bjorn.andersson@linaro.org>
+        id S1726619AbfDRFdt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 01:33:49 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38693 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbfDRFdt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 01:33:49 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e80so711360ote.5
+        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2019 22:33:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aXbMAAsszy6FzOVtjRJW6hpyRmmDJ6XtcJWRp7Ah/ZI=;
+        b=JIDM6AJ9nVJMI19kVQF4/CdZYyL7un86sPMHP05qLaanWK6R5toEnFKs6bG/KTRn2t
+         FgZyXR4DIinoIIo1Sv0EOF/rtMjhSZzZBvyTKJoSjcqO8bZl3+XJ1snMAtbnzQKNtQOR
+         ZpRZvpcdZsS+I05LQH2sSb2ZwJSCVvJhUh62SyIloL6Tzoy4BtdtrWzldI9a/WKckAnu
+         UocWJoO/nSUVzm6yh+YNIrFf0BvqfyJhPkz/eb0y0WmlS1WJ6Kw9oJP1l02EMjGUgUUd
+         LHbzG3xUtxQ2h7cG4aleMut/ypT8KDbSpKx8hoWwme6JKS7D0qGerqF6FzzMR7OqmREa
+         dbnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aXbMAAsszy6FzOVtjRJW6hpyRmmDJ6XtcJWRp7Ah/ZI=;
+        b=QUyv4FL3R9Ck2rbj76Dkox4VXC93kKQYplKqythibyhUh/OMuVlePDj4PXv5dooqrQ
+         wPXMl8BB89/V1UxLwxD5aY7YRdgcUo+szR9sb6mqa09jne4fQQxzGFY4Lsx73q1hh4w4
+         XUPeQzFmcUMHka/yyO4TKvudOD61OqaWbygdt7Hw27eOLMEPnEFqtiTvfXmUMRok/NPC
+         uak8trkRmwbn3VqkT4F57nH2rXuSg7jyCmsGFAwfZVqDeWQH4xpy5BO2oH1jdqSoomdB
+         Cvjf76YlYHB4i56C3AS0ADBgw1DbIBqYBYgmR1lCoJCkxtKw+7uMbiPrvAotp5LLkKcG
+         49hQ==
+X-Gm-Message-State: APjAAAW3/o6FLY0CyWvMqYHj13I/0M2Zrm6NrOPViKBR0LyGh2TRYX+w
+        pZ70W+3Wwpk1s8V4xQXkANfoMA==
+X-Google-Smtp-Source: APXvYqy5REPUbx3ersiYZ2U8smEkwejsKtgs6FAILobVFGdWcszGDEAP/9RrOS8mFxK1o+W4F/exMA==
+X-Received: by 2002:a05:6830:1051:: with SMTP id b17mr2245083otp.341.1555565628459;
+        Wed, 17 Apr 2019 22:33:48 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li808-42.members.linode.com. [104.237.132.42])
+        by smtp.gmail.com with ESMTPSA id 189sm495480oid.35.2019.04.17.22.33.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Apr 2019 22:33:47 -0700 (PDT)
+Date:   Thu, 18 Apr 2019 13:33:39 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Zhong Kaihua <zhongkaihua@huawei.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>
+Subject: Re: [PATCH v2] clk: hi3660: Mark clk_gate_ufs_subsys as critical
+Message-ID: <20190418053339.GA4524@leoy-ThinkPad-X240s>
+References: <20190320100508.6950-1-leo.yan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190219060407.15263-4-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190320100508.6950-1-leo.yan@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-02-19, 22:04, Bjorn Andersson wrote:
+Hi Michael, Stephen,
 
-> +static int qcom_pcie2_phy_power_on(struct phy *phy)
-> +{
-> +	struct qcom_phy *qphy = phy_get_drvdata(phy);
-> +	int ret;
-> +	u32 val;
-> +
-> +	/* Program REF_CLK source */
-> +	val = readl(qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-> +	val &= ~BIT(1);
-> +	writel(val, qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-> +
-> +	usleep_range(1000, 2000);
-> +
-> +	/* Don't use PAD for refclock */
-> +	val = readl(qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-> +	val &= ~BIT(0);
-> +	writel(val, qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-> +
-> +	/* Program SSP ENABLE */
-> +	val = readl(qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL3);
-> +	val |= BIT(0);
-> +	writel(val, qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL3);
+On Wed, Mar 20, 2019 at 06:05:08PM +0800, Leo Yan wrote:
+> clk_gate_ufs_subsys is a system bus clock, turning off it will
+> introduce lockup issue during system suspend flow.  Let's mark
+> clk_gate_ufs_subsys as critical clock, thus keeps it on during
+> system suspend and resume.
 
-we have this readl, modify and writel pattern in the file. I guess it
-makes sense to add a modifyl() with mask and value as args..
+Could you pick up this patch?  Or should I resend it?
 
--- 
-~Vinod
+Thanks,
+Leo Yan
+
+> Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
+> Cc: stable@vger.kernel.org
+> Cc: Zhong Kaihua <zhongkaihua@huawei.com>
+> Cc: John Stultz <john.stultz@linaro.org>
+> Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+> Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  drivers/clk/hisilicon/clk-hi3660.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+> index f40419959656..794eeff0d5d2 100644
+> --- a/drivers/clk/hisilicon/clk-hi3660.c
+> +++ b/drivers/clk/hisilicon/clk-hi3660.c
+> @@ -163,8 +163,12 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_sep_clks[] = {
+>  	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 17, 0, },
+>  	{ HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
+>  	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
+> +	/*
+> +	 * clk_gate_ufs_subsys is a system bus clock, mark it as critical
+> +	 * clock and keep it on for system suspend and resume.
+> +	 */
+>  	{ HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sysbus",
+> -	  CLK_SET_RATE_PARENT, 0x50, 21, 0, },
+> +	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 21, 0, },
+>  	{ HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
+>  	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
+>  	{ HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
+> -- 
+> 2.17.1
+> 
