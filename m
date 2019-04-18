@@ -2,121 +2,125 @@ Return-Path: <SRS0=WJeD=SU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE27C10F0B
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 05:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DD3C10F14
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 08:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD7D321479
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 05:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C66732183F
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 08:05:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JIDM6AJ9"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="S66dh4Ip"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbfDRFdt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 01:33:49 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38693 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbfDRFdt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 01:33:49 -0400
-Received: by mail-ot1-f68.google.com with SMTP id e80so711360ote.5
-        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2019 22:33:49 -0700 (PDT)
+        id S1728074AbfDRIF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 04:05:26 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45757 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388252AbfDRIFZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 04:05:25 -0400
+Received: by mail-io1-f66.google.com with SMTP id s7so1214823iom.12
+        for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2019 01:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aXbMAAsszy6FzOVtjRJW6hpyRmmDJ6XtcJWRp7Ah/ZI=;
-        b=JIDM6AJ9nVJMI19kVQF4/CdZYyL7un86sPMHP05qLaanWK6R5toEnFKs6bG/KTRn2t
-         FgZyXR4DIinoIIo1Sv0EOF/rtMjhSZzZBvyTKJoSjcqO8bZl3+XJ1snMAtbnzQKNtQOR
-         ZpRZvpcdZsS+I05LQH2sSb2ZwJSCVvJhUh62SyIloL6Tzoy4BtdtrWzldI9a/WKckAnu
-         UocWJoO/nSUVzm6yh+YNIrFf0BvqfyJhPkz/eb0y0WmlS1WJ6Kw9oJP1l02EMjGUgUUd
-         LHbzG3xUtxQ2h7cG4aleMut/ypT8KDbSpKx8hoWwme6JKS7D0qGerqF6FzzMR7OqmREa
-         dbnA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AbR0bNXOeX5XkekGGfrgR2SNLv2lg70f38dGHlM6btE=;
+        b=S66dh4IpAaTtcy75alpA5rJi6X0chvwnFc35tJuNner1Um3zpi70Rsf2N54Cga15v6
+         XQFg3pWKDsaw1LyA0zTfdMrNXoUUH7GyrF+ZQYTd+AyTmOwplDEbdQKYl4QiccLOLe1F
+         Az2vqFNzkEXoQNgq2VSpD/on+QXSGCw64T7u6P4X/zH6AFPpk4SkeXActxrjkqqf09uG
+         I7scldq8jTct1Q07YuHt3JPNS76/aAT7OcqhSVmo7IxDwZhrkLsxXg3IwF+lY27zQaX2
+         fJFJyraRwzxcNB6Za+zCceUhOQnpGx/jxamZ+mj8NOvtt9+Xju7TrD9LUWncNhfrJBjD
+         kH9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aXbMAAsszy6FzOVtjRJW6hpyRmmDJ6XtcJWRp7Ah/ZI=;
-        b=QUyv4FL3R9Ck2rbj76Dkox4VXC93kKQYplKqythibyhUh/OMuVlePDj4PXv5dooqrQ
-         wPXMl8BB89/V1UxLwxD5aY7YRdgcUo+szR9sb6mqa09jne4fQQxzGFY4Lsx73q1hh4w4
-         XUPeQzFmcUMHka/yyO4TKvudOD61OqaWbygdt7Hw27eOLMEPnEFqtiTvfXmUMRok/NPC
-         uak8trkRmwbn3VqkT4F57nH2rXuSg7jyCmsGFAwfZVqDeWQH4xpy5BO2oH1jdqSoomdB
-         Cvjf76YlYHB4i56C3AS0ADBgw1DbIBqYBYgmR1lCoJCkxtKw+7uMbiPrvAotp5LLkKcG
-         49hQ==
-X-Gm-Message-State: APjAAAW3/o6FLY0CyWvMqYHj13I/0M2Zrm6NrOPViKBR0LyGh2TRYX+w
-        pZ70W+3Wwpk1s8V4xQXkANfoMA==
-X-Google-Smtp-Source: APXvYqy5REPUbx3ersiYZ2U8smEkwejsKtgs6FAILobVFGdWcszGDEAP/9RrOS8mFxK1o+W4F/exMA==
-X-Received: by 2002:a05:6830:1051:: with SMTP id b17mr2245083otp.341.1555565628459;
-        Wed, 17 Apr 2019 22:33:48 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li808-42.members.linode.com. [104.237.132.42])
-        by smtp.gmail.com with ESMTPSA id 189sm495480oid.35.2019.04.17.22.33.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Apr 2019 22:33:47 -0700 (PDT)
-Date:   Thu, 18 Apr 2019 13:33:39 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Zhong Kaihua <zhongkaihua@huawei.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: Re: [PATCH v2] clk: hi3660: Mark clk_gate_ufs_subsys as critical
-Message-ID: <20190418053339.GA4524@leoy-ThinkPad-X240s>
-References: <20190320100508.6950-1-leo.yan@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AbR0bNXOeX5XkekGGfrgR2SNLv2lg70f38dGHlM6btE=;
+        b=ty6Z5C6AO7DoqAF+J5hnyHCNdmTg3on9nVfbLJn2EuvdvmeDrD3Bi73Jt+ThJLHyK7
+         RvUQxt6lm1wVgD6gXvpkYiVIBtG0t/7IzJgwXwIIVOE+wjB4+xo7WsIZYN8CHbDrxdql
+         Q3newEstYq8a3xhWlCiRWxZ69rga3vhvKIONlBDUrTysy8CJnxGolzOCeBfM4ONKXl1R
+         WzUmr5KEYFxGGn65Ms14lCl9Aqvy4Cr2ce/jQnm3ou3GFOahnCLJNfZ0HKZxM1Wuw4Dt
+         8bIb9P1g18JTTG/UP3w4pKsvVT2+eFV2N/6N/m7xHb6+HBdhBVofZBe8pYW9MQIxqCwg
+         Z18g==
+X-Gm-Message-State: APjAAAWn4nWpauqx2ZYefPOPKmRbkUHUwHAMjnQ1ifKkUO/vTVJxQMjn
+        ATy4XWqMVJMfh2jTQaZsXJBDff6F5ZIEV13oeutGlw==
+X-Google-Smtp-Source: APXvYqzO/gs4XlvT5/1iyZ2hAg34PJ0Fwxw9lkhxzRbofHUSsExRxrB1OcWby5jOpygsvFSdNgLqPPomjx63lgMFdD8=
+X-Received: by 2002:a6b:e61a:: with SMTP id g26mr60039595ioh.105.1555574724922;
+ Thu, 18 Apr 2019 01:05:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190320100508.6950-1-leo.yan@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-20-fparent@baylibre.com>
+ <5bc3fbfa-6d7e-08d3-116c-a8f78bc680cd@gmail.com> <1555403151.7441.4.camel@mhfsdcap03>
+In-Reply-To: <1555403151.7441.4.camel@mhfsdcap03>
+From:   Fabien Parent <fparent@baylibre.com>
+Date:   Thu, 18 Apr 2019 10:05:13 +0200
+Message-ID: <CAOwMV_yKAm1zar6buhe25O56AkAX8e0nXnm4GmqhvHC-yagKfQ@mail.gmail.com>
+Subject: Re: [PATCH 19/24] dt-bindings: spi: spi-mt65xx: add support for MT8516
+To:     lei liu <leilk.liu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        ryder.lee@mediatek.com, linux-watchdog@vger.kernel.org,
+        jjian.zhou@mediatek.com, wenzhen.yu@mediatek.com,
+        Stephane Le Provost <stephane.leprovost@mediatek.com>,
+        sean.wang@kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yong.mao@mediatek.com,
+        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, hsin-hsiung.wang@mediatek.com,
+        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Michael, Stephen,
+On Tue, Apr 16, 2019 at 10:25 AM lei liu <leilk.liu@mediatek.com> wrote:
+>
+> On Tue, 2019-04-16 at 09:55 +0200, Matthias Brugger wrote:
+> >
+> > On 23/03/2019 22:16, Fabien Parent wrote:
+> > > Add binding documentation of spi-mt65xx for MT8516 SoC.
+> > >
+> > > Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/spi/spi-mt65xx.txt | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> >
+> >
+> > applied to v5.1-next/dts64
+> >
+> > Mark let me know if you want to take it through your tree and I drop the patch.
+> >
+> > > diff --git a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
+> > > index 69c356767cf8..69ac5976b952 100644
+> > > --- a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
+> > > +++ b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
+> > > @@ -10,6 +10,7 @@ Required properties:
+> > >      - mediatek,mt8135-spi: for mt8135 platforms
+> > >      - mediatek,mt8173-spi: for mt8173 platforms
+> > >      - mediatek,mt8183-spi: for mt8183 platforms
+> > > +    - "mediatek,mt8516-spi", "mediatek,mt2701-spi": for mt8516 platforms
+> Hi Fabien,
+> mt8516 SPI design comes from mt2712 and it's different from mt2701. Here
+> it should compatible with mt2712.
 
-On Wed, Mar 20, 2019 at 06:05:08PM +0800, Leo Yan wrote:
-> clk_gate_ufs_subsys is a system bus clock, turning off it will
-> introduce lockup issue during system suspend flow.  Let's mark
-> clk_gate_ufs_subsys as critical clock, thus keeps it on during
-> system suspend and resume.
+Ok, thanks. I will retry with the mt2712 compatible.
 
-Could you pick up this patch?  Or should I resend it?
-
-Thanks,
-Leo Yan
-
-> Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
-> Cc: stable@vger.kernel.org
-> Cc: Zhong Kaihua <zhongkaihua@huawei.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-> Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  drivers/clk/hisilicon/clk-hi3660.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-> index f40419959656..794eeff0d5d2 100644
-> --- a/drivers/clk/hisilicon/clk-hi3660.c
-> +++ b/drivers/clk/hisilicon/clk-hi3660.c
-> @@ -163,8 +163,12 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_sep_clks[] = {
->  	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 17, 0, },
->  	{ HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
->  	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
-> +	/*
-> +	 * clk_gate_ufs_subsys is a system bus clock, mark it as critical
-> +	 * clock and keep it on for system suspend and resume.
-> +	 */
->  	{ HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sysbus",
-> -	  CLK_SET_RATE_PARENT, 0x50, 21, 0, },
-> +	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 21, 0, },
->  	{ HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
->  	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
->  	{ HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
-> -- 
-> 2.17.1
-> 
+> > >
+> > >  - #address-cells: should be 1.
+> > >
+> > >
+> >
+> > _______________________________________________
+> > Linux-mediatek mailing list
+> > Linux-mediatek@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+>
+>
