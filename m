@@ -2,109 +2,116 @@ Return-Path: <SRS0=WJeD=SU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46FBC10F0E
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 09:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD19C10F0E
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 09:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4E9206B6
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 09:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F16C32184B
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 09:46:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxjmOoYA"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="giwTdgDL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387971AbfDRJAZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 05:00:25 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37385 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728074AbfDRJAY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 05:00:24 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v14so1943910wmf.2;
-        Thu, 18 Apr 2019 02:00:23 -0700 (PDT)
+        id S2388461AbfDRJqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 05:46:40 -0400
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:45474 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387971AbfDRJqk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 05:46:40 -0400
+Received: by mail-wr1-f52.google.com with SMTP id s15so2123436wra.12
+        for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2019 02:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pw1FAqykH+UF3fjtfJ6Mf6wdF0exFztFvJZAXvxyVKg=;
-        b=DxjmOoYA5FR/fxL2GlrgwGjwPyKtTP/YcrqtSZmwfzz7IFCtkHI1TUoNZGLvt6Jrrx
-         OJ+Uz5tuK+DVJIzMU7nK8P6pEfLwwNdnQ7yCLAeMVtAz6fV1pUhHfDCFlPLTF+pAL6uh
-         XEKAyV40QSXBLcOc1+5/T+TaGhfwEBdQUL7b+koJNCSMXaEFd10SukQbyuqLIVh/oy58
-         3H+CUy9HFk/xPZr43wgjUVGqaaVxxYz6sXGXq4fRQakoqi6qUgdVstNtxuYIHVQ3FkQP
-         FDpKmA8yEMmLCl2IuQSQDlsXul1lmGohaQpYQjq1SXmCZbV7K0tjx8hFTMXQ2UB+ziG3
-         EYtw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=wFOSH+TsufDrAKB6RXYXQt2TcaPAfldbSHx2BWbJYxA=;
+        b=giwTdgDLtuXlOhDzfRleqFVVXN3qd49xjhg7zFvtCVDgVFM/AgZTa+wOoYQOw6ujWK
+         1T2hfER+HjAbHZ2JeD1kIgpx60Wa/Nc2fR0zi/C40KkrwsEQX34oY4IOL1hTcAhrJQhV
+         QZOzCpPdhw+qfOfJbx3whHzw/F3Zn9s/9h13prV9MYIUpkPK6OtESz0vbQHpFMS34bQO
+         wEZYInevOA6cVpQIu/4HRp34+IS7WhwXbrjcYPBnbiABwxCPwJUHHg6A9ak9IMqqGlrd
+         vsw09u/q4I+2tPXS2IDF+zwKXk4V84pm5aHBtrB55O2BNKFjYWqf+moqSM9NJd9CygdP
+         CW6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pw1FAqykH+UF3fjtfJ6Mf6wdF0exFztFvJZAXvxyVKg=;
-        b=DtvtGEMIyWuAROSmXH9Rm3UiD4z6kan/bcLiXRXZQyQOVvCLjDODMVnsBvPYdpvF/7
-         01qNaxANxqP1yL4PA69ADkRJ1bmPv6krc0bwZnEK68AwqhHW8X5go4kR1sI1TVD3PcaL
-         uUJJYSjgGy81CtpzxskqXv3NEADSP3X7yLKyQztCdYwU0KaUU5BZA9my3HLR4GvAJMF1
-         Vg0n+mYk4JOjRb830PAtUWi+3ygud1fG9o6E6OvRM4y5XOLqXWTu+tVDwGZ9HKb1qbx0
-         cuVezr2Uju6+iPtp4H91ZVWag3//+6uj9GCRkYYN8CHGgMj1jj6QsKVOUYWS+5J78Hmm
-         jG+g==
-X-Gm-Message-State: APjAAAWkbwFBdS/WA1w702eQtbniX5zBbiHUPueilx8Plt1jH37L+NKE
-        5bKA0vEWh1ucfIYiAnHBFjku48K7O4ia8G/H0sU=
-X-Google-Smtp-Source: APXvYqxUMeQRyOVazc5Uz46XVpBJSOKQ6ZFOR6P6n+hVm64dZztoOKs+Xqs13J0NQk+GKCgnYKiHlkrwZga7h8tXC/E=
-X-Received: by 2002:a1c:81c9:: with SMTP id c192mr2149650wmd.124.1555578022703;
- Thu, 18 Apr 2019 02:00:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190415101046.5872-1-jonas.gorski@gmail.com> <20190415101046.5872-2-jonas.gorski@gmail.com>
- <155554397723.15276.10863024281240089015@swboyd.mtv.corp.google.com>
-In-Reply-To: <155554397723.15276.10863024281240089015@swboyd.mtv.corp.google.com>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Thu, 18 Apr 2019 11:00:21 +0200
-Message-ID: <CAOiHx==vJ7ss3G8poddKpdDA_3U9bh9LtBaaFZ2EcxxGF4nNGA@mail.gmail.com>
-Subject: Re: [PATCH RFT V2 1/8] clk: divider: add explicit big endian support
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Anatolij Gustschin <agust@denx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=wFOSH+TsufDrAKB6RXYXQt2TcaPAfldbSHx2BWbJYxA=;
+        b=iHlNcvjDaolz2FOZfHUVuLUfA7ToRda3Ww6jBmnRgJSsbr+B+CdElBp+T6/t6gMeEM
+         nYnBUOXaZV+Ohef1Abf20rRTdKaUUBJL0QDoYQSYoLhlglPI0aK7Y66tnZlGh469vTOb
+         W2abZFqDpbDcGdFySjmPdNZV64fxspDeLsKYSjBoVTXs5NxK9GFtBMa7WOcmxEylX6cw
+         TA5UJJJ6GuwUtix4DZnC7iGWKWPy7kZHakIoh5syHQfKi7z4dm8tEmWa7ioxRDNB3Y0o
+         9OT+MNtIw5Umz2TadyLp5urQEWC75VeWyc5UvOecw8Ym9SzCDCLBnHCeyN6hDRCpReTI
+         9mbQ==
+X-Gm-Message-State: APjAAAWemkmWpWV3eXYeJZ5BcA8tUVEjquMVC+8i0S5IE1RmSd+IdLpS
+        hnBXHUVIg837gpmZphr48RPmsg==
+X-Google-Smtp-Source: APXvYqyBPw54P/D5S15QzOu6VM+WQp28dmywCDDa7fGzE5cNP9k10SL38i22EjIlOj0Gz2EgNwRrXA==
+X-Received: by 2002:a05:6000:12c8:: with SMTP id l8mr58866072wrx.80.1555580798198;
+        Thu, 18 Apr 2019 02:46:38 -0700 (PDT)
+Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x192sm1724886wmf.48.2019.04.18.02.46.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Apr 2019 02:46:37 -0700 (PDT)
+Message-ID: <3d961b5ea14a7aae4088282955f926e19b7bc9d9.camel@baylibre.com>
+Subject: [GIT PULL] clk: meson: 2nd update for v5.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Date:   Thu, 18 Apr 2019 11:46:36 +0200
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 18 Apr 2019 at 01:32, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Jonas Gorski (2019-04-15 03:10:39)
-> > @@ -370,7 +388,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-> >         if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-> >                 u32 val;
-> >
-> > -               val = clk_readl(divider->reg) >> divider->shift;
-> > +               val = clk_div_readl(divider->reg) >> divider->shift;
->
-> Good deal that kbuild running sparse found that this was supposed to be
-> divider and not divider->reg. If you can fix that and remove the else in
-> all the basic type readl wrappers then this series looks good to merge
-> for me.
+Dear clock maintainers,
 
-Yeah, I'm quite glad about that. I was first confused why I didn't
-catch it in my test build, but then remembered only C++ complains
-about implicit void* casts (IIRC). I have it already fixed locally and
-did a sparse build myself, was just waiting for at least one non-bot
-comment before resending the series.
+Below is a request to pull another round of update for amlogic clocks.
 
+The main purpose of this pull request is to add the g12a SoC family
+support in the axg audio clock controller driver. It applies on top of
+our previous PR.
 
-Regards
-Jonas
+Cheers
+
+The following changes since commit 90751f686e3f0415f1f931bf47ff14dd34316ea5:
+
+  clk: meson: meson8b: add the video decoder clock trees (2019-04-01 13:34:29 +0200)
+
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/meson-clk-5.2-2
+
+for you to fetch changes up to 075001385c66a00fba9810b9ecb88d644384df88:
+
+  clk: meson: axg-audio: add g12a support (2019-04-08 09:59:33 +0200)
+
+----------------------------------------------------------------
+* Do not register clock inputs in clock provider
+* Add g12a support in the axg audio clock controller
+
+----------------------------------------------------------------
+Jerome Brunet (3):
+      dt-bindings: clk: axg-audio: add g12a support
+      clk: meson: axg_audio: replace prefix axg by aud
+      clk: meson: axg-audio: don't register inputs in the onecell data
+
+Maxime Jourdan (1):
+      clk: meson: axg-audio: add g12a support
+
+Neil Armstrong (1):
+      Merge branch 'next/headers' into next/drivers
+
+ .../bindings/clock/amlogic,axg-audio-clkc.txt      |    3 +-
+ drivers/clk/meson/axg-audio.c                      | 1219 ++++++++++++--------
+ drivers/clk/meson/axg-audio.h                      |   36 +-
+ include/dt-bindings/clock/axg-audio-clkc.h         |   10 +
+ 4 files changed, 736 insertions(+), 532 deletions(-)
+
