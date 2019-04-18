@@ -2,686 +2,133 @@ Return-Path: <SRS0=WJeD=SU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34F6C10F14
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D2CC10F0E
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 13:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB4E214DA
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPvi5DAY"
+	by mail.kernel.org (Postfix) with ESMTP id EA5DB20674
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 13:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388375AbfDRLMa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 07:12:30 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39722 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388369AbfDRLM3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 07:12:29 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j9so2476987wrn.6;
-        Thu, 18 Apr 2019 04:12:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oJH6b8KRs9SU6XRzykJOr6qiUI3vNvZqNsg+8Q2z9O8=;
-        b=cPvi5DAYf+hdHMqnH2vtBEEp1bNdPeVXhR4STB3LH9zgGBke+/ziycQxkdaslP0K8t
-         OlNVbvViKYSEWDTWY+JywnqaLwveqaVvNALuvrbsDPz7XyP8p5cHdXq/rSXSqieM76zL
-         IkNHjRBne8yOe5chQF/Jl7CedD5QRu7WOn1FZ6hhSpJOtICHriJNFqfrDuje9odKSEZW
-         7FWev2AtJBfFngojKvsbsVNHG6KobMWVrpZLDs4VLSmtGWa1W3NnI1Qq8dWryL3xCPuo
-         OR6hchxkFIJO6lybcr0NeRhqY3OvmSJ95PEUM9pbfX75jN9bj9MNDDO4QDflArA/ey3q
-         UCdw==
+        id S2388343AbfDRNJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 09:09:19 -0400
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:32998 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727807AbfDRNJT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 09:09:19 -0400
+Received: by mail-wm1-f41.google.com with SMTP id z6so6918217wmi.0
+        for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2019 06:09:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oJH6b8KRs9SU6XRzykJOr6qiUI3vNvZqNsg+8Q2z9O8=;
-        b=kzhT/zSQN0xPQCNI2Stuf+fD3P5p2bKVkZBpw+E8F4/EBLKq1eXqPcDECbWYReU8we
-         yRGROwFsLjoZhrq7LEfkbUUT1wSuMRxjaZD46VR+n8ktoDbK7R+/y7piR19+IQPveUh9
-         OMyvhpS7IcV2FXmcXVMyEJCpdbNjHlEWhwXfnOjhDgycOOkEXvrg/JbchFx+e42Zs2fv
-         Hj0K2mI51zNymOrEdw61Rz2sedLLcgKyxMBDucw7lEXqODVvK3ABHxo3Y1XL2aiQOOyg
-         QxxmHyvnIHnDeKBIwaHnlhIs9bj2dSWQKsm5fk1UfX/XDRSaqLYSouf7vcs2RnpqI6Jq
-         hfGQ==
-X-Gm-Message-State: APjAAAUT0dP8kn3bxO4MwR2uS3TMzMdbXE9W+yM1hddG5arxTXwfg16F
-        uhySYU6sBaPh+67W4+tYEV2Lw21IcdA=
-X-Google-Smtp-Source: APXvYqxPDJ/amv1X552Gro2aWV9Lvb7+OsPND3pjb2eVgMkqQlkY2i+AbWzP8sWDcnkK7r+fnQXu0g==
-X-Received: by 2002:adf:dc83:: with SMTP id r3mr59719484wrj.179.1555585946749;
-        Thu, 18 Apr 2019 04:12:26 -0700 (PDT)
-Received: from localhost.localdomain ([2001:470:9e39::64])
-        by smtp.gmail.com with ESMTPSA id z63sm2005594wme.30.2019.04.18.04.12.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Apr 2019 04:12:26 -0700 (PDT)
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-To:     linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
-Cc:     Anatolij Gustschin <agust@denx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NBNzyXE5iaOPUoVOUROGSZSKXq/p8U4Oi/meNFfnFWE=;
+        b=oTVrl7R7SJhWN6oi20wQ6/v0Q9ZKd0PkQqDZCC4IGQ3Km0AhdDr+76k2HDSfSz3hAJ
+         iu3bb30tgBvncWr47eH6J4Ar9pgq5VnhuTrTOfGoSWywK9kpZTMsQwxHC+YcGdw+WV5Y
+         jAYiO7+o6U0LvPljAPz1WJA78h+Wj825xcqCRTw9f7GhgnrlPP0y5qL8m76Qz57uqWHO
+         qsX/NJQRLrCR8PPI3dqT2c+uYZ5rNb9DwjFJ4s2fVxV24pyMMNBQ0x9IxIESHphobejr
+         ZeRB4g9VzX1F6eG832x78ORPuNCtn2ZJAOo8YCkBKsf2A2ZzKnradxaIVLFB6OSwlCC2
+         Cc0A==
+X-Gm-Message-State: APjAAAUvwESS685vzSej4t80F3UfhCdHse9Up/SEGE6UDzCucKlyE4eb
+        DHwq2t+v3gLvzVBupRJ+qslLdw==
+X-Google-Smtp-Source: APXvYqy/k+L3rsoLOHBuVgRTHCpBYCBpOqXgUKiXUExgKLsfKJQrsz667H39lvjSYXEgULGpVc5v9w==
+X-Received: by 2002:a1c:4845:: with SMTP id v66mr3326106wma.144.1555592957551;
+        Thu, 18 Apr 2019 06:09:17 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id z6sm1758386wrh.45.2019.04.18.06.09.16
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Apr 2019 06:09:16 -0700 (PDT)
+Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     =?UTF-8?B?0KHQtdC80LXQvSDQktC10YDRh9C10L3QutC+?= 
+        <semverchenko@factor-ts.ru>,
+        =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>,
+        "Fujinaka, Todd" <todd.fujinaka@intel.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH RFT V3 8/8] clk: core: replace clk_{readl,writel} with {readl,writel}
-Date:   Thu, 18 Apr 2019 13:12:11 +0200
-Message-Id: <20190418111211.10474-9-jonas.gorski@gmail.com>
-X-Mailer: git-send-email 2.13.2
-In-Reply-To: <20190418111211.10474-1-jonas.gorski@gmail.com>
-References: <20190418111211.10474-1-jonas.gorski@gmail.com>
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <e01bb9da-0dde-4bfa-5693-eb4c02a1d696@redhat.com>
+ <20190328152421.GJ9224@smile.fi.intel.com>
+ <26800a0e-c309-1e69-c5b4-e11b761c7b40@redhat.com>
+ <20190328154931.GK9224@smile.fi.intel.com>
+ <d4c44bc8-ae0c-a6ff-3042-ae3185ceb33e@redhat.com>
+ <ef893b2e-121a-d395-9843-47d0c9f1515a@factor-ts.ru>
+ <942808d6-e2c1-cc8c-4aed-9b44a7ce4c76@redhat.com>
+ <c5ebcf73-1706-48d8-6904-ae6a89c44151@redhat.com>
+ <20190408172111.GX9224@smile.fi.intel.com>
+ <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
+ <20190409153125.GU9224@smile.fi.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <a05e2ac3-de31-bd7a-6b39-8cdf00190f67@redhat.com>
+Date:   Thu, 18 Apr 2019 15:09:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190409153125.GU9224@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that clk_{readl,writel} is just an alias for {readl,writel}, we can
-switch all users of clk_* to use the accessors directly and remove the
-helpers.
+Hi,
 
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
----
-V2 -> V3:
- * no actual changes
-V1 -> V2:
- * newly added patch
+On 09-04-19 17:31, Andy Shevchenko wrote:
+> On Mon, Apr 08, 2019 at 08:43:10PM +0200, Hans de Goede wrote:
+>> On 08-04-19 19:21, Andy Shevchenko wrote:
+>>> On Thu, Apr 04, 2019 at 04:43:03PM +0200, Hans de Goede wrote:
+>>>> On 29-03-19 16:53, Hans de Goede wrote:
+>>>>> On 3/29/19 2:59 PM, Семен Верченко wrote:
+>>>
+>>>>> Hmm, so 4 ethernet cards and 4 enabled / marked as critical clocks.
+>>>>>
+>>>>> Supporting this through get_clk is going to require a DMI table in the igb driver
+>>>>> combined with checking which PCI "slot" the card is to get the correct clock
+>>>>> for each ethernet controller.
+>>>>>
+>>>>> I believe tht just restoring the old behavior to mark all clocks enabled
+>>>>> on boot as critical, but then limited to this system based on a dmi match,
+>>>>> is the best solution here.
+>>>>>
+>>>>> Andy?
+>>>>
+>>>> Andy? Now that we've the patch ready for the other system which needs to
+>>>> have the CLK_IS_CRITICAL workaround and enables this based on DMI info,
+>>>> I believe the best fix for this system is to simply add it to that DMI
+>>>> table?
+>>>
+>>> I reviewed v4, supposed to go via CLK tree.
+>>
+>> Right, but that patch adds the quirk for the system with the USB hub,
+>> do you agree, that given that each ethernet controller seems to be
+>> using its own clock, it is best to use a DMI quirk for this case too?
+>>
+>> If you agree then someone needs to prepare a follow-up patch on top of
+>> v4 which adds the DMI info for this board to the table.
+> 
+> I hope we may find a better solution in the future, but for now as a quick fix
+> the proposed can be done.
 
- drivers/clk/clk-divider.c               |  4 ++--
- drivers/clk/clk-fractional-divider.c    |  4 ++--
- drivers/clk/clk-gate.c                  |  4 ++--
- drivers/clk/clk-multiplier.c            |  4 ++--
- drivers/clk/clk-mux.c                   |  4 ++--
- drivers/clk/clk-xgene.c                 |  6 +++---
- drivers/clk/hisilicon/clk-hisi-phase.c  |  4 ++--
- drivers/clk/imx/clk-divider-gate.c      | 20 ++++++++++----------
- drivers/clk/imx/clk-sccg-pll.c          | 12 ++++++------
- drivers/clk/nxp/clk-lpc18xx-ccu.c       |  6 +++---
- drivers/clk/nxp/clk-lpc18xx-cgu.c       | 24 ++++++++++++------------
- drivers/clk/rockchip/clk-ddr.c          |  2 +-
- drivers/clk/rockchip/clk-half-divider.c |  6 +++---
- drivers/clk/tegra/clk-tegra124.c        |  4 ++--
- drivers/clk/tegra/clk-tegra210.c        |  6 +++---
- drivers/clk/zynq/clkc.c                 |  6 +++---
- drivers/clk/zynq/pll.c                  | 18 +++++++++---------
- include/linux/clk-provider.h            | 15 ---------------
- 18 files changed, 67 insertions(+), 82 deletions(-)
+Ok.
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 25c7404e376c..2c600d750546 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -30,7 +30,7 @@ static inline u32 clk_div_readl(struct clk_divider *divider)
- 	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
- 		return ioread32be(divider->reg);
- 
--	return clk_readl(divider->reg);
-+	return readl(divider->reg);
- }
- 
- static inline void clk_div_writel(struct clk_divider *divider, u32 val)
-@@ -38,7 +38,7 @@ static inline void clk_div_writel(struct clk_divider *divider, u32 val)
- 	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
- 		iowrite32be(val, divider->reg);
- 	else
--		clk_writel(val, divider->reg);
-+		writel(val, divider->reg);
- }
- 
- #define div_mask(width)	((1 << (width)) - 1)
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index f88df265e787..638a9bbc2ab8 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -18,7 +18,7 @@ static inline u32 clk_fd_readl(struct clk_fractional_divider *fd)
- 	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
- 		return ioread32be(fd->reg);
- 
--	return clk_readl(fd->reg);
-+	return readl(fd->reg);
- }
- 
- static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
-@@ -26,7 +26,7 @@ static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
- 	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
- 		iowrite32be(val, fd->reg);
- 	else
--		clk_writel(val, fd->reg);
-+		writel(val, fd->reg);
- }
- 
- static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 6ced7b1f5585..0c0bb83f714e 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -28,7 +28,7 @@ static inline u32 clk_gate_readl(struct clk_gate *gate)
- 	if (gate->flags & CLK_GATE_BIG_ENDIAN)
- 		return ioread32be(gate->reg);
- 
--	return clk_readl(gate->reg);
-+	return readl(gate->reg);
- }
- 
- static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
-@@ -36,7 +36,7 @@ static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
- 	if (gate->flags & CLK_GATE_BIG_ENDIAN)
- 		iowrite32be(val, gate->reg);
- 	else
--		clk_writel(val, gate->reg);
-+		writel(val, gate->reg);
- }
- 
- /*
-diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-index 77327df9bf32..94470b4eadf4 100644
---- a/drivers/clk/clk-multiplier.c
-+++ b/drivers/clk/clk-multiplier.c
-@@ -16,7 +16,7 @@ static inline u32 clk_mult_readl(struct clk_multiplier *mult)
- 	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
- 		return ioread32be(mult->reg);
- 
--	return clk_readl(mult->reg);
-+	return readl(mult->reg);
- }
- 
- static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
-@@ -24,7 +24,7 @@ static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
- 	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
- 		iowrite32be(val, mult->reg);
- 	else
--		clk_writel(val, mult->reg);
-+		writel(val, mult->reg);
- }
- 
- static unsigned long __get_mult(struct clk_multiplier *mult,
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 61ad331b7ff4..893c9b285532 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -28,7 +28,7 @@ static inline u32 clk_mux_readl(struct clk_mux *mux)
- 	if (mux->flags & CLK_MUX_BIG_ENDIAN)
- 		return ioread32be(mux->reg);
- 
--	return clk_readl(mux->reg);
-+	return readl(mux->reg);
- }
- 
- static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
-@@ -36,7 +36,7 @@ static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
- 	if (mux->flags & CLK_MUX_BIG_ENDIAN)
- 		iowrite32be(val, mux->reg);
- 	else
--		clk_writel(val, mux->reg);
-+		writel(val, mux->reg);
- }
- 
- int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index 531b030d4d4e..d975465fe2a8 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -262,7 +262,7 @@ static unsigned long xgene_clk_pmd_recalc_rate(struct clk_hw *hw,
- 	else
- 		__acquire(fd->lock);
- 
--	val = clk_readl(fd->reg);
-+	val = readl(fd->reg);
- 
- 	if (fd->lock)
- 		spin_unlock_irqrestore(fd->lock, flags);
-@@ -333,10 +333,10 @@ static int xgene_clk_pmd_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		__acquire(fd->lock);
- 
--	val = clk_readl(fd->reg);
-+	val = readl(fd->reg);
- 	val &= ~fd->mask;
- 	val |= (scale << fd->shift);
--	clk_writel(val, fd->reg);
-+	writel(val, fd->reg);
- 
- 	if (fd->lock)
- 		spin_unlock_irqrestore(fd->lock, flags);
-diff --git a/drivers/clk/hisilicon/clk-hisi-phase.c b/drivers/clk/hisilicon/clk-hisi-phase.c
-index 5fdc267bb2da..ba6afad66a2b 100644
---- a/drivers/clk/hisilicon/clk-hisi-phase.c
-+++ b/drivers/clk/hisilicon/clk-hisi-phase.c
-@@ -75,10 +75,10 @@ static int hisi_clk_set_phase(struct clk_hw *hw, int degrees)
- 
- 	spin_lock_irqsave(phase->lock, flags);
- 
--	val = clk_readl(phase->reg);
-+	val = readl(phase->reg);
- 	val &= ~phase->mask;
- 	val |= regval << phase->shift;
--	clk_writel(val, phase->reg);
-+	writel(val, phase->reg);
- 
- 	spin_unlock_irqrestore(phase->lock, flags);
- 
-diff --git a/drivers/clk/imx/clk-divider-gate.c b/drivers/clk/imx/clk-divider-gate.c
-index df1f8429fe16..2a8352a316c7 100644
---- a/drivers/clk/imx/clk-divider-gate.c
-+++ b/drivers/clk/imx/clk-divider-gate.c
-@@ -29,7 +29,7 @@ static unsigned long clk_divider_gate_recalc_rate_ro(struct clk_hw *hw,
- 	struct clk_divider *div = to_clk_divider(hw);
- 	unsigned int val;
- 
--	val = clk_readl(div->reg) >> div->shift;
-+	val = readl(div->reg) >> div->shift;
- 	val &= clk_div_mask(div->width);
- 	if (!val)
- 		return 0;
-@@ -51,7 +51,7 @@ static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
- 	if (!clk_hw_is_enabled(hw)) {
- 		val = div_gate->cached_val;
- 	} else {
--		val = clk_readl(div->reg) >> div->shift;
-+		val = readl(div->reg) >> div->shift;
- 		val &= clk_div_mask(div->width);
- 	}
- 
-@@ -87,10 +87,10 @@ static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
- 	spin_lock_irqsave(div->lock, flags);
- 
- 	if (clk_hw_is_enabled(hw)) {
--		val = clk_readl(div->reg);
-+		val = readl(div->reg);
- 		val &= ~(clk_div_mask(div->width) << div->shift);
- 		val |= (u32)value << div->shift;
--		clk_writel(val, div->reg);
-+		writel(val, div->reg);
- 	} else {
- 		div_gate->cached_val = value;
- 	}
-@@ -114,9 +114,9 @@ static int clk_divider_enable(struct clk_hw *hw)
- 
- 	spin_lock_irqsave(div->lock, flags);
- 	/* restore div val */
--	val = clk_readl(div->reg);
-+	val = readl(div->reg);
- 	val |= div_gate->cached_val << div->shift;
--	clk_writel(val, div->reg);
-+	writel(val, div->reg);
- 
- 	spin_unlock_irqrestore(div->lock, flags);
- 
-@@ -133,10 +133,10 @@ static void clk_divider_disable(struct clk_hw *hw)
- 	spin_lock_irqsave(div->lock, flags);
- 
- 	/* store the current div val */
--	val = clk_readl(div->reg) >> div->shift;
-+	val = readl(div->reg) >> div->shift;
- 	val &= clk_div_mask(div->width);
- 	div_gate->cached_val = val;
--	clk_writel(0, div->reg);
-+	writel(0, div->reg);
- 
- 	spin_unlock_irqrestore(div->lock, flags);
- }
-@@ -146,7 +146,7 @@ static int clk_divider_is_enabled(struct clk_hw *hw)
- 	struct clk_divider *div = to_clk_divider(hw);
- 	u32 val;
- 
--	val = clk_readl(div->reg) >> div->shift;
-+	val = readl(div->reg) >> div->shift;
- 	val &= clk_div_mask(div->width);
- 
- 	return val ? 1 : 0;
-@@ -206,7 +206,7 @@ struct clk_hw *imx_clk_divider_gate(const char *name, const char *parent_name,
- 	div_gate->divider.hw.init = &init;
- 	div_gate->divider.flags = CLK_DIVIDER_ONE_BASED | clk_divider_flags;
- 	/* cache gate status */
--	val = clk_readl(reg) >> shift;
-+	val = readl(reg) >> shift;
- 	val &= clk_div_mask(width);
- 	div_gate->cached_val = val;
- 
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
-index 9dfd03a95557..991bbe63f156 100644
---- a/drivers/clk/imx/clk-sccg-pll.c
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -348,7 +348,7 @@ static unsigned long clk_sccg_pll_recalc_rate(struct clk_hw *hw,
- 
- 	temp64 = parent_rate;
- 
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	if (val & SSCG_PLL_BYPASS2_MASK) {
- 		temp64 = parent_rate;
- 	} else if (val & SSCG_PLL_BYPASS1_MASK) {
-@@ -371,10 +371,10 @@ static int clk_sccg_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 val;
- 
- 	/* set bypass here too since the parent might be the same */
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	val &= ~SSCG_PLL_BYPASS_MASK;
- 	val |= FIELD_PREP(SSCG_PLL_BYPASS_MASK, setup->bypass);
--	clk_writel(val, pll->base + PLL_CFG0);
-+	writel(val, pll->base + PLL_CFG0);
- 
- 	val = readl_relaxed(pll->base + PLL_CFG2);
- 	val &= ~(PLL_DIVF1_MASK | PLL_DIVF2_MASK);
-@@ -395,7 +395,7 @@ static u8 clk_sccg_pll_get_parent(struct clk_hw *hw)
- 	u32 val;
- 	u8 ret = pll->parent;
- 
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	if (val & SSCG_PLL_BYPASS2_MASK)
- 		ret = pll->bypass2;
- 	else if (val & SSCG_PLL_BYPASS1_MASK)
-@@ -408,10 +408,10 @@ static int clk_sccg_pll_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
- 	u32 val;
- 
--	val = clk_readl(pll->base + PLL_CFG0);
-+	val = readl(pll->base + PLL_CFG0);
- 	val &= ~SSCG_PLL_BYPASS_MASK;
- 	val |= FIELD_PREP(SSCG_PLL_BYPASS_MASK, pll->setup.bypass);
--	clk_writel(val, pll->base + PLL_CFG0);
-+	writel(val, pll->base + PLL_CFG0);
- 
- 	return clk_sccg_pll_wait_lock(pll);
- }
-diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-index 27781b49eb82..5969f620607a 100644
---- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-@@ -142,7 +142,7 @@ static int lpc18xx_ccu_gate_endisable(struct clk_hw *hw, bool enable)
- 	 * Divider field is write only, so divider stat field must
- 	 * be read so divider field can be set accordingly.
- 	 */
--	val = clk_readl(gate->reg);
-+	val = readl(gate->reg);
- 	if (val & LPC18XX_CCU_DIVSTAT)
- 		val |= LPC18XX_CCU_DIV;
- 
-@@ -155,12 +155,12 @@ static int lpc18xx_ccu_gate_endisable(struct clk_hw *hw, bool enable)
- 		 * and the next write should clear the RUN bit.
- 		 */
- 		val |= LPC18XX_CCU_AUTO;
--		clk_writel(val, gate->reg);
-+		writel(val, gate->reg);
- 
- 		val &= ~LPC18XX_CCU_RUN;
- 	}
- 
--	clk_writel(val, gate->reg);
-+	writel(val, gate->reg);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-index 2531174b399e..f5bc8bd192b7 100644
---- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-@@ -352,9 +352,9 @@ static unsigned long lpc18xx_pll0_recalc_rate(struct clk_hw *hw,
- 	struct lpc18xx_pll *pll = to_lpc_pll(hw);
- 	u32 ctrl, mdiv, msel, npdiv;
- 
--	ctrl = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
--	mdiv = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
--	npdiv = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
-+	ctrl = readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	mdiv = readl(pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
-+	npdiv = readl(pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
- 
- 	if (ctrl & LPC18XX_PLL0_CTRL_BYPASS)
- 		return parent_rate;
-@@ -415,25 +415,25 @@ static int lpc18xx_pll0_set_rate(struct clk_hw *hw, unsigned long rate,
- 	m |= lpc18xx_pll0_msel2seli(m) << LPC18XX_PLL0_MDIV_SELI_SHIFT;
- 
- 	/* Power down PLL, disable clk output and dividers */
--	ctrl = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	ctrl = readl(pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 	ctrl |= LPC18XX_PLL0_CTRL_PD;
- 	ctrl &= ~(LPC18XX_PLL0_CTRL_BYPASS | LPC18XX_PLL0_CTRL_DIRECTI |
- 		  LPC18XX_PLL0_CTRL_DIRECTO | LPC18XX_PLL0_CTRL_CLKEN);
--	clk_writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 
- 	/* Configure new PLL settings */
--	clk_writel(m, pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
--	clk_writel(LPC18XX_PLL0_NP_DIVS_1, pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
-+	writel(m, pll->reg + LPC18XX_CGU_PLL0USB_MDIV);
-+	writel(LPC18XX_PLL0_NP_DIVS_1, pll->reg + LPC18XX_CGU_PLL0USB_NP_DIV);
- 
- 	/* Power up PLL and wait for lock */
- 	ctrl &= ~LPC18XX_PLL0_CTRL_PD;
--	clk_writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+	writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 	do {
- 		udelay(10);
--		stat = clk_readl(pll->reg + LPC18XX_CGU_PLL0USB_STAT);
-+		stat = readl(pll->reg + LPC18XX_CGU_PLL0USB_STAT);
- 		if (stat & LPC18XX_PLL0_STAT_LOCK) {
- 			ctrl |= LPC18XX_PLL0_CTRL_CLKEN;
--			clk_writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
-+			writel(ctrl, pll->reg + LPC18XX_CGU_PLL0USB_CTRL);
- 
- 			return 0;
- 		}
-@@ -458,8 +458,8 @@ static unsigned long lpc18xx_pll1_recalc_rate(struct clk_hw *hw,
- 	bool direct, fbsel;
- 	u32 stat, ctrl;
- 
--	stat = clk_readl(pll->reg + LPC18XX_CGU_PLL1_STAT);
--	ctrl = clk_readl(pll->reg + LPC18XX_CGU_PLL1_CTRL);
-+	stat = readl(pll->reg + LPC18XX_CGU_PLL1_STAT);
-+	ctrl = readl(pll->reg + LPC18XX_CGU_PLL1_CTRL);
- 
- 	direct = (ctrl & LPC18XX_PLL1_CTRL_DIRECT) ? true : false;
- 	fbsel = (ctrl & LPC18XX_PLL1_CTRL_FBSEL) ? true : false;
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index ebce5260068b..09ede6920593 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -82,7 +82,7 @@ static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
- 	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
- 	u32 val;
- 
--	val = clk_readl(ddrclk->reg_base +
-+	val = readl(ddrclk->reg_base +
- 			ddrclk->mux_offset) >> ddrclk->mux_shift;
- 	val &= GENMASK(ddrclk->mux_width - 1, 0);
- 
-diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
-index b8da6e799423..784b81e1ea7c 100644
---- a/drivers/clk/rockchip/clk-half-divider.c
-+++ b/drivers/clk/rockchip/clk-half-divider.c
-@@ -24,7 +24,7 @@ static unsigned long clk_half_divider_recalc_rate(struct clk_hw *hw,
- 	struct clk_divider *divider = to_clk_divider(hw);
- 	unsigned int val;
- 
--	val = clk_readl(divider->reg) >> divider->shift;
-+	val = readl(divider->reg) >> divider->shift;
- 	val &= div_mask(divider->width);
- 	val = val * 2 + 3;
- 
-@@ -124,11 +124,11 @@ static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
- 		val = div_mask(divider->width) << (divider->shift + 16);
- 	} else {
--		val = clk_readl(divider->reg);
-+		val = readl(divider->reg);
- 		val &= ~(div_mask(divider->width) << divider->shift);
- 	}
- 	val |= value << divider->shift;
--	clk_writel(val, divider->reg);
-+	writel(val, divider->reg);
- 
- 	if (divider->lock)
- 		spin_unlock_irqrestore(divider->lock, flags);
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index df0018f7bf7e..abc0c4bea740 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1466,9 +1466,9 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
- 	tegra_pmc_clk_init(pmc_base, tegra124_clks);
- 
- 	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
--	plld_base = clk_readl(clk_base + PLLD_BASE);
-+	plld_base = readl(clk_base + PLLD_BASE);
- 	plld_base &= ~BIT(25);
--	clk_writel(plld_base, clk_base + PLLD_BASE);
-+	writel(plld_base, clk_base + PLLD_BASE);
- }
- 
- /**
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 7545af763d7a..ed3c7df75d1e 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3557,7 +3557,7 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	if (!clks)
- 		return;
- 
--	value = clk_readl(clk_base + SPARE_REG0) >> CLK_M_DIVISOR_SHIFT;
-+	value = readl(clk_base + SPARE_REG0) >> CLK_M_DIVISOR_SHIFT;
- 	clk_m_div = (value & CLK_M_DIVISOR_MASK) + 1;
- 
- 	if (tegra_osc_clk_init(clk_base, tegra210_clks, tegra210_input_freq,
-@@ -3574,9 +3574,9 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	tegra_pmc_clk_init(pmc_base, tegra210_clks);
- 
- 	/* For Tegra210, PLLD is the only source for DSIA & DSIB */
--	value = clk_readl(clk_base + PLLD_BASE);
-+	value = readl(clk_base + PLLD_BASE);
- 	value &= ~BIT(25);
--	clk_writel(value, clk_base + PLLD_BASE);
-+	writel(value, clk_base + PLLD_BASE);
- 
- 	tegra_clk_apply_init_table = tegra210_clock_apply_init_table;
- 
-diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-index d7b53ac8ad11..4b9d5c14c400 100644
---- a/drivers/clk/zynq/clkc.c
-+++ b/drivers/clk/zynq/clkc.c
-@@ -158,7 +158,7 @@ static void __init zynq_clk_register_fclk(enum zynq_clk fclk,
- 	clks[fclk] = clk_register_gate(NULL, clk_name,
- 			div1_name, CLK_SET_RATE_PARENT, fclk_gate_reg,
- 			0, CLK_GATE_SET_TO_DISABLE, fclk_gate_lock);
--	enable_reg = clk_readl(fclk_gate_reg) & 1;
-+	enable_reg = readl(fclk_gate_reg) & 1;
- 	if (enable && !enable_reg) {
- 		if (clk_prepare_enable(clks[fclk]))
- 			pr_warn("%s: FCLK%u enable failed\n", __func__,
-@@ -287,7 +287,7 @@ static void __init zynq_clk_setup(struct device_node *np)
- 			SLCR_IOPLL_CTRL, 4, 1, 0, &iopll_lock);
- 
- 	/* CPU clocks */
--	tmp = clk_readl(SLCR_621_TRUE) & 1;
-+	tmp = readl(SLCR_621_TRUE) & 1;
- 	clk = clk_register_mux(NULL, "cpu_mux", cpu_parents, 4,
- 			CLK_SET_RATE_NO_REPARENT, SLCR_ARM_CLK_CTRL, 4, 2, 0,
- 			&armclk_lock);
-@@ -510,7 +510,7 @@ static void __init zynq_clk_setup(struct device_node *np)
- 			&dbgclk_lock);
- 
- 	/* leave debug clocks in the state the bootloader set them up to */
--	tmp = clk_readl(SLCR_DBG_CLK_CTRL);
-+	tmp = readl(SLCR_DBG_CLK_CTRL);
- 	if (tmp & DBG_CLK_CTRL_CLKACT_TRC)
- 		if (clk_prepare_enable(clks[dbg_trc]))
- 			pr_warn("%s: trace clk enable failed\n", __func__);
-diff --git a/drivers/clk/zynq/pll.c b/drivers/clk/zynq/pll.c
-index 00d72fb5c036..800b70ee19b3 100644
---- a/drivers/clk/zynq/pll.c
-+++ b/drivers/clk/zynq/pll.c
-@@ -90,7 +90,7 @@ static unsigned long zynq_pll_recalc_rate(struct clk_hw *hw,
- 	 * makes probably sense to redundantly save fbdiv in the struct
- 	 * zynq_pll to save the IO access.
- 	 */
--	fbdiv = (clk_readl(clk->pll_ctrl) & PLLCTRL_FBDIV_MASK) >>
-+	fbdiv = (readl(clk->pll_ctrl) & PLLCTRL_FBDIV_MASK) >>
- 			PLLCTRL_FBDIV_SHIFT;
- 
- 	return parent_rate * fbdiv;
-@@ -112,7 +112,7 @@ static int zynq_pll_is_enabled(struct clk_hw *hw)
- 
- 	spin_lock_irqsave(clk->lock, flags);
- 
--	reg = clk_readl(clk->pll_ctrl);
-+	reg = readl(clk->pll_ctrl);
- 
- 	spin_unlock_irqrestore(clk->lock, flags);
- 
-@@ -138,10 +138,10 @@ static int zynq_pll_enable(struct clk_hw *hw)
- 	/* Power up PLL and wait for lock */
- 	spin_lock_irqsave(clk->lock, flags);
- 
--	reg = clk_readl(clk->pll_ctrl);
-+	reg = readl(clk->pll_ctrl);
- 	reg &= ~(PLLCTRL_RESET_MASK | PLLCTRL_PWRDWN_MASK);
--	clk_writel(reg, clk->pll_ctrl);
--	while (!(clk_readl(clk->pll_status) & (1 << clk->lockbit)))
-+	writel(reg, clk->pll_ctrl);
-+	while (!(readl(clk->pll_status) & (1 << clk->lockbit)))
- 		;
- 
- 	spin_unlock_irqrestore(clk->lock, flags);
-@@ -168,9 +168,9 @@ static void zynq_pll_disable(struct clk_hw *hw)
- 	/* shut down PLL */
- 	spin_lock_irqsave(clk->lock, flags);
- 
--	reg = clk_readl(clk->pll_ctrl);
-+	reg = readl(clk->pll_ctrl);
- 	reg |= PLLCTRL_RESET_MASK | PLLCTRL_PWRDWN_MASK;
--	clk_writel(reg, clk->pll_ctrl);
-+	writel(reg, clk->pll_ctrl);
- 
- 	spin_unlock_irqrestore(clk->lock, flags);
- }
-@@ -223,9 +223,9 @@ struct clk *clk_register_zynq_pll(const char *name, const char *parent,
- 
- 	spin_lock_irqsave(pll->lock, flags);
- 
--	reg = clk_readl(pll->pll_ctrl);
-+	reg = readl(pll->pll_ctrl);
- 	reg &= ~PLLCTRL_BPQUAL_MASK;
--	clk_writel(reg, pll->pll_ctrl);
-+	writel(reg, pll->pll_ctrl);
- 
- 	spin_unlock_irqrestore(pll->lock, flags);
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 479e616ce7f5..46d5fc3057b5 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -996,21 +996,6 @@ static inline int of_clk_detect_critical(struct device_node *np, int index,
- }
- #endif /* CONFIG_OF */
- 
--/*
-- * wrap access to peripherals in accessor routines
-- * for improved portability across platforms
-- */
--
--static inline u32 clk_readl(u32 __iomem *reg)
--{
--	return readl(reg);
--}
--
--static inline void clk_writel(u32 val, u32 __iomem *reg)
--{
--	writel(val, reg);
--}
--
- void clk_gate_restore_context(struct clk_hw *hw);
- 
- #endif /* CONFIG_COMMON_CLK */
--- 
-2.13.2
+Семен Верченко, this means that we are going to need DMI info from
+the board in question. I thought we already had that, but I now see that
+you original report did not have that a
+
+Please run as root:
+
+dmidecode &> dmidecode.log
+
+And then reply to this email with the generated dmidecode.log file
+attached. Once I have that file I can prepare a patch fixing this.
+
+Regards,
+
+Hans
 
