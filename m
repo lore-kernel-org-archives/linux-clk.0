@@ -2,121 +2,109 @@ Return-Path: <SRS0=WJeD=SU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22855C10F0B
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 08:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46FBC10F0E
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 09:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF8A52183E
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 08:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C4E9206B6
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 09:00:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxjmOoYA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbfDRIS0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 04:18:26 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:40403 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388315AbfDRISX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 04:18:23 -0400
-X-UUID: 0fee49785471427ba9a5605c483fc628-20190418
-X-UUID: 0fee49785471427ba9a5605c483fc628-20190418
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <leilk.liu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 812527592; Thu, 18 Apr 2019 16:18:11 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 18 Apr
- 2019 16:18:09 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 18 Apr 2019 16:18:07 +0800
-Message-ID: <1555575487.7441.6.camel@mhfsdcap03>
-Subject: Re: [PATCH 19/24] dt-bindings: spi: spi-mt65xx: add support for
- MT8516
-From:   lei liu <leilk.liu@mediatek.com>
-To:     Fabien Parent <fparent@baylibre.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <ryder.lee@mediatek.com>,
-        <linux-watchdog@vger.kernel.org>, <jjian.zhou@mediatek.com>,
-        <wenzhen.yu@mediatek.com>,
-        Stephane Le Provost <stephane.leprovost@mediatek.com>,
-        <sean.wang@kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yong.mao@mediatek.com>,
-        <linux-spi@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <hsin-hsiung.wang@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        <linux-i2c@vger.kernel.org>
-Date:   Thu, 18 Apr 2019 16:18:07 +0800
-In-Reply-To: <CAOwMV_yKAm1zar6buhe25O56AkAX8e0nXnm4GmqhvHC-yagKfQ@mail.gmail.com>
-References: <20190323211612.860-1-fparent@baylibre.com>
-         <20190323211612.860-20-fparent@baylibre.com>
-         <5bc3fbfa-6d7e-08d3-116c-a8f78bc680cd@gmail.com>
-         <1555403151.7441.4.camel@mhfsdcap03>
-         <CAOwMV_yKAm1zar6buhe25O56AkAX8e0nXnm4GmqhvHC-yagKfQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S2387971AbfDRJAZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 05:00:25 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37385 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728074AbfDRJAY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 05:00:24 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v14so1943910wmf.2;
+        Thu, 18 Apr 2019 02:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pw1FAqykH+UF3fjtfJ6Mf6wdF0exFztFvJZAXvxyVKg=;
+        b=DxjmOoYA5FR/fxL2GlrgwGjwPyKtTP/YcrqtSZmwfzz7IFCtkHI1TUoNZGLvt6Jrrx
+         OJ+Uz5tuK+DVJIzMU7nK8P6pEfLwwNdnQ7yCLAeMVtAz6fV1pUhHfDCFlPLTF+pAL6uh
+         XEKAyV40QSXBLcOc1+5/T+TaGhfwEBdQUL7b+koJNCSMXaEFd10SukQbyuqLIVh/oy58
+         3H+CUy9HFk/xPZr43wgjUVGqaaVxxYz6sXGXq4fRQakoqi6qUgdVstNtxuYIHVQ3FkQP
+         FDpKmA8yEMmLCl2IuQSQDlsXul1lmGohaQpYQjq1SXmCZbV7K0tjx8hFTMXQ2UB+ziG3
+         EYtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pw1FAqykH+UF3fjtfJ6Mf6wdF0exFztFvJZAXvxyVKg=;
+        b=DtvtGEMIyWuAROSmXH9Rm3UiD4z6kan/bcLiXRXZQyQOVvCLjDODMVnsBvPYdpvF/7
+         01qNaxANxqP1yL4PA69ADkRJ1bmPv6krc0bwZnEK68AwqhHW8X5go4kR1sI1TVD3PcaL
+         uUJJYSjgGy81CtpzxskqXv3NEADSP3X7yLKyQztCdYwU0KaUU5BZA9my3HLR4GvAJMF1
+         Vg0n+mYk4JOjRb830PAtUWi+3ygud1fG9o6E6OvRM4y5XOLqXWTu+tVDwGZ9HKb1qbx0
+         cuVezr2Uju6+iPtp4H91ZVWag3//+6uj9GCRkYYN8CHGgMj1jj6QsKVOUYWS+5J78Hmm
+         jG+g==
+X-Gm-Message-State: APjAAAWkbwFBdS/WA1w702eQtbniX5zBbiHUPueilx8Plt1jH37L+NKE
+        5bKA0vEWh1ucfIYiAnHBFjku48K7O4ia8G/H0sU=
+X-Google-Smtp-Source: APXvYqxUMeQRyOVazc5Uz46XVpBJSOKQ6ZFOR6P6n+hVm64dZztoOKs+Xqs13J0NQk+GKCgnYKiHlkrwZga7h8tXC/E=
+X-Received: by 2002:a1c:81c9:: with SMTP id c192mr2149650wmd.124.1555578022703;
+ Thu, 18 Apr 2019 02:00:22 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+References: <20190415101046.5872-1-jonas.gorski@gmail.com> <20190415101046.5872-2-jonas.gorski@gmail.com>
+ <155554397723.15276.10863024281240089015@swboyd.mtv.corp.google.com>
+In-Reply-To: <155554397723.15276.10863024281240089015@swboyd.mtv.corp.google.com>
+From:   Jonas Gorski <jonas.gorski@gmail.com>
+Date:   Thu, 18 Apr 2019 11:00:21 +0200
+Message-ID: <CAOiHx==vJ7ss3G8poddKpdDA_3U9bh9LtBaaFZ2EcxxGF4nNGA@mail.gmail.com>
+Subject: Re: [PATCH RFT V2 1/8] clk: divider: add explicit big endian support
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Anatolij Gustschin <agust@denx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2019-04-18 at 10:05 +0200, Fabien Parent wrote:
-> On Tue, Apr 16, 2019 at 10:25 AM lei liu <leilk.liu@mediatek.com> wrote:
+On Thu, 18 Apr 2019 at 01:32, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Jonas Gorski (2019-04-15 03:10:39)
+> > @@ -370,7 +388,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> >         if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+> >                 u32 val;
 > >
-> > On Tue, 2019-04-16 at 09:55 +0200, Matthias Brugger wrote:
-> > >
-> > > On 23/03/2019 22:16, Fabien Parent wrote:
-> > > > Add binding documentation of spi-mt65xx for MT8516 SoC.
-> > > >
-> > > > Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/spi/spi-mt65xx.txt | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > >
-> > >
-> > > applied to v5.1-next/dts64
-> > >
-> > > Mark let me know if you want to take it through your tree and I drop the patch.
-> > >
-> > > > diff --git a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-> > > > index 69c356767cf8..69ac5976b952 100644
-> > > > --- a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-> > > > +++ b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-> > > > @@ -10,6 +10,7 @@ Required properties:
-> > > >      - mediatek,mt8135-spi: for mt8135 platforms
-> > > >      - mediatek,mt8173-spi: for mt8173 platforms
-> > > >      - mediatek,mt8183-spi: for mt8183 platforms
-> > > > +    - "mediatek,mt8516-spi", "mediatek,mt2701-spi": for mt8516 platforms
-> > Hi Fabien,
-> > mt8516 SPI design comes from mt2712 and it's different from mt2701. Here
-> > it should compatible with mt2712.
-> 
-> Ok, thanks. I will retry with the mt2712 compatible.
-> 
+> > -               val = clk_readl(divider->reg) >> divider->shift;
+> > +               val = clk_div_readl(divider->reg) >> divider->shift;
+>
+> Good deal that kbuild running sparse found that this was supposed to be
+> divider and not divider->reg. If you can fix that and remove the else in
+> all the basic type readl wrappers then this series looks good to merge
+> for me.
 
-Hi, I already send mt8516 spi patch and it's applied by Mark. Please
-don't do it again. Thanks.
-
-> > > >
-> > > >  - #address-cells: should be 1.
-> > > >
-> > > >
-> > >
-> > > _______________________________________________
-> > > Linux-mediatek mailing list
-> > > Linux-mediatek@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> >
-> >
+Yeah, I'm quite glad about that. I was first confused why I didn't
+catch it in my test build, but then remembered only C++ complains
+about implicit void* casts (IIRC). I have it already fixed locally and
+did a sparse build myself, was just waiting for at least one non-bot
+comment before resending the series.
 
 
+Regards
+Jonas
