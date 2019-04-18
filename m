@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68676C10F14
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35FEC10F0E
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9FA214DA
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6381214DA
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoZ60qYe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nh5HIHVL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388548AbfDRLMY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 07:12:24 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38829 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbfDRLMX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 07:12:23 -0400
-Received: by mail-wm1-f67.google.com with SMTP id w15so2420432wmc.3;
-        Thu, 18 Apr 2019 04:12:22 -0700 (PDT)
+        id S2388757AbfDRLMZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 07:12:25 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33718 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388375AbfDRLMZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 07:12:25 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z6so6701073wmi.0;
+        Thu, 18 Apr 2019 04:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LWVDRq3wPJtqLVuL8GILzgU6+gx9+RFydNdVEdr68+U=;
-        b=SoZ60qYeBe4qwv1VMxxgH13aew4p66WqDIfl03PxZ+J05obKjr+9jLEObRmpDBLHsb
-         hNFYIf+9KO4WhjJcqRO4Y04q4jlwIT6vJY3gCrG4eVyBHJklVx+n7EFoxwtd6q1yJz1o
-         38IWgk+eGK5VHghpm8QaRDsX+3gLjT625J92LgcIWSiM8pSm9A5XiSRNM7if6AOpaICc
-         yp7X00DDoDip2BkA9kna2VA+JYJ4vTUaEw8llyqNz2SVo3/hGGP4tZqV5y0wJxKd3O/H
-         PvXEih0Y2UvVlxriEUWcDBm3oW5ShknpkVwruitBQEGvG3xZlSfhRsG2x5Fa4+3C6g3f
-         IpBQ==
+        bh=7rH6QiINrW20jZKJQ9mHqe+acRM5fOnj0AeCibP7tdo=;
+        b=nh5HIHVL+iaMdKswN/1VECmDUAsvHer42OH6xA6YeVOt3d002kWpK+8tVEU4/in2sy
+         5dKDBE0cey7kqrFDpfMO9f2GNGGciWLsaXPzGG5fpfNXIV46BQuprg2U/dfRr+SaKvKG
+         2yJHHGxOHyPy63rbRNTvLcc9MPEgztaTgQAV2YL2xDVvDy7ObSO056yCjBo1aXfpBuvg
+         BjEcCn3yfXbhUT76eTLUj9z4tvQlF6gSLkKfR1JH6sUbmEfBLB9FrL5wOeT5Ct/o1ITQ
+         2mdgTcHGVqAQEdNoOPkWSmDTYz9HZ/rTiZ0sZ3NTGb93M2Qo5auH+q/CRrbv707/QE+t
+         +46Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LWVDRq3wPJtqLVuL8GILzgU6+gx9+RFydNdVEdr68+U=;
-        b=h0rwn0Sys2WeJUPQo+HUApqLs60mwtYcWUOlWN5KGOE7r9agpbsJU2xyd13TXDBcuD
-         q5xh1nrGBofPrjXFTSv95senLLJwZ49nZ6lrE8i97TdxrkFyaIpsCZ5/qCgfB6k3XoJD
-         5H6FYTHiO6Bb/rat+UYziYMR66KppQGEqsk22CS9ApemthnfzReZMPmUx7XeCnxz1fG3
-         O8HxFXkrIPzTpBxS8b4bix14NuUcLFq+XiFMVCOYVCI/IdS2Cn8TJZ5jyaCQzAlyrmGh
-         vwC6R7uofsA3kTtGpBEHrJxHiHhAzTll0rRabfVV9ScR4OESsa9lj7cfjuY+MujxljsK
-         OemQ==
-X-Gm-Message-State: APjAAAWcONOpM9mJXAalntV3+Z1AAKuLhA3yK/CuyBaGU67JT+WWUVvs
-        yFx7nefACzyuZGUc73ZFdg9yDRlwLRM=
-X-Google-Smtp-Source: APXvYqwKd5imwQ9tx9WLxEfWpd7Dn8I3vL36mwTDaErx27W2X8tFwiWgG4+QiGXq0JcOtMzgpkFrXQ==
-X-Received: by 2002:a1c:e1c5:: with SMTP id y188mr2663908wmg.39.1555585941683;
-        Thu, 18 Apr 2019 04:12:21 -0700 (PDT)
+        bh=7rH6QiINrW20jZKJQ9mHqe+acRM5fOnj0AeCibP7tdo=;
+        b=Qf/vPDI9SQeFZx79MR9O2LI9IWz6Aaq6oSWodd4atOQ2Ingaf8fvonIYSZYdWkspaS
+         D8RS1lyxLoNW29L3Oss+Zb3xIgUoqBeuM0Q7FvJmQW1ubLr2gA7f7zV6gVbOjXqKALqZ
+         uYiOegveJBKIFXrrDJcVVEfVjp2q4AxGkY+Q3mDhtAtyTm4IDSXkk2Usp2QJTue6oNAq
+         sDWBW3hwn72V7b1hNnLNbp0RXA9//SsCWcCn8SeMZES1nsoGQU5b51UbaxaYa1xc39+l
+         CJOJR6j5rQpB3ITzIjSHUCzMTCwWNllPgCQQ043t+Mb+1SnqQxLfEvI95a6G81shUpPO
+         fTNA==
+X-Gm-Message-State: APjAAAUyGjJIQ4pJlJoNcBzAFwX8Oxu52Q0C1bp6B5AUor5Z6uoR0v0j
+        +LlS8nj+eQYWtJ055CLNzWaSsVL6Ppg=
+X-Google-Smtp-Source: APXvYqyqtoymM85mY8yDZvpZvH8yQ3m231qFQRM7gMJHvVMU6OFaUJjhJvrdys5NJLtR6ZDHgzO3fw==
+X-Received: by 2002:a1c:43c2:: with SMTP id q185mr2724953wma.53.1555585943326;
+        Thu, 18 Apr 2019 04:12:23 -0700 (PDT)
 Received: from localhost.localdomain ([2001:470:9e39::64])
-        by smtp.gmail.com with ESMTPSA id z63sm2005594wme.30.2019.04.18.04.12.20
+        by smtp.gmail.com with ESMTPSA id z63sm2005594wme.30.2019.04.18.04.12.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Apr 2019 04:12:21 -0700 (PDT)
+        Thu, 18 Apr 2019 04:12:22 -0700 (PDT)
 From:   Jonas Gorski <jonas.gorski@gmail.com>
 To:     linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org,
@@ -74,9 +74,9 @@ Cc:     Anatolij Gustschin <agust@denx.de>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH RFT V3 5/8] clk: mux: add explicit big endian support
-Date:   Thu, 18 Apr 2019 13:12:08 +0200
-Message-Id: <20190418111211.10474-6-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V3 6/8] powerpc/512x: mark clocks as big endian
+Date:   Thu, 18 Apr 2019 13:12:09 +0200
+Message-Id: <20190418111211.10474-7-jonas.gorski@gmail.com>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20190418111211.10474-1-jonas.gorski@gmail.com>
 References: <20190418111211.10474-1-jonas.gorski@gmail.com>
@@ -85,93 +85,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian mux clocks.
+These clocks' registers are accessed as big endian, so mark them as
+such.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V2 -> V3:
- * drop unneeded else in clk_mux_readl
+ * slightly rework to avoid a line >80 chars
 V1 -> V2:
- * switch from global to local flag
+ * switch from global to local flags
 
- drivers/clk/clk-mux.c        | 22 +++++++++++++++++++---
- include/linux/clk-provider.h |  4 ++++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/512x/clock-commonclk.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 2ad2df2e8909..61ad331b7ff4 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -23,6 +23,22 @@
-  * parent - parent is adjustable through clk_set_parent
-  */
- 
-+static inline u32 clk_mux_readl(struct clk_mux *mux)
-+{
-+	if (mux->flags & CLK_MUX_BIG_ENDIAN)
-+		return ioread32be(mux->reg);
-+
-+	return clk_readl(mux->reg);
-+}
-+
-+static inline void clk_mux_writel(struct clk_mux *mux, u32 val)
-+{
-+	if (mux->flags & CLK_MUX_BIG_ENDIAN)
-+		iowrite32be(val, mux->reg);
-+	else
-+		clk_writel(val, mux->reg);
-+}
-+
- int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
- 			 unsigned int val)
+diff --git a/arch/powerpc/platforms/512x/clock-commonclk.c b/arch/powerpc/platforms/512x/clock-commonclk.c
+index b3097fe6441b..af265ae40a61 100644
+--- a/arch/powerpc/platforms/512x/clock-commonclk.c
++++ b/arch/powerpc/platforms/512x/clock-commonclk.c
+@@ -239,6 +239,7 @@ static inline struct clk *mpc512x_clk_divider(
+ 	const char *name, const char *parent_name, u8 clkflags,
+ 	u32 __iomem *reg, u8 pos, u8 len, int divflags)
  {
-@@ -73,7 +89,7 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	u32 val;
++	divflags |= CLK_DIVIDER_BIG_ENDIAN;
+ 	return clk_register_divider(NULL, name, parent_name, clkflags,
+ 				    reg, pos, len, divflags, &clklock);
+ }
+@@ -250,7 +251,7 @@ static inline struct clk *mpc512x_clk_divtable(
+ {
+ 	u8 divflags;
  
--	val = clk_readl(mux->reg) >> mux->shift;
-+	val = clk_mux_readl(mux) >> mux->shift;
- 	val &= mux->mask;
+-	divflags = 0;
++	divflags = CLK_DIVIDER_BIG_ENDIAN;
+ 	return clk_register_divider_table(NULL, name, parent_name, 0,
+ 					  reg, pos, len, divflags,
+ 					  divtab, &clklock);
+@@ -261,10 +262,12 @@ static inline struct clk *mpc512x_clk_gated(
+ 	u32 __iomem *reg, u8 pos)
+ {
+ 	int clkflags;
++	u8 gateflags;
  
- 	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-@@ -94,12 +110,12 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
- 		reg = mux->mask << (mux->shift + 16);
- 	} else {
--		reg = clk_readl(mux->reg);
-+		reg = clk_mux_readl(mux);
- 		reg &= ~(mux->mask << mux->shift);
- 	}
- 	val = val << mux->shift;
- 	reg |= val;
--	clk_writel(reg, mux->reg);
-+	clk_mux_writel(mux, reg);
+ 	clkflags = CLK_SET_RATE_PARENT;
++	gateflags = CLK_GATE_BIG_ENDIAN;
+ 	return clk_register_gate(NULL, name, parent_name, clkflags,
+-				 reg, pos, 0, &clklock);
++				 reg, pos, gateflags, &clklock);
+ }
  
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 9df78e3fb62b..f82cda41e1a8 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -510,6 +510,9 @@ void clk_hw_unregister_divider(struct clk_hw *hw);
-  * 	.get_parent clk_op.
-  * CLK_MUX_ROUND_CLOSEST - Use the parent rate that is closest to the desired
-  *	frequency.
-+ * CLK_MUX_BIG_ENDIAN - By default little endian register accesses are used for
-+ *	the mux register.  Setting this flag makes the register accesses big
-+ *	endian.
-  */
- struct clk_mux {
- 	struct clk_hw	hw;
-@@ -528,6 +531,7 @@ struct clk_mux {
- #define CLK_MUX_HIWORD_MASK		BIT(2)
- #define CLK_MUX_READ_ONLY		BIT(3) /* mux can't be changed */
- #define CLK_MUX_ROUND_CLOSEST		BIT(4)
-+#define CLK_MUX_BIG_ENDIAN		BIT(5)
+ static inline struct clk *mpc512x_clk_muxed(const char *name,
+@@ -275,7 +278,7 @@ static inline struct clk *mpc512x_clk_muxed(const char *name,
+ 	u8 muxflags;
  
- extern const struct clk_ops clk_mux_ops;
- extern const struct clk_ops clk_mux_ro_ops;
+ 	clkflags = CLK_SET_RATE_PARENT;
+-	muxflags = 0;
++	muxflags = CLK_MUX_BIG_ENDIAN;
+ 	return clk_register_mux(NULL, name,
+ 				parent_names, parent_count, clkflags,
+ 				reg, pos, len, muxflags, &clklock);
 -- 
 2.13.2
 
