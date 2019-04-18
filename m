@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D8DC10F0E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C74C10F14
 	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E10FA21850
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B99BC214DA
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0dp+VAQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4nTJkPa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388640AbfDRLMS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 07:12:18 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37566 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388401AbfDRLMS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 07:12:18 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v14so2433792wmf.2;
-        Thu, 18 Apr 2019 04:12:16 -0700 (PDT)
+        id S2388737AbfDRLMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 07:12:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38820 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388375AbfDRLMT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 07:12:19 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w15so2420164wmc.3;
+        Thu, 18 Apr 2019 04:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KT4IxCbsdb20vxjXV3Yb4q905/4eUjLcCpAjIqK4bV0=;
-        b=Y0dp+VAQWLfpErhF5KeNWFfcBtdaMQvfr9DnX6fKs/x/daooxvyFFobx/p0lK4b1su
-         sL3/oMGDNvEAQDpMWWoSMgYLEAs8HzpjSQH8Oa4cHmI9qOUN1VRi9QqSScgfCArJud6+
-         OjuhRAikaH4eI+ba1oTlYRBm68ubvsAJEYgHe+0u7Ob7hB3F1ipgC3nGw1GsHjsQ8sCM
-         eQdfS55oeRT/OxLSmob0RZUskqtAMwiFDQiR2ONAhTLL2ZPBWr4jKLLytpon1nX4K90s
-         3geEjI7yvYIxF8SiuwTIg0Vszc/6KJzlKwPCd6EIjh9XCkSn37wVEFOaSdky5ipCyvyp
-         amrg==
+        bh=cm1EEGeZHsHeXdzknWNTewmHAGGaI1nGB6a7qRF/P7c=;
+        b=R4nTJkPaGbHzkHhLqaoceUHq8NlF7Zxf8cy/R8GkIIKkUNdpxa1NUHv17CvdbutIuJ
+         gpFKHKIEBWpsQGr8jtRBZignnQ4OumyZ73y9kJ6bBfx/a/dynf8FIBQDkcBuRJ2FN0LQ
+         L8Ex8y/vjyBvap22CEh0VTK6oBsW7Rq1NJZmqriHu4Aq58nv2dMgMOI4IOSNc0zAmrhg
+         8fy9fNjEtiRREKSSI9DGE4VA1CN/rNiB+IqQN29LynUINmMeyv2xjTyp2tnCVMm7+PjI
+         ntSvwuT2WmPsXmA0DUGUd2UtuuSQ5WaKzXb7OoVlykK/+DQy3OBK5Wv0xJ0teJGAV9nM
+         5DBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KT4IxCbsdb20vxjXV3Yb4q905/4eUjLcCpAjIqK4bV0=;
-        b=MnIZJPPMPy8RqCjQ8ta6A6n3AZ/0QjCSpNLubdkcH1gQxEOBIz3PrRcIrt+/N0e2tY
-         JbR2Q6gsBEp9Z99wJHbDdNRpGrt2gUIa0mYL60n03N/Odeo1kumod2oYGh0qp/8+GgH9
-         xrLo66UkrSyoPKpjDfA0jkVftPf45ePaHZA7+WVs8R7wLYRhWCXk1ULVrbBdZEVPejzu
-         9FNEce47QSuaaze+ViFk/eZvIrFouwYbeYwgcPj+4TgTDF92avJr0NIt4IgcMl1le0qr
-         DwQjf/wf5ItALnm1bFlkxhWKZBH1sWvs4FyFx1vbfLWAvw0W8CLlGmhEJjtX4dVyWIXn
-         9j/w==
-X-Gm-Message-State: APjAAAXeMHGLcTl/rigalVwVotQ3g/JTp+CrcSW8gCd9s+KYeXM2tKWx
-        mlL6OqTtzSDr5FXPhYR2yEZeV2VA8mI=
-X-Google-Smtp-Source: APXvYqxs6Cf3sKJNDaD7WXuqSj31uua0iWy7oJoeMqG8rWXkMXo9aCMr9fbPBHKpXW7mg3Uayp8TLg==
-X-Received: by 2002:a1c:1b10:: with SMTP id b16mr2760179wmb.90.1555585935442;
-        Thu, 18 Apr 2019 04:12:15 -0700 (PDT)
+        bh=cm1EEGeZHsHeXdzknWNTewmHAGGaI1nGB6a7qRF/P7c=;
+        b=J5x0ehVuHyTuFJUh07R49QkTUjBGdPTuAXZ1zlQAW/ANGyj2AttxKb1cSTq7+URznN
+         DG30N5lSWKVmMaZTdeZe2sFVIUctqAnGJhvWL0T/vKZa29WeJPNpIEOxOyniqUCQHAX0
+         AZuP9v7KQsPvNvQz934IoIQIvYkPwv+Q8t9tIpBsvczIxxEX598+Bdao2MxNO2SRn6WS
+         mnquKnvdtpPkVcCh9y23h2/T8gZQGhiPXPuZM1rtbZHeDlibkSUzl7PayldFJsV/dzQG
+         kKp45TWdeuvPR+9Es13eC0JWwvqoQb1DpJiv+YmLnOHjmMvVNZv8Qj1G6yqH2mJgiWL6
+         nxNQ==
+X-Gm-Message-State: APjAAAXZ7Pd5vPZ2NJUEwkIKdrW5l/4nifFn5eZ2I+D0xpytclj4g8+3
+        dGkfCngoeDWGhG2XeLlVVHuuGphP1tU=
+X-Google-Smtp-Source: APXvYqzcxqiH4NfwjdJ93Bud895D2LmZXnP6SukbgtmppxptpSRARrAOSdr4F5mOJgEaaReIeCmaJQ==
+X-Received: by 2002:a1c:3d6:: with SMTP id 205mr2873697wmd.66.1555585937030;
+        Thu, 18 Apr 2019 04:12:17 -0700 (PDT)
 Received: from localhost.localdomain ([2001:470:9e39::64])
-        by smtp.gmail.com with ESMTPSA id z63sm2005594wme.30.2019.04.18.04.12.13
+        by smtp.gmail.com with ESMTPSA id z63sm2005594wme.30.2019.04.18.04.12.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Apr 2019 04:12:14 -0700 (PDT)
+        Thu, 18 Apr 2019 04:12:16 -0700 (PDT)
 From:   Jonas Gorski <jonas.gorski@gmail.com>
 To:     linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org,
@@ -74,9 +74,9 @@ Cc:     Anatolij Gustschin <agust@denx.de>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH RFT V3 1/8] clk: divider: add explicit big endian support
-Date:   Thu, 18 Apr 2019 13:12:04 +0200
-Message-Id: <20190418111211.10474-2-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V3 2/8] clk: fractional-divider: add explicit big endian support
+Date:   Thu, 18 Apr 2019 13:12:05 +0200
+Message-Id: <20190418111211.10474-3-jonas.gorski@gmail.com>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20190418111211.10474-1-jonas.gorski@gmail.com>
 References: <20190418111211.10474-1-jonas.gorski@gmail.com>
@@ -86,103 +86,90 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian divider clocks.
+allow runtime configuration of big endian fractional divider clocks.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V2 -> V3:
- * fix passed arguments to clk_div_readl found by kbuild
- * drop unneeded else in clk_div_readl
+ * drop unneeded else in clk_fd_readl
 V1 -> V2:
  * switch from global to local flag
 
- drivers/clk/clk-divider.c    | 26 ++++++++++++++++++++++----
- include/linux/clk-provider.h |  4 ++++
- 2 files changed, 26 insertions(+), 4 deletions(-)
+ drivers/clk/clk-fractional-divider.c | 22 +++++++++++++++++++---
+ include/linux/clk-provider.h         |  4 ++++
+ 2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index e5a17265cfaf..25c7404e376c 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -25,6 +25,24 @@
-  * parent - fixed parent.  No clk_set_parent support
-  */
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index fdfe2e423d15..f88df265e787 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -13,6 +13,22 @@
+ #include <linux/slab.h>
+ #include <linux/rational.h>
  
-+static inline u32 clk_div_readl(struct clk_divider *divider)
++static inline u32 clk_fd_readl(struct clk_fractional_divider *fd)
 +{
-+	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
-+		return ioread32be(divider->reg);
++	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
++		return ioread32be(fd->reg);
 +
-+	return clk_readl(divider->reg);
++	return clk_readl(fd->reg);
 +}
 +
-+static inline void clk_div_writel(struct clk_divider *divider, u32 val)
++static inline void clk_fd_writel(struct clk_fractional_divider *fd, u32 val)
 +{
-+	if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
-+		iowrite32be(val, divider->reg);
++	if (fd->flags & CLK_FRAC_DIVIDER_BIG_ENDIAN)
++		iowrite32be(val, fd->reg);
 +	else
-+		clk_writel(val, divider->reg);
++		clk_writel(val, fd->reg);
 +}
 +
-+#define div_mask(width)	((1 << (width)) - 1)
-+
- static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
- 				      u8 width)
+ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ 					unsigned long parent_rate)
  {
-@@ -135,7 +153,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
- 	struct clk_divider *divider = to_clk_divider(hw);
- 	unsigned int val;
+@@ -27,7 +43,7 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ 	else
+ 		__acquire(fd->lock);
  
--	val = clk_readl(divider->reg) >> divider->shift;
-+	val = clk_div_readl(divider) >> divider->shift;
- 	val &= clk_div_mask(divider->width);
+-	val = clk_readl(fd->reg);
++	val = clk_fd_readl(fd);
  
- 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-@@ -370,7 +388,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
- 		u32 val;
+ 	if (fd->lock)
+ 		spin_unlock_irqrestore(fd->lock, flags);
+@@ -115,10 +131,10 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	else
+ 		__acquire(fd->lock);
  
--		val = clk_readl(divider->reg) >> divider->shift;
-+		val = clk_div_readl(divider) >> divider->shift;
- 		val &= clk_div_mask(divider->width);
+-	val = clk_readl(fd->reg);
++	val = clk_fd_readl(fd);
+ 	val &= ~(fd->mmask | fd->nmask);
+ 	val |= (m << fd->mshift) | (n << fd->nshift);
+-	clk_writel(val, fd->reg);
++	clk_fd_writel(fd, val);
  
- 		return divider_ro_round_rate(hw, rate, prate, divider->table,
-@@ -420,11 +438,11 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
- 		val = clk_div_mask(divider->width) << (divider->shift + 16);
- 	} else {
--		val = clk_readl(divider->reg);
-+		val = clk_div_readl(divider);
- 		val &= ~(clk_div_mask(divider->width) << divider->shift);
- 	}
- 	val |= (u32)value << divider->shift;
--	clk_writel(val, divider->reg);
-+	clk_div_writel(divider, val);
- 
- 	if (divider->lock)
- 		spin_unlock_irqrestore(divider->lock, flags);
+ 	if (fd->lock)
+ 		spin_unlock_irqrestore(fd->lock, flags);
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index db21437c77e2..7117b8cc0c0c 100644
+index 7117b8cc0c0c..8c07d810acf5 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -416,6 +416,9 @@ struct clk_div_table {
-  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
-  *	except when the value read from the register is zero, the divisor is
-  *	2^width of the field.
-+ * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses are used
-+ *	for the divider register.  Setting this flag makes the register accesses
-+ *	big endian.
+@@ -607,6 +607,9 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+  *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
+  *	is set then the numerator and denominator are both the value read
+  *	plus one.
++ * CLK_FRAC_DIVIDER_BIG_ENDIAN - By default little endian register accesses are
++ *	used for the divider register.  Setting this flag makes the register
++ *	accesses big endian.
   */
- struct clk_divider {
+ struct clk_fractional_divider {
  	struct clk_hw	hw;
-@@ -437,6 +440,7 @@ struct clk_divider {
- #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
- #define CLK_DIVIDER_READ_ONLY		BIT(5)
- #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
-+#define CLK_DIVIDER_BIG_ENDIAN		BIT(7)
+@@ -627,6 +630,7 @@ struct clk_fractional_divider {
+ #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
  
- extern const struct clk_ops clk_divider_ops;
- extern const struct clk_ops clk_divider_ro_ops;
+ #define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
++#define CLK_FRAC_DIVIDER_BIG_ENDIAN		BIT(1)
+ 
+ extern const struct clk_ops clk_fractional_divider_ops;
+ struct clk *clk_register_fractional_divider(struct device *dev,
 -- 
 2.13.2
 
