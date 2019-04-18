@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DEDC10F14
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA2FC10F14
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E765214DA
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBFD12183F
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Apr 2019 11:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ha7eC9dC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h60nmFi5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388751AbfDRLMV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Apr 2019 07:12:21 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56255 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388716AbfDRLMV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 07:12:21 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o25so2290176wmf.5;
-        Thu, 18 Apr 2019 04:12:19 -0700 (PDT)
+        id S2388530AbfDRLMW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Apr 2019 07:12:22 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36136 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388375AbfDRLMW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Apr 2019 07:12:22 -0400
+Received: by mail-wm1-f68.google.com with SMTP id h18so2435401wml.1;
+        Thu, 18 Apr 2019 04:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1+9nJK1Db2lO9Wy+wl5d5tDXTM6Ik02w576iY7MCnxU=;
-        b=ha7eC9dC9yJ9uOyYhddr+sfovKYz+R1+Pml66seQaXCE7mLV/rsMJgccTUEnqDkGI2
-         7XK8TmlfXSvYCzNz+f5bGZXSSYr7qGUcvuZuPbQ66rR1At1NkWLF4LWsXouPRDVyqKv5
-         O1IrxOq6QOig6eExpNlSQd/Q4RB5znyCbqiL7uyuoWlW1bNjF9kvmCqhnPxZxhdC3nWu
-         iWAMgBwYg9iP9i0POH5G9+RZoT0QpNoJ+fyy0/08vCHl6JR2Ws94b+d6ayAlWsAjOTJw
-         /GHCT1hN1aVyJQJhslI/5SPB/YifrC3VvtQpjvEyYLlacODMOJYc2Nr5gHiH6bcrkdJa
-         drhA==
+        bh=a8sDOmAMJdu2EjIPFYny65MP6zKmI8GdE/EZa2fTsNo=;
+        b=h60nmFi5x2mIN/rBCI88YsQNzZAQChgujE7vqDW4RpmUC5hruX4p3eUa4w4aaRI8eX
+         X7CmxifbK2cNxi9jSYxLOHFTmnyX2+z84gYa30T133er5WFF6Y4nvO4Y6ACx7TCbnTGB
+         5ox7B4sBdmOSI07NYDtofhhHIyiTpZR+RBsjPycDIHPmRV2Bu5iuh5hL+fARNNpBzrUM
+         s1bF/fHrSMSq2weBWdaZLHNU9AdUqZ7Cl+qtc2/7bIcAWcARbttYgmTrCRMSVzindJwT
+         gQPfdSQS7hKUHBC8DYhwzNmJT0XLtwcQaz8Fn7cCE6kQVRDUOk8nRVyiKalt9K13tHtT
+         zHeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1+9nJK1Db2lO9Wy+wl5d5tDXTM6Ik02w576iY7MCnxU=;
-        b=bwdaXwi1ZWErjPyfmOMv7TlFvRrx2TJRGTeBYYew2PHJi9zMX8tkbShmNGIzov2pkz
-         RcjpNqQxh7omZzITfXSnnvTLcCY+RoBr+WD+gxV+lgCm5gzt78T+5K9KlGBANiaXT6pN
-         9OVQz15dmReFgcradjK5ebZjdyyyZgXXK4aKJI4KXQFsR4VSaMWW2onNPTE2uAbbuSRR
-         Wz/yL8puDvRV5pFJ9OPFNdIfhnDXkLhKSPUcojQgfG2yoIrJo6SqbYSN/v/+6Ck/RjMa
-         4eQbTsOqWyTtHhzmFvTAbC5sFnu7qwZ15Oww59dVGO7GKBmcHGvfeA6y7h9JJFKQivSj
-         +e6w==
-X-Gm-Message-State: APjAAAVBHvV4y9jRhJ17028gi1t78bZTIjn5VoZ6ZJY+1dUAWQfPCvMy
-        k0MC4di14YtI7Hkq+5Cmr+8BbkeRfk4=
-X-Google-Smtp-Source: APXvYqxJs+G3NOyqcEh489pdgO7urfXXmfd1Hav4NVN4L0GbWSK0G3CZBbUOhXitaAImb+p9xxUdVw==
-X-Received: by 2002:a05:600c:2055:: with SMTP id p21mr2771224wmg.118.1555585938600;
-        Thu, 18 Apr 2019 04:12:18 -0700 (PDT)
+        bh=a8sDOmAMJdu2EjIPFYny65MP6zKmI8GdE/EZa2fTsNo=;
+        b=bd7plsKOpEBmR1zCQw3BPdnrVv/YcOJUExzFtyL5vusNYDPgzFRJbkxPW8DraIx/r6
+         oi02szsb9oA1sEiXTnJl8bMZ8XvusE2NB/O+hBeq6J3ieBj4KDz5L9Zh0F1hsKAGqPxr
+         vao6OZhNNja4U3cR3HAAWC6JASTtT3D9zgPkbzoDBzzOGKxDtU9/S+FCIw3R/Qcg/glx
+         cl9G2lmJNRin734k5p0bBkJ3PB8gjn80QuaYEikzmmn0bE3j92mU0Orx7A0LEWko2vle
+         Xr8QC5IOJrOvp81uYOpjCOr6+xdOJOG0Do7TU7G1rk/tgf8zUO6RUy0BOPvldSBRPzls
+         iF0A==
+X-Gm-Message-State: APjAAAUt4IwEzDfhULPaCFugGgXBzrrCJyrlgd/1kH1avwD07mUEITuu
+        7yPGUDd6H/xpteqnbbvucx0YO8jsNOA=
+X-Google-Smtp-Source: APXvYqxyQgWCnYZxnIVZG7lXRdM+1OaUMj/QeKDR9GD2ugSYxk4ihhxM90/Ax0/RONbbDMhql3/YrA==
+X-Received: by 2002:a7b:c4d2:: with SMTP id g18mr2649663wmk.108.1555585940115;
+        Thu, 18 Apr 2019 04:12:20 -0700 (PDT)
 Received: from localhost.localdomain ([2001:470:9e39::64])
-        by smtp.gmail.com with ESMTPSA id z63sm2005594wme.30.2019.04.18.04.12.17
+        by smtp.gmail.com with ESMTPSA id z63sm2005594wme.30.2019.04.18.04.12.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Apr 2019 04:12:18 -0700 (PDT)
+        Thu, 18 Apr 2019 04:12:19 -0700 (PDT)
 From:   Jonas Gorski <jonas.gorski@gmail.com>
 To:     linux-clk@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org,
@@ -74,9 +74,9 @@ Cc:     Anatolij Gustschin <agust@denx.de>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH RFT V3 3/8] clk: gate: add explicit big endian support
-Date:   Thu, 18 Apr 2019 13:12:06 +0200
-Message-Id: <20190418111211.10474-4-jonas.gorski@gmail.com>
+Subject: [PATCH RFT V3 4/8] clk: multiplier: add explicit big endian support
+Date:   Thu, 18 Apr 2019 13:12:07 +0200
+Message-Id: <20190418111211.10474-5-jonas.gorski@gmail.com>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20190418111211.10474-1-jonas.gorski@gmail.com>
 References: <20190418111211.10474-1-jonas.gorski@gmail.com>
@@ -86,95 +86,90 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Add a clock specific flag to switch register accesses to big endian, to
-allow runtime configuration of big endian gated clocks.
+allow runtime configuration of big endian multiplier clocks.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
 V2 -> V3:
- * drop unneeded else in clk_gate_readl
+ * drop unneeded else in clk_mult_readl
 V1 -> V2:
  * switch from global to local flag
 
- drivers/clk/clk-gate.c       | 22 +++++++++++++++++++---
+ drivers/clk/clk-multiplier.c | 22 +++++++++++++++++++---
  include/linux/clk-provider.h |  4 ++++
  2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index f05823cd9b21..6ced7b1f5585 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -23,6 +23,22 @@
-  * parent - fixed parent.  No clk_set_parent support
-  */
+diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
+index 3c86f859c199..77327df9bf32 100644
+--- a/drivers/clk/clk-multiplier.c
++++ b/drivers/clk/clk-multiplier.c
+@@ -11,6 +11,22 @@
+ #include <linux/of.h>
+ #include <linux/slab.h>
  
-+static inline u32 clk_gate_readl(struct clk_gate *gate)
++static inline u32 clk_mult_readl(struct clk_multiplier *mult)
 +{
-+	if (gate->flags & CLK_GATE_BIG_ENDIAN)
-+		return ioread32be(gate->reg);
++	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
++		return ioread32be(mult->reg);
 +
-+	return clk_readl(gate->reg);
++	return clk_readl(mult->reg);
 +}
 +
-+static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
++static inline void clk_mult_writel(struct clk_multiplier *mult, u32 val)
 +{
-+	if (gate->flags & CLK_GATE_BIG_ENDIAN)
-+		iowrite32be(val, gate->reg);
++	if (mult->flags & CLK_MULTIPLIER_BIG_ENDIAN)
++		iowrite32be(val, mult->reg);
 +	else
-+		clk_writel(val, gate->reg);
++		clk_writel(val, mult->reg);
 +}
 +
- /*
-  * It works on following logic:
-  *
-@@ -55,7 +71,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
- 		if (set)
- 			reg |= BIT(gate->bit_idx);
- 	} else {
--		reg = clk_readl(gate->reg);
-+		reg = clk_gate_readl(gate);
+ static unsigned long __get_mult(struct clk_multiplier *mult,
+ 				unsigned long rate,
+ 				unsigned long parent_rate)
+@@ -27,7 +43,7 @@ static unsigned long clk_multiplier_recalc_rate(struct clk_hw *hw,
+ 	struct clk_multiplier *mult = to_clk_multiplier(hw);
+ 	unsigned long val;
  
- 		if (set)
- 			reg |= BIT(gate->bit_idx);
-@@ -63,7 +79,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
- 			reg &= ~BIT(gate->bit_idx);
- 	}
+-	val = clk_readl(mult->reg) >> mult->shift;
++	val = clk_mult_readl(mult) >> mult->shift;
+ 	val &= GENMASK(mult->width - 1, 0);
  
--	clk_writel(reg, gate->reg);
-+	clk_gate_writel(gate, reg);
+ 	if (!val && mult->flags & CLK_MULTIPLIER_ZERO_BYPASS)
+@@ -118,10 +134,10 @@ static int clk_multiplier_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	else
+ 		__acquire(mult->lock);
  
- 	if (gate->lock)
- 		spin_unlock_irqrestore(gate->lock, flags);
-@@ -88,7 +104,7 @@ int clk_gate_is_enabled(struct clk_hw *hw)
- 	u32 reg;
- 	struct clk_gate *gate = to_clk_gate(hw);
+-	val = clk_readl(mult->reg);
++	val = clk_mult_readl(mult);
+ 	val &= ~GENMASK(mult->width + mult->shift - 1, mult->shift);
+ 	val |= factor << mult->shift;
+-	clk_writel(val, mult->reg);
++	clk_mult_writel(mult, val);
  
--	reg = clk_readl(gate->reg);
-+	reg = clk_gate_readl(gate);
- 
- 	/* if a set bit disables this clk, flip it before masking */
- 	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
+ 	if (mult->lock)
+ 		spin_unlock_irqrestore(mult->lock, flags);
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 8c07d810acf5..8576c2dbc639 100644
+index 8576c2dbc639..9df78e3fb62b 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -348,6 +348,9 @@ void of_fixed_clk_setup(struct device_node *np);
-  *	of this register, and mask of gate bits are in higher 16-bit of this
-  *	register.  While setting the gate bits, higher 16-bit should also be
-  *	updated to indicate changing gate bits.
-+ * CLK_GATE_BIG_ENDIAN - by default little endian register accesses are used for
-+ *	the gate register.  Setting this flag makes the register accesses big
-+ *	endian.
+@@ -667,6 +667,9 @@ void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
+  *	leaving the parent rate unmodified.
+  * CLK_MULTIPLIER_ROUND_CLOSEST - Makes the best calculated divider to be
+  *	rounded to the closest integer instead of the down one.
++ * CLK_MULTIPLIER_BIG_ENDIAN - By default little endian register accesses are
++ *	used for the multiplier register.  Setting this flag makes the register
++ *	accesses big endian.
   */
- struct clk_gate {
- 	struct clk_hw hw;
-@@ -361,6 +364,7 @@ struct clk_gate {
+ struct clk_multiplier {
+ 	struct clk_hw	hw;
+@@ -681,6 +684,7 @@ struct clk_multiplier {
  
- #define CLK_GATE_SET_TO_DISABLE		BIT(0)
- #define CLK_GATE_HIWORD_MASK		BIT(1)
-+#define CLK_GATE_BIG_ENDIAN		BIT(2)
+ #define CLK_MULTIPLIER_ZERO_BYPASS		BIT(0)
+ #define CLK_MULTIPLIER_ROUND_CLOSEST	BIT(1)
++#define CLK_MULTIPLIER_BIG_ENDIAN		BIT(2)
  
- extern const struct clk_ops clk_gate_ops;
- struct clk *clk_register_gate(struct device *dev, const char *name,
+ extern const struct clk_ops clk_multiplier_ops;
+ 
 -- 
 2.13.2
 
