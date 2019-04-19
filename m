@@ -2,85 +2,215 @@ Return-Path: <SRS0=/mgL=SV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F1CC282DF
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B471C282DF
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB67C217F9
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555704537;
-	bh=0YyHVu4Lu0tqvQMfGyIttHTGuTquYwrv7wHPvujtUlU=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=JUiBymtUm7tahhQZRcutyUQSFFwa6lzFkeIJcVguIOhjJGINZIdksADxXEZP98rVf
-	 aKIDZDBnz372toKj21scREa6KczlPAfuR4CT6PhyOtvSimMX5S/eAfRAnazCJKFgNF
-	 xP7YqrSTtTHTSvbmugnPk82slVr6pWrTdopHjszI=
+	by mail.kernel.org (Postfix) with ESMTP id EB92520663
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:12:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="byTpf8Qo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfDSUI5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Apr 2019 16:08:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727205AbfDSUI5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Apr 2019 16:08:57 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 773412171F;
-        Fri, 19 Apr 2019 20:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555704536;
-        bh=0YyHVu4Lu0tqvQMfGyIttHTGuTquYwrv7wHPvujtUlU=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=mq933jxcCtjK8Ptzb061grgMsL5+kakuJHMg4EEz1jvJldpcRY3cjAeL4IlhJIRSn
-         1OpED1W6Uw30lMWQwqAhGrMrpNVxG1bwhpdRHlgEwwwWXRCyNZvG1StHyAI8eoJP5Q
-         JTmrCLt9YlEZ3IL6eXrMcq/5/YfDMW6IxTpSUrZ0=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190419111927.j3ggz2oke6msty5g@flea>
-References: <20190419111927.j3ggz2oke6msty5g@flea>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] Allwinner clock fixes for 5.1
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <155570453560.15276.11373060420462021008@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 19 Apr 2019 13:08:55 -0700
+        id S1725928AbfDSUMm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Apr 2019 16:12:42 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54553 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfDSUMm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 16:12:42 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c1so7249864wml.4
+        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2019 13:12:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ynOU9D+n/C593aR3+aH7h2j53IirX4AgmFGNr7usCrU=;
+        b=byTpf8QoDgheP4OH2aYrCTOxGGLrxTH10MiS0MadOR04anYnsYV3eXcz0Z5yIL4hMc
+         cUB8UgQcoNVUgO+CYC4mDqDAioM40IiIwGUvTWVLmzmZOr+vi0a6LMpnh3AHazSm8/BC
+         shZvT217NUTHxY/C41qd7v80EyDpr8ENIJLNeOga9H2B+XK1lPVehRNZMF1IB//lma7l
+         Ye8SjgV9UqExN8kwh4cifc9xHyEAeftkvfDLQ5IMH4LiKafv+fcC6Ur6nRmLa7Jxcut0
+         gQ0XYpGIok5VuoWE0nNo60Oc9kVhI+ilYcYNoTeYTfhVDS6KPMLx0Z87s9LzvLM4uL+0
+         VB2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ynOU9D+n/C593aR3+aH7h2j53IirX4AgmFGNr7usCrU=;
+        b=kFPO43dFZjrb4cuxhZPDttt0if96Fts7+0tVEU1cfCu8Y/yGk21HuDYbi/Crnjmz5F
+         QRaZu42E6WaNGwMB/ym8R2ciL3VoFtb1u+7nfZcky62mVbvGm2W/3Fvq/shMymXV+hdZ
+         2HyGJhaFS1URSMahtx5SCB+IgqU5CuDmm9sOtmH+So7jkWQpl99d5itb8e1HWLIL3G4u
+         NdlXYSFiPTykmcQeyfy7X9m71eAwjjNlLuRNuz4sTON27tguuQpr6uFtEkaniCwPsJoQ
+         WLAKz3S9o9Uffw2yVqERA49miWX1gya43qALwVNnaApvqY1Tx+G2A5rrlK1PCfGfz/sB
+         3afA==
+X-Gm-Message-State: APjAAAUfvAydus0gq8Xc1o0vzqf+fZPzVXJo8pS9B2gst7TBWRNBTRc6
+        IQWLbpTAYWGoWwH8tjmiYXFXiLprPLc=
+X-Google-Smtp-Source: APXvYqwekbzTNrsULQwgq7khMJrLh4Cfn1gRnNMNgYqnDRCzpvEUs6iMH0O5C23PtZ6RMMJEoHncBA==
+X-Received: by 2002:a1c:f606:: with SMTP id w6mr1732536wmc.130.1555662908388;
+        Fri, 19 Apr 2019 01:35:08 -0700 (PDT)
+Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust4998.18-1.cable.virginm.net. [86.31.179.135])
+        by smtp.gmail.com with ESMTPSA id t76sm5700147wmt.8.2019.04.19.01.35.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 19 Apr 2019 01:35:07 -0700 (PDT)
+From:   Peter Griffin <peter.griffin@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        john.stultz@linaro.org, airlied@linux.ie, daniel@ffwll.ch,
+        robh+dt@kernel.org, mark.rutland@arm.com, p.zabel@pengutronix.de,
+        xuwei5@hisilicon.com, mturquette@baylibre.com, sboyd@kernel.org,
+        yuq825@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, lima@lists.freedesktop.org
+Subject: [PATCH v2 4/6] reset: hi6220: Add support for AO reset controller
+Date:   Fri, 19 Apr 2019 09:32:59 +0100
+Message-Id: <1555662781-22570-5-git-send-email-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1555662781-22570-1-git-send-email-peter.griffin@linaro.org>
+References: <1555662781-22570-1-git-send-email-peter.griffin@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2019-04-19 04:19:27)
-> Hi Mike, Stephen,
->=20
-> Please pull the following fixes for the current release.
->=20
-> Thanks!
-> Maxime
->=20
-> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
-1b:
->=20
->   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/cl=
-k-fixes-for-5.1
->=20
-> for you to fetch changes up to 1054e4dd1cbbb7bf5cc836832648f9972134ef67:
->=20
->   clk: sunxi-ng: nkmp: Explain why zero width check is needed (2019-04-04=
- 09:32:32 +0200)
+This is required to bring Mali450 gpu out of reset. Also
+we now use CLK_OF_DECLARE_DRIVER to probe in both the
+clock and reset drivers. The clock and reset parts have
+been done as one atomic commit to avoid a bisection hole.
 
-Thanks. Pulled into clk-next. Maybe we can improve GENMASK macro to make
-a compilation error when the input is 0 or negative?
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi |  1 +
+ drivers/clk/hisilicon/clk-hi6220.c        |  3 +-
+ drivers/reset/hisilicon/hi6220_reset.c    | 65 ++++++++++++++++++++++++++++++-
+ 3 files changed, 67 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index 2defc19..66a3746 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -260,6 +260,7 @@
+ 			compatible = "hisilicon,hi6220-aoctrl", "syscon";
+ 			reg = <0x0 0xf7800000 0x0 0x2000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		sys_ctrl: sys_ctrl@f7030000 {
+diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+index a87809d..3dde9d3 100644
+--- a/drivers/clk/hisilicon/clk-hi6220.c
++++ b/drivers/clk/hisilicon/clk-hi6220.c
+@@ -89,8 +89,9 @@ static void __init hi6220_clk_ao_init(struct device_node *np)
+ 	hisi_clk_register_gate_sep(hi6220_separated_gate_clks_ao,
+ 				ARRAY_SIZE(hi6220_separated_gate_clks_ao), clk_data_ao);
+ }
+-CLK_OF_DECLARE(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_init);
+ 
++/* reset driver also probes and uses these registers */
++CLK_OF_DECLARE_DRIVER(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_init);
+ 
+ /* clocks in sysctrl */
+ static const char *mmc0_mux0_p[] __initdata = { "pll_ddr_gate", "syspll", };
+diff --git a/drivers/reset/hisilicon/hi6220_reset.c b/drivers/reset/hisilicon/hi6220_reset.c
+index d5e5229..ccd5e0a 100644
+--- a/drivers/reset/hisilicon/hi6220_reset.c
++++ b/drivers/reset/hisilicon/hi6220_reset.c
+@@ -36,6 +36,7 @@
+ enum hi6220_reset_ctrl_type {
+ 	PERIPHERAL,
+ 	MEDIA,
++	AO,
+ };
+ 
+ struct hi6220_reset_data {
+@@ -95,6 +96,61 @@ static const struct reset_control_ops hi6220_media_reset_ops = {
+ 	.deassert = hi6220_media_deassert,
+ };
+ 
++#define AO_SCTRL_SC_PW_CLKEN0     0x800
++#define AO_SCTRL_SC_PW_CLKDIS0    0x804
++
++#define AO_SCTRL_SC_PW_RSTEN0     0x810
++#define AO_SCTRL_SC_PW_RSTDIS0    0x814
++
++#define AO_SCTRL_SC_PW_ISOEN0     0x820
++#define AO_SCTRL_SC_PW_ISODIS0    0x824
++#define AO_MAX_INDEX              12
++
++static int hi6220_ao_assert(struct reset_controller_dev *rc_dev,
++			       unsigned long idx)
++{
++	struct hi6220_reset_data *data = to_reset_data(rc_dev);
++	struct regmap *regmap = data->regmap;
++	int ret;
++
++	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTEN0, BIT(idx));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(regmap, AO_SCTRL_SC_PW_ISOEN0, BIT(idx));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(regmap, AO_SCTRL_SC_PW_CLKDIS0, BIT(idx));
++	if (ret)
++		return ret;
++}
++
++static int hi6220_ao_deassert(struct reset_controller_dev *rc_dev,
++				 unsigned long idx)
++{
++	struct hi6220_reset_data *data = to_reset_data(rc_dev);
++	struct regmap *regmap = data->regmap;
++	int ret;
++
++	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTDIS0, BIT(idx));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(regmap, AO_SCTRL_SC_PW_ISODIS0, BIT(idx));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(regmap, AO_SCTRL_SC_PW_CLKEN0, BIT(idx));
++	if (ret)
++		return ret;
++}
++
++static const struct reset_control_ops hi6220_ao_reset_ops = {
++	.assert = hi6220_ao_assert,
++	.deassert = hi6220_ao_deassert,
++};
++
+ static int hi6220_reset_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -120,9 +176,12 @@ static int hi6220_reset_probe(struct platform_device *pdev)
+ 	if (type == MEDIA) {
+ 		data->rc_dev.ops = &hi6220_media_reset_ops;
+ 		data->rc_dev.nr_resets = MEDIA_MAX_INDEX;
+-	} else {
++	} else if (type == PERIPHERAL) {
+ 		data->rc_dev.ops = &hi6220_peripheral_reset_ops;
+ 		data->rc_dev.nr_resets = PERIPH_MAX_INDEX;
++	} else {
++		data->rc_dev.ops = &hi6220_ao_reset_ops;
++		data->rc_dev.nr_resets = AO_MAX_INDEX;
+ 	}
+ 
+ 	return reset_controller_register(&data->rc_dev);
+@@ -137,6 +196,10 @@ static const struct of_device_id hi6220_reset_match[] = {
+ 		.compatible = "hisilicon,hi6220-mediactrl",
+ 		.data = (void *)MEDIA,
+ 	},
++	{
++		.compatible = "hisilicon,hi6220-aoctrl",
++		.data = (void *)AO,
++	},
+ 	{ /* sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, hi6220_reset_match);
+-- 
+2.7.4
 
