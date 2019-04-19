@@ -2,99 +2,204 @@ Return-Path: <SRS0=/mgL=SV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A981C282DA
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44532C282DA
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA4CD20449
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:37:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07D59205C9
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:42:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEEJtvfI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tP0jP6IR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfDSShQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Apr 2019 14:37:16 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41783 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbfDSShQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 14:37:16 -0400
-Received: by mail-lj1-f194.google.com with SMTP id k8so5323751lja.8;
-        Fri, 19 Apr 2019 11:37:14 -0700 (PDT)
+        id S1727836AbfDSSmL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Apr 2019 14:42:11 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33259 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfDSSmK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 14:42:10 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j11so4623739lfm.0;
+        Fri, 19 Apr 2019 11:42:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/oAnR9QFJmiluH9HCMbLbrR6ySx9u8WG7unplYByvro=;
-        b=EEEJtvfIxuPgnMw/lFamOp6jLXKjzalKUkSm9JR7U0lCZEjg5SIl/XxaYOcokCfpEX
-         e/hbYD0OH6bBZ2PVAG+obSCTc+/pgBelx7e+vC2Eb6lGFkkfGhB9srAZo4QqAF7mX8BM
-         dFWZ2Io4csz4LdIh/NkCL3oLGAZ07/mfin9jel7yAgL4l25jZDrPyzH1Ayminoa5916b
-         7wB+3nJmxYMwZ7LUpJ++SF+09LlmASUpQJB0uZy/YxxDjpdK82HDU+T1SpVajwTpDjTk
-         NFFElnpmfNFu0SSxgiT9sDVsBo7rD819x8O0J1LFbZbz7yQ2Xhc0bRNlGSwkaclHGuoS
-         pOvw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HkDQoCQpTgRPIKUHwSpnY6a7B5BEF0xk1EkoTQxVLwY=;
+        b=tP0jP6IRgLznIdATt0uMp2nYkMcRXvYtZqZS3Wgu8TBD89Nz+/Ro0WR6SwzDCio120
+         aPV34kQsrssK1uSbM39qtjOKbyZZmxqdwGRuhCPRrMrzrSjD68/qCYQKfRb33ekYTByx
+         meRQjz/OqbzFA3sDqMtehLi2eHNPFeYBAfxfkmz9bgq/43sFQAExfMu+cI2uEoy7C31e
+         jZ9+UUzoIhcKE/ZFo6DxaDgWjl/qPM5SVr2w7o91okr8hgZQFCMOmn1v5uIjYUduFngs
+         UrJGkVz7ixz2P1f6DJc39j0dqRemqIiw3HDU+MupIAQozZfsmiCaeAT4HVkowMJuPcrW
+         N5Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/oAnR9QFJmiluH9HCMbLbrR6ySx9u8WG7unplYByvro=;
-        b=TmRQbOjYenWWE9imWpQ3fwpkkHRVm1fDMIhE7/kMDZ9nhxzBQPfGevo32r2+GIhO2K
-         V1HlEnoPLvee2cMDCkyfPPdTUzylDLs4/mLN3ejCEMQj1eE9T9y0XUSXcGHrTvVlaETJ
-         cBVD23oDDsWKW8RB0EnadH1ggz47DsAX0zikG3Viw33fcIFT1VmBm+JycYo862pFYFtk
-         xrmbHvLbIInavzfk2gNNaVp2ZhpB3TaJkzTe//FxOQwSDUP1uf9yucTOoAtcEQOg8HVo
-         rypKh+urGbAg4tXz9ucyHQY8Yd8pIBzYKEmw1PTobm4vFs0nSpXC0/SYCXIZBIOpo/Ko
-         zF0A==
-X-Gm-Message-State: APjAAAXBKCwEA7XKe75ddhPzKUjh/bDQJ+MnFcSJc54RsFYOH+TyIirn
-        YzBt8m4+u4Y7xA+iE/59FQNg018g
-X-Google-Smtp-Source: APXvYqwYQyC2BkECVlIeFIPPbp04x5/d3vMInVaqcHC/SFJfNsJ3PzdA1B2Su9SvbI8HCf4uGGS5YA==
-X-Received: by 2002:a2e:90c9:: with SMTP id o9mr2161824ljg.102.1555674716048;
-        Fri, 19 Apr 2019 04:51:56 -0700 (PDT)
-Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.googlemail.com with ESMTPSA id a2sm1106488lfi.13.2019.04.19.04.51.54
+        bh=HkDQoCQpTgRPIKUHwSpnY6a7B5BEF0xk1EkoTQxVLwY=;
+        b=STtlotRtxCSNBef+1cibTjr/61L3H6qmEMxTvfK0oSTATWsmCk4TzseBgL/KJvx+3R
+         vB9G3SoG2bKuUSmVqB+wR8jxZNQmy8gEpa0kzrLX17icC90NDZtKuBnrcGPS3czsGYqM
+         LHRI3wzauf0bSLw+GYjepS775VQCuk+bPjms1qTnEa/aCvHfeM9NwWH5A2LrFXoFvDBL
+         qLxU2YQ2CjbPNEVfSveik0kgsJsmCmH1BMjjcEebJXoKjUo4gd1fbWHPOEvceWhG60oR
+         /lqZZKspyqS8QcN7sJu4yg8bLZmFpIntJGzGawUTcrvurv4p/trQDpdE3Nv7uE4luKuM
+         Er0A==
+X-Gm-Message-State: APjAAAUgR9agSpBqZ5AbdRpuCAxu3Q0qhDn6hLlpfum2gSjiJQPHOA/4
+        uc3CdzpZCPJ18Rrbg3+yzK0q02tI
+X-Google-Smtp-Source: APXvYqygVdiLLfZ89BVhO+jOmC07goWGyUolGFQSE7DhyxkhRAlan9Af447i6sggU+pibboGL7vhXQ==
+X-Received: by 2002:a19:f703:: with SMTP id z3mr2045154lfe.119.1555674339904;
+        Fri, 19 Apr 2019 04:45:39 -0700 (PDT)
+Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.gmail.com with ESMTPSA id m3sm1061371lfh.94.2019.04.19.04.45.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Apr 2019 04:51:55 -0700 (PDT)
-Subject: Re: [PATCH v1 0/2] clk: Tegra124 PLLM fixes
+        Fri, 19 Apr 2019 04:45:38 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20190411214835.19947-1-digetx@gmail.com>
-Message-ID: <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
-Date:   Fri, 19 Apr 2019 14:50:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+Subject: [PATCH RESEND] clk: tegra: Don't enable already enabled PLLs
+Date:   Fri, 19 Apr 2019 14:42:26 +0300
+Message-Id: <20190419114226.8066-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190411214835.19947-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-12.04.2019 0:48, Dmitry Osipenko пишет:
-> Hello, here are two trivial patches that are correcting PLLM on Tegra124.
-> First fixes system lockup due to a bad hardware configuration, second
-> removes usage of a non-existent register bit.
-> 
-> Dmitry Osipenko (2):
->   clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides
->     divider
->   clk: tegra124: Remove lock-enable bit from PLLM
-> 
->  drivers/clk/tegra/clk-pll.c      | 4 ++--
->  drivers/clk/tegra/clk-tegra124.c | 3 +--
->  2 files changed, 3 insertions(+), 4 deletions(-)
-> 
+Initially Common Clock Framework isn't aware of the clock-enable status,
+this results in enabling of clocks that were enabled by bootloader. This
+is not a big deal for a regular clock-gates, but for PLL's it may have
+some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+clock) may result in extra long period of PLL re-locking.
 
-Hello Peter,
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
 
-The patches in this series are trivial and fixing the longstanding bug on Tegra124. Could you please take a look and and ACK the series if it looks good to you?
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 3e67cbcd80da..6b976b2514f7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
+ 	unsigned long flags = 0;
+ 	int ret;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+@@ -940,11 +943,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
+ static int clk_plle_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	struct tegra_clk_pll_freq_table sel;
++	unsigned long input_rate;
+ 	u32 val;
+ 	int err;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+ 
+@@ -1355,6 +1363,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
+ 	int ret;
+ 	unsigned long flags = 0;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+@@ -1567,7 +1578,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -1704,6 +1720,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ 		return -EINVAL;
+ 	}
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
+ 
+ 	if (pll->lock)
+@@ -2379,6 +2398,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 	return clk;
+ }
+ 
++static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	u32 val;
++
++	val = pll_readl_base(pll);
++
++	return val & PLLE_BASE_ENABLE ? 1 : 0;
++}
++
+ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+@@ -2386,7 +2415,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret = 0;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_plle_tegra210_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -2497,16 +2531,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+ 
+-static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	u32 val;
+-
+-	val = pll_readl_base(pll);
+-
+-	return val & PLLE_BASE_ENABLE ? 1 : 0;
+-}
+-
+ static const struct clk_ops tegra_clk_plle_tegra210_ops = {
+ 	.is_enabled =  clk_plle_tegra210_is_enabled,
+ 	.enable = clk_plle_tegra210_enable,
+-- 
+2.21.0
+
