@@ -2,96 +2,128 @@ Return-Path: <SRS0=/mgL=SV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFD0C282DF
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D54C282E2
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD7D217F9
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:19:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555705166;
-	bh=M8nKRkU5xwF3iD0UlNUz2o+WV3MkeZOVhAkT625GiFU=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=CL+dBnNG1RHAjEbySL0ignuZ/kdhSlCw1RAmCsIBGiipLyJ3mBcvJMFAyEydmOta8
-	 coTV7jZf672xRY7CxxTXZ+L6IfAybCXko0EB+TNkYy2miSwrNycIMt8wnzdzViGguY
-	 JmJWQRkWHjGMTuSrLGYK2rVpkYaJjA6IKCAXOYDo=
+	by mail.kernel.org (Postfix) with ESMTP id 0277720821
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 20:21:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726134AbfDSUTZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Apr 2019 16:19:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725817AbfDSUTZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Apr 2019 16:19:25 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD12920821;
-        Fri, 19 Apr 2019 20:19:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555705164;
-        bh=M8nKRkU5xwF3iD0UlNUz2o+WV3MkeZOVhAkT625GiFU=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=DVH1HFOihKH23ACAA1Byid3DHjMMERQShB8krZjmSp3kjCM3gPhJWuZJYUJ/Jm4j5
-         IbyYapmqEMEpfVWTe9b63bEXbyFGt0yd+JTZ4npoYlRuggSWiQ6K+RHKCXybX4hNPl
-         Nki5UYnV+/QfheaoNhgtffqm5WB0xlIg+9r0mabI=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190419112518.5zwaeqg7egfimts7@flea>
-References: <20190419112518.5zwaeqg7egfimts7@flea>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] Allwinner clock changes for 5.2
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
+        id S1726320AbfDSUVF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Apr 2019 16:21:05 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:42156 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbfDSUVF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 16:21:05 -0400
+X-Greylist: delayed 4808 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Apr 2019 16:21:05 EDT
+Received: from relay4-d.mail.gandi.net (unknown [217.70.183.196])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id E7D3F3A6DB0
+        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2019 11:25:20 +0000 (UTC)
+X-Originating-IP: 90.89.68.76
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 85BC2E0002;
+        Fri, 19 Apr 2019 11:25:19 +0000 (UTC)
+Date:   Fri, 19 Apr 2019 13:25:18 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <155570516391.15276.12155157680991893525@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 19 Apr 2019 13:19:23 -0700
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock changes for 5.2
+Message-ID: <20190419112518.5zwaeqg7egfimts7@flea>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="klf2zoka6pajchlv"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2019-04-19 04:25:18)
-> Hi Mike, Stephen,
->=20
-> Please pull the following changes for the next merge window.
->=20
-> Thanks!
-> Maxime
->=20
-> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
-1b:
->=20
->   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-5.2
 
-Thanks. Pulled but not yet merged into clk-next, because I see this error
-when I try to build just the files that have changed:
+--klf2zoka6pajchlv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
-	  Depends on [n]: HAS_IOMEM [=3Dy] && ARCH_SUNXI
-	  Selected by [y]:
-	  - CLK_SUNXI_PRCM_SUN6I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
-	  - CLK_SUNXI_PRCM_SUN8I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+Hi Mike, Stephen,
 
-	WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
-	  Depends on [n]: HAS_IOMEM [=3Dy] && ARCH_SUNXI
-	  Selected by [y]:
-	  - CLK_SUNXI_PRCM_SUN6I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
-	  - CLK_SUNXI_PRCM_SUN8I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+Please pull the following changes for the next merge window.
 
-Maybe the Kconfig patch isn't completely proper. I suppose that
-MFD_SUN6I_PRCM can be selected via COMPILE_TEST=3Dy path of
-CLK_SUNXI_PRCM_SUN6I and then fail to enable because ARCH_SUNXI=3Dn.
+Thanks!
+Maxime
 
+The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+
+  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-5.2
+
+for you to fetch changes up to c77cebac96a9edf1f3a508b475110f5d44196901:
+
+  clk: sunxi-ng: sun5i: Export the MBUS clock (2019-04-10 16:33:01 +0200)
+
+----------------------------------------------------------------
+Allwinner clock changes for 5.2
+
+Our usual bunch of changes, this time, it's mainly:
+
+  - Export a new clock for the MBUS controller on the A13
+  - H6 fixes to support a finer clocking of the video and VPU engines
+  - Add some Kconfig options
+  - Some bit offset fixes
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      clk: sunxi-ng: a83t: Add pll-video0 as parent of csi-mclk
+
+Icenowy Zheng (1):
+      clk: sunxi-ng: f1c100s: fix USB PHY gate bit offset
+
+Jernej Skrabec (3):
+      clk: sunxi-ng: Allow DE clock to set parent rate
+      clk: sunxi-ng: h6: Preset hdmi-cec clock parent
+      clk: sunxi-ng: h6: Allow video & vpu clocks to change parent rate
+
+Maxime Ripard (2):
+      clk: sunxi: Add Kconfig options
+      clk: sunxi-ng: sun5i: Export the MBUS clock
+
+ drivers/clk/Kconfig                      |  1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c    |  3 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c     | 19 ++++++++++---
+ drivers/clk/sunxi-ng/ccu-sun5i.h         |  4 ---
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    |  5 ++--
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     |  3 +-
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c |  2 +-
+ drivers/clk/sunxi/Kconfig                | 43 ++++++++++++++++++++++++++++
+ drivers/clk/sunxi/Makefile               | 49 ++++++++++++++++++--------------
+ include/dt-bindings/clock/sun5i-ccu.h    |  2 +-
+ 10 files changed, 95 insertions(+), 36 deletions(-)
+ create mode 100644 drivers/clk/sunxi/Kconfig
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--klf2zoka6pajchlv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXLmwHgAKCRDj7w1vZxhR
+xaoZAP4xvAsW57DxiKGQos5qTeUdGrCaWsUGrkhQ1Vr/OfoRSQD/fHDA69uw4V45
+2kKQ0hs+BA4EtiPeY3qLeEJPkXqm7g4=
+=K/fC
+-----END PGP SIGNATURE-----
+
+--klf2zoka6pajchlv--
