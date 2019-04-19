@@ -2,111 +2,99 @@ Return-Path: <SRS0=/mgL=SV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DATE_IN_PAST_06_12,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFAEC282DA
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A981C282DA
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE02620449
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA4CD20449
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 18:37:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMYTHEsy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEEJtvfI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfDSSfD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Apr 2019 14:35:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38182 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbfDSSfC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 14:35:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f14so7282351wrj.5
-        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2019 11:35:01 -0700 (PDT)
+        id S1727121AbfDSShQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Apr 2019 14:37:16 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41783 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725859AbfDSShQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 14:37:16 -0400
+Received: by mail-lj1-f194.google.com with SMTP id k8so5323751lja.8;
+        Fri, 19 Apr 2019 11:37:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xYWA1kVpCqnEsYf8ZQx0FLCh1pK1B8ewCVuRiUp9+Z8=;
-        b=NMYTHEsyViL3Br+SjY3sw6m9G1rJitRY7NAdq8Yt6Fq/gvyqUu1aOGinsEW6LAt+Fe
-         hEoi1JyShLw06Tq0DBu9SJCtYRP4buuUPtEWlTJ0duWy5mhNTFQv5xYWSO/BZkbMIX91
-         fYaZ3Gj42LSBcQh+Bg7oIcNw7kQjxXi3rg37Il5Xg0hxKeR/wQjm8DsDKlsnsDPzX+I0
-         CZSGCUgBoGgA2/z1fuzOYt5wfosrAsGUlET6KOsJ61mHwiCA09JqEi9b1zEVg8m/poep
-         A+x6MXEnoIjFxPbimGfsZH7SIwNJ/uuF3jxBqY5Jakuk4XS3vUoXRjX4mf8gzNi2I9Z3
-         AHHQ==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/oAnR9QFJmiluH9HCMbLbrR6ySx9u8WG7unplYByvro=;
+        b=EEEJtvfIxuPgnMw/lFamOp6jLXKjzalKUkSm9JR7U0lCZEjg5SIl/XxaYOcokCfpEX
+         e/hbYD0OH6bBZ2PVAG+obSCTc+/pgBelx7e+vC2Eb6lGFkkfGhB9srAZo4QqAF7mX8BM
+         dFWZ2Io4csz4LdIh/NkCL3oLGAZ07/mfin9jel7yAgL4l25jZDrPyzH1Ayminoa5916b
+         7wB+3nJmxYMwZ7LUpJ++SF+09LlmASUpQJB0uZy/YxxDjpdK82HDU+T1SpVajwTpDjTk
+         NFFElnpmfNFu0SSxgiT9sDVsBo7rD819x8O0J1LFbZbz7yQ2Xhc0bRNlGSwkaclHGuoS
+         pOvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xYWA1kVpCqnEsYf8ZQx0FLCh1pK1B8ewCVuRiUp9+Z8=;
-        b=KaaetnVA1fQ/tGy6/IHPwhvOL+In6NxozPc4YvUa/eRVZi3rm/VW3ZeY7d3regNPmx
-         DOLqa25UpgxGqHz2DpA0200YyJwahfZk/UJSIlwENbFJ6VCJbYA7w3sz/SHfBYiyv2aE
-         j6U7XEYa9pxSlRaxxoPAEs5qgS57//maq5qDREUnJsCgyXjWTx5dsl9PbM4AcX+l60cL
-         TSizZ3pcDo42xm+o2uXuboHFq+bUy++6wcDav6ff6cw4Y8Ezqi3jSFWSht/W53b9ZtMX
-         n4kID+St1ofu02Kq2hfje6esoDXzY9sdsBIctWEu1il9TIj/af5pnQI+jkKLeeGqgMTF
-         qFqg==
-X-Gm-Message-State: APjAAAXHJ5eZagP29f/dot15O/tsuIE6GeuYushlxuuaeTJUPRycb2Om
-        SZMqWzcOS9A5ajS+mR8rK7a76zU9kijZaeEYT8qgRSwc
-X-Google-Smtp-Source: APXvYqx6dFV14mi6crY3nmIZGkRMpj0N1pv5xC7zA3yUXgv+TCCDMvpMvdEwx6s/elbQ9yfMCX1yn5Jx0SJg/y+pGtE=
-X-Received: by 2002:adf:ec09:: with SMTP id x9mr2478024wrn.187.1555669029154;
- Fri, 19 Apr 2019 03:17:09 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/oAnR9QFJmiluH9HCMbLbrR6ySx9u8WG7unplYByvro=;
+        b=TmRQbOjYenWWE9imWpQ3fwpkkHRVm1fDMIhE7/kMDZ9nhxzBQPfGevo32r2+GIhO2K
+         V1HlEnoPLvee2cMDCkyfPPdTUzylDLs4/mLN3ejCEMQj1eE9T9y0XUSXcGHrTvVlaETJ
+         cBVD23oDDsWKW8RB0EnadH1ggz47DsAX0zikG3Viw33fcIFT1VmBm+JycYo862pFYFtk
+         xrmbHvLbIInavzfk2gNNaVp2ZhpB3TaJkzTe//FxOQwSDUP1uf9yucTOoAtcEQOg8HVo
+         rypKh+urGbAg4tXz9ucyHQY8Yd8pIBzYKEmw1PTobm4vFs0nSpXC0/SYCXIZBIOpo/Ko
+         zF0A==
+X-Gm-Message-State: APjAAAXBKCwEA7XKe75ddhPzKUjh/bDQJ+MnFcSJc54RsFYOH+TyIirn
+        YzBt8m4+u4Y7xA+iE/59FQNg018g
+X-Google-Smtp-Source: APXvYqwYQyC2BkECVlIeFIPPbp04x5/d3vMInVaqcHC/SFJfNsJ3PzdA1B2Su9SvbI8HCf4uGGS5YA==
+X-Received: by 2002:a2e:90c9:: with SMTP id o9mr2161824ljg.102.1555674716048;
+        Fri, 19 Apr 2019 04:51:56 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id a2sm1106488lfi.13.2019.04.19.04.51.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Apr 2019 04:51:55 -0700 (PDT)
+Subject: Re: [PATCH v1 0/2] clk: Tegra124 PLLM fixes
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190411214835.19947-1-digetx@gmail.com>
+Message-ID: <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
+Date:   Fri, 19 Apr 2019 14:50:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <201904190740.Fs1CMC0M%lkp@intel.com>
-In-Reply-To: <201904190740.Fs1CMC0M%lkp@intel.com>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Fri, 19 Apr 2019 12:17:10 +0200
-Message-ID: <CAOiHx==Aps2WKU5zCu4L4y+MUwCyrNr9xJ4rC5GQg=T47Jn1RA@mail.gmail.com>
-Subject: Re: [clk:clk-remove-io.h 8/9] drivers/clk//renesas/r7s9210-cpg-mssr.c:122:10:
- error: implicit declaration of function 'clk_readl'; did you mean '__readl'?
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-clk@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190411214835.19947-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 19 Apr 2019 at 01:52, kbuild test robot <lkp@intel.com> wrote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-remove-io.h
-> head:   91c16d737801d56e258b72c9d71f79c42c613919
-> commit: f1df560411dd2c32ce1bd1b9d3a90a8d8ae9be9c [8/9] clk: core: replace clk_{readl,writel} with {readl,writel}
-> config: x86_64-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         git checkout f1df560411dd2c32ce1bd1b9d3a90a8d8ae9be9c
->         # save the attached .config to linux build tree
->         make ARCH=x86_64
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
->
->
-> All errors (new ones prefixed by >>):
->
->    drivers/clk//renesas/r7s9210-cpg-mssr.c: In function 'r7s9210_update_clk_table':
-> >> drivers/clk//renesas/r7s9210-cpg-mssr.c:122:10: error: implicit declaration of function 'clk_readl'; did you mean '__readl'? [-Werror=implicit-function-declaration]
->      frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
->              ^~~~~~~~~
->              __readl
->    cc1: some warnings being treated as errors
->
-> sparse warnings: (new ones prefixed by >>)
->
->    drivers/clk/renesas/r7s9210-cpg-mssr.c:122:17: sparse: undefined identifier 'clk_readl'
-> >> drivers/clk/renesas/r7s9210-cpg-mssr.c:122:26: sparse: call with no type!
+12.04.2019 0:48, Dmitry Osipenko пишет:
+> Hello, here are two trivial patches that are correcting PLLM on Tegra124.
+> First fixes system lockup due to a bad hardware configuration, second
+> removes usage of a non-existent register bit.
+> 
+> Dmitry Osipenko (2):
+>   clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides
+>     divider
+>   clk: tegra124: Remove lock-enable bit from PLLM
+> 
+>  drivers/clk/tegra/clk-pll.c      | 4 ++--
+>  drivers/clk/tegra/clk-tegra124.c | 3 +--
+>  2 files changed, 3 insertions(+), 4 deletions(-)
+> 
 
-That wasn't me! ;-)
+Hello Peter,
 
-Looks like r7s9210-cpg-mssr was switched to readl() independently
-about a month ago with 9c561be8d8f2e01afaa9657051fc22e1e68f1914 which
-seems to be only in clk-next yet.
-
-Nice catch with the include cleanup, I always forget those.
-
-
-Regards
-Jonas
+The patches in this series are trivial and fixing the longstanding bug on Tegra124. Could you please take a look and and ACK the series if it looks good to you?
