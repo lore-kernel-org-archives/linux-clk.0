@@ -2,57 +2,56 @@ Return-Path: <SRS0=/mgL=SV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F71EC282E0
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 19:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96929C282DA
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 19:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6779621479
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 19:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A994204EC
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Apr 2019 19:54:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MmDEdzRc"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b/L5hdEy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfDSTbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Apr 2019 15:31:11 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53785 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbfDSTbK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 15:31:10 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q16so7186092wmj.3
-        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2019 12:31:08 -0700 (PDT)
+        id S1726696AbfDSTyJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Apr 2019 15:54:09 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37749 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfDSTyI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 15:54:08 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v14so7387722wmf.2
+        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2019 12:54:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MCTEvmabwYzI3ci+NujQrB/hypflAW8OQ75e8/ggXfk=;
-        b=MmDEdzRcl9DaSM0D19sHLRP9UUgUb3DU9U/mKJ4uV0lViP+8Df/cara5+dwmvId2vi
-         WCLQOT1S9LX6lveDGKTjokIESoUs5zV+Yvi2kw6zAVVXQxJinyhsP81cBiz3+fbe0KXq
-         ib3QilCDqnukXnjqqNJxDG7lbKiTmelD2kCgZCXW6E3bamJvWp+dJHAKTUt9EIDg5PJO
-         AsDxgXHM9sRx+3nZAzUT1J9faizEapC+cpYUkDdC4uGnPeBtXmOu2wab7KpbQzOGQDRM
-         YwN/fvrXryGp/kH7lktMqf7IosiwgS0IQxI/hbqoi3Y+bV/6gjxR+f9ffx6d6suPdsih
-         gDBw==
+        h=from:to:cc:subject:date:message-id;
+        bh=aSruXCIf56eTUnwd91mFJWvgWo5ilLOW75OOPS8G/vQ=;
+        b=b/L5hdEywCgjzZXewVEgNkwkRzSctvTyMAgjLLfQe/+d8De14q8WZX75J9BSDobTku
+         YUBJKbF348WamlAnWAxLY8sGTZvvMi2yJIx2ug6l/zntb9dohxh0wh4tCkJGuI1d0z8L
+         SrQZhZStVkUneIGq++IlAWsT2hX5/S0B8XP0NSNA4FAlnN04Ysw+Lv2b4MR89PMJOH2K
+         R6rVoL0zmApHrx57+z8sXYHfjMS321lOzp1YwQ0P4p7s/xPwQ8gOC71JF4DxI7SHCf9F
+         Ret9rCen/YzJXaWJ+lP/WFlhuEObKsdn5HpdKtYREmNd66KMY02IMnL2faRr9dUPQJhh
+         RAdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MCTEvmabwYzI3ci+NujQrB/hypflAW8OQ75e8/ggXfk=;
-        b=FVLE+zyRCjybkWz+iE/Kywl1K+1W9Zpcxdi3zKi1G0I1nl0QbRL2OJiaGqqBPESOHc
-         xQYxlQcF15SC10gGAqy9Q1xlT2z2fouAxEbv5Cezkb2o69mFSKHWlUw1Zz7KBhFLse6+
-         y/rkJKvPj0xXPARVzrtnBOyJR3FxHmWP1aaa9yrDG7zf45Lm9HZrS0w19I4/wnl0qp3E
-         dcWjmzmu/u5WQvhbwT6mAEBGCi/V9v/I18+DaIupdaWf4S1eeBOYNSqp1UP8+eizkItt
-         hI/Xj/s36lzMWlTxYPa3EV5FWan4jW0H9iK4Owy2NImn/XDCDgt/cKrlZ3hFr7OGY0jm
-         mMhg==
-X-Gm-Message-State: APjAAAWgtgjrOHJQIHcQ1wjKNS5SsqRTvf1SD9k9ZZYd+ixNAPUX1rxc
-        uLrLjkMOB2CGTBannWDr7qg8UQ==
-X-Google-Smtp-Source: APXvYqz4to8wAVskrNWhKtpXeo1y+/84uKbi75fWJa+XAgG68NFzqtWiTfz7vu78hoCS57ktmCjphQ==
-X-Received: by 2002:a1c:6502:: with SMTP id z2mr1745391wmb.119.1555662904613;
-        Fri, 19 Apr 2019 01:35:04 -0700 (PDT)
-Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust4998.18-1.cable.virginm.net. [86.31.179.135])
-        by smtp.gmail.com with ESMTPSA id t76sm5700147wmt.8.2019.04.19.01.35.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aSruXCIf56eTUnwd91mFJWvgWo5ilLOW75OOPS8G/vQ=;
+        b=JQkTFprEzCDWOF4yG9PbaxlAvaeJvmX4OqW0dcQxJe/rm7W6KhoIRgm8yjHZdaqxTh
+         Lpfej/ZkXqHhvsND8JU1HRNB9CGX2k3nW/PD9eu7PMdOQzd7yOat6cou0lz1eVrTIbWE
+         Gn3EgfxU1wucH+EUlXfRmHNi/WruJVHLs2wpgaG4sElRaarPekG2Q4oU3MhkfiNNHHrz
+         evr+oQ6bBdBgB6JHd36p19xNBIYPKaZkqDvtyfI3AJqga5CttkDnmJJjNOm2s00y59TX
+         LAWjC69C7XfuxBr519DqJtQkmHsCvtXIRbif4SaXANfTgsJGz5x9Xg2OnVc+pTowxX+W
+         EmqA==
+X-Gm-Message-State: APjAAAWHTP8E+CKwwSkPs79dRtxB6uau5eQjcaE65aNSB3gtoQ/E++yi
+        ArqvzHkB04dLeUDVeZxcKzFIaw==
+X-Google-Smtp-Source: APXvYqxfjCfRWxLbTWBnUcA/cu/fK391O64x79gXKonNAQ0gNZuh0zwpSSvj2c3lV75vHBq3aiErZQ==
+X-Received: by 2002:a1c:e0c6:: with SMTP id x189mr1764732wmg.4.1555662903279;
         Fri, 19 Apr 2019 01:35:03 -0700 (PDT)
+Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust4998.18-1.cable.virginm.net. [86.31.179.135])
+        by smtp.gmail.com with ESMTPSA id t76sm5700147wmt.8.2019.04.19.01.35.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 19 Apr 2019 01:35:02 -0700 (PDT)
 From:   Peter Griffin <peter.griffin@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         john.stultz@linaro.org, airlied@linux.ie, daniel@ffwll.ch,
@@ -61,49 +60,54 @@ To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         yuq825@gmail.com
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, lima@lists.freedesktop.org
-Subject: [PATCH v2 1/6] dt-bindings: gpu: mali-utgard: add hisilicon,hi6220-mali compatible
-Date:   Fri, 19 Apr 2019 09:32:56 +0100
-Message-Id: <1555662781-22570-2-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v2 0/6] Add HiKey / HI6220 SoC Mali-450 support
+Date:   Fri, 19 Apr 2019 09:32:55 +0100
+Message-Id: <1555662781-22570-1-git-send-email-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1555662781-22570-1-git-send-email-peter.griffin@linaro.org>
-References: <1555662781-22570-1-git-send-email-peter.griffin@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Hisilicon hi6220 uses a Mali-450MP4 with 4 PPs, so add
-a compatible for it.
+Hi folks,
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+This series adds support for the Mali450 MP4 GPU found on the
+hi6220 SoC from HiSilicon. It has been tested with the
+lima drm/mesa driver hosted on freedesktop.org gitlab,
+and validated using Weston and kmscube.
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-index 3f128e4..2a16b0c 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-@@ -21,6 +21,7 @@ Required properties:
-       + rockchip,rk3228-mali
-       + rockchip,rk3328-mali
-       + stericsson,db8500-mali
-+      + hisilicon,hi6220-mali
- 
-   - reg: Physical base address and length of the GPU registers
- 
-@@ -91,6 +92,10 @@ to specify one more vendor-specific compatible, among:
-       * interrupt-names and interrupts:
-         + combined: combined interrupt of all of the above lines
- 
-+  - hisilicon,hi6220-mali
-+    Required properties:
-+      * resets: phandles to the reset lines for the GPU
-+
- Example:
- 
- mali: gpu@1c40000 {
+As lima drm driver has now been merged this v2 series includes
+one extra patch to avoid Oops when all Mali ip blocks share the
+same irq.
+
+regards,
+
+Peter.
+
+Changes since v1:
+* Additional drm/lima patch to avoid Oops in shared irq case (Peter Griffin)
+* Squash clock and reset driver parts to avoid bisection hole (Stephen Boyd)
+* Add comment as to what other driver is probing same dt node (Stephen Boyd)
+* Check regmap_write error code and return individually (Philipp Zabel)
+* Add Rob Herring Reviewed by tags
+
+Peter Griffin (6):
+  dt-bindings: gpu: mali-utgard: add hisilicon,hi6220-mali compatible
+  dt-bindings: reset: hisilicon: Update compatible documentation
+  arm64: dts: hisilicon: Add Mali-450 MP4 GPU DT entry
+  reset: hi6220: Add support for AO reset controller
+  dt-bindings: reset: hisilicon: Add ao reset controller
+  drm/lima: handle shared irq case for lima_pp_bcast_irq_handler
+
+ .../devicetree/bindings/gpu/arm,mali-utgard.txt    |  5 ++
+ .../bindings/reset/hisilicon,hi6220-reset.txt      |  1 +
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          | 38 +++++++++++++
+ drivers/clk/hisilicon/clk-hi6220.c                 |  3 +-
+ drivers/gpu/drm/lima/lima_pp.c                     |  8 ++-
+ drivers/reset/hisilicon/hi6220_reset.c             | 65 +++++++++++++++++++++-
+ include/dt-bindings/reset/hisi,hi6220-resets.h     |  7 +++
+ 7 files changed, 124 insertions(+), 3 deletions(-)
+
 -- 
 2.7.4
 
