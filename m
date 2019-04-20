@@ -2,96 +2,116 @@ Return-Path: <SRS0=zQoE=SW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EA2C282E1
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Apr 2019 01:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E502FC282DD
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Apr 2019 08:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 582DD20859
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Apr 2019 01:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA4AA21479
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Apr 2019 08:40:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XT+otKh2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oB/54gkH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbfDTBSQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Apr 2019 21:18:16 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46003 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfDTBSQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Apr 2019 21:18:16 -0400
-Received: by mail-yb1-f196.google.com with SMTP id v2so222640ybm.12
-        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2019 18:18:16 -0700 (PDT)
+        id S1725912AbfDTIkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Apr 2019 04:40:43 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46442 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbfDTIkm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Apr 2019 04:40:42 -0400
+Received: by mail-io1-f68.google.com with SMTP id p23so5993106iol.13;
+        Sat, 20 Apr 2019 01:40:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tzbY/Yv1Au74aAJ4RNinQbr52uik+Q8k68V9wr+IZQo=;
-        b=XT+otKh2aq2TMCq7OpJpGzZjiSnQm2ev7mGIQbPalQaycMJ9olqY13HAfo7rC1xeJ2
-         1ScUY8U2LnmpUBAA/Q42axKAIBNIBaa/Xs/jRofRVxypx16TWvV+6I28NlFGmNW/I+Q+
-         LRnPIe5Wbp3EuAbw73V+30q6eiEws6vAbLWYnbxqpe3EME/sHHkwerzuESkOUoym8/JB
-         nHiUPhtljlnP/GHjkBvMIbrJ/EVOYy4J9QEIqrTZz/bObfxUMTPD05qPlOzi8zl3Eiqq
-         KIWy0MxHNjEw6l+FXJG45z249Qo+V0AgQotcRjlnCUuVMDOijWVT6Mv7Yhl9C7M8L6iM
-         dr7A==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9+6dI8bBr5EeS01R3XrlVG0WXReduip9VKJvNOCigX8=;
+        b=oB/54gkHzFqwNJbbheAcUbsymK8yFduJNw7HLVjuPtiv3AO+dVR+kBLarSdV2bS5vM
+         TiHU6IrswBSZ6eqxzC2XfRgG6LoTzqxduxzhIxBQBf60/FKFD4y7cIIalwwz7FCBVg//
+         DI4uUPmvcrF06dk6eZDGIxVoQvCE1aDfL+3Tb/WPxo3ktureghIy+CsWzMapL4RM77VF
+         egMRc/Glyn5jnVXkrafAELTGQN8nInuyZk2pGhfrlFGYO2SZ1VH1TxbmuwMpVIx02YXb
+         txthkm5APXQ2IlztE6zNzyzjpv6Rrntk9JqYhEemTmuypUwPvitA9c/BLaPbhQ6qE31j
+         wCmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tzbY/Yv1Au74aAJ4RNinQbr52uik+Q8k68V9wr+IZQo=;
-        b=osc7o3YnjTAxunmMAcFZGv6nnKzVUi2VyqykNzYtHJfa8wW1x82/a1Ipdh5eyuLFJZ
-         5PjwkoxCePXG5n/ou+utELYfXRGbaCxWp2RLkJ5GMWW98PItGyfMlnNXPo8o9a3Vwpnu
-         h/j/cmY9YdIpE166knFMd8xKOa54D5CwMCFiD/7foslhmuk5etW4xcXxYlgk4iRsrh78
-         BE33TSrZtX2673BTTJ3OmlP9NxA6HRoJxwGvSw64lh7f9h4xo7+uJOOxjREz+9md0Nxs
-         ZKy2Wzio9ZgSQ1PX1vbGOUnI0ZkZl3sH4BSGbk0LfClskpAY+WjuY/xT3WL2amVBOewF
-         qj2w==
-X-Gm-Message-State: APjAAAUO/MJodC2VX4jRXKwdXArninZgGlhdlwgiwtZjyYHxEm4f0QIq
-        cFhX+NKEAp0JaY9q5kgKzyaZ0w==
-X-Google-Smtp-Source: APXvYqywpLuB9cPOPhBt4vZEAu3fSMKmOl2SFtJbV94NWtA8VKZn310GxRdP/GUdaa7D9pBZcVxgVw==
-X-Received: by 2002:a5b:d0e:: with SMTP id y14mr6053164ybp.103.1555723095719;
-        Fri, 19 Apr 2019 18:18:15 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li931-65.members.linode.com. [45.56.113.65])
-        by smtp.gmail.com with ESMTPSA id b205sm1211752ywa.82.2019.04.19.18.18.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Apr 2019 18:18:14 -0700 (PDT)
-Date:   Sat, 20 Apr 2019 09:18:04 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Zhong Kaihua <zhongkaihua@huawei.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: Re: [PATCH v2] clk: hi3660: Mark clk_gate_ufs_subsys as critical
-Message-ID: <20190420011803.GA3759@leoy-ThinkPad-X240s>
-References: <20190320100508.6950-1-leo.yan@linaro.org>
- <155571244214.15276.7318614591453533548@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9+6dI8bBr5EeS01R3XrlVG0WXReduip9VKJvNOCigX8=;
+        b=MiSPd4KQJlIaei/Fw0AEY19fXsIjOKj5DmQEt7yhs26hkTmzG0pozpGvokCtvRK2S8
+         au0NThFLWvEWo7q7zZuK4zILVPfUFsyfAr1eLoT5I2RW9Gvtwz0wdf7psemc9yv9bNS2
+         XNvA0ghayuZAPufvAqyXTo3oexWwPtX2R0gRf3WyUivhX3rGPAjriahDHM9dbXS4rRCn
+         aQ5cCg/QztMUQCubGPPy/3raD1Nz5sFlXVR0GBnja5yJTo+KAvojZybmgTYOCc37h182
+         9zQdniOUt5Grm6H2TodkwlBFUGLLYKEw7pEvYSBoMKnA5WnwWNjlYhMwqQxA4vegeCo5
+         VOjg==
+X-Gm-Message-State: APjAAAXxJB440exJWrZT7oqtxUVfIc6zpuwq/uUQVlmUIQmeHCzDJGPj
+        zB2h+2Hj88HtlhoziGXrjnI4NHRZuqvLNNlB5No=
+X-Google-Smtp-Source: APXvYqy9NGHwXKkP8Jqenizk2w/9fPRVYHgsX9gdwqUGQb1x5tlb9nrm5tOeBw84N98Hzt7h3xwsTnJGhBf8lp2D/bM=
+X-Received: by 2002:a6b:6405:: with SMTP id t5mr4561098iog.190.1555749642090;
+ Sat, 20 Apr 2019 01:40:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155571244214.15276.7318614591453533548@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1555662781-22570-1-git-send-email-peter.griffin@linaro.org> <1555662781-22570-7-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1555662781-22570-7-git-send-email-peter.griffin@linaro.org>
+From:   Qiang Yu <yuq825@gmail.com>
+Date:   Sat, 20 Apr 2019 16:40:30 +0800
+Message-ID: <CAKGbVbtkE5K0CgyMjdOBoLRCzqQ-EDbbH67N9SbeWr1wTB_OHg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] drm/lima: handle shared irq case for lima_pp_bcast_irq_handler
+To:     Peter Griffin <peter.griffin@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, robh+dt@kernel.org,
+        mark.rutland@arm.com, p.zabel@pengutronix.de, xuwei5@hisilicon.com,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        lima@lists.freedesktop.org, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 19, 2019 at 03:20:42PM -0700, Stephen Boyd wrote:
-> Quoting Leo Yan (2019-03-20 03:05:08)
-> > clk_gate_ufs_subsys is a system bus clock, turning off it will
-> > introduce lockup issue during system suspend flow.  Let's mark
-> > clk_gate_ufs_subsys as critical clock, thus keeps it on during
-> > system suspend and resume.
-> > 
-> > Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
-> > Cc: stable@vger.kernel.org
-> > Cc: Zhong Kaihua <zhongkaihua@huawei.com>
-> > Cc: John Stultz <john.stultz@linaro.org>
-> > Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-> > Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> 
-> Applied to clk-next
+Pushed to drm-misc-next.
 
-Thanks!
+Thanks,
+Qiang
+
+On Fri, Apr 19, 2019 at 4:35 PM Peter Griffin <peter.griffin@linaro.org> wrote:
+>
+> On Hikey board all lima ip blocks are shared with one irq.
+> This patch avoids a NULL ptr deref crash on this platform
+> on startup. Tested with Weston and kmscube.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Qiang Yu <yuq825@gmail.com>
+> ---
+>  drivers/gpu/drm/lima/lima_pp.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/lima/lima_pp.c b/drivers/gpu/drm/lima/lima_pp.c
+> index d29721e..8fef224 100644
+> --- a/drivers/gpu/drm/lima/lima_pp.c
+> +++ b/drivers/gpu/drm/lima/lima_pp.c
+> @@ -64,7 +64,13 @@ static irqreturn_t lima_pp_bcast_irq_handler(int irq, void *data)
+>         struct lima_ip *pp_bcast = data;
+>         struct lima_device *dev = pp_bcast->dev;
+>         struct lima_sched_pipe *pipe = dev->pipe + lima_pipe_pp;
+> -       struct drm_lima_m450_pp_frame *frame = pipe->current_task->frame;
+> +       struct drm_lima_m450_pp_frame *frame;
+> +
+> +       /* for shared irq case */
+> +       if (!pipe->current_task)
+> +               return IRQ_NONE;
+> +
+> +       frame = pipe->current_task->frame;
+>
+>         for (i = 0; i < frame->num_pp; i++) {
+>                 struct lima_ip *ip = pipe->processor[i];
+> --
+> 2.7.4
+>
