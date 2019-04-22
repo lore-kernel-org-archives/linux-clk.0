@@ -2,88 +2,108 @@ Return-Path: <SRS0=Z5yo=SY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DBDC282E2
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 09:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D96C10F11
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 10:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 516E22075A
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 09:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B722206A3
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 10:20:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=factor-ts.ru header.i=@factor-ts.ru header.b="lqzzzsBy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfDVJWs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Apr 2019 05:22:48 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:34684 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726164AbfDVJWr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Apr 2019 05:22:47 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B7A4200124;
-        Mon, 22 Apr 2019 11:22:46 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9DB6920001A;
-        Mon, 22 Apr 2019 11:22:42 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 64D6B402ED;
-        Mon, 22 Apr 2019 17:22:37 +0800 (SGT)
-From:   andy.tang@nxp.com
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH 2/2] clk: qoriq: add more PLL divider clocks support
-Date:   Mon, 22 Apr 2019 17:15:09 +0800
-Message-Id: <20190422091509.3181-2-andy.tang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190422091509.3181-1-andy.tang@nxp.com>
-References: <20190422091509.3181-1-andy.tang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726836AbfDVKUV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Apr 2019 06:20:21 -0400
+Received: from dionis-sg.factor-ts.ru ([194.154.76.132]:60152 "EHLO
+        factor-ts.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726675AbfDVKUV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Apr 2019 06:20:21 -0400
+Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=factor-ts.ru; s=10;
+        t=1555928415; bh=5jfVTGY1sU8abVBXzX9aF+fXTbCjtVy8LM+h3jZTKLc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=lqzzzsByEkXxqTXO9r7WNQUe5FSA876iPS/2LepYMRywjTO+ZQ3A4GkvtWtnaH3vy
+         ts4e/Tk4yMsCggSUwRjUswEGTJ6CWxtzKo6jAqC2LzR0bJS7PJVhHvDmlyzPX5AkKV
+         5JvFY+WvgThcPLtnh1B960gwQ8DrFOozodEmIn1g=
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>,
+        "Fujinaka, Todd" <todd.fujinaka@intel.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <e01bb9da-0dde-4bfa-5693-eb4c02a1d696@redhat.com>
+ <20190328152421.GJ9224@smile.fi.intel.com>
+ <26800a0e-c309-1e69-c5b4-e11b761c7b40@redhat.com>
+ <20190328154931.GK9224@smile.fi.intel.com>
+ <d4c44bc8-ae0c-a6ff-3042-ae3185ceb33e@redhat.com>
+ <ef893b2e-121a-d395-9843-47d0c9f1515a@factor-ts.ru>
+ <942808d6-e2c1-cc8c-4aed-9b44a7ce4c76@redhat.com>
+ <c5ebcf73-1706-48d8-6904-ae6a89c44151@redhat.com>
+ <20190408172111.GX9224@smile.fi.intel.com>
+ <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
+ <20190409153125.GU9224@smile.fi.intel.com>
+ <a05e2ac3-de31-bd7a-6b39-8cdf00190f67@redhat.com>
+ <c2fa7ae8-1ad5-1a85-3e25-8bc5a9b5ee01@factor-ts.ru>
+ <da634f93-9cbb-f5a8-e7c2-4a20368823e9@redhat.com>
+From:   Semyon Verchenko <semverchenko@factor-ts.ru>
+Message-ID: <99a451b4-34cd-b14c-1cef-116829d435f9@factor-ts.ru>
+Date:   Mon, 22 Apr 2019 13:20:13 +0300
+MIME-Version: 1.0
+In-Reply-To: <da634f93-9cbb-f5a8-e7c2-4a20368823e9@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US-large
+X-MailScanner-ID: 3A0AE23E8003.AF4EB
+X-MailScanner: Found to be clean
+X-MailScanner-From: semverchenko@factor-ts.ru
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yuantian Tang <andy.tang@nxp.com>
 
-More PLL divider clocks are needed by clock consumer IP. So enlarge
-the PLL divider array to accommodate more divider clocks.
+On 18.04.2019 18:12, Hans de Goede wrote:
+> Hi Semyon,
+>
+> On 18-04-19 15:26, Semyon Verchenko wrote:
+>>
+>> On 18.04.2019 16:09, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 09-04-19 17:31, Andy Shevchenko wrote:
+>
+> <snip>
+>
+>>> Ok.
+>>>
+>>> Семен Верченко, this means that we are going to need DMI info from
+>>> the board in question. I thought we already had that, but I now see 
+>>> that
+>>> you original report did not have that a
+>>>
+>>> Please run as root:
+>>>
+>>> dmidecode &> dmidecode.log
+>>>
+>>> And then reply to this email with the generated dmidecode.log file
+>>> attached. Once I have that file I can prepare a patch fixing this.
+>
+> Thank you for the DMI decode.
+>
+> Attached are 3 patches, can you please test if adding those 3 patches
+> to your kernel fixes the problem?
+>
+> Thanks & Regards,
+>
+> Hans
+>
+Hi Hans,
+It seems that these patches fix the problem (at least interfaces are 
+visible through ip addr and it's possible to ping something from them).
 
-Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
----
- drivers/clk/clk-qoriq.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 1212a9b..5e2b3ac 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -34,6 +34,7 @@
- #define CGA_PLL4	4	/* only on clockgen-1.0, which lacks CGB */
- #define CGB_PLL1	4
- #define CGB_PLL2	5
-+#define MAX_PLL_DIV	16
- 
- struct clockgen_pll_div {
- 	struct clk *clk;
-@@ -41,7 +42,7 @@ struct clockgen_pll_div {
- };
- 
- struct clockgen_pll {
--	struct clockgen_pll_div div[8];
-+	struct clockgen_pll_div div[MAX_PLL_DIV];
- };
- 
- #define CLKSEL_VALID	1
-@@ -1128,7 +1129,7 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
- 		int ret;
- 
- 		/*
--		 * For platform PLL, there are 8 divider clocks.
-+		 * For platform PLL, there are MAX_PLL_DIV divider clocks.
- 		 * For core PLL, there are 4 divider clocks at most.
- 		 */
- 		if (idx != PLATFORM_PLL && i >= 4)
--- 
-1.7.1
-
+Thanks for fixing this issue.
