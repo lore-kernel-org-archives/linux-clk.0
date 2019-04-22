@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0805EC282E1
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 06:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5E1C282E1
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 06:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA63D213A2
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 06:23:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E4C20859
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 06:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555914221;
-	bh=so2IQuSWD6ZaH5gpjvUE4vmj5uroAljRaSMxOoJM4Cs=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=GPFii9i7RMUXK+h33Q9U5+fknLc0utl1CrTIChi4WRC+Bb/zBI50i3DPiMoilpHDU
-	 q+YtWbcthNLe167JLlA/190cHBI+KcRDkk16sQdnQxBo/QDw4YQ7Gl1obX6LaF4jxl
-	 NgXi802uinZ6YitZfFfDPiluF/SmIgGDZ3E59aOE=
+	s=default; t=1555914227;
+	bh=YfRI7Rxe7q3HxjC2AfjeQu8fjgMSoPVkh9+ZeBwTu7g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=OcTbsYLW4UoNTB9b7eUiQviN3TEJ7iGxBHv4nPLbBYjOLxnztoJZik4ftKCAluaV6
+	 zeqoBkioOGvduVmpw/MswrNAL3V16IpAbGlqSSB4hTXKPosAMBR0TP0pi23iXS7oWf
+	 2D9bFSGi5kHbh8b02NSw7PXkp1vL4OKi5rtHO15s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfDVGXl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Apr 2019 02:23:41 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43217 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfDVGXk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Apr 2019 02:23:40 -0400
-Received: by mail-pl1-f196.google.com with SMTP id n8so5322386plp.10
-        for <linux-clk@vger.kernel.org>; Sun, 21 Apr 2019 23:23:40 -0700 (PDT)
+        id S1726284AbfDVGXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Apr 2019 02:23:46 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44967 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfDVGXq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Apr 2019 02:23:46 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y13so5217797pfm.11
+        for <linux-clk@vger.kernel.org>; Sun, 21 Apr 2019 23:23:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=N/lfYI0cXuViCNJjEQTXsvDFJtm544bjPdmz9VfOyRo=;
-        b=qzUqTt86Gvc+jaYx3xDT4sjAcRYW6qf18MLYrT8ybuMtumpvFtzNIOIHReaTg9epq0
-         h+BAPQchpo2f+Xy7ehhnrDz5jb8rbfwAO8hWDRkgVtvqndQdSN9j4AGaRkwLnOR6wEmj
-         hghcjDlkuAgZDT2wvXsK8MGKEzdwtEWup0TFAqyOckuTUqxIEyrYbq02Vb6en1NNGZlH
-         9hCMJ+PY+LgSmwdzCAaT5ZEmq+ZseQwEw2E7jFdi7g3glVhco9XzIbMH7iAAfwSMELc5
-         DSH0SBaK+KeD8ATOltHd+hFUZHIJRMZGZoGx9Hohfua5exQyvHR5AJ6MVbr3wgZKib9B
-         ng3A==
-X-Gm-Message-State: APjAAAWxAfD09HI+8YH8shp6sw4Uif+SDYXtH9GqZIvsWgpGwP5moAab
-        niizur01JRFxxoJOXbN/5moIic0otaI=
-X-Google-Smtp-Source: APXvYqwqDfkK5LmS5nD1yZYUWuSfEeDp8Y3e/jzAtBc6Tbl49bvLiPA8u+zP1ArRhdis2z34UZ9GOA==
-X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr18765345plo.106.1555914220309;
-        Sun, 21 Apr 2019 23:23:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dhnJQEJIbjqmnmRU53KQwsemtNtBiydoERs2zy3Z5uM=;
+        b=WU5nH/oRaAXHaq7aFG72f6bd+OCvpl+tyl4yPcsv76naS8OY7mm7kn3E/AoSCbLc1q
+         2emsoD1ddyyY0fMGvjotTi1bsNAtxIHFQk/iFsWn5X6FI4u49ULccL1f3JN9WNewp4lv
+         XTkAtbckaEFXL/BNwZpvQO77qOWtFgVgGpM1dqfaf66t3BoDEHAiODKUH+vkGFss0H8t
+         zY3/944oiRgWN+SpVDrjXm3j02hiV3N7QoNQ+pcQv/0asIKLdkPH/8+mxthVP+mfonQb
+         agGCpzUETiTGdqHnzCpHI843NgZlUuCkO9SdS7HU+jWLZyoVy7X9Ga7OyIQAz7fqeMqa
+         JnsQ==
+X-Gm-Message-State: APjAAAXtQa6YNz6AsuOfbUSeoXfMq1rHdDCjFF6EFf8PltjrOlAB1yiZ
+        Yi1Vm5sFSDxHmNeIQwjpAa9H1v2HHLI=
+X-Google-Smtp-Source: APXvYqyyQjLIIxsRAZxMeUGwBFWK+QQmUK6PVAPjqUjBCiDsvlxnRHLtOdUmWgvxydjJBTqkpofUUQ==
+X-Received: by 2002:a63:1509:: with SMTP id v9mr17250376pgl.194.1555914226040;
+        Sun, 21 Apr 2019 23:23:46 -0700 (PDT)
 Received: from localhost (98.142.130.235.16clouds.com. [98.142.130.235])
-        by smtp.gmail.com with ESMTPSA id y19sm17070744pfn.164.2019.04.21.23.23.38
+        by smtp.gmail.com with ESMTPSA id e4sm18242499pgd.32.2019.04.21.23.23.44
         (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 21 Apr 2019 23:23:39 -0700 (PDT)
+        Sun, 21 Apr 2019 23:23:45 -0700 (PDT)
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -54,10 +55,15 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Fabio Estevam <festevam@gmail.com>,
         Stefan Agner <stefan@agner.ch>, kernel@pengutronix.de,
         linux-imx@nxp.com, linux-clk@vger.kernel.org
-Subject: [GIT PULL 1/3] i.MX common clock changes for 5.2
-Date:   Mon, 22 Apr 2019 14:23:12 +0800
-Message-Id: <20190422062314.1354-1-shawnguo@kernel.org>
+Subject: [GIT PULL 2/3] i.MX5 clock changes for 5.2
+Date:   Mon, 22 Apr 2019 14:23:13 +0800
+Message-Id: <20190422062314.1354-2-shawnguo@kernel.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20190422062314.1354-1-shawnguo@kernel.org>
+References: <20190422062314.1354-1-shawnguo@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -69,19 +75,28 @@ The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-imx-5.2
+  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-imx5-5.2
 
-for you to fetch changes up to 48a15bb42df85d30e13281642a12fd27221668fa:
+for you to fetch changes up to de348df5b389f7ddab388934e84f24d8a9f3c961:
 
-  clk: imx: Remove unused imx_get_clk_hw_fixed (2019-03-26 16:49:49 +0800)
-
-----------------------------------------------------------------
-i.MX common clock changes for 5.2:
- - Clean up unused imx_get_clk_hw_fixed() inline function.
+  clk: imx: rename clk-imx51-imx53.c to clk-imx5.c (2019-04-15 17:09:23 +0800)
 
 ----------------------------------------------------------------
-Abel Vesa (1):
-      clk: imx: Remove unused imx_get_clk_hw_fixed
+i.MX5 clock changes for 5.2:
+ - A couple of patches from Jonathan Neuschäfer to improve i.MX5 clock
+   driver for i.MX50 support.
+ - Rename file clk-imx51-imx53.c to clk-imx5.c, as it covers support for
+   all i.MX5 series SoCs including i.MX50.
 
- drivers/clk/imx/clk.h | 5 -----
- 1 file changed, 5 deletions(-)
+----------------------------------------------------------------
+Jonathan Neuschäfer (2):
+      clk: imx5: Fix i.MX50 mainbus clock registers
+      clk: imx5: Fix i.MX50 ESDHC clock registers
+
+Shawn Guo (1):
+      clk: imx: rename clk-imx51-imx53.c to clk-imx5.c
+
+ drivers/clk/imx/Makefile                          |  2 +-
+ drivers/clk/imx/{clk-imx51-imx53.c => clk-imx5.c} | 59 +++++++++++++++++------
+ 2 files changed, 46 insertions(+), 15 deletions(-)
+ rename drivers/clk/imx/{clk-imx51-imx53.c => clk-imx5.c} (94%)
