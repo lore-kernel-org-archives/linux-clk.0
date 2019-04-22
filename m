@@ -2,108 +2,145 @@ Return-Path: <SRS0=Z5yo=SY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D96C10F11
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 10:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4522AC10F11
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 11:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B722206A3
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 10:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 156CF20693
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Apr 2019 11:44:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=factor-ts.ru header.i=@factor-ts.ru header.b="lqzzzsBy"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T4yJLfC+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfDVKUV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Apr 2019 06:20:21 -0400
-Received: from dionis-sg.factor-ts.ru ([194.154.76.132]:60152 "EHLO
-        factor-ts.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbfDVKUV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Apr 2019 06:20:21 -0400
-Subject: Re: [E1000-devel] igb driver with Intel Atom Bay Trail issue
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=factor-ts.ru; s=10;
-        t=1555928415; bh=5jfVTGY1sU8abVBXzX9aF+fXTbCjtVy8LM+h3jZTKLc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=lqzzzsByEkXxqTXO9r7WNQUe5FSA876iPS/2LepYMRywjTO+ZQ3A4GkvtWtnaH3vy
-         ts4e/Tk4yMsCggSUwRjUswEGTJ6CWxtzKo6jAqC2LzR0bJS7PJVhHvDmlyzPX5AkKV
-         5JvFY+WvgThcPLtnh1B960gwQ8DrFOozodEmIn1g=
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     =?UTF-8?Q?David_M=c3=bcller?= <dave.mueller@gmx.ch>,
-        "Fujinaka, Todd" <todd.fujinaka@intel.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "e1000-devel@lists.sf.net" <e1000-devel@lists.sf.net>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <e01bb9da-0dde-4bfa-5693-eb4c02a1d696@redhat.com>
- <20190328152421.GJ9224@smile.fi.intel.com>
- <26800a0e-c309-1e69-c5b4-e11b761c7b40@redhat.com>
- <20190328154931.GK9224@smile.fi.intel.com>
- <d4c44bc8-ae0c-a6ff-3042-ae3185ceb33e@redhat.com>
- <ef893b2e-121a-d395-9843-47d0c9f1515a@factor-ts.ru>
- <942808d6-e2c1-cc8c-4aed-9b44a7ce4c76@redhat.com>
- <c5ebcf73-1706-48d8-6904-ae6a89c44151@redhat.com>
- <20190408172111.GX9224@smile.fi.intel.com>
- <a5392081-b545-6c19-ed0f-d71432308c63@redhat.com>
- <20190409153125.GU9224@smile.fi.intel.com>
- <a05e2ac3-de31-bd7a-6b39-8cdf00190f67@redhat.com>
- <c2fa7ae8-1ad5-1a85-3e25-8bc5a9b5ee01@factor-ts.ru>
- <da634f93-9cbb-f5a8-e7c2-4a20368823e9@redhat.com>
-From:   Semyon Verchenko <semverchenko@factor-ts.ru>
-Message-ID: <99a451b4-34cd-b14c-1cef-116829d435f9@factor-ts.ru>
-Date:   Mon, 22 Apr 2019 13:20:13 +0300
+        id S1727268AbfDVLoz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Apr 2019 07:44:55 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40812 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfDVLoz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Apr 2019 07:44:55 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z24so14278142wmi.5
+        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2019 04:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3YIh3hHvBZ7BaXs+3YAwERcSnfSNsChZK/sbht0VfxE=;
+        b=T4yJLfC+kupU+qX7A3pI0xLYFwwzOVUlLOy1JRy/Kz0QbEM3erk4k4Hnr5dY0ONEMb
+         hCKzyMx8XcTNLO8jVVegbvRn16ZoH82lGgBOw7pkuWycPlY2Opc7NY0NvWeCsk156bfD
+         J+0Qt3E4CPZLIF72HYuGI9xvf4/VCBYOK/aaUocEuVX6fucqMGEHdoKKEYHx8ePRoIlb
+         MvYM9ED0p4vfCc7S7TvIU+fgSyyvEQj+T2il00NkwmEj0EDrHlD4wo65oWHBkc5fYO6l
+         Frfl9llzsUhv/nbSyZuLJIaISgv5pZYBQ9KLVaRzZqyxHLtYKxRqCQYt2MQwJKCc7MBA
+         +w2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3YIh3hHvBZ7BaXs+3YAwERcSnfSNsChZK/sbht0VfxE=;
+        b=DhMytTO23N5Tfnwx0da1aXaa1ydttTGlwZrJYs1o6u2xpFGbUwMd8R5oU7seTj2ic5
+         PI8PXOK9z9KCreBK6GI4nRHZJ2yhX/DLK9mZAQnwGqi1lIrcYk0M5GOeLBvQWZUNSs+X
+         yTQs3+R7TD3iDXlGiyvLe6pH2ccXNiMbA45lGaUmA3kyud0Fhf46pi1BF+tR43wIiJCR
+         5JuNWdN/lE7LLbiCDlxkMoB/BIza1K8REOBAO9twO07obvQQStthYLxIX1s7JEdhKR/N
+         ySdhwYncMvTqg2ut1KnIIQonG7mhnSRXI/Y3ELQ88GHRX6CyKNCnym4Rcdlm2di1k7Sp
+         /xBQ==
+X-Gm-Message-State: APjAAAVEsWpasedenDM2WXcN0ANwPjEuGhQzVA5kbBDKyhF/+cbVsZB2
+        DOmfmNJ/aMtkWC1zeHzm22QmqQ==
+X-Google-Smtp-Source: APXvYqxyn2cRm1w2onk1AW+e9B4V01SSiNFGLHUlwiQTvPsQP2i4/ep+XIFIcV5pM9vTbWyQANsxxA==
+X-Received: by 2002:a1c:cf83:: with SMTP id f125mr11168607wmg.96.1555933493626;
+        Mon, 22 Apr 2019 04:44:53 -0700 (PDT)
+Received: from [192.168.1.2] (200.red-83-34-200.dynamicip.rima-tde.net. [83.34.200.200])
+        by smtp.gmail.com with ESMTPSA id h8sm10913684wrx.45.2019.04.22.04.44.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Apr 2019 04:44:52 -0700 (PDT)
+Subject: Re: [PATCH v2 05/14] clk: qcom: apcs-msm8916: get parent clock names
+ from DT
+To:     Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
+        arnd@arndb.de, bjorn.andersson@linaro.org, david.brown@linaro.org,
+        enric.balletbo@collabora.com, heiko@sntech.de,
+        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
+        jassisinghbrar@gmail.com, mark.rutland@arm.com,
+        mturquette@baylibre.com, olof@lixom.net, robh+dt@kernel.org,
+        sibis@codeaurora.org, will.deacon@arm.com
+Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1548700381-22376-6-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <155085910216.77512.12604271825136479370@swboyd.mtv.corp.google.com>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <31e17283-c374-f16e-df95-09aaf1854435@linaro.org>
+Date:   Mon, 22 Apr 2019 13:44:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <da634f93-9cbb-f5a8-e7c2-4a20368823e9@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US-large
-X-MailScanner-ID: 3A0AE23E8003.AF4EB
-X-MailScanner: Found to be clean
-X-MailScanner-From: semverchenko@factor-ts.ru
+In-Reply-To: <155085910216.77512.12604271825136479370@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2/22/19 19:11, Stephen Boyd wrote:
+> Quoting Jorge Ramirez-Ortiz (2019-01-28 10:32:52)
+>> @@ -61,6 +65,25 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
+>>         if (!a53cc)
+>>                 return -ENOMEM;
+>>  
+>> +       /* check if the parent names are present in the device tree */
+> 
+> This looks odd.
+> 
+>> +       ret = devm_clk_bulk_get(parent, ARRAY_SIZE(pclks), pclks);
+>> +       if (ret == -EPROBE_DEFER)
+>> +               return ret;
+> 
+> Why can't we use of_clk_parent_fill() if we know this is always a DT
+> platform?  The parent clks may not be registered at the time of probe?
 
-On 18.04.2019 18:12, Hans de Goede wrote:
-> Hi Semyon,
->
-> On 18-04-19 15:26, Semyon Verchenko wrote:
->>
->> On 18.04.2019 16:09, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 09-04-19 17:31, Andy Shevchenko wrote:
->
-> <snip>
->
->>> Ok.
->>>
->>> Семен Верченко, this means that we are going to need DMI info from
->>> the board in question. I thought we already had that, but I now see 
->>> that
->>> you original report did not have that a
->>>
->>> Please run as root:
->>>
->>> dmidecode &> dmidecode.log
->>>
->>> And then reply to this email with the generated dmidecode.log file
->>> attached. Once I have that file I can prepare a patch fixing this.
->
-> Thank you for the DMI decode.
->
-> Attached are 3 patches, can you please test if adding those 3 patches
-> to your kernel fixes the problem?
->
-> Thanks & Regards,
->
-> Hans
->
-Hi Hans,
-It seems that these patches fix the problem (at least interfaces are 
-visible through ip addr and it's possible to ping something from them).
+yes, and AFAICS the important thing at this point is that the clock is
+registered hence the handling of defer.
 
-Thanks for fixing this issue.
+I could use of_clk_parent_fill and then - if needed - call
+devm_clk_bulk_get but I am not sure of the gains of doing it (wouldnt
+this just make the code more confusing?)
+
+
+> Maybe this series should wait for the parent registration stuff I'm
+> working on so that this can be made simpler.
+
+the need for the clock name is not intrinsic to this driver (the driver
+itself doesnt use these names) but it just feeds these to the framework.
+
+I was looking into your parent registration code and I am not sure how
+can I use it in this particular driver other than simply removing the
+names and hoping that things are handled properly at the lower
+levels.... could you clarify please?
+
+
+> 
+>> +
+>> +       if (!ret) {
+>> +               gpll0_a53cc[0] = __clk_get_name(pclks[0].clk);
+>> +               gpll0_a53cc[1] = __clk_get_name(pclks[1].clk);
+>> +               a53cc->pclk = pclks[1].clk;
+>> +       } else {
+>> +               /* support old binding where only pll was explicitily defined */
+>> +               a53cc->pclk = devm_clk_get(parent, NULL);
+>> +               if (IS_ERR(a53cc->pclk)) {
+>> +                       ret = PTR_ERR(a53cc->pclk);
+>> +                       dev_err(dev, "failed to get clk: %d\n", ret);
+>> +                       return ret;
+>> +               }
+>> +       }
+>> +
+>>         init.name = "a53mux";
+>>         init.parent_names = gpll0_a53cc;
+>>         init.num_parents = ARRAY_SIZE(gpll0_a53cc);
+> 
+
