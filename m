@@ -2,150 +2,112 @@ Return-Path: <SRS0=Ati7=SZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADCCC282DD
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 10:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7CFC10F14
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 11:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36016214AE
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 10:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CA0321773
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 11:01:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPpI+Wyu"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mXjEB6+l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfDWKkJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Apr 2019 06:40:09 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52049 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfDWKkI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Apr 2019 06:40:08 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 4so18050500wmf.1;
-        Tue, 23 Apr 2019 03:40:07 -0700 (PDT)
+        id S1727307AbfDWLBV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Apr 2019 07:01:21 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38466 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727314AbfDWLBO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Apr 2019 07:01:14 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v1so2597854lfg.5
+        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2019 04:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=l1jRs+VjgKr89zOhBdbqqRIIlbputC+F8Zk2yYKbNgU=;
-        b=GPpI+WyuDh9UF5YRcVMFIyZObqeJT7d8pRfSxWxEbzxyzzD9g/f+mpHEGsKZFjyHzW
-         SJQPFd2bbh0inepg0kGnTIe/uhPn3qKZ/asAgPNLZ+VYjQ/oS9Oc3FeWV639bNQKN1ck
-         4JcDhIaLrfyL2h9DDF/J76du516p8NyeGLpwMpGi4L58lEv/h2Xq5TFwhl/5PbkCskzN
-         P4xac557sOvWB0r4P3AuMnhwUktvbEFAkdUBM1c7jk2xyUKHcXeWkCpd66OcSAs3+CFc
-         LFxlycJm8IJushgZTkJaxWI1RX86iDBfEt9g/ydIMmosfulsQFvXS4M5VuF4oLeSXMgx
-         8MRg==
+        bh=gS3jY0cmkbFsh3cNxOmZnt/KE4EI6n91gBXnGpPbZ1Q=;
+        b=mXjEB6+lo1HOESakhWrQ9pwSHM0TTBKJ/dIVZh1wzO5Ez4T/92hBLLV44VC07ZRMvt
+         snpwDMT78FHiYuZu7KvsC9+pNpkH5OqoliZMNMq9ISIPxXaOUG+mjhEon054XrBbxz51
+         TRdLlKbQKoJZ43uJlOvNzLJq7c0WL6mBF5aTukyd2SB/TlV20Tnih0cE0JpN6a7mNuZJ
+         LY4BLdbyta/q4t/eIsjKhIxaZhqBrcuf+uXCJRdpF3jKIKNLPyKIWraaJxo5AXBsSJwR
+         tH8XtTZqdNUhCNwNMi1D6m201cnljOuVrvh05X9quZt8m4qVGrHtAxfqvOFw5m7O4L7A
+         uNpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=l1jRs+VjgKr89zOhBdbqqRIIlbputC+F8Zk2yYKbNgU=;
-        b=gD7B8JVR0O2d8YMeOvrg3oYGr7jfF2FK390cLJCzo7WGojpkINPFep1o4I0vgVqNHn
-         qnu0rt1e8H9xlXCvx5aFHIbvFX2br1IzLVodhCNshqPPkGKXR7CnPnGYRWNW3Gpr5rO8
-         +e6Y38pLMSpIcL4R/tY5BWiNvZXGuv/pD8gcd+cdrQ6K6if5B8PpBKfgBzsjjPENbLpQ
-         rmZvjyswcWBonMtjszyN2iCSMO9aXeiyOlJafrhZL7N9YZ2S0OPrMBUKmJ2c7NMI2z4w
-         9OYQHgJt6iCb0+y/pGLhcIosa4T33YyRzH5CC1j7Ipcy31c3KXCEVFxObEfpGEMSYrgp
-         e0fA==
-X-Gm-Message-State: APjAAAVF2mfK35x/+1QkbubKeS60vHBMP4qAfFxiUL71cd0laYhSA/5q
-        E9uzCYvcj2e5Fh7vpv5L5UFIFPz2o0d521iwNrc=
-X-Google-Smtp-Source: APXvYqxX3ua8Qip8sefdRbffrTTXZjOWBfJVKhjRipliVEu+qqlgPQ7lY15svXgVJ4//LFGPkaoS3e4lRfjlEplbk9A=
-X-Received: by 2002:a1c:81c9:: with SMTP id c192mr1754113wmd.124.1556016006820;
- Tue, 23 Apr 2019 03:40:06 -0700 (PDT)
+        bh=gS3jY0cmkbFsh3cNxOmZnt/KE4EI6n91gBXnGpPbZ1Q=;
+        b=grWsiE/QF7W66eh6s4uIDcVJR48+ILeuo8RoE8vC4SwxU8LkAzsqdQZD49Ve/1qnAi
+         tui1iOLj2rWDpTFTbW4YeA2yb4oCt0B/DRe5/rPsszao3GPxTk71GtXfjTG/PMPzU7e2
+         6rDEbyObw3TBQK8bFvI+H7P0JMvNqeAGEXEwI5C9fg7zr00dWtghFdm5jkmzD3DZ/hHM
+         DpB1IirUPoeI+qujZ8GRnZu4pKzC6wHskPlCPyndXGmweZl7ZPheevQHdMosTMgez8oP
+         wRkCSe4MllPP74CI8vkQkgrwDJCZF0FyBy6IH1u8J/KiZ97h4PdvdHVEm4UZYAvc6Zgb
+         4C6w==
+X-Gm-Message-State: APjAAAXCbuXaQ0+NRgJ1fbtt29e3AD8LO8sJVzEbk5KYm51iqUM/PV1b
+        zqGiiJGFqNBbJqRBCluGNNlB6tQRvd6M7Nx2nIZz9Q==
+X-Google-Smtp-Source: APXvYqxHCBLuMMwfVuMemjoZPJ1cT1LWnsQq1xx6AGcVpGsdx6BL5lCuQ04MVK7flKgJBhn7Yi1G2d9ABJZDm7cT+PU=
+X-Received: by 2002:a19:f001:: with SMTP id p1mr14389561lfc.27.1556017272455;
+ Tue, 23 Apr 2019 04:01:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190418111211.10474-1-jonas.gorski@gmail.com>
- <20190418111211.10474-2-jonas.gorski@gmail.com> <CAMuHMdX7E8fR+2s-gPgGLKUCdW_--YUDW7w+op3BDurgACFEmA@mail.gmail.com>
-In-Reply-To: <CAMuHMdX7E8fR+2s-gPgGLKUCdW_--YUDW7w+op3BDurgACFEmA@mail.gmail.com>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Tue, 23 Apr 2019 12:39:59 +0200
-Message-ID: <CAOiHx=mjhzG-i8H5R0A+Mu3mcBXTNEaaBhC8rwCQPMWArDA+1A@mail.gmail.com>
-Subject: Re: [PATCH RFT V3 1/8] clk: divider: add explicit big endian support
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-16-fparent@baylibre.com>
+ <CACRpkdZZ6-+MVdK4bOP4SHxQ8uQ8zENcir7DSteHy4g+B5uySQ@mail.gmail.com> <b1e4eb6c-0d53-0307-99e4-9fef9e2b33d8@gmail.com>
+In-Reply-To: <b1e4eb6c-0d53-0307-99e4-9fef9e2b33d8@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 23 Apr 2019 13:01:00 +0200
+Message-ID: <CACRpkdZ8gq+hGRT6EAyP2w9K0jz5RAzWeZ6_UrW+v-BOjd-wbg@mail.gmail.com>
+Subject: Re: [PATCH 15/24] dt-bindings: pinctrl: pinctrl-mt65xx: add support
+ for MT8516
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Fabien Parent <fparent@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        hsin-hsiung.wang@mediatek.com, wenzhen.yu@mediatek.com,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Yong Mao <yong.mao@mediatek.com>, jjian.zhou@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-i2c@vger.kernel.org,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Paul Mackerras <paulus@samba.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Anatolij Gustschin <agust@denx.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        linux-spi <linux-spi@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        stephane.leprovost@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Tue, Apr 16, 2019 at 11:12 AM Matthias Brugger
+<matthias.bgg@gmail.com> wrote:
 
-On Tue, 23 Apr 2019 at 09:49, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Linus,
 >
-> Hi Jonas,
+> On 08/04/2019 22:44, Linus Walleij wrote:
+> > On Sat, Mar 23, 2019 at 10:17 PM Fabien Parent <fparent@baylibre.com> wrote:
+> >
+> >> Add binding documentation of pinctrl-mt65xx for MT8516 SoC.
+> >>
+> >> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> >
+> > Patch applied with Rob's ACK.
+> >
 >
-> On Thu, Apr 18, 2019 at 1:12 PM Jonas Gorski <jonas.gorski@gmail.com> wrote:
-> > Add a clock specific flag to switch register accesses to big endian, to
-> > allow runtime configuration of big endian divider clocks.
-> >
-> > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-> > ---
-> > V2 -> V3:
-> >  * fix passed arguments to clk_div_readl found by kbuild
-> >  * drop unneeded else in clk_div_readl
-> > V1 -> V2:
-> >  * switch from global to local flag
-> >
-> >  drivers/clk/clk-divider.c    | 26 ++++++++++++++++++++++----
-> >  include/linux/clk-provider.h |  4 ++++
-> >  2 files changed, 26 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > index e5a17265cfaf..25c7404e376c 100644
-> > --- a/drivers/clk/clk-divider.c
-> > +++ b/drivers/clk/clk-divider.c
-> > @@ -25,6 +25,24 @@
-> >   * parent - fixed parent.  No clk_set_parent support
-> >   */
-> >
-> > +static inline u32 clk_div_readl(struct clk_divider *divider)
-> > +{
-> > +       if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
-> > +               return ioread32be(divider->reg);
-> > +
-> > +       return clk_readl(divider->reg);
-> > +}
-> > +
-> > +static inline void clk_div_writel(struct clk_divider *divider, u32 val)
-> > +{
-> > +       if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
-> > +               iowrite32be(val, divider->reg);
-> > +       else
-> > +               clk_writel(val, divider->reg);
-> > +}
-> > +
-> > +#define div_mask(width)        ((1 << (width)) - 1)
->
-> What's the purpose of adding this definition?
-> It does not seem to be used.
+> I don't see this in your for-next branch. Did the patch got lost?
 
-No purpose at all, it's an uncaught artifact from rebasing ._.
+I usually push the devel branch to be tested by the build robots
+and then mix down the for-next branch.
 
-Stephen, which one is your preferred way of fixing that?
+Recent week(s) the build robot was not responding so it got delayed.
 
-a) a new V4 patchset without this line
-b) a follow up patch that removes it
-c) just removing the line yourself
-
-
-Regards
-Jonas
+Yours,
+Linus Walleij
