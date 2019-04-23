@@ -2,154 +2,112 @@ Return-Path: <SRS0=Ati7=SZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6060C10F11
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 01:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5842C282DD
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 07:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78060206BA
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 01:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE142206BA
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 07:47:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbfDWBPW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Apr 2019 21:15:22 -0400
-Received: from regular1.263xmail.com ([211.150.70.206]:34816 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728533AbfDWBPV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Apr 2019 21:15:21 -0400
-Received: from zhangqing?rock-chips.com (unknown [192.168.167.78])
-        by regular1.263xmail.com (Postfix) with ESMTP id 16F8325D;
-        Tue, 23 Apr 2019 09:15:12 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from [172.16.12.236] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P29765T139902436968192S1555982110311816_;
-        Tue, 23 Apr 2019 09:15:11 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <1d0c61725f2fedc3f3fadbfa0afc204d>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH v2] clk: rockchip: undo several noc and special clocks as
- critical on rk3288
-To:     Doug Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Caesar Wang <caesar.wang@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20190412161747.107107-1-dianders@chromium.org>
- <CAD=FV=Xkdc_yPCjVUh96atdiB4fo4h3oNZYe45ef+eLeVUVM8g@mail.gmail.com>
-From:   "elaine.zhang" <zhangqing@rock-chips.com>
-Organization: rockchip
-Message-ID: <a8bd1681-0d24-e8d5-9f81-77e8fcb61c63@rock-chips.com>
-Date:   Tue, 23 Apr 2019 09:15:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726130AbfDWHrE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Apr 2019 03:47:04 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:34112 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbfDWHrE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Apr 2019 03:47:04 -0400
+Received: by mail-vs1-f68.google.com with SMTP id t78so7729939vsc.1;
+        Tue, 23 Apr 2019 00:47:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wj5jZcKMZaOyGXlAkiClbQvKsdQD78WBTyQQ8q29tbc=;
+        b=F5xubDmo54CK2CRhfRSPeDw4zsvaNrErAmCv310ekYOClNc4zZ/ANUw6oMh/yO1lE0
+         v4+sbxANN3C9sAYo4ovhfBOTrer7IkMj7+NOXvxzCZtYZC0as4a2bjsZ9YULYjLGNj2U
+         dCj7gR/23P8qpNd2PUDiCFKne1KVIAh714BbfYkNPchKSQg6PWfkN4hnjwEs4rbsCrp7
+         Y/2LAqIet2z+4sdz2nrdgPz9YmUZiieQ655zd6nMW2/bIEf8iX9Q6b2iNUK9HJmoLIr5
+         Io+UIEMb4QmdcBr9BK755MPpmjTIKAvY87amuOijS3uWt0Ome7FcdEnbNyiXGGe8czni
+         U4dg==
+X-Gm-Message-State: APjAAAW/LSS3R3iRXEYyw6eBDsoOGDDPolzXGKHD9C/dqmvaHaaTtmdd
+        +sByjqVj07iC+JvJfXZo+PJSWJ5pRlnRU/y8oypFYA==
+X-Google-Smtp-Source: APXvYqxo26ej/6F6dc33/I4MPlHPdV8j7IfTxr2RWvPkX4iNQPzm2d2THVf3/Z05O+yjPgX+BiNqKQW+B5O5BSjXIBM=
+X-Received: by 2002:a67:8317:: with SMTP id f23mr11903182vsd.63.1556005622942;
+ Tue, 23 Apr 2019 00:47:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Xkdc_yPCjVUh96atdiB4fo4h3oNZYe45ef+eLeVUVM8g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20190404113722.20634-1-geert+renesas@glider.be> <155500418814.20095.8564288702076959777@swboyd.mtv.corp.google.com>
+In-Reply-To: <155500418814.20095.8564288702076959777@swboyd.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 23 Apr 2019 09:46:50 +0200
+Message-ID: <CAMuHMdXpBHBPqEBHqphYbOVhgZyOFLSUPgB__5P-FFOehgWfbQ@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v5.2
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-hi,
+Hi Stephen,
 
-在 2019/4/22 下午11:23, Doug Anderson 写道:
-> Elaine,
+On Thu, Apr 11, 2019 at 7:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2019-04-04 04:37:22)
+> > The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+> >
+> >   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.2-tag1
+> >
+> > for you to fetch changes up to b953eaaeb58efc944f51cffd3f6838657958f0f8:
+> >
+> >   clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value (2019-04-04 11:54:46 +0200)
+> >
+> > ----------------------------------------------------------------
+> > clk: renesas: Updates for v5.2
+> >
+> >   - Add missing PCI USB clock on RZ/N1,
+> >   - Add Z2 (Cortex-A53) clocks on R-Car E3 and RZ/G2E, incl. a new
+> >     helper in <linux/math64.h>,
+> >   - Small fixes and cleanups.
+> >
 >
-> On Fri, Apr 12, 2019 at 9:18 AM Douglas Anderson <dianders@chromium.org> wrote:
->> This is mostly a revert of commit 55bb6a633c33 ("clk: rockchip: mark
->> noc and some special clk as critical on rk3288") except that we're
->> keeping "pmu_hclk_otg0" as critical still.
->>
->> NOTE: turning these clocks off doesn't seem to do a whole lot in terms
->> of power savings (checking the power on the logic rail).  It appears
->> to save maybe 1-2mW.  ...but still it seems like we should turn the
->> clocks off if they aren't needed.
->>
->> About "pmu_hclk_otg0" (the one clock from the original commit we're
->> still keeping critical) from an email thread:
->>
->>> pmu ahb clock
->>>
->>> Function: Clock to pmu module when hibernation and/or ADP is
->>> enabled. Must be greater than or equal to 30 MHz.
->>>
->>> If the SOC design does not support hibernation/ADP function, only have
->>> hclk_otg, this clk can be switched according to the usage of otg.
->>> If the SOC design support hibernation/ADP, has two clocks, hclk_otg and
->>> pmu_hclk_otg0.
->>> Hclk_otg belongs to the closed part of otg logic, which can be switched
->>> according to the use of otg.
->>>
->>> pmu_hclk_otg0 belongs to the always on part.
->>>
->>> As for whether pmu_hclk_otg0 can be turned off when otg is not in use,
->>> we have not tested. IC suggest make pmu_hclk_otg0 always on.
->> For the rest of the clocks:
->>
->> atclk: No documentation about this clock other than that it goes to
->> the CPU.  CPU functions fine without it on.  Maybe needed for JTAG?
->>
->> jtag: Presumably this clock is only needed if you're debugging with
->> JTAG.  It doesn't seem like it makes sense to waste power for every
->> rk3288 user.  In any case to do JTAG you'd need private patches to
->> adjust the pinctrl the mux the JTAG out anyway.
->>
->> pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
->> clocks on only during kernel panics in order to access some coresight
->> registers.  Since nothing in the upstream kernel does this we should
->> be able to leave them off safely.  Maybe also needed for JTAG?
->>
->> hsicphy12m_xin12m: There is no indication of why this clock would need
->> to be turned on for boards that don't use HSIC.
->>
->> pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
->> these 4 clocks on only when doing DDR transitions and they are off
->> otherwise.  I see no reason why they'd need to be on in the upstream
->> kernel which doesn't support DDRFreq.
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>
->> Changes in v2:
->> - Now keep pmu_hclk_otg0 as critical.
->> - Updated description since this isn't a clean revert.
->> - PWM patches have landed, so just one patch in the series now.
->>
->>   drivers/clk/rockchip/clk-rk3288.c | 13 ++++---------
->>   1 file changed, 4 insertions(+), 9 deletions(-)
-> >From previous discussions I think you're all happy with this patch
-> now, right?  Care to give it an official Reviewed-by tag?
-
-Yes.
-
-Reviewed-by: Elaine Zhang <zhangqing@rock-chips.com>
-
+> Thanks. Pulled into clk-next with the below fix squashed on top.
 >
-> -Doug
+> ----8<----
+> From: Stephen Boyd <sboyd@kernel.org>
+> Subject: [PATCH] clk: renesas: rcar-gen3: Remove unused variable
 >
+> This variable is no longer used and the compiler rightly complains that
+> it should be removed. Drop it to silence the following:
 >
+> drivers/clk/renesas/rcar-gen3-cpg.c: In function 'cpg_sd_clk_register':
+> drivers/clk/renesas/rcar-gen3-cpg.c:386:15: warning: unused variable 'i' [-Wunused-variable]
+>   unsigned int i;
 >
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Fixes: b953eaaeb58e ("clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
+Thanks pulling, and for fixing this silly oversight.
 
+/me wants his gcc-4.1 back...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
