@@ -2,157 +2,154 @@ Return-Path: <SRS0=Ati7=SZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 160D5C10F11
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 01:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6060C10F11
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 01:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEF8020874
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 01:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555981601;
-	bh=4XIl9c68z55v60nFntFl8ggNOHnaIkdvgGfAWOYpQLA=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=w8X1N7hVrx3kZLVJQ3uekd5GYi90BY9AO0Zu4tUHapJCSPsY9mj3kEWtrcggHt+R2
-	 SZSiA9eklYLTA9wYgyoAAr9zJohnl+KcJNWzYDRO3VessETmvzRPvsF1siFoQC6Ui6
-	 UWRWJq3dSysT190mv9vkWCbSWlsIXzS8QNuXikoc=
+	by mail.kernel.org (Postfix) with ESMTP id 78060206BA
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 01:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbfDWBGl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Apr 2019 21:06:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728615AbfDWBGl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Apr 2019 21:06:41 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE80820811;
-        Tue, 23 Apr 2019 01:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555981599;
-        bh=4XIl9c68z55v60nFntFl8ggNOHnaIkdvgGfAWOYpQLA=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=B1VSvggqsZOFAlatTEPnGrp5nbjBVq/qQo1SddRFxp+U8HgHcUmAoMstxQyRfkOXA
-         RPNDH69H1XbBLTxJj0HlIuSpLXz4P+d8GeSsk2Lo5C6vFuUPXiJvc1Xy/0XgWNsvDc
-         ZPl8GX/PvFfFKwy/FWDi8BLBNU9E6th1vxSsPPt8=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5cbe596c.1c69fb81.e252.b9d0@mx.google.com>
-References: <5cbe596c.1c69fb81.e252.b9d0@mx.google.com>
+        id S1728549AbfDWBPW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Apr 2019 21:15:22 -0400
+Received: from regular1.263xmail.com ([211.150.70.206]:34816 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728533AbfDWBPV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Apr 2019 21:15:21 -0400
+Received: from zhangqing?rock-chips.com (unknown [192.168.167.78])
+        by regular1.263xmail.com (Postfix) with ESMTP id 16F8325D;
+        Tue, 23 Apr 2019 09:15:12 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.12.236] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P29765T139902436968192S1555982110311816_;
+        Tue, 23 Apr 2019 09:15:11 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <1d0c61725f2fedc3f3fadbfa0afc204d>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: linux-arm-kernel@lists.infradead.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v2] clk: rockchip: undo several noc and special clocks as
+ critical on rk3288
+To:     Doug Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: clk/clk-next boot bisection: v5.1-rc1-142-ga55b079c961b on panda
-To:     "kernelci.org bot" <bot@kernelci.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>, broonie@kernel.org,
-        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
-        khilman@baylibre.com, matthew.hart@linaro.org,
-        mgalka@collabora.com, tomeu.vizoso@collabora.com
-Message-ID: <155598159898.15276.8408514960097680895@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Mon, 22 Apr 2019 18:06:38 -0700
+        Stephen Boyd <sboyd@kernel.org>,
+        Caesar Wang <caesar.wang@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190412161747.107107-1-dianders@chromium.org>
+ <CAD=FV=Xkdc_yPCjVUh96atdiB4fo4h3oNZYe45ef+eLeVUVM8g@mail.gmail.com>
+From:   "elaine.zhang" <zhangqing@rock-chips.com>
+Organization: rockchip
+Message-ID: <a8bd1681-0d24-e8d5-9f81-77e8fcb61c63@rock-chips.com>
+Date:   Tue, 23 Apr 2019 09:15:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=Xkdc_yPCjVUh96atdiB4fo4h3oNZYe45ef+eLeVUVM8g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting kernelci.org bot (2019-04-22 17:16:44)
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> * This automated bisection report was sent to you on the basis  *
-> * that you may be involved with the breaking commit it has      *
-> * found.  No manual investigation has been done to verify it,   *
-> * and the root cause of the problem may be somewhere else.      *
-> * Hope this helps!                                              *
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
->=20
-> clk/clk-next boot bisection: v5.1-rc1-142-ga55b079c961b on panda
->=20
-> Summary:
->   Start:      a55b079c961b Merge branch 'clk-hisi' into clk-next
->   Details:    https://kernelci.org/boot/id/5cbe3cdb59b514fd22fe6025
->   Plain log:  https://storage.kernelci.org//clk/clk-next/v5.1-rc1-142-ga5=
-5b079c961b/arm/omap2plus_defconfig/gcc-7/lab-baylibre/boot-omap4-panda.txt
->   HTML log:   https://storage.kernelci.org//clk/clk-next/v5.1-rc1-142-ga5=
-5b079c961b/arm/omap2plus_defconfig/gcc-7/lab-baylibre/boot-omap4-panda.html
->   Result:     ecbf3f1795fd clk: fixed-factor: Let clk framework find pare=
-nt
->=20
-> Checks:
->   revert:     PASS
->   verify:     PASS
->=20
-> Parameters:
->   Tree:       clk
->   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.g=
-it
->   Branch:     clk-next
->   Target:     panda
->   CPU arch:   arm
->   Lab:        lab-baylibre
->   Compiler:   gcc-7
->   Config:     omap2plus_defconfig
->   Test suite: boot
->=20
-> Breaking commit found:
+hi,
 
-Awesome! I LOVE IT!!!
+在 2019/4/22 下午11:23, Doug Anderson 写道:
+> Elaine,
+>
+> On Fri, Apr 12, 2019 at 9:18 AM Douglas Anderson <dianders@chromium.org> wrote:
+>> This is mostly a revert of commit 55bb6a633c33 ("clk: rockchip: mark
+>> noc and some special clk as critical on rk3288") except that we're
+>> keeping "pmu_hclk_otg0" as critical still.
+>>
+>> NOTE: turning these clocks off doesn't seem to do a whole lot in terms
+>> of power savings (checking the power on the logic rail).  It appears
+>> to save maybe 1-2mW.  ...but still it seems like we should turn the
+>> clocks off if they aren't needed.
+>>
+>> About "pmu_hclk_otg0" (the one clock from the original commit we're
+>> still keeping critical) from an email thread:
+>>
+>>> pmu ahb clock
+>>>
+>>> Function: Clock to pmu module when hibernation and/or ADP is
+>>> enabled. Must be greater than or equal to 30 MHz.
+>>>
+>>> If the SOC design does not support hibernation/ADP function, only have
+>>> hclk_otg, this clk can be switched according to the usage of otg.
+>>> If the SOC design support hibernation/ADP, has two clocks, hclk_otg and
+>>> pmu_hclk_otg0.
+>>> Hclk_otg belongs to the closed part of otg logic, which can be switched
+>>> according to the use of otg.
+>>>
+>>> pmu_hclk_otg0 belongs to the always on part.
+>>>
+>>> As for whether pmu_hclk_otg0 can be turned off when otg is not in use,
+>>> we have not tested. IC suggest make pmu_hclk_otg0 always on.
+>> For the rest of the clocks:
+>>
+>> atclk: No documentation about this clock other than that it goes to
+>> the CPU.  CPU functions fine without it on.  Maybe needed for JTAG?
+>>
+>> jtag: Presumably this clock is only needed if you're debugging with
+>> JTAG.  It doesn't seem like it makes sense to waste power for every
+>> rk3288 user.  In any case to do JTAG you'd need private patches to
+>> adjust the pinctrl the mux the JTAG out anyway.
+>>
+>> pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
+>> clocks on only during kernel panics in order to access some coresight
+>> registers.  Since nothing in the upstream kernel does this we should
+>> be able to leave them off safely.  Maybe also needed for JTAG?
+>>
+>> hsicphy12m_xin12m: There is no indication of why this clock would need
+>> to be turned on for boards that don't use HSIC.
+>>
+>> pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
+>> these 4 clocks on only when doing DDR transitions and they are off
+>> otherwise.  I see no reason why they'd need to be on in the upstream
+>> kernel which doesn't support DDRFreq.
+>>
+>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>> ---
+>>
+>> Changes in v2:
+>> - Now keep pmu_hclk_otg0 as critical.
+>> - Updated description since this isn't a clean revert.
+>> - PWM patches have landed, so just one patch in the series now.
+>>
+>>   drivers/clk/rockchip/clk-rk3288.c | 13 ++++---------
+>>   1 file changed, 4 insertions(+), 9 deletions(-)
+> >From previous discussions I think you're all happy with this patch
+> now, right?  Care to give it an official Reviewed-by tag?
 
->=20
-> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-facto=
-r.c
-> index 241b3f8c61a9..5b09f2cdb7de 100644
-> --- a/drivers/clk/clk-fixed-factor.c
-> +++ b/drivers/clk/clk-fixed-factor.c
-> @@ -64,12 +64,14 @@ const struct clk_ops clk_fixed_factor_ops =3D {
->  };
->  EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
-> =20
-> -struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
-> -               const char *name, const char *parent_name, unsigned long =
-flags,
-> -               unsigned int mult, unsigned int div)
-> +static struct clk_hw *
-> +__clk_hw_register_fixed_factor(struct device *dev, struct device_node *n=
-p,
-> +               const char *name, const char *parent_name, int index,
-> +               unsigned long flags, unsigned int mult, unsigned int div)
->  {
->         struct clk_fixed_factor *fix;
->         struct clk_init_data init;
-> +       struct clk_parent_data pdata =3D { .index =3D index };
->         struct clk_hw *hw;
->         int ret;
-> =20
-> @@ -85,11 +87,17 @@ struct clk_hw *clk_hw_register_fixed_factor(struct de=
-vice *dev,
->         init.name =3D name;
->         init.ops =3D &clk_fixed_factor_ops;
->         init.flags =3D flags | CLK_IS_BASIC;
-> -       init.parent_names =3D &parent_name;
-> +       if (parent_name)
-> +               init.parent_names =3D &parent_name;
-> +       else
-> +               init.parent_data =3D &pdata;
+Yes.
 
-Ick. I realized that 'init.parent_names' here can be full of junk! Let's
-initialize it properly. Maybe that makes this all better?
+Reviewed-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-----8<----
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 5b09f2cdb7de..2d988a7585d5 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -70,7 +70,7 @@ __clk_hw_register_fixed_factor(struct device *dev, struct=
- device_node *np,
- 		unsigned long flags, unsigned int mult, unsigned int div)
- {
- 	struct clk_fixed_factor *fix;
--	struct clk_init_data init;
-+	struct clk_init_data init =3D { };
- 	struct clk_parent_data pdata =3D { .index =3D index };
- 	struct clk_hw *hw;
- 	int ret;
+>
+> -Doug
+>
+>
+>
+
+
