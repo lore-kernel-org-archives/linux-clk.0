@@ -2,96 +2,67 @@ Return-Path: <SRS0=Ati7=SZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 749ABC10F03
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 22:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E702C10F03
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 23:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D87D218DA
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 22:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B9AB218DA
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 23:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556059905;
-	bh=SLbCAZJQDRjk9vfOn393HVdMCmgStLY/ewawo1pjTEg=;
+	s=default; t=1556060429;
+	bh=EeaQKmLG3fYyd+mnAdVPREDARRO/e4IXy7yRKjb9S9c=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=x1fpx/vgkvtosvtbQF7u5hGOdJOo4vIAkmC6zrynFIsXpQs8AIrBqBjabItxX0Jw9
-	 3DUy0//HyPdCHV9DwZsG7g7V/ERc/IOfQHcaZcPKBj5OwI5L8oO6tv8RaxqOA1OSF5
-	 n3LFuGSsiGfslKnCXykrYCW36nbJHOFSEwmatR1A=
+	b=jKsNElk9a9hC2NvA1IZs4DtV15ipDDKlJ0D31FqiLPLE5Bg/Pb46Hpv58fP/f3Ran
+	 sfzqB8Ao/maKBdivKzLbqoGdL7VjPhJQYx5RhOJAa0DcTXaCKaGHmFTmcQNIcRpzxl
+	 iZfZNIecAht+vVptHzaz8fCjTA3ccf48z9geTdfI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfDWWvo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Apr 2019 18:51:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47028 "EHLO mail.kernel.org"
+        id S1728354AbfDWXA2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Apr 2019 19:00:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbfDWWvo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Apr 2019 18:51:44 -0400
+        id S1726325AbfDWXA2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Apr 2019 19:00:28 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B73E1218D3;
-        Tue, 23 Apr 2019 22:51:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E126E206BA;
+        Tue, 23 Apr 2019 23:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556059903;
-        bh=SLbCAZJQDRjk9vfOn393HVdMCmgStLY/ewawo1pjTEg=;
+        s=default; t=1556060428;
+        bh=EeaQKmLG3fYyd+mnAdVPREDARRO/e4IXy7yRKjb9S9c=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=YbJ/44xwF2XkY70C8ezjis7D1gJTyERQsW1BJULYaY3DojG/gKkDZwEcDpIpPovXB
-         7Wn3dzuyjn11xp2pcoCLDPnYnUSVyqMxfNn0SEsnKom8V+4w8YXdE+ruwR9q4fYlmN
-         N6Vg8eY3NdKvD+8ZoQnQeKflQGdFAQ0c3nQMD1SQ=
+        b=HbJYB4UWA6xVCzovsop3aU4TaTD5kEaf48GD5lS4YXm+fS7ppTojKZWO+ZF/ljRzs
+         eC5gKJVBPcg1JXgoYshnB3ineCahHqe+y7wxASBrD9ZX9ZNeITnC0jP7BD7mi2lwwB
+         xfmAmkw4S/Ki30C0XDq4PCAiwZCQt145nX+vMhPs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1553954090-65470-1-git-send-email-nixiaoming@huawei.com>
-References: <1553954090-65470-1-git-send-email-nixiaoming@huawei.com>
+In-Reply-To: <1553954142-65515-1-git-send-email-nixiaoming@huawei.com>
+References: <1553954142-65515-1-git-send-email-nixiaoming@huawei.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/2] clk:Fix divide-by-zero in divider_ro_round_rate_parent
-To:     jbrunet@baylibre.com, mojha@codeaurora.org,
+Subject: Re: [PATCH v3 2/2] clk:mmp: clk-mix.c fix divide-by-zero
+To:     chao.xie@marvell.com, jbrunet@baylibre.com, mojha@codeaurora.org,
         mturquette@baylibre.com, nixiaoming@huawei.com,
         sboyd@codeaurora.org, soren.brinkmann@xilinx.com
-Message-ID: <155605990288.15276.7089726827167650203@swboyd.mtv.corp.google.com>
+Message-ID: <155606042712.15276.6873845293187802041@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Tue, 23 Apr 2019 15:51:42 -0700
+Date:   Tue, 23 Apr 2019 16:00:27 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting nixiaoming (2019-03-30 06:54:50)
-> In the function divider_recalc_rate() The judgment of the return value of
-> _get_div() indicates that the return value of _get_div() can be 0.
-
-When does _get_div() return 0? It can't be CLK_DIVIDER_MAX_AT_ZERO or
-CLK_DIVIDER_POWER_OF_TWO. I suppose it could be CLK_DIVIDER_ONE_BASED if
-CLK_DIVIDER_ALLOW_ZERO is set? Or just CLK_DIVIDER_ALLOW_ZERO is set? Or
-a table that has 0 in it for some odd reason.
-
-> In order to avoid the divide-by-zero error, add check for return value
-> of _get_div() in the divider_ro_round_rate_parent()
+Quoting nixiaoming (2019-03-30 06:55:42)
+> The _get_div() function has a branch with a return value of 0
+> Add a check on the return value of _get_div() to avoid divide-by-zero
 >=20
+
+Are you seeing this in practice? Or just trying to avoid a div-by-zero
+case that you've found from inspection?=20
+
 > Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 > Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-> ---
->  drivers/clk/clk-divider.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index e5a1726..f4bf7a4 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -347,6 +347,9 @@ long divider_ro_round_rate_parent(struct clk_hw *hw, =
-struct clk_hw *parent,
->         int div;
-> =20
->         div =3D _get_div(table, val, flags, width);
-> +       /* avoid divide-by-zero */
-> +       if (!div)
-> +               return -EINVAL;
-
-Can you please give more details on what's happening here? Who's the
-caller? What are the arguments being passed in? Shouldn't we check for
-CLK_DIVIDER_ALLOW_ZERO and then return prate as it comes in instead of
-returning an error?
-
-> =20
->         /* Even a read-only clock can propagate a rate change */
->         if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
