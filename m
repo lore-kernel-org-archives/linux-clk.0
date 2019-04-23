@@ -6,109 +6,83 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4A4C282DD
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 17:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D88C10F03
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 17:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E8D217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 17:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 450F42183E
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Apr 2019 17:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556041126;
-	bh=Zy+CCWqqJ4AugKSL12VgkMnjIU56Ym4mmSnbNdQLmlU=;
+	s=default; t=1556041209;
+	bh=OJ5HFdYrclCj1KQA4C5FoU+iSAcjqOdxVRhLB+Vkg7s=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=Lg8wlhFC+waUlG3UC6D4guJ9QQFg/UZevOo8gYHBa70tALa3WzGHmAAVP9VHi0xv0
-	 6pwOsXxTKx2o1VLGZOcuqvBl+JdJfJACTGYHzgbC2JgVteCTNgTRK7042JF2UbXti7
-	 COH6OipJey4EnXBdOs7aSHd8Nwf4S/eyrkj5bhFg=
+	b=2NAGHCkxKr9D8lYXR/ZljzLSTsviJ7YhPVtq0V3QR6a6iWYeQpoDM826p4opS+dpX
+	 XQpAnkuQ0F3ChNyB+tgCLMyPd2F+jZkiPy0YBcr6shaRpj19uJkt7xSfjABxNs6tD3
+	 qZiq04lxeK4rJfn9PVx83gTdwlIKuvnTkFVMxHW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729105AbfDWRio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Apr 2019 13:38:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33620 "EHLO mail.kernel.org"
+        id S1729366AbfDWRkI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Apr 2019 13:40:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728594AbfDWRin (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Apr 2019 13:38:43 -0400
+        id S1728826AbfDWRkI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Apr 2019 13:40:08 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E352121738;
-        Tue, 23 Apr 2019 17:38:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB05921738;
+        Tue, 23 Apr 2019 17:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556041123;
-        bh=Zy+CCWqqJ4AugKSL12VgkMnjIU56Ym4mmSnbNdQLmlU=;
+        s=default; t=1556041207;
+        bh=OJ5HFdYrclCj1KQA4C5FoU+iSAcjqOdxVRhLB+Vkg7s=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=zL2xHMxdmf4ZvHGtuZAKw6ecN30+iJ4wUWu5zIdaeMQDfLUpK0/6L/OjYz0G5+dQm
-         GgosWx4815WJd9wO8ukrD6WGdtob1u61HtVxku3zjp2o19TEO+q4zau7zL3lB4Pcbr
-         c9E033CexDTWFOB11xeeuk3Lz/YozEjE7Gwqy2Rc=
+        b=SwWnyRFo2YdYR6iHb0xVL3qx7KO7SGmmOgc+HN2CD+qg+RZNZKFcFe4E/+C2WaKU1
+         aKGB6bLEEK4YCxRHqEYTVA3G7IbQ/+QM7NWl5S2h2Ogohu6Vpy1mqWUrnD+OMCxOd2
+         LT1sfl3Wlao8gHRTlvc/56DyhmvugBnYCvi9IxDs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190423155418.5dc40c48@litschi.hi.pengutronix.de>
-References: <20190412095220.22855-1-m.tretter@pengutronix.de> <155570893975.15276.16952520187761883361@swboyd.mtv.corp.google.com> <20190423155418.5dc40c48@litschi.hi.pengutronix.de>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
+In-Reply-To: <CAOiHx=mjhzG-i8H5R0A+Mu3mcBXTNEaaBhC8rwCQPMWArDA+1A@mail.gmail.com>
+References: <20190418111211.10474-1-jonas.gorski@gmail.com> <20190418111211.10474-2-jonas.gorski@gmail.com> <CAMuHMdX7E8fR+2s-gPgGLKUCdW_--YUDW7w+op3BDurgACFEmA@mail.gmail.com> <CAOiHx=mjhzG-i8H5R0A+Mu3mcBXTNEaaBhC8rwCQPMWArDA+1A@mail.gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Michal Simek <michal.simek@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Paul Mackerras <paulus@samba.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Anatolij Gustschin <agust@denx.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3] clk: zynqmp: use structs for clk query responses
-To:     Michael Tretter <m.tretter@pengutronix.de>
-Message-ID: <155604112205.15276.6904109270991370948@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH RFT V3 1/8] clk: divider: add explicit big endian support
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>
+Message-ID: <155604120699.15276.12116926593244975174@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Tue, 23 Apr 2019 10:38:42 -0700
+Date:   Tue, 23 Apr 2019 10:40:06 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Tretter (2019-04-23 06:54:18)
-> On Fri, 19 Apr 2019 14:22:19 -0700, Stephen Boyd wrote:
-> > Also, I was hoping to see the patch go further and make structures
-> > instead of doing FIELD_GET on u32s. For example:
-> >=20
-> > #define CLK_PARENTS_ID                  GENMASK(15, 0)
-> > #define CLK_PARENTS_FLAGS               GENMASK(31, 16)
-> >=20
-> > This could be a struct of two u16 in them (and quite possibly __le16).
-> >=20
-> >       u16 id;
-> >       u16 flags;
+Quoting Jonas Gorski (2019-04-23 03:39:59)
+> No purpose at all, it's an uncaught artifact from rebasing ._.
 >=20
-> The error codes also do not fit into this scheme. For example, if no
-> further parents are available, the response will contain the value
-> 0xFFFFFFFF in the response. The value may occur at any position in the
-> parents array and should not be interpreted as a struct with two u16 in
-> it, but should be seen as a single value on its own.
+> Stephen, which one is your preferred way of fixing that?
 >=20
-> Therefore, I think the abstraction using a u32[] and bitfields is better
-> than defining a struct for unmarshalling the response.
+> a) a new V4 patchset without this line
+> b) a follow up patch that removes it
+> c) just removing the line yourself
 
-We have union for that?
-
-	union {
-		struct resp {
-			u16 id;
-			u16 flags;
-		};
-		u32 error;
-	};
-
->=20
-> >=20
-> > with __packed on it. This one is weird though:
-> >=20
-> > #define CLK_ATTR_NODE_INDEX             GENMASK(13, 0)
-> > #define CLK_ATTR_NODE_TYPE              GENMASK(19, 14)
-> > #define CLK_ATTR_NODE_SUBCLASS          GENMASK(25, 20)
-> > #define CLK_ATTR_NODE_CLASS             GENMASK(31, 26)
-> >=20
-> > The bits are really packed in there. I guess we can't win this one.
->=20
-> Actually, the CLK_ATTR_NODE_INDEX is not a field in the response, but a
-> field in the clock id. The driver needs to use the index from the query
-> to set the index field in the clock id. Only the bits 2 and 0 in bits
-> 13..0 carry actual meaning.
->=20
-> Not sure if I should amend this patch or have a separate patch for
-> that, because this is in fact an issue in the "drivers: clk: Update
-> clock driver to handle clock attribute" patch.
->=20
-
-I'd just send a follow-up patch if something is wrong.
+I'll go for c and fix up things. Thanks for the catch Geert!
 
