@@ -2,103 +2,206 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B176C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 08:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E391C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 09:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53BD22148D
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 08:36:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IcgtoO7c"
+	by mail.kernel.org (Postfix) with ESMTP id 28A2D21773
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 09:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfDXIg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 04:36:28 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15022 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbfDXIg2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Apr 2019 04:36:28 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cc020110000>; Wed, 24 Apr 2019 01:36:34 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 24 Apr 2019 01:36:27 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 24 Apr 2019 01:36:27 -0700
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 24 Apr
- 2019 08:36:27 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 26E1944E1F; Wed, 24 Apr 2019 11:36:25 +0300 (EEST)
-Date:   Wed, 24 Apr 2019 11:36:25 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/2] clk: Tegra124 PLLM fixes
-Message-ID: <20190424083625.GQ12975@pdeschrijver-desktop.Nvidia.com>
-References: <20190411214835.19947-1-digetx@gmail.com>
- <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1556094994; bh=sf+uC56izVTBFAJrolQ4P2SCwZC5xEniGczvXZfp1Y0=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:
-         Content-Transfer-Encoding:In-Reply-To:X-NVConfidentiality:
-         User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=IcgtoO7cd1+ZMlOXL3Dyjm646oTNpQMAfVgCo6pv4GlUOxSTHqxoqm3KRQDceNo4t
-         0SuVmEIyv2zUZ6QbA+mPIW0d1tLUXEFfv8mquJV5q+UlMBTZQbQFffLIhCG3FH7twl
-         0lg0zI7YngEiIg7HtxR4hCpF9wyugHVC7p8Pg6TaqoXOLhYo5ZmdIvq0EV8MMFeX6Y
-         rL47GSdkPquCYujxtuYuDknlXF8dwwlal5J/WjZdIG0aLXt7nM9YFe0SewDF1YeHdI
-         YbwU7Nllf/dxU9ZoQK/cRD/M/1JOdsQiV/WdZAvYeL3CilD1Z3j+X/oo+a23P3DgLb
-         9pEkVScnsg7+Q==
+        id S1727613AbfDXJGh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 05:06:37 -0400
+Received: from atl4mhfb03.myregisteredsite.com ([209.17.115.119]:35720 "EHLO
+        atl4mhfb03.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727344AbfDXJGg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Apr 2019 05:06:36 -0400
+X-Greylist: delayed 345 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Apr 2019 05:06:35 EDT
+Received: from jax4mhob02.myregisteredsite.com (jax4mhob02.myregisteredsite.com [64.69.218.82])
+        by atl4mhfb03.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id x3O92R3D018571
+        for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2019 05:02:27 -0400
+Received: from mailpod.hostingplatform.com (atl4qobmail04pod0.registeredsite.com [10.30.71.206])
+        by jax4mhob02.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id x3O92PCb019180
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2019 05:02:25 -0400
+Received: (qmail 9435 invoked by uid 0); 24 Apr 2019 09:02:24 -0000
+X-TCPREMOTEIP: 81.173.50.109
+X-Authenticated-UID: mike@milosoftware.com
+Received: from unknown (HELO mikebuntu.TOPIC.LOCAL) (mike@milosoftware.com@81.173.50.109)
+  by 0 with ESMTPA; 24 Apr 2019 09:02:24 -0000
+From:   Mike Looijmans <mike.looijmans@topic.nl>
+To:     devicetree@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH] dt-bindings: Add silabs,si5341
+Date:   Wed, 24 Apr 2019 11:02:16 +0200
+Message-Id: <20190424090216.18417-1-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 19, 2019 at 02:50:10PM +0300, Dmitry Osipenko wrote:
-> 12.04.2019 0:48, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Hello, here are two trivial patches that are correcting PLLM on Tegra12=
-4.
-> > First fixes system lockup due to a bad hardware configuration, second
-> > removes usage of a non-existent register bit.
-> >=20
-> > Dmitry Osipenko (2):
-> >   clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides
-> >     divider
-> >   clk: tegra124: Remove lock-enable bit from PLLM
-> >=20
-> >  drivers/clk/tegra/clk-pll.c      | 4 ++--
-> >  drivers/clk/tegra/clk-tegra124.c | 3 +--
-> >  2 files changed, 3 insertions(+), 4 deletions(-)
-> >=20
->=20
-> Hello Peter,
->=20
-> The patches in this series are trivial and fixing the longstanding bug on=
- Tegra124. Could you please take a look and and ACK the series if it looks =
-good to you?
+Adds the devicetree bindings for the si5341 driver that supports the
+Si5341 and Si5340 chips.
 
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>                     =
-                                        =20
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+---
+ .../bindings/clock/silabs,si5341.txt          | 141 ++++++++++++++++++
+ 1 file changed, 141 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si5341.txt b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
+new file mode 100644
+index 000000000000..1a00dd83100f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
+@@ -0,0 +1,141 @@
++Binding for Silicon Labs Si5341 and Si5340 programmable i2c clock generator.
++
++Reference
++[1] Si5341 Data Sheet
++    https://www.silabs.com/documents/public/reference-manuals/Si5341-40-D-RM.pdf
++
++The Si5341 and Si5340 are programmable i2c clock generators with up to 10 output
++clocks. The chip contains a PLL that sources 5 (or 4) multisynth clocks, which
++in turn can be directed to any of the 10 (or 4) outputs through a divider.
++The internal structure of the clock generators can be found in [1].
++
++The driver can be used in "as is" mode, reading the current settings from the
++chip at boot, in case you have a (pre-)programmed device. If the PLL is not
++configured when the driver probes, it assumes the driver must fully initialize
++it.
++
++The device type, speed grade and revision are determined runtime by probing.
++
++The driver currently only supports XTAL input mode, and does not support any
++fancy input configurations. They can still be programmed into the chip and
++the driver will leave them "as is".
++
++==I2C device node==
++
++Required properties:
++- compatible: shall be one of the following: "silabs,si5341", "silabs,si5340"
++- reg: i2c device address, usually 0x74
++- #clock-cells: from common clock binding; shall be set to 1.
++- clocks: from common clock binding; list of parent clock
++  handles, shall be xtal reference clock. Usually a fixed clock.
++- clock-names: Shall be "xtal".
++- #address-cells: shall be set to 1.
++- #size-cells: shall be set to 0.
++
++Optional properties:
++- silabs,pll-m-num, silabs,pll-m-den: Numerator and denominator for PLL
++  feedback divider. Must be such that the PLL output is in the valid range. For
++  example, to create 14GHz from a 48MHz xtal, use m-num=14000 and m-den=48. Only
++  the fraction matters, using 3500 and 12 will deliver the exact same result.
++  If these are not specified, and the PLL is not yet programmed when the driver
++  probes, the PLL will be set to 14GHz.
++- silabs,reprogram: When present, the driver will always assume the device must
++  be initialized, and always performs the soft-reset routine. Since this will
++  temporarily stop all output clocks, don't do this if the chip is generating
++  the CPU clock for example.
++
++==Child nodes==
++
++Each of the clock outputs can be overwritten individually by
++using a child node to the I2C device node. If a child node for a clock
++output is not set, the configuration remains unchanged.
++
++Required child node properties:
++- reg: number of clock output.
++
++Optional child node properties:
++- silabs,format: Output format, see [1], 1=differential, 2=low-power, 4=LVCMOS
++- silabs,common-mode: Output common mode, depends on standard.
++- silabs,amplitude: Output amplitude, depends on standard.
++- silabs,synth-source: Select which multisynth to use for this output
++- silabs,synth-frequency: Sets the frequency for the multisynth connected to
++  this output. This will affect other outputs connected to this multisynth. The
++  setting is applied before silabs,synth-master and clock-frequency.
++- silabs,synth-master: If present, this output is allowed to change the
++  multisynth frequency dynamically.
++- clock-frequency: Sets a default frequency for this output.
++- always-on: Immediately and permanently enable this output. Particulary
++  useful when combined with assigned-clocks, since that does not prepare clocks.
++
++==Example==
++
++/* 48MHz reference crystal */
++ref48: ref48M {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <48000000>;
++};
++
++i2c-master-node {
++
++	/* Programmable clock (for logic) */
++	si5341: clock-generator@74 {
++		reg = <0x74>;
++		compatible = "silabs,si5341";
++		#clock-cells = <1>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&ref48>;
++		clock-names = "xtal";
++
++		silabs,pll-m-num = <14000>; /* PLL at 14.0 GHz */
++		silabs,pll-m-den = <48>;
++		silabs,reprogram; /* Chips are not programmed, always reset */
++
++		/*
++		 * Output 0 configuration:
++		 *  LVDS 3v3
++		 *  Source from Multisynth 3
++		 *  Use 600MHz synth frequency, and generate 100MHz from that
++		 *  Always keep this clock running
++		 */
++		out0 {
++			/* refclk0 for PS-GT, usually for SATA or PCIe */
++			reg = <0>;
++			silabs,format = <1>; /* LVDS 3v3 */
++			silabs,common-mode = <3>;
++			silabs,amplitude = <3>;
++			silabs,synth-source = <3>; /* Multisynth 3 */
++			silabs,synth-frequency = <600000000>;
++			silabs,synth-master;
++			clock-frequency = <10000000>;
++			always-on;
++		};
++
++		/*
++		 * Output 6 configuration:
++		 *  LVDS 1v8
++		 */
++		out6 {
++			/* FPGA clock 200MHz */
++			reg = <6>;
++			silabs,format = <1>; /* LVDS 1v8 */
++			silabs,common-mode = <13>;
++			silabs,amplitude = <3>;
++		};
++
++		/*
++		 * Output 8 configuration:
++		 *  HCSL 3v3
++		 *  run at 100MHz
++		 */
++		out8 {
++			reg = <8>;
++			silabs,format = <2>;
++			silabs,common-mode = <11>;
++			silabs,amplitude = <3>;
++			silabs,synth-source = <0>;
++			clock-frequency = <100000000>;
++		};
++	};
++};
+-- 
+2.17.1
 
-Peter.
