@@ -6,138 +6,104 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D844C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 21:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C327C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 23:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C37A218B0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 21:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1885921773
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 23:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556141255;
-	bh=xUxFNsMZ8txNu7js12qDGeRYYEYc3jJ0GwudbvyOSd4=;
+	s=default; t=1556148078;
+	bh=DSmHkoIkwZsm1Mx8ltfExaA4b8nehNkyJDu8NKgo8pI=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=jeX/+mFtQLQ4xXFiiWwO51qSEj7EAp3naehIndxS1Cg1tsWM9SlofZrJ+TcxEZ7w3
-	 x1zEfptJx2S9V7KtZXOvspEnm1cE7yBR4QqMhXM0wRgS+bDweGgrjKjtUa16WC8DQL
-	 K7vUsUvD4i1uqhXf63D0ULo6C6vgeu7aeMRLzRx8=
+	b=W5nkjkr7JgbJ0JlSkJ3OTc80RuyJa+wFRjhVtACPDVPFB0JxtU4i5g5JvKctXBXsb
+	 6WEy9a2GwmAwNH6zb72oG05clRFObrNP5tZpZzSJCN0M1QDk5F0j796lanejYCphRr
+	 dFTtucZTD93VhIfrMYfKs0HQwFblBhKi5zSSxRv0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387456AbfDXV1e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 17:27:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39418 "EHLO mail.kernel.org"
+        id S1728066AbfDXXVR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 19:21:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731175AbfDXV1e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 17:27:34 -0400
+        id S1727358AbfDXXVR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Apr 2019 19:21:17 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 990A32183E;
-        Wed, 24 Apr 2019 21:27:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6CF62175B;
+        Wed, 24 Apr 2019 23:21:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556141253;
-        bh=xUxFNsMZ8txNu7js12qDGeRYYEYc3jJ0GwudbvyOSd4=;
+        s=default; t=1556148076;
+        bh=DSmHkoIkwZsm1Mx8ltfExaA4b8nehNkyJDu8NKgo8pI=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=rzaZXS9tp0Wrwyxq4Sl6jD+5RE/ExNHeXPc/36SNn0Z69ZrmA7BV8FUgWkRwfBGfp
-         6hSFUqO9qrTqfhxEZr49uZcbwpb3ErbNK4oZv6N05aLJ7IUbMAOtbw8n5gaLqwXIdK
-         Fx6L6fqUhFOdKJSE0x61mMqu7Iu2qX7h7l+MCGcc=
+        b=gjGboqiJ3iboaJ9xE1Ny624NdCprS5t9kYpU06qxsjIaN3AkYjEhmk8nojpeteq0Z
+         VfblfykldCXCugpYlUmGSY6cU1g4yfipoTPT5520A4cJGF5bjlYGxNGwS8Pf9Krn3t
+         2GgwXjdP4ga0wkZyHufMV2o5cJ84lRiepHweIoOc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <E490CD805F7529488761C40FD9D26EF12AB29F5F@dggemm507-mbx.china.huawei.com>
-References: <1553954090-65470-1-git-send-email-nixiaoming@huawei.com> <155605990288.15276.7089726827167650203@swboyd.mtv.corp.google.com> <E490CD805F7529488761C40FD9D26EF12AB29F5F@dggemm507-mbx.china.huawei.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <1556117426-26878-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1556117426-26878-1-git-send-email-vabhav.sharma@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH v3 1/2] clk:Fix divide-by-zero in divider_ro_round_rate_parent
-To:     "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-        "mojha@codeaurora.org" <mojha@codeaurora.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "soren.brinkmann@xilinx.com" <soren.brinkmann@xilinx.com>,
-        Nixiaoming <nixiaoming@huawei.com>
-Message-ID: <155614125279.15276.7728769195271989477@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] arm64: drivers: clk: qoriq: increase array size of cmux_to_group
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>
+Message-ID: <155614807592.15276.17299738374776352204@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Wed, 24 Apr 2019 14:27:32 -0700
+Date:   Wed, 24 Apr 2019 16:21:15 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nixiaoming (2019-04-24 08:31:23)
-> On Wed, Apr 24, 2019 at 6:52 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> >Quoting nixiaoming (2019-03-30 06:54:50)
-> >> In the function divider_recalc_rate() The judgment of the return value=
- of
-> >> _get_div() indicates that the return value of _get_div() can be 0.
-> >
-> >When does _get_div() return 0? It can't be CLK_DIVIDER_MAX_AT_ZERO or
-> >CLK_DIVIDER_POWER_OF_TWO. I suppose it could be CLK_DIVIDER_ONE_BASED if
-> >CLK_DIVIDER_ALLOW_ZERO is set? Or just CLK_DIVIDER_ALLOW_ZERO is set? Or
-> >a table that has 0 in it for some odd reason.
-> >
-> divider_ro_round_rate_parent() is an exported function.
-> There is no parameter check or return value check before=20
-> and after calling _get_div(), which may result in a divide by zero error.
+Your subject should be "clk: qoriq: Increase array size of cmux_to_group"
+
+Quoting Vabhav Sharma (2019-04-24 07:50:13)
+> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 >=20
-> Case1: The "flags" contains CLK_DIVIDER_ONE_BASED, and "val" is 0.
-> Case2: The "flags" does not contain CLK_DIVIDER_ONE_BASED,=20
->     CLK_DIVIDER_POWER_OF_TWO, CLK_DIVIDER_MAX_AT_ZERO, =20
->     "table" is NULL.  "val" is 0xffffffff
-> In both cases _get_div() returns 0
-
-Alright, so this is all theoretical and not happening in practice? Best
-to do nothing then I think.
-
+> Increase size of cmux_to_group array, to accomdate entry of
+> -1 termination.
 >=20
-> >> In order to avoid the divide-by-zero error, add check for return value
-> >> of _get_div() in the divider_ro_round_rate_parent()
-> >>=20
-> >> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
-> >> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-> >> ---
-> >>  drivers/clk/clk-divider.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>=20
-> >> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> >> index e5a1726..f4bf7a4 100644
-> >> --- a/drivers/clk/clk-divider.c
-> >> +++ b/drivers/clk/clk-divider.c
-> >> @@ -347,6 +347,9 @@ long divider_ro_round_rate_parent(struct clk_hw *h=
-w, struct clk_hw *parent,
-> >>         int div;
-> >> =20
-> >>         div =3D _get_div(table, val, flags, width);
-> >> +       /* avoid divide-by-zero */
-> >> +       if (!div)
-> >> +               return -EINVAL;
-> >
-> >Can you please give more details on what's happening here? Who's the
-> >caller? What are the arguments being passed in? Shouldn't we check for
-> >CLK_DIVIDER_ALLOW_ZERO and then return prate as it comes in instead of
-> >returning an error?
-> >
-> I found that there may be a divide-by-zero error by code review,
->  for example: "flags" is CLK_DIVIDER_ONE_BASED and "val" is 0.
-> So simply add a return value check to avoid divide-by-zero
+> Added -1, terminated, entry for 4080_cmux_grpX.
 >=20
-> thanks for your suggestion,=20
-> I will resend the patch later
-> refer to your advice and divider_recalc_rate() to add a check for CLK_DIV=
-IDER_ALLOW_ZERO
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Acked-by: Scott Wood <oss@buserror.net>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk-qoriq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >=20
+> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+> index 1212a9b..f6606cf 100644
+> --- a/drivers/clk/clk-qoriq.c
+> +++ b/drivers/clk/clk-qoriq.c
+> @@ -79,7 +79,7 @@ struct clockgen_chipinfo {
+>         const struct clockgen_muxinfo *cmux_groups[2];
+>         const struct clockgen_muxinfo *hwaccel[NUM_HWACCEL];
+>         void (*init_periph)(struct clockgen *cg);
+> -       int cmux_to_group[NUM_CMUX]; /* -1 terminates if fewer than NUM_C=
+MUX */
+> +       int cmux_to_group[NUM_CMUX+1]; /* array should be -1 terminated */
 
-Ok. I'm actually wondering why divider_ro_round_rate_parent() doesn't
-use clk_divider_bestdiv() instead of _get_div(). I think we did this to
-make things simpler.
+Please put space around that +.
 
-We could make clk_divider_bestdiv() take a 'val' argument to start the
-divider loop (and make that 0 for the "normal" case) and then look at
-the 'flags' for CLK_DIVIDER_READ_ONLY to restrict the 'maxdiv' and 'i'
-arguments there to be whatever the val is passed in to be. It would
-require passing the val into _get_maxdiv() too, and only caring about
-the val when the read only flag is set.
+>         u32 pll_mask;   /* 1 << n bit set if PLL n is valid */
+>         u32 flags;      /* CG_xxx */
+>  };
+> @@ -601,7 +601,7 @@ static const struct clockgen_chipinfo chipinfo[] =3D {
+>                         &p4080_cmux_grp1, &p4080_cmux_grp2
+>                 },
+>                 .cmux_to_group =3D {
+> -                       0, 0, 0, 0, 1, 1, 1, 1
+> +                       0, 0, 0, 0, 1, 1, 1, 1, -1
+>                 },
+>                 .pll_mask =3D 0x1f,
+>         },
 
-Then I think we would naturally get div-by-zero avoidance code and we
-could collapse the divider code paths substantially into
-clk_divider_bestdiv(). It would be even better if that patch could come
-after moving the clk-divider ops to use .determine_rate() instead of
-.round_rate() clk_ops. If we did that then we could enhance the divider
-code to handle rate request clamping.
+Did you want this patch to go through clk tree? I seem to have acked it,
+which I don't remember. Usually when I ack something I assume it's going
+through some other tree.
 
