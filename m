@@ -2,163 +2,87 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B7CC282CE
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 09:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A34D8C282E1
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 10:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F37C20878
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 09:30:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bVoE2GyT"
+	by mail.kernel.org (Postfix) with ESMTP id 72365218B0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 10:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfDXJaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 05:30:21 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40969 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729024AbfDXJaU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Apr 2019 05:30:20 -0400
-Received: by mail-pl1-f193.google.com with SMTP id d9so3074076pls.8
-        for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2019 02:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jS8sA5wVvAstEMBPfxsjXr3lvFTcs0TzZqWL7gM79Nw=;
-        b=bVoE2GyTwPZO7/bsB1UtAykhVesT02vmZE7yOcPQYEvY2yKhHMsjFiKyA5CABbiYkH
-         3s6swu7SZSM8VrzmdeMqXYi+6MwxdyIF2b53WHv7/5oZg3XibbxWZkr2tznB3EI4nP9t
-         7JYAQnBNdZBDJV/IhJ+KpevyqetCOUyrurL3tXgh8pi7uJ7SeUrqvVDHAtxA3D49UmA/
-         ofd6csttFFZDzTLrcYQn+QAtvJ5uSuhczjxgN4YMIoG+VTTQQFPmXJ1isDlflWK6gAU2
-         hRaTUXak13JtonP4AH0vR1DOoWi5yCk0PTCuS2EWspp9Ugn9NTJZS7qAXtc8LrQ2EfX4
-         xJnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jS8sA5wVvAstEMBPfxsjXr3lvFTcs0TzZqWL7gM79Nw=;
-        b=CybnPjs3GgAJtGl2qTkX/j6pn3Xjp0kbiK8w9Kurnu4vzajYnjcFh8Ozftuv+ElUYK
-         5BEarBZrGzAvqkeNktjjDNFuLa7qYZfGoK9vM8cwHLITBGzjaP/khdc2GOg1YDNZQQwP
-         TxSGIpkUj3SiCO8VI0XtrwFxxYMQAJBNwCZeneZxUJgHxtBP+8DISPIWwo/FLC1Ky7v7
-         sg4vD6IMbjHBNIcynCYePiyQyBK1aYVFwmCO5ard1UAf0r7AzbR4gFIg6nc8pP16mGFp
-         b9dOJaWyvaM/peh6WCDysiJUgWNczF7KEYtB0wNT2BfZEziO5quOXqqi6tJK2k/75fEm
-         hTkg==
-X-Gm-Message-State: APjAAAUYAAyljkJFdZxzy0GgpSH8UO6Ao2Uz/xUnn688vY9baMFtr+ge
-        cHMsZ++1hxw8CSEEzjckJEnZTQ==
-X-Google-Smtp-Source: APXvYqyvJbo01zmJtkIrttWV5J+5l51q8sH4KWYsVBjaJbuocJCDqsEwJfUW759839TNhvJEt02FQw==
-X-Received: by 2002:a17:902:2e01:: with SMTP id q1mr30844272plb.221.1556098218762;
-        Wed, 24 Apr 2019 02:30:18 -0700 (PDT)
-Received: from localhost ([122.166.139.136])
-        by smtp.gmail.com with ESMTPSA id j12sm22427245pgg.79.2019.04.24.02.30.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Apr 2019 02:30:17 -0700 (PDT)
-Date:   Wed, 24 Apr 2019 15:00:15 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc:     Christian Neubert <christian.neubert.86@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for
- cpu clocks
-Message-ID: <20190424093015.rcr5auamfccxf6ei@vireshk-i7>
-References: <20190313163558.6705-1-gregory.clement@bootlin.com>
- <20190314121541.GB19385@apalos>
- <CAC5LXJcCs4nr-qFOWzUJpUBAJ9ngG-cgeTCVCFBKFc1SPzHMuQ@mail.gmail.com>
- <20190314134428.GA24768@apalos>
- <874l85v8p6.fsf@FE-laptop>
- <20190318112844.GA1708@apalos>
- <87h8c0s955.fsf@FE-laptop>
- <20190318122113.GA4834@apalos>
+        id S1727697AbfDXKuO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 06:50:14 -0400
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:46423 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726790AbfDXKuO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Apr 2019 06:50:14 -0400
+Received: from [IPv6:2001:420:44c1:2579:8575:c0e0:a08:6676] ([IPv6:2001:420:44c1:2579:8575:c0e0:a08:6676])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id JFTahJiZEZVjxJFTdha81T; Wed, 24 Apr 2019 12:50:12 +0200
+Subject: Re: [PATCH 0/5] Aspeed: Enable video engine
+To:     Eddie James <eajames@linux.ibm.com>, linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        joel@jms.id.au, andrew@aj.id.au, mchehab@kernel.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org
+References: <1554229504-5661-1-git-send-email-eajames@linux.ibm.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <b524e352-2e9d-6360-5517-18eee2e02c2c@xs4all.nl>
+Date:   Wed, 24 Apr 2019 12:50:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190318122113.GA4834@apalos>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <1554229504-5661-1-git-send-email-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfClRnGEmmvsjAmZ6WsMrfn9ojbVDq+RnKJoF1TYkNQnafmXDBrLctyOIdqxY6QFyjoqJQ851+tiXMc25OcmQahV5IV9Vv3TS/+ADvNHfpR02caCnxC62
+ TrFhkBG3lPcl0VkKtI3rM3S0v+MnPUe+k1sCISaMFBQjBkrYrQ6vBdPB2yd+WCqcLmQVldn/Pzk43ifSaep5qkMx0GuNCpKdGz0i4uoW6w23HsgD7TLPNl4h
+ ydj4GLcNCgOOlBNEux1CHDjRGeyBUh/xEtnQpEargmhcxWqS5pvKFXo2HqPpbyPxlE2VnKzmX1wCnlePyOojIWhEGqafDjnchxueHZ2Ii0PcrwWsqPeLR3fB
+ 3d5p1Qe1KOontEwlj6i2XCC4DDKXhGH2bfLR0JyF5X3bpXZsHNgjF/vygZ7FPPeEUKptcO1rlb0RFf1saYmnx/iGcsWOQ4jEXATf0Ib07/xzirFu813j9s5d
+ TRDtHaySY1SO/EkGMdxO8nryob5RY4y4HW01pYFv41Gr26pYAgh0TNHCnW4ByiHefZZuvA9AYvrTbZ9APzkMltWOtgB77Y0lLz34SHrJfKx8zHoumgMxE0Da
+ J6njZ8THjga6nOrnAOGGLBj4+NNryL+PfTon1VOLjzZdlxC5FnSLL5CBhBz8iPlx2GFMy4P88Me6jrAoYSxQNzWD9UX25RZHti1mvHLosII3Mw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-03-19, 14:21, Ilias Apalodimas wrote:
-> Hi Gregory, 
-> 
-> > >> 
-> > > [   14.909524] clk_pm_cpu_set_parent old=28004840 -> val=0x6000000 load_level=0
-> > > [   14.916424] clk_pm_cpu_set_parent old=2E004840 -> val=0x600 load_level=1
-> > > [   14.923315] clk_pm_cpu_set_parent old=8880A8C0 -> val=0x6000000 load_level=2
-> > > [   14.930572] clk_pm_cpu_set_parent old=8E80A8C0 -> val=0x600 load_level=3
-> > >
-> > >
-> > > Let me know if you need anything else
-> > 
-> > Could you show me the output of "cat /sys/kernel/debug/clk/clk_summary"
-> > 
-> root@localhost ~ # cat /sys/kernel/debug/clk/clk_summary
->                                  enable  prepare  protect                                duty
->    clock                          count    count    count        rate   accuracy phase  cycle
-> ---------------------------------------------------------------------------------------------
->  xtal                                 2        3        0    25000000          0     0  50000
->     i2c_1                             0        0        0    25000000          0     0  50000
->     i2c_2                             0        0        0    25000000          0     0  50000
->     avs                               0        0        0    25000000          0     0  50000
->     TBG-B-S                           2        2        0  1000000000          0     0  50000
->        cpu                            0        0        0   200000000          0     0  50000
->        usb32_ss_sys                   1        1        0   125000000          0     0  50000
->        usb32_usb2_sys                 0        0        0   100000000          0     0  50000
->        gbe_125                        0        0        0   125000000          0     0  50000
->           gbe0_125                    0        0        0   125000000          0     0  50000
->           gbe1_125                    0        0        0   125000000          0     0  50000
->        gbe_core                       1        1        0   250000000          0     0  50000
->           gbe_bm                      0        0        0   250000000          0     0  50000
->           gbe0_core                   1        1        0   250000000          0     0  50000
->           gbe1_core                   0        0        0   250000000          0     0  50000
->        eip97                          0        0        0   500000000          0     0  50000
->        trace                          0        0        0  1000000000          0     0  50000
->        ddr_fclk                       0        0        0   125000000          0     0  50000
->        pwm                            0        0        0    50000000          0     0  50000
->        tscem_tmx                      0        0        0  1000000000          0     0  50000
->        sec_dap                        0        0        0   100000000          0     0  50000
->        sec_at                         0        0        0   200000000          0     0  50000
->     TBG-A-S                           0        0        0  1600000000          0     0  50000
->        sdio                           0        0        0   400000000          0     0  50000
->        ddr_phy                        0        0        0   400000000          0     0  50000
->        mmc                            0        0        0   400000000          0     0  50000
->     TBG-B-P                           0        0        0   500000000          0     0  50000
->        gbe_50                         0        0        0    50000000          0     0  50000
->           gbe0_50                     0        0        0    50000000          0     0  50000
->           gbe1_50                     0        0        0    50000000          0     0  50000
->     TBG-A-P                           0        1        0   800000000          0     0  50000
->        counter                        0        0        0   160000000          0     0  50000
->        sqf                            0        1        0   200000000          0     0  50000
->        tscem                          0        0        0   200000000          0     0  50000
->        sata_host                      0        0        0   200000000          0     0  50000
-> root@localhost ~ # 
-> 
-> > Also, during this week-end, Christian suggested that the issue might
-> > come from the AVS support.
-> > 
-> > Could you disable it and check you still have the issue?
-> > 
-> > For this, you just have to remove the avs node in
-> > arch/arm64/boot/dts/marvell/armada-37xx.dtsi and rebuild the dtb.
-> Sure. You'll have to wait for a week though. Currently on a trip. I'll run that
->  once i return
+Hi Eddie,
 
-@Ilias: Can you please try this now and confirm to Gregory ?
+On 4/2/19 8:24 PM, Eddie James wrote:
+> This series enables the video engine on Aspeed BMC platforms. The video engine
+> clocking is added to the Aspeed clock driver. The use of the video engine reset
+> line, originally planned to be made externally available in the clock driver,
+> is removed from the video engine driver. Finally a node for the video engine is
+> added to the AST2500 devicetree.
+> The series also includes a missing property for reserved memory in the
+> devicetree documentation, and a small change to make the video engine driver
+> start without reserved memory.
 
--- 
-viresh
+I assume you'll post a v3 since there were some comments?
+
+If you want to get it in for 5.2, then be aware that you should post it tomorrow
+at the latest.
+
+Regards,
+
+	Hans
+
+> 
+> Eddie James (5):
+>   media: platform: Aspeed: Remove use of reset line
+>   media: platform: Aspeed: Make reserved memory optional
+>   media: dt-bindings: aspeed-video: Add missing memory-region property
+>   clk: Aspeed: Setup video engine clocking
+>   ARM: dts: aspeed-g5: Add video engine
+> 
+>  .../devicetree/bindings/media/aspeed-video.txt     |  6 ++++
+>  arch/arm/boot/dts/aspeed-g5.dtsi                   | 10 ++++++
+>  drivers/clk/clk-aspeed.c                           | 42 ++++++++++++++++++++--
+>  drivers/media/platform/aspeed-video.c              | 33 ++++-------------
+>  4 files changed, 61 insertions(+), 30 deletions(-)
+> 
+
