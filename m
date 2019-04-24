@@ -2,67 +2,91 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E9EC282E1
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 23:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FD4C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 23:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 625C221773
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 23:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556148193;
-	bh=957fOFQAN0C6XJmCCGy9dAvWhCB4IusbiKTa3Wx+WEg=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=hBKJUFg7AKJjj97NvoxrhI7GkYM1GJx+Ya0aQMaLi/NENmtJ7Hy/F6UY2qWhcqy3s
-	 ikTYPT/TbjsI4qC7BbwqLZVKGnpUww5Rjq2nMemPwPTcggrWYKe71VaQG6CQSe+R/r
-	 zP4M4EueKg8pktj2HGBJqB6+EYW6iS9k5WW9ibMs=
+	by mail.kernel.org (Postfix) with ESMTP id C9F7B214AE
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 23:37:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZaE+ay+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfDXXXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 19:23:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728155AbfDXXXM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 19:23:12 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1372F217FA;
-        Wed, 24 Apr 2019 23:23:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556148192;
-        bh=957fOFQAN0C6XJmCCGy9dAvWhCB4IusbiKTa3Wx+WEg=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=Td8y1JFwZU8hEBXyn6ttij4aGjtBZY8dPwoLOhTNXb2uvdFIhNAGmmUZHT619r5if
-         RjGHUU385QnllGSdYa7MfGiLDeIPMslSee063X8w2iGesM4LDN8OCvSyYTVCPohKT3
-         ZI3qoXV2e5Dc7zSZzS7oc77LlrQkbQg6optP3yyc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <bd6a2bf5-aae5-9610-4f48-09e6f44fa3b4@gmail.com>
-References: <201904242234.3ZpDzMBq%lkp@intel.com> <bd6a2bf5-aae5-9610-4f48-09e6f44fa3b4@gmail.com>
+        id S1727433AbfDXXhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 19:37:09 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:45322 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfDXXhJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Apr 2019 19:37:09 -0400
+Received: by mail-lj1-f177.google.com with SMTP id y6so18472631ljd.12
+        for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2019 16:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KLNrORvuKNvAinge+zhKpygJaR7+13snXpFr/GCw1ho=;
+        b=kZaE+ay+C7Xd86Twpz4mybvhAmece29Q9543iYEfXXr9L5cGb5365PuhfiZriFszwg
+         kwPdhd77BwLxzV38vQO2zyjSB3gArD9jCZ/H7n45geC0Wef4h0+G50Ea2uxA/1hbWIcj
+         S2ALdOzzXFmfhHEvhcUDFR6/Tug7pM9N/WOMY9jj7R0lp6u8Mt8K4isAFhzp0htXAFCZ
+         9wg1YRhBq3Z/nBfSjPliTqYQ1/O9y8JXI9k9S/HzJSK2UYCqeaDQgNoKPvhzZVRvvxOH
+         7urChbwKNLCOGt6pJFH3ro9UShvIm4HBEkbK3pkXlwqElU1FyLUYOPH4mxQn8vMBtZdh
+         YqCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KLNrORvuKNvAinge+zhKpygJaR7+13snXpFr/GCw1ho=;
+        b=i7a092meXQbp/tKtrW7Ip/qpzXAGL+CaRNrqizCRxuuz2bXjSTltUYZ8DP8nukqpWY
+         sIA+iCjhzxzDaixCL0TnyhsowhrjN2+OFzZhA20aDlsPKKZIurFFKVtsd5PRqVd61rMD
+         LYgapogdqIeRuXkGfv4UVCNNDqIitcQ3J4ZakCHWwyVmSmwAx1IcfLWOxDHAl9Jf52VF
+         GM2dhfWzzWX8i785uNvBO2lvT9lmZGZPOnyQHky2v6FrYl8RJTk6sMCXTkzV1DSLBox5
+         CCAw71o9PCMvV1Z+pnqC9uj/nY/bRyDZbLtRRs27iNDAFts7ZvBZNTXXJo6qvNtrwh5b
+         W60A==
+X-Gm-Message-State: APjAAAXpB7fKT19Sm6E7DH+IX/I8IDgBdZAhMkUi6a1qfY37YM/aF23D
+        VC00kFMxdVHPi0wR2ZqBIzBKhrQh
+X-Google-Smtp-Source: APXvYqyxHnrA6kBruxeZqTJ+sk5atPwo9uv1zJsjUGSdgty0WGHJ+VzewxhtB2m9aLztfqFxgVmOfQ==
+X-Received: by 2002:a05:651c:114:: with SMTP id a20mr18782520ljb.53.1556149026915;
+        Wed, 24 Apr 2019 16:37:06 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id y8sm4272903lji.88.2019.04.24.16.37.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Apr 2019 16:37:06 -0700 (PDT)
+Subject: Re: [chanwoo:devfreq-testing 15/16]
+ drivers//devfreq/tegra30-devfreq.c:478:8: error: implicit declaration of
+ function 'clk_set_min_rate'; did you mean 'clk_set_rate'?
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Cc:     linux-clk@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [chanwoo:devfreq-testing 15/16] drivers//devfreq/tegra30-devfreq.c:478:8: error: implicit declaration of function 'clk_set_min_rate'; did you mean 'clk_set_rate'?
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <155614819134.15276.7176628667441699971@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Wed, 24 Apr 2019 16:23:11 -0700
+References: <201904242234.3ZpDzMBq%lkp@intel.com>
+ <bd6a2bf5-aae5-9610-4f48-09e6f44fa3b4@gmail.com>
+ <155614819134.15276.7176628667441699971@swboyd.mtv.corp.google.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <778e8833-ec80-8474-ab07-24a5a1d22640@gmail.com>
+Date:   Thu, 25 Apr 2019 02:37:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <155614819134.15276.7176628667441699971@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Osipenko (2019-04-24 07:41:56)
->=20
-> Oh, there is no declaration for clk_set_min_rate() when CONFIG_COMMON_CLK=
-=3Dn. Either driver should be made dependent on CONFIG_COMMON_CLK or the de=
-claration should be added to include/linux/clk.h (the same applies to tegra=
-20-devfreq).
->=20
-> Chanwoo, what will we do?
+25.04.2019 2:23, Stephen Boyd пишет:
+> Quoting Dmitry Osipenko (2019-04-24 07:41:56)
+>>
+>> Oh, there is no declaration for clk_set_min_rate() when CONFIG_COMMON_CLK=n. Either driver should be made dependent on CONFIG_COMMON_CLK or the declaration should be added to include/linux/clk.h (the same applies to tegra20-devfreq).
+>>
+>> Chanwoo, what will we do?
+> 
+> Send a patch to add the empty wrappers to clk.h please.
+> 
 
-Send a patch to add the empty wrappers to clk.h please.
-
+All right!
