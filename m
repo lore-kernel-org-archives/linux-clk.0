@@ -2,86 +2,142 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CE2C282E1
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 20:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D844C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 21:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 685DB218B0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 20:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C37A218B0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 21:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556139347;
-	bh=JB2pTfbdLCrFKBW53Eyyh+L38zpGBWdyy93V8mYDvr0=;
+	s=default; t=1556141255;
+	bh=xUxFNsMZ8txNu7js12qDGeRYYEYc3jJ0GwudbvyOSd4=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=bOGS0hUtCZVWP8yfW/t4Wigz6oKQfRBw+YPUavWyKWkexpnnNXn9fwWxTpT+soq9f
-	 rBTj21Zvwr0UsfF7AO8huKBtUci+aJdMrAnyDJ/dGgIpZos7YJqdqCzWS3KIlY6F+7
-	 EahBr3lNhpHnCSIXVIhI6adC3yzkYY1sEokichjA=
+	b=jeX/+mFtQLQ4xXFiiWwO51qSEj7EAp3naehIndxS1Cg1tsWM9SlofZrJ+TcxEZ7w3
+	 x1zEfptJx2S9V7KtZXOvspEnm1cE7yBR4QqMhXM0wRgS+bDweGgrjKjtUa16WC8DQL
+	 K7vUsUvD4i1uqhXf63D0ULo6C6vgeu7aeMRLzRx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387583AbfDXUzr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 16:55:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58292 "EHLO mail.kernel.org"
+        id S2387456AbfDXV1e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 17:27:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387467AbfDXUzq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 16:55:46 -0400
+        id S1731175AbfDXV1e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Apr 2019 17:27:34 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E70F82183E;
-        Wed, 24 Apr 2019 20:55:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 990A32183E;
+        Wed, 24 Apr 2019 21:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556139346;
-        bh=JB2pTfbdLCrFKBW53Eyyh+L38zpGBWdyy93V8mYDvr0=;
+        s=default; t=1556141253;
+        bh=xUxFNsMZ8txNu7js12qDGeRYYEYc3jJ0GwudbvyOSd4=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=P4Z1foV9w7fCW+EHFfiEe4Tq6PwO+l8457MoNdkEdTofYAXQ1dlspOoXsOe4gp2M9
-         0gf1dnj+5VZoiRNQ2E5g8Ct9h+9w5pIRNcdoFU0NMoP9CqULZ4yqWqmElCOUfbHoy6
-         y5vzEHDR1OvXXvdUJ0YcChNBynhN9S0ldw+ORd2A=
+        b=rzaZXS9tp0Wrwyxq4Sl6jD+5RE/ExNHeXPc/36SNn0Z69ZrmA7BV8FUgWkRwfBGfp
+         6hSFUqO9qrTqfhxEZr49uZcbwpb3ErbNK4oZv6N05aLJ7IUbMAOtbw8n5gaLqwXIdK
+         Fx6L6fqUhFOdKJSE0x61mMqu7Iu2qX7h7l+MCGcc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <E490CD805F7529488761C40FD9D26EF12AB29F8A@dggemm507-mbx.china.huawei.com>
-References: <1553954142-65515-1-git-send-email-nixiaoming@huawei.com> <155606042712.15276.6873845293187802041@swboyd.mtv.corp.google.com> <E490CD805F7529488761C40FD9D26EF12AB29F8A@dggemm507-mbx.china.huawei.com>
+In-Reply-To: <E490CD805F7529488761C40FD9D26EF12AB29F5F@dggemm507-mbx.china.huawei.com>
+References: <1553954090-65470-1-git-send-email-nixiaoming@huawei.com> <155605990288.15276.7089726827167650203@swboyd.mtv.corp.google.com> <E490CD805F7529488761C40FD9D26EF12AB29F5F@dggemm507-mbx.china.huawei.com>
 Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH v3 2/2] clk:mmp: clk-mix.c fix divide-by-zero
-To:     "chao.xie@marvell.com" <chao.xie@marvell.com>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
+Subject: RE: [PATCH v3 1/2] clk:Fix divide-by-zero in divider_ro_round_rate_parent
+To:     "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
         "mojha@codeaurora.org" <mojha@codeaurora.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
         "soren.brinkmann@xilinx.com" <soren.brinkmann@xilinx.com>,
         Nixiaoming <nixiaoming@huawei.com>
-Message-ID: <155613934508.15276.10077721853967398026@swboyd.mtv.corp.google.com>
+Message-ID: <155614125279.15276.7728769195271989477@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Wed, 24 Apr 2019 13:55:45 -0700
+Date:   Wed, 24 Apr 2019 14:27:32 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nixiaoming (2019-04-24 08:34:54)
-> On Wed, Apr 24, 2019 at 7:00 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> >Quoting nixiaoming (2019-03-30 06:55:42)
-> >> The _get_div() function has a branch with a return value of 0
-> >> Add a check on the return value of _get_div() to avoid divide-by-zero
+Quoting Nixiaoming (2019-04-24 08:31:23)
+> On Wed, Apr 24, 2019 at 6:52 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >Quoting nixiaoming (2019-03-30 06:54:50)
+> >> In the function divider_recalc_rate() The judgment of the return value=
+ of
+> >> _get_div() indicates that the return value of _get_div() can be 0.
+> >
+> >When does _get_div() return 0? It can't be CLK_DIVIDER_MAX_AT_ZERO or
+> >CLK_DIVIDER_POWER_OF_TWO. I suppose it could be CLK_DIVIDER_ONE_BASED if
+> >CLK_DIVIDER_ALLOW_ZERO is set? Or just CLK_DIVIDER_ALLOW_ZERO is set? Or
+> >a table that has 0 in it for some odd reason.
+> >
+> divider_ro_round_rate_parent() is an exported function.
+> There is no parameter check or return value check before=20
+> and after calling _get_div(), which may result in a divide by zero error.
+>=20
+> Case1: The "flags" contains CLK_DIVIDER_ONE_BASED, and "val" is 0.
+> Case2: The "flags" does not contain CLK_DIVIDER_ONE_BASED,=20
+>     CLK_DIVIDER_POWER_OF_TWO, CLK_DIVIDER_MAX_AT_ZERO, =20
+>     "table" is NULL.  "val" is 0xffffffff
+> In both cases _get_div() returns 0
+
+Alright, so this is all theoretical and not happening in practice? Best
+to do nothing then I think.
+
+>=20
+> >> In order to avoid the divide-by-zero error, add check for return value
+> >> of _get_div() in the divider_ro_round_rate_parent()
 > >>=20
+> >> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+> >> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+> >> ---
+> >>  drivers/clk/clk-divider.c | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>=20
+> >> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> >> index e5a1726..f4bf7a4 100644
+> >> --- a/drivers/clk/clk-divider.c
+> >> +++ b/drivers/clk/clk-divider.c
+> >> @@ -347,6 +347,9 @@ long divider_ro_round_rate_parent(struct clk_hw *h=
+w, struct clk_hw *parent,
+> >>         int div;
+> >> =20
+> >>         div =3D _get_div(table, val, flags, width);
+> >> +       /* avoid divide-by-zero */
+> >> +       if (!div)
+> >> +               return -EINVAL;
 > >
-> >Are you seeing this in practice? Or just trying to avoid a div-by-zero
-> >case that you've found from inspection?=20
+> >Can you please give more details on what's happening here? Who's the
+> >caller? What are the arguments being passed in? Shouldn't we check for
+> >CLK_DIVIDER_ALLOW_ZERO and then return prate as it comes in instead of
+> >returning an error?
 > >
-> This potential bug is found by code inspection.
-> _get_div() is defined as a static function which is only refered twice=20
-> in drivers/clk/mmp/clk-mix.c. In both cases the return value of _get_div()
->  is used as divider without any check.
->  If _get_div() never returns 0, then the branch returning 0 is dead code,
-> or the return value should be check to avoid dividing by zero error.=20
+> I found that there may be a divide-by-zero error by code review,
+>  for example: "flags" is CLK_DIVIDER_ONE_BASED and "val" is 0.
+> So simply add a return value check to avoid divide-by-zero
+>=20
+> thanks for your suggestion,=20
+> I will resend the patch later
+> refer to your advice and divider_recalc_rate() to add a check for CLK_DIV=
+IDER_ALLOW_ZERO
 >=20
 
-Ok. If it's found by code inspection then I'd rather wait until someone
-can confirm what the behavior should be when _get_div() returns 0. Is it
-an error case that never happens or does the hardware support 0 as a
-divider value meaning "bypass"? I'd like to understand that before
-patching up a potential div-by-zero case and not knowing what it means.
+Ok. I'm actually wondering why divider_ro_round_rate_parent() doesn't
+use clk_divider_bestdiv() instead of _get_div(). I think we did this to
+make things simpler.
+
+We could make clk_divider_bestdiv() take a 'val' argument to start the
+divider loop (and make that 0 for the "normal" case) and then look at
+the 'flags' for CLK_DIVIDER_READ_ONLY to restrict the 'maxdiv' and 'i'
+arguments there to be whatever the val is passed in to be. It would
+require passing the val into _get_maxdiv() too, and only caring about
+the val when the read only flag is set.
+
+Then I think we would naturally get div-by-zero avoidance code and we
+could collapse the divider code paths substantially into
+clk_divider_bestdiv(). It would be even better if that patch could come
+after moving the clk-divider ops to use .determine_rate() instead of
+.round_rate() clk_ops. If we did that then we could enhance the divider
+code to handle rate request clamping.
 
