@@ -2,152 +2,103 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1365BC10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 07:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B176C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 08:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D383820835
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 07:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53BD22148D
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 08:36:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UgVyVAjb"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IcgtoO7c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfDXHNw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 03:13:52 -0400
-Received: from mail-eopbgr150078.outbound.protection.outlook.com ([40.107.15.78]:40423
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725934AbfDXHNw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 03:13:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZBcaGwEAJk/BWY5w9l6JssJBo/tPOMKKsLgLBBILaRI=;
- b=UgVyVAjbE1SVdlix6PapfDCIy3z+YYjXd98W2zUdXj1kVq33Tppvib6/4Ml5u3Sy4bhhOPXSt4VJU/0645CPhKP7Fqd0azZazYp2NSvWb8GqYq5i1CWWDhKwWDo1brEFSJaVHua93XurGlVYMqtw81TzZlh/9O8xQPwz+8Bp1Ys=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB6323.eurprd04.prod.outlook.com (20.179.36.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1813.12; Wed, 24 Apr 2019 07:13:49 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::880d:a6d1:c29c:8560]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::880d:a6d1:c29c:8560%3]) with mapi id 15.20.1813.017; Wed, 24 Apr 2019
- 07:13:48 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] Re: [RFC 00/19] clk: imx: Switch the imx6 and imx7 to
- clk_hw based API
-Thread-Topic: [EXT] Re: [RFC 00/19] clk: imx: Switch the imx6 and imx7 to
- clk_hw based API
-Thread-Index: AQHU4MUXcPbU/vcAG02E7jK3YSvT1aYX1gUAgB459YCAFGt6gIAAnYaA
-Date:   Wed, 24 Apr 2019 07:13:48 +0000
-Message-ID: <20190424071347.73xbynv5jqipqkgx@fsr-ub1664-175>
-References: <1553269010-15591-1-git-send-email-abel.vesa@nxp.com>
- <CAOMZO5DWpu9irOWR3rux-vV1sihfsDkTs5SJ7XXy8MgRBCd-Gw@mail.gmail.com>
- <155493360763.20095.6174028293897341109@swboyd.mtv.corp.google.com>
- <155605619927.15276.90300312265075245@swboyd.mtv.corp.google.com>
-In-Reply-To: <155605619927.15276.90300312265075245@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c5d98508-3c27-4a0c-b4bf-08d6c88465d0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600141)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM0PR04MB6323;
-x-ms-traffictypediagnostic: AM0PR04MB6323:
-x-microsoft-antispam-prvs: <AM0PR04MB63238C60ACB0EB80B55692CDF63C0@AM0PR04MB6323.eurprd04.prod.outlook.com>
-x-forefront-prvs: 00179089FD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(396003)(366004)(376002)(39860400002)(346002)(189003)(199004)(316002)(14454004)(97736004)(6246003)(5660300002)(6916009)(6486002)(229853002)(71200400001)(305945005)(478600001)(53936002)(7736002)(6436002)(2906002)(4326008)(71190400001)(54906003)(99286004)(66066001)(73956011)(44832011)(446003)(33716001)(486006)(76176011)(8676002)(476003)(11346002)(66946007)(102836004)(186003)(6506007)(68736007)(1076003)(53546011)(26005)(66446008)(66556008)(66476007)(64756008)(93886005)(91956017)(5024004)(14444005)(25786009)(6512007)(9686003)(3846002)(256004)(86362001)(76116006)(6116002)(8936002)(81156014)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6323;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /Gr2hzgoH00809P6f1mXg3h6y82Aes0AIfvTQEBWJGBAcajXAzPb68DDHNVNpn15GUok+VH1gfPUnBR7X7AaxdRzIJWBuvnZXMmnl9RMaGYmmkX/0K8G5EPlgKoytutf0O5eCKPe0OQyS7x2e7kk+6o7vRstgzmkHpyJMF4Z8vEucCTghnQtoSXDnFBse2FqvPsYmbao4G0LOc/GVQRA4a0KmqiS2P6gEtofElL+rsSp66A+g+dVBPDgDddGBl7O7eQ5h6STUtP8yXJswPk9Rhm1OJWVUCNtdi6/h8PZ0PXmDpIYeGWz3JtxJT5LVkfeJG1P+Rpq/gAESl/xFLis+W30bLhupH8F69a6l7n3rpD8+KxkCvCI/++sMV6bJEe0HfQErUpaJlOJOjoOP0t83uT/lq7tc0/j/ytZ4mAEJ2o=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <514CC0D793A5544D9E3E93AD49311BD8@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727247AbfDXIg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 04:36:28 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15022 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfDXIg2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Apr 2019 04:36:28 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cc020110000>; Wed, 24 Apr 2019 01:36:34 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 24 Apr 2019 01:36:27 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 24 Apr 2019 01:36:27 -0700
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 24 Apr
+ 2019 08:36:27 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 26E1944E1F; Wed, 24 Apr 2019 11:36:25 +0300 (EEST)
+Date:   Wed, 24 Apr 2019 11:36:25 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 0/2] clk: Tegra124 PLLM fixes
+Message-ID: <20190424083625.GQ12975@pdeschrijver-desktop.Nvidia.com>
+References: <20190411214835.19947-1-digetx@gmail.com>
+ <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5d98508-3c27-4a0c-b4bf-08d6c88465d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2019 07:13:48.7938
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6323
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1556094994; bh=sf+uC56izVTBFAJrolQ4P2SCwZC5xEniGczvXZfp1Y0=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:
+         Content-Transfer-Encoding:In-Reply-To:X-NVConfidentiality:
+         User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=IcgtoO7cd1+ZMlOXL3Dyjm646oTNpQMAfVgCo6pv4GlUOxSTHqxoqm3KRQDceNo4t
+         0SuVmEIyv2zUZ6QbA+mPIW0d1tLUXEFfv8mquJV5q+UlMBTZQbQFffLIhCG3FH7twl
+         0lg0zI7YngEiIg7HtxR4hCpF9wyugHVC7p8Pg6TaqoXOLhYo5ZmdIvq0EV8MMFeX6Y
+         rL47GSdkPquCYujxtuYuDknlXF8dwwlal5J/WjZdIG0aLXt7nM9YFe0SewDF1YeHdI
+         YbwU7Nllf/dxU9ZoQK/cRD/M/1JOdsQiV/WdZAvYeL3CilD1Z3j+X/oo+a23P3DgLb
+         9pEkVScnsg7+Q==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-04-23 14:49:59, Stephen Boyd wrote:
-> WARNING: This email was created outside of NXP. DO NOT CLICK links or att=
-achments unless you recognize the sender and know the content is safe.
+On Fri, Apr 19, 2019 at 02:50:10PM +0300, Dmitry Osipenko wrote:
+> 12.04.2019 0:48, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Hello, here are two trivial patches that are correcting PLLM on Tegra12=
+4.
+> > First fixes system lockup due to a bad hardware configuration, second
+> > removes usage of a non-existent register bit.
+> >=20
+> > Dmitry Osipenko (2):
+> >   clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides
+> >     divider
+> >   clk: tegra124: Remove lock-enable bit from PLLM
+> >=20
+> >  drivers/clk/tegra/clk-pll.c      | 4 ++--
+> >  drivers/clk/tegra/clk-tegra124.c | 3 +--
+> >  2 files changed, 3 insertions(+), 4 deletions(-)
+> >=20
 >=20
+> Hello Peter,
 >=20
->=20
-> Quoting Stephen Boyd (2019-04-10 15:00:07)
-> > Quoting Fabio Estevam (2019-03-22 09:24:54)
-> > > Hi Abel,
-> > >
-> > > On Fri, Mar 22, 2019 at 12:37 PM Abel Vesa <abel.vesa@nxp.com> wrote:
-> > > >
-> > > > This work is part of the effort of switching the entire imx clock d=
-rivers
-> > > > towards clk_hw based API. In order to do that, we have to keep the =
-old
-> > >
-> > > Maybe I missed some earlier discussions on this topic, but let me ask
-> > > a fundamental question first: what is the motivation for this API
-> > > change?
-> > >
-> > > I could not find the reasoning inside the series.
-> >
-> > The reasoning should be added to the series, but I would like to see cl=
-k
-> > providers only deal with clk_hw structures and not with clk structures.
-> > This clearly divides the line between clk consumers and clk providers s=
-o
-> > that we know if clk providers are using the clk API themselves. That's
-> > why I introduced clk_hw_register() in the first place.
-> >
+> The patches in this series are trivial and fixing the longstanding bug on=
+ Tegra124. Could you please take a look and and ACK the series if it looks =
+good to you?
 
-Sorry for the late response.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>                     =
+                                        =20
 
-AFAICT, all the providers that are used in imx6 and imx7 are using
-(with this patchseries) the clk_hw_register (unless I'm missing something h=
-ere).
 
-Can you please be more specific and point out exactly which one isn't ?
-
->=20
-> FYI, I'm dropping this from my review queue under the assumption it will
-> be sent again. Also, it would be nice to not have the wrappers at all in
-> the next series so that everything is clk_hw based instead of clk based.
-> Otherwise, it looks good to me and I'd like to see this work completed.
-> Thanks!
->=20
-
-I'll try to resend this before the end of next week.
-
-As for the wrappers, they need to stay in until the last user of the clk
-based API is switched to clk_hw based. That means all the remaining imx
-platforms (1 through 5, and then 8). I chosed to do the imx6 and imx7
-first because these are easier to find. Once this is in, I'll move on
-with the imx8 and then the imx1 through imx5 (which are harder to find
-nowadays).
-
-Thanks for helping with the review on this.=
+Peter.
