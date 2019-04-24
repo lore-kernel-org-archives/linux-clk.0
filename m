@@ -2,91 +2,86 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62439C282CE
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 17:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CE2C282E1
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 20:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 293532064A
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 17:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 685DB218B0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 20:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556139347;
+	bh=JB2pTfbdLCrFKBW53Eyyh+L38zpGBWdyy93V8mYDvr0=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=bOGS0hUtCZVWP8yfW/t4Wigz6oKQfRBw+YPUavWyKWkexpnnNXn9fwWxTpT+soq9f
+	 rBTj21Zvwr0UsfF7AO8huKBtUci+aJdMrAnyDJ/dGgIpZos7YJqdqCzWS3KIlY6F+7
+	 EahBr3lNhpHnCSIXVIhI6adC3yzkYY1sEokichjA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388465AbfDXRlX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 13:41:23 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:43472 "EHLO gloria.sntech.de"
+        id S2387583AbfDXUzr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 16:55:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403873AbfDXRgk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 13:36:40 -0400
-Received: from [80.143.192.209] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hJLp0-00012P-8w; Wed, 24 Apr 2019 19:36:38 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL RESEND] Rockchip clock updates for 5.2
-Date:   Wed, 24 Apr 2019 19:36:37 +0200
-Message-ID: <2075886.jWuYUtlPVG@phil>
+        id S2387467AbfDXUzq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Apr 2019 16:55:46 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E70F82183E;
+        Wed, 24 Apr 2019 20:55:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556139346;
+        bh=JB2pTfbdLCrFKBW53Eyyh+L38zpGBWdyy93V8mYDvr0=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=P4Z1foV9w7fCW+EHFfiEe4Tq6PwO+l8457MoNdkEdTofYAXQ1dlspOoXsOe4gp2M9
+         0gf1dnj+5VZoiRNQ2E5g8Ct9h+9w5pIRNcdoFU0NMoP9CqULZ4yqWqmElCOUfbHoy6
+         y5vzEHDR1OvXXvdUJ0YcChNBynhN9S0ldw+ORd2A=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <E490CD805F7529488761C40FD9D26EF12AB29F8A@dggemm507-mbx.china.huawei.com>
+References: <1553954142-65515-1-git-send-email-nixiaoming@huawei.com> <155606042712.15276.6873845293187802041@swboyd.mtv.corp.google.com> <E490CD805F7529488761C40FD9D26EF12AB29F8A@dggemm507-mbx.china.huawei.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: RE: [PATCH v3 2/2] clk:mmp: clk-mix.c fix divide-by-zero
+To:     "chao.xie@marvell.com" <chao.xie@marvell.com>,
+        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
+        "mojha@codeaurora.org" <mojha@codeaurora.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        "soren.brinkmann@xilinx.com" <soren.brinkmann@xilinx.com>,
+        Nixiaoming <nixiaoming@huawei.com>
+Message-ID: <155613934508.15276.10077721853967398026@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Wed, 24 Apr 2019 13:55:45 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+Quoting Nixiaoming (2019-04-24 08:34:54)
+> On Wed, Apr 24, 2019 at 7:00 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >Quoting nixiaoming (2019-03-30 06:55:42)
+> >> The _get_div() function has a branch with a return value of 0
+> >> Add a check on the return value of _get_div() to avoid divide-by-zero
+> >>=20
+> >
+> >Are you seeing this in practice? Or just trying to avoid a div-by-zero
+> >case that you've found from inspection?=20
+> >
+> This potential bug is found by code inspection.
+> _get_div() is defined as a static function which is only refered twice=20
+> in drivers/clk/mmp/clk-mix.c. In both cases the return value of _get_div()
+>  is used as divider without any check.
+>  If _get_div() never returns 0, then the branch returning 0 is dead code,
+> or the return value should be check to avoid dividing by zero error.=20
+>=20
 
-please find below rockchip clock changes for 5.2
-with quite a bit of attention for the rk3288.
-
-Please pull
-
-Thanks
-Heiko
-
-[RESEND because I used a wrong email address for Stephen]
-
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.2-rockchip-clk-1
-
-for you to fetch changes up to f4033db5b84ebe4b32c25ba2ed65ab20b628996a:
-
-  clk: rockchip: undo several noc and special clocks as critical on rk3288 (2019-04-23 12:17:11 +0200)
-
-----------------------------------------------------------------
-Clock fixes for rk3328 and rk3288 and a new sub-type for an upcoming
-soc where mux and divider are not necessarily in the same register
-anymore.
-
-----------------------------------------------------------------
-Douglas Anderson (4):
-      clk: rockchip: Make rkpwm a critical clock on rk3288
-      clk: rockchip: Fix video codec clocks on rk3288
-      clk: rockchip: Turn on "aclk_dmac1" for suspend on rk3288
-      clk: rockchip: undo several noc and special clocks as critical on rk3288
-
-Finley Xiao (1):
-      clk: rockchip: add a COMPOSITE_DIV_OFFSET clock-type
-
-Jonas Karlman (1):
-      clk: rockchip: fix wrong clock definitions for rk3328
-
-Matthias Kaehlcke (1):
-      clk: rockchip: Limit use of USB PHY clock to USB on rk3288
-
- drivers/clk/rockchip/clk-rk3288.c | 36 ++++++++++++++++++++++--------------
- drivers/clk/rockchip/clk-rk3328.c | 18 +++++++++---------
- drivers/clk/rockchip/clk.c        |  9 ++++++---
- drivers/clk/rockchip/clk.h        | 23 +++++++++++++++++++++++
- 4 files changed, 60 insertions(+), 26 deletions(-)
-
-
+Ok. If it's found by code inspection then I'd rather wait until someone
+can confirm what the behavior should be when _get_div() returns 0. Is it
+an error case that never happens or does the hardware support 0 as a
+divider value meaning "bypass"? I'd like to understand that before
+patching up a potential div-by-zero case and not knowing what it means.
 
