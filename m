@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-11.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B09C10F11
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 16:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62439C282CE
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 17:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AAA5206A3
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 16:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 293532064A
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 17:41:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732775AbfDXQt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 12:49:26 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:43154 "EHLO gloria.sntech.de"
+        id S2388465AbfDXRlX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 13:41:23 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:43472 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732121AbfDXQt0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 12:49:26 -0400
+        id S2403873AbfDXRgk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Apr 2019 13:36:40 -0400
 Received: from [80.143.192.209] (helo=phil.localnet)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1hJL5H-0000qO-4k; Wed, 24 Apr 2019 18:49:23 +0200
+        id 1hJLp0-00012P-8w; Wed, 24 Apr 2019 19:36:38 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
-To:     Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 5.2
-Date:   Wed, 24 Apr 2019 18:49:22 +0200
-Message-ID: <3556608.kE4XR7voD3@phil>
+Subject: [GIT PULL RESEND] Rockchip clock updates for 5.2
+Date:   Wed, 24 Apr 2019 19:36:37 +0200
+Message-ID: <2075886.jWuYUtlPVG@phil>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -46,6 +46,8 @@ Please pull
 
 Thanks
 Heiko
+
+[RESEND because I used a wrong email address for Stephen]
 
 The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
