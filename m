@@ -2,73 +2,89 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F96C282CE
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 15:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B09C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 16:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D99B21773
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 15:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AAA5206A3
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 16:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbfDXPfD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 11:35:03 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2568 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731121AbfDXPfD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 11:35:03 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 528527EAAA004929808A;
-        Wed, 24 Apr 2019 23:34:57 +0800 (CST)
-Received: from DGGEMM507-MBX.china.huawei.com ([169.254.1.118]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0415.000;
- Wed, 24 Apr 2019 23:34:54 +0800
-From:   Nixiaoming <nixiaoming@huawei.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "chao.xie@marvell.com" <chao.xie@marvell.com>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-        "mojha@codeaurora.org" <mojha@codeaurora.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "soren.brinkmann@xilinx.com" <soren.brinkmann@xilinx.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 2/2] clk:mmp: clk-mix.c fix divide-by-zero
-Thread-Topic: [PATCH v3 2/2] clk:mmp: clk-mix.c fix divide-by-zero
-Thread-Index: AQHU5v/jsCMLKtXulUG+5bCCd/VhFqZJ/JKAgAGbAnA=
-Date:   Wed, 24 Apr 2019 15:34:54 +0000
-Message-ID: <E490CD805F7529488761C40FD9D26EF12AB29F8A@dggemm507-mbx.china.huawei.com>
-References: <1553954142-65515-1-git-send-email-nixiaoming@huawei.com>
- <155606042712.15276.6873845293187802041@swboyd.mtv.corp.google.com>
-In-Reply-To: <155606042712.15276.6873845293187802041@swboyd.mtv.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.57.88.168]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1732775AbfDXQt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 12:49:26 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:43154 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732121AbfDXQt0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Apr 2019 12:49:26 -0400
+Received: from [80.143.192.209] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hJL5H-0000qO-4k; Wed, 24 Apr 2019 18:49:23 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock updates for 5.2
+Date:   Wed, 24 Apr 2019 18:49:22 +0200
+Message-ID: <3556608.kE4XR7voD3@phil>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gV2VkLCBBcHIgMjQsIDIwMTkgYXQgNzowMCBBTSBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5l
-bC5vcmc+IHdyb3RlOg0KPlF1b3Rpbmcgbml4aWFvbWluZyAoMjAxOS0wMy0zMCAwNjo1NTo0MikN
-Cj4+IFRoZSBfZ2V0X2RpdigpIGZ1bmN0aW9uIGhhcyBhIGJyYW5jaCB3aXRoIGEgcmV0dXJuIHZh
-bHVlIG9mIDANCj4+IEFkZCBhIGNoZWNrIG9uIHRoZSByZXR1cm4gdmFsdWUgb2YgX2dldF9kaXYo
-KSB0byBhdm9pZCBkaXZpZGUtYnktemVybw0KPj4gDQo+DQo+QXJlIHlvdSBzZWVpbmcgdGhpcyBp
-biBwcmFjdGljZT8gT3IganVzdCB0cnlpbmcgdG8gYXZvaWQgYSBkaXYtYnktemVybw0KPmNhc2Ug
-dGhhdCB5b3UndmUgZm91bmQgZnJvbSBpbnNwZWN0aW9uPyANCj4NClRoaXMgcG90ZW50aWFsIGJ1
-ZyBpcyBmb3VuZCBieSBjb2RlIGluc3BlY3Rpb24uDQpfZ2V0X2RpdigpIGlzIGRlZmluZWQgYXMg
-YSBzdGF0aWMgZnVuY3Rpb24gd2hpY2ggaXMgb25seSByZWZlcmVkIHR3aWNlIA0KaW4gZHJpdmVy
-cy9jbGsvbW1wL2Nsay1taXguYy4gSW4gYm90aCBjYXNlcyB0aGUgcmV0dXJuIHZhbHVlIG9mIF9n
-ZXRfZGl2KCkNCiBpcyB1c2VkIGFzIGRpdmlkZXIgd2l0aG91dCBhbnkgY2hlY2suDQogSWYgX2dl
-dF9kaXYoKSBuZXZlciByZXR1cm5zIDAsIHRoZW4gdGhlIGJyYW5jaCByZXR1cm5pbmcgMCBpcyBk
-ZWFkIGNvZGUsDQpvciB0aGUgcmV0dXJuIHZhbHVlIHNob3VsZCBiZSBjaGVjayB0byBhdm9pZCBk
-aXZpZGluZyBieSB6ZXJvIGVycm9yLiANCg0KdGhhbmtzDQoNCj4+IFNpZ25lZC1vZmYtYnk6IG5p
-eGlhb21pbmcgPG5peGlhb21pbmdAaHVhd2VpLmNvbT4NCj4+IFJldmlld2VkLWJ5OiBNdWtlc2gg
-T2poYSA8bW9qaGFAY29kZWF1cm9yYS5vcmc+DQo+DQo=
+Hi Mike, Stephen,
+
+please find below rockchip clock changes for 5.2
+with quite a bit of attention for the rk3288.
+
+Please pull
+
+Thanks
+Heiko
+
+The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+
+  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.2-rockchip-clk-1
+
+for you to fetch changes up to f4033db5b84ebe4b32c25ba2ed65ab20b628996a:
+
+  clk: rockchip: undo several noc and special clocks as critical on rk3288 (2019-04-23 12:17:11 +0200)
+
+----------------------------------------------------------------
+Clock fixes for rk3328 and rk3288 and a new sub-type for an upcoming
+soc where mux and divider are not necessarily in the same register
+anymore.
+
+----------------------------------------------------------------
+Douglas Anderson (4):
+      clk: rockchip: Make rkpwm a critical clock on rk3288
+      clk: rockchip: Fix video codec clocks on rk3288
+      clk: rockchip: Turn on "aclk_dmac1" for suspend on rk3288
+      clk: rockchip: undo several noc and special clocks as critical on rk3288
+
+Finley Xiao (1):
+      clk: rockchip: add a COMPOSITE_DIV_OFFSET clock-type
+
+Jonas Karlman (1):
+      clk: rockchip: fix wrong clock definitions for rk3328
+
+Matthias Kaehlcke (1):
+      clk: rockchip: Limit use of USB PHY clock to USB on rk3288
+
+ drivers/clk/rockchip/clk-rk3288.c | 36 ++++++++++++++++++++++--------------
+ drivers/clk/rockchip/clk-rk3328.c | 18 +++++++++---------
+ drivers/clk/rockchip/clk.c        |  9 ++++++---
+ drivers/clk/rockchip/clk.h        | 23 +++++++++++++++++++++++
+ 4 files changed, 60 insertions(+), 26 deletions(-)
+
+
+
