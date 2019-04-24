@@ -2,136 +2,129 @@ Return-Path: <SRS0=/Yer=S2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B071C282CE
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 14:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0342C10F11
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 15:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3609206BA
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 14:54:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jeglYtiK"
+	by mail.kernel.org (Postfix) with ESMTP id C837F2089F
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Apr 2019 15:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731871AbfDXOy1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Apr 2019 10:54:27 -0400
-Received: from mail-eopbgr50068.outbound.protection.outlook.com ([40.107.5.68]:27013
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731113AbfDXOy1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Apr 2019 10:54:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nDV5bQxA5k+ndE95DZzEKl1CMuva2JheTFchkJZgn84=;
- b=jeglYtiKHfw44LvM+A6n4+ZYXE5nWMGT46CGE8fzThbenumJjqZmDip0498eC0rYdqbXZTerY/eSUC41lA5qBj0ZeQo4hlO1xYat+7IH6kVWJbK4I0xKi06BUO49e/B/Ycj2xUdjO99479tZzXudMG5WiAMFNIM01fsopukXTps=
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB5776.eurprd04.prod.outlook.com (20.178.127.206) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.12; Wed, 24 Apr 2019 14:54:24 +0000
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::9bd:1d31:d6c3:d157]) by VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::9bd:1d31:d6c3:d157%6]) with mapi id 15.20.1813.017; Wed, 24 Apr 2019
- 14:54:24 +0000
-From:   Vabhav Sharma <vabhav.sharma@nxp.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Andy Tang <andy.tang@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH] arm64: drivers: clk: qoriq: Add clockgen support for lx2160a
-Thread-Topic: [PATCH] arm64: drivers: clk: qoriq: Add clockgen support for
- lx2160a
-Thread-Index: AQHU+q2bE74r8QWOEEW3f2AnJYEBpA==
-Date:   Wed, 24 Apr 2019 14:54:24 +0000
-Message-ID: <1556117674-27029-1-git-send-email-vabhav.sharma@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BM1PR0101CA0031.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:1a::17) To VI1PR04MB4800.eurprd04.prod.outlook.com
- (2603:10a6:803:53::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.9.1
-x-originating-ip: [92.120.1.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 83cdeac5-85fe-4316-fb84-08d6c8c4bd8e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5776;
-x-ms-traffictypediagnostic: VI1PR04MB5776:
-x-microsoft-antispam-prvs: <VI1PR04MB577614B36BC688A4E88A0035F33C0@VI1PR04MB5776.eurprd04.prod.outlook.com>
-x-forefront-prvs: 00179089FD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(346002)(136003)(366004)(199004)(189003)(71200400001)(71190400001)(14454004)(86362001)(53936002)(2201001)(102836004)(66476007)(66946007)(73956011)(54906003)(66556008)(64756008)(66446008)(2501003)(99286004)(5660300002)(6512007)(6116002)(97736004)(305945005)(3846002)(44832011)(50226002)(81166006)(81156014)(256004)(8676002)(8936002)(66066001)(25786009)(478600001)(26005)(52116002)(316002)(68736007)(2906002)(186003)(110136005)(486006)(2616005)(476003)(6506007)(386003)(6486002)(36756003)(7736002)(4326008)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5776;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: WFCiYoBGROylOuLe+8D7x/csgKBJ5ybwx3zDblw0XVjfdOU+9PNaaK5d5XBsaNuBgzAXkUS+U9k+Zx4iGoLaijuXUuz+3GE2u8f+Djvnfbn+AFXGjErD4JZ8Q4m4eKcbsU/cPpQN2DjGeFAGQmhQ0aKwRyxRbsRPCIUmZ2sT06IZKBnm/rOR4ZlCRSZ850JRUsBbLoMPoobVi2GQb2oSWps3DA53vpEs4Qd9vZXvfl2lYoeXOd96i3z4VgEqCqstYCddkOxG0cl4vXlxzvg9BtrABa03Pb/IftFS7PtxlsETQ7bG2nAv0gX4h3QWl+01xocXgmf3SPGpCuYBPyL/wU0kHqUUrk4glJYxgdeMjOAIP60XFx6ND5KiR+n1L6naJ8tBwEc0AC21RBF5HOW2tX/kKsFlxVqUtdtZLejoaD8=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730485AbfDXPAh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Apr 2019 11:00:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34366 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730764AbfDXPAh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Apr 2019 11:00:37 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3OF0HbY096333
+        for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2019 11:00:36 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s2s71u60e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2019 11:00:35 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-clk@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Wed, 24 Apr 2019 16:00:34 +0100
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 24 Apr 2019 16:00:31 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3OF0UYN18808980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Apr 2019 15:00:30 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9AF12B2075;
+        Wed, 24 Apr 2019 15:00:29 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A445AB2064;
+        Wed, 24 Apr 2019 15:00:28 +0000 (GMT)
+Received: from [9.41.179.222] (unknown [9.41.179.222])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 24 Apr 2019 15:00:28 +0000 (GMT)
+Subject: Re: [PATCH 0/5] Aspeed: Enable video engine
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Eddie James <eajames@linux.ibm.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        joel@jms.id.au, andrew@aj.id.au, mchehab@kernel.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org
+References: <1554229504-5661-1-git-send-email-eajames@linux.ibm.com>
+ <b524e352-2e9d-6360-5517-18eee2e02c2c@xs4all.nl>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Wed, 24 Apr 2019 10:00:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83cdeac5-85fe-4316-fb84-08d6c8c4bd8e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2019 14:54:24.2606
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5776
+In-Reply-To: <b524e352-2e9d-6360-5517-18eee2e02c2c@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19042415-0072-0000-0000-0000041E5973
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010987; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000285; SDB=6.01193741; UDB=6.00625810; IPR=6.00974565;
+ MB=3.00026577; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-24 15:00:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19042415-0073-0000-0000-00004BF14B21
+Message-Id: <f3cacd11-c68d-9097-4a86-3ebeab046b93@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-24_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904240117
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RnJvbTogWW9nZXNoIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KDQpBZGQgY2xv
-Y2tnZW4gc3VwcG9ydCBmb3IgbHgyMTYwYS4NCkFkZGVkIGVudHJ5IGZvciBjb21wYXQgJ2ZzbCxs
-eDIxNjBhLWNsb2NrZ2VuJy4NCg0KU2lnbmVkLW9mZi1ieTogVGFuZyBZdWFudGlhbiA8YW5keS50
-YW5nQG54cC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBZb2dlc2ggR2F1ciA8eW9nZXNobmFyYXlhbi5n
-YXVyQG54cC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBWYWJoYXYgU2hhcm1hIDx2YWJoYXYuc2hhcm1h
-QG54cC5jb20+DQpBY2tlZC1ieTogU2NvdHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD4NCkFja2Vk
-LWJ5OiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+DQpBY2tlZC1ieTogVmlyZXNoIEt1
-bWFyIDx2aXJlc2gua3VtYXJAbGluYXJvLm9yZz4NCi0tLQ0KIGRyaXZlcnMvY2xrL2Nsay1xb3Jp
-cS5jICAgICAgICAgfCAxMiArKysrKysrKysrKysNCiBkcml2ZXJzL2NwdWZyZXEvcW9yaXEtY3B1
-ZnJlcS5jIHwgIDEgKw0KIDIgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKQ0KDQpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrLXFvcmlxLmMgYi9kcml2ZXJzL2Nsay9jbGstcW9yaXEu
-Yw0KaW5kZXggZjY2MDZjZi4uOTZkYjc4MCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvY2xrL2Nsay1x
-b3JpcS5jDQorKysgYi9kcml2ZXJzL2Nsay9jbGstcW9yaXEuYw0KQEAgLTU3MCw2ICs1NzAsMTcg
-QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBjbG9ja2dlbl9jaGlwaW5mbyBjaGlwaW5mb1tdID0gew0K
-IAkJLmZsYWdzID0gQ0dfVkVSMyB8IENHX0xJVFRMRV9FTkRJQU4sDQogCX0sDQogCXsNCisJCS5j
-b21wYXQgPSAiZnNsLGx4MjE2MGEtY2xvY2tnZW4iLA0KKwkJLmNtdXhfZ3JvdXBzID0gew0KKwkJ
-CSZjbG9ja2dlbjJfY211eF9jZ2ExMiwgJmNsb2NrZ2VuMl9jbXV4X2NnYg0KKwkJfSwNCisJCS5j
-bXV4X3RvX2dyb3VwID0gew0KKwkJCTAsIDAsIDAsIDAsIDEsIDEsIDEsIDEsIC0xDQorCQl9LA0K
-KwkJLnBsbF9tYXNrID0gMHgzNywNCisJCS5mbGFncyA9IENHX1ZFUjMgfCBDR19MSVRUTEVfRU5E
-SUFOLA0KKwl9LA0KKwl7DQogCQkuY29tcGF0ID0gImZzbCxwMjA0MS1jbG9ja2dlbiIsDQogCQku
-Z3V0c19jb21wYXQgPSAiZnNsLHFvcmlxLWRldmljZS1jb25maWctMS4wIiwNCiAJCS5pbml0X3Bl
-cmlwaCA9IHAyMDQxX2luaXRfcGVyaXBoLA0KQEAgLTE0MjcsNiArMTQzOCw3IEBAIENMS19PRl9E
-RUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX2xzMTA0M2EsICJmc2wsbHMxMDQzYS1jbG9ja2dlbiIsIGNs
-b2NrZ2VuX2luaXQpOw0KIENMS19PRl9ERUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX2xzMTA0NmEsICJm
-c2wsbHMxMDQ2YS1jbG9ja2dlbiIsIGNsb2NrZ2VuX2luaXQpOw0KIENMS19PRl9ERUNMQVJFKHFv
-cmlxX2Nsb2NrZ2VuX2xzMTA4OGEsICJmc2wsbHMxMDg4YS1jbG9ja2dlbiIsIGNsb2NrZ2VuX2lu
-aXQpOw0KIENMS19PRl9ERUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX2xzMjA4MGEsICJmc2wsbHMyMDgw
-YS1jbG9ja2dlbiIsIGNsb2NrZ2VuX2luaXQpOw0KK0NMS19PRl9ERUNMQVJFKHFvcmlxX2Nsb2Nr
-Z2VuX2x4MjE2MGEsICJmc2wsbHgyMTYwYS1jbG9ja2dlbiIsIGNsb2NrZ2VuX2luaXQpOw0KIENM
-S19PRl9ERUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX3AyMDQxLCAiZnNsLHAyMDQxLWNsb2NrZ2VuIiwg
-Y2xvY2tnZW5faW5pdCk7DQogQ0xLX09GX0RFQ0xBUkUocW9yaXFfY2xvY2tnZW5fcDMwNDEsICJm
-c2wscDMwNDEtY2xvY2tnZW4iLCBjbG9ja2dlbl9pbml0KTsNCiBDTEtfT0ZfREVDTEFSRShxb3Jp
-cV9jbG9ja2dlbl9wNDA4MCwgImZzbCxwNDA4MC1jbG9ja2dlbiIsIGNsb2NrZ2VuX2luaXQpOw0K
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJlcS9xb3JpcS1jcHVmcmVxLmMgYi9kcml2ZXJzL2Nw
-dWZyZXEvcW9yaXEtY3B1ZnJlcS5jDQppbmRleCA0Mjk1ZTU0Li44MWYwMjg4IDEwMDY0NA0KLS0t
-IGEvZHJpdmVycy9jcHVmcmVxL3FvcmlxLWNwdWZyZXEuYw0KKysrIGIvZHJpdmVycy9jcHVmcmVx
-L3FvcmlxLWNwdWZyZXEuYw0KQEAgLTI4NCw2ICsyODQsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0
-IG9mX2RldmljZV9pZCBub2RlX21hdGNoZXNbXSBfX2luaXRjb25zdCA9IHsNCiAJeyAuY29tcGF0
-aWJsZSA9ICJmc2wsbHMxMDQ2YS1jbG9ja2dlbiIsIH0sDQogCXsgLmNvbXBhdGlibGUgPSAiZnNs
-LGxzMTA4OGEtY2xvY2tnZW4iLCB9LA0KIAl7IC5jb21wYXRpYmxlID0gImZzbCxsczIwODBhLWNs
-b2NrZ2VuIiwgfSwNCisJeyAuY29tcGF0aWJsZSA9ICJmc2wsbHgyMTYwYS1jbG9ja2dlbiIsIH0s
-DQogCXsgLmNvbXBhdGlibGUgPSAiZnNsLHA0MDgwLWNsb2NrZ2VuIiwgfSwNCiAJeyAuY29tcGF0
-aWJsZSA9ICJmc2wscW9yaXEtY2xvY2tnZW4tMS4wIiwgfSwNCiAJeyAuY29tcGF0aWJsZSA9ICJm
-c2wscW9yaXEtY2xvY2tnZW4tMi4wIiwgfSwNCi0tIA0KMi43LjQNCg0K
+
+On 4/24/19 5:50 AM, Hans Verkuil wrote:
+> Hi Eddie,
+>
+> On 4/2/19 8:24 PM, Eddie James wrote:
+>> This series enables the video engine on Aspeed BMC platforms. The video engine
+>> clocking is added to the Aspeed clock driver. The use of the video engine reset
+>> line, originally planned to be made externally available in the clock driver,
+>> is removed from the video engine driver. Finally a node for the video engine is
+>> added to the AST2500 devicetree.
+>> The series also includes a missing property for reserved memory in the
+>> devicetree documentation, and a small change to make the video engine driver
+>> start without reserved memory.
+> I assume you'll post a v3 since there were some comments?
+
+
+Sure... The only change would be a missing semi-colon in the devicetree 
+doc. And we're only on v2 :)
+
+
+>
+> If you want to get it in for 5.2, then be aware that you should post it tomorrow
+> at the latest.
+>
+> Regards,
+>
+> 	Hans
+>
+>> Eddie James (5):
+>>    media: platform: Aspeed: Remove use of reset line
+>>    media: platform: Aspeed: Make reserved memory optional
+>>    media: dt-bindings: aspeed-video: Add missing memory-region property
+>>    clk: Aspeed: Setup video engine clocking
+>>    ARM: dts: aspeed-g5: Add video engine
+>>
+>>   .../devicetree/bindings/media/aspeed-video.txt     |  6 ++++
+>>   arch/arm/boot/dts/aspeed-g5.dtsi                   | 10 ++++++
+>>   drivers/clk/clk-aspeed.c                           | 42 ++++++++++++++++++++--
+>>   drivers/media/platform/aspeed-video.c              | 33 ++++-------------
+>>   4 files changed, 61 insertions(+), 30 deletions(-)
+>>
+
