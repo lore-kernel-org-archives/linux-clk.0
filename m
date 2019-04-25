@@ -2,90 +2,71 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	HTTP_ESCAPED_HOST,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4AAC43218
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2449CC43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA68420878
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556213955;
-	bh=RGZVoIkWoyiIjnhRavvqGcCbfMKb8iFu9mmjyyXkcLY=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=0wfQy9LFZAGJkVaTwrdgsyWUNYWf5k900SnB+SXKpkynj9a2j+TWluglac3f5C87Y
-	 bvtdETSP16SZ9hi7URqqz4MOBI57/63/d3A6yNLNJiFdSJQO9haYnakYpx7fb+2wVh
-	 4c3dZHIw+xvOEc7crmOpO3kX4wu9TPqrC8U77TnM=
+	by mail.kernel.org (Postfix) with ESMTP id AF89D20675
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfDYRjO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 13:39:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726916AbfDYRjO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 13:39:14 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A82EE2084F;
-        Thu, 25 Apr 2019 17:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556213954;
-        bh=RGZVoIkWoyiIjnhRavvqGcCbfMKb8iFu9mmjyyXkcLY=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=WIXRjX5DYlpHrMOzrIZ00esyy+5oKkeQSbVt/ying9yMr+AwWN6rTXLmW5JZpsWeL
-         3aq8SbYEEJxZB5gV2ZkjDW+dckHVxAq8nWeVH1ECl39U+GkSkZuA8adoutTpHV6SEg
-         Gbyop/B60fsrR+2R3ZrHZ4T2PAIwImKfFzUf7LiA=
-Content-Type: text/plain; charset="utf-8"
+        id S1726202AbfDYRoV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 13:44:21 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35290 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbfDYRoV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 13:44:21 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id 4827A277A3B
+Subject: Re: clk/clk-next boot bisection: v5.1-rc1-142-ga55b079c961b on panda
+To:     Mark Brown <broonie@kernel.org>, Tony Lindgren <tony@atomide.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "kernelci.org bot" <bot@kernelci.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        enric.balletbo@collabora.com, khilman@baylibre.com,
+        matthew.hart@linaro.org, mgalka@collabora.com,
+        tomeu.vizoso@collabora.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <5cbe596c.1c69fb81.e252.b9d0@mx.google.com>
+ <155598159898.15276.8408514960097680895@swboyd.mtv.corp.google.com>
+ <20190423144028.GA8007@atomide.com> <20190425172807.GW2803@sirena.org.uk>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <9d076ce7-ce9b-07d9-21c7-e3e2eddf2fdb@collabora.com>
+Date:   Thu, 25 Apr 2019 18:44:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2075886.jWuYUtlPVG@phil>
-References: <2075886.jWuYUtlPVG@phil>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL RESEND] Rockchip clock updates for 5.2
-To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Message-ID: <155621395307.15276.12161393001768759522@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 10:39:13 -0700
+In-Reply-To: <20190425172807.GW2803@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko Stuebner (2019-04-24 10:36:37)
-> Hi Mike, Stephen,
->=20
-> please find below rockchip clock changes for 5.2
-> with quite a bit of attention for the rk3288.
->=20
-> Please pull
->=20
-> Thanks
-> Heiko
->=20
-> [RESEND because I used a wrong email address for Stephen]
+On 25/04/2019 18:28, Mark Brown wrote:
+> On Tue, Apr 23, 2019 at 07:40:28AM -0700, Tony Lindgren wrote:
+> 
+>> Hmm do you guys have some index page of all the found "boot bisection"
+>> issues that I can check every morning while drinking coffee? :)
+> 
+> Sadly there's no web UI for this bit of the system.  The nearest would
+> be trying to find the reports on LKML but that is suboptimal.
 
-No worries, I still got it.
+Quite:
 
->=20
-> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
-1b:
->=20
->   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v5.2-rockchip-clk-1
->=20
-> for you to fetch changes up to f4033db5b84ebe4b32c25ba2ed65ab20b628996a:
->=20
->   clk: rockchip: undo several noc and special clocks as critical on rk328=
-8 (2019-04-23 12:17:11 +0200)
->=20
-> ----------------------------------------------------------------
+  https://www.google.co.uk/search?q=lkml.org+%22boot%20bisection%3A%22
 
-Pulled into clk-next
+Also there aren't that many bisections, maybe a couple per month.
+I think we could cc the KernelCI reports mailing list, or maybe
+have a new list, for people who want to receive all the bisection
+reports.  There should be more as we keep adding trees and
+especially when we start bisecting test suite results, not just
+boots.
 
+Guillaume
