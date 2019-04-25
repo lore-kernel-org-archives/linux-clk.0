@@ -2,141 +2,119 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE033C10F03
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 10:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5EAC10F03
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 10:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD19F206BA
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 10:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556186643;
-	bh=/+eJmfmKMbVPqJpQ6oWQVgZ/pGm0KLqrR5ywKHCRPdo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=mCsDkkTa16YBw0GSV7TpLCcAb5GeQxMWGREe3onugS3svnhOXlwpRJJbJmvVhvqSf
-	 0uD6PAHcNqGors14paFjtoPS/uxYBFoI5Ptit7IBWL3FXVljpsVC1Xcxrn8Y7m4zUi
-	 4+W9PXP+WtvMBWq3kRoxZ/YpCIsJtMGHaBZmlMA8=
+	by mail.kernel.org (Postfix) with ESMTP id 5055520656
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 10:14:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DDSDqgeM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbfDYKED (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 06:04:03 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45563 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728108AbfDYKED (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 06:04:03 -0400
-Received: by mail-ot1-f66.google.com with SMTP id e5so18865093otk.12;
-        Thu, 25 Apr 2019 03:04:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kbFce9kqOYMXkwbYbsm3ItH4gOftYJ40LGsY5EDEySQ=;
-        b=GpoFqo/8sRA0De9Y0/dmGa2mXcFCQXjMGI3KZAU3REuyrDN2NCc7FcRmUROkotWU7Z
-         aifpUg1fraTA+7IHiNrps2eeeAGlVG2k0aKqRDzw/qMPy39gBkq9X0hhVsNJ2CF82cy1
-         8WOa8ez93mkUTu31MQ2XJWAw+dCp5umKPXtI5S0s696wA74ApxmULaLIGFWoK8dRmfuB
-         UKWCHPspKh9jQBJEtquxCx59mUEqyi3iSr5D7zuT2/QjuZS00jxKK3BYLPHFJPkzuYtW
-         A/zQ3Yls3s7BuF9yBa0OFuFN/gOWLocZfD7MXoDwf1i+l5J40bnC6THx/UT/gQ/1pWqG
-         C4Xw==
-X-Gm-Message-State: APjAAAXHAKxl1xQVkH5mrCjC7bIcad5uY8I6x+NLOw1V45ZIeiAsR47o
-        W1KqRDnPtNINlpnk2gf+3Dln0l15bshq/R5JN0g=
-X-Google-Smtp-Source: APXvYqye7zlg9qsqJ4qajiP68faXdzWWcSDQZ64WTgv0yfrn0oIfUzFm+fLYRbco3aErHavq7zojj97vw8Ieol5EeSE=
-X-Received: by 2002:a9d:6e17:: with SMTP id e23mr23121690otr.65.1556186641899;
- Thu, 25 Apr 2019 03:04:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <1556185703-26243-1-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1556185703-26243-1-git-send-email-vabhav.sharma@nxp.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 25 Apr 2019 12:03:51 +0200
-Message-ID: <CAJZ5v0iwrjonKpA3Skkhkg3g5Pp9Qzx0v2GBYKdv7eM_jL4p8g@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: qoriq: Add clockgen support for lx2160a
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        id S1727061AbfDYKOe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 06:14:34 -0400
+Received: from mail-eopbgr140074.outbound.protection.outlook.com ([40.107.14.74]:15186
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726810AbfDYKOe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 06:14:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YsjovnhVLnvkhSbYgFg/TGHW0ptUX3p0PiX7K0JGfMI=;
+ b=DDSDqgeM5+3eNZJm3S/v4SOV19W4AVGG86DKE/NPPZgPucwXG/KGe0HUVK7tuGzcICB6PqDKr103j9VUid4uaZ04cEBcOdAxZrK8Ihgws18QM/7B7JZlE6jxKaxlHj8S44u4axgJA3siVLE0i/ZOYNsKV4ul1BPTwF12KMueqQA=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5986.eurprd04.prod.outlook.com (20.178.116.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1813.17; Thu, 25 Apr 2019 10:14:28 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::94a2:9f9a:41bf:6355]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::94a2:9f9a:41bf:6355%3]) with mapi id 15.20.1813.017; Thu, 25 Apr 2019
+ 10:14:28 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Andy Tang <andy.tang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: pll14xx: drop unused variable
+Thread-Topic: [PATCH] clk: imx: pll14xx: drop unused variable
+Thread-Index: AQHU+0+qGQ/M85MjFkGdnBen7mxehA==
+Date:   Thu, 25 Apr 2019 10:14:28 +0000
+Message-ID: <20190425102740.19286-1-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.16.4
+x-clientproxiedby: HK2PR04CA0050.apcprd04.prod.outlook.com
+ (2603:1096:202:14::18) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9cf42ee5-360a-472e-6064-08d6c966cccc
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5986;
+x-ms-traffictypediagnostic: AM0PR04MB5986:
+x-microsoft-antispam-prvs: <AM0PR04MB5986AAC1901726A617C99253883D0@AM0PR04MB5986.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0018A2705B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(376002)(39860400002)(366004)(189003)(199004)(6116002)(14454004)(478600001)(386003)(2201001)(2501003)(8676002)(86362001)(102836004)(99286004)(52116002)(305945005)(66066001)(7736002)(4326008)(6506007)(25786009)(3846002)(97736004)(68736007)(6486002)(81156014)(81166006)(2906002)(71190400001)(71200400001)(1076003)(26005)(44832011)(6436002)(2616005)(476003)(53936002)(66476007)(66946007)(66446008)(36756003)(6512007)(73956011)(8936002)(64756008)(54906003)(186003)(50226002)(110136005)(256004)(486006)(5660300002)(316002)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5986;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: KJaMCWExiEwppx8DmROrOkimOZVZmZE33g0f8MLZQZD5rwSz/1BV7PXD6yDBKzLyaEe6Hhf9rLXjIIiMEZuV3JElFY/FBKqvkxhhM0+a+kYycTYmwRxEn0DOM7Ld7IvjbOs9ea306J9EYPfkcQ/6vRHbWBUPb55RhDchv3eg3mJFg3lIrkf3DJ4f4zclcPl8E/0TrSruQ9CVnCWRnUEGaMlCl+d9z4r9evYIbsv//9j64BCMYcwr/9sbn8NKnQOUVv2P6u3wm9NsojSMZwKs3Px0iKdVlccE4FWJEnJBB1MXueVcs9yXZTbGOWS0zFHpDH/2C6MrSdAEjGvCFuCrGehMFWZh5dZyNBcwjr1rF0LtEqLKBmxEmkSnDT33sIfsTyt4OtvdO/yvecS6OHv47FL4GGG7orgL3xiFkkfGbIw=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf42ee5-360a-472e-6064-08d6c966cccc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2019 10:14:28.2859
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5986
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 11:48 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
->
-> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
->
-> Add clockgen support for lx2160a.
-> Added entry for compat 'fsl,lx2160a-clockgen'.
-
-Well, if I'm expected to apply this, the above is a bit terse.
-
-It looks like the patch makes the qoriq-cpufreq driver handle some new
-hardware, but the changelog doesn't say much about that.
-
-I'm guessing that the clockgen support added here makes it possible
-for qoriq-cpufreq to handle this chip, is that correct?
-
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Acked-by: Scott Wood <oss@buserror.net>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> Changes for v2:
-> - Subject line updated
->
->  drivers/clk/clk-qoriq.c         | 12 ++++++++++++
->  drivers/cpufreq/qoriq-cpufreq.c |  1 +
->  2 files changed, 13 insertions(+)
->
-> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-> index 3d51d7c..1a15201 100644
-> --- a/drivers/clk/clk-qoriq.c
-> +++ b/drivers/clk/clk-qoriq.c
-> @@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
->                 .flags = CG_VER3 | CG_LITTLE_ENDIAN,
->         },
->         {
-> +               .compat = "fsl,lx2160a-clockgen",
-> +               .cmux_groups = {
-> +                       &clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-> +               },
-> +               .cmux_to_group = {
-> +                       0, 0, 0, 0, 1, 1, 1, 1, -1
-> +               },
-> +               .pll_mask = 0x37,
-> +               .flags = CG_VER3 | CG_LITTLE_ENDIAN,
-> +       },
-> +       {
->                 .compat = "fsl,p2041-clockgen",
->                 .guts_compat = "fsl,qoriq-device-config-1.0",
->                 .init_periph = p2041_init_periph,
-> @@ -1427,6 +1438,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
-> +CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_p2041, "fsl,p2041-clockgen", clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_p3041, "fsl,p3041-clockgen", clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_p4080, "fsl,p4080-clockgen", clockgen_init);
-> diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-> index 4295e54..81f0288 100644
-> --- a/drivers/cpufreq/qoriq-cpufreq.c
-> +++ b/drivers/cpufreq/qoriq-cpufreq.c
-> @@ -284,6 +284,7 @@ static const struct of_device_id node_matches[] __initconst = {
->         { .compatible = "fsl,ls1046a-clockgen", },
->         { .compatible = "fsl,ls1088a-clockgen", },
->         { .compatible = "fsl,ls2080a-clockgen", },
-> +       { .compatible = "fsl,lx2160a-clockgen", },
->         { .compatible = "fsl,p4080-clockgen", },
->         { .compatible = "fsl,qoriq-clockgen-1.0", },
->         { .compatible = "fsl,qoriq-clockgen-2.0", },
-> --
-> 2.7.4
->
+SXQgZG9lcyBub3QgbWFrZSBzZW5zZSB0byBvbmx5IGdldCB2YWx1ZSBmcm9tIHBsbC0+YmFzZSBh
+bmQgYXNzaWduDQp0byBhIGxvY2FsIHZhcmlhYmxlIHdoZW4gcmVjYWxjX3JhdGUuDQoNClNpZ25l
+ZC1vZmYtYnk6IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KLS0tDQogZHJpdmVycy9jbGsv
+aW14L2Nsay1wbGwxNHh4LmMgfCA2ICsrLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKyksIDQgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xr
+LXBsbDE0eHguYyBiL2RyaXZlcnMvY2xrL2lteC9jbGstcGxsMTR4eC5jDQppbmRleCAxYWNmYTNl
+M2NmYjQuLjEyZTU4NDE4NWRhZiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvY2xrL2lteC9jbGstcGxs
+MTR4eC5jDQorKysgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLXBsbDE0eHguYw0KQEAgLTc0LDEwICs3
+NCw5IEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIGNsa19wbGwxNDE2eF9yZWNhbGNfcmF0ZShzdHJ1
+Y3QgY2xrX2h3ICpodywNCiAJCQkJCQkgIHVuc2lnbmVkIGxvbmcgcGFyZW50X3JhdGUpDQogew0K
+IAlzdHJ1Y3QgY2xrX3BsbDE0eHggKnBsbCA9IHRvX2Nsa19wbGwxNHh4KGh3KTsNCi0JdTMyIG1k
+aXYsIHBkaXYsIHNkaXYsIHBsbF9nbnJsLCBwbGxfZGl2Ow0KKwl1MzIgbWRpdiwgcGRpdiwgc2Rp
+diwgcGxsX2RpdjsNCiAJdTY0IGZ2Y28gPSBwYXJlbnRfcmF0ZTsNCiANCi0JcGxsX2ducmwgPSBy
+ZWFkbF9yZWxheGVkKHBsbC0+YmFzZSk7DQogCXBsbF9kaXYgPSByZWFkbF9yZWxheGVkKHBsbC0+
+YmFzZSArIDQpOw0KIAltZGl2ID0gKHBsbF9kaXYgJiBNRElWX01BU0spID4+IE1ESVZfU0hJRlQ7
+DQogCXBkaXYgPSAocGxsX2RpdiAmIFBESVZfTUFTSykgPj4gUERJVl9TSElGVDsNCkBAIC05Mywx
+MSArOTIsMTAgQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcgY2xrX3BsbDE0NDN4X3JlY2FsY19yYXRl
+KHN0cnVjdCBjbGtfaHcgKmh3LA0KIAkJCQkJCSAgdW5zaWduZWQgbG9uZyBwYXJlbnRfcmF0ZSkN
+CiB7DQogCXN0cnVjdCBjbGtfcGxsMTR4eCAqcGxsID0gdG9fY2xrX3BsbDE0eHgoaHcpOw0KLQl1
+MzIgbWRpdiwgcGRpdiwgc2RpdiwgcGxsX2ducmwsIHBsbF9kaXZfY3RsMCwgcGxsX2Rpdl9jdGwx
+Ow0KKwl1MzIgbWRpdiwgcGRpdiwgc2RpdiwgcGxsX2Rpdl9jdGwwLCBwbGxfZGl2X2N0bDE7DQog
+CXNob3J0IGludCBrZGl2Ow0KIAl1NjQgZnZjbyA9IHBhcmVudF9yYXRlOw0KIA0KLQlwbGxfZ25y
+bCA9IHJlYWRsX3JlbGF4ZWQocGxsLT5iYXNlKTsNCiAJcGxsX2Rpdl9jdGwwID0gcmVhZGxfcmVs
+YXhlZChwbGwtPmJhc2UgKyA0KTsNCiAJcGxsX2Rpdl9jdGwxID0gcmVhZGxfcmVsYXhlZChwbGwt
+PmJhc2UgKyA4KTsNCiAJbWRpdiA9IChwbGxfZGl2X2N0bDAgJiBNRElWX01BU0spID4+IE1ESVZf
+U0hJRlQ7DQotLSANCjIuMTYuNA0KDQo=
