@@ -2,176 +2,236 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67BBC43219
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 22:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6B6C43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 23:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E782820717
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 22:25:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA3B5206BF
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 23:04:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556231112;
-	bh=GACxoLulNU5OtRBVh4C6+vAfmx59bpYIT7euqG9Hw2Y=;
+	s=default; t=1556233455;
+	bh=xyOwleloGnzrL31NoqwKJynw8hs5VGuKk6KkW1Ye4EU=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=ivHzeHeAwrZqDMBJ/EWymsP8dVeFjZ0bZlv/6BY+eMsPtXJYowtpyrh07G9UdI1Ym
-	 KhFbYt4BDmoXZAls2DQfuY3t9jDWzAFM75muIKzaPw3Sj54Zj1SRi3ZV1JIC8MxsIx
-	 /iMep8fjY2anYJRESmdOTWnIHoteTr2x1xOFZ3no=
+	b=iyXqwehdlJLr///BEJPQSj74ugPdk3G3626fSMA1eBkdTHtFrqYRxlGJyI2Eb1B5K
+	 4SHjLpxeEzde4sir3yUxkdbGXL6xPZeVcV11k117Smn4/eZKrB6cMrU+b7gRxvHVDM
+	 c4O16X2NVa9m9MmnB4qO+hbQ9DfzzjOmCio3Qevs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfDYWZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 18:25:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60054 "EHLO mail.kernel.org"
+        id S1728959AbfDYXEI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 19:04:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbfDYWZL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 18:25:11 -0400
+        id S1727842AbfDYXEI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 19:04:08 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FBB8206C0;
-        Thu, 25 Apr 2019 22:25:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BAF6206BF;
+        Thu, 25 Apr 2019 23:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556231109;
-        bh=GACxoLulNU5OtRBVh4C6+vAfmx59bpYIT7euqG9Hw2Y=;
+        s=default; t=1556233447;
+        bh=xyOwleloGnzrL31NoqwKJynw8hs5VGuKk6KkW1Ye4EU=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=DMYI5upH/y40N2SBRYu4goleLc1jZrvfgr9RR8EfGg0iWKAhU2va1VsChK4Yo8PXb
-         oMCdTznx/mSN0XthQHnRgWaK5fAQf/nNxEgEEjtgTzlg39afRqqwrlbgEZ6UcNcLjE
-         7rABNeOTlgayruhzdulEHDAGjEu/Eg7HiIMHw3Do=
+        b=J/c1hXUAREMPjRxTuatlcax5gIQ35ktYB2NXH0tCTK/5LID3UBbHR/X0vsTSvwZEX
+         cAsMizPdjGSdNaA1JGDWYXw9wue10pBNi/SGH2UHDTAcXhfkV0heM4j2NQytwGe1YZ
+         302KxLgRqMB0qvsbipQaI7wpuGvofy6j8P/+/Rl4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2b4f56cd-caf9-e6b5-6344-a045e08a9c91@gmail.com>
-References: <20190414202009.31268-1-digetx@gmail.com> <20190414202009.31268-2-digetx@gmail.com> <155621927685.15276.16453873579880842057@swboyd.mtv.corp.google.com> <2b4f56cd-caf9-e6b5-6344-a045e08a9c91@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190424090216.18417-1-mike.looijmans@topic.nl>
+References: <20190424090216.18417-1-mike.looijmans@topic.nl>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Looijmans <mike.looijmans@topic.nl>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 1/4] clk: tegra20/30: Add custom EMC clock implementation
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Message-ID: <155623110849.15276.13181079281286430446@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] dt-bindings: Add silabs,si5341
+To:     Mike Looijmans <mike.looijmans@topic.nl>,
+        devicetree@vger.kernel.org
+Message-ID: <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 15:25:08 -0700
+Date:   Thu, 25 Apr 2019 16:04:06 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Osipenko (2019-04-25 14:42:19)
-> 25.04.2019 22:07, Stephen Boyd =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Quoting Dmitry Osipenko (2019-04-14 13:20:06)
-> >> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/c=
-lk-tegra20-emc.c
-> >> new file mode 100644
-> >> index 000000000000..35b67a9989c8
-> >> --- /dev/null
-> >> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
-> >> @@ -0,0 +1,307 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +#include <linux/bits.h>
-> >> +#include <linux/clk/tegra.h>
-> >=20
-> > Include clk-provider.h as this is a clk provider driver.
+Quoting Mike Looijmans (2019-04-24 02:02:16)
+> Adds the devicetree bindings for the si5341 driver that supports the
+> Si5341 and Si5340 chips.
 >=20
-> Okay, although clk-provider.h is also included by clk.h below.
-
-We prefer explicit includes instead of implicit ones. Failing to do that
-leads to changes like the one I'm making now to push out linux/io.h to
-all the users who are relying on clk-provider.h to provide it for them.
-
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> ---
+>  .../bindings/clock/silabs,si5341.txt          | 141 ++++++++++++++++++
+>  1 file changed, 141 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341=
+.txt
 >=20
-> >> +{
-> >> +       struct clk *clk =3D __clk_lookup("emc");
-> >> +       struct tegra_clk_emc *emc;
-> >> +       struct clk_hw *hw;
-> >> +
-> >> +       if (clk) {
-> >> +               hw =3D __clk_get_hw(clk);
-> >> +               emc =3D to_tegra_clk_emc(hw);
-> >> +
-> >> +               emc->round_cb =3D round_cb;
-> >> +               emc->arg_cb =3D arg_cb;
-> >> +       }
-> >> +}
-> >> +
-> >> +bool tegra20_clk_emc_driver_available(void)
-> >> +{
-> >> +       struct clk *clk =3D __clk_lookup("emc");
-> >=20
-> > Can we avoid using __clk_lookup()? Maybe by having the clk_hw pointer in
-> > this driver somehow?
->=20
-> tegra20_clk_emc_driver_available() is a private function of the Tegra's
-> clk-core. Please note that prototype of this function is added to the
-> local "drivers/clk/tegra/clk.h" file.
->=20
-> It is indeed possible to use clk pointer instead of __clk_lookup() and
-> I'll change that in v3 since it's causing some confusion.
+> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5341.txt b/=
+Documentation/devicetree/bindings/clock/silabs,si5341.txt
+> new file mode 100644
+> index 000000000000..1a00dd83100f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
+> @@ -0,0 +1,141 @@
+> +Binding for Silicon Labs Si5341 and Si5340 programmable i2c clock genera=
+tor.
+> +
+> +Reference
+> +[1] Si5341 Data Sheet
+> +    https://www.silabs.com/documents/public/reference-manuals/Si5341-40-=
+D-RM.pdf
 
-Can you use a clk_hw pointer directly? I'd like to see clk provider
-drivers only use struct clk_hw, and clk consumers only use struct clk.
+Thanks! I also had to look up the pinout in the datasheet, not the
+reference manual above.
 
->=20
-> >> +       struct tegra_clk_emc *emc;
-> >> +       struct clk_hw *hw;
-> >> +
-> >> +       if (clk) {
-> >> +               hw =3D __clk_get_hw(clk);
-> >=20
-> > This gets further to the point, we don't prefer to see drivers use
-> > __clk_get_hw() unless they absolutely need to. Maybe I don't understand
-> > the driver structure, but it seems like maybe the driver that's
-> > providing the callbacks could be the same driver that's registering
-> > these clks, and thus everything could be inside one file so that we
-> > don't have to pass around callbacks and clk_hw pointers? Commit text
-> > says "this is how it's been" but that's not a reason to keep doing it.
->=20
-> Again, tegra20_clk_emc_driver_available() is for the Terga's clk-core
-> and not for the EMC (External Memory Controller) driver. This function
-> is used to determine whether EMC driver is ready to handle clock-rate
-> changes (PRE/POST rate-change notifications), clk users can't get EMC
-> clock until driver is ready (i.e. the "round" callback is registered by
-> the driver).
+> +
+> +The Si5341 and Si5340 are programmable i2c clock generators with up to 1=
+0 output
+> +clocks. The chip contains a PLL that sources 5 (or 4) multisynth clocks,=
+ which
+> +in turn can be directed to any of the 10 (or 4) outputs through a divide=
+r.
+> +The internal structure of the clock generators can be found in [1].
+> +
+> +The driver can be used in "as is" mode, reading the current settings fro=
+m the
+> +chip at boot, in case you have a (pre-)programmed device. If the PLL is =
+not
+> +configured when the driver probes, it assumes the driver must fully init=
+ialize
+> +it.
+> +
+> +The device type, speed grade and revision are determined runtime by prob=
+ing.
+> +
+> +The driver currently only supports XTAL input mode, and does not support=
+ any
+> +fancy input configurations. They can still be programmed into the chip a=
+nd
+> +the driver will leave them "as is".
+> +
+> +=3D=3DI2C device node=3D=3D
+> +
+> +Required properties:
+> +- compatible: shall be one of the following: "silabs,si5341", "silabs,si=
+5340"
+> +- reg: i2c device address, usually 0x74
+> +- #clock-cells: from common clock binding; shall be set to 1.
+> +- clocks: from common clock binding; list of parent clock
+> +  handles, shall be xtal reference clock. Usually a fixed clock.
 
-Who are the other users of the EMC clk? Why does the EMC driver and the
-clk driver need to be in sync in such a way that requires us to check if
-some code in the EMC driver is ready before we can hand out clks from
-this clk provider? It looks like some tight coupling between these two
-pieces of code on the clk_get() path which is setting off alarms for me.
+Is there only one possible clk parent? Looks like there's an optional
+xtal on the XA/XB pins and then up to three more input clks on IN0/1/2.
+So shouldn't this list all of those and then indicate that at least one
+should be specified at all times?
 
->=20
-> Please see tegra20_clk_src_onecell_get() changes in this patch and
-> drivers/memory/tegra/tegra20-emc.c for clarity.
->=20
-> It is not possible to register clk from the EMC driver without having
-> some custom integration with the clk-core because CLK and EMC are
-> different hardware units and hence EMC driver doesn't have direct access
-> to the CLK registers. I think it is better to keep CLK and memory-timing
-> programming logically separated simply for consistency, although I'm
-> open to suggestions.
+> +- clock-names: Shall be "xtal".
 
-Sorry, I'm really confused and it's probably because I'm not taking the
-time to read all the Tegra code right now. I'm trying to understand the
-overall memory controller frequency logic.
+This should include the other clk inputs?
 
-I understand that there's a memory controller, and a clk controller, and
-they're different hardware blocks. Presumably the clk controller can't
-change frequencies without informing the memory controller that it's
-going to change something so the memory controller can fix timings in
-the EMC register space.
+> +- #address-cells: shall be set to 1.
+> +- #size-cells: shall be set to 0.
 
-Is there some other entity that's needing to be deferred while the EMC
-and clk drivers tell each other that they're probed and ready so that
-these notifiers all work? Is that entity using clks directly instead of
-going through the EMC to change frequencies? If so, why can't we funnel
-that logic through EMC which then goes to the clk driver? That way it's
-clearly "thing that changes frequency" -> EMC -> clk controller call
-chain. It might even allow us to get rid of the rate notifiers?
+I'd expect to see all the input voltage supplies here too.
+
+	vdd-supply
+	vdda-supply
+	vdds-supply
+	vdd0-supply
+	vdd1-supply
+	vdd2-supply
+	vdd3-supply
+	vdd4-supply
+	vdd5-supply
+	vdd6-supply
+	vdd7-supply
+	vdd8-supply
+	vdd9-supply
+
+> +
+> +Optional properties:
+> +- silabs,pll-m-num, silabs,pll-m-den: Numerator and denominator for PLL
+> +  feedback divider. Must be such that the PLL output is in the valid ran=
+ge. For
+> +  example, to create 14GHz from a 48MHz xtal, use m-num=3D14000 and m-de=
+n=3D48. Only
+> +  the fraction matters, using 3500 and 12 will deliver the exact same re=
+sult.
+> +  If these are not specified, and the PLL is not yet programmed when the=
+ driver
+> +  probes, the PLL will be set to 14GHz.
+
+Can this be done via assigned-clock-rates? Possibly with a table in the
+clk driver to tell us how to generate those rates.
+
+> +- silabs,reprogram: When present, the driver will always assume the devi=
+ce must
+> +  be initialized, and always performs the soft-reset routine. Since this=
+ will
+> +  temporarily stop all output clocks, don't do this if the chip is gener=
+ating
+> +  the CPU clock for example.
+
+Could this be done with the reset framework? It almost sounds like if
+the clk is a CLK_IS_CRITICAL then we shouldn't do the reset, otherwise
+we probably should reset the chip when the driver probes. If we don't
+have a case where it's going to be supplying a critical clk for a long
+time then perhaps we shouldn't even consider this topic until later.
+
+> +
+
+Looks like there is an interrupt pin? So we need an optional interrupts
+property?  Also, a reset pin, so maybe a 'resets' property. There's also
+another input pin for 'output enable' which maybe someone wants to use?
+Plus some other pins to control step up/down of frequency and clock
+synchronization? Maybe those should be optional gpios, but it probably
+can wait until later.
+
+> +=3D=3DChild nodes=3D=3D
+> +
+> +Each of the clock outputs can be overwritten individually by
+> +using a child node to the I2C device node. If a child node for a clock
+> +output is not set, the configuration remains unchanged.
+> +
+> +Required child node properties:
+> +- reg: number of clock output.
+> +
+> +Optional child node properties:
+> +- silabs,format: Output format, see [1], 1=3Ddifferential, 2=3Dlow-power=
+, 4=3DLVCMOS
+> +- silabs,common-mode: Output common mode, depends on standard.
+> +- silabs,amplitude: Output amplitude, depends on standard.
+> +- silabs,synth-source: Select which multisynth to use for this output
+> +- silabs,synth-frequency: Sets the frequency for the multisynth connecte=
+d to
+> +  this output. This will affect other outputs connected to this multisyn=
+th. The
+> +  setting is applied before silabs,synth-master and clock-frequency.
+> +- silabs,synth-master: If present, this output is allowed to change the
+> +  multisynth frequency dynamically.
+
+These above properties look like highly detailed configuration data to
+let the driver configure the clk output exactly how it's supposed to be
+configured. Can these properties be rewritten in more high-level terms
+that a system integrator would understand? Ideally, I shouldn't have to
+read the datasheet and the driver and then figure out what DT properties
+need the values from the datasheet in them so that the driver writes
+them to a particular register. I don't know if that's possible here,
+because I haven't read the driver or the datasheet too closely yet, but
+that should be the goal.
+
+> +- clock-frequency: Sets a default frequency for this output.
+
+Why not use assigned-clock-rates?
+
+> +- always-on: Immediately and permanently enable this output. Particulary
+> +  useful when combined with assigned-clocks, since that does not prepare=
+ clocks.
+
+Looks like you want CLK_IS_CRITICAL in DT. We've had that discussion
+before but maybe we should revisit it here and add a way to indicate
+that some clk should never be turned off instead of assuming that we
+can do this from C code all the time.
 
