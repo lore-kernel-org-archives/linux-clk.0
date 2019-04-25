@@ -2,136 +2,133 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D547CC10F03
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 09:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67B3C10F03
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 09:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C64A217FA
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 09:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AE1C217FA
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 09:11:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bphqXoPN"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n556TSWZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfDYJAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 05:00:20 -0400
-Received: from mail-eopbgr00077.outbound.protection.outlook.com ([40.107.0.77]:16289
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726039AbfDYJAU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 05:00:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t1xv8iTfGalx80tXbxq8F0wBjv2P9+kdKUZon7r4Ayg=;
- b=bphqXoPNkDsrlv7HGSyNfASmzq1N/Bo0WO62ZGGfKS/q//fQZopYL+V1vCyJzylS1teIDlkiQE4cg5P93HnEb9U5ib65df+AyHAMfu9lqjoleuReLjnaTHbsMQNGsC5pv1SkmbNikIu2wj1gXo/UzA1/qHMBQbZ1A7/mTpolIdk=
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB5087.eurprd04.prod.outlook.com (20.177.50.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.12; Thu, 25 Apr 2019 09:00:16 +0000
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::9bd:1d31:d6c3:d157]) by VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::9bd:1d31:d6c3:d157%6]) with mapi id 15.20.1813.017; Thu, 25 Apr 2019
- 09:00:16 +0000
-From:   Vabhav Sharma <vabhav.sharma@nxp.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Andy Tang <andy.tang@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v2] clk: qoriq: Add clockgen support for lx2160a
-Thread-Topic: [PATCH v2] clk: qoriq: Add clockgen support for lx2160a
-Thread-Index: AQHU+0VMeG1ON/JzDEWQk7OLyeNdaw==
-Date:   Thu, 25 Apr 2019 09:00:16 +0000
-Message-ID: <1556182821-9187-1-git-send-email-vabhav.sharma@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BMXPR01CA0084.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:54::24) To VI1PR04MB4800.eurprd04.prod.outlook.com
- (2603:10a6:803:53::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.9.1
-x-originating-ip: [92.120.1.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b0449846-a59d-4c43-fe34-08d6c95c6f45
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5087;
-x-ms-traffictypediagnostic: VI1PR04MB5087:
-x-microsoft-antispam-prvs: <VI1PR04MB50872858EA1885AE75ED8865F33D0@VI1PR04MB5087.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0018A2705B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(366004)(136003)(396003)(199004)(189003)(478600001)(71190400001)(305945005)(71200400001)(6512007)(6116002)(3846002)(5660300002)(53936002)(97736004)(6486002)(64756008)(7736002)(25786009)(6436002)(66446008)(14454004)(4326008)(6506007)(386003)(68736007)(66946007)(2906002)(486006)(44832011)(8936002)(73956011)(2616005)(476003)(36756003)(66476007)(102836004)(66556008)(66066001)(26005)(186003)(316002)(54906003)(110136005)(99286004)(2201001)(81166006)(81156014)(86362001)(8676002)(52116002)(50226002)(256004)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5087;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: bLHQZfFx2CzotfS9+tz7tMCX6oqcAlWvkm8bzEjLzt7wWTPaCoMeqbr78VfAoicNLHtuTnb++tr8zoRBi3m7FrHpWiNfHa9VGJ4eBMc4bS8zDowikqltta3Vwc/20YhXEgdfpOcNDLl9QP5X0cjz0aeJaNCjvfbaOvHHeUawM1R3/TQigu89mJZ2dfaK+QRKcoLZN/mPhvUTKojtyrtPzLmbSI2QqCooYeVGS4KvJ9yRnOwjX24RgnVQNJ9YBQRCr3dWQnIQBRo43JKggAAeGQCQdgqo9qsn/4+LtDZfFhPpfV5qBhPjR9YlrGlDh8W5z0SFk8wbDKNfMzYIhx+C5Pp7tBjxfVJ39ohvT9K+h4EfRFcLmmpKpEM1UmuwO/64UnJT7Z5KaR0U8E7RLv4Gmlq7r86b5OOnFs8MiEsoe4A=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727600AbfDYJLt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 05:11:49 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53801 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbfDYJLs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 05:11:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 26so2455998wmj.3
+        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2019 02:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=VfN3CUkSaPdoS7A8KSZ4/VihmK1M2aNoTuLwkFBF9Z8=;
+        b=n556TSWZEnT6QXKvSKr8gIPI2liF0wcoZIhTueLdkcmsETDTe+DNvx9fFtaetpIuMb
+         VX//O5NqnLlo8VDpAfA630JcNTqcYhWZwO/ov7Z7t2U9nF24zYteaa8BFuDTH12dh968
+         cv86rUd1NsKzREjRaTJSQDix20C8cJlbxnHPg0OqjmdoZo4k9nkz5dDs6MMB3d7EbyHL
+         A6+3sPvRiWtIoBSKG7hLDG7SpUOXv2py6f9/G6I58fSbOspwrxCoLN3pAYmGUkDLhber
+         6RSSX4s0iajbritQHsxcl3EypfcFaLKdIiFGIzkt1xcgWZWLrNW5XVPDT7ZxUDZAaKKI
+         okfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=VfN3CUkSaPdoS7A8KSZ4/VihmK1M2aNoTuLwkFBF9Z8=;
+        b=LL+Q5mM3USYC/6C7EROaGaTWkw5vzJfTKNVBFEJzcfLRKb92FYZ620hQ+dAcvsKDvZ
+         khCGvHVm4MDNX5rsZM2F1f1bth45OV0iiHDrHDnOfFiyJTnbowFnA5jKpepliBoyR3Ss
+         dF9MUT5r5/zpoqYmq6K9dwitg76QZYQeX4I+OPdWErN/Y7IbhEBKAzaLkCjTboVWnSq7
+         /Rm+xalnY6s5Kta4/JpL59SbtttoMblr8QmoiVYXMA57pwqEOzh2IZ1gGST1R13pxK61
+         DfBfRw9Z3806g+gNFxFXi8JEenYWB5PCBNOHnNJUL0rLKly0cMAbNMXSm3l0EG/Q9uJU
+         ygEA==
+X-Gm-Message-State: APjAAAWILpay9JaLHCVHWZtMX8KX7qy0bZO9o20EapjNH/3aeJb61M67
+        K3A1jdNo+2uAIxchjKG/2QiHZQ==
+X-Google-Smtp-Source: APXvYqyfBaAeEeeqIF9yNJfx+w/kqEhwhpwftPbbZOYsHGjQxinvnQBkbC2ZH8ku+giWEzg3+qWT1w==
+X-Received: by 2002:a1c:d7:: with SMTP id 206mr2861249wma.69.1556183506674;
+        Thu, 25 Apr 2019 02:11:46 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id r9sm20383255wmh.38.2019.04.25.02.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Apr 2019 02:11:45 -0700 (PDT)
+Date:   Thu, 25 Apr 2019 10:11:44 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Tony Xie <tony.xie@rock-chips.com>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v7 2/6] mfd: rk808: Add RK817 and RK809 support
+Message-ID: <20190425091144.GH14758@dell>
+References: <20190102102002.29245-1-tony.xie@rock-chips.com>
+ <20190102102002.29245-3-tony.xie@rock-chips.com>
+ <20190402063305.GZ4187@dell>
+ <518340124.P20tlEWT52@phil>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0449846-a59d-4c43-fe34-08d6c95c6f45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2019 09:00:16.3538
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5087
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <518340124.P20tlEWT52@phil>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RnJvbTogWW9nZXNoIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KDQpBZGQgY2xv
-Y2tnZW4gc3VwcG9ydCBmb3IgbHgyMTYwYS4NCkFkZGVkIGVudHJ5IGZvciBjb21wYXQgJ2ZzbCxs
-eDIxNjBhLWNsb2NrZ2VuJy4NCg0KU2lnbmVkLW9mZi1ieTogVGFuZyBZdWFudGlhbiA8YW5keS50
-YW5nQG54cC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBZb2dlc2ggR2F1ciA8eW9nZXNobmFyYXlhbi5n
-YXVyQG54cC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBWYWJoYXYgU2hhcm1hIDx2YWJoYXYuc2hhcm1h
-QG54cC5jb20+DQpBY2tlZC1ieTogU2NvdHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD4NCkFja2Vk
-LWJ5OiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+DQpBY2tlZC1ieTogVmlyZXNoIEt1
-bWFyIDx2aXJlc2gua3VtYXJAbGluYXJvLm9yZz4NCg0KQ2hhbmdlcyBmb3IgdjI6DQotIFN1Ympl
-Y3QgbGluZSB1cGRhdGVkDQotLS0NCiBkcml2ZXJzL2Nsay9jbGstcW9yaXEuYyAgICAgICAgIHwg
-MTIgKysrKysrKysrKysrDQogZHJpdmVycy9jcHVmcmVxL3FvcmlxLWNwdWZyZXEuYyB8ICAxICsN
-CiAyIGZpbGVzIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvY2xrL2Nsay1xb3JpcS5jIGIvZHJpdmVycy9jbGsvY2xrLXFvcmlxLmMNCmluZGV4IDNkNTFk
-N2MuLjFhMTUyMDEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2Nsay9jbGstcW9yaXEuYw0KKysrIGIv
-ZHJpdmVycy9jbGsvY2xrLXFvcmlxLmMNCkBAIC01NzAsNiArNTcwLDE3IEBAIHN0YXRpYyBjb25z
-dCBzdHJ1Y3QgY2xvY2tnZW5fY2hpcGluZm8gY2hpcGluZm9bXSA9IHsNCiAJCS5mbGFncyA9IENH
-X1ZFUjMgfCBDR19MSVRUTEVfRU5ESUFOLA0KIAl9LA0KIAl7DQorCQkuY29tcGF0ID0gImZzbCxs
-eDIxNjBhLWNsb2NrZ2VuIiwNCisJCS5jbXV4X2dyb3VwcyA9IHsNCisJCQkmY2xvY2tnZW4yX2Nt
-dXhfY2dhMTIsICZjbG9ja2dlbjJfY211eF9jZ2INCisJCX0sDQorCQkuY211eF90b19ncm91cCA9
-IHsNCisJCQkwLCAwLCAwLCAwLCAxLCAxLCAxLCAxLCAtMQ0KKwkJfSwNCisJCS5wbGxfbWFzayA9
-IDB4MzcsDQorCQkuZmxhZ3MgPSBDR19WRVIzIHwgQ0dfTElUVExFX0VORElBTiwNCisJfSwNCisJ
-ew0KIAkJLmNvbXBhdCA9ICJmc2wscDIwNDEtY2xvY2tnZW4iLA0KIAkJLmd1dHNfY29tcGF0ID0g
-ImZzbCxxb3JpcS1kZXZpY2UtY29uZmlnLTEuMCIsDQogCQkuaW5pdF9wZXJpcGggPSBwMjA0MV9p
-bml0X3BlcmlwaCwNCkBAIC0xNDI3LDYgKzE0MzgsNyBAQCBDTEtfT0ZfREVDTEFSRShxb3JpcV9j
-bG9ja2dlbl9sczEwNDNhLCAiZnNsLGxzMTA0M2EtY2xvY2tnZW4iLCBjbG9ja2dlbl9pbml0KTsN
-CiBDTEtfT0ZfREVDTEFSRShxb3JpcV9jbG9ja2dlbl9sczEwNDZhLCAiZnNsLGxzMTA0NmEtY2xv
-Y2tnZW4iLCBjbG9ja2dlbl9pbml0KTsNCiBDTEtfT0ZfREVDTEFSRShxb3JpcV9jbG9ja2dlbl9s
-czEwODhhLCAiZnNsLGxzMTA4OGEtY2xvY2tnZW4iLCBjbG9ja2dlbl9pbml0KTsNCiBDTEtfT0Zf
-REVDTEFSRShxb3JpcV9jbG9ja2dlbl9sczIwODBhLCAiZnNsLGxzMjA4MGEtY2xvY2tnZW4iLCBj
-bG9ja2dlbl9pbml0KTsNCitDTEtfT0ZfREVDTEFSRShxb3JpcV9jbG9ja2dlbl9seDIxNjBhLCAi
-ZnNsLGx4MjE2MGEtY2xvY2tnZW4iLCBjbG9ja2dlbl9pbml0KTsNCiBDTEtfT0ZfREVDTEFSRShx
-b3JpcV9jbG9ja2dlbl9wMjA0MSwgImZzbCxwMjA0MS1jbG9ja2dlbiIsIGNsb2NrZ2VuX2luaXQp
-Ow0KIENMS19PRl9ERUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX3AzMDQxLCAiZnNsLHAzMDQxLWNsb2Nr
-Z2VuIiwgY2xvY2tnZW5faW5pdCk7DQogQ0xLX09GX0RFQ0xBUkUocW9yaXFfY2xvY2tnZW5fcDQw
-ODAsICJmc2wscDQwODAtY2xvY2tnZW4iLCBjbG9ja2dlbl9pbml0KTsNCmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2NwdWZyZXEvcW9yaXEtY3B1ZnJlcS5jIGIvZHJpdmVycy9jcHVmcmVxL3FvcmlxLWNw
-dWZyZXEuYw0KaW5kZXggNDI5NWU1NC4uODFmMDI4OCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvY3B1
-ZnJlcS9xb3JpcS1jcHVmcmVxLmMNCisrKyBiL2RyaXZlcnMvY3B1ZnJlcS9xb3JpcS1jcHVmcmVx
-LmMNCkBAIC0yODQsNiArMjg0LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
-bm9kZV9tYXRjaGVzW10gX19pbml0Y29uc3QgPSB7DQogCXsgLmNvbXBhdGlibGUgPSAiZnNsLGxz
-MTA0NmEtY2xvY2tnZW4iLCB9LA0KIAl7IC5jb21wYXRpYmxlID0gImZzbCxsczEwODhhLWNsb2Nr
-Z2VuIiwgfSwNCiAJeyAuY29tcGF0aWJsZSA9ICJmc2wsbHMyMDgwYS1jbG9ja2dlbiIsIH0sDQor
-CXsgLmNvbXBhdGlibGUgPSAiZnNsLGx4MjE2MGEtY2xvY2tnZW4iLCB9LA0KIAl7IC5jb21wYXRp
-YmxlID0gImZzbCxwNDA4MC1jbG9ja2dlbiIsIH0sDQogCXsgLmNvbXBhdGlibGUgPSAiZnNsLHFv
-cmlxLWNsb2NrZ2VuLTEuMCIsIH0sDQogCXsgLmNvbXBhdGlibGUgPSAiZnNsLHFvcmlxLWNsb2Nr
-Z2VuLTIuMCIsIH0sDQotLSANCjIuNy40DQoNCg==
+On Thu, 11 Apr 2019, Heiko Stuebner wrote:
+
+> Hi Lee,
+> 
+> Am Dienstag, 2. April 2019, 08:33:05 CEST schrieb Lee Jones:
+> > On Wed, 02 Jan 2019, Tony Xie wrote:
+> > 
+> > > The RK809 and RK817 are a Power Management IC (PMIC) for multimedia
+> > > and handheld devices. They contains the following components:
+> > >   - Regulators
+> > >   - RTC
+> > >   - Clocking
+> > > 
+> > > Both RK809 and RK817 chips are using a similar register map,
+> > > so we can reuse the RTC and Clocking functionality.
+> > > Most of regulators have a some implementation also.
+> > > 
+> > > Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > > ---
+> > >  drivers/mfd/Kconfig       |   6 +-
+> > >  drivers/mfd/rk808.c       | 192 +++++++++++++++++++++++++++++++++++++-
+> > >  include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 364 insertions(+), 6 deletions(-)
+> > 
+> > For my own reference:
+> >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> 
+> do you have some sort of merge plan for this or are you waiting for
+> specific Acks? I guess if we're waiting for an Ack from Mark Brown,
+> we'll need a resend of the patch.
+> 
+> All other patches have Acks from their subsystem maintainers (rtc, clk)
+> so you could pick up all patches except patch3 and I could just resend
+> this one, which in turn could also go through the regulator tree.
+> 
+> Otherwise we'll probably need a resend of the series, as Mark most of
+> the time doesn't keep old patch series around.
+
+Try resending it.  Hopefully he will review in the next week or so can
+I can collect it when I return back from Shared Parental Leave.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
