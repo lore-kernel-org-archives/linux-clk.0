@@ -2,751 +2,295 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78371C10F03
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 10:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F79DC282E5
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 11:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9302084B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 10:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CD5D217FA
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 11:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730440AbfDYKlK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 06:41:10 -0400
-Received: from mx.socionext.com ([202.248.49.38]:5361 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbfDYKlJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 06:41:09 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 25 Apr 2019 19:40:55 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 0CFC56117D;
-        Thu, 25 Apr 2019 19:40:56 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 25 Apr 2019 19:40:56 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id AC8051A04E0;
-        Thu, 25 Apr 2019 19:40:55 +0900 (JST)
-Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 95E98121BD0;
-        Thu, 25 Apr 2019 19:40:55 +0900 (JST)
-From:   Sugaya Taichi <sugaya.taichi@socionext.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726915AbfDYLNu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 07:13:50 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45247 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfDYLNu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 07:13:50 -0400
+Received: by mail-lf1-f67.google.com with SMTP id t11so17175972lfl.12;
+        Thu, 25 Apr 2019 04:13:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=dlYkvMpT+4KQM13INrX0UqfPmh1COXsyCWyuxu7omFg=;
+        b=J6kk3K994wSqUEE0BX6ld/Q3VRBpgFFvQjZGNUEbPF2lBAhZHG3vWaJkGZt9Rht84m
+         iNi+8ZPE0exDNEW5zTtdhNiYV3D54J8rErqzwnf6iSquEqbI5gtp/SpHQ34LYal57d5H
+         ns+H94j+gWLD3xokDkKXrSzZQZRhG/zC6knRZOYBeCixACyBeJ8sgEZ2q5ck5X0kVe0N
+         V2PlE0UU1C272SLtdrgD0/sSRf0LvY8rETUUnWRLwRBaZAQ/hnBz2hR3AniKEo95hICA
+         zV9hAWn1HANfgmkJUVYuai1EVCabyx65WYpn8zjcmjZKh/25bh5Jt8O2H135W73PLPIs
+         Rg6w==
+X-Gm-Message-State: APjAAAWfcJbKSM5H8yGdnMQVVD5vGrj7khvKI+GiUwzdBYWravdohosv
+        a2Wd4IbsCUC3XVE5WL9/6Yc=
+X-Google-Smtp-Source: APXvYqzXVFcGeCnxk6q5aRrLL5ouspEOHg0jeJ0oexa03q8Yvo2TVmHnaglAbQ5r7S9kE3hwRhWeCQ==
+X-Received: by 2002:a19:c113:: with SMTP id r19mr20663765lff.64.1556190826662;
+        Thu, 25 Apr 2019 04:13:46 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q29sm4598656ljc.8.2019.04.25.04.13.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Apr 2019 04:13:45 -0700 (PDT)
+Date:   Thu, 25 Apr 2019 14:13:33 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mazziesaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH v3 2/3] clock: milbeaut: Add Milbeaut M10V clock controller
-Date:   Thu, 25 Apr 2019 19:41:01 +0900
-Message-Id: <1556188862-22546-3-git-send-email-sugaya.taichi@socionext.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1556188862-22546-1-git-send-email-sugaya.taichi@socionext.com>
-References: <1556188862-22546-1-git-send-email-sugaya.taichi@socionext.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: [PATCH RESEND v13 0/8] support ROHM BD70528 PMIC
+Message-ID: <cover2.1554371464.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The M10V of the Milbeaut SoCs has an on-chip controller that derive
-mostly clocks from a single external clock, using PLLs, dividers,
-multiplexers and gates. Since the PLLs have already been started and
-will not stop / restart, they are fixed factor. The gates will be added
-in later patch (all of the gates are off state now).
+Patch series introducing support for ROHM BD70528 PMIC
 
-Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+Resending the series as I forgot Lee from the recipient list of
+the original mail.
+
+ROHM BD70528 is a programmable Power Management IC for battery
+powered 'ultra low power' systems like the pre-announced NXP
+i.MX7 ULP. This patch series introduces support for the PMIC. Please
+note that this driver only supports HW setup where PMIC is connected
+to I2C on A7 core. The other scenario is to use M4 as a power manager
+and connect pmic to M4. On such setups the A7 can only access pmic
+via M4 core using RPMSG virtio. Such setup depends on RPMSG
+implementation on M4 core and is currently not supported by this
+patch series.
+
+RTC block of the bd70528 can support 'wake' irq which wakes PMIC
+from standby state. Wake irq's can be armed to wake up system up
+to 24 hours from arming. bd70528 can also generate alarm interrupts
+which can be armed to occur years after triggering. The RTC driver
+does always arm both the waker and alarm irqs and does not utilize
+longer period of alarm interrupts. All the RTC timers are limited
+to occur within the next 24 hours. Any suggestions on more elegant
+timer support are welcome =)
+
+GPIO portion of bd70528 driver adds I/O support for driving GPIO
+pins or reading the state. The interrupt functionality is provided
+by regmap-irq. Current GPIO driver is not aware of whether the pin(s)
+are used for I/O or interrupts and it is up-to driver user to
+ensure there is no misconfiguration or "double use".
+
+The power-supply patch included in series is only poorly tested as I
+lack of hardware with real battery connected. Reset and ADC are not
+supported by this series.
+
+Changelog v13:
+- Moved WDT enable/disable code from MFD to WDT
+- Added WDT enable/disable stubs for cases where WDT is omitted from
+  Kconfig
+
+Changelog v12:
+- No functional changes
+- Fixed styling issues pointed by Lee Jones
+- Fixed styling issues pointed by Alexandre Belloni
+- Fixed various styling issues
+
+Changelog v11:
+- No functional changes
+- Rebased on linux 5.1-rc2
+- Dropped patch 9 which was already applied by Mark
+- renamed dt-bindings patch as suggested by Rob
+  
+Changelog v10:
+- Exported locking functions for RTC lock and as a result dropped hid
+  the struct bd70528 from sub-devices who no longer needed it.
+- removed linux/gpio.h header from GPIO driver.
+
+Changelog v9: Changes suggested by Lee Jones
+- MFD, DT-binding, RTC and WDT changed
+- DT-bindings: Spelling fixes
+- RTC and WDT: Use exported function instead of function pointer for WDT
+  arming/disarming
+- MFD: Export WDT arming/disarming function instead of providing a
+  pointer to it.
+- Various styling fixes.
+
+Changelog v8:
+- regulators(*), wdt, gpio, rtc, mfd(*) and dt-bindings unchanged.
+  (*)Patches 1-3 squashed to not break bisecting.
+
+- removed unnecessary newline from clk
+- fixed possible use of uninitialized 'reg' from power-supply.
+  Found by 0-day tests and reported by Dan Carpenter.
+
+Changelog v7:
+Only patch 2 changed.
+- Avoid out-of-array-bounds access at regulator probe if unsupported
+  chip type is passed to bd718x7 regulator driver.
+
+Changelog v6:
+Only patch 10 changed.
+- styling fixes pointed by Gunter Roeck
+- dropped RFC tag
+
+Changelog v5 (RFC):
+Only patch 7 changed.
+- Explained why lock is not needed at GPIO value getting
+- removed ampersands from function pointer assignments.
+
+Changelog v4 (RFC):
+patches 1,2,3,4,5,10 are unchanged from v3
+DT-binding fixes suggested by Rob Herring:
+- drop interrupt-parent
+- drop clock-frequency
+- change pmic node name to a generic one
+RTC:
+- enable RTC block's irqs before registering rtc
+GPIO fixes after initial testing:
+- fix getting GPIO value when direction is output
+POWER:
+- Add ASCII art intended to clarify the charger HW state machine
+
+Changelog v3 (RFC):
+patches 1,2,3,4,5,6,7,8 and 10 are unchanged from v2
+RTC fixups suggested by Guenter Roeck:
+- create bd70528_set_time_locked function in order to simplify
+  error handling and to make mutex lock/unlock path more obvious
+- don't ignore errors on bd70528_set_time_locked
+- simplify bd70528_read_alarm enabled condition setting
+- add __packed to structs where members are mapped to HW registers
+- remove unnecessary brackets from enable condition in set_wake
+RTC: fixups suggested by Alessandro Belloni
+- don't use deprecated devm_rtc_device_register
+- add alarm_irq_enable callback
+- add range_min and range_max
+WDT:
+- add regmap and mutex pointers to WDT data so that they can be accessed
+  without dereferencing the parent data
+- remove parent data pointer from WDT data
+- embed struct watchdog_device into WDT data in order to avoid double
+  allocation.
+GPIO:
+- remove unused header as pointed by Linus Walleij
+POWER:
+- do not copy the whole MFD data (especially the mutex to avoid
+  all possibilities of accidentally using the copy of a mutex)
+
+Changelog v2 (RFC): Mainly feedback from Guenter Roeck:
+- patches 1, 2, 3, 4, 5, 9 are unchanged.
+- mfd: own mutex for each bd70528 instance - embed in struct bd70528
+- watchdog: do not copy parent device data
+- watchdog: fix deadlock caused by double locked mutex
+- watchdog: set initial timeouts and WDT parent information
+- watchdog: remove unnecessary ping function from ops
+- watchdog: and the comment regarding it
+- watchdog: allocate watchdog struct in order to allow multiple WDG
+  instances
+- rtc: bd70528 fix the order of mutex unlock and re-enabling RTC based
+  timers
+- rtc: fix the irq mask register address
+- power: fix the irq mask register address
+- regulator/regmap-irq: Drop the patches 1, 8 and 9 from original series
+  as those were already applied by Mark 
+
+Patch 1:
+	split the bd718x7.h to generic and chip specific portions.
+	(breaks compilation without patch 2 and 3)
+	- adapt bd718x7.h changes to bd718x7 regulator driver
+	- adapt bd718x7.h changes to bd718x7 clk driver
+Patch 2:
+	add MFD core support for bd70528
+Patch 3:
+	support bd70528 clk using bd718x7 clk driver
+Patch 4:
+	document DT bindings for BD70528
+Patch 5:
+	support BD70528 GPIO block
+Patch 6:
+	support BD70528 RTC
+Patch 7:
+	support BD70528 battery charger
+Patch 8:
+	support BD70528 watchdog
+
+This patch series is based on Linus' v5.1-rc2 tag.
+
 ---
- drivers/clk/Makefile       |   1 +
- drivers/clk/clk-milbeaut.c | 663 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 664 insertions(+)
- create mode 100644 drivers/clk/clk-milbeaut.c
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 1db1336..a567bb8 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -32,6 +32,7 @@ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
- obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
-+obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
- obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
-diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
-new file mode 100644
-index 0000000..a78d917
---- /dev/null
-+++ b/drivers/clk/clk-milbeaut.c
-@@ -0,0 +1,663 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Socionext Inc.
-+ * Copyright (C) 2016 Linaro Ltd.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define M10V_CLKSEL1		0x0
-+#define CLKSEL(n)	(((n) - 1) * 4 + M10V_CLKSEL1)
-+
-+#define M10V_PLL1		"pll1"
-+#define M10V_PLL1DIV2		"pll1-2"
-+#define M10V_PLL2		"pll2"
-+#define M10V_PLL2DIV2		"pll2-2"
-+#define M10V_PLL6		"pll6"
-+#define M10V_PLL6DIV2		"pll6-2"
-+#define M10V_PLL6DIV3		"pll6-3"
-+#define M10V_PLL7		"pll7"
-+#define M10V_PLL7DIV2		"pll7-2"
-+#define M10V_PLL7DIV5		"pll7-5"
-+#define M10V_PLL9		"pll9"
-+#define M10V_PLL10		"pll10"
-+#define M10V_PLL10DIV2		"pll10-2"
-+#define M10V_PLL11		"pll11"
-+
-+#define M10V_SPI_PARENT0	"spi-parent0"
-+#define M10V_SPI_PARENT1	"spi-parent1"
-+#define M10V_SPI_PARENT2	"spi-parent2"
-+#define M10V_UHS1CLK2_PARENT0	"uhs1clk2-parent0"
-+#define M10V_UHS1CLK2_PARENT1	"uhs1clk2-parent1"
-+#define M10V_UHS1CLK2_PARENT2	"uhs1clk2-parent2"
-+#define M10V_UHS1CLK1_PARENT0	"uhs1clk1-parent0"
-+#define M10V_UHS1CLK1_PARENT1	"uhs1clk1-parent1"
-+#define M10V_NFCLK_PARENT0	"nfclk-parent0"
-+#define M10V_NFCLK_PARENT1	"nfclk-parent1"
-+#define M10V_NFCLK_PARENT2	"nfclk-parent2"
-+#define M10V_NFCLK_PARENT3	"nfclk-parent3"
-+#define M10V_NFCLK_PARENT4	"nfclk-parent4"
-+#define M10V_NFCLK_PARENT5	"nfclk-parent5"
-+
-+#define M10V_DCHREQ		1
-+#define M10V_UPOLL_RATE		1
-+#define M10V_UTIMEOUT		250
-+
-+#define M10V_EMMCCLK_ID		0
-+#define M10V_ACLK_ID		1
-+#define M10V_HCLK_ID		2
-+#define M10V_PCLK_ID		3
-+#define M10V_RCLK_ID		4
-+#define M10V_SPICLK_ID		5
-+#define M10V_NFCLK_ID		6
-+#define M10V_UHS1CLK2_ID	7
-+#define M10V_NUM_CLKS		8
-+
-+#define to_m10v_div(_hw)        container_of(_hw, struct m10v_clk_divider, hw)
-+
-+static struct clk_hw_onecell_data *m10v_clk_data;
-+
-+static DEFINE_SPINLOCK(m10v_crglock);
-+
-+struct m10v_clk_div_factors {
-+	const char			*name;
-+	const char			*parent_name;
-+	u32				offset;
-+	u8				shift;
-+	u8				width;
-+	const struct clk_div_table	*table;
-+	unsigned long			div_flags;
-+	int				onecell_idx;
-+};
-+
-+struct m10v_clk_div_fixed_data {
-+	const char	*name;
-+	const char	*parent_name;
-+	u8		div;
-+	u8		mult;
-+	int		onecell_idx;
-+};
-+
-+struct m10v_clk_mux_factors {
-+	const char		*name;
-+	const char * const	*parent_names;
-+	u8			num_parents;
-+	u32			offset;
-+	u8			shift;
-+	u8			mask;
-+	u32			*table;
-+	unsigned long		mux_flags;
-+	int			onecell_idx;
-+};
-+
-+static const struct clk_div_table emmcclk_table[] = {
-+	{ .val = 0, .div = 8 },
-+	{ .val = 1, .div = 9 },
-+	{ .val = 2, .div = 10 },
-+	{ .val = 3, .div = 15 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table mclk400_table[] = {
-+	{ .val = 1, .div = 2 },
-+	{ .val = 3, .div = 4 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table mclk200_table[] = {
-+	{ .val = 3, .div = 4 },
-+	{ .val = 7, .div = 8 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table aclk400_table[] = {
-+	{ .val = 1, .div = 2 },
-+	{ .val = 3, .div = 4 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table aclk300_table[] = {
-+	{ .val = 0, .div = 2 },
-+	{ .val = 1, .div = 3 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table aclk_table[] = {
-+	{ .val = 3, .div = 4 },
-+	{ .val = 7, .div = 8 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table aclkexs_table[] = {
-+	{ .val = 3, .div = 4 },
-+	{ .val = 4, .div = 5 },
-+	{ .val = 5, .div = 6 },
-+	{ .val = 7, .div = 8 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table hclk_table[] = {
-+	{ .val = 7, .div = 8 },
-+	{ .val = 15, .div = 16 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table hclkbmh_table[] = {
-+	{ .val = 3, .div = 4 },
-+	{ .val = 7, .div = 8 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table pclk_table[] = {
-+	{ .val = 15, .div = 16 },
-+	{ .val = 31, .div = 32 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table rclk_table[] = {
-+	{ .val = 0, .div = 8 },
-+	{ .val = 1, .div = 16 },
-+	{ .val = 2, .div = 24 },
-+	{ .val = 3, .div = 32 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table uhs1clk0_table[] = {
-+	{ .val = 0, .div = 2 },
-+	{ .val = 1, .div = 3 },
-+	{ .val = 2, .div = 4 },
-+	{ .val = 3, .div = 8 },
-+	{ .val = 4, .div = 16 },
-+	{ .div = 0 },
-+};
-+
-+static const struct clk_div_table uhs2clk_table[] = {
-+	{ .val = 0, .div = 9 },
-+	{ .val = 1, .div = 10 },
-+	{ .val = 2, .div = 11 },
-+	{ .val = 3, .div = 12 },
-+	{ .val = 4, .div = 13 },
-+	{ .val = 5, .div = 14 },
-+	{ .val = 6, .div = 16 },
-+	{ .val = 7, .div = 18 },
-+	{ .div = 0 },
-+};
-+
-+static u32 spi_mux_table[] = {0, 1, 2};
-+static const char * const spi_mux_names[] = {
-+	M10V_SPI_PARENT0, M10V_SPI_PARENT1, M10V_SPI_PARENT2
-+};
-+
-+static u32 uhs1clk2_mux_table[] = {2, 3, 4, 8};
-+static const char * const uhs1clk2_mux_names[] = {
-+	M10V_UHS1CLK2_PARENT0, M10V_UHS1CLK2_PARENT1,
-+	M10V_UHS1CLK2_PARENT2, M10V_PLL6DIV2
-+};
-+
-+static u32 uhs1clk1_mux_table[] = {3, 4, 8};
-+static const char * const uhs1clk1_mux_names[] = {
-+	M10V_UHS1CLK1_PARENT0, M10V_UHS1CLK1_PARENT1, M10V_PLL6DIV2
-+};
-+
-+static u32 nfclk_mux_table[] = {0, 1, 2, 3, 4, 8};
-+static const char * const nfclk_mux_names[] = {
-+	M10V_NFCLK_PARENT0, M10V_NFCLK_PARENT1, M10V_NFCLK_PARENT2,
-+	M10V_NFCLK_PARENT3, M10V_NFCLK_PARENT4, M10V_NFCLK_PARENT5
-+};
-+
-+static const struct m10v_clk_div_fixed_data m10v_pll_fixed_data[] = {
-+	{M10V_PLL1, NULL, 1, 40, -1},
-+	{M10V_PLL2, NULL, 1, 30, -1},
-+	{M10V_PLL6, NULL, 1, 35, -1},
-+	{M10V_PLL7, NULL, 1, 40, -1},
-+	{M10V_PLL9, NULL, 1, 33, -1},
-+	{M10V_PLL10, NULL, 5, 108, -1},
-+	{M10V_PLL10DIV2, M10V_PLL10, 2, 1, -1},
-+	{M10V_PLL11, NULL, 2, 75, -1},
-+};
-+
-+static const struct m10v_clk_div_fixed_data m10v_div_fixed_data[] = {
-+	{"usb2", NULL, 2, 1, -1},
-+	{"pcisuppclk", NULL, 20, 1, -1},
-+	{M10V_PLL1DIV2, M10V_PLL1, 2, 1, -1},
-+	{M10V_PLL2DIV2, M10V_PLL2, 2, 1, -1},
-+	{M10V_PLL6DIV2, M10V_PLL6, 2, 1, -1},
-+	{M10V_PLL6DIV3, M10V_PLL6, 3, 1, -1},
-+	{M10V_PLL7DIV2, M10V_PLL7, 2, 1, -1},
-+	{M10V_PLL7DIV5, M10V_PLL7, 5, 1, -1},
-+	{"ca7wd", M10V_PLL2DIV2, 12, 1, -1},
-+	{"pclkca7wd", M10V_PLL1DIV2, 16, 1, -1},
-+	{M10V_SPI_PARENT0, M10V_PLL10DIV2, 2, 1, -1},
-+	{M10V_SPI_PARENT1, M10V_PLL10DIV2, 4, 1, -1},
-+	{M10V_SPI_PARENT2, M10V_PLL7DIV2, 8, 1, -1},
-+	{M10V_UHS1CLK2_PARENT0, M10V_PLL7, 4, 1, -1},
-+	{M10V_UHS1CLK2_PARENT1, M10V_PLL7, 8, 1, -1},
-+	{M10V_UHS1CLK2_PARENT2, M10V_PLL7, 16, 1, -1},
-+	{M10V_UHS1CLK1_PARENT0, M10V_PLL7, 8, 1, -1},
-+	{M10V_UHS1CLK1_PARENT1, M10V_PLL7, 16, 1, -1},
-+	{M10V_NFCLK_PARENT0, M10V_PLL7DIV2, 8, 1, -1},
-+	{M10V_NFCLK_PARENT1, M10V_PLL7DIV2, 10, 1, -1},
-+	{M10V_NFCLK_PARENT2, M10V_PLL7DIV2, 13, 1, -1},
-+	{M10V_NFCLK_PARENT3, M10V_PLL7DIV2, 16, 1, -1},
-+	{M10V_NFCLK_PARENT4, M10V_PLL7DIV2, 40, 1, -1},
-+	{M10V_NFCLK_PARENT5, M10V_PLL7DIV5, 10, 1, -1},
-+};
-+
-+static const struct m10v_clk_div_factors m10v_div_factor_data[] = {
-+	{"emmc", M10V_PLL11, CLKSEL(1), 28, 3, emmcclk_table, 0,
-+		M10V_EMMCCLK_ID},
-+	{"mclk400", M10V_PLL1DIV2, CLKSEL(10), 7, 3, mclk400_table, 0, -1},
-+	{"mclk200", M10V_PLL1DIV2, CLKSEL(10), 3, 4, mclk200_table, 0, -1},
-+	{"aclk400", M10V_PLL1DIV2, CLKSEL(10), 0, 3, aclk400_table, 0, -1},
-+	{"aclk300", M10V_PLL2DIV2, CLKSEL(12), 0, 2, aclk300_table, 0, -1},
-+	{"aclk", M10V_PLL1DIV2, CLKSEL(9), 20, 4, aclk_table, 0, M10V_ACLK_ID},
-+	{"aclkexs", M10V_PLL1DIV2, CLKSEL(9), 16, 4, aclkexs_table, 0, -1},
-+	{"hclk", M10V_PLL1DIV2, CLKSEL(9), 7, 5, hclk_table, 0, M10V_HCLK_ID},
-+	{"hclkbmh", M10V_PLL1DIV2, CLKSEL(9), 12, 4, hclkbmh_table, 0, -1},
-+	{"pclk", M10V_PLL1DIV2, CLKSEL(9), 0, 7, pclk_table, 0, M10V_PCLK_ID},
-+	{"uhs1clk0", M10V_PLL7, CLKSEL(1), 3, 5, uhs1clk0_table, 0, -1},
-+	{"uhs2clk", M10V_PLL6DIV3, CLKSEL(1), 18, 4, uhs2clk_table, 0, -1},
-+};
-+
-+static const struct m10v_clk_mux_factors m10v_mux_factor_data[] = {
-+	{"spi", spi_mux_names, ARRAY_SIZE(spi_mux_names),
-+		CLKSEL(8), 3, 7, spi_mux_table, 0, M10V_SPICLK_ID},
-+	{"uhs1clk2", uhs1clk2_mux_names, ARRAY_SIZE(uhs1clk2_mux_names),
-+		CLKSEL(1), 13, 31, uhs1clk2_mux_table, 0, M10V_UHS1CLK2_ID},
-+	{"uhs1clk1", uhs1clk1_mux_names, ARRAY_SIZE(uhs1clk1_mux_names),
-+		CLKSEL(1), 8, 31, uhs1clk1_mux_table, 0, -1},
-+	{"nfclk", nfclk_mux_names, ARRAY_SIZE(nfclk_mux_names),
-+		CLKSEL(1), 22, 127, nfclk_mux_table, 0, M10V_NFCLK_ID},
-+};
-+
-+static u8 m10v_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val;
-+
-+	val = readl(mux->reg) >> mux->shift;
-+	val &= mux->mask;
-+
-+	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-+}
-+
-+static int m10v_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val = clk_mux_index_to_val(mux->table, mux->flags, index);
-+	unsigned long flags = 0;
-+	u32 reg;
-+	u32 write_en = BIT(fls(mux->mask) - 1);
-+
-+	if (mux->lock)
-+		spin_lock_irqsave(mux->lock, flags);
-+	else
-+		__acquire(mux->lock);
-+
-+	reg = readl(mux->reg);
-+	reg &= ~(mux->mask << mux->shift);
-+
-+	val = (val | write_en) << mux->shift;
-+	reg |= val;
-+	writel(reg, mux->reg);
-+
-+	if (mux->lock)
-+		spin_unlock_irqrestore(mux->lock, flags);
-+	else
-+		__release(mux->lock);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops m10v_mux_ops = {
-+	.get_parent = m10v_mux_get_parent,
-+	.set_parent = m10v_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+
-+static struct clk_hw *m10v_clk_hw_register_mux(struct device *dev,
-+			const char *name, const char * const *parent_names,
-+			u8 num_parents, unsigned long flags, void __iomem *reg,
-+			u8 shift, u32 mask, u8 clk_mux_flags, u32 *table,
-+			spinlock_t *lock)
-+{
-+	struct clk_mux *mux;
-+	struct clk_hw *hw;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &m10v_mux_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	mux->reg = reg;
-+	mux->shift = shift;
-+	mux->mask = mask;
-+	mux->flags = clk_mux_flags;
-+	mux->lock = lock;
-+	mux->table = table;
-+	mux->hw.init = &init;
-+
-+	hw = &mux->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(mux);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+
-+}
-+
-+struct m10v_clk_divider {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		shift;
-+	u8		width;
-+	u8		flags;
-+	const struct clk_div_table	*table;
-+	spinlock_t	*lock;
-+	void __iomem	*write_valid_reg;
-+};
-+
-+static unsigned long m10v_clk_divider_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct m10v_clk_divider *divider = to_m10v_div(hw);
-+	unsigned int val;
-+
-+	val = readl(divider->reg) >> divider->shift;
-+	val &= clk_div_mask(divider->width);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-+				   divider->flags, divider->width);
-+}
-+
-+static long m10v_clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *prate)
-+{
-+	struct m10v_clk_divider *divider = to_m10v_div(hw);
-+
-+	/* if read only, just return current value */
-+	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-+		u32 val;
-+
-+		val = readl(divider->reg) >> divider->shift;
-+		val &= clk_div_mask(divider->width);
-+
-+		return divider_ro_round_rate(hw, rate, prate, divider->table,
-+					     divider->width, divider->flags,
-+					     val);
-+	}
-+
-+	return divider_round_rate(hw, rate, prate, divider->table,
-+				  divider->width, divider->flags);
-+}
-+
-+static int m10v_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct m10v_clk_divider *divider = to_m10v_div(hw);
-+	int value;
-+	unsigned long flags = 0;
-+	u32 val;
-+	u32 write_en = BIT(divider->width - 1);
-+
-+	value = divider_get_val(rate, parent_rate, divider->table,
-+				divider->width, divider->flags);
-+	if (value < 0)
-+		return value;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	val = readl(divider->reg);
-+	val &= ~(clk_div_mask(divider->width) << divider->shift);
-+
-+	val |= ((u32)value | write_en) << divider->shift;
-+	writel(val, divider->reg);
-+
-+	if (divider->write_valid_reg) {
-+		writel(M10V_DCHREQ, divider->write_valid_reg);
-+		if (readl_poll_timeout(divider->write_valid_reg, val,
-+			!val, M10V_UPOLL_RATE, M10V_UTIMEOUT))
-+			pr_err("%s:%s couldn't stabilize\n",
-+				__func__, divider->hw.init->name);
-+	}
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops m10v_clk_divider_ops = {
-+	.recalc_rate = m10v_clk_divider_recalc_rate,
-+	.round_rate = m10v_clk_divider_round_rate,
-+	.set_rate = m10v_clk_divider_set_rate,
-+};
-+
-+static struct clk_hw *m10v_clk_hw_register_divider(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width,
-+		u8 clk_divider_flags, const struct clk_div_table *table,
-+		spinlock_t *lock, void __iomem *write_valid_reg)
-+{
-+	struct m10v_clk_divider *div;
-+	struct clk_hw *hw;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &m10v_clk_divider_ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	div->reg = reg;
-+	div->shift = shift;
-+	div->width = width;
-+	div->flags = clk_divider_flags;
-+	div->lock = lock;
-+	div->hw.init = &init;
-+	div->table = table;
-+	div->write_valid_reg = write_valid_reg;
-+
-+	/* register the clock */
-+	hw = &div->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(div);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
-+static void m10v_reg_div_pre(const struct m10v_clk_div_factors *factors,
-+			     struct clk_hw_onecell_data *clk_data,
-+			     void __iomem *base)
-+{
-+	struct clk_hw *hw;
-+	void __iomem *write_valid_reg;
-+
-+	/*
-+	 * The registers on CLKSEL(9) or CLKSEL(10) need additional
-+	 * writing to become valid.
-+	 */
-+	if ((factors->offset == CLKSEL(9)) || (factors->offset == CLKSEL(10)))
-+		write_valid_reg = base + CLKSEL(11);
-+	else
-+		write_valid_reg = NULL;
-+
-+	hw = m10v_clk_hw_register_divider(NULL, factors->name,
-+					  factors->parent_name,
-+					  CLK_SET_RATE_PARENT,
-+					  base + factors->offset,
-+					  factors->shift,
-+					  factors->width, factors->div_flags,
-+					  factors->table,
-+					  &m10v_crglock, write_valid_reg);
-+
-+	if (factors->onecell_idx >= 0)
-+		clk_data->hws[factors->onecell_idx] = hw;
-+}
-+
-+static void m10v_reg_fixed_pre(const struct m10v_clk_div_fixed_data *factors,
-+			       struct clk_hw_onecell_data *clk_data,
-+			       const char *parent_name)
-+{
-+	struct clk_hw *hw;
-+	const char *pn = factors->parent_name ?
-+				factors->parent_name : parent_name;
-+
-+	hw = clk_hw_register_fixed_factor(NULL, factors->name, pn, 0,
-+					  factors->mult, factors->div);
-+
-+	if (factors->onecell_idx >= 0)
-+		clk_data->hws[factors->onecell_idx] = hw;
-+}
-+
-+static void m10v_reg_mux_pre(const struct m10v_clk_mux_factors *factors,
-+			       struct clk_hw_onecell_data *clk_data,
-+			       void __iomem *base)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = m10v_clk_hw_register_mux(NULL, factors->name,
-+				      factors->parent_names,
-+				      factors->num_parents,
-+				      CLK_SET_RATE_PARENT,
-+				      base + factors->offset, factors->shift,
-+				      factors->mask, factors->mux_flags,
-+				      factors->table, &m10v_crglock);
-+
-+	if (factors->onecell_idx >= 0)
-+		clk_data->hws[factors->onecell_idx] = hw;
-+}
-+
-+static int m10v_clk_probe(struct platform_device *pdev)
-+{
-+	int id;
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	void __iomem *base;
-+	const char *parent_name;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+
-+	for (id = 0; id < ARRAY_SIZE(m10v_div_factor_data); ++id)
-+		m10v_reg_div_pre(&m10v_div_factor_data[id],
-+				 m10v_clk_data, base);
-+
-+	for (id = 0; id < ARRAY_SIZE(m10v_div_fixed_data); ++id)
-+		m10v_reg_fixed_pre(&m10v_div_fixed_data[id],
-+				   m10v_clk_data, parent_name);
-+
-+	for (id = 0; id < ARRAY_SIZE(m10v_mux_factor_data); ++id)
-+		m10v_reg_mux_pre(&m10v_mux_factor_data[id],
-+				 m10v_clk_data, base);
-+
-+	for (id = 0; id < M10V_NUM_CLKS; id++) {
-+		if (IS_ERR(m10v_clk_data->hws[id]))
-+			return PTR_ERR(m10v_clk_data->hws[id]);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id m10v_clk_dt_ids[] = {
-+	{ .compatible = "socionext,milbeaut-m10v-ccu", },
-+	{ }
-+};
-+
-+static struct platform_driver m10v_clk_driver = {
-+	.probe  = m10v_clk_probe,
-+	.driver = {
-+		.name = "m10v-ccu",
-+		.of_match_table = m10v_clk_dt_ids,
-+	},
-+};
-+builtin_platform_driver(m10v_clk_driver);
-+
-+static void __init m10v_cc_init(struct device_node *np)
-+{
-+	int id;
-+	void __iomem *base;
-+	const char *parent_name;
-+	struct clk_hw *hw;
-+
-+	m10v_clk_data = kzalloc(struct_size(m10v_clk_data, hws,
-+					M10V_NUM_CLKS),
-+					GFP_KERNEL);
-+
-+	if (!m10v_clk_data)
-+		return;
-+
-+	base = of_iomap(np, 0);
-+	if (!base) {
-+		kfree(m10v_clk_data);
-+		return;
-+	}
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	if (!parent_name) {
-+		kfree(m10v_clk_data);
-+		iounmap(base);
-+		return;
-+	}
-+
-+	/*
-+	 * This way all clocks fetched before the platform device probes,
-+	 * except those we assign here for early use, will be deferred.
-+	 */
-+	for (id = 0; id < M10V_NUM_CLKS; id++)
-+		m10v_clk_data->hws[id] = ERR_PTR(-EPROBE_DEFER);
-+
-+	/*
-+	 * PLLs are set by bootloader so this driver registers them as the
-+	 * fixed factor.
-+	 */
-+	for (id = 0; id < ARRAY_SIZE(m10v_pll_fixed_data); ++id)
-+		m10v_reg_fixed_pre(&m10v_pll_fixed_data[id],
-+				   m10v_clk_data, parent_name);
-+
-+	/*
-+	 * timer consumes "rclk" so it needs to register here.
-+	 */
-+	hw = m10v_clk_hw_register_divider(NULL, "rclk", M10V_PLL10DIV2, 0,
-+					base + CLKSEL(1), 0, 3, 0, rclk_table,
-+					&m10v_crglock, 0);
-+	m10v_clk_data->hws[M10V_RCLK_ID] = hw;
-+
-+	m10v_clk_data->num = M10V_NUM_CLKS;
-+	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, m10v_clk_data);
-+}
-+CLK_OF_DECLARE_DRIVER(m10v_cc, "socionext,milbeaut-m10v-ccu", m10v_cc_init);
+Matti Vaittinen (8):
+  mfd: regulator: clk: split rohm-bd718x7.h
+  mfd: bd70528: Support ROHM bd70528 PMIC - core
+  clk: bd718x7: Support ROHM BD70528 clk block
+  dt-bindings: mfd: Document first ROHM BD70528 bindings
+  gpio: Initial support for ROHM bd70528 GPIO block
+  rtc: bd70528: Initial support for ROHM bd70528 RTC
+  power: supply: Initial support for ROHM BD70528 PMIC charger block
+  watchdog: bd70528: Initial support for ROHM BD70528 watchdog block
+
+ .../bindings/mfd/rohm,bd70528-pmic.txt        | 102 +++
+ drivers/clk/Kconfig                           |   6 +-
+ drivers/clk/clk-bd718x7.c                     |  24 +-
+ drivers/gpio/Kconfig                          |  11 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-bd70528.c                   | 232 ++++++
+ drivers/mfd/Kconfig                           |  17 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/rohm-bd70528.c                    | 316 ++++++++
+ drivers/mfd/rohm-bd718x7.c                    |  23 +-
+ drivers/power/supply/Kconfig                  |   9 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/bd70528-charger.c        | 742 ++++++++++++++++++
+ drivers/regulator/bd718x7-regulator.c         |  25 +-
+ drivers/rtc/Kconfig                           |   8 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-bd70528.c                     | 500 ++++++++++++
+ drivers/watchdog/Kconfig                      |  12 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/bd70528_wdt.c                | 290 +++++++
+ include/linux/mfd/rohm-bd70528.h              | 408 ++++++++++
+ include/linux/mfd/rohm-bd718x7.h              |  22 +-
+ include/linux/mfd/rohm-generic.h              |  20 +
+ 23 files changed, 2726 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+ create mode 100644 drivers/gpio/gpio-bd70528.c
+ create mode 100644 drivers/mfd/rohm-bd70528.c
+ create mode 100644 drivers/power/supply/bd70528-charger.c
+ create mode 100644 drivers/rtc/rtc-bd70528.c
+ create mode 100644 drivers/watchdog/bd70528_wdt.c
+ create mode 100644 include/linux/mfd/rohm-bd70528.h
+ create mode 100644 include/linux/mfd/rohm-generic.h
+
 -- 
-1.9.1
+2.17.2
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
