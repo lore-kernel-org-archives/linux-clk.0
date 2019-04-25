@@ -2,79 +2,96 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3D1C43218
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A1AC43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 793462088F
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:44:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41D3A2067D
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556207095;
-	bh=litMVQpHU+/YgQJSXnL07b1ADLT5zH/nv4RFj6AZUA4=;
+	s=default; t=1556207623;
+	bh=QfVP/tIgKcO1dC2YfnIFEr1yLlGdnMnH+hkipPKTe6I=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=BhZ2e+Lg0H5Ont2ltyCpsccWqDvmujCG8DJppV7I7D7+TAFC8piCr8uilPcRFf0Xc
-	 KoOxDoldLG9OASykdZdjGSwuNWNTr0lsEz+xJM+6HMdUiV0LSFni3aKEuwgcWOkIpe
-	 C8K22DKUZgX11KzvPzub+8iKDfIpPtHu5nn9O6rU=
+	b=nBn7S7W/9pRaC7a31h4LedqNUApS5RDXVktoX84Or1uiGH1TZLWD7sG+/lYqWE9GD
+	 ku/aix1KfCGYsK2chMeIhJlm3UYrkoyJSdeMOkKgJZ54NIhLVmaZndDT3xtUq9ggSS
+	 15ZjZdfxcqTvDErY+2AqeIf7IOAh9qljPzLjfYHc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbfDYPoy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 11:44:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45830 "EHLO mail.kernel.org"
+        id S1729402AbfDYPxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 11:53:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727631AbfDYPoy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 11:44:54 -0400
+        id S1729397AbfDYPxf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 11:53:35 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C794206C1;
-        Thu, 25 Apr 2019 15:44:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E35522067D;
+        Thu, 25 Apr 2019 15:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556207094;
-        bh=litMVQpHU+/YgQJSXnL07b1ADLT5zH/nv4RFj6AZUA4=;
+        s=default; t=1556207615;
+        bh=QfVP/tIgKcO1dC2YfnIFEr1yLlGdnMnH+hkipPKTe6I=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=KGy2LTK2ECluGi3r8eiaDket3hCRfhEjc8C0WPODz1bEIj7xdJdmjpaIiAEEextJx
-         5OP3bkRZ18RckZttVkZbDh6pNFeZNVfRuW77VzIAnrB5+p9RJfUMFWOruHTDLK1BaP
-         +FGeFS+so7X5l+QAW20z5vN7jyt+LoSeN+KoYxEw=
+        b=Zy0hFfMTDldJMGCGnNkeB5nXxkgW8Cf+0nO0fyWPT54XBX1l//se3WQvezjsDb8ge
+         FEo35dmgr9B7cbYnyUlqtDwg689t+Dq6EB0eGKqURjURaevmWMlPb4WJ+pqH4xU43N
+         PaJ31s4TBHp1o8tr0l0HPpr1HEFUnxZ6p1cdmJDE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190422062314.1354-3-shawnguo@kernel.org>
-References: <20190422062314.1354-1-shawnguo@kernel.org> <20190422062314.1354-3-shawnguo@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
+In-Reply-To: <20190424071347.73xbynv5jqipqkgx@fsr-ub1664-175>
+References: <1553269010-15591-1-git-send-email-abel.vesa@nxp.com> <CAOMZO5DWpu9irOWR3rux-vV1sihfsDkTs5SJ7XXy8MgRBCd-Gw@mail.gmail.com> <155493360763.20095.6174028293897341109@swboyd.mtv.corp.google.com> <155605619927.15276.90300312265075245@swboyd.mtv.corp.google.com> <20190424071347.73xbynv5jqipqkgx@fsr-ub1664-175>
+Cc:     Fabio Estevam <festevam@gmail.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Stefan Agner <stefan@agner.ch>, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL 3/3] i.MX7UPL clock changes for 5.2
-To:     Shawn Guo <shawnguo@kernel.org>
-Message-ID: <155620709327.15276.9748665722176236865@swboyd.mtv.corp.google.com>
+Subject: Re: [EXT] Re: [RFC 00/19] clk: imx: Switch the imx6 and imx7 to clk_hw based API
+To:     Abel Vesa <abel.vesa@nxp.com>
+Message-ID: <155620761362.15276.4197988939287759775@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 08:44:53 -0700
+Date:   Thu, 25 Apr 2019 08:53:33 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shawn Guo (2019-04-21 23:23:14)
-> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
-1b:
+Quoting Abel Vesa (2019-04-24 00:13:48)
 >=20
->   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/c=
-lk-imx7ulp-5.2
->=20
-> for you to fetch changes up to d058fb60d56b89548028acd6f70b8396e633ffc1:
->=20
->   dt-bindings: clock: imx7ulp: remove SNVS clock (2019-03-20 16:00:03 +08=
-00)
->=20
-> ----------------------------------------------------------------
+> Can you please be more specific and point out exactly which one isn't ?
 
-Pulled into clk-next
+Is this a question for me?
+
+>=20
+> >=20
+> > FYI, I'm dropping this from my review queue under the assumption it will
+> > be sent again. Also, it would be nice to not have the wrappers at all in
+> > the next series so that everything is clk_hw based instead of clk based.
+> > Otherwise, it looks good to me and I'd like to see this work completed.
+> > Thanks!
+> >=20
+>=20
+> I'll try to resend this before the end of next week.
+>=20
+> As for the wrappers, they need to stay in until the last user of the clk
+> based API is switched to clk_hw based. That means all the remaining imx
+> platforms (1 through 5, and then 8). I chosed to do the imx6 and imx7
+> first because these are easier to find. Once this is in, I'll move on
+> with the imx8 and then the imx1 through imx5 (which are harder to find
+> nowadays).
+>=20
+
+Ok. I'm not thrilled to keep around legacy code because nobody is
+testing out new kernels on these devices. If we can, we should try to
+delete old drivers that don't get used anymore, but if we can't then
+we should be able to modify and compile those drivers and wait for the
+bug reports to come in if something is broken.
+
 
