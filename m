@@ -2,105 +2,71 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DC7C43218
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 20:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFF9C43219
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 20:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A29206A3
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 20:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D34206BF
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 20:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556225698;
+	bh=9kPxeaHLTC5zEznVxhDzmnYyWY2CCYM1KXH0Csa7C5o=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=BN8BESTyxAwnMlW/W+boKf9FV29pc4ldDnsx6CJJ61zlcr3IBpwGGd9T6u3F+8pwn
+	 9sPDtO7c6Q72Fm9czMpyah9YX8LYmJpT3i9KxvQ6qDKON6+oQ3LgCqe7BDCq0pNqzt
+	 hIIaETDZuwe0olMdeZ4w2AIYsLtAeLijF6fo1ABs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731095AbfDYUbn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 16:31:43 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39857 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730805AbfDYUbn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 16:31:43 -0400
-X-Originating-IP: 90.66.53.80
-Received: from localhost (lfbn-1-3034-80.w90-66.abo.wanadoo.fr [90.66.53.80])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id A9448E000E;
-        Thu, 25 Apr 2019 20:31:39 +0000 (UTC)
-Date:   Thu, 25 Apr 2019 22:31:39 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] clk: at91: add sam9x60 pmc driver
-Message-ID: <20190425203139.GO14604@piout.net>
-References: <20190402125056.21509-1-alexandre.belloni@bootlin.com>
- <20190402125056.21509-8-alexandre.belloni@bootlin.com>
- <155622113579.15276.15900194435736283135@swboyd.mtv.corp.google.com>
+        id S2387703AbfDYUyw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 16:54:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387666AbfDYUyw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 16:54:52 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7432F206BF;
+        Thu, 25 Apr 2019 20:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556225691;
+        bh=9kPxeaHLTC5zEznVxhDzmnYyWY2CCYM1KXH0Csa7C5o=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=fLm7DoLrzXvm+baR3CxKAZTCqQb0KuQVZ9vL1st6KcsqWiAowiLcWM8zEBt5i0Zr0
+         rUygrgfhHXR/EtEWhk9iYqsfQ1BzeLPIlbP/9h0VXSkvibVjxvnLU4xz3OC7FIg59J
+         DwADhk/nWGw4r2ampPdtxMWpKC4mpw0VUbgjNDt0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155622113579.15276.15900194435736283135@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190414192321.23294-2-digetx@gmail.com>
+References: <20190414192321.23294-1-digetx@gmail.com> <20190414192321.23294-2-digetx@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2 1/5] clk: tegra: emc: Don't enable EMC clock manually
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Message-ID: <155622569044.15276.18228580730419302688@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Thu, 25 Apr 2019 13:54:50 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/04/2019 12:38:55-0700, Stephen Boyd wrote:
-> Quoting Alexandre Belloni (2019-04-02 05:50:56)
-> > diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> > new file mode 100644
-> > index 000000000000..22bf51c55bdc
-> > --- /dev/null
-> > +++ b/drivers/clk/at91/sam9x60.c
-> > @@ -0,0 +1,307 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/mfd/syscon.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#include <dt-bindings/clock/at91.h>
-> > +
-> > +#include "pmc.h"
-> > +
-> > +DEFINE_SPINLOCK(pmc_pll_lock);
-> > +
-> > +static const struct clk_master_characteristics mck_characteristics = {
-> > +       .output = { .min = 140000000, .max = 200000000 },
-> > +       .divisors = { 1, 2, 4, 3 },
-> > +       .have_div3_pres = 1,
-> > +};
-> > +
-> > +static const struct clk_master_layout sam9x60_master_layout = {
-> > +       .mask = 0x373,
-> > +       .pres_shift = 4,
-> > +       .offset = 0x28,
-> > +};
-> > +
-> > +static struct clk_range plla_outputs[] = {
-> 
-> const?
-> 
+Quoting Dmitry Osipenko (2019-04-14 12:23:17)
+> The EMC clock marked as critical, hence it is already enabled at the
+> registration time.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-Right, can you fix that up or should I send a new version?
+Applied to clk-next
 
-> > +       { .min = 300000000, .max = 600000000 },
-> > +};
-> [...]
-> > +
-> > +}
-> > +
-> > +CLK_OF_DECLARE_DRIVER(sam9x60_pmc, "microchip,sam9x60-pmc", sam9x60_pmc_setup);
-> > -- 
-> 
-> Can't be platform device?
-> 
-
-IIRC two clocks are used by the clocksource and having it as a platform
-device make the clocksource driver fail with -EPROBE_DEFER.
-
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
