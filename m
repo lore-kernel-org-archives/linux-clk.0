@@ -3,88 +3,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD63C43219
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 18:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E82FC43219
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 18:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12607212F5
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 18:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 940B02067C
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 18:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556216555;
-	bh=8FwAZHmi9UHXsQc/fK2P+f7BQai0va4r7Z/zs/ULFsc=;
+	s=default; t=1556216584;
+	bh=UlM4Dk+AXEhHrlSRNA8oMUjYFcpUKlq44FwzloZ0ric=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=Y1zVyuNrI/e/SOTr0U4Bue4ML+q+Z8KLFdAE4WbQvjpCgaxQjS7C4xNTw8RROn7Q7
-	 KIE8q/FY56y0xbh+XcIc5C6LInUDXwg/r5gzr0NUqog6NtrVB68C2Xw1gTwSUjZfAp
-	 ilpuYkPyz9l3rarzU3tAfeiq6U7ggM0mwVzL+W7s=
+	b=SRRL1ZR/9pGU5f1+KVR0SkAsrcJyyzgYNGu6ttcoiuOpssRGwPE+eiZQkyv+EAsMI
+	 Vl5NR4KSg5ADhhU+UU3LJiMy1UPYq0Z5wkRJwx+VwYN1Mvq0zStTxo1EZgu3z+RVkO
+	 kw1reZo80NVctbhz7PI4gdLOSYC7fPrNZ+9pOZ64=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbfDYSWZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 14:22:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38040 "EHLO mail.kernel.org"
+        id S1728210AbfDYSXD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 14:23:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbfDYSWZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 14:22:25 -0400
+        id S1726040AbfDYSXD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 14:23:03 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF08B20656;
-        Thu, 25 Apr 2019 18:22:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D98E20717;
+        Thu, 25 Apr 2019 18:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556216544;
-        bh=8FwAZHmi9UHXsQc/fK2P+f7BQai0va4r7Z/zs/ULFsc=;
+        s=default; t=1556216583;
+        bh=UlM4Dk+AXEhHrlSRNA8oMUjYFcpUKlq44FwzloZ0ric=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=U6BiAeMhAxc4gsPpYf+jfcZlkBDn70cguLWZHUqiXfFNMgqvr9hF+p8eyRWBV5+oo
-         3R86GSUHUW0yhYTL2zEMHAj6ARZDGo4FLV/5QB5h8//uTtX6o+no2g1k1kVQeHwpC2
-         IAR53Ot9UwqSvD/zjVpA7SiMXYLXpbpIP2azCgX0=
+        b=LAR82SwIFFehmxCey6B0Cpy8zUd4mVVv7GBNX8b3yJMm44cIeeonk4ADnLZn85O9u
+         gUsdaUD4zIEhbQqb6EbF+R6yKKJwG/ggB201dFk7NlD8dSDpC683NXH0mDBy5PB6nt
+         xf3mvGxEQ5nccW8uTAXYsn7BBBVtOvU3YLwG2hGU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1556200638-24066-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1556200638-24066-1-git-send-email-vabhav.sharma@nxp.com>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Andy Tang <andy.tang@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
+In-Reply-To: <20190422091509.3181-1-andy.tang@nxp.com>
+References: <20190422091509.3181-1-andy.tang@nxp.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yuantian Tang <andy.tang@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3] clk: qoriq: add support for lx2160a
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Message-ID: <155621654326.15276.741983919838675194@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: add more PLL divider clocks support
+To:     andy.tang@nxp.com, mturquette@baylibre.com
+Message-ID: <155621658211.15276.13147157968888205274@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 11:22:23 -0700
+Date:   Thu, 25 Apr 2019 11:23:02 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vabhav Sharma (2019-04-25 06:57:05)
-> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Quoting andy.tang@nxp.com (2019-04-22 02:15:08)
+> From: Yuantian Tang <andy.tang@nxp.com>
 >=20
-> Add clockgen support and configuration for NXP SoC lx2160a in qoriq
-> clock driver with compatible property as "fsl,lx2160a-clockgen".
+> More PLL divider clocks are needed by clock consumer IP. So update
+> the PLL divider description to make it more general.
 >=20
-> qoriq-cpufreq driver is based on qoriq clock driver, enable support
-> of NXP SoC lx2160a in qoriq cpufreq driver to handle the lx2160a SoC.
->=20
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Acked-by: Scott Wood <oss@buserror.net>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
 > ---
-> Changes for v3:
-> - Incorporated review comments of Rafael J. Wysocki
-> - Updated commit message
 
-If you can split it into clk and cpufreq that would be preferred. Then I
-can take the clk part and PM tree can take the cpufreq part. Otherwise,
-you have sent other patches to drivers/clk/clk-qoriq.c and I'm worried
-there will be cross tree conflicts if I take those other patches this
-cycle.
+Applied to clk-next
 
