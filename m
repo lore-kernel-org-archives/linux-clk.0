@@ -2,113 +2,109 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8242C10F03
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 12:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20025C43219
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 13:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A432081C
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 12:33:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D56212F5
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 13:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHDWKwAV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrLE8l1m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725959AbfDYMdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 08:33:16 -0400
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:35059 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbfDYMdK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 08:33:10 -0400
-Received: by mail-wm1-f42.google.com with SMTP id y197so10365368wmd.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2019 05:33:09 -0700 (PDT)
+        id S1727782AbfDYNaj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 09:30:39 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33975 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfDYNai (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 09:30:38 -0400
+Received: by mail-lf1-f65.google.com with SMTP id h5so17516758lfm.1;
+        Thu, 25 Apr 2019 06:30:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Tmlh66TVXb+pSFlqjzdKxmks/bQ0y8g4h02Q2AlwVMA=;
-        b=hHDWKwAV5nYFX6rVYSYfwUolebmMX3j62o6yjHU45+9SpEt8301nswM+kEfWQdAoLm
-         fW4mMyasKnxApgWqR7SQJ4ejX6ZFoesknAxGgmjPO5MssprQfn/9aD42VJ+ZDM+m5q8e
-         0K1A/ZdVNIvgCLFq7YFc0aWlqh3LANecYz2byijnLrEwmakPuyoBq8/GXhIB8H8EMqcv
-         dq2mvKiiNgLx4bR67kPRjhQHFxIjyDCxuPz5jO4k8/CS6aO101lrJSW10xMVjoloIHAT
-         o14WlOVR2qezBex6eRSLvfcC5RXN7WJVnN0jiHxikp4MueONLuGWNcyLAKNe1KMIfRoB
-         e5Ow==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lNFirraLM7s7j9AxHTJl4hrxwW7TmyqVI4M5YpiegmQ=;
+        b=GrLE8l1mB8/Ns8BSizCMIvBMrnUj0jRKn1jlhkVlCeoGqniNofIWXvfjsWclfGEtCG
+         zl5PjUk3Gl4mRB3+oh6Si9hXe93GGp5TcE2S0TN/n97+Klm1wAcd87lFuiASCL+IDfOt
+         eWtqTPtiTbKh6ZoufpDkHeMote2aaIESsOAISEZINKUSBxAWh2ZvmhYuDlSUsW9XXjoB
+         +sbzWkagY3tCD0LEUE5nHYNqxPcMzjV6p5rur0lHeJVSmKl0GkajcxGSA5E+tFH5N7+q
+         gd8bPndXUe8jXeT/oIyKIeUSt0mgQRwYXuUwtI2ZV/KA0vRlLozWkHRfhbNKqyB2Tg/v
+         cQeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Tmlh66TVXb+pSFlqjzdKxmks/bQ0y8g4h02Q2AlwVMA=;
-        b=oZR8cQ1HD3jAg8KUiI+B7rn0KM2DULEXco6jk1UhyK/Y1EjpQiZhwKA6V9BAvqI0bE
-         TNJoJwrd3WwxnhQ6Gy8mAX94TXj0KuccvsS5ni9MhOCSN5QNRc8zxG5Y17XU/wiwY4OS
-         AbE8h/Mjqah4Lzx6ZLBWjZyYWKgs/Li9r+USZHE2FEcVfBdWBKSht13AZLr+GboY+oi0
-         bKO5AkHI02cNBjcj/phcpZt5QS8LSHqFYUNLKTydd8KBDf9gZdLc+49uz5kdoOGE2I32
-         inONiZRRaeDExkVnwGwtcnlyDCsmRMP/22Flyy4+9iKW60F9MHzP2DDBt0x/cFB0oau7
-         R2Mg==
-X-Gm-Message-State: APjAAAWc5kOecdpJYV1Y5rL9rMQQv6LyUUSwge5+XO6MEMElJe2LwVXj
-        PjzpK0FLO473Iq2HLpCFoB1Bhw==
-X-Google-Smtp-Source: APXvYqyO73VogtYJaAG2wco5dVXxq7D6ym3CqkjHRmSdg3sRZSfQ9pQAWVmnWn5TqLxqTjxNqcSEZw==
-X-Received: by 2002:a1c:730c:: with SMTP id d12mr3212612wmb.47.1556195588720;
-        Thu, 25 Apr 2019 05:33:08 -0700 (PDT)
-Received: from apalos (athedsl-4485328.home.otenet.gr. [94.71.60.216])
-        by smtp.gmail.com with ESMTPSA id t9sm26127402wra.71.2019.04.25.05.33.05
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lNFirraLM7s7j9AxHTJl4hrxwW7TmyqVI4M5YpiegmQ=;
+        b=F2TUX1VRAzN6zoozgHNThG6Cfmgvqqt4ahpNTTlKNUreZz/9YHiVRLNYiEA0pt1zHs
+         b5gA4fC7qitRIoFflp3zSUll8sqsjq4BP9KR64m1FLP44Qbc9K+wJZQeeF0HA+WPaJ2k
+         MwXHFjFSEDGqrkU2TrLqSv2oN+I+KCBRB2MgriA2+0l1WmG/MhLk8bbcmqCEPaB/E54Z
+         hzrisuIIaTuXJmQM5A5Lp/M+LJfAtqy9NduaagD9I9OA5j8rocD1K4qroXanjvcph9T0
+         3wkl2aAzTidtU1CFls1OKpITpXj/wGDU225VvycJoU6frN+3JqI87JYp1K9PvxwMO+9X
+         fS5A==
+X-Gm-Message-State: APjAAAUOl1jviDHnqaXzFfm/ZvcHG7Kq6ZF1JBe9rHUZ6C69GctGMtPe
+        v6BXjnHWZg39xU6Jspfaug4=
+X-Google-Smtp-Source: APXvYqzlgKsvEYbH0JjN7vHcwyejNN9RCstjg0TXjF88R9xPdiFc2sPZNz7WjdVzrK+ozyZf44MW6A==
+X-Received: by 2002:ac2:4192:: with SMTP id z18mr19409461lfh.96.1556199036455;
+        Thu, 25 Apr 2019 06:30:36 -0700 (PDT)
+Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.gmail.com with ESMTPSA id k21sm4647237ljk.21.2019.04.25.06.30.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Apr 2019 05:33:07 -0700 (PDT)
-Date:   Thu, 25 Apr 2019 15:33:03 +0300
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Christian Neubert <christian.neubert.86@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for
- cpu clocks
-Message-ID: <20190425123303.GA12659@apalos>
-References: <20190313163558.6705-1-gregory.clement@bootlin.com>
- <20190314121541.GB19385@apalos>
- <CAC5LXJcCs4nr-qFOWzUJpUBAJ9ngG-cgeTCVCFBKFc1SPzHMuQ@mail.gmail.com>
- <20190314134428.GA24768@apalos>
- <874l85v8p6.fsf@FE-laptop>
- <20190318112844.GA1708@apalos>
- <87h8c0s955.fsf@FE-laptop>
- <20190318122113.GA4834@apalos>
- <20190424093015.rcr5auamfccxf6ei@vireshk-i7>
+        Thu, 25 Apr 2019 06:30:35 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] clk: Add missing stubs for a few functions
+Date:   Thu, 25 Apr 2019 16:28:37 +0300
+Message-Id: <20190425132837.18389-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190424093015.rcr5auamfccxf6ei@vireshk-i7>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Viresh,
+Compilation fails if any of undeclared clk_set_*() functions are in use
+and CONFIG_HAVE_CLK=n.
 
-> > > Also, during this week-end, Christian suggested that the issue might
-> > > come from the AVS support.
-> > > 
-> > > Could you disable it and check you still have the issue?
-> > > 
-> > > For this, you just have to remove the avs node in
-> > > arch/arm64/boot/dts/marvell/armada-37xx.dtsi and rebuild the dtb.
-> > Sure. You'll have to wait for a week though. Currently on a trip. I'll run that
-> >  once i return
-> 
-> @Ilias: Can you please try this now and confirm to Gregory ?
-I am more overloaded than usual and totally forgot about this. Apologies.
-I'll try finding some time and do this.
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ include/linux/clk.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Thanks
-/Ilias
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index d8bc1a856b39..f689fc58d7be 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -811,6 +811,22 @@ static inline bool clk_has_parent(struct clk *clk, struct clk *parent)
+ 	return true;
+ }
+ 
++static inline int clk_set_rate_range(struct clk *clk, unsigned long min,
++				     unsigned long max)
++{
++	return 0;
++}
++
++static inline int clk_set_min_rate(struct clk *clk, unsigned long rate)
++{
++	return 0;
++}
++
++static inline int clk_set_max_rate(struct clk *clk, unsigned long rate)
++{
++	return 0;
++}
++
+ static inline int clk_set_parent(struct clk *clk, struct clk *parent)
+ {
+ 	return 0;
+-- 
+2.21.0
+
