@@ -6,78 +6,111 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 516A5C43219
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32145C43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA40216C8
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D45206BA
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:29:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556227243;
-	bh=FwWW5aF+KPCN6r6b5P/fYFL30f8b/Q9I5eF3YH9cCvI=;
+	s=default; t=1556227748;
+	bh=fXKxNIi5a/B3PpIuMmHIVsGGXiZch2q1OaB5IXDPSNk=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=m1tYhX2pzu/1YWhi/fUnn1zQTV+4aQ3g5BQJzq2VZ7YGN7G4H+ogJB5iKKPc2tl5x
-	 9pSlszyAjHIsiBB+S4/H1ecMOCBwLHSXhzD3fVjiuL9ASy7b7Cz77c32zQj90amXzO
-	 WbTQUnUigRg2OpWhiyEjBqp60Y78Iuid//K2r8ac=
+	b=jUvFzmgUh7rqm8QYihiH97LEcnasprrRUcrC89NWHpSJTJCzuplPGCnxtPxDGha1c
+	 hkBw8Af+PANwnZJJSk2qqJfi6GLvsXR9PkPX9jtj+MNpoE/438J+Iqlvqwau92JR/2
+	 5lxX+ZBYOk3Z4d8WhC8wIIXqwAwDFzCmeQkD30LU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfDYVUm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 17:20:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42588 "EHLO mail.kernel.org"
+        id S1726658AbfDYV3H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 17:29:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfDYVUm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 17:20:42 -0400
+        id S1726272AbfDYV3H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 17:29:07 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20F3E216C4;
-        Thu, 25 Apr 2019 21:20:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97B6D20675;
+        Thu, 25 Apr 2019 21:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556227242;
-        bh=FwWW5aF+KPCN6r6b5P/fYFL30f8b/Q9I5eF3YH9cCvI=;
+        s=default; t=1556227746;
+        bh=fXKxNIi5a/B3PpIuMmHIVsGGXiZch2q1OaB5IXDPSNk=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=D/lR2eFzA3tSlYpcSUcrFt6eyzW/S/73YG696QgswmT6LTDaVUoDo5jvGJSCyLz5s
-         aWPFvMk0DqVf61/g8G+rlTwPs9YnV4HVHi+J0RuqYg0+D8P5rK6owkc2gqFrZI0mVa
-         F45LfU2isehEQ0IaQRmQ6LA8TpSICnrD8vQvkyKs=
+        b=d7U0G8hsoBgurdZXSYEozG88nOcjAM6GmHc6kdo0draNUpwZ3Sh1kyhKw3Ok9k3th
+         CugbSicsafaalHPHFjkbB1iU+u22qXon6IreJaxb6OSms4P/WPolzUnPeVmjSHUZ88
+         y9qNxLQjqSSaYBBpRvcuFUfdIWCS9blUklzpC+Do=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190425211009.GP14604@piout.net>
-References: <20190402125056.21509-1-alexandre.belloni@bootlin.com> <20190402125056.21509-8-alexandre.belloni@bootlin.com> <155622113579.15276.15900194435736283135@swboyd.mtv.corp.google.com> <20190425203139.GO14604@piout.net> <155622589096.15276.8583738150370510787@swboyd.mtv.corp.google.com> <20190425211009.GP14604@piout.net>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <31e17283-c374-f16e-df95-09aaf1854435@linaro.org>
+References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1548700381-22376-6-git-send-email-jorge.ramirez-ortiz@linaro.org> <155085910216.77512.12604271825136479370@swboyd.mtv.corp.google.com> <31e17283-c374-f16e-df95-09aaf1854435@linaro.org>
+Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 7/7] clk: at91: add sam9x60 pmc driver
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Message-ID: <155622724107.15276.12946928869888731656@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 05/14] clk: qcom: apcs-msm8916: get parent clock names from DT
+To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
+        andy.gross@linaro.org, arnd@arndb.de, bjorn.andersson@linaro.org,
+        david.brown@linaro.org, enric.balletbo@collabora.com,
+        heiko@sntech.de, horms+renesas@verge.net.au,
+        jagan@amarulasolutions.com, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, olof@lixom.net,
+        robh+dt@kernel.org, sibis@codeaurora.org, will.deacon@arm.com
+Message-ID: <155622774551.15276.4140891469702307355@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 14:20:41 -0700
+Date:   Thu, 25 Apr 2019 14:29:05 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexandre Belloni (2019-04-25 14:10:09)
-> On 25/04/2019 13:58:10-0700, Stephen Boyd wrote:
-> > > IIRC two clocks are used by the clocksource and having it as a platfo=
-rm
-> > > device make the clocksource driver fail with -EPROBE_DEFER.
-> > >=20
+Quoting Jorge Ramirez (2019-04-22 04:44:50)
+> On 2/22/19 19:11, Stephen Boyd wrote:
+> > Quoting Jorge Ramirez-Ortiz (2019-01-28 10:32:52)
+> >> @@ -61,6 +65,25 @@ static int qcom_apcs_msm8916_clk_probe(struct platf=
+orm_device *pdev)
+> >>         if (!a53cc)
+> >>                 return -ENOMEM;
+> >> =20
+> >> +       /* check if the parent names are present in the device tree */
 > >=20
-> > Ok. I'll add a comment in the driver. It needs to be
-> > CLK_OF_DECLARE_DRIVER() because it's used somewhere else too? Or it can
-> > be CLK_OF_DECLARE() instead?
+> > This looks odd.
+> >=20
+> >> +       ret =3D devm_clk_bulk_get(parent, ARRAY_SIZE(pclks), pclks);
+> >> +       if (ret =3D=3D -EPROBE_DEFER)
+> >> +               return ret;
+> >=20
+> > Why can't we use of_clk_parent_fill() if we know this is always a DT
+> > platform?  The parent clks may not be registered at the time of probe?
 >=20
-> It is coming from that comment:
-> https://lore.kernel.org/lkml/153573753043.93865.2420370848457480370@swboy=
-d.mtv.corp.google.com/
+> yes, and AFAICS the important thing at this point is that the clock is
+> registered hence the handling of defer.
 >=20
-> Maybe I misinterpreted it.
+> I could use of_clk_parent_fill and then - if needed - call
+> devm_clk_bulk_get but I am not sure of the gains of doing it (wouldnt
+> this just make the code more confusing?)
+
+Yeah of_clk_parent_fill() isn't the best approach. But it at least keeps
+this driver from using clk consumer APIs?
+
+>=20
+>=20
+> > Maybe this series should wait for the parent registration stuff I'm
+> > working on so that this can be made simpler.
+>=20
+> the need for the clock name is not intrinsic to this driver (the driver
+> itself doesnt use these names) but it just feeds these to the framework.
+>=20
+> I was looking into your parent registration code and I am not sure how
+> can I use it in this particular driver other than simply removing the
+> names and hoping that things are handled properly at the lower
+> levels.... could you clarify please?
 >=20
 
-Hmm I was just confused it seems. If you don't have two devices probing
-the same DT node with this compatible string then I think it can just be
-CLK_OF_DECLARE(). I was thinking that you were running into some sort of
-issue where the other driver using this same compatible couldn't probe.
+I think so. I've forgotten the context of this patch, but the general
+idea would be to specify the parents with clock-names or DT index in the
+DT node for the clks registered here and not use of_clk_parent_fill() or
+do any sort of devm_clk_bulk_get() calls. Then the framework will take
+care of finding the parents for the clks and hooking things up properly
+for the parent-child relationship.
 
