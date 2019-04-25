@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACC7C43219
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD116C43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EAFE206C0
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD2E9206C0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 21:42:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556228367;
-	bh=QV+KhoMm+qvubf4BBbcuj+P6ndycnsFc4a3jxIeQzsI=;
+	s=default; t=1556228537;
+	bh=lstaYbFKz51ckNjQrG8PXrp8B5qwaZFeEn3qgtoJ28k=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=ewPXcWIlraa+yTjcn2Gdx1Kke3K2Kf7vIWajvWgpwTDAkhA0K6pFs1V6QcK3+qz1V
-	 9VlPvsmFpNr9ThAzRUVaURLJD0EpLnlp38TgXT4wbGB3xbIDkWkc4e+IvpLHwI4PEJ
-	 fsw7DGIhFuVUXHdW6h02Df7WmHda5P7WiYdJmFuI=
+	b=0WuOa0tPWejFSLOVTMnGgxLBw41GIIW2QbUtPQz/D1neykGoxY+9QmTY7Wdp4MKrc
+	 pfRlSs7ERnPGur3uJYZLW6Q9XYioyLgNOMSWPcJNS/I4kVgI+4VDxoONsvWAeomnIs
+	 9slBlazDSXnfUpxp0yPgp5iahYKfXPdFk/1HRMMs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731273AbfDYVj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 17:39:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48340 "EHLO mail.kernel.org"
+        id S1730371AbfDYVmR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 17:42:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727179AbfDYVj0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 17:39:26 -0400
+        id S1729084AbfDYVmR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 17:42:17 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7537206BF;
-        Thu, 25 Apr 2019 21:39:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97D39206BF;
+        Thu, 25 Apr 2019 21:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556228365;
-        bh=QV+KhoMm+qvubf4BBbcuj+P6ndycnsFc4a3jxIeQzsI=;
+        s=default; t=1556228536;
+        bh=lstaYbFKz51ckNjQrG8PXrp8B5qwaZFeEn3qgtoJ28k=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=v1fhsiGq/KOFeGeRZUyGATJ50iAs47cuQJdH8c6Na+xVcmoZNLLgAFQ9ya1kZlGDG
-         NS1vjhycH/ByHs9COR7DTGUZlfkQiKb/8tlKIo8nRRXLI0eIYJ7JzXM14Tjapltbol
-         6xmm2mxA+xfCVDewxUsWmuTk5juHN9qrxKhZh26E=
+        b=YpxkvJubQLaAs4bxQDK5aJg31vbBoOMAsIIqJVbPT2IEfFv1HsunRbIxpZgQ1OXaz
+         KJAtj5QEZhM1fwUnCojWZjTwSaiqf01ZAIxDz38zo/lLMk/t6XFmAhpFB2CFKncPBo
+         z1KQxU22+WXKkXQkl2ulwKpcHadyysdt1bfeQa/4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190323211612.860-15-fparent@baylibre.com>
-References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-15-fparent@baylibre.com>
-Cc:     sean.wang@kernel.org, ryder.lee@mediatek.com,
-        hsin-hsiung.wang@mediatek.com, wenzhen.yu@mediatek.com,
-        chaotian.jing@mediatek.com, yong.mao@mediatek.com,
-        jjian.zhou@mediatek.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-clk@vger.kernel.org, stephane.leprovost@mediatek.com,
-        Fabien Parent <fparent@baylibre.com>
+In-Reply-To: <20190425102740.19286-1-peng.fan@nxp.com>
+References: <20190425102740.19286-1-peng.fan@nxp.com>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 14/24] clk: mediatek: add clock driver for MT8516
-To:     Fabien Parent <fparent@baylibre.com>, mark.rutland@arm.com,
-        matthias.bgg@gmail.com, robh+dt@kernel.org
-Message-ID: <155622836474.15276.3720750789980463871@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: imx: pll14xx: drop unused variable
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Message-ID: <155622853547.15276.13713264032689161727@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 14:39:24 -0700
+Date:   Thu, 25 Apr 2019 14:42:15 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Fabien Parent (2019-03-23 14:16:02)
-> Add the clock driver for the MT8516 SoC.
+Quoting Peng Fan (2019-04-25 03:14:28)
+> It does not make sense to only get value from pll->base and assign
+> to a local variable when recalc_rate.
 >=20
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
 
 Applied to clk-next
