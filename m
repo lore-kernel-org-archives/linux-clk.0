@@ -2,99 +2,90 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA182C43218
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4AAC43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B621206BF
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA68420878
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:39:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556213299;
-	bh=KZ7Vq6MJGUGJOP1LIm6nuki37oyzKRSI0kCmH6EGc0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QBfq7Kp7r38XwfFyQvhUEdgIbQuyL8Gy7DPw4TUAlGGZ533EsZPQQuXA3P5Ls7Knl
-	 VH5q8LKYWbcTC8ZJsT3I36G0Si9lB6v28pjcVGujJ/qP8uaoz9xUD3HVffDaW9pvMg
-	 N2n2hTxNvbNjHlnfk8Xlaq6o7vfqLC70BKxMxKAA=
+	s=default; t=1556213955;
+	bh=RGZVoIkWoyiIjnhRavvqGcCbfMKb8iFu9mmjyyXkcLY=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=0wfQy9LFZAGJkVaTwrdgsyWUNYWf5k900SnB+SXKpkynj9a2j+TWluglac3f5C87Y
+	 bvtdETSP16SZ9hi7URqqz4MOBI57/63/d3A6yNLNJiFdSJQO9haYnakYpx7fb+2wVh
+	 4c3dZHIw+xvOEc7crmOpO3kX4wu9TPqrC8U77TnM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfDYR2S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 13:28:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51018 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbfDYR2R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 13:28:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5//Ed24q2hhc/wnJ0HqSkEXHaaPI5WZwKLImFJ+SszA=; b=hw5c6cgM7IQvpLzxQKvQxpJmg
-        qKJ/oHRdNI2raWMl2FV8Wfxrtv8QJvWpxGgrPbdUKq6pTeXQPmZ5OCGcKt3wgyIM90ZW4neVq+W5k
-        uXccj7+gR75Euy6p1ev16fpNEistmj2Zq0SfIOgblObzgX6NYrKXkb/8ni4oPkqIGGVRU=;
-Received: from 92.40.248.65.threembb.co.uk ([92.40.248.65] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hJiAM-0003Ik-1b; Thu, 25 Apr 2019 17:28:10 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 6A009441D3B; Thu, 25 Apr 2019 18:28:07 +0100 (BST)
-Date:   Thu, 25 Apr 2019 18:28:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "kernelci.org bot" <bot@kernelci.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
-        khilman@baylibre.com, matthew.hart@linaro.org,
-        mgalka@collabora.com, tomeu.vizoso@collabora.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: clk/clk-next boot bisection: v5.1-rc1-142-ga55b079c961b on panda
-Message-ID: <20190425172807.GW2803@sirena.org.uk>
-References: <5cbe596c.1c69fb81.e252.b9d0@mx.google.com>
- <155598159898.15276.8408514960097680895@swboyd.mtv.corp.google.com>
- <20190423144028.GA8007@atomide.com>
+        id S1727414AbfDYRjO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 13:39:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726916AbfDYRjO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 13:39:14 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A82EE2084F;
+        Thu, 25 Apr 2019 17:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556213954;
+        bh=RGZVoIkWoyiIjnhRavvqGcCbfMKb8iFu9mmjyyXkcLY=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=WIXRjX5DYlpHrMOzrIZ00esyy+5oKkeQSbVt/ying9yMr+AwWN6rTXLmW5JZpsWeL
+         3aq8SbYEEJxZB5gV2ZkjDW+dckHVxAq8nWeVH1ECl39U+GkSkZuA8adoutTpHV6SEg
+         Gbyop/B60fsrR+2R3ZrHZ4T2PAIwImKfFzUf7LiA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1Wg5Vd7si6EhrIHA"
-Content-Disposition: inline
-In-Reply-To: <20190423144028.GA8007@atomide.com>
-X-Cookie: Shah, shah!  Ayatollah you so!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2075886.jWuYUtlPVG@phil>
+References: <2075886.jWuYUtlPVG@phil>
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [GIT PULL RESEND] Rockchip clock updates for 5.2
+To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Message-ID: <155621395307.15276.12161393001768759522@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Thu, 25 Apr 2019 10:39:13 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Heiko Stuebner (2019-04-24 10:36:37)
+> Hi Mike, Stephen,
+>=20
+> please find below rockchip clock changes for 5.2
+> with quite a bit of attention for the rk3288.
+>=20
+> Please pull
+>=20
+> Thanks
+> Heiko
+>=20
+> [RESEND because I used a wrong email address for Stephen]
 
---1Wg5Vd7si6EhrIHA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+No worries, I still got it.
 
-On Tue, Apr 23, 2019 at 07:40:28AM -0700, Tony Lindgren wrote:
+>=20
+> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
+1b:
+>=20
+>   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v5.2-rockchip-clk-1
+>=20
+> for you to fetch changes up to f4033db5b84ebe4b32c25ba2ed65ab20b628996a:
+>=20
+>   clk: rockchip: undo several noc and special clocks as critical on rk328=
+8 (2019-04-23 12:17:11 +0200)
+>=20
+> ----------------------------------------------------------------
 
-> Hmm do you guys have some index page of all the found "boot bisection"
-> issues that I can check every morning while drinking coffee? :)
+Pulled into clk-next
 
-Sadly there's no web UI for this bit of the system.  The nearest would
-be trying to find the reports on LKML but that is suboptimal.
-
---1Wg5Vd7si6EhrIHA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzB7iIACgkQJNaLcl1U
-h9C1+gf/VJq4cVVkiHFm1QdHncra/jZ6tWfiwlCAvaNC5dE3vVZ299Jq+KylALPe
-TOHnuPFUo+ROtYAoAwpJra5ZbjGUE+u/bLQLpfliufFPbbPH66CvMphfPWt8Wyv5
-wNlh7WvvJxzObEfF5tNiJ+SU69Xz/e2aKCPQxdf9ooT1gg/N215664aeL3pXTuQJ
-/MGBvGIYPVhWKnFKRtrBpI+oITsa2o5tLrPHavmP16BJ3cEM+EupyJ6iryg1XGSN
-VptSXI5qx8156K0291FSN3xVfgqrwmjwZcbNuj9wubjEjwEz9pvZQsILELuJE5au
-un8KAxntqk7mAAsyIK5e2TXbNSHoiw==
-=JxN+
------END PGP SIGNATURE-----
-
---1Wg5Vd7si6EhrIHA--
