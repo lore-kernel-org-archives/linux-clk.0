@@ -2,110 +2,99 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C86C4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA182C43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACAA52088F
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B621206BF
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556207741;
-	bh=Sj9zca4x76PQUiKMnQqwT2iM0s9f8yvgaZ0yIoQLcDg=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=B5JHpsqa3CkZd+zKATVRs8pBWT+sdgvDAbHlZ5Auz3xxotSvXSMIY2T44bpGMvC7s
-	 BG3pYLbUhwljWEPQupg2DnrEOkA7zHwQaplqUabhEhtx9840og+5nEUZ8tdzW525fa
-	 UgWrUcieB0rksLgqSGcP5XFTZIJxHEE4fzDJnSFc=
+	s=default; t=1556213299;
+	bh=KZ7Vq6MJGUGJOP1LIm6nuki37oyzKRSI0kCmH6EGc0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=QBfq7Kp7r38XwfFyQvhUEdgIbQuyL8Gy7DPw4TUAlGGZ533EsZPQQuXA3P5Ls7Knl
+	 VH5q8LKYWbcTC8ZJsT3I36G0Si9lB6v28pjcVGujJ/qP8uaoz9xUD3HVffDaW9pvMg
+	 N2n2hTxNvbNjHlnfk8Xlaq6o7vfqLC70BKxMxKAA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfDYPzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 11:55:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727137AbfDYPzk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 11:55:40 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B9E12067D;
-        Thu, 25 Apr 2019 15:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556207740;
-        bh=Sj9zca4x76PQUiKMnQqwT2iM0s9f8yvgaZ0yIoQLcDg=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=VtmLwKhLGohXUfzRUPqmq+sLsSr5vXqh6VjyN1vWDuWyDL8ez38rJBEubi+OrupBK
-         vK35uEFKdpOscHhJbAZJ1B+LFSso1wNv4mXjcvTlhwOGLuZnoDRmSZyFJnSHlmzuaP
-         rD9ecu4GCgRHSQ5DOjfb2tla3kBaJ6qisZdVsKc8=
-Content-Type: text/plain; charset="utf-8"
+        id S1726448AbfDYR2S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 13:28:18 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51018 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfDYR2R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 13:28:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5//Ed24q2hhc/wnJ0HqSkEXHaaPI5WZwKLImFJ+SszA=; b=hw5c6cgM7IQvpLzxQKvQxpJmg
+        qKJ/oHRdNI2raWMl2FV8Wfxrtv8QJvWpxGgrPbdUKq6pTeXQPmZ5OCGcKt3wgyIM90ZW4neVq+W5k
+        uXccj7+gR75Euy6p1ev16fpNEistmj2Zq0SfIOgblObzgX6NYrKXkb/8ni4oPkqIGGVRU=;
+Received: from 92.40.248.65.threembb.co.uk ([92.40.248.65] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hJiAM-0003Ik-1b; Thu, 25 Apr 2019 17:28:10 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 6A009441D3B; Thu, 25 Apr 2019 18:28:07 +0100 (BST)
+Date:   Thu, 25 Apr 2019 18:28:07 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "kernelci.org bot" <bot@kernelci.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
+        khilman@baylibre.com, matthew.hart@linaro.org,
+        mgalka@collabora.com, tomeu.vizoso@collabora.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: clk/clk-next boot bisection: v5.1-rc1-142-ga55b079c961b on panda
+Message-ID: <20190425172807.GW2803@sirena.org.uk>
+References: <5cbe596c.1c69fb81.e252.b9d0@mx.google.com>
+ <155598159898.15276.8408514960097680895@swboyd.mtv.corp.google.com>
+ <20190423144028.GA8007@atomide.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190425142306.k5lh6x5pubv5fl4w@flea>
-References: <20190419112518.5zwaeqg7egfimts7@flea> <155570516391.15276.12155157680991893525@swboyd.mtv.corp.google.com> <20190425142306.k5lh6x5pubv5fl4w@flea>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] Allwinner clock changes for 5.2
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Message-ID: <155620773926.15276.12796358613328884337@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 08:55:39 -0700
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1Wg5Vd7si6EhrIHA"
+Content-Disposition: inline
+In-Reply-To: <20190423144028.GA8007@atomide.com>
+X-Cookie: Shah, shah!  Ayatollah you so!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2019-04-25 07:23:06)
-> Hi,
->=20
-> On Fri, Apr 19, 2019 at 01:19:23PM -0700, Stephen Boyd wrote:
-> > Quoting Maxime Ripard (2019-04-19 04:25:18)
-> > > Hi Mike, Stephen,
-> > >
-> > > Please pull the following changes for the next merge window.
-> > >
-> > > Thanks!
-> > > Maxime
-> > >
-> > > The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69ddd=
-aa231b:
-> > >
-> > >   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-> > >
-> > > are available in the Git repository at:
-> > >
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tag=
-s/sunxi-clk-for-5.2
-> >
-> > Thanks. Pulled but not yet merged into clk-next, because I see this err=
-or
-> > when I try to build just the files that have changed:
-> >
-> >       WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
-> >         Depends on [n]: HAS_IOMEM [=3Dy] && ARCH_SUNXI
-> >         Selected by [y]:
-> >         - CLK_SUNXI_PRCM_SUN6I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI=
- [=3Dy]
-> >         - CLK_SUNXI_PRCM_SUN8I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI=
- [=3Dy]
-> >
-> >       WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
-> >         Depends on [n]: HAS_IOMEM [=3Dy] && ARCH_SUNXI
-> >         Selected by [y]:
-> >         - CLK_SUNXI_PRCM_SUN6I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI=
- [=3Dy]
-> >         - CLK_SUNXI_PRCM_SUN8I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI=
- [=3Dy]
-> >
-> > Maybe the Kconfig patch isn't completely proper. I suppose that
-> > MFD_SUN6I_PRCM can be selected via COMPILE_TEST=3Dy path of
-> > CLK_SUNXI_PRCM_SUN6I and then fail to enable because ARCH_SUNXI=3Dn.
->=20
-> There's a fix for that that went through the MFD tree in 5.1-rc4
->=20
 
-Ok. I suppose it's easiest to ignore this problem then and merge up
-these changes into -next. Thanks!
+--1Wg5Vd7si6EhrIHA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Tue, Apr 23, 2019 at 07:40:28AM -0700, Tony Lindgren wrote:
+
+> Hmm do you guys have some index page of all the found "boot bisection"
+> issues that I can check every morning while drinking coffee? :)
+
+Sadly there's no web UI for this bit of the system.  The nearest would
+be trying to find the reports on LKML but that is suboptimal.
+
+--1Wg5Vd7si6EhrIHA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzB7iIACgkQJNaLcl1U
+h9C1+gf/VJq4cVVkiHFm1QdHncra/jZ6tWfiwlCAvaNC5dE3vVZ299Jq+KylALPe
+TOHnuPFUo+ROtYAoAwpJra5ZbjGUE+u/bLQLpfliufFPbbPH66CvMphfPWt8Wyv5
+wNlh7WvvJxzObEfF5tNiJ+SU69Xz/e2aKCPQxdf9ooT1gg/N215664aeL3pXTuQJ
+/MGBvGIYPVhWKnFKRtrBpI+oITsa2o5tLrPHavmP16BJ3cEM+EupyJ6iryg1XGSN
+VptSXI5qx8156K0291FSN3xVfgqrwmjwZcbNuj9wubjEjwEz9pvZQsILELuJE5au
+un8KAxntqk7mAAsyIK5e2TXbNSHoiw==
+=JxN+
+-----END PGP SIGNATURE-----
+
+--1Wg5Vd7si6EhrIHA--
