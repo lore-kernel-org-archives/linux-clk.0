@@ -2,71 +2,85 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	HTTP_ESCAPED_HOST,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2449CC43218
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74863C43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF89D20675
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 028C920685
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 17:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556214671;
+	bh=bGcgDgP+AlGUTJBd7p6PhXDCt/gxhGUApsvwLrTO604=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=Im12iI5RosIw+EE1HZi85rZFtDFvxPLuMghZdplM+7I14YqZVuDLaz6jAXUxpQAK5
+	 Th+Ew79uSHclzLEyWBosJZvC8XbsaItYh4ml8Qq6XKd3HUS6c5NvYlKsFoD/sMHMuh
+	 7zA+5dCSICM2Q/p3marLdDzjpSiEWRPJgjC5uXXM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfDYRoV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 13:44:21 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35290 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbfDYRoV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Apr 2019 13:44:21 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id 4827A277A3B
-Subject: Re: clk/clk-next boot bisection: v5.1-rc1-142-ga55b079c961b on panda
-To:     Mark Brown <broonie@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "kernelci.org bot" <bot@kernelci.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        enric.balletbo@collabora.com, khilman@baylibre.com,
-        matthew.hart@linaro.org, mgalka@collabora.com,
-        tomeu.vizoso@collabora.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <5cbe596c.1c69fb81.e252.b9d0@mx.google.com>
- <155598159898.15276.8408514960097680895@swboyd.mtv.corp.google.com>
- <20190423144028.GA8007@atomide.com> <20190425172807.GW2803@sirena.org.uk>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Message-ID: <9d076ce7-ce9b-07d9-21c7-e3e2eddf2fdb@collabora.com>
-Date:   Thu, 25 Apr 2019 18:44:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        id S1726196AbfDYRvK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 13:51:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726124AbfDYRvJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 13:51:09 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 988F5205F4;
+        Thu, 25 Apr 2019 17:51:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556214669;
+        bh=bGcgDgP+AlGUTJBd7p6PhXDCt/gxhGUApsvwLrTO604=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=dTjtl5qQb88jnCuUo/bdW915Ijck6uZy0fpyWKXJdT8VZw7UQfAa0yBkbVnpmbVGq
+         cWTnFqBU+EVYycnxmTOfRhXJxrQ+nXm2JuqiiorU27NLNkhzhwOG2a5MQ5Yb6F8vYY
+         uEHa3qzsyul712D3+lM/5ZH7zMGXIPE3tt9EwptY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190425172807.GW2803@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0b729373-baa1-5258-064e-499b2f9ca807@ti.com>
+References: <1554365467-1325-1-git-send-email-t-kristo@ti.com> <1554365467-1325-6-git-send-email-t-kristo@ti.com> <20190404140635.GA49658@atomide.com> <0b729373-baa1-5258-064e-499b2f9ca807@ti.com>
+Cc:     linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+        mturquette@baylibre.com, Eric Ruei <e-ruei1@ti.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 5/6] clk: ti: am33xx: drop idlest polling from gfx clkctrl clock
+To:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+Message-ID: <155621466804.15276.12136205638146291136@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Thu, 25 Apr 2019 10:51:08 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/04/2019 18:28, Mark Brown wrote:
-> On Tue, Apr 23, 2019 at 07:40:28AM -0700, Tony Lindgren wrote:
-> 
->> Hmm do you guys have some index page of all the found "boot bisection"
->> issues that I can check every morning while drinking coffee? :)
-> 
-> Sadly there's no web UI for this bit of the system.  The nearest would
-> be trying to find the reports on LKML but that is suboptimal.
+Quoting Tero Kristo (2019-04-07 22:45:08)
+> On 04/04/2019 17:06, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [190404 08:12]:
+> >> From: Eric Ruei <e-ruei1@ti.com>
+> >>
+> >> The GFX modules on AM33xx SoCs have a hardreset line and are controlled
+> >> by a GFX reset line. Any clkctrl enable/disable operations cannot be
+> >> checked for module enabled/disabled status independent of the reset
+> >> operation, and this causes some unwanted timeouts in the kernel and
+> >> unbalanced states for the GFX clocks. These details should be handled
+> >> by the driver integration code itself.
+> >=20
+> > These last two patches should no longer be needed with ti-sysc.
+> > Well, at least based on testing with the earlier reset-simple driver
+> > patch and a test for sgx register access on am335x.
+> >=20
+> > On init we deassert rstctrl if configured and in reset, then enable
+> > clocks, and read the module revision. And the module is ready for child
+> > device driver(s) to probe, and do what they want with the rstctrl via a
+> > reset driver. If no child device driver(s) are configured, ti-sysc will
+> > just put the module rstctrl back to reset using reset driver.
+>=20
+> Ok good to know, lets drop these patches for now and re-consider once we =
 
-Quite:
+> can try out graphics with latest kernel... unfortunately it is not=20
+> available upstream.
 
-  https://www.google.co.uk/search?q=lkml.org+%22boot%20bisection%3A%22
+Sooooo drop the last two patches and I should pick up the first four?
 
-Also there aren't that many bisections, maybe a couple per month.
-I think we could cc the KernelCI reports mailing list, or maybe
-have a new list, for people who want to receive all the bisection
-reports.  There should be more as we keep adding trees and
-especially when we start bisecting test suite results, not just
-boots.
-
-Guillaume
