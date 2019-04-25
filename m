@@ -2,83 +2,75 @@ Return-Path: <SRS0=pf3n=S3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF5EC43219
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF52C43219
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B946E2067D
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46048206C0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 15:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556205251;
-	bh=VKcQ7dtOO4etdLiKfe7TgJ5sgVICJSkgnBSL2us1BhQ=;
+	s=default; t=1556205460;
+	bh=DOu32qWfw+/nvGXXIM3Kh1JnVH5LE+57kCAc7oSlCTI=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=f3pn/JAPhvt+atK8ivGB+FPkUICu2WKpxtaNGMpNwbtwJ44ou2CQxunXqW+mqIiYe
-	 J+qdVZWQGZRaWuDseYqKYJR7I+o1cmh8jsvEaLfCzl6y+rHSSGHgYu7VfcYvMzFf5m
-	 0qYdkFXkMVuYql3cdy+iOHNRbKR53c6nsbUh+4pU=
+	b=P+4uU/wy6Gc56WhB16nwxQ23Q2Y4Eal1eaLsht+Apuh5Y1jZlASDQHijcSeE55/ky
+	 fSB5yitHxTS3pJqrZsjaNEQveG8f15wfA7O+CyIL9oJ3Auf/rrzIHuaob+8u4beha9
+	 kxr0F9u1Mnwck4YaUub2yF5GzwvqUKQAkk5tsGGw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbfDYPOL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 11:14:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33360 "EHLO mail.kernel.org"
+        id S1726265AbfDYPRe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 11:17:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726597AbfDYPOK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 11:14:10 -0400
+        id S1726026AbfDYPRe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 11:17:34 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4B792067D;
-        Thu, 25 Apr 2019 15:14:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD9292067D;
+        Thu, 25 Apr 2019 15:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556205250;
-        bh=VKcQ7dtOO4etdLiKfe7TgJ5sgVICJSkgnBSL2us1BhQ=;
+        s=default; t=1556205453;
+        bh=DOu32qWfw+/nvGXXIM3Kh1JnVH5LE+57kCAc7oSlCTI=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=tNQ0SxplcmnwUnNFpTfU28wCweR4RoNlCNIoPeuM7JWQwPw5J1pijXU3w3NpJRVBE
-         ZsJpWFH2GyL4ok6WKCVdJgV43M1aF3HPOd2f3HTDTwS5k1cFSgdDwn6MNYe+W5qi7k
-         uLtF7wE3Mw0BOEaU+DaO8ONqFFaHBQVXuhcaqgG4=
+        b=wrRZxXubOpjiXt361Gr/UB4aUmZTM359yiaj9LJjcvSeHIt/+0PdyVJX8XwyQ7FPJ
+         kJAPOfIArg2GmahYw5HxW1JV4lBnRykXTCEpa8r7O3DMqustQcSWpvcA6o3fIJ9GjC
+         Q3oBGj6DEy+f16kqxXgvvlmZ2uhvJjb4ytRJcWs4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d020b512-59be-51bd-39c1-4827e57b020c@gmail.com>
-References: <20190411214835.19947-1-digetx@gmail.com> <46c12545-0e9e-93bf-2ccc-4577f4eb223e@gmail.com> <20190424083625.GQ12975@pdeschrijver-desktop.Nvidia.com> <d020b512-59be-51bd-39c1-4827e57b020c@gmail.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+In-Reply-To: <20190411214835.19947-2-digetx@gmail.com>
+References: <20190411214835.19947-1-digetx@gmail.com> <20190411214835.19947-2-digetx@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v1 0/2] clk: Tegra124 PLLM fixes
+Subject: Re: [PATCH v1 1/2] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
 To:     Dmitry Osipenko <digetx@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Message-ID: <155620524950.15276.14252541417126056267@swboyd.mtv.corp.google.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Message-ID: <155620545264.15276.2161212955972224165@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 08:14:09 -0700
+Date:   Thu, 25 Apr 2019 08:17:32 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Osipenko (2019-04-25 06:50:39)
-> 24.04.2019 11:36, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, Apr 19, 2019 at 02:50:10PM +0300, Dmitry Osipenko wrote:
-> >> 12.04.2019 0:48, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>
-> >> The patches in this series are trivial and fixing the longstanding bug=
- on Tegra124. Could you please take a look and and ACK the series if it loo=
-ks good to you?
-> >=20
-> > Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>                 =
-                                            =20
+Quoting Dmitry Osipenko (2019-04-11 14:48:34)
+> There are wrongly set parenthesis in the code that are resulting in a
+> wrong configuration being programmed for PLLM. The original fix was made
+> by Danny Huang in the downstream kernel. The patch was tested on Nyan Big
+> Tegra124 chromebook, PLLM rate changing works correctly now and system
+> doesn't lock up after changing the PLLM rate due to EMC scaling.
 >=20
-> Thank you, Peter.
->=20
->=20
-> Stephen, is yours maintainer-tool able to pick up the "Acked-By" for the =
-whole series or do I need to resend the series with a proper "Acked-by" tag=
- added to every patch? Please let me know.
+> Cc: <stable@vger.kernel.org>
+> Tested-by: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-The maintainer-tool is me, but I don't require you to resend to collect
-acks or other tags. I can do it and I'll do it today.
+Applied to clk-next
 
