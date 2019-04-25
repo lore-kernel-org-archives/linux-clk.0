@@ -3,73 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA15C43219
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 18:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CD3C43218
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 19:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D267206C1
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 18:47:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59498206BA
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Apr 2019 19:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556218047;
-	bh=h0IRdS0zhUHch+Mb2SVu8W6kNKIPNL4kiY/nrL3Ch+c=;
+	s=default; t=1556219280;
+	bh=n1XacDQSZkIHcOl4KDxvF+mtyxMvHgv1v1cEjOLiHlk=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=kcuuYwwxNy9oYw/8kmku/K1SN4tNEjBe6J+Jgii5Cd7nDtNhm+ZOcDBesMvUXNwtc
-	 slfzmfESKlxSLZWOGnfBtdueG3/GLvypuw4qIMKDCG4SZSO03sOZVpHHhNdOYMxZy2
-	 OIO1P219qhsGiElZ5AyI2X7mS2D8JVwB8RKIMSWc=
+	b=pZ7D+BXWHwaASAwlPM/SIXz7mOibaVQ9sED35Xnl9ZseVQfha1m0qPIioNbhGvBSs
+	 Oanig1mly7u4WabrJ27ZI5KLE24p034cvVCDRAK05Ku5TJtCnw29aH80E6aSTss3dq
+	 cU0ZRMVP/PZ9niThWn4u63pddXlPIrpJukUdPeiE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbfDYSr0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Apr 2019 14:47:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44894 "EHLO mail.kernel.org"
+        id S1726125AbfDYTH7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Apr 2019 15:07:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbfDYSr0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Apr 2019 14:47:26 -0400
+        id S1725941AbfDYTH7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Apr 2019 15:07:59 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 103CA20578;
-        Thu, 25 Apr 2019 18:47:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A09D206A3;
+        Thu, 25 Apr 2019 19:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556218046;
-        bh=h0IRdS0zhUHch+Mb2SVu8W6kNKIPNL4kiY/nrL3Ch+c=;
+        s=default; t=1556219278;
+        bh=n1XacDQSZkIHcOl4KDxvF+mtyxMvHgv1v1cEjOLiHlk=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=ZrXuEZkEgN0F1w1XhoLf7aUEBeKml8v8KWlXzW6ZkIWi6AjJjI2ACKGYmjbOb/pOe
-         Vz9yPBEgrjBM7WZk0Y+XQOlJoVHIYH9XWFfV0QUsyh8X7H3/IJB1azfCyry6pLxdzY
-         tTYV+LUARV5TVg5zLmjvUw+4n5bGnB+a5JFOmki0=
+        b=D1+W4uaX0FJhWFWv2rfanhVDPGKf2C0GU8/Sl8TfwpNf0Ugl+nUJroarUCCLhpSFU
+         Xn58i2HZjegdu9q8j645ardBebJjLxeK7vSiHWfQIngISl614pRSmECpOJx1m1M9Za
+         bA+f2diCytBz1JXdg3unFCpmYITogw/czyi4xKfo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190405075332.28530-2-gabriel.fernandez@st.com>
-References: <20190405075332.28530-1-gabriel.fernandez@st.com> <20190405075332.28530-2-gabriel.fernandez@st.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
+In-Reply-To: <20190414202009.31268-2-digetx@gmail.com>
+References: <20190414202009.31268-1-digetx@gmail.com> <20190414202009.31268-2-digetx@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/2] clk: stm32: Introduce clocks of STM32F769 board
-To:     Gabriel Fernandez <gabriel.fernandez@st.com>,
-        alexandre torgue <alexandre.torgue@st.com>,
-        mark rutland <mark.rutland@arm.com>,
-        maxime coquelin <mcoquelin.stm32@gmail.com>,
-        michael turquette <mturquette@baylibre.com>,
-        rob herring <robh+dt@kernel.org>
-Message-ID: <155621804467.15276.5950117999221628038@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/4] clk: tegra20/30: Add custom EMC clock implementation
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Message-ID: <155621927685.15276.16453873579880842057@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Thu, 25 Apr 2019 11:47:24 -0700
+Date:   Thu, 25 Apr 2019 12:07:56 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gabriel Fernandez (2019-04-05 00:53:31)
-> STM32F769 clocks are derived from STM32746 clocks.
-> main differences are:
-> - new source clock for SAI1 and SAI2 (HSI or HSE)
-> - Add DFSDM & DSI clocks
->=20
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
+Quoting Dmitry Osipenko (2019-04-14 13:20:06)
+> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-=
+tegra20-emc.c
+> new file mode 100644
+> index 000000000000..35b67a9989c8
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
+> @@ -0,0 +1,307 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bits.h>
+> +#include <linux/clk/tegra.h>
 
-Applied to clk-next
+Include clk-provider.h as this is a clk provider driver.
 
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk.h"
+> +
+> +#define CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK     GENMASK(7, 0)
+> +#define CLK_SOURCE_EMC_2X_CLK_SRC_MASK         GENMASK(31, 30)
+[...]
+> +
+> +static const struct clk_ops tegra_clk_emc_ops =3D {
+> +       .recalc_rate =3D emc_recalc_rate,
+> +       .get_parent =3D emc_get_parent,
+> +       .set_parent =3D emc_set_parent,
+> +       .set_rate =3D emc_set_rate,
+> +       .set_rate_and_parent =3D emc_set_rate_and_parent,
+> +       .determine_rate =3D emc_determine_rate,
+> +};
+> +
+> +void tegra20_clk_set_emc_round_callback(void *round_cb, void *arg_cb)
+
+Why can't we have type safety on these function pointers?
+
+> +{
+> +       struct clk *clk =3D __clk_lookup("emc");
+> +       struct tegra_clk_emc *emc;
+> +       struct clk_hw *hw;
+> +
+> +       if (clk) {
+> +               hw =3D __clk_get_hw(clk);
+> +               emc =3D to_tegra_clk_emc(hw);
+> +
+> +               emc->round_cb =3D round_cb;
+> +               emc->arg_cb =3D arg_cb;
+> +       }
+> +}
+> +
+> +bool tegra20_clk_emc_driver_available(void)
+> +{
+> +       struct clk *clk =3D __clk_lookup("emc");
+
+Can we avoid using __clk_lookup()? Maybe by having the clk_hw pointer in
+this driver somehow?
+
+> +       struct tegra_clk_emc *emc;
+> +       struct clk_hw *hw;
+> +
+> +       if (clk) {
+> +               hw =3D __clk_get_hw(clk);
+
+This gets further to the point, we don't prefer to see drivers use
+__clk_get_hw() unless they absolutely need to. Maybe I don't understand
+the driver structure, but it seems like maybe the driver that's
+providing the callbacks could be the same driver that's registering
+these clks, and thus everything could be inside one file so that we
+don't have to pass around callbacks and clk_hw pointers? Commit text
+says "this is how it's been" but that's not a reason to keep doing it.
+
+> +               emc =3D to_tegra_clk_emc(hw);
+> +
