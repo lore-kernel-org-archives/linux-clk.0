@@ -2,116 +2,69 @@ Return-Path: <SRS0=YBHQ=S4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10843C43218
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 17:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB90C43219
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 20:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13C52077B
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 17:59:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A08D206A3
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 20:11:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556301563;
-	bh=WPqUM+UaEShzVMvhHbJHT5wITvv+kGG1zCztVTcp71c=;
+	s=default; t=1556309473;
+	bh=RkbULoiZSLqR6xCaOWrI+uG6A7jeCbGF+yfNEVWGrD8=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=X3vws5mf+QMuc7phxPFl4lgDyLv8O/18z6KWLpqQB2mNuwGcLrcUGz4TbTWXP/RFQ
-	 yoeUjT7uksBkSHlM7bPm/IxfogXLHu14kumW6sV7hO7TpZU6Hceq0Wf5Abj6Eq6Cho
-	 VVFyEB7fJ+5bdmJbgArVyJKwr/K15Ahc8x6jVWy0=
+	b=brytDFO38YOkSIsrkHgDbHvBRVukQzOu27VbdAfnWpJU8tSqfAI7OPXXr5eSt3OaR
+	 fNQlrNciVftaf/TzcqrF2x4fSYX6wdUNZImnkYE1nHBED0417DyhNmxFvUB4XArwZs
+	 SReNZeTKsBvAxBhLOLkBJ9HOGir/6hhSLQBYglIk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfDZR7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Apr 2019 13:59:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34600 "EHLO mail.kernel.org"
+        id S1726866AbfDZULM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Apr 2019 16:11:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfDZR7X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Apr 2019 13:59:23 -0400
+        id S1726083AbfDZULM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Apr 2019 16:11:12 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB5820656;
-        Fri, 26 Apr 2019 17:59:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F2FD20693;
+        Fri, 26 Apr 2019 20:11:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556301562;
-        bh=WPqUM+UaEShzVMvhHbJHT5wITvv+kGG1zCztVTcp71c=;
+        s=default; t=1556309472;
+        bh=RkbULoiZSLqR6xCaOWrI+uG6A7jeCbGF+yfNEVWGrD8=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=Mcnijnug/BwvI1i9G2TKtWIIwUacj/hSComeEk18dJXoPKk+xjuQH/ILvEChs5/hi
-         /DR6GeUpD3jy5i0WiRBSat7hKkvBCKh6eYqKgtS9K7OFbYqImhGk2WZcob+NaN0K04
-         PuHK4NvSe2GLZ/ijOpXbDws9jaWOdvGtsRS0RD7w=
+        b=YhqQNjZFeIFmFDmu83CDgtskZX1s2BX8H+REwMwR6Mpvu6k+Iix3gC1HxCTo54g+5
+         8mnOFOjRpc1+/Xm+2OfBT235mrKYsNnqrdhWGq7CZwt83tnUhpSHnDw6GGJ50Oux4b
+         K1ik5tmfxIY/qF4/fJ/1+1y8wM24islDVQdwZo1U=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190426152626.GD19559@ulmo>
-References: <20190425181447.60726-1-sboyd@kernel.org> <20190426152626.GD19559@ulmo>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Tero Kristo <t-kristo@ti.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>, linux-pwm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
+In-Reply-To: <20190425081454.3210-1-ping.bai@nxp.com>
+References: <20190425081454.3210-1-ping.bai@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: Remove CLK_IS_BASIC clk flag
-To:     Thierry Reding <thierry.reding@gmail.com>
-Message-ID: <155630156131.15276.5014003885761074101@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: imx: keep uart clock on during system boot
+To:     "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>
+Message-ID: <155630947117.15276.2826970890432610316@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Fri, 26 Apr 2019 10:59:21 -0700
+Date:   Fri, 26 Apr 2019 13:11:11 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Thierry Reding (2019-04-26 08:26:26)
-> On Thu, Apr 25, 2019 at 11:14:47AM -0700, Stephen Boyd wrote:
-> [...]
-> > base-commit: 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b
-> > prerequisite-patch-id: 6196ca807a15f9f4a67d5e6b8668b4f13442ac15
-> > prerequisite-patch-id: 9532946d1be40c2b20af0591ac4636a4cf3b14dd
-> > prerequisite-patch-id: 4e4a9591f5a4ac0d5a72e694da8fdae8c8dda352
-> > prerequisite-patch-id: bcd75306e64ff866989a978127f6b16f7575d0d3
+Quoting Jacky Bai (2019-04-25 01:10:08)
+> Keep uart clocks enabled when earlyprintk or
+> earlycon is active.
 >=20
-> Just curious: what are these? I mean, I have a pretty good guess what
-> these are, but how do you use them?
->=20
+> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> ---
 
-I'm generating patches with git format-patch --base=3D<commit>. This chain
-shows that the base commit is v5.1-rc1, i.e. 9e98c678c2d6 ("Linux
-5.1-rc1") and then that there are four patches applied on top of that
-commit that have these patch ids. If you were to pass the patches from
-the mailing list through 'git patch-id' you would see these patch ids.
-Or if I had pushed the patches out to linux-next I suppose I could have
-generated with a --base argument pointing to the tip of a 'clk-ti'
-branch.
-
-For example, the first patch-id is essentially
-https://lkml.kernel.org/r/1554365467-1325-2-git-send-email-t-kristo@ti.com
-piped to 'git patch-id'. When I do that I get=20
-
-6196ca807a15f9f4a67d5e6b8668b4f13442ac15 0000000000000000000000000000000000=
-000000
-
-and when I do that to the patch I've applied locally I get:
-
-$ git show b88b5b7182b0 | git patch-id
-6196ca807a15f9f4a67d5e6b8668b4f13442ac15 b88b5b7182b07ebdc1ab692b4fc6a10abf=
-ff208d
-
-I think there may be a typo in the docs or a bug in git though, because
-when I pass that same patch to 'git patch-id --stable' it produces
-another patch-id.
-
-4cf9f89ca61d8002df1494b48fac618c66f6220d 0000000000000000000000000000000000=
-000000
-
-Caption: Something is wrong...
-
-Either way, I'm not really using this so far but I figure it's useful if
-robots want to pick up on this and have a patch-id database for changes
-they've downloaded and tested from the list to figure out where to apply
-patches. I'd like to use it to do something similar so I can properly
-apply patches from the list onto the correct base commit and merge it
-all up. That's a little ways off though because I've yet to start
-working on a tool to do full on patch management via mailing lists.
-Also, I haven't seen anyone else using this git feature yet. Maybe I
-should add some hints in submitting-patches?
+Applied to clk-next
 
