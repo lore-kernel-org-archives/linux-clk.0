@@ -2,108 +2,74 @@ Return-Path: <SRS0=YBHQ=S4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE46C43219
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 17:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52071C4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 17:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2ED2084F
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 17:01:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="AP439BzA"
+	by mail.kernel.org (Postfix) with ESMTP id 13DB120673
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 17:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556299040;
+	bh=YOqdRP1NibCHtG7DRV7/U52ilDs1WxrKyoCTk50cxM0=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=twjngacugEKnXgbL8sFxUS/frKjENCYwAxp7hZd/k7pgj6P36LNIktpuu/l7nGiki
+	 GOFUTRYIUKw8T1F2ouzXLdVa5O/Aipk0ytU05KsqNhgQPE1knjoak13IZuB18qaYog
+	 mxBdnNvM0nwg1RXSrel67EBkhMc3faNZ2R5VvNrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfDZRB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Apr 2019 13:01:26 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51637 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbfDZRB0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Apr 2019 13:01:26 -0400
-Received: by mail-it1-f196.google.com with SMTP id s3so6986585itk.1
-        for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2019 10:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=zDIZQ9ehjNOQSUbZQgzdpHMfF6sVsj/oslNkVq4cSrY=;
-        b=AP439BzAHjJKyAid09DT103cdZDtF9UrIhHFn2Pt44VgL+IbSW15o1KwPQqYNy0LpU
-         qLX7aOtbMaw2JewrDg2e/3Cdx6kVRMmzV8PkU0p2GGinJ3rpWbP5/UyllZzF+UsH5OMk
-         D0wnOFHTOTklPo4a1dsAGd2yKBJRY73MIYrYcfkxG7LN4KvVdobuEjVJbc4wF4YK50kN
-         LSGSeS1o3FNENzRPgB2SXAFCcmrN+rXz1PoFZ161N6+EL775INq8o06VvLJrJw7LhktX
-         3Ho0hpz3NcIfZrnncbBYxLN0BhGsJ8Kwq08/YbeudM+isW27iJaOBO4bXzk4a+hiJqGt
-         3zHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=zDIZQ9ehjNOQSUbZQgzdpHMfF6sVsj/oslNkVq4cSrY=;
-        b=lT05GbYPkvFQ/BfG8w1KRTwPbrAbA0U0t/eTSDoeia01yWjrjmFGAdPs1BPZwYGxKX
-         T/zyeUkxKlkrP217uQc88XH6I6pClBkdjqj5gDRHt8mp4pVzygj6n/mgmOVg/Xwvfvry
-         eObONXzF+B1Qm/2y0bUgqpa29K3dlHnq0e9S5DaKvewWuPLILbtJDuzKVVk0B/CH8nHy
-         qKuZ8OhMGNjPqOSYzTkEC9OGES7KADR6xDDoKguys60DJXP9lYk2DOAMeTWXw/QgCsHz
-         OBT2EPcRFUHPkD0Y6Cxk90C5DxyCo/XJP0zIaJwsNqi36C8BhD0zKZVC4ahYe/RofXXd
-         eONg==
-X-Gm-Message-State: APjAAAU+pXWykH7JvLKSLW0XbnKVGAM8B+NhelAYH5zUByFa6bfkP1xd
-        03GYif7xXn48wHOJFX5WMMhQ/w==
-X-Google-Smtp-Source: APXvYqwbG6fHNL5fErzNNkXgu9Hs1MIDmYaGtcDj67ArLLjXDisa5LhrqDJcfgJBSkXwyuFQoNwpdg==
-X-Received: by 2002:a02:5143:: with SMTP id s64mr32790119jaa.54.1556298085393;
-        Fri, 26 Apr 2019 10:01:25 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id n15sm8746976ioa.26.2019.04.26.10.01.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Apr 2019 10:01:24 -0700 (PDT)
-Date:   Fri, 26 Apr 2019 10:01:23 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Stephen Boyd <sboyd@kernel.org>
-cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        id S1726566AbfDZRRT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Apr 2019 13:17:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbfDZRRT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Apr 2019 13:17:19 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A97E212F5;
+        Fri, 26 Apr 2019 17:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556299038;
+        bh=YOqdRP1NibCHtG7DRV7/U52ilDs1WxrKyoCTk50cxM0=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=qwe4qs3dYnolA64U11jZvfhn/j37Iv6ZCuKR4WL1MSHxIBouZbgjhY6LjtqOdEpQ3
+         bbOxeujdj/rMuxTwmQ7mgz1gYTgH6qnQtOLY7nEeXkFqGOtBa2OVWi0YwvUfyj52PT
+         IUvIjrhK2aF4EmZHRmjiqhk8H1ED4faU7k5pBiwY=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <alpine.DEB.2.21.9999.1904261000090.28496@viisi.sifive.com>
+References: <20190411082618.3502-1-paul.walmsley@sifive.com> <155624271876.15276.8637203698438742304@swboyd.mtv.corp.google.com> <alpine.DEB.2.21.9999.1904261000090.28496@viisi.sifive.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         mturquette@baylibre.com
-Subject: Re: [PATCH v3 0/3] clk: add driver for the SiFive FU540 PRCI and
- PLLs it controls
-In-Reply-To: <155624271876.15276.8637203698438742304@swboyd.mtv.corp.google.com>
-Message-ID: <alpine.DEB.2.21.9999.1904261000090.28496@viisi.sifive.com>
-References: <20190411082618.3502-1-paul.walmsley@sifive.com> <155624271876.15276.8637203698438742304@swboyd.mtv.corp.google.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 0/3] clk: add driver for the SiFive FU540 PRCI and PLLs it controls
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Message-ID: <155629903755.15276.1866080713022430392@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Fri, 26 Apr 2019 10:17:17 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Quoting Paul Walmsley (2019-04-26 10:01:23)
+> On Thu, 25 Apr 2019, Stephen Boyd wrote:
+> >=20
+> > Can you please send the dt macro patch along with the rest of the
+> > patches? I can't apply these patches and build them without it.
+>=20
+> It's upstream now as commit 6ec4bae178d8 ("dt-bindings: clock: sifive: ad=
+d=20
+> FU540-C000 PRCI clock constants")
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D6ec4bae178d8a1e9814eb3bfdd321b0475de0468
+>=20
 
-On Thu, 25 Apr 2019, Stephen Boyd wrote:
+Hmm ok. Thanks for the pointer.
 
-> Quoting Paul Walmsley (2019-04-11 01:26:16)
-> > clk: add driver for the SiFive FU540 PRCI and PLLs it controls
-> > 
-> > Add a driver for the SiFive FU540 PRCI IP block, which handles clock and
-> > some device reset control for the SiFive FU540 chip.  Also add a driver-
-> > independent library for the Analog Bits Wide-Range PLL (WRPLL), used by
-> > the PRCI driver to monitor and control the WRPLL instances on the FU540
-> > chip.
-> > 
-> > Boot-tested on a SiFive HiFive Unleashed board, using BBL and the
-> > open-source FSBL with a mainline-focused DTB.
-> > 
-> > This third version incorporates changes requested by Stephen Boyd
-> > <sboyd@kernel.org> and Rob Herring <robh@kernel.org>.
-> > 
-> > This patch series is also available, along with the DT macro prerequisite
-> > patch, at:
-> 
-> Can you please send the dt macro patch along with the rest of the
-> patches? I can't apply these patches and build them without it.
-
-It's upstream now as commit 6ec4bae178d8 ("dt-bindings: clock: sifive: add 
-FU540-C000 PRCI clock constants")
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6ec4bae178d8a1e9814eb3bfdd321b0475de0468
-
-
-- Paul
