@@ -2,79 +2,79 @@ Return-Path: <SRS0=YBHQ=S4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9655AC43218
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 21:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F67C43219
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 22:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1B5206DD
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 21:45:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46A4B20869
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Apr 2019 22:03:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556315141;
-	bh=XzXNABoAKNkpocBuqx1viF3gTN17qt4X8eq70Ew0xyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=l+z7kHRYooA7VYUHbIrNKQCR6EtZPS951oBTHPgTTHaFYsNwdnhSOjEvgDv9AYsw/
-	 JYXgAaE+8pFC88VwcPcElpUuZZ/Y/mhWuOqnj8kn8OE0Mwoq4u/kYGcDql03G0Uwy0
-	 bBFPqeptvxBLvqMXR8mEG7DbcBAYInDzOOrI2a3Q=
+	s=default; t=1556316184;
+	bh=zWgbe3sH6AyKzLwdPq0MEOIdtManQi4jsdsZX/XFkqc=;
+	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
+	b=Wl+q24ZGYVG/PL3KQa7YxFocsI2G9rSvKAwy9RK+iw39Poq/cB3hhTxhPTZGef0Ff
+	 9jJnEbFj2hAxVviD3vTMWuTzge+k/OfzBtXWeH/U3YM80n5vv82sIpliIjA1WZFbNZ
+	 yMayft+OaaMIn0bclF4/qKypBABshlqJCdrmVK94=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfDZVpl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Apr 2019 17:45:41 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42031 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfDZVpk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Apr 2019 17:45:40 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f23so3886261otl.9;
-        Fri, 26 Apr 2019 14:45:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uixqWZkXYqMmHxhf1bJFrlRr6J6RhaltFblgUArN8CY=;
-        b=lujZGMKteL9hnsRn0CFzo+igshlvZCC9hTBD5wRNA9l1f1/47fPgn9YhwtvEJXZZuF
-         6+kheYT7P/VKly1ZnWire9IuPpSFj+Ka/hcoS+s1ELlahYSJGFCvyqXof/hhoOhn3W9h
-         ZWnfqTGhiE8ROUS9E4RW1a39qqAPXruJ4updcD0LWSx6iNql2LXzBAn4gTZ5Sovaos9y
-         6fs+WfoJQpGRwy7qHO/7nrF/BGVKusuVWkkA8B88a4vMtjmkULGZRuhUPUoy9niqUxZi
-         RwFdMKI9zEGgN96IvoVtZPv6PpL7akf+cAkiLeOtCeCEFQNBmG2h8pzDKTIv6vh8qBTC
-         x8mQ==
-X-Gm-Message-State: APjAAAWVqpjR4HsCXZP6uVrpv16SRtx8B1ByR3ur6VK+IA4eLQH/Ymtl
-        qdU+DGSxLrh9PzEO3xNAXg==
-X-Google-Smtp-Source: APXvYqyFL232FQopAeyXtwXlJdFgy4h/dz+IuPMIi6LrbiayrLXwjtQv+4qUbdp0zYZZMZTYu51jJg==
-X-Received: by 2002:a9d:5f06:: with SMTP id f6mr28619446oti.18.1556315139985;
-        Fri, 26 Apr 2019 14:45:39 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i11sm10482364otl.27.2019.04.26.14.45.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Apr 2019 14:45:39 -0700 (PDT)
-Date:   Fri, 26 Apr 2019 16:45:38 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Guillaume La Roque <glaroque@baylibre.com>
-Cc:     jbrunet@baylibre.com, narmstrong@baylibre.com,
-        khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clk: g12a-clkc: add Temperature
- Sensor clock ID
-Message-ID: <20190426214538.GA29979@bogus>
-References: <20190412100221.26740-1-glaroque@baylibre.com>
- <20190412100221.26740-2-glaroque@baylibre.com>
+        id S1727056AbfDZWC7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Apr 2019 18:02:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726632AbfDZWC7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Apr 2019 18:02:59 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A19DD206C1;
+        Fri, 26 Apr 2019 22:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556316178;
+        bh=zWgbe3sH6AyKzLwdPq0MEOIdtManQi4jsdsZX/XFkqc=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=vWw9Kj9nQbmiJQbeUp1u16WmTL9GHxkUuzkCTvUjCHiBS9w8svynFpefU45yCW/IG
+         25vGSoYdiAlib1FVE3pkr1UA8lggyp1L2sY4jPjLZydccCo7McTP60aRskMUJmNoVP
+         zQmwcxTa56udTlmER5V9u/ovcJYkAKsaY/WVsk8I=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190412100221.26740-2-glaroque@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190426210651.GX14604@piout.net>
+References: <20190402125056.21509-1-alexandre.belloni@bootlin.com> <20190402125056.21509-8-alexandre.belloni@bootlin.com> <155622113579.15276.15900194435736283135@swboyd.mtv.corp.google.com> <20190425203139.GO14604@piout.net> <155622589096.15276.8583738150370510787@swboyd.mtv.corp.google.com> <20190425211009.GP14604@piout.net> <155622724107.15276.12946928869888731656@swboyd.mtv.corp.google.com> <20190426210651.GX14604@piout.net>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 7/7] clk: at91: add sam9x60 pmc driver
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <155631617779.168659.28330983552532693@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Fri, 26 Apr 2019 15:02:57 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 12, 2019 at 12:02:20PM +0200, Guillaume La Roque wrote:
-> Add clock id used by temperature sensor for G12A Socs
-> 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> ---
->  include/dt-bindings/clock/g12a-clkc.h | 1 +
->  1 file changed, 1 insertion(+)
+Quoting Alexandre Belloni (2019-04-26 14:06:51)
+> On 25/04/2019 14:20:41-0700, Stephen Boyd wrote:
+> >=20
+> > Hmm I was just confused it seems. If you don't have two devices probing
+> > the same DT node with this compatible string then I think it can just be
+> > CLK_OF_DECLARE(). I was thinking that you were running into some sort of
+> > issue where the other driver using this same compatible couldn't probe.
+> >=20
+>=20
+> I tried separating it into two initializations and do as much as
+> possible in the platform driver but because the TCB clocks are
+> peripheral clocks that depend on most of the other ones, I didn't find
+> it convenient. This can safely be changed to CLK_OF_DECLARE. I can send
+> v4 if you want. This should probably be changed for the other drivers
+> too.
 
-Acked-by: Rob Herring <robh@kernel.org>
+I've fixed it locally, just haven't pushed it out. If you have other
+drivers that should be using CLK_OF_DECLARE then feel free to send a
+patch for it.
+
