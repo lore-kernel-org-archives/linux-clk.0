@@ -2,144 +2,91 @@ Return-Path: <SRS0=Sirx=S5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD607C43219
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 20:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FC4C43219
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 20:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E9422064A
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 20:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69BA02077B
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 20:21:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YS5I/PQH"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="HwsHKR6O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbfD0UCu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 Apr 2019 16:02:50 -0400
-Received: from mail-eopbgr140042.outbound.protection.outlook.com ([40.107.14.42]:39493
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726030AbfD0UCt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 27 Apr 2019 16:02:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U7ixNb3cEMOv5V6/O/AYuHD6yqE8cuO6dlEpzMcuIbE=;
- b=YS5I/PQHNThq6HMdoDzEdofb9ZFLOq2c7NbJjCvEpzdsv0idVtPUwy7CzdggYSa1/joOwSB8vfUQFfd+A5Zl194SioBed8qUOQy1ZJ4x/d+rjDpQ8DuQmBVaP0pAwv5P5+0CopPvLaSkh+FMMBqQtflNnXrpJBFWqQ+zp8FFw2c=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB6019.eurprd04.prod.outlook.com (20.179.32.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.14; Sat, 27 Apr 2019 20:02:45 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::880d:a6d1:c29c:8560]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::880d:a6d1:c29c:8560%3]) with mapi id 15.20.1835.015; Sat, 27 Apr 2019
- 20:02:45 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] Re: [RFC 00/19] clk: imx: Switch the imx6 and imx7 to
- clk_hw based API
-Thread-Topic: [EXT] Re: [RFC 00/19] clk: imx: Switch the imx6 and imx7 to
- clk_hw based API
-Thread-Index: AQHU4MUXcPbU/vcAG02E7jK3YSvT1aYX1gUAgB459YCAFGt6gIAAnYaAgAIjjYCAA2nsAA==
-Date:   Sat, 27 Apr 2019 20:02:45 +0000
-Message-ID: <20190427193814.xs6tm3nzxc4ju6so@fsr-ub1664-175>
-References: <1553269010-15591-1-git-send-email-abel.vesa@nxp.com>
- <CAOMZO5DWpu9irOWR3rux-vV1sihfsDkTs5SJ7XXy8MgRBCd-Gw@mail.gmail.com>
- <155493360763.20095.6174028293897341109@swboyd.mtv.corp.google.com>
- <155605619927.15276.90300312265075245@swboyd.mtv.corp.google.com>
- <20190424071347.73xbynv5jqipqkgx@fsr-ub1664-175>
- <155620761362.15276.4197988939287759775@swboyd.mtv.corp.google.com>
-In-Reply-To: <155620761362.15276.4197988939287759775@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 91d87a5b-67f4-4969-094a-08d6cb4b50c2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6019;
-x-ms-traffictypediagnostic: AM0PR04MB6019:
-x-microsoft-antispam-prvs: <AM0PR04MB6019B02E5B1486CB1D098CEFF63F0@AM0PR04MB6019.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0020414413
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(376002)(346002)(136003)(396003)(366004)(39860400002)(199004)(189003)(6436002)(66066001)(5660300002)(8676002)(81156014)(229853002)(81166006)(99286004)(97736004)(6486002)(33716001)(76176011)(316002)(68736007)(6512007)(8936002)(9686003)(3846002)(6916009)(6116002)(91956017)(66476007)(66556008)(64756008)(66446008)(76116006)(86362001)(54906003)(73956011)(66946007)(53546011)(102836004)(93886005)(53936002)(71190400001)(71200400001)(186003)(6506007)(305945005)(7736002)(256004)(14444005)(2906002)(478600001)(44832011)(11346002)(446003)(26005)(6246003)(1076003)(25786009)(476003)(486006)(14454004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6019;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: g7ILKgzhc0PabUtA8l7EtLfAWXyC1Ox++vu+UB0eTc8fBIZtQ8kv6Jc5S1dljfQ1aJ6f87mrQRj/eOdQ7ed58Hu2s/vPZMjo6bA0oCeXLj16apt0467GGzwHByK9FWfsxnx4aOPRCfElrC25BH2net2k8L79K/M+1Y82N99ETCCQrmOGw0xd9h32uB23jMqQUGy4t669Z91KVqilStorfenVieCiIwdoVTdsF+MILJ2p2v3plxsapcz1dRzaVljPWTX1NiX0o6a3X1jAEGZqYulBCu+VKycIJ2mwh0So9hIxuhy9aMVMkj1KLRItBmdSbVoK6/1bo+VBpmgv+sJXaVBxFw58HbhqDowCeOQcL0AunDhhtLWprNwYPcCzjy3kLZfe4kWp+ZNrNkwedNw7jy3egw7vNm0ltfDJmxtIcI0=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <786A2DACB3811D4F8FEF29EA5CE0661D@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726225AbfD0UVE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 Apr 2019 16:21:04 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46760 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfD0UVD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Apr 2019 16:21:03 -0400
+Received: by mail-ot1-f65.google.com with SMTP id s24so5484409otk.13;
+        Sat, 27 Apr 2019 13:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n8Sb3tDJVImkB0zIvqUNX/1u9RCQM+Iqq9MF+QaVX+o=;
+        b=HwsHKR6O7oYk6gzDrFLWDWr00L+GargDSoGdxBfjtZOR8CBR3KidRbmiylzrgQHwxm
+         MJ/Xnr45lPAcbOQj6p/l1s7U55IPUx5uCo+gRTp9nF41i2vlxKoRreX7EShpj7z8XdfT
+         34nursl4YBNh16tgdb34l83xRQUqmbdHPQNWUT6KkR2dUApVNTTpDTyWyJWOgOY8iEYy
+         ervKIWZ3WRu3RlaPDfOmm9PSmP8uLy/r2PGgoX59NyeuVL9o3pHSknvkeinla7xsj9HH
+         PMHwMEfIrc/s1zTmgDbsr0gCJKnFHRb25iDYU0rdM4zutJgNNYX3J94RY87mHWKdSCb7
+         7zPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n8Sb3tDJVImkB0zIvqUNX/1u9RCQM+Iqq9MF+QaVX+o=;
+        b=itpPW8TtccnOKTfQBsh4YOXJMqKo2isqiGn4Th5H2exBbShXGCsHOvAgkbuWsp5pps
+         VoWpm8BwN2Ah87ps2b8nXtVIZhmbe7HjjUjPAfyv4S5nMr3R9tWJIs9Zo6QW+OsHBL+d
+         G1RKuSyYIU5vJv3Kj7isbo6bPvvXsSnxuT09sbQ/tZOlKIB4qoylCxhLB0qqaKIK8trS
+         fHNaVb2DqY+Q5hHWn/taTKaQkVjvZ6io8HU2ip0Qg+Y0AnhE3cA/pn0x71jUV7BTrEQp
+         fjMXVfKG4HSdNIrf+JsjyV1l6vQcGHMs1nSCj76NCrYn7tc+zgbTyAm3jZDARt/QPhT1
+         005A==
+X-Gm-Message-State: APjAAAWBtfKhskGYmwgFM0m+EVZEYqxjOK7zOv839GTbPg0jAP4AjjPa
+        QNvaaGLMWZg6rIBKP28yX3rTcCKNsbXUNVu9Qa8=
+X-Google-Smtp-Source: APXvYqywHHIypHdHq0I41rAZEA+6VJ9TxGQ+E16M1jSVmeWMFHtvuuU+DN61Bjd+1sPF5MYTnsCJUcorqrRMGVgg0i0=
+X-Received: by 2002:a9d:5e90:: with SMTP id f16mr31076242otl.86.1556396462982;
+ Sat, 27 Apr 2019 13:21:02 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91d87a5b-67f4-4969-094a-08d6cb4b50c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Apr 2019 20:02:45.6262
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6019
+References: <20190423091503.10847-1-narmstrong@baylibre.com> <20190423091503.10847-3-narmstrong@baylibre.com>
+In-Reply-To: <20190423091503.10847-3-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sat, 27 Apr 2019 22:20:52 +0200
+Message-ID: <CAFBinCBHDf8N7J5C7SkCF44k+-H686EYbK9zm6TOg_oUWJ+vTw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] clk: meson: g12a: Add support for G12B CPUB clocks
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-04-25 08:53:33, Stephen Boyd wrote:
-> Caution: EXT Email
->=20
-> Quoting Abel Vesa (2019-04-24 00:13:48)
-> >
-> > Can you please be more specific and point out exactly which one isn't ?
->=20
-> Is this a question for me?
->=20
+On Tue, Apr 23, 2019 at 11:15 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> This patch support for the specific Amlogic G12B clocks.
+>
+> G12B clock driver is very close, the main differences are :
+> - the clock tree is duplicated for the both clusters, and the
+>   SYS_PLL are swapped between the clusters
+> - G12A has additional clocks like for CSI an other components
+>
+> Here only the cpu clock tree is handled.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Nevermind. I'll send another version in the following days.
+while reviewing I used the public S922X datasheet from hardkernel to
+verify the implementation.
+I noticed that HHI_SYS_PLL_CNTL1  and HHI_SYS1_PLL_CNTL1 seem to have
+a 19-bit fractional part for the sys_pll and sys1_pll clocks.
+Neil, do you know more about the fractional parts on these clocks?
 
-> >
-> > >
-> > > FYI, I'm dropping this from my review queue under the assumption it w=
-ill
-> > > be sent again. Also, it would be nice to not have the wrappers at all=
- in
-> > > the next series so that everything is clk_hw based instead of clk bas=
-ed.
-> > > Otherwise, it looks good to me and I'd like to see this work complete=
-d.
-> > > Thanks!
-> > >
-> >
-> > I'll try to resend this before the end of next week.
-> >
-> > As for the wrappers, they need to stay in until the last user of the cl=
-k
-> > based API is switched to clk_hw based. That means all the remaining imx
-> > platforms (1 through 5, and then 8). I chosed to do the imx6 and imx7
-> > first because these are easier to find. Once this is in, I'll move on
-> > with the imx8 and then the imx1 through imx5 (which are harder to find
-> > nowadays).
-> >
->=20
-> Ok. I'm not thrilled to keep around legacy code because nobody is
-> testing out new kernels on these devices. If we can, we should try to
-> delete old drivers that don't get used anymore, but if we can't then
-> we should be able to modify and compile those drivers and wait for the
-> bug reports to come in if something is broken.
->=20
 
-Yes, as I said, I'll put together some other patchseries for the older imx
-platforms (1 through 5) once this one gets in.
-
-> =
+Regards
+Martin
