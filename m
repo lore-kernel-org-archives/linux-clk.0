@@ -3,99 +3,196 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92218C43218
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B28AC4321A
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE122087C
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:01:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B64E208CB
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556326913;
-	bh=w7xtzG77bIQLj4EH5p8XHdnkslc2MaHBi4pBdgv/a/8=;
-	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
-	b=vhN1Sm8oT7yZvagE+xWGTRYCM38laAoSQ4OVG1dlXt78hfKy7mYJlFfSyS3olxi6N
-	 0f9hVBpo6vZ+CGO9ZoEQcIjWHh858x3tvBCdxViNzODXUSyyCywI0bMomUvbMF1EoN
-	 U8wC1McqHDTFGO9qzTfSWM7jD3evVa0jpmVhmbxc=
+	s=default; t=1556329615;
+	bh=j2kyNLypqmuPdxZ4sBgK303V10UtV0B5eXfCEn/wCV8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=rDTIBupcVp/ImTvre9wXBquo6St/iAh30pAZNkjEMjvMD+TVoVzR21oeRxqEwhgTd
+	 RFGx31NfDy7fsc8QtPNT+DvE8L9X5zZ/oQKUNmUgBxl7iEtRHiCCLbWNGlhqYnExdL
+	 FHGijqMFMQs7vp30SVflqaS864QAsT090z4BNJ6U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfD0BBw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Apr 2019 21:01:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36292 "EHLO mail.kernel.org"
+        id S1728732AbfD0BnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Apr 2019 21:43:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726266AbfD0BBw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Apr 2019 21:01:52 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727946AbfD0BnQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Apr 2019 21:43:16 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEEA020873;
-        Sat, 27 Apr 2019 01:01:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3045C208CB;
+        Sat, 27 Apr 2019 01:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556326912;
-        bh=w7xtzG77bIQLj4EH5p8XHdnkslc2MaHBi4pBdgv/a/8=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=yesemrRi5X8RA3qSogY0wR6IFNjsCuGDf94v+yi87TNw8NANAtH5SyyTyyza35Wci
-         KMu3bYH7HVPRzyCL0CiyD5manlKpF5+mnOZoQkSC5dAkls3RyulJUOnANgv0mbkPsF
-         7PYeN9bu0hlAknmYFA7R2QisNwcHeOH0e7f4VqPQ=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1556329395;
+        bh=j2kyNLypqmuPdxZ4sBgK303V10UtV0B5eXfCEn/wCV8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JseIFofjbhmcrphxDvD3k/ydvDG78R//IXm24REP5FGKv+1Y1uf7hJAStHX+2Ir7a
+         CpMrfflzzkHm0DOi0rG/PLyy88drWZU4+9jhx9xa3k6ADoMuu+36n+UBxkSWLnXMaF
+         CN9PmKO713jUmyUTKkfBqhIzP+9A61IkSS0A+S0k=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     =?UTF-8?q?David=20M=C3=BCller?= <dave.mueller@gmx.ch>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 27/32] clk: x86: Add system specific quirk to mark clocks as critical
+Date:   Fri, 26 Apr 2019 21:42:18 -0400
+Message-Id: <20190427014224.8274-27-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190427014224.8274-1-sashal@kernel.org>
+References: <20190427014224.8274-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190411082733.3736-2-paul.walmsley@sifive.com>
-References: <20190411082733.3736-2-paul.walmsley@sifive.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/3] clk: analogbits: add Wide-Range PLL library
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Wesley Terpstra <wesley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Megan Wachs <megan@sifive.com>
-Message-ID: <155632691100.168659.14460051101205812433@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 26 Apr 2019 18:01:51 -0700
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Walmsley (2019-04-11 01:27:32)
-> Add common library code for the Analog Bits Wide-Range PLL (WRPLL) IP
-> block, as implemented in TSMC CLN28HPC.
->=20
-> There is no bus interface or register target associated with this PLL.
-> This library is intended to be used by drivers for IP blocks that
-> expose registers connected to the PLL configuration and status
-> signals.
->=20
-> Based on code originally written by Wesley Terpstra
-> <wesley@sifive.com>:
-> https://github.com/riscv/riscv-linux/commit/999529edf517ed75b56659d456d22=
-1b2ee56bb60
->=20
-> This version incorporates several changes requested by Stephen
-> Boyd <sboyd@kernel.org>.
->=20
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> Cc: Wesley Terpstra <wesley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Megan Wachs <megan@sifive.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
+From: David Müller <dave.mueller@gmx.ch>
 
-I haven't deeply reviewed at all, but I already get two problems when
-compile testing these patches. I can fix them up if nothing else needs
-fixing.
+[ Upstream commit 7c2e07130090ae001a97a6b65597830d6815e93e ]
 
-drivers/clk/analogbits/wrpll-cln28hpc.c:165 __wrpll_calc_divq() warn: shoul=
-d 'target_rate << divq' be a 64 bit type?
-drivers/clk/sifive/fu540-prci.c:214:16: error: return expression in void fu=
-nction
+Since commit 648e921888ad ("clk: x86: Stop marking clocks as
+CLK_IS_CRITICAL"), the pmc_plt_clocks of the Bay Trail SoC are
+unconditionally gated off. Unfortunately this will break systems where these
+clocks are used for external purposes beyond the kernel's knowledge. Fix it
+by implementing a system specific quirk to mark the necessary pmc_plt_clks as
+critical.
+
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Signed-off-by: David Müller <dave.mueller@gmx.ch>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/x86/clk-pmc-atom.c                | 14 ++++++++++---
+ drivers/platform/x86/pmc_atom.c               | 21 +++++++++++++++++++
+ .../linux/platform_data/x86/clk-pmc-atom.h    |  3 +++
+ 3 files changed, 35 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index d977193842df..19174835693b 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -165,7 +165,7 @@ static const struct clk_ops plt_clk_ops = {
+ };
+ 
+ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
+-					void __iomem *base,
++					const struct pmc_clk_data *pmc_data,
+ 					const char **parent_names,
+ 					int num_parents)
+ {
+@@ -184,9 +184,17 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
+ 	init.num_parents = num_parents;
+ 
+ 	pclk->hw.init = &init;
+-	pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
++	pclk->reg = pmc_data->base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
+ 	spin_lock_init(&pclk->lock);
+ 
++	/*
++	 * On some systems, the pmc_plt_clocks already enabled by the
++	 * firmware are being marked as critical to avoid them being
++	 * gated by the clock framework.
++	 */
++	if (pmc_data->critical && plt_clk_is_enabled(&pclk->hw))
++		init.flags |= CLK_IS_CRITICAL;
++
+ 	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
+ 	if (ret) {
+ 		pclk = ERR_PTR(ret);
+@@ -332,7 +340,7 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(parent_names);
+ 
+ 	for (i = 0; i < PMC_CLK_NUM; i++) {
+-		data->clks[i] = plt_clk_register(pdev, i, pmc_data->base,
++		data->clks[i] = plt_clk_register(pdev, i, pmc_data,
+ 						 parent_names, data->nparents);
+ 		if (IS_ERR(data->clks[i])) {
+ 			err = PTR_ERR(data->clks[i]);
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+index 77bac859342d..75f69cf0d45f 100644
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -17,6 +17,7 @@
+ 
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/platform_data/x86/clk-pmc-atom.h>
+@@ -421,11 +422,27 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+ }
+ #endif /* CONFIG_DEBUG_FS */
+ 
++/*
++ * Some systems need one or more of their pmc_plt_clks to be
++ * marked as critical.
++ */
++static const struct dmi_system_id critclk_systems[] __initconst = {
++	{
++		.ident = "MPL CEC1x",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "MPL AG"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
++		},
++	},
++	{ /*sentinel*/ }
++};
++
+ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
+ 			  const struct pmc_data *pmc_data)
+ {
+ 	struct platform_device *clkdev;
+ 	struct pmc_clk_data *clk_data;
++	const struct dmi_system_id *d = dmi_first_match(critclk_systems);
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+@@ -433,6 +450,10 @@ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
+ 
+ 	clk_data->base = pmc_regmap; /* offset is added by client */
+ 	clk_data->clks = pmc_data->clks;
++	if (d) {
++		clk_data->critical = true;
++		pr_info("%s critclks quirk enabled\n", d->ident);
++	}
+ 
+ 	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
+ 					       PLATFORM_DEVID_NONE,
+diff --git a/include/linux/platform_data/x86/clk-pmc-atom.h b/include/linux/platform_data/x86/clk-pmc-atom.h
+index 3ab892208343..7a37ac27d0fb 100644
+--- a/include/linux/platform_data/x86/clk-pmc-atom.h
++++ b/include/linux/platform_data/x86/clk-pmc-atom.h
+@@ -35,10 +35,13 @@ struct pmc_clk {
+  *
+  * @base:	PMC clock register base offset
+  * @clks:	pointer to set of registered clocks, typically 0..5
++ * @critical:	flag to indicate if firmware enabled pmc_plt_clks
++ *		should be marked as critial or not
+  */
+ struct pmc_clk_data {
+ 	void __iomem *base;
+ 	const struct pmc_clk *clks;
++	bool critical;
+ };
+ 
+ #endif /* __PLATFORM_DATA_X86_CLK_PMC_ATOM_H */
+-- 
+2.19.1
 
