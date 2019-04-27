@@ -4,39 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B28AC4321A
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0B0C4321A
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B64E208CB
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C33E20873
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Apr 2019 01:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556329615;
-	bh=j2kyNLypqmuPdxZ4sBgK303V10UtV0B5eXfCEn/wCV8=;
+	s=default; t=1556329750;
+	bh=V4fwlGWCxOK+NeGDC85FykK3c4VuiYL3SSt+nrRudZc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rDTIBupcVp/ImTvre9wXBquo6St/iAh30pAZNkjEMjvMD+TVoVzR21oeRxqEwhgTd
-	 RFGx31NfDy7fsc8QtPNT+DvE8L9X5zZ/oQKUNmUgBxl7iEtRHiCCLbWNGlhqYnExdL
-	 FHGijqMFMQs7vp30SVflqaS864QAsT090z4BNJ6U=
+	b=r50vh2i46QJYc6LIdcmUpXFeY2tBx/550O/HdlL8SJCmFlQ1KGQk2ZCRvdJxE+SNZ
+	 A35fsQWTjQilEtUGdxhR5MrxRlAvFH3yDf47B6pEBswQdjBFAvm5KsIeb53536WG25
+	 3BAixUTFiQA68hLgJehYX6+kbU1UL/G6AX90wFMQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbfD0BnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Apr 2019 21:43:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
+        id S1728489AbfD0BmK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Apr 2019 21:42:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727946AbfD0BnQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Apr 2019 21:43:16 -0400
+        id S1728482AbfD0BmJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Apr 2019 21:42:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3045C208CB;
-        Sat, 27 Apr 2019 01:43:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40625208CB;
+        Sat, 27 Apr 2019 01:42:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556329395;
-        bh=j2kyNLypqmuPdxZ4sBgK303V10UtV0B5eXfCEn/wCV8=;
+        s=default; t=1556329328;
+        bh=V4fwlGWCxOK+NeGDC85FykK3c4VuiYL3SSt+nrRudZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JseIFofjbhmcrphxDvD3k/ydvDG78R//IXm24REP5FGKv+1Y1uf7hJAStHX+2Ir7a
-         CpMrfflzzkHm0DOi0rG/PLyy88drWZU4+9jhx9xa3k6ADoMuu+36n+UBxkSWLnXMaF
-         CN9PmKO713jUmyUTKkfBqhIzP+9A61IkSS0A+S0k=
+        b=ixZj9NPuq44S5SSVUuooo5Pyiq0L+EQCkVolS0uxnS0hZF7LPca0T2ThcC1TuLyVl
+         426jX4NeeX6xZ4rv2+463jDsCsDePYuNALF+0bhQlgSfbguwfpcBuU9t4z/OJsV28a
+         eKroVlNKXpxNXt+KfyrFrijzddbiV8o21eITGY2Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?David=20M=C3=BCller?= <dave.mueller@gmx.ch>,
@@ -44,12 +45,12 @@ Cc:     =?UTF-8?q?David=20M=C3=BCller?= <dave.mueller@gmx.ch>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 27/32] clk: x86: Add system specific quirk to mark clocks as critical
-Date:   Fri, 26 Apr 2019 21:42:18 -0400
-Message-Id: <20190427014224.8274-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 45/53] clk: x86: Add system specific quirk to mark clocks as critical
+Date:   Fri, 26 Apr 2019 21:40:42 -0400
+Message-Id: <20190427014051.7522-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190427014224.8274-1-sashal@kernel.org>
-References: <20190427014224.8274-1-sashal@kernel.org>
+In-Reply-To: <20190427014051.7522-1-sashal@kernel.org>
+References: <20190427014051.7522-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -125,7 +126,7 @@ index d977193842df..19174835693b 100644
  		if (IS_ERR(data->clks[i])) {
  			err = PTR_ERR(data->clks[i]);
 diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-index 77bac859342d..75f69cf0d45f 100644
+index 8f018b3f3cd4..eaec2d306481 100644
 --- a/drivers/platform/x86/pmc_atom.c
 +++ b/drivers/platform/x86/pmc_atom.c
 @@ -17,6 +17,7 @@
@@ -136,7 +137,7 @@ index 77bac859342d..75f69cf0d45f 100644
  #include <linux/init.h>
  #include <linux/io.h>
  #include <linux/platform_data/x86/clk-pmc-atom.h>
-@@ -421,11 +422,27 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+@@ -391,11 +392,27 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
  }
  #endif /* CONFIG_DEBUG_FS */
  
@@ -164,7 +165,7 @@ index 77bac859342d..75f69cf0d45f 100644
  
  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
  	if (!clk_data)
-@@ -433,6 +450,10 @@ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
+@@ -403,6 +420,10 @@ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
  
  	clk_data->base = pmc_regmap; /* offset is added by client */
  	clk_data->clks = pmc_data->clks;
