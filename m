@@ -2,90 +2,76 @@ Return-Path: <SRS0=OnHn=S7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01554C004C9
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 17:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CA6C43219
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 18:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF30E21530
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 17:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FDC621655
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 18:15:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556559964;
-	bh=RdZEIE1yML4NLzsLDlQheSTk8OsdY1CjK/XZauwHndY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=h5xDrGsgYuyQl5CggcwxMWAlnq4k6tI3+Yk6Tt33+y6p6LYv3/wcdiK31Y6AKdnhM
-	 UPfnMfVuFDDpBljGklKYnEhJt7BREzvoZw8XMOV3XuOJFfi054keI+yiboKZFRmEcv
-	 NDxkgiKw5UE2B+8JHBUXrsXGd/J21KkFdDSkV0fA=
+	s=default; t=1556561725;
+	bh=fx4OITbER8lfWRFsjpKYjxmfmM4FFQhcrIIX7592miI=;
+	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
+	b=Y8iei1HaehcoEH5qPlPtw9Bb8pgqkUQVZcINWIuDxublcDMfXh6bHWU50S5E2ZHwD
+	 23Clm5n63YaoST7tZTRWkHRpxcKCQRULnTbuYKYXrzagw9DHmiIADHQdmO+aoWsty7
+	 sHkRnQErGd5U5Kj1gbkmHM2thoocz88BsrSvUstE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbfD2Rp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Apr 2019 13:45:58 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41334 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbfD2Rp6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Apr 2019 13:45:58 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g8so8415762otl.8;
-        Mon, 29 Apr 2019 10:45:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jAzJmF2TDQHSyudozQ8MRP+x53QYDHzdtWrUcOyie5o=;
-        b=g+R92KDFW0x6NHaON6tGIwOzwahJ1uY0f2uFCkM4ehSXaRpBAy18WwSJwtH24yiNe8
-         Dg6R8os/+N3ERC8WIGnbGzbVmntXuD3l6v60G+bWPUzFAUYTgXamkoM8+k0Hygiag358
-         GhJSY0zjzqtA+iVigi21JwYab0ZHSptzDZa3GUb+5ElgDPZSLLDfbjpAHCd+XoXNw3W1
-         fUo9gVCXk3klCJArpYi8zt+LC0xiTwZp08rGBvCJaPEVcuBd7S06+vaQ0G9Ii2T0Ol6N
-         +wb+8004MAeSHDVZQJI9zLO9mqyT9QTIsihnsVlEJRJYudAGAISx7wr+ryHl4Xk4q3WW
-         3lAA==
-X-Gm-Message-State: APjAAAXP/1pUa26HJGkf/eXsNAxq4jxGUKPhrIqtba3Po3E4Tvs+/7yL
-        Wu+pL+cVudy8UBa+4r+JhGhHMoc=
-X-Google-Smtp-Source: APXvYqyDmhrZrBxVsjETXa+G0jMSBEdawMchYDvBe7bdT/A54hBJgsvfF2vIblFu+/8+xxw3vWkkFw==
-X-Received: by 2002:a9d:7f89:: with SMTP id t9mr23252837otp.169.1556559413449;
-        Mon, 29 Apr 2019 10:36:53 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s26sm13741338otk.24.2019.04.29.10.36.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 10:36:52 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 12:36:51 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH 2/6] dt-bindings: media: sun6i-csi: Add compatible string
- for A83T variant
-Message-ID: <20190429173651.GA6551@bogus>
-References: <20190408165744.11672-1-wens@kernel.org>
- <20190408165744.11672-3-wens@kernel.org>
+        id S1729061AbfD2SPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Apr 2019 14:15:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728976AbfD2SPY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Apr 2019 14:15:24 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 342122075E;
+        Mon, 29 Apr 2019 18:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556561724;
+        bh=fx4OITbER8lfWRFsjpKYjxmfmM4FFQhcrIIX7592miI=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=hBkCppFmJ6UYtguHRR5FERpqeoSf2uQwVsMZ3cArS4hrgDCvnGEo7gmPYlowPOfVb
+         quvs3JIhvpsjrbJpAU0yu4UAxQ2Ru3YE66nAaLGgP8bHIudOJNmemEVx5ZF4aSTejH
+         mQwBWkqB2SX2rwUhnemVjspcamqOIs9TjpSxXOTM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190408165744.11672-3-wens@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1556531652-27740-1-git-send-email-gerald.baeza@st.com>
+References: <1556531652-27740-1-git-send-email-gerald.baeza@st.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/1] clk: stm32mp1: Add ddrperfm clock
+To:     "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>
+Message-ID: <155656172338.168659.837239195206058428@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Mon, 29 Apr 2019 11:15:23 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue,  9 Apr 2019 00:57:40 +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
-> 
-> The A83T SoC has a camera sensor interface (known as CSI in Allwinner
-> lingo), which is similar to the one found on the A64 and H3. The only
-> difference seems to be that support of MIPI CSI through a connected
-> MIPI CSI-2 bridge.
-> 
-> Add a compatible string for this variant.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Quoting Gerald BAEZA (2019-04-29 02:54:44)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>=20
+> Add ddrperfm clock for DDR Performance Monitor driver
+>=20
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
 > ---
->  Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
+
