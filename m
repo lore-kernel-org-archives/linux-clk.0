@@ -2,76 +2,111 @@ Return-Path: <SRS0=OnHn=S7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CA6C43219
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 18:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89044C004C9
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 19:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FDC621655
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 18:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556561725;
-	bh=fx4OITbER8lfWRFsjpKYjxmfmM4FFQhcrIIX7592miI=;
-	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
-	b=Y8iei1HaehcoEH5qPlPtw9Bb8pgqkUQVZcINWIuDxublcDMfXh6bHWU50S5E2ZHwD
-	 23Clm5n63YaoST7tZTRWkHRpxcKCQRULnTbuYKYXrzagw9DHmiIADHQdmO+aoWsty7
-	 sHkRnQErGd5U5Kj1gbkmHM2thoocz88BsrSvUstE=
+	by mail.kernel.org (Postfix) with ESMTP id 5A17C21670
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 19:42:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="gPhueT4R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfD2SPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Apr 2019 14:15:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728976AbfD2SPY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:15:24 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 342122075E;
-        Mon, 29 Apr 2019 18:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556561724;
-        bh=fx4OITbER8lfWRFsjpKYjxmfmM4FFQhcrIIX7592miI=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=hBkCppFmJ6UYtguHRR5FERpqeoSf2uQwVsMZ3cArS4hrgDCvnGEo7gmPYlowPOfVb
-         quvs3JIhvpsjrbJpAU0yu4UAxQ2Ru3YE66nAaLGgP8bHIudOJNmemEVx5ZF4aSTejH
-         mQwBWkqB2SX2rwUhnemVjspcamqOIs9TjpSxXOTM=
-Content-Type: text/plain; charset="utf-8"
+        id S1729174AbfD2TmK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Apr 2019 15:42:10 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:37876 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728928AbfD2TmJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Apr 2019 15:42:09 -0400
+Received: by mail-it1-f193.google.com with SMTP id r85so972936itc.2
+        for <linux-clk@vger.kernel.org>; Mon, 29 Apr 2019 12:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=OfSXGm/ZOpE/A5OPPtROuilo3cIAMJykM1qQwH2z66U=;
+        b=gPhueT4Rp4VegY21P3pKS9Ih/RR/nUEkk7jhKA1RfbY03ZnKHvyqL2Wk4lzdTDTHew
+         xJvCjJt/zV14JZ8yo42NKhZo1GXXGsru7NvXarkjF84DA6TNMB0w/Seaco92ZgKmPQAp
+         Wbmk1wofnz4d/0bHdBOMpivJ+knKJjh1QZ7Sblvpy6eEa9kQNKKbpWlvgzqushvBRdZT
+         BChOhN2sliOuqFf7iD2f5CS7krUZ8wCqwo4bSX0iceJ8QK+Xyd80HiWowfUqUXWe5IYG
+         EYZokboxA+1ZIybHhTM6idYhaLVjhpX7E7dKPr4P4x3DWqzMfOmYg5DxRkKClQzrKnhM
+         F6nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=OfSXGm/ZOpE/A5OPPtROuilo3cIAMJykM1qQwH2z66U=;
+        b=kpY0r0UG9aFryAjkJxsohh2zxxiuJ+oqENY0mKnFXvZ5DIeTo36bA8Kv3Tc1yu5qT4
+         QB0DyOXIZVVSgRQFbA/dTcMN1FU5dPe2Jke0gpwKFmnLAeyufUNL3FZ98CSgE5ERhk8T
+         VyqcPW87ki569rV81zPR1mOwaYk3bMnAXPP1h++Ii2+jzrN5eILgUG320Z6lZx98fy6x
+         Jc+5r90Vs2k8Cg4xXOUctPbkqZ/AygUnXHElk0s5IA3R11FVDQJAOVwS2QB3thgOongJ
+         15cJ3jf4CIIfCY4um+uZtLl/EZjj8TUmy4/nqA8w4tNtH9MHgQG3kZZr767oPimGp1GD
+         0uGQ==
+X-Gm-Message-State: APjAAAVaK7qKgOXNQ3RhzyX+IadHLF1h0KWW8ZDBlWSjlCHYi/u1JtJZ
+        08pga2jbYoRMtEvrxFQUiE0xTQ==
+X-Google-Smtp-Source: APXvYqyLjolJDasdvL/lXithdtFoxBopxLY0mM3Qb0W7s1HdM9MPrXYGgLBx7TSF2DI2OVcQaX56KA==
+X-Received: by 2002:a24:4d85:: with SMTP id l127mr658460itb.53.1556566928783;
+        Mon, 29 Apr 2019 12:42:08 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id t24sm7949990ioc.1.2019.04.29.12.42.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 12:42:07 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 12:42:07 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Paul Walmsley <paul@pwsan.com>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Megan Wachs <megan@sifive.com>
+Subject: Re: [PATCH v3 1/3] clk: analogbits: add Wide-Range PLL library
+In-Reply-To: <alpine.DEB.2.21.9999.1904262031510.10713@viisi.sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.1904291141340.7063@viisi.sifive.com>
+References: <20190411082733.3736-2-paul.walmsley@sifive.com> <155632691100.168659.14460051101205812433@swboyd.mtv.corp.google.com> <alpine.DEB.2.21.9999.1904262031510.10713@viisi.sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1556531652-27740-1-git-send-email-gerald.baeza@st.com>
-References: <1556531652-27740-1-git-send-email-gerald.baeza@st.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/1] clk: stm32mp1: Add ddrperfm clock
-To:     "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Gerald BAEZA <gerald.baeza@st.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-        Gerald BAEZA <gerald.baeza@st.com>
-Message-ID: <155656172338.168659.837239195206058428@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Mon, 29 Apr 2019 11:15:23 -0700
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gerald BAEZA (2019-04-29 02:54:44)
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->=20
-> Add ddrperfm clock for DDR Performance Monitor driver
->=20
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
-> ---
+Hi Stephen,
 
-Applied to clk-next
+On Fri, 26 Apr 2019, Paul Walmsley wrote:
 
+> On Fri, 26 Apr 2019, Stephen Boyd wrote:
+> 
+> > Quoting Paul Walmsley (2019-04-11 01:27:32)
+> > > Add common library code for the Analog Bits Wide-Range PLL (WRPLL) IP
+> > > block, as implemented in TSMC CLN28HPC.
+> > 
+> > I haven't deeply reviewed at all, but I already get two problems when
+> > compile testing these patches. I can fix them up if nothing else needs
+> > fixing.
+> > 
+> > drivers/clk/analogbits/wrpll-cln28hpc.c:165 __wrpll_calc_divq() warn: should 'target_rate << divq' be a 64 bit type?
+> > drivers/clk/sifive/fu540-prci.c:214:16: error: return expression in void function
+> 
+> Hmm, that's odd.  I will definitely take a look and repost.
+
+I'm not able to reproduce these problems.  The configs tried here were:
+
+- 64-bit RISC-V defconfig w/ PRCI driver enabled (gcc 8.2.0 built with 
+  crosstool-NG 1.24.0)
+
+- 32-bit ARM defconfig w/ PRCI driver enabled (gcc 8.3.0 built with 
+  crosstool-NG 1.24.0)
+
+- 32-bit i386 defconfig w/ PRCI driver enabled (gcc 
+  5.4.0-6ubuntu1~16.04.11)
+
+Could you post the toolchain and kernel config you're using?
+
+
+- Paul
