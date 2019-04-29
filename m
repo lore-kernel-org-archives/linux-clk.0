@@ -6,84 +6,81 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3EEC43219
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 22:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF78C43219
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 22:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D59E215EA
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 22:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39F6F2075E
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 22:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556578590;
-	bh=yXWHKubp7eGa3UoDVHyla+JGD8NiP4rV2Qe7y1ELTtQ=;
+	s=default; t=1556578761;
+	bh=/wNr8VsiG03XlgiYJ3PW0ej3WrLq3I5p2va/dtfT1eQ=;
 	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
-	b=d7kF4wBAqsxofF1NL9jstB8BBw47vCLibVOMECfXvfwMWiAA34lfQEftFeBS+ctIX
-	 fMNTBlnWSU9HPfGU7cRPJybx8SuWZqucheUgFHQQ9zexXD8jaXefqSemzxlY0uq5Ci
-	 rMZJlg0Of3KKzovFh1iI5lQcKxRh+5+89v7VA0YU=
+	b=0hvoeMA+q+/lKRFTn0/Pfluegr1XrOLcGJ0JOisgSq2D0uOBaXP2O0KpbxDqd24mi
+	 HDPnZlygxd4zxL0A15R9FJ5pOVZWsbfQp9Kv6Ht4FUuUInFLGJpSl+P89pFK5jfJ9L
+	 Eic4v8Wxc+oquMdmtzIuW9JvqwHRzUj8ARlyU6ks=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfD2W4a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Apr 2019 18:56:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47082 "EHLO mail.kernel.org"
+        id S1729628AbfD2W7U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Apr 2019 18:59:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729617AbfD2W4a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Apr 2019 18:56:30 -0400
+        id S1729603AbfD2W7U (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Apr 2019 18:59:20 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 573572075E;
-        Mon, 29 Apr 2019 22:56:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE9852075E;
+        Mon, 29 Apr 2019 22:59:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556578589;
-        bh=yXWHKubp7eGa3UoDVHyla+JGD8NiP4rV2Qe7y1ELTtQ=;
+        s=default; t=1556578760;
+        bh=/wNr8VsiG03XlgiYJ3PW0ej3WrLq3I5p2va/dtfT1eQ=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=KSmULu9Q7s2Li6tqMGI3QDi8P2Yb4j0jqhxUFeAeWv5fd1lzmlbm10LuPa9rYJFru
-         CBkHSqzpA8UlNdzuLasLUPvGb5GS1GpSuqJYaYzD9YqcAGXkWtyKeLt/+gNRd8yjSG
-         SwZ0gj7S0zwXJ/23fKD1uWD8IWFgYQUd2iez/SsM=
+        b=zvnvOknTP6/WjClt+yysNR0aev+4bazA60BfGQcM0sRt0xjk74yCtqqLWPOGHBtpR
+         Ja/+pbEHNUeKO9gNPv97yG6aoIBPvMh1z7w/WJarvG/ijOh8yWOIjSVW/OA/SyKbNJ
+         UWTWI6aw72jedO4rwzggGY5nqWhq/G1ZV/sXOa9o=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190411082733.3736-3-paul.walmsley@sifive.com>
-References: <20190411082733.3736-2-paul.walmsley@sifive.com> <20190411082733.3736-3-paul.walmsley@sifive.com>
+In-Reply-To: <1556571191.1721.0@crapouillou.net>
+References: <20190417112420.3034-1-paul@crapouillou.net> <155562472561.15276.17918796624287416345@swboyd.mtv.corp.google.com> <1556571191.1721.0@crapouillou.net>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: clk: add documentation for the SiFive PRCI driver
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Megan Wachs <megan@sifive.com>
-Message-ID: <155657858858.168659.15376308496117600451@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: ingenic/jz4725b: Fix parent of pixel clock
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Message-ID: <155657875909.168659.9064792203031956186@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Mon, 29 Apr 2019 15:56:28 -0700
+Date:   Mon, 29 Apr 2019 15:59:19 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Walmsley (2019-04-11 01:27:34)
-> Add DT binding documentation for the Linux driver for the SiFive
-> PRCI clock & reset control IP block, as found on the SiFive
-> FU540 chip.
+Quoting Paul Cercueil (2019-04-29 13:53:11)
+> Hi Stephen,
 >=20
-> This version includes changes requested by Stephen Boyd
-> <sboyd@kernel.org> and Rob Herring <robh@kernel.org>, and
-> fixes some errors in the initial version.
+> Le jeu. 18 avril 2019 =C3=A0 23:58, Stephen Boyd <sboyd@kernel.org> a=20
+> =C3=A9crit :
+> > Quoting Paul Cercueil (2019-04-17 04:24:20)
+> >>  The pixel clock is directly connected to the output of the PLL, and=20
+> >> not
+> >>  to the /2 divider.
+> >>=20
+> >>  Cc: stable@vger.kernel.org
+> >>  Fixes: 226dfa4726eb ("clk: Add Ingenic jz4725b CGU driver")
+> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> >>  ---
+> >=20
+> > Applied to clk-next
 >=20
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Megan Wachs <megan@sifive.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
+> Could you drop this patch?
+>=20
+> It turns out it is wrong and the pixel clock is really connected to the=20
+> "pll half"
+> clock. The real bug was elsewhere: the "pll half" clock does not report=20
+> the correct
+> rate. I will send a patch for this one later.
+>=20
 
-Applied to clk-next
+Ok. No problem.
 
