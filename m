@@ -1,857 +1,183 @@
-Return-Path: <SRS0=solY=S6=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=OnHn=S7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEB8C43219
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Apr 2019 01:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0647C43219
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 03:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 920702087E
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Apr 2019 01:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D4A7206BF
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Apr 2019 03:18:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="C7ri093X"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qpW1JBl2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfD1Bun (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 Apr 2019 21:50:43 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:51819 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbfD1Bum (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Apr 2019 21:50:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1556416242; x=1587952242;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=4MX0d4Og/3AYYU7mE5atKWYq9ihRFJMpJiOwpwGLAOg=;
-  b=C7ri093XShD/rsb3DwHo1a/c8r8I/u0+M1ztp+y6jjMWAS/FOKkSDx7e
-   ABqXL+9y3aZxxn13wvjt8h32pArd/9WLJ29bQ2p6NexFcEhV/HAAu0wHX
-   W9GoNw6gflAH9igdd9ky0G3O0YVgFpV4cboGShNKWY2r+bLqvmAeNwNyF
-   0lZFuQonHSwVyx5qnkbPAV2q2kn8b5vzIBRmitilH+VCFyunUtnvDECiI
-   tqz70UDgiYKRl7KBAzA0kp+haeTen/ouCkp+fWQ1vEAwC2wrx+MQ0P+hJ
-   HEQykbApDIsxVlvrojZ0Rrb/f71tthEsdPBzKg5Q9d3+ZY/ifxYwkMvVT
-   A==;
-X-IronPort-AV: E=Sophos;i="5.60,403,1549900800"; 
-   d="scan'208";a="108720066"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Apr 2019 09:50:42 +0800
-IronPort-SDR: Ccwjzq+G5nTum6Rn3P2sNI0/pA2S5uAl1QO+sM0DoWEEG9BPUljQCMCVUuocBTaANJcnWNU8ih
- eKwQF0L8NA+z6FtR9HBYRbt2tuXvQFB2XoXvABLeHCMAxxyYsjbrswmkxFSU3lE9UCe1EalQKY
- gGaHChIarKsnZUgy2ck7Gbcy+VL/vMHPS7xk8vwVs8/Ru2IoL15YaKCtZJwJ/8EKu3pglr2meG
- jlcKqaFH4RYwENcQ/9O8GkKQxsMVxvkuKYYGEFT0sq95U4Zu7aYpMa/DRR1pDyUSim7U1qDdL4
- xuv9WREft/ZWw6/N2MbjvEUb
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 27 Apr 2019 18:29:15 -0700
-IronPort-SDR: Rn4JUIAWk0RkIBa/J0B206QY8v+uXnmX99b/4aN/A6cdpAe5cxGSTiTLL2AGAw/9umRC71n0s7
- FJghdc4hnLhbS0DyIxXHcKrGcYzHv7RCAkzcVoOJvuAIVGCH1SExgKvLIFKQJnimLu4m2lP0E4
- GMlsDZXK+iko4ZXa20Wjm/4f20U3utrdodiXkgev0G6YRVe/J5jRLxLxVtZergcHm8ZjgZUXOB
- iY9MVh7DNpVv8cHeFjSdtdR/D6KAu6KR+EHIzS+xIG3AAJhDoA3e/f6aWt569w9Z1Do/nh9uYt
- zdk=
-Received: from c2h11g2.ad.shared (HELO [10.86.53.94]) ([10.86.53.94])
-  by uls-op-cesaip01.wdc.com with ESMTP; 27 Apr 2019 18:50:42 -0700
-Subject: Re: [PATCH v3 3/3] clk: sifive: add a driver for the SiFive FU540
- PRCI IP block
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        id S1727120AbfD2DSv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 28 Apr 2019 23:18:51 -0400
+Received: from mail-eopbgr150089.outbound.protection.outlook.com ([40.107.15.89]:64738
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726819AbfD2DSu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 28 Apr 2019 23:18:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4iMLlDfwX5SjLqPHsRwarG/5BUrKn0CHzbRXGTwW7xw=;
+ b=qpW1JBl2GFTdY7PvHQ2t+X7EaeCh5JeW/QmA6nul8y8isigYk7P1oYe9VZ0AEMgfdN64NImZvHHeLpenY5vMnldq4ipbflf/5Ir5oDyDot19/gUQjdFrOwMYW6NlGv33+iUr1j2SpWcgTqTpSTukXBM+fCE+fStqHZFjCTCxqH0=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3724.eurprd04.prod.outlook.com (52.134.66.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1835.12; Mon, 29 Apr 2019 03:18:43 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e8ca:4f6b:e43:c170]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e8ca:4f6b:e43:c170%3]) with mapi id 15.20.1835.018; Mon, 29 Apr 2019
+ 03:18:43 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc:     Paul Walmsley <paul@pwsan.com>, Albert Ou <aou@eecs.berkeley.edu>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Wesley W . Terpstra" <wesley@sifive.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Megan Wachs <megan@sifive.com>
-References: <20190411082733.3736-2-paul.walmsley@sifive.com>
- <20190411082733.3736-4-paul.walmsley@sifive.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <256b9312-4740-e7b1-84ac-c0cc1ff4bc77@wdc.com>
-Date:   Sat, 27 Apr 2019 18:50:40 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190411082733.3736-4-paul.walmsley@sifive.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH] clk: imx: add fractional-N pll support to pllv4
+Thread-Topic: [PATCH] clk: imx: add fractional-N pll support to pllv4
+Thread-Index: AQHU/jo/D2ZwDi5WREOeVbOKgmEXYQ==
+Date:   Mon, 29 Apr 2019 03:18:43 +0000
+Message-ID: <1556507637-22847-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR03CA0059.apcprd03.prod.outlook.com
+ (2603:1096:202:17::29) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1621dcd0-9aa4-4613-ac6c-08d6cc5161f9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3724;
+x-ms-traffictypediagnostic: DB3PR0402MB3724:
+x-microsoft-antispam-prvs: <DB3PR0402MB3724A98114832849F315C314F5390@DB3PR0402MB3724.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0022134A87
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(53936002)(25786009)(186003)(97736004)(8936002)(478600001)(110136005)(305945005)(7736002)(4326008)(26005)(73956011)(66946007)(3846002)(6116002)(66556008)(476003)(64756008)(66476007)(2616005)(2906002)(2201001)(486006)(66446008)(6506007)(102836004)(66066001)(386003)(6512007)(52116002)(6436002)(5660300002)(68736007)(86362001)(71200400001)(6486002)(71190400001)(36756003)(81156014)(8676002)(316002)(14454004)(2501003)(256004)(81166006)(99286004)(50226002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3724;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YDnUAWd0UZ2nqTuFYIMpg4zROUGw4Zo7/K/+YZI4ZNDnYAoob7OY6LYAurgSltu/69oSUCDD4BH4I4Xcz1QmsGsxJPVTjyZygDO7in5EBVvSt4bZyVS+Us0pSil3JZu7i8Zl86ow23/vqCwf9sq2leWix/WFvQaFHn8HteMR4DU3Lddl1VB/sYDc3e8eT6fXkC+lsTg3Fa8CiaNO+C6KSqGWiWibX5MmGS+mwYOchqmJuPvAku8uzqw06SgyPvSmnidwh5gDYhX03g2fUvY1IzxSkUuzbEKX2zefe9NcK3fvaECwBVYQ9XzR+3x9wHpM7X7aGPyztYY6uDzqLY+oM0JNIGHvO4p7YrhmV7IpD053wzOQ+SV7JoAh3UdL1TbNxQ70DuRCAbPdo8tp71BbiOBjh6fe1XkLcicL3/4qoMA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1621dcd0-9aa4-4613-ac6c-08d6cc5161f9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 03:18:43.1046
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3724
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/11/19 1:28 AM, Paul Walmsley wrote:
-> Add driver code for the SiFive FU540 PRCI IP block.  This IP block
-> handles reset and clock control for the SiFive FU540 device and
-> implements SoC-level clock tree controls and dividers.
-> 
-> Based on code written by Wesley Terpstra <wesley@sifive.com>:
-> https://github.com/riscv/riscv-linux/commit/999529edf517ed75b56659d456d221b2ee56bb60
-> 
-> Boot and PLL rate change were tested on a SiFive HiFive Unleashed
-> board.
-> 
-> This version includes several changes requested by Stephen Boyd
-> <sboyd@kernel.org>.
-> 
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: Wesley W. Terpstra <wesley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Megan Wachs <megan@sifive.com>
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->   drivers/clk/Kconfig             |   1 +
->   drivers/clk/Makefile            |   1 +
->   drivers/clk/sifive/Kconfig      |  18 +
->   drivers/clk/sifive/Makefile     |   1 +
->   drivers/clk/sifive/fu540-prci.c | 630 ++++++++++++++++++++++++++++++++
->   5 files changed, 651 insertions(+)
->   create mode 100644 drivers/clk/sifive/Kconfig
->   create mode 100644 drivers/clk/sifive/Makefile
->   create mode 100644 drivers/clk/sifive/fu540-prci.c
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 83dc90bd5179..d2f94ff9b0fc 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -310,6 +310,7 @@ source "drivers/clk/mvebu/Kconfig"
->   source "drivers/clk/qcom/Kconfig"
->   source "drivers/clk/renesas/Kconfig"
->   source "drivers/clk/samsung/Kconfig"
-> +source "drivers/clk/sifive/Kconfig"
->   source "drivers/clk/sprd/Kconfig"
->   source "drivers/clk/sunxi-ng/Kconfig"
->   source "drivers/clk/tegra/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 091ee1d8af65..5173a5ae1069 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -94,6 +94,7 @@ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
->   obj-y					+= renesas/
->   obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
->   obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
-> +obj-y					+= sifive/
->   obj-$(CONFIG_ARCH_SIRF)			+= sirf/
->   obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
->   obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-> diff --git a/drivers/clk/sifive/Kconfig b/drivers/clk/sifive/Kconfig
-> new file mode 100644
-> index 000000000000..8db4a3eb4782
-> --- /dev/null
-> +++ b/drivers/clk/sifive/Kconfig
-> @@ -0,0 +1,18 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +menuconfig CLK_SIFIVE
-> +	bool "SiFive SoC driver support"
-> +	help
-> +	  SoC drivers for SiFive Linux-capable SoCs.
-> +
-> +if CLK_SIFIVE
-> +
-> +config CLK_SIFIVE_FU540_PRCI
-> +	bool "PRCI driver for SiFive FU540 SoCs"
-> +	select CLK_ANALOGBITS_WRPLL_CLN28HPC
-> +	help
-> +	  Supports the Power Reset Clock interface (PRCI) IP block found in
-> +	  FU540 SoCs.  If this kernel is meant to run on a SiFive FU540 SoC,
-> +	  enable this driver.
-> +
-> +endif
-> diff --git a/drivers/clk/sifive/Makefile b/drivers/clk/sifive/Makefile
-> new file mode 100644
-> index 000000000000..74d58a4c0756
-> --- /dev/null
-> +++ b/drivers/clk/sifive/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_CLK_SIFIVE_FU540_PRCI)	+= fu540-prci.o
-> diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
-> new file mode 100644
-> index 000000000000..ecf1dfbcc645
-> --- /dev/null
-> +++ b/drivers/clk/sifive/fu540-prci.c
-> @@ -0,0 +1,630 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 SiFive, Inc.
-> + * Wesley Terpstra
-> + * Paul Walmsley
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * The FU540 PRCI implements clock and reset control for the SiFive
-> + * FU540-C000 chip.  This driver assumes that it has sole control
-> + * over all PRCI resources.
-> + *
-> + * This driver is based on the PRCI driver written by Wesley Terpstra:
-> + * https://github.com/riscv/riscv-linux/commit/999529edf517ed75b56659d456d221b2ee56bb60
-> + *
-> + * References:
-> + * - SiFive FU540-C000 manual v1p0, Chapter 7 "Clocking and Reset"
-> + */
-> +
-> +#include <dt-bindings/clock/sifive-fu540-prci.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk/analogbits-wrpll-cln28hpc.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_clk.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +/*
-> + * EXPECTED_CLK_PARENT_COUNT: how many parent clocks this driver expects:
-> + *     hfclk and rtcclk
-> + */
-> +#define EXPECTED_CLK_PARENT_COUNT		2
-> +
-> +/*
-> + * Register offsets and bitmasks
-> + */
-> +
-> +/* COREPLLCFG0 */
-> +#define PRCI_COREPLLCFG0_OFFSET			0x4
-> +# define PRCI_COREPLLCFG0_DIVR_SHIFT		0
-> +# define PRCI_COREPLLCFG0_DIVR_MASK		(0x3f << PRCI_COREPLLCFG0_DIVR_SHIFT)
-> +# define PRCI_COREPLLCFG0_DIVF_SHIFT		6
-> +# define PRCI_COREPLLCFG0_DIVF_MASK		(0x1ff << PRCI_COREPLLCFG0_DIVF_SHIFT)
-> +# define PRCI_COREPLLCFG0_DIVQ_SHIFT		15
-> +# define PRCI_COREPLLCFG0_DIVQ_MASK		(0x7 << PRCI_COREPLLCFG0_DIVQ_SHIFT)
-> +# define PRCI_COREPLLCFG0_RANGE_SHIFT		18
-> +# define PRCI_COREPLLCFG0_RANGE_MASK		(0x7 << PRCI_COREPLLCFG0_RANGE_SHIFT)
-> +# define PRCI_COREPLLCFG0_BYPASS_SHIFT		24
-> +# define PRCI_COREPLLCFG0_BYPASS_MASK		(0x1 << PRCI_COREPLLCFG0_BYPASS_SHIFT)
-> +# define PRCI_COREPLLCFG0_FSE_SHIFT		25
-> +# define PRCI_COREPLLCFG0_FSE_MASK		(0x1 << PRCI_COREPLLCFG0_FSE_SHIFT)
-> +# define PRCI_COREPLLCFG0_LOCK_SHIFT		31
-> +# define PRCI_COREPLLCFG0_LOCK_MASK		(0x1 << PRCI_COREPLLCFG0_LOCK_SHIFT)
-> +
-> +/* DDRPLLCFG0 */
-> +#define PRCI_DDRPLLCFG0_OFFSET			0xc
-> +# define PRCI_DDRPLLCFG0_DIVR_SHIFT		0
-> +# define PRCI_DDRPLLCFG0_DIVR_MASK		(0x3f << PRCI_DDRPLLCFG0_DIVR_SHIFT)
-> +# define PRCI_DDRPLLCFG0_DIVF_SHIFT		6
-> +# define PRCI_DDRPLLCFG0_DIVF_MASK		(0x1ff << PRCI_DDRPLLCFG0_DIVF_SHIFT)
-> +# define PRCI_DDRPLLCFG0_DIVQ_SHIFT		15
-> +# define PRCI_DDRPLLCFG0_DIVQ_MASK		(0x7 << PRCI_DDRPLLCFG0_DIVQ_SHIFT)
-> +# define PRCI_DDRPLLCFG0_RANGE_SHIFT		18
-> +# define PRCI_DDRPLLCFG0_RANGE_MASK		(0x7 << PRCI_DDRPLLCFG0_RANGE_SHIFT)
-> +# define PRCI_DDRPLLCFG0_BYPASS_SHIFT		24
-> +# define PRCI_DDRPLLCFG0_BYPASS_MASK		(0x1 << PRCI_DDRPLLCFG0_BYPASS_SHIFT)
-> +# define PRCI_DDRPLLCFG0_FSE_SHIFT		25
-> +# define PRCI_DDRPLLCFG0_FSE_MASK		(0x1 << PRCI_DDRPLLCFG0_FSE_SHIFT)
-> +# define PRCI_DDRPLLCFG0_LOCK_SHIFT		31
-> +# define PRCI_DDRPLLCFG0_LOCK_MASK		(0x1 << PRCI_DDRPLLCFG0_LOCK_SHIFT)
-> +
-> +/* DDRPLLCFG1 */
-> +#define PRCI_DDRPLLCFG1_OFFSET			0x10
-> +# define PRCI_DDRPLLCFG1_CKE_SHIFT		24
-> +# define PRCI_DDRPLLCFG1_CKE_MASK		(0x1 << PRCI_DDRPLLCFG1_CKE_SHIFT)
-> +
-> +/* GEMGXLPLLCFG0 */
-> +#define PRCI_GEMGXLPLLCFG0_OFFSET		0x1c
-> +# define PRCI_GEMGXLPLLCFG0_DIVR_SHIFT		0
-> +# define PRCI_GEMGXLPLLCFG0_DIVR_MASK		(0x3f << PRCI_GEMGXLPLLCFG0_DIVR_SHIFT)
-> +# define PRCI_GEMGXLPLLCFG0_DIVF_SHIFT		6
-> +# define PRCI_GEMGXLPLLCFG0_DIVF_MASK		(0x1ff << PRCI_GEMGXLPLLCFG0_DIVF_SHIFT)
-> +# define PRCI_GEMGXLPLLCFG0_DIVQ_SHIFT		15
-> +# define PRCI_GEMGXLPLLCFG0_DIVQ_MASK		(0x7 << PRCI_GEMGXLPLLCFG0_DIVQ_SHIFT)
-> +# define PRCI_GEMGXLPLLCFG0_RANGE_SHIFT		18
-> +# define PRCI_GEMGXLPLLCFG0_RANGE_MASK		(0x7 << PRCI_GEMGXLPLLCFG0_RANGE_SHIFT)
-> +# define PRCI_GEMGXLPLLCFG0_BYPASS_SHIFT	24
-> +# define PRCI_GEMGXLPLLCFG0_BYPASS_MASK		(0x1 << PRCI_GEMGXLPLLCFG0_BYPASS_SHIFT)
-> +# define PRCI_GEMGXLPLLCFG0_FSE_SHIFT		25
-> +# define PRCI_GEMGXLPLLCFG0_FSE_MASK		(0x1 << PRCI_GEMGXLPLLCFG0_FSE_SHIFT)
-> +# define PRCI_GEMGXLPLLCFG0_LOCK_SHIFT		31
-> +# define PRCI_GEMGXLPLLCFG0_LOCK_MASK		(0x1 << PRCI_GEMGXLPLLCFG0_LOCK_SHIFT)
-> +
-> +/* GEMGXLPLLCFG1 */
-> +#define PRCI_GEMGXLPLLCFG1_OFFSET		0x20
-> +# define PRCI_GEMGXLPLLCFG1_CKE_SHIFT		24
-> +# define PRCI_GEMGXLPLLCFG1_CKE_MASK		(0x1 << PRCI_GEMGXLPLLCFG1_CKE_SHIFT)
-> +
-> +/* CORECLKSEL */
-> +#define PRCI_CORECLKSEL_OFFSET			0x24
-> +# define PRCI_CORECLKSEL_CORECLKSEL_SHIFT	0
-> +# define PRCI_CORECLKSEL_CORECLKSEL_MASK	(0x1 << PRCI_CORECLKSEL_CORECLKSEL_SHIFT)
-> +
-> +/* DEVICESRESETREG */
-> +#define PRCI_DEVICESRESETREG_OFFSET			0x28
-> +# define PRCI_DEVICESRESETREG_DDR_CTRL_RST_N_SHIFT	0
-> +# define PRCI_DEVICESRESETREG_DDR_CTRL_RST_N_MASK	(0x1 << PRCI_DEVICESRESETREG_DDR_CTRL_RST_N_SHIFT)
-> +# define PRCI_DEVICESRESETREG_DDR_AXI_RST_N_SHIFT	1
-> +# define PRCI_DEVICESRESETREG_DDR_AXI_RST_N_MASK	(0x1 << PRCI_DEVICESRESETREG_DDR_AXI_RST_N_SHIFT)
-> +# define PRCI_DEVICESRESETREG_DDR_AHB_RST_N_SHIFT	2
-> +# define PRCI_DEVICESRESETREG_DDR_AHB_RST_N_MASK	(0x1 << PRCI_DEVICESRESETREG_DDR_AHB_RST_N_SHIFT)
-> +# define PRCI_DEVICESRESETREG_DDR_PHY_RST_N_SHIFT	3
-> +# define PRCI_DEVICESRESETREG_DDR_PHY_RST_N_MASK	(0x1 << PRCI_DEVICESRESETREG_DDR_PHY_RST_N_SHIFT)
-> +# define PRCI_DEVICESRESETREG_GEMGXL_RST_N_SHIFT	5
-> +# define PRCI_DEVICESRESETREG_GEMGXL_RST_N_MASK		(0x1 << PRCI_DEVICESRESETREG_GEMGXL_RST_N_SHIFT)
-> +
-> +/* CLKMUXSTATUSREG */
-> +#define PRCI_CLKMUXSTATUSREG_OFFSET			0x2c
-> +# define PRCI_CLKMUXSTATUSREG_TLCLKSEL_STATUS_SHIFT	1
-> +# define PRCI_CLKMUXSTATUSREG_TLCLKSEL_STATUS_MASK	(0x1 << PRCI_CLKMUXSTATUSREG_TLCLKSEL_STATUS_SHIFT)
-> +
-> +/*
-> + * Private structures
-> + */
-> +
-> +/**
-> + * struct __prci_data - per-device-instance data
-> + * @va: base virtual address of the PRCI IP block
-> + * @hw_clks: encapsulates struct clk_hw records
-> + *
-> + * PRCI per-device instance data
-> + */
-> +struct __prci_data {
-> +	void __iomem *va;
-> +	struct clk_hw_onecell_data hw_clks;
-> +};
-> +
-> +/**
-> + * struct __prci_wrpll_data - WRPLL configuration and integration data
-> + * @c: WRPLL current configuration record
-> + * @enable_bypass: fn ptr to code to bypass the WRPLL (if applicable; else NULL)
-> + * @disable_bypass: fn ptr to code to not bypass the WRPLL (or NULL)
-> + * @cfg0_offs: WRPLL CFG0 register offset (in bytes) from the PRCI base address
-> + *
-> + * @enable_bypass and @disable_bypass are used for WRPLL instances
-> + * that contain a separate external glitchless clock mux downstream
-> + * from the PLL.  The WRPLL internal bypass mux is not glitchless.
-> + */
-> +struct __prci_wrpll_data {
-> +	struct analogbits_wrpll_cfg c;
-> +	void (*enable_bypass)(struct __prci_data *pd);
-> +	void (*disable_bypass)(struct __prci_data *pd);
-> +	u8 cfg0_offs;
-> +};
-> +
-> +/**
-> + * struct __prci_clock - describes a clock device managed by PRCI
-> + * @name: user-readable clock name string - should match the manual
-> + * @parent_name: parent name for this clock
-> + * @ops: struct clk_ops for the Linux clock framework to use for control
-> + * @hw: Linux-private clock data
-> + * @pwd: WRPLL-specific data, associated with this clock (if not NULL)
-> + * @pd: PRCI-specific data associated with this clock (if not NULL)
-> + *
-> + * PRCI clock data.  Used by the PRCI driver to register PRCI-provided
-> + * clocks to the Linux clock infrastructure.
-> + */
-> +struct __prci_clock {
-> +	const char *name;
-> +	const char *parent_name;
-> +	const struct clk_ops *ops;
-> +	struct clk_hw hw;
-> +	struct __prci_wrpll_data *pwd;
-> +	struct __prci_data *pd;
-> +};
-> +
-> +#define clk_hw_to_prci_clock(pwd) container_of(pwd, struct __prci_clock, hw)
-> +
-> +/*
-> + * Private functions
-> + */
-> +
-> +/**
-> + * __prci_readl() - read from a PRCI register
-> + * @pd: PRCI context
-> + * @offs: register offset to read from (in bytes, from PRCI base address)
-> + *
-> + * Read the register located at offset @offs from the base virtual
-> + * address of the PRCI register target described by @pd, and return
-> + * the value to the caller.
-> + *
-> + * Context: Any context.
-> + *
-> + * Return: the contents of the register described by @pd and @offs.
-> + */
-> +static u32 __prci_readl(struct __prci_data *pd, u32 offs)
-> +{
-> +	return readl_relaxed(pd->va + offs);
-> +}
-> +
-> +static void __prci_writel(u32 v, u32 offs, struct __prci_data *pd)
-> +{
-> +	return writel_relaxed(v, pd->va + offs);
-> +}
-> +
-> +/* WRPLL-related private functions */
-> +
-> +/**
-> + * __prci_wrpll_unpack() - unpack WRPLL configuration registers into parameters
-> + * @c: ptr to a struct analogbits_wrpll_cfg record to write config into
-> + * @r: value read from the PRCI PLL configuration register
-> + *
-> + * Given a value @r read from an FU540 PRCI PLL configuration register,
-> + * split it into fields and populate it into the WRPLL configuration record
-> + * pointed to by @c.
-> + *
-> + * The COREPLLCFG0 macros are used below, but the other *PLLCFG0 macros
-> + * have the same register layout.
-> + *
-> + * Context: Any context.
-> + */
-> +static void __prci_wrpll_unpack(struct analogbits_wrpll_cfg *c, u32 r)
-> +{
-> +	u32 v;
-> +
-> +	v = r & PRCI_COREPLLCFG0_DIVR_MASK;
-> +	v >>= PRCI_COREPLLCFG0_DIVR_SHIFT;
-> +	c->divr = v;
-> +
-> +	v = r & PRCI_COREPLLCFG0_DIVF_MASK;
-> +	v >>= PRCI_COREPLLCFG0_DIVF_SHIFT;
-> +	c->divf = v;
-> +
-> +	v = r & PRCI_COREPLLCFG0_DIVQ_MASK;
-> +	v >>= PRCI_COREPLLCFG0_DIVQ_SHIFT;
-> +	c->divq = v;
-> +
-> +	v = r & PRCI_COREPLLCFG0_RANGE_MASK;
-> +	v >>= PRCI_COREPLLCFG0_RANGE_SHIFT;
-> +	c->range = v;
-> +
-> +	c->flags &= (WRPLL_FLAGS_INT_FEEDBACK_MASK |
-> +		     WRPLL_FLAGS_EXT_FEEDBACK_MASK);
-> +
-> +	/* external feedback mode not supported */
-> +	c->flags |= WRPLL_FLAGS_INT_FEEDBACK_MASK;
-> +}
-> +
-> +/**
-> + * __prci_wrpll_pack() - pack PLL configuration parameters into a register value
-> + * @c: pointer to a struct analogbits_wrpll_cfg record containing the PLL's cfg
-> + *
-> + * Using a set of WRPLL configuration values pointed to by @c,
-> + * assemble a PRCI PLL configuration register value, and return it to
-> + * the caller.
-> + *
-> + * Context: Any context.  Caller must ensure that the contents of the
-> + *          record pointed to by @c do not change during the execution
-> + *          of this function.
-> + *
-> + * Returns: a value suitable for writing into a PRCI PLL configuration
-> + *          register
-> + */
-> +static u32 __prci_wrpll_pack(struct analogbits_wrpll_cfg * const c)
-> +{
-> +	u32 r = 0;
-> +
-> +	r |= c->divr << PRCI_COREPLLCFG0_DIVR_SHIFT;
-> +	r |= c->divf << PRCI_COREPLLCFG0_DIVF_SHIFT;
-> +	r |= c->divq << PRCI_COREPLLCFG0_DIVQ_SHIFT;
-> +	r |= c->range << PRCI_COREPLLCFG0_RANGE_SHIFT;
-> +
-> +	/* external feedback mode not supported */
-> +	r |= PRCI_COREPLLCFG0_FSE_MASK;
-> +
-> +	return r;
-> +}
-> +
-> +/**
-> + * __prci_wrpll_read_cfg() - read the WRPLL configuration from the PRCI
-> + * @pd: PRCI context
-> + * @pwd: PRCI WRPLL metadata
-> + *
-> + * Read the current configuration of the PLL identified by @pwd from
-> + * the PRCI identified by @pd, and store it into the local configuration
-> + * cache in @pwd.
-> + *
-> + * Context: Any context.  Caller must prevent the records pointed to by
-> + *          @pd and @pwd from changing during execution.
-> + */
-> +static void __prci_wrpll_read_cfg(struct __prci_data *pd,
-> +				  struct __prci_wrpll_data *pwd)
-> +{
-> +	__prci_wrpll_unpack(&pwd->c, __prci_readl(pd, pwd->cfg0_offs));
-> +}
-> +
-> +/**
-> + * __prci_wrpll_write_cfg() - write WRPLL configuration into the PRCI
-> + * @pd: PRCI context
-> + * @pwd: PRCI WRPLL metadata
-> + * @c: WRPLL configuration record to write
-> + *
-> + * Write the WRPLL configuration described by @c into the WRPLL
-> + * configuration register identified by @pwd in the PRCI instance
-> + * described by @c.  Make a cached copy of the WRPLL's current
-> + * configuration so it can be used by other code.
-> + *
-> + * Context: Any context.  Caller must prevent the records pointed to by
-> + *          @pd and @pwd from changing during execution.
-> + */
-> +static void __prci_wrpll_write_cfg(struct __prci_data *pd,
-> +				   struct __prci_wrpll_data *pwd,
-> +				   struct analogbits_wrpll_cfg *c)
-> +{
-> +	__prci_writel(__prci_wrpll_pack(c), pwd->cfg0_offs, pd);
-> +
-> +	memcpy(&pwd->c, c, sizeof(struct analogbits_wrpll_cfg));
-> +}
-> +
-> +/* Core clock mux control */
-> +
-> +/**
-> + * __prci_coreclksel_use_hfclk() - switch the CORECLK mux to output HFCLK
-> + * @pd: struct __prci_data * for the PRCI containing the CORECLK mux reg
-> + *
-> + * Switch the CORECLK mux to the HFCLK input source; return once complete.
-> + *
-> + * Context: Any context.  Caller must prevent concurrent changes to the
-> + *          PRCI_CORECLKSEL_OFFSET register.
-> + */
-> +static void __prci_coreclksel_use_hfclk(struct __prci_data *pd)
-> +{
-> +	u32 r;
-> +
-> +	r = __prci_readl(pd, PRCI_CORECLKSEL_OFFSET);
-> +	r |= PRCI_CORECLKSEL_CORECLKSEL_MASK;
-> +	__prci_writel(r, PRCI_CORECLKSEL_OFFSET, pd);
-> +
-> +	r = __prci_readl(pd, PRCI_CORECLKSEL_OFFSET); /* barrier */
-> +}
-> +
-> +/**
-> + * __prci_coreclksel_use_corepll() - switch the CORECLK mux to output COREPLL
-> + * @pd: struct __prci_data * for the PRCI containing the CORECLK mux reg
-> + *
-> + * Switch the CORECLK mux to the PLL output clock; return once complete.
-> + *
-> + * Context: Any context.  Caller must prevent concurrent changes to the
-> + *          PRCI_CORECLKSEL_OFFSET register.
-> + */
-> +static void __prci_coreclksel_use_corepll(struct __prci_data *pd)
-> +{
-> +	u32 r;
-> +
-> +	r = __prci_readl(pd, PRCI_CORECLKSEL_OFFSET);
-> +	r &= ~PRCI_CORECLKSEL_CORECLKSEL_MASK;
-> +	__prci_writel(r, PRCI_CORECLKSEL_OFFSET, pd);
-> +
-> +	r = __prci_readl(pd, PRCI_CORECLKSEL_OFFSET); /* barrier */
-> +}
-> +
-> +/*
-> + * Linux clock framework integration
-> + *
-> + * See the Linux clock framework documentation for more information on
-> + * these functions.
-> + */
-> +
-> +static unsigned long sifive_fu540_prci_wrpll_recalc_rate(struct clk_hw *hw,
-> +							 unsigned long parent_rate)
-> +{
-> +	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-> +	struct __prci_wrpll_data *pwd = pc->pwd;
-> +
-> +	return analogbits_wrpll_calc_output_rate(&pwd->c, parent_rate);
-> +}
-> +
-> +static long sifive_fu540_prci_wrpll_round_rate(struct clk_hw *hw,
-> +					       unsigned long rate,
-> +					       unsigned long *parent_rate)
-> +{
-> +	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-> +	struct __prci_wrpll_data *pwd = pc->pwd;
-> +	struct analogbits_wrpll_cfg c;
-> +
-> +	memcpy(&c, &pwd->c, sizeof(c));
-> +
-> +	analogbits_wrpll_configure_for_rate(&c, rate, *parent_rate);
-> +
-> +	return analogbits_wrpll_calc_output_rate(&c, *parent_rate);
-> +}
-> +
-> +static int sifive_fu540_prci_wrpll_set_rate(struct clk_hw *hw,
-> +					    unsigned long rate,
-> +					    unsigned long parent_rate)
-> +{
-> +	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-> +	struct __prci_wrpll_data *pwd = pc->pwd;
-> +	struct __prci_data *pd = pc->pd;
-> +	int r;
-> +
-> +	r = analogbits_wrpll_configure_for_rate(&pwd->c, rate, parent_rate);
-> +	if (r)
-> +		return r;
-> +
-> +	if (pwd->enable_bypass)
-> +		pwd->enable_bypass(pd);
-> +
-> +	__prci_wrpll_write_cfg(pd, pwd, &pwd->c);
-> +
-> +	udelay(analogbits_wrpll_calc_max_lock_us(&pwd->c));
-> +
-> +	if (pwd->disable_bypass)
-> +		pwd->disable_bypass(pd);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops sifive_fu540_prci_wrpll_clk_ops = {
-> +	.set_rate = sifive_fu540_prci_wrpll_set_rate,
-> +	.round_rate = sifive_fu540_prci_wrpll_round_rate,
-> +	.recalc_rate = sifive_fu540_prci_wrpll_recalc_rate,
-> +};
-> +
-> +static const struct clk_ops sifive_fu540_prci_wrpll_ro_clk_ops = {
-> +	.recalc_rate = sifive_fu540_prci_wrpll_recalc_rate,
-> +};
-> +
-> +/* TLCLKSEL clock integration */
-> +
-> +static unsigned long sifive_fu540_prci_tlclksel_recalc_rate(struct clk_hw *hw,
-> +							    unsigned long parent_rate)
-> +{
-> +	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-> +	struct __prci_data *pd = pc->pd;
-> +	u32 v;
-> +	u8 div;
-> +
-> +	v = __prci_readl(pd, PRCI_CLKMUXSTATUSREG_OFFSET);
-> +	v &= PRCI_CLKMUXSTATUSREG_TLCLKSEL_STATUS_MASK;
-> +	div = v ? 1 : 2;
-> +
-> +	return div_u64(parent_rate, div);
-> +}
-> +
-> +static const struct clk_ops sifive_fu540_prci_tlclksel_clk_ops = {
-> +	.recalc_rate = sifive_fu540_prci_tlclksel_recalc_rate,
-> +};
-> +
-> +/*
-> + * PRCI integration data for each WRPLL instance
-> + */
-> +
-> +static struct __prci_wrpll_data __prci_corepll_data = {
-> +	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
-> +	.enable_bypass = __prci_coreclksel_use_hfclk,
-> +	.disable_bypass = __prci_coreclksel_use_corepll,
-> +};
-> +
-> +static struct __prci_wrpll_data __prci_ddrpll_data = {
-> +	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
-> +};
-> +
-> +static struct __prci_wrpll_data __prci_gemgxlpll_data = {
-> +	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
-> +};
-> +
-> +/*
-> + * List of clock controls provided by the PRCI
-> + */
-> +
-> +static struct __prci_clock __prci_init_clocks[] = {
-> +	[PRCI_CLK_COREPLL] = {
-> +		.name = "corepll",
-> +		.parent_name = "hfclk",
-> +		.ops = &sifive_fu540_prci_wrpll_clk_ops,
-> +		.pwd = &__prci_corepll_data,
-> +	},
-> +	[PRCI_CLK_DDRPLL] = {
-> +		.name = "ddrpll",
-> +		.parent_name = "hfclk",
-> +		.ops = &sifive_fu540_prci_wrpll_ro_clk_ops,
-> +		.pwd = &__prci_ddrpll_data,
-> +	},
-> +	[PRCI_CLK_GEMGXLPLL] = {
-> +		.name = "gemgxlpll",
-> +		.parent_name = "hfclk",
-> +		.ops = &sifive_fu540_prci_wrpll_clk_ops,
-> +		.pwd = &__prci_gemgxlpll_data,
-> +	},
-> +	[PRCI_CLK_TLCLK] = {
-> +		.name = "tlclk",
-> +		.parent_name = "corepll",
-> +		.ops = &sifive_fu540_prci_tlclksel_clk_ops,
-> +	},
-> +};
-> +
-> +/**
-> + * __prci_register_clocks() - register clock controls in the PRCI with Linux
-> + * @dev: Linux struct device *
-> + *
-> + * Register the list of clock controls described in __prci_init_plls[] with
-> + * the Linux clock framework.
-> + *
-> + * Return: 0 upon success or a negative error code upon failure.
-> + */
-> +static int __prci_register_clocks(struct device *dev, struct __prci_data *pd)
-> +{
-> +	struct clk_init_data init;
-> +	struct __prci_clock *pic;
-> +	int parent_count, i, clk_hw_count, r;
-> +
-> +	parent_count = of_clk_get_parent_count(dev->of_node);
-> +	if (parent_count != EXPECTED_CLK_PARENT_COUNT) {
-> +		dev_err(dev, "expected only two parent clocks, found %d\n",
-> +			parent_count);
-> +		return -EINVAL;
-> +	}
-> +
-> +	memset(&init, 0, sizeof(struct clk_init_data));
-> +
-> +	/* Register PLLs */
-> +	clk_hw_count = sizeof(__prci_init_clocks) / sizeof(struct __prci_clock);
-> +
-> +	for (i = 0; i < clk_hw_count; ++i) {
-> +		pic = &__prci_init_clocks[i];
-> +
-> +		init.name = pic->name;
-> +		init.parent_names = &pic->parent_name;
-> +		init.num_parents = 1;
-> +		init.ops = pic->ops;
-> +		pic->hw.init = &init;
-> +
-> +		pic->pd = pd;
-> +
-> +		if (pic->pwd)
-> +			__prci_wrpll_read_cfg(pd, pic->pwd);
-> +
-> +		r = devm_clk_hw_register(dev, &pic->hw);
-> +		if (r) {
-> +			dev_warn(dev, "Failed to register clock %s: %d\n",
-> +				 init.name, r);
-> +			return r;
-> +		}
-> +
-> +		r = clk_hw_register_clkdev(&pic->hw, pic->name, dev_name(dev));
-> +		if (r) {
-> +			dev_warn(dev, "Failed to register clkdev for %s: %d\n",
-> +				 init.name, r);
-> +			return r;
-> +		}
-> +
-> +		pd->hw_clks.hws[i] = &pic->hw;
-> +	}
-> +
-> +	pd->hw_clks.num = i;
-> +
-> +	r = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					&pd->hw_clks);
-> +	if (r) {
-> +		dev_err(dev, "could not add hw_provider: %d\n", r);
-> +		return r;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Linux device model integration
-> + *
-> + * See the Linux device model documentation for more information about
-> + * these functions.
-> + */
-> +static int sifive_fu540_prci_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct resource *res;
-> +	struct __prci_data *pd;
-> +	int r;
-> +
-> +	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-> +	if (!pd)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	pd->va = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(pd->va))
-> +		return PTR_ERR(pd->va);
-> +
-> +	r = __prci_register_clocks(dev, pd);
-> +	if (r) {
-> +		dev_err(dev, "could not register clocks: %d\n", r);
-> +		return r;
-> +	}
-> +
-> +	dev_dbg(dev, "SiFive FU540 PRCI probed\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id sifive_fu540_prci_of_match[] = {
-> +	{ .compatible = "sifive,fu540-c000-prci", },
-
-All the existing unleashed devices have prci clock compatible string as
-"sifive,aloeprci0" or "sifive,ux00prci0". Should it be added to maintain 
-backward compatibility?
-
-Even after adding the compatible string (just for my testing purpose), I 
-get this while booting.
-
-[    0.104571] sifive-fu540-prci 10000000.prci: expected only two parent 
-clocks, found 1
-[    0.112460] sifive-fu540-prci 10000000.prci: could not register 
-clocks: -22
-[    0.119499] sifive-fu540-prci: probe of 10000000.prci failed with 
-error -22
-
-Looking at the DT entries, your DT patch has
-
-+		prci: clock-controller@10000000 {
-+			compatible = "sifive,fu540-c000-prci";
-+			reg = <0x0 0x10000000 0x0 0x1000>;
-+			clocks = <&hfclk>, <&rtcclk>;
-+			#clock-cells = <1>;
-+		};
-
-
-while current DT from FSBL 
-(https://github.com/sifive/freedom-u540-c000-bootloader/blob/master/fsbl/ux00_fsbl.dts)
-
-prci: prci@10000000 {
-			compatible = "sifive,aloeprci0", "sifive,ux00prci0";
-			reg = <0x0 0x10000000 0x0 0x1000>;
-			reg-names = "control";
-			clocks = <&refclk>;
-			#clock-cells = <1>;
-		};
-
-This seems to be the cause of error. It looks like this patch needs a 
-complete different DT (your DT patch) than FSBL provides.
-
-This means everybody must upgrade the FSBL to use your DT patch in their 
-boards once this driver is merged. Is this okay?
-
-Regards,
-Atish
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, sifive_fu540_prci_of_match);
-> +
-> +static struct platform_driver sifive_fu540_prci_driver = {
-> +	.driver	= {
-> +		.name = "sifive-fu540-prci",
-> +		.of_match_table = sifive_fu540_prci_of_match,
-> +	},
-> +	.probe = sifive_fu540_prci_probe,
-> +};
-> +
-> +static int __init sifive_fu540_prci_init(void)
-> +{
-> +	return platform_driver_register(&sifive_fu540_prci_driver);
-> +}
-> +core_initcall(sifive_fu540_prci_init);
-> 
-
+VGhlIHBsbHY0IHN1cHBvcnRzIGZyYWN0aW9uYWwtTiBmdW5jdGlvbiwgdGhlIGZvcm11bGEgaXM6
+DQoNClBMTCBvdXRwdXQgZnJlcSA9IGlucHV0ICogKG11bHQgKyBudW0vZGVub20pLA0KDQpUaGlz
+IHBhdGNoIGFkZHMgZnJhY3Rpb25hbC1OIGZ1bmN0aW9uIHN1cHBvcnQsIGluY2x1ZGluZw0KY2xv
+Y2sgcm91bmQgcmF0ZSwgY2FsY3VsYXRlIHJhdGUgYW5kIHNldCByYXRlLCB3aXRoIHRoaXMNCnBh
+dGNoLCB0aGUgY2xvY2sgcmF0ZSBvZiBBUExMIGluIGNsb2NrIHRyZWUgaXMgbW9yZSBhY2N1cmF0
+ZQ0KdGhhbiBiZWZvcmU6DQoNCldpdGhvdXQgZnJhY3Rpb246DQphcGxsX3ByZV9zZWwgICAgICAg
+ICAgICAgICAgICAgICAgMSAgICAgICAgMSAgICAgICAgMSAgICAyNDAwMDAwMCAgICAgICAgICAw
+ICAgICAwICA1MDAwMA0KICAgYXBsbF9wcmVfZGl2ICAgICAgICAgICAgICAgICAgIDEgICAgICAg
+IDEgICAgICAgIDIgICAgMjQwMDAwMDAgICAgICAgICAgMCAgICAgMCAgNTAwMDANCiAgICAgIGFw
+bGwgICAgICAgICAgICAgICAgICAgICAgICAxICAgICAgICAxICAgICAgICAyICAgNTI4MDAwMDAw
+ICAgICAgICAgIDAgICAgIDAgIDUwMDAwDQogICAgICAgICBhcGxsX3BmZDMgICAgICAgICAgICAg
+ICAgMCAgICAgICAgMCAgICAgICAgMCAgIDc5MjAwMDAwMCAgICAgICAgICAwICAgICAwICA1MDAw
+MA0KICAgICAgICAgYXBsbF9wZmQyICAgICAgICAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAg
+ICAzMzk0Mjg1NzEgICAgICAgICAgMCAgICAgMCAgNTAwMDANCiAgICAgICAgIGFwbGxfcGZkMSAg
+ICAgICAgICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgMzUyMDAwMDAwICAgICAgICAgIDAg
+ICAgIDAgIDUwMDAwDQogICAgICAgICAgICB1c2RoYzAgICAgICAgICAgICAgICAgMCAgICAgICAg
+MCAgICAgICAgMCAgIDM1MjAwMDAwMCAgICAgICAgICAwICAgICAwICA1MDAwMA0KICAgICAgICAg
+YXBsbF9wZmQwICAgICAgICAgICAgICAgIDEgICAgICAgIDEgICAgICAgIDEgICAzNTIwMDAwMDAg
+ICAgICAgICAgMCAgICAgMCAgNTAwMDANCg0KV2l0aCBmcmFjdGlvbjoNCmFwbGxfcHJlX3NlbCAg
+ICAgICAgICAgICAgICAgICAgICAxICAgICAgICAxICAgICAgICAxICAgIDI0MDAwMDAwICAgICAg
+ICAgIDAgICAgIDAgIDUwMDAwDQogICBhcGxsX3ByZV9kaXYgICAgICAgICAgICAgICAgICAgMSAg
+ICAgICAgMSAgICAgICAgMiAgICAyNDAwMDAwMCAgICAgICAgICAwICAgICAwICA1MDAwMA0KICAg
+ICAgYXBsbCAgICAgICAgICAgICAgICAgICAgICAgIDEgICAgICAgIDEgICAgICAgIDIgICA1Mjky
+MDAwMDAgICAgICAgICAgMCAgICAgMCAgNTAwMDANCiAgICAgICAgIGFwbGxfcGZkMyAgICAgICAg
+ICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgNzkzODAwMDAwICAgICAgICAgIDAgICAgIDAg
+IDUwMDAwDQogICAgICAgICBhcGxsX3BmZDIgICAgICAgICAgICAgICAgMCAgICAgICAgMCAgICAg
+ICAgMCAgIDM0MDIwMDAwMCAgICAgICAgICAwICAgICAwICA1MDAwMA0KICAgICAgICAgYXBsbF9w
+ZmQxICAgICAgICAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAzNTI4MDAwMDAgICAgICAg
+ICAgMCAgICAgMCAgNTAwMDANCiAgICAgICAgICAgIHVzZGhjMCAgICAgICAgICAgICAgICAwICAg
+ICAgICAwICAgICAgICAwICAgMzUyODAwMDAwICAgICAgICAgIDAgICAgIDAgIDUwMDAwDQogICAg
+ICAgICBhcGxsX3BmZDAgICAgICAgICAgICAgICAgMSAgICAgICAgMSAgICAgICAgMSAgIDM1Mjgw
+MDAwMCAgICAgICAgICAwICAgICAwICA1MDAwMA0KDQpTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFu
+ZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCi0tLQ0KIGRyaXZlcnMvY2xrL2lteC9jbGstcGxsdjQu
+YyB8IDY4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLQ0KIDEg
+ZmlsZSBjaGFuZ2VkLCA2MCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay1wbGx2NC5jIGIvZHJpdmVycy9jbGsvaW14L2Nsay1w
+bGx2NC5jDQppbmRleCBkMzhiYzlmLi40Y2VkNWNhIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jbGsv
+aW14L2Nsay1wbGx2NC5jDQorKysgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLXBsbHY0LmMNCkBAIC02
+NCwxMyArNjQsMTggQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcgY2xrX3BsbHY0X3JlY2FsY19yYXRl
+KHN0cnVjdCBjbGtfaHcgKmh3LA0KIAkJCQkJICAgdW5zaWduZWQgbG9uZyBwYXJlbnRfcmF0ZSkN
+CiB7DQogCXN0cnVjdCBjbGtfcGxsdjQgKnBsbCA9IHRvX2Nsa19wbGx2NChodyk7DQotCXUzMiBk
+aXY7DQorCXUzMiBtdWx0ID0gcmVhZGxfcmVsYXhlZChwbGwtPmJhc2UgKyBQTExfQ0ZHX09GRlNF
+VCk7DQorCXUzMiBtZm4gPSByZWFkbF9yZWxheGVkKHBsbC0+YmFzZSArIFBMTF9OVU1fT0ZGU0VU
+KTsNCisJdTMyIG1mZCA9IHJlYWRsX3JlbGF4ZWQocGxsLT5iYXNlICsgUExMX0RFTk9NX09GRlNF
+VCk7DQorCXU2NCB0ZW1wNjQgPSBwYXJlbnRfcmF0ZTsNCiANCi0JZGl2ID0gcmVhZGxfcmVsYXhl
+ZChwbGwtPmJhc2UgKyBQTExfQ0ZHX09GRlNFVCk7DQotCWRpdiAmPSBCTV9QTExfTVVMVDsNCi0J
+ZGl2ID4+PSBCUF9QTExfTVVMVDsNCisJbXVsdCAmPSBCTV9QTExfTVVMVDsNCisJbXVsdCA+Pj0g
+QlBfUExMX01VTFQ7DQogDQotCXJldHVybiBwYXJlbnRfcmF0ZSAqIGRpdjsNCisJdGVtcDY0ICo9
+IG1mbjsNCisJZG9fZGl2KHRlbXA2NCwgbWZkKTsNCisNCisJcmV0dXJuIChwYXJlbnRfcmF0ZSAq
+IG11bHQpICsgKHUzMil0ZW1wNjQ7DQogfQ0KIA0KIHN0YXRpYyBsb25nIGNsa19wbGx2NF9yb3Vu
+ZF9yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQpAQCAtNzgsMTQg
+KzgzLDQ3IEBAIHN0YXRpYyBsb25nIGNsa19wbGx2NF9yb3VuZF9yYXRlKHN0cnVjdCBjbGtfaHcg
+Kmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQogew0KIAl1bnNpZ25lZCBsb25nIHBhcmVudF9yYXRl
+ID0gKnByYXRlOw0KIAl1bnNpZ25lZCBsb25nIHJvdW5kX3JhdGUsIGk7DQorCWJvb2wgZm91bmQg
+PSBmYWxzZTsNCisJdTMyIG1mbiwgbWZkID0gMTAwMDAwMDsNCisJdTMyIG1heF9tZmQgPSAweDNG
+RkZGRkZGOw0KKwl1NjQgdGVtcDY0Ow0KIA0KIAlmb3IgKGkgPSAwOyBpIDwgQVJSQVlfU0laRShw
+bGx2NF9tdWx0X3RhYmxlKTsgaSsrKSB7DQogCQlyb3VuZF9yYXRlID0gcGFyZW50X3JhdGUgKiBw
+bGx2NF9tdWx0X3RhYmxlW2ldOw0KLQkJaWYgKHJhdGUgPj0gcm91bmRfcmF0ZSkNCi0JCQlyZXR1
+cm4gcm91bmRfcmF0ZTsNCisJCWlmIChyYXRlID49IHJvdW5kX3JhdGUpIHsNCisJCQlmb3VuZCA9
+IHRydWU7DQorCQkJYnJlYWs7DQorCQl9DQorCX0NCisNCisJaWYgKCFmb3VuZCkgew0KKwkJcHJf
+d2FybigiJXM6IHVuYWJsZSB0byByb3VuZCByYXRlICVsdSwgcGFyZW50IHJhdGUgJWx1XG4iLA0K
+KwkJCWNsa19od19nZXRfbmFtZShodyksIHJhdGUsIHBhcmVudF9yYXRlKTsNCisJCXJldHVybiAw
+Ow0KIAl9DQogDQotCXJldHVybiByb3VuZF9yYXRlOw0KKwlpZiAocGFyZW50X3JhdGUgPD0gbWF4
+X21mZCkNCisJCW1mZCA9IHBhcmVudF9yYXRlOw0KKw0KKwl0ZW1wNjQgPSAodTY0KShyYXRlIC0g
+cm91bmRfcmF0ZSk7DQorCXRlbXA2NCAqPSBtZmQ7DQorCWRvX2Rpdih0ZW1wNjQsIHBhcmVudF9y
+YXRlKTsNCisJbWZuID0gdGVtcDY0Ow0KKw0KKwkvKg0KKwkgKiBOT1RFOiBUaGUgdmFsdWUgb2Yg
+bnVtZXJhdG9yIG11c3QgYWx3YXlzIGJlIGNvbmZpZ3VyZWQgdG8gYmUNCisJICogbGVzcyB0aGFu
+IHRoZSB2YWx1ZSBvZiB0aGUgZGVub21pbmF0b3IuIElmIHdlIGNhbid0IGdldCBhIHByb3Blcg0K
+KwkgKiBwYWlyIG9mIG1mbi9tZmQsIHdlIHNpbXBseSByZXR1cm4gdGhlIHJvdW5kX3JhdGUgd2l0
+aG91dCB1c2luZw0KKwkgKiB0aGUgZnJhYyBwYXJ0Lg0KKwkgKi8NCisJaWYgKG1mbiA+PSBtZmQp
+DQorCQlyZXR1cm4gcm91bmRfcmF0ZTsNCisNCisJdGVtcDY0ID0gKHU2NClwYXJlbnRfcmF0ZTsN
+CisJdGVtcDY0ICo9IG1mbjsNCisJZG9fZGl2KHRlbXA2NCwgbWZkKTsNCisNCisJcmV0dXJuIHJv
+dW5kX3JhdGUgKyAodTMyKXRlbXA2NDsNCiB9DQogDQogc3RhdGljIGJvb2wgY2xrX3BsbHY0X2lz
+X3ZhbGlkX211bHQodW5zaWduZWQgaW50IG11bHQpDQpAQCAtMTA2LDE3ICsxNDQsMzEgQEAgc3Rh
+dGljIGludCBjbGtfcGxsdjRfc2V0X3JhdGUoc3RydWN0IGNsa19odyAqaHcsIHVuc2lnbmVkIGxv
+bmcgcmF0ZSwNCiB7DQogCXN0cnVjdCBjbGtfcGxsdjQgKnBsbCA9IHRvX2Nsa19wbGx2NChodyk7
+DQogCXUzMiB2YWwsIG11bHQ7DQorCXUzMiBtZm4sIG1mZCA9IDEwMDAwMDA7DQorCXUzMiBtYXhf
+bWZkID0gMHgzRkZGRkZGRjsNCisJdTY0IHRlbXA2NDsNCiANCiAJbXVsdCA9IHJhdGUgLyBwYXJl
+bnRfcmF0ZTsNCiANCiAJaWYgKCFjbGtfcGxsdjRfaXNfdmFsaWRfbXVsdChtdWx0KSkNCiAJCXJl
+dHVybiAtRUlOVkFMOw0KIA0KKwlpZiAocGFyZW50X3JhdGUgPD0gbWF4X21mZCkNCisJCW1mZCA9
+IHBhcmVudF9yYXRlOw0KKw0KKwl0ZW1wNjQgPSAodTY0KShyYXRlIC0gbXVsdCAqIHBhcmVudF9y
+YXRlKTsNCisJdGVtcDY0ICo9IG1mZDsNCisJZG9fZGl2KHRlbXA2NCwgcGFyZW50X3JhdGUpOw0K
+KwltZm4gPSB0ZW1wNjQ7DQorDQogCXZhbCA9IHJlYWRsX3JlbGF4ZWQocGxsLT5iYXNlICsgUExM
+X0NGR19PRkZTRVQpOw0KIAl2YWwgJj0gfkJNX1BMTF9NVUxUOw0KIAl2YWwgfD0gbXVsdCA8PCBC
+UF9QTExfTVVMVDsNCiAJd3JpdGVsX3JlbGF4ZWQodmFsLCBwbGwtPmJhc2UgKyBQTExfQ0ZHX09G
+RlNFVCk7DQogDQorCXdyaXRlbF9yZWxheGVkKG1mbiwgcGxsLT5iYXNlICsgUExMX05VTV9PRkZT
+RVQpOw0KKwl3cml0ZWxfcmVsYXhlZChtZmQsIHBsbC0+YmFzZSArIFBMTF9ERU5PTV9PRkZTRVQp
+Ow0KKw0KIAlyZXR1cm4gMDsNCiB9DQogDQotLSANCjIuNy40DQoNCg==
