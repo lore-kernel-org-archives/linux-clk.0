@@ -2,187 +2,109 @@ Return-Path: <SRS0=4m2Q=TA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4176DC43219
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 01:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F934C43219
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 01:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3954216FD
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 01:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F264F216FD
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 01:57:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EdgV0s/g"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="m8zNQMgm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbfD3BaS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Apr 2019 21:30:18 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3006 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729238AbfD3BaS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Apr 2019 21:30:18 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cc7a50a0001>; Mon, 29 Apr 2019 18:29:46 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 29 Apr 2019 18:30:16 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 29 Apr 2019 18:30:16 -0700
-Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 30 Apr
- 2019 01:30:14 +0000
-Subject: Re: [PATCH v2] dt-bindings: memory: tegra: Add external memory
- controller binding for Tegra210
-To:     Rob Herring <robh@kernel.org>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1729869AbfD3B50 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Apr 2019 21:57:26 -0400
+Received: from mail-eopbgr20044.outbound.protection.outlook.com ([40.107.2.44]:28027
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729238AbfD3B50 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Apr 2019 21:57:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yfff3VUuI7FcOhQjulztNG48leP+fI44AuIkflJgl58=;
+ b=m8zNQMgmesbA5Qvqbu73itjk8fopxZ2wxo/NZp5eUir5WEd7SnUlPnJAucEl3j09Xnyde8W0/lYs1khktAFJ+oS/Wl2JR6Ly9V/vnT0JYy6tL9tqsdo/SM5CmbGtf3AQoHGHy0qrIFuoYOMVf8o0mjk1CobjmnoP9NE78TjDH4o=
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) by
+ AM6PR0402MB3829.eurprd04.prod.outlook.com (52.133.29.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.10; Tue, 30 Apr 2019 01:55:18 +0000
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::55cc:4406:327:9259]) by AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::55cc:4406:327:9259%3]) with mapi id 15.20.1835.018; Tue, 30 Apr 2019
+ 01:55:18 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20190412080855.387-1-josephl@nvidia.com>
- <20190429215605.GA3078@bogus>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <4d08d43e-d325-c357-9d4e-1ad7d2ec5569@nvidia.com>
-Date:   Tue, 30 Apr 2019 09:30:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190429215605.GA3078@bogus>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH] clk: imx: pllv3: Fix fall through build warning
+Thread-Topic: [PATCH] clk: imx: pllv3: Fix fall through build warning
+Thread-Index: AQHU/vfDJ+hnJuSvCk6GSL1CreUf2Q==
+Date:   Tue, 30 Apr 2019 01:55:18 +0000
+Message-ID: <1556589033-6080-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1556587787; bh=WcVvCIYL++Y4/n1+Xz6Tu56dIgRAmQvNOhrKo0esrIY=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=EdgV0s/g4MHQ4czaeNejKtV8l0MHumtuM10bX/MiODEJU+mU5ybmcatHQ9+fj451T
-         xM2h6uOlmXx6ixFyh6sWi0MwajuN1SjMtjnpQVXC2OAc8UoA7rj+GileRQTRSP1rsW
-         hun7OWevGtQH/vc2P8Vu+SidtChcHc9PpO+OXV0Bn2JuIExajjXaBPcL/9n6e9NWzR
-         RLZjQcmmuBHkfdCYEWxdF/T6zFmALxL34N0+oQsfUjY0c7byEmBEX2zY/CoNJsK7wM
-         HXb/iJe126DBgkyh7a3tH9onNoq0s3TStwfhGeHLvGCzZTupj/Q8PEv5elNdNvM7U0
-         3fyzV29Uibz6A==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0063.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::27) To AM6PR0402MB3911.eurprd04.prod.outlook.com
+ (2603:10a6:209:1c::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 68c6c806-fef6-46d2-40f5-08d6cd0ee578
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM6PR0402MB3829;
+x-ms-traffictypediagnostic: AM6PR0402MB3829:
+x-microsoft-antispam-prvs: <AM6PR0402MB382940A6A3A42D3A816F67AAF53A0@AM6PR0402MB3829.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:331;
+x-forefront-prvs: 00235A1EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(396003)(376002)(136003)(189003)(199004)(86362001)(4326008)(2501003)(2201001)(6436002)(81166006)(8936002)(6486002)(66066001)(52116002)(7736002)(66446008)(81156014)(110136005)(64756008)(73956011)(66476007)(66556008)(305945005)(99286004)(50226002)(316002)(25786009)(8676002)(6512007)(53936002)(256004)(14454004)(4744005)(66946007)(186003)(3846002)(6116002)(14444005)(26005)(2906002)(386003)(68736007)(71190400001)(97736004)(478600001)(476003)(486006)(5660300002)(6506007)(2616005)(71200400001)(36756003)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3829;H:AM6PR0402MB3911.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: um4Cp4BkeckDFY5Y5DLx3bezGZvre+JlN93QVKB+XsfrzCraQGIqgnMK4mLAqpassiMGSuJpW+AvZA9DXftPvH71t+bQ9JhPbeZMobX2yJ0SUi+GYVLS5jdapUU5ZSbBFLCHJHIsHS0JupB8dcdVf/vR5GCNffOC9NXjpDJ8iGj4cqKRXOja3XURtnPX+RDCpYpABNFT+j+j89n6WAPS585vpYqWd5W6N3JZgjeFMBUN7ctOk07Lsluoo1GF6QSWivOEW7W+iWjKosPelKohnz2PgjNhCn1VcNu0dCzhRuQMezYQ3smQIvcZ2nh43z8HBJXTcmb53N9ETZLUPtjugnkyZKQgiEtpXNRhvodt781BMQyUBluGkFYIeYLMROpkGN7C7RIjJ4Qb0YTAFFVZtnEgKj05V5nDx0Aybu9UVJA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68c6c806-fef6-46d2-40f5-08d6cd0ee578
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2019 01:55:18.7396
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3829
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/30/19 5:56 AM, Rob Herring wrote:
-> On Fri, Apr 12, 2019 at 04:08:55PM +0800, Joseph Lo wrote:
->> Add the binding document for the external memory controller (EMC) which
->> communicates with external LPDDR4 devices. It includes the bindings of
->> the EMC node and the EMC table of different rates.
->>
->> To support high rates for LPDDR4, the EMC table must be trained before
->> it can be used for runtime clock switching. It has been done by firmware
->> and merged the training data to the table that the kernel can share the
->> result. So the bindings are used for both kernel and firmware.
->>
->> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->> This patch splits from the original patch set that supports EMC scaling
->> with binding document and drivers. Because the binding would be shared
->> by both firmware and kernel. We want to settle this first. Then we can
->> fix the kernel and firmware to support the same.
->>
->> Changes in v2:
->> * only use "tegra210" string in compatible string and remove the legacy
->>    "tegra21" string.
->> * clock-frequency -> fix the unit from kilohertz to hertz
->> * add "interrupts" property
->> * s/nvidia,emc-min-mv/nvidia,emc-min-millivolt/
->> * s/nvidia,gk20a-min-mv/nvidia,gk20a-min-millivolt/
->> * s/nvidia,source/clock-names/
->> * fix lots of properties that use underline to hyphen
->> * s/nvidia,emc-clock-latency-change/nvidia,emc-clock-latency-microsecond/
->> * add more information in the property descriptions
->> ---
->>   .../nvidia,tegra210-emc.txt                   | 614 ++++++++++++++++++
->>   1 file changed, 614 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
->> new file mode 100644
->> index 000000000000..318239c3c295
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
->> @@ -0,0 +1,614 @@
->> +NVIDIA Tegra210 SoC EMC (external memory controller)
->> +====================================================
->> +
->> +Required properties :
->> +- compatible : should be "nvidia,tegra210-emc".
->> +- reg : physical base address and length of the controller's registers.
->> +- clocks : phandles of the possible source clocks
->> +- clock-names : names of the possible source clocks
->> +- interrupts : Should contain the EMC general interrupt
->> +- #address-cells : should be 1
->> +- #size-cells : should be 0
->> +- nvidia,memory-controller : phandle of the memory controller.
->> +- nvidia,use-ram-code : boolean, indicates whether we should use RAM_CODE in
->> +		        the register to find matching emc-table nodes
->> +
-...
->> +- nvidia,ptfv : a 12 word array of control data for periodic training
->> +- nvidia,emc-registers :
->> +- nvidia,emc-shadow-regs-ca-train :
->> +- nvidia,emc-shadow-regs-quse-train :
->> +- nvidia,emc-shadow-regs-rdwr-train :
->> +  a 221 word array of the following registers (See TRM 18.10.2 for register
->> +  descriptions)
-> 
-> I think this dumping of register values should not be in DT. I think the
-> result here will be a lot of duplication of data. How many of the
-> registers' values vary between 2 frequencies, for example?
-> 
-> We have bindings already for DDR that use timing values (see
-> bindings/lpddr2/lpddr2.txt). There's one for LPDDR3 being added. This
-> data is similar to the SPD data which is used in DIMMs. If SPD data is
-> enough information for any DIMM to work on any PC, then that should be
-> sufficient for embedded uses too.
-> 
-Hi Rob,
-
-Thanks for the review. After some internal discussions, we decide to 
-choose another approach. Instead of these EMC table bindings in the DT, 
-we think that would be easier to pass the binary blob of the EMC table. 
-Because the timing/settings in the EMC table could be different depends 
-on vendors and devices (lpddr2/3/4), unify binding may not fit for each 
-vendor.
-
-For Tegra210, lpddr4 is the only SDRAM devices we support, it's more 
-complicated than lpddr2/3. And the rate above 800MHz must be trained 
-before it can be used, it's done by firmware, so the table also includes 
-these training data. Just want to describe the table could have many 
-private settings.
-
-So we want to go through the EMC table with binary blob, it makes the DT 
-binding easier for review and control in the driver. Will re-work the 
-series to support this approach.
-
-reserved-memory {
-     #address-cells = <...>;
-     #size-cells = <...>;
-     ranges;
-
-     emc_table: emc-table@.... {
-         compatible = ...;
-         reg = <...>;
-     };
-};
-
-external-memory-controller@... {
-     ...
-     memory-region = <&emc_table>;
-};
-
-Thanks,
-Joseph
+Rml4IGJlbG93IGZhbGwgdGhyb3VnaCBidWlsZCB3YXJuaW5nOg0KDQpkcml2ZXJzL2Nsay9pbXgv
+Y2xrLXBsbHYzLmM6NDUzOjIxOiB3YXJuaW5nOg0KdGhpcyBzdGF0ZW1lbnQgbWF5IGZhbGwgdGhy
+b3VnaCBbLVdpbXBsaWNpdC1mYWxsdGhyb3VnaD1dDQoNCiAgIHBsbC0+ZGVub21fb2Zmc2V0ID0g
+UExMX0lNWDdfREVOT01fT0ZGU0VUOw0KICAgICAgICAgICAgICAgICAgICAgXg0KZHJpdmVycy9j
+bGsvaW14L2Nsay1wbGx2My5jOjQ1NDoyOiBub3RlOiBoZXJlDQogIGNhc2UgSU1YX1BMTFYzX0FW
+Og0KICBefn5+DQoNClNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAu
+Y29tPg0KLS0tDQogZHJpdmVycy9jbGsvaW14L2Nsay1wbGx2My5jIHwgMSArDQogMSBmaWxlIGNo
+YW5nZWQsIDEgaW5zZXJ0aW9uKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xr
+LXBsbHYzLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLXBsbHYzLmMNCmluZGV4IGU4OTJiOWEuLmZi
+ZTRmZTAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLXBsbHYzLmMNCisrKyBiL2Ry
+aXZlcnMvY2xrL2lteC9jbGstcGxsdjMuYw0KQEAgLTQ1MSw2ICs0NTEsNyBAQCBzdHJ1Y3QgY2xr
+ICppbXhfY2xrX3BsbHYzKGVudW0gaW14X3BsbHYzX3R5cGUgdHlwZSwgY29uc3QgY2hhciAqbmFt
+ZSwNCiAJY2FzZSBJTVhfUExMVjNfQVZfSU1YNzoNCiAJCXBsbC0+bnVtX29mZnNldCA9IFBMTF9J
+TVg3X05VTV9PRkZTRVQ7DQogCQlwbGwtPmRlbm9tX29mZnNldCA9IFBMTF9JTVg3X0RFTk9NX09G
+RlNFVDsNCisJCS8qIGZhbGwgdGhyb3VnaCAqLw0KIAljYXNlIElNWF9QTExWM19BVjoNCiAJCW9w
+cyA9ICZjbGtfcGxsdjNfYXZfb3BzOw0KIAkJYnJlYWs7DQotLSANCjIuNy40DQoNCg==
