@@ -2,122 +2,177 @@ Return-Path: <SRS0=4m2Q=TA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F072DC43219
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 20:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3300C43219
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 20:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B882D2080C
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 20:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 818C420652
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Apr 2019 20:52:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="F0uIwwoW"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EftjXGkx";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DpFnD4yL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbfD3Uvc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Apr 2019 16:51:32 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37749 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfD3Uvc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Apr 2019 16:51:32 -0400
-Received: by mail-it1-f195.google.com with SMTP id r85so7072623itc.2
-        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2019 13:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vjQtX5qzbngzO6WItWUMVIwx0kzAkLppgcgbD0Y95uE=;
-        b=F0uIwwoWKlnBD0zMndyAUgxMQWgstX0DeGWUgyikUtD+ZL9Ef8bN9f0oJWQaWvbvFw
-         85rBa8HLz4CIBild/BejxfpIYzucwPsZm6jNgFcwBaor5feaM/EmRCNpKIO43DZKx8Z9
-         RwbJnPR6SrC7LuwVrwXPZRsPeIPcKimDfH7G3OZm6AFNMPjYVAZfbjoaZpBNYC1+/gzW
-         FCxn8taXvl4WOtg0aS9EwvN9AhMSCgSmg8Mir1WWq1AuBHTLsb0E9rq95fRSubl/25Gm
-         IM3Zq8AI4oezyB5rIGxoW/eLLFOuIs/akYM/TWigLwLLqaIfMEnXr/0NEfNvfYfXwT8I
-         GbPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vjQtX5qzbngzO6WItWUMVIwx0kzAkLppgcgbD0Y95uE=;
-        b=NpPwBTcPdYLZYBAUjU0EqbWQ9xSKfewA1n9xD0SzvGoHWDWXy104DVnOgnnrB+GSnm
-         WJ8UFyGeQ0j6z6apcVLYP+XhaorHiDUbEuNY8gmSz0H8XIqSy08yaJWMAFhsA+ACjci0
-         SbQJDSRD0SXjaEkjGi2Z6oAXLNgEAMrJ1kXOA0adJ9kVSquARjVsCQZhpL1tJmI2A5J2
-         xD4mFIJXJPVSMGazali4sMIxCe0MrCRVFou5hC7bur57Ct1ZoKnjV2zmPY/7r3F59n/6
-         ahrPWy7xgnbn+HYpCbt8BiSTHdX5MQcofO3ppMJGkSQz/V3DUNe4CyZi7wuPo4hUHLt+
-         M1Ow==
-X-Gm-Message-State: APjAAAX+p2gqloPxPxDQWikJ+9DlulHdONmbqbUKxtXaxzTP9Zloq1ZC
-        MMYRRaGY/nFI80CUXj32/zVyKA==
-X-Google-Smtp-Source: APXvYqx8LPqX8+1jPVWOhnE83hohCgwnay3/bNio9Sr2ZTQMCvXG1lYnXsfpJOWygz06tzC47v2Dug==
-X-Received: by 2002:a24:7688:: with SMTP id z130mr5167604itb.57.1556657490516;
-        Tue, 30 Apr 2019 13:51:30 -0700 (PDT)
-Received: from viisi.lan (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id v134sm1998052ita.16.2019.04.30.13.51.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 13:51:29 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-To:     sboyd@kernel.org, mturquette@baylibre.com
-Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>
-Subject: [PATCH v4 0/2] clk: add driver for the SiFive FU540 PRCI and PLLs it controls
-Date:   Tue, 30 Apr 2019 13:50:55 -0700
-Message-Id: <20190430205055.25673-1-paul.walmsley@sifive.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727030AbfD3Uwo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Apr 2019 16:52:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40608 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbfD3Uwn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Apr 2019 16:52:43 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5D2B96086B; Tue, 30 Apr 2019 20:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1556657562;
+        bh=ggeviOtdBH4/GOHpOq3caG1b2ST1eJy4nFGiOudL/4Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EftjXGkxkBH2PtuwGWYcGpcgRVxADRG0cz3ZHqVazACJgV/60007FHaTCDrhKhLpo
+         Kl+c2B0BsaYgJsBEbXokvr+Hmr9I1Y9QKRYkmC1jRBLo3rFK3YPdsUmIH0RDaXFKWz
+         jLK92W/EteQo8EOX9fwFbRfn//RcUsPSZ/Xj8F9A=
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 855BB602DC;
+        Tue, 30 Apr 2019 20:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1556657561;
+        bh=ggeviOtdBH4/GOHpOq3caG1b2ST1eJy4nFGiOudL/4Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DpFnD4yLwZm8KxnStREaRY+CNwUKY70c2YjKEj1xhOJ3f3oeh8tEMuOU1y/8w9fSk
+         KHGyRM13bLymITp9IgL++H+NSeXkXxx2C/Q92qCK1REGwfUhqICin6WdhvC+Wm+inv
+         BMKYT6c50OzNWL0MvrCt1zhHJfI7ofvf3zpXLT7c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 855BB602DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v1] clk: Probe defer clk_get() on orphans
+To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, georgi.djakov@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1549911467-2465-1-git-send-email-jhugo@codeaurora.org>
+ <155598074927.15276.327474594450313045@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <db550aa0-ed92-8e25-10bf-06a78d771048@codeaurora.org>
+Date:   Tue, 30 Apr 2019 14:52:40 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <155598074927.15276.327474594450313045@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk: add driver for the SiFive FU540 PRCI and PLLs it controls
+On 4/22/2019 6:52 PM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-02-11 10:57:47)
+>> If a parent to a clock comes from outside that clock's provider, the parent
+>> may not be present at the time the clock is registered (ie the parent comes
+>> from another driver that has not yet probed).  The clock can still be
+>> registered, and a reference to it obtained, however that clock may not be
+>> fully functional - ie get_rate might return an invalid value.
+>>
+>> This has been a problem that has resulted in the UART console breaking on
+>> some Qualcomm SoCs, as the UART baud rate is based on a clock that is the
+>> child of XO.  Due to the large chain of dependencies, its possible that the
+>> RPM has not provided XO by the time that the UART driver probes, gets the
+>> baud rate clock, and calls get_rate - which returns 0 and results in a bad
+>> configuration.
+>>
+>> An orphan clock is a clock that is missing a parent or some other ancestor.
+>> Since the parent is defined, we can assume that it is expected to appear at
+>> some point in a properly configured system (all bets are off if a required
+>> driver is not compiled, etc), and it is unlikely that the clock can be
+>> properly consumed during the time the clock is an orphan.  Therefore,
+>> return EPROBE_DEFER for orphan clocks so that consumers wait until the
+>> parent chain is established, and proper clock operation can occur.
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>>
+>> This is based upon the "Rewrite clk parent handling" series at [1], and assumes
+>> that the suspected missing line commented on at [2] is added.
+>>
+>> The idea for this solution came from [3] and [4].
+>>
+>> [1] https://lore.kernel.org/lkml/20190129061021.94775-1-sboyd@kernel.org/T/#u
+>> [2] https://lkml.org/lkml/2019/2/11/1634
+>> [3] https://lkml.org/lkml/2019/2/6/382
+>> [4] https://lkml.org/lkml/2015/12/27/209
+> 
+> There have been multiple attempts over the years to support probe defer
+> for clks that don't have parents. If you search the kernel mailing list
+> archives I'm sure you'll come across them (for example
+> https://patchwork.kernel.org/patch/6313051/). That's why we have the
+> first part of the code to indicate if a clk is an orphan or not, i.e.
+> commit e6500344edbb ("clk: track the orphan status of clocks and their
+> children"), but not this patch that you've sent.
+> 
+> There are a couple requirements that we need to make sure we don't break
+> first.
+> 
+>   1. clk_get() should work for clks on the orphan list if that clk is
+>   parented to something that will never be registered with the framework
+> 
+>   2. We need a way for drivers to express that the parent of a clk
+>   won't exist
+> 
+>   3. Critical clks need to turn clks on even if they'll never get
+>   parents registered
+> 
+> We've had problems in the past
+> (http://lists.infradead.org/pipermail/linux-arm-kernel/2015-May/343007.html)
+> where bootloaders configure clks in certain ways that the kernel doesn't
+> care to even consider as possible. In these cases we either need to let
+> clk_set_rate() reparent them when consumers are ready or we need to
+> convert drivers that are forcing on clks early to use the
+> CLK_IS_CRITICAL flag to turn on clks even if they're never going to find
+> their parents.
+> 
+> Last time we tried to do this in 2015 (wow so many years ago!) we were
+> blocked on not having the critical clks infrastructure and the legacy
+> sunxi clk driver needed to convert to DT and critical clks flag to keep
+> working. I think we could have done it a year or two ago, because sunxi
+> moved to a new design, but then we got more use-cases where clks may
+> never get the parent they're currently configured for in the bootloader
+> and then the kernel would never hand out the clk to consumers and the
+> clk_set_rate() case would fail.
+> 
+> To fix that last part, I'm proposing we introduce the .get_parent_hw()
+> op and then rely on drivers to tell the framework that the parent is
+> there either with a direct pointer reference or by knowing that the
+> DT/firmware is telling us the parent is valid. If we just rely on string
+> names and a u8 to indicate parents then we don't have enough information
+> to figure out how the parent is provided and if it will ever appear at
+> some point in the future. Once we have a way to describe this through
+> DT/firmware then we're able to indicate the clk is an orphan when that's
+> actually the case vs. when the clk is configured in hardware for
+> something that we won't know about. You can see this work in the
+> clk-parent-rewrite series in clk.git.
+> 
+> There's also one more problem, which is what we do with clks that we've
+> handed out to consumers and then the driver for the parent of that clk
+> is removed and the parent is unregistered. Right now, we move these clks
+> to the orphan list and set the clk_nodrv_ops on the parent that's
+> unregistered. We probably need to set clk_nodrv_ops on all the children
+> that get orphaned, and remove the cached clk_core pointer in all the
+> clk_core::parents members (even ones that aren't currently using it!),
+> and stash away the original clk_ops so we can restore them later when
+> the clk is properly reparented if the parent comes back. It's a lot of
+> book keeping to remove the dangling references and let it come back
+> later. I haven't started on this part, but it's on my radar.
+> 
 
-Add a driver for the SiFive FU540 PRCI IP block, which handles clock and
-some device reset control for the SiFive FU540 chip.  Also add a driver-
-independent library for the Analog Bits Wide-Range PLL (WRPLL), used by
-the PRCI driver to monitor and control the WRPLL instances on the FU540
-chip.
-
-This fourth version incorporates changes requested by Stephen Boyd
-<sboyd@kernel.org>.  The DT bindings patch has been dropped since
-Stephen has already queued it.
-
-This patch series is also available, with the binding documentation
-patch, at:
-
-   https://github.com/sifive/riscv-linux/tree/dev/paulw/prci-v5.1-rc7
-
-Boot-tested on a SiFive HiFive Unleashed board, using BBL and the
-open-source FSBL with a mainline-focused DTB, using the following
-composite test branch:
-
-   https://github.com/sifive/riscv-linux/tree/dev/paulw/dts-v5.1-rc7-experimental
-
-
-- Paul
-
-Paul Walmsley (2):
-  clk: analogbits: add Wide-Range PLL library
-  clk: sifive: add a driver for the SiFive FU540 PRCI IP block
-
- MAINTAINERS                                   |   6 +
- drivers/clk/Kconfig                           |   3 +
- drivers/clk/Makefile                          |   2 +
- drivers/clk/analogbits/Kconfig                |   2 +
- drivers/clk/analogbits/Makefile               |   3 +
- drivers/clk/analogbits/wrpll-cln28hpc.c       | 364 ++++++++++
- drivers/clk/sifive/Kconfig                    |  18 +
- drivers/clk/sifive/Makefile                   |   1 +
- drivers/clk/sifive/fu540-prci.c               | 630 ++++++++++++++++++
- include/linux/clk/analogbits-wrpll-cln28hpc.h |  79 +++
- 10 files changed, 1108 insertions(+)
- create mode 100644 drivers/clk/analogbits/Kconfig
- create mode 100644 drivers/clk/analogbits/Makefile
- create mode 100644 drivers/clk/analogbits/wrpll-cln28hpc.c
- create mode 100644 drivers/clk/sifive/Kconfig
- create mode 100644 drivers/clk/sifive/Makefile
- create mode 100644 drivers/clk/sifive/fu540-prci.c
- create mode 100644 include/linux/clk/analogbits-wrpll-cln28hpc.h
+Ugh.  Ok.  Much more work to be done.  I guess we live with the fake XO 
+in GCC hack for a while yet then.
 
 -- 
-2.20.1
-
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
