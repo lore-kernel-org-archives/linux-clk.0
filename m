@@ -5,69 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0463CC43219
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D584BC43219
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35C721670
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A48FA21670
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:50:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iE5hb9iF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vFCSk0Aa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbfEAJib (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 05:38:31 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37943 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfEAJib (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 05:38:31 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 10so8392916pfo.5;
-        Wed, 01 May 2019 02:38:30 -0700 (PDT)
+        id S1726074AbfEAJuV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 05:50:21 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46034 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfEAJuU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 05:50:20 -0400
+Received: by mail-pf1-f194.google.com with SMTP id e24so8384413pfi.12;
+        Wed, 01 May 2019 02:50:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=owh1+96njcn9ahbDynNjb5P6yOXw37D/n4qns3X2QwA=;
-        b=iE5hb9iFNRyVWnqSKpD3spBTWeadh31zroyhlGL7jJwEB1mAqk47Tk5b6T+JT5+F5v
-         wGdkEqc2jpdtjIWNe1whifJzYfWS4w3D7ZLYZ2T7TlrJPr6wDxS/u9lrYEGhc2algPGj
-         cmETf8WKLGW/dSJhS8Ad4dDFkbF8ZK8HniP2/v7KGXLV8xisnUysBrSlCXYRUEFZHGa+
-         vr/FKaHUoRIptzQqN8zWZYnYVt5HTqdcsWBvzvSAQlH9WUnC/JBDefMtU8AjTO/+ebrc
-         IW2EYFnieHGK7HlM94wjBdQAzN1qAw/85AlGsGp34zpBdBKYaqltvFtJ1YMqLpksusHD
-         ELsg==
+        bh=vq6ABJrMXgL3b8vmrge6PuZWxawVLWLQA8qwraJhwLw=;
+        b=vFCSk0Aabd+dZ+UacJfzyAb3TVGzqtMgoAE2/70GrZ8EkkRZIzU4sgccK4In1h2J09
+         UEIkhBac8sDW/m1dH7xUEuvwRCkVOk1qpB9aC13WslidfzVpsbde/uyGdkKCwRpoCfdY
+         F2yHs082PazgXcizsNqAXEKLdGyYKJ9Y5oKLsSi7vZpEfHkSA0UlpVOg+Ed/MA7Xbn0p
+         H5VGY6wl2oiUsnn46OdB/Y45hwRx+yOfLyn1UQRxgeAtunJF2vatL1Kb2MAAJAu/f07W
+         /pxk9YwsAmDFrH88f5F+KDU4FDnuCFsvgcZIIPXSaLrYXYCWvb6DRng2570JD3F/U4np
+         mS4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=owh1+96njcn9ahbDynNjb5P6yOXw37D/n4qns3X2QwA=;
-        b=L30g5iyQNheXqplq1XNPdH5/PA2o7yNDcO3M1Fh0CuzCuFl/E8VefhFDCPfEZYVO53
-         qldB0OX2f6jB0qU7PAtncz5mTECt3//xMy6i7tlYuVv2kZeWu4BU79Ig4BARAGbHhlnE
-         zJyNq0Li0JcFe3gEizMWZGUsdS4SIBxjNhC6eo7pEDeWcWEFswnoTXF1MDp4BOrCmGtf
-         zRmVcIXnParolV09QVurkQ8k7HOEF29x2SHzT4P2S9KIpo/hnlJs25CGE1A965eaSNkf
-         2zbsiPmUd8zK1Jqmai0XMMJ4lMcRcr5wybpSDB4TIZmsWRcDg64LJBuHlxdiTSHTUbDf
-         sVyA==
-X-Gm-Message-State: APjAAAUxu3gk+zFrU0VU8Cwuih5MnCdlbp4bF0rU1YWpTENIVf9ud6iJ
-        KIpI89ZZfcZ6B7oGykNOMos=
-X-Google-Smtp-Source: APXvYqzGuCKntJdJEwVJAk71kSWaYWfCEBpo6FZ13iZkWeJVS+FrxwKKZXy9FkxRB0zReNDIP3DdSg==
-X-Received: by 2002:a63:a18:: with SMTP id 24mr70870555pgk.332.1556703510326;
-        Wed, 01 May 2019 02:38:30 -0700 (PDT)
+        bh=vq6ABJrMXgL3b8vmrge6PuZWxawVLWLQA8qwraJhwLw=;
+        b=EGr6a/Zemw7HI4ZTL5CmDfc2s/fTx/ekZKpoTVSIqAHjANoqqwbenNMA4NE/8+p9we
+         +3c+7K0uZ2ZS6M7kLHTHw+gVAT4KRyXwyATeEBFqwsgBEwhKLK40edM9kaTw+Pjvcr5K
+         /Kr63LHdB1Uh/HpL697FE1yzgru3Fkvx7XnYf/jf+E9+IauiGTK+0dsISfCOQD11q+1V
+         pACgybe3gXHUfdVMC3Wg3HnrPG48XuuUqW5nlwiLk5ls8sqNwHPcDFzKem6wswrNY7hv
+         ERIaAAzZCmwMn6qTHTGe8Nc8lSHhBV96txKHCkVUejpR+FH0dDeQvDD6UXgGBcrzgAHn
+         vltA==
+X-Gm-Message-State: APjAAAVjs5Zu3+tlTeqyCcp4PxM3eti+kJ4UYNqr39jpU0NMwS7bcArT
+        +4NTFADRh2CQutvzlIfqg68=
+X-Google-Smtp-Source: APXvYqztY9Lbt6YDhUTEMhvIf/V9nOYDHOePZOYfNXr48KcsqL8AgA4CqySLyw05cbKNOyrdsg6J9A==
+X-Received: by 2002:a63:3284:: with SMTP id y126mr73331208pgy.424.1556704220128;
+        Wed, 01 May 2019 02:50:20 -0700 (PDT)
 Received: from nishad ([106.51.235.3])
-        by smtp.gmail.com with ESMTPSA id 13sm55356715pfi.172.2019.05.01.02.38.26
+        by smtp.gmail.com with ESMTPSA id o15sm17048688pgb.85.2019.05.01.02.50.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 02:38:29 -0700 (PDT)
-Date:   Wed, 1 May 2019 15:08:22 +0530
+        Wed, 01 May 2019 02:50:19 -0700 (PDT)
+Date:   Wed, 1 May 2019 15:20:12 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Joe Perches <joe@perches.com>,
         Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
+        <u.kleine-koenig@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sprd: Use the correct style for SPDX License Identifier
-Message-ID: <20190501093818.GA8671@nishad>
+Subject: [PATCH] clk: sunxi-ng: Use the correct style for SPDX License
+ Identifier
+Message-ID: <20190501095008.GA9120@nishad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -78,7 +80,7 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 This patch corrects the SPDX License Identifier style
-in header files related to Clock Drivers for Spreadtrum SoCs.
+in header files related to Clock Drivers for Allwinner SoCs.
 For C header files Documentation/process/license-rules.rst
 mandates C-like comments (opposed to C source files where
 C++ style should be used)
@@ -89,74 +91,32 @@ https://lkml.org/lkml/2019/2/7/46
 Suggested-by: Joe Perches <joe@perches.com>
 Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- drivers/clk/sprd/common.h    | 2 +-
- drivers/clk/sprd/composite.h | 2 +-
- drivers/clk/sprd/div.h       | 2 +-
- drivers/clk/sprd/gate.h      | 2 +-
- drivers/clk/sprd/mux.h       | 2 +-
- drivers/clk/sprd/pll.h       | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.h     | 2 +-
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sprd/common.h b/drivers/clk/sprd/common.h
-index abd9ff5ef448..1d077b39cef6 100644
---- a/drivers/clk/sprd/common.h
-+++ b/drivers/clk/sprd/common.h
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
+index 2ccfe4428260..9406f9a6a8aa 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
 @@ -1,4 +1,4 @@
 -// SPDX-License-Identifier: GPL-2.0
 +/* SPDX-License-Identifier: GPL-2.0 */
- //
- // Spreadtrum clock infrastructure
- //
-diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
-index 0984e9e252dc..04ab3f587ee2 100644
---- a/drivers/clk/sprd/composite.h
-+++ b/drivers/clk/sprd/composite.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- //
- // Spreadtrum composite clock driver
- //
-diff --git a/drivers/clk/sprd/div.h b/drivers/clk/sprd/div.h
-index b3033d24d431..87510e3d0e14 100644
---- a/drivers/clk/sprd/div.h
-+++ b/drivers/clk/sprd/div.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- //
- // Spreadtrum divider clock driver
- //
-diff --git a/drivers/clk/sprd/gate.h b/drivers/clk/sprd/gate.h
-index 2e582c68a08b..dc352ea55e1f 100644
---- a/drivers/clk/sprd/gate.h
-+++ b/drivers/clk/sprd/gate.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- //
- // Spreadtrum gate clock driver
- //
-diff --git a/drivers/clk/sprd/mux.h b/drivers/clk/sprd/mux.h
-index 548cfa0f145c..892e4191cc7f 100644
---- a/drivers/clk/sprd/mux.h
-+++ b/drivers/clk/sprd/mux.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- //
- // Spreadtrum multiplexer clock driver
- //
-diff --git a/drivers/clk/sprd/pll.h b/drivers/clk/sprd/pll.h
-index 514175621099..e95f11e91ffe 100644
---- a/drivers/clk/sprd/pll.h
-+++ b/drivers/clk/sprd/pll.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- //
- // Spreadtrum pll clock driver
- //
+ /*
+  * Copyright 2016 Icenowy Zheng <icenowy@aosc.io>
+  */
+diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+index 39d06fed55b2..b22484f1bb9a 100644
+--- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
++++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+@@ -1,5 +1,5 @@
+-/* SPDX-License-Identifier: GPL-2.0+
+- *
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
+  * Copyright 2017 Icenowy Zheng <icenowy@aosc.io>
+  *
+  */
 -- 
 2.17.1
 
