@@ -2,121 +2,116 @@ Return-Path: <SRS0=T3R6=TB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D584BC43219
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70343C04AA8
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 10:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A48FA21670
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4235821743
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 10:59:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vFCSk0Aa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NX7Yd44v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfEAJuV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 05:50:21 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46034 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfEAJuU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 05:50:20 -0400
-Received: by mail-pf1-f194.google.com with SMTP id e24so8384413pfi.12;
-        Wed, 01 May 2019 02:50:20 -0700 (PDT)
+        id S1726091AbfEAK7K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 06:59:10 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33728 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfEAK7K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 06:59:10 -0400
+Received: by mail-pf1-f196.google.com with SMTP id z28so3156097pfk.0;
+        Wed, 01 May 2019 03:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=vq6ABJrMXgL3b8vmrge6PuZWxawVLWLQA8qwraJhwLw=;
-        b=vFCSk0Aabd+dZ+UacJfzyAb3TVGzqtMgoAE2/70GrZ8EkkRZIzU4sgccK4In1h2J09
-         UEIkhBac8sDW/m1dH7xUEuvwRCkVOk1qpB9aC13WslidfzVpsbde/uyGdkKCwRpoCfdY
-         F2yHs082PazgXcizsNqAXEKLdGyYKJ9Y5oKLsSi7vZpEfHkSA0UlpVOg+Ed/MA7Xbn0p
-         H5VGY6wl2oiUsnn46OdB/Y45hwRx+yOfLyn1UQRxgeAtunJF2vatL1Kb2MAAJAu/f07W
-         /pxk9YwsAmDFrH88f5F+KDU4FDnuCFsvgcZIIPXSaLrYXYCWvb6DRng2570JD3F/U4np
-         mS4Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8SGQbEjaib7Nhep2Q++3S1f8rzs3/Y7ym1uGZjAH6kw=;
+        b=NX7Yd44v5So6MaNiIhjz4fW08cnocDFsis50jFMXBeQ94nhM8FHhzwYEpRtUcPxn1x
+         zDqZ/M5fy6sAVUz6Os7ScVnsD5uFpJyM3pZhcpcWzDs2dxq/3kh1f97D1yia1xzBqrCv
+         4OKjXBI6uquf3jBjh8fgkCiJ4aOs8HZgRMNut8+3JrWJSBeYdPL64FDeUzWf1HE3TEG7
+         bsMmwnGDnF9IgHm7aMtlRj+W/jKbZUsY7YayCNUuSFHq6HbYIL7sR2JZn3aCmk/6xquQ
+         ddUMgNsepEzBOXjKH5VpVKTmAR4cD/yvgqitsi3KuvqmAwDsj/7sOeQ7fT8+rw04FcUx
+         BRDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=vq6ABJrMXgL3b8vmrge6PuZWxawVLWLQA8qwraJhwLw=;
-        b=EGr6a/Zemw7HI4ZTL5CmDfc2s/fTx/ekZKpoTVSIqAHjANoqqwbenNMA4NE/8+p9we
-         +3c+7K0uZ2ZS6M7kLHTHw+gVAT4KRyXwyATeEBFqwsgBEwhKLK40edM9kaTw+Pjvcr5K
-         /Kr63LHdB1Uh/HpL697FE1yzgru3Fkvx7XnYf/jf+E9+IauiGTK+0dsISfCOQD11q+1V
-         pACgybe3gXHUfdVMC3Wg3HnrPG48XuuUqW5nlwiLk5ls8sqNwHPcDFzKem6wswrNY7hv
-         ERIaAAzZCmwMn6qTHTGe8Nc8lSHhBV96txKHCkVUejpR+FH0dDeQvDD6UXgGBcrzgAHn
-         vltA==
-X-Gm-Message-State: APjAAAVjs5Zu3+tlTeqyCcp4PxM3eti+kJ4UYNqr39jpU0NMwS7bcArT
-        +4NTFADRh2CQutvzlIfqg68=
-X-Google-Smtp-Source: APXvYqztY9Lbt6YDhUTEMhvIf/V9nOYDHOePZOYfNXr48KcsqL8AgA4CqySLyw05cbKNOyrdsg6J9A==
-X-Received: by 2002:a63:3284:: with SMTP id y126mr73331208pgy.424.1556704220128;
-        Wed, 01 May 2019 02:50:20 -0700 (PDT)
-Received: from nishad ([106.51.235.3])
-        by smtp.gmail.com with ESMTPSA id o15sm17048688pgb.85.2019.05.01.02.50.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 02:50:19 -0700 (PDT)
-Date:   Wed, 1 May 2019 15:20:12 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8SGQbEjaib7Nhep2Q++3S1f8rzs3/Y7ym1uGZjAH6kw=;
+        b=csecKGrvDZjOWrqqPfL27bg4l02Drl/F4CWFrd3Pg5HxxFKG8VO88mSdkf2/Tq5vWx
+         HCnxHtE1RpffrFI3qBe69bmRtRgKzA2d0Ozxousg+6euVZNcEPfOwHxPzi7S3BlSh8/F
+         feqOvOFftS180hFzyvJGY/gXxqqlqmyhCl9OQHtk4XaQ63My6F6ij38NoGVjxOKt4ni0
+         7QUiLcHSXz02kPcRt0DDqFPL+epFhBtoVY9EFlbdqrYRV+d9Clm9LPICNqi1PDYIJWVC
+         xpSOKLbGoWu0iSt5f9IHBpplLkZ7tpxf8Vv1BU7W9cHWfcSZjig0E+uGzM0n1Fwpc4Ka
+         Y8Rg==
+X-Gm-Message-State: APjAAAVHjq7PYIvX987pSaXkRgSmH4BE+OP5PsgYYKYOJym/nv6g5aD2
+        elRdc1j0nb/GkGyEV2zPUgEvCIHj
+X-Google-Smtp-Source: APXvYqxFn0wBuKRgk/9vlkcN0OKH0p+qkkZSyrGestN3cYg6IH8+cfxbRWmSgq6G2Sa/L46jQZHAbQ==
+X-Received: by 2002:a62:1d83:: with SMTP id d125mr40625283pfd.74.1556708349589;
+        Wed, 01 May 2019 03:59:09 -0700 (PDT)
+Received: from ?IPv6:2409:251:20c0:100:fe80:8e59:9ae1:e028? ([2409:251:20c0:100:fe80:8e59:9ae1:e028])
+        by smtp.gmail.com with ESMTPSA id g65sm89246pfg.77.2019.05.01.03.59.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 03:59:09 -0700 (PDT)
+Subject: Re: [RFC v2 1/5] clk: mips: ralink: add Ralink MIPS gating clock
+ driver
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     John Crispin <john@phrozen.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: Use the correct style for SPDX License
- Identifier
-Message-ID: <20190501095008.GA9120@nishad>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20190405000129.19331-1-drvlabo@gmail.com>
+ <20190405000129.19331-2-drvlabo@gmail.com>
+ <155622043597.15276.9250071449626345612@swboyd.mtv.corp.google.com>
+From:   NOGUCHI Hiroshi <drvlabo@gmail.com>
+Message-ID: <63290737-8f9a-3d17-77ed-d5417a58294a@gmail.com>
+Date:   Wed, 1 May 2019 19:58:43 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <155622043597.15276.9250071449626345612@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch corrects the SPDX License Identifier style
-in header files related to Clock Drivers for Allwinner SoCs.
-For C header files Documentation/process/license-rules.rst
-mandates C-like comments (opposed to C source files where
-C++ style should be used)
+Thanks for suggestions.
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46
+>> +{
+>> +       struct clk_hw *clk_hw;
+>> +       const char *name;
+>> +       const char *parent_name;
+>> +       u32 val;
+>> +       int cnt;
+>> +       int num;
+>> +       int i;
+>> +       int idx;
+>> +
+>> +       syscon_regmap = syscon_regmap_lookup_by_phandle(np, "ralink,sysctl");
+>> +       if (IS_ERR(syscon_regmap)) {
+>> +               pr_err("rt2880-clock: could not get syscon regmap.\n");
+>> +               return PTR_ERR(syscon_regmap);
+>> +       }
+>> +
+>> +       cnt = of_property_count_u32_elems(np, "clock-indices");
+>> +       if (cnt < 0) {
+>> +               pr_err("rt2880-clock: clock-indices property is invalid.\n");
+>> +               return cnt;
+>> +       }
+>> +
+>> +       num = 0;
+>> +       for (i = 0; i < cnt; i++) {
+>> +               if (of_property_read_u32_index(np, "clock-indices", i, &val))
+> 
+> I'm a little lost one what the indices are for? Why is the number space
+> being folded like this?
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h6.h     | 2 +-
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
-index 2ccfe4428260..9406f9a6a8aa 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright 2016 Icenowy Zheng <icenowy@aosc.io>
-  */
-diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
-index 39d06fed55b2..b22484f1bb9a 100644
---- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
-+++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
-@@ -1,5 +1,5 @@
--/* SPDX-License-Identifier: GPL-2.0+
-- *
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-  * Copyright 2017 Icenowy Zheng <icenowy@aosc.io>
-  *
-  */
--- 
-2.17.1
-
+I want to let the clock cell index match  with the bit number in the 
+gate control register.
+Is my "clock-indices" usage wrong ?
