@@ -2,152 +2,73 @@ Return-Path: <SRS0=T3R6=TB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D87BC43219
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 16:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF9AC43219
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 17:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2A9D208C3
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 16:54:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mdmHe26O"
+	by mail.kernel.org (Postfix) with ESMTP id 2E85E208C3
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 17:03:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556730230;
+	bh=BBvwoNEHVRq6c/XWJXO2zRZ6ZBCo20OJ+aAG/Lv8KEw=;
+	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
+	b=SJSOBVE12C+NrPRjU6RR2R06aWDlquUYGgNOFhShlzZpoxgqdldqt5CmAf64EYf12
+	 keHjSherRgZvmch4aylXRrNBYSrYOymbRl23b7Xci/FlAQaegij9ERp/uIG0xqAu21
+	 CCyL8idf9xKjvfneNw8kzk1d2ApdpafqyjPBK2mc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfEAQyH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 12:54:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46134 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726517AbfEAQyG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 12:54:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n2so8518889pgg.13
-        for <linux-clk@vger.kernel.org>; Wed, 01 May 2019 09:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xONlzx3IaXMZ6M2dIMHdENsla+SllYiw67kc5eZCItg=;
-        b=mdmHe26OBi9kOgFFLbKVTkeFrr/oF7ylBvU855Q+odT/xOzuTNul9rItz3QAEJD0Oe
-         IYQEGUcYenG1Hvwks5L36dSwARhC5uiRVulTqgCNAuiBvmJ86HlXK9xxNZ4mc3xI/TOh
-         m0ZYdFFI2iGNENCIsW+jnZIjhpRhyBOyXL9R9qgx/iPr0MgejOrJwkZQ9z/jPOATBchZ
-         ljykq3BK8ezWbsX2WJVG9i/qDXnwLuQ8wIzuFbKOqMIO5F1BJK3ocgrKxgeZKags1cWH
-         Uo6z0T7WEKDsgyiLA92M+r8PxjRC65a8GzXoV0Nix+j780MTA95B4UEScAdGlBv6WSAh
-         +1sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xONlzx3IaXMZ6M2dIMHdENsla+SllYiw67kc5eZCItg=;
-        b=o+IkY/kk1/U/38DgFVkA8XN9b9WEEOcudwyRUcRZCVJCe7LUF/rV/5OK3yH9PurYw8
-         OpX0+NjQdan3HnGjIK0qiV2Dco6MVYAiN9dYX/BCM+WLoeavaZRh1SpwwQ4LEsFbYxP4
-         hzjPQe1FYHAX5Sb4qUiRXdLc4F9fwMG5mCZnNVhVVXV6bENIWzMsbK8mVfC9Olm8irAL
-         sNr3UBo+1DIRUmt2U24+GdUf7RSICNI6Gfb5M5h8ZR7pwZGYMFGN51Qqr99D6+CrlIkM
-         nyeG7KjtDPNDfNxFP+4l4LaHEqEWuNOpVBNQSlZlvjcBQaZ7gZQYxM9I1KtuQ46FBLVR
-         VhGw==
-X-Gm-Message-State: APjAAAX8oJo1RnLFn3/soQJB79559Wxw6MAtbfi6oeEeh8M2KZB9C0m8
-        p3kJJe3z5aIIrgw5hxUOH0DvDQ==
-X-Google-Smtp-Source: APXvYqzfb2xrwvHBji0xFCXOTmqgNI8ofWQ4r1hEacPKpw22h+6vWrHSlazGTj5++rju1N8fNQ4TEg==
-X-Received: by 2002:aa7:8e14:: with SMTP id c20mr47798607pfr.14.1556729645920;
-        Wed, 01 May 2019 09:54:05 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 4sm4316877pfd.55.2019.05.01.09.54.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 09:54:04 -0700 (PDT)
-Date:   Wed, 1 May 2019 09:54:06 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, agross@kernel.org,
-        marc.w.gonzalez@free.fr, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] clk: qcom: Add MSM8998 Multimedia Clock
- Controller (MMCC) driver
-Message-ID: <20190501165406.GI2938@tuxbook-pro>
-References: <1556677404-29194-1-git-send-email-jhugo@codeaurora.org>
- <1556677642-29428-1-git-send-email-jhugo@codeaurora.org>
- <20190501034314.GE2938@tuxbook-pro>
- <0513163c-5088-6168-64fb-04fa51f711fa@codeaurora.org>
+        id S1726004AbfEARDt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 13:03:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbfEARDs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 May 2019 13:03:48 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 261CB20835;
+        Wed,  1 May 2019 17:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556730228;
+        bh=BBvwoNEHVRq6c/XWJXO2zRZ6ZBCo20OJ+aAG/Lv8KEw=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=0gtlaiv6NrICHtxforyV7oISLK86EyMix5IUOatqtwQ4kcZeGdpRed8mVTYeLb1S3
+         foVvw/4MYzmnzg9+rks40rohOWflkP2KHZAL9EYhuoRYXNDeCG9zIODbT2xcYqgoAW
+         HD932Ci7ImLSuvL3t9y+sbDPcxVCvsnPbxKT5vKo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0513163c-5088-6168-64fb-04fa51f711fa@codeaurora.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <DB3PR0402MB3916F59134DB9CF9837B43C1F53B0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1556589033-6080-1-git-send-email-Anson.Huang@nxp.com> <155664820799.168659.12393223246835475198@swboyd.mtv.corp.google.com> <DB3PR0402MB3916F59134DB9CF9837B43C1F53B0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: RE: [PATCH] clk: imx: pllv3: Fix fall through build warning
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+Message-ID: <155673022723.168659.16788237682007828514@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Wed, 01 May 2019 10:03:47 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 01 May 07:25 PDT 2019, Jeffrey Hugo wrote:
+Quoting Anson Huang (2019-05-01 02:33:46)
+> Hi, Stephen
+>         I saw Gustavo already sent out a patch to fix these two warnings,=
+ so I will NOT sent the patch again, thanks.
 
-> On 4/30/2019 9:43 PM, Bjorn Andersson wrote:
-> > On Tue 30 Apr 19:27 PDT 2019, Jeffrey Hugo wrote:
-> > > +static const struct of_device_id mmcc_msm8998_match_table[] = {
-> > > +	{ .compatible = "qcom,mmcc-msm8998" },
-> > > +	{ }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, mmcc_msm8998_match_table);
-> > > +
-> > > +static int mmcc_msm8998_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct regmap *regmap;
-> > > +
-> > 
-> > Don't you want to wait for "xo" here as well?
-> 
-> No, I don't want to.  As far as I recall, Stephen would like to make a clear
-> divide between clock providers, and clock consumers.  Since we have the uart
-> issue in gcc, and gcc is pretty critical to the entire SoC, it seems like
-> there is a reason (not sure I'd call it "good") to wait for xo there.
-> 
-> Here, I'm less confident in the reasoning.  mmcc is not really critical to
-> the SoC, and everything it services is "optional".  If you have a headless
-> system with no display output, you won't even need it.  On system where
-> there is a display, I expect the realistic driver ordering to be that
-> everything which consumes a mmcc clock to come up well after xo is
-> available.
-> 
-> In short, seems like a bit of a kludge to maybe avoid an issue which doesn't
-> seem like would happen.
-> 
+So I will apply that patch instead? Can you send your reviewed-by tag
+then?
 
-Okay, cool.
-
-> > 
-> > > +	regmap = qcom_cc_map(pdev, &mmcc_msm8998_desc);
-> > > +	if (IS_ERR(regmap))
-> > > +		return PTR_ERR(regmap);
-> > > +
-> > > +	return qcom_cc_really_probe(pdev, &mmcc_msm8998_desc, regmap);
-> > > +}
-> > [..]
-> > > +MODULE_DESCRIPTION("QCOM MMCC MSM8998 Driver");
-> > > +MODULE_LICENSE("GPL v2");
-> > > +MODULE_ALIAS("platform:mmcc-msm8998");
-> > 
-> > MODULE_DEVICE_TABLE() will provide the alias for module auto loading, so
-> > drop this.
-> 
-> Huh.  I did not know that.  Will put on the list to fixup.
-> 
-
-With this dropped (and your objection above) I think the patch looks
-good.
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> 
-> 
-> -- 
-> Jeffrey Hugo
-> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies,
-> Inc.
-> Qualcomm Technologies, Inc. is a member of the
-> Code Aurora Forum, a Linux Foundation Collaborative Project.
