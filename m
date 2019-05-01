@@ -2,106 +2,108 @@ Return-Path: <SRS0=T3R6=TB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99010C43219
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 07:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5996EC43219
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 08:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF9E20835
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 07:39:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/RKIVSW"
+	by mail.kernel.org (Postfix) with ESMTP id 315E020835
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 08:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfEAHjp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 03:39:45 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43326 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfEAHjo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 03:39:44 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t22so4987834pgi.10;
-        Wed, 01 May 2019 00:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=TY9nANZTsmFVcCEMn85U2AmDbTx1OVF1fP/JuxE6pck=;
-        b=L/RKIVSWyF8E4KtcOIV387q6/Tb86laQX7r3pD8SEuiLby2nB+ssYbl2j3oWjXg516
-         evecBrJyE4S8sG0P2qInrFLGWFURALtdaL3J1DRk2l3BJc4LNjtc5i9y+rAnQk3XTa5b
-         D7ZjAya502/1Y89T/nZqe9m3yinY+GtZg6fY/VQh1+ubllLlFFC0LTe9wg5+q8tvLIeU
-         IsRgfcvWsZyrpflV6O2BI7MqTjgRVCQKSt5Wfg45WEk4HQ8n12s9K3u/uVSLsE6FyP/v
-         DEPJxkvrLYXvEVftwxV84HWy7W15Uih+qDnYDzuP5muEopHSgllaxvtTl2M4DjDBHwd9
-         JbSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=TY9nANZTsmFVcCEMn85U2AmDbTx1OVF1fP/JuxE6pck=;
-        b=V0w4++SdTsivfTBq1H2U6tolkkaHfekdLNva+awZtWOmNDt5iMTqXotqIpya2Pn+Ri
-         Ob3yCbDfMKXJhYSMFTGce9OM/2czpiI9HaVSJd0PaPrYL1bYFQibbsOExm98RXCGzfTe
-         svphFNQ5dVAVTSbL3vE2o/f8GwVhrSLaz9xzCT3BHa0FVKV8+fVO39qRfj5S/U5qBCx6
-         D02xIQ5FbRlLR03EmjhrTb4sikDsFNy9p660dIXGzpuXRgEcq6IsvF475x0qnQ0ErDqW
-         VV+EF165NCb6/oKDALvQ6RTi+/sTcr519HDlN3ZjPklKetk4gNqFo4WHescOf6t/ZbOD
-         Xelw==
-X-Gm-Message-State: APjAAAX7xuucLVJGtEDpn+Ul3D/Tc/3gjt7spwAQSxfoHLsnAgNz4vu1
-        s/rIW/T6Awbh+afpwiK7/Tg=
-X-Google-Smtp-Source: APXvYqwOkqeKyBWwXnCc2ePCnLepyeUhDiRTUrFqALdmmw1N9z2v+VQh9bPszUu6ke+HkIJjXYGs4g==
-X-Received: by 2002:a63:28c8:: with SMTP id o191mr30982923pgo.164.1556696384089;
-        Wed, 01 May 2019 00:39:44 -0700 (PDT)
-Received: from nishad ([106.51.235.3])
-        by smtp.gmail.com with ESMTPSA id f87sm65341453pff.56.2019.05.01.00.39.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 00:39:43 -0700 (PDT)
-Date:   Wed, 1 May 2019 13:09:36 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: Use the correct style for SPDX License Identifier
-Message-ID: <20190501073932.GA6925@nishad>
+        id S1726014AbfEAIdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 04:33:22 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:45148 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725776AbfEAIdW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 04:33:22 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x418NisY000381;
+        Wed, 1 May 2019 03:33:19 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2s6xhyrrg3-1;
+        Wed, 01 May 2019 03:33:19 -0500
+Received: from EDIEX01.ad.cirrus.com (unknown [198.61.84.80])
+        by mail1.cirrus.com (Postfix) with ESMTP id B1509611C8C0;
+        Wed,  1 May 2019 03:33:18 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 1 May
+ 2019 09:33:18 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Wed, 1 May 2019 09:33:18 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id F081445;
+        Wed,  1 May 2019 09:33:17 +0100 (BST)
+Date:   Wed, 1 May 2019 09:33:17 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 1/2] clk: Ensure new parent is looked up when changing
+ parents
+Message-ID: <20190501083317.GF81578@ediswmail.ad.cirrus.com>
+References: <20190430144412.20950-1-ckeepax@opensource.cirrus.com>
+ <155664268919.168659.14590969678316998228@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <155664268919.168659.14590969678316998228@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905010056
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch corrects the SPDX License Identifier style
-in clk-regmap-mux-div.h. For C header files
-Documentation/process/license-rules.rst mandates C-like
-comments (opposed to C source files where C++ style
-should be used)
+On Tue, Apr 30, 2019 at 09:44:49AM -0700, Stephen Boyd wrote:
+> Quoting Charles Keepax (2019-04-30 07:44:11)
+> > clk_core_fill_parent_index is called from clk_mux_determine_rate_flags
+> > and for the initial parent of the clock but seems to not get called on
+> > the path changing a clocks parent. This can cause a clock parent change
+> > to fail, fix this by adding a call in clk_fetch_parent_index.
+> > 
+> > Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > ---
+> >  drivers/clk/clk.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index ffd33b63c37eb..5aa180180ee95 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1601,6 +1601,9 @@ static int clk_fetch_parent_index(struct clk_core *core,
+> >                 return -EINVAL;
+> >  
+> >         for (i = 0; i < core->num_parents; i++) {
+> > +               if (!core->parents[i].core)
+> > +                       clk_core_fill_parent_index(core, i);
+> > +
+> 
+> Hm... are you not specifying 'names' for the parent, so just clk_hw
+> pointer? Maybe we need to compare clk_hw pointers with clk_hw pointers
+> and then fill in the core pointer with what we have in hand. Pretty much
+> at all costs we shouldn't call clk_core_fill_parent_index() here because
+> drivers may fall into the trap of searching the entire clk tree for a
+> pointer we already have.
+> 
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46
+Apologies perhaps I am misunderstanding how this new system
+works. In the event of the parent clocks being specified in
+DT, whilst going round this loop would you expect the clock to
+match on the core == parent check?  Or on the fallback unique
+name check? My assumption was on the core == parent check, and
+if that is the case how would you expect the parents[i].core
+field to have been populated?
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/clk/qcom/clk-regmap-mux-div.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/clk-regmap-mux-div.h b/drivers/clk/qcom/clk-regmap-mux-div.h
-index 6cd6261be7ac..4df6c8d24c24 100644
---- a/drivers/clk/qcom/clk-regmap-mux-div.h
-+++ b/drivers/clk/qcom/clk-regmap-mux-div.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2017, Linaro Limited
-  * Author: Georgi Djakov <georgi.djakov@linaro.org>
--- 
-2.17.1
-
+Thanks,
+Charles
