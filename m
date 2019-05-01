@@ -2,84 +2,78 @@ Return-Path: <SRS0=T3R6=TB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AF4C43219
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 20:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73797C43219
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 21:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B023F205F4
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 20:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41FC32085A
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 21:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556744461;
+	bh=RNfxhTIjmff0paVh7E25ufbTsE9xtP3fIa1eYFm/084=;
+	h=In-Reply-To:References:To:Cc:From:Subject:Date:List-ID:From;
+	b=NJSkZhWx6S1P16xV0T7jY+bK1yaMma192u26x0UPAvvb7eWkF2idgwHSWFAtFmKqY
+	 KtjqxRDV+GukRlLX4TIXcj7GH/JurTwEBNE00M2Jib3mg/ab9139j0heU4fJ92l7yO
+	 YCpZulI6fLpW0WeAoCe0U+/W/gOzFn+z7WjWoV60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbfEAUUr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 16:20:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726266AbfEAUUr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 1 May 2019 16:20:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9EB1BAD12;
-        Wed,  1 May 2019 20:20:45 +0000 (UTC)
-Subject: Re: [PATCH] clk: actions: Use the correct style for SPDX License
- Identifier
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org
-References: <20190501070707.GA5619@nishad>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Linux GmbH
-Message-ID: <057d9b37-7475-1902-bce7-6d519c2e0fdf@suse.de>
-Date:   Wed, 1 May 2019 22:20:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726121AbfEAVBA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 17:01:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726088AbfEAVBA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 May 2019 17:01:00 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 094E22075E;
+        Wed,  1 May 2019 21:01:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556744460;
+        bh=RNfxhTIjmff0paVh7E25ufbTsE9xtP3fIa1eYFm/084=;
+        h=In-Reply-To:References:To:Cc:From:Subject:Date:From;
+        b=IbF1Cx5Sgla9OzDphVepmru3gr3lihFyNA7Ktxt/wAwj70/vPxCydDr43ABcgLTIE
+         C/WulMaNZ+OymYH6AkVZdNkaNdsG3k77QxjCpgpXjl9ONBhYKznyKS+8+0Be1rLTfP
+         K255BKxkq4mqk/ACNZaqJJM6Ux6Qo62e6VX/FKJo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190501070707.GA5619@nishad>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1556585557-28795-1-git-send-email-Anson.Huang@nxp.com>
+References: <1556585557-28795-1-git-send-email-Anson.Huang@nxp.com>
+To:     "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V2] clk: imx: pllv4: add fractional-N pll support
+Message-ID: <155674445915.200842.2835083854881674143@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Wed, 01 May 2019 14:00:59 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-+ linux-actions
+The Content-transfer-encoding header is still base64. I guess it can't
+be fixed.
 
-Am 01.05.19 um 09:07 schrieb Nishad Kamdar:
-> This patch corrects the SPDX License Identifier style
-> in header files related to Clock Drivers for Actions Semi Socs.
-> For C header files Documentation/process/license-rules.rst
-> mandates C-like comments (opposed to C source files where
-> C++ style should be used)
-[...]
->  drivers/clk/actions/owl-common.h       | 2 +-
->  drivers/clk/actions/owl-composite.h    | 2 +-
->  drivers/clk/actions/owl-divider.h      | 2 +-
->  drivers/clk/actions/owl-factor.h       | 2 +-
->  drivers/clk/actions/owl-fixed-factor.h | 2 +-
->  drivers/clk/actions/owl-gate.h         | 2 +-
->  drivers/clk/actions/owl-mux.h          | 2 +-
->  drivers/clk/actions/owl-pll.h          | 2 +-
->  drivers/clk/actions/owl-reset.h        | 2 +-
->  9 files changed, 9 insertions(+), 9 deletions(-)
-
-Where's the practical benefit of this patch? These are all private
-headers used from C files, so they can handle C++ comments just fine,
-otherwise we would've seen build failures.
-
-I could understand if you were patching files in include/ but not here.
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
+Quoting Anson Huang (2019-04-29 17:57:22)
+> The pllv4 supports fractional-N function, the formula is:
+>=20
+> PLL output freq =3D input * (mult + num/denom),
+>=20
+> This patch adds fractional-N function support, including
+> clock round rate, calculate rate and set rate, with this
+> patch, the clock rate of APLL in clock tree is more accurate
+> than before:
+>=20
