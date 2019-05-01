@@ -2,73 +2,83 @@ Return-Path: <SRS0=T3R6=TB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF9AC43219
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 17:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86331C43219
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 19:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E85E208C3
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 17:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D3AF20866
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 19:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556730230;
-	bh=BBvwoNEHVRq6c/XWJXO2zRZ6ZBCo20OJ+aAG/Lv8KEw=;
-	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
-	b=SJSOBVE12C+NrPRjU6RR2R06aWDlquUYGgNOFhShlzZpoxgqdldqt5CmAf64EYf12
-	 keHjSherRgZvmch4aylXRrNBYSrYOymbRl23b7Xci/FlAQaegij9ERp/uIG0xqAu21
-	 CCyL8idf9xKjvfneNw8kzk1d2ApdpafqyjPBK2mc=
+	s=default; t=1556740137;
+	bh=bD4ynz3Hn4pfw3+uE1looZJWFzyV8VUA15yYFnArROo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eL6Q/21nlj4r/zE7oiQ5C5Nb1c2XbNrLuf7Czuqiha8SAlXI+1NYvqUSget5GqAFD
+	 KY9bOe+Bk8ckc9efMln5E9yH7IEb+sxA6Po7xHb1WSgib30wgeLBgLzbzQZqiqCPvk
+	 /jo1oy+QsuwPyNfH6+Oy0IL6eOad0mU9TDylACtI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbfEARDt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 13:03:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725973AbfEARDs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 1 May 2019 13:03:48 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 261CB20835;
-        Wed,  1 May 2019 17:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556730228;
-        bh=BBvwoNEHVRq6c/XWJXO2zRZ6ZBCo20OJ+aAG/Lv8KEw=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=0gtlaiv6NrICHtxforyV7oISLK86EyMix5IUOatqtwQ4kcZeGdpRed8mVTYeLb1S3
-         foVvw/4MYzmnzg9+rks40rohOWflkP2KHZAL9EYhuoRYXNDeCG9zIODbT2xcYqgoAW
-         HD932Ci7ImLSuvL3t9y+sbDPcxVCvsnPbxKT5vKo=
-Content-Type: text/plain; charset="utf-8"
+        id S1726106AbfEATs5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 15:48:57 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34439 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfEATs4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 15:48:56 -0400
+Received: by mail-oi1-f195.google.com with SMTP id v10so14656328oib.1;
+        Wed, 01 May 2019 12:48:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9ikJo1NEP++jN/CQZU0v1y07L/HudzlvOQM/HORBFx0=;
+        b=VXNt608PdhODnru1svgmZG2uxNiN1emdJw7k4jeOclQ2xyIR0/QHPZ+ffimbz0tkYc
+         f9VC4Q8FBmcsmoTI4pbfneaRreNcxkMoiVJTzrHJqIs51Yv6Z3d6MO+3d9tJCE+2uovO
+         2XSpbz+R4BL1IFw1/G/G6zJJDHCWPBQBnT9rYZwz3Z1Nrko+9DSqXqu6SJAoUDW1vcXq
+         F5I245YemZhna4vjmXlWSyqDRbeYsbCoanrs18IrfzzdTxyH5EA7cTASltMtfJ1ueX+H
+         zhmpWGvyK5lrnMFnarLIFj2MSepwNnqjjeHVPnhdUBPmCr4Fn0yk1CpSKT1NMF8J89aC
+         ajug==
+X-Gm-Message-State: APjAAAWflQJ59o6pKddmPqdiid1JHrc/LBiDI8lZ6KZyRwnzugmFXosf
+        tHkpbV6XC9fxCXXjc3mU9opHOoM=
+X-Google-Smtp-Source: APXvYqyisfJMnup7uluBIkIszKSOr0l6ULyLaAvsXMlVi039cSIjJeTIlO7zl+QNjSx8mRgPMjl8IA==
+X-Received: by 2002:aca:f004:: with SMTP id o4mr3763oih.55.1556740135900;
+        Wed, 01 May 2019 12:48:55 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id c65sm25713oih.53.2019.05.01.12.48.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 May 2019 12:48:54 -0700 (PDT)
+Date:   Wed, 1 May 2019 14:48:54 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: Re: [PATCH v3 1/6] dt-bindings: clock: Document external clocks for
+ MSM8998 gcc
+Message-ID: <20190501194854.GA10996@bogus>
+References: <1556677404-29194-1-git-send-email-jhugo@codeaurora.org>
+ <1556677473-29242-1-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB3PR0402MB3916F59134DB9CF9837B43C1F53B0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1556589033-6080-1-git-send-email-Anson.Huang@nxp.com> <155664820799.168659.12393223246835475198@swboyd.mtv.corp.google.com> <DB3PR0402MB3916F59134DB9CF9837B43C1F53B0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH] clk: imx: pllv3: Fix fall through build warning
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-Message-ID: <155673022723.168659.16788237682007828514@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Wed, 01 May 2019 10:03:47 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556677473-29242-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2019-05-01 02:33:46)
-> Hi, Stephen
->         I saw Gustavo already sent out a patch to fix these two warnings,=
- so I will NOT sent the patch again, thanks.
+On Tue, 30 Apr 2019 20:24:33 -0600, Jeffrey Hugo wrote:
+> The global clock controller on MSM8998 can consume a number of external
+> clocks.  Document them.
+> 
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-So I will apply that patch instead? Can you send your reviewed-by tag
-then?
-
+Reviewed-by: Rob Herring <robh@kernel.org>
