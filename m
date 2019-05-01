@@ -2,108 +2,134 @@ Return-Path: <SRS0=T3R6=TB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5996EC43219
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 08:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A687C43219
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315E020835
-	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 08:33:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 328E721734
+	for <linux-clk@archiver.kernel.org>; Wed,  1 May 2019 09:24:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WvyBO6Da"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726014AbfEAIdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 04:33:22 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:45148 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725776AbfEAIdW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 04:33:22 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x418NisY000381;
-        Wed, 1 May 2019 03:33:19 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2s6xhyrrg3-1;
-        Wed, 01 May 2019 03:33:19 -0500
-Received: from EDIEX01.ad.cirrus.com (unknown [198.61.84.80])
-        by mail1.cirrus.com (Postfix) with ESMTP id B1509611C8C0;
-        Wed,  1 May 2019 03:33:18 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 1 May
- 2019 09:33:18 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Wed, 1 May 2019 09:33:18 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id F081445;
-        Wed,  1 May 2019 09:33:17 +0100 (BST)
-Date:   Wed, 1 May 2019 09:33:17 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 1/2] clk: Ensure new parent is looked up when changing
- parents
-Message-ID: <20190501083317.GF81578@ediswmail.ad.cirrus.com>
-References: <20190430144412.20950-1-ckeepax@opensource.cirrus.com>
- <155664268919.168659.14590969678316998228@swboyd.mtv.corp.google.com>
+        id S1726052AbfEAJYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 05:24:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34811 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfEAJYP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 05:24:15 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b3so8385052pfd.1;
+        Wed, 01 May 2019 02:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=npCKuEhBLbCVZt2YPdcZ3HRYomc+RD/O9XeiPEqtF8w=;
+        b=WvyBO6DaVpyVwichyh5oygw7YvmjbYRTsg4TMuJE2lUwaT29VmB6RTgNDQZ8bB8UNw
+         4oc7EUIDh22RmrpCDJLRr8S31K56fCdDv9XnAaSeegTmQZPj+6VWnCwGEkR+iOoXpIcu
+         q2as/fgD0Pamgcga9ZE4SsMljZRXB/fwBWkH2ykefGqY4XUvZTISM/hOX5bdt3+eNldm
+         IxVpBV9zTPhlyyUiUNwpWAkEMxqoBK/QOeg6vKtW2a9IKaOsJBOlF/AIaT17q0X0UVft
+         lxMPu3vh+cYUPNOO9f+my5iUKKwRNvp94G+RQwqqVuTLtkRYPm/RkunYATVESsiTYQxy
+         WJyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=npCKuEhBLbCVZt2YPdcZ3HRYomc+RD/O9XeiPEqtF8w=;
+        b=lGOv+enfvdZvTP0KgFgr2QxQ2DC1K2yf4uAzhrZTe+JibR9Hv2J35cYo73ErOobD6a
+         A1HYRcsZwaI5Mc92+8NDxB0DQ+PmtB2EHH/dHUmctsw9VbcZTbaVuRzC4RkK5DDQUjBg
+         77Umo7n1A+01WJOSGMWM6GogMWvtiqumuWR9xq00EPAdNnSyczf0bqtohzDOPXWMxXxA
+         XUQgbMqprDApE41bUNksXRFM3z6uOTEXHNxgFwe7ai7LMkyLXnOG89Q9U+PqIQ09Cj/8
+         +0PD85ly4MO8ugSrtfLUlM3auctVbzvWbVj049+FawEL2Ng76Gf6mFwn5vaqZv1MzuAB
+         7+Vw==
+X-Gm-Message-State: APjAAAXZJIsloGBJc4jCjrEzYDuGT5ehWc6KCyZECA2jro7fGd0p+UPA
+        W3cAvM141x9PQDpT1WL+ZLU=
+X-Google-Smtp-Source: APXvYqyN1RS02J0XD6PXRrfceL6wCLQkjjCBn4Q3NI0NKZ/pPbbNvCvGgS4mXb6m547cLib3zVRNGg==
+X-Received: by 2002:aa7:8251:: with SMTP id e17mr40151508pfn.147.1556702654443;
+        Wed, 01 May 2019 02:24:14 -0700 (PDT)
+Received: from nishad ([106.51.235.3])
+        by smtp.gmail.com with ESMTPSA id x6sm19377938pfm.114.2019.05.01.02.24.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 May 2019 02:24:13 -0700 (PDT)
+Date:   Wed, 1 May 2019 14:54:07 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: renesas: Use the correct style for SPDX License
+ Identifier
+Message-ID: <20190501092359.GA8152@nishad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155664268919.168659.14590969678316998228@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905010056
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 09:44:49AM -0700, Stephen Boyd wrote:
-> Quoting Charles Keepax (2019-04-30 07:44:11)
-> > clk_core_fill_parent_index is called from clk_mux_determine_rate_flags
-> > and for the initial parent of the clock but seems to not get called on
-> > the path changing a clocks parent. This can cause a clock parent change
-> > to fail, fix this by adding a call in clk_fetch_parent_index.
-> > 
-> > Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > ---
-> >  drivers/clk/clk.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index ffd33b63c37eb..5aa180180ee95 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -1601,6 +1601,9 @@ static int clk_fetch_parent_index(struct clk_core *core,
-> >                 return -EINVAL;
-> >  
-> >         for (i = 0; i < core->num_parents; i++) {
-> > +               if (!core->parents[i].core)
-> > +                       clk_core_fill_parent_index(core, i);
-> > +
-> 
-> Hm... are you not specifying 'names' for the parent, so just clk_hw
-> pointer? Maybe we need to compare clk_hw pointers with clk_hw pointers
-> and then fill in the core pointer with what we have in hand. Pretty much
-> at all costs we shouldn't call clk_core_fill_parent_index() here because
-> drivers may fall into the trap of searching the entire clk tree for a
-> pointer we already have.
-> 
+This patch corrects the SPDX License Identifier style
+in header files related to Clock Drivers for Renesas Socs.
+For C header files Documentation/process/license-rules.rst
+mandates C-like comments (opposed to C source files where
+C++ style should be used)
 
-Apologies perhaps I am misunderstanding how this new system
-works. In the event of the parent clocks being specified in
-DT, whilst going round this loop would you expect the clock to
-match on the core == parent check?  Or on the fallback unique
-name check? My assumption was on the core == parent check, and
-if that is the case how would you expect the parents[i].core
-field to have been populated?
+Changes made by using a script provided by Joe Perches here:
+https://lkml.org/lkml/2019/2/7/46
 
-Thanks,
-Charles
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/clk/renesas/rcar-gen2-cpg.h    | 4 ++--
+ drivers/clk/renesas/rcar-gen3-cpg.h    | 4 ++--
+ drivers/clk/renesas/renesas-cpg-mssr.h | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen2-cpg.h b/drivers/clk/renesas/rcar-gen2-cpg.h
+index bff9551c7a38..db2f57ef2f99 100644
+--- a/drivers/clk/renesas/rcar-gen2-cpg.h
++++ b/drivers/clk/renesas/rcar-gen2-cpg.h
+@@ -1,5 +1,5 @@
+-/* SPDX-License-Identifier: GPL-2.0
+- *
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
+  * R-Car Gen2 Clock Pulse Generator
+  *
+  * Copyright (C) 2016 Cogent Embedded Inc.
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 15700d219a05..c4ac80cac6a0 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -1,5 +1,5 @@
+-/* SPDX-License-Identifier: GPL-2.0
+- *
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
+  * R-Car Gen3 Clock Pulse Generator
+  *
+  * Copyright (C) 2015-2018 Glider bvba
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index c4ec9df146fd..4ddcdf3bfb95 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -1,5 +1,5 @@
+-/* SPDX-License-Identifier: GPL-2.0
+- *
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
+  * Renesas Clock Pulse Generator / Module Standby and Software Reset
+  *
+  * Copyright (C) 2015 Glider bvba
+-- 
+2.17.1
+
