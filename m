@@ -2,89 +2,138 @@ Return-Path: <SRS0=2SAN=TC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE88C43219
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 13:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C02C04AA9
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 19:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC822063F
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 13:52:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZSaTxtU"
+	by mail.kernel.org (Postfix) with ESMTP id 9FDF920651
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 19:51:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfEBNws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 May 2019 09:52:48 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37397 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEBNws (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 May 2019 09:52:48 -0400
-Received: by mail-lj1-f196.google.com with SMTP id b12so2263458lji.4;
-        Thu, 02 May 2019 06:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5anwCJxZnrogG1HpaX5y6QTVoKVHb6NYl3V1OWC8Maw=;
-        b=fZSaTxtUp9KZxUwqiulAv3Yf8e0/0Tk8FoqOybYS6zR3CxOOmSDfy0TNx+CGk4Eoch
-         v1bVlaK+AAFJvqFsHux0G0CChokbiD1DMQXApebfeG3bEna9BB7jTs+NTPVBaTaXXqVH
-         Kg7dyYsa/qzl21EcdbRGK5viwRJwQLI7e4+Vmb0zeO+PaGqJ5uUVpEKG+rqzHYIQ+ujL
-         PV2Lzv2rg/TGcg/Aq37DYQgbmD1hOCK9lU8mcvBxG90juU/77zDTveC+nz7OIMNFbbSq
-         QIQrKrZtqle2y6b3rLC5UqXFHhhZrZmQjvAid7C59nmKpVTddv6ESm8AZsk+kS75rKGR
-         3fzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5anwCJxZnrogG1HpaX5y6QTVoKVHb6NYl3V1OWC8Maw=;
-        b=bC7PCgWg09wNgB2un8IiutHay7w2FUcmkk/vZKmzVXwO15XL8WIApH/igeVscqH8vl
-         wGuCxf6viMspIr2X0j5rY78KDgR53etsdVjh7Gp8OXm0BczFAbyvrmhJUsKrsD4t6mEX
-         gbiXafvNgK5Aq50o8pk3HN9HpKqtexGk2jD1Cpnpv7Kgv3B50NtBs8G/pXuw5GOmkgTs
-         kDAGG8QJtyPS81HidWfOwGVnTUkyKDlX2uHF68bz0Kssujz1JOUu4jMVDEa3ehjDkLqm
-         kGS1u8GE6mA3i/rtMgEu17USmSiDWBMw0mHAvAtjGb7Ccg7MncXSSeiSFotoN8yxRqlY
-         7FpQ==
-X-Gm-Message-State: APjAAAVJs8Cb8wVD+w5TT7syaasRLAUzYAF9TrCBG3rofpYd5kVM73Ff
-        dcWZaF9JtVU+Gg0MM+XO+1+n19VsLQ5vZIVksf0=
-X-Google-Smtp-Source: APXvYqwpy0wkkhhf9ipmjbRgmrEAJI6N5SaQzNQ2z75ilDtSMuEnGod5PWv+zB0VGlgyLHDHCTU+WJ1wY+nHifNPqTA=
-X-Received: by 2002:a2e:a0c4:: with SMTP id f4mr2067329ljm.100.1556805166266;
- Thu, 02 May 2019 06:52:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <55a0abac1c2efc4921588ee87986da43af1eb35a.1556802190.git.agx@sigxcpu.org>
-In-Reply-To: <55a0abac1c2efc4921588ee87986da43af1eb35a.1556802190.git.agx@sigxcpu.org>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 2 May 2019 10:52:40 -0300
-Message-ID: <CAOMZO5B3GqJoGtN42OeukxVXEUxsDRPsgMGf1huKQ7xZFYedZQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx8mq: Add dsi_ipg_div
-To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726528AbfEBTuy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 May 2019 15:50:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42318 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfEBTuy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 May 2019 15:50:54 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id A84AF28423D
+Received: by earth.universe (Postfix, from userid 1000)
+        id 65A1B3C0D1B; Thu,  2 May 2019 21:50:49 +0200 (CEST)
+Date:   Thu, 2 May 2019 21:50:49 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Anson Huang <anson.huang@nxp.com>,
-        Carlo Caione <ccaione@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [PATCH v14 7/8] power: supply: Initial support for ROHM BD70528
+ PMIC charger block
+Message-ID: <20190502195049.brysexbyyq7khtr4@earth.universe>
+References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+ <eece016c86483d55befab1a06fb299c9d6d17134.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bhukgbujt2wxql42"
+Content-Disposition: inline
+In-Reply-To: <eece016c86483d55befab1a06fb299c9d6d17134.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 2, 2019 at 10:07 AM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
->
-> It's defined in imx8mq-clock.h but wasn't assigned yet. It's used as
-> clk_tx_esc in the nwl dsi host controller (i.MX8MQ RM, Rev. 0, 01/2018
-> Sect. 13.5.3.7.4).
->
-> Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+--bhukgbujt2wxql42
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Thu, May 02, 2019 at 12:17:12PM +0300, Matti Vaittinen wrote:
+> ROHM BD70528 PMIC includes battery charger block. Support charger
+> staus queries and doing few basic settings like input current limit
+> and charging current.
+>=20
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+Please only add Acked-by when you receive one, especially when you
+do not implement all requested changes :)
+
+[...]
+
+> +static int bd70528_get_irqs(struct platform_device *pdev,
+> +			    struct bd70528_psy *bdpsy)
+> +{
+> +	int irq, i, ret;
+> +	unsigned int mask;
+> +	const struct irq_name_pair bd70528_chg_irqs[] =3D {
+> +		{ .n =3D "bd70528-bat-ov-res", .h =3D BD_IRQ_HND(BAT_OV_RES) },
+> +		{ .n =3D "bd70528-bat-ov-det", .h =3D BD_IRQ_HND(BAT_OV_DET) },
+> +		{ .n =3D "bd70528-bat-dead", .h =3D BD_IRQ_HND(DBAT_DET) },
+> +		{ .n =3D "bd70528-bat-warmed", .h =3D BD_IRQ_HND(COLD_RES) },
+> +		{ .n =3D "bd70528-bat-cold", .h =3D BD_IRQ_HND(COLD_DET) },
+> +		{ .n =3D "bd70528-bat-cooled", .h =3D BD_IRQ_HND(HOT_RES) },
+> +		{ .n =3D "bd70528-bat-hot", .h =3D BD_IRQ_HND(HOT_DET) },
+> +		{ .n =3D "bd70528-chg-tshd", .h =3D BD_IRQ_HND(CHG_TSD) },
+> +		{ .n =3D "bd70528-bat-removed", .h =3D BD_IRQ_HND(BAT_RMV) },
+> +		{ .n =3D "bd70528-bat-detected", .h =3D BD_IRQ_HND(BAT_DET) },
+> +		{ .n =3D "bd70528-dcin2-ov-res", .h =3D BD_IRQ_HND(DCIN2_OV_RES) },
+> +		{ .n =3D "bd70528-dcin2-ov-det", .h =3D BD_IRQ_HND(DCIN2_OV_DET) },
+> +		{ .n =3D "bd70528-dcin2-removed", .h =3D BD_IRQ_HND(DCIN2_RMV) },
+> +		{ .n =3D "bd70528-dcin2-detected", .h =3D BD_IRQ_HND(DCIN2_DET) },
+> +		{ .n =3D "bd70528-dcin1-removed", .h =3D BD_IRQ_HND(DCIN1_RMV) },
+> +		{ .n =3D "bd70528-dcin1-detected", .h =3D BD_IRQ_HND(DCIN1_DET) },
+> +	};
+
+Please also make it static. That will move the whole thing to
+read-only (because of const) data section. This improves the
+security and the required cpu time at the same time (no need
+to copy values to the stack).
+
+But this can be changed later, so no need to block the whole
+patchset just because of this. If Lee wants to merge this for
+5.2, that would be fine with me. But please add it directly in
+a new patch revision if the patch does not make it into 5.2.
+
+-- Sebastian
+
+--bhukgbujt2wxql42
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlzLShUACgkQ2O7X88g7
++pqErhAAgZNXEYhrDHkaaYDwxjL4Ch28ycvgjE9+HjCig5co2F2nW25/cQPj3IeQ
+KLwc3hAAy0RzDKTc72fMtg//7b8L21Dzj4Qz4pHmQ3vhOETyAvwt3mOK8kiCSh9F
+MlrJ7vtUSnOo3S/QGiBCQ6gjTzrkyYWYtJAK3UabGbwagf9t8bKAUquWNbwFbvuu
+0Q2L++Z8eX4O0b8sbLJ5YxCx9eib2j3W6C2CNHUFG+WLjLom4IskqYq3Y7KELQ4U
+1YQbFUI5p+WFnxZU0uklYPEBfMCRBXd4iG2XBc8c/KBMkeQKOlXkURqUl7lmNT9u
+jgdqBpp0qgOlmJE7YsJTFjgyuwWR/BWLpE9QMKxBR1Ua94G6HRnoNiveq2qty18b
+s6G53YnvJsjI2y0cnP0+wACEKBATa33dUCLDABsKlyXl1jSdeE8csDM3XZ/SMNxZ
+CWayrYggYz3nk9y1bnJK3bkyVNAKaDRlNOA+kezZGAPUdcojFJOWin45Vkm5CFma
+t9SNRSBFArbG/9x/iOcETTVE+Hb7w5czGr+D41vJd/OUM/oE+sCt4ylIi4PA6a/y
+IF5fC7XzuTspKeoLuUo7WWght3JjD5+aGZ5OF6GKOSn7sdn0N2D53CdXp482U+jv
+a3ojwbXAqujhOIZhw5WYMfXjMyfKvhoPjjSIbk+NNRt8ksWKMc8=
+=CJv+
+-----END PGP SIGNATURE-----
+
+--bhukgbujt2wxql42--
