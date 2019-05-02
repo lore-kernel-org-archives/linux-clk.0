@@ -2,283 +2,134 @@ Return-Path: <SRS0=2SAN=TC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EEDC04AA8
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 07:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A929C43219
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 08:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16D2920873
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 07:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27CEA2085A
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 08:06:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="pvs4DWpk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfEBHfr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 May 2019 03:35:47 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42931 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbfEBHfr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 May 2019 03:35:47 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r72so1237492ljb.9;
-        Thu, 02 May 2019 00:35:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f0nKg4+Q/T5kK5uvm+jeP7BQaQUkQKsJ7nRo2YBgk6k=;
-        b=hPJxKgLDGTqBxusxENdcxCsX7MMBoPLHkbLQRtpa7Os24CYzfQkQPGq0g98pQtDY7G
-         3UFS+Yn8pSlkEsVjbmAKOn/7VbyWL8IiwdMrm3am+WCFfpQcznKJpPxK/urgy7ZhWD7T
-         d0zkn7kHNEzoyw1eCWNpudFHPwIcTIT2bp5dEMGfI5Eq2qoodh0+Bry0GPpTYKj3CE83
-         ID4xHWDJrUcx3kpR1PEeylBD82twYCTyTFXbTJcclH5XyDAdo24m4bb1blSwprq8Lwr5
-         0vTLuu+kqfUCxUQXR+p+G9XQv/ADQXAtsqckRoAjZ44bV429B5pnMmIxQhZUE0WkouXK
-         bJgA==
-X-Gm-Message-State: APjAAAVIo7fMKApiBRKbHPQwN/YOsryUAJ2IohzUghxSnSGQ6sZqaM5W
-        FHPH9YTC4pNG18Ncnscs+zc=
-X-Google-Smtp-Source: APXvYqzIpAHQ7nHKtraHvv4s2zWB5pLMM9V2XACoeCr8U64xGT7XSBTcwo0x1dcDx2z2HD9HPiqymg==
-X-Received: by 2002:a2e:8090:: with SMTP id i16mr994712ljg.135.1556782543766;
-        Thu, 02 May 2019 00:35:43 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id m15sm527367lfl.54.2019.05.02.00.35.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 00:35:43 -0700 (PDT)
-Date:   Thu, 2 May 2019 10:35:39 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1725951AbfEBIGo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 May 2019 04:06:44 -0400
+Received: from mail-eopbgr140073.outbound.protection.outlook.com ([40.107.14.73]:42560
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725944AbfEBIGo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 2 May 2019 04:06:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7+G2fFdlFEFiJ4IZnh1ZB+CjmaTHkWA3pQf3+2OBMxY=;
+ b=pvs4DWpkaDt2w2VcgRni2Y1hNIyTnNZx+9xHjywoQvlmWa4GDBazGtoCT8/lQwv6EZX2frlQ/qorJYe8MMxSJShkDNDyEJ2xWDICJCjAAjxp2JoBWOJRpCcIjqENb7WrNXzIPDIl4NIZ+Wpb8+N6tpZ2bc8Kehzi3i+cRKfY2rM=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB4563.eurprd04.prod.outlook.com (52.135.144.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1835.15; Thu, 2 May 2019 08:06:39 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::c19b:5964:bfcb:96a8]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::c19b:5964:bfcb:96a8%7]) with mapi id 15.20.1856.008; Thu, 2 May 2019
+ 08:06:39 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH RESEND v13 7/8] power: supply: Initial support for ROHM
- BD70528 PMIC charger block
-Message-ID: <20190502073539.GB7864@localhost.localdomain>
-References: <cover2.1554371464.git.matti.vaittinen@fi.rohmeurope.com>
- <resend.d5ba82b3d674d237d62a5e1768c9fa81cde2cf4e.1554371464.git.matti.vaittinen@fi.rohmeurope.com>
- <20190501222535.yt4ofrlf6wfwfmz7@earth.universe>
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v2 00/18] clk: imx: Switch the imx6 and imx7 to clk_hw based
+ API
+Thread-Topic: [PATCH v2 00/18] clk: imx: Switch the imx6 and imx7 to clk_hw
+ based API
+Thread-Index: AQHVAL3494CVXW2TMka+Gnk5oj+AAw==
+Date:   Thu, 2 May 2019 08:06:39 +0000
+Message-ID: <1556784376-7191-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0501CA0041.eurprd05.prod.outlook.com
+ (2603:10a6:800:60::27) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
+x-originating-ip: [89.37.124.34]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e4776059-c9b9-4aaa-3236-08d6ced51aca
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4563;
+x-ms-traffictypediagnostic: AM0PR04MB4563:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM0PR04MB4563576F0F9215BA31DB1BA2F6340@AM0PR04MB4563.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:619;
+x-forefront-prvs: 0025434D2D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(376002)(346002)(366004)(199004)(189003)(53936002)(66476007)(66556008)(64756008)(66946007)(73956011)(66446008)(66066001)(6116002)(36756003)(3846002)(305945005)(86362001)(6486002)(81156014)(6512007)(81166006)(25786009)(8676002)(4326008)(6306002)(71200400001)(71190400001)(99286004)(8936002)(14454004)(966005)(50226002)(2616005)(68736007)(478600001)(386003)(2906002)(6506007)(52116002)(316002)(44832011)(54906003)(110136005)(26005)(7736002)(5660300002)(256004)(102836004)(186003)(486006)(476003)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4563;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +TPL3UHN7gJsI7USvMkPT4x17/WxXnsmInWgKz6r3y5GbdEd1qz+3BdL+wV8vLOscLcYlbPeDe6Mbrpa9jFeuqMbRKQ9BkV0NoM/6RN3nhIpe8YYuViitClo1OsynRko2/DLBjna9p44Yd6cvd3O6Yc82X9zZ0ykfuTou4tSBPMvW4Q+0moLvxoYpTiy6UXnCIP5D1sFRq7d++WG8SiJ79Llb8vOxtlExGy4g1PthgJ0EvffZs56Q78h8IU/tVRU3aFm8VVID69KVD3yhpiWNYY5Ft2Dhn1mf26WxOo9YMEpdRElh4OzZLRn1LNy0UTSwEMLKwuE/6+8T8GMVRmLpU8b8hqDPGdf1Nyl77qLjXMrA2X5b7L6OHoOwn/5xL1CU4rOuLlJ1SeRuFzRnAOGq77Q6vVJ/s2wSq3DBtP++ag=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501222535.yt4ofrlf6wfwfmz7@earth.universe>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4776059-c9b9-4aaa-3236-08d6ced51aca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2019 08:06:39.5786
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4563
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Sebastian,
-
-Thanks for the review. This is highly appreciated as charger subsystem
-is new to me =)
-
-On Thu, May 02, 2019 at 12:25:35AM +0200, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Thu, Apr 25, 2019 at 02:16:51PM +0300, Matti Vaittinen wrote:
-> > ROHM BD70528 PMIC includes battery charger block. Support charger
-> > staus queries and doing few basic settings like input current limit
-> > and charging current.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-
-//snip
-
-> > +struct irq_name_pair {
-> > +	const char *n;
-> > +	irqreturn_t (*h)(int irq, void *arg);
-> > +};
-> > +
-> > +static int bd70528_get_irqs(struct platform_device *pdev,
-> > +			    struct bd70528_psy *bdpsy)
-> > +{
-> > +	int irq, i, ret;
-> > +	unsigned int mask;
-> > +	struct irq_name_pair bd70528_chg_irqs[] = {
-> > +		{ .n = "bd70528-bat-ov-res", .h = BD_IRQ_HND(BAT_OV_RES) },
-> > +		{ .n = "bd70528-bat-ov-det", .h = BD_IRQ_HND(BAT_OV_DET) },
-> > +		{ .n = "bd70528-bat-dead", .h = BD_IRQ_HND(DBAT_DET) },
-> > +		{ .n = "bd70528-bat-warmed", .h = BD_IRQ_HND(COLD_RES) },
-> > +		{ .n = "bd70528-bat-cold", .h = BD_IRQ_HND(COLD_DET) },
-> > +		{ .n = "bd70528-bat-cooled", .h = BD_IRQ_HND(HOT_RES) },
-> > +		{ .n = "bd70528-bat-hot", .h = BD_IRQ_HND(HOT_DET) },
-> > +		{ .n = "bd70528-chg-tshd", .h = BD_IRQ_HND(CHG_TSD) },
-> > +		{ .n = "bd70528-bat-removed", .h = BD_IRQ_HND(BAT_RMV) },
-> > +		{ .n = "bd70528-bat-detected", .h = BD_IRQ_HND(BAT_DET) },
-> > +		{ .n = "bd70528-dcin2-ov-res", .h = BD_IRQ_HND(DCIN2_OV_RES) },
-> > +		{ .n = "bd70528-dcin2-ov-det", .h = BD_IRQ_HND(DCIN2_OV_DET) },
-> > +		{ .n = "bd70528-dcin2-removed", .h = BD_IRQ_HND(DCIN2_RMV) },
-> > +		{ .n = "bd70528-dcin2-detected", .h = BD_IRQ_HND(DCIN2_DET) },
-> > +		{ .n = "bd70528-dcin1-removed", .h = BD_IRQ_HND(DCIN1_RMV) },
-> > +		{ .n = "bd70528-dcin1-detected", .h = BD_IRQ_HND(DCIN1_DET) },
-> > +	};
-> 
-> static const?
-
-Const seems appropriate but I don't see the benefits of static? I think
-it's just fine to have this at stack?
-
-> > +
-> > +struct linear_range {
-> > +	int min;
-> > +	int step;
-> > +	int vals;
-> > +	int low_sel;
-> > +};
-> > +
-> > +struct linear_range current_limit_ranges[] = {
-> > +	{
-> > +		.min = 5,
-> > +		.step = 1,
-> > +		.vals = 36,
-> > +		.low_sel = 0,
-> > +	},
-> > +	{
-> > +		.min = 40,
-> > +		.step = 5,
-> > +		.vals = 5,
-> > +		.low_sel = 0x23,
-> > +	},
-> > +	{
-> > +		.min = 60,
-> > +		.step = 20,
-> > +		.vals = 8,
-> > +		.low_sel = 0x27,
-> > +	},
-> > +	{
-> > +		.min = 200,
-> > +		.step = 50,
-> > +		.vals = 7,
-> > +		.low_sel = 0x2e,
-> > +	}
-> > +};
-> 
-> static const?
-
-Definitely static, can be const too. Thanks.
-
-> > +/*
-> > + * BD70528 would support setting and getting own charge current/
-> > + * voltage for low temperatures. The driver currently only reads
-> > + * the charge current at room temperature. We do set both though.
-> > + */
-> > +struct linear_range warm_charge_curr[] = {
-> > +	{
-> > +		.min = 10,
-> > +		.step = 10,
-> > +		.vals = 20,
-> > +		.low_sel = 0,
-> > +	},
-> > +	{
-> > +		.min = 200,
-> > +		.step = 25,
-> > +		.vals = 13,
-> > +		.low_sel = 0x13,
-> > +	},
-> > +};
-> 
-> static const?
-
-Yes. I agree. Thanks =)
- 
-> > +static const struct power_supply_desc bd70528_charger_desc = {
-> > +	.name		= "bd70528-charger",
-> > +	.type		= POWER_SUPPLY_TYPE_BATTERY,
-> 
-> charge should use POWER_SUPPLY_TYPE_MAINS (or
-> POWER_SUPPLY_TYPE_USB for USB chargers).
-
-I'll check this. Thanks.
- 
-> > +	.properties	= bd70528_charger_props,
-> > +	.num_properties	= ARRAY_SIZE(bd70528_charger_props),
-> > +	.get_property	= bd70528_charger_get_property,
-> > +	.set_property	= bd70528_charger_set_property,
-> > +	.property_is_writeable	= bd70528_prop_is_writable,
-> > +};
-> > +
-> > +static int bd70528_power_probe(struct platform_device *pdev)
-> > +{
-> > +	struct rohm_regmap_dev *mfd;
-> > +	struct bd70528_psy *bdpsy;
-> > +	struct power_supply_config cfg = {};
-> > +
-> > +	mfd = dev_get_drvdata(pdev->dev.parent);
-> > +	if (!mfd) {
-> > +		dev_err(&pdev->dev, "No MFD driver data\n");
-> > +		return -EINVAL;
-> > +	}
-> 
-> There is absolutley no need for this hack. Just get the regmap
-> for the parent device and store the regmap and the device pointer
-> directly in bdpsy.
-
-So I guess you suggest just using the dev_get_regmap(pdev->dev.parent)
-instead of using the platform data from parent? This is fine now as we
-don't care about the chip_type just now as the only PMIC thic charger
-driver supports for now is BD70528. So I can drop reading the parent's
-drvdata - although we may get back to this when I work with next ROHM
-PMIC with (almost) similar charger block.. :) But I'll switch to the
-dev_get_regmap() for now.
- 
-> > +	bdpsy = devm_kzalloc(&pdev->dev, sizeof(*bdpsy), GFP_KERNEL);
-> > +	if (!bdpsy)
-> > +		return -ENOMEM;
-> > +	bdpsy->chip = *mfd;
-> > +	bdpsy->chip.dev = &pdev->dev;
-> > +
-> > +	platform_set_drvdata(pdev, bdpsy);
-> > +	cfg.drv_data = bdpsy;
-> > +	cfg.of_node = pdev->dev.parent->of_node;
-> > +
-> > +	bdpsy->psy = devm_power_supply_register(&pdev->dev,
-> > +						&bd70528_charger_desc, &cfg);
-> > +	if (IS_ERR(bdpsy->psy)) {
-> > +		dev_err(&pdev->dev, "failed: power supply register\n");
-> > +		return PTR_ERR(bdpsy->psy);
-> > +	}
-> > +
-> > +	return bd70528_get_irqs(pdev, bdpsy);
-> > +}
-> > +
-> > +static struct platform_driver bd70528_power = {
-> > +	.driver = {
-> > +		.name = "bd70528-power"
-> > +	},
-> > +	.probe = bd70528_power_probe,
-> > +};
-> > +
-> > +module_platform_driver(bd70528_power);
-> > +
-> > +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-> > +MODULE_DESCRIPTION("BD70528 power-supply driver");
-> > +MODULE_LICENSE("GPL");
-> 
-> Otherwise looks ok to me.
-
-Thanks. I'll fix issues you pointed (except the static struct in
-function) and translate this to ack. Please let me know if this is not
-Ok or if you really think the array bd70528_chg_irqs (which is local to
-function) should be static.
-
-Br,
-	Matti Vaittinen
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+VGhpcyBpcyBiYXNpY2FsbHkgYSAybmQgdmVyc2lvbiBmb3IgdGhpcyBSRkM6DQoNCmh0dHBzOi8v
+bGttbC5vcmcvbGttbC8yMDE5LzMvMjIvMTc3Mg0KDQpDaGFuZ2VzIHNpbmNlIHYxOg0KICogQWRk
+ZWQgdGhlIHJlYXNvbiBmb3IgdGhpcyB3b3JrIGluIGVhY2ggY29tbWl0IG1lc3NhZ2UNCiAqIEFk
+ZGVkIGNsa19odyBiYXNlZCBpbml0aWFsaXphdGlvbiBmb3IgdWFydF9jbGtzIGluIGlteDZzbGwg
+ZHJpdmVyDQoNCkFiZWwgVmVzYSAoMTgpOg0KICBjbGs6IGlteDogQWRkIGlteF9vYnRhaW5fZml4
+ZWRfY2xvY2sgY2xrX2h3IGJhc2VkIHZhcmlhbnQNCiAgY2xrOiBpbXg2c3g6IERvIG5vdCByZXBh
+cmVudCB0byB1bnJlZ2lzdGVyZWQgSU1YNlNYX0NMS19BWEkNCiAgY2xrOiBpbXg2cTogRG8gbm90
+IHJlcGFyZW50IHVuaW5pdGlhbGl6ZWQgSU1YNlFETF9DTEtfUEVSSVBIMiBjbG9jaw0KICBjbGs6
+IGlteDogY2xrLWJ1c3k6IFN3aXRjaCB0byBjbGtfaHcgYmFzZWQgQVBJDQogIGNsazogaW14OiBj
+bGstY3B1OiBTd2l0Y2ggdG8gY2xrX2h3IGJhc2VkIEFQSQ0KICBjbGs6IGlteDogY2xrLWdhdGUy
+OiBTd2l0Y2ggdG8gY2xrX2h3IGJhc2VkIEFQSQ0KICBjbGs6IGlteDogY2xrLXBsbHYzOiBTd2l0
+Y2ggdG8gY2xrX2h3IGJhc2VkIEFQSQ0KICBjbGs6IGlteDogY2xrLXBmZDogU3dpdGNoIHRvIGNs
+a19odyBiYXNlZCBBUEkNCiAgY2xrOiBpbXg6IGNsay1nYXRlLWV4Y2x1c2l2ZTogU3dpdGNoIHRv
+IGNsa19odyBiYXNlZCBBUEkNCiAgY2xrOiBpbXg6IGNsay1maXh1cC1kaXY6IFN3aXRjaCB0byBj
+bGtfaHcgYmFzZWQgQVBJDQogIGNsazogaW14OiBjbGstZml4dXAtbXV4OiBTd2l0Y2ggdG8gY2xr
+X2h3IGJhc2VkIEFQSQ0KICBjbGs6IGlteDogU3dpdGNoIHdyYXBwZXJzIHRvIGNsa19odyBiYXNl
+ZCBBUEkNCiAgY2xrOiBpbXg2cTogU3dpdGNoIHRvIGNsa19odyBiYXNlZCBBUEkNCiAgY2xrOiBp
+bXg2c2w6IFN3aXRjaCB0byBjbGtfaHcgYmFzZWQgQVBJDQogIGNsazogaW14NnN4OiBTd2l0Y2gg
+dG8gY2xrX2h3IGJhc2VkIEFQSQ0KICBjbGs6IGlteDZ1bDogU3dpdGNoIHRvIGNsa19odyBiYXNl
+ZCBBUEkNCiAgY2xrOiBpbXg3ZDogU3dpdGNoIHRvIGNsa19odyBiYXNlZCBBUEkNCiAgY2xrOiBp
+bXg2c2xsOiBTd2l0Y2ggdG8gY2xrX2h3IGJhc2VkIEFQSQ0KDQogZHJpdmVycy9jbGsvaW14L2Ns
+ay1idXN5LmMgICAgICAgICAgIHwgIDMwICstDQogZHJpdmVycy9jbGsvaW14L2Nsay1jcHUuYyAg
+ICAgICAgICAgIHwgIDE0ICstDQogZHJpdmVycy9jbGsvaW14L2Nsay1maXh1cC1kaXYuYyAgICAg
+IHwgIDE1ICstDQogZHJpdmVycy9jbGsvaW14L2Nsay1maXh1cC1tdXguYyAgICAgIHwgIDE1ICst
+DQogZHJpdmVycy9jbGsvaW14L2Nsay1nYXRlLWV4Y2x1c2l2ZS5jIHwgIDE3ICstDQogZHJpdmVy
+cy9jbGsvaW14L2Nsay1nYXRlMi5jICAgICAgICAgIHwgIDE0ICstDQogZHJpdmVycy9jbGsvaW14
+L2Nsay1pbXg2cS5jICAgICAgICAgIHwgNzY3ICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQ0K
+IGRyaXZlcnMvY2xrL2lteC9jbGstaW14NnNsLmMgICAgICAgICB8IDQwNCArKysrKysrLS0tLS0t
+LQ0KIGRyaXZlcnMvY2xrL2lteC9jbGstaW14NnNsbC5jICAgICAgICB8IDQzMCArKysrKysrLS0t
+LS0tLS0NCiBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZzeC5jICAgICAgICAgfCA2NTYgKysrKysr
+KysrKystLS0tLS0tLS0tLS0NCiBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZ1bC5jICAgICAgICAg
+fCA1NzQgKysrKysrKysrKy0tLS0tLS0tLS0NCiBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDdkLmMg
+ICAgICAgICAgfCA5ODMgKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0NCiBkcml2
+ZXJzL2Nsay9pbXgvY2xrLXBmZC5jICAgICAgICAgICAgfCAgMTQgKy0NCiBkcml2ZXJzL2Nsay9p
+bXgvY2xrLXBsbHYzLmMgICAgICAgICAgfCAgMTQgKy0NCiBkcml2ZXJzL2Nsay9pbXgvY2xrLmMg
+ICAgICAgICAgICAgICAgfCAgMTEgKw0KIGRyaXZlcnMvY2xrL2lteC9jbGsuaCAgICAgICAgICAg
+ICAgICB8IDE0MiArKystLQ0KIDE2IGZpbGVzIGNoYW5nZWQsIDIxNTEgaW5zZXJ0aW9ucygrKSwg
+MTk0OSBkZWxldGlvbnMoLSkNCg0KLS0gDQoyLjcuNA0KDQo=
