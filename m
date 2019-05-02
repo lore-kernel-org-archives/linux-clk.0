@@ -2,87 +2,91 @@ Return-Path: <SRS0=2SAN=TC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F80C43219
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 20:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AA0C43219
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 20:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE522085A
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 20:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E952B2081C
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 20:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556829828;
-	bh=L/uUYW5vLxR98baFOMyoQD9iYylHnteOXlwFU+2+IYw=;
-	h=In-Reply-To:References:To:Cc:From:Subject:Date:List-ID:From;
-	b=Ko+OpWA03twhfMxt6TbeXjzLGeo9RUnGUN5E6apZxXdNp/E0PJf0nZwKn4FwhxooB
-	 JhteMHgONeWW+yQUf9tvceiYD5qdRy0bcNSrY1feevgbuKUGEdoVv3TuElwD0RcA0s
-	 KGAvlWfFw2KjqYeLE5KoR4R/5l37lnB5GxH4fES8=
+	s=default; t=1556830002;
+	bh=+iqD5SnNrrJIdoo7MTK34t9LYNPBy0FRPLXiJ6oRojU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=asX3NuvWclKxE13P//fi49nPtlqT44K5N2thKmpaALqk5viEeXfbWzJY/9Kwl/HIE
+	 LgBjIdZE8c7rddS4zKDjZFQ3ozpUnq8ISpo+RA9MVQxvKCndQiehMGWcYp4OTujtNp
+	 HNNNLSz1SOzXGy54WFVmQ+pw9dpDDDe4HCrB4VlE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbfEBUnr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 May 2019 16:43:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54394 "EHLO mail.kernel.org"
+        id S1726022AbfEBUql (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 May 2019 16:46:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbfEBUnr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 May 2019 16:43:47 -0400
-Received: from localhost (unknown [104.132.0.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725962AbfEBUql (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 2 May 2019 16:46:41 -0400
+Received: from mail.kernel.org (unknown [104.132.0.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE2D52081C;
-        Thu,  2 May 2019 20:43:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB4102081C;
+        Thu,  2 May 2019 20:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556829826;
-        bh=L/uUYW5vLxR98baFOMyoQD9iYylHnteOXlwFU+2+IYw=;
-        h=In-Reply-To:References:To:Cc:From:Subject:Date:From;
-        b=EaeKe+n3NxQDSiV89AeuqufG4jIjiCfu2O9QzaOu08OmrJGDhDL4p9U/en2USFQw1
-         9EoQ+IAFqr3cLt4zeKvCvHaO5qYuGkO2ns5vMjpwHdZv+C+6nuMU4GLATQMYOvjgtn
-         2XLALOgOwuLXffpoMVSxbRHmbS9p4ANCa4lXWEcw=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190502112024.GA18333@centauri>
-References: <20190502002138.10646-1-bjorn.andersson@linaro.org> <ecc6a7fb-14a8-3314-d376-433c9f98b692@free.fr> <20190502112024.GA18333@centauri>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        s=default; t=1556830000;
+        bh=+iqD5SnNrrJIdoo7MTK34t9LYNPBy0FRPLXiJ6oRojU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=f4IlykwBG55mpJCrj5NizV8957nyprp6IG1ARqmQm9I+/q0q+FgFsUMG+LzUnLsC+
+         ERBDsrTPwZNMdeE/4JRDAln9CevEk9EuoZ6IGydWhpalC7HzNXMzXxynvdK1NE8LFu
+         cRgbp2RmVX7Ero0bzGbnF5APxLXAVyWx2J+E3OIY=
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: gcc-qcs404: Add PCIe resets
-Message-ID: <155682982590.200842.4482547017911714715@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Thu, 02 May 2019 13:43:45 -0700
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.1-rc7
+Date:   Thu,  2 May 2019 13:46:40 -0700
+Message-Id: <20190502204640.26046-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Niklas Cassel (2019-05-02 04:20:24)
-> On Thu, May 02, 2019 at 12:53:33PM +0200, Marc Gonzalez wrote:
-> > On 02/05/2019 02:21, Bjorn Andersson wrote:
-> >=20
-> > > diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt=
--bindings/clock/qcom,gcc-qcs404.h
-> > > index 454b3f43f538..5959399fed2e 100644
-> > > --- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> > > +++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> > > @@ -166,5 +166,12 @@
-> > >  #define GCC_PCIEPHY_0_PHY_BCR                              12
-> > >  #define GCC_EMAC_BCR                                       13
-> > >  #define GCC_CDSP_RESTART                           14
-> > > +#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES          14
-> >=20
-> > Seems weird that there would be two names for the same entry at index 1=
-4?
->=20
-> Changes since v2:
-> - Rebased patch
->=20
-> The proper tag in the subject should have been [PATCH v2].
->=20
-> This is most likely an issue caused by the rebase.
->=20
+The following changes since commit f89b9e1be7da8bb0aac667a0206a00975cefe6d3:
 
-Please resend then.
+  clk: imx: Fix PLL_1416X not rounding rates (2019-04-12 14:21:43 -0700)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to b88c9f4129dcec941e5a26508e991c08051ed1ac:
+
+  clk: Add missing stubs for a few functions (2019-04-25 08:19:15 -0700)
+
+----------------------------------------------------------------
+Two fixes for the NKMP clks on Allwinner SoCs, a locking fix for clkdev
+where we forgot to hold a lock while iterating a list that can change,
+and finally a build fix that adds some stubs for clk APIs that are used
+by devfreq drivers on platforms without the clk APIs.
+
+----------------------------------------------------------------
+Dmitry Osipenko (1):
+      clk: Add missing stubs for a few functions
+
+Jernej Skrabec (2):
+      clk: sunxi-ng: nkmp: Avoid GENMASK(-1, 0)
+      clk: sunxi-ng: nkmp: Explain why zero width check is needed
+
+Stephen Boyd (2):
+      clkdev: Hold clocks_mutex while iterating clocks list
+      Merge tag 'clk-fixes-for-5.1' of https://git.kernel.org/.../sunxi/linux into clk-fixes
+
+ drivers/clk/clkdev.c            |  5 +++++
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 24 +++++++++++++++++++-----
+ include/linux/clk.h             | 16 ++++++++++++++++
+ 3 files changed, 40 insertions(+), 5 deletions(-)
+
+-- 
+Sent by a computer through tubes
