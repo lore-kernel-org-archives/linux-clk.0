@@ -2,81 +2,89 @@ Return-Path: <SRS0=2SAN=TC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8283AC04AA9
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 13:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE88C43219
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 13:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC8F205C9
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 13:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BC822063F
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 13:52:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZSaTxtU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfEBNHn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 May 2019 09:07:43 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:53497 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbfEBNHm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 May 2019 09:07:42 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 88C42FB03;
-        Thu,  2 May 2019 15:07:39 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zGDN90Q_6sjD; Thu,  2 May 2019 15:07:38 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 1F8C5472C0; Thu,  2 May 2019 15:07:38 +0200 (CEST)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726203AbfEBNws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 May 2019 09:52:48 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37397 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEBNws (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 May 2019 09:52:48 -0400
+Received: by mail-lj1-f196.google.com with SMTP id b12so2263458lji.4;
+        Thu, 02 May 2019 06:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=5anwCJxZnrogG1HpaX5y6QTVoKVHb6NYl3V1OWC8Maw=;
+        b=fZSaTxtUp9KZxUwqiulAv3Yf8e0/0Tk8FoqOybYS6zR3CxOOmSDfy0TNx+CGk4Eoch
+         v1bVlaK+AAFJvqFsHux0G0CChokbiD1DMQXApebfeG3bEna9BB7jTs+NTPVBaTaXXqVH
+         Kg7dyYsa/qzl21EcdbRGK5viwRJwQLI7e4+Vmb0zeO+PaGqJ5uUVpEKG+rqzHYIQ+ujL
+         PV2Lzv2rg/TGcg/Aq37DYQgbmD1hOCK9lU8mcvBxG90juU/77zDTveC+nz7OIMNFbbSq
+         QIQrKrZtqle2y6b3rLC5UqXFHhhZrZmQjvAid7C59nmKpVTddv6ESm8AZsk+kS75rKGR
+         3fzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5anwCJxZnrogG1HpaX5y6QTVoKVHb6NYl3V1OWC8Maw=;
+        b=bC7PCgWg09wNgB2un8IiutHay7w2FUcmkk/vZKmzVXwO15XL8WIApH/igeVscqH8vl
+         wGuCxf6viMspIr2X0j5rY78KDgR53etsdVjh7Gp8OXm0BczFAbyvrmhJUsKrsD4t6mEX
+         gbiXafvNgK5Aq50o8pk3HN9HpKqtexGk2jD1Cpnpv7Kgv3B50NtBs8G/pXuw5GOmkgTs
+         kDAGG8QJtyPS81HidWfOwGVnTUkyKDlX2uHF68bz0Kssujz1JOUu4jMVDEa3ehjDkLqm
+         kGS1u8GE6mA3i/rtMgEu17USmSiDWBMw0mHAvAtjGb7Ccg7MncXSSeiSFotoN8yxRqlY
+         7FpQ==
+X-Gm-Message-State: APjAAAVJs8Cb8wVD+w5TT7syaasRLAUzYAF9TrCBG3rofpYd5kVM73Ff
+        dcWZaF9JtVU+Gg0MM+XO+1+n19VsLQ5vZIVksf0=
+X-Google-Smtp-Source: APXvYqwpy0wkkhhf9ipmjbRgmrEAJI6N5SaQzNQ2z75ilDtSMuEnGod5PWv+zB0VGlgyLHDHCTU+WJ1wY+nHifNPqTA=
+X-Received: by 2002:a2e:a0c4:: with SMTP id f4mr2067329ljm.100.1556805166266;
+ Thu, 02 May 2019 06:52:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <55a0abac1c2efc4921588ee87986da43af1eb35a.1556802190.git.agx@sigxcpu.org>
+In-Reply-To: <55a0abac1c2efc4921588ee87986da43af1eb35a.1556802190.git.agx@sigxcpu.org>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 2 May 2019 10:52:40 -0300
+Message-ID: <CAOMZO5B3GqJoGtN42OeukxVXEUxsDRPsgMGf1huKQ7xZFYedZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx8mq: Add dsi_ipg_div
+To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Abel Vesa <abel.vesa@nxp.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         Anson Huang <anson.huang@nxp.com>,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Carlo Caione <ccaione@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: imx8mq: Add dsi_ipg_div
-Date:   Thu,  2 May 2019 15:07:38 +0200
-Message-Id: <55a0abac1c2efc4921588ee87986da43af1eb35a.1556802190.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Carlo Caione <ccaione@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It's defined in imx8mq-clock.h but wasn't assigned yet. It's used as
-clk_tx_esc in the nwl dsi host controller (i.MX8MQ RM, Rev. 0, 01/2018
-Sect. 13.5.3.7.4).
+On Thu, May 2, 2019 at 10:07 AM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
+>
+> It's defined in imx8mq-clock.h but wasn't assigned yet. It's used as
+> clk_tx_esc in the nwl dsi host controller (i.MX8MQ RM, Rev. 0, 01/2018
+> Sect. 13.5.3.7.4).
+>
+> Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
-This is basically a resend January with a slightly more exhaustive
-commit message.
-
- drivers/clk/imx/clk-imx8mq.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index a9b3888aef0c..daf1841b2adb 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -458,6 +458,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	clks[IMX8MQ_CLK_DSI_DBI] = imx8m_clk_composite("dsi_dbi", imx8mq_dsi_dbi_sels, base + 0xbc00);
- 	clks[IMX8MQ_CLK_DSI_ESC] = imx8m_clk_composite("dsi_esc", imx8mq_dsi_esc_sels, base + 0xbc80);
- 	clks[IMX8MQ_CLK_DSI_AHB] = imx8m_clk_composite("dsi_ahb", imx8mq_dsi_ahb_sels, base + 0x9200);
-+	clks[IMX8MQ_CLK_DSI_IPG_DIV] = imx_clk_divider2("dsi_ipg_div", "dsi_ahb", base + 0x9280, 0, 6);
- 	clks[IMX8MQ_CLK_CSI1_CORE] = imx8m_clk_composite("csi1_core", imx8mq_csi1_core_sels, base + 0xbd00);
- 	clks[IMX8MQ_CLK_CSI1_PHY_REF] = imx8m_clk_composite("csi1_phy_ref", imx8mq_csi1_phy_sels, base + 0xbd80);
- 	clks[IMX8MQ_CLK_CSI1_ESC] = imx8m_clk_composite("csi1_esc", imx8mq_csi1_esc_sels, base + 0xbe00);
--- 
-2.20.1
-
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
