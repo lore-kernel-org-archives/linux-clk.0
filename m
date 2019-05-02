@@ -2,123 +2,135 @@ Return-Path: <SRS0=2SAN=TC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098D7C43219
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 00:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB028C43219
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 00:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAA312081C
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 00:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA43C2081C
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 00:53:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="id9MFSi1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iy/Sn6Xa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfEBAVn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 May 2019 20:21:43 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42430 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEBAVm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 20:21:42 -0400
-Received: by mail-pl1-f195.google.com with SMTP id x15so170187pln.9
-        for <linux-clk@vger.kernel.org>; Wed, 01 May 2019 17:21:42 -0700 (PDT)
+        id S1726166AbfEBAxE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 May 2019 20:53:04 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55734 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbfEBAxE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 May 2019 20:53:04 -0400
+Received: by mail-it1-f195.google.com with SMTP id i131so528954itf.5;
+        Wed, 01 May 2019 17:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=J26xK/TYsajFaHvqG0j2f94K7R5CgJ81uUOmoyW1ySo=;
-        b=id9MFSi12QAJGAd/W3zdyzyHMjGBmd8Wy0JaCu+Prx66jU4Zf8Z+YRBM7MU/tVGELs
-         vXlqFGdGneK//N/pjOdMDh7eohn/p7wfe2IWZPWVx4l4JzZqXjI7eqsJ1diaU/QIM4sL
-         7qjTJj1xG7ZfZWsv1O6DmM6YW90Z7ViiN3z9CL50Xq5fPdD07go/jjK1vp3v6YfGbMBE
-         ejAU3TvFndLszoxn8HuI2eHWDlcFJrs99FaCP3sPDkiCdfZIo6+zuZl6QfYirnsVcjC2
-         tJvbtXs53KZxKkTGYGkAdOYXk0fp/Ezua68oeXUH/IFRmlzNz+YIp0ZIz+onlGvAdiVj
-         uXYg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SMeSIjBMoztFLs1N6yeylbhEwFQ8aE16zamS1zR69mw=;
+        b=iy/Sn6XaDIKRiDSuy0xTaguACJf6ApHbDUyojNS1rXStyorLACsb0v6xqDZ/RxD+D7
+         dn7+rhRXc69rcLC/sDFHT/DqJJBU9EbuhBQmC+AoUsq1I1DIPuSLxVNYuSzAxnVZy+LU
+         yfriT2A10Lm2/4Zy1PSYiDXbmIKa0hgDeC0dT6oAIpVXH6xh3kYPPV6EM+hF1KTpLbJZ
+         Nla30v/MTpGqk3M+hYHJEDR9Q1z45PSmeGhXGUv7X13IbgDVk+6RK7Rh7wcvFinFu+vH
+         Yj3avo4TqzqlICz+BG7kCu/IChct8jmUxDs9pnXMWLUa/z4vEcAFYml4gvBh+40F5Usj
+         3uYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=J26xK/TYsajFaHvqG0j2f94K7R5CgJ81uUOmoyW1ySo=;
-        b=d+TA3HnOwsADUWo+CJ/oHbn9u1q3wU4i3nhhZ6BtYxvFvjfvclLqFsJpnDwmoP8RG+
-         AsJ2iPdKtSUdEJk74S07y3KmQ+YhjlDN91s1hBXkstqYmcvfxvgW9V/k5mBmi4BHTYmI
-         aHz6HSW744QyEHlJyIiPKkrncdUmhVJZTusn3ge7na22AbKesxfw3LEcVDROXsYVVx97
-         5qjvFBL086NJgrT4zl18VqDrUes58A9gAzSxUa0eAsAEW+5zzVrCYWPmwoBz3u64f2a6
-         XT5dNlX6yTj2D5Gj7PIWEUCR55JLx8N2ZGB9yK/Zw3wwzXI+0Pu1VVquyEitiJDaSvCb
-         fAHA==
-X-Gm-Message-State: APjAAAU5RLTdF+SvFM6rMpZi3oG4I3UPt6BLBlYf1sgy15AYzeu6yLW7
-        S/rSJV8JIJa2jW1rGAnhVyQiHQ==
-X-Google-Smtp-Source: APXvYqzJafGbTkXFJtaSH9BKk45AzcDPTwsf23PnIvgdu4HmmglxeH2vYEGCAn0ti1vRBYhrztMbnA==
-X-Received: by 2002:a17:902:e405:: with SMTP id ci5mr504855plb.224.1556756501941;
-        Wed, 01 May 2019 17:21:41 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k68sm32341783pfb.146.2019.05.01.17.21.40
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SMeSIjBMoztFLs1N6yeylbhEwFQ8aE16zamS1zR69mw=;
+        b=jVHdkM1eLVj8fd0F5Qp3NZ59MeXG33pIhaj5r2rnFelYqVeptpN1s+q832jhBWkg8M
+         UVaTLwKihCz4K4mLTrIMGQFlRt8H2jdhtZV3l+Rupt7TxTvh5dYhjuc0AFxTmAx7Jnma
+         HeGND1W3NqI0AONWXY5TWdJk70rUYOHdTLljiTHmI1EeT2RnK9I9C6DD6S2odrWp1EZr
+         kLfa6+4dos/qDQbPY9b3jO1b8N4B9kFCTOYN+y6ZOUM6U0hZkLUMlIX0T/0oMEhQBlE5
+         OHe8iZVfpzol6dE3KBNkNZQNnnTVLtyWC2z30kMSxy4uS1aLIjhjUDUCCkbu+Qeb0aT8
+         OZJQ==
+X-Gm-Message-State: APjAAAVywGWpYJYN68igFdGKkrUAt2QJJcItKUPRL++nMWPgVIbAixPa
+        xcmwmYUGS7OVzjVEVDZKrdjFUTgJ
+X-Google-Smtp-Source: APXvYqy3d6dJXuMHx07TIlwjPLHrrzD18rTenNrcq63rPhYmeSCO98a7pjuckVpAlPuBAvYyFxZv3Q==
+X-Received: by 2002:a02:6307:: with SMTP id j7mr525665jac.65.1556758383076;
+        Wed, 01 May 2019 17:53:03 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id d10sm4370934ios.72.2019.05.01.17.52.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 17:21:40 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH] clk: gcc-qcs404: Add PCIe resets
-Date:   Wed,  1 May 2019 17:21:38 -0700
-Message-Id: <20190502002138.10646-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Wed, 01 May 2019 17:53:02 -0700 (PDT)
+Subject: Re: [PATCH v2 2/4] dt-bindings: memory: Add binding for NVIDIA
+ Tegra30 External Memory Controller
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190414202009.31268-1-digetx@gmail.com>
+ <20190414202009.31268-3-digetx@gmail.com> <20190429220542.GA17924@bogus>
+ <137c766e-66f6-828a-5c3b-f526d66d37bd@gmail.com>
+ <CAL_JsqKCWytgQEDPLX27xdaDrARtHssbhFcL47RO0zfECm0Gig@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <27d24f4e-cf4c-b2d1-140a-5dcef021fa40@gmail.com>
+Date:   Thu, 2 May 2019 03:52:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqKCWytgQEDPLX27xdaDrARtHssbhFcL47RO0zfECm0Gig@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enabling PCIe requires several of the PCIe related resets from GCC, so
-add them all.
+02.05.2019 3:17, Rob Herring пишет:
+> On Wed, May 1, 2019 at 7:06 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> 30.04.2019 1:05, Rob Herring пишет:
+>>> On Sun, Apr 14, 2019 at 11:20:07PM +0300, Dmitry Osipenko wrote:
+>>>> Add device-tree binding for NVIDIA Tegra30 External Memory Controller.
+>>>> The binding is based on the Tegra124 EMC binding since hardware is
+>>>> similar, although there are couple significant differences.
+>>>
+>>> My comments on Tegra124 binding apply here.
+>>
+>> The common timing definition doesn't fully match the definition that is
+>> used by Tegra's Memory Controller, thus the DQS (data strobe) timing
+>> parameter is comprised of multiple sub-parameters that describe how to
+>> generate the strobe in hardware. There are also more additional
+>> parameters that are specific to Tegra and they are individually
+>> characterized for each memory model and clock rate. Hence the common
+>> timing definition isn't usable.
+> 
+> I don't understand. Every PC in the world can work with any DIMM
+> (within a given generation) just with SPD data. Why is that not
+> sufficient here?
 
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+Because this is not a standard PC, but a custom embedded hardware that
+is simpler and also doesn't fully follow the standards in some cases.
 
-Changes since v2:
-- Rebased patch
+> In any case, it seems for Tegra124 a different approach is going to be
+> taken. Seems like an "avoid DT" solution to me, but if it's contained
+> within the firmware it's not my problem.
 
- drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
- include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
- 2 files changed, 14 insertions(+)
+My above comment really applies to all Terga's.
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index a54807eb3b28..29cf464dd2c8 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2766,6 +2766,13 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
- 	[GCC_PCIE_0_PHY_BCR] = { 0x3e004 },
- 	[GCC_PCIE_0_LINK_DOWN_BCR] = { 0x3e038 },
- 	[GCC_PCIEPHY_0_PHY_BCR] = { 0x3e03c },
-+	[GCC_PCIE_0_AXI_MASTER_STICKY_ARES] = { 0x3e040, 6},
-+	[GCC_PCIE_0_AHB_ARES] = { 0x3e040, 5 },
-+	[GCC_PCIE_0_AXI_SLAVE_ARES] = { 0x3e040, 4 },
-+	[GCC_PCIE_0_AXI_MASTER_ARES] = { 0x3e040, 3 },
-+	[GCC_PCIE_0_CORE_STICKY_ARES] = { 0x3e040, 2 },
-+	[GCC_PCIE_0_SLEEP_ARES] = { 0x3e040, 1 },
-+	[GCC_PCIE_0_PIPE_ARES] = { 0x3e040, 0 },
- 	[GCC_EMAC_BCR] = { 0x4e000 },
- };
- 
-diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-index 454b3f43f538..5959399fed2e 100644
---- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-+++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-@@ -166,5 +166,12 @@
- #define GCC_PCIEPHY_0_PHY_BCR				12
- #define GCC_EMAC_BCR					13
- #define GCC_CDSP_RESTART				14
-+#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES		14
-+#define GCC_PCIE_0_AHB_ARES				15
-+#define GCC_PCIE_0_AXI_SLAVE_ARES			16
-+#define GCC_PCIE_0_AXI_MASTER_ARES			17
-+#define GCC_PCIE_0_CORE_STICKY_ARES			18
-+#define GCC_PCIE_0_SLEEP_ARES				19
-+#define GCC_PCIE_0_PIPE_ARES				20
- 
- #endif
--- 
-2.18.0
+The Tegra210 is also a bit more complicated case because of the
+proprietary signed firmware that can't be easily replaced with
+opensource alternative without special hacks, but AFAIK the unofficial
+opensource firmware will be available in some form for at least one
+consumer device (Nintendo Switch).
 
+Please write a detailed comment to the Tegra210's patch, saying what you
+would want to see changed. I'm sure Joseph will try to do his best.
+
+Note that it is always possible to define a proper device tree binding
+and then also "unofficially" support the downstream binding, IIRC that's
+what some drivers are already doing in upstream kernel. So I think you
+could just demand for the proper binding regardless of the firmware
+situation.
