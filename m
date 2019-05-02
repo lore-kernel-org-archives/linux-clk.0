@@ -2,50 +2,43 @@ Return-Path: <SRS0=2SAN=TC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AA0C43219
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 20:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A42FC43219
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 21:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E952B2081C
-	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 20:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556830002;
-	bh=+iqD5SnNrrJIdoo7MTK34t9LYNPBy0FRPLXiJ6oRojU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=asX3NuvWclKxE13P//fi49nPtlqT44K5N2thKmpaALqk5viEeXfbWzJY/9Kwl/HIE
-	 LgBjIdZE8c7rddS4zKDjZFQ3ozpUnq8ISpo+RA9MVQxvKCndQiehMGWcYp4OTujtNp
-	 HNNNLSz1SOzXGy54WFVmQ+pw9dpDDDe4HCrB4VlE=
+	by mail.kernel.org (Postfix) with ESMTP id D97BC2081C
+	for <linux-clk@archiver.kernel.org>; Thu,  2 May 2019 21:25:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="W9P9cxNj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbfEBUql (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 May 2019 16:46:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54650 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbfEBUql (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 May 2019 16:46:41 -0400
-Received: from mail.kernel.org (unknown [104.132.0.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB4102081C;
-        Thu,  2 May 2019 20:46:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556830000;
-        bh=+iqD5SnNrrJIdoo7MTK34t9LYNPBy0FRPLXiJ6oRojU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=f4IlykwBG55mpJCrj5NizV8957nyprp6IG1ARqmQm9I+/q0q+FgFsUMG+LzUnLsC+
-         ERBDsrTPwZNMdeE/4JRDAln9CevEk9EuoZ6IGydWhpalC7HzNXMzXxynvdK1NE8LFu
-         cRgbp2RmVX7Ero0bzGbnF5APxLXAVyWx2J+E3OIY=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.1-rc7
-Date:   Thu,  2 May 2019 13:46:40 -0700
-Message-Id: <20190502204640.26046-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+        id S1726030AbfEBVZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 May 2019 17:25:19 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:52912 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbfEBVZT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 May 2019 17:25:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1556832318; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gdt3tlRdRDdELKQiFYlbSJ7Gl5xHGd3LofHxFVVvckM=;
+        b=W9P9cxNj1+AsQhMQgA4Zm0CHdBm5QbAoedxElycG2YMybnJ1MH6sQTwQ7HmYsYiSZdZXFZ
+        yQ5jWUPGPA1klbgNEzFFqfsBZ+4uFhjLpA15xD3w69Cqlvs/XU3sMO0/K6TIDbSPq7RtQC
+        y3AI2c5+V0DVY8ZU1ysLrlzsR4UzaCM=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        od@zcrc.me, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 2/5] clk: ingenic/jz4740: Fix incorrect dividers for main clocks
+Date:   Thu,  2 May 2019 23:24:59 +0200
+Message-Id: <20190502212502.24330-2-paul@crapouillou.net>
+In-Reply-To: <20190502212502.24330-1-paul@crapouillou.net>
+References: <20190502212502.24330-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -53,40 +46,81 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit f89b9e1be7da8bb0aac667a0206a00975cefe6d3:
+The main clocks (cclk, hclk, pclk, mclk, lcd) were using
+incorrect dividers, and thus reported an incorrect rate.
 
-  clk: imx: Fix PLL_1416X not rounding rates (2019-04-12 14:21:43 -0700)
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/jz4740-cgu.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to b88c9f4129dcec941e5a26508e991c08051ed1ac:
-
-  clk: Add missing stubs for a few functions (2019-04-25 08:19:15 -0700)
-
-----------------------------------------------------------------
-Two fixes for the NKMP clks on Allwinner SoCs, a locking fix for clkdev
-where we forgot to hold a lock while iterating a list that can change,
-and finally a build fix that adds some stubs for clk APIs that are used
-by devfreq drivers on platforms without the clk APIs.
-
-----------------------------------------------------------------
-Dmitry Osipenko (1):
-      clk: Add missing stubs for a few functions
-
-Jernej Skrabec (2):
-      clk: sunxi-ng: nkmp: Avoid GENMASK(-1, 0)
-      clk: sunxi-ng: nkmp: Explain why zero width check is needed
-
-Stephen Boyd (2):
-      clkdev: Hold clocks_mutex while iterating clocks list
-      Merge tag 'clk-fixes-for-5.1' of https://git.kernel.org/.../sunxi/linux into clk-fixes
-
- drivers/clk/clkdev.c            |  5 +++++
- drivers/clk/sunxi-ng/ccu_nkmp.c | 24 +++++++++++++++++++-----
- include/linux/clk.h             | 16 ++++++++++++++++
- 3 files changed, 40 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index b86edd328249..ec6c71806687 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -57,6 +57,10 @@ static const s8 pll_od_encoding[4] = {
+ 	0x0, 0x1, -1, 0x3,
+ };
+ 
++static const u8 jz4740_cgu_cpccr_div_table[] = {
++	1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
++};
++
+ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 
+ 	/* External clocks */
+@@ -96,31 +100,46 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 	[JZ4740_CLK_CCLK] = {
+ 		"cclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1,
++			jz4740_cgu_cpccr_div_table,
++		},
+ 	},
+ 
+ 	[JZ4740_CLK_HCLK] = {
+ 		"hclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1,
++			jz4740_cgu_cpccr_div_table,
++		},
+ 	},
+ 
+ 	[JZ4740_CLK_PCLK] = {
+ 		"pclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1,
++			jz4740_cgu_cpccr_div_table,
++		},
+ 	},
+ 
+ 	[JZ4740_CLK_MCLK] = {
+ 		"mclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1,
++			jz4740_cgu_cpccr_div_table,
++		},
+ 	},
+ 
+ 	[JZ4740_CLK_LCD] = {
+ 		"lcd", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 16, 1, 5, 22, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 16, 1, 5, 22, -1, -1,
++			jz4740_cgu_cpccr_div_table,
++		},
+ 		.gate = { CGU_REG_CLKGR, 10 },
+ 	},
+ 
 -- 
-Sent by a computer through tubes
+2.21.0.593.g511ec345e18
+
