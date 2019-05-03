@@ -2,140 +2,136 @@ Return-Path: <SRS0=gieW=TD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0EEC43219
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 08:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76101C46470
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 09:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB852075C
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 08:21:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45E2F206DF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 09:47:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UA17r3XT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725789AbfECIVo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 May 2019 04:21:44 -0400
-Received: from mga04.intel.com ([192.55.52.120]:30207 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725777AbfECIVo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 May 2019 04:21:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 01:21:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
-   d="scan'208";a="296629461"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 03 May 2019 01:21:42 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hMTRt-0005fY-PN; Fri, 03 May 2019 16:21:41 +0800
-Date:   Fri, 3 May 2019 16:21:21 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     kbuild-all@01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [clk:clk-sifive-fu540 3/3]
- drivers/clk/sifive/fu540-prci.c:534:41-42: WARNING: Use ARRAY_SIZE
-Message-ID: <201905031619.nJ5l01Tg%lkp@intel.com>
+        id S1727059AbfECJrj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 May 2019 05:47:39 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52205 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfECJrj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 May 2019 05:47:39 -0400
+Received: by mail-wm1-f66.google.com with SMTP id t76so6344546wmt.1;
+        Fri, 03 May 2019 02:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hKKanKzajc50t11Dd5aKaiR0AfOXx84AGrAuPRlKLjs=;
+        b=UA17r3XTHeasbaxo2HgeTqh666U18nnHTjZ5rdfSeE6j4Td0LmvJ+Hr6LjoguBOcfN
+         gCsq7dIZwojHe4/oa2YouOTZq3r9HgIHLFisQBXqX6sdJovW/mzgQG19n2GpScE0urd+
+         ELDuxgmq/6seVyBww+ELyG1iFKsgqquCCLleMTF5IHTiL4DpcXqpZcXG6YJ9zkMRHTf9
+         5iWv+M9luBRoCfqlaH9QN1tDpPVja3ZCXosLCwiB28KDVeYWn6l3o3Tyz+Ec3+kERcIr
+         kCfIVK5m5gi4+fKAbK1i03VQBJmbZnXzonWg4rHYU42xQLHSyw9Lh3CtHt12ugcOaoBl
+         f5Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hKKanKzajc50t11Dd5aKaiR0AfOXx84AGrAuPRlKLjs=;
+        b=OELTGYV7YBPoQzdJc6UZPQv5x8zItMNeCm5pIO1akRCNxG2WVk44ckfDlENc1uKQHO
+         DYOmaFIvpjwvcQYdklwSSZ2QFkDWIK+avnBGEpWWiCqIanC961pJFAJB1GWaoxWXtdoz
+         ep0tQkaXvaB0ZsVr21IUOKScFT3GX6HmObXVL1p8Hcrbxb99Vl7yA98DRZaVn/qv3W2L
+         vxG47ErGI0c1Xl8Fl+Ju1CGgDer4amKlZ70syav3VfTmSOiibWncVN2x45TcloTu1UQ8
+         pTPK0az5QDfWmNpOuOjdF5zMwKCc/wJsEwJUnPy/V/0IEWGpGDA2i5xJwPZjnLfdkLJP
+         AxEw==
+X-Gm-Message-State: APjAAAWYBfe5vu7k4MMBqEATUZ+y/y1QtGvtAOY79ZMVcK0kqXqV++34
+        LLM6NCGm2ryLKsRebXw7cYvJRLaiAMuyPmHYFsI=
+X-Google-Smtp-Source: APXvYqzaVkmBVr6fBHeaBc5eruyEJ1T9FCYhw4WpOJERBXB50acBkUSBAvgkg4NlFT2Y3Brwgr0ZAB6Lzk1UlfZDHQs=
+X-Received: by 2002:a1c:9941:: with SMTP id b62mr1460156wme.76.1556876857611;
+ Fri, 03 May 2019 02:47:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190502122657.15577-1-jonas.gorski@gmail.com>
+ <20190502122657.15577-2-jonas.gorski@gmail.com> <27a90951-9525-c9b2-2c61-1a5db345cd70@gmail.com>
+In-Reply-To: <27a90951-9525-c9b2-2c61-1a5db345cd70@gmail.com>
+From:   Jonas Gorski <jonas.gorski@gmail.com>
+Date:   Fri, 3 May 2019 11:47:55 +0200
+Message-ID: <CAOiHx=mbvqN16NG-gEOjVcSm6rV0P7iZd4XfzPHNS+Ns03+V_A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] devicetree: document the BCM63XX gated clock bindings
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-sifive-fu540
-head:   85ed1c299cca9beb5df6006361cf18bfa2305836
-commit: 85ed1c299cca9beb5df6006361cf18bfa2305836 [3/3] clk: sifive: add a driver for the SiFive FU540 PRCI IP block
+On Fri, 3 May 2019 at 03:44, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+>
+> On 5/2/2019 5:26 AM, Jonas Gorski wrote:
+> > Add binding documentation for the gated clock controller found on MIPS
+> > based BCM63XX SoCs.
+> >
+> > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+Thanks!
+
+>
+> > ---
+> >  .../bindings/clock/brcm,bcm63xx-clocks.txt         | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt
+> > new file mode 100644
+> > index 000000000000..3041657e2f96
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt
+> > @@ -0,0 +1,22 @@
+> > +Gated Clock Controller Bindings for MIPS based BCM63XX SoCs
+> > +
+> > +Required properties:
+> > +- compatible: must be one of:
+> > +      "brcm,bcm3368-clocks"
+> > +      "brcm,bcm6328-clocks"
+> > +      "brcm,bcm6358-clocks"
+> > +      "brcm,bcm6362-clocks"
+> > +      "brcm,bcm6368-clocks"
+> > +      "brcm,bcm63268-clocks"
+>
+> We could always add 6348/6338 to that list later one.
+
+That's the plan*. But currently neither one is supported by
+BMIPS_GENERIC, which was my starting point. And making BCM63XX use the
+driver is ... complicated, due to (important) consumers not being
+platform drivers (the MPI/PCIe controller codes). And they can't be
+just converted to platform drivers, as they should then be non-legacy
+PCI controller drivers, so a full rewrite is needed.
+
+So let's stick with BMIPS_GENERIC first, else we never get anything
+done ;-). In the end BCM63XX should go away anyway, once BMIPS_GENERIC
+has reached feature parity.
 
 
-coccinelle warnings: (new ones prefixed by >>)
+Regards
+Jonas
 
->> drivers/clk/sifive/fu540-prci.c:534:41-42: WARNING: Use ARRAY_SIZE
+* if it even makes sense, as these are quite old, and systems will
+quite struggle running a modern kernel/OS.
 
-vim +534 drivers/clk/sifive/fu540-prci.c
-
-   508	
-   509	/**
-   510	 * __prci_register_clocks() - register clock controls in the PRCI with Linux
-   511	 * @dev: Linux struct device *
-   512	 *
-   513	 * Register the list of clock controls described in __prci_init_plls[] with
-   514	 * the Linux clock framework.
-   515	 *
-   516	 * Return: 0 upon success or a negative error code upon failure.
-   517	 */
-   518	static int __prci_register_clocks(struct device *dev, struct __prci_data *pd)
-   519	{
-   520		struct clk_init_data init;
-   521		struct __prci_clock *pic;
-   522		int parent_count, i, clk_hw_count, r;
-   523	
-   524		parent_count = of_clk_get_parent_count(dev->of_node);
-   525		if (parent_count != EXPECTED_CLK_PARENT_COUNT) {
-   526			dev_err(dev, "expected only two parent clocks, found %d\n",
-   527				parent_count);
-   528			return -EINVAL;
-   529		}
-   530	
-   531		memset(&init, 0, sizeof(struct clk_init_data));
-   532	
-   533		/* Register PLLs */
- > 534		clk_hw_count = sizeof(__prci_init_clocks) / sizeof(struct __prci_clock);
-   535	
-   536		for (i = 0; i < clk_hw_count; ++i) {
-   537			pic = &__prci_init_clocks[i];
-   538	
-   539			init.name = pic->name;
-   540			init.parent_names = &pic->parent_name;
-   541			init.num_parents = 1;
-   542			init.ops = pic->ops;
-   543			pic->hw.init = &init;
-   544	
-   545			pic->pd = pd;
-   546	
-   547			if (pic->pwd)
-   548				__prci_wrpll_read_cfg(pd, pic->pwd);
-   549	
-   550			r = devm_clk_hw_register(dev, &pic->hw);
-   551			if (r) {
-   552				dev_warn(dev, "Failed to register clock %s: %d\n",
-   553					 init.name, r);
-   554				return r;
-   555			}
-   556	
-   557			r = clk_hw_register_clkdev(&pic->hw, pic->name, dev_name(dev));
-   558			if (r) {
-   559				dev_warn(dev, "Failed to register clkdev for %s: %d\n",
-   560					 init.name, r);
-   561				return r;
-   562			}
-   563	
-   564			pd->hw_clks.hws[i] = &pic->hw;
-   565		}
-   566	
-   567		pd->hw_clks.num = i;
-   568	
-   569		r = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-   570						&pd->hw_clks);
-   571		if (r) {
-   572			dev_err(dev, "could not add hw_provider: %d\n", r);
-   573			return r;
-   574		}
-   575	
-   576		return 0;
-   577	}
-   578	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Jonas
