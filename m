@@ -2,136 +2,109 @@ Return-Path: <SRS0=gieW=TD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76101C46470
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 09:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0806DC04AAB
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 11:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E2F206DF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 09:47:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4FC82089E
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 11:19:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UA17r3XT"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="I8LbVOy2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfECJrj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 May 2019 05:47:39 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52205 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfECJrj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 May 2019 05:47:39 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t76so6344546wmt.1;
-        Fri, 03 May 2019 02:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hKKanKzajc50t11Dd5aKaiR0AfOXx84AGrAuPRlKLjs=;
-        b=UA17r3XTHeasbaxo2HgeTqh666U18nnHTjZ5rdfSeE6j4Td0LmvJ+Hr6LjoguBOcfN
-         gCsq7dIZwojHe4/oa2YouOTZq3r9HgIHLFisQBXqX6sdJovW/mzgQG19n2GpScE0urd+
-         ELDuxgmq/6seVyBww+ELyG1iFKsgqquCCLleMTF5IHTiL4DpcXqpZcXG6YJ9zkMRHTf9
-         5iWv+M9luBRoCfqlaH9QN1tDpPVja3ZCXosLCwiB28KDVeYWn6l3o3Tyz+Ec3+kERcIr
-         kCfIVK5m5gi4+fKAbK1i03VQBJmbZnXzonWg4rHYU42xQLHSyw9Lh3CtHt12ugcOaoBl
-         f5Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hKKanKzajc50t11Dd5aKaiR0AfOXx84AGrAuPRlKLjs=;
-        b=OELTGYV7YBPoQzdJc6UZPQv5x8zItMNeCm5pIO1akRCNxG2WVk44ckfDlENc1uKQHO
-         DYOmaFIvpjwvcQYdklwSSZ2QFkDWIK+avnBGEpWWiCqIanC961pJFAJB1GWaoxWXtdoz
-         ep0tQkaXvaB0ZsVr21IUOKScFT3GX6HmObXVL1p8Hcrbxb99Vl7yA98DRZaVn/qv3W2L
-         vxG47ErGI0c1Xl8Fl+Ju1CGgDer4amKlZ70syav3VfTmSOiibWncVN2x45TcloTu1UQ8
-         pTPK0az5QDfWmNpOuOjdF5zMwKCc/wJsEwJUnPy/V/0IEWGpGDA2i5xJwPZjnLfdkLJP
-         AxEw==
-X-Gm-Message-State: APjAAAWYBfe5vu7k4MMBqEATUZ+y/y1QtGvtAOY79ZMVcK0kqXqV++34
-        LLM6NCGm2ryLKsRebXw7cYvJRLaiAMuyPmHYFsI=
-X-Google-Smtp-Source: APXvYqzaVkmBVr6fBHeaBc5eruyEJ1T9FCYhw4WpOJERBXB50acBkUSBAvgkg4NlFT2Y3Brwgr0ZAB6Lzk1UlfZDHQs=
-X-Received: by 2002:a1c:9941:: with SMTP id b62mr1460156wme.76.1556876857611;
- Fri, 03 May 2019 02:47:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190502122657.15577-1-jonas.gorski@gmail.com>
- <20190502122657.15577-2-jonas.gorski@gmail.com> <27a90951-9525-c9b2-2c61-1a5db345cd70@gmail.com>
-In-Reply-To: <27a90951-9525-c9b2-2c61-1a5db345cd70@gmail.com>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Fri, 3 May 2019 11:47:55 +0200
-Message-ID: <CAOiHx=mbvqN16NG-gEOjVcSm6rV0P7iZd4XfzPHNS+Ns03+V_A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] devicetree: document the BCM63XX gated clock bindings
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        id S1727669AbfECLTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 May 2019 07:19:34 -0400
+Received: from mail-eopbgr00082.outbound.protection.outlook.com ([40.107.0.82]:40769
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726396AbfECLTe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 May 2019 07:19:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+TmTahHCBNWFPCJExfqYFjyX7VBn88No3244GdyV/vM=;
+ b=I8LbVOy2i7C2r+19dXpQgrMJi2romUcH3UzilzpfHukf11JciV7kqHBOy8UvoJX0lRJ9OYGXkgbH1wrAXGXrTz9R03dkMD0WBovsJaxqo5COQZ9wVIYtUXvuoo7cjZz80szootl0Qy4ErWitrSY1GK/XDTKMHfV1mVH8vcH31Z4=
+Received: from AM0PR04MB6434.eurprd04.prod.outlook.com (20.179.252.215) by
+ AM0PR04MB5859.eurprd04.prod.outlook.com (20.178.202.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Fri, 3 May 2019 11:19:30 +0000
+Received: from AM0PR04MB6434.eurprd04.prod.outlook.com
+ ([fe80::19be:75a:9fe:7cec]) by AM0PR04MB6434.eurprd04.prod.outlook.com
+ ([fe80::19be:75a:9fe:7cec%7]) with mapi id 15.20.1856.008; Fri, 3 May 2019
+ 11:19:30 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] gdb/scripts: Improve lx-clk-summary
+Thread-Topic: [PATCH 0/2] gdb/scripts: Improve lx-clk-summary
+Thread-Index: AQHVAaITaVxkbZFe1kuCtvvT+0qG3Q==
+Date:   Fri, 3 May 2019 11:19:30 +0000
+Message-ID: <cover.1556881728.git.leonard.crestez@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [89.37.124.34]
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: VE1PR08CA0027.eurprd08.prod.outlook.com
+ (2603:10a6:803:104::40) To AM0PR04MB6434.eurprd04.prod.outlook.com
+ (2603:10a6:208:16c::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2ac0f060-6232-4c4c-2551-08d6cfb93621
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5859;
+x-ms-traffictypediagnostic: AM0PR04MB5859:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM0PR04MB585956A3F5DD0939258C3FB7EE350@AM0PR04MB5859.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0026334A56
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(39860400002)(396003)(189003)(199004)(478600001)(256004)(66066001)(966005)(14454004)(6306002)(6436002)(386003)(66946007)(6512007)(2616005)(110136005)(316002)(476003)(6486002)(8676002)(66476007)(66556008)(64756008)(66446008)(99286004)(53936002)(3846002)(81156014)(81166006)(54906003)(36756003)(6116002)(68736007)(8936002)(50226002)(44832011)(73956011)(2906002)(486006)(305945005)(52116002)(4326008)(102836004)(6506007)(25786009)(5660300002)(186003)(26005)(7736002)(86362001)(71200400001)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5859;H:AM0PR04MB6434.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5YzIV5TdvP9RDWtj+/pFCW8PQ14PQYUvURPgPhaOY5ErwdqhXCodMjZ5PVXztfvQfNar0fnp8HMMmqXpvjhcoW9BDxGsItTEpqlS95i3+nAhiVWplXVTORCagjShIx72z/8/CLsaDIzBQsLW5E4mGznVYG/DMHRfR5rBoZF9MoY47cM0/jXRt7QL+kbeZZzo4bMqJyB70vqj3T3UI96zMOY1Ts3zhGkwN148MdU7Lkt0RqiVFV+HB8vDQjmdp6RL8t3pMwwQwpGLlmiyLwWjsUEMkHVOpSM0IazG7NaIZvNxFdSgT3YGdUr3oNlXyVswSrg/bdvYJcUij3edR+33QgTOo5IfRsyNfVaLqp1sGMxN2bn+5JwQb5kdN15NVoL/MpCoPrz3mjakmhXO6NqI8TxYWYFzs5dFjwL0tXfyXTE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ac0f060-6232-4c4c-2551-08d6cfb93621
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 May 2019 11:19:30.8172
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5859
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 3 May 2019 at 03:44, Florian Fainelli <f.fainelli@gmail.com> wrote:
->
->
->
-> On 5/2/2019 5:26 AM, Jonas Gorski wrote:
-> > Add binding documentation for the gated clock controller found on MIPS
-> > based BCM63XX SoCs.
-> >
-> > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
->
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-
-Thanks!
-
->
-> > ---
-> >  .../bindings/clock/brcm,bcm63xx-clocks.txt         | 22 ++++++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt
-> > new file mode 100644
-> > index 000000000000..3041657e2f96
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-clocks.txt
-> > @@ -0,0 +1,22 @@
-> > +Gated Clock Controller Bindings for MIPS based BCM63XX SoCs
-> > +
-> > +Required properties:
-> > +- compatible: must be one of:
-> > +      "brcm,bcm3368-clocks"
-> > +      "brcm,bcm6328-clocks"
-> > +      "brcm,bcm6358-clocks"
-> > +      "brcm,bcm6362-clocks"
-> > +      "brcm,bcm6368-clocks"
-> > +      "brcm,bcm63268-clocks"
->
-> We could always add 6348/6338 to that list later one.
-
-That's the plan*. But currently neither one is supported by
-BMIPS_GENERIC, which was my starting point. And making BCM63XX use the
-driver is ... complicated, due to (important) consumers not being
-platform drivers (the MPI/PCIe controller codes). And they can't be
-just converted to platform drivers, as they should then be non-legacy
-PCI controller drivers, so a full rewrite is needed.
-
-So let's stick with BMIPS_GENERIC first, else we never get anything
-done ;-). In the end BCM63XX should go away anyway, once BMIPS_GENERIC
-has reached feature parity.
-
-
-Regards
-Jonas
-
-* if it even makes sense, as these are quite old, and systems will
-quite struggle running a modern kernel/OS.
-
-Jonas
+VGhlIGVhcmxpZXIgc2VyaWVzIGFkZGluZyBjbGsgc3VwcG9ydCB0byBnZGIvc2NyaXB0cyB3YXMg
+cXVpY2tseQ0KYWNjZXB0ZWQgYnV0IHNvbWUgY29uY2VybnMgd2VyZSByYWlzZWQgYnkgU3RlcGhl
+biBCb3lkIHNvIHRoaXMgc2VyaWVzDQphdHRlbXB0cyB0byBhZGRyZXNzIHRoZW0uDQoNCkxpbmsg
+dG8gcHJldmlvdXMgc2VyaWVzOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOS80LzIyLzU1DQoN
+ClRoaXMgaXMgbm90IGEgdjIgYW5kIHNxdWFzaGluZyBpcyBub3QgZXhwZWN0ZWQuDQoNCkZpZWxk
+cyBvdGhlciB0aGFuIGNsayByYXRlIG5vdCBjb3ZlcmVkIGJlY2F1c2UgdGhleSdyZSBtdWNoIG1v
+cmUgcmFyZWx5DQp1c2VkIGFuZCBjYWNoZSBsb2dpYyBjYW4gZ2V0IG1vcmUgY29tcGxpY2F0ZWQg
+YW5kIGJyaXR0bGUuDQoNCkxYX0dEQlBBUlNFRCBpcyB1c2VkIGluIGNvbnN0YW50cy5weS5pbiBi
+ZWNhdXNlIHB5dGhvbiBkb2VzIG5vdA0KdW5kZXJzdGFuZCBDIGludGVnZXIgbGl0ZXJhbCBzdWZm
+aXhlcyBsaWtlIHRoZSAiMVVMIiBmcm9tIHRoZSBkZWZpbml0aW9uDQpvZiBCSVQoKSB1c2VkIGJ5
+IENMS19HRVRfUkFURV9OT0NBQ0hFLiBBbHRlcm5hdGl2ZSB3b3JrYXJvdW5kcyB3b3VsZCBiZQ0K
+aGFja2luZyBhd2F5IFVMIHN1ZmZpeGVzIHdpdGggc2VkIG9yIHJlZGVmaW5pbmcgQklUJmNvIGJ1
+dCByZWx5aW5nIG9uDQpnZGIgZXZhbHVhdGlvbiBpcyBlYXNpZXIgYW5kIG11Y2ggbW9yZSBmbGV4
+aWJsZS4NCg0KTGVvbmFyZCBDcmVzdGV6ICgyKToNCiAgc2NyaXB0cy9nZGI6IENsZWFudXAgZXJy
+b3IgaGFuZGxpbmcgaW4gbGlzdCBoZWxwZXJzDQogIHNjcmlwdHMvZ2RiOiBQcmludCBjYWNoZWQg
+cmF0ZSBpbiBseC1jbGstc3VtbWFyeQ0KDQogc2NyaXB0cy9nZGIvbGludXgvY2xrLnB5ICAgICAg
+ICAgIHwgMjEgKysrKysrKysrKysrKystLS0tLS0tDQogc2NyaXB0cy9nZGIvbGludXgvY29uc3Rh
+bnRzLnB5LmluIHwgIDQgKysrKw0KIHNjcmlwdHMvZ2RiL2xpbnV4L2xpc3RzLnB5ICAgICAgICB8
+IDEwICsrLS0tLS0tLS0NCiAzIGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDE1IGRl
+bGV0aW9ucygtKQ0KDQotLSANCjIuMTcuMQ0KDQo=
