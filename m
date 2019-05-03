@@ -2,94 +2,92 @@ Return-Path: <SRS0=gieW=TD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B97C43219
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 14:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B97C004C9
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 15:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF1E2205ED
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 14:36:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hg2G70/I"
+	by mail.kernel.org (Postfix) with ESMTP id 21B112087F
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 15:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556899062;
+	bh=AUKU07ZUFBcme7h7KpoCXxRbhp++Lt8tHdh+MTSYDRU=;
+	h=In-Reply-To:References:To:Cc:From:Subject:Date:List-ID:From;
+	b=wuv7HPX2eENRKr7pa9FVIgq79Zkk3He8fLHVyLCcWnnXP1cEclNvB9amPSV0blATJ
+	 hSrJYhP+jA+IK5o5jCITmeTrcDD10Ly2Im09B1G8kpr0b762jzDZ4IMIfeIfPj9681
+	 gCo2Jiejoqn7NsUjed66XDdRPNmEMFGCRw/wuPK4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbfECOgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 May 2019 10:36:40 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42273 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfECOgj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 May 2019 10:36:39 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l2so8175020wrb.9;
-        Fri, 03 May 2019 07:36:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9LOlOd4BnNhf1pDjGDrzR/ZKkfoXDSgbpZmiFhx/+So=;
-        b=Hg2G70/IF42hwa2sC6gm/jdkqyjwPHSzvqPkqfP1jo0BUp6RNAnh5BIQm/+kAWYTW8
-         91kQZlHD9Wfl0j/ZWV3Y5J2X70HDKI4N9yYIt5LqnfHnjyaFTxUbp8yeO5vlU4ytOTIq
-         sGeAethRyn+cfdzPBCX297FcoC0C1YKqiNcVyyGRixQXPnbBwJFeyvrwMTTf8w0tv+T4
-         vV9dT0FTqhNvEvfBYf9YYrjQn+KVqq76StJ3fI7jgWazxQ/rfFGgV0aG1EN7C2TCyxOo
-         Kq3ScrICKPE1q3pCT/qoVllfBz8l/des4kRK22/UQ5a/Rs8cYRDXuX/raRqeVM2F2zqo
-         LveQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9LOlOd4BnNhf1pDjGDrzR/ZKkfoXDSgbpZmiFhx/+So=;
-        b=IL3aO0mw9uc7IEle5vKz6F6kFd/W6ipGd98S+9+OTie5QUM/TnotTbpnEvmD7JTs91
-         9RDmWGQtXYYdm039PsqHUbDZsHzJNLlQdY9xw407RuUyby0xplk8TctnOFaQR65Sc3VN
-         0EaTIZykuNJnyU3yvxivQKZM23EiMwhT3764meMEvafFC6MFfbtVZVTBQLUXhsY1r0Br
-         9Yv3ppsrRsywCkaudJh5L3y4RHr4DTZvnKfxi2UcLeQZkrK5QMWiEvcRNXT3HRgEmCnn
-         oJkFX3z/I84OKlcg4X7rRxV9Hz9I2Xlx3QAWe9cohvzOvSgaBgaz2GkOJAnlQqYTzfkQ
-         7Axg==
-X-Gm-Message-State: APjAAAU+r1L+9ImqqAsECwBYCDjEf0qATGK8YOyuz46C9CUMUHixHw/Q
-        Day00EqHCvYn9axqA45D0hs=
-X-Google-Smtp-Source: APXvYqwPvEswxGgTxmceKzFYWP1rt3HvGjUS5zfk5glnnt2V0zX2AeQo2kgXS1/hJAMaI+XIGfIWqQ==
-X-Received: by 2002:adf:b646:: with SMTP id i6mr7217752wre.12.1556894198184;
-        Fri, 03 May 2019 07:36:38 -0700 (PDT)
-Received: from [192.168.1.33] (193.red-88-21-103.staticip.rima-tde.net. [88.21.103.193])
-        by smtp.gmail.com with ESMTPSA id o6sm3174417wre.60.2019.05.03.07.36.36
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 May 2019 07:36:37 -0700 (PDT)
-Subject: Re: [PATCH 3/3] MIPS: BMIPS: add clock controller nodes
-To:     Jonas Gorski <jonas.gorski@gmail.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-References: <20190502122657.15577-1-jonas.gorski@gmail.com>
- <20190502122657.15577-4-jonas.gorski@gmail.com>
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
-Openpgp: url=http://pgp.mit.edu/pks/lookup?op=get&search=0xE3E32C2CDEADC0DE
-Message-ID: <ca21b81a-9772-039a-82be-e339f2a5ff16@amsat.org>
-Date:   Fri, 3 May 2019 16:36:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728310AbfECP5l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 May 2019 11:57:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728282AbfECP5l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 May 2019 11:57:41 -0400
+Received: from localhost (unknown [104.132.0.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E136A2075C;
+        Fri,  3 May 2019 15:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556899061;
+        bh=AUKU07ZUFBcme7h7KpoCXxRbhp++Lt8tHdh+MTSYDRU=;
+        h=In-Reply-To:References:To:Cc:From:Subject:Date:From;
+        b=iI/v3AxYZ3PJnJf9fEElJ2Nayg2jbyzgtTKyeB6wlFN+K94YWkHAx/BRhkDtU21h9
+         PgnpcxZOLaP0pqK/8Zixe3GJVBZwSih16RDfnV+iabXZLPjyUNmtVPxruD55BWUB3d
+         BuTjUxT025pMKA56mDZaoNKJObKLJYbIfOkqv0rw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190502122657.15577-4-jonas.gorski@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <AM0PR04MB4211B63333AB7C50497AE17680350@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1556585557-28795-1-git-send-email-Anson.Huang@nxp.com> <155674445915.200842.2835083854881674143@swboyd.mtv.corp.google.com> <AM0PR04MB4211B63333AB7C50497AE17680350@AM0PR04MB4211.eurprd04.prod.outlook.com>
+To:     "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: RE: [PATCH V2] clk: imx: pllv4: add fractional-N pll support
+Message-ID: <155689906009.200842.4702575036187120025@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Fri, 03 May 2019 08:57:40 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/2/19 2:26 PM, Jonas Gorski wrote:
-> Now that we have a driver for the clock controller, add nodes to allow
-> devices to make use of it.
-> 
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+Quoting Aisheng Dong (2019-05-02 19:38:34)
+> > From: Stephen Boyd [mailto:sboyd@kernel.org]
+> > Sent: Thursday, May 2, 2019 5:01 AM
+> >=20
+> > The Content-transfer-encoding header is still base64. I guess it can't =
+be fixed.
+> >=20
+>=20
+> How can we know it's base64?
+> As I saw from the 'Headers' in patchwork, it's:
+> "Content-Type: text/plain; charset=3D"us-ascii"
+> Content-Transfer-Encoding: 7bit"
+> https://patchwork.kernel.org/patch/10922657/
+>=20
+> We'd like to fix it this.
+>=20
 
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+I see:
+
+Content-Type                                      text/plain; charset=3D"ut=
+f-8"                                                                       =
+                                =20
+Content-Transfer-Encoding                         base64              =20
+
+Maybe that's because I'm getting the mail directly instead of from the
+mailing list?
+
