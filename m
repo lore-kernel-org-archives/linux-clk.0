@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B97C004C9
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 15:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67A7C43219
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 16:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21B112087F
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 15:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F8D22087F
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 16:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556899062;
-	bh=AUKU07ZUFBcme7h7KpoCXxRbhp++Lt8tHdh+MTSYDRU=;
+	s=default; t=1556899237;
+	bh=bxhQFwkgb1/uTuKhOvqyOxk9Lk21qkxoVsIO9wm62ck=;
 	h=In-Reply-To:References:To:Cc:From:Subject:Date:List-ID:From;
-	b=wuv7HPX2eENRKr7pa9FVIgq79Zkk3He8fLHVyLCcWnnXP1cEclNvB9amPSV0blATJ
-	 hSrJYhP+jA+IK5o5jCITmeTrcDD10Ly2Im09B1G8kpr0b762jzDZ4IMIfeIfPj9681
-	 gCo2Jiejoqn7NsUjed66XDdRPNmEMFGCRw/wuPK4=
+	b=cRXIooO0WJoHM09su4uvhmNH8ndTn+FQ/USdy6Gi6xxt1+/0sNP7ZQU0iZdC9N8Wf
+	 K3qlq2OhEyAQa2I/FHnkicra3UvCPszGhzHFn9vJkMWu6zkYGgG+AzKcpeO0KCnXG3
+	 RtxR/zZfSRxKGLTm9kIQuzS3GOmIVPzsxaIzwrco=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbfECP5l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 May 2019 11:57:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34806 "EHLO mail.kernel.org"
+        id S1726267AbfECQAh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 May 2019 12:00:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728282AbfECP5l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 May 2019 11:57:41 -0400
+        id S1726495AbfECQAh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 May 2019 12:00:37 -0400
 Received: from localhost (unknown [104.132.0.70])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E136A2075C;
-        Fri,  3 May 2019 15:57:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C7052075C;
+        Fri,  3 May 2019 16:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556899061;
-        bh=AUKU07ZUFBcme7h7KpoCXxRbhp++Lt8tHdh+MTSYDRU=;
+        s=default; t=1556899236;
+        bh=bxhQFwkgb1/uTuKhOvqyOxk9Lk21qkxoVsIO9wm62ck=;
         h=In-Reply-To:References:To:Cc:From:Subject:Date:From;
-        b=iI/v3AxYZ3PJnJf9fEElJ2Nayg2jbyzgtTKyeB6wlFN+K94YWkHAx/BRhkDtU21h9
-         PgnpcxZOLaP0pqK/8Zixe3GJVBZwSih16RDfnV+iabXZLPjyUNmtVPxruD55BWUB3d
-         BuTjUxT025pMKA56mDZaoNKJObKLJYbIfOkqv0rw=
+        b=yFM/I+fhaz7lElaS0OEcAC+wiUgGonipKNEnUXd4yrkSEaqXrPiupuYAVH4b64cCm
+         RgTH++volK8HAZPU112kb+cNaVRWb7k2tFgdL+o5gXYJZbg6lVUW8juUaK6+DigEgh
+         BC3mGnRa23ci6dfKCRgQp69kqR8R4ogVNbke/280=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,9 +56,9 @@ To:     "festevam@gmail.com" <festevam@gmail.com>,
 Cc:     dl-linux-imx <linux-imx@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 Subject: RE: [PATCH V2] clk: imx: pllv4: add fractional-N pll support
-Message-ID: <155689906009.200842.4702575036187120025@swboyd.mtv.corp.google.com>
+Message-ID: <155689923561.200842.16988174858654134777@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Fri, 03 May 2019 08:57:40 -0700
+Date:   Fri, 03 May 2019 09:00:35 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -81,13 +81,6 @@ be fixed.
 > We'd like to fix it this.
 >=20
 
-I see:
-
-Content-Type                                      text/plain; charset=3D"ut=
-f-8"                                                                       =
-                                =20
-Content-Transfer-Encoding                         base64              =20
-
-Maybe that's because I'm getting the mail directly instead of from the
-mailing list?
+Also, if you look at the one for linux-clk mailing list you'll see
+base64 CTE: https://patchwork.kernel.org/patch/10921115/
 
