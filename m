@@ -2,80 +2,117 @@ Return-Path: <SRS0=gieW=TD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE8DC43219
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 16:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C03CC43219
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 16:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 122F02081C
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 16:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556901203;
-	bh=O/xEJw24VT9Hb4jjpu49qih6nck5dQTHztbx3nttuQQ=;
-	h=In-Reply-To:References:To:Cc:From:Subject:Date:List-ID:From;
-	b=d4cjNI1YB7EJ58Cd39iAjuQuzTW6nLFD+tHx+CrKSVkbBUu1wdqDXnXFCLo3snotW
-	 pCXBRFfCVYGUync5JJlXUA1TMvSu05qNTtmvyIe5DqxJRJmrzGBd6Y4+zqp0Xfvb8w
-	 xYTS/ISwI8zpCKwMgl2D6PLNv4f0Csn5+qHW628I=
+	by mail.kernel.org (Postfix) with ESMTP id 577DD20651
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 16:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfECQdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 May 2019 12:33:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33656 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfECQdW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 May 2019 12:33:22 -0400
-Received: from localhost (unknown [104.132.0.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D644F20651;
-        Fri,  3 May 2019 16:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556901201;
-        bh=O/xEJw24VT9Hb4jjpu49qih6nck5dQTHztbx3nttuQQ=;
-        h=In-Reply-To:References:To:Cc:From:Subject:Date:From;
-        b=lF3lhaV+ZwRGoMCbf2EH3F6q1J7furZeR5G0vyXJt/zrXk8OqY+TKfc03W9cWapWG
-         QUihVJMlBpOMBwuRhQO3X5Hc/qSgv5n9QVAocTKUXvwSABkC42ETKcwWCFWAT82Qzl
-         Lq09bK2Bb4HoycPz5MoEYTHIgnFZz4+onWOlOXKk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726468AbfECQd0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 May 2019 12:33:26 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:50618 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726585AbfECQd0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 May 2019 12:33:26 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x43GUGhD021709;
+        Fri, 3 May 2019 11:33:23 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2s6xhyvp23-1;
+        Fri, 03 May 2019 11:33:23 -0500
+Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id CB2CA611C8C5;
+        Fri,  3 May 2019 11:33:22 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 3 May
+ 2019 17:33:22 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Fri, 3 May 2019 17:33:22 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 2CE622A1;
+        Fri,  3 May 2019 17:33:22 +0100 (BST)
+Date:   Fri, 3 May 2019 17:33:22 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 1/2] clk: Ensure new parent is looked up when changing
+ parents
+Message-ID: <20190503163322.GH81578@ediswmail.ad.cirrus.com>
+References: <20190430144412.20950-1-ckeepax@opensource.cirrus.com>
+ <155664268919.168659.14590969678316998228@swboyd.mtv.corp.google.com>
+ <20190501083317.GF81578@ediswmail.ad.cirrus.com>
+ <155674078882.168659.17440291177352926788@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c1d3fd4db13d999a3ba57f5bbc1924862d824f61.1556881728.git.leonard.crestez@nxp.com>
-References: <cover.1556881728.git.leonard.crestez@nxp.com> <c1d3fd4db13d999a3ba57f5bbc1924862d824f61.1556881728.git.leonard.crestez@nxp.com>
-To:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/2] scripts/gdb: Cleanup error handling in list helpers
-Message-ID: <155690120115.200842.4461891246222331678@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 03 May 2019 09:33:21 -0700
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <155674078882.168659.17440291177352926788@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905030105
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Leonard Crestez (2019-05-03 04:19:31)
-> An incorrect argument to list_for_each is an internal error in gdb
-> scripts so a TypeError should be raised. The gdb.GdbError exception type
-> is intended for user errors such as incorrect invocation.
->=20
-> Drop the type assertion in list_for_each_entry because list_for_each isn't
-> going to suddenly yield something else.
->=20
-> Applies to both list and hlist
+On Wed, May 01, 2019 at 12:59:48PM -0700, Stephen Boyd wrote:
+> Quoting Charles Keepax (2019-05-01 01:33:17)
+> > On Tue, Apr 30, 2019 at 09:44:49AM -0700, Stephen Boyd wrote:
+> > > Quoting Charles Keepax (2019-04-30 07:44:11)
 
-This should be done to other "type errors" in the gdb scripts too.
+Thank you for the explanation think I am starting to get there.
 
->=20
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
+> I don't expect parents[i].core to be populated until we do the fallback
+> string match in this function when the globally unique names match or if
+> it's already populated by some other path calling
+> clk_core_fill_parent_index(). The problem is we just fixed a long
+> standing regression in this function with commit ede77858473a ("clk:
+> Remove global clk traversal on fetch parent index"). Calling
+> clk_core_fill_parent_index() will bring that performance problem back,
+> so we need to figure out how to find the index for a clk without doing
+> the global search.
+> 
 
-Either way,
+There is a slight error in the commit message there I think, the
+change doesn't affect clk_mux_determine_rate_flags which still
+calls clk_core_get_parent_by_index so will still do the full
+lookup. It looks like it affects clk_calc_new_rates instead.
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Which I guess does raise the question would an optimisation on
+the determine_rate path help these power issues as well?
 
+> It seems that some clk providers specify parents that may never exist,
+> so we'll possibly spend time looping through the parents each time doing
+> a global string comparison on hundreds of clks. It would be best to
+> avoid that, so we shouldn't really do any sort of caching here except
+> for the one clk_core pointer we already have passed in.
+> 
+> So you're saying this happens in the clk_set_parent() path, where the
+> parent passed into this function has never been cached before?
+
+Yeah that seems to be what is happening in my case. As best I
+can figure out so far, this relates to our clocks not having
+any rate setting capabilities, as it looks like most of the
+cache population comes from those paths.
+
+> +
+> +		/* Maybe it hasn't been cached (clk_set_parent() path) */
+> +		if (parent == clk_core_get(core, i))
+> +			return i;
+
+This part does fix my issue. Is there a reason not to update
+core->parents[i].core on this path?
+
+Thanks,
+Charles
