@@ -2,147 +2,147 @@ Return-Path: <SRS0=gieW=TD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2249BC004C9
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 05:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FBFC43219
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 07:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF00A2081C
-	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 05:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8A8205F4
+	for <linux-clk@archiver.kernel.org>; Fri,  3 May 2019 07:38:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725806AbfECFaC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 May 2019 01:30:02 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:58930 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfECFaC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 May 2019 01:30:02 -0400
-X-AuditID: c0a8fbf4-501ff700000014c1-38-5ccbd1d6c247
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 00.CF.05313.6D1DBCC5; Fri,  3 May 2019 07:29:58 +0200 (CEST)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Fri, 3 May 2019 07:29:54 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "sebastian.reichel@collabora.com" <sebastian.reichel@collabora.com>
-CC:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 7/8] power: supply: Initial support for ROHM BD70528
- PMIC charger block
-Thread-Topic: [PATCH v14 7/8] power: supply: Initial support for ROHM
- BD70528 PMIC charger block
-Thread-Index: AQHVAMfZHKgWTJ2VgUSUAlV6mCtylaZYHZeAgAChyIA=
-Date:   Fri, 3 May 2019 05:29:53 +0000
-Message-ID: <322fa765ddd72972aba931c706657661ca685afa.camel@fi.rohmeurope.com>
-References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
-         <eece016c86483d55befab1a06fb299c9d6d17134.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
-         <20190502195049.brysexbyyq7khtr4@earth.universe>
-In-Reply-To: <20190502195049.brysexbyyq7khtr4@earth.universe>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EECE8E2DA13B254A9D94FC7DADE8ADED@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726509AbfECHi3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 May 2019 03:38:29 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:14480 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725809AbfECHi3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 May 2019 03:38:29 -0400
+X-IronPort-AV: E=Sophos;i="5.60,424,1549926000"; 
+   d="scan'208";a="381465281"
+Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 09:38:15 +0200
+Date:   Fri, 3 May 2019 09:38:12 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Stephen Boyd <sboyd@kernel.org>
+cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        kbuild-all@01.org
+Subject: [clk:clk-parent-rewrite 18/78] drivers/clk/clk.c:371:11-16: WARNING:
+ Unsigned expression compared with zero: index >= 0 (fwd)
+Message-ID: <alpine.DEB.2.20.1905030937270.3572@hadrien>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUwURxjO7MftHrDNcJ7eFHuNXk0bTUFNjE5a25p+2KVNTWNb0jbEYykr
-        S+Q+snugtH+IH7FHa6QWUznhtAbU2ivGM02BaMNdqSgQlJSiKCclXDGgQC9QkEjO7rhV+DPz
-        zPvM8zzvJO/wtGUvl8EXuX2y6paKHaYUpuX0g3Bmb3dH7pqje1fiuu4/Obx//CSHp2rbGXx4
-        MG7Cx1q7WDzw7+8AT/d8SeGquVMUTnx9m8Xnj80B/EdzjQlPHmgF+NKPPSZ8o+FXDse/76Rw
-        /fVuCtfUX2Zwd/tbeN/FVg4ne88xOHZ3Cx4aSdKbloihYAiIEzf2cWIw9IXYGKsDYlMgxonh
-        M36T2N97wST+EAqxYtNMOSd+F5ylxMnws++nfpq6MV/ylX5QVOhe/WpeqnL/1k+MN7lsV0fX
-        N1Q5qFxWAcw8guvQpf09oAKk8BbYC1Db2d2UcWgDqK9zVD/wvAluRBV9HIFW+DaqrhLJFRr+
-        bUaRgw9ZYrQISujoWBAQbIX56K+2ZsbAL6Gb/lM0wQxcgfZEJh7dEeAWdO/+bdrIug5Q6B//
-        IyMzfAX5+/dwBANoR/7ycYpgGtpQeHiGNbqGqO7CVdrAi9HIUPL/ugNdnB1kSKM0XInONq82
-        pJvQt/2jrIGXo6qvBjmjh3R0pTrOVIIlgQUJgXl1YIE6sEAdWKA+DtgzALmkouJCySevzVLl
-        kizVo7j07TOPKwyM2ZlqBA+j2VEAeeBIE6avdORaWKlUK3NFwdM85VgsBFv00lP5noIyRdIU
-        p1pSLGtRgHjaYRW2JdpzLUKBVPa5rHoeU0t5xmETHjRHci2QJO+QZa+sPmaf4XkHEt69ppum
-        q3KhvGt7UbFvnqZ4MzFPybBqsrtAVqUSn+Ik0+LU9HEhVJqe20DkguaVXHrVkLaDDXzLicFa
-        mo/MkPXIwLC+jkXu1NIWxu1xyxk2IXZVl0EiU0rcT0JHgU1/+yIhStg0/Ws98RzV4yg97s4h
-        8kzNJ81TGeXg/MEEzsr0rnntk4k8i/+NxvHp+pz0ypwx+0f5xzf/fDf7N5BuX7Vz247nl77Y
-        8MuhF9YvX8fW2GvfUxo+vndY6Tkyt2Jr11xwQ5Kunr25e+CdDw9kTpvj4bwTwzbrc/amKW+2
-        7Jw0Nzm7fHTpwLnXc+KJ2LVEJ35zZGbny6c3e7W+IQejKdLaVbSqSf8BrLZD8xcEAAA=
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gU2ViYXN0aWFuLA0KDQpPbiBUaHUsIDIwMTktMDUtMDIgYXQgMjE6NTAgKzAyMDAsIFNl
-YmFzdGlhbiBSZWljaGVsIHdyb3RlOg0KPiBIaSwNCj4gDQo+IE9uIFRodSwgTWF5IDAyLCAyMDE5
-IGF0IDEyOjE3OjEyUE0gKzAzMDAsIE1hdHRpIFZhaXR0aW5lbiB3cm90ZToNCj4gPiBST0hNIEJE
-NzA1MjggUE1JQyBpbmNsdWRlcyBiYXR0ZXJ5IGNoYXJnZXIgYmxvY2suIFN1cHBvcnQgY2hhcmdl
-cg0KPiA+IHN0YXVzIHF1ZXJpZXMgYW5kIGRvaW5nIGZldyBiYXNpYyBzZXR0aW5ncyBsaWtlIGlu
-cHV0IGN1cnJlbnQgbGltaXQNCj4gPiBhbmQgY2hhcmdpbmcgY3VycmVudC4NCj4gPiANCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVy
-b3BlLmNvbT4NCj4gPiBBY2tlZC1ieTogU2ViYXN0aWFuIFJlaWNoZWwgPHNlYmFzdGlhbi5yZWlj
-aGVsQGNvbGxhYm9yYS5jb20+DQo+IA0KPiBQbGVhc2Ugb25seSBhZGQgQWNrZWQtYnkgd2hlbiB5
-b3UgcmVjZWl2ZSBvbmUsIGVzcGVjaWFsbHkgd2hlbiB5b3UNCj4gZG8gbm90IGltcGxlbWVudCBh
-bGwgcmVxdWVzdGVkIGNoYW5nZXMgOikNCg0KU29ycnkuIFRoaXMgaXMgbXkgYmFkLiBJIHRyYW5z
-bGF0ZWQgeW91cjogIk90aGVyd2lzZSBsb29rcyBvayB0byBtZS4iDQotIHRvIGFuIGFjay4gQW5k
-IEkgd2FzIHByZXR0eSBzdXJlIHlvdSBkaWRuJ3Qgd2FudCB0byBzdGF0aWNpemUgdGhlDQpsb2Nh
-bCBhcnJheS4gSSBzaG91bGQndmUga25vd24gYmV0dGVyLiBJIHNob3VsZCBoYXZlIHdhaXRlZCBm
-b3IgeW91ciBPaw0KdG8gbGVhdmluZyB0aGUgc3RhdGljIG91dCBiZWZvcmUgYWRkaW5nIGFuIGFj
-ay4NCg0KPiANCj4gPiArc3RhdGljIGludCBiZDcwNTI4X2dldF9pcnFzKHN0cnVjdCBwbGF0Zm9y
-bV9kZXZpY2UgKnBkZXYsDQo+ID4gKwkJCSAgICBzdHJ1Y3QgYmQ3MDUyOF9wc3kgKmJkcHN5KQ0K
-PiA+ICt7DQo+ID4gKwlpbnQgaXJxLCBpLCByZXQ7DQo+ID4gKwl1bnNpZ25lZCBpbnQgbWFzazsN
-Cj4gPiArCWNvbnN0IHN0cnVjdCBpcnFfbmFtZV9wYWlyIGJkNzA1MjhfY2hnX2lycXNbXSA9IHsN
-Cj4gPiArCQl7IC5uID0gImJkNzA1MjgtYmF0LW92LXJlcyIsIC5oID0NCj4gPiBCRF9JUlFfSE5E
-KEJBVF9PVl9SRVMpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWJhdC1vdi1kZXQiLCAuaCA9
-DQo+ID4gQkRfSVJRX0hORChCQVRfT1ZfREVUKSB9LA0KPiA+ICsJCXsgLm4gPSAiYmQ3MDUyOC1i
-YXQtZGVhZCIsIC5oID0gQkRfSVJRX0hORChEQkFUX0RFVCkgfSwNCj4gPiArCQl7IC5uID0gImJk
-NzA1MjgtYmF0LXdhcm1lZCIsIC5oID0gQkRfSVJRX0hORChDT0xEX1JFUykNCj4gPiB9LA0KPiA+
-ICsJCXsgLm4gPSAiYmQ3MDUyOC1iYXQtY29sZCIsIC5oID0gQkRfSVJRX0hORChDT0xEX0RFVCkg
-fSwNCj4gPiArCQl7IC5uID0gImJkNzA1MjgtYmF0LWNvb2xlZCIsIC5oID0gQkRfSVJRX0hORChI
-T1RfUkVTKQ0KPiA+IH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWJhdC1ob3QiLCAuaCA9IEJE
-X0lSUV9ITkQoSE9UX0RFVCkgfSwNCj4gPiArCQl7IC5uID0gImJkNzA1MjgtY2hnLXRzaGQiLCAu
-aCA9IEJEX0lSUV9ITkQoQ0hHX1RTRCkgfSwNCj4gPiArCQl7IC5uID0gImJkNzA1MjgtYmF0LXJl
-bW92ZWQiLCAuaCA9IEJEX0lSUV9ITkQoQkFUX1JNVikNCj4gPiB9LA0KPiA+ICsJCXsgLm4gPSAi
-YmQ3MDUyOC1iYXQtZGV0ZWN0ZWQiLCAuaCA9IEJEX0lSUV9ITkQoQkFUX0RFVCkNCj4gPiB9LA0K
-PiA+ICsJCXsgLm4gPSAiYmQ3MDUyOC1kY2luMi1vdi1yZXMiLCAuaCA9DQo+ID4gQkRfSVJRX0hO
-RChEQ0lOMl9PVl9SRVMpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWRjaW4yLW92LWRldCIs
-IC5oID0NCj4gPiBCRF9JUlFfSE5EKERDSU4yX09WX0RFVCkgfSwNCj4gPiArCQl7IC5uID0gImJk
-NzA1MjgtZGNpbjItcmVtb3ZlZCIsIC5oID0NCj4gPiBCRF9JUlFfSE5EKERDSU4yX1JNVikgfSwN
-Cj4gPiArCQl7IC5uID0gImJkNzA1MjgtZGNpbjItZGV0ZWN0ZWQiLCAuaCA9DQo+ID4gQkRfSVJR
-X0hORChEQ0lOMl9ERVQpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWRjaW4xLXJlbW92ZWQi
-LCAuaCA9DQo+ID4gQkRfSVJRX0hORChEQ0lOMV9STVYpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcw
-NTI4LWRjaW4xLWRldGVjdGVkIiwgLmggPQ0KPiA+IEJEX0lSUV9ITkQoRENJTjFfREVUKSB9LA0K
-PiA+ICsJfTsNCj4gDQo+IFBsZWFzZSBhbHNvIG1ha2UgaXQgc3RhdGljLiBUaGF0IHdpbGwgbW92
-ZSB0aGUgd2hvbGUgdGhpbmcgdG8NCj4gcmVhZC1vbmx5IChiZWNhdXNlIG9mIGNvbnN0KSBkYXRh
-IHNlY3Rpb24uIFRoaXMgaW1wcm92ZXMgdGhlDQo+IHNlY3VyaXR5IGFuZCB0aGUgcmVxdWlyZWQg
-Y3B1IHRpbWUgYXQgdGhlIHNhbWUgdGltZSAobm8gbmVlZA0KPiB0byBjb3B5IHZhbHVlcyB0byB0
-aGUgc3RhY2spLg0KDQpPay4gSSBzZWUgeW91ciBwb2ludCBhbmQgaXQgc291bmRzIHJlYXNvbmFi
-bGUuDQoNCj4gQnV0IHRoaXMgY2FuIGJlIGNoYW5nZWQgbGF0ZXIsIHNvIG5vIG5lZWQgdG8gYmxv
-Y2sgdGhlIHdob2xlDQo+IHBhdGNoc2V0IGp1c3QgYmVjYXVzZSBvZiB0aGlzLiBJZiBMZWUgd2Fu
-dHMgdG8gbWVyZ2UgdGhpcyBmb3INCj4gNS4yLCB0aGF0IHdvdWxkIGJlIGZpbmUgd2l0aCBtZS4g
-QnV0IHBsZWFzZSBhZGQgaXQgZGlyZWN0bHkgaW4NCj4gYSBuZXcgcGF0Y2ggcmV2aXNpb24gaWYg
-dGhlIHBhdGNoIGRvZXMgbm90IG1ha2UgaXQgaW50byA1LjIuDQoNCkl0IHdvdWxkIGJlIGdyZWF0
-IHRvIGdldCB0aGlzIGluLCBpdCBoYXMgYmVlbiByZXNwaW5uZWQgcXVpdGUgYSBmZXcNCnRpbWVz
-IGFscmVhZHkuLi4gSSBob3BlIExlZSB0YWtlcyB0aGUgc2VyaWVzIGluIHdoZW4gaGUncyBiYWNr
-IGZyb20gaGlzDQpsZWF2ZSAtIGJ1dCBpdCBpcyBub3QgYSBwcm9ibGVtIGZvciBtZSB0byBjaGFu
-Z2UgdGhpcyB3aXRoIGxhdGVyIHBhdGNoDQoob3IgY2hhbmdlIHRoaXMgaW4gdGhlIHNlcmllcyBp
-ZiBpdCBzdGlsbCBuZWVkcyB0byBiZSByZXdvcmtlZCkuDQoNCg0KQnIsDQoJTWF0dGkgVmFpdHRp
-bmVuDQo=
+On line 371, index is unsigned, so it is always >= 0.
+
+julia
+
+---------- Forwarded message ----------
+Date: Fri, 3 May 2019 15:30:37 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: [clk:clk-parent-rewrite 18/78] drivers/clk/clk.c:371:11-16: WARNING:
+    Unsigned expression compared with zero: index >= 0
+
+CC: kbuild-all@01.org
+CC: linux-clk@vger.kernel.org
+CC: linux-arm-kernel@lists.infradead.org
+TO: Stephen Boyd <sboyd@kernel.org>
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-parent-rewrite
+head:   f5e93ab2421d0dd27acac9159d9c4834cd5705e7
+commit: 9fd6fd58989e06bc5fe92f5aef85a64f63340ab1 [18/78] clk: Cache core in clk_fetch_parent_index() without names
+:::::: branch date: 12 hours ago
+:::::: commit date: 34 hours ago
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+
+>> drivers/clk/clk.c:371:11-16: WARNING: Unsigned expression compared with zero: index >= 0
+
+# https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?id=9fd6fd58989e06bc5fe92f5aef85a64f63340ab1
+git remote add clk https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+git remote update clk
+git checkout 9fd6fd58989e06bc5fe92f5aef85a64f63340ab1
+vim +371 drivers/clk/clk.c
+
+bddca894 Prashant Gaikwad 2012-12-26  326
+fc0c209c Stephen Boyd     2019-04-12  327  /**
+dde4eff4 Stephen Boyd     2019-04-12  328   * clk_core_get - Find the clk_core parent of a clk
+fc0c209c Stephen Boyd     2019-04-12  329   * @core: clk to find parent of
+9fd6fd58 Stephen Boyd     2019-04-30  330   * @p_index: parent index to search for
+fc0c209c Stephen Boyd     2019-04-12  331   *
+fc0c209c Stephen Boyd     2019-04-12  332   * This is the preferred method for clk providers to find the parent of a
+fc0c209c Stephen Boyd     2019-04-12  333   * clk when that parent is external to the clk controller. The parent_names
+fc0c209c Stephen Boyd     2019-04-12  334   * array is indexed and treated as a local name matching a string in the device
+dde4eff4 Stephen Boyd     2019-04-12  335   * node's 'clock-names' property or as the 'con_id' matching the device's
+dde4eff4 Stephen Boyd     2019-04-12  336   * dev_name() in a clk_lookup. This allows clk providers to use their own
+fc0c209c Stephen Boyd     2019-04-12  337   * namespace instead of looking for a globally unique parent string.
+fc0c209c Stephen Boyd     2019-04-12  338   *
+fc0c209c Stephen Boyd     2019-04-12  339   * For example the following DT snippet would allow a clock registered by the
+fc0c209c Stephen Boyd     2019-04-12  340   * clock-controller@c001 that has a clk_init_data::parent_data array
+fc0c209c Stephen Boyd     2019-04-12  341   * with 'xtal' in the 'name' member to find the clock provided by the
+fc0c209c Stephen Boyd     2019-04-12  342   * clock-controller@f00abcd without needing to get the globally unique name of
+fc0c209c Stephen Boyd     2019-04-12  343   * the xtal clk.
+fc0c209c Stephen Boyd     2019-04-12  344   *
+fc0c209c Stephen Boyd     2019-04-12  345   *      parent: clock-controller@f00abcd {
+fc0c209c Stephen Boyd     2019-04-12  346   *              reg = <0xf00abcd 0xabcd>;
+fc0c209c Stephen Boyd     2019-04-12  347   *              #clock-cells = <0>;
+fc0c209c Stephen Boyd     2019-04-12  348   *      };
+fc0c209c Stephen Boyd     2019-04-12  349   *
+fc0c209c Stephen Boyd     2019-04-12  350   *      clock-controller@c001 {
+fc0c209c Stephen Boyd     2019-04-12  351   *              reg = <0xc001 0xf00d>;
+fc0c209c Stephen Boyd     2019-04-12  352   *              clocks = <&parent>;
+fc0c209c Stephen Boyd     2019-04-12  353   *              clock-names = "xtal";
+fc0c209c Stephen Boyd     2019-04-12  354   *              #clock-cells = <1>;
+fc0c209c Stephen Boyd     2019-04-12  355   *      };
+fc0c209c Stephen Boyd     2019-04-12  356   *
+fc0c209c Stephen Boyd     2019-04-12  357   * Returns: -ENOENT when the provider can't be found or the clk doesn't
+fc0c209c Stephen Boyd     2019-04-12  358   * exist in the provider. -EINVAL when the name can't be found. NULL when the
+fc0c209c Stephen Boyd     2019-04-12  359   * provider knows about the clk but it isn't provided on this system.
+fc0c209c Stephen Boyd     2019-04-12  360   * A valid clk_core pointer when the clk can be found in the provider.
+fc0c209c Stephen Boyd     2019-04-12  361   */
+9fd6fd58 Stephen Boyd     2019-04-30  362  static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
+fc0c209c Stephen Boyd     2019-04-12  363  {
+9fd6fd58 Stephen Boyd     2019-04-30  364  	const char *name = core->parents[p_index].fw_name;
+9fd6fd58 Stephen Boyd     2019-04-30  365  	u8 index = core->parents[p_index].index;
+dde4eff4 Stephen Boyd     2019-04-12  366  	struct clk_hw *hw = ERR_PTR(-ENOENT);
+dde4eff4 Stephen Boyd     2019-04-12  367  	struct device *dev = core->dev;
+dde4eff4 Stephen Boyd     2019-04-12  368  	const char *dev_id = dev ? dev_name(dev) : NULL;
+fc0c209c Stephen Boyd     2019-04-12  369  	struct device_node *np = core->of_node;
+fc0c209c Stephen Boyd     2019-04-12  370
+601b6e93 Stephen Boyd     2019-04-12 @371  	if (np && index >= 0)
+601b6e93 Stephen Boyd     2019-04-12  372  		hw = of_clk_get_hw(np, index, name);
+dde4eff4 Stephen Boyd     2019-04-12  373
+dde4eff4 Stephen Boyd     2019-04-12  374  	/*
+dde4eff4 Stephen Boyd     2019-04-12  375  	 * If the DT search above couldn't find the provider or the provider
+dde4eff4 Stephen Boyd     2019-04-12  376  	 * didn't know about this clk, fallback to looking up via clkdev based
+dde4eff4 Stephen Boyd     2019-04-12  377  	 * clk_lookups
+dde4eff4 Stephen Boyd     2019-04-12  378  	 */
+601b6e93 Stephen Boyd     2019-04-12  379  	if (PTR_ERR(hw) == -ENOENT && name)
+dde4eff4 Stephen Boyd     2019-04-12  380  		hw = clk_find_hw(dev_id, name);
+dde4eff4 Stephen Boyd     2019-04-12  381
+dde4eff4 Stephen Boyd     2019-04-12  382  	if (IS_ERR(hw))
+fc0c209c Stephen Boyd     2019-04-12  383  		return ERR_CAST(hw);
+fc0c209c Stephen Boyd     2019-04-12  384
+fc0c209c Stephen Boyd     2019-04-12  385  	return hw->core;
+fc0c209c Stephen Boyd     2019-04-12  386  }
+fc0c209c Stephen Boyd     2019-04-12  387
+
+:::::: The code at line 371 was first introduced by commit
+:::::: 601b6e93304a65f8f7c37168763ab9ba5b195ce5 clk: Allow parents to be specified via clkspec index
+
+:::::: TO: Stephen Boyd <sboyd@kernel.org>
+:::::: CC: Stephen Boyd <sboyd@kernel.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
