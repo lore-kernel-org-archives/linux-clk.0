@@ -2,258 +2,124 @@ Return-Path: <SRS0=v31j=TH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C90EC04AAB
-	for <linux-clk@archiver.kernel.org>; Tue,  7 May 2019 14:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BA0C004C9
+	for <linux-clk@archiver.kernel.org>; Tue,  7 May 2019 19:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D4120825
-	for <linux-clk@archiver.kernel.org>; Tue,  7 May 2019 14:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 765C520825
+	for <linux-clk@archiver.kernel.org>; Tue,  7 May 2019 19:34:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="nMydFJ0X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbfEGOEV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 May 2019 10:04:21 -0400
-Received: from jax4mhob06.myregisteredsite.com ([64.69.218.86]:39548 "EHLO
-        jax4mhob06.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726399AbfEGOEV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 May 2019 10:04:21 -0400
-Received: from mailpod.hostingplatform.com (atl4qobmail02pod0.registeredsite.com [10.30.71.204])
-        by jax4mhob06.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id x47E4IsY014249
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-clk@vger.kernel.org>; Tue, 7 May 2019 10:04:18 -0400
-Received: (qmail 27752 invoked by uid 0); 7 May 2019 14:04:17 -0000
-X-TCPREMOTEIP: 81.173.50.109
-X-Authenticated-UID: mike@milosoftware.com
-Received: from unknown (HELO mikebuntu.TOPIC.LOCAL) (mike@milosoftware.com@81.173.50.109)
-  by 0 with ESMTPA; 7 May 2019 14:04:17 -0000
-From:   Mike Looijmans <mike.looijmans@topic.nl>
-To:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v2] dt-bindings: clock: Add silabs,si5341
-Date:   Tue,  7 May 2019 16:04:13 +0200
-Message-Id: <20190507140413.28335-1-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190424090216.18417-1-mike.looijmans@topic.nl>
-References: <20190424090216.18417-1-mike.looijmans@topic.nl> <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com> <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl> <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com> <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl>
+        id S1726336AbfEGTeg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 May 2019 15:34:36 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:56034 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbfEGTeg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 May 2019 15:34:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1557257672; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=9NMfdnya0GuZD5SgIy37BX/N2lS6vwhuvXIT4drEbnY=;
+        b=nMydFJ0XZqxs/6gFn6b50tlXto+17s/QudbdwWYuG5VysPUCbl0PfOjNJUwGvc573Qy8/T
+        mZXEtC7/J6+Oz4qw48Ef24GE1WyeIbSNpDl4SI5N3AEsadZ6QE6cKtFYs1RBEuhF0NEonW
+        J0fVlaWz4MNfRkMILkF0fUB1DbMdUhQ=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     od@zcrc.me, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/5] clk: ingenic: Add missing header in cgu.h
+Date:   Tue,  7 May 2019 21:34:17 +0200
+Message-Id: <20190507193421.12260-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adds the devicetree bindings for the Si5341 and Si5340 chips from
-Silicon Labs. These are multiple-input multiple-output clock
-synthesizers.
+The cgu.h has structures that contain 'clk_onecell_data' and 'clk_hw'
+structures (no pointers), so the <linux/clk-provider.h> header should be
+included.
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
-v2: Add data sheet reference.
-    Restructured to enable use of "assigned-clock*" properties to set
-    up both outputs and internal synthesizers.
-    Nicer indentation.
-    Updated subject line and body of commit message.
-    If these bindings are (mostly) acceptable, I'll post an updated
-    driver patch v2 to implement these changes.
+ drivers/clk/ingenic/cgu.h         | 1 +
+ drivers/clk/ingenic/jz4725b-cgu.c | 1 -
+ drivers/clk/ingenic/jz4740-cgu.c  | 1 -
+ drivers/clk/ingenic/jz4770-cgu.c  | 1 -
+ drivers/clk/ingenic/jz4780-cgu.c  | 1 -
+ 5 files changed, 1 insertion(+), 4 deletions(-)
 
- .../bindings/clock/silabs,si5341.txt          | 187 ++++++++++++++++++
- 1 file changed, 187 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5341.txt b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
-new file mode 100644
-index 000000000000..6086dfcaeecf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
-@@ -0,0 +1,187 @@
-+Binding for Silicon Labs Si5341 and Si5340 programmable i2c clock generator.
-+
-+Reference
-+[1] Si5341 Data Sheet
-+    https://www.silabs.com/documents/public/data-sheets/Si5341-40-D-DataSheet.pdf
-+[2] Si5341 Reference Manual
-+    https://www.silabs.com/documents/public/reference-manuals/Si5341-40-D-RM.pdf
-+
-+The Si5341 and Si5340 are programmable i2c clock generators with up to 10 output
-+clocks. The chip contains a PLL that sources 5 (or 4) multisynth clocks, which
-+in turn can be directed to any of the 10 (or 4) outputs through a divider.
-+The internal structure of the clock generators can be found in [2].
-+
-+The driver can be used in "as is" mode, reading the current settings from the
-+chip at boot, in case you have a (pre-)programmed device. If the PLL is not
-+configured when the driver probes, it assumes the driver must fully initialize
-+it.
-+
-+The device type, speed grade and revision are determined runtime by probing.
-+
-+The driver currently only supports XTAL input mode, and does not support any
-+fancy input configurations. They can still be programmed into the chip and
-+the driver will leave them "as is".
-+
-+==I2C device node==
-+
-+Required properties:
-+- compatible: shall be one of the following:
-+	"silabs,si5340" - Si5340 A/B/C/D
-+	"silabs,si5341" - Si5341 A/B/C/D
-+- reg: i2c device address, usually 0x74
-+- #clock-cells: from common clock binding; shall be set to 2.
-+	The first value is "0" for outputs, "1" for synthesizers.
-+	The second value is the output or synthesizer index.
-+- clocks: from common clock binding; list of parent clock  handles,
-+	corresponding to inputs. Use a fixed clock for the "xtal" input.
-+	At least one must be present.
-+- clock-names: One of: "xtal", "in0", "in1", "in2"
-+- vdd-supply: Regulator node for VDD
-+
-+Optional properties:
-+- vdda-supply: Regulator node for VDDA
-+- vdds-supply: Regulator node for VDDS
-+- silabs,pll-m-num, silabs,pll-m-den: Numerator and denominator for PLL
-+  feedback divider. Must be such that the PLL output is in the valid range. For
-+  example, to create 14GHz from a 48MHz xtal, use m-num=14000 and m-den=48. Only
-+  the fraction matters, using 3500 and 12 will deliver the exact same result.
-+  If these are not specified, and the PLL is not yet programmed when the driver
-+  probes, the PLL will be set to 14GHz.
-+- silabs,reprogram: When present, the driver will always assume the device must
-+  be initialized, and always performs the soft-reset routine. Since this will
-+  temporarily stop all output clocks, don't do this if the chip is generating
-+  the CPU clock for example.
-+- interrupts: Interrupt for INTRb pin.
-+
-+== Child nodes: Synthesizers ==
-+
-+In order to refer to the internal synthesizers, there can be a child node named
-+"synthesizers".
-+
-+Required synthesizers node properties:
-+- #address-cells: shall be set to 1.
-+- #size-cells: shall be set to 0.
-+
-+Each child of this node corresponds to a multisynth in the Si534X chip. This
-+allows the synthesizer to be referred to with assigned-clocks.
-+
-+Required child node properties:
-+- reg: synthesizer index in range 0..4 for Si5341 and 0..3 for Si5340.
-+
-+== Child nodes: Outputs ==
-+
-+The child node "outputs" lists the output clocks.
-+
-+Required outputs node properties:
-+- #address-cells: shall be set to 1.
-+- #size-cells: shall be set to 0.
-+
-+Each of the clock outputs can be overwritten individually by
-+using a child node to the outputs child node. If a child node for a clock
-+output is not set, the configuration remains unchanged.
-+
-+Required child node properties:
-+- reg: number of clock output.
-+
-+Optional child node properties:
-+- vdd-supply: Regulator node for VDD for this output. The driver selects default
-+	values for common-mode and amplitude based on the voltage.
-+- silabs,format: Output format, one of:
-+	1 = differential (defaults to LVDS levels)
-+	2 = low-power (defaults to HCSL levels)
-+	4 = LVCMOS
-+- silabs,common-mode: Manually overide output common mode, see [2] for values
-+- silabs,amplitude: Manually override output amplitude, see [2] for values
-+- silabs,synth-master: boolean. If present, this output is allowed to change the
-+	multisynth frequency dynamically.
-+- silabs,disable-state : clock output disable state, shall be
-+	0 = clock output is driven LOW when disabled
-+	1 = clock output is driven HIGH when disabled
-+
-+==Example==
-+
-+/* 48MHz reference crystal */
-+ref48: ref48M {
-+	compatible = "fixed-clock";
-+	#clock-cells = <0>;
-+	clock-frequency = <48000000>;
-+};
-+
-+i2c-master-node {
-+	/* Programmable clock (for logic) */
-+	si5341: clock-generator@74 {
-+		reg = <0x74>;
-+		compatible = "silabs,si5341";
-+		#clock-cells = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&ref48>;
-+		clock-names = "xtal";
-+
-+		silabs,pll-m-num = <14000>; /* PLL at 14.0 GHz */
-+		silabs,pll-m-den = <48>;
-+		silabs,reprogram; /* Chips are not programmed, always reset */
-+
-+		synthesizers {
-+			synth@2 {
-+				reg = <2>;
-+			};
-+		};
-+
-+		outputs {
-+			out@0 {
-+				reg = <0>;
-+				silabs,format = <1>; /* LVDS 3v3 */
-+				silabs,common-mode = <3>;
-+				silabs,amplitude = <3>;
-+				silabs,synth-master;
-+			};
-+
-+			/*
-+			 * Output 6 configuration:
-+			 *  LVDS 1v8
-+			 */
-+			out@6 {
-+				reg = <6>;
-+				silabs,format = <1>; /* LVDS 1v8 */
-+				silabs,common-mode = <13>;
-+				silabs,amplitude = <3>;
-+			};
-+
-+			/*
-+			 * Output 8 configuration:
-+			 *  HCSL 3v3
-+			 */
-+			out@8 {
-+				reg = <8>;
-+				silabs,format = <2>;
-+				silabs,common-mode = <11>;
-+				silabs,amplitude = <3>;
-+			};
-+		};
-+	};
-+};
-+
-+some-video-node {
-+	/* Standard clock bindings */
-+	clock-names = "pixel";
-+	clocks = <&si5341 0 7>; /* Output 7 */
-+
-+	/* Set output 7 to use syntesizer 3 as its parent */
-+	assigned-clocks = <&si5341 0 7>, <&si5341 1 3>;
-+	assigned-clock-parents = <&si5341 1 3>;
-+	/* Set output 7 to 148.5 MHz using a synth frequency of 594 MHz */
-+	assigned-clock-rates = <148500000>, <594000000>;
-+};
-+
-+some-audio-node {
-+	clock-names = "i2s-clk";
-+	clocks = <&si5341 0 0>;
-+	/*
-+	 * since output 0 is a synth-master, the synth will be automatically set
-+	 * to an appropriate frequency when the audio driver requests another
-+	 * frequency. We give control over synth 2 to this output here.
-+	 */
-+	assigned-clocks = <&si5341 0 0>;
-+	assigned-clock-parents = <&si5341 1 2>;
-+};
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index e12716d8ce3c..c18198ba2955 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -19,6 +19,7 @@
+ #define __DRIVERS_CLK_INGENIC_CGU_H__
+ 
+ #include <linux/bitops.h>
++#include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/spinlock.h>
+ 
+diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
+index 584ff4ff81c7..044bbd271bb6 100644
+--- a/drivers/clk/ingenic/jz4725b-cgu.c
++++ b/drivers/clk/ingenic/jz4725b-cgu.c
+@@ -6,7 +6,6 @@
+  * Author: Paul Cercueil <paul@crapouillou.net>
+  */
+ 
+-#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+ #include <dt-bindings/clock/jz4725b-cgu.h>
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index b86edd328249..09629c0613c1 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -15,7 +15,6 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+ #include <dt-bindings/clock/jz4740-cgu.h>
+diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
+index bf46a0df2004..2e6fd8b1c248 100644
+--- a/drivers/clk/ingenic/jz4770-cgu.c
++++ b/drivers/clk/ingenic/jz4770-cgu.c
+@@ -5,7 +5,6 @@
+  */
+ 
+ #include <linux/bitops.h>
+-#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+ #include <linux/syscore_ops.h>
+diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
+index 6427be117ff1..ad64afb438a5 100644
+--- a/drivers/clk/ingenic/jz4780-cgu.c
++++ b/drivers/clk/ingenic/jz4780-cgu.c
+@@ -15,7 +15,6 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+ #include <dt-bindings/clock/jz4780-cgu.h>
 -- 
-2.17.1
+2.21.0.593.g511ec345e18
 
