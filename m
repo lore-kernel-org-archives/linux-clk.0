@@ -2,118 +2,88 @@ Return-Path: <SRS0=Q+cx=TI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF714C04A6B
-	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 17:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61691C04A6B
+	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 18:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC55216F4
-	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 17:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557334808;
-	bh=uHAW0/o+g55YDVcmOd6JTnlBsp1XalPYNPR1umKx9o0=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=QwRrmNJiubn3JgwqvWMhpc+WxUyBilQZLogn3PArwj0kkAa+3E5WNoxg6yPqihsuh
-	 PZMUjpHxYtJ0jTBlyAFsKhPvAKsVB/du6I8FMndWPfg7kmyJcXbpmD/Ex/IFE5/3jw
-	 UT2lRF6GoocUbJ8xIcC8dA8xW74lEj7FwHZt5gh8=
+	by mail.kernel.org (Postfix) with ESMTP id 3543721773
+	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 18:25:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RIdf54AQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cUkf6ob1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbfEHRAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 May 2019 13:00:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728616AbfEHRAI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 8 May 2019 13:00:08 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727971AbfEHSZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 May 2019 14:25:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54172 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbfEHSZK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 May 2019 14:25:10 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1857A60132; Wed,  8 May 2019 18:25:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557339910;
+        bh=mn5g6iGvI2jmQwQ92iHJz0YqAINmEWshw7aWFCQfT8w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RIdf54AQ1bGrooB1DtKFLhtCG7SO0ZHb3S1CBOLJ4xUOnPQl6/wmNgr7R/9/OWgDx
+         163ILqkJRgVwrYByux0Wxm1kaMhYggcEM14wZQFX/R00Bw8EA2dH4T7QWxj8DCoOk2
+         lliYvEIQCcvHHFaFJ1lvuSwaulWmku3lFc//fddo=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AF3421530;
-        Wed,  8 May 2019 17:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557334807;
-        bh=uHAW0/o+g55YDVcmOd6JTnlBsp1XalPYNPR1umKx9o0=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=rT40VyCj79Hd+00Cx7RENkzjM0uBHarbGEU9vXMneMP/7Hn2E06wPch0sWI1CG3eS
-         b2+E5k6XRzyntrobMs0+qD0hi+EUeh3fxuQO1QNLqJjFz8PkJKlZE/IifAdKGr5Vq+
-         ePrUiNWpC5h8UY6xmJaOEFHB2yQLh2XzgpVdiP4I=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190508112842.11654-4-alexandru.ardelean@analog.com>
-References: <20190508112842.11654-1-alexandru.ardelean@analog.com> <20190508112842.11654-4-alexandru.ardelean@analog.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 02/16] treewide: rename match_string() -> __match_string()
-Cc:     gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Heiko Stuebner <heiko@sntech.de>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <155733480678.14659.15999974975874060801@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Wed, 08 May 2019 10:00:06 -0700
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EFA7060300;
+        Wed,  8 May 2019 18:25:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557339909;
+        bh=mn5g6iGvI2jmQwQ92iHJz0YqAINmEWshw7aWFCQfT8w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cUkf6ob1eVuJfc9srVi59Ws6hszxrQGe8uxQIxlAFVEBEX81xI5fwgdzMj5HmAPbw
+         zbfCA5S3lo8HcmhgdhtHRIrl+lawI8jA+EU6zIr5gJBq80XH4QxIKTFchJzZBksg0K
+         bJG6HSXcpYLsYA3RdaSPpGOuJ3QqeA2YHJ/FDJXM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFA7060300
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/3] clk: qcom: Misc updates for Root Clock Generators
+Date:   Wed,  8 May 2019 23:54:52 +0530
+Message-Id: <1557339895-21952-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-(Trimming the lists but keeping lkml)
+This patch adds support for the below
 
-Quoting Alexandru Ardelean (2019-05-08 04:28:28)
-> This change does a rename of match_string() -> __match_string().
->=20
-> There are a few parts to the intention here (with this change):
-> 1. Align with sysfs_match_string()/__sysfs_match_string()
-> 2. This helps to group users of `match_string()` into simple users:
->    a. those that use ARRAY_SIZE(_a) to specify the number of elements
->    b. those that use -1 to pass a NULL terminated array of strings
->    c. special users, which (after eliminating 1 & 2) are not that many
-> 3. The final intent is to fix match_string()/__match_string() which is
->    slightly broken, in the sense that passing -1 or a positive value does
->    not make any difference: the iteration will stop at the first NULL
->    element.
->=20
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
-[...]
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 96053a96fe2f..0b6c3d300411 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2305,8 +2305,8 @@ bool clk_has_parent(struct clk *clk, struct clk *pa=
-rent)
->         if (core->parent =3D=3D parent_core)
->                 return true;
-> =20
-> -       return match_string(core->parent_names, core->num_parents,
-> -                           parent_core->name) >=3D 0;
-> +       return __match_string(core->parent_names, core->num_parents,
-> +                             parent_core->name) >=3D 0;
+1) There could be failure while updating the RCG and not returning the
+   failure could cause the consumer to assume the clock update is a
+   success and not handling the failure gracefully.
+2) There are few clocks in certain clock controllers which might require
+   the hardware control mode to be enabled explicitly.
+3) Update the DFS macro as per the hardware plans.
 
-This is essentially ARRAY_SIZE(core->parent_names) so it should be fine
-to put this back to match_string() later in the series.
+Taniya Das (3):
+  clk: qcom: rcg: Return failure for RCG update
+  clk: qcom: rcg2: Add support for hardware control mode
+  clk: qcom: rcg: update the DFS macro for RCG
 
->  }
->  EXPORT_SYMBOL_GPL(clk_has_parent);
-> =20
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index c3ad92965823..373f13e9cd83 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -276,8 +276,8 @@ static struct clk *rockchip_clk_register_frac_branch(
->                 struct clk *mux_clk;
->                 int ret;
-> =20
-> -               frac->mux_frac_idx =3D match_string(child->parent_names,
-> -                                                 child->num_parents, nam=
-e);
-> +               frac->mux_frac_idx =3D __match_string(child->parent_names,
-> +                                                   child->num_parents, n=
-ame);
+ drivers/clk/qcom/clk-rcg.h    |  5 ++-
+ drivers/clk/qcom/clk-rcg2.c   |  5 ++-
+ drivers/clk/qcom/gcc-sdm845.c | 96 +++++++++++++++++++++----------------------
+ 3 files changed, 56 insertions(+), 50 deletions(-)
 
-I suspect this is the same as above, but Heiko can ack/confirm.
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
->                 frac->mux_ops =3D &clk_mux_ops;
->                 frac->clk_nb.notifier_call =3D rockchip_clk_frac_notifier=
-_cb;
-> =20
