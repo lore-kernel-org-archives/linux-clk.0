@@ -1,147 +1,127 @@
-Return-Path: <SRS0=v31j=TH=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Q+cx=TI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B19BDC004C9
-	for <linux-clk@archiver.kernel.org>; Tue,  7 May 2019 20:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3584DC04AAB
+	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 11:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F13205C9
-	for <linux-clk@archiver.kernel.org>; Tue,  7 May 2019 20:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0849221479
+	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 11:24:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OaB/4ACU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dLf0GeJ5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbfEGU56 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 May 2019 16:57:58 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34483 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728085AbfEGU56 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 May 2019 16:57:58 -0400
-Received: by mail-pl1-f193.google.com with SMTP id ck18so8780005plb.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 May 2019 13:57:57 -0700 (PDT)
+        id S1727521AbfEHLYY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 May 2019 07:24:24 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34092 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbfEHLYY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 May 2019 07:24:24 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f7so16387679wrq.1
+        for <linux-clk@vger.kernel.org>; Wed, 08 May 2019 04:24:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TzIDRvnZo9wzh0xH3koUcb27TGvZ58GI6x5LKLeUe9I=;
-        b=OaB/4ACU/IWVZycUh57X29GmMnkaQrLyMkJ3KidBs2HBMnVPyuS8/OBUtIfMxShvCn
-         WgUQF4rEGtZONQ4PmLZ2gf/8xYixQd+1MwAMSvyy+W7G2Jrrw7gY9Hiqu/RRw8+PtJqE
-         X2bMJd2tWgRU7o3C1/rJU8nhc5o8adgsUhM0A=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=1ZGlp40IsYtFAaBk0HZMbzf6li3dlBM1JeMgqqz53qI=;
+        b=dLf0GeJ5oO2/qzJ2OPJsKrWb1jddayoko2NnzJa2Ao0wHEnYkkD8bC0lix+E4KUog5
+         HOSpNmLXFhms8Zmf2MqLUVR/SIre28mjmpqCw0GpbXExy/GCCt6KMXZV0hBW2LdlWKwT
+         7ZFCxPZpm7P84TjCBKoZGANS9gelWb+IKZbJatQAyAoRb8MH+1nr64aMFbyvnGBfXJwr
+         GqslgS+cGoVeRyvj4mPtx+uWfDCQQW+nOpgXrXe/dZQ/R3ho6OE4oZ55uJS8+bpTiD4+
+         1Ae5IR323BjGtWXzuIoKQfjrO7/XwnCxaL67+t4ZWnZk5Rhm+IhvBeQFLh3eU4b4/E0I
+         a/3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TzIDRvnZo9wzh0xH3koUcb27TGvZ58GI6x5LKLeUe9I=;
-        b=s71xVBbBeebTrE9NXsKFG9eoVApFQ8ojUAGcK17pm5VfOUeevZX5hnLiAgS1THQkut
-         d4NJvKDH9My2hOkHuRb0mf2LRoDYl7NHqINVgJMyCYoapzQP5qAegtq1vHTBEBYun557
-         b8jVo4JgZQOkMBSWM1DsCMOJEkR/AANYIbvl7d/IOJr25jv2IS9JG+8cZcMA94ZoFOOR
-         sSAdUJcykcqflrqH1th2zQ0uNU3ujMD94grIax3/pRMbfYg1ivWwhlhA6cii2nZS+QoJ
-         lf/oMyJpmEAxHPYw/WfhVNdOisKNDQFQsx40dptBuugTArnWaqeQ1nqR9E4d6QxfZ93i
-         jzmA==
-X-Gm-Message-State: APjAAAW2lkDBIEH56/wt6IZ2WctVyaaMleZXS9SMPF37CsqK3llHB4i/
-        Na7uk0pT6lPxNJIBF7LTCxETtQ==
-X-Google-Smtp-Source: APXvYqzYlHZ7coikKWCS9HQ5qQvpgCjiuR9K5Lq4yfRHG4UsIqkyhrUN0ehUlirvQ6B8bDiFku6CcQ==
-X-Received: by 2002:a17:902:8f88:: with SMTP id z8mr42103644plo.54.1557262677391;
-        Tue, 07 May 2019 13:57:57 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id m6sm16482035pgq.0.2019.05.07.13.57.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 May 2019 13:57:56 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc:     Shawn Lin <shawn.lin@rock-chips.com>, hal@halemmerich.com,
-        amstan@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=1ZGlp40IsYtFAaBk0HZMbzf6li3dlBM1JeMgqqz53qI=;
+        b=UUAZ7gtf/PZ48rnl/66Ys1V5d/X1ihXRqUnthhq17Bvze9Ta90hrGIIP4JQmXQNX0Z
+         6Dvv9At47azXP4fT/MK88+GxskkZWputXd6FsdkWWVGzgw9/1YFHW4FEw+ajlA/4TmhE
+         FfXBmtqeB8mzE6SM0Ls8yZSjwBl8erb5fQIdu4Cg5QA7Uz2bS4H9EPxI6stnOyVm4mGT
+         LKaKcI1/LNdkBNOTigidUJ9PVI12IMg8C8CqKYX5fyPcJ0S9NrbEAxXxYq+3I+dDXmqH
+         uO/1Maqxkb08AOnyAPIs4dQo+A1lCquHzx9JLLfcFXtC6F7POlT72jkW/Rcu+pZvvMfS
+         UDeQ==
+X-Gm-Message-State: APjAAAUGruglSNBTQV/3roi7TNF1CCujaPRqwEZ+dbn1+SjJF63r4enB
+        rvsUsVYXQTlJEV7dVdcqwJv5fw==
+X-Google-Smtp-Source: APXvYqwRRnCpg9Buqa4k1dpgkoWwP+tLwA3WGNYrjxvZ7tkjnD7LulMPynsnUSKYyb73BEvs2F6yFg==
+X-Received: by 2002:adf:ebd0:: with SMTP id v16mr20468589wrn.175.1557314662357;
+        Wed, 08 May 2019 04:24:22 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id i17sm3726274wmb.0.2019.05.08.04.24.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 04:24:21 -0700 (PDT)
+Date:   Wed, 8 May 2019 12:24:19 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: rockchip: Slightly more accurate math in rockchip_mmc_get_phase()
-Date:   Tue,  7 May 2019 13:57:42 -0700
-Message-Id: <20190507205742.50835-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [PATCH v14 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
+Message-ID: <20190508112419.GU3995@dell>
+References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+ <a666794d68b846a5527fc37e80cce5010615f54a.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a666794d68b846a5527fc37e80cce5010615f54a.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There's a bit of math in rockchip_mmc_get_phase() to calculate the
-"fine delay".  This math boils down to:
+On Thu, 02 May 2019, Matti Vaittinen wrote:
 
- PSECS_PER_SEC = 1000000000000.
- ROCKCHIP_MMC_DELAY_ELEMENT_PSEC = 60
- card_clk * ROCKCHIP_MMC_DELAY_ELEMENT_PSEC * 360 * x / PSECS_PER_SEC
+> ROHM BD70528MWV is an ultra-low quiescent current general
+> purpose single-chip power management IC for battery-powered
+> portable devices.
+> 
+> Add MFD core which enables chip access for following subdevices:
+> 	- regulators/LED drivers
+> 	- battery-charger
+> 	- gpios
+> 	- 32.768kHz clk
+> 	- RTC
+> 	- watchdog
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+> Changelog v14: No changes
+> 
+>  drivers/mfd/Kconfig              |  17 ++
+>  drivers/mfd/Makefile             |   1 +
+>  drivers/mfd/rohm-bd70528.c       | 316 ++++++++++++++++++++++++
+>  include/linux/mfd/rohm-bd70528.h | 408 +++++++++++++++++++++++++++++++
+>  4 files changed, 742 insertions(+)
+>  create mode 100644 drivers/mfd/rohm-bd70528.c
+>  create mode 100644 include/linux/mfd/rohm-bd70528.h
 
-...but we do it in pieces to avoid overflowing 32-bits.  Right now we
-overdo it a little bit, though, and end up getting less accurate math
-than we could.  Right now we do:
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
- DIV_ROUND_CLOSEST((card_clk / 1000000) *
-                   (ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10) *
-                   (360 / 10) *
-		   delay_num,
-		   PSECS_PER_SEC / 1000000 / 10 / 10)
-
-This is non-ideal because:
-A) The pins on Rockchip SoCs are rated to go at most 150 MHz, so the
-   max card clock is 150 MHz.  Even ignoring this the maximum SD card
-   clock (for SDR104) would be 208 MHz.  This means you can decrease
-   your division by 100x and still not overflow:
-     hex(208000000 / 10000 * 6 * 36 * 0xff) == 0x44497200
-B) On many Rockchip SoCs we end up with a card clock that is actually
-   148500000 because we parent off the 297 MHz PLL.  That means the
-   math we're actually doing today is less than ideal.  Specifically:
-   148500000 / 1000000 = 148
-
-Let's fix the math to be slightly more accurate.
-
-NOTE: no known problems are fixed by this.  It was found simply by
-code inspection.  If you want to see the difference between the old
-and the new on a 148.5 MHz clock, this python can help:
-
-  old = [x for x in
-         (int(round(148 * 6 * 36 * x / 10000.)) for x in range(256))
-	 if x < 90]
-  new = [x for x in
-         (int(round(1485 * 6 * 36 * x / 100000.)) for x in range(256))
-	 if x < 90]
-
-The only differences are:
-  delay_num=17 54=>55
-  delay_num=22 70=>71
-  delay_num=27 86=>87
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
- drivers/clk/rockchip/clk-mmc-phase.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index 026a26bb702d..9b2f4c094adf 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -71,13 +71,13 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
- 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
- 
- 	if (raw_value & ROCKCHIP_MMC_DELAY_SEL) {
--		/* degrees/delaynum * 10000 */
-+		/* degrees/delaynum * 1000000 */
- 		unsigned long factor = (ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10) *
--					36 * (rate / 1000000);
-+					36 * (rate / 10000);
- 
- 		delay_num = (raw_value & ROCKCHIP_MMC_DELAYNUM_MASK);
- 		delay_num >>= ROCKCHIP_MMC_DELAYNUM_OFFSET;
--		degrees += DIV_ROUND_CLOSEST(delay_num * factor, 10000);
-+		degrees += DIV_ROUND_CLOSEST(delay_num * factor, 1000000);
- 	}
- 
- 	return degrees % 360;
 -- 
-2.21.0.1020.gf2820cf01a-goog
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
