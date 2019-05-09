@@ -1,127 +1,101 @@
-Return-Path: <SRS0=Q+cx=TI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=+6Yl=TJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF6DC04A6B
-	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 22:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4F0C04AB1
+	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 08:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8A9214AF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 May 2019 22:39:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pN6yEozN"
+	by mail.kernel.org (Postfix) with ESMTP id A638D21479
+	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 08:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfEHWj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 May 2019 18:39:27 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40719 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfEHWj1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 May 2019 18:39:27 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u17so190568pfn.7
-        for <linux-clk@vger.kernel.org>; Wed, 08 May 2019 15:39:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=DI+BFwmjWQA6D82QdpD9PwbEn/75l/dnxAFOv7WasL0=;
-        b=pN6yEozN+v9qh958i/29zP43Q6Fdk3TyYa3IHeIxW3ZQc+MQg4sQRr/uBZbI6UQ4a6
-         GAfCk7erK4RiXgjzX+MxK6HzxZGT7wXRgYY3JWzJuEgf1gMEyCK581h3T+yccNT5wV4h
-         6FB68zvGP53iLipyrQu5sT04QMuFG7+3+5pcYVG43J/9drS1hBK46pKgO13tA0CZFthH
-         ORGZYZErMUIcFTAiAeW4CzAjuFoc4c68PRSy8uLSvkVH7nF2UZL/OLyGZRgMR13pUzqU
-         551X1hdc0P4G4j+P69VWc0WuePLHsciusqaK32Y6ph2WzWxLNrvRzaM4h0namHG3sCYT
-         hTqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DI+BFwmjWQA6D82QdpD9PwbEn/75l/dnxAFOv7WasL0=;
-        b=cvZ22mZirXHWGEOZFuvtw6JzMkBBGYTApgOXAk7sz2m/4h2iES4TvDDrB06OFSrPo5
-         U7Kb2ABI1PIFmQSvb3RPw7rM3EYJ19AjI+on64OpTW2AGOPnQz5FZyXtLlcmk9y+nhMP
-         z6Tqkt+7+pNGipG/Wmwdove0u8pLA2YZcxXhPqUZFTqxQ7ckb7Yttccj8RC3RF0EZq4/
-         hYogMZ5QXYlQOlBRL29+E9Dcbk/TRHieATGnJ61m5J/YucbxY/PHnjCKyA666r7dvi9b
-         nQn9meNqo+hgpZDfUEqz7yJ7ov1jJVEcQjeRNnm80x8FKoOkvv1VeY02qIo4gUWiAON2
-         m5+w==
-X-Gm-Message-State: APjAAAV3Ns2JgiCxXBEDfrtNQf3T7QN8z4CX4Y6gvMwIAwQ/TXcKrvxM
-        RCdJIv+/4g4FnBZRPCTE9hcamQ==
-X-Google-Smtp-Source: APXvYqxZHNcJ7/5iAg404zT2w1lum4XrojyHWZaqJbHdRHScPBbGcVlHEnxcrGXGPLY9D7Uu90GP6w==
-X-Received: by 2002:a65:4342:: with SMTP id k2mr883081pgq.178.1557355166187;
-        Wed, 08 May 2019 15:39:26 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p5sm266785pgs.32.2019.05.08.15.39.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 15:39:25 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v4] clk: gcc-qcs404: Add PCIe resets
-Date:   Wed,  8 May 2019 15:39:22 -0700
-Message-Id: <20190508223922.5609-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        id S1726511AbfEIIqG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 May 2019 04:46:06 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:50396 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725847AbfEIIqG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 May 2019 04:46:06 -0400
+Received: from we0048.dip.tu-dresden.de ([141.76.176.48] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hOege-00020Z-Rr; Thu, 09 May 2019 10:45:56 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>, hal@halemmerich.com,
+        amstan@chromium.org, Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: rockchip: Slightly more accurate math in rockchip_mmc_get_phase()
+Date:   Thu, 09 May 2019 10:45:56 +0200
+Message-ID: <1830378.zUSKOufHgj@phil>
+In-Reply-To: <20190507205742.50835-1-dianders@chromium.org>
+References: <20190507205742.50835-1-dianders@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enabling PCIe requires several of the PCIe related resets from GCC, so
-add them all.
+Am Dienstag, 7. Mai 2019, 22:57:42 CEST schrieb Douglas Anderson:
+> There's a bit of math in rockchip_mmc_get_phase() to calculate the
+> "fine delay".  This math boils down to:
+> 
+>  PSECS_PER_SEC = 1000000000000.
+>  ROCKCHIP_MMC_DELAY_ELEMENT_PSEC = 60
+>  card_clk * ROCKCHIP_MMC_DELAY_ELEMENT_PSEC * 360 * x / PSECS_PER_SEC
+> 
+> ...but we do it in pieces to avoid overflowing 32-bits.  Right now we
+> overdo it a little bit, though, and end up getting less accurate math
+> than we could.  Right now we do:
+> 
+>  DIV_ROUND_CLOSEST((card_clk / 1000000) *
+>                    (ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10) *
+>                    (360 / 10) *
+> 		   delay_num,
+> 		   PSECS_PER_SEC / 1000000 / 10 / 10)
+> 
+> This is non-ideal because:
+> A) The pins on Rockchip SoCs are rated to go at most 150 MHz, so the
+>    max card clock is 150 MHz.  Even ignoring this the maximum SD card
+>    clock (for SDR104) would be 208 MHz.  This means you can decrease
+>    your division by 100x and still not overflow:
+>      hex(208000000 / 10000 * 6 * 36 * 0xff) == 0x44497200
+> B) On many Rockchip SoCs we end up with a card clock that is actually
+>    148500000 because we parent off the 297 MHz PLL.  That means the
+>    math we're actually doing today is less than ideal.  Specifically:
+>    148500000 / 1000000 = 148
+> 
+> Let's fix the math to be slightly more accurate.
+> 
+> NOTE: no known problems are fixed by this.  It was found simply by
+> code inspection.  If you want to see the difference between the old
+> and the new on a 148.5 MHz clock, this python can help:
+> 
+>   old = [x for x in
+>          (int(round(148 * 6 * 36 * x / 10000.)) for x in range(256))
+> 	 if x < 90]
+>   new = [x for x in
+>          (int(round(1485 * 6 * 36 * x / 100000.)) for x in range(256))
+> 	 if x < 90]
+> 
+> The only differences are:
+>   delay_num=17 54=>55
+>   delay_num=22 70=>71
+>   delay_num=27 86=>87
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+gave this a spin on multiple socs and all of them still detected a hs200-
+card, so I've applied that for 5.3
 
-Changes since v3:
-- Fix rebase mistake in v2
+Thanks
+Heiko
 
-Changes since v2:
-- Rebase patch
-
- drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
- include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index a54807eb3b28..29cf464dd2c8 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2766,6 +2766,13 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
- 	[GCC_PCIE_0_PHY_BCR] = { 0x3e004 },
- 	[GCC_PCIE_0_LINK_DOWN_BCR] = { 0x3e038 },
- 	[GCC_PCIEPHY_0_PHY_BCR] = { 0x3e03c },
-+	[GCC_PCIE_0_AXI_MASTER_STICKY_ARES] = { 0x3e040, 6},
-+	[GCC_PCIE_0_AHB_ARES] = { 0x3e040, 5 },
-+	[GCC_PCIE_0_AXI_SLAVE_ARES] = { 0x3e040, 4 },
-+	[GCC_PCIE_0_AXI_MASTER_ARES] = { 0x3e040, 3 },
-+	[GCC_PCIE_0_CORE_STICKY_ARES] = { 0x3e040, 2 },
-+	[GCC_PCIE_0_SLEEP_ARES] = { 0x3e040, 1 },
-+	[GCC_PCIE_0_PIPE_ARES] = { 0x3e040, 0 },
- 	[GCC_EMAC_BCR] = { 0x4e000 },
- };
- 
-diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-index 454b3f43f538..2cd62c98561f 100644
---- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-+++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-@@ -166,5 +166,12 @@
- #define GCC_PCIEPHY_0_PHY_BCR				12
- #define GCC_EMAC_BCR					13
- #define GCC_CDSP_RESTART				14
-+#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES		15
-+#define GCC_PCIE_0_AHB_ARES				16
-+#define GCC_PCIE_0_AXI_SLAVE_ARES			17
-+#define GCC_PCIE_0_AXI_MASTER_ARES			18
-+#define GCC_PCIE_0_CORE_STICKY_ARES			19
-+#define GCC_PCIE_0_SLEEP_ARES				20
-+#define GCC_PCIE_0_PIPE_ARES				21
- 
- #endif
--- 
-2.18.0
 
