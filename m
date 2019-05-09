@@ -2,56 +2,57 @@ Return-Path: <SRS0=+6Yl=TJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8BBC04AB1
-	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 20:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9505BC04AB1
+	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 20:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9AE21744
-	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 20:30:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67F8921744
+	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 20:30:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0xmpFiI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdhFSjIj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfEIUaI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 May 2019 16:30:08 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40283 "EHLO
+        id S1727025AbfEIUaM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 May 2019 16:30:12 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:36003 "EHLO
         mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbfEIUaI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 May 2019 16:30:08 -0400
-Received: by mail-yw1-f66.google.com with SMTP id 18so2925741ywe.7;
-        Thu, 09 May 2019 13:30:07 -0700 (PDT)
+        with ESMTP id S1726701AbfEIUaL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 May 2019 16:30:11 -0400
+Received: by mail-yw1-f66.google.com with SMTP id q185so2945339ywe.3;
+        Thu, 09 May 2019 13:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4Uc1sxWlZenzjNtw/v4Bu0vw6ThmoS5rTB+EikbKMzw=;
-        b=g0xmpFiIyYDNtnP8/cR+PuL+UNRGGblsJgGR0K8vdvAZrBMnyWKNYLS0wwM/ZbaeyN
-         54df6yMCkkZ+zVvQwuPDCaHQ0vO1qgsZPoLeZV9d/vNJkXdz5Jzak9cjocWm7tsLddHG
-         sdR14VQ0GlXDvDnM0YMQo8jOc3c2V2KVmDbVEd/GNksGjBgWqsgTG1Mgprf0cLnm162s
-         OuNWgFHVmY9/YfW11U8qxVgwgRFpxeufexjKccS8OrWFY+nOtUdiwPCREAqoZbTESVl9
-         fwas8BeS3epJXxPT3tP3AG2dPgNoBUUP/OHi7kP9tM+ckVoUU2g41G9JAw7JdgvQuIYe
-         Jr3g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TA7//dX4vtBRwfNw92xuXPb7M1etmOxtq99BxrnfvNg=;
+        b=UdhFSjIjYPEQz069K1zUOUYpxwVXhfQpOnt8uw/FEn3ACH1y0XsqcFJq7hoikXnIN5
+         7pHFpibEtzxazXcGCsvLOZaj2xpavBnlJidIg/GH9UDLSx9d/2nc1pFAxDX4LZP7z2E3
+         aWsVgKYbbwktnAXc1/vvlntIwpaLUn0SZqYV+zUmm5Kp7AdDXuXPpZWerRZWBabIuucj
+         noHlbC60V6XwuQlSTQx8M603v4bl00GDk9lVlGWT8UJw3OcNmYvV7Orj0Fa3w2IvPQFh
+         x6dd0pLQT2cJqtMHPn4xxx78/cx6yDbRMVIK3Gb9NtR0mxPF8fY7rupO/tfaYd0AYPl1
+         GGtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4Uc1sxWlZenzjNtw/v4Bu0vw6ThmoS5rTB+EikbKMzw=;
-        b=dcoTrezVqkBgFqmwU7np0JI1iHpMjiR9/xdDiRYE0wUM26hFysqjPRhWSqKgRXmwl0
-         4aE/AuNzdw2vU9YTpbxDAOv27MN0D7PGh18tECb4VF9FcySD42ru3FNLuBefxuk5X1Ot
-         adzftitnX5QRfONN02QeAoQwBQTenUYLF7Kli+s4Fw7nVRYECEKuVjWdzfsV2zVdrsv/
-         A1BJZgzflsgxRFqLxY9GpcLr41lOC11lEloRUsl6YsFoUVEC2ZR8b//PczHrf8t7x7Q3
-         3ASnYbXX6dlqGlNTtaBbpZd2rPP6vbyK2n4YJYImAEcmIdx3JZRrGPdr3kAoHYI3VfEs
-         HTrg==
-X-Gm-Message-State: APjAAAWokHFI5Jiy5EbAmYOPvPj+UdTLCM/XU1eA7dWOjr5iV3LjnZAK
-        oZRd75DWNjII6j+20f4VGlMzlSSx
-X-Google-Smtp-Source: APXvYqzy38NnSBuSt1HdIcLK+5diag01BsVcL6xGPpIwXjbp51WMU2vzQXUWPwyJKxLRIno94pgVLg==
-X-Received: by 2002:a81:48b:: with SMTP id 133mr1684226ywe.11.1557433807088;
-        Thu, 09 May 2019 13:30:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TA7//dX4vtBRwfNw92xuXPb7M1etmOxtq99BxrnfvNg=;
+        b=l1/kfcC4eYqL7cvLu7pGvKdbZaCPgV7NRAjkE8fuknbhrk2JPV5AehY3HaM/V48aYE
+         qmRAjoCFcR9w8B/u4fmuaW/FT/hYt2n43QuFq90bYXN91HEo8RqQ+ltvbCF4rNilDeVi
+         vFvl8LDq3vEj6wQtwCNQmD+rvF2cLIVsDfdUXM7co/D/6EB2RPVnvEVEENZM6TIeLK5j
+         hmRYr1JLnTKEjuENnXVWVENAjImxvjII6/4Mn6TAMKkTOzZN4dyx1w2QM0SWhxrA5/Sv
+         NskIXDjVWb4QyUaYl6KTIoEKP1n1BiAfTPx+sfQrW5vRpHGZe+Xhor+RFePe0r8/ElYo
+         9Ccg==
+X-Gm-Message-State: APjAAAUwFJvPszSJgPuvbYFezl+/d0Q3KgUrs98aNkh8nrGp4SD5Ag6z
+        1d/WpIWYa/N1zNrl8075j9Q=
+X-Google-Smtp-Source: APXvYqya9CY9+vVMA3jwse8sBZtcJuBFPP+dj9DSeNP6zoCn9RUV57N6dmyMltfl9TGSA04reMoPfA==
+X-Received: by 2002:a81:9b8d:: with SMTP id s135mr3469060ywg.481.1557433810958;
+        Thu, 09 May 2019 13:30:10 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id u6sm896150ywl.71.2019.05.09.13.30.04
+        by smtp.gmail.com with ESMTPSA id u6sm896150ywl.71.2019.05.09.13.30.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 13:30:05 -0700 (PDT)
+        Thu, 09 May 2019 13:30:10 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -61,31 +62,41 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-kernel@vger.kernel.org (open list),
         bcm-kernel-feedback-list@broadcom.com, wahrenst@gmx.net,
         eric@anholt.net, stefan.wahren@i2se.com
-Subject: [PATCH 0/2] clk: bcm: Allow CLK_BCM2835 for ARCH_BRCMSTB
-Date:   Thu,  9 May 2019 13:29:54 -0700
-Message-Id: <20190509202956.6320-1-f.fainelli@gmail.com>
+Subject: [PATCH 2/2] clk: bcm: Allow CLK_BCM2835 for ARCH_BRCMSTB
+Date:   Thu,  9 May 2019 13:29:56 -0700
+Message-Id: <20190509202956.6320-3-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190509202956.6320-1-f.fainelli@gmail.com>
+References: <20190509202956.6320-1-f.fainelli@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+ARCH_BRCMSTB needs to use the BCM2835 clock driver for chips like
+BCM7211 which adopted that clock controller, make that possible and the
+driver default to be enabled for ARCH_BRCMSTB.
 
-This small patch series allows making use of the CLK_BCM2835 driver(s)
-on ARCH_BRCMSTB since we have newer chips that make use of the CPRMAN
-block that this driver supports.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/clk/bcm/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
-
-Florian Fainelli (2):
-  clk: bcm: Make BCM2835 clock drivers selectable
-  clk: bcm: Allow CLK_BCM2835 for ARCH_BRCMSTB
-
- drivers/clk/bcm/Kconfig  | 9 +++++++++
- drivers/clk/bcm/Makefile | 4 ++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 0b873e23f128..0eb281d597fc 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -1,8 +1,8 @@
+ config CLK_BCM2835
+ 	bool "Broadcom BCM2835 clock support"
+-	depends on ARCH_BCM2835 || COMPILE_TEST
++	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
+ 	depends on COMMON_CLK
+-	default ARCH_BCM2835
++	default ARCH_BCM2835 || ARCH_BRCMSTB
+ 	help
+ 	  Enable common clock framework support for Broadcom BCM2835
+ 	  SoCs.
 -- 
 2.17.1
 
