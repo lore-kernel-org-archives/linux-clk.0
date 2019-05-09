@@ -2,115 +2,90 @@ Return-Path: <SRS0=+6Yl=TJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F10C04AB1
-	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 17:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8BBC04AB1
+	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 20:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A894920675
-	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 17:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557422867;
-	bh=TuZoZqt3C0Ly1PPKUwukLctgk89R/xZyUazagckl/rc=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=vtHUXtn2JAe3BOLPZgB1eAYwfHxkRXX5OQleDOtJYaXqrHG9DpGhm/01m/Es9htgr
-	 ztu2CBp5TbFSqcbGTOCJOdq/k0Mm8yjb+NAbjo8qIXANOnKpIMXk7ZwMUDs7h1Yq39
-	 8CzKvkcmIcuHmggSxRWsdyj7EDWs/D6BdCgjPbqc=
+	by mail.kernel.org (Postfix) with ESMTP id 9E9AE21744
+	for <linux-clk@archiver.kernel.org>; Thu,  9 May 2019 20:30:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0xmpFiI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfEIR1r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 May 2019 13:27:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726632AbfEIR1r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 May 2019 13:27:47 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D8AF20675;
-        Thu,  9 May 2019 17:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557422866;
-        bh=TuZoZqt3C0Ly1PPKUwukLctgk89R/xZyUazagckl/rc=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=bAZfXMIUKIKsOuzgSpi04J+BjpwxbbTPE/x7MCVEFuVBqCpdtCOViJGgsx21EZ67I
-         lGvMgzfqW2K/Eeh/hdq+zWXs0fXub0NvjX+yAbxGce9cUQxzdcndvp+8MFfTprWGWb
-         mjdzIqNY2L/6UFFn+ipSqvXCDut4TsqQcqn9DBaA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1557339895-21952-4-git-send-email-tdas@codeaurora.org>
-References: <1557339895-21952-1-git-send-email-tdas@codeaurora.org> <1557339895-21952-4-git-send-email-tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v1 3/3] clk: qcom: rcg: update the DFS macro for RCG
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Message-ID: <155742286525.14659.18081373668341127486@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Thu, 09 May 2019 10:27:45 -0700
+        id S1726715AbfEIUaI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 May 2019 16:30:08 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40283 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbfEIUaI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 May 2019 16:30:08 -0400
+Received: by mail-yw1-f66.google.com with SMTP id 18so2925741ywe.7;
+        Thu, 09 May 2019 13:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4Uc1sxWlZenzjNtw/v4Bu0vw6ThmoS5rTB+EikbKMzw=;
+        b=g0xmpFiIyYDNtnP8/cR+PuL+UNRGGblsJgGR0K8vdvAZrBMnyWKNYLS0wwM/ZbaeyN
+         54df6yMCkkZ+zVvQwuPDCaHQ0vO1qgsZPoLeZV9d/vNJkXdz5Jzak9cjocWm7tsLddHG
+         sdR14VQ0GlXDvDnM0YMQo8jOc3c2V2KVmDbVEd/GNksGjBgWqsgTG1Mgprf0cLnm162s
+         OuNWgFHVmY9/YfW11U8qxVgwgRFpxeufexjKccS8OrWFY+nOtUdiwPCREAqoZbTESVl9
+         fwas8BeS3epJXxPT3tP3AG2dPgNoBUUP/OHi7kP9tM+ckVoUU2g41G9JAw7JdgvQuIYe
+         Jr3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4Uc1sxWlZenzjNtw/v4Bu0vw6ThmoS5rTB+EikbKMzw=;
+        b=dcoTrezVqkBgFqmwU7np0JI1iHpMjiR9/xdDiRYE0wUM26hFysqjPRhWSqKgRXmwl0
+         4aE/AuNzdw2vU9YTpbxDAOv27MN0D7PGh18tECb4VF9FcySD42ru3FNLuBefxuk5X1Ot
+         adzftitnX5QRfONN02QeAoQwBQTenUYLF7Kli+s4Fw7nVRYECEKuVjWdzfsV2zVdrsv/
+         A1BJZgzflsgxRFqLxY9GpcLr41lOC11lEloRUsl6YsFoUVEC2ZR8b//PczHrf8t7x7Q3
+         3ASnYbXX6dlqGlNTtaBbpZd2rPP6vbyK2n4YJYImAEcmIdx3JZRrGPdr3kAoHYI3VfEs
+         HTrg==
+X-Gm-Message-State: APjAAAWokHFI5Jiy5EbAmYOPvPj+UdTLCM/XU1eA7dWOjr5iV3LjnZAK
+        oZRd75DWNjII6j+20f4VGlMzlSSx
+X-Google-Smtp-Source: APXvYqzy38NnSBuSt1HdIcLK+5diag01BsVcL6xGPpIwXjbp51WMU2vzQXUWPwyJKxLRIno94pgVLg==
+X-Received: by 2002:a81:48b:: with SMTP id 133mr1684226ywe.11.1557433807088;
+        Thu, 09 May 2019 13:30:07 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id u6sm896150ywl.71.2019.05.09.13.30.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 13:30:05 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list),
+        bcm-kernel-feedback-list@broadcom.com, wahrenst@gmx.net,
+        eric@anholt.net, stefan.wahren@i2se.com
+Subject: [PATCH 0/2] clk: bcm: Allow CLK_BCM2835 for ARCH_BRCMSTB
+Date:   Thu,  9 May 2019 13:29:54 -0700
+Message-Id: <20190509202956.6320-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-05-08 11:24:55)
-> Update the init data name for each of the dynamic frequency switch
-> controlled clock associated with the RCG clock name, so that it can be
-> generated as per the hardware plan. Thus update the macro accordingly.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Hi Stephen,
 
-This patch doesn't make any sense to me.
+This small patch series allows making use of the CLK_BCM2835 driver(s)
+on ARCH_BRCMSTB since we have newer chips that make use of the CPRMAN
+block that this driver supports.
 
-> ---
->  drivers/clk/qcom/clk-rcg.h    |  2 +-
->  drivers/clk/qcom/gcc-sdm845.c | 96 +++++++++++++++++++++----------------=
-------
->  2 files changed, 49 insertions(+), 49 deletions(-)
->=20
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 5562f38..e40e8f8 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -171,7 +171,7 @@ struct clk_rcg_dfs_data {
->  };
->=20
->  #define DEFINE_RCG_DFS(r) \
-> -       { .rcg =3D &r##_src, .init =3D &r##_init }
-> +       { .rcg =3D &r, .init =3D &r##_init }
+Thanks!
 
-Why do we need to rename the init data?
+Florian Fainelli (2):
+  clk: bcm: Make BCM2835 clock drivers selectable
+  clk: bcm: Allow CLK_BCM2835 for ARCH_BRCMSTB
 
->=20
->  extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
->                                     const struct clk_rcg_dfs_data *rcgs,
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index 7131dcf..a76178b 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -408,7 +408,7 @@ enum {
->         { }
->  };
->=20
-> -static struct clk_init_data gcc_qupv3_wrap0_s0_clk_init =3D {
-> +static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init =3D {
->         .name =3D "gcc_qupv3_wrap0_s0_clk_src",
->         .parent_names =3D gcc_parent_names_0,
->         .num_parents =3D 4,
-> @@ -3577,22 +3577,22 @@ enum {
->  MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
->=20
->  static const struct clk_rcg_dfs_data gcc_dfs_clocks[] =3D {
-> -       DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk),
-> +       DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk_src),
+ drivers/clk/bcm/Kconfig  | 9 +++++++++
+ drivers/clk/bcm/Makefile | 4 ++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-I've trimmed the above to try and see what's changed but it doesn't make
-sense still.
+-- 
+2.17.1
 
