@@ -2,143 +2,102 @@ Return-Path: <SRS0=JHcd=TK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 598E0C04AB1
-	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 02:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327B8C04A6B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 03:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 290682182B
-	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 02:58:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jvHMDqEH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jvHMDqEH"
+	by mail.kernel.org (Postfix) with ESMTP id 02DD92182B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 03:28:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1557458892;
+	bh=Vodgijw9WRizuu9THwepTbSoYZ8ws+bZYRW+EAXnc5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HQP9vDc3ngQOT8ci82zx/kKYDamZlUHjsnBCzBdMMEpTnQ5rS9ZTpPsuNv3w/bEt2
+	 1XBSPLXYStt0RQM+uXJnDRpzfd8YswdeUY6UpsNJDbdffo8YjLi4WNtW8aLyGHMhGk
+	 f/lCqzsFeQS0qpYwx1oY1vkoDm6mVV4i7RBwvT1A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfEJC6t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 May 2019 22:58:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48424 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbfEJC6t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 May 2019 22:58:49 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E9CC7602DC; Fri, 10 May 2019 02:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557457127;
-        bh=XLLv4bUR+OY9ABRV/+7uwvmNvS54liCSR5ocsFHuJFQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jvHMDqEHlxQ9PTKP0D8QvZ61RHCicfIlsVbQGQgKztj4hUED4TVWkqudj56KDNN0J
-         be3v/TaINdzIAnomU7TVQvvP6kYY4ARst6Wg8FsiLPapV8zOssn1rPolKTj7ghInge
-         O3c1vQNW1ATIotJ44sz6bu8VVo90vjjY/tLg8w+A=
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726908AbfEJD2L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 May 2019 23:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726880AbfEJD2L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 May 2019 23:28:11 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9E01602DC;
-        Fri, 10 May 2019 02:58:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557457127;
-        bh=XLLv4bUR+OY9ABRV/+7uwvmNvS54liCSR5ocsFHuJFQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jvHMDqEHlxQ9PTKP0D8QvZ61RHCicfIlsVbQGQgKztj4hUED4TVWkqudj56KDNN0J
-         be3v/TaINdzIAnomU7TVQvvP6kYY4ARst6Wg8FsiLPapV8zOssn1rPolKTj7ghInge
-         O3c1vQNW1ATIotJ44sz6bu8VVo90vjjY/tLg8w+A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9E01602DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1 3/3] clk: qcom: rcg: update the DFS macro for RCG
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1557339895-21952-1-git-send-email-tdas@codeaurora.org>
- <1557339895-21952-4-git-send-email-tdas@codeaurora.org>
- <155742286525.14659.18081373668341127486@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <07bcd2df-a786-ea52-8566-70f484248952@codeaurora.org>
-Date:   Fri, 10 May 2019 08:28:39 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mail.kernel.org (Postfix) with ESMTPSA id DA6B72084A;
+        Fri, 10 May 2019 03:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557458890;
+        bh=Vodgijw9WRizuu9THwepTbSoYZ8ws+bZYRW+EAXnc5s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gQpZsDQDPDNB4zpoaSbm0NrOEyRfw2BQLvhe1PjydIwKZj65kqZXgWsw8o0buW1SP
+         qA7AIiOu8aTFMaRuFPZMTSpwX0ALZV0FNkNcpKYDLLFLaxZN7IURhqLgVhG0YvCASL
+         M3y79cQxl7bCd9d4nQQL/rqut2Nvy1btGirdopHg=
+Date:   Fri, 10 May 2019 11:27:47 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: imx6sll: Fix mispelling uart4_serial as serail
+Message-ID: <20190510032746.GF15856@dragon>
+References: <8776296d079b3b4d67d4421656238757a8ad373d.1556046082.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <155742286525.14659.18081373668341127486@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8776296d079b3b4d67d4421656238757a8ad373d.1556046082.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
-
-Thanks for the review.
-
-On 5/9/2019 10:57 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-05-08 11:24:55)
->> Update the init data name for each of the dynamic frequency switch
->> controlled clock associated with the RCG clock name, so that it can be
->> generated as per the hardware plan. Thus update the macro accordingly.
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+On Tue, Apr 23, 2019 at 07:05:08PM +0000, Leonard Crestez wrote:
+> This looks like a copy-paste error. This string is not referenced
+> anywhere so it's safe to rename it.
 > 
-> This patch doesn't make any sense to me.
-> 
->> ---
->>   drivers/clk/qcom/clk-rcg.h    |  2 +-
->>   drivers/clk/qcom/gcc-sdm845.c | 96 +++++++++++++++++++++----------------------
->>   2 files changed, 49 insertions(+), 49 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
->> index 5562f38..e40e8f8 100644
->> --- a/drivers/clk/qcom/clk-rcg.h
->> +++ b/drivers/clk/qcom/clk-rcg.h
->> @@ -171,7 +171,7 @@ struct clk_rcg_dfs_data {
->>   };
->>
->>   #define DEFINE_RCG_DFS(r) \
->> -       { .rcg = &r##_src, .init = &r##_init }
->> +       { .rcg = &r, .init = &r##_init }
-> 
-> Why do we need to rename the init data?
-> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-We want to manage the init data as the clock source name, so that we 
-could manage to auto generate our code. So that we do not have to 
-re-name the clock init data manually if the DFS source names gets 
-updated at any point of time.
+I see this keep coming, so have to ask you to fix your patch sender.
+The base64 encoding makes it very difficult to apply patch.  I have done
+manual applying for your patches a couple of times, and I thought that's
+just accident.  It seems not.  Please fix and resend. 
 
->>
->>   extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
->>                                      const struct clk_rcg_dfs_data *rcgs,
->> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->> index 7131dcf..a76178b 100644
->> --- a/drivers/clk/qcom/gcc-sdm845.c
->> +++ b/drivers/clk/qcom/gcc-sdm845.c
->> @@ -408,7 +408,7 @@ enum {
->>          { }
->>   };
->>
->> -static struct clk_init_data gcc_qupv3_wrap0_s0_clk_init = {
->> +static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init = {
->>          .name = "gcc_qupv3_wrap0_s0_clk_src",
->>          .parent_names = gcc_parent_names_0,
->>          .num_parents = 4,
->> @@ -3577,22 +3577,22 @@ enum {
->>   MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
->>
->>   static const struct clk_rcg_dfs_data gcc_dfs_clocks[] = {
->> -       DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk),
->> +       DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk_src),
+Shawn
+
+> ---
+>  drivers/clk/imx/clk-imx6sll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I've trimmed the above to try and see what's changed but it doesn't make
-> sense still.
+> diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
+> index 3bd2044cf25c..9def76df0879 100644
+> --- a/drivers/clk/imx/clk-imx6sll.c
+> +++ b/drivers/clk/imx/clk-imx6sll.c
+> @@ -266,11 +266,11 @@ static void __init imx6sll_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX6SLL_CLK_EPIT1]		= imx_clk_gate2("epit1",	"perclk", base + 0x6c, 12);
+>  	clks[IMX6SLL_CLK_EPIT2]		= imx_clk_gate2("epit2",	"perclk", base + 0x6c, 14);
+>  	clks[IMX6SLL_CLK_GPT_BUS]	= imx_clk_gate2("gpt1_bus",	"perclk", base + 0x6c, 20);
+>  	clks[IMX6SLL_CLK_GPT_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk", base + 0x6c, 22);
+>  	clks[IMX6SLL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg", base + 0x6c, 24);
+> -	clks[IMX6SLL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serail",	"uart_podf", base + 0x6c, 24);
+> +	clks[IMX6SLL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serial",	"uart_podf", base + 0x6c, 24);
+>  	clks[IMX6SLL_CLK_GPIO1]		= imx_clk_gate2("gpio1",	"ipg", base + 0x6c, 26);
+>  	clks[IMX6SLL_CLK_GPIO5]		= imx_clk_gate2("gpio5",	"ipg", base + 0x6c, 30);
+>  
+>  	/* CCGR2 */
+>  	clks[IMX6SLL_CLK_GPIO6]		= imx_clk_gate2("gpio6",	"ipg",    base + 0x70, 0);
+> -- 
+> 2.17.1
 > 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
