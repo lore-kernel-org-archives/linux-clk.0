@@ -2,104 +2,96 @@ Return-Path: <SRS0=JHcd=TK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DC7C04A6B
-	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 17:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B6FC04A6B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 20:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CBEB208C3
-	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 17:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557510865;
-	bh=TPcYCKnbp3auhRg3X0Zai1KmfmkYrRP7IMwzQaXcZaQ=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=a3teiIo1qFqZVzgEsIRtxqrItVAZqjDDhtVbUPNxaoNf+ceh1WLOX8oMXmQbYUzo0
-	 YRrc0s+Tipd0kIVoHxh/A2MaCJgg53qgw7m0tmGOiNq578LafOUQhsv4ZfPBYusN5n
-	 K0DSNNRvw+ho/r8Q4QJxQaqmGBleAs+R1uOAkrv8=
+	by mail.kernel.org (Postfix) with ESMTP id 4EDAC217F9
+	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 20:11:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfEJRyP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 May 2019 13:54:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727551AbfEJRyP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 10 May 2019 13:54:15 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89E7F208C3;
-        Fri, 10 May 2019 17:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557510854;
-        bh=TPcYCKnbp3auhRg3X0Zai1KmfmkYrRP7IMwzQaXcZaQ=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=wUhYsGhmnx1usumemDEOYHTOVFf6PU8tbg2IXIe/iuDX/i15g95hkvlwKP8OoCIvt
-         1/2jeuMnBye7x16Uq8fCbTNqjvgSsSbr4FmmMzzJgWWKwMLUViybFcyKBAfHIqsUrf
-         aZaHWVX8DhSfZnWKf+JqWwF7NN0phV8g+WK6QZ9w=
-Content-Type: text/plain; charset="utf-8"
+        id S1727994AbfEJULs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 May 2019 16:11:48 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:40221 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727676AbfEJULr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 May 2019 16:11:47 -0400
+X-Originating-IP: 90.66.53.80
+Received: from localhost (lfbn-1-3034-80.w90-66.abo.wanadoo.fr [90.66.53.80])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id F2EA7C0002;
+        Fri, 10 May 2019 20:11:43 +0000 (UTC)
+Date:   Fri, 10 May 2019 22:11:43 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu.Beznea@microchip.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] clk: at91: sckc: sama5d4 has no bypass support
+Message-ID: <20190510201143.GC7622@piout.net>
+References: <1557487388-32098-1-git-send-email-claudiu.beznea@microchip.com>
+ <1557487388-32098-2-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <07bcd2df-a786-ea52-8566-70f484248952@codeaurora.org>
-References: <1557339895-21952-1-git-send-email-tdas@codeaurora.org> <1557339895-21952-4-git-send-email-tdas@codeaurora.org> <155742286525.14659.18081373668341127486@swboyd.mtv.corp.google.com> <07bcd2df-a786-ea52-8566-70f484248952@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v1 3/3] clk: qcom: rcg: update the DFS macro for RCG
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Message-ID: <155751085370.14659.7749105088997177801@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 10 May 2019 10:54:13 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557487388-32098-2-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-05-09 19:58:39)
-> Hello Stephen,
->=20
-> Thanks for the review.
->=20
-> On 5/9/2019 10:57 PM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2019-05-08 11:24:55)
-> >> Update the init data name for each of the dynamic frequency switch
-> >> controlled clock associated with the RCG clock name, so that it can be
-> >> generated as per the hardware plan. Thus update the macro accordingly.
-> >>
-> >> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> >=20
-> > This patch doesn't make any sense to me.
-> >=20
-> >> ---
-> >>   drivers/clk/qcom/clk-rcg.h    |  2 +-
-> >>   drivers/clk/qcom/gcc-sdm845.c | 96 +++++++++++++++++++++------------=
-----------
-> >>   2 files changed, 49 insertions(+), 49 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> >> index 5562f38..e40e8f8 100644
-> >> --- a/drivers/clk/qcom/clk-rcg.h
-> >> +++ b/drivers/clk/qcom/clk-rcg.h
-> >> @@ -171,7 +171,7 @@ struct clk_rcg_dfs_data {
-> >>   };
-> >>
-> >>   #define DEFINE_RCG_DFS(r) \
-> >> -       { .rcg =3D &r##_src, .init =3D &r##_init }
-> >> +       { .rcg =3D &r, .init =3D &r##_init }
-> >=20
-> > Why do we need to rename the init data?
-> >=20
->=20
-> We want to manage the init data as the clock source name, so that we=20
-> could manage to auto generate our code. So that we do not have to=20
-> re-name the clock init data manually if the DFS source names gets=20
-> updated at any point of time.
->=20
+On 10/05/2019 11:23:27+0000, Claudiu.Beznea@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+> 
+> The slow clock of SAMA5D4 has no bypass support thus remove it.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Why is the clk name changing to not have a _src after the "root" of the
-clk name? As long as I can remember, RCGs have a "_src" postfix.
+> ---
+>  drivers/clk/at91/sckc.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+> index e76b1d64e905..6c55a7a86f79 100644
+> --- a/drivers/clk/at91/sckc.c
+> +++ b/drivers/clk/at91/sckc.c
+> @@ -429,7 +429,6 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
+>  	struct clk_init_data init;
+>  	const char *xtal_name;
+>  	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
+> -	bool bypass;
+>  	int ret;
+>  
+>  	if (!regbase)
+> @@ -443,8 +442,6 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
+>  
+>  	xtal_name = of_clk_get_parent_name(np, 0);
+>  
+> -	bypass = of_property_read_bool(np, "atmel,osc-bypass");
+> -
+>  	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
+>  	if (!osc)
+>  		return;
+> @@ -459,9 +456,6 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
+>  	osc->sckcr = regbase;
+>  	osc->startup_usec = 1200000;
+>  
+> -	if (bypass)
+> -		writel((readl(regbase) | AT91_SCKC_OSC32BYP), regbase);
+> -
+>  	hw = &osc->hw;
+>  	ret = clk_hw_register(NULL, &osc->hw);
+>  	if (ret) {
+> -- 
+> 2.7.4
+> 
 
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
