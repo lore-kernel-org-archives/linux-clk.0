@@ -2,341 +2,142 @@ Return-Path: <SRS0=JHcd=TK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F977C04A6B
-	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 10:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1989AC04A6B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 11:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC4220881
-	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 10:55:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7C0E2175B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 May 2019 11:23:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="eMUFDcm6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfEJKzo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 May 2019 06:55:44 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:58524 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727082AbfEJKzo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 May 2019 06:55:44 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AAiRfl020923;
-        Fri, 10 May 2019 05:55:41 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2scba3jgnd-1;
-        Fri, 10 May 2019 05:55:41 -0500
-Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id BA7F5611C8AB;
-        Fri, 10 May 2019 05:55:40 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 10 May
- 2019 11:55:40 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Fri, 10 May 2019 11:55:40 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 1737344;
-        Fri, 10 May 2019 11:55:40 +0100 (BST)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <sboyd@kernel.org>
-CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH v2] clk: lochnagar: Use new parent_data approach to register clock parents
-Date:   Fri, 10 May 2019 11:55:39 +0100
-Message-ID: <20190510105540.10091-1-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
+        id S1727067AbfEJLXf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 May 2019 07:23:35 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:61924 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbfEJLXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 May 2019 07:23:35 -0400
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,453,1549954800"; 
+   d="scan'208";a="32481275"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 10 May 2019 04:23:33 -0700
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 10 May 2019 04:23:33 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1O0LlmyDZYkM6Z73Frz1BVNUWeFkBXK/TsGcKsV4eH4=;
+ b=eMUFDcm6gRQb7Y4S68HMpLmAzugSdlgBNfF9LLwBwcXU2BSD0JjnDiC4HnYmcHQUTyJ8yeL8m5EUtDVWf9j229CgONeQdpOS0CRgVOfC5psu7Qu7vPNNiRPvvhhY9zJtMPtr6Sd2dV6oY5pxrg1BhrvgRgnCBEkmtJPsDzSqw9s=
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com (10.172.54.17) by
+ MWHPR11MB1935.namprd11.prod.outlook.com (10.175.54.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.22; Fri, 10 May 2019 11:23:24 +0000
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::f01a:9325:7a65:cdb4]) by MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::f01a:9325:7a65:cdb4%4]) with mapi id 15.20.1878.022; Fri, 10 May 2019
+ 11:23:24 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Claudiu.Beznea@microchip.com>
+Subject: [PATCH v3 0/4] add slow clock support for SAM9X60
+Thread-Topic: [PATCH v3 0/4] add slow clock support for SAM9X60
+Thread-Index: AQHVByLHeJKlvNrK60qOrSCn+DEu0Q==
+Date:   Fri, 10 May 2019 11:23:23 +0000
+Message-ID: <1557487388-32098-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0701CA0031.eurprd07.prod.outlook.com
+ (2603:10a6:800:90::17) To MWHPR11MB1549.namprd11.prod.outlook.com
+ (2603:10b6:301:c::17)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5e7c9a22-cb5e-4e77-35df-08d6d539e9e3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MWHPR11MB1935;
+x-ms-traffictypediagnostic: MWHPR11MB1935:
+x-microsoft-antispam-prvs: <MWHPR11MB193550D7E90626DF7C4BCE98870C0@MWHPR11MB1935.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0033AAD26D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(39860400002)(136003)(366004)(376002)(199004)(189003)(256004)(52116002)(478600001)(3846002)(99286004)(72206003)(68736007)(26005)(5660300002)(6116002)(66446008)(110136005)(107886003)(2906002)(4326008)(186003)(386003)(6506007)(66476007)(64756008)(66946007)(102836004)(66556008)(54906003)(2501003)(14454004)(6512007)(73956011)(6436002)(2616005)(6486002)(7736002)(305945005)(53936002)(66066001)(25786009)(316002)(71200400001)(71190400001)(86362001)(8676002)(81166006)(50226002)(36756003)(81156014)(476003)(8936002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1935;H:MWHPR11MB1549.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Yg6Sde9l5p1RhWndYADdDoAk/qCUmCeE9yvNw8Vc/ZnxWkVbyxv82YC7E8durjDDqDSJ+bUb4IYAyd2o1DcXukcur+77qv17Mlj6Ay10kOLXaxpPu1KXPMkeYC2nXQsNpzvDB/GBEIYpFYPypD7NQEJcX44jx+c+Wl72DsGzavWIYiR4XcLLQlbH6jN3fgugkAyWDozq5UkkW2SyDl2lxFj8myVjghNUscGlpmGByf5Ger33v2LLC0VOOBDSHtviVfEXvR+9wuBzRIZVFoKuV/0h8tiRjwTKry8fh0EjxcF0apXOK8YBXJAQPmgsx1YjoGjlusVdOHg/S2HVmaUO+UXDaPWOj9nq4JO34B0GiupnKL3QilQcOg23GUy5a5FZfDP9OuIBY2ItIlTnebWM0hjmopzdMFNC/rnROI9tZsU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905100077
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e7c9a22-cb5e-4e77-35df-08d6d539e9e3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 May 2019 11:23:23.9392
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1935
+X-OriginatorOrg: microchip.com
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch over to the more modern style of registering parents and simplify
-the code in the process.
-
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
-
-Changes since v1:
- - Add config structure used from of_device_id for version specific
-   configuration
-
-Regarding the globally unique names being the same as the DT
-names. There isn't really much intention that this driver would
-use globally unique names and I am only really populating them
-to avoid NULL pointer dereferences in the core. If there is
-something it would make more sense to populate in those fields
-I am happy to do so.  However, the names for the clocks as
-used from DT are fairly specific and I am unclear what else
-I would put in that field.
-
-Thanks,
-Charles
-
- drivers/clk/clk-lochnagar.c | 194 +++++++++++++++++++-------------------------
- 1 file changed, 82 insertions(+), 112 deletions(-)
-
-diff --git a/drivers/clk/clk-lochnagar.c b/drivers/clk/clk-lochnagar.c
-index a2f31e58ee483..a0b8f67707e79 100644
---- a/drivers/clk/clk-lochnagar.c
-+++ b/drivers/clk/clk-lochnagar.c
-@@ -42,46 +42,45 @@ struct lochnagar_clk_priv {
- 	struct regmap *regmap;
- 	enum lochnagar_type type;
- 
--	const char **parents;
--	unsigned int nparents;
--
- 	struct lochnagar_clk lclks[LOCHNAGAR_NUM_CLOCKS];
- };
- 
--static const char * const lochnagar1_clk_parents[] = {
--	"ln-none",
--	"ln-spdif-mclk",
--	"ln-psia1-mclk",
--	"ln-psia2-mclk",
--	"ln-cdc-clkout",
--	"ln-dsp-clkout",
--	"ln-pmic-32k",
--	"ln-gf-mclk1",
--	"ln-gf-mclk3",
--	"ln-gf-mclk2",
--	"ln-gf-mclk4",
-+#define LN_PARENT(NAME) { .name = NAME, .fw_name = NAME }
-+
-+static const struct clk_parent_data lochnagar1_clk_parents[] = {
-+	LN_PARENT("ln-none"),
-+	LN_PARENT("ln-spdif-mclk"),
-+	LN_PARENT("ln-psia1-mclk"),
-+	LN_PARENT("ln-psia2-mclk"),
-+	LN_PARENT("ln-cdc-clkout"),
-+	LN_PARENT("ln-dsp-clkout"),
-+	LN_PARENT("ln-pmic-32k"),
-+	LN_PARENT("ln-gf-mclk1"),
-+	LN_PARENT("ln-gf-mclk3"),
-+	LN_PARENT("ln-gf-mclk2"),
-+	LN_PARENT("ln-gf-mclk4"),
- };
- 
--static const char * const lochnagar2_clk_parents[] = {
--	"ln-none",
--	"ln-cdc-clkout",
--	"ln-dsp-clkout",
--	"ln-pmic-32k",
--	"ln-spdif-mclk",
--	"ln-clk-12m",
--	"ln-clk-11m",
--	"ln-clk-24m",
--	"ln-clk-22m",
--	"ln-clk-8m",
--	"ln-usb-clk-24m",
--	"ln-gf-mclk1",
--	"ln-gf-mclk3",
--	"ln-gf-mclk2",
--	"ln-psia1-mclk",
--	"ln-psia2-mclk",
--	"ln-spdif-clkout",
--	"ln-adat-mclk",
--	"ln-usb-clk-12m",
-+static const struct clk_parent_data lochnagar2_clk_parents[] = {
-+	LN_PARENT("ln-none"),
-+	LN_PARENT("ln-cdc-clkout"),
-+	LN_PARENT("ln-dsp-clkout"),
-+	LN_PARENT("ln-pmic-32k"),
-+	LN_PARENT("ln-spdif-mclk"),
-+	LN_PARENT("ln-clk-12m"),
-+	LN_PARENT("ln-clk-11m"),
-+	LN_PARENT("ln-clk-24m"),
-+	LN_PARENT("ln-clk-22m"),
-+	LN_PARENT("ln-clk-8m"),
-+	LN_PARENT("ln-usb-clk-24m"),
-+	LN_PARENT("ln-gf-mclk1"),
-+	LN_PARENT("ln-gf-mclk3"),
-+	LN_PARENT("ln-gf-mclk2"),
-+	LN_PARENT("ln-psia1-mclk"),
-+	LN_PARENT("ln-psia2-mclk"),
-+	LN_PARENT("ln-spdif-clkout"),
-+	LN_PARENT("ln-adat-mclk"),
-+	LN_PARENT("ln-usb-clk-12m"),
- };
- 
- #define LN1_CLK(ID, NAME, REG) \
-@@ -122,6 +121,24 @@ static const struct lochnagar_clk lochnagar2_clks[LOCHNAGAR_NUM_CLOCKS] = {
- 	LN2_CLK(SOUNDCARD_MCLK, "ln-soundcard-mclk"),
- };
- 
-+struct lochnagar_config {
-+	const struct clk_parent_data *parents;
-+	int nparents;
-+	const struct lochnagar_clk *clks;
-+};
-+
-+static const struct lochnagar_config lochnagar1_conf = {
-+	.parents = lochnagar1_clk_parents,
-+	.nparents = ARRAY_SIZE(lochnagar1_clk_parents),
-+	.clks = lochnagar1_clks,
-+};
-+
-+static const struct lochnagar_config lochnagar2_conf = {
-+	.parents = lochnagar2_clk_parents,
-+	.nparents = ARRAY_SIZE(lochnagar2_clk_parents),
-+	.clks = lochnagar2_clks,
-+};
-+
- static inline struct lochnagar_clk *lochnagar_hw_to_lclk(struct clk_hw *hw)
- {
- 	return container_of(hw, struct lochnagar_clk, hw);
-@@ -183,7 +200,7 @@ static u8 lochnagar_clk_get_parent(struct clk_hw *hw)
- 	if (ret < 0) {
- 		dev_dbg(priv->dev, "Failed to read parent of %s: %d\n",
- 			lclk->name, ret);
--		return priv->nparents;
-+		return hw->init->num_parents;
- 	}
- 
- 	val &= lclk->src_mask;
-@@ -198,46 +215,6 @@ static const struct clk_ops lochnagar_clk_ops = {
- 	.get_parent = lochnagar_clk_get_parent,
- };
- 
--static int lochnagar_init_parents(struct lochnagar_clk_priv *priv)
--{
--	struct device_node *np = priv->dev->of_node;
--	int i, j;
--
--	switch (priv->type) {
--	case LOCHNAGAR1:
--		memcpy(priv->lclks, lochnagar1_clks, sizeof(lochnagar1_clks));
--
--		priv->nparents = ARRAY_SIZE(lochnagar1_clk_parents);
--		priv->parents = devm_kmemdup(priv->dev, lochnagar1_clk_parents,
--					     sizeof(lochnagar1_clk_parents),
--					     GFP_KERNEL);
--		break;
--	case LOCHNAGAR2:
--		memcpy(priv->lclks, lochnagar2_clks, sizeof(lochnagar2_clks));
--
--		priv->nparents = ARRAY_SIZE(lochnagar2_clk_parents);
--		priv->parents = devm_kmemdup(priv->dev, lochnagar2_clk_parents,
--					     sizeof(lochnagar2_clk_parents),
--					     GFP_KERNEL);
--		break;
--	default:
--		dev_err(priv->dev, "Unknown Lochnagar type: %d\n", priv->type);
--		return -EINVAL;
--	}
--
--	if (!priv->parents)
--		return -ENOMEM;
--
--	for (i = 0; i < priv->nparents; i++) {
--		j = of_property_match_string(np, "clock-names",
--					     priv->parents[i]);
--		if (j >= 0)
--			priv->parents[i] = of_clk_get_parent_name(np, j);
--	}
--
--	return 0;
--}
--
- static struct clk_hw *
- lochnagar_of_clk_hw_get(struct of_phandle_args *clkspec, void *data)
- {
-@@ -252,16 +229,42 @@ lochnagar_of_clk_hw_get(struct of_phandle_args *clkspec, void *data)
- 	return &priv->lclks[idx].hw;
- }
- 
--static int lochnagar_init_clks(struct lochnagar_clk_priv *priv)
-+static const struct of_device_id lochnagar_of_match[] = {
-+	{ .compatible = "cirrus,lochnagar1-clk", .data = &lochnagar1_conf },
-+	{ .compatible = "cirrus,lochnagar2-clk", .data = &lochnagar2_conf },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, lochnagar_of_match);
-+
-+static int lochnagar_clk_probe(struct platform_device *pdev)
- {
- 	struct clk_init_data clk_init = {
- 		.ops = &lochnagar_clk_ops,
--		.parent_names = priv->parents,
--		.num_parents = priv->nparents,
- 	};
-+	struct device *dev = &pdev->dev;
-+	struct lochnagar_clk_priv *priv;
-+	const struct of_device_id *of_id;
- 	struct lochnagar_clk *lclk;
-+	struct lochnagar_config *conf;
- 	int ret, i;
- 
-+	of_id = of_match_device(lochnagar_of_match, dev);
-+	if (!of_id)
-+		return -EINVAL;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	priv->regmap = dev_get_regmap(dev->parent, NULL);
-+	conf = (struct lochnagar_config *)of_id->data;
-+
-+	memcpy(priv->lclks, conf->clks, sizeof(priv->lclks));
-+
-+	clk_init.parent_data = conf->parents;
-+	clk_init.num_parents = conf->nparents;
-+
- 	for (i = 0; i < ARRAY_SIZE(priv->lclks); i++) {
- 		lclk = &priv->lclks[i];
- 
-@@ -289,39 +292,6 @@ static int lochnagar_init_clks(struct lochnagar_clk_priv *priv)
- 	return ret;
- }
- 
--static const struct of_device_id lochnagar_of_match[] = {
--	{ .compatible = "cirrus,lochnagar1-clk", .data = (void *)LOCHNAGAR1 },
--	{ .compatible = "cirrus,lochnagar2-clk", .data = (void *)LOCHNAGAR2 },
--	{}
--};
--MODULE_DEVICE_TABLE(of, lochnagar_of_match);
--
--static int lochnagar_clk_probe(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--	struct lochnagar_clk_priv *priv;
--	const struct of_device_id *of_id;
--	int ret;
--
--	of_id = of_match_device(lochnagar_of_match, dev);
--	if (!of_id)
--		return -EINVAL;
--
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
--
--	priv->dev = dev;
--	priv->regmap = dev_get_regmap(dev->parent, NULL);
--	priv->type = (enum lochnagar_type)of_id->data;
--
--	ret = lochnagar_init_parents(priv);
--	if (ret)
--		return ret;
--
--	return lochnagar_init_clks(priv);
--}
--
- static struct platform_driver lochnagar_clk_driver = {
- 	.driver = {
- 		.name = "lochnagar-clk",
--- 
-2.11.0
-
+RnJvbTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+DQoNCkhp
+LA0KDQpUaGlzIHNlcmllcyBhZGQgc2xvdyBjbG9jayBzdXBwb3J0IGZvciBTQU05WDYwLiBBcGFy
+dCBmcm9tIHByZXZpb3VzIElQcywgdGhpcw0Kb25lIHVzZXMgZGlmZmVyZW50IG9mZnNldHMgaW4g
+Y29udHJvbCByZWdpc3RlciBmb3IgZGlmZmVyZW50IGZ1bmN0aW9uYWxpdGllcy4NClRoZSBzZXJp
+ZXMgYWRhcHQgY3VycmVudCBkcml2ZXIgdG8gd29yayBmb3IgYWxsIElQcyB1c2luZyBwZXIgSVAN
+CmNvbmZpZ3VyYXRpb25zIGluaXRpYWxpemVkIGF0IHByb2JlLg0KDQpUaGFuayB5b3UsDQpDbGF1
+ZGl1IEJlem5lYQ0KDQpDaGFuZ2VzIGluIHYzOg0KLSBhZGQgcGF0Y2ggMS8xIHRoYXQgcmVtb3Zl
+IGJ5cGFzcyBjb2RlIGluIHRoZSBjb2RlIHNwZWNpZmljIHRvIFNBTUE1RDQNCiAgKHRoZXJlIGlz
+IG5vIGJ5cGFzcyBzdXBwb3J0IG9uIFNBTUE1RDQpDQotIGFkYXB0IHJldmlldyBjb21tZW50cw0K
+LSByZWdpc3RlciBjbG9jayB3aXRoIG9mX2Nsa19od19vbmVjZWxsX2dldCB0byBlbXBoYXNpemUg
+dGhhdCB0aGlzIElQIGhhcw0KICAyIG91dHB1dCBjbG9ja3MgTURfU0xLQyBhbmQgVERfU0xDSyAo
+SSBjb25zaWRlcmVkIG5vdCBuZWNlc3NhcnkgdG8NCiAgaW50cm9kdWNlIG5ldyBjb25zdGFudHMg
+dG8gYmUgc2hhcmVkIGIvdyBkcml2ZXIgYW5kIERUIGJpbmRpbmdzOyBpZg0KICB5b3UgY29uc2lk
+ZXIgb3RoZXJ3aXNlLCBsZXQgbWUga25vdykNCi0gYWRhcHQgZHQtYmluZGluZyBwYXRjaCB3aXRo
+IGNsb2NrLWNlbGxzIGNoYW5nZXMgKHRodXMgZGlkbid0IGludHJvZHVjZWQNCiAgUmV2aWV3ZWQt
+YnkgdGFnKQ0KLSByZW5hbWVkIHN0cnVjdCBjbGtfc2xvd19vZmZzZXRzIHRvIHN0cnVjdCBjbGtf
+c2xvd19iaXRzIGFuZCB0aGUNCiAgY29ycmVzcG9uZGluZyBpbnN0YW5jZXMgb2YgaXQNCg0KQ2hh
+bmdlcyBpbiB2MjoNCi0gc3BsaXQgcGF0Y2ggMS8xIGZyb20gdjEgaW4gMiBwYXRjaGVzOiBvbmUg
+YWRkaW5nIHJlZ2lzdGVyIGJpdCBvZmZzZXRzDQogIHN1cHBvcnQgKHBhdGNoIDEvMyBmcm9tIHRo
+aXMgc2VyaWVzKSwgb25lIGFkZGluZyBzdXBwb3J0IGZvciBTQU05WDYwDQogIChwYXRjaCAyLzMg
+ZnJvbSB0aGlzIHNlcmllcykNCi0gZml4IGNvbXBhdGlibGUgc3RyaW5nIGZyb20gIm1pY3JvY2hp
+cCxhdDkxc2FtOXg2MC1zY2tjIiB0bw0KICAibWljcm9jaGlwLHNhbTl4NjAtc2NrYyINCg0KQ2xh
+dWRpdSBCZXpuZWEgKDQpOg0KICBjbGs6IGF0OTE6IHNja2M6IHNhbWE1ZDQgaGFzIG5vIGJ5cGFz
+cyBzdXBwb3J0DQogIGNsazogYXQ5MTogc2NrYzogYWRkIHN1cHBvcnQgdG8gc3BlY2lmeSByZWdp
+c3RlcnMgYml0IG9mZnNldHMNCiAgZHQtYmluZGluZ3M6IGNsazogYXQ5MTogYWRkIGJpbmRpbmdz
+IGZvciBTQU05WDYwJ3Mgc2xvdyBjbG9jaw0KICAgIGNvbnRyb2xsZXINCiAgY2xrOiBhdDkxOiBz
+Y2tjOiBhZGQgc3VwcG9ydCBmb3IgU0FNOVg2MA0KDQogLi4uL2RldmljZXRyZWUvYmluZGluZ3Mv
+Y2xvY2svYXQ5MS1jbG9jay50eHQgICAgICAgfCAgIDcgKy0NCiBkcml2ZXJzL2Nsay9hdDkxL3Nj
+a2MuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDE4MCArKysrKysrKysrKysrKysrLS0t
+LS0NCiAyIGZpbGVzIGNoYW5nZWQsIDE0NSBpbnNlcnRpb25zKCspLCA0MiBkZWxldGlvbnMoLSkN
+Cg0KLS0gDQoyLjcuNA0KDQo=
