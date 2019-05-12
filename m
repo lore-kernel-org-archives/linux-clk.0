@@ -2,71 +2,68 @@ Return-Path: <SRS0=xnMn=TM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CCCC04A6B
-	for <linux-clk@archiver.kernel.org>; Sun, 12 May 2019 19:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFBBC04A6B
+	for <linux-clk@archiver.kernel.org>; Sun, 12 May 2019 20:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 084AF20C01
-	for <linux-clk@archiver.kernel.org>; Sun, 12 May 2019 19:43:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7ED020C01
+	for <linux-clk@archiver.kernel.org>; Sun, 12 May 2019 20:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="D7EZkZWp"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hPLqw9Nr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfELTnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 May 2019 15:43:16 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34360 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727074AbfELTnO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 May 2019 15:43:14 -0400
-Received: by mail-wm1-f68.google.com with SMTP id m20so9845829wmg.1;
-        Sun, 12 May 2019 12:43:13 -0700 (PDT)
+        id S1726958AbfELU6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 May 2019 16:58:00 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43629 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbfELU6A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 May 2019 16:58:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r4so12979223wro.10
+        for <linux-clk@vger.kernel.org>; Sun, 12 May 2019 13:57:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AqfzzZgYh773xcVhaI6uUR4lAMlHwzAkWA/UkOzUZ64=;
-        b=D7EZkZWpd252npUWFhFf2WXhLBZPNYbIIOokNB+eEc385EcmLuDkq/0rM76ytoIXDr
-         /IK0+sF2f3Kq+kT3hmPV72GWZQcj3u0QMXdzOgIX3XpNA7ZQpALbltmFzMKv4XQiLK2H
-         c1U3v4RL7KyYKkQrVi63+MaDyF9d1Fz60n5I45HUiwBAlRQbCJe8QXCmj7UX8GUzoFek
-         daRr9vIwh/67yncmj95i022mp8xph+BoaQoYH3oG34oxJkM7tdK9/vnNfZxjwDCBMxJJ
-         bhL2X2He7dHlJSZbLupQWgPQx1EHHRGMLuNJZG7HrF/DYnzx36uAHq5E0EnUvPeFyRCe
-         e9+g==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sm9UEwQ3mt6/GT1ya/gcLVA0odO8xivuaaUGOOt4No4=;
+        b=hPLqw9NroyF97KvvhKpIe0wPnef3gIPB4pjDSJW9Jzke60ROE+9tnEZ8Z+AOiwE47K
+         TJEoGTYE4jfwwz4sE8mkYttcVJyaT4XHE1IL4g+689KKKC3SZyNqcq+hMYpnvwJDo3Ly
+         /GAkrLx9wjGbbbbGrSOyc6Kqld4m2KRu4d/eE4haXvTR2s8uUtzTqwusuY2JMNImsIb1
+         7w2hheTMNGldIiGpKYG3uJjEWWca9SrmgxrpQGJAorSmd7HGDQxrO9oEpVjzvf5O6knc
+         z2fSkgBwQHyrB+yh6lXbsYvPpM84xjHEXHBENz30aooPFuy554whRfhtUCR/GxlqMc+G
+         h3eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AqfzzZgYh773xcVhaI6uUR4lAMlHwzAkWA/UkOzUZ64=;
-        b=RMldcOMvGIdgbHSOEauDRIIcxt1hX6zNWn6v8ei+HubGLTiJpIHBvpd9i5THKWGHOi
-         U9KPkFtBdFWt5tyktNwiHSiTLClOu9vdFrWgkuBi+ILnvqMRW8cayZd4h8UPYolrti2g
-         GfSDo0khkqzUV8xlVcaOey+4RMhAZMUhzvzx32FYSBLUty8DTzOq1rj7alesKod/bTZR
-         yXZrR2VfxWUL8PhUD662XiLf+Xf3JjgfJOPWSsWcJTW6EHhU+lFBdJauZOfqYrsfSowQ
-         yxeduLC/9ILHD8Dr3ZtXSN368xKHKs8TV8Q40k1ntQTFPZRU3u/sKk+DFDOcn3mJ4BSU
-         629A==
-X-Gm-Message-State: APjAAAWAu/ZxkrFsDv/J0O5vyP8+2YJY8ZEAmUrr0X4kne/SomzRJ9Hf
-        LlgQTdlxULJ4tHMRdsfLUfc=
-X-Google-Smtp-Source: APXvYqxst1IMmq0aCd4wGUOWu4F2rwedBjwlTWWdXmF/1nnjuBDeUJsPP7ROf9mWcgMxqv5G7bnQ2g==
-X-Received: by 2002:a1c:ba87:: with SMTP id k129mr1518472wmf.132.1557690192455;
-        Sun, 12 May 2019 12:43:12 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133C8AD00ECBE9107EA8EB108.dip0.t-ipconnect.de. [2003:f1:33c8:ad00:ecbe:9107:ea8e:b108])
-        by smtp.googlemail.com with ESMTPSA id r23sm13685178wmh.29.2019.05.12.12.43.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 May 2019 12:43:11 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, narmstrong@baylibre.com,
-        jbrunet@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sm9UEwQ3mt6/GT1ya/gcLVA0odO8xivuaaUGOOt4No4=;
+        b=ImwmVEkPPs5I9QdWhipopzI93mRM4ZawYRi8IQU4VW7iL5904+pOR8/YNvlYlxl6KL
+         WhJZiDnIvwiqOmZIQkCnMqX9irJs9O83D1DcBGuFPS1BYTmRa1gBdRkaagPJxY91r7YV
+         nH3QpUfoyeIZcMXQvchR0Sxs+1Lom4uQebsS+JzrWpzoLgIDNrb+CFAp5q7tOx0qPWN4
+         De0EsLywrOESCXSl15McR4zoOVGrGnxq5gb6UkFl3rUh949XIdSxrYP893w4SCzOIUto
+         /4sPYuA5JNEhltqsOmvMJMlMwcwEcA9yruYOcLMPv5L45R0PFm2FH/dn18SABuevhkqM
+         JE2A==
+X-Gm-Message-State: APjAAAX4ZesQKsY7qJyl8d9OVRHrH8RI1alR/QsRq1uNHz54zPrRqyNQ
+        IZwakefjzoSoasQrXUIHAsHy7g==
+X-Google-Smtp-Source: APXvYqw8T4YnO6cWYWIIJcnC34eAvY38shlhSF9rcgw5hN8w/eUPE6JNCP2+VaqoLH0QgxrHKgRNUw==
+X-Received: by 2002:a5d:5701:: with SMTP id a1mr15615178wrv.52.1557694678203;
+        Sun, 12 May 2019 13:57:58 -0700 (PDT)
+Received: from boomer.baylibre.com (uluru.liltaz.com. [163.172.81.188])
+        by smtp.googlemail.com with ESMTPSA id o81sm21483068wmb.2.2019.05.12.13.57.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 May 2019 13:57:57 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/1] clk: meson: meson8b: fix a typo in the VPU parent names array variable
-Date:   Sun, 12 May 2019 21:43:00 +0200
-Message-Id: <20190512194300.7445-2-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190512194300.7445-1-martin.blumenstingl@googlemail.com>
-References: <20190512194300.7445-1-martin.blumenstingl@googlemail.com>
+Subject: [PATCH] clk: meson: fix MPLL 50M binding id typo
+Date:   Sun, 12 May 2019 22:57:43 +0200
+Message-Id: <20190512205743.24131-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -74,51 +71,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The variable which holds the parent names for the VPU clocks has a typo
-in it. Fix this typo to make the variable naming in the driver
-consistent. No functional changes.
+MPLL_5OM (the capital letter o) should indeed be MPLL_50M (the number)
+Fix this before it gets used.
 
-Fixes: 41785ce562491d ("clk: meson: meson8b: add the VPU clock trees")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reported-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Fixes: 25db146aa726 ("dt-bindings: clk: meson: add g12a periph clock controller bindings")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/meson8b.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/meson/g12a.c              | 4 ++--
+ drivers/clk/meson/g12a.h              | 2 +-
+ include/dt-bindings/clock/g12a-clkc.h | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 37cf0f01bb5d..62cd3a7f1f65 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1761,7 +1761,7 @@ static struct clk_regmap meson8m2_gp_pll = {
- 	},
- };
- 
--static const char * const mmeson8b_vpu_0_1_parent_names[] = {
-+static const char * const meson8b_vpu_0_1_parent_names[] = {
- 	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
- };
- 
-@@ -1778,8 +1778,8 @@ static struct clk_regmap meson8b_vpu_0_sel = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_0_sel",
- 		.ops = &clk_regmap_mux_ops,
--		.parent_names = mmeson8b_vpu_0_1_parent_names,
--		.num_parents = ARRAY_SIZE(mmeson8b_vpu_0_1_parent_names),
-+		.parent_names = meson8b_vpu_0_1_parent_names,
-+		.num_parents = ARRAY_SIZE(meson8b_vpu_0_1_parent_names),
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
-@@ -1837,8 +1837,8 @@ static struct clk_regmap meson8b_vpu_1_sel = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_1_sel",
- 		.ops = &clk_regmap_mux_ops,
--		.parent_names = mmeson8b_vpu_0_1_parent_names,
--		.num_parents = ARRAY_SIZE(mmeson8b_vpu_0_1_parent_names),
-+		.parent_names = meson8b_vpu_0_1_parent_names,
-+		.num_parents = ARRAY_SIZE(meson8b_vpu_0_1_parent_names),
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 739f64fdf1e3..206fafd299ea 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -2734,8 +2734,8 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
+ 		[CLKID_MALI_1_DIV]		= &g12a_mali_1_div.hw,
+ 		[CLKID_MALI_1]			= &g12a_mali_1.hw,
+ 		[CLKID_MALI]			= &g12a_mali.hw,
+-		[CLKID_MPLL_5OM_DIV]		= &g12a_mpll_50m_div.hw,
+-		[CLKID_MPLL_5OM]		= &g12a_mpll_50m.hw,
++		[CLKID_MPLL_50M_DIV]		= &g12a_mpll_50m_div.hw,
++		[CLKID_MPLL_50M]		= &g12a_mpll_50m.hw,
+ 		[CLKID_SYS_PLL_DIV16_EN]	= &g12a_sys_pll_div16_en.hw,
+ 		[CLKID_SYS_PLL_DIV16]		= &g12a_sys_pll_div16.hw,
+ 		[CLKID_CPU_CLK_DYN0_SEL]	= &g12a_cpu_clk_premux0.hw,
+diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+index 39c41af70804..bcc05cd9882f 100644
+--- a/drivers/clk/meson/g12a.h
++++ b/drivers/clk/meson/g12a.h
+@@ -166,7 +166,7 @@
+ #define CLKID_HDMI_DIV				167
+ #define CLKID_MALI_0_DIV			170
+ #define CLKID_MALI_1_DIV			173
+-#define CLKID_MPLL_5OM_DIV			176
++#define CLKID_MPLL_50M_DIV			176
+ #define CLKID_SYS_PLL_DIV16_EN			178
+ #define CLKID_SYS_PLL_DIV16			179
+ #define CLKID_CPU_CLK_DYN0_SEL			180
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+index 82c9e0c020b2..e10470ed7c4f 100644
+--- a/include/dt-bindings/clock/g12a-clkc.h
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -130,7 +130,7 @@
+ #define CLKID_MALI_1_SEL			172
+ #define CLKID_MALI_1				174
+ #define CLKID_MALI				175
+-#define CLKID_MPLL_5OM				177
++#define CLKID_MPLL_50M				177
+ #define CLKID_CPU_CLK				187
+ #define CLKID_PCIE_PLL				201
+ #define CLKID_VDEC_1				204
 -- 
-2.21.0
+2.20.1
 
