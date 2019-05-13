@@ -2,93 +2,111 @@ Return-Path: <SRS0=NIgS=TN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D3AC04AA7
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 17:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C62C04AA7
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 20:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D01020879
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 17:48:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557769708;
-	bh=ZMo/XKQSozcSyr5tIGrY/hUHUmfcwFjJFalqvHmmVbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=njqQ0E/1lKxvhgpIHR0rR9HGWFa7gPSKPEwJ0wVN9xEnNmTArrZngPIdtBsI3ptGN
-	 t40voKUfRVj10C78d1G28F6M4YQKJ6Gi/f3PFdzP+OlINUMT70k6gT5IXcWTZQMvr6
-	 e4zHgu7UqakVoAj6F95Nhcialf9VHaEQuj63PqC4=
+	by mail.kernel.org (Postfix) with ESMTP id 2A95D20850
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 20:08:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="hSXxafaV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfEMRsX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 May 2019 13:48:23 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34973 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728884AbfEMRsW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 13:48:22 -0400
-Received: by mail-ot1-f67.google.com with SMTP id n14so5668708otk.2;
-        Mon, 13 May 2019 10:48:22 -0700 (PDT)
+        id S1726109AbfEMUIK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 May 2019 16:08:10 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42614 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfEMUIJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 16:08:09 -0400
+Received: by mail-io1-f67.google.com with SMTP id g16so11107758iom.9
+        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 13:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tVpxrVqtZ6so56rmoXRO/UqKolhNWwjERgPc3LzGFN8=;
+        b=hSXxafaV5iTjOToTOFm4RvKmXIJLq851eKZ0B8cA9rjCzP2lEK7Ikybh/EnCwRncxd
+         y4SFaafG08JvytYn5XC+jiHhPG2URqrcilytocl+eOTZmHcYxn9/IEgq25FW5lz79n2q
+         4qVl9TtNf80RAVLRrsPKKLHLkPn9xNZbZcwAFgA5GEHrCVMJyk3INBoBbmfModA0ugMO
+         9HM1hRCR5mxxaKFmCVTokyVPhdzIJq1ZrhfwoCNM9EKO/hi5s5aICg+1FEvj8l6JXuun
+         NpvSgJdDZovD7yJfYykntLRjnfcJjEIvFXOwfDFbTQKdEFxz7RRnvi3+FTWXNPBIpVsa
+         1sBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gkHpJzWFAksIMv+VI682dKhDhr4Fbw0OiglBoy3hzNs=;
-        b=eFqyMYtZEPXKGobq8vjlWfQxdn5ATh+VwqVKIHgvLyAUgaPk82GPZuO4FBNEauL3Lf
-         1QlhZSSzhbRVu3u8gTH4ZVI6XKFtYIc/txCOUiiz6g5w+306Ta9EMRbNn/03vLr4txSa
-         RWq5U2eryyBflLMsCgmZFwA73aVYoenErDlr/OwdNAg8Rf1mOFVK0LunKKA21B4gSj/X
-         8Yw1yuq0WXHR38oR9XkquSU8C+q6E69QjceQSbQP56aeN4SCETBJ0EQsNhh8b3YHomhy
-         +evJA5/bI20ZPqA3otP5+RitQhWNsgpJv0mkY5K8PDhDUEqkvxdbNIdcYLB6We4/Nsv0
-         y1RQ==
-X-Gm-Message-State: APjAAAU7DvQKj6TefQgy09a8EzBqL9+xkFmCuVDRCAIXQgASg0ZFo/1/
-        Lo3bBmNh7BN7rvXfArHZeQ==
-X-Google-Smtp-Source: APXvYqyDNm+2TRXIedzOkppCtpoGAVu0Y//bfN1IBeyWcv0SwaLYFxVbDIaB5w/V3N+DpWu8gG67sA==
-X-Received: by 2002:a05:6830:164e:: with SMTP id h14mr17428711otr.321.1557769701976;
-        Mon, 13 May 2019 10:48:21 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e9sm6164134otf.48.2019.05.13.10.48.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 10:48:20 -0700 (PDT)
-Date:   Mon, 13 May 2019 12:48:20 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Claudiu.Beznea@microchip.com
-Subject: Re: [PATCH v3 3/4] dt-bindings: clk: at91: add bindings for
- SAM9X60's  slow clock controller
-Message-ID: <20190513174820.GA16840@bogus>
-References: <1557487388-32098-1-git-send-email-claudiu.beznea@microchip.com>
- <1557487388-32098-4-git-send-email-claudiu.beznea@microchip.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tVpxrVqtZ6so56rmoXRO/UqKolhNWwjERgPc3LzGFN8=;
+        b=LMXk5kvZYq/HyJ9LFAZAhbDw3D9gKyjiahuxYewXcTiW+zn+SM8RUkIk17bh1Ng0bm
+         UpUVI9piDuTs8ZjSvkjPKf0pDX5ln6HhUUXsvMw9uMMAJPYskKglqW0GkpBLtbHic/+H
+         wN/M7V1oWnLWQOyLZivKIFYY3l+sJcZkLkI0OFJ47E86NeCVo3e417bm/QByCiz+edsO
+         9jF6xctzCupjA74M2K9Fy7nfdKpLJ0c45kxr7hMRz7XCBhCWrHjdSvyFvv5HAlRTNpy+
+         IyqsaYwgLRNcgT58dCBuNTN0/h177A0fz2MhX7ccKyQe77+5cu1BXBYee2gyI4WU/ION
+         B0Og==
+X-Gm-Message-State: APjAAAVFl2M0MXZf2lC8ldnYzIdFpMglR0/ejMNfz7ZBsvJsGDn/s6rk
+        p83xSXRvWZXeKR8HcTevHT6agQ==
+X-Google-Smtp-Source: APXvYqyw8zFE1ynOjqj9m0tDEwjIwV/Nsk7yMgV7lkFPmgfuZg00tc/M+Qp16udiiomTmHQFlr0Prw==
+X-Received: by 2002:a5d:9e01:: with SMTP id h1mr2997330ioh.57.1557778088886;
+        Mon, 13 May 2019 13:08:08 -0700 (PDT)
+Received: from viisi.lan (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id h21sm242468ith.8.2019.05.13.13.08.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 13:08:08 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com, pavel@ucw.cz
+Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-clk@vger.kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH] clk: sifive: restrict Kconfig scope for the FU540 PRCI driver
+Date:   Mon, 13 May 2019 13:07:58 -0700
+Message-Id: <20190513200758.15241-1-paul.walmsley@sifive.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557487388-32098-4-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 10 May 2019 11:23:35 +0000, <Claudiu.Beznea@microchip.com> wrote:
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> 
-> Add bindings for SAM9X60's slow clock controller.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
-> 
-> Hi Rob,
-> 
-> I didn't added your Reviewed-by tag to this version since I changed
-> the driver with regards to clock-cells DT binding (and I though you
-> may want to comment on this).
-> 
-> Thank you,
-> Claudiu Beznea
-> 
->  Documentation/devicetree/bindings/clock/at91-clock.txt | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
+Restrict Kconfig scope for SiFive clock and reset IP block drivers
+such that they won't appear on most configurations that are unlikely
+to support them.  This is based on a suggestion from Pavel Machek
+<pavel@ucw.cz>.  Ideally this should be dependent on
+CONFIG_ARCH_SIFIVE, but since that Kconfig directive does not yet
+exist, add dependencies on RISCV or COMPILE_TEST for now.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+---
+ drivers/clk/sifive/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/sifive/Kconfig b/drivers/clk/sifive/Kconfig
+index 8db4a3eb4782..27a8fe531357 100644
+--- a/drivers/clk/sifive/Kconfig
++++ b/drivers/clk/sifive/Kconfig
+@@ -2,6 +2,7 @@
+ 
+ menuconfig CLK_SIFIVE
+ 	bool "SiFive SoC driver support"
++	depends on RISCV || COMPILE_TEST
+ 	help
+ 	  SoC drivers for SiFive Linux-capable SoCs.
+ 
+@@ -10,6 +11,7 @@ if CLK_SIFIVE
+ config CLK_SIFIVE_FU540_PRCI
+ 	bool "PRCI driver for SiFive FU540 SoCs"
+ 	select CLK_ANALOGBITS_WRPLL_CLN28HPC
++	depends on RISCV || COMPILE_TEST
+ 	help
+ 	  Supports the Power Reset Clock interface (PRCI) IP block found in
+ 	  FU540 SoCs.  If this kernel is meant to run on a SiFive FU540 SoC,
+-- 
+2.20.1
+
