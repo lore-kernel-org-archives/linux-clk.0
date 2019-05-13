@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD0FC04AB1
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C8BC04AB4
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3E1C2147A
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63AC02146F
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zpNEfai/"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FTChcYwy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbfEMMb2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 May 2019 08:31:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42107 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729215AbfEMMb1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 08:31:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l2so15040716wrb.9
-        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 05:31:26 -0700 (PDT)
+        id S1729876AbfEMMbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 May 2019 08:31:33 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54454 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbfEMMbc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 08:31:32 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i3so7860470wml.4
+        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 05:31:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mW2Fqi37nfrJWuA7Y78Xlr35mQpQP8Au1z+vEQpFR/c=;
-        b=zpNEfai/ShFL9b9BqnxeB/Z0ueU/STT54nBh4jzNCSq8avg67UIuysT+FBIdpsciGJ
-         fH+PJQ9dp/RC7UD4U5T30ILymLeLPSwMCGXbRrY5FXFhGMJXH/+xZrPQkS/NROWCtXPG
-         Y7ljuoZE9vGoccHwsjUOCzX8dVYDO7DZe8QJuNXNCAPU66G93Qz+KX2xdn/T7cRrxtNc
-         8oB5kEqR8RaHUs3dERDJiu2eG5YGccaZMM0q08ciUhiKKYmMbNuj7N6p3ewMaIvPWP4C
-         DeWdKERkqxW3JlXFcHB6roMjM7t/OioSCWUmH/ADLTHh0+Plh+vhbwRRRN3wuazodw3q
-         8xxw==
+        bh=qDWoUB9bcp7o6UKFktF9ACZ04OzawQuwNyVSxDs2oGM=;
+        b=FTChcYwy/64XxJA+Qdoi5SQTOLGXNUXjv+nlh1tRXwcJ5wHIr4YXrKpPSAYujuyCzp
+         nijO6vpU+0BTOBu0M8rH69Fy/BcRNzMsb9+QsY4mgYef5o5Py4Er/BU6A4UPldUHIUwm
+         3N1VBhSmqFk12ex6lkH7nZ7A1wkbMpbp1wKpzXPxwEDHpUroEI1zCpg1SeMKQmrJ7goz
+         QVgAUjDQTPtot79cCw6omTqisZOw9lWoYiGfS0N3V6ax1/grApmnole0AFlAcoL9OJMk
+         k1xLXdk/GNS3KbD325KPkAfuHONMfgCR0ZXh4mu7cIH8/tJI20Q5P7EPet0TDqsWy1Jv
+         Dx4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mW2Fqi37nfrJWuA7Y78Xlr35mQpQP8Au1z+vEQpFR/c=;
-        b=bREjw7HYorB58PCX1nAXOZ5xz/QtsgeEz46QC9UR43ZLdazCvmIuTtPwr7uMs86Q5p
-         WjLAHx2XdhCUn8Jb+L1ajHy15W6hfvv4TBFCQRKbmKIWlcw4LtR305Pj3IxTkkq8FCPK
-         lz+kVytREaPxveibB0gd3YOmBUxHAv/LvydKNcFbYfLroLafKXCE9Vuvni2Xn+iT7iRl
-         ZI7wky9YE+ZfU/83eTAYJOaEvz3g64KHARfX2QFuDeu6PTXTxQ2H+yYESdek5gKAvKBA
-         7H2hwLxm0/RbPbQRfdbHJ3z24z6I1jN88Xyh8RsKwuZE8/8HeEF/PF4KmGkp3O9qjQdM
-         iJlw==
-X-Gm-Message-State: APjAAAVruxXMPSAzLyZmOpWQNlL2RW2gNnu1sJ/o8m9/tOAX/LOWD3x9
-        vqfElsPA2c/AkSYs8SPtsbGb0A==
-X-Google-Smtp-Source: APXvYqzMT85oqFabMAnmREk8mC5CwV17opJfsoHj/As/U4QV+LoR1dwrkdAtQjJSAYM8uOuBfPWaiw==
-X-Received: by 2002:adf:dc4b:: with SMTP id m11mr18014405wrj.66.1557750685310;
-        Mon, 13 May 2019 05:31:25 -0700 (PDT)
+        bh=qDWoUB9bcp7o6UKFktF9ACZ04OzawQuwNyVSxDs2oGM=;
+        b=Q6wW6ZYkd5yJq62ZMtteVIjI8CibMSDgn5q2gb1cIgWYmjSxVLPWjGkuDP8rwajgTP
+         FeS3k5NN9gc4f90HxTqOzUDhRW/O6I4Hb7dGA+wJuD1FGF+VWq3diHvnNnJR8stCQHQK
+         sPpbV19AeC8flcQjBe2DBxlHDqgjBKOFlnJ0P2djj4+1pcaV8ycVYcnHqcg01UuIhB4m
+         qm2BObq9vnFyuXdCz4A7w7LoHSyTg0+7PUn+qePixctWuZB9fp/X9mIuiDp8yIQ+ktA0
+         vQhyOQFDUiPDhd+hXr5kUzeYj3Xvbc7l1tPrkcEbTQg4ihcYLx+rY78xlAkVUu6zPizJ
+         cxKg==
+X-Gm-Message-State: APjAAAUesfblOZz6L/r2KauL2PT4QypWMQJI/f6tHv5YDgm99fHKWYmz
+        o1m79xujjhO92DoTogIGZV66YA==
+X-Google-Smtp-Source: APXvYqzS/G2YjzdOEaicaTu5qFCKLfkduSgGOTIkrGT+2VPcKPiv3XEJKguO/PiftHRHyxFE9Kutnw==
+X-Received: by 2002:a1c:1d4:: with SMTP id 203mr16339134wmb.76.1557750690506;
+        Mon, 13 May 2019 05:31:30 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.24
+        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 05:31:24 -0700 (PDT)
+        Mon, 13 May 2019 05:31:30 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -61,9 +61,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/7] clk: meson: gxbb: no spread spectrum on mpll0
-Date:   Mon, 13 May 2019 14:31:10 +0200
-Message-Id: <20190513123115.18145-3-jbrunet@baylibre.com>
+Subject: [PATCH v2 7/7] clk: meson: g12a: add controller register init
+Date:   Mon, 13 May 2019 14:31:15 +0200
+Message-Id: <20190513123115.18145-8-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190513123115.18145-1-jbrunet@baylibre.com>
 References: <20190513123115.18145-1-jbrunet@baylibre.com>
@@ -74,34 +74,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The documentation says there is an SSEN bit on mpll0 but, after testing
-it, no spread spectrum function appears to be enabled by this bit on any
-of the MPLLs.
+Add the MPLL common register initial setting
 
-Let's remove it until we know more
-
-Fixes: 1f737ffa13ef ("clk: meson: mpll: fix mpll0 fractional part ignored")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/gxbb.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/clk/meson/g12a.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 29ffb4fde714..dab16d9b1af8 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -679,11 +679,6 @@ static struct clk_regmap gxbb_mpll0_div = {
- 			.shift   = 16,
- 			.width   = 9,
- 		},
--		.ssen = {
--			.reg_off = HHI_MPLL_CNTL,
--			.shift   = 25,
--			.width	 = 1,
--		},
- 		.lock = &meson_clk_lock,
- 	},
- 	.hw.init = &(struct clk_init_data){
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index ef1d2e4c8fd2..d5aceb79a91a 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -2992,10 +2992,16 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
+ 	&g12a_vdec_hevcf,
+ };
+ 
++static const struct reg_sequence g12a_init_regs[] = {
++	{ .reg = HHI_MPLL_CNTL0,	.def = 0x00000543 },
++};
++
+ static const struct meson_eeclkc_data g12a_clkc_data = {
+ 	.regmap_clks = g12a_clk_regmaps,
+ 	.regmap_clk_num = ARRAY_SIZE(g12a_clk_regmaps),
+-	.hw_onecell_data = &g12a_hw_onecell_data
++	.hw_onecell_data = &g12a_hw_onecell_data,
++	.init_regs = g12a_init_regs,
++	.init_count = ARRAY_SIZE(g12a_init_regs),
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
 -- 
 2.20.1
 
