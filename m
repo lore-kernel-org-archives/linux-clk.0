@@ -2,192 +2,186 @@ Return-Path: <SRS0=NIgS=TN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F385C04AB1
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 08:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C38C7C04AB1
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 09:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 075E421019
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 08:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89CC320989
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 09:18:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nvsHSXeb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfEMIdC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 May 2019 04:33:02 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7745 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725866AbfEMIdC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 13 May 2019 04:33:02 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2065CD97083CE2953F2;
-        Mon, 13 May 2019 16:32:58 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
- 16:32:49 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2] clk: ti: Remove unused functions
-Date:   Mon, 13 May 2019 16:32:24 +0800
-Message-ID: <20190513083224.28892-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190512100328.27136-1-yuehaibing@huawei.com>
-References: <20190512100328.27136-1-yuehaibing@huawei.com>
+        id S1728256AbfEMJSL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 May 2019 05:18:11 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37003 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728215AbfEMJSK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 05:18:10 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e15so1950329wrs.4
+        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 02:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=XQMVZi5//3rMDhqHIdy7w3EyVwVaJ+ULF4VGfnvRPq8=;
+        b=nvsHSXebQ0UNHoxf0gRJ4+jB88usDq5bJWzqzfoKMHeAJlU/CuYIF6O/qEQOBXXxlA
+         et/wOAMmgkRgiDgYUXgin9KtQgAUVj+dm2mJkf7Awcim1sIw3hWnMFJ7X7oS3uD3wfr1
+         DCTY3TwaSlTjK8UM1SgbJvleQW9CY5ae4kENAmb2FRvh9vRP/C6u7Gha6kzze9tHQDqR
+         T8x2lFM01suwxpAFuWgQRwnEDTuwEcRkglSUHc+giFjDmRNAPb5Nsu2FfY25YRMyTqzu
+         aTLNtn2U3v38G1wCPwzjXgdBglNigkRmuM3OjODAOE8YDBEoC3Nw+cYEgHBeflKTHnQL
+         KUXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=XQMVZi5//3rMDhqHIdy7w3EyVwVaJ+ULF4VGfnvRPq8=;
+        b=rT/rioGYVe+QO+RJ11H3yKUdUt5+1FCjNY10B5rvt2LvcjydCHR9KymWIpXoXoKqFL
+         eVROFsFZILV4230RI+JbdczKlP3I2PIAwGHIVGenfYvycktG3oDrZ63WH0EP+iqP1L7q
+         oM+zkyIjtFddTYu6En6Zqi3VFhmi9ADsMvv8xKi0bgBLoYKiuYqRMOOgyqyIhKQ/9J3J
+         f6pbshjIEsbqg0tC7qm87p9kcnn0q1/enYZs3x1BfmVJ2ZgxnZaTtGvO0I72kbszoL8t
+         YQ53eKferwmqLRMAkO8gG+BcET6bFlLsLvDEV+6vzA2ee/tKfKhj3B0dBIRMmvwoZgM7
+         oz+g==
+X-Gm-Message-State: APjAAAXddMNjUlhhfyM50+Rg0uoxgkA4LH2wTEPh4fg1Nu4PngZEg9jg
+        LSCP8J4ZLAu3Hdq2dDm9FoW1YA==
+X-Google-Smtp-Source: APXvYqyIECT6aJkOFzkPVJlDjoDZ2HcPpXHNHjaNT4bi/sI/WqgAo8On9LI2Ef1KnBcYaKn5thGi/g==
+X-Received: by 2002:a5d:4002:: with SMTP id n2mr17376466wrp.187.1557739088475;
+        Mon, 13 May 2019 02:18:08 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x4sm1815075wrn.41.2019.05.13.02.18.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 02:18:07 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson: fix MPLL 50M binding id typo
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20190512205743.24131-1-jbrunet@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <44902731-313b-8e8c-669c-4f15c5b98a55@baylibre.com>
+Date:   Mon, 13 May 2019 11:18:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190512205743.24131-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-They are not used any more since
-commit 7558562a70fb ("clk: ti: Drop legacy clk-3xxx-legacy code")
+On 12/05/2019 22:57, Jerome Brunet wrote:
+> MPLL_5OM (the capital letter o) should indeed be MPLL_50M (the number)
+> Fix this before it gets used.
+> 
+> Reported-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Fixes: 25db146aa726 ("dt-bindings: clk: meson: add g12a periph clock controller bindings")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/g12a.c              | 4 ++--
+>  drivers/clk/meson/g12a.h              | 2 +-
+>  include/dt-bindings/clock/g12a-clkc.h | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 739f64fdf1e3..206fafd299ea 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -2734,8 +2734,8 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
+>  		[CLKID_MALI_1_DIV]		= &g12a_mali_1_div.hw,
+>  		[CLKID_MALI_1]			= &g12a_mali_1.hw,
+>  		[CLKID_MALI]			= &g12a_mali.hw,
+> -		[CLKID_MPLL_5OM_DIV]		= &g12a_mpll_50m_div.hw,
+> -		[CLKID_MPLL_5OM]		= &g12a_mpll_50m.hw,
+> +		[CLKID_MPLL_50M_DIV]		= &g12a_mpll_50m_div.hw,
+> +		[CLKID_MPLL_50M]		= &g12a_mpll_50m.hw,
+>  		[CLKID_SYS_PLL_DIV16_EN]	= &g12a_sys_pll_div16_en.hw,
+>  		[CLKID_SYS_PLL_DIV16]		= &g12a_sys_pll_div16.hw,
+>  		[CLKID_CPU_CLK_DYN0_SEL]	= &g12a_cpu_clk_premux0.hw,
+> diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+> index 39c41af70804..bcc05cd9882f 100644
+> --- a/drivers/clk/meson/g12a.h
+> +++ b/drivers/clk/meson/g12a.h
+> @@ -166,7 +166,7 @@
+>  #define CLKID_HDMI_DIV				167
+>  #define CLKID_MALI_0_DIV			170
+>  #define CLKID_MALI_1_DIV			173
+> -#define CLKID_MPLL_5OM_DIV			176
+> +#define CLKID_MPLL_50M_DIV			176
+>  #define CLKID_SYS_PLL_DIV16_EN			178
+>  #define CLKID_SYS_PLL_DIV16			179
+>  #define CLKID_CPU_CLK_DYN0_SEL			180
+> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+> index 82c9e0c020b2..e10470ed7c4f 100644
+> --- a/include/dt-bindings/clock/g12a-clkc.h
+> +++ b/include/dt-bindings/clock/g12a-clkc.h
+> @@ -130,7 +130,7 @@
+>  #define CLKID_MALI_1_SEL			172
+>  #define CLKID_MALI_1				174
+>  #define CLKID_MALI				175
+> -#define CLKID_MPLL_5OM				177
+> +#define CLKID_MPLL_50M				177
+>  #define CLKID_CPU_CLK				187
+>  #define CLKID_PCIE_PLL				201
+>  #define CLKID_VDEC_1				204
+> 
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Suggested-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: also remove mux/div unused functions
----
- drivers/clk/ti/divider.c | 36 ------------------------------------
- drivers/clk/ti/gate.c    | 30 ------------------------------
- drivers/clk/ti/mux.c     | 31 -------------------------------
- 3 files changed, 97 deletions(-)
-
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 4786e0e..c2ff4ce 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -474,42 +474,6 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- 	return &div->hw;
- }
- 
--struct clk *ti_clk_register_divider(struct ti_clk *setup)
--{
--	struct ti_clk_divider *div = setup->data;
--	struct clk_omap_reg reg = {
--		.index = div->module,
--		.offset = div->reg,
--	};
--	u8 width;
--	u32 flags = 0;
--	u8 div_flags = 0;
--	const struct clk_div_table *table;
--	struct clk *clk;
--
--	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
--		div_flags |= CLK_DIVIDER_ONE_BASED;
--
--	if (div->flags & CLKF_INDEX_POWER_OF_TWO)
--		div_flags |= CLK_DIVIDER_POWER_OF_TWO;
--
--	if (div->flags & CLKF_SET_RATE_PARENT)
--		flags |= CLK_SET_RATE_PARENT;
--
--	table = _get_div_table_from_setup(div, &width);
--	if (IS_ERR(table))
--		return (struct clk *)table;
--
--	clk = _register_divider(NULL, setup->name, div->parent,
--				flags, &reg, div->bit_shift,
--				width, -EINVAL, div_flags, table);
--
--	if (IS_ERR(clk))
--		kfree(table);
--
--	return clk;
--}
--
- static struct clk_div_table *
- __init ti_clk_get_div_table(struct device_node *node)
- {
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index 504c0e9..4238955 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -131,36 +131,6 @@ static struct clk *_register_gate(struct device *dev, const char *name,
- 	return clk;
- }
- 
--struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup)
--{
--	struct clk_hw_omap *gate;
--	struct clk_omap_reg *reg;
--	const struct clk_hw_omap_ops *ops = &clkhwops_wait;
--
--	if (!setup)
--		return NULL;
--
--	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
--	if (!gate)
--		return ERR_PTR(-ENOMEM);
--
--	reg = (struct clk_omap_reg *)&gate->enable_reg;
--	reg->index = setup->module;
--	reg->offset = setup->reg;
--
--	gate->enable_bit = setup->bit_shift;
--
--	if (setup->flags & CLKF_NO_WAIT)
--		ops = NULL;
--
--	if (setup->flags & CLKF_INTERFACE)
--		ops = &clkhwops_iclk_wait;
--
--	gate->ops = ops;
--
--	return &gate->hw;
--}
--
- static void __init _of_ti_gate_clk_setup(struct device_node *node,
- 					 const struct clk_ops *ops,
- 					 const struct clk_hw_omap_ops *hw_ops)
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index b7f9a4f..0069e7c 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -164,37 +164,6 @@ static struct clk *_register_mux(struct device *dev, const char *name,
- 	return clk;
- }
- 
--struct clk *ti_clk_register_mux(struct ti_clk *setup)
--{
--	struct ti_clk_mux *mux;
--	u32 flags;
--	u8 mux_flags = 0;
--	struct clk_omap_reg reg;
--	u32 mask;
--
--	mux = setup->data;
--	flags = CLK_SET_RATE_NO_REPARENT;
--
--	mask = mux->num_parents;
--	if (!(mux->flags & CLKF_INDEX_STARTS_AT_ONE))
--		mask--;
--
--	mask = (1 << fls(mask)) - 1;
--	reg.index = mux->module;
--	reg.offset = mux->reg;
--	reg.ptr = NULL;
--
--	if (mux->flags & CLKF_INDEX_STARTS_AT_ONE)
--		mux_flags |= CLK_MUX_INDEX_ONE;
--
--	if (mux->flags & CLKF_SET_RATE_PARENT)
--		flags |= CLK_SET_RATE_PARENT;
--
--	return _register_mux(NULL, setup->name, mux->parents, mux->num_parents,
--			     flags, &reg, mux->bit_shift, mask, -EINVAL,
--			     mux_flags, NULL);
--}
--
- /**
-  * of_mux_clk_setup - Setup function for simple mux rate clock
-  * @node: DT node for the clock
--- 
-2.7.4
-
-
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
