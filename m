@@ -2,186 +2,135 @@ Return-Path: <SRS0=NIgS=TN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C38C7C04AB1
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 09:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1038BC04AA7
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CC320989
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 09:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6219208C3
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nvsHSXeb"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mtX1wcS9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbfEMJSL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 May 2019 05:18:11 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37003 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728215AbfEMJSK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 05:18:10 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e15so1950329wrs.4
-        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 02:18:09 -0700 (PDT)
+        id S1729818AbfEMMbZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 May 2019 08:31:25 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36858 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727937AbfEMMbZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 08:31:25 -0400
+Received: by mail-wr1-f65.google.com with SMTP id o4so15079319wra.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 05:31:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=XQMVZi5//3rMDhqHIdy7w3EyVwVaJ+ULF4VGfnvRPq8=;
-        b=nvsHSXebQ0UNHoxf0gRJ4+jB88usDq5bJWzqzfoKMHeAJlU/CuYIF6O/qEQOBXXxlA
-         et/wOAMmgkRgiDgYUXgin9KtQgAUVj+dm2mJkf7Awcim1sIw3hWnMFJ7X7oS3uD3wfr1
-         DCTY3TwaSlTjK8UM1SgbJvleQW9CY5ae4kENAmb2FRvh9vRP/C6u7Gha6kzze9tHQDqR
-         T8x2lFM01suwxpAFuWgQRwnEDTuwEcRkglSUHc+giFjDmRNAPb5Nsu2FfY25YRMyTqzu
-         aTLNtn2U3v38G1wCPwzjXgdBglNigkRmuM3OjODAOE8YDBEoC3Nw+cYEgHBeflKTHnQL
-         KUXg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a0zDbTaa26ZySHoR9jAKQENuusgUutv6iF4zZAMHHyo=;
+        b=mtX1wcS9kONTXKDjOAvlX2YSMyoJbMEHEStzY48fjKQrJGj9j+ajTQ1w+CC2FH2PYP
+         DOSQhUe/lHcfeG6HWyhZ2O0OMEs29Sk9D8p1BHtUL3WTmff3xeteIp+/6aTWrflNBabs
+         YLbe1lua9Nnjjwjt7h6QnQ50n3Dv3Y6CVNF6k83a3O1dGOOKfdeHcYVVrJ32Uiuk82/t
+         1mNBkIfBIfOseviNJPfkzqEOEI2KPnm9nSjq22WIGIy8I6nAssHLdBxuwHejfPRt7KH9
+         iNRVT2pWfFKygo5+U15kIiCNPKiFxRIT5sQk/fsrVh/HjfXgM0jSZst1NFMGmKVsnXCL
+         5I9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=XQMVZi5//3rMDhqHIdy7w3EyVwVaJ+ULF4VGfnvRPq8=;
-        b=rT/rioGYVe+QO+RJ11H3yKUdUt5+1FCjNY10B5rvt2LvcjydCHR9KymWIpXoXoKqFL
-         eVROFsFZILV4230RI+JbdczKlP3I2PIAwGHIVGenfYvycktG3oDrZ63WH0EP+iqP1L7q
-         oM+zkyIjtFddTYu6En6Zqi3VFhmi9ADsMvv8xKi0bgBLoYKiuYqRMOOgyqyIhKQ/9J3J
-         f6pbshjIEsbqg0tC7qm87p9kcnn0q1/enYZs3x1BfmVJ2ZgxnZaTtGvO0I72kbszoL8t
-         YQ53eKferwmqLRMAkO8gG+BcET6bFlLsLvDEV+6vzA2ee/tKfKhj3B0dBIRMmvwoZgM7
-         oz+g==
-X-Gm-Message-State: APjAAAXddMNjUlhhfyM50+Rg0uoxgkA4LH2wTEPh4fg1Nu4PngZEg9jg
-        LSCP8J4ZLAu3Hdq2dDm9FoW1YA==
-X-Google-Smtp-Source: APXvYqyIECT6aJkOFzkPVJlDjoDZ2HcPpXHNHjaNT4bi/sI/WqgAo8On9LI2Ef1KnBcYaKn5thGi/g==
-X-Received: by 2002:a5d:4002:: with SMTP id n2mr17376466wrp.187.1557739088475;
-        Mon, 13 May 2019 02:18:08 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x4sm1815075wrn.41.2019.05.13.02.18.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 02:18:07 -0700 (PDT)
-Subject: Re: [PATCH] clk: meson: fix MPLL 50M binding id typo
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a0zDbTaa26ZySHoR9jAKQENuusgUutv6iF4zZAMHHyo=;
+        b=imFrO00RUKIGrop+MMofM+ANOCHKHqUH1rkQPZzBvjkB9qXyD1fcKGHT+M1Kr5IVj2
+         ZEOiXlTFspjf8yiQ9HHBse/P9AVQgSjMCa4w5khlcI9LxP0hLv/dkioveD4iKW1rh+mB
+         lgWiMELOy5lxfLZGh1w0t04t6xSi7HMsUHa7qNcuKzdBUvLlf9agsIR86u7nyCqbo1dd
+         KWUldJdD27nY9znTQ6ESe68dsJy5x2QAJKUlT9uHlvln0Ta0X8y/M+0VIVJM+pwhVJG2
+         xFHgSUx8CbGjhAVdUFIu8d/7G/wI+t9y6ib4YLkM64t+WhmpbOxrJSqa89hfEh2bhU4L
+         K8LA==
+X-Gm-Message-State: APjAAAVktgw8ZoA5RviSXcqDvYW1HwVbsB3/Gqtjw5kdc0BYKvDg2WXg
+        fsTzp3vKC91YPRh68ADF7ZxjAQ==
+X-Google-Smtp-Source: APXvYqwjb5WcdnNbNi455xLV0O5EORjeFi0LCmBfRmVg75MPPb4ZOa6EeMxt3cqUECWOAand/HVppg==
+X-Received: by 2002:adf:fc8f:: with SMTP id g15mr18367756wrr.122.1557750683186;
+        Mon, 13 May 2019 05:31:23 -0700 (PDT)
+Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 May 2019 05:31:22 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20190512205743.24131-1-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <44902731-313b-8e8c-669c-4f15c5b98a55@baylibre.com>
-Date:   Mon, 13 May 2019 11:18:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] clk: meson: fix mpll jitter
+Date:   Mon, 13 May 2019 14:31:08 +0200
+Message-Id: <20190513123115.18145-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190512205743.24131-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/05/2019 22:57, Jerome Brunet wrote:
-> MPLL_5OM (the capital letter o) should indeed be MPLL_50M (the number)
-> Fix this before it gets used.
-> 
-> Reported-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Fixes: 25db146aa726 ("dt-bindings: clk: meson: add g12a periph clock controller bindings")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/g12a.c              | 4 ++--
->  drivers/clk/meson/g12a.h              | 2 +-
->  include/dt-bindings/clock/g12a-clkc.h | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 739f64fdf1e3..206fafd299ea 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -2734,8 +2734,8 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
->  		[CLKID_MALI_1_DIV]		= &g12a_mali_1_div.hw,
->  		[CLKID_MALI_1]			= &g12a_mali_1.hw,
->  		[CLKID_MALI]			= &g12a_mali.hw,
-> -		[CLKID_MPLL_5OM_DIV]		= &g12a_mpll_50m_div.hw,
-> -		[CLKID_MPLL_5OM]		= &g12a_mpll_50m.hw,
-> +		[CLKID_MPLL_50M_DIV]		= &g12a_mpll_50m_div.hw,
-> +		[CLKID_MPLL_50M]		= &g12a_mpll_50m.hw,
->  		[CLKID_SYS_PLL_DIV16_EN]	= &g12a_sys_pll_div16_en.hw,
->  		[CLKID_SYS_PLL_DIV16]		= &g12a_sys_pll_div16.hw,
->  		[CLKID_CPU_CLK_DYN0_SEL]	= &g12a_cpu_clk_premux0.hw,
-> diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
-> index 39c41af70804..bcc05cd9882f 100644
-> --- a/drivers/clk/meson/g12a.h
-> +++ b/drivers/clk/meson/g12a.h
-> @@ -166,7 +166,7 @@
->  #define CLKID_HDMI_DIV				167
->  #define CLKID_MALI_0_DIV			170
->  #define CLKID_MALI_1_DIV			173
-> -#define CLKID_MPLL_5OM_DIV			176
-> +#define CLKID_MPLL_50M_DIV			176
->  #define CLKID_SYS_PLL_DIV16_EN			178
->  #define CLKID_SYS_PLL_DIV16			179
->  #define CLKID_CPU_CLK_DYN0_SEL			180
-> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-> index 82c9e0c020b2..e10470ed7c4f 100644
-> --- a/include/dt-bindings/clock/g12a-clkc.h
-> +++ b/include/dt-bindings/clock/g12a-clkc.h
-> @@ -130,7 +130,7 @@
->  #define CLKID_MALI_1_SEL			172
->  #define CLKID_MALI_1				174
->  #define CLKID_MALI				175
-> -#define CLKID_MPLL_5OM				177
-> +#define CLKID_MPLL_50M				177
->  #define CLKID_CPU_CLK				187
->  #define CLKID_PCIE_PLL				201
->  #define CLKID_VDEC_1				204
-> 
+This patchset is a squash of these previous patchsets [0], [1] without
+modification, beside a re-ordering of the changes to facilitate backports
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+We are observing a lot of jitter on the MPLL outputs of the g12a.
+No such jitter is seen on gx family. On the axg family, only MPLL2
+seems affected. This was not a problem so far since this MPLL output
+is not used.
+
+The jitter can be as high as +/- 4%.
+
+This is a problem for audio application. This may cause distortion on
+i2s and completely break SPDIF.
+
+After exchanging with Amlogic, it seems we have activated (by mistake)
+the 'spread spectrum' feature.
+
+The 3 first patches properly set the bit responsible for the spread
+spectrum in the mpll driver and add the required correction in the
+related clock controllers.
+
+When the g12a support has been initially submitted, the MPLL appeared
+(overall) fine. At the time, the board I used was flashed with Amlogic
+vendor u-boot. Since then, I moved to an early version on mainline
+u-boot, which is likely to initialize the clock differently.
+
+While debugging audio support, I noticed that MPLL based clocks were way
+above target. It appeared the fractional part of the divider was not
+working.
+
+To work properly, the MPLLs each needs an initial setting in addition to
+a common one. No one likes those register sequences but sometimes, like
+here for PLL clocks, there is no way around it.
+
+The last 4 patches add the possibility to set initial register sequence
+for the ee clock controller and the MPLL driver. It is then used to enable
+the fractional part of the g12a MPLL.
+
+As agreed with the clock maintainers, I'll submit a series to CCF to
+remove the .init() callbacks and introduce register()/deregister()
+callbacks later on (pinky swear).
+
+Jerome Brunet (7):
+  clk: meson: mpll: properly handle spread spectrum
+  clk: meson: gxbb: no spread spectrum on mpll0
+  clk: meson: axg: spread spectrum is on mpll2
+  clk: meson: mpll: add init callback and regs
+  clk: meson: g12a: add mpll register init sequences
+  clk: meson: eeclk: add init regs
+  clk: meson: g12a: add controller register init
+
+ drivers/clk/meson/axg.c         | 10 ++++-----
+ drivers/clk/meson/clk-mpll.c    | 36 ++++++++++++++++++++++++---------
+ drivers/clk/meson/clk-mpll.h    |  3 +++
+ drivers/clk/meson/g12a.c        | 32 ++++++++++++++++++++++++++++-
+ drivers/clk/meson/gxbb.c        |  5 -----
+ drivers/clk/meson/meson-eeclk.c |  3 +++
+ drivers/clk/meson/meson-eeclk.h |  2 ++
+ 7 files changed, 70 insertions(+), 21 deletions(-)
+
+-- 
+2.20.1
+
