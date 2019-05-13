@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C8BC04AB4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C309DC04AAA
 	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63AC02146F
+	by mail.kernel.org (Postfix) with ESMTP id 96DE42146F
 	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 12:31:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FTChcYwy"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="0wgYoQfY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729876AbfEMMbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 May 2019 08:31:33 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54454 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729871AbfEMMbc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 08:31:32 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i3so7860470wml.4
-        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 05:31:31 -0700 (PDT)
+        id S1729873AbfEMMbc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 May 2019 08:31:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38283 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729868AbfEMMbb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 May 2019 08:31:31 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v11so15067107wru.5
+        for <linux-clk@vger.kernel.org>; Mon, 13 May 2019 05:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qDWoUB9bcp7o6UKFktF9ACZ04OzawQuwNyVSxDs2oGM=;
-        b=FTChcYwy/64XxJA+Qdoi5SQTOLGXNUXjv+nlh1tRXwcJ5wHIr4YXrKpPSAYujuyCzp
-         nijO6vpU+0BTOBu0M8rH69Fy/BcRNzMsb9+QsY4mgYef5o5Py4Er/BU6A4UPldUHIUwm
-         3N1VBhSmqFk12ex6lkH7nZ7A1wkbMpbp1wKpzXPxwEDHpUroEI1zCpg1SeMKQmrJ7goz
-         QVgAUjDQTPtot79cCw6omTqisZOw9lWoYiGfS0N3V6ax1/grApmnole0AFlAcoL9OJMk
-         k1xLXdk/GNS3KbD325KPkAfuHONMfgCR0ZXh4mu7cIH8/tJI20Q5P7EPet0TDqsWy1Jv
-         Dx4A==
+        bh=fKq0Xmw2ntAqrTVNaEz/XqYkib9vFynLezQDvMrUHDU=;
+        b=0wgYoQfY9TIqdwNaY/BkNPlr0XnHO48h33h8xoTL79c51HyaaofletIxDBjvzreQht
+         3HV9XeCUyMiQecWaAhnQ1239LeF8VIripVqhuFv2YBfC+L2KqP9AhRShrK/lswUtOiLg
+         Y6Q9q5dfecPp9pJ2S7G/R9HBvejDxkZbOS8tPxTz3Rl1C21VYE1grO2WUew9BXfQF7mw
+         ZQ8m91LMV8OdEQHmYFjmRZM0BlKZMS9rlwi00GfoeuZ9Kn+0k6OfQn7E5XSYLI6blUdU
+         A42s1ISqhSRquPF7VtEhghQr7PT1hMZcqYaY9nIl3QheEk74eXZezq1xuhTKzsXCK7cd
+         3wRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qDWoUB9bcp7o6UKFktF9ACZ04OzawQuwNyVSxDs2oGM=;
-        b=Q6wW6ZYkd5yJq62ZMtteVIjI8CibMSDgn5q2gb1cIgWYmjSxVLPWjGkuDP8rwajgTP
-         FeS3k5NN9gc4f90HxTqOzUDhRW/O6I4Hb7dGA+wJuD1FGF+VWq3diHvnNnJR8stCQHQK
-         sPpbV19AeC8flcQjBe2DBxlHDqgjBKOFlnJ0P2djj4+1pcaV8ycVYcnHqcg01UuIhB4m
-         qm2BObq9vnFyuXdCz4A7w7LoHSyTg0+7PUn+qePixctWuZB9fp/X9mIuiDp8yIQ+ktA0
-         vQhyOQFDUiPDhd+hXr5kUzeYj3Xvbc7l1tPrkcEbTQg4ihcYLx+rY78xlAkVUu6zPizJ
-         cxKg==
-X-Gm-Message-State: APjAAAUesfblOZz6L/r2KauL2PT4QypWMQJI/f6tHv5YDgm99fHKWYmz
-        o1m79xujjhO92DoTogIGZV66YA==
-X-Google-Smtp-Source: APXvYqzS/G2YjzdOEaicaTu5qFCKLfkduSgGOTIkrGT+2VPcKPiv3XEJKguO/PiftHRHyxFE9Kutnw==
-X-Received: by 2002:a1c:1d4:: with SMTP id 203mr16339134wmb.76.1557750690506;
-        Mon, 13 May 2019 05:31:30 -0700 (PDT)
+        bh=fKq0Xmw2ntAqrTVNaEz/XqYkib9vFynLezQDvMrUHDU=;
+        b=mnxRqV6XmXAnHfjQdEUcZv1gEl2A4ppVEhtPD/RK5WqZoOF1nPcUl+pYOg8dD7UXY4
+         Vwr+c56IRpvRqfPAnMhsX7xAbsQw9aCPzzAyWxQkaP9OxaEEiBYPXI6p2sItdIdyEbO0
+         RaNkzx9w2WaNLOknK7BJDtAl2XkcUouONVZ9ZYD38XFcnXT7WbTGgi92PZ3I9MYFmnJD
+         nxPWLpnR2sG0lVFNE79F0ZqNa+nZuGLUQlvUP8K9oX7qMvq+LiU9pCnJCYzoC9iau0Uw
+         Zo5gnQWZRKGe3UKqkoGNzqRGZODEQ/awzohNnvVqb6ZlBl9fPtmQnahPRGaPmPCmS6Px
+         3Xqg==
+X-Gm-Message-State: APjAAAWS/MLGMY/BZxgYQpxdSfiJZUl7M2C4NCPLPI3Ai+nsviTRSKN5
+        HajmcA7WVzfUt9Hmb5HpDHiLWg==
+X-Google-Smtp-Source: APXvYqwzHLI7fugsJXC/aNnzGQOW5Fw4/jeXRTXUrlzZLCuvKph6sDV0Eyyp1mvIS9eOYmglUQwIiA==
+X-Received: by 2002:a5d:6a52:: with SMTP id t18mr15049885wrw.146.1557750689502;
+        Mon, 13 May 2019 05:31:29 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.29
+        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 05:31:30 -0700 (PDT)
+        Mon, 13 May 2019 05:31:29 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -61,9 +61,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] clk: meson: g12a: add controller register init
-Date:   Mon, 13 May 2019 14:31:15 +0200
-Message-Id: <20190513123115.18145-8-jbrunet@baylibre.com>
+Subject: [PATCH v2 6/7] clk: meson: eeclk: add init regs
+Date:   Mon, 13 May 2019 14:31:14 +0200
+Message-Id: <20190513123115.18145-7-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190513123115.18145-1-jbrunet@baylibre.com>
 References: <20190513123115.18145-1-jbrunet@baylibre.com>
@@ -74,35 +74,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the MPLL common register initial setting
+Like the PLL and MPLL, the controller may require some magic setting to
+be applied on startup.
+
+This is needed when the initial setting is not applied by the boot ROM.
+The controller need to do it when the setting applies to several clock,
+like all the MPLLs in the case of g12a.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/g12a.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/clk/meson/meson-eeclk.c | 3 +++
+ drivers/clk/meson/meson-eeclk.h | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index ef1d2e4c8fd2..d5aceb79a91a 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -2992,10 +2992,16 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
- 	&g12a_vdec_hevcf,
- };
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 37a34c9c3885..6ba2094be257 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -34,6 +34,9 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(map);
+ 	}
  
-+static const struct reg_sequence g12a_init_regs[] = {
-+	{ .reg = HHI_MPLL_CNTL0,	.def = 0x00000543 },
-+};
++	if (data->init_count)
++		regmap_multi_reg_write(map, data->init_regs, data->init_count);
 +
- static const struct meson_eeclkc_data g12a_clkc_data = {
- 	.regmap_clks = g12a_clk_regmaps,
- 	.regmap_clk_num = ARRAY_SIZE(g12a_clk_regmaps),
--	.hw_onecell_data = &g12a_hw_onecell_data
-+	.hw_onecell_data = &g12a_hw_onecell_data,
-+	.init_regs = g12a_init_regs,
-+	.init_count = ARRAY_SIZE(g12a_init_regs),
+ 	input = meson_clk_hw_register_input(dev, "xtal", IN_PREFIX "xtal", 0);
+ 	if (IS_ERR(input)) {
+ 		ret = PTR_ERR(input);
+diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+index 1b809b1419fe..9ab5d6fa7ccb 100644
+--- a/drivers/clk/meson/meson-eeclk.h
++++ b/drivers/clk/meson/meson-eeclk.h
+@@ -17,6 +17,8 @@ struct platform_device;
+ struct meson_eeclkc_data {
+ 	struct clk_regmap *const	*regmap_clks;
+ 	unsigned int			regmap_clk_num;
++	const struct reg_sequence	*init_regs;
++	unsigned int			init_count;
+ 	struct clk_hw_onecell_data	*hw_onecell_data;
  };
  
- static const struct of_device_id clkc_match_table[] = {
 -- 
 2.20.1
 
