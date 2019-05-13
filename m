@@ -2,131 +2,138 @@ Return-Path: <SRS0=NIgS=TN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6633C04AB1
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 03:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60AFC04AB1
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 05:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C8F20989
-	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 03:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A72F20C01
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 05:32:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LCuDUzzM";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LCuDUzzM"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WEwiHFWM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfEMDoy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 May 2019 23:44:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48230 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbfEMDoy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 May 2019 23:44:54 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C244D6016D; Mon, 13 May 2019 03:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557719092;
-        bh=aC/siESkfqyPwZqxlLNGpYFrcrfYJOzDMbmJcKmnt8Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LCuDUzzMo1fBLmd1EvgoyFXQi1lbDKsroM/CaZgKtM3RuzPBxYMhn9C70x2wOz/hs
-         l8uLVULdvMRM/YjIT6Dh6JtAReBew4cmMGgAKGP77kF62eYVJcrENHlSgCO38UEuzt
-         wlZndxuJb/i8oNNpu/clWpAHVnEkuo8owsWDNIQA=
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8381F6016D;
-        Mon, 13 May 2019 03:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557719092;
-        bh=aC/siESkfqyPwZqxlLNGpYFrcrfYJOzDMbmJcKmnt8Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LCuDUzzMo1fBLmd1EvgoyFXQi1lbDKsroM/CaZgKtM3RuzPBxYMhn9C70x2wOz/hs
-         l8uLVULdvMRM/YjIT6Dh6JtAReBew4cmMGgAKGP77kF62eYVJcrENHlSgCO38UEuzt
-         wlZndxuJb/i8oNNpu/clWpAHVnEkuo8owsWDNIQA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8381F6016D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1 3/3] clk: qcom: rcg: update the DFS macro for RCG
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1557339895-21952-1-git-send-email-tdas@codeaurora.org>
- <1557339895-21952-4-git-send-email-tdas@codeaurora.org>
- <155742286525.14659.18081373668341127486@swboyd.mtv.corp.google.com>
- <07bcd2df-a786-ea52-8566-70f484248952@codeaurora.org>
- <155751085370.14659.7749105088997177801@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <f65811f8-42ea-6365-7822-db662eaea228@codeaurora.org>
-Date:   Mon, 13 May 2019 09:14:46 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <155751085370.14659.7749105088997177801@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1727528AbfEMFcM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 May 2019 01:32:12 -0400
+Received: from mail-eopbgr80087.outbound.protection.outlook.com ([40.107.8.87]:3281
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725866AbfEMFcM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 13 May 2019 01:32:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ObFyiP1qiiCBXrAk80o80SkGnTFgkA8Z/9BPbwfEPug=;
+ b=WEwiHFWMqQfu9X0Nu6JW+wapW599T9SAycq8pMlxLeMZL5dsQGZl8q9URBWekTqqTukci1jDPn+QKmA0LP45k930Em4KDOqt0X8oEMH319rwRoQSmoksM78wQEg6r7E4R6mMy8Uqs53uIdbRTn/DQ0TXtfHseBOfpzqxbCyEVCk=
+Received: from AM0PR04MB6434.eurprd04.prod.outlook.com (20.179.252.215) by
+ AM0PR04MB4881.eurprd04.prod.outlook.com (20.177.40.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.24; Mon, 13 May 2019 05:32:07 +0000
+Received: from AM0PR04MB6434.eurprd04.prod.outlook.com
+ ([fe80::19be:75a:9fe:7cec]) by AM0PR04MB6434.eurprd04.prod.outlook.com
+ ([fe80::19be:75a:9fe:7cec%7]) with mapi id 15.20.1878.024; Mon, 13 May 2019
+ 05:32:07 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Jacky Bai <ping.bai@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+CC:     Anson Huang <anson.huang@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 1/2] clk: imx8mm: Mark dram_apb critical
+Thread-Topic: [PATCH 1/2] clk: imx8mm: Mark dram_apb critical
+Thread-Index: AQHVCU00unSS8OoySUuU9eBOMvjcrw==
+Date:   Mon, 13 May 2019 05:32:07 +0000
+Message-ID: <61a5cad23ad56a2aed96f3bdbf7c67df25e0bd6b.1557725494.git.leonard.crestez@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [89.37.124.34]
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: LO2P265CA0125.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9f::17) To AM0PR04MB6434.eurprd04.prod.outlook.com
+ (2603:10a6:208:16c::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c1d2eb8c-8f30-47aa-4c17-08d6d76456cb
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4881;
+x-ms-traffictypediagnostic: AM0PR04MB4881:
+x-microsoft-antispam-prvs: <AM0PR04MB4881198C0EE65C56E9E6AFB6EE0F0@AM0PR04MB4881.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1923;
+x-forefront-prvs: 0036736630
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(136003)(366004)(396003)(199004)(189003)(305945005)(6436002)(66066001)(14444005)(256004)(2906002)(52116002)(71190400001)(25786009)(71200400001)(102836004)(54906003)(6486002)(110136005)(53936002)(386003)(316002)(86362001)(68736007)(4326008)(6512007)(478600001)(5660300002)(6506007)(99286004)(7736002)(26005)(118296001)(186003)(50226002)(6116002)(8936002)(3846002)(486006)(476003)(2616005)(8676002)(73956011)(14454004)(36756003)(44832011)(64756008)(66476007)(66556008)(81156014)(81166006)(66446008)(66946007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4881;H:AM0PR04MB6434.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nt5MvoyMigCMFswL0/ROWyZOHxSESFYtngjgavnySGKn93x48hAQeB53FwketjHFsHQTUi/SsSuovFksNtJJNGm2F48xsSPvedAzyb9tFWHbpanXVO4tuMRGLKewMi3NlM+WLAMDo72YRHndlANVI43PuQ+Cc59j2n8NwgK+XBIWJP4nKlTyDFxclHUcm+y0gXQfRs3TC0bxwYz9rpsxcrG/1Duoeuu7p2SASWY7Ov9ZmcrXkNdlexObfXfHHRNJyTYNrh1GMoGtRHfDl3X93AKJQ4jfzir2nwQN4gKDl6qlDn30o7tk38MQFQU07RHZaq9XqAYZZH3PL9y8ui8L2sF8i9XljmX6Tpgb8tPpjinbhaevziwUosqYjt4wq+Nza+CR5Ld8hM0wzmwhKBjab1yRNfQqGwZbmYW/4vE5lok=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <BE2849F329DEDF4B849E611DD86696BE@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1d2eb8c-8f30-47aa-4c17-08d6d76456cb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2019 05:32:07.7636
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4881
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+This clock is used for dram operations inside TF-A and must be kept
+enabled for features such as suspend/resume dram retention and busfreq
+to work.
 
-On 5/10/2019 11:24 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-05-09 19:58:39)
->> Hello Stephen,
->>
->> Thanks for the review.
->>
->> On 5/9/2019 10:57 PM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2019-05-08 11:24:55)
->>>> Update the init data name for each of the dynamic frequency switch
->>>> controlled clock associated with the RCG clock name, so that it can be
->>>> generated as per the hardware plan. Thus update the macro accordingly.
->>>>
->>>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->>>
->>> This patch doesn't make any sense to me.
->>>
->>>> ---
->>>>    drivers/clk/qcom/clk-rcg.h    |  2 +-
->>>>    drivers/clk/qcom/gcc-sdm845.c | 96 +++++++++++++++++++++----------------------
->>>>    2 files changed, 49 insertions(+), 49 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
->>>> index 5562f38..e40e8f8 100644
->>>> --- a/drivers/clk/qcom/clk-rcg.h
->>>> +++ b/drivers/clk/qcom/clk-rcg.h
->>>> @@ -171,7 +171,7 @@ struct clk_rcg_dfs_data {
->>>>    };
->>>>
->>>>    #define DEFINE_RCG_DFS(r) \
->>>> -       { .rcg = &r##_src, .init = &r##_init }
->>>> +       { .rcg = &r, .init = &r##_init }
->>>
->>> Why do we need to rename the init data?
->>>
->>
->> We want to manage the init data as the clock source name, so that we
->> could manage to auto generate our code. So that we do not have to
->> re-name the clock init data manually if the DFS source names gets
->> updated at any point of time.
->>
-> 
-> Why is the clk name changing to not have a _src after the "root" of the
-> clk name? As long as I can remember, RCGs have a "_src" postfix.
-> 
+This is required for imx8mm suspend to work with NXP branch of TF-A.
+There is an equivalent clk on imx8mq and it's always been marked as
+critical in upstream.
 
-Yes, the RCGs would have _src, so we do want the init data also to be
-generated with _src postfix. So that we do not have to manually clean up 
-the generated code.
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 1ef8438e3d6d..fbb61c2f12d0 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -521,11 +521,11 @@ static int __init imx8mm_clocks_init(struct device_no=
+de *ccm_node)
+ 	clks[IMX8MM_CLK_IPG_ROOT] =3D imx_clk_divider2("ipg_root", "ahb", base + =
+0x9080, 0, 1);
+ 	clks[IMX8MM_CLK_IPG_AUDIO_ROOT] =3D imx_clk_divider2("ipg_audio_root", "a=
+udio_ahb", base + 0x9180, 0, 1);
+=20
+ 	/* IP */
+ 	clks[IMX8MM_CLK_DRAM_ALT] =3D imx8m_clk_composite("dram_alt", imx8mm_dram=
+_alt_sels, base + 0xa000);
+-	clks[IMX8MM_CLK_DRAM_APB] =3D imx8m_clk_composite("dram_apb", imx8mm_dram=
+_apb_sels, base + 0xa080);
++	clks[IMX8MM_CLK_DRAM_APB] =3D imx8m_clk_composite_critical("dram_apb", im=
+x8mm_dram_apb_sels, base + 0xa080);
+ 	clks[IMX8MM_CLK_VPU_G1] =3D imx8m_clk_composite("vpu_g1", imx8mm_vpu_g1_s=
+els, base + 0xa100);
+ 	clks[IMX8MM_CLK_VPU_G2] =3D imx8m_clk_composite("vpu_g2", imx8mm_vpu_g2_s=
+els, base + 0xa180);
+ 	clks[IMX8MM_CLK_DISP_DTRC] =3D imx8m_clk_composite("disp_dtrc", imx8mm_di=
+sp_dtrc_sels, base + 0xa200);
+ 	clks[IMX8MM_CLK_DISP_DC8000] =3D imx8m_clk_composite("disp_dc8000", imx8m=
+m_disp_dc8000_sels, base + 0xa280);
+ 	clks[IMX8MM_CLK_PCIE1_CTRL] =3D imx8m_clk_composite("pcie1_ctrl", imx8mm_=
+pcie1_ctrl_sels, base + 0xa300);
+--=20
+2.17.1
 
---
