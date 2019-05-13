@@ -1,129 +1,132 @@
-Return-Path: <SRS0=xnMn=TM=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=NIgS=TN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFBBC04A6B
-	for <linux-clk@archiver.kernel.org>; Sun, 12 May 2019 20:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6633C04AB1
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 03:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7ED020C01
-	for <linux-clk@archiver.kernel.org>; Sun, 12 May 2019 20:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98C8F20989
+	for <linux-clk@archiver.kernel.org>; Mon, 13 May 2019 03:45:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hPLqw9Nr"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LCuDUzzM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LCuDUzzM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfELU6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 May 2019 16:58:00 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43629 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbfELU6A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 May 2019 16:58:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r4so12979223wro.10
-        for <linux-clk@vger.kernel.org>; Sun, 12 May 2019 13:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Sm9UEwQ3mt6/GT1ya/gcLVA0odO8xivuaaUGOOt4No4=;
-        b=hPLqw9NroyF97KvvhKpIe0wPnef3gIPB4pjDSJW9Jzke60ROE+9tnEZ8Z+AOiwE47K
-         TJEoGTYE4jfwwz4sE8mkYttcVJyaT4XHE1IL4g+689KKKC3SZyNqcq+hMYpnvwJDo3Ly
-         /GAkrLx9wjGbbbbGrSOyc6Kqld4m2KRu4d/eE4haXvTR2s8uUtzTqwusuY2JMNImsIb1
-         7w2hheTMNGldIiGpKYG3uJjEWWca9SrmgxrpQGJAorSmd7HGDQxrO9oEpVjzvf5O6knc
-         z2fSkgBwQHyrB+yh6lXbsYvPpM84xjHEXHBENz30aooPFuy554whRfhtUCR/GxlqMc+G
-         h3eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Sm9UEwQ3mt6/GT1ya/gcLVA0odO8xivuaaUGOOt4No4=;
-        b=ImwmVEkPPs5I9QdWhipopzI93mRM4ZawYRi8IQU4VW7iL5904+pOR8/YNvlYlxl6KL
-         WhJZiDnIvwiqOmZIQkCnMqX9irJs9O83D1DcBGuFPS1BYTmRa1gBdRkaagPJxY91r7YV
-         nH3QpUfoyeIZcMXQvchR0Sxs+1Lom4uQebsS+JzrWpzoLgIDNrb+CFAp5q7tOx0qPWN4
-         De0EsLywrOESCXSl15McR4zoOVGrGnxq5gb6UkFl3rUh949XIdSxrYP893w4SCzOIUto
-         /4sPYuA5JNEhltqsOmvMJMlMwcwEcA9yruYOcLMPv5L45R0PFm2FH/dn18SABuevhkqM
-         JE2A==
-X-Gm-Message-State: APjAAAX4ZesQKsY7qJyl8d9OVRHrH8RI1alR/QsRq1uNHz54zPrRqyNQ
-        IZwakefjzoSoasQrXUIHAsHy7g==
-X-Google-Smtp-Source: APXvYqw8T4YnO6cWYWIIJcnC34eAvY38shlhSF9rcgw5hN8w/eUPE6JNCP2+VaqoLH0QgxrHKgRNUw==
-X-Received: by 2002:a5d:5701:: with SMTP id a1mr15615178wrv.52.1557694678203;
-        Sun, 12 May 2019 13:57:58 -0700 (PDT)
-Received: from boomer.baylibre.com (uluru.liltaz.com. [163.172.81.188])
-        by smtp.googlemail.com with ESMTPSA id o81sm21483068wmb.2.2019.05.12.13.57.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 12 May 2019 13:57:57 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH] clk: meson: fix MPLL 50M binding id typo
-Date:   Sun, 12 May 2019 22:57:43 +0200
-Message-Id: <20190512205743.24131-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727534AbfEMDoy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 May 2019 23:44:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48230 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbfEMDoy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 May 2019 23:44:54 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C244D6016D; Mon, 13 May 2019 03:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557719092;
+        bh=aC/siESkfqyPwZqxlLNGpYFrcrfYJOzDMbmJcKmnt8Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LCuDUzzMo1fBLmd1EvgoyFXQi1lbDKsroM/CaZgKtM3RuzPBxYMhn9C70x2wOz/hs
+         l8uLVULdvMRM/YjIT6Dh6JtAReBew4cmMGgAKGP77kF62eYVJcrENHlSgCO38UEuzt
+         wlZndxuJb/i8oNNpu/clWpAHVnEkuo8owsWDNIQA=
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8381F6016D;
+        Mon, 13 May 2019 03:44:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557719092;
+        bh=aC/siESkfqyPwZqxlLNGpYFrcrfYJOzDMbmJcKmnt8Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LCuDUzzMo1fBLmd1EvgoyFXQi1lbDKsroM/CaZgKtM3RuzPBxYMhn9C70x2wOz/hs
+         l8uLVULdvMRM/YjIT6Dh6JtAReBew4cmMGgAKGP77kF62eYVJcrENHlSgCO38UEuzt
+         wlZndxuJb/i8oNNpu/clWpAHVnEkuo8owsWDNIQA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8381F6016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1 3/3] clk: qcom: rcg: update the DFS macro for RCG
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1557339895-21952-1-git-send-email-tdas@codeaurora.org>
+ <1557339895-21952-4-git-send-email-tdas@codeaurora.org>
+ <155742286525.14659.18081373668341127486@swboyd.mtv.corp.google.com>
+ <07bcd2df-a786-ea52-8566-70f484248952@codeaurora.org>
+ <155751085370.14659.7749105088997177801@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <f65811f8-42ea-6365-7822-db662eaea228@codeaurora.org>
+Date:   Mon, 13 May 2019 09:14:46 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <155751085370.14659.7749105088997177801@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MPLL_5OM (the capital letter o) should indeed be MPLL_50M (the number)
-Fix this before it gets used.
+Hello Stephen,
 
-Reported-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Fixes: 25db146aa726 ("dt-bindings: clk: meson: add g12a periph clock controller bindings")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/g12a.c              | 4 ++--
- drivers/clk/meson/g12a.h              | 2 +-
- include/dt-bindings/clock/g12a-clkc.h | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+On 5/10/2019 11:24 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-05-09 19:58:39)
+>> Hello Stephen,
+>>
+>> Thanks for the review.
+>>
+>> On 5/9/2019 10:57 PM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2019-05-08 11:24:55)
+>>>> Update the init data name for each of the dynamic frequency switch
+>>>> controlled clock associated with the RCG clock name, so that it can be
+>>>> generated as per the hardware plan. Thus update the macro accordingly.
+>>>>
+>>>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>>>
+>>> This patch doesn't make any sense to me.
+>>>
+>>>> ---
+>>>>    drivers/clk/qcom/clk-rcg.h    |  2 +-
+>>>>    drivers/clk/qcom/gcc-sdm845.c | 96 +++++++++++++++++++++----------------------
+>>>>    2 files changed, 49 insertions(+), 49 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+>>>> index 5562f38..e40e8f8 100644
+>>>> --- a/drivers/clk/qcom/clk-rcg.h
+>>>> +++ b/drivers/clk/qcom/clk-rcg.h
+>>>> @@ -171,7 +171,7 @@ struct clk_rcg_dfs_data {
+>>>>    };
+>>>>
+>>>>    #define DEFINE_RCG_DFS(r) \
+>>>> -       { .rcg = &r##_src, .init = &r##_init }
+>>>> +       { .rcg = &r, .init = &r##_init }
+>>>
+>>> Why do we need to rename the init data?
+>>>
+>>
+>> We want to manage the init data as the clock source name, so that we
+>> could manage to auto generate our code. So that we do not have to
+>> re-name the clock init data manually if the DFS source names gets
+>> updated at any point of time.
+>>
+> 
+> Why is the clk name changing to not have a _src after the "root" of the
+> clk name? As long as I can remember, RCGs have a "_src" postfix.
+> 
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 739f64fdf1e3..206fafd299ea 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -2734,8 +2734,8 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
- 		[CLKID_MALI_1_DIV]		= &g12a_mali_1_div.hw,
- 		[CLKID_MALI_1]			= &g12a_mali_1.hw,
- 		[CLKID_MALI]			= &g12a_mali.hw,
--		[CLKID_MPLL_5OM_DIV]		= &g12a_mpll_50m_div.hw,
--		[CLKID_MPLL_5OM]		= &g12a_mpll_50m.hw,
-+		[CLKID_MPLL_50M_DIV]		= &g12a_mpll_50m_div.hw,
-+		[CLKID_MPLL_50M]		= &g12a_mpll_50m.hw,
- 		[CLKID_SYS_PLL_DIV16_EN]	= &g12a_sys_pll_div16_en.hw,
- 		[CLKID_SYS_PLL_DIV16]		= &g12a_sys_pll_div16.hw,
- 		[CLKID_CPU_CLK_DYN0_SEL]	= &g12a_cpu_clk_premux0.hw,
-diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
-index 39c41af70804..bcc05cd9882f 100644
---- a/drivers/clk/meson/g12a.h
-+++ b/drivers/clk/meson/g12a.h
-@@ -166,7 +166,7 @@
- #define CLKID_HDMI_DIV				167
- #define CLKID_MALI_0_DIV			170
- #define CLKID_MALI_1_DIV			173
--#define CLKID_MPLL_5OM_DIV			176
-+#define CLKID_MPLL_50M_DIV			176
- #define CLKID_SYS_PLL_DIV16_EN			178
- #define CLKID_SYS_PLL_DIV16			179
- #define CLKID_CPU_CLK_DYN0_SEL			180
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-index 82c9e0c020b2..e10470ed7c4f 100644
---- a/include/dt-bindings/clock/g12a-clkc.h
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -130,7 +130,7 @@
- #define CLKID_MALI_1_SEL			172
- #define CLKID_MALI_1				174
- #define CLKID_MALI				175
--#define CLKID_MPLL_5OM				177
-+#define CLKID_MPLL_50M				177
- #define CLKID_CPU_CLK				187
- #define CLKID_PCIE_PLL				201
- #define CLKID_VDEC_1				204
+Yes, the RCGs would have _src, so we do want the init data also to be
+generated with _src postfix. So that we do not have to manually clean up 
+the generated code.
+
 -- 
-2.20.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
