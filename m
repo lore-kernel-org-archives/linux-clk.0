@@ -2,213 +2,73 @@ Return-Path: <SRS0=Uhbp=TO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCECFC04AB4
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 20:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29284C04AB7
+	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 21:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98A6420873
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 20:34:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF0BF20873
+	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 21:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1557868780;
+	bh=+KDMoLaxjjfTgrLza0xRM2hNVZ4vloQuz//YOp2frGM=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=vM3xD24CAwp6NSPviLM078K7FJ9x86uS5uvkVNFh3eARqIyUww7LzuxosJmLeg1o5
+	 JsTV5k2Y+Y9SSVX24xzFzOn8u2r4tLqR/laJXySYBHtA+1DcCwIPlOEH8wEgk/ApNg
+	 TmsQsXtcs48wDeE/rWH30M2AYGSi0ikLlFPuZxC0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbfENUeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 May 2019 16:34:07 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:53067 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfENUeH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 May 2019 16:34:07 -0400
-X-Originating-IP: 46.193.9.130
-Received: from localhost (cust-west-pareq2-46-193-9-130.wb.wifirst.net [46.193.9.130])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id E95A1C0002;
-        Tue, 14 May 2019 20:34:01 +0000 (UTC)
-Date:   Tue, 14 May 2019 22:34:01 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chen-Yu Tsai <wens@csie.org>, Tero Kristo <t-kristo@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH] clk: Remove io.h from clk-provider.h
-Message-ID: <20190514203401.xq7giy63nhsws2i5@flea>
-References: <20190514170931.56312-1-sboyd@kernel.org>
+        id S1726460AbfENVTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 May 2019 17:19:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbfENVTe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 May 2019 17:19:34 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A504C20873;
+        Tue, 14 May 2019 21:19:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557868773;
+        bh=+KDMoLaxjjfTgrLza0xRM2hNVZ4vloQuz//YOp2frGM=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=pTPVRQNTaJojaQ0GqBt/fEENNLqPRrXJxWTCL/0pVycdw/ItgYUTeECXfmnuDzOq/
+         ILAA/qtQ7RokSpwdkr2pc9dhBTTS7OSxTu3H6xwzsPF8Q+S9CPrrV1om52Xe1bWJlY
+         b1Z7yHqOUND7mtrRQvNE/NBbUVPs1FgWSOAmvH9s=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190514170931.56312-1-sboyd@kernel.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190514153341.22540-1-chris.paterson2@renesas.com>
+References: <20190514153341.22540-1-chris.paterson2@renesas.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
+Cc:     Biju Das <biju.das@bp.renesas.com>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Message-ID: <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Tue, 14 May 2019 14:19:32 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 14, 2019 at 10:09:31AM -0700, Stephen Boyd wrote:
-> Now that we've gotten rid of clk_readl() we can remove io.h from the
-> clk-provider header and push out the io.h include to any code that isn't
-> already including the io.h header but using things like readl/writel,
-> etc.
->
-> Found with this grep:
->
->   git grep -l clk-provider.h | grep '.c$' | xargs git grep -L 'linux/io.h' | \
->   	xargs git grep -l \
-> 	-e '\<__iowrite32_copy\>' --or \
-> 	-e '\<__ioread32_copy\>' --or \
-> 	-e '\<__iowrite64_copy\>' --or \
-> 	-e '\<ioremap_page_range\>' --or \
-> 	-e '\<ioremap_huge_init\>' --or \
-> 	-e '\<arch_ioremap_pud_supported\>' --or \
-> 	-e '\<arch_ioremap_pmd_supported\>' --or \
-> 	-e '\<devm_ioport_map\>' --or \
-> 	-e '\<devm_ioport_unmap\>' --or \
-> 	-e '\<IOMEM_ERR_PTR\>' --or \
-> 	-e '\<devm_ioremap\>' --or \
-> 	-e '\<devm_ioremap_nocache\>' --or \
-> 	-e '\<devm_ioremap_wc\>' --or \
-> 	-e '\<devm_iounmap\>' --or \
-> 	-e '\<devm_ioremap_release\>' --or \
-> 	-e '\<devm_memremap\>' --or \
-> 	-e '\<devm_memunmap\>' --or \
-> 	-e '\<__devm_memremap_pages\>' --or \
-> 	-e '\<pci_remap_cfgspace\>' --or \
-> 	-e '\<arch_has_dev_port\>' --or \
-> 	-e '\<arch_phys_wc_add\>' --or \
-> 	-e '\<arch_phys_wc_del\>' --or \
-> 	-e '\<memremap\>' --or \
-> 	-e '\<memunmap\>' --or \
-> 	-e '\<arch_io_reserve_memtype_wc\>' --or \
-> 	-e '\<arch_io_free_memtype_wc\>' --or \
-> 	-e '\<__io_aw\>' --or \
-> 	-e '\<__io_pbw\>' --or \
-> 	-e '\<__io_paw\>' --or \
-> 	-e '\<__io_pbr\>' --or \
-> 	-e '\<__io_par\>' --or \
-> 	-e '\<__raw_readb\>' --or \
-> 	-e '\<__raw_readw\>' --or \
-> 	-e '\<__raw_readl\>' --or \
-> 	-e '\<__raw_readq\>' --or \
-> 	-e '\<__raw_writeb\>' --or \
-> 	-e '\<__raw_writew\>' --or \
-> 	-e '\<__raw_writel\>' --or \
-> 	-e '\<__raw_writeq\>' --or \
-> 	-e '\<readb\>' --or \
-> 	-e '\<readw\>' --or \
-> 	-e '\<readl\>' --or \
-> 	-e '\<readq\>' --or \
-> 	-e '\<writeb\>' --or \
-> 	-e '\<writew\>' --or \
-> 	-e '\<writel\>' --or \
-> 	-e '\<writeq\>' --or \
-> 	-e '\<readb_relaxed\>' --or \
-> 	-e '\<readw_relaxed\>' --or \
-> 	-e '\<readl_relaxed\>' --or \
-> 	-e '\<readq_relaxed\>' --or \
-> 	-e '\<writeb_relaxed\>' --or \
-> 	-e '\<writew_relaxed\>' --or \
-> 	-e '\<writel_relaxed\>' --or \
-> 	-e '\<writeq_relaxed\>' --or \
-> 	-e '\<readsb\>' --or \
-> 	-e '\<readsw\>' --or \
-> 	-e '\<readsl\>' --or \
-> 	-e '\<readsq\>' --or \
-> 	-e '\<writesb\>' --or \
-> 	-e '\<writesw\>' --or \
-> 	-e '\<writesl\>' --or \
-> 	-e '\<writesq\>' --or \
-> 	-e '\<inb\>' --or \
-> 	-e '\<inw\>' --or \
-> 	-e '\<inl\>' --or \
-> 	-e '\<outb\>' --or \
-> 	-e '\<outw\>' --or \
-> 	-e '\<outl\>' --or \
-> 	-e '\<inb_p\>' --or \
-> 	-e '\<inw_p\>' --or \
-> 	-e '\<inl_p\>' --or \
-> 	-e '\<outb_p\>' --or \
-> 	-e '\<outw_p\>' --or \
-> 	-e '\<outl_p\>' --or \
-> 	-e '\<insb\>' --or \
-> 	-e '\<insw\>' --or \
-> 	-e '\<insl\>' --or \
-> 	-e '\<outsb\>' --or \
-> 	-e '\<outsw\>' --or \
-> 	-e '\<outsl\>' --or \
-> 	-e '\<insb_p\>' --or \
-> 	-e '\<insw_p\>' --or \
-> 	-e '\<insl_p\>' --or \
-> 	-e '\<outsb_p\>' --or \
-> 	-e '\<outsw_p\>' --or \
-> 	-e '\<outsl_p\>' --or \
-> 	-e '\<ioread8\>' --or \
-> 	-e '\<ioread16\>' --or \
-> 	-e '\<ioread32\>' --or \
-> 	-e '\<ioread64\>' --or \
-> 	-e '\<iowrite8\>' --or \
-> 	-e '\<iowrite16\>' --or \
-> 	-e '\<iowrite32\>' --or \
-> 	-e '\<iowrite64\>' --or \
-> 	-e '\<ioread16be\>' --or \
-> 	-e '\<ioread32be\>' --or \
-> 	-e '\<ioread64be\>' --or \
-> 	-e '\<iowrite16be\>' --or \
-> 	-e '\<iowrite32be\>' --or \
-> 	-e '\<iowrite64be\>' --or \
-> 	-e '\<ioread8_rep\>' --or \
-> 	-e '\<ioread16_rep\>' --or \
-> 	-e '\<ioread32_rep\>' --or \
-> 	-e '\<ioread64_rep\>' --or \
-> 	-e '\<iowrite8_rep\>' --or \
-> 	-e '\<iowrite16_rep\>' --or \
-> 	-e '\<iowrite32_rep\>' --or \
-> 	-e '\<iowrite64_rep\>' --or \
-> 	-e '\<__io_virt\>' --or \
-> 	-e '\<pci_iounmap\>' --or \
-> 	-e '\<virt_to_phys\>' --or \
-> 	-e '\<phys_to_virt\>' --or \
-> 	-e '\<ioremap_uc\>' --or \
-> 	-e '\<ioremap\>' --or \
-> 	-e '\<__ioremap\>' --or \
-> 	-e '\<iounmap\>' --or \
-> 	-e '\<ioremap\>' --or \
-> 	-e '\<ioremap_nocache\>' --or \
-> 	-e '\<ioremap_uc\>' --or \
-> 	-e '\<ioremap_wc\>' --or \
-> 	-e '\<ioremap_wc\>' --or \
-> 	-e '\<ioremap_wt\>' --or \
-> 	-e '\<ioport_map\>' --or \
-> 	-e '\<ioport_unmap\>' --or \
-> 	-e '\<ioport_map\>' --or \
-> 	-e '\<ioport_unmap\>' --or \
-> 	-e '\<xlate_dev_kmem_ptr\>' --or \
-> 	-e '\<xlate_dev_mem_ptr\>' --or \
-> 	-e '\<unxlate_dev_mem_ptr\>' --or \
-> 	-e '\<virt_to_bus\>' --or \
-> 	-e '\<bus_to_virt\>' --or \
-> 	-e '\<memset_io\>' --or \
-> 	-e '\<memcpy_fromio\>' --or \
-> 	-e '\<memcpy_toio\>'
->
-> I also reordered a couple includes when they weren't alphabetical and
-> removed clk.h from kona, replacing it with clk-provider.h because
-> that driver doesn't use clk consumer APIs.
->
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Quoting Chris Paterson (2019-05-14 08:33:41)
+> Misspelling 'prohibited' is quite common in the real world, although
+> surprisingly not so much in the Linux Kernel. In addition to fixing the
+> typo we may as well add it to the spelling checker.
+>=20
+> Also adding the present participle (prohibiting).
+>=20
+> Fixes: 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
+>=20
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
