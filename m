@@ -2,61 +2,60 @@ Return-Path: <SRS0=Uhbp=TO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22612C04AB4
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 16:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B26DC04AB4
+	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 16:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E86132085A
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 16:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A0E320863
+	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 16:30:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9AO/zdd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhVvJi4w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbfENQ3F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 May 2019 12:29:05 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35338 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfENQ3F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 May 2019 12:29:05 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g5so8524013plt.2;
-        Tue, 14 May 2019 09:29:04 -0700 (PDT)
+        id S1726107AbfENQaZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 May 2019 12:30:25 -0400
+Received: from mail-pl1-f182.google.com ([209.85.214.182]:41422 "EHLO
+        mail-pl1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfENQaY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 May 2019 12:30:24 -0400
+Received: by mail-pl1-f182.google.com with SMTP id f12so6499170plt.8;
+        Tue, 14 May 2019 09:30:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Yj7g1zX5VtWrwoZOWHxMk02AJw3vsxkG/HQMAspuC98=;
-        b=i9AO/zddYqJtxhgFcoe8F5Na4bI9O43hctdsNe4kI3e3NDv++1q5htouXKw5MnRGxC
-         GoGvfIHxsjQzjQNqM6tEjb78jquLfxl8kCUw7MBZV7/vv8+vTBHnoPqqZL6COLZFzq/p
-         s6V+2+Bsit437yDuw7qHdOWZGXBcSZep+APajcggOS2RtZWhpHsLDVIwEO31wrhxguol
-         x8prFK5E06I1cpLnjRjx4hupLjZk8dcEW30Dry3ddJhnxdVeGT/F/8u2oX03X7bV3f1S
-         5Lm8rSUF3Xa1bIAlOFVfdxSi7BmruPqdtizbC8IvS0sA1KHUP3EZE5jHQ8xGr2p/yv9T
-         4tfA==
+        bh=uuKK3mR4hA4i4JCsj/Kq1PVxAZau9p6kEToMkCt9NZw=;
+        b=EhVvJi4w4BR9xTrJYoWqIAnnSL0+LEY2TwBngqnUTL/PB/ILUwCJeJvNdEm47x5YaD
+         ZiseRKdoLAugTw4slONhk7T2X0hWBgsx76/Gv6FkXr0LOyi1dPFIvopdxcQAsihpQlpg
+         8yuaw+qFWThLNJXs8PA/Il+0MbEbmF4Dfh6cdLQxjlhDoufXerapcHFIwa9atf7ZsS2L
+         aVpWUKg+ubH3ijsSlgce29rXcgIFxh2ECcLYotPERprKx7V0OYGdUth7M0XqdxbLPTzF
+         kYUKbumo9mlG4O0kHO8s3+mNCKlnJLkKpqjuwhH4gx91JNXqQRxR0qhW3OzzQZVPixut
+         eBRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Yj7g1zX5VtWrwoZOWHxMk02AJw3vsxkG/HQMAspuC98=;
-        b=P6QK06fiUcDXMIq8oXfuYhbkRHVAc5xEhy6jttVlsZfJDLnBo8CfRMy3pqCnHM7Jmg
-         gmav6D5KMuzYxJcH7nkrGupHq9Gi4rBe6DW4+cvmBiet1M/746FNovnfJ8cti9AJI58Y
-         mowtbIvrF1yLh9shrCPovo11QlWBc2zBDFbALxelcGwGGGib60lcgGfEafeH8nHU9hW1
-         gOS409MOFX8BXxcFHy7Uy3iKCR7Nz0RI2gSo1VmFDhm0fVJonhpPAdy50D6egvfs2dI6
-         84TTRX0fJxQcdkWzuwxjQ2s6nVvO3GAx9WqUzvQVSdJJ5tzsce/mXUDGJJu6XsXBEDjh
-         4aoQ==
-X-Gm-Message-State: APjAAAXSVVxFpnklMuiayWsRG1mCcin9ur8XT/571RZUtpAM7VJGKrS6
-        /4KOMy+E+cQG3SYtCmXNPKI=
-X-Google-Smtp-Source: APXvYqxeRPzrXEVpgMuRnDMSw53AxeQEtchI8snOYaBDxa/Ydc0vjRoHLmr7zl3AcQ3L5HFPxGcSNw==
-X-Received: by 2002:a17:902:7002:: with SMTP id y2mr39331457plk.75.1557851344624;
-        Tue, 14 May 2019 09:29:04 -0700 (PDT)
+        bh=uuKK3mR4hA4i4JCsj/Kq1PVxAZau9p6kEToMkCt9NZw=;
+        b=rB/U4M18YBet34ievJpa4Cp2WGSD/mlhex/V1wUb6xrg7FwS7gSnYTahtcjto5eorb
+         tNqqF07M/91d9UdRbGfde8InWOIvzOGn2yResWULr1VB5Es3vwUKaqXAGZCmwGDzR2LJ
+         SAVA9vKXhuOAcpZF4Sd/HkbIfS1wCh31puOAmuXEAU/VH/7//IRwC7RV13ZoBP2cGs4A
+         TiiOcAGCSm7dKThHCJwAklavwvDFv3ZfDP0zb5v/MwEpBA8bacHNtMq8QQZixyY0fqFC
+         HGzIdE7ZfB6E+RuaEol1gUKycnpMyFXoL8Wu0/CL+UrUouaWfDq5DXdOg0LQQu7wRp9c
+         hvlg==
+X-Gm-Message-State: APjAAAURD2Tfa7H++Rrb6VFzfV/mBj+hu0Qb50zkA/iwV9kcXjaKn/+o
+        +W2Qpy23eVxlrCxpC5UOsfM=
+X-Google-Smtp-Source: APXvYqzs4fyGjlRgOBs0Nb+TzxRJgwCiX8zcvwkB82bJdY463a07ZRC+FtrklJEZ2aIb3N3SD+2jCw==
+X-Received: by 2002:a17:902:2983:: with SMTP id h3mr12641147plb.267.1557851424198;
+        Tue, 14 May 2019 09:30:24 -0700 (PDT)
 Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.googlemail.com with ESMTPSA id t7sm29751782pfa.42.2019.05.14.09.28.57
+        by smtp.googlemail.com with ESMTPSA id b144sm23348864pfb.68.2019.05.14.09.30.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 09:29:03 -0700 (PDT)
-Subject: Re: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
- controller binding for Tegra210
+        Tue, 14 May 2019 09:30:23 -0700 (PDT)
+Subject: Re: [PATCH V3 3/8] clk: tegra: Export functions for EMC clock scaling
 To:     Joseph Lo <josephl@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -66,14 +65,14 @@ To:     Joseph Lo <josephl@nvidia.com>,
 Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20190510084719.18902-1-josephl@nvidia.com>
- <20190510084719.18902-2-josephl@nvidia.com>
+ <20190510084719.18902-4-josephl@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
-Date:   Tue, 14 May 2019 19:28:16 +0300
+Message-ID: <502f213b-2101-9d56-54c9-8be48f1be5b8@gmail.com>
+Date:   Tue, 14 May 2019 19:29:34 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190510084719.18902-2-josephl@nvidia.com>
+In-Reply-To: <20190510084719.18902-4-josephl@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,64 +82,24 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 10.05.2019 11:47, Joseph Lo пишет:
-> Add the binding document for the external memory controller (EMC) which
-> communicates with external LPDDR4 devices. It includes the bindings of
-> the EMC node and a sub-node of EMC table which under the reserved memory
-> node. The EMC table contains the data of the rates that EMC supported.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
-> v3:
-> - drop the bindings of EMC table
-> - add memory-region and reserved-memory node for EMC table
-> ---
->  .../nvidia,tegra210-emc.txt                   | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> new file mode 100644
-> index 000000000000..d65aeef2329c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> @@ -0,0 +1,55 @@
-> +NVIDIA Tegra210 SoC EMC (external memory controller)
-> +====================================================
-> +
-> +Device node
-> +===========
-> +Required properties :
-> +- compatible : should be "nvidia,tegra210-emc".
-> +- reg : physical base address and length of the controller's registers.
-> +- clocks : phandles of the possible source clocks.
-> +- clock-names : names of the possible source clocks.
-> +- interrupts : Should contain the EMC general interrupt.
-> +- memory-region : phandle to the reserved memory (see
-> +  Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt) which
-> +  contains a sub-node of EMC table.
-> +- nvidia,memory-controller : phandle of the memory controller.
-> +
-> +Reserved memory node
-> +====================
-> +Should contain a sub-node of EMC table with required properties:
-> +- compatible : should be "nvidia,tegra210-emc-table".
-> +- reg : physical address and length of the location of EMC table.
-> +
-> +Example:
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		emc_table: emc-table@8be00000 {
-> +			compatible = "nvidia,tegra210-emc-table";
-> +			reg = <0x0 0x8be00000 0x0 0x10000>;
-> +			status = "okay";
-> +		};
+> Export functions to allow accessing the CAR register required by EMC
+> clock scaling. These functions will be used to access the CAR register
+> as part of the scaling sequence.
 
-You essentially moved the v1 binding into obscure and undocumented blob,
-ignoring previous review comments. This is a very odd move... please
-explain what is going on.
+> DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+> 	t57478018; bh=emd3R6nSFwL5B+aWA2W+bJqcZ1Jhvwnayz1wGOPSA4M=;
+> 	h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+> 	 In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+> 	 Content-Transfer-Encoding:Content-Type;
+> 	b=fW7ddx6p6BuGNLGA6jAL5AxsojqeQcOg9fZBqbA1Ze45XU3gt7tiL88s8g7gTftA+
+> 	 NdruKRXPLS0r4iOgKqEUf3bmoBP0Kf+l0PQcJu55U5v55XnP6cuKrQw2cmbDaw/g2Z
+> 	 a6DZrAIbUZzi3P3b764ZDmUlRD1sHAWWswZwG3kHwBP0TDOXNjAEVcp7NPm868VOvv
+> 	 aJrdb6VblknwjNkE6OV7ktGB1ODge5YSAePDLNAplZBw+BFnogtESwvf0cFcYVbxCG
+> 	 COh/UNKdlJuOM95IgbZiom9I8NiwuS07bA2WzudSgnMKbhNI6VlFgDu5A6JaPt3Irv
+> 	 N4nuUT4+Ln3Fg=
+> 
+
+What's that?
 
 -- 
 Dmitry
