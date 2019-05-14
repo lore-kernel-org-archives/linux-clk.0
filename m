@@ -7,58 +7,60 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3BFC04AB4
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 18:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BC4C04AB4
+	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 18:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20B5520850
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 18:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C6CB20850
+	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 18:16:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="sMJt7uF/"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="HHumoDlF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfENSNz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 May 2019 14:13:55 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44839 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfENSNz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 May 2019 14:13:55 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g18so15920787otj.11;
-        Tue, 14 May 2019 11:13:55 -0700 (PDT)
+        id S1727522AbfENSQk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 May 2019 14:16:40 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39805 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbfENSQk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 May 2019 14:16:40 -0400
+Received: by mail-oi1-f196.google.com with SMTP id v2so9436483oie.6;
+        Tue, 14 May 2019 11:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nyGqEkYvn3BjYrUHlUmuJ5keO+5aqjugox8sRHwUIKQ=;
-        b=sMJt7uF/4MNIcXxMXbk2JGh9sK1ZuIkDIyJcENl1EXYhzKzodF1+ugcoWijVBgq+i8
-         9EhD8c5zI9PaWrG06IIKSesXQ0MoUwdjL4UipV2+zYdA8XqkgsRMXtyKaljBghy2R6Ym
-         YJACxzNY2afZNBKPl0H8CEVcVdKZRazC9WYzgVJQ00NYkrfHKHRFYAXIoV4CNjbfFG5B
-         07M/t4bMdKWo/yxz464eIynQQPJZMaYkQyP2bI4BriaD64C9EmnziZMLV8jootQU8J8W
-         WOsTK7N+x8ilXKC9COudzpcDlYC+mWifszg5v143FlGiIaiRMDUcntuzNrrTIhcY0rD4
-         sFew==
+        bh=4YMSOdywhMDkZIusrQTvSoGh0Q6ONeiUFTYpafArN1A=;
+        b=HHumoDlFG8R5gAm3Ad1ciIosYI3vaJ7hvHU+HejRRC3yCLveG8A8/bU2GI1BTbzPaH
+         IUwfrvrdpaTW6+rlhxdctqH0ds3IQeGLswlJygQJo8Wy8owPgytP15gmPLZgAk4FkBDg
+         NgZhOKRTzusOhfrD0OLcPwc6cOCFj7fIZbmQX3qUu2d5lDU5d2QhslTTaVbc9IjZZG/C
+         rARWXf1jUvtJLOMJCZ+Ly5WWspAoAMkEbPRS2xtQz0P3kLU+xBfNqPrhlzInuNT65nGC
+         KMyOwwLqwZW5V3mdgjKe/Vi2o3InWL6SK1ZVnKOqmz9Smip2Y7WHvEvf+2+YD2o1F/Cm
+         8TRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nyGqEkYvn3BjYrUHlUmuJ5keO+5aqjugox8sRHwUIKQ=;
-        b=NJpGG7QSrTAsBwt5Q6ZEmriD1yf1eP2yQTGJYHi8NWVRNfWm8AcmywRYONguULaZG6
-         JsULfMCWtVFAgYUMsd1ur56GNU7jvI+gPvp/bforQMXYeam8wg8j7+75c0Eq9rwRBc/V
-         mdn4nQAq+7bXLpJg5DuH471UP+Hvxd2mDGnj7TH+ycRi4lnVWCuDts93Arq0g8BHslHf
-         +QsIJfo7VoXB+6MleQ+6FFq5dQLGBLTczdUcJGeB3Gj+JZsrw0+3r8yFPaBnhAN3ROSQ
-         B/sVOkF9q4C9ffuphv1nERftp8LOLT+akpw1y+X1JaGjxNwu3LtPNjvosiKCDXwL+n8N
-         UU/w==
-X-Gm-Message-State: APjAAAXM9QcB/BISWMJE8dY3mjvXiZru/x9FSFkVtrXM5/GluqzUrLAs
-        XieIH7JunRlxhdQsNLBRnttDxcRrJksDcqzhaKY=
-X-Google-Smtp-Source: APXvYqz+CMQFl/iOZjK2ovpb8x50ggC+uyHiRTZ4z3hnHfRgzwsvxnfKT1wYL9y9zA8iIXUs4gGObTt3HYxN+WCmozs=
-X-Received: by 2002:a05:6830:1182:: with SMTP id u2mr11543945otq.71.1557857634583;
- Tue, 14 May 2019 11:13:54 -0700 (PDT)
+        bh=4YMSOdywhMDkZIusrQTvSoGh0Q6ONeiUFTYpafArN1A=;
+        b=C3UXHAwF3AXmNoefDJKL+/SyhC38nb0fdHxQjxI7/5YO/omGeNckktqJeXLDM77+CJ
+         3zjXG9omGPutDj2GaF1uWQgTXilRzSidakNTSpndKBL1pjhv4JIjRaMoUSio0Mnm8u7D
+         TDEtsyN4Q//JQoDlsu0R+sicVUrsgUZjbKykO4RUhbgEhp+KX96hsryX7g46uY0XfJmz
+         LN+hy91JYEqqYD4MucQbQyHxnP5D7NqHypaPXC3JfQiW7QpeQggS/nb3t43SsHVChb0p
+         AQToTGJxQAfoMpdngWyuEjzTu/eGmVcM/KqJ7v7pEq+dJo/u9PFGa2cCuHDirk8+rfZi
+         8ZzA==
+X-Gm-Message-State: APjAAAWvSN8ScZsQb3HMM39718PgX+ytBcBOPrPxYCQLpPoqXgGZ9lc9
+        zC94eo+ZC4s5mbjbmYYNBqzU68brY6Mgw6I0GUU=
+X-Google-Smtp-Source: APXvYqyY2t4CYQPKEHqtsUwWM2Rw8XRLaW0voMCaWNP5OK2WwOoKu/4mjsM6cQLFKNXGKuBZGFlXDA3GnbdV2cYN/5E=
+X-Received: by 2002:aca:b68a:: with SMTP id g132mr3805890oif.47.1557857799214;
+ Tue, 14 May 2019 11:16:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190513124531.20334-1-jbrunet@baylibre.com>
-In-Reply-To: <20190513124531.20334-1-jbrunet@baylibre.com>
+References: <20190513123115.18145-1-jbrunet@baylibre.com> <20190513123115.18145-2-jbrunet@baylibre.com>
+In-Reply-To: <20190513123115.18145-2-jbrunet@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 14 May 2019 20:13:43 +0200
-Message-ID: <CAFBinCDASu9_wx+hhyqYBb4=m=oxcgJv=UcBpPXhfj50p+gkCA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: meson: g12a: fix gp0 and hifi ranges
+Date:   Tue, 14 May 2019 20:16:28 +0200
+Message-ID: <CAFBinCBOtsSCg40L+PovAwN2dvLpDO7KMhJpcftpSiv+moBDSA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] clk: meson: mpll: properly handle spread spectrum
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -68,30 +70,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 13, 2019 at 2:45 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Mon, May 13, 2019 at 2:31 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
 >
-> While some SoC samples are able to lock with a PLL factor of 55, others
-> samples can't. ATM, a minimum of 60 appears to work on all the samples
-> I have tried.
+> The bit 'SSEN' available on some MPLL DSS outputs is not related to the
+> fractional part of the divider but to the function called
+> 'Spread Spectrum'.
 >
-> Even with 60, it sometimes takes a long time for the PLL to eventually
-> lock. The documentation says that the minimum rate of these PLLs DCO
-> should be 3GHz, a factor of 125. Let's use that to be on the safe side.
+> This function might be used to solve EM issues by adding a jitter on
+> clock signal. This widens the signal spectrum and weakens the peaks in it.
 >
-> With factor range changed, the PLL seems to lock quickly (enough) so far.
-> It is still unclear if the range was the only reason for the delay.
+> While spread spectrum might be useful for some application, it is
+> problematic for others, such as audio.
 >
-> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+> This patch introduce a new flag to the MPLL driver to enable (or not) the
+> spread spectrum function.
+>
+> Fixes: 1f737ffa13ef ("clk: meson: mpll: fix mpll0 fractional part ignored")
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-this matches with what Amlogic does in their 4.9 vendor kernel from
-buildroot-openlinux-A113-201901:
-$ grep -P "\tPLL_RATE" kernel/aml-4.9/drivers/amlogic/clk/g12a/g12a.h
-| cut -d',' -f2 | tr -s " " | sort -u | head -n5
- 125
- 126
- 128
- 129
- 132
+in v1 [0] I checked that Ethernet is still working on my Odroid-C1.
+I didn't repeat this test with v2 but since the logic has not changed
+you can still add my:
+Tested-by: Martin Blumenstingl<martin.blumenstingl@googlemail.com>
 
-based on that:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+[0] https://patchwork.kernel.org/patch/10877431/
