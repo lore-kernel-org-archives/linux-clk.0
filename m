@@ -2,113 +2,89 @@ Return-Path: <SRS0=g5s0=TP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1ACC04E53
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 15:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2693EC04E53
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 18:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE3B20873
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 15:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4F8620843
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 18:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQ5b5R0c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1gPCjG+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfEOP0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 May 2019 11:26:54 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42047 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbfEOP0x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 May 2019 11:26:53 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 188so151052ljf.9;
-        Wed, 15 May 2019 08:26:52 -0700 (PDT)
+        id S1726554AbfEOSd7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 May 2019 14:33:59 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:36436 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfEOSd7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 May 2019 14:33:59 -0400
+Received: by mail-yb1-f193.google.com with SMTP id m10so229841ybk.3;
+        Wed, 15 May 2019 11:33:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6cBL5aTouL63mlEBJPFj1RGOe1dEBWdZshtStEgjyl4=;
-        b=gQ5b5R0cTyTWOhDTjkP9WO0SWdB1A53z3VCrlhsLBS0+PRh7ovvr7QE8jfIgbzMWIg
-         XpS+7U2Z5d2Xh3UxCBnJ/QDrt9ec6JQtiWybb37FBDCxIQJswkqHxWln2/z/mQYEVdLF
-         /B+UTIlz+mu5uVm7uD+KHp5GDQz5N27xHw6Ty+QAjcR+zhoPcIwJY+PVEAX60Yjgu0hM
-         JK9Ez/wN4v/uqTQqB2qI2lBMrJV5LRXqDo4JMvgCROiLJT3R5aXOmuasJLVFB480uW8L
-         SThd3R3Ti+TrxWDvdiRGRZL0WD9EFHWExxoFcZn9i/nXMguyXnRvknWFKmuo9/H1Ktoa
-         bTtA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HnVd2S8VknS7EmG8FcfjRFAi+NkjPV+gxxEXD/c0pnc=;
+        b=U1gPCjG+D+4aIu+PcJQhSCyFUml1ZVD7xRzGJdpN4SepTMBxsIv8dRVFFOe/wL8Vgr
+         5Wx9ZjxkBVZaEKQjcbCJcMGrwgPcIgciC/BwNLPWuky2hu3Yq8tf606dj27rAEmmfqoK
+         NtIsBGmBp1MBrcLBVBR1Mv2A6CKirC9Xq0ciakxUn1B/9bfKR1YvdYkccFW7JYdlS8ed
+         A1HA77zqhEmom1IKc0udacwIeVs+GWbKQt/hXjK5tSQxQ0fQN5pBwcpJjx22NGqV7fzo
+         If3LKxKhOq8IVVLykcIxWxtRcfU1ypwg5MH4R3icqEk6jy3yNCofZCgini1ni/L7mAxq
+         RarA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6cBL5aTouL63mlEBJPFj1RGOe1dEBWdZshtStEgjyl4=;
-        b=tutVH4U0hrVSjgS7P2hbxmx394yL3mJXYLOIpQp74wVfAM+WArQqTw2990Ok0wa7f8
-         wAirAfDuwhU6TUdaz0zyGHC5qMoeTSVrVwHGA/qoL8iy2haKith0dpNCma0AGTfNE+rU
-         0WJyw4OzIC9e/+39nSbm2A10RUTw53vWHC8DrDEH/ZfsWUd/uHKgJOpOoj9fc94FTuy6
-         GYuLAdRWWPFAmClO0OCmnQiLbVyMSji+0qPxTwdbqJEeuxXwhy2yKQ7XLmd718EzPD/P
-         oKC13oGBLKUfDu+GfCN2/9MT0niKefpeAyKNSvycT9o+K6tHAUTdPnjF/PP6dHXqMvUg
-         lm+w==
-X-Gm-Message-State: APjAAAUW0MFKK9BY7xtoyD7AhT8FMUrmM/TOk0mONvgj16ibKouGWZ//
-        eKE/ejv46BCC2tuSI88l+30=
-X-Google-Smtp-Source: APXvYqx1eXNFS/yKESjwI/+dMTt/Mzw77h/fGs13ul8A07QCq74RGyhn5/lFO1hjsM3brXCAP4ghWQ==
-X-Received: by 2002:a2e:8644:: with SMTP id i4mr7583980ljj.0.1557934011892;
-        Wed, 15 May 2019 08:26:51 -0700 (PDT)
-Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.googlemail.com with ESMTPSA id k81sm399103ljb.77.2019.05.15.08.26.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 08:26:51 -0700 (PDT)
-Subject: Re: [PATCH V3 5/8] memory: tegra: Add EMC scaling support code for
- Tegra210
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190510084719.18902-1-josephl@nvidia.com>
- <20190510084719.18902-6-josephl@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6a42ff62-44fe-c420-7645-d57ecc1defaa@gmail.com>
-Date:   Wed, 15 May 2019 18:26:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HnVd2S8VknS7EmG8FcfjRFAi+NkjPV+gxxEXD/c0pnc=;
+        b=N23qMd3h3+BHzv7tSemtM1fNoEnzrwfr1UM8vewDGLSUZlr+FRkMFEI7MVjYDiyDtC
+         C5cGOBlKsO6CzrrwiNEPAhKcOEcRWmMyXLIohsofuUhfQIPjqRHPxVxsjOIvWBsh0h5W
+         Vgr73gKvBdzBj2iRN+1qSNZwNJL9CvyBPp9VIudwVKx+ta6aXuZutARHuyrO1XrHtHx+
+         1jjO97duEThdRu2m5MMgy2u7QDW2OhjHCB0+eZ0zK55GDN3TghVqLu+stBRTMoBo1wkJ
+         upQ3ue+WUWhA6Wf7Z2jbNQHzO2ThYpfawCDK/G8IAZLJHPG9UiofNK15IxJotLRSS+65
+         iXSA==
+X-Gm-Message-State: APjAAAUZj/5Iqj/dU4UXs83SP6WBwJrWy0hfaVhnAaSGluhRkmLU2jGQ
+        EA+C68oYtPUSy0LsLYdPcbJTMotSRX2XXXDxPy0=
+X-Google-Smtp-Source: APXvYqyIhd2iPzcP+rbRmFUBJ+m9T5N2f9m167KLV8oGalcuqt6Z8jWcA/wh/Y+HxmjzzMYCIMCeIuYYq0bnwOtP7tM=
+X-Received: by 2002:a25:4485:: with SMTP id r127mr19575805yba.386.1557945238502;
+ Wed, 15 May 2019 11:33:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190510084719.18902-6-josephl@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190514170931.56312-1-sboyd@kernel.org>
+In-Reply-To: <20190514170931.56312-1-sboyd@kernel.org>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Wed, 15 May 2019 11:33:46 -0700
+Message-ID: <CAMo8BfL+JSBtw_HmZ3y9AnBK0vhg+YCw+f1E3XOfOaFFFaFQqg@mail.gmail.com>
+Subject: Re: [PATCH] clk: Remove io.h from clk-provider.h
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Chris Zankel <chris@zankel.net>,
+        John Crispin <john@phrozen.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-10.05.2019 11:47, Joseph Lo пишет:
-> This patch adds the required APIs and variables for the EMC scaling
-> sequence code on Tegra210.
-> 
-> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
+On Tue, May 14, 2019 at 10:09 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> Now that we've gotten rid of clk_readl() we can remove io.h from the
+> clk-provider header and push out the io.h include to any code that isn't
+> already including the io.h header but using things like readl/writel,
+> etc.
 
-> +
-> +void do_clock_change(struct tegra_emc *emc, u32 clksrc)
-> +{
-> +	int err;
-> +
-> +	mc_readl(emc->mc, MC_EMEM_ADR_CFG);
-> +	emc_readl(emc, EMC_INTSTATUS);
-> +
-> +	tegra210_clk_emc_update_setting(clksrc);
-> +
-> +	err = wait_for_update(emc, EMC_INTSTATUS,
-> +			      EMC_INTSTATUS_CLKCHANGE_COMPLETE, true, REG_EMC);
-> +	if (err) {
-> +		pr_err("%s: clock change completion error: %d", __func__, err);
-> +		WARN_ON(1);
-> +	}
-
-Ether WARN(err, ...) or dev_warn, or just dev_err.
+For arch/xtensa/platforms/xtfpga/setup.c:
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
 -- 
-Dmitry
+Thanks.
+-- Max
