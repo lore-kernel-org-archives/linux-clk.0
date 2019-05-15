@@ -2,270 +2,193 @@ Return-Path: <SRS0=g5s0=TP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28114C04E53
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 12:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01A5C04E53
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 13:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3BBE20843
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 12:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6686E20881
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 13:51:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LIQZSvUG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaHZE40a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfEOM2a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 May 2019 08:28:30 -0400
-Received: from mail-eopbgr80050.outbound.protection.outlook.com ([40.107.8.50]:55713
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726441AbfEOM2a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 May 2019 08:28:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TUKTTWtdup4kcg1hBTn5GgCNlMToZqlxuuoKC0uuBVk=;
- b=LIQZSvUGyMttw+e7AywSOcWi40wz/wUhZKXuMGqw/H+re7CIW4+I0QwFCNO8jAjq1w1LPE43G1+KJ86ytI9hPa7mNflxt7/b9nEpYDe2PoYpfc8yZBUHZg8cm6M9netBtXZ3zRBSm/rKATNuZzkX5xstR4TdQjpV1xGJTdMIY3g=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3946.eurprd04.prod.outlook.com (52.134.72.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.16; Wed, 15 May 2019 12:28:20 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::d035:3bd0:a56a:189d]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::d035:3bd0:a56a:189d%2]) with mapi id 15.20.1900.010; Wed, 15 May 2019
- 12:28:20 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "tiny.windzz@gmail.com" <tiny.windzz@gmail.com>,
-        "pp@emlix.com" <pp@emlix.com>,
-        "colin.didier@devialet.com" <colin.didier@devialet.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "hofrat@osadl.org" <hofrat@osadl.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH V2 2/2] clk: imx: Use imx_mmdc_mask_handshake() API for
- masking MMDC channel
-Thread-Topic: [PATCH V2 2/2] clk: imx: Use imx_mmdc_mask_handshake() API for
- masking MMDC channel
-Thread-Index: AQHVCxmupCy7lBV1C029aC5p17PIAg==
-Date:   Wed, 15 May 2019 12:28:19 +0000
-Message-ID: <1557922984-20811-2-git-send-email-Anson.Huang@nxp.com>
-References: <1557922984-20811-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1557922984-20811-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0P153CA0031.APCP153.PROD.OUTLOOK.COM
- (2603:1096:203:17::19) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: da266132-ffc7-4753-38ee-08d6d930d064
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3946;
-x-ms-traffictypediagnostic: DB3PR0402MB3946:
-x-microsoft-antispam-prvs: <DB3PR0402MB39465E32DA38DC19F7AE2DCCF5090@DB3PR0402MB3946.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 0038DE95A2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(136003)(396003)(366004)(199004)(189003)(5660300002)(68736007)(99286004)(8676002)(36756003)(2501003)(50226002)(66066001)(256004)(110136005)(14454004)(478600001)(81166006)(81156014)(8936002)(52116002)(66556008)(3846002)(73956011)(6116002)(6486002)(64756008)(66446008)(446003)(7416002)(2906002)(2201001)(76176011)(11346002)(66946007)(6506007)(102836004)(6436002)(7736002)(305945005)(6512007)(386003)(316002)(26005)(86362001)(486006)(71200400001)(71190400001)(4326008)(25786009)(476003)(2616005)(186003)(66476007)(53936002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3946;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Yx3VXDHEMZ7gHl/mBCf+77MNXxpvpCxQFH5bvDu50lFFSK4fuPk4gsRHNPJUGdPkrwqzubeBH2Rg+M7WG5Goj2lIbRINwBPqHGooWMtzzHBb9/iT1Y2tHTraya2Q7U+hy2FqEeX3130LKIcMTKmpc3sqCDdtEKMsq3uhbvp/wIHGQ3ToMWcsTlq5hW5ylUsu1RKZS3NWXBSAv2SVzi8xN+mYzYtX6editvH69fIIoFgMLjE3Bvs/c2iE8XEF3dvz37rc+UJvQID3rTdTsWYq6nHaZYAPHLTEK/hARaW+olblI9jfTa+pgn3/yB5zBfh+NdbNdkbMnHV7gYiWA0PbHQss9QeJWzsDS0PY4xxIW0eUQricfSjVOpKZ8LvqGIltf5nDko0p0p19UY5UaHffq8YDg07zk+VMeeh7c1R4mEE=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <51EF862EDC503D40B06F3F92E712B7C5@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726622AbfEONvQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 May 2019 09:51:16 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52827 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbfEONvP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 May 2019 09:51:15 -0400
+Received: by mail-it1-f193.google.com with SMTP id q65so196840itg.2;
+        Wed, 15 May 2019 06:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=p/y8JRassq6ldagHFCRqos7/WsoBIbYVcLzev7Ry3W8=;
+        b=KaHZE40aR03wi9RLD9spGr5b93BbQ5DubEQrkywFhVa/nXaUR1JKUW8uo9C3F/L4cf
+         5GRSuGcX6WUjHS72cONwr20aOHsj/qpk/0knlB/TCTMnD1u7F6+VB8A+388jl/AUuEd0
+         pF3fcsHPPc7HU3fF/KFu01x7DWvRFlJwiPbmtlAdUKaRERF9t06ihbQnLpa1TRBADuae
+         R+upDTYboIUgtTjOb4E77GIR9OBSjlu/SO2YVW33vbZLBY5HF+1+b/mJAUgjp9QlcZlJ
+         Sf1SVNMNjb4Gm3WPRdniVtcdObc/IQyzSBx3W1+HfnGYWQq9MwMYQp7GpfUEh22jkXg4
+         kmmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p/y8JRassq6ldagHFCRqos7/WsoBIbYVcLzev7Ry3W8=;
+        b=YRc8Teo8NlUcmksobpM3nPQi0LLgzao7UYYSLIp+6qExbYisLM9Fyan6nBGWnEFLal
+         C7PJ9VZNWuBS5E/St4D+e1T7hXeGCrDWeq0uY1aR3/sJ8VD03BPQVyixAXgVKtAYrkjQ
+         /Xu8Y5OHThleKoPtTkfWBXdRxLTt1YTl4pXt42Tp0VZqGCjiVet9fivQxkJvwxzoPAXo
+         /r0P+aQNZW72iasIDCRVXQiMk+TSH9XdYKvtbtPGMCIazGE0NSVs7dFvbdytXnz1Gu3o
+         LQV16Xp7wsTeaIFuogquuvY6Kp5FdfGPgKGNac9e4vbxrxPFy964bcH2ngPrfYU14fOp
+         bfFg==
+X-Gm-Message-State: APjAAAVz4Lucposd2PDI4r+08nl8rbNI41d+7etR5daemDYfxIv3sq4/
+        7rGaUcRDLcuXOEgBUIzqNTY=
+X-Google-Smtp-Source: APXvYqyUdVq7O/jGC2ASOLVYVe+9UfE6Gezo9Pbls9Qhpg3DCNcoBRXv/sg0AXqtNZTG2PeckYWVYg==
+X-Received: by 2002:a02:c8da:: with SMTP id q26mr28090176jao.0.1557928274570;
+        Wed, 15 May 2019 06:51:14 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id q16sm615991ior.75.2019.05.15.06.51.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 06:51:13 -0700 (PDT)
+Subject: Re: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190510084719.18902-1-josephl@nvidia.com>
+ <20190510084719.18902-2-josephl@nvidia.com>
+ <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
+ <63360b18-6a17-ab3f-6c54-6e11e24885d0@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c3909c66-5aa4-161b-98d4-02ad20e02c88@gmail.com>
+Date:   Wed, 15 May 2019 16:50:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da266132-ffc7-4753-38ee-08d6d930d064
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 12:28:20.0102
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3946
+In-Reply-To: <63360b18-6a17-ab3f-6c54-6e11e24885d0@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use imx_mmdc_mask_handshake() API instead of programming CCM
-register directly in each platform to mask unused MMDC channel's
-handshake.
+15.05.2019 10:17, Joseph Lo пишет:
+> On 5/15/19 12:28 AM, Dmitry Osipenko wrote:
+>> 10.05.2019 11:47, Joseph Lo пишет:
+>>> Add the binding document for the external memory controller (EMC) which
+>>> communicates with external LPDDR4 devices. It includes the bindings of
+>>> the EMC node and a sub-node of EMC table which under the reserved memory
+>>> node. The EMC table contains the data of the rates that EMC supported.
+>>>
+>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>> ---
+>>> v3:
+>>> - drop the bindings of EMC table
+>>> - add memory-region and reserved-memory node for EMC table
+>>> ---
+>>>   .../nvidia,tegra210-emc.txt                   | 55 +++++++++++++++++++
+>>>   1 file changed, 55 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+>>>
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+>>> b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+>>>
+>>> new file mode 100644
+>>> index 000000000000..d65aeef2329c
+>>> --- /dev/null
+>>> +++
+>>> b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+>>>
+>>> @@ -0,0 +1,55 @@
+>>> +NVIDIA Tegra210 SoC EMC (external memory controller)
+>>> +====================================================
+>>> +
+>>> +Device node
+>>> +===========
+>>> +Required properties :
+>>> +- compatible : should be "nvidia,tegra210-emc".
+>>> +- reg : physical base address and length of the controller's registers.
+>>> +- clocks : phandles of the possible source clocks.
+>>> +- clock-names : names of the possible source clocks.
+>>> +- interrupts : Should contain the EMC general interrupt.
+>>> +- memory-region : phandle to the reserved memory (see
+>>> + 
+>>> Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt) which
+>>>
+>>> +  contains a sub-node of EMC table.
+>>> +- nvidia,memory-controller : phandle of the memory controller.
+>>> +
+>>> +Reserved memory node
+>>> +====================
+>>> +Should contain a sub-node of EMC table with required properties:
+>>> +- compatible : should be "nvidia,tegra210-emc-table".
+>>> +- reg : physical address and length of the location of EMC table.
+>>> +
+>>> +Example:
+>>> +    reserved-memory {
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>> +        ranges;
+>>> +
+>>> +        emc_table: emc-table@8be00000 {
+>>> +            compatible = "nvidia,tegra210-emc-table";
+>>> +            reg = <0x0 0x8be00000 0x0 0x10000>;
+>>> +            status = "okay";
+>>> +        };
+>>
+>> You essentially moved the v1 binding into obscure and undocumented blob,
+>> ignoring previous review comments. This is a very odd move... please
+>> explain what is going on.
+>>
+> 
+> Discussed with Thierry offline which way we prefer to pass the EMC table
+> to the kernel. Some reasons below we decide to chose this one (via
+> binary blob).
+> 
+> - The EMC table is much bigger than the previous Tegra generations
+> (LPDDR4 v.s. LPDDR2/3). It's harder to settle in the review process. And
+> if there is a new fix of the table in the future, we'll need to go
+> through that again.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-No changes.
----
- drivers/clk/imx/clk-imx6q.c   | 13 +------------
- drivers/clk/imx/clk-imx6sl.c  |  5 +----
- drivers/clk/imx/clk-imx6sll.c |  3 +--
- drivers/clk/imx/clk-imx6sx.c  |  5 +----
- drivers/clk/imx/clk-imx6ul.c  |  5 +----
- 5 files changed, 5 insertions(+), 26 deletions(-)
+I don't think that this a very good excuse for not documenting the
+blob's structure.
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 708e7c5..077276b 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -260,25 +260,14 @@ static bool pll6_bypassed(struct device_node *node)
- 	return false;
- }
-=20
--#define CCM_CCDR		0x04
- #define CCM_CCSR		0x0c
- #define CCM_CS2CDR		0x2c
-=20
--#define CCDR_MMDC_CH1_MASK		BIT(16)
- #define CCSR_PLL3_SW_CLK_SEL		BIT(0)
-=20
- #define CS2CDR_LDB_DI0_CLK_SEL_SHIFT	9
- #define CS2CDR_LDB_DI1_CLK_SEL_SHIFT	12
-=20
--static void __init imx6q_mmdc_ch1_mask_handshake(void __iomem *ccm_base)
--{
--	unsigned int reg;
--
--	reg =3D readl_relaxed(ccm_base + CCM_CCDR);
--	reg |=3D CCDR_MMDC_CH1_MASK;
--	writel_relaxed(reg, ccm_base + CCM_CCDR);
--}
--
- /*
-  * The only way to disable the MMDC_CH1 clock is to move it to pll3_sw_clk
-  * via periph2_clk2_sel and then to disable pll3_sw_clk by selecting the
-@@ -651,7 +640,7 @@ static void __init imx6q_clocks_init(struct device_node=
- *ccm_node)
-=20
- 	disable_anatop_clocks(anatop_base);
-=20
--	imx6q_mmdc_ch1_mask_handshake(base);
-+	imx_mmdc_mask_handshake(base, 1);
-=20
- 	if (clk_on_imx6qp()) {
- 		clk[IMX6QDL_CLK_LDB_DI0_SEL]      =3D imx_clk_mux_flags("ldb_di0_sel", b=
-ase + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_=
-PARENT);
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index e13d881..acb5983 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -17,8 +17,6 @@
-=20
- #include "clk.h"
-=20
--#define CCDR				0x4
--#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
- #define CCSR			0xc
- #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
- #define CACRR			0x10
-@@ -414,8 +412,7 @@ static void __init imx6sl_clocks_init(struct device_nod=
-e *ccm_node)
- 	clks[IMX6SL_CLK_USDHC4]       =3D imx_clk_gate2("usdhc4",       "usdhc4_p=
-odf",       base + 0x80, 8);
-=20
- 	/* Ensure the MMDC CH0 handshake is bypassed */
--	writel_relaxed(readl_relaxed(base + CCDR) |
--		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-+	imx_mmdc_mask_handshake(base, 0);
-=20
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
-=20
-diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
-index 7eea448..3aa71c9 100644
---- a/drivers/clk/imx/clk-imx6sll.c
-+++ b/drivers/clk/imx/clk-imx6sll.c
-@@ -16,7 +16,6 @@
- #include "clk.h"
-=20
- #define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
--#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
- #define xPLL_CLR(offset)		(offset + 0x8)
-=20
- static const char *pll_bypass_src_sels[] =3D { "osc", "dummy", };
-@@ -340,7 +339,7 @@ static void __init imx6sll_clocks_init(struct device_no=
-de *ccm_node)
- 	clks[IMX6SLL_CLK_USDHC3]	=3D imx_clk_gate2("usdhc3", "usdhc3_podf",  base=
- + 0x80,	6);
-=20
- 	/* mask handshake of mmdc */
--	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + 0x4);
-+	imx_mmdc_mask_handshake(base, 0);
-=20
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
-=20
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 91558b0..24f7b4d 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -22,9 +22,6 @@
-=20
- #include "clk.h"
-=20
--#define CCDR    0x4
--#define BM_CCM_CCDR_MMDC_CH0_MASK       (0x2 << 16)
--
- static const char *step_sels[]		=3D { "osc", "pll2_pfd2_396m", };
- static const char *pll1_sw_sels[]	=3D { "pll1_sys", "step", };
- static const char *periph_pre_sels[]	=3D { "pll2_bus", "pll2_pfd2_396m", "=
-pll2_pfd0_352m", "pll2_198m", };
-@@ -488,7 +485,7 @@ static void __init imx6sx_clocks_init(struct device_nod=
-e *ccm_node)
- 	clks[IMX6SX_CLK_CKO2]         =3D imx_clk_gate("cko2",           "cko2_po=
-df",         base + 0x60, 24);
-=20
- 	/* mask handshake of mmdc */
--	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-+	imx_mmdc_mask_handshake(base, 0);
-=20
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
-=20
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index fd60d15..4bf3226 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -22,9 +22,6 @@
-=20
- #include "clk.h"
-=20
--#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
--#define CCDR	0x4
--
- static const char *pll_bypass_src_sels[] =3D { "osc", "dummy", };
- static const char *pll1_bypass_sels[] =3D { "pll1", "pll1_bypass_src", };
- static const char *pll2_bypass_sels[] =3D { "pll2", "pll2_bypass_src", };
-@@ -464,7 +461,7 @@ static void __init imx6ul_clocks_init(struct device_nod=
-e *ccm_node)
- 	clks[IMX6UL_CLK_CKO2]		=3D imx_clk_gate("cko2",		"cko2_podf",	 base + 0x6=
-0,	24);
-=20
- 	/* mask handshake of mmdc */
--	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-+	imx_mmdc_mask_handshake(base, 0);
-=20
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
-=20
---=20
-2.7.4
+> - Because it's LPDDR4 we want to support here, to support higher rates,
+> the devices have must be gone through the training process, which is
+> done in the firmware. Which means We already have the table somewhere in
+> the memory and kernel can just re-use that. No need to convert them back
+> to DT and pass to the kernel. This is much easier to maintain in the
+> future if there is something needs to fix.
+> - With the mechanism above, we don't need to maintain the huge EMC table
+> in the DT file like below.
+> http://patchwork.ozlabs.org/patch/1063886/
+> http://patchwork.ozlabs.org/patch/1063889/
 
+The blob's EMC table contains stuff specific to downstream kernel, hence
+it's a not very re-usable downstream software ABI mixed with HW
+description that you're bringing into upstream. This is not very
+welcomed, although I don't see it as a big problem if you'll state that
+all clearly in the commit message with a solid explanation why it is the
+best possible option.
+
+> And sorry, maybe it's not clear at that moment, but I did mention that
+> we want to go with the new method (via binary blob) in the previous review.
+> Please see http://patchwork.ozlabs.org/patch/1084467/
+
+Okay. It will be better if the discussion happened publicly, at least I
+hope that Rob is involved in it.
