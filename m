@@ -2,104 +2,99 @@ Return-Path: <SRS0=g5s0=TP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1223C04E53
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 07:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43147C04E53
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 07:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C19FB20881
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 07:25:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Djwtup3M"
+	by mail.kernel.org (Postfix) with ESMTP id 137A520862
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 07:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbfEOHZy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 May 2019 03:25:54 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2875 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfEOHZy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 May 2019 03:25:54 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cdbbed80000>; Wed, 15 May 2019 00:25:12 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 15 May 2019 00:25:53 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 15 May 2019 00:25:53 -0700
-Received: from [10.19.108.132] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 May
- 2019 07:25:50 +0000
-Subject: Re: [PATCH V3 3/8] clk: tegra: Export functions for EMC clock scaling
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20190510084719.18902-1-josephl@nvidia.com>
- <20190510084719.18902-4-josephl@nvidia.com>
- <502f213b-2101-9d56-54c9-8be48f1be5b8@gmail.com>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <ec33f656-707c-df2c-dc53-206c9a533cb9@nvidia.com>
-Date:   Wed, 15 May 2019 15:25:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1725933AbfEOHbJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 May 2019 03:31:09 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36802 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfEOHbJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 May 2019 03:31:09 -0400
+Received: by mail-vs1-f65.google.com with SMTP id l20so1049504vsp.3;
+        Wed, 15 May 2019 00:31:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/RiZNLVGk5uscGAFyY2St4mHBVN2ZWa9kSjg9JS7O1Q=;
+        b=Yd/RgVCU6hSPudtzKlIeHrXCql7LN4CsaEt9vbuH/YTrYHdEhqSu81c0nxNwbp3qI+
+         OijZgkHUu4sWREJ96cF/Jh4G702Q87x8KwjMamh/4Cj66Yd0LnG1CgNnL4tydK1qoK/l
+         6MFgJE7eF3IrOqePqQvIe4Hv6hERc3embyFpV0FnPBXNt+wOpXg0jLRrKCRHEoVvNyVC
+         42gJSmGh76TXTNfSsrr6LlpqYgo3yGUBj3nts2l7ZZczQkoEwRAPtItX4wGv3dBJIX5S
+         4PQ3MpkAijy6k/F8VFGU3RRpMRzDUkflSurkMIuJHTxcPXkIvLw/xyS1pnbuF5kF3bSv
+         jlLg==
+X-Gm-Message-State: APjAAAWlI+2vtmZmFK+kvnI1lnmUK2IFgMJ96zCJxEbQedsMqp9sR6Ax
+        NjdTJW3nu1uFTzwCtgMNryZvaUmLhinpKDN8jSc=
+X-Google-Smtp-Source: APXvYqyRcOXdW0fMdPdyx6mSbkideJurOlUHR/isxy0xxECgEAo+PwOhR3EJ2IbRUlwpuj9hKqBv+SYlm731qEA+c0s=
+X-Received: by 2002:a67:7c93:: with SMTP id x141mr11569593vsc.96.1557905468511;
+ Wed, 15 May 2019 00:31:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <502f213b-2101-9d56-54c9-8be48f1be5b8@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557905112; bh=jrnWqN2/5mZMwT6yqfzkk1cAC05bsa3N0rVhz8ivnBw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Djwtup3MPZ9WaM+OX9pCCkzVZ1n+AniGRTXwqfU98gs0OEie4LDloDV9kn5ljcAW+
-         UTE5flHwi2RWdIkxBCnEkjP7AabAezQIqLIQgV7EKnKwkpxLkZmGUVWYNByIjgmOAh
-         0SAnyo05p2xI/0EY9wWlN6Xro2503AVuilkIX2BgB+wN69BQsR9103gV4vsAd0UOqN
-         RLPbKQUqsT/HpzbVE5KknEB3NEYdWQheWRjC2bMf68fAMsdf23Ez+cRsB6G1nwPw4c
-         DkMUKR2xesbgigUmPI+HckS90msI6s8jREn4tDApO3XobOzYgqAZiUxoK9Nkggr/3i
-         6Tqup70/Mx91Q==
+References: <20190514170931.56312-1-sboyd@kernel.org>
+In-Reply-To: <20190514170931.56312-1-sboyd@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 15 May 2019 09:30:55 +0200
+Message-ID: <CAMuHMdXigXCDjZ=HzhTqgrRdL3nDrYrZ1be3nuDjqO3PbxZOng@mail.gmail.com>
+Subject: Re: [PATCH] clk: Remove io.h from clk-provider.h
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        John Crispin <john@phrozen.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/15/19 12:29 AM, Dmitry Osipenko wrote:
-> 10.05.2019 11:47, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Export functions to allow accessing the CAR register required by EMC
->> clock scaling. These functions will be used to access the CAR register
->> as part of the scaling sequence.
->=20
->> DKIM-Signature: v=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dnvidia.c=
-om; s=3Dn1;
->> 	t=1557478018; bh=3Demd3R6nSFwL5B+aWA2W+bJqcZ1Jhvwnayz1wGOPSA4M=3D;
->> 	h=3DX-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
->> 	 In-Reply-To:References:MIME-Version:X-NVConfidentiality:
->> 	 Content-Transfer-Encoding:Content-Type;
->> 	b=3DfW7ddx6p6BuGNLGA6jAL5AxsojqeQcOg9fZBqbA1Ze45XU3gt7tiL88s8g7gTftA+
->> 	 NdruKRXPLS0r4iOgKqEUf3bmoBP0Kf+l0PQcJu55U5v55XnP6cuKrQw2cmbDaw/g2Z
->> 	 a6DZrAIbUZzi3P3b764ZDmUlRD1sHAWWswZwG3kHwBP0TDOXNjAEVcp7NPm868VOvv
->> 	 aJrdb6VblknwjNkE6OV7ktGB1ODge5YSAePDLNAplZBw+BFnogtESwvf0cFcYVbxCG
->> 	 COh/UNKdlJuOM95IgbZiom9I8NiwuS07bA2WzudSgnMKbhNI6VlFgDu5A6JaPt3Irv
->> 	 N4nuUT4+Ln3Fg=3D
->>
->=20
-> What's that?
->=20
-Sorry, I don't know how does that come from. I didn't see that in my=20
-mail client when receiving this patch.
+Hi Stephen,
 
-I did notice this patch was missing in the Tegra Patchwork, but it's=20
-okay in the Linux ARM Kernel patchwork.
-http://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D107142
-https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=3D116097
+On Tue, May 14, 2019 at 7:09 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> Now that we've gotten rid of clk_readl() we can remove io.h from the
+> clk-provider header and push out the io.h include to any code that isn't
+> already including the io.h header but using things like readl/writel,
+> etc.
+>
+> Found with this grep:
+>
+>   git grep -l clk-provider.h | grep '.c$' | xargs git grep -L 'linux/io.h' | \
 
-So I guess maybe something wrong when the server handling this patch.
+Suggestion for future use:
+
+    git grep -l clk-provider.h -- "*.c" | ...
+
+> I'm going to push this into clk-next today and if nothing breaks, send
+> it off for inclusion in a couple days, at least before -rc1 is released.
+
+Thanks!
+
+For clk/renesas:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
