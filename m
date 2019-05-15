@@ -2,371 +2,169 @@ Return-Path: <SRS0=g5s0=TP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 131A1C04AA7
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 04:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AD3C04E53
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 07:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C525720881
-	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 04:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CECF20862
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 07:17:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SXypkHVw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="obwltrBp"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="a2qSGk4g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbfEOEVC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 May 2019 00:21:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52838 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfEOEVB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 May 2019 00:21:01 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 58D4D60128; Wed, 15 May 2019 04:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557894060;
-        bh=dMLeWugXX2weNePSxZ8H5xGCU0+p5AicbNiVXvGBSWY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SXypkHVw7mzZezuxYJup5DLwbTo/txJ05eDjs6vS1TeA0Fg8lSucawixR+tW9iFUb
-         1ZXaQF7A2YlT08f8aHJP93N6MHYWWwuJj/SiXuCtWgOJHLvPWvBrbT38rn/CJ7O/b/
-         WmeuWJ4tw0V9OeD54E0BffGJbRBs7BSqqN3L4GXw=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A89EC60128;
-        Wed, 15 May 2019 04:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557894059;
-        bh=dMLeWugXX2weNePSxZ8H5xGCU0+p5AicbNiVXvGBSWY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=obwltrBptbeomr9jcclNHzeqYGooE3Dnxeyvzpu/KGnwrZLrlb0j07mtrzsbu2ilF
-         KWChki8fH3gEVe4bJEAdo5rTfhCS/rJctoinHw1x1evyu0Jn+dPLbX4/GDhP4CYqQY
-         MVkgsLjl9rE0u7iskF182FQdclGPwQZj9VfVMLi8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A89EC60128
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 2/2] clk: qcom : dispcc: Add support for display port clocks
-Date:   Wed, 15 May 2019 09:50:39 +0530
-Message-Id: <1557894039-31835-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1557894039-31835-1-git-send-email-tdas@codeaurora.org>
-References: <1557894039-31835-1-git-send-email-tdas@codeaurora.org>
+        id S1725921AbfEOHR0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 May 2019 03:17:26 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2339 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfEOHR0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 May 2019 03:17:26 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cdbbcd60000>; Wed, 15 May 2019 00:16:39 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 15 May 2019 00:17:19 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 15 May 2019 00:17:19 -0700
+Received: from [10.19.108.132] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 May
+ 2019 07:17:16 +0000
+Subject: Re: [PATCH V3 1/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20190510084719.18902-1-josephl@nvidia.com>
+ <20190510084719.18902-2-josephl@nvidia.com>
+ <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
+From:   Joseph Lo <josephl@nvidia.com>
+Message-ID: <63360b18-6a17-ab3f-6c54-6e11e24885d0@nvidia.com>
+Date:   Wed, 15 May 2019 15:17:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <fd68f906-79b4-6eda-b1fa-abaf3b4c6a12@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1557904599; bh=rvmmtMaDz2XaVLEijpVuOgwxP0IUeQ7iihHR6HcMzMU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=a2qSGk4gKxUaZ3GAI9557ok/St7di3j7E+S/1xLLPItkQWok5/yNI9bIcGgy1oPWt
+         flKon0UEMX/TARGfN54tRSRDgwsEIbXiM9nCsZxipiYytw7oG0OX58Q4q4NMsofplv
+         ygRbceZlgrjJl1A65JLdfdMgTOlyYGgSubSOCLiHxLsHIqLmh4ZNBbYuDXMVmC30k4
+         p/XtllqlZ4GwIWGalS/ZYWgrwk+2FJUa0joB37Tr91SjdhcFTv3Nqlxl1HNq3+SKdd
+         sKeE/tsAbvBRst/mOT0Gir54nk+rgr5ylnuIqFOgMwwGm69E+ZfpFcOezckDHatz2s
+         U2jnfk4YYjXKw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SDM845 dispcc supports RCG and CBCRs for display port, so add support for
-the same.
+On 5/15/19 12:28 AM, Dmitry Osipenko wrote:
+> 10.05.2019 11:47, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Add the binding document for the external memory controller (EMC) which
+>> communicates with external LPDDR4 devices. It includes the bindings of
+>> the EMC node and a sub-node of EMC table which under the reserved memory
+>> node. The EMC table contains the data of the rates that EMC supported.
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>> v3:
+>> - drop the bindings of EMC table
+>> - add memory-region and reserved-memory node for EMC table
+>> ---
+>>   .../nvidia,tegra210-emc.txt                   | 55 +++++++++++++++++++
+>>   1 file changed, 55 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/memory-controller=
+s/nvidia,tegra210-emc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia=
+,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nv=
+idia,tegra210-emc.txt
+>> new file mode 100644
+>> index 000000000000..d65aeef2329c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra2=
+10-emc.txt
+>> @@ -0,0 +1,55 @@
+>> +NVIDIA Tegra210 SoC EMC (external memory controller)
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>> +
+>> +Device node
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +Required properties :
+>> +- compatible : should be "nvidia,tegra210-emc".
+>> +- reg : physical base address and length of the controller's registers.
+>> +- clocks : phandles of the possible source clocks.
+>> +- clock-names : names of the possible source clocks.
+>> +- interrupts : Should contain the EMC general interrupt.
+>> +- memory-region : phandle to the reserved memory (see
+>> +  Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt=
+) which
+>> +  contains a sub-node of EMC table.
+>> +- nvidia,memory-controller : phandle of the memory controller.
+>> +
+>> +Reserved memory node
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +Should contain a sub-node of EMC table with required properties:
+>> +- compatible : should be "nvidia,tegra210-emc-table".
+>> +- reg : physical address and length of the location of EMC table.
+>> +
+>> +Example:
+>> +	reserved-memory {
+>> +		#address-cells =3D <2>;
+>> +		#size-cells =3D <2>;
+>> +		ranges;
+>> +
+>> +		emc_table: emc-table@8be00000 {
+>> +			compatible =3D "nvidia,tegra210-emc-table";
+>> +			reg =3D <0x0 0x8be00000 0x0 0x10000>;
+>> +			status =3D "okay";
+>> +		};
+>=20
+> You essentially moved the v1 binding into obscure and undocumented blob,
+> ignoring previous review comments. This is a very odd move... please
+> explain what is going on.
+>=20
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/dispcc-sdm845.c               | 216 ++++++++++++++++++++++++-
- include/dt-bindings/clock/qcom,dispcc-sdm845.h |  13 +-
- 2 files changed, 227 insertions(+), 2 deletions(-)
+Discussed with Thierry offline which way we prefer to pass the EMC table=20
+to the kernel. Some reasons below we decide to chose this one (via=20
+binary blob).
 
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-index 0cc4909..b1b8d27 100644
---- a/drivers/clk/qcom/dispcc-sdm845.c
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
-  */
+- The EMC table is much bigger than the previous Tegra generations=20
+(LPDDR4 v.s. LPDDR2/3). It's harder to settle in the review process. And=20
+if there is a new fix of the table in the future, we'll need to go=20
+through that again.
+- Because it's LPDDR4 we want to support here, to support higher rates,=20
+the devices have must be gone through the training process, which is=20
+done in the firmware. Which means We already have the table somewhere in=20
+the memory and kernel can just re-use that. No need to convert them back=20
+to DT and pass to the kernel. This is much easier to maintain in the=20
+future if there is something needs to fix.
+- With the mechanism above, we don't need to maintain the huge EMC table=20
+in the DT file like below.
+http://patchwork.ozlabs.org/patch/1063886/
+http://patchwork.ozlabs.org/patch/1063889/
 
- #include <linux/clk-provider.h>
-@@ -29,6 +29,8 @@ enum {
- 	P_DSI1_PHY_PLL_OUT_DSICLK,
- 	P_GPLL0_OUT_MAIN,
- 	P_GPLL0_OUT_MAIN_DIV,
-+	P_DP_PHY_PLL_LINK_CLK,
-+	P_DP_PHY_PLL_VCO_DIV_CLK,
- };
+And sorry, maybe it's not clear at that moment, but I did mention that=20
+we want to go with the new method (via binary blob) in the previous review.
+Please see http://patchwork.ozlabs.org/patch/1084467/
 
- static const struct parent_map disp_cc_parent_map_0[] = {
-@@ -45,6 +47,20 @@ enum {
- 	"core_bi_pll_test_se",
- };
-
-+static const struct parent_map disp_cc_parent_map_1[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_DP_PHY_PLL_LINK_CLK, 1 },
-+	{ P_DP_PHY_PLL_VCO_DIV_CLK, 2 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const char * const disp_cc_parent_names_1[] = {
-+	"bi_tcxo",
-+	"dp_link_clk_divsel_ten",
-+	"dp_vco_divided_clk_src_mux",
-+	"core_bi_pll_test_se",
-+};
-+
- static const struct parent_map disp_cc_parent_map_2[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_CORE_BI_PLL_TEST_SE, 7 },
-@@ -128,6 +144,82 @@ enum {
- 	},
- };
-
-+static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
-+	.cmd_rcgr = 0x219c,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_2,
-+	.freq_tbl = ftbl_disp_cc_mdss_dp_aux_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_dp_aux_clk_src",
-+		.parent_names = disp_cc_parent_names_2,
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
-+	.cmd_rcgr = 0x2154,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_1,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_dp_crypto_clk_src",
-+		.parent_names = disp_cc_parent_names_1,
-+		.num_parents = 4,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_byte2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
-+	.cmd_rcgr = 0x2138,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_1,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_dp_link_clk_src",
-+		.parent_names = disp_cc_parent_names_1,
-+		.num_parents = 4,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_byte2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src = {
-+	.cmd_rcgr = 0x2184,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_1,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_dp_pixel1_clk_src",
-+		.parent_names = disp_cc_parent_names_1,
-+		.num_parents = 4,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_dp_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
-+	.cmd_rcgr = 0x216c,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_1,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_dp_pixel_clk_src",
-+		.parent_names = disp_cc_parent_names_1,
-+		.num_parents = 4,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_dp_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] = {
- 	F(19200000, P_BI_TCXO, 1, 0, 0),
- 	{ }
-@@ -391,6 +483,115 @@ enum {
- 	},
- };
-
-+static struct clk_branch disp_cc_mdss_dp_aux_clk = {
-+	.halt_reg = 0x2054,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2054,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_dp_aux_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_dp_aux_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_dp_crypto_clk = {
-+	.halt_reg = 0x2048,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2048,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_dp_crypto_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_dp_crypto_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_dp_link_clk = {
-+	.halt_reg = 0x2040,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2040,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_dp_link_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_dp_link_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* reset state of disp_cc_mdss_dp_link_div_clk_src divider is 0x3 (div 4) */
-+static struct clk_branch disp_cc_mdss_dp_link_intf_clk = {
-+	.halt_reg = 0x2044,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2044,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_dp_link_intf_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_dp_link_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_dp_pixel1_clk = {
-+	.halt_reg = 0x2050,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2050,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_dp_pixel1_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_dp_pixel1_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_dp_pixel_clk = {
-+	.halt_reg = 0x204c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x204c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_dp_pixel_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_dp_pixel_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch disp_cc_mdss_esc0_clk = {
- 	.halt_reg = 0x2038,
- 	.halt_check = BRANCH_HALT,
-@@ -589,6 +790,19 @@ enum {
- 	[DISP_CC_MDSS_BYTE1_INTF_CLK] = &disp_cc_mdss_byte1_intf_clk.clkr,
- 	[DISP_CC_MDSS_BYTE1_DIV_CLK_SRC] =
- 					&disp_cc_mdss_byte1_div_clk_src.clkr,
-+	[DISP_CC_MDSS_DP_AUX_CLK] = &disp_cc_mdss_dp_aux_clk.clkr,
-+	[DISP_CC_MDSS_DP_AUX_CLK_SRC] = &disp_cc_mdss_dp_aux_clk_src.clkr,
-+	[DISP_CC_MDSS_DP_CRYPTO_CLK] = &disp_cc_mdss_dp_crypto_clk.clkr,
-+	[DISP_CC_MDSS_DP_CRYPTO_CLK_SRC] =
-+					&disp_cc_mdss_dp_crypto_clk_src.clkr,
-+	[DISP_CC_MDSS_DP_LINK_CLK] = &disp_cc_mdss_dp_link_clk.clkr,
-+	[DISP_CC_MDSS_DP_LINK_CLK_SRC] = &disp_cc_mdss_dp_link_clk_src.clkr,
-+	[DISP_CC_MDSS_DP_LINK_INTF_CLK] = &disp_cc_mdss_dp_link_intf_clk.clkr,
-+	[DISP_CC_MDSS_DP_PIXEL1_CLK] = &disp_cc_mdss_dp_pixel1_clk.clkr,
-+	[DISP_CC_MDSS_DP_PIXEL1_CLK_SRC] =
-+					&disp_cc_mdss_dp_pixel1_clk_src.clkr,
-+	[DISP_CC_MDSS_DP_PIXEL_CLK] = &disp_cc_mdss_dp_pixel_clk.clkr,
-+	[DISP_CC_MDSS_DP_PIXEL_CLK_SRC] = &disp_cc_mdss_dp_pixel_clk_src.clkr,
- 	[DISP_CC_MDSS_ESC0_CLK] = &disp_cc_mdss_esc0_clk.clkr,
- 	[DISP_CC_MDSS_ESC0_CLK_SRC] = &disp_cc_mdss_esc0_clk_src.clkr,
- 	[DISP_CC_MDSS_ESC1_CLK] = &disp_cc_mdss_esc1_clk.clkr,
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sdm845.h b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
-index 11eed4b..4016fd1 100644
---- a/include/dt-bindings/clock/qcom,dispcc-sdm845.h
-+++ b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
-  */
-
- #ifndef _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
-@@ -35,6 +35,17 @@
- #define DISP_CC_PLL0						25
- #define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				26
- #define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				27
-+#define DISP_CC_MDSS_DP_AUX_CLK					28
-+#define DISP_CC_MDSS_DP_AUX_CLK_SRC				29
-+#define DISP_CC_MDSS_DP_CRYPTO_CLK				30
-+#define DISP_CC_MDSS_DP_CRYPTO_CLK_SRC				31
-+#define DISP_CC_MDSS_DP_LINK_CLK				32
-+#define DISP_CC_MDSS_DP_LINK_CLK_SRC				33
-+#define DISP_CC_MDSS_DP_LINK_INTF_CLK				34
-+#define DISP_CC_MDSS_DP_PIXEL1_CLK				35
-+#define DISP_CC_MDSS_DP_PIXEL1_CLK_SRC				36
-+#define DISP_CC_MDSS_DP_PIXEL_CLK				37
-+#define DISP_CC_MDSS_DP_PIXEL_CLK_SRC				38
-
- /* DISP_CC Reset */
- #define DISP_CC_MDSS_RSCC_BCR					0
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+Thanks,
+Joseph
