@@ -1,74 +1,128 @@
-Return-Path: <SRS0=Uhbp=TO=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=g5s0=TP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29284C04AB7
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 21:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 791AFC04AB4
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 01:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF0BF20873
-	for <linux-clk@archiver.kernel.org>; Tue, 14 May 2019 21:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557868780;
-	bh=+KDMoLaxjjfTgrLza0xRM2hNVZ4vloQuz//YOp2frGM=;
-	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
-	b=vM3xD24CAwp6NSPviLM078K7FJ9x86uS5uvkVNFh3eARqIyUww7LzuxosJmLeg1o5
-	 JsTV5k2Y+Y9SSVX24xzFzOn8u2r4tLqR/laJXySYBHtA+1DcCwIPlOEH8wEgk/ApNg
-	 TmsQsXtcs48wDeE/rWH30M2AYGSi0ikLlFPuZxC0=
+	by mail.kernel.org (Postfix) with ESMTP id 2C56520873
+	for <linux-clk@archiver.kernel.org>; Wed, 15 May 2019 01:09:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mWXbE5uq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfENVTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 May 2019 17:19:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbfENVTe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 May 2019 17:19:34 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A504C20873;
-        Tue, 14 May 2019 21:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557868773;
-        bh=+KDMoLaxjjfTgrLza0xRM2hNVZ4vloQuz//YOp2frGM=;
-        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
-        b=pTPVRQNTaJojaQ0GqBt/fEENNLqPRrXJxWTCL/0pVycdw/ItgYUTeECXfmnuDzOq/
-         ILAA/qtQ7RokSpwdkr2pc9dhBTTS7OSxTu3H6xwzsPF8Q+S9CPrrV1om52Xe1bWJlY
-         b1Z7yHqOUND7mtrRQvNE/NBbUVPs1FgWSOAmvH9s=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1726653AbfEOBJa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 May 2019 21:09:30 -0400
+Received: from mail-eopbgr40064.outbound.protection.outlook.com ([40.107.4.64]:39045
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726148AbfEOBJ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 May 2019 21:09:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hlaZHZlW9EYYSPZqa9cgIB0Ac0/aHzBRg9/HrsxiOVg=;
+ b=mWXbE5uqq8yY6x+8fx6Bp14gHj5DW6QX6DRrK+jnygdXaS+U8Rjok+kZ9pI0xTUqs1K1W6y/g9qnErLe2KuEbRUe/olbiCyfagfr9aA0GKZ5H0t6kwzQNYpWBrBMBeSGe0G5FwXwgSuZnKtDT/fIUgexmQEBakADGhWSy/r7Xbs=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3675.eurprd04.prod.outlook.com (52.134.69.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Wed, 15 May 2019 01:09:24 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d%2]) with mapi id 15.20.1900.010; Wed, 15 May 2019
+ 01:09:24 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH 1/3] dt-bindings: clock: imx8mq: Add SNVS clock
+Thread-Topic: [PATCH 1/3] dt-bindings: clock: imx8mq: Add SNVS clock
+Thread-Index: AQHVCrrVEeSa7rFIWkyl1S849ZKcvw==
+Date:   Wed, 15 May 2019 01:09:24 +0000
+Message-ID: <1557882259-3353-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR06CA0022.apcprd06.prod.outlook.com
+ (2603:1096:202:2e::34) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8cfd6b46-1b1f-4329-5c13-08d6d8d1f7c2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3675;
+x-ms-traffictypediagnostic: DB3PR0402MB3675:
+x-microsoft-antispam-prvs: <DB3PR0402MB36750998907AD738DF3CD878F5090@DB3PR0402MB3675.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2733;
+x-forefront-prvs: 0038DE95A2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(136003)(366004)(199004)(189003)(386003)(6506007)(26005)(7736002)(305945005)(68736007)(81166006)(99286004)(81156014)(73956011)(66946007)(8676002)(52116002)(186003)(4744005)(5660300002)(486006)(102836004)(36756003)(476003)(2616005)(71200400001)(71190400001)(256004)(14444005)(2906002)(66476007)(6116002)(6486002)(6436002)(316002)(3846002)(6512007)(478600001)(14454004)(66446008)(64756008)(66556008)(8936002)(50226002)(110136005)(2501003)(7416002)(53936002)(25786009)(86362001)(4326008)(66066001)(2201001)(32563001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3675;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: uiCdCT17QpS3pQGtbERpPCuZKHqGoCh0UfFCYg/yelJFeFuYH5Iwczyf35uNjel/sbCKHiCdiy9FvW5jOcdTOy5A4m9sZGvubSb5vchrv/jBEMfAelYlkQT+RGDbhCrD3xpIZhPiCoVaeTtDg6DuElXYgI8qkYBjWhoGESwduoay/r8zI1CJcrN9GJ43AvKJ/8n0JMueNAHyPr11cK4jo19wJbVf1b/V6l3bxAR6jCXGj1vKsBlvjHeCgxlgt/bTZunoF5ArOwxC1fsAa3giwJrlFMjy4CpFaqW9QAx0CT8OazJPGmt1wuuvWcaPwNCfbUolB7ZZ15hjeRB/uPIsQ+dT4kMDChXo2AdEZfuZF6QjGH0PT6gCWh+XJEDa0GdhApRiOMXwogs0dYkhq/6EVZedZQPN3MGIP1r0B6lj89k=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <F79890AAE8E69040BD66092F454597A8@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190514153341.22540-1-chris.paterson2@renesas.com>
-References: <20190514153341.22540-1-chris.paterson2@renesas.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
-Cc:     Biju Das <biju.das@bp.renesas.com>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Message-ID: <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Tue, 14 May 2019 14:19:32 -0700
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cfd6b46-1b1f-4329-5c13-08d6d8d1f7c2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 01:09:24.5545
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3675
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chris Paterson (2019-05-14 08:33:41)
-> Misspelling 'prohibited' is quite common in the real world, although
-> surprisingly not so much in the Linux Kernel. In addition to fixing the
-> typo we may as well add it to the spelling checker.
->=20
-> Also adding the present participle (prohibiting).
->=20
-> Fixes: 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
->=20
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> ---
+Add macro for the SNVS clock of the i.MX8MQ.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings=
+/clock/imx8mq-clock.h
+index 6677e92..0233bb1 100644
+--- a/include/dt-bindings/clock/imx8mq-clock.h
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -400,5 +400,7 @@
+ #define IMX8MQ_CLK_GPIO4_ROOT			262
+ #define IMX8MQ_CLK_GPIO5_ROOT			263
+=20
+-#define IMX8MQ_CLK_END				264
++#define IMX8MQ_CLK_SNVS_ROOT			264
++
++#define IMX8MQ_CLK_END				265
+ #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
+--=20
+2.7.4
 
