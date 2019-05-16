@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0AAC04AAF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 11:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55869C04AAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 11:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C3520848
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 11:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ABA520848
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 11:49:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558007188;
-	bh=kmXQqmllIO4CjqQm4UERExzBN0kBl6jy2TCfPzpSBdo=;
+	s=default; t=1558007341;
+	bh=tBCzZByeN4C91PgXW1UqMiCBhoEnLvF0UumL/e18Rc4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rq0Q1baFGc4KK0ZGvAV5bUx9+3Ptz0HWKIyfXAjQLt7SPmw1CNf1SL7FVqDF5ISDX
-	 Mw2xnUC7zF7HSVs6igNLu8Q9i0dFoQ8e3UyJHY4Y31aKhstj2eBcJTjvU3eiboenzr
-	 83fhzV9e9Gl4TqVqdtS0OV7gzo8CZwCsVXSLdk34=
+	b=dkjqf3GatL9I4OSgXWRXc5tXugDPIv8+pVzHBJhBlPqshifRPmFg09XXH25520K0c
+	 ySlH0TeGxg2sVpxRMDsrK41uytqL27N0NF6n9jXtz5f+ozX0weOElXqD20YDlATaoX
+	 sJhPtyPVyV3yAPEM2X8HVo4KdtB0wpNqQgYLQdhM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfEPLq1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 May 2019 07:46:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49010 "EHLO mail.kernel.org"
+        id S1727398AbfEPLjs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 May 2019 07:39:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727753AbfEPLkj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 May 2019 07:40:39 -0400
+        id S1727408AbfEPLjr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 May 2019 07:39:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 605C320862;
-        Thu, 16 May 2019 11:40:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0AA920881;
+        Thu, 16 May 2019 11:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558006839;
-        bh=kmXQqmllIO4CjqQm4UERExzBN0kBl6jy2TCfPzpSBdo=;
+        s=default; t=1558006786;
+        bh=tBCzZByeN4C91PgXW1UqMiCBhoEnLvF0UumL/e18Rc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X61G+txiB/aLtU/FJzsgMUv+AqpTn2mMIJU2fnjBrNI5b2djZmnCUaBxhHZKgjkrc
-         uG0d0KSuxWqEnVBkShBVhI22eK4p65Gdx7Ch0upZ1nPEP5CDbfrSsbyyNJ6TJhJ97R
-         4nkhk87BfUX2V6AM3Ma5Hc8DNZcclWjQGuuJE5fs=
+        b=1oNB/ukrGnBywjVn/X2wQN+8NEDG9YU6SYAaVu+ZZO4IlLrCbZH0mgbn4phR/v1d9
+         y0wJexXmb2Hc+zX1ox5wH+FK9h/Le42yDD50LeZZ4Xq7ruXb8lJ342g2TdJZ2gkm3Z
+         bnC5M9hYplEhdR2ipzodslYjID3VYluqCz9T1roA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 08/25] clk: sunxi-ng: nkmp: Avoid GENMASK(-1, 0)
-Date:   Thu, 16 May 2019 07:40:11 -0400
-Message-Id: <20190516114029.8682-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 10/34] clk: sunxi-ng: nkmp: Avoid GENMASK(-1, 0)
+Date:   Thu, 16 May 2019 07:39:07 -0400
+Message-Id: <20190516113932.8348-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190516114029.8682-1-sashal@kernel.org>
-References: <20190516114029.8682-1-sashal@kernel.org>
+In-Reply-To: <20190516113932.8348-1-sashal@kernel.org>
+References: <20190516113932.8348-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -156,10 +156,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index ebd9436d2c7cd..1ad53d1016a3e 100644
+index 9b49adb20d07c..69dfc6de1c4e6 100644
 --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
 +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -160,7 +160,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -167,7 +167,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
  			   unsigned long parent_rate)
  {
  	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
@@ -168,7 +168,7 @@ index ebd9436d2c7cd..1ad53d1016a3e 100644
  	struct _ccu_nkmp _nkmp;
  	unsigned long flags;
  	u32 reg;
-@@ -179,10 +179,18 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -186,10 +186,18 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
  
  	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
  
