@@ -2,85 +2,70 @@ Return-Path: <SRS0=duwI=TQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB98C04E84
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 21:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A5CC04AAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 22:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E84C52084A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 21:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558043648;
-	bh=7/VPrBeDCtUB7U1B72xCKN6fY5VM8msYqQe9cjnuI/4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Ror2dtVW/29PhApP7hNv1XyhODTvs6C2BFggXrv/++Rxufzd5XFSUmNkovLlrpyx6
-	 3KL01D4JcqjWNY1x+V5NY/ib+ZVJx/DOE2Sm9mJ8/2QGv0tqGNJoCb6Ek5YsLIDTtt
-	 XXtpX4kt0U+sKhZ94Rw7IuUhGnFpDOE15x0Rr1BI=
+	by mail.kernel.org (Postfix) with ESMTP id 41A3B2070D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 22:23:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbfEPVyH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 May 2019 17:54:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43618 "EHLO mail.kernel.org"
+        id S1728139AbfEPWXw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 May 2019 18:23:52 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:57212 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbfEPVyH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 May 2019 17:54:07 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75E5D2082E;
-        Thu, 16 May 2019 21:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558043646;
-        bh=7/VPrBeDCtUB7U1B72xCKN6fY5VM8msYqQe9cjnuI/4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ea7cvSFtUlBdy3juIFqqgBLtktCBOpnDrfQYYMnl7yji+Qq3nRa5PGMi88NO5NpBj
-         S0Zdd+p13+BoTJfuB7yWTvvrxIqjoxLe1xQsTnaVcL+OZ3TNLxxckOyEcASIXUJhdo
-         +MgNwoycoijodr3LLVBTOyHPcmlqf5uushk3bmSU=
-Content-Type: text/plain; charset="utf-8"
+        id S1726762AbfEPWXw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 May 2019 18:23:52 -0400
+Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hROmt-0007Ew-NA; Fri, 17 May 2019 00:23:43 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Justin Swartz <justin.swartz@risingedge.co.za>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/clk/rockchip/clk-rk3228.c: add 1.464GHz clock rate
+Date:   Fri, 17 May 2019 00:23:42 +0200
+Message-ID: <5025740.0R6fdBNFxo@phil>
+In-Reply-To: <20190516124437.4906-1-justin.swartz@risingedge.co.za>
+References: <20190516124437.4906-1-justin.swartz@risingedge.co.za>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com>
-References: <20190514153341.22540-1-chris.paterson2@renesas.com> <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com> <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com>
-Subject: Re: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 16 May 2019 14:54:05 -0700
-Message-Id: <20190516215406.75E5D2082E@mail.kernel.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-05-15 00:32:46)
-> On Tue, May 14, 2019 at 11:19 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > Quoting Chris Paterson (2019-05-14 08:33:41)
-> > > Misspelling 'prohibited' is quite common in the real world, although
-> > > surprisingly not so much in the Linux Kernel. In addition to fixing t=
-he
-> > > typo we may as well add it to the spelling checker.
-> > >
-> > > Also adding the present participle (prohibiting).
-> > >
-> > > Fixes: 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
-> > >
-> > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
->=20
-> Thanks!
->=20
-> So I guess I'll queue this in clk-renesas-for-v5.3?
->=20
+Hi Justin,
 
-Guess so! Or Andrew does it.
+Am Donnerstag, 16. Mai 2019, 14:44:36 CEST schrieb Justin Swartz:
+> Add missing 1.464GHz clock rate to rk3228_cpuclk_rates[]
+> 
+> Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+
+I've applied the patch for kernel 5.3 and adapted the subject
+plus commit message a bit to:
+
+"clk: rockchip: add 1.464GHz cpu-clock rate to rk3228
+    
+Add missing 1.464GHz clock rate to rk3228_cpuclk_rates[], which gets
+referenced in the operating points but wasn't defined till now."
+
+So just for you next submissions:
+The patch subject should match the subsystem prefix which you can see with
+something like "git log --oneline drivers/clk/rockchip" and the commit
+message can be as verbose as you like.
+
+So just to clarify, no need to change anything for this patch, just to
+keep in mind for future patches :-) .
+
+Thanks
+Heiko
+
+
