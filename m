@@ -2,332 +2,172 @@ Return-Path: <SRS0=duwI=TQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6920C04E87
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 07:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B050CC04AB4
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 07:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889EE2082E
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 07:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80F562087B
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 07:52:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QRZhD9Ta"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfEPHaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 May 2019 03:30:23 -0400
-Received: from regular1.263xmail.com ([211.150.70.206]:37868 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbfEPHaW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 May 2019 03:30:22 -0400
-Received: from zhangqing?rock-chips.com (unknown [192.168.167.70])
-        by regular1.263xmail.com (Postfix) with ESMTP id E85882D6;
-        Thu, 16 May 2019 15:30:17 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P13209T139637228037888S1557991815390339_;
-        Thu, 16 May 2019 15:30:17 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <cb34ae4eeaae4b2977591b303e5d5faf>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 6/6] clk: rockchip: support pll setting by auto
-Date:   Thu, 16 May 2019 15:30:16 +0800
-Message-Id: <1557991816-13698-1-git-send-email-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1557991736-13580-1-git-send-email-zhangqing@rock-chips.com>
-References: <1557991736-13580-1-git-send-email-zhangqing@rock-chips.com>
+        id S1726429AbfEPHwP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 May 2019 03:52:15 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7671 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbfEPHwO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 May 2019 03:52:14 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cdd16840000>; Thu, 16 May 2019 00:51:32 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 16 May 2019 00:52:13 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 16 May 2019 00:52:13 -0700
+Received: from [10.19.108.132] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 May
+ 2019 07:52:10 +0000
+Subject: Re: [PATCH V3 4/8] memory: tegra: Add Tegra210 EMC clock driver
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20190510084719.18902-1-josephl@nvidia.com>
+ <20190510084719.18902-5-josephl@nvidia.com>
+ <74fad66b-a6e9-ffc9-c1c9-e88b841e9209@gmail.com>
+ <648df201-eb63-6d26-3f90-02eba7624921@nvidia.com>
+ <bb2ef045-7d77-02d0-79fb-06f68732c5a5@gmail.com>
+From:   Joseph Lo <josephl@nvidia.com>
+Message-ID: <3afd909c-5be9-370d-e21a-ec57be3b841b@nvidia.com>
+Date:   Thu, 16 May 2019 15:52:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <bb2ef045-7d77-02d0-79fb-06f68732c5a5@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1557993092; bh=4tYXVDno4KsskhiP9PdJy8YJDFFqRr5SFW0KndO/iBM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=QRZhD9TaVAD5dOHju+CIHeSqirBQ/Ulz15Kk2FmIblanfUyxPeO4afRI+aW6v0jEC
+         4mxyRVNhhrUOeeW2FTTBVHxKDgWR1UjBsWpWjweH+mpnTomFW1GT6eUxsHonzQOXPL
+         EJfoDq+3orBP52QP16A795sbIOXBv1uiXV1xuOOLmrEX9mHLtNe2CB0b70vh6oAJ0P
+         ZPHe5B+st3dHfzcihktR40rHrR19xKpi53zkIZEhxI9g4nc4UAgitud94aI3vgkT9t
+         UKvCgne+FM3dGLU4H4wdr/wG03I+3ZphrW2ugU6f8T6IMeJPWKV2anjGhs4qhWm/l1
+         F2wt+FurGu0QA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If setting freq is not support in rockchip_pll_rate_table,
-It can calculate and set pll params by auto.
+On 5/15/19 11:25 PM, Dmitry Osipenko wrote:
+> 15.05.2019 11:42, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 5/15/19 1:04 AM, Dmitry Osipenko wrote:
+>>> 10.05.2019 11:47, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> This is the initial patch for Tegra210 EMC clock driver, which doesn't
+>>>> include the support code and detail sequence for clock scaling yet.
+>>>>
+>>>> The driver is designed to support LPDDR4 SDRAM. Because of the LPDDR4
+>>>> devices need to do initial time training before it can be used, the
+>>>> firmware will help to do that at early boot stage. Then, the trained
+>>>> table for the rates we support will pass to the kernel via DT. So the
+>>>> driver can get the trained table for clock scaling support.
+>>>>
+>>>> For the higher rate support (above 800MHz), the periodic training is
+>>>> needed for the timing compensation. So basically, two methodologies fo=
+r
+>>>> clock scaling are supported, one is following the clock changing
+>>>> sequence to update the EMC table to EMC registers and another is if th=
+e
+>>>> rate needs periodic training, then we will start a timer to do that
+>>>> periodically until it scales to the lower rate.
+>>>>
+>>>> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+>>>>
+>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>>> ---
+snip.
+>>>> +=C2=A0=C2=A0=C2=A0 if (!seq->set_clock) {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq =3D NULL;
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(&pdev->dev, "Inval=
+id EMC sequence for table Rev. %d\n",
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 em=
+c->emc_table[0].rev);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto emc_clk_register;
+>>>
+>>> Why do you want to register EMC clock if something fails? KMSG will be
+>>> flooded with errors coming from clk_set_rate.
+>>>
+>>
+>> See patch 7 in the series, the legacy EMC clock will be removed later,
+>> so we need to register the EMC clock whether the table is ready or not> =
+In that case, I mean if the table is not available, it will still
+>> register EMC clock at the rate that boot loader configured before kernel
+>> booting. So the MC clock can still work as expected, which is under EMC
+>> clock.
+>>
+>> And I did test that, couldn't observe any KMSG in that case.
+>=20
+> Looks like it kinda should work in the end.
+>=20
+> Although it's not good that now MC driver relies on the EMC driver
+> presence. Maybe it's not the best variant with moving the clock stuff
+> into the EMC driver?
+>=20
+> What about the backwards compatibility for DT that doesn't have the EMC
+> node?
+>=20
+> What if EMC driver is disabled in the kernel's config?
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-pll.c | 215 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 200 insertions(+), 15 deletions(-)
+The three questions above are actually one problem here. It's not about=20
+MC clock, because it's still available after these changes. And MC=20
+driver can still get it in the probe function even the EMC driver isn't=20
+there.
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 45a64526c78c..8fa1ee8b13c3 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -23,6 +23,7 @@
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
- #include <linux/clk.h>
-+#include <linux/gcd.h>
- #include "clk.h"
- 
- #define PLL_MODE_MASK		0x3
-@@ -55,6 +56,198 @@ struct rockchip_clk_pll {
- #define to_rockchip_clk_pll_nb(nb) \
- 			container_of(nb, struct rockchip_clk_pll, clk_nb)
- 
-+#define MHZ			(1000UL * 1000UL)
-+#define KHZ			(1000UL)
-+
-+/* CLK_PLL_TYPE_RK3066_AUTO type ops */
-+#define PLL_FREF_MIN		(269 * KHZ)
-+#define PLL_FREF_MAX		(2200 * MHZ)
-+
-+#define PLL_FVCO_MIN		(440 * MHZ)
-+#define PLL_FVCO_MAX		(2200 * MHZ)
-+
-+#define PLL_FOUT_MIN		(27500 * KHZ)
-+#define PLL_FOUT_MAX		(2200 * MHZ)
-+
-+#define PLL_NF_MAX		(4096)
-+#define PLL_NR_MAX		(64)
-+#define PLL_NO_MAX		(16)
-+
-+/* CLK_PLL_TYPE_RK3036/3366/3399_AUTO type ops */
-+#define MIN_FOUTVCO_FREQ	(800 * MHZ)
-+#define MAX_FOUTVCO_FREQ	(2000 * MHZ)
-+
-+static struct rockchip_pll_rate_table auto_table;
-+
-+static struct rockchip_pll_rate_table *rk_pll_rate_table_get(void)
-+{
-+	return &auto_table;
-+}
-+
-+static int rockchip_pll_clk_set_postdiv(unsigned long fout_hz,
-+					u32 *postdiv1,
-+					u32 *postdiv2,
-+					u32 *foutvco)
-+{
-+	unsigned long freq;
-+
-+	if (fout_hz < MIN_FOUTVCO_FREQ) {
-+		for (*postdiv1 = 1; *postdiv1 <= 7; (*postdiv1)++) {
-+			for (*postdiv2 = 1; *postdiv2 <= 7; (*postdiv2)++) {
-+				freq = fout_hz * (*postdiv1) * (*postdiv2);
-+				if (freq >= MIN_FOUTVCO_FREQ &&
-+				    freq <= MAX_FOUTVCO_FREQ) {
-+					*foutvco = freq;
-+					return 0;
-+				}
-+			}
-+		}
-+		pr_err("CANNOT FIND postdiv1/2 to make fout in range from 800M to 2000M,fout = %lu\n",
-+		       fout_hz);
-+	} else {
-+		*postdiv1 = 1;
-+		*postdiv2 = 1;
-+	}
-+	return 0;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+			     unsigned long fin_hz,
-+			     unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	/* FIXME set postdiv1/2 always 1*/
-+	u32 foutvco = fout_hz;
-+	u64 fin_64, frac_64;
-+	u32 f_frac, postdiv1, postdiv2;
-+	unsigned long clk_gcd = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	rockchip_pll_clk_set_postdiv(fout_hz, &postdiv1, &postdiv2, &foutvco);
-+	rate_table->postdiv1 = postdiv1;
-+	rate_table->postdiv2 = postdiv2;
-+	rate_table->dsmpd = 1;
-+
-+	if (fin_hz / MHZ * MHZ == fin_hz && fout_hz / MHZ * MHZ == fout_hz) {
-+		fin_hz /= MHZ;
-+		foutvco /= MHZ;
-+		clk_gcd = gcd(fin_hz, foutvco);
-+		rate_table->refdiv = fin_hz / clk_gcd;
-+		rate_table->fbdiv = foutvco / clk_gcd;
-+
-+		rate_table->frac = 0;
-+
-+		pr_debug("fin = %lu, fout = %lu, clk_gcd = %lu, refdiv = %u, fbdiv = %u, postdiv1 = %u, postdiv2 = %u, frac = %u\n",
-+			 fin_hz, fout_hz, clk_gcd, rate_table->refdiv,
-+			 rate_table->fbdiv, rate_table->postdiv1,
-+			 rate_table->postdiv2, rate_table->frac);
-+	} else {
-+		pr_debug("frac div running, fin_hz = %lu, fout_hz = %lu, fin_INT_mhz = %lu, fout_INT_mhz = %lu\n",
-+			 fin_hz, fout_hz,
-+			 fin_hz / MHZ * MHZ,
-+			 fout_hz / MHZ * MHZ);
-+		pr_debug("frac get postdiv1 = %u,  postdiv2 = %u, foutvco = %u\n",
-+			 rate_table->postdiv1, rate_table->postdiv2, foutvco);
-+		clk_gcd = gcd(fin_hz / MHZ, foutvco / MHZ);
-+		rate_table->refdiv = fin_hz / MHZ / clk_gcd;
-+		rate_table->fbdiv = foutvco / MHZ / clk_gcd;
-+		pr_debug("frac get refdiv = %u,  fbdiv = %u\n",
-+			 rate_table->refdiv, rate_table->fbdiv);
-+
-+		rate_table->frac = 0;
-+
-+		f_frac = (foutvco % MHZ);
-+		fin_64 = fin_hz;
-+		do_div(fin_64, (u64)rate_table->refdiv);
-+		frac_64 = (u64)f_frac << 24;
-+		do_div(frac_64, fin_64);
-+		rate_table->frac = (u32)frac_64;
-+		if (rate_table->frac > 0)
-+			rate_table->dsmpd = 0;
-+		pr_debug("frac = %x\n", rate_table->frac);
-+	}
-+	return rate_table;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_rk3066_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+				    unsigned long fin_hz,
-+				    unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	u32 nr, nf, no, nonr;
-+	u32 nr_out, nf_out, no_out;
-+	u32 n;
-+	u32 numerator, denominator;
-+	u64 fref, fvco, fout;
-+	unsigned long clk_gcd = 0;
-+
-+	nr_out = PLL_NR_MAX + 1;
-+	no_out = 0;
-+	nf_out = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	clk_gcd = gcd(fin_hz, fout_hz);
-+
-+	numerator = fout_hz / clk_gcd;
-+	denominator = fin_hz / clk_gcd;
-+
-+	for (n = 1;; n++) {
-+		nf = numerator * n;
-+		nonr = denominator * n;
-+		if (nf > PLL_NF_MAX || nonr > (PLL_NO_MAX * PLL_NR_MAX))
-+			break;
-+
-+		for (no = 1; no <= PLL_NO_MAX; no++) {
-+			if (!(no == 1 || !(no % 2)))
-+				continue;
-+
-+			if (nonr % no)
-+				continue;
-+			nr = nonr / no;
-+
-+			if (nr > PLL_NR_MAX)
-+				continue;
-+
-+			fref = fin_hz / nr;
-+			if (fref < PLL_FREF_MIN || fref > PLL_FREF_MAX)
-+				continue;
-+
-+			fvco = fref * nf;
-+			if (fvco < PLL_FVCO_MIN || fvco > PLL_FVCO_MAX)
-+				continue;
-+
-+			fout = fvco / no;
-+			if (fout < PLL_FOUT_MIN || fout > PLL_FOUT_MAX)
-+				continue;
-+
-+			/* select the best from all available PLL settings */
-+			if ((no > no_out) ||
-+			    ((no == no_out) && (nr < nr_out))) {
-+				nr_out = nr;
-+				nf_out = nf;
-+				no_out = no;
-+			}
-+		}
-+	}
-+
-+	/* output the best PLL setting */
-+	if ((nr_out <= PLL_NR_MAX) && (no_out > 0)) {
-+		rate_table->nr = nr_out;
-+		rate_table->nf = nf_out;
-+		rate_table->no = no_out;
-+	} else {
-+		return NULL;
-+	}
-+
-+	return rate_table;
-+}
-+
- static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			    struct rockchip_clk_pll *pll, unsigned long rate)
- {
-@@ -66,24 +259,16 @@ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			return &rate_table[i];
- 	}
- 
--	return NULL;
-+	if (pll->type == pll_rk3066)
-+		return rockchip_rk3066_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
-+	else
-+		return rockchip_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
- }
- 
- static long rockchip_pll_round_rate(struct clk_hw *hw,
- 			    unsigned long drate, unsigned long *prate)
- {
--	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
--	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
--	int i;
--
--	/* Assumming rate_table is in descending order */
--	for (i = 0; i < pll->rate_count; i++) {
--		if (drate >= rate_table[i].rate)
--			return rate_table[i].rate;
--	}
--
--	/* return minimum supported value */
--	return rate_table[i - 1].rate;
-+	return drate;
- }
- 
- /*
-@@ -163,7 +348,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	struct rockchip_pll_rate_table cur;
--	u64 rate64 = prate;
-+	u64 rate64 = prate, frac_rate64 = prate;
- 
- 	rockchip_rk3036_pll_get_params(pll, &cur);
- 
-@@ -172,7 +357,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
- 
- 	if (cur.dsmpd == 0) {
- 		/* fractional mode */
--		u64 frac_rate64 = prate * cur.frac;
-+		frac_rate64 *= cur.frac;
- 
- 		do_div(frac_rate64, cur.refdiv);
- 		rate64 += frac_rate64 >> 24;
--- 
-1.9.1
+The problem is that without EMC driver after these changes. The PLLM=20
+will have no client under it, which will cause the PLLM to be disabled=20
+in the late init call of "clk_disable_unused". So the system will be stuck.
 
+>=20
+> And lastly.. what stops the MC driver to probe before the EMC? Looks
+> like MC driver is already in trouble because it's on arch level and the
+> EMC is on subsys, hence MC will get the orphaned clock and won't
+> initialize hardware properly on probe.
 
+After this moving, the EMC driver will be always enabled by default. And=20
+the DT change is necessary as well. The blob of EMC table is not=20
+necessary, because it needs a firmware update. We will update the=20
+firmware accordingly after the review settled and release it later.
 
+In case of no EMC table blob, the driver can still be registered, but no=20
+scaling function provided.
+
+>=20
+> BTW, how are you testing the EMC driver? Is there T210 devfreq patches
+> in works? Or what's the user of the EMC on T210?
+>=20
+
+1. Currently, via debugfs.
+2. No, we prefer to use Interconnect framework for that. The evaluation=20
+is ongoing.
+3. With Interconnect, the devices or peripherals can register on it to=20
+request the BW. So we can fine-tune the BW requirements with the latency=20
+allowance registers altogether to get better efficiency.
+
+Thanks,
+Joseph
