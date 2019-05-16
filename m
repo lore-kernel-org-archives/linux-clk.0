@@ -2,195 +2,96 @@ Return-Path: <SRS0=duwI=TQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55869C04AAF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 11:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD32BC04AAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 13:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ABA520848
-	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 11:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558007341;
-	bh=tBCzZByeN4C91PgXW1UqMiCBhoEnLvF0UumL/e18Rc4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dkjqf3GatL9I4OSgXWRXc5tXugDPIv8+pVzHBJhBlPqshifRPmFg09XXH25520K0c
-	 ySlH0TeGxg2sVpxRMDsrK41uytqL27N0NF6n9jXtz5f+ozX0weOElXqD20YDlATaoX
-	 sJhPtyPVyV3yAPEM2X8HVo4KdtB0wpNqQgYLQdhM=
+	by mail.kernel.org (Postfix) with ESMTP id BA2D320818
+	for <linux-clk@archiver.kernel.org>; Thu, 16 May 2019 13:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfEPLjs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 May 2019 07:39:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727408AbfEPLjr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 May 2019 07:39:47 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0AA920881;
-        Thu, 16 May 2019 11:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558006786;
-        bh=tBCzZByeN4C91PgXW1UqMiCBhoEnLvF0UumL/e18Rc4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1oNB/ukrGnBywjVn/X2wQN+8NEDG9YU6SYAaVu+ZZO4IlLrCbZH0mgbn4phR/v1d9
-         y0wJexXmb2Hc+zX1ox5wH+FK9h/Le42yDD50LeZZ4Xq7ruXb8lJ342g2TdJZ2gkm3Z
-         bnC5M9hYplEhdR2ipzodslYjID3VYluqCz9T1roA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 10/34] clk: sunxi-ng: nkmp: Avoid GENMASK(-1, 0)
-Date:   Thu, 16 May 2019 07:39:07 -0400
-Message-Id: <20190516113932.8348-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190516113932.8348-1-sashal@kernel.org>
-References: <20190516113932.8348-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1727218AbfEPNUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 May 2019 09:20:16 -0400
+Received: from outgoing14.flk.host-h.net ([197.242.87.48]:48227 "EHLO
+        outgoing14.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbfEPNUQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 May 2019 09:20:16 -0400
+X-Greylist: delayed 1877 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 09:20:14 EDT
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam4-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hRFoc-0008Ba-7W; Thu, 16 May 2019 14:48:55 +0200
+Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
+        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hRFoX-000550-Js; Thu, 16 May 2019 14:48:49 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/clk/rockchip/clk-rk3228.c: add 1.464GHz clock rate
+Date:   Thu, 16 May 2019 12:44:36 +0000
+Message-Id: <20190516124437.4906-1-justin.swartz@risingedge.co.za>
+X-Mailer: git-send-email 2.11.0
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25451/Thu May 16 09:59:51 2019)
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00896517575494)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fbJ1LThpDP3PaEa+mzHFASpSDasLI4SayDByyq9LIhVyO1UfNdFVadD
+ 4Wekg4mMmETNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
+ mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
+ qhBpvAyWwieZyauFYqHkIbFa+ipFJdVl2Qo16OdG/SgJyrKdw0Znvotuy3L4aSJjqFExmwGwvf6h
+ PQx0fYKjNC9VXDo4KyWWo0k/XI0fGv8bNm7IfazUKrTRmPfW13HBdTouyUQiTqTLnMPwSR2klzqa
+ C1hRfn6HuUe9L0a5vwf8PHac6dlnibl3vcBqVmvQB4A18afqaqkE9y2tELrbSfbpenEpmH6eQvWp
+ DWTULXV1jJ5bfceEJeNruLKdflVX7oFNsdF5bKhCA9a8IVosfxGBTbadg2lBMt3xu9nbye2CdJLN
+ jSo1M+TSg3TNDI3/M5s9/ot3ko3rrae7IifWc6pL546YUVQwaYLh3di89W/ji5iahyCgJgyv93tC
+ 61cbiLYl3RCqADG/Ryndzp4OfbK7c6EqHwlqvaI+zok/BsKQK4gft4+8sY8CNaDDoRMm0CGce/fp
+ WUXurEbGCiZ0ePvZjCuJdbYb9IXfYGRpVS/0hA4Mwkg/wxsjmSXwdCAtc5U5IMGqr3wBwEeX6Ai5
+ 5FPRpzhbYqsuNEW45+y/2kiUpWy9c957+6R4kroQiAThpzOdFqFvbdRuq0FZjQOwDKXnhaC6dkwF
+ 9ybSMhHO+IPM0C985aNe1vwE2plJLdOGZ2rsAWflnmUXwJv1R9bnj+xoJG4VbeMz329ug19D+AX+
+ zbkDEwtZIltLJVY6CFz3MnUtwYrRjdK3JtbOY4V5u4SqNrbdxyGLEIoLEuuC4P/fyEEgA3CnflZn
+ bjDB2+RGRgaXth2/9YEbMsGSn6owqJN0kS7MUpAEhFoAxikOdx3ALFboD0vMokt+4lO8Qp33tUy6
+ u+ztjUSMb/XuWI+kpQSOtXwGn8ttztpqwHsOJJ90zNCwBTwJWw42swm4bO6gacpMpzJ5RNWFoIkg
+ vLC7uMZSLKkLPlzqsPnNmrTFfBI+gCHkFgyh9jAE9PwtDurXCCybWAnihjA708Lg3Y2gXyaf+rIt
+ vvthbyiMZOAfvJjwL84MO4Vozqbzv/NmqBexmg1oMlu3UCyNNO7qENlLqkRemjF1A1q3g0ZrubFa
+ n/xi+AGXOIO97ttnHrPmGyC6rR21+9c=
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+Add missing 1.464GHz clock rate to rk3228_cpuclk_rates[]
 
-[ Upstream commit 2abc330c514fe56c570bb1a6318b054b06a4f72e ]
-
-Sometimes one of the nkmp factors is unused. This means that one of the
-factors shift and width values are set to 0. Current nkmp clock code
-generates a mask for each factor with GENMASK(width + shift - 1, shift).
-For unused factor this translates to GENMASK(-1, 0). This code is
-further expanded by C preprocessor to final version:
-(((~0UL) - (1UL << (0)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (-1))))
-or a bit simplified:
-(~0UL & (~0UL >> BITS_PER_LONG))
-
-It turns out that result of the second part (~0UL >> BITS_PER_LONG) is
-actually undefined by C standard, which clearly specifies:
-
-"If the value of the right operand is negative or is greater than or
-equal to the width of the promoted left operand, the behavior is
-undefined."
-
-Additionally, compiling kernel with aarch64-linux-gnu-gcc 8.3.0 gave
-different results whether literals or variables with same values as
-literals were used. GENMASK with literals -1 and 0 gives zero and with
-variables gives 0xFFFFFFFFFFFFFFF (~0UL). Because nkmp driver uses
-GENMASK with variables as parameter, expression calculates mask as ~0UL
-instead of 0. This has further consequences that LSB in register is
-always set to 1 (1 is neutral value for a factor and shift is 0).
-
-For example, H6 pll-de clock is set to 600 MHz by sun4i-drm driver, but
-due to this bug ends up being 300 MHz. Additionally, 300 MHz seems to be
-too low because following warning can be found in dmesg:
-
-[    1.752763] WARNING: CPU: 2 PID: 41 at drivers/clk/sunxi-ng/ccu_common.c:41 ccu_helper_wait_for_lock.part.0+0x6c/0x90
-[    1.763378] Modules linked in:
-[    1.766441] CPU: 2 PID: 41 Comm: kworker/2:1 Not tainted 5.1.0-rc2-next-20190401 #138
-[    1.774269] Hardware name: Pine H64 (DT)
-[    1.778200] Workqueue: events deferred_probe_work_func
-[    1.783341] pstate: 40000005 (nZcv daif -PAN -UAO)
-[    1.788135] pc : ccu_helper_wait_for_lock.part.0+0x6c/0x90
-[    1.793623] lr : ccu_helper_wait_for_lock.part.0+0x48/0x90
-[    1.799107] sp : ffff000010f93840
-[    1.802422] x29: ffff000010f93840 x28: 0000000000000000
-[    1.807735] x27: ffff800073ce9d80 x26: ffff000010afd1b8
-[    1.813049] x25: ffffffffffffffff x24: 00000000ffffffff
-[    1.818362] x23: 0000000000000001 x22: ffff000010abd5c8
-[    1.823675] x21: 0000000010000000 x20: 00000000685f367e
-[    1.828987] x19: 0000000000001801 x18: 0000000000000001
-[    1.834300] x17: 0000000000000001 x16: 0000000000000000
-[    1.839613] x15: 0000000000000000 x14: ffff000010789858
-[    1.844926] x13: 0000000000000000 x12: 0000000000000001
-[    1.850239] x11: 0000000000000000 x10: 0000000000000970
-[    1.855551] x9 : ffff000010f936c0 x8 : ffff800074cec0d0
-[    1.860864] x7 : 0000800067117000 x6 : 0000000115c30b41
-[    1.866177] x5 : 00ffffffffffffff x4 : 002c959300bfe500
-[    1.871490] x3 : 0000000000000018 x2 : 0000000029aaaaab
-[    1.876802] x1 : 00000000000002e6 x0 : 00000000686072bc
-[    1.882114] Call trace:
-[    1.884565]  ccu_helper_wait_for_lock.part.0+0x6c/0x90
-[    1.889705]  ccu_helper_wait_for_lock+0x10/0x20
-[    1.894236]  ccu_nkmp_set_rate+0x244/0x2a8
-[    1.898334]  clk_change_rate+0x144/0x290
-[    1.902258]  clk_core_set_rate_nolock+0x180/0x1b8
-[    1.906963]  clk_set_rate+0x34/0xa0
-[    1.910455]  sun8i_mixer_bind+0x484/0x558
-[    1.914466]  component_bind_all+0x10c/0x230
-[    1.918651]  sun4i_drv_bind+0xc4/0x1a0
-[    1.922401]  try_to_bring_up_master+0x164/0x1c0
-[    1.926932]  __component_add+0xa0/0x168
-[    1.930769]  component_add+0x10/0x18
-[    1.934346]  sun8i_dw_hdmi_probe+0x18/0x20
-[    1.938443]  platform_drv_probe+0x50/0xa0
-[    1.942455]  really_probe+0xcc/0x280
-[    1.946032]  driver_probe_device+0x54/0xe8
-[    1.950130]  __device_attach_driver+0x80/0xb8
-[    1.954488]  bus_for_each_drv+0x78/0xc8
-[    1.958326]  __device_attach+0xd4/0x130
-[    1.962163]  device_initial_probe+0x10/0x18
-[    1.966348]  bus_probe_device+0x90/0x98
-[    1.970185]  deferred_probe_work_func+0x6c/0xa0
-[    1.974720]  process_one_work+0x1e0/0x320
-[    1.978732]  worker_thread+0x228/0x428
-[    1.982484]  kthread+0x120/0x128
-[    1.985714]  ret_from_fork+0x10/0x18
-[    1.989290] ---[ end trace 9babd42e1ca4b84f ]---
-
-This commit solves the issue by first checking value of the factor
-width. If it is equal to 0 (unused factor), mask is set to 0, otherwise
-GENMASK() macro is used as before.
-
-Fixes: d897ef56faf9 ("clk: sunxi-ng: Mask nkmp factors when setting register")
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
 ---
- drivers/clk/sunxi-ng/ccu_nkmp.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/clk/rockchip/clk-rk3228.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index 9b49adb20d07c..69dfc6de1c4e6 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -167,7 +167,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long parent_rate)
- {
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
--	u32 n_mask, k_mask, m_mask, p_mask;
-+	u32 n_mask = 0, k_mask = 0, m_mask = 0, p_mask = 0;
- 	struct _ccu_nkmp _nkmp;
- 	unsigned long flags;
- 	u32 reg;
-@@ -186,10 +186,18 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
- 
--	n_mask = GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
--	k_mask = GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
--	m_mask = GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
--	p_mask = GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
-+	if (nkmp->n.width)
-+		n_mask = GENMASK(nkmp->n.width + nkmp->n.shift - 1,
-+				 nkmp->n.shift);
-+	if (nkmp->k.width)
-+		k_mask = GENMASK(nkmp->k.width + nkmp->k.shift - 1,
-+				 nkmp->k.shift);
-+	if (nkmp->m.width)
-+		m_mask = GENMASK(nkmp->m.width + nkmp->m.shift - 1,
-+				 nkmp->m.shift);
-+	if (nkmp->p.width)
-+		p_mask = GENMASK(nkmp->p.width + nkmp->p.shift - 1,
-+				 nkmp->p.shift);
- 
- 	spin_lock_irqsave(nkmp->common.lock, flags);
- 
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 7af48184b..b85730565 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -109,6 +109,7 @@ static struct rockchip_cpuclk_rate_table rk3228_cpuclk_rates[] __initdata = {
+ 	RK3228_CPUCLK_RATE(1608000000, 1, 7),
+ 	RK3228_CPUCLK_RATE(1512000000, 1, 7),
+ 	RK3228_CPUCLK_RATE(1488000000, 1, 5),
++	RK3228_CPUCLK_RATE(1464000000, 1, 5),
+ 	RK3228_CPUCLK_RATE(1416000000, 1, 5),
+ 	RK3228_CPUCLK_RATE(1392000000, 1, 5),
+ 	RK3228_CPUCLK_RATE(1296000000, 1, 5),
 -- 
-2.20.1
+2.11.0
 
