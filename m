@@ -2,99 +2,109 @@ Return-Path: <SRS0=WYU1=TR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A212DC46460
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 15:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C4CC04AB4
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 19:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70D7521744
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 15:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7226A2087E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 19:16:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OrBVinkc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OrBVinkc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbfEQPfQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 May 2019 11:35:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39072 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729313AbfEQPfP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 17 May 2019 11:35:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6F0E2ACF5;
-        Fri, 17 May 2019 15:35:14 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, ptesarik@suse.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        id S1727467AbfEQTQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 May 2019 15:16:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49978 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbfEQTQm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 May 2019 15:16:42 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DC8E860275; Fri, 17 May 2019 19:16:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558120601;
+        bh=UDu0988ZE+VQBR50SgJEt/dR2lv42ytmm9zgN71+Qlg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OrBVinkcuh1jiRpHR+jEUx8gGVeVx2nWoaqEvPm2vSvBoTy74pq5bMN3C0b6cHOCz
+         i1juxM8hVd0hEFvyPPpyEoo5PtLybM8gNyJ2CWzIeqDkmQ/ul2UfNkeTheE14VXqpF
+         S+UN/Pp9BwqV+JfH3wQ8Y6areQgX+7juWB7OcNB0=
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BC32860735;
+        Fri, 17 May 2019 19:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558120601;
+        bh=UDu0988ZE+VQBR50SgJEt/dR2lv42ytmm9zgN71+Qlg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OrBVinkcuh1jiRpHR+jEUx8gGVeVx2nWoaqEvPm2vSvBoTy74pq5bMN3C0b6cHOCz
+         i1juxM8hVd0hEFvyPPpyEoo5PtLybM8gNyJ2CWzIeqDkmQ/ul2UfNkeTheE14VXqpF
+         S+UN/Pp9BwqV+JfH3wQ8Y6areQgX+7juWB7OcNB0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC32860735
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH] clk: qcom: gdsc: WARN when failing to toggle
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC 1/5] clk: bcm2835: set CLK_GET_RATE_NOCACHE on CPU clocks
-Date:   Fri, 17 May 2019 17:35:03 +0200
-Message-Id: <20190517153508.18314-2-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190517153508.18314-1-nsaenzjulienne@suse.de>
-References: <20190517153508.18314-1-nsaenzjulienne@suse.de>
+References: <20190504001736.8598-1-bjorn.andersson@linaro.org>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <fa15fb15-3597-8563-bf30-518ce345a232@codeaurora.org>
+Date:   Fri, 17 May 2019 13:16:39 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190504001736.8598-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Raspberry Pi's firmware is responsible for updating the cpu clocks and
-pll. This makes sure we get the right rates anytime.
+On 5/3/2019 6:17 PM, Bjorn Andersson wrote:
+> Failing to toggle a GDSC as the driver core is attaching the
+> power-domain to a device will cause a silent probe deferral. Provide an
+> explicit warning to the developer, in order to reduce the amount of time
+> it take to debug this.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- drivers/clk/bcm/clk-bcm2835.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 770bb01f523e..c2772dfb155a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -411,6 +411,7 @@ struct bcm2835_pll_data {
- 	u32 reference_enable_mask;
- 	/* Bit in CM_LOCK to indicate when the PLL has locked. */
- 	u32 lock_mask;
-+	u32 flags;
- 
- 	const struct bcm2835_pll_ana_bits *ana;
- 
-@@ -1299,7 +1300,7 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 	init.num_parents = 1;
- 	init.name = data->name;
- 	init.ops = &bcm2835_pll_clk_ops;
--	init.flags = CLK_IGNORE_UNUSED;
-+	init.flags = data->flags | CLK_IGNORE_UNUSED;
- 
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
- 	if (!pll)
-@@ -1660,6 +1661,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.ana_reg_base = A2W_PLLB_ANA0,
- 		.reference_enable_mask = A2W_XOSC_CTRL_PLLB_ENABLE,
- 		.lock_mask = CM_LOCK_FLOCKB,
-+		.flags = CLK_GET_RATE_NOCACHE,
- 
- 		.ana = &bcm2835_ana_default,
- 
-@@ -1674,7 +1676,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLB_LOADARM,
- 		.hold_mask = CM_PLLB_HOLDARM,
- 		.fixed_divider = 1,
--		.flags = CLK_SET_RATE_PARENT),
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE),
- 
- 	/*
- 	 * PLLC is the core PLL, used to drive the core VPU clock.
+> ---
+>   drivers/clk/qcom/gdsc.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index dd63aa36b092..6a8a4996dde3 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -149,7 +149,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>   		udelay(1);
+>   	}
+>   
+> -	return gdsc_poll_status(sc, status);
+> +	ret = gdsc_poll_status(sc, status);
+> +	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
+> +	return ret;
+>   }
+>   
+>   static inline int gdsc_deassert_reset(struct gdsc *sc)
+> 
+
+
 -- 
-2.21.0
-
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
