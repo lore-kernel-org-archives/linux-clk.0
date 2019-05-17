@@ -2,89 +2,235 @@ Return-Path: <SRS0=WYU1=TR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA74C04AB4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 10:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3A4C04E87
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 13:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9ABC2087B
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 10:47:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGWxc2NY"
+	by mail.kernel.org (Postfix) with ESMTP id 2051D21744
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 13:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfEQKrU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 May 2019 06:47:20 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42941 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbfEQKrT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 May 2019 06:47:19 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y13so4972444lfh.9;
-        Fri, 17 May 2019 03:47:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ku+cJ0KGPggfXsWsOEHqzdK2uKS13WYhdMXnkwa2J94=;
-        b=YGWxc2NYkRjVCyVbQ1/3Kdezha005MkUtmDXwU3Dnn66C729JPxJ5OvZuYRVpCUFLQ
-         KI/g4RjNq9uklOniZJlfGCrkHS6f7BQowB7XoHbyskPrUjX0322lL4+aTWQYJ58goKjC
-         Nr8MEiMJgf1uRPnhX2KIVgij8d4p4vWRG2K9znhvAsxnCpJRLpKrFqTRMRtJPKPose6i
-         8e6Ebfc7YHlS+BhHuTdAlgIhCSANHprdYIW29we064YDbWX5agWqW7MV99e5EwGERmeE
-         kwdvEmsqol/i7mS05ECUsNyxXxOFpD2NR/JDj3vMIQodyzu1KyCNMyn2Ufc0ZcKM/WRd
-         nDHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ku+cJ0KGPggfXsWsOEHqzdK2uKS13WYhdMXnkwa2J94=;
-        b=qM1WowCnZ7dMh/eaMrnYH4kZEYjLCZkGVUiYgHkpDEsqgG4ypokeS4LtcmP1Oo88eQ
-         HGOzffGUa/vux1e+f/MpuIfWkyVlJa9DduooxxmaptstfVZKFqFDang5aGS0p7thE6MY
-         QEVz4F+4FkyuZckhWjpfLsbL/wISNKIGQ5sdOEc/dFm5ZMtjz5/zXY7i4qYpsDGIEN38
-         2vavsoe4UrHKBOH5tPKLwlPr0OVCR106thj92BeC4mFvJ5VcDiwv/3texIPgs3fkkwc/
-         GeGroI8pgkFi2m6mjo6QUmvKwWvFzjxUdz818QgtBdaXL5Wv2ZlDFbBSmhee0FLAg3U6
-         nryQ==
-X-Gm-Message-State: APjAAAVsbps/B9X4VQOqZ7sr8MQmLRh46ckjs+mutsasOvSEhGiUoYSM
-        5nIk947xnUIbSFJmZNRVNvhqxChA8/8DGDXJR1o=
-X-Google-Smtp-Source: APXvYqxZ2MG2AQvc33D8SCatH+kfTvr7StGGJTsiwIzC3IiePbUuBCM66Lyp5YEs5ptkeASOwJL4u708VtTLT1yA9fA=
-X-Received: by 2002:a19:c60f:: with SMTP id w15mr27524114lff.61.1558090037048;
- Fri, 17 May 2019 03:47:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190517074039.22614-1-peng.fan@nxp.com>
-In-Reply-To: <20190517074039.22614-1-peng.fan@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 17 May 2019 07:47:08 -0300
-Message-ID: <CAOMZO5CobB6oSKc9SY3LLdLc9+ZkfiZyYXyCQa5yR-Wwnv0OCQ@mail.gmail.com>
-Subject: Re: [PATCH V2] clk: imx: imx8mm: fix int pll clk gate
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728472AbfEQNU2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 May 2019 09:20:28 -0400
+Received: from jax4mhob09.myregisteredsite.com ([64.69.218.89]:47968 "EHLO
+        jax4mhob09.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728188AbfEQNU2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 May 2019 09:20:28 -0400
+Received: from mailpod.hostingplatform.com (atl4qobmail04pod0.registeredsite.com [10.30.71.206])
+        by jax4mhob09.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id x4HDKOar017114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-clk@vger.kernel.org>; Fri, 17 May 2019 09:20:25 -0400
+Received: (qmail 27192 invoked by uid 0); 17 May 2019 13:20:24 -0000
+X-TCPREMOTEIP: 81.173.50.109
+X-Authenticated-UID: mike@milosoftware.com
+Received: from unknown (HELO mikebuntu.TOPIC.LOCAL) (mike@milosoftware.com@81.173.50.109)
+  by 0 with ESMTPA; 17 May 2019 13:20:24 -0000
+From:   Mike Looijmans <mike.looijmans@topic.nl>
+To:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH v3] dt-bindings: clock: Add silabs,si5341
+Date:   Fri, 17 May 2019 15:20:20 +0200
+Message-Id: <20190517132020.31081-1-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190507140413.28335-1-mike.looijmans@topic.nl>
+References: <20190424090216.18417-1-mike.looijmans@topic.nl> <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com> <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl> <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com> <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl> <20190507140413.28335-1-mike.looijmans@topic.nl> <20190513203146.GA24085@bogus>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 17, 2019 at 4:27 AM Peng Fan <peng.fan@nxp.com> wrote:
->
-> Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
-> To Frac pll, the gate shift is 13, however to Int PLL the gate shift
-> is 11.
->
-> Cc: <stable@vger.kernel.org>
+Adds the devicetree bindings for the Si5341 and Si5340 chips from
+Silicon Labs. These are multiple-input multiple-output clock
+synthesizers.
 
-The Fixes tag should go here instead.
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+---
+v3: Remove synthesizers child nodes
+    Fix typo
+v2: Add data sheet reference.
+    Restructured to enable use of "assigned-clock*" properties to set
+    up both outputs and internal synthesizers.
+    Nicer indentation.
+    Updated subject line and body of commit message.
+
+ .../bindings/clock/silabs,si5341.txt          | 162 ++++++++++++++++++
+ 1 file changed, 162 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si5341.txt b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
+new file mode 100644
+index 000000000000..a70c333e4cd4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
+@@ -0,0 +1,162 @@
++Binding for Silicon Labs Si5341 and Si5340 programmable i2c clock generator.
++
++Reference
++[1] Si5341 Data Sheet
++    https://www.silabs.com/documents/public/data-sheets/Si5341-40-D-DataSheet.pdf
++[2] Si5341 Reference Manual
++    https://www.silabs.com/documents/public/reference-manuals/Si5341-40-D-RM.pdf
++
++The Si5341 and Si5340 are programmable i2c clock generators with up to 10 output
++clocks. The chip contains a PLL that sources 5 (or 4) multisynth clocks, which
++in turn can be directed to any of the 10 (or 4) outputs through a divider.
++The internal structure of the clock generators can be found in [2].
++
++The driver can be used in "as is" mode, reading the current settings from the
++chip at boot, in case you have a (pre-)programmed device. If the PLL is not
++configured when the driver probes, it assumes the driver must fully initialize
++it.
++
++The device type, speed grade and revision are determined runtime by probing.
++
++The driver currently only supports XTAL input mode, and does not support any
++fancy input configurations. They can still be programmed into the chip and
++the driver will leave them "as is".
++
++==I2C device node==
++
++Required properties:
++- compatible: shall be one of the following:
++	"silabs,si5340" - Si5340 A/B/C/D
++	"silabs,si5341" - Si5341 A/B/C/D
++- reg: i2c device address, usually 0x74
++- #clock-cells: from common clock binding; shall be set to 2.
++	The first value is "0" for outputs, "1" for synthesizers.
++	The second value is the output or synthesizer index.
++- clocks: from common clock binding; list of parent clock  handles,
++	corresponding to inputs. Use a fixed clock for the "xtal" input.
++	At least one must be present.
++- clock-names: One of: "xtal", "in0", "in1", "in2"
++- vdd-supply: Regulator node for VDD
++
++Optional properties:
++- vdda-supply: Regulator node for VDDA
++- vdds-supply: Regulator node for VDDS
++- silabs,pll-m-num, silabs,pll-m-den: Numerator and denominator for PLL
++  feedback divider. Must be such that the PLL output is in the valid range. For
++  example, to create 14GHz from a 48MHz xtal, use m-num=14000 and m-den=48. Only
++  the fraction matters, using 3500 and 12 will deliver the exact same result.
++  If these are not specified, and the PLL is not yet programmed when the driver
++  probes, the PLL will be set to 14GHz.
++- silabs,reprogram: When present, the driver will always assume the device must
++  be initialized, and always performs the soft-reset routine. Since this will
++  temporarily stop all output clocks, don't do this if the chip is generating
++  the CPU clock for example.
++- interrupts: Interrupt for INTRb pin.
++- #address-cells: shall be set to 1.
++- #size-cells: shall be set to 0.
++
++
++== Child nodes: Outputs ==
++
++The child nodes list the output clocks.
++
++Each of the clock outputs can be overwritten individually by using a child node.
++If a child node for a clock output is not set, the configuration remains
++unchanged.
++
++Required child node properties:
++- reg: number of clock output.
++
++Optional child node properties:
++- vdd-supply: Regulator node for VDD for this output. The driver selects default
++	values for common-mode and amplitude based on the voltage.
++- silabs,format: Output format, one of:
++	1 = differential (defaults to LVDS levels)
++	2 = low-power (defaults to HCSL levels)
++	4 = LVCMOS
++- silabs,common-mode: Manually override output common mode, see [2] for values
++- silabs,amplitude: Manually override output amplitude, see [2] for values
++- silabs,synth-master: boolean. If present, this output is allowed to change the
++	multisynth frequency dynamically.
++- silabs,silabs,disable-high: boolean. If set, the clock output is driven HIGH
++	when disabled, otherwise it's driven LOW.
++
++==Example==
++
++/* 48MHz reference crystal */
++ref48: ref48M {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <48000000>;
++};
++
++i2c-master-node {
++	/* Programmable clock (for logic) */
++	si5341: clock-generator@74 {
++		reg = <0x74>;
++		compatible = "silabs,si5341";
++		#clock-cells = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&ref48>;
++		clock-names = "xtal";
++
++		silabs,pll-m-num = <14000>; /* PLL at 14.0 GHz */
++		silabs,pll-m-den = <48>;
++		silabs,reprogram; /* Chips are not programmed, always reset */
++
++		out@0 {
++			reg = <0>;
++			silabs,format = <1>; /* LVDS 3v3 */
++			silabs,common-mode = <3>;
++			silabs,amplitude = <3>;
++			silabs,synth-master;
++		};
++
++		/*
++		 * Output 6 configuration:
++		 *  LVDS 1v8
++		 */
++		out@6 {
++			reg = <6>;
++			silabs,format = <1>; /* LVDS 1v8 */
++			silabs,common-mode = <13>;
++			silabs,amplitude = <3>;
++		};
++
++		/*
++		 * Output 8 configuration:
++		 *  HCSL 3v3
++		 */
++		out@8 {
++			reg = <8>;
++			silabs,format = <2>;
++			silabs,common-mode = <11>;
++			silabs,amplitude = <3>;
++		};
++	};
++};
++
++some-video-node {
++	/* Standard clock bindings */
++	clock-names = "pixel";
++	clocks = <&si5341 0 7>; /* Output 7 */
++
++	/* Set output 7 to use syntesizer 3 as its parent */
++	assigned-clocks = <&si5341 0 7>, <&si5341 1 3>;
++	assigned-clock-parents = <&si5341 1 3>;
++	/* Set output 7 to 148.5 MHz using a synth frequency of 594 MHz */
++	assigned-clock-rates = <148500000>, <594000000>;
++};
++
++some-audio-node {
++	clock-names = "i2s-clk";
++	clocks = <&si5341 0 0>;
++	/*
++	 * since output 0 is a synth-master, the synth will be automatically set
++	 * to an appropriate frequency when the audio driver requests another
++	 * frequency. We give control over synth 2 to this output here.
++	 */
++	assigned-clocks = <&si5341 0 0>;
++	assigned-clock-parents = <&si5341 1 2>;
++};
+-- 
+2.17.1
+
