@@ -2,367 +2,464 @@ Return-Path: <SRS0=WYU1=TR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=AC_FROM_MANY_DOTS,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7CCC04AB4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 14:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E67E2C04E84
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 15:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A3C2166E
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 14:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE4482087E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 15:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfEQOtE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 May 2019 10:49:04 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:51244 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728861AbfEQOtE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 May 2019 10:49:04 -0400
-X-IronPort-AV: E=Sophos;i="5.60,480,1549897200"; 
-   d="scan'208";a="16051826"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 17 May 2019 23:48:58 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D53A141773CE;
-        Fri, 17 May 2019 23:48:55 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S1728790AbfEQPf3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 May 2019 11:35:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39136 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729326AbfEQPfT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 17 May 2019 11:35:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AB085AE48;
+        Fri, 17 May 2019 15:35:16 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     stefan.wahren@i2se.com, Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        sboyd@kernel.org, ptesarik@suse.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: r9a06g032: Add clock domain support
-Date:   Fri, 17 May 2019 15:48:29 +0100
-Message-Id: <1558104509-3657-1-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
+Subject: [RFC 3/5] clk: bcm2835: use firmware interface to update pllb
+Date:   Fri, 17 May 2019 17:35:05 +0200
+Message-Id: <20190517153508.18314-4-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190517153508.18314-1-nsaenzjulienne@suse.de>
+References: <20190517153508.18314-1-nsaenzjulienne@suse.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are several clocks on the r9ag032 which are currently not enabled
-in their drivers that can be delegated to clock domain system for power
-management. Therefore add support for clock domain functionality to the
-r9a06g032 clock driver.
+Raspberry Pi's firmware, which runs in a dedicated processor, keeps
+track of the board's temperature and voltage. It's resposible for
+scaling the CPU frequency whenever it deems the device reached an unsafe
+state. On top of that the firmware provides an interface which allows
+Linux to to query the clock's state or change it's frequency.
 
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
+Being the sole user of the bcm2835 clock driver, this integrates the
+firmware interface into the clock driver and adds a first user: the CPU
+pll, also known as 'pllb'.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- drivers/clk/renesas/r9a06g032-clocks.c | 243 ++++++++++++++++++++++++---------
- 1 file changed, 176 insertions(+), 67 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 274 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 259 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 0b492b5..8a278da 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -15,6 +15,8 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 5aea110672f3..ce5b16f3704e 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -35,6 +35,7 @@
  #include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_domain.h>
  #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/sys_soc.h>
-@@ -49,6 +51,7 @@ struct r9a06g032_gate {
- /* This is used to describe a clock for instantiation */
- struct r9a06g032_clkdesc {
- 	const char *name;
-+	bool managed;
- 	u32 type: 3;
- 	u32 index: 8;
- 	u32 source : 8; /* source index + 1 (0 == none) */
-@@ -81,7 +84,11 @@ struct r9a06g032_clkdesc {
- #define D_GATE(_idx, _n, _src, ...) \
- 	{ .type = K_GATE, .index = R9A06G032_##_idx, \
- 		.source = 1 + R9A06G032_##_src, .name = _n, \
--		.gate = I_GATE(__VA_ARGS__), }
-+		.managed = 0, .gate = I_GATE(__VA_ARGS__) }
-+#define D_MODULE(_idx, _n, _src, ...) \
-+	{ .type = K_GATE, .index = R9A06G032_##_idx, \
-+		.source = 1 + R9A06G032_##_src, .name = _n, \
-+		.managed = 1, .gate = I_GATE(__VA_ARGS__) }
- /* Fixed-factor multipler and divider for root clocks */
- #define D_ROOT(_idx, _n, _mul, _div) \
- 	{ .type = K_FFC, .index = R9A06G032_##_idx, .name = _n, \
-@@ -198,7 +205,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_GATE(CLK_P6_PG2, "clk_p6_pg2", DIV_P6_PG, 0x8a3, 0x8a4, 0x8a5, 0, 0xb61, 0, 0),
- 	D_GATE(CLK_P6_PG3, "clk_p6_pg3", DIV_P6_PG, 0x8a6, 0x8a7, 0x8a8, 0, 0xb62, 0, 0),
- 	D_GATE(CLK_P6_PG4, "clk_p6_pg4", DIV_P6_PG, 0x8a9, 0x8aa, 0x8ab, 0, 0xb63, 0, 0),
--	D_GATE(CLK_PCI_USB, "clk_pci_usb", CLKOUT_D40, 0xe6, 0, 0, 0, 0, 0, 0),
-+	D_MODULE(CLK_PCI_USB, "clk_pci_usb", CLKOUT_D40, 0xe6, 0, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_QSPI0, "clk_qspi0", DIV_QSPI0, 0x2a4, 0x2a5, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_QSPI1, "clk_qspi1", DIV_QSPI1, 0x484, 0x485, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_RGMII_REF, "clk_rgmii_ref", CLKOUT_D8, 0x340, 0, 0, 0, 0, 0, 0),
-@@ -215,17 +222,17 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_GATE(CLK_SPI5, "clk_spi5", DIV_P4_PG, 0x822, 0x823, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_SWITCH, "clk_switch", DIV_SWITCH, 0x982, 0x983, 0, 0, 0, 0, 0),
- 	D_DIV(DIV_MOTOR, "div_motor", CLKOUT_D5, 84, 2, 8),
--	D_GATE(HCLK_ECAT125, "hclk_ecat125", CLKOUT_D8, 0x400, 0x401, 0, 0x402, 0, 0x440, 0x441),
--	D_GATE(HCLK_PINCONFIG, "hclk_pinconfig", CLKOUT_D40, 0x740, 0x741, 0x742, 0, 0xae0, 0, 0),
--	D_GATE(HCLK_SERCOS, "hclk_sercos", CLKOUT_D10, 0x420, 0x422, 0, 0x421, 0, 0x460, 0x461),
--	D_GATE(HCLK_SGPIO2, "hclk_sgpio2", DIV_P5_PG, 0x8c3, 0x8c4, 0x8c5, 0, 0xb41, 0, 0),
--	D_GATE(HCLK_SGPIO3, "hclk_sgpio3", DIV_P5_PG, 0x8c6, 0x8c7, 0x8c8, 0, 0xb42, 0, 0),
--	D_GATE(HCLK_SGPIO4, "hclk_sgpio4", DIV_P5_PG, 0x8c9, 0x8ca, 0x8cb, 0, 0xb43, 0, 0),
--	D_GATE(HCLK_TIMER0, "hclk_timer0", CLKOUT_D40, 0x743, 0x744, 0x745, 0, 0xae1, 0, 0),
--	D_GATE(HCLK_TIMER1, "hclk_timer1", CLKOUT_D40, 0x746, 0x747, 0x748, 0, 0xae2, 0, 0),
--	D_GATE(HCLK_USBF, "hclk_usbf", CLKOUT_D8, 0xe3, 0, 0, 0xe4, 0, 0x102, 0x103),
--	D_GATE(HCLK_USBH, "hclk_usbh", CLKOUT_D8, 0xe0, 0xe1, 0, 0xe2, 0, 0x100, 0x101),
--	D_GATE(HCLK_USBPM, "hclk_usbpm", CLKOUT_D8, 0xe5, 0, 0, 0, 0, 0, 0),
-+	D_MODULE(HCLK_ECAT125, "hclk_ecat125", CLKOUT_D8, 0x400, 0x401, 0, 0x402, 0, 0x440, 0x441),
-+	D_MODULE(HCLK_PINCONFIG, "hclk_pinconfig", CLKOUT_D40, 0x740, 0x741, 0x742, 0, 0xae0, 0, 0),
-+	D_MODULE(HCLK_SERCOS, "hclk_sercos", CLKOUT_D10, 0x420, 0x422, 0, 0x421, 0, 0x460, 0x461),
-+	D_MODULE(HCLK_SGPIO2, "hclk_sgpio2", DIV_P5_PG, 0x8c3, 0x8c4, 0x8c5, 0, 0xb41, 0, 0),
-+	D_MODULE(HCLK_SGPIO3, "hclk_sgpio3", DIV_P5_PG, 0x8c6, 0x8c7, 0x8c8, 0, 0xb42, 0, 0),
-+	D_MODULE(HCLK_SGPIO4, "hclk_sgpio4", DIV_P5_PG, 0x8c9, 0x8ca, 0x8cb, 0, 0xb43, 0, 0),
-+	D_MODULE(HCLK_TIMER0, "hclk_timer0", CLKOUT_D40, 0x743, 0x744, 0x745, 0, 0xae1, 0, 0),
-+	D_MODULE(HCLK_TIMER1, "hclk_timer1", CLKOUT_D40, 0x746, 0x747, 0x748, 0, 0xae2, 0, 0),
-+	D_MODULE(HCLK_USBF, "hclk_usbf", CLKOUT_D8, 0xe3, 0, 0, 0xe4, 0, 0x102, 0x103),
-+	D_MODULE(HCLK_USBH, "hclk_usbh", CLKOUT_D8, 0xe0, 0xe1, 0, 0xe2, 0, 0x100, 0x101),
-+	D_MODULE(HCLK_USBPM, "hclk_usbpm", CLKOUT_D8, 0xe5, 0, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_48_PG_F, "clk_48_pg_f", CLK_48, 0x78c, 0x78d, 0, 0x78e, 0, 0xb04, 0xb05),
- 	D_GATE(CLK_48_PG4, "clk_48_pg4", CLK_48, 0x789, 0x78a, 0x78b, 0, 0xb03, 0, 0),
- 	D_FFC(CLK_DDRPHY_PLLCLK_D4, "clk_ddrphy_pllclk_d4", CLK_DDRPHY_PLLCLK, 4),
-@@ -235,13 +242,13 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_FFC(CLK_REF_SYNC_D8, "clk_ref_sync_d8", CLK_REF_SYNC, 8),
- 	D_FFC(CLK_SERCOS100_D2, "clk_sercos100_d2", CLK_SERCOS100, 2),
- 	D_DIV(DIV_CA7, "div_ca7", CLK_REF_SYNC, 57, 1, 4, 1, 2, 4),
--	D_GATE(HCLK_CAN0, "hclk_can0", CLK_48, 0x783, 0x784, 0x785, 0, 0xb01, 0, 0),
--	D_GATE(HCLK_CAN1, "hclk_can1", CLK_48, 0x786, 0x787, 0x788, 0, 0xb02, 0, 0),
--	D_GATE(HCLK_DELTASIGMA, "hclk_deltasigma", DIV_MOTOR, 0x1ef, 0x1f0, 0x1f1, 0, 0, 0, 0),
--	D_GATE(HCLK_PWMPTO, "hclk_pwmpto", DIV_MOTOR, 0x1ec, 0x1ed, 0x1ee, 0, 0, 0, 0),
--	D_GATE(HCLK_RSV, "hclk_rsv", CLK_48, 0x780, 0x781, 0x782, 0, 0xb00, 0, 0),
--	D_GATE(HCLK_SGPIO0, "hclk_sgpio0", DIV_MOTOR, 0x1e0, 0x1e1, 0x1e2, 0, 0, 0, 0),
--	D_GATE(HCLK_SGPIO1, "hclk_sgpio1", DIV_MOTOR, 0x1e3, 0x1e4, 0x1e5, 0, 0, 0, 0),
-+	D_MODULE(HCLK_CAN0, "hclk_can0", CLK_48, 0x783, 0x784, 0x785, 0, 0xb01, 0, 0),
-+	D_MODULE(HCLK_CAN1, "hclk_can1", CLK_48, 0x786, 0x787, 0x788, 0, 0xb02, 0, 0),
-+	D_MODULE(HCLK_DELTASIGMA, "hclk_deltasigma", DIV_MOTOR, 0x1ef, 0x1f0, 0x1f1, 0, 0, 0, 0),
-+	D_MODULE(HCLK_PWMPTO, "hclk_pwmpto", DIV_MOTOR, 0x1ec, 0x1ed, 0x1ee, 0, 0, 0, 0),
-+	D_MODULE(HCLK_RSV, "hclk_rsv", CLK_48, 0x780, 0x781, 0x782, 0, 0xb00, 0, 0),
-+	D_MODULE(HCLK_SGPIO0, "hclk_sgpio0", DIV_MOTOR, 0x1e0, 0x1e1, 0x1e2, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SGPIO1, "hclk_sgpio1", DIV_MOTOR, 0x1e3, 0x1e4, 0x1e5, 0, 0, 0, 0),
- 	D_DIV(RTOS_MDC, "rtos_mdc", CLK_REF_SYNC, 100, 80, 640, 80, 160, 320, 640),
- 	D_GATE(CLK_CM3, "clk_cm3", CLK_REF_SYNC_D4, 0xba0, 0xba1, 0, 0xba2, 0, 0xbc0, 0xbc1),
- 	D_GATE(CLK_DDRC, "clk_ddrc", CLK_DDRPHY_PLLCLK_D4, 0x323, 0x324, 0, 0, 0, 0, 0),
-@@ -249,53 +256,53 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_GATE(CLK_HSR50, "clk_hsr50", CLK_HSR100_D2, 0x484, 0x485, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_HW_RTOS, "clk_hw_rtos", CLK_REF_SYNC_D4, 0xc60, 0xc61, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_SERCOS50, "clk_sercos50", CLK_SERCOS100_D2, 0x424, 0x423, 0, 0, 0, 0, 0),
--	D_GATE(HCLK_ADC, "hclk_adc", CLK_REF_SYNC_D8, 0x1af, 0x1b0, 0x1b1, 0, 0, 0, 0),
--	D_GATE(HCLK_CM3, "hclk_cm3", CLK_REF_SYNC_D4, 0xc20, 0xc21, 0xc22, 0, 0, 0, 0),
--	D_GATE(HCLK_CRYPTO_EIP150, "hclk_crypto_eip150", CLK_REF_SYNC_D4, 0x123, 0x124, 0x125, 0, 0x142, 0, 0),
--	D_GATE(HCLK_CRYPTO_EIP93, "hclk_crypto_eip93", CLK_REF_SYNC_D4, 0x120, 0x121, 0, 0x122, 0, 0x140, 0x141),
--	D_GATE(HCLK_DDRC, "hclk_ddrc", CLK_REF_SYNC_D4, 0x320, 0x322, 0, 0x321, 0, 0x3a0, 0x3a1),
--	D_GATE(HCLK_DMA0, "hclk_dma0", CLK_REF_SYNC_D4, 0x260, 0x261, 0x262, 0x263, 0x2c0, 0x2c1, 0x2c2),
--	D_GATE(HCLK_DMA1, "hclk_dma1", CLK_REF_SYNC_D4, 0x264, 0x265, 0x266, 0x267, 0x2c3, 0x2c4, 0x2c5),
--	D_GATE(HCLK_GMAC0, "hclk_gmac0", CLK_REF_SYNC_D4, 0x360, 0x361, 0x362, 0x363, 0x3c0, 0x3c1, 0x3c2),
--	D_GATE(HCLK_GMAC1, "hclk_gmac1", CLK_REF_SYNC_D4, 0x380, 0x381, 0x382, 0x383, 0x3e0, 0x3e1, 0x3e2),
--	D_GATE(HCLK_GPIO0, "hclk_gpio0", CLK_REF_SYNC_D4, 0x212, 0x213, 0x214, 0, 0, 0, 0),
--	D_GATE(HCLK_GPIO1, "hclk_gpio1", CLK_REF_SYNC_D4, 0x215, 0x216, 0x217, 0, 0, 0, 0),
--	D_GATE(HCLK_GPIO2, "hclk_gpio2", CLK_REF_SYNC_D4, 0x229, 0x22a, 0x22b, 0, 0, 0, 0),
--	D_GATE(HCLK_HSR, "hclk_hsr", CLK_HSR100_D2, 0x480, 0x482, 0, 0x481, 0, 0x4c0, 0x4c1),
--	D_GATE(HCLK_I2C0, "hclk_i2c0", CLK_REF_SYNC_D8, 0x1a9, 0x1aa, 0x1ab, 0, 0, 0, 0),
--	D_GATE(HCLK_I2C1, "hclk_i2c1", CLK_REF_SYNC_D8, 0x1ac, 0x1ad, 0x1ae, 0, 0, 0, 0),
--	D_GATE(HCLK_LCD, "hclk_lcd", CLK_REF_SYNC_D4, 0x7a0, 0x7a1, 0x7a2, 0, 0xb20, 0, 0),
--	D_GATE(HCLK_MSEBI_M, "hclk_msebi_m", CLK_REF_SYNC_D4, 0x164, 0x165, 0x166, 0, 0x183, 0, 0),
--	D_GATE(HCLK_MSEBI_S, "hclk_msebi_s", CLK_REF_SYNC_D4, 0x160, 0x161, 0x162, 0x163, 0x180, 0x181, 0x182),
--	D_GATE(HCLK_NAND, "hclk_nand", CLK_REF_SYNC_D4, 0x280, 0x281, 0x282, 0x283, 0x2e0, 0x2e1, 0x2e2),
--	D_GATE(HCLK_PG_I, "hclk_pg_i", CLK_REF_SYNC_D4, 0x7ac, 0x7ad, 0, 0x7ae, 0, 0xb24, 0xb25),
--	D_GATE(HCLK_PG19, "hclk_pg19", CLK_REF_SYNC_D4, 0x22c, 0x22d, 0x22e, 0, 0, 0, 0),
--	D_GATE(HCLK_PG20, "hclk_pg20", CLK_REF_SYNC_D4, 0x22f, 0x230, 0x231, 0, 0, 0, 0),
--	D_GATE(HCLK_PG3, "hclk_pg3", CLK_REF_SYNC_D4, 0x7a6, 0x7a7, 0x7a8, 0, 0xb22, 0, 0),
--	D_GATE(HCLK_PG4, "hclk_pg4", CLK_REF_SYNC_D4, 0x7a9, 0x7aa, 0x7ab, 0, 0xb23, 0, 0),
--	D_GATE(HCLK_QSPI0, "hclk_qspi0", CLK_REF_SYNC_D4, 0x2a0, 0x2a1, 0x2a2, 0x2a3, 0x300, 0x301, 0x302),
--	D_GATE(HCLK_QSPI1, "hclk_qspi1", CLK_REF_SYNC_D4, 0x480, 0x481, 0x482, 0x483, 0x4c0, 0x4c1, 0x4c2),
--	D_GATE(HCLK_ROM, "hclk_rom", CLK_REF_SYNC_D4, 0xaa0, 0xaa1, 0xaa2, 0, 0xb80, 0, 0),
--	D_GATE(HCLK_RTC, "hclk_rtc", CLK_REF_SYNC_D8, 0xa00, 0, 0, 0, 0, 0, 0),
--	D_GATE(HCLK_SDIO0, "hclk_sdio0", CLK_REF_SYNC_D4, 0x60, 0x61, 0x62, 0x63, 0x80, 0x81, 0x82),
--	D_GATE(HCLK_SDIO1, "hclk_sdio1", CLK_REF_SYNC_D4, 0x640, 0x641, 0x642, 0x643, 0x660, 0x661, 0x662),
--	D_GATE(HCLK_SEMAP, "hclk_semap", CLK_REF_SYNC_D4, 0x7a3, 0x7a4, 0x7a5, 0, 0xb21, 0, 0),
--	D_GATE(HCLK_SPI0, "hclk_spi0", CLK_REF_SYNC_D4, 0x200, 0x201, 0x202, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI1, "hclk_spi1", CLK_REF_SYNC_D4, 0x203, 0x204, 0x205, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI2, "hclk_spi2", CLK_REF_SYNC_D4, 0x206, 0x207, 0x208, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI3, "hclk_spi3", CLK_REF_SYNC_D4, 0x209, 0x20a, 0x20b, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI4, "hclk_spi4", CLK_REF_SYNC_D4, 0x20c, 0x20d, 0x20e, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI5, "hclk_spi5", CLK_REF_SYNC_D4, 0x20f, 0x210, 0x211, 0, 0, 0, 0),
--	D_GATE(HCLK_SWITCH, "hclk_switch", CLK_REF_SYNC_D4, 0x980, 0, 0x981, 0, 0, 0, 0),
--	D_GATE(HCLK_SWITCH_RG, "hclk_switch_rg", CLK_REF_SYNC_D4, 0xc40, 0xc41, 0xc42, 0, 0, 0, 0),
--	D_GATE(HCLK_UART0, "hclk_uart0", CLK_REF_SYNC_D8, 0x1a0, 0x1a1, 0x1a2, 0, 0, 0, 0),
--	D_GATE(HCLK_UART1, "hclk_uart1", CLK_REF_SYNC_D8, 0x1a3, 0x1a4, 0x1a5, 0, 0, 0, 0),
--	D_GATE(HCLK_UART2, "hclk_uart2", CLK_REF_SYNC_D8, 0x1a6, 0x1a7, 0x1a8, 0, 0, 0, 0),
--	D_GATE(HCLK_UART3, "hclk_uart3", CLK_REF_SYNC_D4, 0x218, 0x219, 0x21a, 0, 0, 0, 0),
--	D_GATE(HCLK_UART4, "hclk_uart4", CLK_REF_SYNC_D4, 0x21b, 0x21c, 0x21d, 0, 0, 0, 0),
--	D_GATE(HCLK_UART5, "hclk_uart5", CLK_REF_SYNC_D4, 0x220, 0x221, 0x222, 0, 0, 0, 0),
--	D_GATE(HCLK_UART6, "hclk_uart6", CLK_REF_SYNC_D4, 0x223, 0x224, 0x225, 0, 0, 0, 0),
--	D_GATE(HCLK_UART7, "hclk_uart7", CLK_REF_SYNC_D4, 0x226, 0x227, 0x228, 0, 0, 0, 0),
-+	D_MODULE(HCLK_ADC, "hclk_adc", CLK_REF_SYNC_D8, 0x1af, 0x1b0, 0x1b1, 0, 0, 0, 0),
-+	D_MODULE(HCLK_CM3, "hclk_cm3", CLK_REF_SYNC_D4, 0xc20, 0xc21, 0xc22, 0, 0, 0, 0),
-+	D_MODULE(HCLK_CRYPTO_EIP150, "hclk_crypto_eip150", CLK_REF_SYNC_D4, 0x123, 0x124, 0x125, 0, 0x142, 0, 0),
-+	D_MODULE(HCLK_CRYPTO_EIP93, "hclk_crypto_eip93", CLK_REF_SYNC_D4, 0x120, 0x121, 0, 0x122, 0, 0x140, 0x141),
-+	D_MODULE(HCLK_DDRC, "hclk_ddrc", CLK_REF_SYNC_D4, 0x320, 0x322, 0, 0x321, 0, 0x3a0, 0x3a1),
-+	D_MODULE(HCLK_DMA0, "hclk_dma0", CLK_REF_SYNC_D4, 0x260, 0x261, 0x262, 0x263, 0x2c0, 0x2c1, 0x2c2),
-+	D_MODULE(HCLK_DMA1, "hclk_dma1", CLK_REF_SYNC_D4, 0x264, 0x265, 0x266, 0x267, 0x2c3, 0x2c4, 0x2c5),
-+	D_MODULE(HCLK_GMAC0, "hclk_gmac0", CLK_REF_SYNC_D4, 0x360, 0x361, 0x362, 0x363, 0x3c0, 0x3c1, 0x3c2),
-+	D_MODULE(HCLK_GMAC1, "hclk_gmac1", CLK_REF_SYNC_D4, 0x380, 0x381, 0x382, 0x383, 0x3e0, 0x3e1, 0x3e2),
-+	D_MODULE(HCLK_GPIO0, "hclk_gpio0", CLK_REF_SYNC_D4, 0x212, 0x213, 0x214, 0, 0, 0, 0),
-+	D_MODULE(HCLK_GPIO1, "hclk_gpio1", CLK_REF_SYNC_D4, 0x215, 0x216, 0x217, 0, 0, 0, 0),
-+	D_MODULE(HCLK_GPIO2, "hclk_gpio2", CLK_REF_SYNC_D4, 0x229, 0x22a, 0x22b, 0, 0, 0, 0),
-+	D_MODULE(HCLK_HSR, "hclk_hsr", CLK_HSR100_D2, 0x480, 0x482, 0, 0x481, 0, 0x4c0, 0x4c1),
-+	D_MODULE(HCLK_I2C0, "hclk_i2c0", CLK_REF_SYNC_D8, 0x1a9, 0x1aa, 0x1ab, 0, 0, 0, 0),
-+	D_MODULE(HCLK_I2C1, "hclk_i2c1", CLK_REF_SYNC_D8, 0x1ac, 0x1ad, 0x1ae, 0, 0, 0, 0),
-+	D_MODULE(HCLK_LCD, "hclk_lcd", CLK_REF_SYNC_D4, 0x7a0, 0x7a1, 0x7a2, 0, 0xb20, 0, 0),
-+	D_MODULE(HCLK_MSEBI_M, "hclk_msebi_m", CLK_REF_SYNC_D4, 0x164, 0x165, 0x166, 0, 0x183, 0, 0),
-+	D_MODULE(HCLK_MSEBI_S, "hclk_msebi_s", CLK_REF_SYNC_D4, 0x160, 0x161, 0x162, 0x163, 0x180, 0x181, 0x182),
-+	D_MODULE(HCLK_NAND, "hclk_nand", CLK_REF_SYNC_D4, 0x280, 0x281, 0x282, 0x283, 0x2e0, 0x2e1, 0x2e2),
-+	D_MODULE(HCLK_PG_I, "hclk_pg_i", CLK_REF_SYNC_D4, 0x7ac, 0x7ad, 0, 0x7ae, 0, 0xb24, 0xb25),
-+	D_MODULE(HCLK_PG19, "hclk_pg19", CLK_REF_SYNC_D4, 0x22c, 0x22d, 0x22e, 0, 0, 0, 0),
-+	D_MODULE(HCLK_PG20, "hclk_pg20", CLK_REF_SYNC_D4, 0x22f, 0x230, 0x231, 0, 0, 0, 0),
-+	D_MODULE(HCLK_PG3, "hclk_pg3", CLK_REF_SYNC_D4, 0x7a6, 0x7a7, 0x7a8, 0, 0xb22, 0, 0),
-+	D_MODULE(HCLK_PG4, "hclk_pg4", CLK_REF_SYNC_D4, 0x7a9, 0x7aa, 0x7ab, 0, 0xb23, 0, 0),
-+	D_MODULE(HCLK_QSPI0, "hclk_qspi0", CLK_REF_SYNC_D4, 0x2a0, 0x2a1, 0x2a2, 0x2a3, 0x300, 0x301, 0x302),
-+	D_MODULE(HCLK_QSPI1, "hclk_qspi1", CLK_REF_SYNC_D4, 0x480, 0x481, 0x482, 0x483, 0x4c0, 0x4c1, 0x4c2),
-+	D_MODULE(HCLK_ROM, "hclk_rom", CLK_REF_SYNC_D4, 0xaa0, 0xaa1, 0xaa2, 0, 0xb80, 0, 0),
-+	D_MODULE(HCLK_RTC, "hclk_rtc", CLK_REF_SYNC_D8, 0xa00, 0, 0, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SDIO0, "hclk_sdio0", CLK_REF_SYNC_D4, 0x60, 0x61, 0x62, 0x63, 0x80, 0x81, 0x82),
-+	D_MODULE(HCLK_SDIO1, "hclk_sdio1", CLK_REF_SYNC_D4, 0x640, 0x641, 0x642, 0x643, 0x660, 0x661, 0x662),
-+	D_MODULE(HCLK_SEMAP, "hclk_semap", CLK_REF_SYNC_D4, 0x7a3, 0x7a4, 0x7a5, 0, 0xb21, 0, 0),
-+	D_MODULE(HCLK_SPI0, "hclk_spi0", CLK_REF_SYNC_D4, 0x200, 0x201, 0x202, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI1, "hclk_spi1", CLK_REF_SYNC_D4, 0x203, 0x204, 0x205, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI2, "hclk_spi2", CLK_REF_SYNC_D4, 0x206, 0x207, 0x208, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI3, "hclk_spi3", CLK_REF_SYNC_D4, 0x209, 0x20a, 0x20b, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI4, "hclk_spi4", CLK_REF_SYNC_D4, 0x20c, 0x20d, 0x20e, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI5, "hclk_spi5", CLK_REF_SYNC_D4, 0x20f, 0x210, 0x211, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SWITCH, "hclk_switch", CLK_REF_SYNC_D4, 0x980, 0, 0x981, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SWITCH_RG, "hclk_switch_rg", CLK_REF_SYNC_D4, 0xc40, 0xc41, 0xc42, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART0, "hclk_uart0", CLK_REF_SYNC_D8, 0x1a0, 0x1a1, 0x1a2, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART1, "hclk_uart1", CLK_REF_SYNC_D8, 0x1a3, 0x1a4, 0x1a5, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART2, "hclk_uart2", CLK_REF_SYNC_D8, 0x1a6, 0x1a7, 0x1a8, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART3, "hclk_uart3", CLK_REF_SYNC_D4, 0x218, 0x219, 0x21a, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART4, "hclk_uart4", CLK_REF_SYNC_D4, 0x21b, 0x21c, 0x21d, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART5, "hclk_uart5", CLK_REF_SYNC_D4, 0x220, 0x221, 0x222, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART6, "hclk_uart6", CLK_REF_SYNC_D4, 0x223, 0x224, 0x225, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART7, "hclk_uart7", CLK_REF_SYNC_D4, 0x226, 0x227, 0x228, 0, 0, 0, 0),
- 	/*
- 	 * These are not hardware clocks, but are needed to handle the special
- 	 * case where we have a 'selector bit' that doesn't just change the
-@@ -372,6 +379,104 @@ struct r9a06g032_clk_gate {
+ #include <dt-bindings/clock/bcm2835.h>
++#include <soc/bcm2835/raspberrypi-firmware.h>
  
- #define to_r9a06g032_gate(_hw) container_of(_hw, struct r9a06g032_clk_gate, hw)
+ #define CM_PASSWORD		0x5a000000
  
-+struct r9a06g032_clk_domain {
-+	struct generic_pm_domain genpd;
-+	struct device_node *np;
+@@ -289,6 +290,30 @@
+ #define LOCK_TIMEOUT_NS		100000000
+ #define BCM2835_MAX_FB_RATE	1750000000u
+ 
++#define RPI_FIRMWARE_ARM_CLK_ID		0x000000003
++#define RPI_FIRMWARE_STATE_ENABLE_BIT	0x1
++#define RPI_FIRMWARE_STATE_WAIT_BIT	0x2
++
++/*
++ * Structure of the message passed to Raspberry Pi's firmware in order to
++ * change clock rates. The 'disable_turbo' option is only available to the ARM
++ * clock (pllb) which we enable by default as turbo mode will alter multiple
++ * clocks at once.
++ *
++ * Even though we're able to access the clock registers directly we're bound to
++ * use the firmware interface as the firmware ultimately takes care of
++ * mitigating overheating/undervoltage situations and we would be changing
++ * frequencies behind his back.
++ *
++ * For more information on the firmware interface check:
++ * https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
++ */
++struct bcm2835_firmware_prop {
++       u32 id;
++       u32 val;
++       u32 disable_turbo;
++} __packed;
++
+ /*
+  * Names of clocks used within the driver that need to be replaced
+  * with an external parent's name.  This array is in the order that
+@@ -316,6 +341,8 @@ struct bcm2835_cprman {
+ 	 */
+ 	const char *real_parent_names[ARRAY_SIZE(cprman_parent_names)];
+ 
++	struct rpi_firmware *firmware;
++
+ 	/* Must be last */
+ 	struct clk_hw_onecell_data onecell;
+ };
+@@ -424,6 +451,23 @@ struct bcm2835_pll_data {
+ 	unsigned long max_fb_rate;
+ };
+ 
++struct bcm2835_fw_pll_data {
++	const char *name;
++	int firmware_clk_id;
++	u32 flags;
++
++	unsigned long min_rate;
++	unsigned long max_rate;
++
++	/*
++	 * The rate provided to the firmware interface might not always match
++	 * the clock subsystem's. For instance, in the case of the ARM cpu
++	 * clock, even though the firmware ultimately edits 'pllb' it takes the
++	 * expected 'pllb_arm' rate as it's input.
++	 */
++	unsigned int rate_rescale;
 +};
 +
-+static struct r9a06g032_clk_domain *r9a06g032_clk_domain;
-+
-+static int create_add_module_clock(struct of_phandle_args *clkspec,
-+			struct device *dev)
+ struct bcm2835_pll_ana_bits {
+ 	u32 mask0;
+ 	u32 set0;
+@@ -505,6 +549,7 @@ struct bcm2835_pll {
+ 	struct clk_hw hw;
+ 	struct bcm2835_cprman *cprman;
+ 	const struct bcm2835_pll_data *data;
++	const struct bcm2835_fw_pll_data *fw_data;
+ };
+ 
+ static int bcm2835_pll_is_on(struct clk_hw *hw)
+@@ -517,6 +562,41 @@ static int bcm2835_pll_is_on(struct clk_hw *hw)
+ 		A2W_PLL_CTRL_PRST_DISABLE;
+ }
+ 
++static int raspberrypi_clock_property(struct rpi_firmware *firmware, u32 tag,
++				      u32 clk, u32 *val)
 +{
-+	struct clk *clk;
-+	int error = 0;
++	int ret;
++	struct bcm2835_firmware_prop msg = {
++		.id = clk,
++		.val = *val,
++		.disable_turbo = 1,
++	};
 +
-+	clk = of_clk_get_from_provider(clkspec);
++	ret = rpi_firmware_property(firmware, tag, &msg, sizeof(msg));
++	if (ret)
++		return ret;
 +
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
++	*val = msg.val;
 +
-+	error = pm_clk_create(dev);
-+	if (error) {
-+		dev_err(dev, "pm_clk_create failed %d\n", error);
-+		clk_put(clk);
-+		return error;
-+	}
-+
-+	error = pm_clk_add_clk(dev, clk);
-+	if (error) {
-+		dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
-+		pm_clk_destroy(dev);
-+		clk_put(clk);
-+	}
-+
-+	return error;
++	return 0;
 +}
 +
-+int __init r9a06g032_attach_dev(struct generic_pm_domain *unused,
-+				struct device *dev)
++static int bcm2835_fw_pll_is_on(struct clk_hw *hw)
 +{
-+	struct r9a06g032_clk_domain *pd = r9a06g032_clk_domain;
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_args clkspec;
-+	int i = 0;
-+	int error;
++	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
++	struct bcm2835_cprman *cprman = pll->cprman;
++	u32 val = 0;
++	int ret;
 +
-+	if (!pd) {
-+		dev_dbg(dev, "RZN1 clock domain not yet available\n");
++	ret = raspberrypi_clock_property(cprman->firmware,
++					 RPI_FIRMWARE_GET_CLOCK_STATE,
++					 pll->fw_data->firmware_clk_id, &val);
++	if (ret)
++		return 0;
++
++	return !!(val & RPI_FIRMWARE_STATE_ENABLE_BIT);
++}
++
+ static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
+ 					     unsigned long parent_rate,
+ 					     u32 *ndiv, u32 *fdiv)
+@@ -547,16 +627,37 @@ static long bcm2835_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long *parent_rate)
+ {
+ 	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
+-	const struct bcm2835_pll_data *data = pll->data;
+ 	u32 ndiv, fdiv;
+ 
+-	rate = clamp(rate, data->min_rate, data->max_rate);
++	if (pll->data)
++		rate = clamp(rate, pll->data->min_rate, pll->data->max_rate);
++	else
++		rate = clamp(rate, pll->fw_data->min_rate,
++			     pll->fw_data->max_rate);
+ 
+ 	bcm2835_pll_choose_ndiv_and_fdiv(rate, *parent_rate, &ndiv, &fdiv);
+ 
+ 	return bcm2835_pll_rate_from_divisors(*parent_rate, ndiv, fdiv, 1);
+ }
+ 
++static unsigned long bcm2835_fw_pll_get_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
++	struct bcm2835_cprman *cprman = pll->cprman;
++	u32 val = 0;
++	int ret;
++
++	ret = raspberrypi_clock_property(cprman->firmware,
++					 RPI_FIRMWARE_GET_CLOCK_RATE,
++					 pll->fw_data->firmware_clk_id,
++					 &val);
++	if (ret)
++		return ret;
++
++	return val * pll->fw_data->rate_rescale;
++}
++
+ static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+ {
+@@ -584,6 +685,35 @@ static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
+ 	return bcm2835_pll_rate_from_divisors(parent_rate, ndiv, fdiv, pdiv);
+ }
+ 
++static int bcm2835_fw_pll_on(struct clk_hw *hw)
++{
++	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
++	struct bcm2835_cprman *cprman = pll->cprman;
++	u32 val;
++	int ret;
++
++	val = RPI_FIRMWARE_STATE_ENABLE_BIT | RPI_FIRMWARE_STATE_WAIT_BIT;
++
++	ret = raspberrypi_clock_property(cprman->firmware,
++					 RPI_FIRMWARE_SET_CLOCK_STATE,
++					 pll->fw_data->firmware_clk_id, &val);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void bcm2835_fw_pll_off(struct clk_hw *hw)
++{
++	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
++	struct bcm2835_cprman *cprman = pll->cprman;
++	u32 val = RPI_FIRMWARE_STATE_WAIT_BIT;
++
++	raspberrypi_clock_property(cprman->firmware,
++				   RPI_FIRMWARE_SET_CLOCK_STATE,
++				   pll->fw_data->firmware_clk_id, &val);
++}
++
+ static void bcm2835_pll_off(struct clk_hw *hw)
+ {
+ 	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
+@@ -651,6 +781,25 @@ bcm2835_pll_write_ana(struct bcm2835_cprman *cprman, u32 ana_reg_base, u32 *ana)
+ 		cprman_write(cprman, ana_reg_base + i * 4, ana[i]);
+ }
+ 
++static int bcm2835_fw_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
++	u32 new_rate = rate / pll->fw_data->rate_rescale;
++	struct bcm2835_cprman *cprman = pll->cprman;
++	int ret;
++
++	ret = raspberrypi_clock_property(cprman->firmware,
++					 RPI_FIRMWARE_SET_CLOCK_RATE,
++					 pll->fw_data->firmware_clk_id,
++					 &new_rate);
++	if (ret)
++		dev_err(cprman->dev, "Failed to change %s frequency: %d",
++			clk_hw_get_name(hw), ret);
++
++	return ret;
++}
++
+ static int bcm2835_pll_set_rate(struct clk_hw *hw,
+ 				unsigned long rate, unsigned long parent_rate)
+ {
+@@ -759,6 +908,15 @@ static const struct clk_ops bcm2835_pll_clk_ops = {
+ 	.debug_init = bcm2835_pll_debug_init,
+ };
+ 
++static const struct clk_ops bcm2835_firmware_pll_clk_ops = {
++	.is_prepared = bcm2835_fw_pll_is_on,
++	.prepare = bcm2835_fw_pll_on,
++	.unprepare = bcm2835_fw_pll_off,
++	.recalc_rate = bcm2835_fw_pll_get_rate,
++	.set_rate = bcm2835_fw_pll_set_rate,
++	.round_rate = bcm2835_pll_round_rate,
++};
++
+ struct bcm2835_pll_divider {
+ 	struct clk_divider div;
+ 	struct bcm2835_cprman *cprman;
+@@ -1287,6 +1445,83 @@ static const struct clk_ops bcm2835_vpu_clock_clk_ops = {
+ 	.debug_init = bcm2835_clock_debug_init,
+ };
+ 
++static int bcm2835_firmware_get_min_max_rates(struct bcm2835_cprman *cprman,
++					      struct bcm2835_fw_pll_data *data)
++{
++	u32 min_rate = 0, max_rate = 0;
++	int ret;
++
++	ret = raspberrypi_clock_property(cprman->firmware,
++					 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
++					 data->firmware_clk_id,
++					 &min_rate);
++	if (ret) {
++		dev_err(cprman->dev, "Failed to get %s min freq: %d\n",
++			data->name, ret);
++		return ret;
++	}
++
++	ret = raspberrypi_clock_property(cprman->firmware,
++					 RPI_FIRMWARE_GET_MAX_CLOCK_RATE,
++					 data->firmware_clk_id,
++					 &max_rate);
++	if (ret) {
++		dev_err(cprman->dev, "Failed to get %s max freq: %d\n",
++			data->name, ret);
++		return ret;
++	}
++
++	data->min_rate = min_rate * data->rate_rescale;
++	data->max_rate = max_rate * data->rate_rescale;
++
++	dev_info(cprman->dev, "min %lu, max %lu\n", data->min_rate, data->max_rate);
++	return 0;
++}
++
++static struct clk_hw *bcm2835_register_fw_pll(struct bcm2835_cprman *cprman,
++					const struct bcm2835_fw_pll_data *data)
++{
++	struct bcm2835_fw_pll_data *fw_data;
++	struct clk_init_data init;
++	struct bcm2835_pll *pll;
++	int ret;
++
++	memset(&init, 0, sizeof(init));
++
++	/* All of the PLLs derive from the external oscillator. */
++	init.parent_names = &cprman->real_parent_names[0];
++	init.num_parents = 1;
++	init.name = data->name;
++	init.ops = &bcm2835_firmware_pll_clk_ops;
++	init.flags = data->flags | CLK_IGNORE_UNUSED;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return NULL;
++
++	/*
++	 * As the max and min rate values are firmware dependent we need a non
++	 * constant version of struct bcm2835_fw_pll_data.
++	 */
++	fw_data = devm_kmemdup(cprman->dev, data, sizeof(*data),
++				     GFP_KERNEL);
++	if (!fw_data)
++		return NULL;
++
++	ret = bcm2835_firmware_get_min_max_rates(cprman, fw_data);
++	if (ret)
++		return NULL;
++
++	pll->cprman = cprman;
++	pll->hw.init = &init;
++	pll->fw_data = fw_data;
++
++	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
++	if (ret)
++		return NULL;
++	return &pll->hw;
++}
++
+ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
+ 					   const struct bcm2835_pll_data *data)
+ {
+@@ -1462,6 +1697,9 @@ struct bcm2835_clk_desc {
+ #define REGISTER_PLL(...)	_REGISTER(&bcm2835_register_pll,	\
+ 					  &(struct bcm2835_pll_data)	\
+ 					  {__VA_ARGS__})
++#define REGISTER_FW_PLL(...)	_REGISTER(&bcm2835_register_fw_pll,	\
++					  &(struct bcm2835_fw_pll_data)	\
++					  {__VA_ARGS__})
+ #define REGISTER_PLL_DIV(...)	_REGISTER(&bcm2835_register_pll_divider, \
+ 					  &(struct bcm2835_pll_divider_data) \
+ 					  {__VA_ARGS__})
+@@ -1654,21 +1892,11 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.flags = CLK_SET_RATE_PARENT),
+ 
+ 	/* PLLB is used for the ARM's clock. */
+-	[BCM2835_PLLB]		= REGISTER_PLL(
++	[BCM2835_PLLB]		= REGISTER_FW_PLL(
+ 		.name = "pllb",
+-		.cm_ctrl_reg = CM_PLLB,
+-		.a2w_ctrl_reg = A2W_PLLB_CTRL,
+-		.frac_reg = A2W_PLLB_FRAC,
+-		.ana_reg_base = A2W_PLLB_ANA0,
+-		.reference_enable_mask = A2W_XOSC_CTRL_PLLB_ENABLE,
+-		.lock_mask = CM_LOCK_FLOCKB,
+ 		.flags = CLK_GET_RATE_NOCACHE,
+-
+-		.ana = &bcm2835_ana_default,
+-
+-		.min_rate = 600000000u,
+-		.max_rate = 3000000000u,
+-		.max_fb_rate = BCM2835_MAX_FB_RATE),
++		.rate_rescale = 2,
++		.firmware_clk_id = RPI_FIRMWARE_ARM_CLK_ID),
+ 	[BCM2835_PLLB_ARM]	= REGISTER_PLL_DIV(
+ 		.name = "pllb_arm",
+ 		.source_pll = "pllb",
+@@ -2133,9 +2361,24 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	const struct bcm2835_clk_desc *desc;
+ 	const size_t asize = ARRAY_SIZE(clk_desc_array);
++	struct device_node *firmware_node;
++	struct rpi_firmware *firmware;
+ 	size_t i;
+ 	int ret;
+ 
++	firmware_node = of_find_node_by_name(NULL, "firmware");
++	if (!firmware_node) {
++		dev_err(dev, "Missing firmware node\n");
++		return -ENOENT;
++	}
++
++	firmware = rpi_firmware_get(firmware_node);
++	of_node_put(firmware_node);
++	if (!firmware) {
++		dev_err(dev, "Can't get raspberrypi's firmware\n");
 +		return -EPROBE_DEFER;
 +	}
 +
-+	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
-+					   &clkspec)) {
-+		int index = clkspec.args[0];
-+
-+		if (index < R9A06G032_CLOCK_COUNT &&
-+				r9a06g032_clocks[index].managed) {
-+			error = create_add_module_clock(&clkspec, dev);
-+
-+			if (error)
-+				return error;
-+
-+			of_node_put(clkspec.np);
-+		}
-+		i++;
-+	}
-+
-+	return 0;
-+}
-+
-+void r9a06g032_detach_dev(struct generic_pm_domain *unused, struct device *dev)
-+{
-+	if (!pm_clk_no_clocks(dev))
-+		pm_clk_destroy(dev);
-+}
-+
-+static int __init r9a06g032_add_clk_domain(struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct generic_pm_domain *genpd;
-+	struct r9a06g032_clk_domain *pd;
-+
-+	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	pd->np = np;
-+
-+	genpd = &pd->genpd;
-+	genpd->name = np->name;
-+	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
-+	genpd->attach_dev = r9a06g032_attach_dev;
-+	genpd->detach_dev = r9a06g032_detach_dev;
-+	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
-+	r9a06g032_clk_domain = pd;
-+
-+	of_genpd_add_provider_simple(np, genpd);
-+	return 0;
-+}
-+
- static void
- r9a06g032_clk_gate_set(struct r9a06g032_priv *clocks,
- 		       struct r9a06g032_gate *g, int on)
-@@ -937,6 +1042,10 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
+ 	cprman = devm_kzalloc(dev,
+ 			      struct_size(cprman, onecell.hws, asize),
+ 			      GFP_KERNEL);
+@@ -2144,6 +2387,7 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
  
-+	error = r9a06g032_add_clk_domain(dev);
-+	if (error)
-+		return error;
-+
- 	return devm_add_action_or_reset(dev,
- 					r9a06g032_clocks_del_clk_provider, np);
- }
+ 	spin_lock_init(&cprman->regs_lock);
+ 	cprman->dev = dev;
++	cprman->firmware = firmware;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	cprman->regs = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(cprman->regs))
 -- 
-2.7.4
+2.21.0
 
