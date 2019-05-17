@@ -2,1465 +2,367 @@ Return-Path: <SRS0=WYU1=TR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=AC_FROM_MANY_DOTS,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013F4C04AB4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 13:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7CCC04AB4
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 14:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0FE720881
-	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 13:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36A3C2166E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 May 2019 14:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbfEQNYC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 May 2019 09:24:02 -0400
-Received: from jax4mhob14.registeredsite.com ([64.69.218.102]:54412 "EHLO
-        jax4mhob14.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728100AbfEQNYC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 May 2019 09:24:02 -0400
-Received: from mailpod.hostingplatform.com ([10.30.71.204])
-        by jax4mhob14.registeredsite.com (8.14.4/8.14.4) with ESMTP id x4HDNuQO018829
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-clk@vger.kernel.org>; Fri, 17 May 2019 09:23:56 -0400
-Received: (qmail 19075 invoked by uid 0); 17 May 2019 13:23:56 -0000
-X-TCPREMOTEIP: 81.173.50.109
-X-Authenticated-UID: mike@milosoftware.com
-Received: from unknown (HELO mikebuntu.TOPIC.LOCAL) (mike@milosoftware.com@81.173.50.109)
-  by 0 with ESMTPA; 17 May 2019 13:23:56 -0000
-From:   Mike Looijmans <mike.looijmans@topic.nl>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v3] clk: Add Si5341/Si5340 driver
-Date:   Fri, 17 May 2019 15:23:52 +0200
-Message-Id: <20190517132352.31221-1-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-In-Reply-To: <20190424090038.18353-1-mike.looijmans@topic.nl>
-References: <20190424090038.18353-1-mike.looijmans@topic.nl> <155623538292.15276.10999401088770081919@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728958AbfEQOtE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 May 2019 10:49:04 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:51244 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728861AbfEQOtE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 May 2019 10:49:04 -0400
+X-IronPort-AV: E=Sophos;i="5.60,480,1549897200"; 
+   d="scan'208";a="16051826"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 May 2019 23:48:58 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D53A141773CE;
+        Fri, 17 May 2019 23:48:55 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: renesas: r9a06g032: Add clock domain support
+Date:   Fri, 17 May 2019 15:48:29 +0100
+Message-Id: <1558104509-3657-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adds a driver for the Si5341 and Si5340 chips. The driver does not fully
-support all features of these chips, but allows the chip to be used
-without any support from the "clockbuilder pro" software.
+There are several clocks on the r9ag032 which are currently not enabled
+in their drivers that can be delegated to clock domain system for power
+management. Therefore add support for clock domain functionality to the
+r9a06g032 clock driver.
 
-If the chip is preprogrammed, that is, you bought one with some defaults
-burned in, or you programmed the NVM in some way, the driver will just
-take over the current settings and only change them on demand. Otherwise
-the input must be a fixed XTAL in its most basic configuration (no
-predividers, no feedback, etc.).
-
-The driver supports dynamic changes of multisynth, output dividers and
-enabling or powering down outputs and multisynths.
-
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
 ---
-v2: Fix setting a Rx_DIV value of 2
-v3: Rework after maintainer review
-    Style changes (whitespace, brackets)
-    Use unaligned.h
-    Integrate assigned-clock(-parent)s support
-    Remove most dev_dbg calls
+ drivers/clk/renesas/r9a06g032-clocks.c | 243 ++++++++++++++++++++++++---------
+ 1 file changed, 176 insertions(+), 67 deletions(-)
 
- drivers/clk/Kconfig      |   11 +
- drivers/clk/Makefile     |    1 +
- drivers/clk/clk-si5341.c | 1347 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1359 insertions(+)
- create mode 100644 drivers/clk/clk-si5341.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index e705aab9e38b..0edd9ae3c89b 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -90,6 +90,17 @@ config COMMON_CLK_SCPI
- 	  This driver uses SCPI Message Protocol to interact with the
- 	  firmware providing all the clock controls.
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 0b492b5..8a278da 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -15,6 +15,8 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_clock.h>
++#include <linux/pm_domain.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+@@ -49,6 +51,7 @@ struct r9a06g032_gate {
+ /* This is used to describe a clock for instantiation */
+ struct r9a06g032_clkdesc {
+ 	const char *name;
++	bool managed;
+ 	u32 type: 3;
+ 	u32 index: 8;
+ 	u32 source : 8; /* source index + 1 (0 == none) */
+@@ -81,7 +84,11 @@ struct r9a06g032_clkdesc {
+ #define D_GATE(_idx, _n, _src, ...) \
+ 	{ .type = K_GATE, .index = R9A06G032_##_idx, \
+ 		.source = 1 + R9A06G032_##_src, .name = _n, \
+-		.gate = I_GATE(__VA_ARGS__), }
++		.managed = 0, .gate = I_GATE(__VA_ARGS__) }
++#define D_MODULE(_idx, _n, _src, ...) \
++	{ .type = K_GATE, .index = R9A06G032_##_idx, \
++		.source = 1 + R9A06G032_##_src, .name = _n, \
++		.managed = 1, .gate = I_GATE(__VA_ARGS__) }
+ /* Fixed-factor multipler and divider for root clocks */
+ #define D_ROOT(_idx, _n, _mul, _div) \
+ 	{ .type = K_FFC, .index = R9A06G032_##_idx, .name = _n, \
+@@ -198,7 +205,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
+ 	D_GATE(CLK_P6_PG2, "clk_p6_pg2", DIV_P6_PG, 0x8a3, 0x8a4, 0x8a5, 0, 0xb61, 0, 0),
+ 	D_GATE(CLK_P6_PG3, "clk_p6_pg3", DIV_P6_PG, 0x8a6, 0x8a7, 0x8a8, 0, 0xb62, 0, 0),
+ 	D_GATE(CLK_P6_PG4, "clk_p6_pg4", DIV_P6_PG, 0x8a9, 0x8aa, 0x8ab, 0, 0xb63, 0, 0),
+-	D_GATE(CLK_PCI_USB, "clk_pci_usb", CLKOUT_D40, 0xe6, 0, 0, 0, 0, 0, 0),
++	D_MODULE(CLK_PCI_USB, "clk_pci_usb", CLKOUT_D40, 0xe6, 0, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_QSPI0, "clk_qspi0", DIV_QSPI0, 0x2a4, 0x2a5, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_QSPI1, "clk_qspi1", DIV_QSPI1, 0x484, 0x485, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_RGMII_REF, "clk_rgmii_ref", CLKOUT_D8, 0x340, 0, 0, 0, 0, 0, 0),
+@@ -215,17 +222,17 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
+ 	D_GATE(CLK_SPI5, "clk_spi5", DIV_P4_PG, 0x822, 0x823, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_SWITCH, "clk_switch", DIV_SWITCH, 0x982, 0x983, 0, 0, 0, 0, 0),
+ 	D_DIV(DIV_MOTOR, "div_motor", CLKOUT_D5, 84, 2, 8),
+-	D_GATE(HCLK_ECAT125, "hclk_ecat125", CLKOUT_D8, 0x400, 0x401, 0, 0x402, 0, 0x440, 0x441),
+-	D_GATE(HCLK_PINCONFIG, "hclk_pinconfig", CLKOUT_D40, 0x740, 0x741, 0x742, 0, 0xae0, 0, 0),
+-	D_GATE(HCLK_SERCOS, "hclk_sercos", CLKOUT_D10, 0x420, 0x422, 0, 0x421, 0, 0x460, 0x461),
+-	D_GATE(HCLK_SGPIO2, "hclk_sgpio2", DIV_P5_PG, 0x8c3, 0x8c4, 0x8c5, 0, 0xb41, 0, 0),
+-	D_GATE(HCLK_SGPIO3, "hclk_sgpio3", DIV_P5_PG, 0x8c6, 0x8c7, 0x8c8, 0, 0xb42, 0, 0),
+-	D_GATE(HCLK_SGPIO4, "hclk_sgpio4", DIV_P5_PG, 0x8c9, 0x8ca, 0x8cb, 0, 0xb43, 0, 0),
+-	D_GATE(HCLK_TIMER0, "hclk_timer0", CLKOUT_D40, 0x743, 0x744, 0x745, 0, 0xae1, 0, 0),
+-	D_GATE(HCLK_TIMER1, "hclk_timer1", CLKOUT_D40, 0x746, 0x747, 0x748, 0, 0xae2, 0, 0),
+-	D_GATE(HCLK_USBF, "hclk_usbf", CLKOUT_D8, 0xe3, 0, 0, 0xe4, 0, 0x102, 0x103),
+-	D_GATE(HCLK_USBH, "hclk_usbh", CLKOUT_D8, 0xe0, 0xe1, 0, 0xe2, 0, 0x100, 0x101),
+-	D_GATE(HCLK_USBPM, "hclk_usbpm", CLKOUT_D8, 0xe5, 0, 0, 0, 0, 0, 0),
++	D_MODULE(HCLK_ECAT125, "hclk_ecat125", CLKOUT_D8, 0x400, 0x401, 0, 0x402, 0, 0x440, 0x441),
++	D_MODULE(HCLK_PINCONFIG, "hclk_pinconfig", CLKOUT_D40, 0x740, 0x741, 0x742, 0, 0xae0, 0, 0),
++	D_MODULE(HCLK_SERCOS, "hclk_sercos", CLKOUT_D10, 0x420, 0x422, 0, 0x421, 0, 0x460, 0x461),
++	D_MODULE(HCLK_SGPIO2, "hclk_sgpio2", DIV_P5_PG, 0x8c3, 0x8c4, 0x8c5, 0, 0xb41, 0, 0),
++	D_MODULE(HCLK_SGPIO3, "hclk_sgpio3", DIV_P5_PG, 0x8c6, 0x8c7, 0x8c8, 0, 0xb42, 0, 0),
++	D_MODULE(HCLK_SGPIO4, "hclk_sgpio4", DIV_P5_PG, 0x8c9, 0x8ca, 0x8cb, 0, 0xb43, 0, 0),
++	D_MODULE(HCLK_TIMER0, "hclk_timer0", CLKOUT_D40, 0x743, 0x744, 0x745, 0, 0xae1, 0, 0),
++	D_MODULE(HCLK_TIMER1, "hclk_timer1", CLKOUT_D40, 0x746, 0x747, 0x748, 0, 0xae2, 0, 0),
++	D_MODULE(HCLK_USBF, "hclk_usbf", CLKOUT_D8, 0xe3, 0, 0, 0xe4, 0, 0x102, 0x103),
++	D_MODULE(HCLK_USBH, "hclk_usbh", CLKOUT_D8, 0xe0, 0xe1, 0, 0xe2, 0, 0x100, 0x101),
++	D_MODULE(HCLK_USBPM, "hclk_usbpm", CLKOUT_D8, 0xe5, 0, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_48_PG_F, "clk_48_pg_f", CLK_48, 0x78c, 0x78d, 0, 0x78e, 0, 0xb04, 0xb05),
+ 	D_GATE(CLK_48_PG4, "clk_48_pg4", CLK_48, 0x789, 0x78a, 0x78b, 0, 0xb03, 0, 0),
+ 	D_FFC(CLK_DDRPHY_PLLCLK_D4, "clk_ddrphy_pllclk_d4", CLK_DDRPHY_PLLCLK, 4),
+@@ -235,13 +242,13 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
+ 	D_FFC(CLK_REF_SYNC_D8, "clk_ref_sync_d8", CLK_REF_SYNC, 8),
+ 	D_FFC(CLK_SERCOS100_D2, "clk_sercos100_d2", CLK_SERCOS100, 2),
+ 	D_DIV(DIV_CA7, "div_ca7", CLK_REF_SYNC, 57, 1, 4, 1, 2, 4),
+-	D_GATE(HCLK_CAN0, "hclk_can0", CLK_48, 0x783, 0x784, 0x785, 0, 0xb01, 0, 0),
+-	D_GATE(HCLK_CAN1, "hclk_can1", CLK_48, 0x786, 0x787, 0x788, 0, 0xb02, 0, 0),
+-	D_GATE(HCLK_DELTASIGMA, "hclk_deltasigma", DIV_MOTOR, 0x1ef, 0x1f0, 0x1f1, 0, 0, 0, 0),
+-	D_GATE(HCLK_PWMPTO, "hclk_pwmpto", DIV_MOTOR, 0x1ec, 0x1ed, 0x1ee, 0, 0, 0, 0),
+-	D_GATE(HCLK_RSV, "hclk_rsv", CLK_48, 0x780, 0x781, 0x782, 0, 0xb00, 0, 0),
+-	D_GATE(HCLK_SGPIO0, "hclk_sgpio0", DIV_MOTOR, 0x1e0, 0x1e1, 0x1e2, 0, 0, 0, 0),
+-	D_GATE(HCLK_SGPIO1, "hclk_sgpio1", DIV_MOTOR, 0x1e3, 0x1e4, 0x1e5, 0, 0, 0, 0),
++	D_MODULE(HCLK_CAN0, "hclk_can0", CLK_48, 0x783, 0x784, 0x785, 0, 0xb01, 0, 0),
++	D_MODULE(HCLK_CAN1, "hclk_can1", CLK_48, 0x786, 0x787, 0x788, 0, 0xb02, 0, 0),
++	D_MODULE(HCLK_DELTASIGMA, "hclk_deltasigma", DIV_MOTOR, 0x1ef, 0x1f0, 0x1f1, 0, 0, 0, 0),
++	D_MODULE(HCLK_PWMPTO, "hclk_pwmpto", DIV_MOTOR, 0x1ec, 0x1ed, 0x1ee, 0, 0, 0, 0),
++	D_MODULE(HCLK_RSV, "hclk_rsv", CLK_48, 0x780, 0x781, 0x782, 0, 0xb00, 0, 0),
++	D_MODULE(HCLK_SGPIO0, "hclk_sgpio0", DIV_MOTOR, 0x1e0, 0x1e1, 0x1e2, 0, 0, 0, 0),
++	D_MODULE(HCLK_SGPIO1, "hclk_sgpio1", DIV_MOTOR, 0x1e3, 0x1e4, 0x1e5, 0, 0, 0, 0),
+ 	D_DIV(RTOS_MDC, "rtos_mdc", CLK_REF_SYNC, 100, 80, 640, 80, 160, 320, 640),
+ 	D_GATE(CLK_CM3, "clk_cm3", CLK_REF_SYNC_D4, 0xba0, 0xba1, 0, 0xba2, 0, 0xbc0, 0xbc1),
+ 	D_GATE(CLK_DDRC, "clk_ddrc", CLK_DDRPHY_PLLCLK_D4, 0x323, 0x324, 0, 0, 0, 0, 0),
+@@ -249,53 +256,53 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
+ 	D_GATE(CLK_HSR50, "clk_hsr50", CLK_HSR100_D2, 0x484, 0x485, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_HW_RTOS, "clk_hw_rtos", CLK_REF_SYNC_D4, 0xc60, 0xc61, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_SERCOS50, "clk_sercos50", CLK_SERCOS100_D2, 0x424, 0x423, 0, 0, 0, 0, 0),
+-	D_GATE(HCLK_ADC, "hclk_adc", CLK_REF_SYNC_D8, 0x1af, 0x1b0, 0x1b1, 0, 0, 0, 0),
+-	D_GATE(HCLK_CM3, "hclk_cm3", CLK_REF_SYNC_D4, 0xc20, 0xc21, 0xc22, 0, 0, 0, 0),
+-	D_GATE(HCLK_CRYPTO_EIP150, "hclk_crypto_eip150", CLK_REF_SYNC_D4, 0x123, 0x124, 0x125, 0, 0x142, 0, 0),
+-	D_GATE(HCLK_CRYPTO_EIP93, "hclk_crypto_eip93", CLK_REF_SYNC_D4, 0x120, 0x121, 0, 0x122, 0, 0x140, 0x141),
+-	D_GATE(HCLK_DDRC, "hclk_ddrc", CLK_REF_SYNC_D4, 0x320, 0x322, 0, 0x321, 0, 0x3a0, 0x3a1),
+-	D_GATE(HCLK_DMA0, "hclk_dma0", CLK_REF_SYNC_D4, 0x260, 0x261, 0x262, 0x263, 0x2c0, 0x2c1, 0x2c2),
+-	D_GATE(HCLK_DMA1, "hclk_dma1", CLK_REF_SYNC_D4, 0x264, 0x265, 0x266, 0x267, 0x2c3, 0x2c4, 0x2c5),
+-	D_GATE(HCLK_GMAC0, "hclk_gmac0", CLK_REF_SYNC_D4, 0x360, 0x361, 0x362, 0x363, 0x3c0, 0x3c1, 0x3c2),
+-	D_GATE(HCLK_GMAC1, "hclk_gmac1", CLK_REF_SYNC_D4, 0x380, 0x381, 0x382, 0x383, 0x3e0, 0x3e1, 0x3e2),
+-	D_GATE(HCLK_GPIO0, "hclk_gpio0", CLK_REF_SYNC_D4, 0x212, 0x213, 0x214, 0, 0, 0, 0),
+-	D_GATE(HCLK_GPIO1, "hclk_gpio1", CLK_REF_SYNC_D4, 0x215, 0x216, 0x217, 0, 0, 0, 0),
+-	D_GATE(HCLK_GPIO2, "hclk_gpio2", CLK_REF_SYNC_D4, 0x229, 0x22a, 0x22b, 0, 0, 0, 0),
+-	D_GATE(HCLK_HSR, "hclk_hsr", CLK_HSR100_D2, 0x480, 0x482, 0, 0x481, 0, 0x4c0, 0x4c1),
+-	D_GATE(HCLK_I2C0, "hclk_i2c0", CLK_REF_SYNC_D8, 0x1a9, 0x1aa, 0x1ab, 0, 0, 0, 0),
+-	D_GATE(HCLK_I2C1, "hclk_i2c1", CLK_REF_SYNC_D8, 0x1ac, 0x1ad, 0x1ae, 0, 0, 0, 0),
+-	D_GATE(HCLK_LCD, "hclk_lcd", CLK_REF_SYNC_D4, 0x7a0, 0x7a1, 0x7a2, 0, 0xb20, 0, 0),
+-	D_GATE(HCLK_MSEBI_M, "hclk_msebi_m", CLK_REF_SYNC_D4, 0x164, 0x165, 0x166, 0, 0x183, 0, 0),
+-	D_GATE(HCLK_MSEBI_S, "hclk_msebi_s", CLK_REF_SYNC_D4, 0x160, 0x161, 0x162, 0x163, 0x180, 0x181, 0x182),
+-	D_GATE(HCLK_NAND, "hclk_nand", CLK_REF_SYNC_D4, 0x280, 0x281, 0x282, 0x283, 0x2e0, 0x2e1, 0x2e2),
+-	D_GATE(HCLK_PG_I, "hclk_pg_i", CLK_REF_SYNC_D4, 0x7ac, 0x7ad, 0, 0x7ae, 0, 0xb24, 0xb25),
+-	D_GATE(HCLK_PG19, "hclk_pg19", CLK_REF_SYNC_D4, 0x22c, 0x22d, 0x22e, 0, 0, 0, 0),
+-	D_GATE(HCLK_PG20, "hclk_pg20", CLK_REF_SYNC_D4, 0x22f, 0x230, 0x231, 0, 0, 0, 0),
+-	D_GATE(HCLK_PG3, "hclk_pg3", CLK_REF_SYNC_D4, 0x7a6, 0x7a7, 0x7a8, 0, 0xb22, 0, 0),
+-	D_GATE(HCLK_PG4, "hclk_pg4", CLK_REF_SYNC_D4, 0x7a9, 0x7aa, 0x7ab, 0, 0xb23, 0, 0),
+-	D_GATE(HCLK_QSPI0, "hclk_qspi0", CLK_REF_SYNC_D4, 0x2a0, 0x2a1, 0x2a2, 0x2a3, 0x300, 0x301, 0x302),
+-	D_GATE(HCLK_QSPI1, "hclk_qspi1", CLK_REF_SYNC_D4, 0x480, 0x481, 0x482, 0x483, 0x4c0, 0x4c1, 0x4c2),
+-	D_GATE(HCLK_ROM, "hclk_rom", CLK_REF_SYNC_D4, 0xaa0, 0xaa1, 0xaa2, 0, 0xb80, 0, 0),
+-	D_GATE(HCLK_RTC, "hclk_rtc", CLK_REF_SYNC_D8, 0xa00, 0, 0, 0, 0, 0, 0),
+-	D_GATE(HCLK_SDIO0, "hclk_sdio0", CLK_REF_SYNC_D4, 0x60, 0x61, 0x62, 0x63, 0x80, 0x81, 0x82),
+-	D_GATE(HCLK_SDIO1, "hclk_sdio1", CLK_REF_SYNC_D4, 0x640, 0x641, 0x642, 0x643, 0x660, 0x661, 0x662),
+-	D_GATE(HCLK_SEMAP, "hclk_semap", CLK_REF_SYNC_D4, 0x7a3, 0x7a4, 0x7a5, 0, 0xb21, 0, 0),
+-	D_GATE(HCLK_SPI0, "hclk_spi0", CLK_REF_SYNC_D4, 0x200, 0x201, 0x202, 0, 0, 0, 0),
+-	D_GATE(HCLK_SPI1, "hclk_spi1", CLK_REF_SYNC_D4, 0x203, 0x204, 0x205, 0, 0, 0, 0),
+-	D_GATE(HCLK_SPI2, "hclk_spi2", CLK_REF_SYNC_D4, 0x206, 0x207, 0x208, 0, 0, 0, 0),
+-	D_GATE(HCLK_SPI3, "hclk_spi3", CLK_REF_SYNC_D4, 0x209, 0x20a, 0x20b, 0, 0, 0, 0),
+-	D_GATE(HCLK_SPI4, "hclk_spi4", CLK_REF_SYNC_D4, 0x20c, 0x20d, 0x20e, 0, 0, 0, 0),
+-	D_GATE(HCLK_SPI5, "hclk_spi5", CLK_REF_SYNC_D4, 0x20f, 0x210, 0x211, 0, 0, 0, 0),
+-	D_GATE(HCLK_SWITCH, "hclk_switch", CLK_REF_SYNC_D4, 0x980, 0, 0x981, 0, 0, 0, 0),
+-	D_GATE(HCLK_SWITCH_RG, "hclk_switch_rg", CLK_REF_SYNC_D4, 0xc40, 0xc41, 0xc42, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART0, "hclk_uart0", CLK_REF_SYNC_D8, 0x1a0, 0x1a1, 0x1a2, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART1, "hclk_uart1", CLK_REF_SYNC_D8, 0x1a3, 0x1a4, 0x1a5, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART2, "hclk_uart2", CLK_REF_SYNC_D8, 0x1a6, 0x1a7, 0x1a8, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART3, "hclk_uart3", CLK_REF_SYNC_D4, 0x218, 0x219, 0x21a, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART4, "hclk_uart4", CLK_REF_SYNC_D4, 0x21b, 0x21c, 0x21d, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART5, "hclk_uart5", CLK_REF_SYNC_D4, 0x220, 0x221, 0x222, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART6, "hclk_uart6", CLK_REF_SYNC_D4, 0x223, 0x224, 0x225, 0, 0, 0, 0),
+-	D_GATE(HCLK_UART7, "hclk_uart7", CLK_REF_SYNC_D4, 0x226, 0x227, 0x228, 0, 0, 0, 0),
++	D_MODULE(HCLK_ADC, "hclk_adc", CLK_REF_SYNC_D8, 0x1af, 0x1b0, 0x1b1, 0, 0, 0, 0),
++	D_MODULE(HCLK_CM3, "hclk_cm3", CLK_REF_SYNC_D4, 0xc20, 0xc21, 0xc22, 0, 0, 0, 0),
++	D_MODULE(HCLK_CRYPTO_EIP150, "hclk_crypto_eip150", CLK_REF_SYNC_D4, 0x123, 0x124, 0x125, 0, 0x142, 0, 0),
++	D_MODULE(HCLK_CRYPTO_EIP93, "hclk_crypto_eip93", CLK_REF_SYNC_D4, 0x120, 0x121, 0, 0x122, 0, 0x140, 0x141),
++	D_MODULE(HCLK_DDRC, "hclk_ddrc", CLK_REF_SYNC_D4, 0x320, 0x322, 0, 0x321, 0, 0x3a0, 0x3a1),
++	D_MODULE(HCLK_DMA0, "hclk_dma0", CLK_REF_SYNC_D4, 0x260, 0x261, 0x262, 0x263, 0x2c0, 0x2c1, 0x2c2),
++	D_MODULE(HCLK_DMA1, "hclk_dma1", CLK_REF_SYNC_D4, 0x264, 0x265, 0x266, 0x267, 0x2c3, 0x2c4, 0x2c5),
++	D_MODULE(HCLK_GMAC0, "hclk_gmac0", CLK_REF_SYNC_D4, 0x360, 0x361, 0x362, 0x363, 0x3c0, 0x3c1, 0x3c2),
++	D_MODULE(HCLK_GMAC1, "hclk_gmac1", CLK_REF_SYNC_D4, 0x380, 0x381, 0x382, 0x383, 0x3e0, 0x3e1, 0x3e2),
++	D_MODULE(HCLK_GPIO0, "hclk_gpio0", CLK_REF_SYNC_D4, 0x212, 0x213, 0x214, 0, 0, 0, 0),
++	D_MODULE(HCLK_GPIO1, "hclk_gpio1", CLK_REF_SYNC_D4, 0x215, 0x216, 0x217, 0, 0, 0, 0),
++	D_MODULE(HCLK_GPIO2, "hclk_gpio2", CLK_REF_SYNC_D4, 0x229, 0x22a, 0x22b, 0, 0, 0, 0),
++	D_MODULE(HCLK_HSR, "hclk_hsr", CLK_HSR100_D2, 0x480, 0x482, 0, 0x481, 0, 0x4c0, 0x4c1),
++	D_MODULE(HCLK_I2C0, "hclk_i2c0", CLK_REF_SYNC_D8, 0x1a9, 0x1aa, 0x1ab, 0, 0, 0, 0),
++	D_MODULE(HCLK_I2C1, "hclk_i2c1", CLK_REF_SYNC_D8, 0x1ac, 0x1ad, 0x1ae, 0, 0, 0, 0),
++	D_MODULE(HCLK_LCD, "hclk_lcd", CLK_REF_SYNC_D4, 0x7a0, 0x7a1, 0x7a2, 0, 0xb20, 0, 0),
++	D_MODULE(HCLK_MSEBI_M, "hclk_msebi_m", CLK_REF_SYNC_D4, 0x164, 0x165, 0x166, 0, 0x183, 0, 0),
++	D_MODULE(HCLK_MSEBI_S, "hclk_msebi_s", CLK_REF_SYNC_D4, 0x160, 0x161, 0x162, 0x163, 0x180, 0x181, 0x182),
++	D_MODULE(HCLK_NAND, "hclk_nand", CLK_REF_SYNC_D4, 0x280, 0x281, 0x282, 0x283, 0x2e0, 0x2e1, 0x2e2),
++	D_MODULE(HCLK_PG_I, "hclk_pg_i", CLK_REF_SYNC_D4, 0x7ac, 0x7ad, 0, 0x7ae, 0, 0xb24, 0xb25),
++	D_MODULE(HCLK_PG19, "hclk_pg19", CLK_REF_SYNC_D4, 0x22c, 0x22d, 0x22e, 0, 0, 0, 0),
++	D_MODULE(HCLK_PG20, "hclk_pg20", CLK_REF_SYNC_D4, 0x22f, 0x230, 0x231, 0, 0, 0, 0),
++	D_MODULE(HCLK_PG3, "hclk_pg3", CLK_REF_SYNC_D4, 0x7a6, 0x7a7, 0x7a8, 0, 0xb22, 0, 0),
++	D_MODULE(HCLK_PG4, "hclk_pg4", CLK_REF_SYNC_D4, 0x7a9, 0x7aa, 0x7ab, 0, 0xb23, 0, 0),
++	D_MODULE(HCLK_QSPI0, "hclk_qspi0", CLK_REF_SYNC_D4, 0x2a0, 0x2a1, 0x2a2, 0x2a3, 0x300, 0x301, 0x302),
++	D_MODULE(HCLK_QSPI1, "hclk_qspi1", CLK_REF_SYNC_D4, 0x480, 0x481, 0x482, 0x483, 0x4c0, 0x4c1, 0x4c2),
++	D_MODULE(HCLK_ROM, "hclk_rom", CLK_REF_SYNC_D4, 0xaa0, 0xaa1, 0xaa2, 0, 0xb80, 0, 0),
++	D_MODULE(HCLK_RTC, "hclk_rtc", CLK_REF_SYNC_D8, 0xa00, 0, 0, 0, 0, 0, 0),
++	D_MODULE(HCLK_SDIO0, "hclk_sdio0", CLK_REF_SYNC_D4, 0x60, 0x61, 0x62, 0x63, 0x80, 0x81, 0x82),
++	D_MODULE(HCLK_SDIO1, "hclk_sdio1", CLK_REF_SYNC_D4, 0x640, 0x641, 0x642, 0x643, 0x660, 0x661, 0x662),
++	D_MODULE(HCLK_SEMAP, "hclk_semap", CLK_REF_SYNC_D4, 0x7a3, 0x7a4, 0x7a5, 0, 0xb21, 0, 0),
++	D_MODULE(HCLK_SPI0, "hclk_spi0", CLK_REF_SYNC_D4, 0x200, 0x201, 0x202, 0, 0, 0, 0),
++	D_MODULE(HCLK_SPI1, "hclk_spi1", CLK_REF_SYNC_D4, 0x203, 0x204, 0x205, 0, 0, 0, 0),
++	D_MODULE(HCLK_SPI2, "hclk_spi2", CLK_REF_SYNC_D4, 0x206, 0x207, 0x208, 0, 0, 0, 0),
++	D_MODULE(HCLK_SPI3, "hclk_spi3", CLK_REF_SYNC_D4, 0x209, 0x20a, 0x20b, 0, 0, 0, 0),
++	D_MODULE(HCLK_SPI4, "hclk_spi4", CLK_REF_SYNC_D4, 0x20c, 0x20d, 0x20e, 0, 0, 0, 0),
++	D_MODULE(HCLK_SPI5, "hclk_spi5", CLK_REF_SYNC_D4, 0x20f, 0x210, 0x211, 0, 0, 0, 0),
++	D_MODULE(HCLK_SWITCH, "hclk_switch", CLK_REF_SYNC_D4, 0x980, 0, 0x981, 0, 0, 0, 0),
++	D_MODULE(HCLK_SWITCH_RG, "hclk_switch_rg", CLK_REF_SYNC_D4, 0xc40, 0xc41, 0xc42, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART0, "hclk_uart0", CLK_REF_SYNC_D8, 0x1a0, 0x1a1, 0x1a2, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART1, "hclk_uart1", CLK_REF_SYNC_D8, 0x1a3, 0x1a4, 0x1a5, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART2, "hclk_uart2", CLK_REF_SYNC_D8, 0x1a6, 0x1a7, 0x1a8, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART3, "hclk_uart3", CLK_REF_SYNC_D4, 0x218, 0x219, 0x21a, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART4, "hclk_uart4", CLK_REF_SYNC_D4, 0x21b, 0x21c, 0x21d, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART5, "hclk_uart5", CLK_REF_SYNC_D4, 0x220, 0x221, 0x222, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART6, "hclk_uart6", CLK_REF_SYNC_D4, 0x223, 0x224, 0x225, 0, 0, 0, 0),
++	D_MODULE(HCLK_UART7, "hclk_uart7", CLK_REF_SYNC_D4, 0x226, 0x227, 0x228, 0, 0, 0, 0),
+ 	/*
+ 	 * These are not hardware clocks, but are needed to handle the special
+ 	 * case where we have a 'selector bit' that doesn't just change the
+@@ -372,6 +379,104 @@ struct r9a06g032_clk_gate {
  
-+config COMMON_CLK_SI5341
-+	tristate "Clock driver for SiLabs 5341 and 5340 A/B/C/D devices"
-+	depends on I2C
-+	select REGMAP_I2C
-+	help
-+	  This driver supports Silicon Labs Si5341 and Si5340 programmable clock
-+	  generators. Not all features of these chips are currently supported
-+	  by the driver, in particular it only supports XTAL input. The chip can
-+	  be pre-programmed to support other configurations and features not yet
-+	  implemented in the driver.
-+
- config COMMON_CLK_SI5351
- 	tristate "Clock driver for SiLabs 5351A/B/C"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 1db133652f0c..4a7aa4a01fef 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -47,6 +47,7 @@ obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
- obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
- obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
-+obj-$(CONFIG_COMMON_CLK_SI5341)		+= clk-si5341.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
- obj-$(CONFIG_COMMON_CLK_SI544)		+= clk-si544.o
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-new file mode 100644
-index 000000000000..fabbd2aec6f1
---- /dev/null
-+++ b/drivers/clk/clk-si5341.c
-@@ -0,0 +1,1347 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for Silicon Labs Si5341/Si5340 Clock generator
-+ * Copyright (C) 2019 Topic Embedded Products
-+ * Author: Mike Looijmans <mike.looijmans@topic.nl>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/gcd.h>
-+#include <linux/math64.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <asm/unaligned.h>
-+
-+#define SI5341_MAX_NUM_OUTPUTS 10
-+#define SI5340_MAX_NUM_OUTPUTS 4
-+
-+#define SI5341_NUM_SYNTH 5
-+#define SI5340_NUM_SYNTH 4
-+
-+/* Range of the synthesizer fractional divider */
-+#define SI5341_SYNTH_N_MIN	10
-+#define SI5341_SYNTH_N_MAX	4095
-+
-+/* The chip can get its input clock from 3 input pins or an XTAL */
-+
-+/* There is one PLL running at 13500–14256 MHz */
-+#define SI5341_PLL_VCO_MIN 13500000000ull
-+#define SI5341_PLL_VCO_MAX 14256000000ull
-+
-+/* The 5 frequency synthesizers obtain their input from the PLL */
-+struct clk_si5341_synth {
-+	struct clk_hw hw;
-+	struct clk_si5341 *data;
-+	u8 index;
-+};
-+#define to_clk_si5341_synth(_hw) \
-+	container_of(_hw, struct clk_si5341_synth, hw)
-+
-+/* The output stages can be connected to any synth (full mux) */
-+struct clk_si5341_output {
-+	struct clk_hw hw;
-+	struct clk_si5341 *data;
-+	u8 index;
-+};
-+#define to_clk_si5341_output(_hw) \
-+	container_of(_hw, struct clk_si5341_output, hw)
-+
-+struct clk_si5341 {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	struct i2c_client *i2c_client;
-+	struct clk_si5341_synth synth[SI5341_NUM_SYNTH];
-+	struct clk_si5341_output clk[SI5341_MAX_NUM_OUTPUTS];
-+	struct clk *pxtal;
-+	const char *pxtal_name;
-+	const u16 *reg_output_offset;
-+	const u16 *reg_rdiv_offset;
-+	u64 freq_vco; /* 13500–14256 MHz */
-+	u8 num_outputs;
-+	u8 num_synth;
-+};
-+#define to_clk_si5341(_hw)	container_of(_hw, struct clk_si5341, hw)
-+
-+struct clk_si5341_output_config {
-+	u8 out_format_drv_bits;
-+	u8 out_cm_ampl_bits;
-+	bool synth_master;
-+	bool always_on;
+ #define to_r9a06g032_gate(_hw) container_of(_hw, struct r9a06g032_clk_gate, hw)
+ 
++struct r9a06g032_clk_domain {
++	struct generic_pm_domain genpd;
++	struct device_node *np;
 +};
 +
-+#define SI5341_PAGE		0x0001
-+#define SI5341_PN_BASE		0x0002
-+#define SI5341_DEVICE_REV	0x0005
-+#define SI5341_STATUS		0x000C
-+#define SI5341_SOFT_RST		0x001C
++static struct r9a06g032_clk_domain *r9a06g032_clk_domain;
 +
-+/* Input dividers (48-bit) */
-+#define SI5341_IN_PDIV(x)	(0x0208 + ((x) * 10))
-+#define SI5341_IN_PSET(x)	(0x020E + ((x) * 10))
-+
-+/* PLL configuration */
-+#define SI5341_PLL_M_NUM	0x0235
-+#define SI5341_PLL_M_DEN	0x023B
-+
-+/* Output configuration */
-+#define SI5341_OUT_CONFIG(output)	\
-+			((output)->data->reg_output_offset[(output)->index])
-+#define SI5341_OUT_FORMAT(output)	(SI5341_OUT_CONFIG(output) + 1)
-+#define SI5341_OUT_CM(output)		(SI5341_OUT_CONFIG(output) + 2)
-+#define SI5341_OUT_MUX_SEL(output)	(SI5341_OUT_CONFIG(output) + 3)
-+#define SI5341_OUT_R_REG(output)	\
-+			((output)->data->reg_rdiv_offset[(output)->index])
-+
-+/* Synthesize N divider */
-+#define SI5341_SYNTH_N_NUM(x)	(0x0302 + ((x) * 11))
-+#define SI5341_SYNTH_N_DEN(x)	(0x0308 + ((x) * 11))
-+#define SI5341_SYNTH_N_UPD(x)	(0x030C + ((x) * 11))
-+
-+/* Synthesizer output enable, phase bypass, power mode */
-+#define SI5341_SYNTH_N_CLK_TO_OUTX_EN	0x0A03
-+#define SI5341_SYNTH_N_PIBYP		0x0A04
-+#define SI5341_SYNTH_N_PDNB		0x0A05
-+#define SI5341_SYNTH_N_CLK_DIS		0x0B4A
-+
-+#define SI5341_REGISTER_MAX	0xBFF
-+
-+/* SI5341_OUT_CONFIG bits */
-+#define SI5341_OUT_CFG_PDN		BIT(0)
-+#define SI5341_OUT_CFG_OE		BIT(1)
-+#define SI5341_OUT_CFG_RDIV_FORCE2	BIT(2)
-+
-+/* Static configuration (to be moved to firmware) */
-+struct si5341_reg_default {
-+	u16 address;
-+	u8 value;
-+};
-+
-+/* Output configuration registers 0..9 are not quite logically organized */
-+static const u16 si5341_reg_output_offset[] = {
-+	0x0108,
-+	0x010D,
-+	0x0112,
-+	0x0117,
-+	0x011C,
-+	0x0121,
-+	0x0126,
-+	0x012B,
-+	0x0130,
-+	0x013A,
-+};
-+
-+static const u16 si5340_reg_output_offset[] = {
-+	0x0112,
-+	0x0117,
-+	0x0126,
-+	0x012B,
-+};
-+
-+/* The location of the R divider registers */
-+static const u16 si5341_reg_rdiv_offset[] = {
-+	0x024A,
-+	0x024D,
-+	0x0250,
-+	0x0253,
-+	0x0256,
-+	0x0259,
-+	0x025C,
-+	0x025F,
-+	0x0262,
-+	0x0268,
-+};
-+static const u16 si5340_reg_rdiv_offset[] = {
-+	0x0250,
-+	0x0253,
-+	0x025C,
-+	0x025F,
-+};
-+
-+/*
-+ * Programming sequence from ClockBuilder, settings to initialize the system
-+ * using only the XTAL input, without pre-divider.
-+ * This also contains settings that aren't mentioned anywhere in the datasheet.
-+ * The "known" settings like synth and output configuration are done later.
-+ */
-+static const struct si5341_reg_default si5341_reg_defaults[] = {
-+	{ 0x0017, 0x3A }, /* INT mask (disable interrupts) */
-+	{ 0x0018, 0xFF }, /* INT mask */
-+	{ 0x0021, 0x0F }, /* Select XTAL as input */
-+	{ 0x0022, 0x00 }, /* Not in datasheet */
-+	{ 0x002B, 0x02 }, /* SPI config */
-+	{ 0x002C, 0x20 }, /* LOS enable for XTAL */
-+	{ 0x002D, 0x00 }, /* LOS timing */
-+	{ 0x002E, 0x00 },
-+	{ 0x002F, 0x00 },
-+	{ 0x0030, 0x00 },
-+	{ 0x0031, 0x00 },
-+	{ 0x0032, 0x00 },
-+	{ 0x0033, 0x00 },
-+	{ 0x0034, 0x00 },
-+	{ 0x0035, 0x00 },
-+	{ 0x0036, 0x00 },
-+	{ 0x0037, 0x00 },
-+	{ 0x0038, 0x00 }, /* LOS setting (thresholds) */
-+	{ 0x0039, 0x00 },
-+	{ 0x003A, 0x00 },
-+	{ 0x003B, 0x00 },
-+	{ 0x003C, 0x00 },
-+	{ 0x003D, 0x00 }, /* LOS setting (thresholds) end */
-+	{ 0x0041, 0x00 }, /* LOS0_DIV_SEL */
-+	{ 0x0042, 0x00 }, /* LOS1_DIV_SEL */
-+	{ 0x0043, 0x00 }, /* LOS2_DIV_SEL */
-+	{ 0x0044, 0x00 }, /* LOS3_DIV_SEL */
-+	{ 0x009E, 0x00 }, /* Not in datasheet */
-+	{ 0x0102, 0x01 }, /* Enable outputs */
-+	{ 0x013F, 0x00 }, /* Not in datasheet */
-+	{ 0x0140, 0x00 }, /* Not in datasheet */
-+	{ 0x0141, 0x40 }, /* OUT LOS */
-+	{ 0x0202, 0x00 }, /* XAXB_FREQ_OFFSET (=0)*/
-+	{ 0x0203, 0x00 },
-+	{ 0x0204, 0x00 },
-+	{ 0x0205, 0x00 },
-+	{ 0x0206, 0x00 }, /* PXAXB (2^x) */
-+	{ 0x0208, 0x00 }, /* Px divider setting (usually 0) */
-+	{ 0x0209, 0x00 },
-+	{ 0x020A, 0x00 },
-+	{ 0x020B, 0x00 },
-+	{ 0x020C, 0x00 },
-+	{ 0x020D, 0x00 },
-+	{ 0x020E, 0x00 },
-+	{ 0x020F, 0x00 },
-+	{ 0x0210, 0x00 },
-+	{ 0x0211, 0x00 },
-+	{ 0x0212, 0x00 },
-+	{ 0x0213, 0x00 },
-+	{ 0x0214, 0x00 },
-+	{ 0x0215, 0x00 },
-+	{ 0x0216, 0x00 },
-+	{ 0x0217, 0x00 },
-+	{ 0x0218, 0x00 },
-+	{ 0x0219, 0x00 },
-+	{ 0x021A, 0x00 },
-+	{ 0x021B, 0x00 },
-+	{ 0x021C, 0x00 },
-+	{ 0x021D, 0x00 },
-+	{ 0x021E, 0x00 },
-+	{ 0x021F, 0x00 },
-+	{ 0x0220, 0x00 },
-+	{ 0x0221, 0x00 },
-+	{ 0x0222, 0x00 },
-+	{ 0x0223, 0x00 },
-+	{ 0x0224, 0x00 },
-+	{ 0x0225, 0x00 },
-+	{ 0x0226, 0x00 },
-+	{ 0x0227, 0x00 },
-+	{ 0x0228, 0x00 },
-+	{ 0x0229, 0x00 },
-+	{ 0x022A, 0x00 },
-+	{ 0x022B, 0x00 },
-+	{ 0x022C, 0x00 },
-+	{ 0x022D, 0x00 },
-+	{ 0x022E, 0x00 },
-+	{ 0x022F, 0x00 }, /* Px divider setting (usually 0) end */
-+	{ 0x026B, 0x00 }, /* DESIGN_ID (ASCII string) */
-+	{ 0x026C, 0x00 },
-+	{ 0x026D, 0x00 },
-+	{ 0x026E, 0x00 },
-+	{ 0x026F, 0x00 },
-+	{ 0x0270, 0x00 },
-+	{ 0x0271, 0x00 },
-+	{ 0x0272, 0x00 }, /* DESIGN_ID (ASCII string) end */
-+	{ 0x0339, 0x1F }, /* N_FSTEP_MSK */
-+	{ 0x033B, 0x00 }, /* Nx_FSTEPW (Frequency step) */
-+	{ 0x033C, 0x00 },
-+	{ 0x033D, 0x00 },
-+	{ 0x033E, 0x00 },
-+	{ 0x033F, 0x00 },
-+	{ 0x0340, 0x00 },
-+	{ 0x0341, 0x00 },
-+	{ 0x0342, 0x00 },
-+	{ 0x0343, 0x00 },
-+	{ 0x0344, 0x00 },
-+	{ 0x0345, 0x00 },
-+	{ 0x0346, 0x00 },
-+	{ 0x0347, 0x00 },
-+	{ 0x0348, 0x00 },
-+	{ 0x0349, 0x00 },
-+	{ 0x034A, 0x00 },
-+	{ 0x034B, 0x00 },
-+	{ 0x034C, 0x00 },
-+	{ 0x034D, 0x00 },
-+	{ 0x034E, 0x00 },
-+	{ 0x034F, 0x00 },
-+	{ 0x0350, 0x00 },
-+	{ 0x0351, 0x00 },
-+	{ 0x0352, 0x00 },
-+	{ 0x0353, 0x00 },
-+	{ 0x0354, 0x00 },
-+	{ 0x0355, 0x00 },
-+	{ 0x0356, 0x00 },
-+	{ 0x0357, 0x00 },
-+	{ 0x0358, 0x00 }, /* Nx_FSTEPW (Frequency step) end */
-+	{ 0x0359, 0x00 }, /* Nx_DELAY */
-+	{ 0x035A, 0x00 },
-+	{ 0x035B, 0x00 },
-+	{ 0x035C, 0x00 },
-+	{ 0x035D, 0x00 },
-+	{ 0x035E, 0x00 },
-+	{ 0x035F, 0x00 },
-+	{ 0x0360, 0x00 },
-+	{ 0x0361, 0x00 },
-+	{ 0x0362, 0x00 }, /* Nx_DELAY end */
-+	{ 0x0802, 0x00 }, /* Not in datasheet */
-+	{ 0x0803, 0x00 }, /* Not in datasheet */
-+	{ 0x0804, 0x00 }, /* Not in datasheet */
-+	{ 0x090E, 0x02 }, /* XAXB_EXTCLK_EN=0 XAXB_PDNB=1 (use XTAL) */
-+	{ 0x091C, 0x04 }, /* ZDM_EN=4 (Normal mode) */
-+	{ 0x0943, 0x00 }, /* IO_VDD_SEL=0 (0=1v8, use 1=3v3) */
-+	{ 0x0949, 0x00 }, /* IN_EN (disable input clocks) */
-+	{ 0x094A, 0x00 }, /* INx_TO_PFD_EN (disabled) */
-+	{ 0x0A02, 0x00 }, /* Not in datasheet */
-+	{ 0x0B44, 0x0F }, /* PDIV_ENB (datasheet does not mention what it is) */
-+};
-+
-+/* Read and interpret a 44-bit followed by a 32-bit value in the regmap */
-+static int si5341_decode_44_32(struct regmap *regmap, unsigned int reg,
-+	u64 *val1, u32 *val2)
++static int create_add_module_clock(struct of_phandle_args *clkspec,
++			struct device *dev)
 +{
-+	int err;
-+	u8 r[10];
++	struct clk *clk;
++	int error = 0;
 +
-+	err = regmap_bulk_read(regmap, reg, r, 10);
-+	if (err < 0)
-+		return err;
++	clk = of_clk_get_from_provider(clkspec);
 +
-+	*val1 = ((u64)((r[5] & 0x0f) << 8 | r[4]) << 32) |
-+		 (get_unaligned_le32(r));
-+	*val2 = get_unaligned_le32(&r[6]);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
 +
-+	return 0;
-+}
-+
-+static int si5341_encode_44_32(struct regmap *regmap, unsigned int reg,
-+	u64 n_num, u32 n_den)
-+{
-+	u8 r[10];
-+
-+	/* Shift left as far as possible without overflowing */
-+	while (!(n_num & BIT(43)) && !(n_den & BIT(31))) {
-+		n_num <<= 1;
-+		n_den <<= 1;
++	error = pm_clk_create(dev);
++	if (error) {
++		dev_err(dev, "pm_clk_create failed %d\n", error);
++		clk_put(clk);
++		return error;
 +	}
 +
-+	/* 44 bits (6 bytes) numerator */
-+	put_unaligned_le32(n_num, r);
-+	r[4] = (n_num >> 32) & 0xff;
-+	r[5] = (n_num >> 40) & 0x0f;
-+	/* 32 bits denominator */
-+	put_unaligned_le32(n_den, &r[6]);
-+
-+	/* Program the fraction */
-+	return regmap_bulk_write(regmap, reg, r, sizeof(r));
-+}
-+
-+/* VCO, we assume it runs at a constant frequency */
-+static unsigned long si5341_clk_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si5341 *data = to_clk_si5341(hw);
-+	int err;
-+	u64 res;
-+	u64 m_num;
-+	u32 m_den;
-+	unsigned int shift;
-+
-+	/* Assume that PDIV is not being used, just read the PLL setting */
-+	err = si5341_decode_44_32(data->regmap, SI5341_PLL_M_NUM,
-+				&m_num, &m_den);
-+	if (err < 0)
-+		return 0;
-+
-+	if (!m_num || !m_den)
-+		return 0;
-+
-+	/*
-+	 * Though m_num is 64-bit, only the upper bits are actually used. While
-+	 * calculating m_num and m_den, they are shifted as far as possible to
-+	 * the left. To avoid 96-bit division here, we just shift them back so
-+	 * we can do with just 64 bits.
-+	 */
-+	shift = 0;
-+	res = m_num;
-+	while (res & 0xffff00000000) {
-+		++shift;
-+		res >>= 1;
-+	}
-+	res *= parent_rate;
-+	do_div(res, (m_den >> shift));
-+
-+	/* We cannot return the actual frequency in 32 bit, store it locally */
-+	data->freq_vco = res;
-+
-+	/* Report kHz since the value is out of range */
-+	do_div(res, 1000);
-+
-+	return (unsigned long)res;
-+}
-+
-+static const struct clk_ops si5341_clk_ops = {
-+	.recalc_rate = si5341_clk_recalc_rate,
-+};
-+
-+/* Synthesizers, there are 5 synthesizers that connect to any of the outputs */
-+
-+/* The synthesizer is on if all power and enable bits are set */
-+static int si5341_synth_clk_is_on(struct clk_hw *hw)
-+{
-+	struct clk_si5341_synth *synth = to_clk_si5341_synth(hw);
-+	int err;
-+	u32 val;
-+	u8 index = synth->index;
-+
-+	err = regmap_read(synth->data->regmap,
-+			SI5341_SYNTH_N_CLK_TO_OUTX_EN, &val);
-+	if (err < 0)
-+		return 0;
-+
-+	if (!(val & BIT(index)))
-+		return 0;
-+
-+	err = regmap_read(synth->data->regmap, SI5341_SYNTH_N_PDNB, &val);
-+	if (err < 0)
-+		return 0;
-+
-+	if (!(val & BIT(index)))
-+		return 0;
-+
-+	/* This bit must be 0 for the synthesizer to receive clock input */
-+	err = regmap_read(synth->data->regmap, SI5341_SYNTH_N_CLK_DIS, &val);
-+	if (err < 0)
-+		return 0;
-+
-+	return !(val & BIT(index));
-+}
-+
-+static void si5341_synth_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_si5341_synth *synth = to_clk_si5341_synth(hw);
-+	u8 index = synth->index; /* In range 0..5 */
-+	u8 mask = BIT(index);
-+
-+	/* Disable output */
-+	regmap_update_bits(synth->data->regmap,
-+		SI5341_SYNTH_N_CLK_TO_OUTX_EN, mask, 0);
-+	/* Power down */
-+	regmap_update_bits(synth->data->regmap,
-+		SI5341_SYNTH_N_PDNB, mask, 0);
-+	/* Disable clock input to synth (set to 1 to disable) */
-+	regmap_update_bits(synth->data->regmap,
-+		SI5341_SYNTH_N_CLK_DIS, mask, mask);
-+}
-+
-+static int si5341_synth_clk_prepare(struct clk_hw *hw)
-+{
-+	struct clk_si5341_synth *synth = to_clk_si5341_synth(hw);
-+	int err;
-+	u8 index = synth->index;
-+	u8 mask = BIT(index);
-+
-+	/* Power up */
-+	err = regmap_update_bits(synth->data->regmap,
-+		SI5341_SYNTH_N_PDNB, mask, mask);
-+	if (err < 0)
-+		return err;
-+
-+	/* Enable clock input to synth (set bit to 0 to enable) */
-+	err = regmap_update_bits(synth->data->regmap,
-+		SI5341_SYNTH_N_CLK_DIS, mask, 0);
-+	if (err < 0)
-+		return err;
-+
-+	/* Enable output */
-+	return regmap_update_bits(synth->data->regmap,
-+		SI5341_SYNTH_N_CLK_TO_OUTX_EN, mask, mask);
-+}
-+
-+/* Synth clock frequency: Fvco * n_den / n_den, with Fvco in 13500-14256 MHz */
-+static unsigned long si5341_synth_clk_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si5341_synth *synth = to_clk_si5341_synth(hw);
-+	u64 f;
-+	u64 n_num;
-+	u32 n_den;
-+	int err;
-+
-+	err = si5341_decode_44_32(synth->data->regmap,
-+			SI5341_SYNTH_N_NUM(synth->index), &n_num, &n_den);
-+	if (err < 0)
-+		return err;
-+
-+	/*
-+	 * n_num and n_den are shifted left as much as possible, so to prevent
-+	 * overflow in 64-bit math, we shift n_den 4 bits to the right
-+	 */
-+	f = synth->data->freq_vco;
-+	f *= n_den >> 4;
-+
-+	/* Now we need to to 64-bit division: f/n_num */
-+	/* And compensate for the 4 bits we dropped */
-+	f = div64_u64(f, (n_num >> 4));
-+
-+	return f;
-+}
-+
-+static long si5341_synth_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct clk_si5341_synth *synth = to_clk_si5341_synth(hw);
-+	u64 f;
-+
-+	/* The synthesizer accuracy is such that anything in range will work */
-+	f = synth->data->freq_vco;
-+	do_div(f, SI5341_SYNTH_N_MAX);
-+	if (rate < f)
-+		return f;
-+
-+	f = synth->data->freq_vco;
-+	do_div(f, SI5341_SYNTH_N_MIN);
-+	if (rate > f)
-+		return f;
-+
-+	return rate;
-+}
-+
-+static int si5341_synth_program(struct clk_si5341_synth *synth,
-+	u64 n_num, u32 n_den, bool is_integer)
-+{
-+	int err;
-+	u8 index = synth->index;
-+
-+	err = si5341_encode_44_32(synth->data->regmap,
-+			SI5341_SYNTH_N_NUM(index), n_num, n_den);
-+
-+	err = regmap_update_bits(synth->data->regmap,
-+		SI5341_SYNTH_N_PIBYP, BIT(index), is_integer ? BIT(index) : 0);
-+	if (err < 0)
-+		return err;
-+
-+	return regmap_write(synth->data->regmap,
-+		SI5341_SYNTH_N_UPD(index), 0x01);
-+}
-+
-+
-+static int si5341_synth_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si5341_synth *synth = to_clk_si5341_synth(hw);
-+	u64 n_num;
-+	u32 n_den;
-+	u32 r;
-+	u32 g;
-+	bool is_integer;
-+
-+	n_num = synth->data->freq_vco;
-+	n_den = rate;
-+
-+	/* see if there's an integer solution */
-+	r = do_div(n_num, rate);
-+	is_integer = (r == 0);
-+	if (is_integer) {
-+		/* Integer divider equal to n_num */
-+		n_den = 1;
-+	} else {
-+		/* Calculate a fractional solution */
-+		g = gcd(r, rate);
-+		n_den = rate / g;
-+		n_num *= n_den;
-+		n_num += r / g;
++	error = pm_clk_add_clk(dev, clk);
++	if (error) {
++		dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
++		pm_clk_destroy(dev);
++		clk_put(clk);
 +	}
 +
-+	dev_dbg(&synth->data->i2c_client->dev,
-+			"%s(%u): n=0x%llx d=0x%x %s\n", __func__,
-+				synth->index, n_num, n_den,
-+				is_integer ? "int" : "frac");
-+
-+	return si5341_synth_program(synth, n_num, n_den, is_integer);
++	return error;
 +}
 +
-+static const struct clk_ops si5341_synth_clk_ops = {
-+	.is_prepared = si5341_synth_clk_is_on,
-+	.prepare = si5341_synth_clk_prepare,
-+	.unprepare = si5341_synth_clk_unprepare,
-+	.recalc_rate = si5341_synth_clk_recalc_rate,
-+	.round_rate = si5341_synth_clk_round_rate,
-+	.set_rate = si5341_synth_clk_set_rate,
-+};
-+
-+static int si5341_output_clk_is_on(struct clk_hw *hw)
++int __init r9a06g032_attach_dev(struct generic_pm_domain *unused,
++				struct device *dev)
 +{
-+	struct clk_si5341_output *output = to_clk_si5341_output(hw);
-+	int err;
-+	u32 val;
++	struct r9a06g032_clk_domain *pd = r9a06g032_clk_domain;
++	struct device_node *np = dev->of_node;
++	struct of_phandle_args clkspec;
++	int i = 0;
++	int error;
 +
-+	err = regmap_read(output->data->regmap,
-+			SI5341_OUT_CONFIG(output), &val);
-+	if (err < 0)
-+		return err;
++	if (!pd) {
++		dev_dbg(dev, "RZN1 clock domain not yet available\n");
++		return -EPROBE_DEFER;
++	}
 +
-+	/* Bit 0=PDN, 1=OE so only a value of 0x2 enables the output */
-+	return (val & 0x03) == SI5341_OUT_CFG_OE;
-+}
++	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
++					   &clkspec)) {
++		int index = clkspec.args[0];
 +
-+/* Disables and then powers down the output */
-+static void si5341_output_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_si5341_output *output = to_clk_si5341_output(hw);
++		if (index < R9A06G032_CLOCK_COUNT &&
++				r9a06g032_clocks[index].managed) {
++			error = create_add_module_clock(&clkspec, dev);
 +
-+	regmap_update_bits(output->data->regmap,
-+			SI5341_OUT_CONFIG(output),
-+			SI5341_OUT_CFG_OE, 0);
-+	regmap_update_bits(output->data->regmap,
-+			SI5341_OUT_CONFIG(output),
-+			SI5341_OUT_CFG_PDN, SI5341_OUT_CFG_PDN);
-+}
++			if (error)
++				return error;
 +
-+/* Powers up and then enables the output */
-+static int si5341_output_clk_prepare(struct clk_hw *hw)
-+{
-+	struct clk_si5341_output *output = to_clk_si5341_output(hw);
-+	int err;
-+
-+	err = regmap_update_bits(output->data->regmap,
-+			SI5341_OUT_CONFIG(output),
-+			SI5341_OUT_CFG_PDN, 0);
-+	if (err < 0)
-+		return err;
-+
-+	return regmap_update_bits(output->data->regmap,
-+			SI5341_OUT_CONFIG(output),
-+			SI5341_OUT_CFG_OE, SI5341_OUT_CFG_OE);
-+}
-+
-+static unsigned long si5341_output_clk_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si5341_output *output = to_clk_si5341_output(hw);
-+	int err;
-+	u32 val;
-+	u32 r_divider;
-+	u8 r[3];
-+
-+	err = regmap_bulk_read(output->data->regmap,
-+			SI5341_OUT_R_REG(output), r, 3);
-+	if (err < 0)
-+		return err;
-+
-+	/* Calculate value as 24-bit integer*/
-+	r_divider = r[2] << 16 | r[1] << 8 | r[0];
-+
-+	/* If Rx_REG is zero, the divider is disabled, so return a "0" rate */
-+	if (!r_divider)
-+		return 0;
-+
-+	/* Divider is 2*(Rx_REG+1) */
-+	r_divider += 1;
-+	r_divider <<= 1;
-+
-+	err = regmap_read(output->data->regmap,
-+			SI5341_OUT_CONFIG(output), &val);
-+	if (err < 0)
-+		return err;
-+
-+	if (val & SI5341_OUT_CFG_RDIV_FORCE2)
-+		r_divider = 2;
-+
-+	return parent_rate / r_divider;
-+}
-+
-+static long si5341_output_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	unsigned long r;
-+
-+	r = *parent_rate >> 1;
-+
-+	/* If rate is an even divisor, no changes to parent required */
-+	if (r && !(r % rate))
-+		return (long)rate;
-+
-+	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-+		if (rate > 200000000) {
-+			/* minimum r-divider is 2 */
-+			r = 2;
-+		} else {
-+			/* Take a parent frequency near 400 MHz */
-+			r = (400000000u / rate) & ~1;
++			of_node_put(clkspec.np);
 +		}
-+		*parent_rate = r * rate;
-+	} else {
-+		/* We cannot change our parent's rate, report what we can do */
-+		r /= rate;
-+		rate = *parent_rate / (r << 1);
-+	}
-+
-+	return rate;
-+}
-+
-+static int si5341_output_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si5341_output *output = to_clk_si5341_output(hw);
-+	/* Frequency divider is (r_div + 1) * 2 */
-+	u32 r_div = (parent_rate / rate) >> 1;
-+	int err;
-+	u8 r[3];
-+
-+	if (r_div <= 1)
-+		r_div = 0;
-+	else if (r_div >= BIT(24))
-+		r_div = BIT(24) - 1;
-+	else
-+		--r_div;
-+
-+	/* For a value of "2", we set the "OUT0_RDIV_FORCE2" bit */
-+	err = regmap_update_bits(output->data->regmap,
-+			SI5341_OUT_CONFIG(output),
-+			SI5341_OUT_CFG_RDIV_FORCE2,
-+			(r_div == 0) ? SI5341_OUT_CFG_RDIV_FORCE2 : 0);
-+	if (err < 0)
-+		return err;
-+
-+	/* Always write Rx_REG, because a zero value disables the divider */
-+	r[0] = r_div ? (r_div & 0xff) : 1;
-+	r[1] = (r_div >> 8) & 0xff;
-+	r[2] = (r_div >> 16) & 0xff;
-+	err = regmap_bulk_write(output->data->regmap,
-+			SI5341_OUT_R_REG(output), r, 3);
-+
-+	return 0;
-+}
-+
-+static int si5341_output_reparent(struct clk_si5341_output *output, u8 index)
-+{
-+	return regmap_update_bits(output->data->regmap,
-+		SI5341_OUT_MUX_SEL(output), 0x07, index);
-+}
-+
-+static int si5341_output_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_si5341_output *output = to_clk_si5341_output(hw);
-+
-+	if (index >= output->data->num_synth)
-+		return -EINVAL;
-+
-+	return si5341_output_reparent(output, index);
-+}
-+
-+static u8 si5341_output_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_si5341_output *output = to_clk_si5341_output(hw);
-+	int err;
-+	u32 val;
-+
-+	err = regmap_read(output->data->regmap,
-+			SI5341_OUT_MUX_SEL(output), &val);
-+
-+	return val & 0x7;
-+}
-+
-+static const struct clk_ops si5341_output_clk_ops = {
-+	.is_prepared = si5341_output_clk_is_on,
-+	.prepare = si5341_output_clk_prepare,
-+	.unprepare = si5341_output_clk_unprepare,
-+	.recalc_rate = si5341_output_clk_recalc_rate,
-+	.round_rate = si5341_output_clk_round_rate,
-+	.set_rate = si5341_output_clk_set_rate,
-+	.set_parent = si5341_output_set_parent,
-+	.get_parent = si5341_output_get_parent,
-+};
-+
-+/*
-+ * The chip can be bought in a pre-programmed version, or one can program the
-+ * NVM in the chip to boot up in a preset mode. This routine tries to determine
-+ * if that's the case, or if we need to reset and program everything from
-+ * scratch. Returns negative error, or true/false.
-+ */
-+static int si5341_is_programmed_already(struct clk_si5341 *data)
-+{
-+	int err;
-+	u8 r[4];
-+
-+	/* Read the PLL divider value, it must have a non-zero value */
-+	err = regmap_bulk_read(data->regmap, SI5341_PLL_M_DEN,
-+			r, ARRAY_SIZE(r));
-+	if (err < 0)
-+		return err;
-+
-+	return !!get_unaligned_le32(r);
-+}
-+
-+static struct clk_hw *
-+of_clk_si5341_get(struct of_phandle_args *clkspec, void *_data)
-+{
-+	struct clk_si5341 *data = _data;
-+	unsigned int idx = clkspec->args[1];
-+	unsigned int group = clkspec->args[0];
-+
-+	switch (group) {
-+	case 0:
-+		if (idx >= data->num_outputs) {
-+			dev_err(&data->i2c_client->dev,
-+				"invalid output index %u\n", idx);
-+			return ERR_PTR(-EINVAL);
-+		}
-+		return &data->clk[idx].hw;
-+	case 1:
-+		if (idx >= data->num_synth) {
-+			dev_err(&data->i2c_client->dev,
-+				"invalid synthesizer index %u\n", idx);
-+			return ERR_PTR(-EINVAL);
-+		}
-+		return &data->synth[idx].hw;
-+	case 2:
-+		if (idx > 0) {
-+			dev_err(&data->i2c_client->dev,
-+				"invalid PLL index %u\n", idx);
-+			return ERR_PTR(-EINVAL);
-+		}
-+		return &data->hw;
-+	default:
-+		dev_err(&data->i2c_client->dev, "invalid group %u\n", group);
-+		return ERR_PTR(-EINVAL);
-+	}
-+}
-+
-+static int si5341_probe_chip_id(struct clk_si5341 *data)
-+{
-+	int err;
-+	u8 reg[4];
-+	u16 model;
-+
-+	err = regmap_bulk_read(data->regmap, SI5341_PN_BASE, reg,
-+				ARRAY_SIZE(reg));
-+	if (err < 0) {
-+		dev_err(&data->i2c_client->dev, "Failed to read chip ID\n");
-+		return err;
-+	}
-+
-+	model = get_unaligned_le16(reg);
-+
-+	dev_info(&data->i2c_client->dev, "Chip: %x Grade: %u Rev: %u\n",
-+		 model, reg[2], reg[3]);
-+
-+	switch (model) {
-+	case 0x5340:
-+		data->num_outputs = SI5340_MAX_NUM_OUTPUTS;
-+		data->num_synth = SI5340_NUM_SYNTH;
-+		data->reg_output_offset = si5340_reg_output_offset;
-+		data->reg_rdiv_offset = si5340_reg_rdiv_offset;
-+		break;
-+	case 0x5341:
-+		data->num_outputs = SI5341_MAX_NUM_OUTPUTS;
-+		data->num_synth = SI5341_NUM_SYNTH;
-+		data->reg_output_offset = si5341_reg_output_offset;
-+		data->reg_rdiv_offset = si5341_reg_rdiv_offset;
-+		break;
-+	default:
-+		dev_err(&data->i2c_client->dev, "Model '%x' not supported\n",
-+			model);
-+		return -EINVAL;
++		i++;
 +	}
 +
 +	return 0;
 +}
 +
-+/* Read active settings into the regmap cache for later reference */
-+static int si5341_read_settings(struct clk_si5341 *data)
++void r9a06g032_detach_dev(struct generic_pm_domain *unused, struct device *dev)
 +{
-+	int err;
-+	u8 i;
-+	u8 r[10];
-+
-+	err = regmap_bulk_read(data->regmap, SI5341_PLL_M_NUM, r, 10);
-+	if (err < 0)
-+		return err;
-+
-+	err = regmap_bulk_read(data->regmap,
-+				SI5341_SYNTH_N_CLK_TO_OUTX_EN, r, 3);
-+	if (err < 0)
-+		return err;
-+
-+	err = regmap_bulk_read(data->regmap,
-+				SI5341_SYNTH_N_CLK_DIS, r, 1);
-+	if (err < 0)
-+		return err;
-+
-+	for (i = 0; i < data->num_synth; ++i) {
-+		err = regmap_bulk_read(data->regmap,
-+					SI5341_SYNTH_N_NUM(i), r, 10);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	for (i = 0; i < data->num_outputs; ++i) {
-+		err = regmap_bulk_read(data->regmap,
-+					data->reg_output_offset[i], r, 4);
-+		if (err < 0)
-+			return err;
-+
-+		err = regmap_bulk_read(data->regmap,
-+					data->reg_rdiv_offset[i], r, 3);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	return 0;
++	if (!pm_clk_no_clocks(dev))
++		pm_clk_destroy(dev);
 +}
 +
-+static int si5341_write_multiple(struct clk_si5341 *data,
-+	const struct si5341_reg_default *values, unsigned int num_values)
++static int __init r9a06g032_add_clk_domain(struct device *dev)
 +{
-+	unsigned int i;
-+	int res;
++	struct device_node *np = dev->of_node;
++	struct generic_pm_domain *genpd;
++	struct r9a06g032_clk_domain *pd;
 +
-+	for (i = 0; i < num_values; ++i) {
-+		res = regmap_write(data->regmap,
-+			values[i].address, values[i].value);
-+		if (res < 0) {
-+			dev_err(&data->i2c_client->dev,
-+				"Failed to write %#x:%#x\n",
-+				values[i].address, values[i].value);
-+			return res;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+const struct si5341_reg_default si5341_preamble[] = {
-+	{ 0x0B25, 0x00 },
-+	{ 0x0502, 0x01 },
-+	{ 0x0505, 0x03 },
-+	{ 0x0957, 0x1F },
-+	{ 0x0B4E, 0x1A },
-+};
-+
-+static int si5341_send_preamble(struct clk_si5341 *data)
-+{
-+	int res;
-+	u32 revision;
-+
-+	/* For revision 2 and up, the values are slightly different */
-+	res = regmap_read(data->regmap, SI5341_DEVICE_REV, &revision);
-+	if (res < 0)
-+		return res;
-+
-+	/* Write "preamble" as specified by datasheet */
-+	res = regmap_write(data->regmap, 0xB24, revision < 2 ? 0xD8 : 0xC0);
-+	if (res < 0)
-+		return res;
-+	res = si5341_write_multiple(data,
-+		si5341_preamble, ARRAY_SIZE(si5341_preamble));
-+	if (res < 0)
-+		return res;
-+
-+	/* Datasheet specifies a 300ms wait after sending the preamble */
-+	msleep(300);
-+
-+	return 0;
-+}
-+
-+/* Perform a soft reset and write post-amble */
-+static int si5341_finalize_defaults(struct clk_si5341 *data)
-+{
-+	int res;
-+	u32 revision;
-+
-+	res = regmap_read(data->regmap, SI5341_DEVICE_REV, &revision);
-+	if (res < 0)
-+		return res;
-+
-+	dev_dbg(&data->i2c_client->dev, "%s rev=%u\n", __func__, revision);
-+
-+	res = regmap_write(data->regmap, SI5341_SOFT_RST, 0x01);
-+	if (res < 0)
-+		return res;
-+
-+	/* Datasheet does not explain these nameless registers */
-+	res = regmap_write(data->regmap, 0xB24, revision < 2 ? 0xDB : 0xC3);
-+	if (res < 0)
-+		return res;
-+	res = regmap_write(data->regmap, 0x0B25, 0x02);
-+	if (res < 0)
-+		return res;
-+
-+	return 0;
-+}
-+
-+
-+static const struct regmap_range si5341_regmap_volatile_range[] = {
-+	regmap_reg_range(0x000C, 0x0012), /* Status */
-+	regmap_reg_range(0x001C, 0x001E), /* reset, finc/fdec */
-+	regmap_reg_range(0x00E2, 0x00FE), /* NVM, interrupts, device ready */
-+	/* Update bits for synth config */
-+	regmap_reg_range(SI5341_SYNTH_N_UPD(0), SI5341_SYNTH_N_UPD(0)),
-+	regmap_reg_range(SI5341_SYNTH_N_UPD(1), SI5341_SYNTH_N_UPD(1)),
-+	regmap_reg_range(SI5341_SYNTH_N_UPD(2), SI5341_SYNTH_N_UPD(2)),
-+	regmap_reg_range(SI5341_SYNTH_N_UPD(3), SI5341_SYNTH_N_UPD(3)),
-+	regmap_reg_range(SI5341_SYNTH_N_UPD(4), SI5341_SYNTH_N_UPD(4)),
-+};
-+
-+const struct regmap_access_table si5341_regmap_volatile = {
-+	.yes_ranges = si5341_regmap_volatile_range,
-+	.n_yes_ranges = ARRAY_SIZE(si5341_regmap_volatile_range),
-+};
-+
-+/* Pages 0, 1, 2, 3, 9, A, B are valid, so there are 12 pages */
-+static const struct regmap_range_cfg si5341_regmap_ranges[] = {
-+	{
-+		.range_min = 0,
-+		.range_max = SI5341_REGISTER_MAX,
-+		.selector_reg = SI5341_PAGE,
-+		.selector_mask = 0xff,
-+		.selector_shift = 0,
-+		.window_start = 0,
-+		.window_len = 256,
-+	},
-+};
-+
-+static const struct regmap_config si5341_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = 0,
-+	.ranges = si5341_regmap_ranges,
-+	.num_ranges = ARRAY_SIZE(si5341_regmap_ranges),
-+	.max_register = SI5341_REGISTER_MAX,
-+	.volatile_table = &si5341_regmap_volatile,
-+};
-+
-+static int si5341_dt_parse_dt(struct i2c_client *client,
-+	struct clk_si5341_output_config *config)
-+{
-+	struct device_node *child;
-+	struct device_node *np = client->dev.of_node;
-+	u32 num;
-+	u32 val;
-+
-+	memset(config, 0, sizeof(struct clk_si5341_output_config) *
-+				SI5341_MAX_NUM_OUTPUTS);
-+
-+	for_each_child_of_node(np, child) {
-+		if (of_property_read_u32(child, "reg", &num)) {
-+			dev_err(&client->dev, "missing reg property of %s\n",
-+				child->name);
-+			goto put_child;
-+		}
-+
-+		if (num >= SI5341_MAX_NUM_OUTPUTS) {
-+			dev_err(&client->dev, "invalid clkout %d\n", num);
-+			goto put_child;
-+		}
-+
-+		if (!of_property_read_u32(child, "silabs,format", &val)) {
-+			/* Set cm and ampl conservatively to 3v3 settings */
-+			switch (val) {
-+			case 1: /* normal differential */
-+				config[num].out_cm_ampl_bits = 0x33;
-+				break;
-+			case 2: /* low-power differential */
-+				config[num].out_cm_ampl_bits = 0x13;
-+				break;
-+			case 4: /* LVCMOS */
-+				config[num].out_cm_ampl_bits = 0x33;
-+				/* Set SI recommended impedance for LVCMOS */
-+				config[num].out_format_drv_bits |= 0xc0;
-+				break;
-+			default:
-+				dev_err(&client->dev,
-+					"invalid silabs,format %u for %u\n",
-+					val, num);
-+				goto put_child;
-+			}
-+			config[num].out_format_drv_bits &= ~0x07;
-+			config[num].out_format_drv_bits |= val & 0x07;
-+			/* Always enable the SYNC feature */
-+			config[num].out_format_drv_bits |= 0x08;
-+		}
-+
-+		if (!of_property_read_u32(child, "silabs,common-mode", &val)) {
-+			if (val > 0xf) {
-+				dev_err(&client->dev,
-+					"invalid silabs,common-mode %u\n",
-+					val);
-+				goto put_child;
-+			}
-+			config[num].out_cm_ampl_bits &= 0xf0;
-+			config[num].out_cm_ampl_bits |= val & 0x0f;
-+		}
-+
-+		if (!of_property_read_u32(child, "silabs,amplitude", &val)) {
-+			if (val > 0xf) {
-+				dev_err(&client->dev,
-+					"invalid silabs,amplitude %u\n",
-+					val);
-+				goto put_child;
-+			}
-+			config[num].out_cm_ampl_bits &= 0x0f;
-+			config[num].out_cm_ampl_bits |= (val << 4) & 0xf0;
-+		}
-+
-+		if (of_property_read_bool(child, "silabs,disable-high"))
-+			config[num].out_format_drv_bits |= 0x10;
-+
-+		config[num].synth_master =
-+			of_property_read_bool(child, "silabs,synth-master");
-+
-+		config[num].always_on =
-+			of_property_read_bool(child, "always-on");
-+	}
-+
-+	return 0;
-+
-+put_child:
-+	of_node_put(child);
-+	return -EINVAL;
-+}
-+
-+/*
-+ * If not pre-configured, calculate and set the PLL configuration manually.
-+ * For low-jitter performance, the PLL should be set such that the synthesizers
-+ * only need integer division.
-+ * Without any user guidance, we'll set the PLL to 14GHz, which still allows
-+ * the chip to generate any frequency on its outputs, but jitter performance
-+ * may be sub-optimal.
-+ */
-+static int si5341_initialize_pll(struct clk_si5341 *data)
-+{
-+	struct device_node *np = data->i2c_client->dev.of_node;
-+	u32 m_num = 0;
-+	u32 m_den = 0;
-+
-+	if (of_property_read_u32(np, "silabs,pll-m-num", &m_num)) {
-+		dev_err(&data->i2c_client->dev,
-+			"PLL configuration requires silabs,pll-m-num\n");
-+	}
-+	if (of_property_read_u32(np, "silabs,pll-m-den", &m_den)) {
-+		dev_err(&data->i2c_client->dev,
-+			"PLL configuration requires silabs,pll-m-den\n");
-+	}
-+
-+	if (!m_num || !m_den) {
-+		dev_err(&data->i2c_client->dev,
-+			"PLL configuration invalid, assume 14GHz\n");
-+		m_den = clk_get_rate(data->pxtal) / 10;
-+		m_num = 1400000000;
-+	}
-+
-+	return si5341_encode_44_32(data->regmap,
-+			SI5341_PLL_M_NUM, m_num, m_den);
-+}
-+
-+static int si5341_probe(struct i2c_client *client,
-+		const struct i2c_device_id *id)
-+{
-+	struct clk_si5341 *data;
-+	struct clk_init_data init;
-+	const char *root_clock_name;
-+	const char *synth_clock_names[SI5341_NUM_SYNTH];
-+	int err;
-+	unsigned int i;
-+	struct clk_si5341_output_config config[SI5341_MAX_NUM_OUTPUTS];
-+	bool initialization_required;
-+
-+	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
++	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
++	if (!pd)
 +		return -ENOMEM;
 +
-+	data->i2c_client = client;
++	pd->np = np;
 +
-+	data->pxtal = devm_clk_get(&client->dev, "xtal");
-+	if (IS_ERR(data->pxtal)) {
-+		if (PTR_ERR(data->pxtal) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
++	genpd = &pd->genpd;
++	genpd->name = np->name;
++	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	genpd->attach_dev = r9a06g032_attach_dev;
++	genpd->detach_dev = r9a06g032_detach_dev;
++	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
++	r9a06g032_clk_domain = pd;
 +
-+		dev_err(&client->dev, "Missing xtal clock input\n");
-+	}
-+
-+	err = si5341_dt_parse_dt(client, config);
-+	if (err)
-+		return err;
-+
-+	if (of_property_read_string(client->dev.of_node, "clock-output-names",
-+			&init.name))
-+		init.name = client->dev.of_node->name;
-+	root_clock_name = init.name;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &si5341_regmap_config);
-+	if (IS_ERR(data->regmap))
-+		return PTR_ERR(data->regmap);
-+
-+	i2c_set_clientdata(client, data);
-+
-+	err = si5341_probe_chip_id(data);
-+	if (err < 0)
-+		return err;
-+
-+	/* "Activate" the xtal (usually a fixed clock) */
-+	clk_prepare_enable(data->pxtal);
-+
-+	if (of_property_read_bool(client->dev.of_node, "silabs,reprogram")) {
-+		initialization_required = true;
-+	} else {
-+		err = si5341_is_programmed_already(data);
-+		if (err < 0)
-+			return err;
-+
-+		initialization_required = !err;
-+	}
-+
-+	if (initialization_required) {
-+		/* Populate the regmap cache in preparation for "cache only" */
-+		err = si5341_read_settings(data);
-+		if (err < 0)
-+			return err;
-+
-+		err = si5341_send_preamble(data);
-+		if (err < 0)
-+			return err;
-+
-+		/*
-+		 * We intend to send all 'final' register values in a single
-+		 * transaction. So cache all register writes until we're done
-+		 * configuring.
-+		 */
-+		regcache_cache_only(data->regmap, true);
-+
-+		/* Write the configuration pairs from the firmware blob */
-+		err = si5341_write_multiple(data, si5341_reg_defaults,
-+					ARRAY_SIZE(si5341_reg_defaults));
-+		if (err < 0)
-+			return err;
-+
-+		/* PLL configuration is required */
-+		err = si5341_initialize_pll(data);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	/* Register the PLL */
-+	data->pxtal_name = __clk_get_name(data->pxtal);
-+	init.parent_names = &data->pxtal_name;
-+	init.num_parents = 1; /* For now, only XTAL input supported */
-+	init.ops = &si5341_clk_ops;
-+	init.flags = 0;
-+	data->hw.init = &init;
-+
-+	err = devm_clk_hw_register(&client->dev, &data->hw);
-+	if (err) {
-+		dev_err(&client->dev, "clock registration failed\n");
-+		return err;
-+	}
-+
-+	init.num_parents = 1;
-+	init.parent_names = &root_clock_name;
-+	init.ops = &si5341_synth_clk_ops;
-+	for (i = 0; i < data->num_synth; ++i) {
-+		synth_clock_names[i] = devm_kasprintf(&client->dev, GFP_KERNEL,
-+				"%s.N%u", client->dev.of_node->name, i);
-+		init.name = synth_clock_names[i];
-+		data->synth[i].index = i;
-+		data->synth[i].data = data;
-+		data->synth[i].hw.init = &init;
-+		err = devm_clk_hw_register(&client->dev, &data->synth[i].hw);
-+		if (err) {
-+			dev_err(&client->dev,
-+				"synth N%u registration failed\n", i);
-+		}
-+	}
-+
-+	init.num_parents = data->num_synth;
-+	init.parent_names = synth_clock_names;
-+	init.ops = &si5341_output_clk_ops;
-+	for (i = 0; i < data->num_outputs; ++i) {
-+		init.name = kasprintf(GFP_KERNEL, "%s.%d",
-+			client->dev.of_node->name, i);
-+		init.flags = config[i].synth_master ? CLK_SET_RATE_PARENT : 0;
-+		data->clk[i].index = i;
-+		data->clk[i].data = data;
-+		data->clk[i].hw.init = &init;
-+		if (config[i].out_format_drv_bits & 0x07) {
-+			regmap_write(data->regmap,
-+				SI5341_OUT_FORMAT(&data->clk[i]),
-+				config[i].out_format_drv_bits);
-+			regmap_write(data->regmap,
-+				SI5341_OUT_CM(&data->clk[i]),
-+				config[i].out_cm_ampl_bits);
-+		}
-+		err = devm_clk_hw_register(&client->dev, &data->clk[i].hw);
-+		kfree(init.name); /* clock framework made a copy of the name */
-+		if (err) {
-+			dev_err(&client->dev,
-+				"output %u registration failed\n", i);
-+			return err;
-+		}
-+		if (config[i].always_on)
-+			clk_prepare(data->clk[i].hw.clk);
-+	}
-+
-+	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_si5341_get,
-+			data);
-+	if (err) {
-+		dev_err(&client->dev, "unable to add clk provider\n");
-+		return err;
-+	}
-+
-+	if (initialization_required) {
-+		/* Synchronize */
-+		regcache_cache_only(data->regmap, false);
-+		err = regcache_sync(data->regmap);
-+		if (err < 0)
-+			return err;
-+
-+		err = si5341_finalize_defaults(data);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	/* Free the names, clk framework makes copies */
-+	for (i = 0; i < data->num_synth; ++i)
-+		 devm_kfree(&client->dev, (void *)synth_clock_names[i]);
-+
++	of_genpd_add_provider_simple(np, genpd);
 +	return 0;
 +}
 +
-+static const struct i2c_device_id si5341_id[] = {
-+	{ "si5340", 0 },
-+	{ "si5341", 1 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, si5341_id);
+ static void
+ r9a06g032_clk_gate_set(struct r9a06g032_priv *clocks,
+ 		       struct r9a06g032_gate *g, int on)
+@@ -937,6 +1042,10 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++	error = r9a06g032_add_clk_domain(dev);
++	if (error)
++		return error;
 +
-+static const struct of_device_id clk_si5341_of_match[] = {
-+	{ .compatible = "silabs,si5340" },
-+	{ .compatible = "silabs,si5341" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, clk_si5341_of_match);
-+
-+static struct i2c_driver si5341_driver = {
-+	.driver = {
-+		.name = "si5341",
-+		.of_match_table = clk_si5341_of_match,
-+	},
-+	.probe		= si5341_probe,
-+	.id_table	= si5341_id,
-+};
-+module_i2c_driver(si5341_driver);
-+
-+MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
-+MODULE_DESCRIPTION("Si5341 driver");
-+MODULE_LICENSE("GPL");
+ 	return devm_add_action_or_reset(dev,
+ 					r9a06g032_clocks_del_clk_provider, np);
+ }
 -- 
-2.17.1
+2.7.4
 
