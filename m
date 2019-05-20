@@ -2,101 +2,148 @@ Return-Path: <SRS0=g6IF=TU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31347C04E87
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 20:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D6EC04AAC
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 21:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1018A2171F
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 20:03:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lF2o1SjA"
+	by mail.kernel.org (Postfix) with ESMTP id 5E164216B7
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 21:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfETUDb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 16:03:31 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39411 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbfETUDb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 May 2019 16:03:31 -0400
-Received: by mail-wm1-f67.google.com with SMTP id n25so561344wmk.4;
-        Mon, 20 May 2019 13:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HBbcf5smXwn2ERqZmWxMF9pKx3odOzZfT39bu+z+NO0=;
-        b=lF2o1SjAnq7Xp1obe3LurDFZKd5BN4khe9sRyPhqgRBSwXBdkoewCBHFf8zoEzEx3t
-         waxWgk5yCdtpMkuIOw5iniH4lLAYZqDMMLGCnfXqfrHbgEYFj366Pmunus0UqhMLDz6N
-         lUIiposDj1jZjf4bLcYTXv/O61vYSkhJM/7nHXruOZQ5Dc5G28mPA9h5j1CCdfX4yZx6
-         Maym0sCKZgVswaiC2gxIrp4w3V2P/K8rwqIMIWm0NAme6TuS7h3Do3JSHUdLUxBnuB3E
-         kwQTXI/91n85e85WkrN1yM/EC4WLajIH3hna/bJWB5kFlsm8P8Cn8lGaGXZLXEM7HE5J
-         u4RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HBbcf5smXwn2ERqZmWxMF9pKx3odOzZfT39bu+z+NO0=;
-        b=nhlWfTBkpxn1ZyoX7uYeXZxeup/yUKiiP+PTwknCeVXl19KvKirt0OKh82HW5Df3GK
-         21zr10+rPHR0pmcUENEyDbWAo/Sy7ddv4WFkIWHn9hBfdJ31J+6s75UmKyypNGQeLyJL
-         HlbdlIgRuL8Q+lBA5J2ykkBbdWtMBmqHDEdc3Ap+RAAKstDic3R3fabW6B3fKMocLz0L
-         pYJns6zfhoH5rGrJxf/vhsAAXd3hisag7YfVrsuiT1mC3kcrw8eDUr4EY/3MT+tfEC++
-         H37BMw6r7wapp9F/A5m9DzH+MfnYEJhFoXQhe5NnU0AXfARM3Qva/RkTZThMejNehETN
-         OsPg==
-X-Gm-Message-State: APjAAAUFnXTrcbMyc8qplXymAeilDsT+LL8G4zxUXYt4uC82E5c/N2oN
-        pNfERt1zC1eqWDjxj8H7UwU=
-X-Google-Smtp-Source: APXvYqzXRf4StT7i+KCej0246pfMyRIOamHfikr5+acfST7ileYaaYz3AnW9nN10il0xEYLcJxFksA==
-X-Received: by 2002:a05:600c:23d2:: with SMTP id p18mr613218wmb.66.1558382609718;
-        Mon, 20 May 2019 13:03:29 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133EE71009C356FA1F0E19AF9.dip0.t-ipconnect.de. [2003:f1:33ee:7100:9c35:6fa1:f0e1:9af9])
-        by smtp.googlemail.com with ESMTPSA id t7sm23583379wrq.76.2019.05.20.13.03.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 13:03:29 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/4] dt-bindings: clock: meson8b: add the audio clocks
-Date:   Mon, 20 May 2019 22:03:16 +0200
-Message-Id: <20190520200319.9265-2-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520200319.9265-1-martin.blumenstingl@googlemail.com>
-References: <20190520200319.9265-1-martin.blumenstingl@googlemail.com>
+        id S1726151AbfETVLu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 17:11:50 -0400
+Received: from anholt.net ([50.246.234.109]:59314 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbfETVLu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 May 2019 17:11:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 32FF310A3575;
+        Mon, 20 May 2019 14:11:50 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id Dx53HeSPU4mP; Mon, 20 May 2019 14:11:48 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 6C67210A356F;
+        Mon, 20 May 2019 14:11:48 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id D85E32FE3AAE; Mon, 20 May 2019 16:11:47 -0500 (CDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-clk@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: Is exporting __clk_notify() acceptable?
+In-Reply-To: <155605928054.15276.8717660730583010316@swboyd.mtv.corp.google.com>
+References: <79606818706359d32f34c7eb2523d6557747c262.camel@suse.de> <155605928054.15276.8717660730583010316@swboyd.mtv.corp.google.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/26.1 (x86_64-pc-linux-gnu)
+Date:   Mon, 20 May 2019 14:11:45 -0700
+Message-ID: <871s0szv8u.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The audio controllers on Meson8, Meson8b and Meson8m2 use similar
-(potentially the same) audio clocks as GXBB, GXL and GXM. Add the
-CLKID_CTS_AMCLK, CLKID_CTS_MCLK_I958 and CLKID_CTS_I958 clock IDs so
-they can be used for the audio controllers.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- include/dt-bindings/clock/meson8b-clkc.h | 3 +++
- 1 file changed, 3 insertions(+)
+Stephen Boyd <sboyd@kernel.org> writes:
 
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index 47556539f0ee..68862aaf977e 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -112,5 +112,8 @@
- #define CLKID_VDEC_HCODEC	199
- #define CLKID_VDEC_2		202
- #define CLKID_VDEC_HEVC		206
-+#define CLKID_CTS_AMCLK		209
-+#define CLKID_CTS_MCLK_I958	212
-+#define CLKID_CTS_I958		213
- 
- #endif /* __MESON8B_CLKC_H */
--- 
-2.21.0
+> Quoting Nicolas Saenz Julienne (2019-04-11 10:43:22)
+>> Hi,
+>> I'm working on implementing proper cpufreq support for Raspberry Pi and =
+stumbled
+>> upon an issue I'd like your opinion on:
+>
+> You may want to work with Eric. I think Eric has been looking at
+> Raspberry Pi clk things from what I can recall.
 
+Sorry for the delay, I've been busy with the switch to my new job.  I
+haven't been doing much with the clocks recently, but hopefully I can
+shed some light.
+
+>> Note that cpufreq notifiers are not an option as they provide the CPU cl=
+ock
+>> change rates which are useless to the peripherals. Also note that the
+>> peripherals need to know the clock rate change in advance.
+>>=20
+>
+> How does it work today? Do the peripherals set clk rates under the
+> assumption that the parent of the clk they're dealing with (I guess VPU
+> clk?) isn't going to change rate?
+>
+> If that's right then I see two pitfalls. The first is that we probably
+> want to maintain the frequency of those child clks when the VPU clk
+> changes rate. The second is that we should integrate the VPU clk into
+> the clk framework so that when it changes rate, the new frequency
+> propagates down to the child clks. It could still use the firmware
+> interface to change the VPU clk in the clk provider driver. I suppose
+> cpufreq-dt could be layered on top of the VPU clk too so that it all
+> just becomes a clk tree management problem.
+
+Linux doesn't drive changing the VPU clock.  It's controlled by the
+firmware's turbo/undervoltage/temperature management thread, and the
+Foundation wants to keep it that way, unfortunately (that way all
+devices have the same temperature management, rather than relying on the
+OS's behavior).
+
+We do expose the VPU (aka bus or core) clock in upstream Linux, but if
+you try to read its rate you just get some sample.  Don't try
+propagating a rate change through VPU clock, it will not go well (Linux
+doesn't control all the leaf clocks, so it would just be flipping whose
+clocks get screwed up by rate changes, and you'd be racing the
+firmware's thread).
+
+Right now in the downstream tree they set up the peripherals using the
+best-case core clock, so things only get clocked down from there:
+
+commit 6239f614fa5ac3893465f71738e031ee175be14b
+Author: Phil Elwell <phil@raspberrypi.org>
+Date:   Mon Mar 6 09:06:18 2017 +0000
+
+    clk-bcm2835: Read max core clock from firmware
+=20=20=20=20
+    The VPU is responsible for managing the core clock, usually under
+    direction from the bcm2835-cpufreq driver but not via the clk-bcm2835
+    driver. Since the core frequency can change without warning, it is
+    safer to report the maximum clock rate to users of the core clock -
+    I2C, SPI and the mini UART - to err on the safe side when calculating
+    clock divisors.
+=20=20=20=20
+    If the DT node for the clock driver includes a reference to the
+    firmware node, use the firmware API to query the maximum core clock
+    instead of reading the divider registers.
+=20=20=20=20
+    Prior to this patch, a "100KHz" I2C bus was sometimes clocked at about
+    160KHz. In particular, switching to the 4.9 kernel was likely to break
+    SenseHAT usage on a Pi3.
+=20=20=20=20
+    Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlzjGBIACgkQtdYpNtH8
+nugMNxAAlxXDzOunGgcoVViFfLRJ5S4qghnMpl+Ik3THKYJAiscNfoo1PQ664ckc
+Wxs8odaNmIEkuy8NnoSg9SsWqY2Xw4CXkn05T/DRra6KkTNgJ8X2YtDkWtkdxKk6
+QYqEhdBDy4mYInelW4xP1vU74ry3ihTibignGdrJGuy4lZoNquUUGbBr3DxucR28
+CT6+0pN0y5G64o6DwYB4GtzMyg0vAlXHNa0jyYZrnZMGdZIpgwsu4YqnGuvP/VYl
+7NRp3ROJLuf7+R6c1+eVD4MGNNmgywcxRptx5rSVdIpulU2JXSOoZppUuhfU4DP8
+KVBjbe5s+tz1cLvywO+zdmpeCj+ML6bL34DDn1ZIA2Ye5y9Hf5txeiE8nzwRyzS7
+9Om+pudbBYDhKuWv7ZCC2yQ2Jst1XEF10jdQGfqwintUcs6XYEtHmoxgTWS7myfq
+P8Do9BKMt51vYGVUcKB6uYthL9LIM26LGUfIeSDtqrqrUPRv98XpjOpPqetJYo36
+AJuOpWKZw+NB0nFo9vlN1dcQ4aMc6Y1YlA5ZwFBaOUioVpzYlbC/R6QinrRdXH2D
+E6lwuS0bHTPK26H9skfwMulCducNPYpG8y7GULopIBiC4lA2y7bcz5zeEISh7orB
+O9cs4iBF93ahYp8C8UGyp/e5Plxil0LocQ0JLY7QVe1ReXagE6o=
+=CAml
+-----END PGP SIGNATURE-----
+--=-=-=--
