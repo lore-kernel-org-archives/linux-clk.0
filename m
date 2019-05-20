@@ -2,78 +2,69 @@ Return-Path: <SRS0=g6IF=TU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A12C46460
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 12:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDA2C04AAC
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 12:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7AA2213F2
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 12:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F0BA20645
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 12:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731672AbfETMT1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 08:19:27 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:50843 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387820AbfETMT1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 May 2019 08:19:27 -0400
-Received: from [192.168.178.167] ([109.104.33.162]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MqsL3-1gpFl41RHl-00mrvz; Mon, 20 May 2019 14:19:07 +0200
-Subject: Re: [RFC v2 4/5] dts: bcm2837: add per-cpu clock devices
+        id S1733262AbfETM45 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 08:56:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58430 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728898AbfETM45 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 May 2019 08:56:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2C64AAE45;
+        Mon, 20 May 2019 12:56:56 +0000 (UTC)
+Message-ID: <1558356237.12672.3.camel@suse.com>
+Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
+From:   Oliver Neukum <oneukum@suse.com>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stefan.wahren@i2se.com, Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
 Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, eric@anholt.net, ptesarik@suse.com,
+        sboyd@kernel.org, ptesarik@suse.com,
         linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         mturquette@baylibre.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org
+Date:   Mon, 20 May 2019 14:43:57 +0200
+In-Reply-To: <20190520104708.11980-4-nsaenzjulienne@suse.de>
 References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
- <20190520104708.11980-5-nsaenzjulienne@suse.de>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <af50c1e9-5f52-e06b-8d0b-c9f72fba1324@i2se.com>
-Date:   Mon, 20 May 2019 14:19:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190520104708.11980-5-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8
+         <20190520104708.11980-4-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:bNR85Xr5Ix+/N8OQzcAK+XY4eUmxwoteVwKocla9a9I7HzkvLcM
- /uiEboQgspShU1W4QTj7siUuy0oqooMehPTXT7eDhfGc4LVkxMDK8Ve1bX0/mEX0dvWe9cY
- ZBTCwKlQSXk3lfET5gAOnFazcF6lfCik5yk+iEsANhQDdrD/6+D6LHXfcPesRRjYroYeLA5
- r4Oi7dFGZg0MqE9xQ+Aeg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6J1Fp4MKs28=:EUhQ8mvrBMpbz/M+ADxWx3
- r/nxWy6+BZ9mkIz0Jn843As9r2wZB17pO/yhpXhG8Wcd6DfI3VO8BU+joDy00A6lI4nTkkvpb
- juD4rVnuBJvH8GH0iARDEgvNWwaj2NnvHhllrxCQsaD9F4LkHDbPlcDtCh9tBCLHHvlg2+CMi
- zo7li5BCz7kfnu6fh4mLkgG7/LlDT5OsIsePWv9qZvbt5oOkfJuRENFOVVFhml8ZKAEf576aV
- Uh4KmJ9u+g5H2zk1KqHGPfMt5Qgzsioxxjoa/kjddfijnYCtvBznCcemvh/OiGN4uJVZBKjbN
- dTv81y2YGx47evOYezaPrDgGCmDPICIaregOF4cCz40R1xoKKhF77HqsSDQKXs/WG6CBD+Eo5
- a2k2IKVKIEpfBK6NCkM4i2pUOU6aLtDYe0L4ocYMu+Y82Qg3GvFYvUYSmiQl3DRZ+TMCJhrNv
- mdvkgm7848M7em8ysrSzfVwYssutfMW11SojWGyXlgqEN6HeOXSKwbhzz3RnhhbkpKs5tF0Y0
- XJrrxF4+a5Ym/LrItbxkz53pjRwiOr+QirImQtfP+mA0gHI1DK5IKkMloFOZJWmjX5oavoAdN
- TRnAretttyb/aSU1GjCjDfUPBYsFoDCfFHHL0soDOkZL0Pq3zjA2QADigHSIquHz60uPPAYWv
- xmXaDQBQsoL1BguVHzwiFVpiEY1xf904cAZMJEEIRKeWCxWQxM81yyASMd1drUXqPdg096jtA
- 4wM1Bfs/IbW91rTOPRpHtsyA76i1t7j850Kw3ZzTMdDk643oku66LbG8L0hLRUl59drWFpCcU
- HtB52UfDRRY9i4xIkEgI15kY27xVxBk1+4VSC1i7DK3ybJD3zSb+QTSnswW/27Q34u0eNWZ23
- vzkE8vSFO7liN76e2kHw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Nicolas,
+On Mo, 2019-05-20 at 12:47 +0200, Nicolas Saenz Julienne wrote:
+> + * For more information on the firmware interface check:
+> + * https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
+> + */
+> +struct bcm2835_firmware_prop {
+> +       u32 id;
+> +       u32 val;
+> +       u32 disable_turbo;
+> +} __packed;
 
-On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
-> The four CPUs share a same clock source called pllb_arm. The clock can
-> be scaled through the raspberrypi firmware interface.
-do you see a problem with applying this also to bcm2835.dtsi and
-bcm2836.dtsi?
+Hi,
+
+technically we are not in arch and those fields have a defined
+endianness.
+
+	Regards
+		Oliver
+
