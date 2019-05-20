@@ -2,148 +2,139 @@ Return-Path: <SRS0=g6IF=TU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D6EC04AAC
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 21:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D90C04AAC
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 23:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E164216B7
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 21:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB6732173C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 23:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558393220;
+	bh=WiH+/OCfcfe+4Xbn3UUb9ykwnCBy4RLUJO0aKNlzOhU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=hwBK6z6CGHZ9ZHyGjEXDOjGHrG1UEeDyeznIYrcttS5RbwBpGgieI74DDJcN7Lkbz
+	 EQtpZKB5XSCK8R57dgwO35g9nioiRMuNJzqkx+IbNkkmSc6yckXtYPwZZrwjxmXa+H
+	 AxicxDehi+o/oLi7xhczw30VWn1oknqQH6H1HkBY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbfETVLu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 17:11:50 -0400
-Received: from anholt.net ([50.246.234.109]:59314 "EHLO anholt.net"
+        id S1726575AbfETXAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 19:00:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbfETVLu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 May 2019 17:11:50 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 32FF310A3575;
-        Mon, 20 May 2019 14:11:50 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id Dx53HeSPU4mP; Mon, 20 May 2019 14:11:48 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 6C67210A356F;
-        Mon, 20 May 2019 14:11:48 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id D85E32FE3AAE; Mon, 20 May 2019 16:11:47 -0500 (CDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-clk@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: Is exporting __clk_notify() acceptable?
-In-Reply-To: <155605928054.15276.8717660730583010316@swboyd.mtv.corp.google.com>
-References: <79606818706359d32f34c7eb2523d6557747c262.camel@suse.de> <155605928054.15276.8717660730583010316@swboyd.mtv.corp.google.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/26.1 (x86_64-pc-linux-gnu)
-Date:   Mon, 20 May 2019 14:11:45 -0700
-Message-ID: <871s0szv8u.fsf@anholt.net>
+        id S1725978AbfETXAU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 May 2019 19:00:20 -0400
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F67D2173C;
+        Mon, 20 May 2019 23:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558393219;
+        bh=WiH+/OCfcfe+4Xbn3UUb9ykwnCBy4RLUJO0aKNlzOhU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eNYEvQaZCFxftor73AUBaBuvs5kQxBD6kNSJX0w/p30iCErC49wIk5tve4buk62JW
+         X+mRVN5Ly+zFH885gRKdBahnunIl6D9H4QxHvqw1shAB8LH5e42oiB/Gf/4NC4b8VJ
+         RKYb7FakZ5o5C5tzUQmOIMU5YxkVvlDHOKTwfGhY=
+Received: by mail-qk1-f175.google.com with SMTP id a64so9915823qkg.5;
+        Mon, 20 May 2019 16:00:19 -0700 (PDT)
+X-Gm-Message-State: APjAAAXQe9clEUbIzvQrzIhScEILDFtIRb/XyEthj0DiIVj/ZxUfIkKu
+        cyEHDC+mmcc2omeKnTM+dhhHy4v09hp5KOumbA==
+X-Google-Smtp-Source: APXvYqw0yA7/JAtvhaZQmdZCHhku9PQPnak0hyEwUTGW5yiBYyusX64Ru1hOe3bgicIVg6fnC6z7c+ozU5sQvG2tn7Q=
+X-Received: by 2002:a37:b8c:: with SMTP id 134mr61102400qkl.121.1558393218412;
+ Mon, 20 May 2019 16:00:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+References: <cover.1558362030.git.mchehab+samsung@kernel.org>
+ <66231286de0f11b45075292216a939858de8c3e5.1558362030.git.mchehab+samsung@kernel.org>
+ <CAL_JsqKGzNBjxhvY2Vq9v8SXiND+7sjmsOwKkeu+gEM=2Y-n_A@mail.gmail.com> <20190520131344.39635733@coco.lan>
+In-Reply-To: <20190520131344.39635733@coco.lan>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 20 May 2019 18:00:06 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJj42BR42NNFj2xkY_EF_6nQnU_D-onV4GZvortv8ptvQ@mail.gmail.com>
+Message-ID: <CAL_JsqJj42BR42NNFj2xkY_EF_6nQnU_D-onV4GZvortv8ptvQ@mail.gmail.com>
+Subject: Re: [PATCH 08/10] dt: fix refs that were renamed to json with the
+ same file name
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Stephen Boyd <sboyd@kernel.org> writes:
-
-> Quoting Nicolas Saenz Julienne (2019-04-11 10:43:22)
->> Hi,
->> I'm working on implementing proper cpufreq support for Raspberry Pi and =
-stumbled
->> upon an issue I'd like your opinion on:
+On Mon, May 20, 2019 at 11:14 AM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
 >
-> You may want to work with Eric. I think Eric has been looking at
-> Raspberry Pi clk things from what I can recall.
-
-Sorry for the delay, I've been busy with the switch to my new job.  I
-haven't been doing much with the clocks recently, but hopefully I can
-shed some light.
-
->> Note that cpufreq notifiers are not an option as they provide the CPU cl=
-ock
->> change rates which are useless to the peripherals. Also note that the
->> peripherals need to know the clock rate change in advance.
->>=20
+> Em Mon, 20 May 2019 10:57:47 -0500
+> Rob Herring <robh+dt@kernel.org> escreveu:
 >
-> How does it work today? Do the peripherals set clk rates under the
-> assumption that the parent of the clk they're dealing with (I guess VPU
-> clk?) isn't going to change rate?
+> > On Mon, May 20, 2019 at 9:48 AM Mauro Carvalho Chehab
+> > <mchehab+samsung@kernel.org> wrote:
+> > >
+> > > This file was converted to json, but the references weren't
+> >
+> > Technically, converted to json-schema (the language) or yaml (the format).
 >
-> If that's right then I see two pitfalls. The first is that we probably
-> want to maintain the frequency of those child clks when the VPU clk
-> changes rate. The second is that we should integrate the VPU clk into
-> the clk framework so that when it changes rate, the new frequency
-> propagates down to the child clks. It could still use the firmware
-> interface to change the VPU clk in the clk provider driver. I suppose
-> cpufreq-dt could be layered on top of the VPU clk too so that it all
-> just becomes a clk tree management problem.
+> Ok. Do you want me to change it at the patch and resend?
 
-Linux doesn't drive changing the VPU clock.  It's controlled by the
-firmware's turbo/undervoltage/temperature management thread, and the
-Foundation wants to keep it that way, unfortunately (that way all
-devices have the same temperature management, rather than relying on the
-OS's behavior).
+No, I can fixup.
 
-We do expose the VPU (aka bus or core) clock in upstream Linux, but if
-you try to read its rate you just get some sample.  Don't try
-propagating a rate change through VPU clock, it will not go well (Linux
-doesn't control all the leaf clocks, so it would just be flipping whose
-clocks get screwed up by rate changes, and you'd be racing the
-firmware's thread).
+>
+> >
+> > > renamed.
+> > >
+> > > Fixes: 66ed144f147a ("dt-bindings: interrupt-controller: Convert ARM GIC to json-schema")
+> > > (and other similar commits)
+> > >
+> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/arm/omap/crossbar.txt       | 2 +-
+> > >  .../devicetree/bindings/clock/samsung,s5pv210-clock.txt       | 2 +-
+> > >  .../bindings/interrupt-controller/marvell,odmi-controller.txt | 2 +-
+> > >  Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt   | 2 +-
+> > >  MAINTAINERS                                                   | 4 ++--
+> > >  5 files changed, 6 insertions(+), 6 deletions(-)
+> >
+> > FYI, I'm actively looking for this in conversions now as we've had a
+> > few of these. For cases where we have a lot of references, I'm fixing
+> > this by keeping the .txt file with a reference to the .yaml file.
+>
+> If the file name remains with the same name, except for the .txt -> .yaml,
+> you can just run the "scripts/documentation-file-ref-check --fix"
+> after this patch:
+>
+>         Subject: [PATCH 04/10] scripts/documentation-file-ref-check: teach about .txt -> .yaml renames
+>
+> and it should detect and automatically fix all the references. As any
+> auto-hint script, you need to double-check the results.
 
-Right now in the downstream tree they set up the peripherals using the
-best-case core clock, so things only get clocked down from there:
+Nice!
 
-commit 6239f614fa5ac3893465f71738e031ee175be14b
-Author: Phil Elwell <phil@raspberrypi.org>
-Date:   Mon Mar 6 09:06:18 2017 +0000
+>
+> > I'll pick up the DT patches in the series.
+>
+> OK. There are a few such fixes inside patch 10/10. Do you want me
+> to split it or can it go through Jonathan's doc tree?
 
-    clk-bcm2835: Read max core clock from firmware
-=20=20=20=20
-    The VPU is responsible for managing the core clock, usually under
-    direction from the bcm2835-cpufreq driver but not via the clk-bcm2835
-    driver. Since the core frequency can change without warning, it is
-    safer to report the maximum clock rate to users of the core clock -
-    I2C, SPI and the mini UART - to err on the safe side when calculating
-    clock divisors.
-=20=20=20=20
-    If the DT node for the clock driver includes a reference to the
-    firmware node, use the firmware API to query the maximum core clock
-    instead of reading the divider registers.
-=20=20=20=20
-    Prior to this patch, a "100KHz" I2C bus was sometimes clocked at about
-    160KHz. In particular, switching to the 4.9 kernel was likely to break
-    SenseHAT usage on a Pi3.
-=20=20=20=20
-    Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Jon's tree is fine.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlzjGBIACgkQtdYpNtH8
-nugMNxAAlxXDzOunGgcoVViFfLRJ5S4qghnMpl+Ik3THKYJAiscNfoo1PQ664ckc
-Wxs8odaNmIEkuy8NnoSg9SsWqY2Xw4CXkn05T/DRra6KkTNgJ8X2YtDkWtkdxKk6
-QYqEhdBDy4mYInelW4xP1vU74ry3ihTibignGdrJGuy4lZoNquUUGbBr3DxucR28
-CT6+0pN0y5G64o6DwYB4GtzMyg0vAlXHNa0jyYZrnZMGdZIpgwsu4YqnGuvP/VYl
-7NRp3ROJLuf7+R6c1+eVD4MGNNmgywcxRptx5rSVdIpulU2JXSOoZppUuhfU4DP8
-KVBjbe5s+tz1cLvywO+zdmpeCj+ML6bL34DDn1ZIA2Ye5y9Hf5txeiE8nzwRyzS7
-9Om+pudbBYDhKuWv7ZCC2yQ2Jst1XEF10jdQGfqwintUcs6XYEtHmoxgTWS7myfq
-P8Do9BKMt51vYGVUcKB6uYthL9LIM26LGUfIeSDtqrqrUPRv98XpjOpPqetJYo36
-AJuOpWKZw+NB0nFo9vlN1dcQ4aMc6Y1YlA5ZwFBaOUioVpzYlbC/R6QinrRdXH2D
-E6lwuS0bHTPK26H9skfwMulCducNPYpG8y7GULopIBiC4lA2y7bcz5zeEISh7orB
-O9cs4iBF93ahYp8C8UGyp/e5Plxil0LocQ0JLY7QVe1ReXagE6o=
-=CAml
------END PGP SIGNATURE-----
---=-=-=--
+Rob
