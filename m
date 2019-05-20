@@ -6,69 +6,73 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814E4C04AAF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 06:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BEEC04AAF
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 07:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50ED520851
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 06:30:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986C82081C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 07:07:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558333820;
-	bh=guWiZhnrQX5XOmYv/2WvChjs/sYiaG71enI6UFsxEOI=;
+	s=default; t=1558336069;
+	bh=OoAI2e+4eQqX83Qh6QnQrdl4+kgQfA5iKpNYidtYuRM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AWLM3yAnQjw72N43qXN9G6VWljZzQS2ix4kdb/noEc4O2M8AHDacIqZe5poeYr7Sq
-	 XxH/4oSD5oJhz/sVGqVa9hm9Yh5aheHPsUdln7lhab+H++FcqXaVmPK9HY+YnVKqvZ
-	 zt/xspQUXfZuJbK9ehTGBY1vXUs+SteUokwOGccY=
+	b=Y8LbmaAnx4nNYSnnBAuf3lFXVE5ZavAsxEBcn369VbWkGfG8UY9jvlDIoqf2oHBen
+	 LxPIPNsr7iP4Sb8oj/5xt7cek3GK59juUokz0wb7l44HDf17sBzl3riRBELntPBMjc
+	 9jaNUOzsEuq6JfqPLSCqSppddmN48DZrubyfH/qc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbfETGaT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 02:30:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
+        id S1730897AbfETHHt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 03:07:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbfETGaT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 May 2019 02:30:19 -0400
+        id S1730545AbfETHHs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 May 2019 03:07:48 -0400
 Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8CF6206B6;
-        Mon, 20 May 2019 06:30:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB25C20856;
+        Mon, 20 May 2019 07:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558333819;
-        bh=guWiZhnrQX5XOmYv/2WvChjs/sYiaG71enI6UFsxEOI=;
+        s=default; t=1558336067;
+        bh=OoAI2e+4eQqX83Qh6QnQrdl4+kgQfA5iKpNYidtYuRM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xTu87tyvie8buwqB1PTc6WMdWlduuQC6RyhF+N3zWBG2GTx4xxBmwsx0/7et1hXkl
-         9xeK3A1BcbLjpJmDBRC7Ae25lDilDfDbin1iGo7PWvS60rHzpoiFNGEQM4+YGkp8VJ
-         2TOKZU9Q6oVcMRoh4tLwLdqUj2n749/98WNgHeMU=
-Date:   Mon, 20 May 2019 14:29:28 +0800
+        b=ttcgK+23s7Uza8CJuC8n4Kb5C78ItuoGriGXEvVSdLJHekJLkLT0SH0BMsNftw2wH
+         aj/H+vprN6pBkkjYQAPM0Jyf+iOIK24gfOZ1JguTnX+gUoHcmhD2RruPX5ZVHbLLja
+         0ftrnKZ4bIIW5+xcrqnUXUcNhEctEib37aWbCmHs=
+Date:   Mon, 20 May 2019 15:06:57 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Jacky Bai <ping.bai@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Aisheng Dong <aisheng.dong@nxp.com>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH RESEND] clk: imx7ulp: update nic1_bus_clk parent info
-Message-ID: <20190520062926.GQ15856@dragon>
-References: <1557656739-13120-1-git-send-email-Anson.Huang@nxp.com>
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: imx8mm: Mark dram_apb critical
+Message-ID: <20190520070656.GS15856@dragon>
+References: <61a5cad23ad56a2aed96f3bdbf7c67df25e0bd6b.1557725494.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557656739-13120-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <61a5cad23ad56a2aed96f3bdbf7c67df25e0bd6b.1557725494.git.leonard.crestez@nxp.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 12, 2019 at 10:30:41AM +0000, Anson Huang wrote:
-> Since i.MX7ULP B0 chip, nic1_bus_clk's parent is changed to
-> from nic0_clk directly, update it accordingly.
+On Mon, May 13, 2019 at 05:32:07AM +0000, Leonard Crestez wrote:
+> This clock is used for dram operations inside TF-A and must be kept
+> enabled for features such as suspend/resume dram retention and busfreq
+> to work.
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> This is required for imx8mm suspend to work with NXP branch of TF-A.
+> There is an equivalent clk on imx8mq and it's always been marked as
+> critical in upstream.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
 Applied, thanks.
