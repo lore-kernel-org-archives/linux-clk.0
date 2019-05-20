@@ -2,75 +2,50 @@ Return-Path: <SRS0=g6IF=TU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33D9C04AAC
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 14:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71346C04E87
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 15:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF720216B7
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 14:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558363722;
-	bh=KgZnFqu8GSl+rx6OsGHuSf+snL+dKVhfuU5mZGXIeTg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t3DER5H9RgzSvolWw3JK5Oo/tmoIeNN3/J9Due0CqCS8kAJ4w/SV9EGpkJ6/GdN2D
-	 3kg+w0R2woD3fTcRQd2xR713s44aWOuQhbZxTGbtoUPhOofd8pdLNU5pOR0Ym/1UZ1
-	 nfoaQUKliTYDk2oaloktAW0QKCpbMGLLfkWYQmuY=
+	by mail.kernel.org (Postfix) with ESMTP id 4695C20863
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 15:06:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="rQhfQbp2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392054AbfETOsK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 10:48:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35476 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392044AbfETOsI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 May 2019 10:48:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XnMBUJIMqmxbjRAsnv7/b08asJF4TzstG749wV0+rWs=; b=eoQ+cq2wTPeCNJ8h70tyhx4Bur
-        B5T+z/gynZWZ9agzubS1Ua/xx/M4SlLxgNmJaJW9zQNytr84hDI7F4ciFgEbfv5WUoeJn1Fydu66y
-        LQwhPDWZeNLoP+ElHraGvsWILDEq6xMu8PBQT/1FiYItU4JRem9/gOeG/a+c8821aPsdulsMfmDJS
-        XAx6WSMXCRU/7/YZs77B/hfIY0cPU81L0euVTvq8TM1HCLMIcQAekzC68Uij5F5PPddmMX/VOinRp
-        EWKTdi1qxRiFAFJV6tGcD4BmW4Zn8+VMSwxOLDf7NenErRcMVIPPwbgO66wB/Yf4zqRk4rZgyoIpG
-        NOKB3Cdg==;
-Received: from [179.176.119.151] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hSja9-0000P4-7A; Mon, 20 May 2019 14:48:05 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hSjZx-00011E-1H; Mon, 20 May 2019 11:47:53 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1732195AbfETPGq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 11:06:46 -0400
+Received: from vps.xff.cz ([195.181.215.36]:54782 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733010AbfETPGm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 May 2019 11:06:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1558364800; bh=rVjMF+TqkJ/FvHNWAdCJqFuT4fG2WrGc2hjCFSuXWa4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rQhfQbp2x63PPAn7Ojxchslau4MFbCKFqSHsg+upPxRhrIHhl0cWE5xDLMytcKjah
+         eC+OGNdhGc5TpOp0WYcI/LFwf7bQ8+G90ZEyos72XJeLKZUZ4HpolRi6dhVJSOJrxQ
+         0c537OvoVhWw3b4n4YCIaW6tILJTT/rphDhUaayA=
+From:   megous@megous.com
+To:     Chen-Yu Tsai <wens@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: [PATCH 08/10] dt: fix refs that were renamed to json with the same file name
-Date:   Mon, 20 May 2019 11:47:37 -0300
-Message-Id: <66231286de0f11b45075292216a939858de8c3e5.1558362030.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1558362030.git.mchehab+samsung@kernel.org>
-References: <cover.1558362030.git.mchehab+samsung@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, Ondrej Jirman <megous@megous.com>
+Subject: [PATCH v2 3/3] ARM: dts: sun8i: a83t: Add device node for CSI (Camera Sensor Interface)
+Date:   Mon, 20 May 2019 17:06:37 +0200
+Message-Id: <20190520150637.23557-4-megous@megous.com>
+In-Reply-To: <20190520150637.23557-1-megous@megous.com>
+References: <20190520150637.23557-1-megous@megous.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -78,95 +53,71 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This file was converted to json, but the references weren't
-renamed.
+From: Chen-Yu Tsai <wens@csie.org>
 
-Fixes: 66ed144f147a ("dt-bindings: interrupt-controller: Convert ARM GIC to json-schema")
-(and other similar commits)
+The A83T SoC has a camera sensor interface (known as CSI in Allwinner
+lingo), which is similar to the one found on the A64 and H3. The only
+difference seems to be that support of MIPI CSI through a connected
+MIPI CSI-2 bridge.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Add a device node for it, and pinctrl nodes for the commonly used MCLK
+and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
+the pinctrl nodes to keep the device tree blob size down if they are
+unused.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Ondrej Jirman <megous@megous.com>
 ---
- Documentation/devicetree/bindings/arm/omap/crossbar.txt       | 2 +-
- .../devicetree/bindings/clock/samsung,s5pv210-clock.txt       | 2 +-
- .../bindings/interrupt-controller/marvell,odmi-controller.txt | 2 +-
- Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt   | 2 +-
- MAINTAINERS                                                   | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/omap/crossbar.txt b/Documentation/devicetree/bindings/arm/omap/crossbar.txt
-index 4cd5d873fc3a..a43e4c7aba3d 100644
---- a/Documentation/devicetree/bindings/arm/omap/crossbar.txt
-+++ b/Documentation/devicetree/bindings/arm/omap/crossbar.txt
-@@ -41,7 +41,7 @@ Examples:
- Consumer:
- ========
- See Documentation/devicetree/bindings/interrupt-controller/interrupts.txt and
--Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt for
-+Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml for
- further details.
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 392b0cabbf0d..ada6d08bc540 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -679,6 +679,20 @@
+ 			#interrupt-cells = <3>;
+ 			#gpio-cells = <3>;
  
- An interrupt consumer on an SoC using crossbar will use:
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt b/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
-index 15b48e20a061..a86c83bf9d4e 100644
---- a/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
-@@ -35,7 +35,7 @@ board device tree, including the system base clock, as selected by XOM[0]
- pin of the SoC. Refer to generic fixed rate clock bindings
- documentation[1] for more information how to specify these clocks.
++			/omit-if-no-ref/
++			csi_8bit_parallel_pins: csi-8bit-parallel-pins {
++				pins = "PE0", "PE2", "PE3", "PE6", "PE7",
++				       "PE8", "PE9", "PE10", "PE11",
++				       "PE12", "PE13";
++				function = "csi";
++			};
++
++			/omit-if-no-ref/
++			csi_mclk_pin: csi-mclk-pin {
++				pins = "PE1";
++				function = "csi";
++			};
++
+ 			emac_rgmii_pins: emac-rgmii-pins {
+ 				pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
+ 				       "PD11", "PD12", "PD13", "PD14", "PD18",
+@@ -997,6 +1011,21 @@
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
  
--[1] Documentation/devicetree/bindings/clock/fixed-clock.txt
-+[1] Documentation/devicetree/bindings/clock/fixed-clock.yaml
- 
- Example: Clock controller node:
- 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/marvell,odmi-controller.txt b/Documentation/devicetree/bindings/interrupt-controller/marvell,odmi-controller.txt
-index 930fb462fd9f..0ebfc952cb34 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/marvell,odmi-controller.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/marvell,odmi-controller.txt
-@@ -23,7 +23,7 @@ Required properties:
- - marvell,spi-base     : List of GIC base SPI interrupts, one for each
-                          ODMI frame. Those SPI interrupts are 0-based,
-                          i.e marvell,spi-base = <128> will use SPI #96.
--                         See Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
-+                         See Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
-                          for details about the GIC Device Tree binding.
- 
- Example:
-diff --git a/Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt b/Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
-index 896b6997cf30..21882c8d4b0c 100644
---- a/Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
-+++ b/Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt
-@@ -15,7 +15,7 @@ Optional properties:
- 	- power-supply: specifies the power source. It can either be a regulator
- 	  or a gpio which enables a regulator, i.e. a regulator-fixed as
- 	  described in
--	  Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-+	  Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
- 
- Example:
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5cfbea4ce575..0c84bf76d165 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2768,7 +2768,7 @@ AVIA HX711 ANALOG DIGITAL CONVERTER IIO DRIVER
- M:	Andreas Klinger <ak@it-klinger.de>
- L:	linux-iio@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-+F:	Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
- F:	drivers/iio/adc/hx711.c
- 
- AX.25 NETWORK LAYER
-@@ -14353,7 +14353,7 @@ SIMPLEFB FB DRIVER
- M:	Hans de Goede <hdegoede@redhat.com>
- L:	linux-fbdev@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/display/simple-framebuffer.txt
-+F:	Documentation/devicetree/bindings/display/simple-framebuffer.yaml
- F:	drivers/video/fbdev/simplefb.c
- F:	include/linux/platform_data/simplefb.h
- 
++		csi: camera@1cb0000 {
++			compatible = "allwinner,sun8i-a83t-csi";
++			reg = <0x01cb0000 0x1000>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_CSI>,
++				 <&ccu CLK_CSI_SCLK>,
++				 <&ccu CLK_DRAM_CSI>;
++			clock-names = "bus", "mod", "ram";
++			resets = <&ccu RST_BUS_CSI>;
++			status = "disabled";
++
++			csi_in: port {
++			};
++		};
++
+ 		hdmi: hdmi@1ee0000 {
+ 			compatible = "allwinner,sun8i-a83t-dw-hdmi";
+ 			reg = <0x01ee0000 0x10000>;
 -- 
 2.21.0
 
