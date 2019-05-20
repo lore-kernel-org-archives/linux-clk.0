@@ -2,127 +2,87 @@ Return-Path: <SRS0=g6IF=TU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABE9C072A4
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 08:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51AEC04AAF
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 08:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FEAC20656
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 08:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558339660;
-	bh=vDLQsD2B5mKgg/9AQ94YonY87MdfYhRV3o85LNhdwaI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DTrBDhxRLBlBPsEgJ9W+cZU2XPNLc+opi2p/XLktYEddbqdtXKBPL4ZhCHASoyrM6
-	 q6ey2CH7Iy61SLqolcLcu9hjVLTnkva/UFisFlxb6rKw4fkn4FsUGJqlxFCRvYQeOj
-	 ziKZ7K17tpeovcqUKWIdfjMdtW1U/kHkMwZaLrnE=
+	by mail.kernel.org (Postfix) with ESMTP id C252920656
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 08:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbfETIHb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 04:07:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36248 "EHLO mail.kernel.org"
+        id S1730628AbfETIOn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 04:14:43 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:60906 "EHLO ns.iliad.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730649AbfETIFf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 May 2019 04:05:35 -0400
-Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD2A320862;
-        Mon, 20 May 2019 08:05:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558339534;
-        bh=vDLQsD2B5mKgg/9AQ94YonY87MdfYhRV3o85LNhdwaI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HJuDNJ69iFBxjhRIg6uFFFy37jUgmClEn9Bsh6rx5GBRiCi8dFoIsntl5w2gysoac
-         tsFAJ2b7dRlAwkFZefoyRVWM2RV6Fdxi6+NZQ+cz8NJpBswUVPo1J9oNofZ8Ni84Mg
-         Rk5CsVk6X+Ze4QnKROEdeHLTcSAErvNKvLssEGyk=
-Received: by wens.tw (Postfix, from userid 1000)
-        id 413565FD5D; Mon, 20 May 2019 16:05:32 +0800 (CST)
-From:   Chen-Yu Tsai <wens@kernel.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/25] clk: Add CLK_HW_INIT_* macros using .parent_hws
-Date:   Mon, 20 May 2019 16:03:58 +0800
-Message-Id: <20190520080421.12575-3-wens@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190520080421.12575-1-wens@kernel.org>
-References: <20190520080421.12575-1-wens@kernel.org>
+        id S1730549AbfETIOn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 May 2019 04:14:43 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 4DCA520B5F;
+        Mon, 20 May 2019 10:14:41 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 3973020AC3;
+        Mon, 20 May 2019 10:14:41 +0200 (CEST)
+Subject: Re: [PATCH] clk: qcom: gdsc: WARN when failing to toggle
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     MSM <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190504001736.8598-1-bjorn.andersson@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <68b73077-9fff-9b4c-bf6a-8aca24a814d7@free.fr>
+Date:   Mon, 20 May 2019 10:14:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190504001736.8598-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon May 20 10:14:41 2019 +0200 (CEST)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+On 04/05/2019 02:17, Bjorn Andersson wrote:
 
-With the new clk parenting code, struct clk_init_data was expanded to
-include .parent_hws, for clk drivers to directly list parents by
-pointing to their respective struct clk_hw's.
+> Failing to toggle a GDSC as the driver core is attaching the
+> power-domain to a device will cause a silent probe deferral. Provide an
+> explicit warning to the developer, in order to reduce the amount of time
+> it take to debug this.
 
-Add macros that can take either one single struct clk_hw *, or an array
-of them, for drivers to use.
+"it takes"
 
-A special CLK_HW_INIT_HWS macro is included, which takes an array of
-struct clk_hw *, but sets .num_parents to 1. This variant is to allow
-the reuse of the array, instead of having a compound literal allocated
-for each clk sharing the same parent.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index dd63aa36b092..6a8a4996dde3 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -149,7 +149,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>  		udelay(1);
+>  	}
+>  
+> -	return gdsc_poll_status(sc, status);
+> +	ret = gdsc_poll_status(sc, status);
+> +	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
+> +	return ret;
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- include/linux/clk-provider.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+In my opinion, the minor obfuscation of "o%s", foo ? "ff" : "n"
+does not justify the tiny space savings.
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index bb6118f79784..0c241b43a802 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -904,6 +904,24 @@ extern struct of_device_id __clk_of_table;
- 		.ops		= _ops,				\
- 	})
- 
-+#define CLK_HW_INIT_HW(_name, _parent, _ops, _flags)			\
-+	(&(struct clk_init_data) {					\
-+		.flags		= _flags,				\
-+		.name		= _name,				\
-+		.parent_hws	= (const struct clk_hw*[]) { _parent },	\
-+		.num_parents	= 1,					\
-+		.ops		= _ops,					\
-+	})
-+
-+#define CLK_HW_INIT_HWS(_name, _parent, _ops, _flags)			\
-+	(&(struct clk_init_data) {					\
-+		.flags		= _flags,				\
-+		.name		= _name,				\
-+		.parent_hws	= _parent,				\
-+		.num_parents	= 1,					\
-+		.ops		= _ops,					\
-+	})
-+
- #define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
- 	(&(struct clk_init_data) {				\
- 		.flags		= _flags,			\
-@@ -913,6 +931,15 @@ extern struct of_device_id __clk_of_table;
- 		.ops		= _ops,				\
- 	})
- 
-+#define CLK_HW_INIT_PARENTS_HW(_name, _parents, _ops, _flags)	\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_hws	= _parents,			\
-+		.num_parents	= ARRAY_SIZE(_parents),		\
-+		.ops		= _ops,				\
-+	})
-+
- #define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
- 	(&(struct clk_init_data) {			\
- 		.flags          = _flags,		\
--- 
-2.20.1
+I'd spell it out: "%s", foo ? "off" : "on"
 
+In any event:
+
+Reviewed-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+
+Regards.
