@@ -2,110 +2,157 @@ Return-Path: <SRS0=g6IF=TU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0A0C04AAF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203E8C04AAC
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 798FA20856
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA1DD2081C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:51:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nwKyM/IE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731944AbfETKrh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 06:47:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55304 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728000AbfETKrh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 May 2019 06:47:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 88D7AAFD1;
-        Mon, 20 May 2019 10:47:35 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, eric@anholt.net, f.fainelli@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, ptesarik@suse.com,
+        id S1730955AbfETKvE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 06:51:04 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42109 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730763AbfETKvE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 May 2019 06:51:04 -0400
+Received: by mail-pl1-f193.google.com with SMTP id x15so6544681pln.9
+        for <linux-clk@vger.kernel.org>; Mon, 20 May 2019 03:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YW9HGM19uXsoCoTdRY5JIfYDHKn9S6uoZXsNTuG/dJI=;
+        b=nwKyM/IEfq5ctjmYY2jYx0QaToWYb1YEuO/QgxBA8FfWHLb8CsKObYDEvzR49aMFbv
+         +oCYec9BmqEYalYo6wUQNHs7NdIb1s+BWbibEgPSe9CFiJGZ4EnF9Ze+cz3e34PXLu0Z
+         Go6tkBaHkP6bJEkNUalms35nw8zGwJ2+hihxeooKztv5hmF4OIS+gPeX2oceCcAy+Q4u
+         G6iAB3C7xRw07Jb/+F1MEC0tjWHjS29c2NSQhCOIEQcvF9TjNmzN/J2P5WzstB/HuOJz
+         D6hwHrVl3td8rIgJIFKzxV/iAjMFTAiJo3fBbK2T9R78xEwU0jkt1bBYhv+P95sZ/cQ5
+         ueaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YW9HGM19uXsoCoTdRY5JIfYDHKn9S6uoZXsNTuG/dJI=;
+        b=kPa0qkaUfadJf8aPGKI/A4STXvhEyMqRdqQi6iSfFISNvG6L6tR+hFLzgWhqDJ7ylH
+         7L2oI/FbPWREpg22dSaZNQIqTyA+kiF8H4caosM3q/lsdtxHOm6nCiG3qRSgbC6CsHaJ
+         ScLf5DQcSZA3kAtdKPZaEZbLv5JXJBqS/7ZRBKBID5ZGLIpE/VIwpmjbisRCTuHwEGSx
+         L2OZE+uHy2zfReQ8uZmiqNfVSpcMGUdEYX279i9OZCeOl3VTdb75oUBOHzj26Wc1xQ9p
+         nS8WKlxAJYRwSzWIPOmr9pPT3WeYPx0wXybxQ5S9K5ZbBQaK1m0RwUK7VyAbr3aBlqKH
+         19KA==
+X-Gm-Message-State: APjAAAWnb8A6mDHnd77R+mVz7l7OxnQs34NE8Ycu9BMoohb8RgNjkG/s
+        M6ZDlcBz5e0wSGchO9S+zA5h0Q==
+X-Google-Smtp-Source: APXvYqwLPnoz4Sab1bFclPQh5T547o374DXWd3I8Z4Z2RFohtUgkOKBd841X9Qsjl4Wl44THZDVQjQ==
+X-Received: by 2002:a17:902:b20f:: with SMTP id t15mr54482368plr.220.1558349463660;
+        Mon, 20 May 2019 03:51:03 -0700 (PDT)
+Received: from localhost ([122.172.118.99])
+        by smtp.gmail.com with ESMTPSA id 63sm24202008pfu.95.2019.05.20.03.51.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 03:51:02 -0700 (PDT)
+Date:   Mon, 20 May 2019 16:21:00 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     stefan.wahren@i2se.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        mbrugger@suse.de, sboyd@kernel.org, eric@anholt.net,
+        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+        ptesarik@suse.com, linux-rpi-kernel@lists.infradead.org,
         ssuloev@orpaltech.com, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC v2 0/5] cpufreq support for the Raspberry Pi
-Date:   Mon, 20 May 2019 12:47:02 +0200
-Message-Id: <20190520104708.11980-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.21.0
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 5/5] cpufreq: add driver for Raspbery Pi
+Message-ID: <20190520105100.hol6cmvnsf3exzes@vireshk-i7>
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+ <20190520104708.11980-6-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520104708.11980-6-nsaenzjulienne@suse.de>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
-as some of you may recall I've been spending some time looking into
-providing 'cpufreq' support for the Raspberry Pi platform[1]. I think
-I'm close to something workable, so I'd love for you to comment on it.
+On 20-05-19, 12:47, Nicolas Saenz Julienne wrote:
+> Raspberry Pi's firmware offers and interface though which update it's
+> performance requirements. It allows us to request for specific runtime
+> frequencies, which the firmware might or might not respect, depending on
+> the firmware configuration and thermals.
+> 
+> As the maximum and minimum frequencies are configurable in the firmware
+> there is no way to know in advance their values. So the Raspberry Pi
+> cpufreq driver queries them, builds an opp frequency table to then
+> launch cpufreq-dt.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  drivers/cpufreq/Kconfig.arm           |  8 +++
+>  drivers/cpufreq/Makefile              |  1 +
+>  drivers/cpufreq/raspberrypi-cpufreq.c | 83 +++++++++++++++++++++++++++
+>  3 files changed, 92 insertions(+)
+>  create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 179a1d302f48..f6eba7ae50d0 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -308,3 +308,11 @@ config ARM_PXA2xx_CPUFREQ
+>  	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
+>  
+>  	  If in doubt, say N.
+> +
+> +config ARM_RASPBERRYPI_CPUFREQ
+> +	tristate "Raspberry Pi cpufreq support"
+> +	depends on RASPBERRYPI_FIRMWARE || COMPILE_TEST
+> +	help
+> +	  This adds the CPUFreq driver for Raspberry Pi
+> +
+> +	  If in doubt, say N.
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 689b26c6f949..02678e9b2ff5 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -84,6 +84,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+>  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
+>  obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
+>  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+> +obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+= raspberrypi-cpufreq.o
 
-There has been some design changes since the last version. Namely the
-fact that I now make sure *only* the CPU frequency is updated. The
-firmware API we use has two modes, with or without turbo. Enabling turbo
-implies not only scaling the CPU clock but also the VPU and other
-peripheral related clocks.  This is problematic as some of them are not
-prepared for this kind frequency changes. I spent some time adapting the
-peripheral drivers, but the result was disappointing as they poorly
-support live frequency changes (which most other chips accept, think for
-instance I2C and clock stretching) but also turned out hard to integrate
-into the kernel. As we were planning to use 'clk_notifiers' which turns
-out not to be such a good idea as it's prone to deadlocks and not
-recommended by the clock maintainers[2]. It's also worth mentioning that
-the foundation kernel doesn't support VPU frequency scaling either.
+My bad sorry, I noticed this earlier and forgot to comment. The above
+two files are maintained in alphabetical order, please add the entries
+at relevant places.
+  
+>  ##################################################################################
+> diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c b/drivers/cpufreq/raspberrypi-cpufreq.c
+> new file mode 100644
+> index 000000000000..a85988867d56
+> --- /dev/null
+> +++ b/drivers/cpufreq/raspberrypi-cpufreq.c
+> @@ -0,0 +1,83 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Raspberry Pi cpufreq driver
+> + *
+> + * Copyright (C) 2019, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> + */
+> +
+> +#include <linux/of.h>
+> +#include <linux/clk.h>
+> +#include <linux/cpu.h>
+> +#include <linux/module.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/cpufreq.h>
+> +#include <linux/platform_device.h>
 
-With this in mind, and as suggested by clock maintainers[2], I've
-decided to integrate the firmware clock interface into the bcm2835 clock
-driver. This, in my opinion, provides the least friction with the
-firmware and lets us write very simple and portable higher level
-drivers. As I did with the 'cpufreq' driver which simply queries the max
-and min frequencies available, which are configurable in the firmware,
-to then trigger the generic 'cpufreq-dt'.
+Would be better to keep above in alphabetical order as well.
 
-In the future we could further integrate other firmware dependent clocks
-into the main driver. For instance to be able to scale the VPU clock,
-which should be operated through a 'devfreq' driver.
-
-This was tested on a RPi3b+ and if the series is well received I'll test
-it further on all platforms I own.
-
-That's all,
-kind regards,
-Nicolas
-
-[1] https://lists.infradead.org/pipermail/linux-rpi-kernel/2019-April/008634.html
-[2] https://www.spinics.net/lists/linux-clk/msg36937.html
-
----
-
-Changes since v1:
-  - Addressed Viresh's comments in cpufreq driver
-  - Resend with (hopefully) proper CCs
-
-Nicolas Saenz Julienne (5):
-  clk: bcm2835: set CLK_GET_RATE_NOCACHE on CPU clocks
-  clk: bcm2835: set pllb_arm divisor as readonly
-  clk: bcm2835: use firmware interface to update pllb
-  dts: bcm2837: add per-cpu clock devices
-  cpufreq: add driver for Raspbery Pi
-
- arch/arm/boot/dts/bcm2837.dtsi        |   8 +
- drivers/clk/bcm/clk-bcm2835.c         | 284 ++++++++++++++++++++++++--
- drivers/cpufreq/Kconfig.arm           |   8 +
- drivers/cpufreq/Makefile              |   1 +
- drivers/cpufreq/raspberrypi-cpufreq.c |  83 ++++++++
- 5 files changed, 366 insertions(+), 18 deletions(-)
- create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+Please don't send another version now and wait for comments on the
+other patches.
 
 -- 
-2.21.0
-
+viresh
