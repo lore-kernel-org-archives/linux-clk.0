@@ -4,40 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D72C04AAC
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 915E4C04AAF
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9DD22081C
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:47:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E89A20863
+	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 10:47:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731125AbfETKrh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 06:47:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55316 "EHLO mx1.suse.de"
+        id S1732120AbfETKrn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 06:47:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55392 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730323AbfETKrh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 May 2019 06:47:37 -0400
+        id S1732046AbfETKrm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 May 2019 06:47:42 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 91BADAFD2;
-        Mon, 20 May 2019 10:47:35 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id B410AAFDD;
+        Mon, 20 May 2019 10:47:40 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, ptesarik@suse.com,
-        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mturquette@baylibre.com, linux-pm@vger.kernel.org,
+To:     stefan.wahren@i2se.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     mbrugger@suse.de, sboyd@kernel.org, eric@anholt.net,
+        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+        ptesarik@suse.com, linux-rpi-kernel@lists.infradead.org,
+        ssuloev@orpaltech.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         linux-kernel@vger.kernel.org
-Subject: [RFC v2 1/5] clk: bcm2835: set CLK_GET_RATE_NOCACHE on CPU clocks
-Date:   Mon, 20 May 2019 12:47:03 +0200
-Message-Id: <20190520104708.11980-2-nsaenzjulienne@suse.de>
+Subject: [RFC v2 5/5] cpufreq: add driver for Raspbery Pi
+Date:   Mon, 20 May 2019 12:47:07 +0200
+Message-Id: <20190520104708.11980-6-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190520104708.11980-1-nsaenzjulienne@suse.de>
 References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
@@ -48,52 +47,141 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Raspberry Pi's firmware is responsible for updating the cpu clocks and
-pll. This makes sure we get the right rates anytime.
+Raspberry Pi's firmware offers and interface though which update it's
+performance requirements. It allows us to request for specific runtime
+frequencies, which the firmware might or might not respect, depending on
+the firmware configuration and thermals.
+
+As the maximum and minimum frequencies are configurable in the firmware
+there is no way to know in advance their values. So the Raspberry Pi
+cpufreq driver queries them, builds an opp frequency table to then
+launch cpufreq-dt.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/cpufreq/Kconfig.arm           |  8 +++
+ drivers/cpufreq/Makefile              |  1 +
+ drivers/cpufreq/raspberrypi-cpufreq.c | 83 +++++++++++++++++++++++++++
+ 3 files changed, 92 insertions(+)
+ create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 770bb01f523e..c2772dfb155a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -411,6 +411,7 @@ struct bcm2835_pll_data {
- 	u32 reference_enable_mask;
- 	/* Bit in CM_LOCK to indicate when the PLL has locked. */
- 	u32 lock_mask;
-+	u32 flags;
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 179a1d302f48..f6eba7ae50d0 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -308,3 +308,11 @@ config ARM_PXA2xx_CPUFREQ
+ 	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
  
- 	const struct bcm2835_pll_ana_bits *ana;
+ 	  If in doubt, say N.
++
++config ARM_RASPBERRYPI_CPUFREQ
++	tristate "Raspberry Pi cpufreq support"
++	depends on RASPBERRYPI_FIRMWARE || COMPILE_TEST
++	help
++	  This adds the CPUFreq driver for Raspberry Pi
++
++	  If in doubt, say N.
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 689b26c6f949..02678e9b2ff5 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -84,6 +84,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+ obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
+ obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
+ obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
++obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+= raspberrypi-cpufreq.o
  
-@@ -1299,7 +1300,7 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 	init.num_parents = 1;
- 	init.name = data->name;
- 	init.ops = &bcm2835_pll_clk_ops;
--	init.flags = CLK_IGNORE_UNUSED;
-+	init.flags = data->flags | CLK_IGNORE_UNUSED;
  
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
- 	if (!pll)
-@@ -1660,6 +1661,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.ana_reg_base = A2W_PLLB_ANA0,
- 		.reference_enable_mask = A2W_XOSC_CTRL_PLLB_ENABLE,
- 		.lock_mask = CM_LOCK_FLOCKB,
-+		.flags = CLK_GET_RATE_NOCACHE,
- 
- 		.ana = &bcm2835_ana_default,
- 
-@@ -1674,7 +1676,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLB_LOADARM,
- 		.hold_mask = CM_PLLB_HOLDARM,
- 		.fixed_divider = 1,
--		.flags = CLK_SET_RATE_PARENT),
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE),
- 
- 	/*
- 	 * PLLC is the core PLL, used to drive the core VPU clock.
+ ##################################################################################
+diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c b/drivers/cpufreq/raspberrypi-cpufreq.c
+new file mode 100644
+index 000000000000..a85988867d56
+--- /dev/null
++++ b/drivers/cpufreq/raspberrypi-cpufreq.c
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Raspberry Pi cpufreq driver
++ *
++ * Copyright (C) 2019, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
++ */
++
++#include <linux/of.h>
++#include <linux/clk.h>
++#include <linux/cpu.h>
++#include <linux/module.h>
++#include <linux/pm_opp.h>
++#include <linux/cpufreq.h>
++#include <linux/platform_device.h>
++
++static const struct of_device_id machines[] __initconst = {
++	{ .compatible = "raspberrypi,3-model-b-plus" },
++	{ .compatible = "raspberrypi,3-model-b" },
++	{ /* sentinel */ }
++};
++
++static int __init raspberrypi_cpufreq_driver_init(void)
++{
++	struct platform_device *pdev;
++	struct device *cpu_dev;
++	struct clk *clk;
++	long min, max;
++	long rate;
++	int ret;
++
++	if (!of_match_node(machines, of_root))
++		return -ENODEV;
++
++	cpu_dev = get_cpu_device(0);
++	if (!cpu_dev) {
++		pr_err("Cannot get CPU for cpufreq driver\n");
++		return -ENODEV;
++	}
++
++	clk = clk_get(cpu_dev, 0);
++	if (IS_ERR(clk)) {
++		dev_err(cpu_dev, "Cannot get clock for CPU0\n");
++		return PTR_ERR(clk);
++	}
++
++	/*
++	 * The max and min frequencies are configurable in the Raspberry Pi
++	 * firmware, so we query them at runtime
++	 */
++	min = clk_round_rate(clk, 0);
++	max = clk_round_rate(clk, ULONG_MAX);
++	clk_put(clk);
++
++	for (rate = min; rate < max; rate += 100000000) {
++		ret = dev_pm_opp_add(cpu_dev, rate, 0);
++		if (ret)
++			goto remove_opp;
++	}
++
++	ret = dev_pm_opp_add(cpu_dev, max, 0);
++	if (ret)
++		goto remove_opp;
++
++	pdev = platform_device_register_data(NULL, "cpufreq-dt", -1, NULL, 0);
++	ret = PTR_ERR_OR_ZERO(pdev);
++	if (ret) {
++		dev_err(cpu_dev, "Failed to create platform device, %d\n", ret);
++		goto remove_opp;
++	}
++
++	return 0;
++
++remove_opp:
++	dev_pm_opp_remove_all_dynamic(cpu_dev);
++
++	return ret;
++}
++
++late_initcall(raspberrypi_cpufreq_driver_init);
++
++MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de");
++MODULE_DESCRIPTION("Raspberry Pi cpufreq driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.21.0
 
