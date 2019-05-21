@@ -2,143 +2,80 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6582BC04AAF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 17:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50364C04E87
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 385B621479
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 17:49:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="VkVn705o"
+	by mail.kernel.org (Postfix) with ESMTP id 1E25C217F9
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558461699;
+	bh=FLZhdWunrjebuUQrgaFqGqa/3rfm/mslltrgtD0N4gs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=i0mTou7gjq8ZCHwcZ0kk0e5mcxlrCSVrr58mljS2S+FiLGErlDb8LJyY5PkekCBxc
+	 A2sDVDc66uj00awU60GIt6aIYazPvfzt90GRmIA1KTXt8txoknJVm8WGYY3NhQGX10
+	 N+r0YKeY55b0vjkCF3dRfQHeBeWK+egGBGzjEek4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbfEURti (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 13:49:38 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34861 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfEURth (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 13:49:37 -0400
-Received: by mail-oi1-f196.google.com with SMTP id a132so13515932oib.2;
-        Tue, 21 May 2019 10:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Yy3oYPWdeUlJWNni35uRANPHnH/KZjqT8e9g9rhiirM=;
-        b=VkVn705o7OpQFHF9HbuH2HaFLohjO9EUw3hhXGLr+u/78N8WUwIm/rBJBHffrztZdq
-         D+sXQCuVSRDH8pUldl/f0ZVTDRpQf16pGmtJHwNT7TcHo/IcHQbZVzCMnfrDHZOD/7py
-         pwTIgpIwHGr5iEI+LGIGeDsKUUZWMGqmw4ffn/Ct7W7tblfJYpcA2CPdw8zDQAHuPehe
-         jobcU4jXoITVfWwSOIgahxhHRlHyxWdop5/2bO9cWpV/KnacspWfewatTh/EJVMJUC7S
-         p5oca3a4lldAjZSJRVKoC7GXU9HZDyZAqKR1GgO2TT08WomiUPOoVB0V9hgSxBL6PZUh
-         4+Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Yy3oYPWdeUlJWNni35uRANPHnH/KZjqT8e9g9rhiirM=;
-        b=NE0upqXc7ChF3cdUNp86mCszzYlQAMy32DSVCyR5JnhJbZRFr8q2rJ/65GAbW8pWjW
-         LkfuAhCar7SkX1ivQ6IEVBqASnvdKE9nBqT85PqLG53jYXGPpzEx4SApPK5c6mas1FU6
-         TDy6168yN00XHR+rZ3R7AnWvecwZACyGPU4TsAyNEkvdnNfKPRjUj/Q5Uz97hDyK5IFM
-         +znUM9eJrsVZdbuEPGmTyB0uYw/tET4MUJLszHW7OhUx6wQOSzw0hzPkq5v9rCbZN5Zq
-         e1shKqtR/8eU6/Nlc10aWGpQIS4vKD8Def50N3XmiosU8RCPk4cEUY3ophUAGtNkxlYp
-         h4zw==
-X-Gm-Message-State: APjAAAXySGI4zwVJX0hjtNpWHSnrmOuUmKfqPyzpciP0YBE5UORg0ujq
-        enxMKlgs1351loBA5tlub0CfRc3CuR6qgO1v3pI=
-X-Google-Smtp-Source: APXvYqwsTyLWRVtVJGzYLFw570+vGq26/BU5Rlh7Kr1b1kBkg18irFOUv0iHFMKBHXzmvtcX9F3LescfHwPspCkkezo=
-X-Received: by 2002:aca:ed0a:: with SMTP id l10mr4510948oih.39.1558460976843;
- Tue, 21 May 2019 10:49:36 -0700 (PDT)
+        id S1727898AbfEUSBi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 14:01:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729098AbfEUSBi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 May 2019 14:01:38 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7A30217D7;
+        Tue, 21 May 2019 18:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558461697;
+        bh=FLZhdWunrjebuUQrgaFqGqa/3rfm/mslltrgtD0N4gs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=wS2iQRdgmag5T8KZvfo76T4L2N8wQBpCRchW2qiTLxHhUwzNJL3O++yzcPmBvnjZA
+         r+yVm3fzoyYi+cNk3Rmmu16l6Z4vxzBmdVkKgBgHqJz2eacSya9ozeO6PsoZZGgJwK
+         PlC/1IU3tBqdzdMFjeMaY9LVmBs9ewvAhKrfX0wA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190521150130.31684-1-narmstrong@baylibre.com> <20190521150130.31684-3-narmstrong@baylibre.com>
-In-Reply-To: <20190521150130.31684-3-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 21 May 2019 19:49:25 +0200
-Message-ID: <CAFBinCB+DD=hssuswV6M4i1Buv7bs0-6TfPTRVdUrhaprLMb0w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: meson: g12a: Add support for G12B CPUB clocks
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMuHMdVOKDRYjzmyRq-KXW8d+dYmAxnM+=y2yOh85YDcCEDMuw@mail.gmail.com>
+References: <20190514153341.22540-1-chris.paterson2@renesas.com> <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com> <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com> <20190516215406.75E5D2082E@mail.kernel.org> <CAMuHMdVOKDRYjzmyRq-KXW8d+dYmAxnM+=y2yOh85YDcCEDMuw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+User-Agent: alot/0.8.1
+Date:   Tue, 21 May 2019 11:01:36 -0700
+Message-Id: <20190521180137.A7A30217D7@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Neil,
+Quoting Geert Uytterhoeven (2019-05-21 01:57:20)
+> Hi Stephen, Andrew,
+>=20
+> On Thu, May 16, 2019 at 11:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Guess so! Or Andrew does it.
+>=20
+> Given the change to scripts/spelling.txt conflicts with b937856a5db2cb7a
+> ("scripts/spelling.txt: add more typos to spelling.txt and sort") in
+> linux-next, and the risk of conflict with future changes to
+> drivers/clk/renesas/r8a77470-cpg-mssr.c is slim, I'd like to defer this
+> to Andrew.
+>=20
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, May 21, 2019 at 5:02 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Update the Meson G12A Clock driver to support the Amlogic G12B SoC.
->
-> G12B clock driver is very close, the main differences are :
-> - the clock tree is duplicated for the both clusters, and the
->   SYS_PLL are swapped between the clusters
-> - G12A has additional clocks like for CSI an other components
-should this also be G12B?
+Ok. Or Chris can split the patch into the clk part and the scripts/
+part?  They're only loosely related to each other, so I'm not sure why
+they were sent in one patch besides for ease of transport.
 
-[...]
-> +static struct clk_regmap g12b_cpub_clk_apb_div = {
-if you also think that it's worth it then please add a comment stating
-that this is called "PCLK_mux" in the datasheet
-same goes for the ATB and AXI clocks below as the naming in the driver
-and datasheet differs
-
-> +       .data = &(struct clk_regmap_div_data){
-> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
-> +               .shift = 3,
-> +               .width = 3,
-> +               .flags = CLK_DIVIDER_POWER_OF_TWO,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "cpub_clk_apb_div",
-> +               .ops = &clk_regmap_divider_ro_ops,
-> +               .parent_names = (const char *[]){ "cpub_clk" },
-> +               .num_parents = 1,
-> +       },
-> +};
-I'm assuming you checked that this is really a power of two divider,
-on the Meson8/8b/8m2 SoCs this is a mux between div[2..8]
-(the same goes for the ATB, AXI and trace div clocks below)
-
-> +
-> +static struct clk_regmap g12b_cpub_clk_apb = {
-> +       .data = &(struct clk_regmap_gate_data){
-> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
-> +               .bit_idx = 16,
-the public S922X datasheet calls this "PCLK_dis", does this mean you
-need a flag here?
-  .flags = CLK_GATE_SET_TO_DISABLE,
-
-[...]
-> +static struct clk_regmap g12b_cpub_clk_atb = {
-> +       .data = &(struct clk_regmap_gate_data){
-> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
-> +               .bit_idx = 17,
-the public S922X datasheet calls this "ATCLK_clk_dis", does this mean
-you need a flag here?
-  .flags = CLK_GATE_SET_TO_DISABLE,
-
-[...]
-> +static struct clk_regmap g12b_cpub_clk_axi = {
-> +       .data = &(struct clk_regmap_gate_data){
-> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
-> +               .bit_idx = 18,
-the public S922X datasheet calls this "ACLKM_clk_dis", does this mean
-you need a flag here?
-  .flags = CLK_GATE_SET_TO_DISABLE,
-
-[...]
-> +static struct clk_regmap g12b_cpub_clk_trace = {
-> +       .data = &(struct clk_regmap_gate_data){
-> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
-> +               .bit_idx = 23,
-the public S922X datasheet calls this "Trace_clk_dis", does this mean
-you need a flag here?
-  .flags = CLK_GATE_SET_TO_DISABLE,
-
-
-Regards
-Martin
