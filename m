@@ -2,252 +2,134 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8566C46460
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CCCC04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A25EC217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CEAA2173E
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:52:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="ax+OwyfL"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gi979lmu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I8ukjk4V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbfEUOw0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 10:52:26 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:41340 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728539AbfEUOwU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 10:52:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1558450338; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+B18APaxvHsp3HPUtJiRP9lFp/hR6r7x1rtqKumiKiM=;
-        b=ax+OwyfLOM8ZdjPX8gVfeoD39JKJTqcBvVDrGbazKu4KRC9R4nw3xojBtGuHLjHwmroqIZ
-        5VIYrXslA78URBExlzuhtFfFhdS/4o597z7shkq2jTb4kw1hqq5L4Q6mVm56e/02Vq7et4
-        1DTREOThqlN5sNdA2Z3DNCdByblCMBY=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v12 13/13] MIPS: jz4740: Drop obsolete code
-Date:   Tue, 21 May 2019 16:51:41 +0200
-Message-Id: <20190521145141.9813-14-paul@crapouillou.net>
-In-Reply-To: <20190521145141.9813-1-paul@crapouillou.net>
-References: <20190521145141.9813-1-paul@crapouillou.net>
+        id S1728966AbfEUOwe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 10:52:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48020 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728316AbfEUOwe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 10:52:34 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7DA1D60E5A; Tue, 21 May 2019 14:52:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558450352;
+        bh=SrPfq8MUViUv+XabaPgjbbiYPwSPr5D7GfKJjGwPG+I=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gi979lmu16tGOEOTilt7ENiKg7rFcuOTfFLuR+c4mUCM/Erh3fSjEoeQnjmPvTwlH
+         dJV0V8+OWwXaZsrnn64uinhEM20+yhbMBCFwI3fegy/pObPwt0G7/y4A38x63Rxop4
+         /pUn38KW6NJodHSvOO0+TFpZmOteK5IPy8aMExiM=
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED10D6021C;
+        Tue, 21 May 2019 14:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558450351;
+        bh=SrPfq8MUViUv+XabaPgjbbiYPwSPr5D7GfKJjGwPG+I=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=I8ukjk4VvZ1URFh1a1CnLlOUQgcflGA2KQX4W7UDU0PS4dhXqM/Fw0r195XSmtXEc
+         OFC9lEihjflZtu/u2C+5Zl3hMUNX6d/m9Y8yGmDJvKAyvNU6M+VBgPne5tcXM82ixH
+         hV8zbiK6KoKwcZX2VEUvx8q8vXpEUlDNeLO1fqU4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED10D6021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v4 0/6] MSM8998 Multimedia Clock Controller
+To:     sboyd@kernel.org
+Cc:     david.brown@linaro.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1558449843-19971-1-git-send-email-jhugo@codeaurora.org>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <933023a0-10fd-fedf-6715-381dae174ad9@codeaurora.org>
+Date:   Tue, 21 May 2019 08:52:28 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1558449843-19971-1-git-send-email-jhugo@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The old clocksource/timer platform code is now obsoleted by the newly
-introduced TCU drivers.
+On 5/21/2019 8:44 AM, Jeffrey Hugo wrote:
+> The multimedia clock controller (mmcc) is the main clock controller for
+> the multimedia subsystem and is required to enable things like display and
+> camera.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+Stephen, I think this series is good to go, and I have display/gpu stuff 
+I'm polishing that will depend on this.  Would you kindly pickup patches 
+1, 3, 4, and 5 for 5.3?  I can work with Bjorn to pick up patches 2 and 6.
 
-Notes:
-    v5: New patch
-    
-    v6-v11: No change
-    
-    v12: Only remove clocksource code. The rest will eventually be
-    	 removed in a future patchset when the PWM/watchdog drivers
-    	 are updated.
+> 
+> v4:
+> -fix makefile to use correct config item
+> -pick up tags
+> -fix ordering of clocks and clock-names in dt
+> -drop MODULE_ALIAS
+> -wait for xo in mmcc since that was found to be useful in some debug configs
+> 
+> v3:
+> -Rebase onto linux-next to get the final version of the clk parent rewrite
+> series
+> -Moved the bindings header to the bindings patch per Rob
+> -Made xo manditory for GCC to work around the lack of clk orphan probe defer
+> to avoid the uart console glitch
+> 
+> v2:
+> -Rebased on the "Rewrite clk parent handling" series and updated to the clk init
+> mechanisms introduced there.
+> -Marked XO clk as CLK_IGNORE_UNUSED to avoid the concern about the XO going away
+> "incorrectly" during late init
+> -Corrected the name of the XO clock to "xo"
+> -Dropped the fake XO clock in GCC to prevent a namespace conflict
+> -Fully enumerated the external clocks (DSI PLLs, etc) in the DT binding
+> -Cleaned up the weird newlines in the added DT node
+> -Added DT header file to msm8998 DT for future clients
+> 
+> Jeffrey Hugo (6):
+>    dt-bindings: clock: Document external clocks for MSM8998 gcc
+>    arm64: dts: msm8998: Add xo clock to gcc node
+>    clk: qcom: smd: Add XO clock for MSM8998
+>    dt-bindings: clock: Add support for the MSM8998 mmcc
+>    clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+>    arm64: dts: qcom: msm8998: Add mmcc node
+> 
+>   .../devicetree/bindings/clock/qcom,gcc.txt    |   10 +
+>   .../devicetree/bindings/clock/qcom,mmcc.txt   |   21 +
+>   arch/arm64/boot/dts/qcom/msm8998.dtsi         |   16 +
+>   drivers/clk/qcom/Kconfig                      |    9 +
+>   drivers/clk/qcom/Makefile                     |    1 +
+>   drivers/clk/qcom/clk-smd-rpm.c                |   24 +-
+>   drivers/clk/qcom/gcc-msm8998.c                |   29 +-
+>   drivers/clk/qcom/mmcc-msm8998.c               | 2915 +++++++++++++++++
+>   include/dt-bindings/clock/qcom,mmcc-msm8998.h |  210 ++
+>   9 files changed, 3214 insertions(+), 21 deletions(-)
+>   create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
+>   create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
+> 
 
- arch/mips/jz4740/time.c | 154 +---------------------------------------
- 1 file changed, 2 insertions(+), 152 deletions(-)
 
-diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
-index 2ca9160f642a..9a61bca8e9f0 100644
---- a/arch/mips/jz4740/time.c
-+++ b/arch/mips/jz4740/time.c
-@@ -13,164 +13,14 @@
-  *
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
--#include <linux/interrupt.h>
--#include <linux/kernel.h>
--#include <linux/time.h>
-+#include <linux/clocksource.h>
- 
--#include <linux/clockchips.h>
--#include <linux/sched_clock.h>
--
--#include <asm/mach-jz4740/clock.h>
--#include <asm/mach-jz4740/irq.h>
- #include <asm/mach-jz4740/timer.h>
--#include <asm/time.h>
--
--#include "clock.h"
--
--#define TIMER_CLOCKEVENT 0
--#define TIMER_CLOCKSOURCE 1
--
--static uint16_t jz4740_jiffies_per_tick;
--
--static u64 jz4740_clocksource_read(struct clocksource *cs)
--{
--	return jz4740_timer_get_count(TIMER_CLOCKSOURCE);
--}
--
--static struct clocksource jz4740_clocksource = {
--	.name = "jz4740-timer",
--	.rating = 200,
--	.read = jz4740_clocksource_read,
--	.mask = CLOCKSOURCE_MASK(16),
--	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
--};
--
--static u64 notrace jz4740_read_sched_clock(void)
--{
--	return jz4740_timer_get_count(TIMER_CLOCKSOURCE);
--}
--
--static irqreturn_t jz4740_clockevent_irq(int irq, void *devid)
--{
--	struct clock_event_device *cd = devid;
--
--	jz4740_timer_ack_full(TIMER_CLOCKEVENT);
--
--	if (!clockevent_state_periodic(cd))
--		jz4740_timer_disable(TIMER_CLOCKEVENT);
--
--	cd->event_handler(cd);
--
--	return IRQ_HANDLED;
--}
--
--static int jz4740_clockevent_set_periodic(struct clock_event_device *evt)
--{
--	jz4740_timer_set_count(TIMER_CLOCKEVENT, 0);
--	jz4740_timer_set_period(TIMER_CLOCKEVENT, jz4740_jiffies_per_tick);
--	jz4740_timer_irq_full_enable(TIMER_CLOCKEVENT);
--	jz4740_timer_enable(TIMER_CLOCKEVENT);
--
--	return 0;
--}
--
--static int jz4740_clockevent_resume(struct clock_event_device *evt)
--{
--	jz4740_timer_irq_full_enable(TIMER_CLOCKEVENT);
--	jz4740_timer_enable(TIMER_CLOCKEVENT);
--
--	return 0;
--}
--
--static int jz4740_clockevent_shutdown(struct clock_event_device *evt)
--{
--	jz4740_timer_disable(TIMER_CLOCKEVENT);
--
--	return 0;
--}
--
--static int jz4740_clockevent_set_next(unsigned long evt,
--	struct clock_event_device *cd)
--{
--	jz4740_timer_set_count(TIMER_CLOCKEVENT, 0);
--	jz4740_timer_set_period(TIMER_CLOCKEVENT, evt);
--	jz4740_timer_enable(TIMER_CLOCKEVENT);
--
--	return 0;
--}
--
--static struct clock_event_device jz4740_clockevent = {
--	.name = "jz4740-timer",
--	.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
--	.set_next_event = jz4740_clockevent_set_next,
--	.set_state_shutdown = jz4740_clockevent_shutdown,
--	.set_state_periodic = jz4740_clockevent_set_periodic,
--	.set_state_oneshot = jz4740_clockevent_shutdown,
--	.tick_resume = jz4740_clockevent_resume,
--	.rating = 200,
--#ifdef CONFIG_MACH_JZ4740
--	.irq = JZ4740_IRQ_TCU0,
--#endif
--#if defined(CONFIG_MACH_JZ4770) || defined(CONFIG_MACH_JZ4780)
--	.irq = JZ4780_IRQ_TCU2,
--#endif
--};
--
--static struct irqaction timer_irqaction = {
--	.handler	= jz4740_clockevent_irq,
--	.flags		= IRQF_PERCPU | IRQF_TIMER,
--	.name		= "jz4740-timerirq",
--	.dev_id		= &jz4740_clockevent,
--};
- 
- void __init plat_time_init(void)
- {
--	int ret;
--	uint32_t clk_rate;
--	uint16_t ctrl;
--	struct clk *ext_clk;
--
- 	of_clk_init(NULL);
- 	jz4740_timer_init();
--
--	ext_clk = clk_get(NULL, "ext");
--	if (IS_ERR(ext_clk))
--		panic("unable to get ext clock");
--	clk_rate = clk_get_rate(ext_clk) >> 4;
--	clk_put(ext_clk);
--
--	jz4740_jiffies_per_tick = DIV_ROUND_CLOSEST(clk_rate, HZ);
--
--	clockevent_set_clock(&jz4740_clockevent, clk_rate);
--	jz4740_clockevent.min_delta_ns = clockevent_delta2ns(100, &jz4740_clockevent);
--	jz4740_clockevent.min_delta_ticks = 100;
--	jz4740_clockevent.max_delta_ns = clockevent_delta2ns(0xffff, &jz4740_clockevent);
--	jz4740_clockevent.max_delta_ticks = 0xffff;
--	jz4740_clockevent.cpumask = cpumask_of(0);
--
--	clockevents_register_device(&jz4740_clockevent);
--
--	ret = clocksource_register_hz(&jz4740_clocksource, clk_rate);
--
--	if (ret)
--		printk(KERN_ERR "Failed to register clocksource: %d\n", ret);
--
--	sched_clock_register(jz4740_read_sched_clock, 16, clk_rate);
--
--	setup_irq(jz4740_clockevent.irq, &timer_irqaction);
--
--	ctrl = JZ_TIMER_CTRL_PRESCALE_16 | JZ_TIMER_CTRL_SRC_EXT;
--
--	jz4740_timer_set_ctrl(TIMER_CLOCKEVENT, ctrl);
--	jz4740_timer_set_ctrl(TIMER_CLOCKSOURCE, ctrl);
--
--	jz4740_timer_set_period(TIMER_CLOCKEVENT, jz4740_jiffies_per_tick);
--	jz4740_timer_irq_full_enable(TIMER_CLOCKEVENT);
--
--	jz4740_timer_set_period(TIMER_CLOCKSOURCE, 0xffff);
--
--	jz4740_timer_enable(TIMER_CLOCKEVENT);
--	jz4740_timer_enable(TIMER_CLOCKSOURCE);
-+	timer_probe();
- }
 -- 
-2.21.0.593.g511ec345e18
-
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
