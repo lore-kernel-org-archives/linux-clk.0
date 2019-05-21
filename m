@@ -2,80 +2,76 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50364C04E87
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56284C04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E25C217F9
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 223B5217D9
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558461699;
-	bh=FLZhdWunrjebuUQrgaFqGqa/3rfm/mslltrgtD0N4gs=;
+	s=default; t=1558463700;
+	bh=h6QMBPaQJ9YaytqpgsgQE/jdYbpm7zZS+J6xihNl3uc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=i0mTou7gjq8ZCHwcZ0kk0e5mcxlrCSVrr58mljS2S+FiLGErlDb8LJyY5PkekCBxc
-	 A2sDVDc66uj00awU60GIt6aIYazPvfzt90GRmIA1KTXt8txoknJVm8WGYY3NhQGX10
-	 N+r0YKeY55b0vjkCF3dRfQHeBeWK+egGBGzjEek4=
+	b=iq9NWbBGj/kZufEp/Og5HcSyZdYSocBd4oB2DOSLLNS/CmmTUwVczpTKbpTpcNi7n
+	 zqT201QhvKaUUf7qUFiYXxXrvGqrdU1B5ka/KHh2udHldcD15tC4PYjPhyDYHjY50X
+	 yvDtCpgyw9JZdBg2/GES2U1XWzTlMmvHHTZEvskk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbfEUSBi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 14:01:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53802 "EHLO mail.kernel.org"
+        id S1728271AbfEUSe7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 14:34:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729098AbfEUSBi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 May 2019 14:01:38 -0400
+        id S1727969AbfEUSe7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 May 2019 14:34:59 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7A30217D7;
-        Tue, 21 May 2019 18:01:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 031D22173E;
+        Tue, 21 May 2019 18:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558461697;
-        bh=FLZhdWunrjebuUQrgaFqGqa/3rfm/mslltrgtD0N4gs=;
+        s=default; t=1558463699;
+        bh=h6QMBPaQJ9YaytqpgsgQE/jdYbpm7zZS+J6xihNl3uc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=wS2iQRdgmag5T8KZvfo76T4L2N8wQBpCRchW2qiTLxHhUwzNJL3O++yzcPmBvnjZA
-         r+yVm3fzoyYi+cNk3Rmmu16l6Z4vxzBmdVkKgBgHqJz2eacSya9ozeO6PsoZZGgJwK
-         PlC/1IU3tBqdzdMFjeMaY9LVmBs9ewvAhKrfX0wA=
+        b=sjLGkhCL+6CNctT+nhppZVHDDEgcqXJhArozSlipyDH2C+UGfFJOeUJONbchPrrY8
+         NnZc0hEFDhjUWchObZB1iK02IZGnHKzuzz28tdEqIK9x9HCkiglnIwWuBCPWHjlo87
+         xUH2qf4/zRl92Gqfbg1BllN7kb1qmZXCE6tCZOoE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMuHMdVOKDRYjzmyRq-KXW8d+dYmAxnM+=y2yOh85YDcCEDMuw@mail.gmail.com>
-References: <20190514153341.22540-1-chris.paterson2@renesas.com> <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com> <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com> <20190516215406.75E5D2082E@mail.kernel.org> <CAMuHMdVOKDRYjzmyRq-KXW8d+dYmAxnM+=y2yOh85YDcCEDMuw@mail.gmail.com>
-Subject: Re: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
+In-Reply-To: <20190513213001.23956-1-paul.walmsley@sifive.com>
+References: <20190513213001.23956-1-paul.walmsley@sifive.com>
+Subject: Re: [PATCH v2] clk: sifive: restrict Kconfig scope for the FU540 PRCI driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-clk@vger.kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Paul Walmsley <paul@pwsan.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>, mturquette@baylibre.com,
+        pavel@ucw.cz
 User-Agent: alot/0.8.1
-Date:   Tue, 21 May 2019 11:01:36 -0700
-Message-Id: <20190521180137.A7A30217D7@mail.kernel.org>
+Date:   Tue, 21 May 2019 11:34:58 -0700
+Message-Id: <20190521183459.031D22173E@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-05-21 01:57:20)
-> Hi Stephen, Andrew,
+Quoting Paul Walmsley (2019-05-13 14:30:04)
+> Restrict Kconfig scope for SiFive clock and reset IP block drivers
+> such that they won't appear on most configurations that are unlikely
+> to support them.  This is based on a suggestion from Pavel Machek
+> <pavel@ucw.cz>.  Ideally this should be dependent on
+> CONFIG_ARCH_SIFIVE, but since that Kconfig directive does not yet
+> exist, add dependencies on RISCV or COMPILE_TEST for now.
 >=20
-> On Thu, May 16, 2019 at 11:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Guess so! Or Andrew does it.
->=20
-> Given the change to scripts/spelling.txt conflicts with b937856a5db2cb7a
-> ("scripts/spelling.txt: add more typos to spelling.txt and sort") in
-> linux-next, and the risk of conflict with future changes to
-> drivers/clk/renesas/r8a77470-cpg-mssr.c is slim, I'd like to defer this
-> to Andrew.
->=20
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> Reported-by: Pavel Machek <pavel@ucw.cz>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Ok. Or Chris can split the patch into the clk part and the scripts/
-part?  They're only loosely related to each other, so I'm not sure why
-they were sent in one patch besides for ease of transport.
+Applied to clk-fixes
 
