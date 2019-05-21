@@ -2,143 +2,138 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D001DC072B5
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 21:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C896C46460
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 21:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EEDA217D7
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 21:32:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="zSTgqhYY"
+	by mail.kernel.org (Postfix) with ESMTP id 3ABA32183F
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 21:44:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727887AbfEUVcD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 17:32:03 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:36245 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbfEUVcC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 17:32:02 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 73CAD886BF;
-        Wed, 22 May 2019 09:32:00 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1558474320;
-        bh=KN+7+Y6HuTQUXjJHPxv21KSUpl/58gx83ZuyPRW6tQc=;
-        h=From:To:CC:Subject:Date:References;
-        b=zSTgqhYY419fkqtmofKeCuVgVVHe+SE+eUbLILv5B/q+2lHVNnt2WlSnSGH6FRgW7
-         DIMvZMtLiDJiH3OxjEBD26Xp2r+3k6XSa1Pg3kOMCMc4RZRh4OnNAgGXFKGK7gcwu9
-         0Q+Za0H17501RrknBI9quHJXy6JrpT3HHgdDJQlZc90ePcTCbV0XPpdFHAHewjG87X
-         Bz1vpKYAIqwLZ50bz6f8PIvP2DWG+Xu6lyhZ01zETNtl11GWWnwULz1xDLe2pMa9aJ
-         a60UCLlegL4j3nj970sz7WSwbj0MQOGwpgwPAZkJjAJhivwZgxPS1VSvqE2REpXI5T
-         L7LibLI8p2CqQ==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5ce46e4c0002>; Wed, 22 May 2019 09:31:56 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Wed, 22 May 2019 09:32:00 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Wed, 22 May 2019 09:32:00 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Philippe Mazenauer <philippe.mazenauer@outlook.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-CC:     Yangtao Li <tiny.windzz@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] clk: armada-xp: Remove unused variables
-Thread-Topic: [PATCH] clk: armada-xp: Remove unused variables
-Thread-Index: AQHVEByfB3zMNKUPxE+M+EKg8bXzJw==
-Date:   Tue, 21 May 2019 21:31:59 +0000
-Message-ID: <b60737773b9049bb80f6b325ac543e67@svr-chch-ex1.atlnz.lc>
-References: <VI1PR07MB4432F4F275BC445289FF3D9CFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+        id S1728036AbfEUVoM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 17:44:12 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:52773 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727825AbfEUVoM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 17:44:12 -0400
+Received: from oxbaltgw36.schlund.de ([172.19.246.44]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M3UhQ-1hTkmN1yTK-000dQZ; Tue, 21 May 2019 23:43:49 +0200
+Date:   Tue, 21 May 2019 23:43:46 +0200 (CEST)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Cc:     linux-pm@vger.kernel.org, sboyd@kernel.org,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        ptesarik@suse.com, rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        mbrugger@suse.de, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ssuloev@orpaltech.com
+Message-ID: <1599901940.259900.1558475026379@email.ionos.de>
+In-Reply-To: <a142b72b828a798610d885d81189dd21b1870d78.camel@suse.de>
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+ <20190520104708.11980-4-nsaenzjulienne@suse.de>
+ <ebc78880-418f-f507-021c-41295113e041@i2se.com>
+ <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
+ <a142b72b828a798610d885d81189dd21b1870d78.camel@suse.de>
+Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update
+ pllb
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev55
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:Isy5OlYsYGu9nrdhnWYleYJBAsXAYF+kjVDhfkkBJjpqzq5ZCJ8
+ wBrxVrIo4++MiWGXASEOqxb4cpbPuhfyfcpg6XJSh/BMfGi9o7z1fQ0Khes7Q8QfhAon+iu
+ Ph83K39Jzsa5+H1HvaMbZwfikr4aq0l8KiaHIfpCPI89Hw0fan5EAleIIX9/KTIpjv3F0xR
+ FCPtxd9TpiKaJ0UONo/RA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nY8tA70RVBM=:mOsfgkfjoAIx80KhU342a4
+ yiIrkI7pWZ99A/mCEoZVH+0C1zJXeM6uoYYhGJL/sfzZ7y4GMmdrn4Ziqsp9VnDV9PqPnBK9e
+ NCeT5AAIqT/jjszs8m5KyTcEaCw5gsYVlG1g/ghx60arMlkVkvQXFvSk1KW5PIw2OB5ckhfsv
+ KMDOIy9RwM5XruZnfBjbWQxqfkRRo1xcsG6+V2rAu1plD+yIXDZnS+eE7qBI7eedU1FR605eZ
+ 4Zh72Z21kH7qhvv1TDKzV2wdka9dwqZ0OE5ApKjURmgSmLmbpPxBCqSYokQaaW8hZumhdaFro
+ jljEXtF9nm/yaRjMTzkBFXceEfpL5hLRD6y+fd8kXRqazon7pQJYtqc/uU/T6z8dV3w8dMk9L
+ u577Sz4xJaLpsHKGXktJJluopiUfX7DZAN41+2AvA+381FNI7KBqbU++3cGOnh58rCfiOem4p
+ rPwXFPDjxuhRpfVUFt/dWUjfx7Xe4KGXYH8TA8c6HFckaal0uXfX+Let7872KVAyugzccDPcw
+ BS/pwCCxGBTsJUVGUoxS55Pp1znnfuNaI6OLCxjThm3sPnt/dgWDRiaLSmKmYBK/66Sc91ecm
+ iYdCy+iz+yCETge8pBVxUWrwwC3DJuCegXJSS2Q6tHFLadvSZj9WSxDeOu2vR2Na7yPXO72hI
+ QpJL3EsCKUTKtU/FyqNjV5SUtgMw+Imt5JxEDmvRjB3vq4QfiTLnFUjOqFwaa3I+7pm7/p0Sn
+ Rvro3OibNuNCeeNH8n65x7Ag+QRfPDGpGbSX/C1+U9r7gDL/IrLNTF+tbj8=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Philippe,=0A=
-=0A=
-On 21/05/19 8:58 PM, Philippe Mazenauer wrote:=0A=
-> Variables 'mv98dx3236_gating_desc' and 'mv98dx3236_coreclks' are=0A=
-> declared static and initialized, but are not used in the file.=0A=
-> =0A=
-> ../drivers/clk/mvebu/armada-xp.c:213:41: warning: =91mv98dx3236_gating_de=
-sc=92 defined but not used [-Wunused-const-variable=3D]=0A=
->   static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __init=
-const =3D {=0A=
->                                           ^~~~~~~~~~~~~~~~~~~~~~=0A=
-> ../drivers/clk/mvebu/armada-xp.c:171:38: warning: =91mv98dx3236_coreclks=
-=92 defined but not used [-Wunused-const-variable=3D]=0A=
->   static const struct coreclk_soc_desc mv98dx3236_coreclks =3D {=0A=
->                                        ^~~~~~~~~~~~~~~~~~~=0A=
-> =0A=
-> Signed-off-by: Philippe Mazenauer <philippe.mazenauer@outlook.de>=0A=
-=0A=
-The usage of these was moved to a separate file in a later commit and =0A=
-the original code wasn't fully cleaned up.=0A=
-=0A=
-Fixes: 337072604224 ("clk: mvebu: Expand mv98dx3236-core-clock support")=0A=
-Cc: stable@vger.kernel.org=0A=
-Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
-=0A=
-Thanks=0A=
-=0A=
-> ---=0A=
->   drivers/clk/mvebu/armada-xp.c | 14 --------------=0A=
->   1 file changed, 14 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.=
-c=0A=
-> index fa1568279c23..2ae24a5debd0 100644=0A=
-> --- a/drivers/clk/mvebu/armada-xp.c=0A=
-> +++ b/drivers/clk/mvebu/armada-xp.c=0A=
-> @@ -168,11 +168,6 @@ static const struct coreclk_soc_desc axp_coreclks =
-=3D {=0A=
->   	.num_ratios =3D ARRAY_SIZE(axp_coreclk_ratios),=0A=
->   };=0A=
->   =0A=
-> -static const struct coreclk_soc_desc mv98dx3236_coreclks =3D {=0A=
-> -	.get_tclk_freq =3D mv98dx3236_get_tclk_freq,=0A=
-> -	.get_cpu_freq =3D mv98dx3236_get_cpu_freq,=0A=
-> -};=0A=
-> -=0A=
->   /*=0A=
->    * Clock Gating Control=0A=
->    */=0A=
-> @@ -210,15 +205,6 @@ static const struct clk_gating_soc_desc axp_gating_d=
-esc[] __initconst =3D {=0A=
->   	{ }=0A=
->   };=0A=
->   =0A=
-> -static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __initc=
-onst =3D {=0A=
-> -	{ "ge1", NULL, 3, 0 },=0A=
-> -	{ "ge0", NULL, 4, 0 },=0A=
-> -	{ "pex00", NULL, 5, 0 },=0A=
-> -	{ "sdio", NULL, 17, 0 },=0A=
-> -	{ "xor0", NULL, 22, 0 },=0A=
-> -	{ }=0A=
-> -};=0A=
-> -=0A=
->   static void __init axp_clk_init(struct device_node *np)=0A=
->   {=0A=
->   	struct device_node *cgnp =3D=0A=
-> =0A=
-=0A=
+
+> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 21. Mai 2019 um 17:47 geschrieben:
+> 
+> 
+> Hi Stefan, thanks for your comments!
+> 
+> On Tue, 2019-05-21 at 14:40 +0200, Stefan Wahren wrote:
+> > Hi Nicolas,
+> > 
+> > On 20.05.19 14:11, Stefan Wahren wrote:
+> > > Hi Nicolas,
+> > > 
+> > > the following comments applies only in case Eric is fine with the whole
+> > > approach.
+> > > 
+> > > On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
+> > > > Raspberry Pi's firmware, which runs in a dedicated processor, keeps
+> > > maybe we should clarify that the firmware is running in the VPU
+> > > > track of the board's temperature and voltage. It's resposible for
+> > > > scaling the CPU frequency whenever it deems the device reached an unsafe
+> > > > state. On top of that the firmware provides an interface which allows
+> > > > Linux to to query the clock's state or change it's frequency.
+> > > I think this requires a separate update of the devicetree binding.
+> > > > Being the sole user of the bcm2835 clock driver, this integrates the
+> > > > firmware interface into the clock driver and adds a first user: the CPU
+> > > > pll, also known as 'pllb'.
+> > > Please verify that the kernel still works (and this clock driver probe)
+> > > under the following conditions:
+> > > 
+> > > - CONFIG_RASPBERRYPI_FIRMWARE=n
+> > > - CONFIG_RASPBERRYPI_FIRMWARE=m
+> > > - older DTBs without patch #1
+> > i thought about this and the case this driver would return
+> > -EPROBE_DEFER. The clock driver is too essential for doing such a thing.
+> > So i think the best solution would be to move these changes into a
+> > separate driver which should be register by the clock driver (similiar
+> > to vchiq). This also avoid the need of a new device tree binding.
+> 
+> I understand your concerns.
+> 
+> Wouldn't you prefer registering the device trough the device tree? I'd go with
+> the same approach as the firmware touchscreen driver, which is registered after
+> the firmware's probe trough dt's 'simple-bus'. That said, it's not a strongly
+> held opinion, I'm happy with whatever solution as long as it works.
+
+A devicetree binding always introduce some kind of inflexibility. In case someone finds a better solution later things can get really messy. A recent example is the clock handling for i2c-bcm2835.
+
+> 
+> I get from your comments that you'd like the register based version of 'pllb'
+> and 'pllb_arm' to be loaded if for some reason the firmware isn't available. Is
+> that right? 
+
+This wasn't my intention. I would prefer a simple approch here (no handover). 
+
+> The main problem I see with this is the duplication of 'pllb' and
+> 'pllb_arm'. Both drivers will create the same clock device through different
+> interfaces. Any suggestions on how to deal with that? If not I can simply
+> remove 'pllb' and 'pllb_arm' from clk-bcm2835.c.
+
+Yes. So even if this driver is disabled, there shouldn't be a regression. Or did i miss something?
+
+> 
+> Regards,
+> Nicolas
+>
