@@ -2,151 +2,401 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7C9C04AAF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 09:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C87C04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 09:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 403EF21479
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 09:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73B4F21479
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 09:46:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfEUJp3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 05:45:29 -0400
-Received: from mail-oln040092070062.outbound.protection.outlook.com ([40.92.70.62]:61924
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726259AbfEUJp2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 May 2019 05:45:28 -0400
-Received: from DB5EUR03FT026.eop-EUR03.prod.protection.outlook.com
- (10.152.20.51) by DB5EUR03HT012.eop-EUR03.prod.protection.outlook.com
- (10.152.20.173) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1900.16; Tue, 21 May
- 2019 09:45:25 +0000
-Received: from VI1PR07MB4432.eurprd07.prod.outlook.com (10.152.20.58) by
- DB5EUR03FT026.mail.protection.outlook.com (10.152.20.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1900.16 via Frontend Transport; Tue, 21 May 2019 09:45:25 +0000
-Received: from VI1PR07MB4432.eurprd07.prod.outlook.com
- ([fe80::91f:b1bb:a60a:fdc3]) by VI1PR07MB4432.eurprd07.prod.outlook.com
- ([fe80::91f:b1bb:a60a:fdc3%7]) with mapi id 15.20.1922.013; Tue, 21 May 2019
- 09:45:25 +0000
-From:   Philippe Mazenauer <philippe.mazenauer@outlook.de>
-CC:     Philippe Mazenauer <philippe.mazenauer@outlook.de>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: qcom: clk-rpm: Removed unused macros/variable
-Thread-Topic: [PATCH] clk: qcom: clk-rpm: Removed unused macros/variable
-Thread-Index: AQHVD7nqvfOPz0/CJkmjpU+VT9xDPg==
-Date:   Tue, 21 May 2019 09:45:25 +0000
-Message-ID: <VI1PR07MB4432BB9A401E0202C4D7D948FD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
-Accept-Language: de-CH, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR11CA0031.namprd11.prod.outlook.com
- (2603:10b6:300:115::17) To VI1PR07MB4432.eurprd07.prod.outlook.com
- (2603:10a6:802:67::17)
-x-incomingtopheadermarker: OriginalChecksum:310B0AA0C53489E8E0DD6A09CFC6C9932C7CDC773006DD602E8A7F86ECD40E7B;UpperCasedChecksum:D50A91F7B91D695612C9D6102FF62D55E61276A06117A058356F152102463F1D;SizeAsReceived:7642;Count:47
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-tmn:  [mJwsZig1wxI6OQCoor7gBM2JrK8DCTQ8]
-x-microsoft-original-message-id: <20190521094451.118510-1-philippe.mazenauer@outlook.de>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 47
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:DB5EUR03HT012;
-x-ms-traffictypediagnostic: DB5EUR03HT012:
-x-microsoft-antispam-message-info: 5U32BXL9EPyGdsu05UExylTZED8laja3QclHayY6in+iYpHEMuRX7xrNRk3jSRPe9ArvS20lCBsupcIPk+xmvO0ut+29UjRtK7uxcXwLqr0uvlFi8hO69loRp3Adj/897Qqp1RvI2VlUrEfDQ/bWaFvNAhFUc46x16QIs0KOZ7d1RHqQiwYvHXbTRkIeheVm
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F14FB1E61B92604D8E4C1E0820587CD2@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726448AbfEUJqw convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 05:46:52 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:35805 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbfEUJqv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 05:46:51 -0400
+X-Originating-IP: 90.88.22.185
+Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B16F920005;
+        Tue, 21 May 2019 09:46:44 +0000 (UTC)
+Date:   Tue, 21 May 2019 11:46:44 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH v4 0/4] Add device links to clocks
+Message-ID: <20190521114644.7000a751@xps13>
+In-Reply-To: <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com>
+References: <20190108161940.4814-1-miquel.raynal@bootlin.com>
+        <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b1bd129-74ee-4d72-2c40-08d6ddd10c63
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 09:45:25.1370
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR03HT012
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-UmVtb3ZlZCBtYWNyb3MgREVGSU5FX0NMS19SUE1fUFhPX0JSQU5DSCwgREVGSU5FX0NMS19SUE1f
-Q1hPX0JSQU5DSCBhbmQNCnZhcmlhYmxlICdjbGtfcnBtX2JyYW5jaF9vcHMnLiBUaGUgbWFjcm9z
-IGFuZCB2YXJpYWJsZSBhcmUgbm90IHVzZWQgaW4gdGhlDQpmaWxlLg0KDQpBcyB0aGUgdmFyaWFi
-bGUsIHdoaWNoIGlzIHVzZWQgYnkgdGhlIG1hY3JvcywgaXMgZGVjbGFyZWQgc3RhdGljLCB0aGUN
-Cm1hY3JvcyBjYW4ndCBiZSB1c2VkIG91dHNpZGUgdGhlIGZpbGUsIGFyZSB1bnVzZWQuDQoNCi4u
-L2RyaXZlcnMvY2xrL3Fjb20vY2xrLXJwbS5jOjQ2MToyOTogd2FybmluZzog4oCYY2xrX3JwbV9i
-cmFuY2hfb3Bz4oCZIGRlZmluZWQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1jb25zdC12YXJpYWJs
-ZT1dDQogc3RhdGljIGNvbnN0IHN0cnVjdCBjbGtfb3BzIGNsa19ycG1fYnJhbmNoX29wcyA9IHsN
-CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+DQoNClNpZ25l
-ZC1vZmYtYnk6IFBoaWxpcHBlIE1hemVuYXVlciA8cGhpbGlwcGUubWF6ZW5hdWVyQG91dGxvb2su
-ZGU+DQotLS0NCiBkcml2ZXJzL2Nsay9xY29tL2Nsay1ycG0uYyB8IDYzIC0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQogMSBmaWxlIGNoYW5nZWQsIDYzIGRlbGV0aW9ucygt
-KQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvcWNvbS9jbGstcnBtLmMgYi9kcml2ZXJzL2Ns
-ay9xY29tL2Nsay1ycG0uYw0KaW5kZXggYjk0OTgxNDQ3NjY0Li41YTY2MjJiMzI3MTMgMTAwNjQ0
-DQotLS0gYS9kcml2ZXJzL2Nsay9xY29tL2Nsay1ycG0uYw0KKysrIGIvZHJpdmVycy9jbGsvcWNv
-bS9jbGstcnBtLmMNCkBAIC04MSw2MiArODEsNiBAQA0KIAkJfSwJCQkJCQkJICAgICAgXA0KIAl9
-DQogDQotI2RlZmluZSBERUZJTkVfQ0xLX1JQTV9QWE9fQlJBTkNIKF9wbGF0Zm9ybSwgX25hbWUs
-IF9hY3RpdmUsIHJfaWQsIHIpCSAgICAgIFwNCi0Jc3RhdGljIHN0cnVjdCBjbGtfcnBtIF9wbGF0
-Zm9ybSMjXyMjX2FjdGl2ZTsJCQkgICAgICBcDQotCXN0YXRpYyBzdHJ1Y3QgY2xrX3JwbSBfcGxh
-dGZvcm0jI18jI19uYW1lID0gewkJCSAgICAgIFwNCi0JCS5ycG1fY2xrX2lkID0gKHJfaWQpLAkJ
-CQkJICAgICAgXA0KLQkJLmFjdGl2ZV9vbmx5ID0gdHJ1ZSwJCQkJCSAgICAgIFwNCi0JCS5wZWVy
-ID0gJl9wbGF0Zm9ybSMjXyMjX2FjdGl2ZSwJCQkJICAgICAgXA0KLQkJLnJhdGUgPSAociksCQkJ
-CQkJICAgICAgXA0KLQkJLmJyYW5jaCA9IHRydWUsCQkJCQkJICAgICAgXA0KLQkJLmh3LmluaXQg
-PSAmKHN0cnVjdCBjbGtfaW5pdF9kYXRhKXsJCQkgICAgICBcDQotCQkJLm9wcyA9ICZjbGtfcnBt
-X2JyYW5jaF9vcHMsCQkJICAgICAgXA0KLQkJCS5uYW1lID0gI19uYW1lLAkJCQkJICAgICAgXA0K
-LQkJCS5wYXJlbnRfbmFtZXMgPSAoY29uc3QgY2hhciAqW10peyAicHhvX2JvYXJkIiB9LCAgICAg
-IFwNCi0JCQkubnVtX3BhcmVudHMgPSAxLAkJCQkgICAgICBcDQotCQl9LAkJCQkJCQkgICAgICBc
-DQotCX07CQkJCQkJCQkgICAgICBcDQotCXN0YXRpYyBzdHJ1Y3QgY2xrX3JwbSBfcGxhdGZvcm0j
-I18jI19hY3RpdmUgPSB7CQkJICAgICAgXA0KLQkJLnJwbV9jbGtfaWQgPSAocl9pZCksCQkJCQkg
-ICAgICBcDQotCQkucGVlciA9ICZfcGxhdGZvcm0jI18jI19uYW1lLAkJCQkgICAgICBcDQotCQku
-cmF0ZSA9IChyKSwJCQkJCQkgICAgICBcDQotCQkuYnJhbmNoID0gdHJ1ZSwJCQkJCQkgICAgICBc
-DQotCQkuaHcuaW5pdCA9ICYoc3RydWN0IGNsa19pbml0X2RhdGEpewkJCSAgICAgIFwNCi0JCQku
-b3BzID0gJmNsa19ycG1fYnJhbmNoX29wcywJCQkgICAgICBcDQotCQkJLm5hbWUgPSAjX2FjdGl2
-ZSwJCQkJICAgICAgXA0KLQkJCS5wYXJlbnRfbmFtZXMgPSAoY29uc3QgY2hhciAqW10peyAicHhv
-X2JvYXJkIiB9LCAgICAgIFwNCi0JCQkubnVtX3BhcmVudHMgPSAxLAkJCQkgICAgICBcDQotCQl9
-LAkJCQkJCQkgICAgICBcDQotCX0NCi0NCi0jZGVmaW5lIERFRklORV9DTEtfUlBNX0NYT19CUkFO
-Q0goX3BsYXRmb3JtLCBfbmFtZSwgX2FjdGl2ZSwgcl9pZCwgcikJICAgICAgXA0KLQlzdGF0aWMg
-c3RydWN0IGNsa19ycG0gX3BsYXRmb3JtIyNfIyNfYWN0aXZlOwkJCSAgICAgIFwNCi0Jc3RhdGlj
-IHN0cnVjdCBjbGtfcnBtIF9wbGF0Zm9ybSMjXyMjX25hbWUgPSB7CQkJICAgICAgXA0KLQkJLnJw
-bV9jbGtfaWQgPSAocl9pZCksCQkJCQkgICAgICBcDQotCQkucGVlciA9ICZfcGxhdGZvcm0jI18j
-I19hY3RpdmUsCQkJCSAgICAgIFwNCi0JCS5yYXRlID0gKHIpLAkJCQkJCSAgICAgIFwNCi0JCS5i
-cmFuY2ggPSB0cnVlLAkJCQkJCSAgICAgIFwNCi0JCS5ody5pbml0ID0gJihzdHJ1Y3QgY2xrX2lu
-aXRfZGF0YSl7CQkJICAgICAgXA0KLQkJCS5vcHMgPSAmY2xrX3JwbV9icmFuY2hfb3BzLAkJCSAg
-ICAgIFwNCi0JCQkubmFtZSA9ICNfbmFtZSwJCQkJCSAgICAgIFwNCi0JCQkucGFyZW50X25hbWVz
-ID0gKGNvbnN0IGNoYXIgKltdKXsgImN4b19ib2FyZCIgfSwgICAgICBcDQotCQkJLm51bV9wYXJl
-bnRzID0gMSwJCQkJICAgICAgXA0KLQkJfSwJCQkJCQkJICAgICAgXA0KLQl9OwkJCQkJCQkJICAg
-ICAgXA0KLQlzdGF0aWMgc3RydWN0IGNsa19ycG0gX3BsYXRmb3JtIyNfIyNfYWN0aXZlID0gewkJ
-CSAgICAgIFwNCi0JCS5ycG1fY2xrX2lkID0gKHJfaWQpLAkJCQkJICAgICAgXA0KLQkJLmFjdGl2
-ZV9vbmx5ID0gdHJ1ZSwJCQkJCSAgICAgIFwNCi0JCS5wZWVyID0gJl9wbGF0Zm9ybSMjXyMjX25h
-bWUsCQkJCSAgICAgIFwNCi0JCS5yYXRlID0gKHIpLAkJCQkJCSAgICAgIFwNCi0JCS5icmFuY2gg
-PSB0cnVlLAkJCQkJCSAgICAgIFwNCi0JCS5ody5pbml0ID0gJihzdHJ1Y3QgY2xrX2luaXRfZGF0
-YSl7CQkJICAgICAgXA0KLQkJCS5vcHMgPSAmY2xrX3JwbV9icmFuY2hfb3BzLAkJCSAgICAgIFwN
-Ci0JCQkubmFtZSA9ICNfYWN0aXZlLAkJCQkgICAgICBcDQotCQkJLnBhcmVudF9uYW1lcyA9IChj
-b25zdCBjaGFyICpbXSl7ICJjeG9fYm9hcmQiIH0sICAgICAgXA0KLQkJCS5udW1fcGFyZW50cyA9
-IDEsCQkJCSAgICAgIFwNCi0JCX0sCQkJCQkJCSAgICAgIFwNCi0JfQ0KLQ0KICNkZWZpbmUgdG9f
-Y2xrX3JwbShfaHcpIGNvbnRhaW5lcl9vZihfaHcsIHN0cnVjdCBjbGtfcnBtLCBodykNCiANCiBz
-dHJ1Y3QgcnBtX2NjOw0KQEAgLTQ1OCwxMyArNDAyLDYgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBj
-bGtfb3BzIGNsa19ycG1fb3BzID0gew0KIAkucmVjYWxjX3JhdGUJPSBjbGtfcnBtX3JlY2FsY19y
-YXRlLA0KIH07DQogDQotc3RhdGljIGNvbnN0IHN0cnVjdCBjbGtfb3BzIGNsa19ycG1fYnJhbmNo
-X29wcyA9IHsNCi0JLnByZXBhcmUJPSBjbGtfcnBtX3ByZXBhcmUsDQotCS51bnByZXBhcmUJPSBj
-bGtfcnBtX3VucHJlcGFyZSwNCi0JLnJvdW5kX3JhdGUJPSBjbGtfcnBtX3JvdW5kX3JhdGUsDQot
-CS5yZWNhbGNfcmF0ZQk9IGNsa19ycG1fcmVjYWxjX3JhdGUsDQotfTsNCi0NCiAvKiBNU004NjYw
-L0FQUTgwNjAgKi8NCiBERUZJTkVfQ0xLX1JQTShtc204NjYwLCBhZmFiX2NsaywgYWZhYl9hX2Ns
-aywgUUNPTV9SUE1fQVBQU19GQUJSSUNfQ0xLKTsNCiBERUZJTkVfQ0xLX1JQTShtc204NjYwLCBz
-ZmFiX2Nsaywgc2ZhYl9hX2NsaywgUUNPTV9SUE1fU1lTX0ZBQlJJQ19DTEspOw0KLS0gDQoyLjE3
-LjENCg0K
+Hi Stephen,
+
+Stephen Boyd <sboyd@kernel.org> wrote on Thu, 11 Apr 2019 16:34:16
+-0700:
+
+> Quoting Miquel Raynal (2019-01-08 08:19:36)
+> > Hello,
+> > 
+> > While working on suspend to RAM feature, I ran into troubles multiple
+> > times when clocks where not suspending/resuming at the desired time. I
+> > had a look at the core and I think the same logic as in the
+> > regulator's core may be applied here to (very easily) fix this issue:
+> > using device links.
+> > 
+> > The only additional change I had to do was to always (when available)
+> > populate the device entry of the core clock structure so that it could
+> > be used later. This is the purpose of patch 1. Patch 2 actually adds
+> > support for device links.
+> > 
+> > Here is a step-by-step explanation of how links are managed, following
+> > Maxime Ripard's suggestion.
+> > 
+> > 
+> > The order of probe has no importance because the framework already
+> > handles orphaned clocks so let's be simple and say there are two root
+> > clocks, not depending on anything, that are probed first: xtal0 and
+> > xtal1. None of these clocks have a parent, there is no device link in
+> > the game, yet.
+> > 
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |                |            |                |
+> >    |   xtal0 core   |            |   xtal1 core   |
+> >    |                |            |                |
+> >    |                |            |                |
+> >    +-------^^-------+            +-------^^-------+
+> >            ||                            ||
+> >            ||                            ||
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |   xtal0 clk    |            |   xtal1 clk    |
+> >    |                |            |                |
+> >    +----------------+            +----------------+
+> > 
+> > Then, a peripheral clock periph0 is probed. His parent is xtal1. The
+> > clock_register_*() call will run __clk_init_parent() and a link between
+> > periph0's core and xtal1's core will be created and stored in
+> > periph0's core->parent_clk_link entry.
+> > 
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |                |            |                |
+> >    |   xtal0 core   |            |   xtal1 core   |
+> >    |                |            |                |
+> >    |                |            |                |
+> >    +-------^^-------+            +-------^^-------+
+> >            ||                            ||
+> >            ||                            ||
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |   xtal0 clk    |            |   xtal1 clk    |
+> >    |                |            |                |
+> >    +----------------+            +-------^--------+
+> >                                          |
+> >                                          |
+> >                           +--------------+
+> >                           |   ->parent_clk_link
+> >                           |
+> >                   +----------------+
+> >                   |                |
+> >                   |                |
+> >                   |  periph0 core  |
+> >                   |                |
+> >                   |                |
+> >                   +-------^^-------+
+> >                           ||
+> >                           ||
+> >                   +----------------+
+> >                   |                |
+> >                   |  periph0 clk 0 |
+> >                   |                |
+> >                   +----------------+
+> > 
+> > Then, device0 is probed and "get" the periph0 clock. clk_get() will be
+> > called and a struct clk will be instantiated for device0 (called in
+> > the figure clk 1). A link between device0 and the new clk 1 instance of
+> > periph0 will be created and stored in the clk->consumer_link entry.
+> > 
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |                |            |                |
+> >    |   xtal0 core   |            |   xtal1 core   |
+> >    |                |            |                |
+> >    |                |            |                |
+> >    +-------^^-------+            +-------^^-------+
+> >            ||                            ||
+> >            ||                            ||
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |   xtal0 clk    |            |   xtal1 clk    |
+> >    |                |            |                |
+> >    +----------------+            +-------^--------+
+> >                                          |
+> >                                          |
+> >                           +--------------+
+> >                           |   ->parent_clk_link
+> >                           |
+> >                   +----------------+
+> >                   |                |
+> >                   |                |
+> >                   |  periph0 core  |
+> >                   |                <-------------+
+> >                   |                <-------------|
+> >                   +-------^^-------+            ||
+> >                           ||                    ||
+> >                           ||                    ||
+> >                   +----------------+    +----------------+
+> >                   |                |    |                |
+> >                   |  periph0 clk 0 |    |  periph0 clk 1 |
+> >                   |                |    |                |
+> >                   +----------------+    +----------------+
+> >                                                 |
+> >                                                 | ->consumer_link
+> >                                                 |
+> >                                                 |
+> >                                                 |
+> >                                         +-------v--------+
+> >                                         |    device0     |
+> >                                         +----------------+
+> > 
+> > Right now, device0 is linked to periph0, itself linked to xtal1 so
+> > everything is fine.
+> > 
+> > Now let's get some fun: the new parent of periph0 is xtal1. The process
+> > will call clk_reparent(), periph0's core->parent_clk_link will be
+> > destroyed and a new link to xtal1 will be setup and stored. The
+> > situation is now that device0 is linked to periph0 and periph0 is
+> > linked to xtal1, so the dependency between device0 and xtal1 is still
+> > clear.
+> > 
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |                |            |                |
+> >    |   xtal0 core   |            |   xtal1 core   |
+> >    |                |            |                |
+> >    |                |            |                |
+> >    +-------^^-------+            +-------^^-------+
+> >            ||                            ||
+> >            ||                            ||
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |   xtal0 clk    |            |   xtal1 clk    |
+> >    |                |            |                |
+> >    +-------^--------+            +----------------+
+> >            |
+> >            |                           \ /
+> >            +----------------------------x  
+> >       ->parent_clk_link   |            / \  
+> >                           |
+> >                   +----------------+
+> >                   |                |
+> >                   |                |
+> >                   |  periph0 core  |
+> >                   |                <-------------+
+> >                   |                <-------------|
+> >                   +-------^^-------+            ||
+> >                           ||                    ||
+> >                           ||                    ||
+> >                   +----------------+    +----------------+
+> >                   |                |    |                |
+> >                   |  periph0 clk 0 |    |  periph0 clk 1 |
+> >                   |                |    |                |
+> >                   +----------------+    +----------------+
+> >                                                 |
+> >                                                 | ->consumer_link
+> >                                                 |
+> >                                                 |
+> >                                                 |
+> >                                         +-------v--------+
+> >                                         |    device0     |
+> >                                         +----------------+
+> > 
+> > I assume periph0 cannot be removed while there are devices using it,
+> > same for xtal0.
+> > 
+> > What can happen is that device0 'put' the clock periph0. The relevant
+> > link is deleted and the clk instance dropped.
+> > 
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |                |            |                |
+> >    |   xtal0 core   |            |   xtal1 core   |
+> >    |                |            |                |
+> >    |                |            |                |
+> >    +-------^^-------+            +-------^^-------+
+> >            ||                            ||
+> >            ||                            ||
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |   xtal0 clk    |            |   xtal1 clk    |
+> >    |                |            |                |
+> >    +-------^--------+            +----------------+
+> >            |
+> >            |                           \ /
+> >            +----------------------------x  
+> >       ->parent_clk_link   |            / \  
+> >                           |
+> >                   +----------------+
+> >                   |                |
+> >                   |                |
+> >                   |  periph0 core  |
+> >                   |                |
+> >                   |                |
+> >                   +-------^^-------+
+> >                           ||
+> >                           ||
+> >                   +----------------+
+> >                   |                |
+> >                   |  periph0 clk 0 |
+> >                   |                |
+> >                   +----------------+
+> > 
+> > Now we can unregister periph0: link with the parent will be destroyed
+> > and the clock may be safely removed.
+> > 
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |                |            |                |
+> >    |   xtal0 core   |            |   xtal1 core   |
+> >    |                |            |                |
+> >    |                |            |                |
+> >    +-------^^-------+            +-------^^-------+
+> >            ||                            ||
+> >            ||                            ||
+> >    +----------------+            +----------------+
+> >    |                |            |                |
+> >    |   xtal0 clk    |            |   xtal1 clk    |
+> >    |                |            |                |
+> >    +----------------+            +----------------+
+> > 
+> > 
+> > This is my understanding of the common clock framework and how links
+> > can be added to it.
+> > 
+> > As a result, here are the links created during the boot of an
+> > ESPRESSObin:
+> >   
+> 
+> Sorry this patch series is taking way too long to get merged. It's
+> already mid-April!
+> 
+> So I still have some of the original questions I had from before, mostly
+> around circular parent chains between clk providers. For example, there
+> are clk providers that both provide clks to other providers and consume
+> clks from those providers. Does device links work gracefully here?
+> 
+> Just speaking from my own qcom experience, I can point to the PCIe PHY
+> that's a provider of a clk to GCC and a consumer of a clk in GCC. In
+> block diagram form this is:
+> 
+> 
+>       PCIE PHY                        GCC
+>    +--------------+          +-------------------------+
+>    |              |          |                         |
+>    |     PHY clk ->----------+---- gcc_pipe_clk ---+   |
+>    |              |          |                     |   |
+>    |              |          |                     |   |
+>    | pci_pipe_clk <----------|---------------------+   |
+>    |              |          |                         |
+>    +--------------+          +-------------------------+
+> 
+> The end result is that the PCIe PHY is a clk controller that provides
+> the PHY clk to GCC's gcc_pipe_clk and then it gets the same clk signal
+> back from GCC and uses it on the PCIe PHY's pci_pipe_clk input.
+> 
+> So is this is a problem?
+> 
+
+It's now my turn to get back on this topic.
+
+I just put my noise back into this and for what I understand of the
+clk subsystem, I think the situation you describe could be pictured
+like this:
+
+
+         +---------------+
+         |               |
+         |               |
+         | PCIe PHY      |
+         |               |
+         |               |
+         +-----^^--------+
+               ||
+               ||
+         +---------------+
+         |               |
+         | pcie_pipe_clk |
+         |               |
+         +------^--------+
+                |
+                | ->parent_clk_link
+                |
+                |
+         +---------------+
+         |               |
+         |               |
+         | GCC           |
+         |               |
+         |               |
+         +------^^-------+
+                ||
+                ||
+         +---------------+
+         |               |
+         | gcc_pipe_clk  |
+         |               |
+         +------^--------+
+                |
+                | ->parent_clk_link
+                |
+                |
+         +---------------+
+         |               |
+         |               |
+         | PCIe PHY      |
+         |               |
+         |               |
+         +------^^-------+
+                ||
+                ||
+         +---------------+
+         |               |
+         | phy_clk       |
+         |               |
+         +---------------+
+
+
+IMHO the fact that the first and third blocks are the same does not
+interfere with device links.
+
+Honestly, I cannot be 100% sure it won't break on qcom designs, maybe
+the best would be to have someone to test. I don't have the relevant
+hardware. Do you? It would be really helpful!
+
+There is an entire PCIe series blocked, waiting for these device links
+to be merged so it would help a lot if someone could test.
+
+Thank you very much,
+Miquèl
