@@ -1,140 +1,121 @@
-Return-Path: <SRS0=g6IF=TU=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D90C04AAC
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 23:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E959C04AAC
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 03:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6732173C
-	for <linux-clk@archiver.kernel.org>; Mon, 20 May 2019 23:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558393220;
-	bh=WiH+/OCfcfe+4Xbn3UUb9ykwnCBy4RLUJO0aKNlzOhU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=hwBK6z6CGHZ9ZHyGjEXDOjGHrG1UEeDyeznIYrcttS5RbwBpGgieI74DDJcN7Lkbz
-	 EQtpZKB5XSCK8R57dgwO35g9nioiRMuNJzqkx+IbNkkmSc6yckXtYPwZZrwjxmXa+H
-	 AxicxDehi+o/oLi7xhczw30VWn1oknqQH6H1HkBY=
+	by mail.kernel.org (Postfix) with ESMTP id 2BA7A21479
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 03:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfETXAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 May 2019 19:00:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725978AbfETXAU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 May 2019 19:00:20 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F67D2173C;
-        Mon, 20 May 2019 23:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558393219;
-        bh=WiH+/OCfcfe+4Xbn3UUb9ykwnCBy4RLUJO0aKNlzOhU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eNYEvQaZCFxftor73AUBaBuvs5kQxBD6kNSJX0w/p30iCErC49wIk5tve4buk62JW
-         X+mRVN5Ly+zFH885gRKdBahnunIl6D9H4QxHvqw1shAB8LH5e42oiB/Gf/4NC4b8VJ
-         RKYb7FakZ5o5C5tzUQmOIMU5YxkVvlDHOKTwfGhY=
-Received: by mail-qk1-f175.google.com with SMTP id a64so9915823qkg.5;
-        Mon, 20 May 2019 16:00:19 -0700 (PDT)
-X-Gm-Message-State: APjAAAXQe9clEUbIzvQrzIhScEILDFtIRb/XyEthj0DiIVj/ZxUfIkKu
-        cyEHDC+mmcc2omeKnTM+dhhHy4v09hp5KOumbA==
-X-Google-Smtp-Source: APXvYqw0yA7/JAtvhaZQmdZCHhku9PQPnak0hyEwUTGW5yiBYyusX64Ru1hOe3bgicIVg6fnC6z7c+ozU5sQvG2tn7Q=
-X-Received: by 2002:a37:b8c:: with SMTP id 134mr61102400qkl.121.1558393218412;
- Mon, 20 May 2019 16:00:18 -0700 (PDT)
+        id S1726392AbfEUDkT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 May 2019 23:40:19 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:19944 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726335AbfEUDkT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 May 2019 23:40:19 -0400
+X-UUID: 33c3fde398294b73ab9909cf30ce4232-20190521
+X-UUID: 33c3fde398294b73ab9909cf30ce4232-20190521
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <erin.lo@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 367033608; Tue, 21 May 2019 11:40:14 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 21 May 2019 11:40:12 +0800
+Received: from mtkslt303.mediatek.inc (10.21.14.116) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 21 May 2019 11:40:12 +0800
+From:   Erin Lo <erin.lo@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH] clk: mediatek: Remove MT8183 unused clock
+Date:   Tue, 21 May 2019 11:40:01 +0800
+Message-ID: <20190521034001.53365-1-erin.lo@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <cover.1558362030.git.mchehab+samsung@kernel.org>
- <66231286de0f11b45075292216a939858de8c3e5.1558362030.git.mchehab+samsung@kernel.org>
- <CAL_JsqKGzNBjxhvY2Vq9v8SXiND+7sjmsOwKkeu+gEM=2Y-n_A@mail.gmail.com> <20190520131344.39635733@coco.lan>
-In-Reply-To: <20190520131344.39635733@coco.lan>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 20 May 2019 18:00:06 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJj42BR42NNFj2xkY_EF_6nQnU_D-onV4GZvortv8ptvQ@mail.gmail.com>
-Message-ID: <CAL_JsqJj42BR42NNFj2xkY_EF_6nQnU_D-onV4GZvortv8ptvQ@mail.gmail.com>
-Subject: Re: [PATCH 08/10] dt: fix refs that were renamed to json with the
- same file name
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 97CAF9D7C80D56F8BE6033CF8E65B654151A3B10C79D90FE75D003E4E7EEA6182000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 20, 2019 at 11:14 AM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Em Mon, 20 May 2019 10:57:47 -0500
-> Rob Herring <robh+dt@kernel.org> escreveu:
->
-> > On Mon, May 20, 2019 at 9:48 AM Mauro Carvalho Chehab
-> > <mchehab+samsung@kernel.org> wrote:
-> > >
-> > > This file was converted to json, but the references weren't
-> >
-> > Technically, converted to json-schema (the language) or yaml (the format).
->
-> Ok. Do you want me to change it at the patch and resend?
+Remove MT8183 sspm clock
 
-No, I can fixup.
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+This clock should only be set in secure world.
+---
+ drivers/clk/mediatek/clk-mt8183.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
->
-> >
-> > > renamed.
-> > >
-> > > Fixes: 66ed144f147a ("dt-bindings: interrupt-controller: Convert ARM GIC to json-schema")
-> > > (and other similar commits)
-> > >
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/arm/omap/crossbar.txt       | 2 +-
-> > >  .../devicetree/bindings/clock/samsung,s5pv210-clock.txt       | 2 +-
-> > >  .../bindings/interrupt-controller/marvell,odmi-controller.txt | 2 +-
-> > >  Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt   | 2 +-
-> > >  MAINTAINERS                                                   | 4 ++--
-> > >  5 files changed, 6 insertions(+), 6 deletions(-)
-> >
-> > FYI, I'm actively looking for this in conversions now as we've had a
-> > few of these. For cases where we have a lot of references, I'm fixing
-> > this by keeping the .txt file with a reference to the .yaml file.
->
-> If the file name remains with the same name, except for the .txt -> .yaml,
-> you can just run the "scripts/documentation-file-ref-check --fix"
-> after this patch:
->
->         Subject: [PATCH 04/10] scripts/documentation-file-ref-check: teach about .txt -> .yaml renames
->
-> and it should detect and automatically fix all the references. As any
-> auto-hint script, you need to double-check the results.
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 9d8651033ae9..1aa5f4059251 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -395,14 +395,6 @@ static const char * const atb_parents[] = {
+ 	"syspll_d5"
+ };
+ 
+-static const char * const sspm_parents[] = {
+-	"clk26m",
+-	"univpll_d2_d4",
+-	"syspll_d2_d2",
+-	"univpll_d2_d2",
+-	"syspll_d3"
+-};
+-
+ static const char * const dpi0_parents[] = {
+ 	"clk26m",
+ 	"tvdpll_d2",
+@@ -606,9 +598,6 @@ static const struct mtk_mux top_muxes[] = {
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_MUX_ATB, "atb_sel",
+ 		atb_parents, 0xa0,
+ 		0xa4, 0xa8, 0, 2, 7, 0x004, 24),
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_MUX_SSPM, "sspm_sel",
+-		sspm_parents, 0xa0,
+-		0xa4, 0xa8, 8, 3, 15, 0x004, 25),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_MUX_DPI0, "dpi0_sel",
+ 		dpi0_parents, 0xa0,
+ 		0xa4, 0xa8, 16, 4, 23, 0x004, 26),
+@@ -947,12 +936,8 @@ static const struct mtk_gate infra_clks[] = {
+ 		"fufs_sel", 13),
+ 	GATE_INFRA2(CLK_INFRA_MD32_BCLK, "infra_md32_bclk",
+ 		"axi_sel", 14),
+-	GATE_INFRA2(CLK_INFRA_SSPM, "infra_sspm",
+-		"sspm_sel", 15),
+ 	GATE_INFRA2(CLK_INFRA_UNIPRO_MBIST, "infra_unipro_mbist",
+ 		"axi_sel", 16),
+-	GATE_INFRA2(CLK_INFRA_SSPM_BUS_HCLK, "infra_sspm_bus_hclk",
+-		"axi_sel", 17),
+ 	GATE_INFRA2(CLK_INFRA_I2C5, "infra_i2c5",
+ 		"i2c_sel", 18),
+ 	GATE_INFRA2(CLK_INFRA_I2C5_ARBITER, "infra_i2c5_arbiter",
+@@ -986,10 +971,6 @@ static const struct mtk_gate infra_clks[] = {
+ 		"msdc50_0_sel", 1),
+ 	GATE_INFRA3(CLK_INFRA_MSDC2_SELF, "infra_msdc2_self",
+ 		"msdc50_0_sel", 2),
+-	GATE_INFRA3(CLK_INFRA_SSPM_26M_SELF, "infra_sspm_26m_self",
+-		"f_f26m_ck", 3),
+-	GATE_INFRA3(CLK_INFRA_SSPM_32K_SELF, "infra_sspm_32k_self",
+-		"f_f26m_ck", 4),
+ 	GATE_INFRA3(CLK_INFRA_UFS_AXI, "infra_ufs_axi",
+ 		"axi_sel", 5),
+ 	GATE_INFRA3(CLK_INFRA_I2C6, "infra_i2c6",
+-- 
+2.18.0
 
-Nice!
-
->
-> > I'll pick up the DT patches in the series.
->
-> OK. There are a few such fixes inside patch 10/10. Do you want me
-> to split it or can it go through Jonathan's doc tree?
-
-Jon's tree is fine.
-
-Rob
