@@ -4,62 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3929C04E87
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 15:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93168C04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 15:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C812173C
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 15:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C7B221743
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 15:21:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="o/RnosTy"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YdirzbDF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbfEUPFX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 11:05:23 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42514 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728144AbfEUPFW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 11:05:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l2so19019300wrb.9
-        for <linux-clk@vger.kernel.org>; Tue, 21 May 2019 08:05:21 -0700 (PDT)
+        id S1728244AbfEUPVX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 11:21:23 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37407 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbfEUPVW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 11:21:22 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 7so3325205wmo.2
+        for <linux-clk@vger.kernel.org>; Tue, 21 May 2019 08:21:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+        h=subject:cc:references:to:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=eJeaQpqmTrI1tGNmxY3CrSOcsSb6wdxlc9iqK0FMa/Y=;
-        b=o/RnosTyL0Cx3Zxh/td2nWqjfqIbiQC6UDEFsow5E/rJp0AM5uIMVO6zUGLs85DUy7
-         snHWYSpyQdzMN5TpmzRZ8maOMkOYLNQBCzSXk+nXxrRsShxZT1vtUXoREk6I3YxN8/fe
-         hvy/gaNoFiMd685lo39FIX2BpYd0n5JwrTCMQDEN4uvvZLD+4wJfBd1mexMqQcaKl4qo
-         lMrLzTQh61RaiS1eyqPExNDqcBpvwX3fEmQZ9804pE092STEizDDa1fDO6UlZlVtIuUV
-         U6CMoPP4qLGTN2jgv3dOABsxBES4yVPWHbnOIGUmXoBDqYIiHpB86kc3NM9VHhZX938j
-         02QQ==
+        bh=psODiRPIry9TFvhYlBsrcuLdv/RwGulasFFSBQnu2NU=;
+        b=YdirzbDFRunUSp4QZI1bN/5FfGpbvG3c66qOjjhY53wh4yrRFy4zeOl96jxeSNTrIU
+         Lf69ZF+uV3o2Vvx3UlCnWok3Evnppx9SRzB7sxZYYHgzrX6S6wdFtR4ggR4kaJchvZDb
+         cAh0LG+kDmKCkEYEC5g3uG+7nUaKg8h27jiInGxmX/ow4Lbyjpg9VPNlN6ln0rqHPJQY
+         9bqw+NFxeUj48KtVPxmHhh1pz5mYDqONC8YhVg1C8AO8GNtO7cateG0lPZkJUCDBJ6MK
+         xgWtF5MJscDnb1PA2hX3H4NWQgjFRtvAIXm7EQvDFLlES/q+0ZHvJMV5T4gJlms8v87b
+         /sLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+        h=x-gm-message-state:subject:cc:references:to:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=eJeaQpqmTrI1tGNmxY3CrSOcsSb6wdxlc9iqK0FMa/Y=;
-        b=WfKBwSUffSuzs2QiSan4QHjwKRGBCNyFjTuE/ZLTGLTQ5CFw9RFA2EOvbzyCrL2Wv+
-         xVmJ1X3FmUTDjbNIbdn+LEAOnQqG+yD1cv7yww6bD1XjGbL0aaU88T2NfSy+m3kPri38
-         WBNkwZZOYmz00UPqK73nk40oZOl+OHPGqd/qyiT+vTL7wzpGRxzDQ5dDBqC3X4jHBSZE
-         9FscwvPohi67N9oUsqImaT7JRS4K1BZ65M51eHhFYN++C3kkXCMo1wYKyIcwWroTGlIr
-         5iS9U1/AzW+nZg2pqVPapA1vlQVnJXtA58n2mKy8bcSsP34hMLKOHHHYWd9TsWxpGy2C
-         K18Q==
-X-Gm-Message-State: APjAAAVVDW54AkZN/fGUZB6By42feDVOP5lcy5O1H8E31+j1WRxBU4RU
-        PQrbX14DhD7+JrNONp6yT66qbw==
-X-Google-Smtp-Source: APXvYqwHL4I/kUrnRxsNNYqmLFUNw/C5VhUy0eI8DaYGfmrZxRCu2psHcYCynl2pNvyIEoRPS+1GvA==
-X-Received: by 2002:adf:e311:: with SMTP id b17mr379687wrj.11.1558451119147;
-        Tue, 21 May 2019 08:05:19 -0700 (PDT)
+        bh=psODiRPIry9TFvhYlBsrcuLdv/RwGulasFFSBQnu2NU=;
+        b=gIV6pKNSlJaJr3E/uQ0iGSAd9iNiizgdyXJY3hi5ow1N8aO22bg49mX+VmCqxArXlE
+         K+xlUilpjDKrrF/KK09P3qiEvYARDPknNHrKsHtsUo6Ozw2ujcZn6VxiREEagetdiAZP
+         WShsEmzIQ7RtLA2OBONzDncHNL/XbQ0QUDhRo2kZvVUqKA2bTbaSgq8Xi9B0cqt29IOy
+         O4Omziht8C/mTtATi/queLGARLJ20eqWF02JkXEAQp0cp99rjTdqzRrdm0W4sVX/pgAg
+         fUtznCBmVondVH0ZGSYFCxBB6oZ8tENkgdlSGXMljOaCD8Cl1mjliqq/xnFR1scEeWRT
+         k76Q==
+X-Gm-Message-State: APjAAAUuFE9pIrdwUpjw9Ru3TpZWlXCvaHOTYFlcifE/PKAqpf+FBbf6
+        OJzMrUTjoMePG4i7hg9sB/bMwg==
+X-Google-Smtp-Source: APXvYqyDwmjzU/LyCH+BqYUmXknqeq+bhBz+HMmXMkNpV3WhUj+twpNnOMI+GxfqsBeFKTq8zgQ4IQ==
+X-Received: by 2002:a1c:dc46:: with SMTP id t67mr4025021wmg.140.1558452079765;
+        Tue, 21 May 2019 08:21:19 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f2sm4231282wme.12.2019.05.21.08.05.18
+        by smtp.gmail.com with ESMTPSA id y132sm5417493wmd.35.2019.05.21.08.21.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 08:05:18 -0700 (PDT)
+        Tue, 21 May 2019 08:21:19 -0700 (PDT)
 Subject: Re: [PATCH 0/3] clk: meson: add support for Amlogic G12A
-To:     jbrunet@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+Cc:     jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20190521150130.31684-1-narmstrong@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -112,8 +113,8 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <d0f0262b-f8b9-fcfb-58e0-8083baf07ff4@baylibre.com>
-Date:   Tue, 21 May 2019 17:05:18 +0200
+Message-ID: <2fd7816a-de5e-c42f-a825-9552d8e79d34@baylibre.com>
+Date:   Tue, 21 May 2019 17:21:18 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
@@ -159,6 +160,7 @@ On 21/05/2019 17:01, Neil Armstrong wrote:
 >  3 files changed, 692 insertions(+), 1 deletion(-)
 > 
 
-The subject is wrong, it should be "clk: meson: add support for Amlogic G12B"
+And I forgot Martins reviews...
+It should still apply to patch 1, patch 2 has changed with new clocks.
 
 Neil
