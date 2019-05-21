@@ -2,98 +2,214 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A9DC04AAF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2900C04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5D72173E
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88A502173E
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbfEUMl2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 08:41:28 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:50737 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfEUMl1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 08:41:27 -0400
-Received: from [192.168.178.167] ([109.104.45.223]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1Mz9lL-1gfcTu2sbL-00wEc7; Tue, 21 May 2019 14:41:01 +0200
-Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     linux-arm-kernel@lists.infradead.org, ptesarik@suse.com,
-        sboyd@kernel.org, viresh.kumar@linaro.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, mbrugger@suse.de, ssuloev@orpaltech.com
-References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
- <20190520104708.11980-4-nsaenzjulienne@suse.de>
- <ebc78880-418f-f507-021c-41295113e041@i2se.com>
-Message-ID: <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
-Date:   Tue, 21 May 2019 14:40:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726995AbfEUMvW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 08:51:22 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58785 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfEUMvV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 08:51:21 -0400
+X-Originating-IP: 90.88.22.185
+Received: from localhost.localdomain (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id D3DCB1C0017;
+        Tue, 21 May 2019 12:51:17 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v5 1/4] clk: core: link consumer with clock driver
+Date:   Tue, 21 May 2019 14:51:10 +0200
+Message-Id: <20190521125114.20357-2-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190521125114.20357-1-miquel.raynal@bootlin.com>
+References: <20190521125114.20357-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <ebc78880-418f-f507-021c-41295113e041@i2se.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:tiKWVTmj0/g6cApKXUC8RRsZ+jzrxl/tRzq9vOMKmDYvP0avI57
- S32E8AJVOWyViyljIeairozBYEi/9tS3d9Quw2v/CXkw1a6Ar/crQaVR2APWjjJGUJ60Nmz
- nZxhLgGefhNTSdMfJ5IvnUvMZRFoS2G0atk28i59/4Gi004Fp1AZZlWoUamsxO3xaRfcezn
- ZcSESHjDxbmzXOZpl4Oaw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VAEVr3c8/0g=:H9FaA9a655WuE86lTBUiV4
- 2OJ0EepMNcKZDh29WOG6N+37XmL8YWraPTsNDcx7Rcf5OUR9+v1spI6wGk3DqpqMAcbBTkYXU
- irJhNgFzv/ehQJyoulSGeHTVIaCj/69YyDXUVPakRsvPb7fytYzSd+G/oU6+D9e+I2KQlcdBs
- CJqaFK1sW1UAEZQ13+kumPGYC463OkExAGsUsNvLNfw7i/a7IVT/0V5OD6zYs11hHtvV0SSIl
- wdjummx1yyjp5j2WYl1h9O7/QQZ1uo50V+AjtmGZx9gT//W9WmNnykfdJuAXgkCtZ6hNlXB7X
- F3nBUgXaNIb80nqocavO2b/2Fg+Bk2Q+bVTG47IHHKdD4hLsum7dMGUaBLs7oyJWJzXHE3/CU
- OX7QgcXooNyVJLSNQ649qi9KFPjYrgeg0+HK8MJKM+f9zggdSGXrdiHl34vhA30lVkJ2JT4wE
- gQr9/s/obESz4h4X9wyILrQf0Q8t//x1ONi9NubbHANW7XBAlGLRL9KvUdOhGrmQ2Ofl76kJi
- NZ0/Iu0opHBvrEUr5CQrCYE4zcOFa4ydGZSKAoPjmuCKM/3N1igCCedn6fTdp9RR6UVIVrieM
- 3QMxnrsaGyx4qt+BtEe1ikMK6T6EVLQGOb7jkCxsoKFPYmuLJicghwwAhW7FVaDgGHGSIGYus
- a+KY2w+DQWj7xERtmRI3FaqGxWQGHAc9NkezH98aiMdImPcbmDSiHr0xWsZ3HBlI27xs4GHAD
- 4v+WV6ijitxntnFIA4En+ZvAntlNK5t+0DuJDVlop7vKvyiX4ON55G5Lljo=
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Nicolas,
+One major concern when, for instance, suspending/resuming a platform
+is to never access registers before the underlying clock has been
+resumed, otherwise most of the time the kernel will just crash. One
+solution is to use syscore operations when registering clock drivers
+suspend/resume callbacks. One problem of using syscore_ops is that the
+suspend/resume scheduling will depend on the order of the
+registrations, which brings (unacceptable) randomness in the process.
 
-On 20.05.19 14:11, Stefan Wahren wrote:
-> Hi Nicolas,
->
-> the following comments applies only in case Eric is fine with the whole
-> approach.
->
-> On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
->> Raspberry Pi's firmware, which runs in a dedicated processor, keeps
-> maybe we should clarify that the firmware is running in the VPU
->> track of the board's temperature and voltage. It's resposible for
->> scaling the CPU frequency whenever it deems the device reached an unsafe
->> state. On top of that the firmware provides an interface which allows
->> Linux to to query the clock's state or change it's frequency.
-> I think this requires a separate update of the devicetree binding.
->> Being the sole user of the bcm2835 clock driver, this integrates the
->> firmware interface into the clock driver and adds a first user: the CPU
->> pll, also known as 'pllb'.
-> Please verify that the kernel still works (and this clock driver probe)
-> under the following conditions:
->
-> - CONFIG_RASPBERRYPI_FIRMWARE=n
-> - CONFIG_RASPBERRYPI_FIRMWARE=m
-> - older DTBs without patch #1
-i thought about this and the case this driver would return
--EPROBE_DEFER. The clock driver is too essential for doing such a thing.
-So i think the best solution would be to move these changes into a
-separate driver which should be register by the clock driver (similiar
-to vchiq). This also avoid the need of a new device tree binding.
+A feature called device links has been introduced to handle such
+situation. It creates dependencies between consumers and providers,
+enforcing e.g. the suspend/resume order when needed. Such feature is
+already in use for regulators.
+
+Add device links support in the clock subsystem by creating/deleting
+the links at get/put time.
+
+Example of a boot (ESPRESSObin, A3700 SoC) with devices linked to clocks:
+
+marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-tbg-clock d0013200.tbg: Dropping the link to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013200.tbg
+marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-periph-clock d0018000.sb-periph-clk: Linked as a consumer to d0013200.tbg
+mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
+xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
+mvebu-uart d0012000.serial: Linked as a consumer to d0013800.pinctrl:xtal-clk
+advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
+cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+cpu cpu0: Dropping the link to d0013000.nb-periph-clk
+cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ drivers/clk/clk.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 49 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ec6f04dcf5e6..e6b84ab43f9f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -83,6 +83,7 @@ struct clk_core {
+ 	struct hlist_node	debug_node;
+ #endif
+ 	struct kref		ref;
++	struct device_link	*parent_clk_link;
+ };
+ 
+ #define CREATE_TRACE_POINTS
+@@ -97,6 +98,7 @@ struct clk {
+ 	unsigned long max_rate;
+ 	unsigned int exclusive_count;
+ 	struct hlist_node clks_node;
++	struct device_link *consumer_link;
+ };
+ 
+ /***           runtime pm          ***/
+@@ -281,6 +283,35 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_parent);
+ 
++static void clk_link_consumer(struct device *consumer, struct clk *clk)
++{
++	if (consumer && clk)
++		clk->consumer_link = device_link_add(consumer, clk->core->dev,
++						     DL_FLAG_STATELESS);
++}
++
++static void clk_unlink_consumer(struct clk *clk)
++{
++	if (clk && clk->consumer_link)
++		device_link_del(clk->consumer_link);
++}
++
++static void clk_link_hierarchy(struct clk_core *consumer,
++			       struct clk_core *provider)
++{
++	if (consumer && provider)
++		consumer->parent_clk_link = device_link_add(consumer->dev,
++							    provider->dev,
++							    DL_FLAG_STATELESS);
++}
++
++static void clk_unlink_hierarchy(struct clk_core *consumer,
++				 struct clk_core *provider)
++{
++	if (consumer && provider && consumer->parent_clk_link)
++		device_link_del(consumer->parent_clk_link);
++}
++
+ static struct clk_core *__clk_lookup_subtree(const char *name,
+ 					     struct clk_core *core)
+ {
+@@ -1665,6 +1696,9 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
+ 
+ 	hlist_del(&core->child_node);
+ 
++	if (core->parent)
++		clk_unlink_hierarchy(core, core->parent);
++
+ 	if (new_parent) {
+ 		bool becomes_orphan = new_parent->orphan;
+ 
+@@ -1676,6 +1710,8 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
+ 
+ 		if (was_orphan != becomes_orphan)
+ 			clk_core_update_orphan_status(core, becomes_orphan);
++
++		clk_link_hierarchy(core, new_parent);
+ 	} else {
+ 		hlist_add_head(&core->child_node, &clk_orphan_list);
+ 		if (!was_orphan)
+@@ -2402,6 +2438,8 @@ __clk_init_parent(struct clk_core *core, bool update_orphan)
+ 	if (!parent_hw)
+ 		return NULL;
+ 
++	clk_link_hierarchy(core, parent_hw->core);
++
+ 	return parent_hw->core;
+ }
+ 
+@@ -3473,6 +3511,7 @@ struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
+ 	}
+ 
+ 	kref_get(&core->ref);
++	clk_link_consumer(dev, clk);
+ 	clk_core_link_consumer(core, clk);
+ 
+ 	return clk;
+@@ -3776,11 +3815,18 @@ void clk_unregister(struct clk *clk)
+ 	clk->core->ops = &clk_nodrv_ops;
+ 	clk_enable_unlock(flags);
+ 
++	clk_unlink_hierarchy(clk->core, clk->core->parent);
++
+ 	if (!hlist_empty(&clk->core->children)) {
+ 		struct clk_core *child;
+ 		struct hlist_node *t;
+ 
+-		/* Reparent all children to the orphan list. */
++		/*
++		 * Reparent all children to the orphan list.
++		 *
++		 * No need to unlink the child clock manually, this will be
++		 * handled by clk_reparent().
++		 */
+ 		hlist_for_each_entry_safe(child, t, &clk->core->children,
+ 					  child_node)
+ 			clk_core_set_parent_nolock(child, NULL);
+@@ -3943,6 +3989,8 @@ void __clk_put(struct clk *clk)
+ 
+ 	clk_prepare_lock();
+ 
++	clk_unlink_consumer(clk);
++
+ 	/*
+ 	 * Before calling clk_put, all calls to clk_rate_exclusive_get() from a
+ 	 * given user should be balanced with calls to clk_rate_exclusive_put()
+-- 
+2.19.1
+
