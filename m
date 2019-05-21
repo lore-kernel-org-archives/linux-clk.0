@@ -4,73 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56284C04AAF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CA0C04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 223B5217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7319217D9
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 18:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558463700;
-	bh=h6QMBPaQJ9YaytqpgsgQE/jdYbpm7zZS+J6xihNl3uc=;
+	s=default; t=1558464192;
+	bh=L96gEwhzXS8dH76O3LoMeL1+YYnNfRATLa7ZW46Bgpw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=iq9NWbBGj/kZufEp/Og5HcSyZdYSocBd4oB2DOSLLNS/CmmTUwVczpTKbpTpcNi7n
-	 zqT201QhvKaUUf7qUFiYXxXrvGqrdU1B5ka/KHh2udHldcD15tC4PYjPhyDYHjY50X
-	 yvDtCpgyw9JZdBg2/GES2U1XWzTlMmvHHTZEvskk=
+	b=UVAcS7KI1dU/HNCy94CMo/zNGoIGqbQ8IzLhjT4zV1MlH+QiUsbeTJkY6UVMwI9QW
+	 MjBiHGeBTdw0Rqc3rfRqEBlO8irvUdpnkbH8oaeOLtfkCcwwLvAga0Ll5uHQfe613e
+	 zuUNEAx35+46uLtxUEdW8zBaJReS+KONzrAS8Xh4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbfEUSe7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 14:34:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32862 "EHLO mail.kernel.org"
+        id S1728103AbfEUSnM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 14:43:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727969AbfEUSe7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 May 2019 14:34:59 -0400
+        id S1727969AbfEUSnM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 May 2019 14:43:12 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 031D22173E;
-        Tue, 21 May 2019 18:34:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B4A020862;
+        Tue, 21 May 2019 18:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558463699;
-        bh=h6QMBPaQJ9YaytqpgsgQE/jdYbpm7zZS+J6xihNl3uc=;
+        s=default; t=1558464191;
+        bh=L96gEwhzXS8dH76O3LoMeL1+YYnNfRATLa7ZW46Bgpw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sjLGkhCL+6CNctT+nhppZVHDDEgcqXJhArozSlipyDH2C+UGfFJOeUJONbchPrrY8
-         NnZc0hEFDhjUWchObZB1iK02IZGnHKzuzz28tdEqIK9x9HCkiglnIwWuBCPWHjlo87
-         xUH2qf4/zRl92Gqfbg1BllN7kb1qmZXCE6tCZOoE=
+        b=rSOf6TJR+EkwkNLjOUJe0ei0k40QHpSAzC8q98LT1tfx5vNIzZzEB8CTXEtbSw4gA
+         yH96MX+btZpGrqyqsT3TQo/3RevmwXX4mQAiFnsF7IDCQSbWGm++YUC2rXW3c2HWYW
+         t+psVXKLJCCNY/JLTFfMLmUjpKCFIqeWjAiLarfY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190513213001.23956-1-paul.walmsley@sifive.com>
-References: <20190513213001.23956-1-paul.walmsley@sifive.com>
-Subject: Re: [PATCH v2] clk: sifive: restrict Kconfig scope for the FU540 PRCI driver
+In-Reply-To: <20190520021702.3531-1-peng.fan@nxp.com>
+References: <20190520021702.3531-1-peng.fan@nxp.com>
+Subject: Re: [PATCH V3] clk: imx: imx8mm: fix int pll clk gate
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk@vger.kernel.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Paul Walmsley <paul@pwsan.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>, mturquette@baylibre.com,
-        pavel@ucw.cz
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
 User-Agent: alot/0.8.1
-Date:   Tue, 21 May 2019 11:34:58 -0700
-Message-Id: <20190521183459.031D22173E@mail.kernel.org>
+Date:   Tue, 21 May 2019 11:43:10 -0700
+Message-Id: <20190521184311.6B4A020862@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Walmsley (2019-05-13 14:30:04)
-> Restrict Kconfig scope for SiFive clock and reset IP block drivers
-> such that they won't appear on most configurations that are unlikely
-> to support them.  This is based on a suggestion from Pavel Machek
-> <pavel@ucw.cz>.  Ideally this should be dependent on
-> CONFIG_ARCH_SIFIVE, but since that Kconfig directive does not yet
-> exist, add dependencies on RISCV or COMPILE_TEST for now.
+Quoting Peng Fan (2019-05-19 19:03:19)
+> To Frac pll, the gate shift is 13, however to Int PLL the gate shift
+> is 11.
 >=20
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> Reported-by: Pavel Machek <pavel@ucw.cz>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: <stable@vger.kernel.org>
+> Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
 > ---
 
 Applied to clk-fixes
