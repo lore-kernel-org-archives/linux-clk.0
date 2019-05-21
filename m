@@ -4,25 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F2AC04AAF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05758C04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:51:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1CA217D7
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D91E2217D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 12:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfEUMv1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 08:51:27 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:54115 "EHLO
+        id S1728202AbfEUMve (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 08:51:34 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:41079 "EHLO
         relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbfEUMv1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 08:51:27 -0400
+        with ESMTP id S1728125AbfEUMvZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 08:51:25 -0400
 X-Originating-IP: 90.88.22.185
 Received: from localhost.localdomain (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 2C2041C0019;
-        Tue, 21 May 2019 12:51:24 +0000 (UTC)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id EDEB11C0011;
+        Tue, 21 May 2019 12:51:21 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -35,9 +36,9 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Gregory Clement <gregory.clement@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v5 4/4] clk: mvebu: armada-37xx-xtal: fill the device entry when registering the clock
-Date:   Tue, 21 May 2019 14:51:13 +0200
-Message-Id: <20190521125114.20357-5-miquel.raynal@bootlin.com>
+Subject: [PATCH v5 3/4] clk: mvebu: armada-37xx-tbg: fill the device entry when registering the clocks
+Date:   Tue, 21 May 2019 14:51:12 +0200
+Message-Id: <20190521125114.20357-4-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190521125114.20357-1-miquel.raynal@bootlin.com>
 References: <20190521125114.20357-1-miquel.raynal@bootlin.com>
@@ -48,7 +49,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-So far the clk_hw_register_fixed_factor() call was not providing any
+So far the clk_hw_register_fixed_factor() calls are not providing any
 device structure. While doing so is harmless for regular use, the
 missing device structure may be a problem for suspend to RAM support.
 
@@ -57,29 +58,34 @@ probe will enforce the suspend/resume orders. When the device is
 missing during the registration, no link can be established, hence the
 order between parent and child clocks are not enforced.
 
-Adding the device structure here will create a link between the XTAL
-clock (this one) and the four TBG clocks that are derived from it.
+Adding the device structure here will create a link between the 4 TBG
+clocks (registered by this driver) and:
+* their parent clock: XTAL,
+* their child clocks: several 'periph' clock.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- drivers/clk/mvebu/armada-37xx-xtal.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/mvebu/armada-37xx-tbg.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-index e9e306d4e9af..0e74bcd83d1a 100644
---- a/drivers/clk/mvebu/armada-37xx-xtal.c
-+++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-@@ -57,7 +57,8 @@ static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
- 		rate = 25000000;
- 
- 	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
--	xtal_hw = clk_hw_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
-+	xtal_hw = clk_hw_register_fixed_rate(&pdev->dev, xtal_name, NULL, 0,
-+					     rate);
- 	if (IS_ERR(xtal_hw))
- 		return PTR_ERR(xtal_hw);
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, xtal_hw);
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+index 992f2d1130b3..6336f6955e92 100644
+--- a/drivers/clk/mvebu/armada-37xx-tbg.c
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -117,8 +117,10 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
+ 		name = tbg[i].name;
+ 		mult = tbg_get_mult(reg, &tbg[i]);
+ 		div = tbg_get_div(reg, &tbg[i]);
+-		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(NULL, name,
+-						parent_name, 0, mult, div);
++		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(dev, name,
++								   parent_name,
++								   0, mult,
++								   div);
+ 		if (IS_ERR(hw_tbg_data->hws[i]))
+ 			dev_err(dev, "Can't register TBG clock %s\n", name);
+ 	}
 -- 
 2.19.1
 
