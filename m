@@ -2,401 +2,145 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C87C04AAF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 09:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E103DC04AAF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 10:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B4F21479
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 09:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9FC621773
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 10:11:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="Q4toLZly"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfEUJqw convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 05:46:52 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:35805 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfEUJqv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 05:46:51 -0400
-X-Originating-IP: 90.88.22.185
-Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B16F920005;
-        Tue, 21 May 2019 09:46:44 +0000 (UTC)
-Date:   Tue, 21 May 2019 11:46:44 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v4 0/4] Add device links to clocks
-Message-ID: <20190521114644.7000a751@xps13>
-In-Reply-To: <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com>
-References: <20190108161940.4814-1-miquel.raynal@bootlin.com>
-        <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726289AbfEUKLX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 06:11:23 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:25115 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfEUKLW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 06:11:22 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,494,1549954800"; 
+   d="scan'208";a="34203048"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 May 2019 03:11:21 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 21 May 2019 03:11:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=68M/FY+nUw7WESU5pU5vZ3ng2vQhHkhfsJX4tSNLKcM=;
+ b=Q4toLZly0khkWSn439UXBnLsjPI3pUM94rCYYFOtDmBBh/3TD8qYa4ONQ2vHczymE5jnGAEM65CbvZaf+Bp5TUjRKtmWEfkp85Vo0KrFFKAKqLrNEXJsIyzKTQZTAlHMzMs/wgewj+a03VLTBi1WRMcU3NkPV/FmtOmVFhkbRA8=
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com (10.172.54.17) by
+ MWHPR11MB1949.namprd11.prod.outlook.com (10.175.54.136) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Tue, 21 May 2019 10:11:19 +0000
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::f01a:9325:7a65:cdb4]) by MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::f01a:9325:7a65:cdb4%4]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 10:11:19 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Claudiu.Beznea@microchip.com>
+Subject: [PATCH v4 0/4] add slow clock support for SAM9X60
+Thread-Topic: [PATCH v4 0/4] add slow clock support for SAM9X60
+Thread-Index: AQHVD72I8ZRJakzxaEW9m+CIsi0IRA==
+Date:   Tue, 21 May 2019 10:11:18 +0000
+Message-ID: <1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0254.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8a::26) To MWHPR11MB1549.namprd11.prod.outlook.com
+ (2603:10b6:301:c::17)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 12c155bb-6f04-4684-b878-08d6ddd4aac5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MWHPR11MB1949;
+x-ms-traffictypediagnostic: MWHPR11MB1949:
+x-microsoft-antispam-prvs: <MWHPR11MB194929C60E2344A12EE8113C87070@MWHPR11MB1949.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(136003)(39860400002)(346002)(189003)(199004)(66446008)(66556008)(81156014)(486006)(66476007)(102836004)(14454004)(2906002)(64756008)(316002)(73956011)(72206003)(26005)(476003)(68736007)(66066001)(2616005)(186003)(25786009)(99286004)(50226002)(66946007)(52116002)(6636002)(2501003)(81166006)(8936002)(6436002)(86362001)(386003)(7736002)(4326008)(110136005)(54906003)(5660300002)(3846002)(6116002)(6506007)(6512007)(36756003)(107886003)(14444005)(256004)(71200400001)(6486002)(478600001)(53936002)(305945005)(71190400001)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1949;H:MWHPR11MB1549.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +4WJX2+fL/B6OMr/u1bZK46DOx4f1XNXb+R5AxMI1oLk4TidjF1/plNmgdAXYtRnbo6H55bo/hKDo9XD+ovmbnkZ+Th8VsxYZ98gWY+mQ/hdNKy3J/zxIb+KUR4uNhghx91jT2VEAq/XHGcu7wo3SI/fGyonh658D+jQxhIcAJy/Uo2TF2koa9TcSRZm4mEXJgjB72O3lcpveE2urIepOH5EDjSwFXjiWSuKe6Q7V8rtb6kEc2ArSfg6SR9/GGXEIsHqyz/dZoKCO//8UnMbNsXbLrv3Ikdi3FlJzuS0LOP5zv++WB32VSkmTy0ZfCWkVwnBjqOEr0kgzCN4ClreNcLOjBG/oEcJ7vuTeotNOKCUVHQiNSZiA1mCwwRjLPLbynxQfriRYWtWR/3iK/K5VvCLej/fkItzCyof5aDx4es=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12c155bb-6f04-4684-b878-08d6ddd4aac5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 10:11:18.9555
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1949
+X-OriginatorOrg: microchip.com
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-Stephen Boyd <sboyd@kernel.org> wrote on Thu, 11 Apr 2019 16:34:16
--0700:
-
-> Quoting Miquel Raynal (2019-01-08 08:19:36)
-> > Hello,
-> > 
-> > While working on suspend to RAM feature, I ran into troubles multiple
-> > times when clocks where not suspending/resuming at the desired time. I
-> > had a look at the core and I think the same logic as in the
-> > regulator's core may be applied here to (very easily) fix this issue:
-> > using device links.
-> > 
-> > The only additional change I had to do was to always (when available)
-> > populate the device entry of the core clock structure so that it could
-> > be used later. This is the purpose of patch 1. Patch 2 actually adds
-> > support for device links.
-> > 
-> > Here is a step-by-step explanation of how links are managed, following
-> > Maxime Ripard's suggestion.
-> > 
-> > 
-> > The order of probe has no importance because the framework already
-> > handles orphaned clocks so let's be simple and say there are two root
-> > clocks, not depending on anything, that are probed first: xtal0 and
-> > xtal1. None of these clocks have a parent, there is no device link in
-> > the game, yet.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +----------------+
-> > 
-> > Then, a peripheral clock periph0 is probed. His parent is xtal1. The
-> > clock_register_*() call will run __clk_init_parent() and a link between
-> > periph0's core and xtal1's core will be created and stored in
-> > periph0's core->parent_clk_link entry.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +-------^--------+
-> >                                          |
-> >                                          |
-> >                           +--------------+
-> >                           |   ->parent_clk_link
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                |
-> >                   |                |
-> >                   +-------^^-------+
-> >                           ||
-> >                           ||
-> >                   +----------------+
-> >                   |                |
-> >                   |  periph0 clk 0 |
-> >                   |                |
-> >                   +----------------+
-> > 
-> > Then, device0 is probed and "get" the periph0 clock. clk_get() will be
-> > called and a struct clk will be instantiated for device0 (called in
-> > the figure clk 1). A link between device0 and the new clk 1 instance of
-> > periph0 will be created and stored in the clk->consumer_link entry.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +-------^--------+
-> >                                          |
-> >                                          |
-> >                           +--------------+
-> >                           |   ->parent_clk_link
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                <-------------+
-> >                   |                <-------------|
-> >                   +-------^^-------+            ||
-> >                           ||                    ||
-> >                           ||                    ||
-> >                   +----------------+    +----------------+
-> >                   |                |    |                |
-> >                   |  periph0 clk 0 |    |  periph0 clk 1 |
-> >                   |                |    |                |
-> >                   +----------------+    +----------------+
-> >                                                 |
-> >                                                 | ->consumer_link
-> >                                                 |
-> >                                                 |
-> >                                                 |
-> >                                         +-------v--------+
-> >                                         |    device0     |
-> >                                         +----------------+
-> > 
-> > Right now, device0 is linked to periph0, itself linked to xtal1 so
-> > everything is fine.
-> > 
-> > Now let's get some fun: the new parent of periph0 is xtal1. The process
-> > will call clk_reparent(), periph0's core->parent_clk_link will be
-> > destroyed and a new link to xtal1 will be setup and stored. The
-> > situation is now that device0 is linked to periph0 and periph0 is
-> > linked to xtal1, so the dependency between device0 and xtal1 is still
-> > clear.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +-------^--------+            +----------------+
-> >            |
-> >            |                           \ /
-> >            +----------------------------x  
-> >       ->parent_clk_link   |            / \  
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                <-------------+
-> >                   |                <-------------|
-> >                   +-------^^-------+            ||
-> >                           ||                    ||
-> >                           ||                    ||
-> >                   +----------------+    +----------------+
-> >                   |                |    |                |
-> >                   |  periph0 clk 0 |    |  periph0 clk 1 |
-> >                   |                |    |                |
-> >                   +----------------+    +----------------+
-> >                                                 |
-> >                                                 | ->consumer_link
-> >                                                 |
-> >                                                 |
-> >                                                 |
-> >                                         +-------v--------+
-> >                                         |    device0     |
-> >                                         +----------------+
-> > 
-> > I assume periph0 cannot be removed while there are devices using it,
-> > same for xtal0.
-> > 
-> > What can happen is that device0 'put' the clock periph0. The relevant
-> > link is deleted and the clk instance dropped.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +-------^--------+            +----------------+
-> >            |
-> >            |                           \ /
-> >            +----------------------------x  
-> >       ->parent_clk_link   |            / \  
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                |
-> >                   |                |
-> >                   +-------^^-------+
-> >                           ||
-> >                           ||
-> >                   +----------------+
-> >                   |                |
-> >                   |  periph0 clk 0 |
-> >                   |                |
-> >                   +----------------+
-> > 
-> > Now we can unregister periph0: link with the parent will be destroyed
-> > and the clock may be safely removed.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +----------------+
-> > 
-> > 
-> > This is my understanding of the common clock framework and how links
-> > can be added to it.
-> > 
-> > As a result, here are the links created during the boot of an
-> > ESPRESSObin:
-> >   
-> 
-> Sorry this patch series is taking way too long to get merged. It's
-> already mid-April!
-> 
-> So I still have some of the original questions I had from before, mostly
-> around circular parent chains between clk providers. For example, there
-> are clk providers that both provide clks to other providers and consume
-> clks from those providers. Does device links work gracefully here?
-> 
-> Just speaking from my own qcom experience, I can point to the PCIe PHY
-> that's a provider of a clk to GCC and a consumer of a clk in GCC. In
-> block diagram form this is:
-> 
-> 
->       PCIE PHY                        GCC
->    +--------------+          +-------------------------+
->    |              |          |                         |
->    |     PHY clk ->----------+---- gcc_pipe_clk ---+   |
->    |              |          |                     |   |
->    |              |          |                     |   |
->    | pci_pipe_clk <----------|---------------------+   |
->    |              |          |                         |
->    +--------------+          +-------------------------+
-> 
-> The end result is that the PCIe PHY is a clk controller that provides
-> the PHY clk to GCC's gcc_pipe_clk and then it gets the same clk signal
-> back from GCC and uses it on the PCIe PHY's pci_pipe_clk input.
-> 
-> So is this is a problem?
-> 
-
-It's now my turn to get back on this topic.
-
-I just put my noise back into this and for what I understand of the
-clk subsystem, I think the situation you describe could be pictured
-like this:
-
-
-         +---------------+
-         |               |
-         |               |
-         | PCIe PHY      |
-         |               |
-         |               |
-         +-----^^--------+
-               ||
-               ||
-         +---------------+
-         |               |
-         | pcie_pipe_clk |
-         |               |
-         +------^--------+
-                |
-                | ->parent_clk_link
-                |
-                |
-         +---------------+
-         |               |
-         |               |
-         | GCC           |
-         |               |
-         |               |
-         +------^^-------+
-                ||
-                ||
-         +---------------+
-         |               |
-         | gcc_pipe_clk  |
-         |               |
-         +------^--------+
-                |
-                | ->parent_clk_link
-                |
-                |
-         +---------------+
-         |               |
-         |               |
-         | PCIe PHY      |
-         |               |
-         |               |
-         +------^^-------+
-                ||
-                ||
-         +---------------+
-         |               |
-         | phy_clk       |
-         |               |
-         +---------------+
-
-
-IMHO the fact that the first and third blocks are the same does not
-interfere with device links.
-
-Honestly, I cannot be 100% sure it won't break on qcom designs, maybe
-the best would be to have someone to test. I don't have the relevant
-hardware. Do you? It would be really helpful!
-
-There is an entire PCIe series blocked, waiting for these device links
-to be merged so it would help a lot if someone could test.
-
-Thank you very much,
-Miquèl
+RnJvbTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+DQoNCkhp
+LA0KDQpUaGlzIHNlcmllcyBhZGQgc2xvdyBjbG9jayBzdXBwb3J0IGZvciBTQU05WDYwLiBBcGFy
+dCBmcm9tIHByZXZpb3VzIElQcywgdGhpcw0Kb25lIHVzZXMgZGlmZmVyZW50IG9mZnNldHMgaW4g
+Y29udHJvbCByZWdpc3RlciBmb3IgZGlmZmVyZW50IGZ1bmN0aW9uYWxpdGllcy4NClRoZSBzZXJp
+ZXMgYWRhcHQgY3VycmVudCBkcml2ZXIgdG8gd29yayBmb3IgYWxsIElQcyB1c2luZyBwZXIgSVAN
+CmNvbmZpZ3VyYXRpb25zIGluaXRpYWxpemVkIGF0IHByb2JlLg0KDQpUaGFuayB5b3UsDQpDbGF1
+ZGl1IEJlem5lYQ0KDQpDaGFuZ2VzIGluIHY0Og0KLSByZW1vdmUgbWFjcm9zIHdoaWNoIHdlcmUg
+dXNlZCB0byBhY2Nlc3MgSVAgc3BlY2lmaWMgYml0cyBmb3IgY29udHJvbA0KICByZWdpc3Rlcg0K
+LSBjb2xsZWN0IEFja2VkLWJ5LCBSZXZpZXdlZC1ieSB0YWdzDQoNCkNoYW5nZXMgaW4gdjM6DQot
+IGFkZCBwYXRjaCAxLzEgdGhhdCByZW1vdmUgYnlwYXNzIGNvZGUgaW4gdGhlIGNvZGUgc3BlY2lm
+aWMgdG8gU0FNQTVENA0KICAodGhlcmUgaXMgbm8gYnlwYXNzIHN1cHBvcnQgb24gU0FNQTVENCkN
+Ci0gYWRhcHQgcmV2aWV3IGNvbW1lbnRzDQotIHJlZ2lzdGVyIGNsb2NrIHdpdGggb2ZfY2xrX2h3
+X29uZWNlbGxfZ2V0IHRvIGVtcGhhc2l6ZSB0aGF0IHRoaXMgSVAgaGFzDQogIDIgb3V0cHV0IGNs
+b2NrcyBNRF9TTEtDIGFuZCBURF9TTENLIChJIGNvbnNpZGVyZWQgbm90IG5lY2Vzc2FyeSB0bw0K
+ICBpbnRyb2R1Y2UgbmV3IGNvbnN0YW50cyB0byBiZSBzaGFyZWQgYi93IGRyaXZlciBhbmQgRFQg
+YmluZGluZ3M7IGlmDQogIHlvdSBjb25zaWRlciBvdGhlcndpc2UsIGxldCBtZSBrbm93KQ0KLSBh
+ZGFwdCBkdC1iaW5kaW5nIHBhdGNoIHdpdGggY2xvY2stY2VsbHMgY2hhbmdlcyAodGh1cyBkaWRu
+J3QgaW50cm9kdWNlZA0KICBSZXZpZXdlZC1ieSB0YWcpDQotIHJlbmFtZWQgc3RydWN0IGNsa19z
+bG93X29mZnNldHMgdG8gc3RydWN0IGNsa19zbG93X2JpdHMgYW5kIHRoZQ0KICBjb3JyZXNwb25k
+aW5nIGluc3RhbmNlcyBvZiBpdA0KDQpDaGFuZ2VzIGluIHYyOg0KLSBzcGxpdCBwYXRjaCAxLzEg
+ZnJvbSB2MSBpbiAyIHBhdGNoZXM6IG9uZSBhZGRpbmcgcmVnaXN0ZXIgYml0IG9mZnNldHMNCiAg
+c3VwcG9ydCAocGF0Y2ggMS8zIGZyb20gdGhpcyBzZXJpZXMpLCBvbmUgYWRkaW5nIHN1cHBvcnQg
+Zm9yIFNBTTlYNjANCiAgKHBhdGNoIDIvMyBmcm9tIHRoaXMgc2VyaWVzKQ0KLSBmaXggY29tcGF0
+aWJsZSBzdHJpbmcgZnJvbSAibWljcm9jaGlwLGF0OTFzYW05eDYwLXNja2MiIHRvDQogICJtaWNy
+b2NoaXAsc2FtOXg2MC1zY2tjIg0KDQpDbGF1ZGl1IEJlem5lYSAoNCk6DQogIGNsazogYXQ5MTog
+c2NrYzogc2FtYTVkNCBoYXMgbm8gYnlwYXNzIHN1cHBvcnQNCiAgY2xrOiBhdDkxOiBzY2tjOiBh
+ZGQgc3VwcG9ydCB0byBzcGVjaWZ5IHJlZ2lzdGVycyBiaXQgb2Zmc2V0cw0KICBkdC1iaW5kaW5n
+czogY2xrOiBhdDkxOiBhZGQgYmluZGluZ3MgZm9yIFNBTTlYNjAncyBzbG93IGNsb2NrDQogICAg
+Y29udHJvbGxlcg0KICBjbGs6IGF0OTE6IHNja2M6IGFkZCBzdXBwb3J0IGZvciBTQU05WDYwDQoN
+CiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9hdDkxLWNsb2NrLnR4dCAgICAgICB8ICAg
+NyArLQ0KIGRyaXZlcnMvY2xrL2F0OTEvc2NrYy5jICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHwgMTczICsrKysrKysrKysrKysrKystLS0tLQ0KIDIgZmlsZXMgY2hhbmdlZCwgMTM5IGluc2Vy
+dGlvbnMoKyksIDQxIGRlbGV0aW9ucygtKQ0KDQotLSANCjIuNy40DQoNCg==
