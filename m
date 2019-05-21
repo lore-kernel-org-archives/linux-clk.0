@@ -2,112 +2,111 @@ Return-Path: <SRS0=Jypq=TV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42660C04AAF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A57BC04E87
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 140A221743
-	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15745208C3
+	for <linux-clk@archiver.kernel.org>; Tue, 21 May 2019 14:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aDX69x7u";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HY1q1k/u"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="yCZ6lx2n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbfEUOtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 10:49:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46736 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbfEUOtm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 10:49:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6DBE260A00; Tue, 21 May 2019 14:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558450182;
-        bh=YPGcPjW1YGrs1F3/ICCgcunTHbniPxqUU3hRT7sKowA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aDX69x7uQxqQNY8qqxe29lKQAhnTez8EGtb6viWRrPhmBEjA1K//H5B6lO4o0q6E7
-         3kRCnT48SZxlVVYo/o6t/pFZ6oK38JfRkAVlwV2z+Ctz6rLPJWEFChUfHmPm495YVg
-         /ceAZdXDUdUdcfTpDRCu3y5kcjbSWGe7S+5AeLZU=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 10058605FC;
-        Tue, 21 May 2019 14:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558450177;
-        bh=YPGcPjW1YGrs1F3/ICCgcunTHbniPxqUU3hRT7sKowA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HY1q1k/uhy+17uhmkcdViky44+TWAbeMVnmuI9P+RbdSZmn+GXLv2z2YkUaq2dlZf
-         QQyT68Oo8SOd2FK9XKOqzSmnzjQkb4HVWI8SDtfaukwkBF1cUG01mf2DcbTwpYpB2G
-         rDDH1tOgulv2bMeGeCZ12GhkvHDQTX9vq/Qm/kKE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10058605FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        david.brown@linaro.org
-Cc:     marc.w.gonzalez@free.fr, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v4 6/6] arm64: dts: qcom: msm8998: Add mmcc node
-Date:   Tue, 21 May 2019 08:49:27 -0600
-Message-Id: <1558450167-21094-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1558449843-19971-1-git-send-email-jhugo@codeaurora.org>
-References: <1558449843-19971-1-git-send-email-jhugo@codeaurora.org>
+        id S1728909AbfEUOwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 10:52:21 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:41286 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728906AbfEUOwT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 10:52:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1558450336; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dkpWB3BedlQ2A/bVMr6jA46kT7eWK3lBANFrXOJIPf8=;
+        b=yCZ6lx2nq+6pK+mAT624ZF8rwxKDKwtYHrELg/dS2ZBKL6GVqET83KOGdrwhb+BN7xdv9E
+        WXfShi3RU1ihOx33XdDliXteDtKeFPQqyhroWNe9UjPIKCxGCfOThwz6hXU6F0OTrTVmlx
+        lKnXoghn9Yur+8w4JiMEC5nGJ2Dm7TY=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v12 12/13] MIPS: GCW0: Reduce system timer and clocksource to 750 kHz
+Date:   Tue, 21 May 2019 16:51:40 +0200
+Message-Id: <20190521145141.9813-13-paul@crapouillou.net>
+In-Reply-To: <20190521145141.9813-1-paul@crapouillou.net>
+References: <20190521145141.9813-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 Multimedia Clock Controller DT node.
+The default clock (12 MHz) is too fast for the system timer.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 141488e..5a32dfe 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
+Notes:
+    v8: New patch
+    
+    v9: Don't configure clock timer1, as the OS Timer is used as
+    	clocksource on this SoC
+    
+    v10: Revert back to v8 bahaviour. Let the user choose what
+    	 clocksource should be used.
+    
+    v11: No change
+    
+    v12: Move clocksource to channel 2, as channel 1 is used as PWM
+    	 for the backlight.
+
+ arch/mips/boot/dts/ingenic/gcw0.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
+index 35f0291e8d38..f58d239c2058 100644
+--- a/arch/mips/boot/dts/ingenic/gcw0.dts
++++ b/arch/mips/boot/dts/ingenic/gcw0.dts
+@@ -2,6 +2,7 @@
+ /dts-v1/;
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,mmcc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
+ #include "jz4770.dtsi"
++#include <dt-bindings/clock/ingenic,tcu.h>
  
-@@ -1066,6 +1067,19 @@
- 			status = "disabled";
- 		};
- 
-+		mmcc: clock-controller@c8c0000 {
-+			compatible = "qcom,mmcc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x0c8c0000 0x40000>;
+ / {
+ 	compatible = "gcw,zero", "ingenic,jz4770";
+@@ -60,3 +61,12 @@
+ 	/* The WiFi module is connected to the UHC. */
+ 	status = "okay";
+ };
 +
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
++&tcu {
++	/* 750 kHz for the system timer and clocksource */
++	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER2>;
++	assigned-clock-rates = <750000>, <750000>;
 +
- 		timer@17920000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
++	/* PWM1 is in use, so reserve channel #2 for the clocksource */
++	ingenic,pwm-channels-mask = <0xfa>;
++};
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.21.0.593.g511ec345e18
 
