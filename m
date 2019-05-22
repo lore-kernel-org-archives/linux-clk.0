@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29731C282DD
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC92C282DD
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F106C217F9
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:26:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF22320675
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:37:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558553190;
-	bh=MQ7GBJGYsRs7x477zz5+ZEI8vXsdtgdGw+AwAxkTOqQ=;
+	s=default; t=1558553864;
+	bh=oV5MnESwSqTdxHd32Kvszv6+H5fgv7apnZmsWkGPLuA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j2mfIuZM7J702toZ37SZwKDY8OLBZXLQnWM1DZZfaaAU2jgywANB87sejVSeZZF/1
-	 ViuoVYdhJjdPV6TnjpV4gmFfod21le3zF0xdiRRP9qM2lwmbAmj4dclE9JKUNJ7wBW
-	 Q1EeEERpkOk2SAfLEIaXTtFkhLgmap2WQR/72bpo=
+	b=zBZWnPj4iVpD3av6JLk9pSoQOOAhaceqcOxY0O2378zMCMw/P36XMrZeRG9rAzUfd
+	 c+NKxaOUFy7h1fLVln4hYa3dwQCRofm7vdd2Ww/x/2KKRrIfDPS1adXT2EhqxtW24C
+	 SR1LZ7YeSfrIjDabyIInCA2ka2gA1JWbSEbS7vtA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730516AbfEVT03 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 May 2019 15:26:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48008 "EHLO mail.kernel.org"
+        id S1733168AbfEVTaK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 May 2019 15:30:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731989AbfEVT03 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 May 2019 15:26:29 -0400
+        id S1733159AbfEVTaK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 May 2019 15:30:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CBD720879;
-        Wed, 22 May 2019 19:26:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05F7C20879;
+        Wed, 22 May 2019 19:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553188;
-        bh=MQ7GBJGYsRs7x477zz5+ZEI8vXsdtgdGw+AwAxkTOqQ=;
+        s=default; t=1558553408;
+        bh=oV5MnESwSqTdxHd32Kvszv6+H5fgv7apnZmsWkGPLuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xjMs+iCVFAZJFQQ0mbgTW7us4mxG/ZYlw3x9y0nySj93/ZmRAhW/OvOYTsCWEamHk
-         JSoQX3qp6c/2Cj55+BbuGrrd6lrKVwSuFtZ7bk1ZyHS4nO80TMknozYtZKSiEHvjYm
-         NdenPxfU0JFn+xNQoLWrsU+f41UyzPU2Kp+lkWYA=
+        b=iIqXrDstkkFYnErM2HP/KLBSdjYm5/keR0vftV6u/VFGmxmOYEM80/U6byEzrEWLW
+         eD+OYQ3WhoSvEdlzjpPVE1eot8KudqYMjE5HB/GW6+pXZ/PX1Tv9jkOH1fzM4nFqHs
+         HAOE2rV+nh+SUJUkSi5nnI7515Gy9untYNxUDHRE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Douglas Anderson <dianders@chromium.org>,
@@ -45,12 +45,12 @@ Cc:     Douglas Anderson <dianders@chromium.org>,
         Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.0 103/317] clk: rockchip: undo several noc and special clocks as critical on rk3288
-Date:   Wed, 22 May 2019 15:20:04 -0400
-Message-Id: <20190522192338.23715-103-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 057/167] clk: rockchip: undo several noc and special clocks as critical on rk3288
+Date:   Wed, 22 May 2019 15:26:52 -0400
+Message-Id: <20190522192842.25858-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
-References: <20190522192338.23715-1-sashal@kernel.org>
+In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
+References: <20190522192842.25858-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -125,10 +125,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 5a67b7869960e..f3bbcdfa88ead 100644
+index 450de24a1b422..45cd2897e586b 100644
 --- a/drivers/clk/rockchip/clk-rk3288.c
 +++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -313,13 +313,13 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+@@ -292,13 +292,13 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
  	COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
  			RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
  			RK3288_CLKGATE_CON(12), 6, GFLAGS),
@@ -144,7 +144,7 @@ index 5a67b7869960e..f3bbcdfa88ead 100644
  			RK3288_CLKGATE_CON(12), 9, GFLAGS),
  	GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
  			RK3288_CLKGATE_CON(12), 10, GFLAGS),
-@@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+@@ -626,7 +626,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
  	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
  			RK3288_CLKSEL_CON(22), 7, IFLAGS),
  
@@ -153,7 +153,7 @@ index 5a67b7869960e..f3bbcdfa88ead 100644
  			RK3288_CLKGATE_CON(4), 14, GFLAGS),
  
  	COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy480m_p, 0,
-@@ -656,7 +656,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+@@ -635,7 +635,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
  	COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy480m_p, 0,
  			RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
  			RK3288_CLKGATE_CON(3), 6, GFLAGS),
@@ -162,7 +162,7 @@ index 5a67b7869960e..f3bbcdfa88ead 100644
  			RK3288_CLKGATE_CON(13), 9, GFLAGS),
  	DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
  			RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
-@@ -837,11 +837,6 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+@@ -816,11 +816,6 @@ static const char *const rk3288_critical_clocks[] __initconst = {
  	"pclk_alive_niu",
  	"pclk_pd_pmu",
  	"pclk_pmu_niu",
