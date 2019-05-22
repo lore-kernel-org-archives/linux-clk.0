@@ -2,120 +2,225 @@ Return-Path: <SRS0=a4ME=TW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 841D0C282CE
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 10:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6202C282CE
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 11:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC1421479
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 10:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE6D217D9
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 11:16:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kA6UFOl5"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="DTEguJ7z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbfEVK4d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 May 2019 06:56:33 -0400
-Received: from mail-eopbgr130072.outbound.protection.outlook.com ([40.107.13.72]:34222
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727464AbfEVK4c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 May 2019 06:56:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZxQaY99ejy8a0zfxsotbMMlkUzenPno6vgiO1lOmMlU=;
- b=kA6UFOl5rmcSz1zJ8EUXgIL0a8ndND6r1fuNHi5jleAJKze+VKROtqGPoISG8X37wqyrn0jISLAiloja0xNV59MvXGE758YjtM5yrgLGp5S95GDe7M/0zdKqz283JW/QJ3moYfayY9ynI3GabJB2SxefhTdRGeMUNvvNJNhfFH8=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB4209.eurprd04.prod.outlook.com (52.134.126.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.17; Wed, 22 May 2019 10:56:29 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::c19b:5964:bfcb:96a8]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::c19b:5964:bfcb:96a8%7]) with mapi id 15.20.1900.020; Wed, 22 May 2019
- 10:56:29 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-CC:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        id S1728869AbfEVLQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 May 2019 07:16:08 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:51226 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728808AbfEVLQH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 May 2019 07:16:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1558523764; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sQdb4SEQMtDupMwnwP5hhbNOdCtEsnxGtObeHTAK/0M=;
+        b=DTEguJ7zyqElohAzti93m/3BAwwsnCvQLJQky7KXrv4BOsGGbIYbbX06Tp0r+HHg8+gl/0
+        FWjVWlCvoR7xSo7xFjdE2/Vf6nzOrlnChOVK0p0K+iyUU2qQgbIj3fK4H0fZH9m1wQQSRw
+        6K5IwZT/5Mg1H0sT0geJn+xK/vO3ZQ0=
+Date:   Wed, 22 May 2019 13:15:56 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v12 09/13] MIPS: jz4740: Add DTS nodes for the TCU drivers
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 0/2] clk: imx8m: Add GIC clock
-Thread-Topic: [PATCH v2 0/2] clk: imx8m: Add GIC clock
-Thread-Index: AQHVEIOCpLH3NHnZl0OVDpw6qRV786Z2+PqA
-Date:   Wed, 22 May 2019 10:56:28 +0000
-Message-ID: <20190522105627.nshnk5ih6r2swzr4@fsr-ub1664-175>
-References: <cover.1558518323.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1558518323.git.leonard.crestez@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ed80387e-495f-4537-59de-08d6dea424fa
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4209;
-x-ms-traffictypediagnostic: AM0PR04MB4209:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <AM0PR04MB420982F98FA283F7195CC4DFF6000@AM0PR04MB4209.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1332;
-x-forefront-prvs: 0045236D47
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(366004)(199004)(189003)(91956017)(66446008)(66556008)(71190400001)(71200400001)(64756008)(66476007)(66946007)(476003)(446003)(11346002)(73956011)(76116006)(99286004)(76176011)(6116002)(3846002)(6512007)(9686003)(54906003)(6506007)(53546011)(6306002)(6436002)(4326008)(6246003)(25786009)(6486002)(186003)(102836004)(53936002)(68736007)(86362001)(26005)(6862004)(256004)(7736002)(4744005)(2906002)(966005)(14454004)(5660300002)(6636002)(1076003)(498600001)(486006)(66066001)(44832011)(229853002)(33716001)(8676002)(81166006)(81156014)(8936002)(305945005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4209;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7/QH5ax1bmACzWnUPkdoidwV9/61FirazZ+NUifC426xOXxA0Kz5EurvgzHBRPpRanw/WyHq/nZX3y1okv6pzmt3irERMxG++xsdFatfAF/Idy2aZ5Gp1SEtwUQGZz1/hBNZan00AnUr8EASpXR8kaxnU2Hx0GWdWkNAd3yaVO++3Rs/r1c5Poc6Kr1li3XhP9XAkiA8/ao6YBw5ikuL+rcgBX+P+fQ+h8t4NRhLC6hUWbLwQlShkq5XdthVltMbZKhsZzGvXlIdgUYXzdUwGuz6nld59u/YnOGU9U+Hw/KDFEHSxZlHSfmBjP6fRRZbhfh8pTZcfQD3r1f2jSNR8yEeysz6rvMxT3EmHk1sRjS1vWXzlopC5br1UjYou3494kIlEd1NP62ijiOKcJiQ33K42ghJYZnN5iv4ZG8UDQQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6A409CE82D50B94CBC334C2A645640EC@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
+Message-Id: <1558523756.3066.0@crapouillou.net>
+In-Reply-To: <CA+7wUsxe4DLmAGNnnXZ3UokguMJ0cOGtu=opQpuAPvN_SH4KUw@mail.gmail.com>
+References: <20190521145141.9813-1-paul@crapouillou.net>
+        <20190521145141.9813-10-paul@crapouillou.net>
+        <CA+7wUsxe4DLmAGNnnXZ3UokguMJ0cOGtu=opQpuAPvN_SH4KUw@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed80387e-495f-4537-59de-08d6dea424fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2019 10:56:29.4404
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4209
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-05-22 09:48:28, Leonard Crestez wrote:
-> Add gic clk and mark it as critical so that parents are not turned off
-> by accident.
->=20
-> Changes since v1:
->  * Add imx8mq
->  * Split dt-bindings to separate patch
->  * Rebase on shawnguo/clk/imx
-> Link to v1: https://patchwork.kernel.org/patch/10940303/
->
 
-For the entire series.
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>=20
+On Wed, May 22, 2019 at 11:21 AM, Mathieu Malaterre <malat@debian.org> 
+wrote:
+> On Tue, May 21, 2019 at 4:52 PM Paul Cercueil <paul@crapouillou.net> 
+> wrote:
+>> 
+>>  Add DTS nodes for the JZ4780, JZ4770 and JZ4740 devicetree files.
+>> 
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>> 
+>>  Notes:
+>>      v5: New patch
+>> 
+>>      v6: Fix register lengths in watchdog/pwm nodes
+>> 
+>>      v7: No change
+>> 
+>>      v8: - Fix wrong start address for PWM node
+>>          - Add system timer and clocksource sub-nodes
+>> 
+>>      v9: Drop timer and clocksource sub-nodes
+>> 
+>>      v10-v11: No change
+>> 
+>>      v12: Drop PWM/watchdog/OST sub-nodes, for now.
+>> 
+>>   arch/mips/boot/dts/ingenic/jz4740.dtsi | 22 ++++++++++++++++++++++
+>>   arch/mips/boot/dts/ingenic/jz4770.dtsi | 21 +++++++++++++++++++++
+>>   arch/mips/boot/dts/ingenic/jz4780.dtsi | 21 +++++++++++++++++++++
+>>   3 files changed, 64 insertions(+)
+>> 
+>>  diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi 
+>> b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+>>  index 2beb78a62b7d..807d9702d4cf 100644
+>>  --- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
+>>  +++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+>>  @@ -53,6 +53,28 @@
+>>                  clock-names = "rtc";
+>>          };
+>> 
+>>  +       tcu: timer@10002000 {
+>>  +               compatible = "ingenic,jz4740-tcu";
+>>  +               reg = <0x10002000 0x1000>;
+>>  +               #address-cells = <1>;
+>>  +               #size-cells = <1>;
+>>  +               ranges = <0x0 0x10002000 0x1000>;
+>>  +
+>>  +               #clock-cells = <1>;
+>>  +
+>>  +               clocks = <&cgu JZ4740_CLK_RTC
+>>  +                         &cgu JZ4740_CLK_EXT
+>>  +                         &cgu JZ4740_CLK_PCLK
+>>  +                         &cgu JZ4740_CLK_TCU>;
+>>  +               clock-names = "rtc", "ext", "pclk", "tcu";
+>>  +
+>>  +               interrupt-controller;
+>>  +               #interrupt-cells = <1>;
+>>  +
+>>  +               interrupt-parent = <&intc>;
+>>  +               interrupts = <23 22 21>;
+>>  +       };
+>>  +
+>>          rtc_dev: rtc@10003000 {
+>>                  compatible = "ingenic,jz4740-rtc";
+>>                  reg = <0x10003000 0x40>;
+>>  diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi 
+>> b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+>>  index 49ede6c14ff3..70932fd90902 100644
+>>  --- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
+>>  +++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+>>  @@ -46,6 +46,27 @@
+>>                  #clock-cells = <1>;
+>>          };
+>> 
+>>  +       tcu: timer@10002000 {
+>>  +               compatible = "ingenic,jz4770-tcu";
+>>  +               reg = <0x10002000 0x1000>;
+>>  +               #address-cells = <1>;
+>>  +               #size-cells = <1>;
+>>  +               ranges = <0x0 0x10002000 0x1000>;
+>>  +
+>>  +               #clock-cells = <1>;
+>>  +
+>>  +               clocks = <&cgu JZ4770_CLK_RTC
+>>  +                         &cgu JZ4770_CLK_EXT
+>>  +                         &cgu JZ4770_CLK_PCLK>;
+>>  +               clock-names = "rtc", "ext", "pclk";
+>>  +
+>>  +               interrupt-controller;
+>>  +               #interrupt-cells = <1>;
+>>  +
+>>  +               interrupt-parent = <&intc>;
+>>  +               interrupts = <27 26 25>;
+>>  +       };
+>>  +
+>>          pinctrl: pin-controller@10010000 {
+>>                  compatible = "ingenic,jz4770-pinctrl";
+>>                  reg = <0x10010000 0x600>;
+>>  diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi 
+>> b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+>>  index b03cdec56de9..495082ce7fc5 100644
+>>  --- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
+>>  +++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+>>  @@ -46,6 +46,27 @@
+>>                  #clock-cells = <1>;
+>>          };
+>> 
+>>  +       tcu: timer@10002000 {
+> 
+> With W=1, I see:
+> 
+> ../arch/mips/boot/dts/ingenic/jz4780.dtsi:64.22-83.4: Warning
+> (unique_unit_address): /timer@10002000: duplicate unit-address (also
+> used in node /watchdog@1000
+> 2000)
 
-> Leonard Crestez (2):
->   dt-bindings: clock: imx8m: Add GIC clock
->   clk: imx8m: Add GIC clock
->=20
->  drivers/clk/imx/clk-imx8mm.c             | 4 ++++
->  drivers/clk/imx/clk-imx8mq.c             | 4 ++++
->  include/dt-bindings/clock/imx8mm-clock.h | 4 +++-
->  include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
->  4 files changed, 14 insertions(+), 2 deletions(-)
->=20
-> --=20
-> 2.17.1
-> =
+That didn't happen in V11 because there I was also migrating the
+watchdog and PWM drivers to children nodes of the TCU. It was more
+atomic, but it also was a 27-patches bomb touching a lot of
+subsystems that nobody was ever going to merge.
+
+Is the address conflict OK, knowing that the watchdog node will
+move out of the way as soon as this patchset is merged?
+
+Should I add an extra patch to remove the watchdog node instead?
+
+(and yes, devicetree ABI will break, which is sort-of OK in this
+case - as on Ingenic boards the devicetree blobs are always
+compiled within the kernel, so I think we should make this
+much-needed change while we still can).
+
+
+>>  +               compatible = "ingenic,jz4770-tcu";
+>>  +               reg = <0x10002000 0x1000>;
+>>  +               #address-cells = <1>;
+>>  +               #size-cells = <1>;
+>>  +               ranges = <0x0 0x10002000 0x1000>;
+>>  +
+>>  +               #clock-cells = <1>;
+>>  +
+>>  +               clocks = <&cgu JZ4780_CLK_RTCLK
+>>  +                         &cgu JZ4780_CLK_EXCLK
+>>  +                         &cgu JZ4780_CLK_PCLK>;
+>>  +               clock-names = "rtc", "ext", "pclk";
+>>  +
+>>  +               interrupt-controller;
+>>  +               #interrupt-cells = <1>;
+>>  +
+>>  +               interrupt-parent = <&intc>;
+>>  +               interrupts = <27 26 25>;
+>>  +       };
+>>  +
+>>          rtc_dev: rtc@10003000 {
+>>                  compatible = "ingenic,jz4780-rtc";
+>>                  reg = <0x10003000 0x4c>;
+>>  --
+>>  2.21.0.593.g511ec345e18
+>> 
+
+
