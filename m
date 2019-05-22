@@ -2,236 +2,205 @@ Return-Path: <SRS0=a4ME=TW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 766C1C072A4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 07:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB81C18E7D
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 09:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5D721479
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 07:58:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FULFs+pj"
+	by mail.kernel.org (Postfix) with ESMTP id C508B20675
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 09:21:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbfEVH6C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 May 2019 03:58:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41171 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728159AbfEVH6C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 May 2019 03:58:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g12so1101763wro.8
-        for <linux-clk@vger.kernel.org>; Wed, 22 May 2019 00:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GHAkYeVRW/vlbv+4Giq061DHjtEKlGHH98fC8Hd4T6c=;
-        b=FULFs+pjbx8CFx/gQAp0W7KZGUi3h9Q9BAqvA+O8BsbxrKAoPipjzIsl5qN/Mvmsl1
-         1dcxuUcoyUPPlrtZUbZxbCGzGfZf2ykIrGOgIWevqEZsuXquAc0YsBYzHo+EoqarUIpF
-         hLZxyXRLNLrVkakJWYy4AhsRVZYNRpGVVj8v8QvRMLUh9yqkFU0yyKZYd0+uJgfyV1Wq
-         3vtsQc0v4uTr1Gf6jsJ3oihSLhidlk89CfvtWC/MxEt/WS9vWJgd6v4z06eCWEuNtJNx
-         xwQ7yZY51PS/D2u+QSrKK1Lvap/2EI68WciYN4ol9b/0/m0VYWyLZYaK3LXgouijZ1uW
-         GpxQ==
+        id S1728734AbfEVJVN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 May 2019 05:21:13 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35226 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbfEVJVN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 May 2019 05:21:13 -0400
+Received: by mail-ot1-f65.google.com with SMTP id n14so1448065otk.2;
+        Wed, 22 May 2019 02:21:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GHAkYeVRW/vlbv+4Giq061DHjtEKlGHH98fC8Hd4T6c=;
-        b=cdTEJuKQ7n3m+f1QYwQRL/sADH1C0c/LO7D61utYNLGQ/5M/L2G9x8lzyvZ6i0UYxg
-         KF2D3iEEADSF6YdBWZatYCKDnUjOGZcJYTh2IlFpXke2UyrhHEuhVqFCFj27m55Dzrlz
-         R+acrTR9hprmkNBxH5m4Ple4y4NxRLLPhgLjDZTIKrnhlKRAEVeyDWel/tiZEu7c2zuJ
-         yf9W2wq4wR4YoWxQuRCmAF/OXB+ctVdGnxfBCMu28Jmn4CWr2uyTh+v2gCTaRv9taZA2
-         YjHiwRhwkJJdkf7ugi84TT8IS5m50Gtlbmdt6iJt2lBFOem97ExlvD5SRI3G3A00QRNH
-         FbtQ==
-X-Gm-Message-State: APjAAAXch0GhgSCK5BiGVm1V6uXflbePA2fVoOb432l/KyeetVmmLuBS
-        CwdyHvewO2jdF0beC7TaQcdSrg==
-X-Google-Smtp-Source: APXvYqyckrgKV1n38zckZ+etnJoUTm0gV39Y0P7uWUcumPygS8i6kzuWmgBBnPrHoFM5KYDd+RZoiw==
-X-Received: by 2002:adf:cf0c:: with SMTP id o12mr44779541wrj.182.1558511880004;
-        Wed, 22 May 2019 00:58:00 -0700 (PDT)
-Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id y16sm7339220wru.28.2019.05.22.00.57.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 00:57:59 -0700 (PDT)
-Subject: Re: [PATCH 2/3] clk: meson: g12a: Add support for G12B CPUB clocks
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190521150130.31684-1-narmstrong@baylibre.com>
- <20190521150130.31684-3-narmstrong@baylibre.com>
- <CAFBinCB+DD=hssuswV6M4i1Buv7bs0-6TfPTRVdUrhaprLMb0w@mail.gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <469affe7-c049-8726-a242-2a003370f952@baylibre.com>
-Date:   Wed, 22 May 2019 09:57:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p/fnSZedKvA8Iqi6ZZvsXLPVwAkY8qUX0ojVQgRr2ec=;
+        b=B4nCp9iwVFmDlnlJC3mpp9Nenucc4SJmlDyRV13lkG5kBZSrddXzsrURuvUQIeThZY
+         Ehr3MLMmqeImqAVXm4MVg0w+eWo9Vbs/sZQtaZxZqpoe1koxkysbIkrSQNECIM6dhiR1
+         fPDWm+O1vLzIkp7SM/gQTHak4gmNG++ugA69j6+h0mykjcXAdT+0wfLmGIQkbfJL1ZLY
+         lSrceY8mHFRckl2VDgcEnKlVGibVKvsbCKciGAT+h2MWb4aDM0maoW/w3UCOIpRNMAHP
+         6IlquCcvhUtV8EmXlQirw1K9rFuLYoItJjR3xubziMDu4IQKBebuob/lMpClAq6MK/3x
+         ruyw==
+X-Gm-Message-State: APjAAAVwfxxPYnQ0T+NNzYp61+mgMiw/KoaLOtEw7UuaE9M+ITn2zuta
+        Y4RyMgMaYU2kayeYYgAZZd0n/YjBPU4NAfCFuUk=
+X-Google-Smtp-Source: APXvYqyobpJ63a1iTpV/Vmzl3T4jPFpgqUHVdSsARI3lZgekWUpzNXifpDBaSAjDG4knVag0MFU8Mr62nKwVypF3Ci8=
+X-Received: by 2002:a9d:6195:: with SMTP id g21mr4768otk.179.1558516871479;
+ Wed, 22 May 2019 02:21:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCB+DD=hssuswV6M4i1Buv7bs0-6TfPTRVdUrhaprLMb0w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190521145141.9813-1-paul@crapouillou.net> <20190521145141.9813-10-paul@crapouillou.net>
+In-Reply-To: <20190521145141.9813-10-paul@crapouillou.net>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Wed, 22 May 2019 11:21:00 +0200
+Message-ID: <CA+7wUsxe4DLmAGNnnXZ3UokguMJ0cOGtu=opQpuAPvN_SH4KUw@mail.gmail.com>
+Subject: Re: [PATCH v12 09/13] MIPS: jz4740: Add DTS nodes for the TCU drivers
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/05/2019 19:49, Martin Blumenstingl wrote:
-> Hi Neil,
-> 
-> On Tue, May 21, 2019 at 5:02 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>
->> Update the Meson G12A Clock driver to support the Amlogic G12B SoC.
->>
->> G12B clock driver is very close, the main differences are :
->> - the clock tree is duplicated for the both clusters, and the
->>   SYS_PLL are swapped between the clusters
->> - G12A has additional clocks like for CSI an other components
-> should this also be G12B?
+On Tue, May 21, 2019 at 4:52 PM Paul Cercueil <paul@crapouillou.net> wrote:
+>
+> Add DTS nodes for the JZ4780, JZ4770 and JZ4740 devicetree files.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>
+> Notes:
+>     v5: New patch
+>
+>     v6: Fix register lengths in watchdog/pwm nodes
+>
+>     v7: No change
+>
+>     v8: - Fix wrong start address for PWM node
+>         - Add system timer and clocksource sub-nodes
+>
+>     v9: Drop timer and clocksource sub-nodes
+>
+>     v10-v11: No change
+>
+>     v12: Drop PWM/watchdog/OST sub-nodes, for now.
+>
+>  arch/mips/boot/dts/ingenic/jz4740.dtsi | 22 ++++++++++++++++++++++
+>  arch/mips/boot/dts/ingenic/jz4770.dtsi | 21 +++++++++++++++++++++
+>  arch/mips/boot/dts/ingenic/jz4780.dtsi | 21 +++++++++++++++++++++
+>  3 files changed, 64 insertions(+)
+>
+> diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> index 2beb78a62b7d..807d9702d4cf 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> @@ -53,6 +53,28 @@
+>                 clock-names = "rtc";
+>         };
+>
+> +       tcu: timer@10002000 {
+> +               compatible = "ingenic,jz4740-tcu";
+> +               reg = <0x10002000 0x1000>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0x0 0x10002000 0x1000>;
+> +
+> +               #clock-cells = <1>;
+> +
+> +               clocks = <&cgu JZ4740_CLK_RTC
+> +                         &cgu JZ4740_CLK_EXT
+> +                         &cgu JZ4740_CLK_PCLK
+> +                         &cgu JZ4740_CLK_TCU>;
+> +               clock-names = "rtc", "ext", "pclk", "tcu";
+> +
+> +               interrupt-controller;
+> +               #interrupt-cells = <1>;
+> +
+> +               interrupt-parent = <&intc>;
+> +               interrupts = <23 22 21>;
+> +       };
+> +
+>         rtc_dev: rtc@10003000 {
+>                 compatible = "ingenic,jz4740-rtc";
+>                 reg = <0x10003000 0x40>;
+> diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+> index 49ede6c14ff3..70932fd90902 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+> @@ -46,6 +46,27 @@
+>                 #clock-cells = <1>;
+>         };
+>
+> +       tcu: timer@10002000 {
+> +               compatible = "ingenic,jz4770-tcu";
+> +               reg = <0x10002000 0x1000>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0x0 0x10002000 0x1000>;
+> +
+> +               #clock-cells = <1>;
+> +
+> +               clocks = <&cgu JZ4770_CLK_RTC
+> +                         &cgu JZ4770_CLK_EXT
+> +                         &cgu JZ4770_CLK_PCLK>;
+> +               clock-names = "rtc", "ext", "pclk";
+> +
+> +               interrupt-controller;
+> +               #interrupt-cells = <1>;
+> +
+> +               interrupt-parent = <&intc>;
+> +               interrupts = <27 26 25>;
+> +       };
+> +
+>         pinctrl: pin-controller@10010000 {
+>                 compatible = "ingenic,jz4770-pinctrl";
+>                 reg = <0x10010000 0x600>;
+> diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> index b03cdec56de9..495082ce7fc5 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> @@ -46,6 +46,27 @@
+>                 #clock-cells = <1>;
+>         };
+>
+> +       tcu: timer@10002000 {
 
-Indeed, another leftover from previous patchset...
+With W=1, I see:
 
-> 
-> [...]
->> +static struct clk_regmap g12b_cpub_clk_apb_div = {
-> if you also think that it's worth it then please add a comment stating
-> that this is called "PCLK_mux" in the datasheet
-> same goes for the ATB and AXI clocks below as the naming in the driver
-> and datasheet differs
-> 
->> +       .data = &(struct clk_regmap_div_data){
->> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
->> +               .shift = 3,
->> +               .width = 3,
->> +               .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +       },
->> +       .hw.init = &(struct clk_init_data){
->> +               .name = "cpub_clk_apb_div",
->> +               .ops = &clk_regmap_divider_ro_ops,
->> +               .parent_names = (const char *[]){ "cpub_clk" },
->> +               .num_parents = 1,
->> +       },
->> +};
-> I'm assuming you checked that this is really a power of two divider,
-> on the Meson8/8b/8m2 SoCs this is a mux between div[2..8]
-> (the same goes for the ATB, AXI and trace div clocks below)
+../arch/mips/boot/dts/ingenic/jz4780.dtsi:64.22-83.4: Warning
+(unique_unit_address): /timer@10002000: duplicate unit-address (also
+used in node /watchdog@1000
+2000)
 
-Indeed it's not a power of 2 here, it's mux between div[2..8]
 
-I'll also need to update the first cluster aswell...
-
-> 
->> +
->> +static struct clk_regmap g12b_cpub_clk_apb = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
->> +               .bit_idx = 16,
-> the public S922X datasheet calls this "PCLK_dis", does this mean you
-> need a flag here?
->   .flags = CLK_GATE_SET_TO_DISABLE,
-
-The first cluster register has some description, but with the same
-fields naming :
-APB_CLK_DIS: set to 1 to manually disable the APB clock...
-
-So you are right, I'll also fix the first cluster clocks.
-
-> 
-> [...]
->> +static struct clk_regmap g12b_cpub_clk_atb = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
->> +               .bit_idx = 17,
-> the public S922X datasheet calls this "ATCLK_clk_dis", does this mean
-> you need a flag here?
->   .flags = CLK_GATE_SET_TO_DISABLE,
-
-Exact
-
-> 
-> [...]
->> +static struct clk_regmap g12b_cpub_clk_axi = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
->> +               .bit_idx = 18,
-> the public S922X datasheet calls this "ACLKM_clk_dis", does this mean
-> you need a flag here?
->   .flags = CLK_GATE_SET_TO_DISABLE,
-
-Exact
-
-> 
-> [...]
->> +static struct clk_regmap g12b_cpub_clk_trace = {
->> +       .data = &(struct clk_regmap_gate_data){
->> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
->> +               .bit_idx = 23,
-> the public S922X datasheet calls this "Trace_clk_dis", does this mean
-> you need a flag here?
->   .flags = CLK_GATE_SET_TO_DISABLE,
-
-Exact
-
-Thanks for the review !
-
-Neil
-
-> 
-> 
-> Regards
-> Martin
-> 
-
+> +               compatible = "ingenic,jz4770-tcu";
+> +               reg = <0x10002000 0x1000>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0x0 0x10002000 0x1000>;
+> +
+> +               #clock-cells = <1>;
+> +
+> +               clocks = <&cgu JZ4780_CLK_RTCLK
+> +                         &cgu JZ4780_CLK_EXCLK
+> +                         &cgu JZ4780_CLK_PCLK>;
+> +               clock-names = "rtc", "ext", "pclk";
+> +
+> +               interrupt-controller;
+> +               #interrupt-cells = <1>;
+> +
+> +               interrupt-parent = <&intc>;
+> +               interrupts = <27 26 25>;
+> +       };
+> +
+>         rtc_dev: rtc@10003000 {
+>                 compatible = "ingenic,jz4780-rtc";
+>                 reg = <0x10003000 0x4c>;
+> --
+> 2.21.0.593.g511ec345e18
+>
