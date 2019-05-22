@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E714C072B5
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 02:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE82C072B5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 02:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34690217D7
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 02:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10616217D7
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 02:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YENWXgYB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ONJRToR0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbfEVCHq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 May 2019 22:07:46 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46633 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727930AbfEVCHq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 22:07:46 -0400
-Received: by mail-oi1-f193.google.com with SMTP id 203so382989oid.13
-        for <linux-clk@vger.kernel.org>; Tue, 21 May 2019 19:07:46 -0700 (PDT)
+        id S1728186AbfEVCIh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 May 2019 22:08:37 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45202 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbfEVCIh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 May 2019 22:08:37 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w144so386202oie.12
+        for <linux-clk@vger.kernel.org>; Tue, 21 May 2019 19:08:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PW2Ksp4dF+kCYGO2bVRBw5OwUH5NVUnvQm1hs6EDl6g=;
-        b=YENWXgYBjKoO0LJUuXsbbL9ODcCAtlfjp9Zm6wsARsbNfeRLCI23TVVM3BF/uL00AM
-         BLgVZdXe7kq0jzXclwNKvS1rTgULLOlEENmBV/Y+o/61bNq4aR4ywl/InH5pmMxoRgKG
-         UtXhrd6Fnz0Fi0pKGBV9ETLvcd2AWAcO2iwPkx/iGFhiWPy/N7sHS56TY2e+5RkTzQqE
-         7GQnhX7osJRKB6smAWzymNNMQ94E2QRgPyO1WcpHNM9CU0NXQUejAv8hGQXGTOV3qc5L
-         5I10NNR7uYkWqWvEpZUQb6pE14tf+vHvR2c8doFRh8z1Rp+dVyi5zTfBZSVoLOPx6w8V
-         iCTg==
+        bh=j9oGlqVZ7a7UoMA0CZ2Nroq/tcaCiGqxcLR++VFFSBA=;
+        b=ONJRToR0Ufufr8MLkh4tEc7UKOyBGQXKr5+9qFh5lLqj1C7LoV/NLE/y9SNENZHxgm
+         zbSIfKqhJ+Q3mRZo+ST9ZdoIL2S2H8VvKGC8DKpXMJh6gIiEMpdPPFN2dS2ysL3rajq3
+         WsKuhvy9PmcISqXiM+zx5O5IivZnYcbe9ShGqzDfqyqIbe7pKwjGnZRtxBynjS0CylsG
+         jSQ7+UDbiEDkqigZDr+LkN0ZsQLi2jqb3LW4GC8zW0v0ORwInRF+s5YZ6G/PXkYxsDp3
+         gtE88kJJvDUouBCEhsKv+JsWcopAKwkJ6k+mMwzTO1llAM1cYqcKHHenjvlaLoZtEkCd
+         b7Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PW2Ksp4dF+kCYGO2bVRBw5OwUH5NVUnvQm1hs6EDl6g=;
-        b=ldUsv4JZPOubiHO6zdsGJelRT8q7J+dpPx97oUPuAJCCoK4swxRfP1hz0AyfPWG6QL
-         +VkmxwkmvfO3S0HibskqqxeSAy3pmMDdn7RCRK0t8AxzKOP75QQKQgJ21AfTAnFGCfcb
-         1/05Z48R+4Vg1YMoKfG2+i24aB46zO4FvLrecPy/THRPAnER1JSUYVorSiixf0yNiW3X
-         nol+h0KzzWxO5F7aaSOsmHRjY3dQslY4VXXJBNQxi7wPDnxhh5/dhs2AdCaeq04VZXbx
-         mFgxLod4y6PwNWEImsPNrUe4yNOG0/jnHHiXr1IwE6nUzFYV7h2LgywAaPJZ0wLdfaex
-         88iA==
-X-Gm-Message-State: APjAAAWl6nkNZPuPJa82nPWA4LUj1qGrEDUnRHTRqWEhxIn+pgW83PYL
-        oEGkjWX0rUpVHP+I1/A0vpB2Ehz75i7EtnvvVe7P1Q==
-X-Google-Smtp-Source: APXvYqxjqcRRR4xBTNMXgyICOQLiOPpbilh/rSzqCR3MbAtsroT4lNBzp+g7xdHt2NeHrKTxYN1cMbG6dh67ig9jpfY=
-X-Received: by 2002:aca:d846:: with SMTP id p67mr2797618oig.6.1558490865822;
- Tue, 21 May 2019 19:07:45 -0700 (PDT)
+        bh=j9oGlqVZ7a7UoMA0CZ2Nroq/tcaCiGqxcLR++VFFSBA=;
+        b=Ln2R+1lq6jfUsOD9z8TDtcER/I2KdEK1XGkYxqd1OBDoosq9rLz5I6QIoIXo7y6rrk
+         lwh9cTwxTWau/Z2xWj7UrRoUp4H9Zto4fUmrUZHkXT4z2/5Wv7ldZ/erHNP1pPK8k1AX
+         DAl9x2lbmWewFOrOY7+qdrqNJNlIamvzRPsgOt9R/7rpZjd3pU4vkjfowzflikHmJhW/
+         iteUoRBfk6TK9L/CQBpLd90ypmf3EYTd1sEKYUKU+sTsgI0yxLItyS0K8+RJ5eBwTR+G
+         uVH8W6gXf3dJPX80Msx8PqqW8sljPb4clu8GWJ78I7euHy7RBX5GaVwKLgHdp/We7Sm/
+         p5Pw==
+X-Gm-Message-State: APjAAAUIG2Psq4pbcIHoLJd6Ku87+Yu36pgmWUkD6Ar3w28NVo/7clBB
+        mXB2wbE5yiTgiFbwJ14PX180EaNIF+iH470j5jvEIA==
+X-Google-Smtp-Source: APXvYqwevZjKWRQpJEtZtfRxHARVBhn6u48gct7wqXcFYUQvsCQFi2eDnxwLrcQ4Z7dE2SPqMFu4WsuDt0XJ41JUQwM=
+X-Received: by 2002:aca:d8c5:: with SMTP id p188mr5568115oig.6.1558490916817;
+ Tue, 21 May 2019 19:08:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190522011504.19342-1-zhang.chunyan@linaro.org> <20190522011504.19342-2-zhang.chunyan@linaro.org>
-In-Reply-To: <20190522011504.19342-2-zhang.chunyan@linaro.org>
+References: <20190522011504.19342-1-zhang.chunyan@linaro.org> <20190522011504.19342-3-zhang.chunyan@linaro.org>
+In-Reply-To: <20190522011504.19342-3-zhang.chunyan@linaro.org>
 From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 22 May 2019 10:07:33 +0800
-Message-ID: <CAMz4kuKbw+HHbALGEJaoYvV435-RS7gMzWbmwZekLWdKT=GV7A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: sprd: Switch from of_iomap() to devm_ioremap_resource()
+Date:   Wed, 22 May 2019 10:08:25 +0800
+Message-ID: <CAMz4kuJOoQVp4xPi+Y4fVqCThVUypv+NEOi+kdvWGoz0c30fEg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: sprd: Check error only for devm_regmap_init_mmio()
 To:     Chunyan Zhang <zhang.chunyan@linaro.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
@@ -70,43 +70,30 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Wed, 22 May 2019 at 09:15, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
 >
-> devm_ioremap_resources() automatically requests resources and devm_ wrappers
-> do better error handling and unmapping of the I/O region when needed,
-> that would make drivers more clean and simple.
+> The function devm_regmap_init_mmio() wouldn't return NULL pointer for
+> now, so only need to ensure the return value is not an error code.
 >
 > Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 
 Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
 
 > ---
->  drivers/clk/sprd/common.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  drivers/clk/sprd/common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-> index e038b0447206..9ce690999eaa 100644
+> index 9ce690999eaa..a5bdca1de5d0 100644
 > --- a/drivers/clk/sprd/common.c
 > +++ b/drivers/clk/sprd/common.c
-> @@ -42,6 +42,7 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
->         void __iomem *base;
->         struct device_node *node = pdev->dev.of_node;
->         struct regmap *regmap;
-> +       struct resource *res;
+> @@ -58,7 +58,7 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
 >
->         if (of_find_property(node, "sprd,syscon", NULL)) {
->                 regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
-> @@ -50,7 +51,11 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
->                         return PTR_ERR(regmap);
->                 }
->         } else {
-> -               base = of_iomap(node, 0);
-> +               res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +               base = devm_ioremap_resource(&pdev->dev, res);
-> +               if (IS_ERR(base))
-> +                       return PTR_ERR(base);
-> +
 >                 regmap = devm_regmap_init_mmio(&pdev->dev, base,
 >                                                &sprdclk_regmap_config);
->                 if (IS_ERR_OR_NULL(regmap)) {
+> -               if (IS_ERR_OR_NULL(regmap)) {
+> +               if (IS_ERR(regmap)) {
+>                         pr_err("failed to init regmap\n");
+>                         return PTR_ERR(regmap);
+>                 }
 > --
 > 2.17.1
 >
