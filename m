@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC92C282DD
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CD7C46460
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF22320675
-	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BFAD2081C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 May 2019 19:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558553864;
+	s=default; t=1558554152;
 	bh=oV5MnESwSqTdxHd32Kvszv6+H5fgv7apnZmsWkGPLuA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zBZWnPj4iVpD3av6JLk9pSoQOOAhaceqcOxY0O2378zMCMw/P36XMrZeRG9rAzUfd
-	 c+NKxaOUFy7h1fLVln4hYa3dwQCRofm7vdd2Ww/x/2KKRrIfDPS1adXT2EhqxtW24C
-	 SR1LZ7YeSfrIjDabyIInCA2ka2gA1JWbSEbS7vtA=
+	b=tf/Sj/DH+wwLOVFVf3UUcxpbHbg+95zUYhDO6eY44+TqFnnqBaeuMbLFzd7qwYxXH
+	 vBC/RpEkuHXpN49+IXK1weORd60TXuihZXAhYB8knLnkKxcxAsaUAxzo26uupJBiuE
+	 as9J/vdQqNOFAnX2pS8qDsDkzTnZGuQbSybKRJGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733168AbfEVTaK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 May 2019 15:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53522 "EHLO mail.kernel.org"
+        id S1732275AbfEVT2n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 May 2019 15:28:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733159AbfEVTaK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 May 2019 15:30:10 -0400
+        id S1732224AbfEVT2m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 May 2019 15:28:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05F7C20879;
-        Wed, 22 May 2019 19:30:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35D8820879;
+        Wed, 22 May 2019 19:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553408;
+        s=default; t=1558553321;
         bh=oV5MnESwSqTdxHd32Kvszv6+H5fgv7apnZmsWkGPLuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iIqXrDstkkFYnErM2HP/KLBSdjYm5/keR0vftV6u/VFGmxmOYEM80/U6byEzrEWLW
-         eD+OYQ3WhoSvEdlzjpPVE1eot8KudqYMjE5HB/GW6+pXZ/PX1Tv9jkOH1fzM4nFqHs
-         HAOE2rV+nh+SUJUkSi5nnI7515Gy9untYNxUDHRE=
+        b=0X9Mipf67I2bxZnNb9FVyZ4W9XSORfXNGVt3hEl9AjFGo0qUjccsWiuxEVHGkAwaV
+         yVy263DoTgHyhYE7rvee83FAtTSEBTY1TQC/KHYdyCP9ArLTDsiWbR24mAjX26Oz5T
+         zAPa2dX6JbEhKy2u1EVY1rcPXPV/s62X2p0eCHhs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Douglas Anderson <dianders@chromium.org>,
@@ -45,12 +45,12 @@ Cc:     Douglas Anderson <dianders@chromium.org>,
         Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 057/167] clk: rockchip: undo several noc and special clocks as critical on rk3288
-Date:   Wed, 22 May 2019 15:26:52 -0400
-Message-Id: <20190522192842.25858-57-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 083/244] clk: rockchip: undo several noc and special clocks as critical on rk3288
+Date:   Wed, 22 May 2019 15:23:49 -0400
+Message-Id: <20190522192630.24917-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
-References: <20190522192842.25858-1-sashal@kernel.org>
+In-Reply-To: <20190522192630.24917-1-sashal@kernel.org>
+References: <20190522192630.24917-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
