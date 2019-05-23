@@ -2,43 +2,43 @@ Return-Path: <SRS0=6R0q=TX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D024C282CE
-	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 01:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B19C282CE
+	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 01:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F772089E
-	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 01:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DF882173C
+	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 01:03:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558573221;
-	bh=6VmfxYZT1/N9X/Zww2/fBpROnyCJQdfMekxssWKH/pA=;
+	s=default; t=1558573425;
+	bh=0c93wE/T01S1HHzZxo+8x1JHeBq/Z/FxViGUSsHuNEw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Fpmpy1OmHftgRW+tnDQ6QelgRBtzI7W2Ns9qL9ehSmTXID9jvsw8pHzt4N4mRn5eI
-	 +ePoYXQjgPy3yA0m4H+ZQ7Ytcjg4FA0VV0cTkf9sWjKRNJ7Ipv7KbuiqT8SpGKaIwF
-	 JWDsaWkaQwWPO3xdfbZ9d/abOm07uIZNuHM4retE=
+	b=h1+fnmUyepiDudV0PANqtu8kUGtiIUHs2Q6XvSIIAhLUq2i6Lvy6jXcd9f6Ihqwlu
+	 AUcSX9/DBDBW5lxzTCeFhDZwvepoEZmEd/MI+S6mjRxsCRS322CpOv3zt4btoGsI5o
+	 3XcQno3BMBMxcHhGOgJUHgVYudE/HbDUB2tKF6OA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728518AbfEWBAR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 May 2019 21:00:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39612 "EHLO mail.kernel.org"
+        id S1729588AbfEWBDp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 May 2019 21:03:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727691AbfEWBAR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 May 2019 21:00:17 -0400
+        id S1729535AbfEWBDo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 May 2019 21:03:44 -0400
 Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E475E2089E;
-        Thu, 23 May 2019 01:00:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07EAB2089E;
+        Thu, 23 May 2019 01:03:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558573216;
-        bh=6VmfxYZT1/N9X/Zww2/fBpROnyCJQdfMekxssWKH/pA=;
+        s=default; t=1558573424;
+        bh=0c93wE/T01S1HHzZxo+8x1JHeBq/Z/FxViGUSsHuNEw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iIXouqScCt16f2CM3Ld1QgkW38/LkVS0CAQ5w6Mqg3cOhpOu2HEk38JHBZ0CJ/0nd
-         zk9e0BS2k2WZQ0C1Nazg+9wAW1CK3jXRKbZHrTMSMTclIy7e8TAPj/gG6gZFoPOnZ2
-         otxiMy87B2aBsIgZnTyGoZPYPpN7j8p6YLZHmCN4=
-Date:   Thu, 23 May 2019 08:59:18 +0800
+        b=H5QNOK3Hj+hGJR7NJooBOJM7pC622hJjNbI5Z74TNb6jZ770OzTtrJEGQI9llBWGP
+         +D6mZ+AVButruoo+8vcMfrKj3TNJQv1FdHUIvbxKyWAJPV51f2RZB+0NHwVmtEjyFn
+         XD27vCaRuP0B38k5NcdLJfb4l/8ijUSN0M6zbBh4=
+Date:   Thu, 23 May 2019 09:02:44 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Anson Huang <anson.huang@nxp.com>
 Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -60,24 +60,43 @@ Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 2/3] clk: imx8mq: add SNVS clock to clock tree
-Message-ID: <20190523005917.GC16359@dragon>
+Subject: Re: [PATCH 3/3] arm64: dts: imx8mq: add clock for SNVS RTC node
+Message-ID: <20190523010243.GD16359@dragon>
 References: <1557882259-3353-1-git-send-email-Anson.Huang@nxp.com>
- <1557882259-3353-2-git-send-email-Anson.Huang@nxp.com>
+ <1557882259-3353-3-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557882259-3353-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1557882259-3353-3-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 15, 2019 at 01:09:30AM +0000, Anson Huang wrote:
-> i.MX8MQ has clock gate for SNVS module, add it into clock tree
-> for SNVS RTC driver to manage.
+On Wed, May 15, 2019 at 01:09:36AM +0000, Anson Huang wrote:
+> i.MX8MQ has clock gate for SNVS module, add clock info to SNVS
+> RTC node for clock management.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Applied, thanks.
+This one still has problem with encoding and thus cannot be applied.
+Here is what I get, and there is '=20' in the patch content.
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
+s/freescale/imx8mq.dtsi
+index e5f3133..b706de8 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -438,6 +438,8 @@
+                                        offset =3D <0x34>;
+                                        interrupts =3D <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+                                                <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++                                       clocks =3D <&clk IMX8MQ_CLK_SNVS_ROOT>;
++                                       clock-names =3D "snvs-rtc";
+                                };
+                        };
+=20
+--=20
+2.7.4
+
