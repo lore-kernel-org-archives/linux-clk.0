@@ -2,78 +2,178 @@ Return-Path: <SRS0=6R0q=TX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EBCC04AAC
-	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 07:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CCEC04AAC
+	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 08:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5DD7206BA
-	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 07:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558596768;
-	bh=7y1NyoV6VAVBTbSwJN9K7Zn3fWn/egJKRZ5wKdxwVnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=w+BVe2lK+RDjyToO2OLBxMSCwI5zdjS3DVH1D/suO4si4xk1qFbRldfqFYwvMBVCr
-	 hrTazvXqOn5K246gcpw+6OMayaVz/LE0aQ+aLD4iOFg4BQgMTqWEAs2eYO8fIHnbXI
-	 YNJxuQmOLCx8/nBNqKJLuTq01PJkYoBI4t80/dww=
+	by mail.kernel.org (Postfix) with ESMTP id 9327320675
+	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 08:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730178AbfEWHcn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 May 2019 03:32:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37242 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726237AbfEWHcn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 May 2019 03:32:43 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DC7F206BA;
-        Thu, 23 May 2019 07:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558596762;
-        bh=7y1NyoV6VAVBTbSwJN9K7Zn3fWn/egJKRZ5wKdxwVnQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jg4Nl8B52eYCfl1L8c19y4siJt4HA8XORwMET0wbUpfodzWS3d5Rr2nB9cQouXX+N
-         x7L4DDAY3pHuZrtzPUClDa4dVbhyxOa64COa7V1+RF2urPJI26D1FztHrreNje5yZB
-         h7p1W/WbrECxlAVlDAcpNpVRbO3cQgrOpckhk8kE=
-Date:   Thu, 23 May 2019 15:31:43 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 3/3] arm64: dts: imx8mm: add clock for SNVS RTC node
-Message-ID: <20190523073142.GF9261@dragon>
-References: <1557883490-22360-1-git-send-email-Anson.Huang@nxp.com>
- <1557883490-22360-3-git-send-email-Anson.Huang@nxp.com>
+        id S1727232AbfEWIvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 May 2019 04:51:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55230 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726230AbfEWIvM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 May 2019 04:51:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B42A7ADD8;
+        Thu, 23 May 2019 08:51:09 +0000 (UTC)
+Message-ID: <c756c54d5e924d61b8ec6eccecf9bfdce7c2b543.camel@suse.de>
+Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Cc:     linux-arm-kernel@lists.infradead.org, ptesarik@suse.com,
+        sboyd@kernel.org, viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mbrugger@suse.de, ssuloev@orpaltech.com
+Date:   Thu, 23 May 2019 10:51:07 +0200
+In-Reply-To: <1599901940.259900.1558475026379@email.ionos.de>
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+         <20190520104708.11980-4-nsaenzjulienne@suse.de>
+         <ebc78880-418f-f507-021c-41295113e041@i2se.com>
+         <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
+         <a142b72b828a798610d885d81189dd21b1870d78.camel@suse.de>
+         <1599901940.259900.1558475026379@email.ionos.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-rttIxA1wzU/XwAkxrIx0"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557883490-22360-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 15, 2019 at 01:30:02AM +0000, Anson Huang wrote:
-> i.MX8MM has clock gate for SNVS module, add clock info to SNVS
-> RTC node for clock management.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Applied, thanks.
+--=-rttIxA1wzU/XwAkxrIx0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2019-05-21 at 23:43 +0200, Stefan Wahren wrote:
+> > Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 21. Mai 2019 um =
+17:47
+> > geschrieben:
+> >=20
+> >=20
+> > Hi Stefan, thanks for your comments!
+> >=20
+> > On Tue, 2019-05-21 at 14:40 +0200, Stefan Wahren wrote:
+> > > Hi Nicolas,
+> > >=20
+> > > On 20.05.19 14:11, Stefan Wahren wrote:
+> > > > Hi Nicolas,
+> > > >=20
+> > > > the following comments applies only in case Eric is fine with the w=
+hole
+> > > > approach.
+> > > >=20
+> > > > On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
+> > > > > Raspberry Pi's firmware, which runs in a dedicated processor, kee=
+ps
+> > > > maybe we should clarify that the firmware is running in the VPU
+> > > > > track of the board's temperature and voltage. It's resposible for
+> > > > > scaling the CPU frequency whenever it deems the device reached an
+> > > > > unsafe
+> > > > > state. On top of that the firmware provides an interface which al=
+lows
+> > > > > Linux to to query the clock's state or change it's frequency.
+> > > > I think this requires a separate update of the devicetree binding.
+> > > > > Being the sole user of the bcm2835 clock driver, this integrates =
+the
+> > > > > firmware interface into the clock driver and adds a first user: t=
+he
+> > > > > CPU
+> > > > > pll, also known as 'pllb'.
+> > > > Please verify that the kernel still works (and this clock driver pr=
+obe)
+> > > > under the following conditions:
+> > > >=20
+> > > > - CONFIG_RASPBERRYPI_FIRMWARE=3Dn
+> > > > - CONFIG_RASPBERRYPI_FIRMWARE=3Dm
+> > > > - older DTBs without patch #1
+> > > i thought about this and the case this driver would return
+> > > -EPROBE_DEFER. The clock driver is too essential for doing such a thi=
+ng.
+> > > So i think the best solution would be to move these changes into a
+> > > separate driver which should be register by the clock driver (similia=
+r
+> > > to vchiq). This also avoid the need of a new device tree binding.
+> >=20
+> > I understand your concerns.
+> >=20
+> > Wouldn't you prefer registering the device trough the device tree? I'd =
+go
+> > with
+> > the same approach as the firmware touchscreen driver, which is register=
+ed
+> > after
+> > the firmware's probe trough dt's 'simple-bus'. That said, it's not a
+> > strongly
+> > held opinion, I'm happy with whatever solution as long as it works.
+>=20
+> A devicetree binding always introduce some kind of inflexibility. In case
+> someone finds a better solution later things can get really messy. A rece=
+nt
+> example is the clock handling for i2c-bcm2835.
+
+Fair enough.
+
+> > I get from your comments that you'd like the register based version of
+> > 'pllb'
+> > and 'pllb_arm' to be loaded if for some reason the firmware isn't avail=
+able.
+> > Is
+> > that right?=20
+>=20
+> This wasn't my intention. I would prefer a simple approch here (no handov=
+er).=20
+>=20
+> > The main problem I see with this is the duplication of 'pllb' and
+> > 'pllb_arm'. Both drivers will create the same clock device through diff=
+erent
+> > interfaces. Any suggestions on how to deal with that? If not I can simp=
+ly
+> > remove 'pllb' and 'pllb_arm' from clk-bcm2835.c.
+>=20
+> Yes. So even if this driver is disabled, there shouldn't be a regression.=
+ Or
+> did i miss something?
+
+No, there shoudn't be any regressions as these clocks are not being used at=
+ the
+moment.
+
+I'll send a follow-up series soon :)
+
+Regrads,
+Nicolas
+
+
+--=-rttIxA1wzU/XwAkxrIx0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlzmXvsACgkQlfZmHno8
+x/5grgf8DaKHj4n6xgx7Eziw8ZvWeoGXlEqp0jORn3i0LMRCmP3NfeQjeI6JKcqk
+cr+LKsKAOdKqi+LSK5E97AD+dhifsZBkQWdXiiWmlqTALBoRx9jug+Bz5hcXQWSP
+GEc7b3ptWKWhdHCkNYDPUMs/2QECyhvdzS64cqzxyWVitzkue3oucEuHBB0zKEVS
+d4O3HJXxgFhUE0hyBEmlaPm94mBq9wIywm01Ifj2Lmzb/gXrM8mYfyZoxW9jM7tl
+2bXiN04WcM6kSq+J4t+3v+baNCP6YlHDnDU7scJ2grPkydirg+E5O87YrKJ0RGys
+okD9UnL1HYEPsLM94xjqSw+H5f2sgQ==
+=kYhp
+-----END PGP SIGNATURE-----
+
+--=-rttIxA1wzU/XwAkxrIx0--
+
