@@ -2,115 +2,80 @@ Return-Path: <SRS0=6R0q=TX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A808C282E1
-	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 09:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2534C282DD
+	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 13:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AF4F20856
-	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 09:08:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="r8KD3LFr"
+	by mail.kernel.org (Postfix) with ESMTP id 995ED2133D
+	for <linux-clk@archiver.kernel.org>; Thu, 23 May 2019 13:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558617205;
+	bh=i7lYr45x2CNGJaVE1I+vswY/B6Ep0jfoFOLag/jMchc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xM53UJybxQg3r4CHIf2ukMZuaVbuNdSmSOgi7faRTM8Sx1qo52QjkhZUBZouRwb+W
+	 Ei5ecsq1212Ap3lXL3PTXGuf1jg8U2cVmMWyiA9jx7UPxNAJv5o93dOOa9mZS93W5L
+	 LJsUTudtvIe1o6g3cD1LJ2kAe8jnQTqIm3LVnKGg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbfEWJIC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 May 2019 05:08:02 -0400
-Received: from mail-eopbgr1400138.outbound.protection.outlook.com ([40.107.140.138]:57081
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726913AbfEWJH7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 May 2019 05:07:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dKlZX0NW+Mpk7xn/91gSke3ikCObMEoYmqB8hkK1mdM=;
- b=r8KD3LFrB5UKwZkiqz/FsaRzUWjvCUjbWTgn7kX7ywkyroyL1UG7ycgZbdtMUiuRxXZS0fh6eH2E0D9FL2Vg01Dp89a/YmJvZHTM11Va53HqZYbFeX0dRndtiEZ6XEBTgelMqwd0/p9uj6S5FaR4pw2CnvWAzuNz2CHoDK8W6jI=
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB3151.jpnprd01.prod.outlook.com (20.177.104.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.17; Thu, 23 May 2019 09:07:52 +0000
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::3ccf:1aef:8f88:693d]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::3ccf:1aef:8f88:693d%2]) with mapi id 15.20.1922.017; Thu, 23 May 2019
- 09:07:52 +0000
-From:   Chris Paterson <Chris.Paterson2@renesas.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
-Thread-Topic: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
-Thread-Index: AQHVCmp0joBlvnu+SEWH+n+koSlr5qZrIJwAgACrVgCAAoL7gIAHAqMAgACYEQCAAo7IgA==
-Date:   Thu, 23 May 2019 09:07:51 +0000
-Message-ID: <TYAPR01MB2285F1CD8540CBC4795D8708B7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20190514153341.22540-1-chris.paterson2@renesas.com>
- <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com>
- <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com>
- <20190516215406.75E5D2082E@mail.kernel.org>
- <CAMuHMdVOKDRYjzmyRq-KXW8d+dYmAxnM+=y2yOh85YDcCEDMuw@mail.gmail.com>
- <20190521180137.A7A30217D7@mail.kernel.org>
-In-Reply-To: <20190521180137.A7A30217D7@mail.kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Paterson2@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e8337eaf-8308-46c3-7ad6-08d6df5e22ab
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:TYAPR01MB3151;
-x-ms-traffictypediagnostic: TYAPR01MB3151:
-x-microsoft-antispam-prvs: <TYAPR01MB3151C64E8056E6366A796929B7010@TYAPR01MB3151.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 00462943DE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(136003)(366004)(376002)(199004)(189003)(5660300002)(256004)(7736002)(14444005)(110136005)(4326008)(52536014)(99286004)(54906003)(33656002)(25786009)(26005)(2906002)(305945005)(81166006)(8936002)(53936002)(8676002)(316002)(76176011)(81156014)(68736007)(3846002)(6116002)(186003)(74316002)(7696005)(76116006)(73956011)(66946007)(66066001)(66476007)(66556008)(66446008)(64756008)(6246003)(102836004)(9686003)(478600001)(71200400001)(71190400001)(229853002)(11346002)(55016002)(6436002)(6506007)(86362001)(486006)(53546011)(14454004)(446003)(476003)(72206003);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3151;H:TYAPR01MB2285.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XykWFxLjdyFDsow7Sg3vuAqLiDJ5QRjSB19rKXQi4VJqB6UxvZE236t8ITwmMv4RzEr3lLtyjVUjtrPDIU1rRMi1xk4KaAQU+w4Z6fSk1I58eAWnkh/ToThmga5Okc0rA8vrxtSCIFEAN6JB4iQYu/vGQToSPvnd3ZnQ3PG4blVW0L6zMHUk6QP0bx1pMX1Iu8jRaYfv0cJbf6UXQRxEissabGAEY7e1nz7HOOWWwAceZwkw0+UGv9JE91LG7ZPpbUzxOW3KwwU5vHQLcK5RN5cNBFfMM/TRybWsB/NOXEAh4dC0njprWcjfi0NQGd9B20HxKzMBEXjZdgC4nsF+nsyavEsAaaiNY4Ay6N5KUPvRBRtZIhUHKMLHn91NJ1vzaR6QxuuD0OwGJMhGw+tRwP3vbRZLxSfTfRSkTqN8qJE=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730369AbfEWNNZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 May 2019 09:13:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbfEWNNZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 May 2019 09:13:25 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7907A20851;
+        Thu, 23 May 2019 13:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558617204;
+        bh=i7lYr45x2CNGJaVE1I+vswY/B6Ep0jfoFOLag/jMchc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sEUCzJUidA3eyt8eg3BWuPceRxfrp0mSFsGy5xctpfatiZ6q8QaoT4l6IBsNmcj0v
+         +NZoqhxb1QNjkuPRez2oTcnledgt9qFut3OzqY7PGTbo/i0w6ksYGTj54GXV/qeYB5
+         vV9GCxeGqPvKEb1knG0MxxtJrtHDNvtp2gRZc+Zw=
+Date:   Thu, 23 May 2019 21:12:20 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 0/2] clk: imx8m: Add GIC clock
+Message-ID: <20190523131219.GX9261@dragon>
+References: <cover.1558518323.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8337eaf-8308-46c3-7ad6-08d6df5e22ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2019 09:07:51.9668
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Chris.Paterson2@renesas.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3151
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1558518323.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gU3RlcGhlbiwNCg0KPiBGcm9tOiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+
-DQo+IFNlbnQ6IDIxIE1heSAyMDE5IDE5OjAyDQo+IA0KPiBRdW90aW5nIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiAoMjAxOS0wNS0yMSAwMTo1NzoyMCkNCj4gPiBIaSBTdGVwaGVuLCBBbmRyZXcsDQo+ID4N
-Cj4gPiBPbiBUaHUsIE1heSAxNiwgMjAxOSBhdCAxMTo1NCBQTSBTdGVwaGVuIEJveWQgPHNib3lk
-QGtlcm5lbC5vcmc+DQo+IHdyb3RlOg0KPiA+ID4NCj4gPiA+IEd1ZXNzIHNvISBPciBBbmRyZXcg
-ZG9lcyBpdC4NCj4gPg0KPiA+IEdpdmVuIHRoZSBjaGFuZ2UgdG8gc2NyaXB0cy9zcGVsbGluZy50
-eHQgY29uZmxpY3RzIHdpdGggYjkzNzg1NmE1ZGIyY2I3YQ0KPiA+ICgic2NyaXB0cy9zcGVsbGlu
-Zy50eHQ6IGFkZCBtb3JlIHR5cG9zIHRvIHNwZWxsaW5nLnR4dCBhbmQgc29ydCIpIGluDQo+ID4g
-bGludXgtbmV4dCwgYW5kIHRoZSByaXNrIG9mIGNvbmZsaWN0IHdpdGggZnV0dXJlIGNoYW5nZXMg
-dG8NCj4gPiBkcml2ZXJzL2Nsay9yZW5lc2FzL3I4YTc3NDcwLWNwZy1tc3NyLmMgaXMgc2xpbSwg
-SSdkIGxpa2UgdG8gZGVmZXIgdGhpcw0KPiA+IHRvIEFuZHJldy4NCj4gPg0KPiA+IEFja2VkLWJ5
-OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiANCj4gT2su
-IE9yIENocmlzIGNhbiBzcGxpdCB0aGUgcGF0Y2ggaW50byB0aGUgY2xrIHBhcnQgYW5kIHRoZSBz
-Y3JpcHRzLw0KPiBwYXJ0PyAgVGhleSdyZSBvbmx5IGxvb3NlbHkgcmVsYXRlZCB0byBlYWNoIG90
-aGVyLCBzbyBJJ20gbm90IHN1cmUgd2h5DQo+IHRoZXkgd2VyZSBzZW50IGluIG9uZSBwYXRjaCBi
-ZXNpZGVzIGZvciBlYXNlIG9mIHRyYW5zcG9ydC4NCg0KSGFwcHkgdG8gc3BsaXQgdGhlIHBhdGNo
-IGlmIHlvdSB3YW50LiBJIGNvbWJpbmVkIHRoZSBwYXRjaCBhcyBJIHNhdyB0aGF0IGRvbmUgaW4g
-YSBjb3VwbGUgb2YgZXhhbXBsZXMgaW4gdGhlIGdpdCBsb2cuDQoNCkhvd2V2ZXIsIEkgZ290IGFu
-IGF1dG9tYXRlZCBlbWFpbCBmcm9tIGFrcG0gc2F5aW5nIHRoYXQgdGhpcyBwYXRjaCB3YXMgYWRk
-ZWQgdG8gdGhlIC1tbSB0cmVlOyBzbyBJIGRvbid0IGtub3cgaWYgeW91IHN0aWxsIHdhbnQgbWUg
-dG8gc3BsaXQgdXAgdGhpcyBwYXRjaCBvciBub3QuDQpMZXQgbWUga25vdy4NCg0KS2luZCByZWdh
-cmRzLCBDaHJpcw0K
+On Wed, May 22, 2019 at 09:48:28AM +0000, Leonard Crestez wrote:
+> Add gic clk and mark it as critical so that parents are not turned off
+> by accident.
+> 
+> Changes since v1:
+>  * Add imx8mq
+>  * Split dt-bindings to separate patch
+>  * Rebase on shawnguo/clk/imx
+> Link to v1: https://patchwork.kernel.org/patch/10940303/
+> 
+> Leonard Crestez (2):
+>   dt-bindings: clock: imx8m: Add GIC clock
+>   clk: imx8m: Add GIC clock
+
+Applied both, thanks.
