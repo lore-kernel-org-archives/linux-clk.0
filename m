@@ -2,166 +2,162 @@ Return-Path: <SRS0=PuqA=TY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 608C8C282E3
-	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 17:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8DAC282E1
+	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 17:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3155D217F9
-	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 17:24:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R80k6ZW4"
+	by mail.kernel.org (Postfix) with ESMTP id 74B7920879
+	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 17:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558719896;
+	bh=sCIfw30J0pAhw/lm4LEPayxbqHC+/EzITfD3eOsrjCY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=S0bO7cYebdxgCmuXGkDh5fRAZa5qXngY03FInfDm9ugtDyODwIej80LIS5oRV0wGx
+	 z/J1FkOUvC6czxPhkN5He2fgxKRMMBv76mAteyylJmjXshiCpx86e2AfbeCTfo3ha6
+	 5w9sSbLuw+QPHX5jrYbz9iAWKIfepTQcR6vSNUtQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731795AbfEXRYT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 May 2019 13:24:19 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46329 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbfEXRYS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 May 2019 13:24:18 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m15so9292595ljg.13;
-        Fri, 24 May 2019 10:24:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ssbN1TdbzNBmflVEU1aQ4WjQYnrmIvlJ3fJbTkCYEoc=;
-        b=R80k6ZW4+477eCiLEWOyECzHViN14QHa/kc5EGUKydeVagXzDJWmZ7z+meczBLoeyW
-         pCQ94EWNunx6Ta5bYQhRIv+Tbr9vPSBTilIF7022NToesQ6zbpz1t8U9aQdmTL06UXrU
-         QbmcWcCG2K0J+Ra4eYS4j8KpamYnZNDi4svTSO6b1kF7Ej4PxQRHNOmtFQjd8CntkQwY
-         Xr24AmDUKHzhmdQjIVN4Z1cG0NO7KwBj0T3ohcgoKFbYL+9VEs3sG++iM8fDYEOwKwUE
-         wB11Dk5zVbzxI8hdpsXFtaDD+tHTA13o2lLmym5uznvx4DGncqPXtDWjKz3P2H/qcjFR
-         LFXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ssbN1TdbzNBmflVEU1aQ4WjQYnrmIvlJ3fJbTkCYEoc=;
-        b=Zi4Qye3R529K/7zL92/0BNGkcw1NhMoU3DsyuL1iZx0pzk80Yiljz54l+NTSzctLzd
-         RT443tXg1HiFd5KrWI5MZacufOxWHqLXiQPPdh/8eDjraQ/w7ez1lzaMQ/ss+ID3UtFv
-         DZIKJY86k5ukgVnvPE2pEYObDTKCB5b9pHrhzD2VcMH5OJxz3dx+QZaIJa6eFlrkNEdS
-         5A6/pLdKomSDPdaaen/F5UtED2omDyqGGuqkuDwte8ssKwne4heSzaoZJm91M66zNRrz
-         zptj+vQQtdhszsv3+1KiKrTQSjo1/pmIrRHtt9BUJrj+JzldtjiF9oMtFTWtkZmvTiDW
-         3RQQ==
-X-Gm-Message-State: APjAAAXZYbzDFh2W/4ehycs2IzXrS/rWYx3dSd6rA5py6ty5H5LgqaBR
-        n6WFxrTebDHG2dcnjONexTk=
-X-Google-Smtp-Source: APXvYqzyc1Puq1aWXJFdGKsz3v4v+LL6XzFiaqiieBRLRqI9otzuddshUBYwjZTlBA/waQu/xMB7vw==
-X-Received: by 2002:a2e:9acb:: with SMTP id p11mr24038393ljj.129.1558718655086;
-        Fri, 24 May 2019 10:24:15 -0700 (PDT)
-Received: from localhost.localdomain ([94.29.35.141])
-        by smtp.gmail.com with ESMTPSA id d13sm196957lfm.27.2019.05.24.10.24.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 10:24:13 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/8] memory: tegra: Introduce Tegra30 EMC driver
-Date:   Fri, 24 May 2019 20:23:45 +0300
-Message-Id: <20190524172353.29087-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        id S2391012AbfEXRo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 May 2019 13:44:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726139AbfEXRo4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 May 2019 13:44:56 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8043420879;
+        Fri, 24 May 2019 17:44:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558719894;
+        bh=sCIfw30J0pAhw/lm4LEPayxbqHC+/EzITfD3eOsrjCY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=BRC7nsmcKnJM8nbaZSMpC2u30M7sxPX/5eLN6EwUk/s9Qrls920l1sAzkLCY4JQhG
+         r1pJJqFUZ4yCf1I+mw91Itqqonih6onfNVqOLdc8tC7HQtbmyIu6LdYYFqSQ1yh90u
+         GeNX33jIiAbkWf55vdh0GHY6dxvqBTDr8YXv86MU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c89ecb6f328014ce22ae5d6c634e5337dbbf3ea2.camel@baylibre.com>
+References: <20190524072745.27398-1-amergnat@baylibre.com> <20190524143355.5586D2133D@mail.kernel.org> <c89ecb6f328014ce22ae5d6c634e5337dbbf3ea2.camel@baylibre.com>
+Subject: Re: [PATCH] clk: fix clock global name usage.
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        baylibre-upstreaming@groups.io
+To:     Alexandre Mergnat <amergnat@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>, mturquette@baylibre.com
+User-Agent: alot/0.8.1
+Date:   Fri, 24 May 2019 10:44:53 -0700
+Message-Id: <20190524174454.8043420879@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Quoting Jerome Brunet (2019-05-24 08:00:08)
+> On Fri, 2019-05-24 at 07:33 -0700, Stephen Boyd wrote:
+> > Do you set the index to 0 in this clk's parent_data? We purposefully set
+> > the index to -1 in clk_core_populate_parent_map() so that the fw_name
+> > can be NULL but the index can be something >=3D 0 and then we'll use th=
+at
+> > to lookup the clk from DT. We need to support that combination.
+> >=20
+> >         fw_name   |   index |  DT lookup?
+> >         ----------+---------+------------
+> >         NULL      |    >=3D 0 |     Y
+> >         NULL      |    -1   |     N
+> >         non-NULL  |    -1   |     ?
+> >         non-NULL  |    >=3D 0 |     Y
+> >=20
+> > Maybe we should support the ? case, because right now it will fail to do
+> > the DT lookup when the index is -1.
+>=20
+> Hi Stephen,
+>=20
+> We are trying to migrate all meson clocks to the new parent structure.
+> There is a little quirk which forces us to continue to use legacy names
+> for a couple of clocks.
+>=20
+> We heavily use static data which init everything to 0.
+> Here is an example:
+>=20
+> static struct clk_regmap g12a_aoclk_cts_rtc_oscin =3D {
+> [...]
+>         .hw.init =3D &(struct clk_init_data){
+>                 .name =3D "g12a_ao_cts_rtc_oscin",
+>                 .ops =3D &clk_regmap_mux_ops,
+> -               .parent_names =3D (const char *[]){ "g12a_ao_32k_by_oscin=
+",
+> -                                                 IN_PREFIX "ext_32k-0" },
+> +               .parent_data =3D (const struct clk_parent_data []) {
+> +                       { .name =3D "g12a_ao_32k_by_oscin" },
+> +                       { .fw_name =3D "ext-32k-0", },
+> +               },
+>                 .num_parents =3D 2,
+>                 .flags =3D CLK_SET_RATE_PARENT,
+>         },
+> };
+>=20
+> With this, instead of taking name =3D "g12a_ao_32k_by_oscin" for entry #0
+> it takes DT names at index 0 which is not what we intended.
+>=20
+> If I understand correctly we should put
+> +                       { .name =3D "g12a_ao_32k_by_oscin", index =3D -1,=
+ },
+>=20
+> And would be alright ?
 
-This series introduces driver for the External Memory Controller (EMC)
-found on Tegra30 chips, it controls the external DRAM on the board. The
-purpose of this driver is to program memory timing for external memory on
-the EMC clock rate change. The driver was tested using the ACTMON devfreq
-driver that performs memory frequency scaling based on memory-usage load.
+I don't understand why this wouldn't have a .fw_name or an .index >=3D 0,
+or both. Is there some reason why that isn't happening?
 
-Changelog:
+>=20
+> While I understand it, it is not very obvious or nice to look at.
+> Plus it is a bit weird that this -1 is required for .name and not .hw.
 
-v3: - Addressed review comments that were made by Stephen Boyd to v2 by
-      adding explicit typing for the callback variable, by including
-      "clk-provider.h" directly in the code and by dropping __clk_lookup
-      usage where possible.
+Sure. It can be better documented. Sorry it's not super obvious. I added
+this later in the series. We could have:
 
-      Added more patches into this series:
+	#define CLK_SKIP_FW_LOOKUP .index =3D -1
 
-        memory: tegra20-emc: Drop setting EMC rate to max on probe
-        memory: tegra20-emc: Adapt for clock driver changes
-        memory: tegra20-emc: Include io.h instead of iopoll.h
-        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
+and then this would read as:
 
-      Initially I was going to include these patches into other patchset,
-      but changed my mind after rearranging things a tad. The "Adapt for
-      clock driver changes" patch is directly related to the clock changes
-      done in the first patch of this series, the rest are minor cleanups
-      that are fine to include here as well.
+        { .name =3D "g12a_ao_32k_by_oscin", CLK_SKIP_FW_LOOKUP },
 
-      Added some more words to the commit message of "Add binding for NVIDIA
-      Tegra30 External Memory Controller" patch, clarifying why common DDR
-      timing device-tree form isn't suitable for Tegra30.
+>=20
+> Do you think we could come up with a priority order which makes the first
+> example work ?
 
-      The Tegra30 EMC driver now explicitly selects the registers access
-      mode (EMC_DBG mux), not relying on the setting left from bootloader.
+Maybe? I'm open to suggestions.
 
-v2: - Added support for changing MC clock diver configuration based on
-      Memory Controller (MC) configuration which is part of the memory
-      timing.
+>=20
+> Something like:
+>=20
+> if (hw) {
+>         /* use pointer */
+> } else if (name) {
+>         /* use legacy global names */
 
-    - Merged the "Add custom EMC clock implementation" patch into this
-      series because the "Introduce Tegra30 EMC driver" patch directly
-      depends on it. Please note that Tegra20 EMC driver will need to be
-      adapted for the clock changes as well, I'll send out the Tegra20
-      patches after this series will be applied because of some other
-      dependencies (devfreq) and because the temporary breakage won't
-      be critical (driver will just error out on probe).
+I don't imagine we can get rid of legacy name for a long time, so this
+can't be in this order. Otherwise we'll try to lookup the legacy name
+before trying the DT lookup and suffer performance hits doing a big
+global search while also skipping the DT lookup that we want drivers to
+use if they're more modern.
 
-    - EMC driver now performs MC configuration validation by checking
-      that the number of MC / EMC timings matches and that the timings
-      rate is the same.
+> } else if (fw_name) {
+>         /* use DT names */
+> } else if (index >=3D 0)=20
+>         /* use DT index */
+> } else {
+>         return -EINVAL;
+> }
+>=20
+> The last 2 clause could be removed if we make index an unsigned.
+>=20
 
-    - EMC driver now supports timings that want to change the MC clock
-      configuration.
-
-    - Other minor prettifying changes of the code.
-
-Dmitry Osipenko (8):
-  clk: tegra20/30: Add custom EMC clock implementation
-  memory: tegra20-emc: Drop setting EMC rate to max on probe
-  memory: tegra20-emc: Adapt for clock driver changes
-  memory: tegra20-emc: Include io.h instead of iopoll.h
-  memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
-    Controller
-  memory: tegra: Introduce Tegra30 EMC driver
-  ARM: dts: tegra30: Add External Memory Controller node
-
- .../memory-controllers/nvidia,tegra30-emc.txt |  249 ++++
- arch/arm/boot/dts/tegra30.dtsi                |   11 +
- drivers/clk/tegra/Makefile                    |    2 +
- drivers/clk/tegra/clk-tegra20-emc.c           |  299 +++++
- drivers/clk/tegra/clk-tegra20.c               |   55 +-
- drivers/clk/tegra/clk-tegra30.c               |   38 +-
- drivers/clk/tegra/clk.h                       |    6 +
- drivers/memory/tegra/Kconfig                  |   10 +
- drivers/memory/tegra/Makefile                 |    1 +
- drivers/memory/tegra/mc.c                     |    3 -
- drivers/memory/tegra/mc.h                     |   30 +-
- drivers/memory/tegra/tegra20-emc.c            |   94 +-
- drivers/memory/tegra/tegra30-emc.c            | 1165 +++++++++++++++++
- drivers/memory/tegra/tegra30.c                |   44 +
- include/linux/clk/tegra.h                     |   14 +
- 15 files changed, 1903 insertions(+), 118 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.txt
- create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
- create mode 100644 drivers/memory/tegra/tegra30-emc.c
-
--- 
-2.21.0
+So just assign -1 to .index? I still think my patch may be needed if
+somehow the index is assigned to something less than 0 and the .fw_name
+is specified. I guess that's possible if the struct is on the stack, so
+we'll probably have to allow this combination.
 
