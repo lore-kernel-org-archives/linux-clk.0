@@ -2,226 +2,201 @@ Return-Path: <SRS0=PuqA=TY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 879CAC072B5
-	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 18:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE50C46460
+	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 20:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E62721773
-	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 18:12:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kjoCNPk9"
+	by mail.kernel.org (Postfix) with ESMTP id 05348217F9
+	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 20:21:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558729270;
+	bh=n2UsS32Sxfj3hv8WCSXkGRum2KUrExqdzbmH8L8X0FA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EAbdy7AUcA4U75bXLMgkeiXdvRAuMpJB214bZ/VkW8RLW5PZOn+fv68guOb7sIGEz
+	 eVMHsSCdDDMAHJJBzk99IQYhfr7K/eiloSmxbb3GFryqyK6GaMR5mS6+XKKxzUjcHC
+	 r/OtJ1S/kea6o827REkLLRN7XewLmLuyW8Xfebw0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfEXSMf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 May 2019 14:12:35 -0400
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:39026 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbfEXSMf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 May 2019 14:12:35 -0400
-Received: by mail-wm1-f49.google.com with SMTP id z23so6031607wma.4
-        for <linux-clk@vger.kernel.org>; Fri, 24 May 2019 11:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=TLYdg3oHGqzqv4K2ZAz9J+M2UOea4Uk7MyQC23T2q1s=;
-        b=kjoCNPk9VlZhrE39XO7cIcyE8n7+k/mnEEV8ZgMEe8KlkkYtUDVmpxDgV+KfAEtMse
-         ZwieEqW7l+PvaiPGEh9AkYcRFZep/XqnU41tJfQDST1XcfV0hRHXoELnzAOHt643959S
-         wcjVeWK6vd1iZ4N3gaEa/ePLt1C0CdWkUCu6BJ+16KjSKEHLntoskBsO3PAu7sZ38P1F
-         n+mxFhm9L/kTX3T0jUcPoEeEPtxrlxCp3jjgXQKPplu5X4es+EdMr6EQz7bpy9Jj2sdy
-         IZ95KlD+j3POmKeF+2xtfFOVvfTZeU6sxSg+l77oqziSlwgj3IqxP9uMhF8fVmRTlHqq
-         mlbg==
+        id S2404115AbfEXUVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 May 2019 16:21:06 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40465 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403845AbfEXUVF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 May 2019 16:21:05 -0400
+Received: by mail-oi1-f193.google.com with SMTP id r136so7954673oie.7;
+        Fri, 24 May 2019 13:21:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=TLYdg3oHGqzqv4K2ZAz9J+M2UOea4Uk7MyQC23T2q1s=;
-        b=Iyv7rGyYdw1A+f5gqtQ15HzjxjrhCkEySxlKbW0eNQ/ar/M9NO3PE7OmFDFU2S+EdI
-         7fxc/00YLow2ykdJH0hdhVojwyt9h3lJPcbF/nF0Z+wRAyTnjRAHXhhjCUy2F54EV3Cg
-         uQ7GjFeON2zq3lrJEE0TD9+9iStQ8IPuJ4g8yuY8ZlhvrvQJqx9LKKseaqtECGwsgVe8
-         J+xX7VdN+hjsRbIELcr/ulLgjsRg8osO2fbLIbDnorZNnWr/gTskK45k8ZIhEOpobLbV
-         enumjanP6b5jP8h8sVulKr+obNkBvg5FntyTptPQIOxHKdNfuPuVKDzGFiyR6Zl+Ev9/
-         urjg==
-X-Gm-Message-State: APjAAAXf6+qkVMt+e8hsEEbrTynPwlqNcxQnxgaoajfDDxfqmU4+anMl
-        nKitjzGOTQT9UvAI8qGcZBrG3g==
-X-Google-Smtp-Source: APXvYqzuIcFRlOMoU/xAjY0kFO3p9TD7dWZFKSvsB1X51zMIoTDznINkHFR4oliNhZ3l2NoKpwLZeg==
-X-Received: by 2002:a1c:254:: with SMTP id 81mr791770wmc.151.1558721552439;
-        Fri, 24 May 2019 11:12:32 -0700 (PDT)
-Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x1sm4993488wrp.35.2019.05.24.11.12.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 24 May 2019 11:12:31 -0700 (PDT)
-Message-ID: <5795a73002f2c787b545308585f0437eb5aa2f72.camel@baylibre.com>
-Subject: Re: [PATCH] clk: fix clock global name usage.
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        baylibre-upstreaming@groups.io
-Date:   Fri, 24 May 2019 20:12:30 +0200
-In-Reply-To: <20190524174454.8043420879@mail.kernel.org>
-References: <20190524072745.27398-1-amergnat@baylibre.com>
-         <20190524143355.5586D2133D@mail.kernel.org>
-         <c89ecb6f328014ce22ae5d6c634e5337dbbf3ea2.camel@baylibre.com>
-         <20190524174454.8043420879@mail.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1Pcvpx47Lgpkklh1dUYuXUVnYLV0UOVqnAMU1ZWlfNU=;
+        b=cSZbacRLT3THI/o2Eb0csGK2Iq6Chyy1j2hI6Y5EvKZFlhH/yICikCMVcwx+3yAmci
+         kBI7cNLZp1+vDsWXz3KkwXkUy5XLO/NDZgNE4+E2AfdreShNqymnGRvMGP+TPlfE1kFU
+         Brlfy/Gr0eYAzPzH8MSN18pJBmEuH1ILaDg3BhWI9G9ywz5S+q93cVC7oCI00oRnorvf
+         0O9Zw1brafdYIipJtS6AGBPrbJRa5uzT35lHkS2zDi20k/izrCTZaM0quisrxrzDKbuI
+         eiUdJqL8EScDza1pfwcDsLIQa39eBxcDY+I4qxActCp/WmmGGDKBlNwcH+9kSkruWLlO
+         wq6g==
+X-Gm-Message-State: APjAAAWoDE/y7UwrXdMYbrf9RrHchZhqFaUnAgNC+91PNutzyQxWe2lm
+        vF+M4OSAcj9yL9P5ygStsA==
+X-Google-Smtp-Source: APXvYqwiWbsmY0AvPIsFqEy9d5xnA4ACojgqv5dnCssQgQucS6H+KMlf712EdwupMRYpX8zpqeZlIw==
+X-Received: by 2002:aca:fd45:: with SMTP id b66mr7646303oii.157.1558729264891;
+        Fri, 24 May 2019 13:21:04 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 19sm1241172otf.72.2019.05.24.13.21.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 May 2019 13:21:04 -0700 (PDT)
+Date:   Fri, 24 May 2019 15:21:03 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me
+Subject: Re: [PATCH v12 03/13] dt-bindings: Add doc for the Ingenic TCU
+ drivers
+Message-ID: <20190524202103.GA15650@bogus>
+References: <20190521145141.9813-1-paul@crapouillou.net>
+ <20190521145141.9813-4-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521145141.9813-4-paul@crapouillou.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2019-05-24 at 10:44 -0700, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2019-05-24 08:00:08)
-> > On Fri, 2019-05-24 at 07:33 -0700, Stephen Boyd wrote:
-> > > Do you set the index to 0 in this clk's parent_data? We purposefully set
-> > > the index to -1 in clk_core_populate_parent_map() so that the fw_name
-> > > can be NULL but the index can be something >= 0 and then we'll use that
-> > > to lookup the clk from DT. We need to support that combination.
-> > > 
-> > >         fw_name   |   index |  DT lookup?
-> > >         ----------+---------+------------
-> > >         NULL      |    >= 0 |     Y
-> > >         NULL      |    -1   |     N
-
-These two I understand
-
-> > >         non-NULL  |    -1   |     ?
-
-If fw_name is provided, you have everything you need to get the clock, why the ?
-
-> > >         non-NULL  |    >= 0 |     Y
-
-If both fw_name and index are provided, how do you perform the look up ? using
-the index ? or the fw_name ? 
-
-> > > 
-> > > Maybe we should support the ? case, because right now it will fail to do
-> > > the DT lookup when the index is -1.
-> > 
-> > Hi Stephen,
-> > 
-> > We are trying to migrate all meson clocks to the new parent structure.
-> > There is a little quirk which forces us to continue to use legacy names
-> > for a couple of clocks.
-> > 
-> > We heavily use static data which init everything to 0.
-> > Here is an example:
-> > 
-> > static struct clk_regmap g12a_aoclk_cts_rtc_oscin = {
-> > [...]
-> >         .hw.init = &(struct clk_init_data){
-> >                 .name = "g12a_ao_cts_rtc_oscin",
-> >                 .ops = &clk_regmap_mux_ops,
-> > -               .parent_names = (const char *[]){ "g12a_ao_32k_by_oscin",
-> > -                                                 IN_PREFIX "ext_32k-0" },
-> > +               .parent_data = (const struct clk_parent_data []) {
-> > +                       { .name = "g12a_ao_32k_by_oscin" },
-> > +                       { .fw_name = "ext-32k-0", },
-> > +               },
-> >                 .num_parents = 2,
-> >                 .flags = CLK_SET_RATE_PARENT,
-> >         },
-> > };
-> > 
-> > With this, instead of taking name = "g12a_ao_32k_by_oscin" for entry #0
-> > it takes DT names at index 0 which is not what we intended.
-> > 
-> > If I understand correctly we should put
-> > +                       { .name = "g12a_ao_32k_by_oscin", index = -1, },
-> > 
-> > And would be alright ?
+On Tue, May 21, 2019 at 04:51:31PM +0200, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) drivers from devicetree.
 > 
-> I don't understand why this wouldn't have a .fw_name or an .index >= 0,
-> or both. Is there some reason why that isn't happening?
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>     v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>      added content.
+>     
+>     v5: - Edited PWM/watchdog DT bindings documentation to point to the new
+>        document.
+>      - Moved main document to
+>        Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>      - Updated documentation to reflect the new devicetree bindings.
+>     
+>     v6: - Removed PWM/watchdog documentation files as asked by upstream
+>      - Removed doc about properties that should be implicit
+>      - Removed doc about ingenic,timer-channel /
+>        ingenic,clocksource-channel as they are gone
+>      - Fix WDT clock name in the binding doc
+>      - Fix lengths of register areas in watchdog/pwm nodes
+>     
+>     v7: No change
+>     
+>     v8: - Fix address of the PWM node
+>      - Added doc about system timer and clocksource children nodes
+>     
+>     v9: - Remove doc about system timer and clocksource children
+>        nodes...
+>     - Add doc about ingenic,pwm-channels-mask property
+>     
+>     v10: No change
+>     
+>     v11: Fix info about default value of ingenic,pwm-channels-mask
+>     
+>     v12: Drop sub-nodes for now; they will be introduced in a follow-up
+>     	 patchset.
 
-And now its me not following :)
-
-In the case I presenting, I only defined the (legacy) name because that we want
-to use. In another thread, I'll explain the particular problem that make us use
-this legacy name, I just to dont want to over complicate this topic now.
+Why? I believe I acked them.
 
 > 
-> > While I understand it, it is not very obvious or nice to look at.
-> > Plus it is a bit weird that this -1 is required for .name and not .hw.
+>  .../devicetree/bindings/timer/ingenic,tcu.txt | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
 > 
-> Sure. It can be better documented. Sorry it's not super obvious. I added
-> this later in the series. We could have:
+> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..d101cd72c9b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> @@ -0,0 +1,59 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+> +==========================================================
+> +
+> +For a description of the TCU hardware and drivers, have a look at
+> +Documentation/mips/ingenic-tcu.txt.
+> +
+> +Required properties:
+> +
+> +- compatible: Must be one of:
+> +  * "ingenic,jz4740-tcu"
+> +  * "ingenic,jz4725b-tcu"
+> +  * "ingenic,jz4770-tcu"
+> +- reg: Should be the offset/length value corresponding to the TCU registers
+> +- clocks: List of phandle & clock specifiers for clocks external to the TCU.
+> +  The "pclk", "rtc" and "ext" clocks should be provided. The "tcu" clock
+> +  should be provided if the SoC has it.
+> +- clock-names: List of name strings for the external clocks.
+> +- #clock-cells: Should be <1>;
+> +  Clock consumers specify this argument to identify a clock. The valid values
+> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+> +- interrupt-controller : Identifies the node as an interrupt controller
+> +- #interrupt-cells : Specifies the number of cells needed to encode an
+> +  interrupt source. The value should be 1.
+> +- interrupt-parent : phandle of the interrupt controller.
+
+Drop this 'interrupt-parent' is implied and could be in a parent node.
+
+> +- interrupts : Specifies the interrupt the controller is connected to.
+> +
+> +Optional properties:
+> +
+> +- ingenic,pwm-channels-mask: Bitmask of TCU channels reserved for PWM use.
+> +  Default value is 0xfc.
+> +
+> +
+> +Example
+> +==========================================================
+> +
+> +#include <dt-bindings/clock/jz4770-cgu.h>
+> +
+> +/ {
+> +	tcu: timer@10002000 {
+> +		compatible = "ingenic,jz4770-tcu";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		#clock-cells = <1>;
+> +
+> +		clocks = <&cgu JZ4770_CLK_RTC
+> +			  &cgu JZ4770_CLK_EXT
+> +			  &cgu JZ4770_CLK_PCLK>;
+> +		clock-names = "rtc", "ext", "pclk";
+> +
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +
+> +		interrupt-parent = <&intc>;
+> +		interrupts = <27 26 25>;
+> +	};
+> +};
+> -- 
+> 2.21.0.593.g511ec345e18
 > 
-> 	#define CLK_SKIP_FW_LOOKUP .index = -1
-> 
-> and then this would read as:
-> 
->         { .name = "g12a_ao_32k_by_oscin", CLK_SKIP_FW_LOOKUP },
-
-Sure but it is still a bit ugly and un-intuitive. If I only defined the legacy
-name, it's pretty obvious that what I want to use ... I should not have to
-insist :)
-
-And again the fact that (legacy) .name is silently discarded if index is not
-defined, but .hw or .fw_name are taken into account no matter what is not
-consistent
-
-> 
-> > Do you think we could come up with a priority order which makes the first
-> > example work ?
-> 
-> Maybe? I'm open to suggestions.
-> 
-> > Something like:
-> > 
-> > if (hw) {
-> >         /* use pointer */
-> > } else if (name) {
-> >         /* use legacy global names */
-> 
-> I don't imagine we can get rid of legacy name for a long time, so this
-> can't be in this order. Otherwise we'll try to lookup the legacy name
-> before trying the DT lookup and suffer performance hits doing a big
-> global search while also skipping the DT lookup that we want drivers to
-> use if they're more modern.
-
-You'll try to look up the legacy name only if it is defined, in which case you
-know you this is what you want to use, so I don't see the penalty.  Unless ...
-
-Are trying to support case where multiple fields among hw, name, fw_name, index
-would be defined simultaneously ??
-
-IMO, it would be weird and very confusing.
-
-> 
-> > } else if (fw_name) {
-> >         /* use DT names */
-> > } else if (index >= 0) 
-> >         /* use DT index */
-> > } else {
-> >         return -EINVAL;
-> > }
-> > 
-> > The last 2 clause could be removed if we make index an unsigned.
-> > 
-> 
-> So just assign -1 to .index? I still think my patch may be needed if
-> somehow the index is assigned to something less than 0 and the .fw_name
-> is specified. I guess that's possible if the struct is on the stack, so
-> we'll probably have to allow this combination.
-
-Maybe it just solve the problem, I don't fully understand its implication. I
-might need to try it, and see
-
-> 
-
-digressing a bit ...
-
-I don't remember seeing the index field in the initial review of your series ?
-what made you add this ?
-
-Isn't it simpler to mandate the use of the clock-names property ? Referring to
-the clock property by index is really weak and should discouraged IMO.
-
-
