@@ -2,115 +2,94 @@ Return-Path: <SRS0=PuqA=TY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F15C072B5
-	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 12:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350D8C072B5
+	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 14:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4533E20851
-	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 12:39:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1832420673
+	for <linux-clk@archiver.kernel.org>; Fri, 24 May 2019 14:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390952AbfEXMjW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 May 2019 08:39:22 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:42436 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390781AbfEXMjV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 May 2019 08:39:21 -0400
-Received: by mail-ua1-f68.google.com with SMTP id e9so3432958uar.9;
-        Fri, 24 May 2019 05:39:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p8BS7qBD61gkszF8TETLiaJ/w6Ke2fe/2O4AZ5tzxRU=;
-        b=o1uvkEeNppHFpCZVqzwhbol+HGvzckfdDXfqBd0rf80gIyNxU52j7el7kw2Hvz+BhQ
-         IO7OTHXny6cpvFWFGFnuxU+AapRmtntuNgGIP10DqXQIr67ut4/7WLxlxlYaC6hV5VmR
-         nyDYtf9D5popSoRIuzrB0uQjbfHSSZPwSerpL+hWM7Eut8b99Zq/abBN+Lk9aiCCpCx4
-         pt4stsdmbH8RYK8JP/m5fKoLnbQoP4BtquLbwLr0a4GdKCbt1Lu4IjJArtFPoecuYwuN
-         Mj5G1AkpSrqM4tC8qjTACHioA/+ktASmbppd6lkitFwzarIfl87SFit3Vg1vaNUai9sR
-         9ozA==
-X-Gm-Message-State: APjAAAVgZNwV8Ft146y1t/BqiCOuxmM414aRDRvOYXGiAHWc7e9ZO+02
-        a8oPgv3tX2rqvrr8lWCi6nqYawJmTETIlgdzsSA=
-X-Google-Smtp-Source: APXvYqxCD+59NtWoY2L+uV9CXk4yN4AziG3UcCB1/CcRvwjxyNk9G1Yz3/qTWfZSWNEOSMvGkzSHwss5D0pmmtH6T5g=
-X-Received: by 2002:ab0:1849:: with SMTP id j9mr3942524uag.75.1558701560479;
- Fri, 24 May 2019 05:39:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <1558442111-10599-1-git-send-email-gareth.williams.jx@renesas.com>
- <CAMuHMdWGwfDtRcfdzPCpQaM8X=x+s0uT7j+EnRP4Yta+4Nx9Gg@mail.gmail.com> <TYAPR01MB40157EF547D93D3B98330CBCDF020@TYAPR01MB4015.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYAPR01MB40157EF547D93D3B98330CBCDF020@TYAPR01MB4015.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 24 May 2019 14:39:07 +0200
-Message-ID: <CAMuHMdXqehwg9Nng8jzVY0Evj6hsvnad1dmgWU02Dc4vGGsTCQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Add clock domain support
-To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S2403932AbfEXOT1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 May 2019 10:19:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43968 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403917AbfEXOT1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 May 2019 10:19:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B02EA78;
+        Fri, 24 May 2019 07:19:27 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CB713F575;
+        Fri, 24 May 2019 07:19:24 -0700 (PDT)
+Date:   Fri, 24 May 2019 15:19:19 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, james.quinlan@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
+        <linux-pm@vger.kernel.org>,
+        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH RFC] firmware: arm_scmi: Allow for better protocol
+ extensibility
+Message-ID: <20190524141918.GA4408@e107155-lin>
+References: <20190521200110.8309-1-f.fainelli@gmail.com>
+ <f9403e7e-1b87-dc46-dfc5-62227c659e7c@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9403e7e-1b87-dc46-dfc5-62227c659e7c@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Gareth,
+On Thu, May 23, 2019 at 10:17:50AM -0700, Florian Fainelli wrote:
+> On 5/21/19 1:01 PM, Florian Fainelli wrote:
+> > The SCMI specific allows implementors to define their custom protocols
+> > in the 0x80-0xFF space. The current scmi_handle structure requires us to
+> > extend the structure with a set of operations and associated private
+> > data in a way that is not quite scaling well.
+> > 
+> > Create a 255 bytes structure that contains an opaque pointer to a set of
+> > operations and private data and create two helper functions to retrieve
+> > those based on the protocol identifier. Several options were considered,
+> > like using a linked list but since we could be performance sensitive in
+> > some paths, using an array was faster and simpler.
+> > 
+> > Convert all call sites to use either scmi_protocol_get_ops() or
+> > scmi_protocol_get_info().
+> > 
+> > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> 
+> On second thought, what I really need is private storage to the scmi_dev
+> (the consumer side), and not so much the protocol (provider) side.
+> Therefore using dev_{set,get}_drvadata() against scmi_device::dev should
+> be working just fine, and if we are concerned about another part of the
+> SCMI stack making use of that storage, we can always extend struct
+> scmi_device with a private cookie.
 
-On Fri, May 24, 2019 at 2:28 PM Gareth Williams
-<gareth.williams.jx@renesas.com> wrote:
-> On Tue, May 22, 2019 at 1:02 PM Gareth Williams
-> <geert@linux-m68k.org> wrote:
-> > On Tue, May 21, 2019 at 2:35 PM Gareth Williams
-> > <gareth.williams.jx@renesas.com> wrote:
-> > > There are several clocks on the r9ag032 which are currently not
-> > > enabled in their drivers that can be delegated to clock domain system
-> > > for power management. Therefore add support for clock domain
-> > > functionality to the
-> > > r9a06g032 clock driver.
-> > >
-> > > Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-> > > ---
-> > > v2:
-> > >  - Rebased onto kernel/git/geert/renesas-drivers.git
-> >
-> > Thanks for the update!
-> >
-> > >  drivers/clk/renesas/r9a06g032-clocks.c | 243
-> > > ++++++++++++++++++++++++---------
-> > >  1 file changed, 176 insertions(+), 67 deletions(-)
-> >
-> > Please also update
-> > Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt,
-> > to describe #power-domain-cells (must be 0), and to update the provider
-> > and consumer examples.
-> >
-> > > --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> > > +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+Sorry, I haven't looked into the original patch in detail yet. But I
+always have rejected to add support for just infrastructure to add
+vendor specific protocols both internally @ARM and to some private
+emails I have received. I prefer to merge it with the first reference
+vendor specific protocol so that the users of this infrastructure gets
+a fair idea on how to use the same.
 
-> > > +int __init r9a06g032_attach_dev(struct generic_pm_domain *unused,
-> >
-> > Missing static.
-> > Please drop the __init, as devices can be attached anytime (no section
-> > mismatch warnings?).
-> Because the clock array used __initconst, I only got a section mismatch warning
-> without __init in the attach function. I will remove both so it compiles cleanly
-> without expecting devices to be attached at one point.
+I will look at the RFC next week.
 
-Oh right, r9a06g032_attach_dev() uses r9a06g032_clocks[].
-So the __initconst must be indeed dropped from the latter, unless you find some
-way to store the managed flag elsewhere.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--
+Regards,
+Sudeep
