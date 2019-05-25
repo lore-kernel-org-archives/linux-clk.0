@@ -2,116 +2,214 @@ Return-Path: <SRS0=Tmpv=TZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3266EC07542
-	for <linux-clk@archiver.kernel.org>; Sat, 25 May 2019 18:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826D5C282E5
+	for <linux-clk@archiver.kernel.org>; Sat, 25 May 2019 19:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08EFB20862
-	for <linux-clk@archiver.kernel.org>; Sat, 25 May 2019 18:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FE8320863
+	for <linux-clk@archiver.kernel.org>; Sat, 25 May 2019 19:13:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="V2509mVz"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="AH5if3JP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfEYSnE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 May 2019 14:43:04 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35343 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfEYSnA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 May 2019 14:43:00 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m3so13001456wrv.2;
-        Sat, 25 May 2019 11:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/BXVDsarFTRUazUo4dgncRjwz7qqivgpQXkEsG5qr/A=;
-        b=V2509mVz46xNeb2AFiUyTgKK3LQv62jXAR4XzrF0gbJb01Ql2EHQEAhVaniRQSCjYr
-         q5+IzqQotlFy1h6MiSVLRvRqzTnd0Zd4D6OQuSuS6EuVDdPmTXC+rwdWczVMvdT3iEJ1
-         MjccrfHm1wflZ3/0OHB3APawxTLYIBKpoUgOVJZe26avayGNsK8mAyx2ZsOaByVhFr6A
-         qukkm0nW6jWAHIKIfTWPmxZ1diNDcn8ShOATHn1TZk7LsNSdqy/HQF22o1JtNtsMnBza
-         Rj5ZIMWKcrOunHmFWRyqVgzIUYVRDwIn9N1wKlNBDiMUjR0fWXD5DXCo7FlblwY1QrfW
-         VxyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/BXVDsarFTRUazUo4dgncRjwz7qqivgpQXkEsG5qr/A=;
-        b=qTkgeKXMOvUPh4M3bGo3bMMCedyrbbTQhM0VHomRoQ2bA1Q3EB+sppPqh25GIhHKVw
-         sp5e/GT644ZkC+C+A4xkwjUIsQ500V8bk7NsCPHaNlbXmcOoUpjf2MreRuAAvPne2nNU
-         DUtgdxN/GHP5Y0kDtt4yLw5xbqAu+4plQK13m66AaX39W96aHfP5IzwZHwweWMXD3wdt
-         EiOyf2h/KpnYKa6Myr9KOtivFrc1PNjJFO1GU82yUGHUV2ks0OQa3bHcZuMUhJHR9Z7p
-         gVGd0TB3+RPKXJr53vjNF8sZCksi2BELh//kZ1KGW0Mapuqo5/D14+UjCzpijr6Osmhr
-         mheg==
-X-Gm-Message-State: APjAAAUaujbl8wHGZBCnvXrk7QrB5UAeEBGIb0sVWxEKGqMTMYFSdyaH
-        kM33k+tnxeB+f5bbndffsZydTOh5
-X-Google-Smtp-Source: APXvYqwDyFKXlwGoxgbo2oy86MnaWJDA0d2MBAYF6xtgJ/BHLFG5DScOmv3lnUmW/OwTtMdc3jLVbg==
-X-Received: by 2002:adf:b447:: with SMTP id v7mr67716393wrd.267.1558809778106;
-        Sat, 25 May 2019 11:42:58 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133DDA4007CB8841254CD64FD.dip0.t-ipconnect.de. [2003:f1:33dd:a400:7cb8:8412:54cd:64fd])
-        by smtp.googlemail.com with ESMTPSA id f20sm5327546wmh.22.2019.05.25.11.42.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 25 May 2019 11:42:57 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/1] clk: pwm: implement the .get_duty_cycle callback
-Date:   Sat, 25 May 2019 20:42:53 +0200
-Message-Id: <20190525184253.3088-2-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190525184253.3088-1-martin.blumenstingl@googlemail.com>
-References: <20190525184253.3088-1-martin.blumenstingl@googlemail.com>
+        id S1727337AbfEYTNb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 25 May 2019 15:13:31 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:48590 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfEYTNb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 May 2019 15:13:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1558811606; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vnk800G1JVnIKGZ4wjv2ZwB3JURC8YSA1aiWxwD8qPY=;
+        b=AH5if3JPmyCbQgwcfuJeUGYe6Pj4ZsMs3TLhc1G/Jx0jb4IMDepAHoFWjclTE168W2rvzu
+        mSbk8Qdcc68fs/w9N8TkKHbSmp0licq6b0R55TSdQc+0Zbit4TVFzMBzqx2rwgRYjjggzj
+        5Mwz2vff2kCChadmRWi0X2pm358VaP8=
+Date:   Sat, 25 May 2019 21:13:16 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v12 03/13] dt-bindings: Add doc for the Ingenic TCU
+ drivers
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me
+Message-Id: <1558811596.2016.1@crapouillou.net>
+In-Reply-To: <20190524202103.GA15650@bogus>
+References: <20190521145141.9813-1-paul@crapouillou.net>
+        <20190521145141.9813-4-paul@crapouillou.net> <20190524202103.GA15650@bogus>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 9fba738a53dda2 ("clk: add duty cycle support") added support for
-getting and setting the duty cycle of a clock. This implements the
-get_duty_cycle callback for PWM based clocks so the duty cycle is shown
-in the debugfs output (/sys/kernel/debug/clk/clk_summary).
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/clk-pwm.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index 02b472a1f9b0..c0cd6a0ff7f8 100644
---- a/drivers/clk/clk-pwm.c
-+++ b/drivers/clk/clk-pwm.c
-@@ -47,10 +47,24 @@ static unsigned long clk_pwm_recalc_rate(struct clk_hw *hw,
- 	return clk_pwm->fixed_rate;
- }
- 
-+static int clk_pwm_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
-+	struct pwm_state state;
-+
-+	pwm_get_state(clk_pwm->pwm, &state);
-+
-+	duty->num = state.duty_cycle;
-+	duty->den = state.period;
-+
-+	return 0;
-+}
-+
- static const struct clk_ops clk_pwm_ops = {
- 	.prepare = clk_pwm_prepare,
- 	.unprepare = clk_pwm_unprepare,
- 	.recalc_rate = clk_pwm_recalc_rate,
-+	.get_duty_cycle = clk_pwm_get_duty_cycle,
- };
- 
- static int clk_pwm_probe(struct platform_device *pdev)
--- 
-2.21.0
+Le ven. 24 mai 2019 =E0 22:21, Rob Herring <robh@kernel.org> a =E9crit :
+> On Tue, May 21, 2019 at 04:51:31PM +0200, Paul Cercueil wrote:
+>>  Add documentation about how to properly use the Ingenic TCU
+>>  (Timer/Counter Unit) drivers from devicetree.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>=20
+>>  Notes:
+>>      v4: New patch in this series. Corresponds to V2 patches 3-4-5=20
+>> with
+>>       added content.
+>>=20
+>>      v5: - Edited PWM/watchdog DT bindings documentation to point to=20
+>> the new
+>>         document.
+>>       - Moved main document to
+>>         Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>       - Updated documentation to reflect the new devicetree bindings.
+>>=20
+>>      v6: - Removed PWM/watchdog documentation files as asked by=20
+>> upstream
+>>       - Removed doc about properties that should be implicit
+>>       - Removed doc about ingenic,timer-channel /
+>>         ingenic,clocksource-channel as they are gone
+>>       - Fix WDT clock name in the binding doc
+>>       - Fix lengths of register areas in watchdog/pwm nodes
+>>=20
+>>      v7: No change
+>>=20
+>>      v8: - Fix address of the PWM node
+>>       - Added doc about system timer and clocksource children nodes
+>>=20
+>>      v9: - Remove doc about system timer and clocksource children
+>>         nodes...
+>>      - Add doc about ingenic,pwm-channels-mask property
+>>=20
+>>      v10: No change
+>>=20
+>>      v11: Fix info about default value of ingenic,pwm-channels-mask
+>>=20
+>>      v12: Drop sub-nodes for now; they will be introduced in a=20
+>> follow-up
+>>      	 patchset.
+>=20
+> Why? I believe I acked them.
+
+The patchset was too big, and I've already been trying to get it=20
+upstream for
+more than one year now. So I cut it in half in hope that it'll be=20
+easier to
+upstream it that way.
+
+>>=20
+>>   .../devicetree/bindings/timer/ingenic,tcu.txt | 59=20
+>> +++++++++++++++++++
+>>   1 file changed, 59 insertions(+)
+>>   create mode 100644=20
+>> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>=20
+>>  diff --git=20
+>> a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt=20
+>> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>  new file mode 100644
+>>  index 000000000000..d101cd72c9b0
+>>  --- /dev/null
+>>  +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>  @@ -0,0 +1,59 @@
+>>  +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+>>  +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>  +
+>>  +For a description of the TCU hardware and drivers, have a look at
+>>  +Documentation/mips/ingenic-tcu.txt.
+>>  +
+>>  +Required properties:
+>>  +
+>>  +- compatible: Must be one of:
+>>  +  * "ingenic,jz4740-tcu"
+>>  +  * "ingenic,jz4725b-tcu"
+>>  +  * "ingenic,jz4770-tcu"
+>>  +- reg: Should be the offset/length value corresponding to the TCU=20
+>> registers
+>>  +- clocks: List of phandle & clock specifiers for clocks external=20
+>> to the TCU.
+>>  +  The "pclk", "rtc" and "ext" clocks should be provided. The "tcu"=20
+>> clock
+>>  +  should be provided if the SoC has it.
+>>  +- clock-names: List of name strings for the external clocks.
+>>  +- #clock-cells: Should be <1>;
+>>  +  Clock consumers specify this argument to identify a clock. The=20
+>> valid values
+>>  +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+>>  +- interrupt-controller : Identifies the node as an interrupt=20
+>> controller
+>>  +- #interrupt-cells : Specifies the number of cells needed to=20
+>> encode an
+>>  +  interrupt source. The value should be 1.
+>>  +- interrupt-parent : phandle of the interrupt controller.
+>=20
+> Drop this 'interrupt-parent' is implied and could be in a parent node.
+>=20
+>>  +- interrupts : Specifies the interrupt the controller is connected=20
+>> to.
+>>  +
+>>  +Optional properties:
+>>  +
+>>  +- ingenic,pwm-channels-mask: Bitmask of TCU channels reserved for=20
+>> PWM use.
+>>  +  Default value is 0xfc.
+>>  +
+>>  +
+>>  +Example
+>>  +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>  +
+>>  +#include <dt-bindings/clock/jz4770-cgu.h>
+>>  +
+>>  +/ {
+>>  +	tcu: timer@10002000 {
+>>  +		compatible =3D "ingenic,jz4770-tcu";
+>>  +		reg =3D <0x10002000 0x1000>;
+>>  +		#address-cells =3D <1>;
+>>  +		#size-cells =3D <1>;
+>>  +		ranges =3D <0x0 0x10002000 0x1000>;
+>>  +
+>>  +		#clock-cells =3D <1>;
+>>  +
+>>  +		clocks =3D <&cgu JZ4770_CLK_RTC
+>>  +			  &cgu JZ4770_CLK_EXT
+>>  +			  &cgu JZ4770_CLK_PCLK>;
+>>  +		clock-names =3D "rtc", "ext", "pclk";
+>>  +
+>>  +		interrupt-controller;
+>>  +		#interrupt-cells =3D <1>;
+>>  +
+>>  +		interrupt-parent =3D <&intc>;
+>>  +		interrupts =3D <27 26 25>;
+>>  +	};
+>>  +};
+>>  --
+>>  2.21.0.593.g511ec345e18
+>>=20
+
+=
 
