@@ -2,273 +2,148 @@ Return-Path: <SRS0=8dxN=T3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6AAC04AB3
-	for <linux-clk@archiver.kernel.org>; Mon, 27 May 2019 10:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025ABC04AB3
+	for <linux-clk@archiver.kernel.org>; Mon, 27 May 2019 11:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71DCE208CA
-	for <linux-clk@archiver.kernel.org>; Mon, 27 May 2019 10:02:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFE1F20815
+	for <linux-clk@archiver.kernel.org>; Mon, 27 May 2019 11:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbfE0KC0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 May 2019 06:02:26 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:42895 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfE0KC0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 May 2019 06:02:26 -0400
-X-Originating-IP: 90.88.147.134
-Received: from localhost (aaubervilliers-681-1-27-134.w90-88.abo.wanadoo.fr [90.88.147.134])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 3D5B24000C;
-        Mon, 27 May 2019 10:02:22 +0000 (UTC)
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH] dt-bindings: clk: Convert Allwinner CCU to a schema
-Date:   Mon, 27 May 2019 12:02:19 +0200
-Message-Id: <20190527100219.11264-1-maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726351AbfE0Ljb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 May 2019 07:39:31 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44041 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbfE0Lja (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 May 2019 07:39:30 -0400
+Received: by mail-ot1-f66.google.com with SMTP id g18so14506656otj.11;
+        Mon, 27 May 2019 04:39:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V0OzTK0kT2ddqZaGr86QRO9HD6H6ELQHgY3vn9EoNSY=;
+        b=nxBPaLcOHEMMdpZHLjXHOILUXYM8fTOI5bfBJJzIuPdm5mvL9uczAcDCZzKQcheqrN
+         /sF7iVdTly8QcS37JohIugNQjMN+SdRwmaBlWSF/xXV+G21BU9sSG6IxvMYDy6VXPHka
+         fFkS2JnNuppbI0A+djLSGEumGqTrDD273Rcea3ZL1j3XS8ACje+k2KImh+nLJXhy2qgQ
+         7K+npPDh3CfHY22hHIYqECLOuBYeiWASF3C5kbgwIVMhNRZRDELzyr3e4j0wGdhtd3ch
+         n/RTnCJSfoeoWo1JNkNo4d5wo6AO5aBK5s7Iq7mjEAM5BnDWeIoU1nH0ddDGyz98XP9Q
+         4djg==
+X-Gm-Message-State: APjAAAV89id1kqpUo8Ajpos7Z4do0GkQNSRoWc00IV5DeQI2NoTE3B0V
+        qTmjmzwgYCtu+y4Fq030nQnnVHdu0JHoWMvMO34=
+X-Google-Smtp-Source: APXvYqzRJPkCqJiOx+VOhGWb3xNSagzD3mXtVwSHX6dsr/mX9srOC/7Nko7rnVoMhplnBtrellrsrHboMJ8YmHsuPBA=
+X-Received: by 2002:a9d:1a5:: with SMTP id e34mr44398857ote.59.1558957169445;
+ Mon, 27 May 2019 04:39:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190521145141.9813-1-paul@crapouillou.net>
+In-Reply-To: <20190521145141.9813-1-paul@crapouillou.net>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Mon, 27 May 2019 13:39:18 +0200
+Message-ID: <CA+7wUszagtyMV3oMxAi4VqpDeFcBY5ohXZ3PrXe-X5JV21bjBw@mail.gmail.com>
+Subject: Re: Ingenic Timer/Counter Unit (TCU) patchset v12
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Allwinner SoCs have a clocks controller supported in Linux, with a
-matching Device Tree binding.
+On Tue, May 21, 2019 at 4:51 PM Paul Cercueil <paul@crapouillou.net> wrote:
+>
+> Hi,
+>
+> Here's the V12 of my patchset to add support for the Timer/Counter Unit
+> (TCU) present on the JZ47xx SoCs from Ingenic.
+>
+> This patchset is much shorter at only 13 patches vs. 27 patches in V11;
+> the remaining patches will be sent in parallel (if applicable) or as a
+> follow-up patchset once this one is merged.
+>
+> In V11 the clocksource maintainers weren't happy with the size of the
+> ingenic-timer driver, which included clocks and irqchip setup code.
+> On the other hand, devicetree maintainers wanted one single node for
+> the TCU hardware since it's effectively just one hardware block.
+>
+> In this patchset the functionality is cut in four different drivers:
+> a MFD one to provide the regmap, probe the children and which provides
+> several API functions; a clocks driver; a irqchip driver; a clocksource
+> driver. All these drivers work with the same regmap, have the same
+> compatible strings, and will probe _with the same devicetree node_.
 
-Now that we have the DT validation in place, let's convert the device tree
-bindings for that controller over to a YAML schemas.
+For the series:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- .../clock/allwinner,sun4i-a10-ccu.yaml        | 141 ++++++++++++++++++
- .../devicetree/bindings/clock/sunxi-ccu.txt   |  62 --------
- 2 files changed, 141 insertions(+), 62 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+Tested-by: Mathieu Malaterre <malat@debian.org>
 
-diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
-new file mode 100644
-index 000000000000..c935405458fe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
-@@ -0,0 +1,141 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/allwinner,sun4i-a10-ccu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Allwinner Clock Control Unit Device Tree Bindings
-+
-+maintainers:
-+  - Chen-Yu Tsai <wens@csie.org>
-+  - Maxime Ripard <maxime.ripard@bootlin.com>
-+
-+properties:
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+  compatible:
-+    enum:
-+      - allwinner,sun4i-a10-ccu
-+      - allwinner,sun5i-a10s-ccu
-+      - allwinner,sun5i-a13-ccu
-+      - allwinner,sun6i-a31-ccu
-+      - allwinner,sun7i-a20-ccu
-+      - allwinner,sun8i-a23-ccu
-+      - allwinner,sun8i-a33-ccu
-+      - allwinner,sun8i-a83t-ccu
-+      - allwinner,sun8i-a83t-r-ccu
-+      - allwinner,sun8i-h3-ccu
-+      - allwinner,sun8i-h3-r-ccu
-+      - allwinner,sun8i-r40-ccu
-+      - allwinner,sun8i-v3s-ccu
-+      - allwinner,sun9i-a80-ccu
-+      - allwinner,sun50i-a64-ccu
-+      - allwinner,sun50i-a64-r-ccu
-+      - allwinner,sun50i-h5-ccu
-+      - allwinner,sun50i-h6-ccu
-+      - allwinner,sun50i-h6-r-ccu
-+      - allwinner,suniv-f1c100s-ccu
-+      - nextthing,gr8-ccu
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 4
-+    items:
-+      - description: High Frequency Oscillator (usually at 24MHz)
-+      - description: Low Frequency Oscillator (usually at 32kHz)
-+      - description: Internal Oscillator
-+      - description: Peripherals PLL
-+
-+  clock-names:
-+    minItems: 2
-+    maxItems: 4
-+    items:
-+      - const: hosc
-+      - const: losc
-+      - const: iosc
-+      - const: pll-periph
-+
-+required:
-+  - "#clock-cells"
-+  - "#reset-cells"
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - allwinner,sun8i-a83t-r-ccu
-+        - allwinner,sun8i-h3-r-ccu
-+        - allwinner,sun50i-a64-r-ccu
-+        - allwinner,sun50i-h6-r-ccu
-+
-+then:
-+  properties:
-+    clocks:
-+      minItems: 4
-+      maxItems: 4
-+
-+    clock-names:
-+      minItems: 4
-+      maxItems: 4
-+
-+else:
-+  if:
-+    properties:
-+      compatible:
-+        const: allwinner,sun50i-h6-ccu
-+
-+  then:
-+    properties:
-+      clocks:
-+        minItems: 3
-+        maxItems: 3
-+
-+      clock-names:
-+        minItems: 3
-+        maxItems: 3
-+
-+  else:
-+    properties:
-+      clocks:
-+        minItems: 2
-+        maxItems: 2
-+
-+      clock-names:
-+        minItems: 2
-+        maxItems: 2
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    ccu: clock@1c20000 {
-+        compatible = "allwinner,sun8i-h3-ccu";
-+        reg = <0x01c20000 0x400>;
-+        clocks = <&osc24M>, <&osc32k>;
-+        clock-names = "hosc", "losc";
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
-+
-+  - |
-+    r_ccu: clock@1f01400 {
-+        compatible = "allwinner,sun50i-a64-r-ccu";
-+        reg = <0x01f01400 0x100>;
-+        clocks = <&osc24M>, <&osc32k>, <&iosc>, <&ccu 11>;
-+        clock-names = "hosc", "losc", "iosc", "pll-periph";
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-deleted file mode 100644
-index e3bd88ae456b..000000000000
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ /dev/null
-@@ -1,62 +0,0 @@
--Allwinner Clock Control Unit Binding
--------------------------------------
--
--Required properties :
--- compatible: must contain one of the following compatibles:
--		- "allwinner,sun4i-a10-ccu"
--		- "allwinner,sun5i-a10s-ccu"
--		- "allwinner,sun5i-a13-ccu"
--		- "allwinner,sun6i-a31-ccu"
--		- "allwinner,sun7i-a20-ccu"
--		- "allwinner,sun8i-a23-ccu"
--		- "allwinner,sun8i-a33-ccu"
--		- "allwinner,sun8i-a83t-ccu"
--		- "allwinner,sun8i-a83t-r-ccu"
--		- "allwinner,sun8i-h3-ccu"
--		- "allwinner,sun8i-h3-r-ccu"
--+		- "allwinner,sun8i-r40-ccu"
--		- "allwinner,sun8i-v3s-ccu"
--		- "allwinner,sun9i-a80-ccu"
--		- "allwinner,sun50i-a64-ccu"
--		- "allwinner,sun50i-a64-r-ccu"
--		- "allwinner,sun50i-h5-ccu"
--		- "allwinner,sun50i-h6-ccu"
--		- "allwinner,sun50i-h6-r-ccu"
--		- "allwinner,suniv-f1c100s-ccu"
--		- "nextthing,gr8-ccu"
--
--- reg: Must contain the registers base address and length
--- clocks: phandle to the oscillators feeding the CCU. Two are needed:
--  - "hosc": the high frequency oscillator (usually at 24MHz)
--  - "losc": the low frequency oscillator (usually at 32kHz)
--	    On the A83T, this is the internal 16MHz oscillator divided by 512
--- clock-names: Must contain the clock names described just above
--- #clock-cells : must contain 1
--- #reset-cells : must contain 1
--
--For the main CCU on H6, one more clock is needed:
--- "iosc": the SoC's internal frequency oscillator
--
--For the PRCM CCUs on A83T/H3/A64/H6, two more clocks are needed:
--- "pll-periph": the SoC's peripheral PLL from the main CCU
--- "iosc": the SoC's internal frequency oscillator
--
--Example for generic CCU:
--ccu: clock@1c20000 {
--	compatible = "allwinner,sun8i-h3-ccu";
--	reg = <0x01c20000 0x400>;
--	clocks = <&osc24M>, <&osc32k>;
--	clock-names = "hosc", "losc";
--	#clock-cells = <1>;
--	#reset-cells = <1>;
--};
--
--Example for PRCM CCU:
--r_ccu: clock@1f01400 {
--	compatible = "allwinner,sun50i-a64-r-ccu";
--	reg = <0x01f01400 0x100>;
--	clocks = <&osc24M>, <&osc32k>, <&iosc>, <&ccu CLK_PLL_PERIPH0>;
--	clock-names = "hosc", "losc", "iosc", "pll-periph";
--	#clock-cells = <1>;
--	#reset-cells = <1>;
--};
--- 
-2.21.0
+System: MIPS Creator CI20
 
+For reference, here is my local patch:
+
+diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi
+b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+index 1bfac58da5df..e7b7da32f278 100644
+--- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/clock/jz4780-cgu.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
+ #include <dt-bindings/dma/jz4780-dma.h>
+
+ / {
+@@ -80,6 +81,15 @@
+
+                interrupt-parent = <&intc>;
+                interrupts = <27 26 25>;
++
++               watchdog: watchdog@0 {
++                       compatible = "ingenic,jz4780-watchdog";
++                       reg = <0x0 0xc>;
++
++                       clocks = <&tcu TCU_CLK_WDT>;
++                       clock-names = "wdt";
++               };
++
+        };
+
+        rtc_dev: rtc@10003000 {
+@@ -287,14 +297,6 @@
+                status = "disabled";
+        };
+
+-       watchdog: watchdog@10002000 {
+-               compatible = "ingenic,jz4780-watchdog";
+-               reg = <0x10002000 0x10>;
+-
+-               clocks = <&cgu JZ4780_CLK_RTCLK>;
+-               clock-names = "rtc";
+-       };
+-
+        nemc: nemc@13410000 {
+                compatible = "ingenic,jz4780-nemc";
+                reg = <0x13410000 0x10000>;
+
+
+
+> Regards,
+> -Paul
+>
+>
