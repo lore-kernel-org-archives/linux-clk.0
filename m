@@ -1,215 +1,274 @@
-Return-Path: <SRS0=Tmpv=TZ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=8dxN=T3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826D5C282E5
-	for <linux-clk@archiver.kernel.org>; Sat, 25 May 2019 19:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6AAC04AB3
+	for <linux-clk@archiver.kernel.org>; Mon, 27 May 2019 10:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE8320863
-	for <linux-clk@archiver.kernel.org>; Sat, 25 May 2019 19:13:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="AH5if3JP"
+	by mail.kernel.org (Postfix) with ESMTP id 71DCE208CA
+	for <linux-clk@archiver.kernel.org>; Mon, 27 May 2019 10:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfEYTNb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 May 2019 15:13:31 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:48590 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfEYTNb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 May 2019 15:13:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1558811606; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vnk800G1JVnIKGZ4wjv2ZwB3JURC8YSA1aiWxwD8qPY=;
-        b=AH5if3JPmyCbQgwcfuJeUGYe6Pj4ZsMs3TLhc1G/Jx0jb4IMDepAHoFWjclTE168W2rvzu
-        mSbk8Qdcc68fs/w9N8TkKHbSmp0licq6b0R55TSdQc+0Zbit4TVFzMBzqx2rwgRYjjggzj
-        5Mwz2vff2kCChadmRWi0X2pm358VaP8=
-Date:   Sat, 25 May 2019 21:13:16 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v12 03/13] dt-bindings: Add doc for the Ingenic TCU
- drivers
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, od@zcrc.me
-Message-Id: <1558811596.2016.1@crapouillou.net>
-In-Reply-To: <20190524202103.GA15650@bogus>
-References: <20190521145141.9813-1-paul@crapouillou.net>
-        <20190521145141.9813-4-paul@crapouillou.net> <20190524202103.GA15650@bogus>
+        id S1725973AbfE0KC0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 May 2019 06:02:26 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:42895 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfE0KC0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 May 2019 06:02:26 -0400
+X-Originating-IP: 90.88.147.134
+Received: from localhost (aaubervilliers-681-1-27-134.w90-88.abo.wanadoo.fr [90.88.147.134])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 3D5B24000C;
+        Mon, 27 May 2019 10:02:22 +0000 (UTC)
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH] dt-bindings: clk: Convert Allwinner CCU to a schema
+Date:   Mon, 27 May 2019 12:02:19 +0200
+Message-Id: <20190527100219.11264-1-maxime.ripard@bootlin.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The Allwinner SoCs have a clocks controller supported in Linux, with a
+matching Device Tree binding.
 
+Now that we have the DT validation in place, let's convert the device tree
+bindings for that controller over to a YAML schemas.
 
-Le ven. 24 mai 2019 =E0 22:21, Rob Herring <robh@kernel.org> a =E9crit :
-> On Tue, May 21, 2019 at 04:51:31PM +0200, Paul Cercueil wrote:
->>  Add documentation about how to properly use the Ingenic TCU
->>  (Timer/Counter Unit) drivers from devicetree.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>=20
->>  Notes:
->>      v4: New patch in this series. Corresponds to V2 patches 3-4-5=20
->> with
->>       added content.
->>=20
->>      v5: - Edited PWM/watchdog DT bindings documentation to point to=20
->> the new
->>         document.
->>       - Moved main document to
->>         Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>       - Updated documentation to reflect the new devicetree bindings.
->>=20
->>      v6: - Removed PWM/watchdog documentation files as asked by=20
->> upstream
->>       - Removed doc about properties that should be implicit
->>       - Removed doc about ingenic,timer-channel /
->>         ingenic,clocksource-channel as they are gone
->>       - Fix WDT clock name in the binding doc
->>       - Fix lengths of register areas in watchdog/pwm nodes
->>=20
->>      v7: No change
->>=20
->>      v8: - Fix address of the PWM node
->>       - Added doc about system timer and clocksource children nodes
->>=20
->>      v9: - Remove doc about system timer and clocksource children
->>         nodes...
->>      - Add doc about ingenic,pwm-channels-mask property
->>=20
->>      v10: No change
->>=20
->>      v11: Fix info about default value of ingenic,pwm-channels-mask
->>=20
->>      v12: Drop sub-nodes for now; they will be introduced in a=20
->> follow-up
->>      	 patchset.
->=20
-> Why? I believe I acked them.
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ .../clock/allwinner,sun4i-a10-ccu.yaml        | 141 ++++++++++++++++++
+ .../devicetree/bindings/clock/sunxi-ccu.txt   |  62 --------
+ 2 files changed, 141 insertions(+), 62 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/sunxi-ccu.txt
 
-The patchset was too big, and I've already been trying to get it=20
-upstream for
-more than one year now. So I cut it in half in hope that it'll be=20
-easier to
-upstream it that way.
-
->>=20
->>   .../devicetree/bindings/timer/ingenic,tcu.txt | 59=20
->> +++++++++++++++++++
->>   1 file changed, 59 insertions(+)
->>   create mode 100644=20
->> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>=20
->>  diff --git=20
->> a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt=20
->> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>  new file mode 100644
->>  index 000000000000..d101cd72c9b0
->>  --- /dev/null
->>  +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>  @@ -0,0 +1,59 @@
->>  +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
->>  +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>  +
->>  +For a description of the TCU hardware and drivers, have a look at
->>  +Documentation/mips/ingenic-tcu.txt.
->>  +
->>  +Required properties:
->>  +
->>  +- compatible: Must be one of:
->>  +  * "ingenic,jz4740-tcu"
->>  +  * "ingenic,jz4725b-tcu"
->>  +  * "ingenic,jz4770-tcu"
->>  +- reg: Should be the offset/length value corresponding to the TCU=20
->> registers
->>  +- clocks: List of phandle & clock specifiers for clocks external=20
->> to the TCU.
->>  +  The "pclk", "rtc" and "ext" clocks should be provided. The "tcu"=20
->> clock
->>  +  should be provided if the SoC has it.
->>  +- clock-names: List of name strings for the external clocks.
->>  +- #clock-cells: Should be <1>;
->>  +  Clock consumers specify this argument to identify a clock. The=20
->> valid values
->>  +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
->>  +- interrupt-controller : Identifies the node as an interrupt=20
->> controller
->>  +- #interrupt-cells : Specifies the number of cells needed to=20
->> encode an
->>  +  interrupt source. The value should be 1.
->>  +- interrupt-parent : phandle of the interrupt controller.
->=20
-> Drop this 'interrupt-parent' is implied and could be in a parent node.
->=20
->>  +- interrupts : Specifies the interrupt the controller is connected=20
->> to.
->>  +
->>  +Optional properties:
->>  +
->>  +- ingenic,pwm-channels-mask: Bitmask of TCU channels reserved for=20
->> PWM use.
->>  +  Default value is 0xfc.
->>  +
->>  +
->>  +Example
->>  +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>  +
->>  +#include <dt-bindings/clock/jz4770-cgu.h>
->>  +
->>  +/ {
->>  +	tcu: timer@10002000 {
->>  +		compatible =3D "ingenic,jz4770-tcu";
->>  +		reg =3D <0x10002000 0x1000>;
->>  +		#address-cells =3D <1>;
->>  +		#size-cells =3D <1>;
->>  +		ranges =3D <0x0 0x10002000 0x1000>;
->>  +
->>  +		#clock-cells =3D <1>;
->>  +
->>  +		clocks =3D <&cgu JZ4770_CLK_RTC
->>  +			  &cgu JZ4770_CLK_EXT
->>  +			  &cgu JZ4770_CLK_PCLK>;
->>  +		clock-names =3D "rtc", "ext", "pclk";
->>  +
->>  +		interrupt-controller;
->>  +		#interrupt-cells =3D <1>;
->>  +
->>  +		interrupt-parent =3D <&intc>;
->>  +		interrupts =3D <27 26 25>;
->>  +	};
->>  +};
->>  --
->>  2.21.0.593.g511ec345e18
->>=20
-
-=
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
+new file mode 100644
+index 000000000000..c935405458fe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
+@@ -0,0 +1,141 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/allwinner,sun4i-a10-ccu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Allwinner Clock Control Unit Device Tree Bindings
++
++maintainers:
++  - Chen-Yu Tsai <wens@csie.org>
++  - Maxime Ripard <maxime.ripard@bootlin.com>
++
++properties:
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  compatible:
++    enum:
++      - allwinner,sun4i-a10-ccu
++      - allwinner,sun5i-a10s-ccu
++      - allwinner,sun5i-a13-ccu
++      - allwinner,sun6i-a31-ccu
++      - allwinner,sun7i-a20-ccu
++      - allwinner,sun8i-a23-ccu
++      - allwinner,sun8i-a33-ccu
++      - allwinner,sun8i-a83t-ccu
++      - allwinner,sun8i-a83t-r-ccu
++      - allwinner,sun8i-h3-ccu
++      - allwinner,sun8i-h3-r-ccu
++      - allwinner,sun8i-r40-ccu
++      - allwinner,sun8i-v3s-ccu
++      - allwinner,sun9i-a80-ccu
++      - allwinner,sun50i-a64-ccu
++      - allwinner,sun50i-a64-r-ccu
++      - allwinner,sun50i-h5-ccu
++      - allwinner,sun50i-h6-ccu
++      - allwinner,sun50i-h6-r-ccu
++      - allwinner,suniv-f1c100s-ccu
++      - nextthing,gr8-ccu
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    maxItems: 4
++    items:
++      - description: High Frequency Oscillator (usually at 24MHz)
++      - description: Low Frequency Oscillator (usually at 32kHz)
++      - description: Internal Oscillator
++      - description: Peripherals PLL
++
++  clock-names:
++    minItems: 2
++    maxItems: 4
++    items:
++      - const: hosc
++      - const: losc
++      - const: iosc
++      - const: pll-periph
++
++required:
++  - "#clock-cells"
++  - "#reset-cells"
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++if:
++  properties:
++    compatible:
++      enum:
++        - allwinner,sun8i-a83t-r-ccu
++        - allwinner,sun8i-h3-r-ccu
++        - allwinner,sun50i-a64-r-ccu
++        - allwinner,sun50i-h6-r-ccu
++
++then:
++  properties:
++    clocks:
++      minItems: 4
++      maxItems: 4
++
++    clock-names:
++      minItems: 4
++      maxItems: 4
++
++else:
++  if:
++    properties:
++      compatible:
++        const: allwinner,sun50i-h6-ccu
++
++  then:
++    properties:
++      clocks:
++        minItems: 3
++        maxItems: 3
++
++      clock-names:
++        minItems: 3
++        maxItems: 3
++
++  else:
++    properties:
++      clocks:
++        minItems: 2
++        maxItems: 2
++
++      clock-names:
++        minItems: 2
++        maxItems: 2
++
++additionalProperties: false
++
++examples:
++  - |
++    ccu: clock@1c20000 {
++        compatible = "allwinner,sun8i-h3-ccu";
++        reg = <0x01c20000 0x400>;
++        clocks = <&osc24M>, <&osc32k>;
++        clock-names = "hosc", "losc";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
++
++  - |
++    r_ccu: clock@1f01400 {
++        compatible = "allwinner,sun50i-a64-r-ccu";
++        reg = <0x01f01400 0x100>;
++        clocks = <&osc24M>, <&osc32k>, <&iosc>, <&ccu 11>;
++        clock-names = "hosc", "losc", "iosc", "pll-periph";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+deleted file mode 100644
+index e3bd88ae456b..000000000000
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ /dev/null
+@@ -1,62 +0,0 @@
+-Allwinner Clock Control Unit Binding
+-------------------------------------
+-
+-Required properties :
+-- compatible: must contain one of the following compatibles:
+-		- "allwinner,sun4i-a10-ccu"
+-		- "allwinner,sun5i-a10s-ccu"
+-		- "allwinner,sun5i-a13-ccu"
+-		- "allwinner,sun6i-a31-ccu"
+-		- "allwinner,sun7i-a20-ccu"
+-		- "allwinner,sun8i-a23-ccu"
+-		- "allwinner,sun8i-a33-ccu"
+-		- "allwinner,sun8i-a83t-ccu"
+-		- "allwinner,sun8i-a83t-r-ccu"
+-		- "allwinner,sun8i-h3-ccu"
+-		- "allwinner,sun8i-h3-r-ccu"
+-+		- "allwinner,sun8i-r40-ccu"
+-		- "allwinner,sun8i-v3s-ccu"
+-		- "allwinner,sun9i-a80-ccu"
+-		- "allwinner,sun50i-a64-ccu"
+-		- "allwinner,sun50i-a64-r-ccu"
+-		- "allwinner,sun50i-h5-ccu"
+-		- "allwinner,sun50i-h6-ccu"
+-		- "allwinner,sun50i-h6-r-ccu"
+-		- "allwinner,suniv-f1c100s-ccu"
+-		- "nextthing,gr8-ccu"
+-
+-- reg: Must contain the registers base address and length
+-- clocks: phandle to the oscillators feeding the CCU. Two are needed:
+-  - "hosc": the high frequency oscillator (usually at 24MHz)
+-  - "losc": the low frequency oscillator (usually at 32kHz)
+-	    On the A83T, this is the internal 16MHz oscillator divided by 512
+-- clock-names: Must contain the clock names described just above
+-- #clock-cells : must contain 1
+-- #reset-cells : must contain 1
+-
+-For the main CCU on H6, one more clock is needed:
+-- "iosc": the SoC's internal frequency oscillator
+-
+-For the PRCM CCUs on A83T/H3/A64/H6, two more clocks are needed:
+-- "pll-periph": the SoC's peripheral PLL from the main CCU
+-- "iosc": the SoC's internal frequency oscillator
+-
+-Example for generic CCU:
+-ccu: clock@1c20000 {
+-	compatible = "allwinner,sun8i-h3-ccu";
+-	reg = <0x01c20000 0x400>;
+-	clocks = <&osc24M>, <&osc32k>;
+-	clock-names = "hosc", "losc";
+-	#clock-cells = <1>;
+-	#reset-cells = <1>;
+-};
+-
+-Example for PRCM CCU:
+-r_ccu: clock@1f01400 {
+-	compatible = "allwinner,sun50i-a64-r-ccu";
+-	reg = <0x01f01400 0x100>;
+-	clocks = <&osc24M>, <&osc32k>, <&iosc>, <&ccu CLK_PLL_PERIPH0>;
+-	clock-names = "hosc", "losc", "iosc", "pll-periph";
+-	#clock-cells = <1>;
+-	#reset-cells = <1>;
+-};
+-- 
+2.21.0
 
