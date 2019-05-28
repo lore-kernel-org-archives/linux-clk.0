@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A842AC04AB6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 07:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0935C072B1
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 07:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 888AA20717
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 07:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A399720883
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 07:34:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfE1H3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 May 2019 03:29:09 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42043 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbfE1H3J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 03:29:09 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y13so13706517lfh.9;
-        Tue, 28 May 2019 00:29:07 -0700 (PDT)
+        id S1726816AbfE1Hen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 May 2019 03:34:43 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38305 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbfE1Hem (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 03:34:42 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 14so16695311ljj.5;
+        Tue, 28 May 2019 00:34:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hd2ztrPa+/Jspv+88ZdGM7xjRP1HllQItAwAUGW3LRI=;
-        b=QpLdjelLA3HG8W7J0qqEUAvL8AgpDZNnHOCWfWnGNXyHyRufR58QFfwJAal8V0WOMX
-         GQaHY6ohSIZzqhgVcCr7GnaS7Ngz8rFNoQqyuoyd9WguexeVCZCQRXk79v8NGGMvHE4j
-         pLQjmv1UbV/k4H72vhB/Cl0w3Uyucg/8uxT485fwfhlm7N/Z8KmlPyuSdNQu+rvpxpcw
-         N36kmwGsOtKMH2KEIgrX9mDB23ook0jhsU1E8x3o1C0lTE65Y55aphDNX1TJ0hDEPned
-         XW+W4k7Wgv2UJeR9wK06bpJ4KsCNcpdvljLT3FWfxGmzfUkov4X9Oxc3Wsf8jzTkrbZO
-         hoUg==
-X-Gm-Message-State: APjAAAU/P99heey4X39O5VLmWSIEI7Gf4tpjVsvzqGZqhrLTb/GNKd+b
-        3gnd2Y/e6/6jBzGfbissqpZLCVakL6ok1Dg043w=
-X-Google-Smtp-Source: APXvYqz9vHfVvbiwy5f5TN/g85aWH14wVF+UEIVfXq7XO4eOsFQL7OTr/XH5SoitkvqVhSY+4KVeEqebYEVCJDL32MU=
-X-Received: by 2002:ac2:52a8:: with SMTP id r8mr25092524lfm.20.1559028546947;
- Tue, 28 May 2019 00:29:06 -0700 (PDT)
+        bh=trapB6GCH6DrFYhLqm2TbydlBbFBOqjrTPKFBvYve8U=;
+        b=UL/Alc6+GYMD9p6SduN+9qtTmrRUYk5N+x4HcCJti7iMA/2gV42kZoU2D6H2sBaPej
+         4hReoi49Nny0v7Of7JQDRX6zxgXIltUS6Aup5b2MMdA1xYEas1kEGiDJlEHAZN+OGBRV
+         9wo+U6SZD860sJ/4eR625xPKnxtijIVkHoyJzkzmZOoK/hoNpcMuYy/o/cxwqrSmB+ja
+         tsLXG4c2D4lx1LUNvjEseuYR5wgjDbSa5kGFxP59muP7hLt5qJq3SrC62r3OEYlI3mUq
+         TNAzwxHai6PqBaFyMaQt0s7E27NZ6GXoLPKV0a4EfIzDJa3o89cfYSL/P/z9uh9pdOmo
+         d94A==
+X-Gm-Message-State: APjAAAWriTG2h8h7NICWKtd02a4zF/IQQvEqWZeiXXSmqhQDqliLBteg
+        yGzn1VDs4BLRM+4/odPFFMIWBBbmOxPhr2rYAss=
+X-Google-Smtp-Source: APXvYqy2qQI+pzVbL0x7gFnfPgU8bYHNW5+5eXWGv1zv7eVDWBC5pYEB/0mszyVJkiZmsuOWedYDfj78KMwjiypaGvY=
+X-Received: by 2002:a2e:249:: with SMTP id 70mr60692698ljc.178.1559028880499;
+ Tue, 28 May 2019 00:34:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <1558711904-27278-1-git-send-email-gareth.williams.jx@renesas.com> <1558711904-27278-2-git-send-email-gareth.williams.jx@renesas.com>
-In-Reply-To: <1558711904-27278-2-git-send-email-gareth.williams.jx@renesas.com>
+References: <1558711904-27278-1-git-send-email-gareth.williams.jx@renesas.com> <1558711904-27278-3-git-send-email-gareth.williams.jx@renesas.com>
+In-Reply-To: <1558711904-27278-3-git-send-email-gareth.williams.jx@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 28 May 2019 09:28:55 +0200
-Message-ID: <CAMuHMdV2jmY2u1-Z6cRR1OQcfW8U0HM_ac-xn1gO9nPf41iD+A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: renesas,r9a06g032-sysctrl:
- Document power Domains
+Date:   Tue, 28 May 2019 09:34:29 +0200
+Message-ID: <CAMuHMdU_+U0iW+35OVZ-ExquE1s0bUtjM5e63zaOU9WFy8j_UA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: renesas: r9a06g032: Add clock domain support
 To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
@@ -64,40 +61,81 @@ Hi Gareth,
 
 On Fri, May 24, 2019 at 5:32 PM Gareth Williams
 <gareth.williams.jx@renesas.com> wrote:
-> The driver is gaining power domain support, so add the new property
-> to the DT binding and update the examples.
+> There are several clocks on the r9ag032 which are currently not enabled
+> in their drivers that can be delegated to clock domain system for power
+> management. Therefore add support for clock domain functionality to the
+> r9a06g032 clock driver.
 >
 > Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
 
-Thanks for your patch!
+Thanks for the update!
 
-> --- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-@@ -40,4 +42,5 @@ Examples
->                 reg-io-width = <4>;
->                 clocks = <&sysctrl R9A06G032_CLK_UART0>;
->                 clock-names = "baudclk";
-> +               power-domains = <&sysctrl>;
+> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
 
-This is an interesting example: according to the driver,
-R9A06G032_CLK_UART0, is not clock used for power management?
+> @@ -344,6 +351,86 @@ struct r9a06g032_clk_gate {
+>
+>  #define to_r9a06g032_gate(_hw) container_of(_hw, struct r9a06g032_clk_gate, hw)
+>
+> +static int create_add_module_clock(struct of_phandle_args *clkspec,
+> +                                  struct device *dev)
+> +{
+> +       struct clk *clk;
+> +       int error = 0;
 
-Oh, the real uart0 node in arch/arm/boot/dts/r9a06g032.dtsi uses
+No need to initialize to 0.
 
-    clocks = <&sysctrl R9A06G032_CLK_UART0>, <&sysctrl R9A06G032_HCLK_UART0>;
-    clock-names = "baudclk", "apb_pclk";
+> +
+> +       clk = of_clk_get_from_provider(clkspec);
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+> +
+> +       error = pm_clk_create(dev);
 
-That does make sense...
+> +static int r9a06g032_attach_dev(struct generic_pm_domain *pd,
+> +                               struct device *dev)
+> +{
+> +       struct device_node *np = dev->of_node;
+> +       struct of_phandle_args clkspec;
+> +       int i = 0;
+> +       int error;
+> +
+> +       while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
+> +                                          &clkspec)) {
+> +               int index;
 
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+scripts/checkpatch.pl says a blank line is missing.
+Alternatively, you can move the declaration of index to the top of the
+function, together with error and i.
+
+> +               if (clkspec.np != pd->dev.of_node)
+> +                       continue;
+> +
+> +               index = clkspec.args[0];
+> +
+> +               if (index < R9A06G032_CLOCK_COUNT &&
+> +                   r9a06g032_clocks[index].managed) {
+> +                       of_node_put(clkspec.np);
+
+As the call below uses clkspec.np, the call to of_node_put() should be
+after it, just before the error check.
+
+> +
+> +                       error = create_add_module_clock(&clkspec, dev);
+> +                       if (error)
+> +                               return error;
+> +               }
+> +               i++;
+> +       }
+> +
+> +       return 0;
+> +}
 
 Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
