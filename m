@@ -7,38 +7,35 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A799C04AB6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ABBC04AB6
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D569A20989
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7579220989
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:10:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QONgxij4"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aZrcrlN+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfE1XJC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 May 2019 19:09:02 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16479 "EHLO
+        id S1727013AbfE1XJ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 May 2019 19:09:59 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16496 "EHLO
         hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbfE1XJC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 19:09:02 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cedbf8b0000>; Tue, 28 May 2019 16:08:59 -0700
+        with ESMTP id S1727147AbfE1XJB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 19:09:01 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cedbf8c0001>; Tue, 28 May 2019 16:09:00 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 28 May 2019 16:08:59 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 28 May 2019 16:09:00 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 28 May 2019 16:08:59 -0700
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
+        by hqpgpgate101.nvidia.com on Tue, 28 May 2019 16:09:00 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
  2019 23:08:59 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
- 2019 23:08:59 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Tue, 28 May 2019 23:08:59 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.86]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cedbf8a0001>; Tue, 28 May 2019 16:08:58 -0700
+        id <B5cedbf8b0003>; Tue, 28 May 2019 16:08:59 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -51,9 +48,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH V2 01/12] irqchip: tegra: do not disable COP IRQ during suspend
-Date:   Tue, 28 May 2019 16:08:45 -0700
-Message-ID: <1559084936-4610-2-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V2 04/12] clk: tegra: add support for peripheral clock suspend and resume
+Date:   Tue, 28 May 2019 16:08:48 -0700
+Message-ID: <1559084936-4610-5-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
@@ -61,101 +58,147 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559084939; bh=gZyRtIANwX5Bl+mFYFbUEqD2HKsVf6EHmX45U++ZyJo=;
+        t=1559084940; bh=xFOmjeaoCNKZGSYsRBa0HN3DzU4TBaJQr2OcS9aU+yo=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=QONgxij4Bt3SsjH0DI8ZOagMIx1eK0UwdB6S5/JuTl+epqAYCtfudpXZrJFizC8vS
-         czd+TtKwgBi/DeEPp4YNGA41jWYWrKWlO5nkiHB9BhBdQGhiTcSw1y2B0edaTTGGD5
-         WMl+OY8yedtKD3vSyi+CutE16UAfxKxZdXXaPJA3pVObag4XVwcCi6NqBqYqjCxZq5
-         870b0rtSkcrO8N7JJeHCUJLM0rGEl21FisNGkJqROSesCXpmn40bukDudpafnAs7U5
-         4kKxEAnHk+NZNDFcu7/Yo/hKgDP1CoFFsQjCVgnvglGAsBVYrfbp7f7w+Vq9ixpOY1
-         j3QJY2DP/WySw==
+        b=aZrcrlN+dCGQehBr2IcQ67Mf1RMkZXisnfCh06ISK0M4+16+MRCACtn9mUX47zRAp
+         CmHdnHWCbB4BXerkBFhbUWjpeJFX/fW8YzxB4GBo12iDTuk4L/kGZe9iVA5nb5OpFm
+         oibUJrKPUVGy+ZDLE0MJ1PUpBpUqQgr3FNLLuoYVjg4EfN1UjpxcAlU1GZdC9T4OT4
+         V4E8l4TfR9DxWayZn1Jx5N6LZoDVKIhi5Ph0vwniu/FRHvNGhfvU9GZ33CiiCui8Yp
+         Y9yk8v9ZRnoltl/Mpc7SLI/Hot4tJXzh+P+4vnifp750SIk7Q4nL9FL5F3Jocah/yy
+         Lg9ggsrzx4OWQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
-sequence and sc7 entry firmware is run from COP/BPMP-Lite.
-
-So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
-for Tegra210.
-
-This patch has fix for leaving the COP IRQ enabled for Tegra210 during
-interrupt controller suspend operation.
+This patch implements peripheral clock context save and restore
+to support system suspend and resume operation.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/irqchip/irq-tegra.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk.c | 74 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h |  3 ++
+ 2 files changed, 76 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-index 0abc0cd1c32e..deab3ba606e2 100644
---- a/drivers/irqchip/irq-tegra.c
-+++ b/drivers/irqchip/irq-tegra.c
-@@ -53,18 +53,22 @@ static unsigned int num_ictlrs;
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index 6f2862eddad7..08b788766564 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -81,6 +81,10 @@ static struct clk **clks;
+ static int clk_num;
+ static struct clk_onecell_data clk_data;
  
- struct tegra_ictlr_soc {
- 	unsigned int num_ictlrs;
-+	bool has_bpmp_fw;
- };
- 
- static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
- 	.num_ictlrs = 4,
-+	.has_bpmp_fw = false,
- };
- 
- static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
- 	.num_ictlrs = 5,
-+	.has_bpmp_fw = false,
- };
- 
- static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
- 	.num_ictlrs = 6,
-+	.has_bpmp_fw = true,
- };
- 
- static const struct of_device_id ictlr_matches[] = {
-@@ -76,6 +80,7 @@ static const struct of_device_id ictlr_matches[] = {
- 
- struct tegra_ictlr_info {
- 	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
-+	struct tegra_ictlr_soc *soc;
- #ifdef CONFIG_PM_SLEEP
- 	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
- 	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
-@@ -156,8 +161,20 @@ static int tegra_ictlr_suspend(void)
- 		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
- 		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
- 
--		/* Disable COP interrupts */
--		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-+		/*
-+		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
-+		 *
-+		 * Tegra210 system suspend flow uses sc7entry firmware which
-+		 * is executed by COP/BPMP and it includes disabling COP IRQ,
-+		 * clamping CPU rail, turning off VDD_CPU, and preparing the
-+		 * system to go to LP0.
-+		 *
-+		 * COP/BPMP wakes up when COP IRQ is triggered and runs
-+		 * sc7entry-firmware. So need to keep COP interrupt enabled
-+		 * for Tegra210.
-+		 */
-+		if (!lic->soc->has_bpmp_fw)
-+			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
- 
- 		/* Disable CPU interrupts */
- 		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
-@@ -348,6 +365,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
- 		goto out_unmap;
++#ifdef CONFIG_PM_SLEEP
++static u32 *periph_ctx;
++#endif
++
+ /* Handlers for SoC-specific reset lines */
+ static int (*special_reset_assert)(unsigned long);
+ static int (*special_reset_deassert)(unsigned long);
+@@ -210,6 +214,65 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
  	}
+ }
  
-+	lic->soc = soc;
- 	tegra_ictlr_syscore_init();
++#ifdef CONFIG_PM_SLEEP
++void tegra_clk_periph_suspend(void __iomem *clk_base)
++{
++	int i, idx;
++
++	idx = 0;
++	for (i = 0; i < periph_banks; i++, idx++)
++		periph_ctx[idx] =
++			readl_relaxed(clk_base + periph_regs[i].rst_reg);
++
++	for (i = 0; i < periph_banks; i++, idx++)
++		periph_ctx[idx] =
++			readl_relaxed(clk_base + periph_regs[i].enb_reg);
++}
++
++void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base)
++{
++	int i;
++
++	WARN_ON(count != periph_banks);
++
++	for (i = 0; i < count; i++)
++		writel_relaxed(clks_on[i], clk_base + periph_regs[i].enb_reg);
++}
++
++void tegra_clk_periph_resume(void __iomem *clk_base)
++{
++	int i, idx;
++
++	idx = 0;
++	for (i = 0; i < periph_banks; i++, idx++)
++		writel_relaxed(periph_ctx[idx],
++			       clk_base + periph_regs[i].rst_reg);
++
++	/* ensure all resets have propagated */
++	fence_udelay(2, clk_base);
++	tegra_read_chipid();
++
++	for (i = 0; i < periph_banks; i++, idx++)
++		writel_relaxed(periph_ctx[idx],
++			       clk_base + periph_regs[i].enb_reg);
++
++	/* ensure all enables have propagated */
++	fence_udelay(2, clk_base);
++	tegra_read_chipid();
++}
++
++static int tegra_clk_suspend_ctx_init(int banks)
++{
++	int err = 0;
++
++	periph_ctx = kzalloc(2 * banks * sizeof(*periph_ctx), GFP_KERNEL);
++	if (!periph_ctx)
++		err = -ENOMEM;
++
++	return err;
++}
++#endif
++
+ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ {
+ 	clk_base = regs;
+@@ -226,11 +289,20 @@ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ 	periph_banks = banks;
  
- 	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
+ 	clks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
+-	if (!clks)
++	if (!clks) {
+ 		kfree(periph_clk_enb_refcnt);
++		return NULL;
++	}
+ 
+ 	clk_num = num;
+ 
++#ifdef CONFIG_PM_SLEEP
++	if (tegra_clk_suspend_ctx_init(banks)) {
++		kfree(periph_clk_enb_refcnt);
++		kfree(clks);
++		return NULL;
++	}
++#endif
+ 	return clks;
+ }
+ 
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index e4d124cc5657..ab238b2c3125 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -848,6 +848,9 @@ void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate);
+ void tegra_clk_plle_tegra210_resume(struct clk *c);
+ void tegra_clk_sync_state_pll(struct clk *c);
+ void tegra_clk_sync_state_pll_out(struct clk *clk);
++void tegra_clk_periph_suspend(void __iomem *clk_base);
++void tegra_clk_periph_resume(void __iomem *clk_base);
++void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base);
+ #endif
+ 
+ 
 -- 
 2.7.4
 
