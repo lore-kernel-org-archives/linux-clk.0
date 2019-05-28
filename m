@@ -5,37 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF36C04AB6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA11C072B1
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A3A20989
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2479B217F9
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LovV5aJ0"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="n4b2Rrh6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfE1XJN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 May 2019 19:09:13 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11196 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbfE1XJE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 19:09:04 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cedbf850001>; Tue, 28 May 2019 16:08:53 -0700
+        id S1727842AbfE1XJU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 May 2019 19:09:20 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16508 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbfE1XJD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 19:09:03 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cedbf8d0000>; Tue, 28 May 2019 16:09:01 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
+  by hqpgpgate102.nvidia.com (PGP Universal service);
   Tue, 28 May 2019 16:09:01 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 May 2019 16:09:01 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
- 2019 23:09:01 +0000
+        by hqpgpgate102.nvidia.com on Tue, 28 May 2019 16:09:01 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
+ 2019 23:09:00 +0000
 Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 28 May 2019 23:09:01 +0000
+ Transport; Tue, 28 May 2019 23:09:00 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.86]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cedbf8c0012>; Tue, 28 May 2019 16:09:00 -0700
+        id <B5cedbf8c000f>; Tue, 28 May 2019 16:09:00 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -48,9 +48,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH V2 11/12] arm64: tegra: enable wake from deep sleep on RTC alarm.
-Date:   Tue, 28 May 2019 16:08:55 -0700
-Message-ID: <1559084936-4610-12-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V2 08/12] soc/tegra: pmc: allow support for more tegra wake models
+Date:   Tue, 28 May 2019 16:08:52 -0700
+Message-ID: <1559084936-4610-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
@@ -58,52 +58,107 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559084933; bh=0l4gC+Qj0JmgYVzpD51BKCVjV4o0qtIe+OiFzC2IyHA=;
+        t=1559084941; bh=TL2n3OtdXxVcQiiOyjZYY5RCn0QsZt4TN9LjjdGwntQ=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=LovV5aJ0tEX82byBH3tCz6/VwLbrK1FSYX/Z3Ng4spRzao8ATjbMWMNVGsFc+xLNv
-         88j5TkQTl77TkvLcNJrlf+fq8hsKZAISyoJIUgB4Tc7cYIhZdQRjvQY5Y9MZMHlCyu
-         c5x4iQ+eeVJXqZtGsNNjjRNvFOsrewPLiPiCrmya+6Wy7ek/mQbT1YVNMBPY1EgadK
-         RQuRTqJpw5nmgTJws0TmztcOAoF6TmiDV7+BtVLDc2dVr4cS0raKs3jwr+IxNG3/Nl
-         Mw24jBRxE8w/pujebCbHSKlyAa6gkQzPCAaSVz/3GgFH3EqpBPwXzlFV6dThrqG3VO
-         12pn60KwfVRtg==
+        b=n4b2Rrh6ZaSzF6CJOF8VIdMV9ny9aw9gw4H6543MXoqH1h8ZVndMmhwnC4u0mOYij
+         Y6Y2on8KNFx5WZstUKcQO0gUfBOtBVacTaJUsO0BsMoqdweK6jmwS+nWgskYJtcEuF
+         4zoWhJ7iBoVAikxfkfKfzWs7lch1d38fIyLR6nkr2/AnT8nR+aiVvWD+feT/X2k/Jy
+         3mfNfr5itUCcD3MzuIgtkaMLF/mqYyzdnkzhN3ZcMfHdvoiZyCLrBZfHbeq1pUTnMq
+         1HRVCH51RZNFSbVF8SbaHpCObOZINJWv67bUgg1SGyf7WFoyhdjvgp3ehXWwH6V+jC
+         m0uhhAP4QsbTg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch updates device tree for RTC and PMC to allow system wake
-from deep sleep on RTC alarm.
+This patch allows to create separate irq_set_wake and irq_set_type
+implementations for different tegra designs PMC that has different
+wake models which require difference wake registers and different
+programming sequence.
+
+AOWAKE model support is available for Tegra186 and Tegra194 only
+and it resides within PMC and supports tiered wake architecture.
+
+Tegra210 and prior tegra designs uses PMC directly to receive wake
+events and coordinate the wake sequence.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/soc/tegra/pmc.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index a550c0a4d572..cf5c215efb04 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -763,7 +763,8 @@
- 	rtc@7000e000 {
- 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x0 0x7000e000 0x0 0x100>;
--		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-parent = <&pmc>;
- 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
- 		clock-names = "rtc";
- 	};
-@@ -773,6 +774,8 @@
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 5648e5c09ef5..974b4c9f6ada 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -235,6 +235,8 @@ struct tegra_pmc_soc {
+ 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+ 				   struct device_node *np,
+ 				   bool invert);
++	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
++	int (*irq_set_type)(struct irq_data *data, unsigned int type);
  
- 		powergates {
- 			pd_audio: aud {
+ 	const char * const *reset_sources;
+ 	unsigned int num_reset_sources;
+@@ -1915,12 +1917,15 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+ 	.alloc = tegra_pmc_irq_alloc,
+ };
+ 
+-static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
++static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	unsigned int offset, bit;
+ 	u32 value;
+ 
++	if (data->hwirq == ULONG_MAX)
++		return 0;
++
+ 	offset = data->hwirq / 32;
+ 	bit = data->hwirq % 32;
+ 
+@@ -1943,7 +1948,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ 	return 0;
+ }
+ 
+-static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
++static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	u32 value;
+@@ -1996,8 +2001,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+ 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+ 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+ 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+-	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+-	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
++	if (pmc->soc->irq_set_type)
++		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
++	if (pmc->soc->irq_set_wake)
++		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+ 
+ 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+ 					       &tegra_pmc_irq_domain_ops, pmc);
+@@ -2670,6 +2677,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.regs = &tegra186_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
++	.irq_set_wake = tegra186_pmc_irq_set_wake,
++	.irq_set_type = tegra186_pmc_irq_set_type,
+ 	.reset_sources = tegra186_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
+ 	.reset_levels = tegra186_reset_levels,
+@@ -2748,6 +2757,8 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+ 	.regs = &tegra186_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
++	.irq_set_wake = tegra186_pmc_irq_set_wake,
++	.irq_set_type = tegra186_pmc_irq_set_type,
+ 	.num_wake_events = ARRAY_SIZE(tegra194_wake_events),
+ 	.wake_events = tegra194_wake_events,
+ };
 -- 
 2.7.4
 
