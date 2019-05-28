@@ -2,40 +2,43 @@ Return-Path: <SRS0=Al5s=T4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ABBC04AB6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A94C072B1
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7579220989
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B8E21734
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:10:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aZrcrlN+"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WmcwXPva"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbfE1XJ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 May 2019 19:09:59 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16496 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727147AbfE1XJB (ORCPT
+        id S1727274AbfE1XJB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 May 2019 19:09:01 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:9103 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbfE1XJB (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 19:09:01 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cedbf8c0001>; Tue, 28 May 2019 16:09:00 -0700
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cedbf8b0000>; Tue, 28 May 2019 16:08:59 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 28 May 2019 16:09:00 -0700
+  Tue, 28 May 2019 16:08:59 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 May 2019 16:09:00 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
+        by hqpgpgate101.nvidia.com on Tue, 28 May 2019 16:08:59 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
  2019 23:08:59 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 28 May 2019 23:08:59 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
+ 2019 23:08:58 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 28 May 2019 23:08:58 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.86]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cedbf8b0003>; Tue, 28 May 2019 16:08:59 -0700
+        id <B5cedbf8a0000>; Tue, 28 May 2019 16:08:58 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -48,157 +51,87 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH V2 04/12] clk: tegra: add support for peripheral clock suspend and resume
-Date:   Tue, 28 May 2019 16:08:48 -0700
-Message-ID: <1559084936-4610-5-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V2 00/12] LP0 entry and exit support for Tegra210
+Date:   Tue, 28 May 2019 16:08:44 -0700
+Message-ID: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559084940; bh=xFOmjeaoCNKZGSYsRBa0HN3DzU4TBaJQr2OcS9aU+yo=;
+        t=1559084939; bh=2b+AWpz2HgNUfsfdegjeMuOpOlMUMPBF8kt06/8Whxg=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=aZrcrlN+dCGQehBr2IcQ67Mf1RMkZXisnfCh06ISK0M4+16+MRCACtn9mUX47zRAp
-         CmHdnHWCbB4BXerkBFhbUWjpeJFX/fW8YzxB4GBo12iDTuk4L/kGZe9iVA5nb5OpFm
-         oibUJrKPUVGy+ZDLE0MJ1PUpBpUqQgr3FNLLuoYVjg4EfN1UjpxcAlU1GZdC9T4OT4
-         V4E8l4TfR9DxWayZn1Jx5N6LZoDVKIhi5Ph0vwniu/FRHvNGhfvU9GZ33CiiCui8Yp
-         Y9yk8v9ZRnoltl/Mpc7SLI/Hot4tJXzh+P+4vnifp750SIk7Q4nL9FL5F3Jocah/yy
-         Lg9ggsrzx4OWQ==
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=WmcwXPvawBckbzm/c86tcyg78+pLBn37oIG96jrkb0qfyiLK15R1mGS4NOgHtIOmv
+         1FdH6CEG+YV0q0nmBt55XzpIEGcYVN5vnqXsla97HUSfKCN5BZA5MAlihZhewnyLo1
+         UOtFDNw3Sn8CGaT+RG//2JDbc1anUNJ7oML2SoXVYhgvh4oFX5VMkmxCx2wrQzUJJB
+         0o5ge373yp+KktSfKIJD9QyKdGZbLN/yacasRQ1BIYMaNvGGFdJzMKYfJ35Yzcy+qx
+         TjU2xDGLN8UN7BFHguutxfliOELqr1BThk8kpY0I5j4//BhcYP7TLUiXQAHQt6+QoQ
+         KTFjGc2UczfZA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch implements peripheral clock context save and restore
-to support system suspend and resume operation.
+This patch series includes Tegra210 deepsleep/LP0 support with
+deep sleep exit through RTC alarm wake and power button wake events.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/clk/tegra/clk.c | 74 ++++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h |  3 ++
- 2 files changed, 76 insertions(+), 1 deletion(-)
+Note: Wake on power button is through gpio-keys node in device tree.
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 6f2862eddad7..08b788766564 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -81,6 +81,10 @@ static struct clk **clks;
- static int clk_num;
- static struct clk_onecell_data clk_data;
- 
-+#ifdef CONFIG_PM_SLEEP
-+static u32 *periph_ctx;
-+#endif
-+
- /* Handlers for SoC-specific reset lines */
- static int (*special_reset_assert)(unsigned long);
- static int (*special_reset_deassert)(unsigned long);
-@@ -210,6 +214,65 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
- 	}
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+void tegra_clk_periph_suspend(void __iomem *clk_base)
-+{
-+	int i, idx;
-+
-+	idx = 0;
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		periph_ctx[idx] =
-+			readl_relaxed(clk_base + periph_regs[i].rst_reg);
-+
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		periph_ctx[idx] =
-+			readl_relaxed(clk_base + periph_regs[i].enb_reg);
-+}
-+
-+void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base)
-+{
-+	int i;
-+
-+	WARN_ON(count != periph_banks);
-+
-+	for (i = 0; i < count; i++)
-+		writel_relaxed(clks_on[i], clk_base + periph_regs[i].enb_reg);
-+}
-+
-+void tegra_clk_periph_resume(void __iomem *clk_base)
-+{
-+	int i, idx;
-+
-+	idx = 0;
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		writel_relaxed(periph_ctx[idx],
-+			       clk_base + periph_regs[i].rst_reg);
-+
-+	/* ensure all resets have propagated */
-+	fence_udelay(2, clk_base);
-+	tegra_read_chipid();
-+
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		writel_relaxed(periph_ctx[idx],
-+			       clk_base + periph_regs[i].enb_reg);
-+
-+	/* ensure all enables have propagated */
-+	fence_udelay(2, clk_base);
-+	tegra_read_chipid();
-+}
-+
-+static int tegra_clk_suspend_ctx_init(int banks)
-+{
-+	int err = 0;
-+
-+	periph_ctx = kzalloc(2 * banks * sizeof(*periph_ctx), GFP_KERNEL);
-+	if (!periph_ctx)
-+		err = -ENOMEM;
-+
-+	return err;
-+}
-+#endif
-+
- struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- {
- 	clk_base = regs;
-@@ -226,11 +289,20 @@ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- 	periph_banks = banks;
- 
- 	clks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
--	if (!clks)
-+	if (!clks) {
- 		kfree(periph_clk_enb_refcnt);
-+		return NULL;
-+	}
- 
- 	clk_num = num;
- 
-+#ifdef CONFIG_PM_SLEEP
-+	if (tegra_clk_suspend_ctx_init(banks)) {
-+		kfree(periph_clk_enb_refcnt);
-+		kfree(clks);
-+		return NULL;
-+	}
-+#endif
- 	return clks;
- }
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e4d124cc5657..ab238b2c3125 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -848,6 +848,9 @@ void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate);
- void tegra_clk_plle_tegra210_resume(struct clk *c);
- void tegra_clk_sync_state_pll(struct clk *c);
- void tegra_clk_sync_state_pll_out(struct clk *clk);
-+void tegra_clk_periph_suspend(void __iomem *clk_base);
-+void tegra_clk_periph_resume(void __iomem *clk_base);
-+void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base);
- #endif
- 
- 
+This series also includes save and restore of PLLs, clocks, OSC contexts
+for basic LP0 exit.
+
+This patch series doesn't support 100% suspend/resume to allow fully
+functional state upon resume and we are working on some more drivers suspend
+and resume implementations.
+
+[V2] : V1 feedback fixes
+	Patch 0002: This version still using syscore. Thierry suggest not to
+	use syscore and waiting on suggestion from Linux Walleij for any better
+	way of storing current state of pins before suspend entry and restoring
+	them on resume at very early stage. So left this the same way as V1 and
+	will address once I get more feedback on this.
+	Also need to findout and implement proper way of forcing resume order
+	between pinctrl and gpio driver.
+
+
+Sowjanya Komatineni (12):
+  irqchip: tegra: do not disable COP IRQ during suspend
+  pinctrl: tegra: add suspend and resume support
+  clk: tegra: save and restore PLLs state for system
+  clk: tegra: add support for peripheral clock suspend and resume
+  clk: tegra: add support for OSC clock resume
+  clk: tegra: add suspend resume support for DFLL clock
+  clk: tegra: support for Tegra210 clocks suspend-resume
+  soc/tegra: pmc: allow support for more tegra wake models
+  soc/tegra: pmc: add pmc wake support for tegra210
+  gpio: tegra: implement wake event support for Tegra210 and prior GPIO
+  arm64: tegra: enable wake from deep sleep on RTC alarm.
+  soc/tegra: pmc: configure tegra deep sleep control settings
+
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |   7 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi       |   5 +-
+ drivers/clk/tegra/clk-dfll.c                   |  82 ++++++
+ drivers/clk/tegra/clk-dfll.h                   |   2 +
+ drivers/clk/tegra/clk-divider.c                |  19 ++
+ drivers/clk/tegra/clk-pll-out.c                |  25 ++
+ drivers/clk/tegra/clk-pll.c                    |  99 +++++--
+ drivers/clk/tegra/clk-tegra-fixed.c            |  16 ++
+ drivers/clk/tegra/clk-tegra210.c               | 382 +++++++++++++++++++++++++
+ drivers/clk/tegra/clk.c                        |  74 ++++-
+ drivers/clk/tegra/clk.h                        |  13 +
+ drivers/gpio/gpio-tegra.c                      | 116 +++++++-
+ drivers/irqchip/irq-tegra.c                    |  22 +-
+ drivers/pinctrl/tegra/pinctrl-tegra.c          |  68 ++++-
+ drivers/pinctrl/tegra/pinctrl-tegra.h          |   3 +
+ drivers/pinctrl/tegra/pinctrl-tegra114.c       |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra124.c       |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra20.c        |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra210.c       |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra30.c        |   1 +
+ drivers/soc/tegra/pmc.c                        | 150 +++++++++-
+ 21 files changed, 1053 insertions(+), 35 deletions(-)
+
 -- 
 2.7.4
 
