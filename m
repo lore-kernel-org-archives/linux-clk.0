@@ -2,118 +2,91 @@ Return-Path: <SRS0=Al5s=T4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAABC04AB6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 16:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7892CC04AB6
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 18:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320AF216FD
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 16:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44D8420989
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 18:13:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDz6LEiP"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Ojcs6udB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfE1Qsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 May 2019 12:48:37 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35589 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbfE1Qsh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 12:48:37 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t1so11339035pgc.2;
-        Tue, 28 May 2019 09:48:37 -0700 (PDT)
+        id S1727795AbfE1SN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 May 2019 14:13:28 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37435 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfE1SN1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 14:13:27 -0400
+Received: by mail-ot1-f68.google.com with SMTP id r10so1131928otd.4;
+        Tue, 28 May 2019 11:13:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=BDz6LEiPv3DbWPxz2q4nGxrvuf/nyreOKnjeVboH01uYK4LNfyhggoZp6K2ruiObxv
-         YAuAXBsTfVJ0boZKnKIkC6UU6d+mWpLDwme//1KEmGzD9lBi4erPBlC0RLWowqzMaBDQ
-         bBh1w+idklGCiKs3Nshy8rmsEEciIFwavafIlX+ImMRbJUusmGGA2j3ShrQ2Yyv8vbBO
-         zSEs8ZE61BbEAHHkxNOMxS1iZ5J2QHK/XBmmBJGUF9yPqiCrLEuG7rDaLS9VM1AXYQqD
-         wBUEWG4L2XxIQHIQCgkt2JlO3jZke23eqatR1WPnLhfwekflViSOgopPAinxrdo8rBQs
-         FCRA==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LPvFSy/+Ol+ZuQMgkb+qnJE+L1Iql0hHfM4lKqsprYE=;
+        b=Ojcs6udBEkePD30+FubBfExeTjFdf/YPOSYCAUMwiskoT4bMtWzZOPU9/eKjyPOG7U
+         wVAlr775HDvInKKs9ocAemTOAMS11GS5df+uZmdNUi27faV9vJvZnuQC77iYUGzfY28o
+         pPd64Eyv8SmCOroCDWO9P3uhnW5BMAAPYzWJjtLLkdLrQbp662bgEcrPAqk9B1XOkqX3
+         mJLxI8CS0ikanr/A+ddV34f29i+OkHMjuc4IP0CFELBtD+09E+zlfQB/LYE/HBANMPyh
+         tRwogab5N70tW5YDnREToqiEgRSlTZyRCdQQA4xwWIZCJxCWC1Ms+/aWZEVVz5KK1rg0
+         7DsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=MH9RdEIX7phwnSlJlc39I9+buo2YFLuM/vwl4aEaN6uJ/EZmc8mikIFSLPHNFPMDl4
-         1TAUH7uo8zyRLS3v3Q4K7FJ3TmEvZCGzDDXK//vbgofo7QJEP2BSQ5W1uVMVrqNRwHbd
-         r1vgWPFTypzZ4y3C5E6zEKv89RqBdEVRvkfKhFdgP0GZ2OL4YeX1A9OXikrXRNQJ5JqM
-         NeGkt17lcj4qQmgKDM3OZ0x6V90ujsdkh/lCNC+riDcidOa5lGfu5ouXxCgbkWWaX1PP
-         balyg2g3+G5CZe+0al/REd+v0YelmACHVvTX4BwkDigiXrNkt+905Ub5bmdB36Pa3vBs
-         2UzQ==
-X-Gm-Message-State: APjAAAVl6Bg+NgVifN9/ZoIPEJIht9+OGkVEdpgI5jhIMrova7feHbwQ
-        GWiX8gK0zRrtOMimycOTRxI=
-X-Google-Smtp-Source: APXvYqyHME0FjSisF3IqfNkzb5R68J3a7YnPvgHLro3k6kdMV1VTMJnenNrsas0+2U+az3DIIcmv+A==
-X-Received: by 2002:a63:2248:: with SMTP id t8mr90644297pgm.358.1559062116816;
-        Tue, 28 May 2019 09:48:36 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id a30sm8916533pje.4.2019.05.28.09.48.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 09:48:36 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, marc.w.gonzalez@free.fr,
-        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH 3/3] arm64: dts: qcom: msm8998: Add gpucc node
-Date:   Tue, 28 May 2019 09:48:34 -0700
-Message-Id: <20190528164834.38691-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190528164616.38517-1-jeffrey.l.hugo@gmail.com>
-References: <20190528164616.38517-1-jeffrey.l.hugo@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LPvFSy/+Ol+ZuQMgkb+qnJE+L1Iql0hHfM4lKqsprYE=;
+        b=RBjWL2v31Fa8rUFRlPzLBB2VPMzlozBOCTQArOKztrsOIeu6RZWpejYIMMUzhm2G1C
+         3olKOBJ0+M/qb81bFkeN0JBjCZqJlfosu0UDt0pAQShKcskWivQthtaoyQ00lDmj7Xfe
+         qDQxQqyi+/zNJITlO5SkyWYKJT+bTzeJhbJEySuuhOZkw5K9X0RRcfQUaPohGkkZmJkU
+         MFUgdSNd69APq2tgOWDXtBkQEdovO6GT67aPWHj7SDnlYwzu9vLuSobsY+ww2ihzxQMJ
+         ZVuE4NtHK20imp12dShanHXVafi3toeOryruZKgRAQZtfdqFDOhAM+37BywzqBqmE4eY
+         Rn3w==
+X-Gm-Message-State: APjAAAVa4cz6VFkKtG1ykK6qwT/VifRl+V50B/1ulGYrfsg8/Zsbd3Ef
+        eauJP3cVsjWTck0Wd0z9ZtUFu7PRizS2hzRAzd14cdV64ow=
+X-Google-Smtp-Source: APXvYqyagHBu0OgYtX3i84tIgx8uv2A97o9m+a9iuX4CshpGLW7d441lQy2nxKnxaNDuCwtbZifs7QCWJ9IKORrBOo0=
+X-Received: by 2002:a9d:69c8:: with SMTP id v8mr22334562oto.6.1559067206898;
+ Tue, 28 May 2019 11:13:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190528080758.17079-1-narmstrong@baylibre.com> <20190528080758.17079-3-narmstrong@baylibre.com>
+In-Reply-To: <20190528080758.17079-3-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 28 May 2019 20:13:16 +0200
+Message-ID: <CAFBinCCMfTL337=HtvoXDDznfqhH+i0N6NAj8qBPso84XFoJBg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: meson: g12a: Add support for G12B CPUB clocks
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 GPU Clock Controller DT node.
+Hi Neil,
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+On Tue, May 28, 2019 at 10:08 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Update the Meson G12A Clock driver to support the Amlogic G12B SoC.
+>
+> G12B clock driver is very close, the main differences are :
+> - the clock tree is duplicated for the both clusters, and the
+>   SYS_PLL are swapped between the clusters
+> - G12B has additional clocks like for CSI an other components
+>
+> Here only the cpu clock tree is handled.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+thank you for taking care of everything I noticed in the previous version!
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 574be78a936e..cf00bfeec6b3 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
- 
-@@ -763,6 +764,20 @@
- 			reg = <0x1f40000 0x20000>;
- 		};
- 
-+		gpucc: clock-controller@5065000 {
-+			compatible = "qcom,gpucc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x05065000 0x9000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
-+
-+
- 		apcs_glb: mailbox@9820000 {
- 			compatible = "qcom,msm8998-apcs-hmss-global";
- 			reg = <0x17911000 0x1000>;
--- 
-2.17.1
+do you still have the CPU post-divider muxes (which are currently
+modeled as CLK_DIVIDER_POWER_OF_TWO dividers) on your TODO-list once
+this is merged?
 
+
+Martin
