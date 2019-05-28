@@ -2,110 +2,87 @@ Return-Path: <SRS0=Al5s=T4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=AC_FROM_MANY_DOTS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65B3C04AB6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 08:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCBCC04AB6
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 11:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDAEC20717
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 08:08:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="T+9lv1CU"
+	by mail.kernel.org (Postfix) with ESMTP id 4EF972075B
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 11:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfE1IIQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 May 2019 04:08:16 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42191 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbfE1III (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 04:08:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l2so19109574wrb.9
-        for <linux-clk@vger.kernel.org>; Tue, 28 May 2019 01:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CL//C3ZWRy94QZXf1OCefDGPvk7lxcX63rkB08gtAL0=;
-        b=T+9lv1CUPBY7+nH6hUamE+GmY2yjsCZdeXbGcWUTfKkdC2brA4WvKz118M+QdCKzqA
-         T26S/U9q9f4yxgtsJvMeIXsRquyYqvHNnTO9BOsgwBZ7eZ9orheKBskPH9AKeGxWE0wB
-         /Bnn+m6ev3TPdTClWioDpz/zFCATrTmTxuarBJHhwPBOmIBG1wuHEyJm2dvelAGVMLwq
-         OIqBi44kCwbv9I4cmZD2YRtBxs7cY4ZWHqmWdaj4pSifcm3ehzivUGJy2Rlbs8r9katY
-         Jjtcudwq/bn2HbUuS2cnt2MkgvTHotWH33avaiw/yvrI+xRL0bTAQWyAeWI9OY5LcdLb
-         xd9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CL//C3ZWRy94QZXf1OCefDGPvk7lxcX63rkB08gtAL0=;
-        b=t+YxqyGBKi2K/ARu+cf4vpCaELQhp9Cf2r3Vh9t0xTLMslCXr0LaUfX1nxV1qG+r2E
-         zy3SUzJz6Qa+kIbpJy3uPYBi9tBBMi1udGddNEHElx+JUF7ZwGkSwcmGWmGtBZa9fiLW
-         ZQuZx+QvPc+EoLFu0bowXrwyISOuHnCRiiL1dq7qNagfJH6PKNCwVmR32b7u9kk0Ak/I
-         b08AHaQ2FlwK1YMjTx1pTYBqdl7arMW3OCIPn410ouALj7bPu3q0E+rhxqlYggYISg5S
-         zSjnlBniS/5Gr6auVHwnD2zMWO4KiO+bgASvE1CVboUdDI+vGIxMpRXlNNZCvUd8t7bN
-         jPZg==
-X-Gm-Message-State: APjAAAUCfEkDQP/blEqZNFdGved/dKfa/fdJt603HjfI/WUSBNHY7/rE
-        g/Egzk7WO6hbJlQmapMxfB6kFA==
-X-Google-Smtp-Source: APXvYqzKYPRMi57PTY6M5KUFleV+I7Dkh+1equfvb7EphYfx1TQ5qT2yKEdmtd5GNtC9yq3KcNPCuA==
-X-Received: by 2002:adf:dc8a:: with SMTP id r10mr17366735wrj.15.1559030886540;
-        Tue, 28 May 2019 01:08:06 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id z74sm2456121wmc.2.2019.05.28.01.08.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 May 2019 01:08:06 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 3/3] clk: meson: g12a: mark fclk_div3 as critical
-Date:   Tue, 28 May 2019 10:07:58 +0200
-Message-Id: <20190528080758.17079-4-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190528080758.17079-1-narmstrong@baylibre.com>
-References: <20190528080758.17079-1-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726867AbfE1LzE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 May 2019 07:55:04 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:56691 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726580AbfE1LzE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 07:55:04 -0400
+X-IronPort-AV: E=Sophos;i="5.60,521,1549897200"; 
+   d="scan'208";a="16978896"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 28 May 2019 20:55:01 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DBC8A4007541;
+        Tue, 28 May 2019 20:54:58 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] clk: renesas: r9a06g032: Add clock domain support
+Date:   Tue, 28 May 2019 12:54:25 +0100
+Message-Id: <1559044467-2639-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Amlogic Meson G12b platform, the fclk_div3 seems to be necessary for
-the system to operate correctly.
+There are several clocks on the r9a06g032 which are currently not enabled
+in their drivers that can be delegated to clock domain system for power
+management. Therefore add support for clock domain functionality to the
+r9a06g032 clock driver after updating the relevant dt-bindings file.
 
-Disabling it cause the entire system to freeze, including peripherals.
+v4:
+ - Removed unneeded initialisation of "error" in 
+   create_add_module_clock.
+ - Moved declaration of "index" to the start of r9a06g032_attach_dev.
+ - Moved of_node_put(clkspec.np) call to after create_add_module_clock
+   call in r9a06g032_attach_dev.
+ - Added missing HCLK to UART0 example to show the clock added
+   to the driver.
+v3:
+ - "managed" flag integrated into existing bit field.
+ - Removed unneeded initialisation inside D_MODULE.
+ - Removed the use of unneeded r9a06g032_clk_domain variable.
+ - Removed error message prints that cannot occur.
+ - Removed __init and __initconst from attach function and
+   r9a06g032_clocks[].
+ - Reordered r9a06g032_add_clk_domain call to after 
+   devm_add_action_or_reset during probe.
+ - Added clock type check when retrieving clocks from device tree.
+ - Reordered of_node_put call to before error check in
+   create_add_module_clock.
+ - changed r9a06g032_detach_dev to a static function.
+ - Added new #power-domain-cells property to the required properties.
+ - Added "#power-domain-cells" and "power-domains" lines to examples.
+v2:
+ - Rebased onto kernel/git/geert/renesas-drivers.git
 
-Let's mark this clock as critical, fixing boot on G12b platforms.
+Gareth Williams (2):
+  dt-bindings: clock: renesas,r9a06g032-sysctrl: Document power Domains
+  clk: renesas: r9a06g032: Add clock domain support
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   |   7 +-
+ drivers/clk/renesas/r9a06g032-clocks.c             | 230 ++++++++++++++-------
+ 2 files changed, 166 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 1abe46a95dc1..3c75ef5e4d24 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -1350,6 +1350,16 @@ static struct clk_regmap g12a_fclk_div3 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div3_div" },
- 		.num_parents = 1,
-+		/*
-+		 * This clock is used by the resident firmware and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) Mark the clock used by a firmware resource, if possible
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
- 
 -- 
-2.21.0
+2.7.4
 
