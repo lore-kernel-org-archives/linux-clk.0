@@ -2,91 +2,178 @@ Return-Path: <SRS0=Al5s=T4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7892CC04AB6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 18:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB02C04E84
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D8420989
-	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 18:13:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B5520989
+	for <linux-clk@archiver.kernel.org>; Tue, 28 May 2019 23:09:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Ojcs6udB"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XTzm6meg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfE1SN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 May 2019 14:13:28 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37435 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbfE1SN1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 14:13:27 -0400
-Received: by mail-ot1-f68.google.com with SMTP id r10so1131928otd.4;
-        Tue, 28 May 2019 11:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LPvFSy/+Ol+ZuQMgkb+qnJE+L1Iql0hHfM4lKqsprYE=;
-        b=Ojcs6udBEkePD30+FubBfExeTjFdf/YPOSYCAUMwiskoT4bMtWzZOPU9/eKjyPOG7U
-         wVAlr775HDvInKKs9ocAemTOAMS11GS5df+uZmdNUi27faV9vJvZnuQC77iYUGzfY28o
-         pPd64Eyv8SmCOroCDWO9P3uhnW5BMAAPYzWJjtLLkdLrQbp662bgEcrPAqk9B1XOkqX3
-         mJLxI8CS0ikanr/A+ddV34f29i+OkHMjuc4IP0CFELBtD+09E+zlfQB/LYE/HBANMPyh
-         tRwogab5N70tW5YDnREToqiEgRSlTZyRCdQQA4xwWIZCJxCWC1Ms+/aWZEVVz5KK1rg0
-         7DsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LPvFSy/+Ol+ZuQMgkb+qnJE+L1Iql0hHfM4lKqsprYE=;
-        b=RBjWL2v31Fa8rUFRlPzLBB2VPMzlozBOCTQArOKztrsOIeu6RZWpejYIMMUzhm2G1C
-         3olKOBJ0+M/qb81bFkeN0JBjCZqJlfosu0UDt0pAQShKcskWivQthtaoyQ00lDmj7Xfe
-         qDQxQqyi+/zNJITlO5SkyWYKJT+bTzeJhbJEySuuhOZkw5K9X0RRcfQUaPohGkkZmJkU
-         MFUgdSNd69APq2tgOWDXtBkQEdovO6GT67aPWHj7SDnlYwzu9vLuSobsY+ww2ihzxQMJ
-         ZVuE4NtHK20imp12dShanHXVafi3toeOryruZKgRAQZtfdqFDOhAM+37BywzqBqmE4eY
-         Rn3w==
-X-Gm-Message-State: APjAAAVa4cz6VFkKtG1ykK6qwT/VifRl+V50B/1ulGYrfsg8/Zsbd3Ef
-        eauJP3cVsjWTck0Wd0z9ZtUFu7PRizS2hzRAzd14cdV64ow=
-X-Google-Smtp-Source: APXvYqyagHBu0OgYtX3i84tIgx8uv2A97o9m+a9iuX4CshpGLW7d441lQy2nxKnxaNDuCwtbZifs7QCWJ9IKORrBOo0=
-X-Received: by 2002:a9d:69c8:: with SMTP id v8mr22334562oto.6.1559067206898;
- Tue, 28 May 2019 11:13:26 -0700 (PDT)
+        id S1727689AbfE1XJG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 May 2019 19:09:06 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11197 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbfE1XJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 May 2019 19:09:05 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cedbf850002>; Tue, 28 May 2019 16:08:53 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 28 May 2019 16:09:01 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 28 May 2019 16:09:01 -0700
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
+ 2019 23:09:01 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 28 May 2019 23:09:01 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.86]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5cedbf8d0001>; Tue, 28 May 2019 16:09:01 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH V2 12/12] soc/tegra: pmc: configure tegra deep sleep control settings
+Date:   Tue, 28 May 2019 16:08:56 -0700
+Message-ID: <1559084936-4610-13-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20190528080758.17079-1-narmstrong@baylibre.com> <20190528080758.17079-3-narmstrong@baylibre.com>
-In-Reply-To: <20190528080758.17079-3-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 28 May 2019 20:13:16 +0200
-Message-ID: <CAFBinCCMfTL337=HtvoXDDznfqhH+i0N6NAj8qBPso84XFoJBg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: meson: g12a: Add support for G12B CPUB clocks
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559084933; bh=AXgFaKaMRanL7gj3q6RZdV0zOpoPQUiMedbJEKLsx0Q=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=XTzm6megZhIPYrjJQ0OTfTwKhiyWA+Qq+M53wuFpyVvHTlMNJo/ELpD/CrbCw9kLq
+         jVzQqC67ksnVg2AQ46qt78iCJcmInX7Hto7hUXFb78f5gpNAQcbUd+EuO50jySz8n7
+         WUkiQKft6BBj0kL/UvgZ3JyP6HwaecEsy1Pdlmb+9RhDvj1hCw1JJu1r174D05fr4e
+         rK3Dq1IQWwKW+aZjBlc1w/w90FkrwGPZmMhrjr7ux+fnzKXrDioXjI+BBzYgaXHL4n
+         LgESPathjq/JDigo9cEeb6GO1+vO6W0M+MHMVwjDZB7Vjqu/DKflSrjRQb9pa+qoXb
+         /ZynPU+L7n/xA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Neil,
+Tegra210 and prior Tegra chips have power request signal polarity,
+deep sleep entry and wake related timings which are platform specific
+that should be configured before entering into deep sleep.
 
-On Tue, May 28, 2019 at 10:08 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Update the Meson G12A Clock driver to support the Amlogic G12B SoC.
->
-> G12B clock driver is very close, the main differences are :
-> - the clock tree is duplicated for the both clusters, and the
->   SYS_PLL are swapped between the clusters
-> - G12B has additional clocks like for CSI an other components
->
-> Here only the cpu clock tree is handled.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-thank you for taking care of everything I noticed in the previous version!
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Below are the timings specific configurations for deep sleep and wake.
+- Core rail power-on stabilization timer
+- OSC clock stabilization timer after SOC rail power is stabilized.
+- Core power off time is the minimum wake delay to keep the system
+in deep sleep state irrespective of any quick wake event.
 
-do you still have the CPU post-divider muxes (which are currently
-modeled as CLK_DIVIDER_POWER_OF_TWO dividers) on your TODO-list once
-this is merged?
+These values depends on the discharge time of regulators and turn OFF
+time of the PMIC to allow the complete system to finish entering into
+deep sleep state.
 
+These values vary based on the platform design and are specified
+through the device tree.
 
-Martin
+This patch has implementation to configure these configurations which
+are must to have for deep sleep state.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  7 +++++++
+ drivers/soc/tegra/pmc.c                        | 18 ++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 4dcd0d36189a..7ac5e55a30aa 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -266,6 +266,13 @@
+ 
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
++		nvidia,suspend-mode = <0>;
++		nvidia,cpu-pwr-good-time = <0>;
++		nvidia,cpu-pwr-off-time = <0>;
++		nvidia,core-pwr-good-time = <4587 3876>;
++		nvidia,core-pwr-off-time = <39065>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
+ 	};
+ 
+ 	/* eMMC */
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 54dc8409e353..d7e0f5057f16 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -66,6 +66,7 @@
+ #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
+ #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+ #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
++#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
+ #define  PMC_CNTRL_MAIN_RST		BIT(4)
+ #define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
+ 
+@@ -98,6 +99,8 @@
+ 
+ #define PMC_CPUPWRGOOD_TIMER		0xc8
+ #define PMC_CPUPWROFF_TIMER		0xcc
++#define PMC_COREPWRGOOD_TIMER		0x3c
++#define PMC_COREPWROFF_TIMER		0xe0
+ 
+ #define PMC_PWR_DET_VALUE		0xe4
+ 
+@@ -2285,6 +2288,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
+ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ {
+ 	u32 value;
++	unsigned long osc, pmu, off;
+ 
+ 	/* Always enable CPU power request */
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+@@ -2298,6 +2302,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	else
+ 		value |= PMC_CNTRL_SYSCLK_POLARITY;
+ 
++	if (pmc->corereq_high)
++		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
++	else
++		value |= PMC_CNTRL_PWRREQ_POLARITY;
++
+ 	/* configure the output polarity while the request is tristated */
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+ 
+@@ -2305,6 +2314,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+ 	value |= PMC_CNTRL_SYSCLK_OE;
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
++
++	osc = DIV_ROUND_UP_ULL(pmc->core_osc_time * 8192, 1000000);
++	pmu = DIV_ROUND_UP_ULL(pmc->core_pmu_time * 32768, 1000000);
++	off = DIV_ROUND_UP_ULL(pmc->core_off_time * 32768, 1000000);
++	if (osc && pmu)
++		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
++				 PMC_COREPWRGOOD_TIMER);
++	if (off)
++		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
+ }
+ 
+ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+-- 
+2.7.4
+
