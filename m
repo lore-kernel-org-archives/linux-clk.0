@@ -2,93 +2,147 @@ Return-Path: <SRS0=s3ie=T5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FEFC28CC0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 22:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5EEC28CC0
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 23:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132D12429C
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 22:29:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3668D24368
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 23:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559168958;
-	bh=sRuDFYFvafjXzg4Zs8n3IU0+t0X6gJgAOUfxV/kpjgw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Eiq13XqwJ+iLYfm2g2TGl2UwCWvYNYsv8ykWg0/umhZ1NnamkLSw4m+TeO+LO5Hhd
-	 TBeDw/6UbA7jUhESaeouPZNI1MiZacJh6WOGnz3aV6Fgzvb77Iz4GchQ+cZT5eeOho
-	 eF8ZrlnwM+o337xG6BwqY0JhDuQO8vQ1gfl7Qf0o=
+	s=default; t=1559172492;
+	bh=8kdlDPHPJB9SK5OUX6kVhT6RIbf9CHlBwHsoSX6UV6o=;
+	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
+	b=krd2s7PXkB2BMAm3bTxmSzyDYIz9KKkTcdXc02Ka0FimVYbZMAQ2/3LzLi4GCww9J
+	 FMTl8Kffm0eeYYkv4WOki5nOssUJK2BsQRTb5KtjMBjFIDYKV5740lHowJra8WUW46
+	 mWmEMLGha2L/6PEYE3psgQHnHS1HqUo2HanuxKrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfE2W3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 18:29:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35824 "EHLO mail.kernel.org"
+        id S1726541AbfE2X2M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 19:28:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726018AbfE2W3R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 May 2019 18:29:17 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726240AbfE2X2L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 May 2019 19:28:11 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D8E12429C;
-        Wed, 29 May 2019 22:29:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14A5224366;
+        Wed, 29 May 2019 23:28:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559168957;
-        bh=sRuDFYFvafjXzg4Zs8n3IU0+t0X6gJgAOUfxV/kpjgw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=am2vgzaqmJF9GMOAx47qRRaowbVYqHHgryyBB9+6F5I258o6ec6Wlmj9OSTJtoBsx
-         OQ34W2C+iqwZ2jHCLU58F67DHmaRuiqjpcQUZaS8Ur0ixUEp3QZ1RErUa+CuNNIh7E
-         vCL0zwXeiPZHQlqkGhplHONjU4EqD17BKVrch4Kg=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.2-rc2
-Date:   Wed, 29 May 2019 15:29:16 -0700
-Message-Id: <20190529222916.57086-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
+        s=default; t=1559172490;
+        bh=8kdlDPHPJB9SK5OUX6kVhT6RIbf9CHlBwHsoSX6UV6o=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=bLZP9ZV/pnaLDEkb6Fbtff0PTHDRn9b6Voj3YcGTY/tQ1tNF2rGSeBQaB0XHoihS2
+         TMcVcgkYcQf5St5x/266iplFn0U8BGyKco7QXrQCq3EcSeFylbzskaTS6YDmEbn/Ee
+         T2XcGWR3cupx2hA2oTOV9Orc6ECjgp2zfX++VPkc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1559084936-4610-4-git-send-email-skomatineni@nvidia.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com> <1559084936-4610-4-git-send-email-skomatineni@nvidia.com>
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        skomatineni@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
+        jonathanh@nvidia.com, linus.walleij@linaro.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
+        tglx@linutronix.de, thierry.reding@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V2 03/12] clk: tegra: save and restore PLLs state for system
+User-Agent: alot/0.8.1
+Date:   Wed, 29 May 2019 16:28:09 -0700
+Message-Id: <20190529232810.14A5224366@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+Quoting Sowjanya Komatineni (2019-05-28 16:08:47)
+> This patch has implementation of saving and restoring PLL's state to
+> support system suspend and resume operations.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Can you provide some more background on _why_ this patch should exist?
+That's typically what gets written in the commit text.
 
-are available in the Git repository at:
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-divider.c | 19 ++++++++
+>  drivers/clk/tegra/clk-pll-out.c | 25 +++++++++++
+>  drivers/clk/tegra/clk-pll.c     | 99 ++++++++++++++++++++++++++++++++---=
+------
+>  drivers/clk/tegra/clk.h         |  9 ++++
+>  4 files changed, 132 insertions(+), 20 deletions(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divi=
+der.c
+> index 2a1822a22740..718694727042 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -14,6 +14,7 @@
+>   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+> =20
+> +#include <linux/clk.h>
+>  #include <linux/kernel.h>
+>  #include <linux/io.h>
+>  #include <linux/err.h>
+> @@ -179,3 +180,21 @@ struct clk *tegra_clk_register_mc(const char *name, =
+const char *parent_name,
+>                                           reg, 16, 1, CLK_DIVIDER_READ_ON=
+LY,
+>                                           mc_div_table, lock);
+>  }
+> +
+> +#if defined(CONFIG_PM_SLEEP)
+> +void tegra_clk_divider_resume(struct clk_hw *hw, unsigned long rate)
+> +{
+> +       struct clk_hw *parent =3D clk_hw_get_parent(hw);
+> +       unsigned long parent_rate;
+> +
+> +       if (IS_ERR(parent)) {
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Will this ever happen? Collapse the WARN_ON into the if please:
 
-for you to fetch changes up to 1cc54078d104f5b4d7e9f8d55362efa5a8daffdb:
+	if (WARN_ON(IS_ERR(parent)))
 
-  clk: ti: clkctrl: Fix clkdm_clk handling (2019-05-21 11:43:40 -0700)
+> +               WARN_ON(1);
+> +               return;
+> +       }
+> +
+> +       parent_rate =3D clk_hw_get_rate(parent);
+> +
+> +       if (clk_frac_div_set_rate(hw, rate, parent_rate) < 0)
+> +               WARN_ON(1);
+> +}
+> +#endif
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 09bccbb9640c..e4d124cc5657 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -841,6 +841,15 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll,=
+ u8 p_div);
+>  int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+>                  u8 frac_width, u8 flags);
+> =20
+> +#ifdef CONFIG_PM_SLEEP
 
-----------------------------------------------------------------
-A few clk driver fixes
+Can you remove this ifdef? It just complicates compilation testing.
 
- - Don't expose the SiFive clk driver on non-RISCV architectures
+> +void tegra_clk_pll_resume(struct clk *c, unsigned long rate);
+> +void tegra_clk_divider_resume(struct clk_hw *hw, unsigned long rate);
+> +void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate);
+> +void tegra_clk_plle_tegra210_resume(struct clk *c);
+> +void tegra_clk_sync_state_pll(struct clk *c);
+> +void tegra_clk_sync_state_pll_out(struct clk *clk);
 
- - Fix some bits describing clks in the imx8mm driver
+Do these APIs need to operate on struct clk? Why can't they operate on
+clk_hw or why can't we drive the suspend/resume sequence from the clk
+provider driver itself?
 
- - Always call clk domain code in the TI driver so non-legacy platforms
-   work
-
-----------------------------------------------------------------
-Paul Walmsley (1):
-      clk: sifive: restrict Kconfig scope for the FU540 PRCI driver
-
-Peng Fan (1):
-      clk: imx: imx8mm: fix int pll clk gate
-
-Tony Lindgren (1):
-      clk: ti: clkctrl: Fix clkdm_clk handling
-
- drivers/clk/imx/clk-imx8mm.c | 12 ++++++------
- drivers/clk/sifive/Kconfig   |  1 +
- drivers/clk/ti/clkctrl.c     |  8 ++++----
- 3 files changed, 11 insertions(+), 10 deletions(-)
-
--- 
-Sent by a computer through tubes
