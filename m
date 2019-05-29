@@ -3,186 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F666C28CC0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 23:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEAEC28CC0
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 23:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAF3224374
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 23:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 377D424386
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 23:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559172651;
-	bh=LI/SipH9I2k+fGVj863RGRAG5O4wgRHhltiAO+zLezo=;
+	s=default; t=1559172953;
+	bh=aHRGWmrf5rXnGBiMo5ak6Pc0Hv90kyBqNX7HV998xic=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=SWN+KRJcWlGj38ghEz0D0my2IPfA5LJjzI9bYoUVy7GgwgDfzS+K+InBAtVgWrd+T
-	 D7lAJwzcBYTcAhPdvv2yQyBUuKEoQ1AmpnqHw9rzf4R+yAmEtSKSVpoWNtItekGsqg
-	 csw0Qww/yCztPKfNNCqh0R4hIUwXIIC2IZvZgTjM=
+	b=bFCM/rwOnKeNK0tzO7VoDqyWAoVHSQVcyXkqcRzqySMC5zMNCi0ueXr9tGrryotgY
+	 B7rTeW1eMoYWnMqyECOdE6EE+PZivfGtM3SnWSbN1DUT3lodZ3isFe39Bfi914Fbzm
+	 Z5no0wc5SJQiIPUJd6TjQmQ5cn8HLXX/90X/lCeo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfE2Xav (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 19:30:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48304 "EHLO mail.kernel.org"
+        id S1726476AbfE2Xfs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 19:35:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbfE2Xav (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 May 2019 19:30:51 -0400
+        id S1726454AbfE2Xfs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 May 2019 19:35:48 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7E5924371;
-        Wed, 29 May 2019 23:30:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7F6F2435D;
+        Wed, 29 May 2019 23:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559172649;
-        bh=LI/SipH9I2k+fGVj863RGRAG5O4wgRHhltiAO+zLezo=;
+        s=default; t=1559172947;
+        bh=aHRGWmrf5rXnGBiMo5ak6Pc0Hv90kyBqNX7HV998xic=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=Wp9wUtgtuKs4M89aPqIkYP3bYXkyWNF0DHHm8tvmzDhDY6pHnpwAa+R5eBW5kYbJo
-         RNNDoQTzrigmV31NWRZrI9ht/hodt3h9VstLMeQU+QTP0ey7QmYJTTljkc9k2PH5On
-         dBK7ZQcYfw4FszlZRVa3C5UGWnq3UFnAu1Pa3Uo8=
+        b=jaP6SePRwzRnxN+ij5bLWVtNYpu/iF9tyV5WGHmrc8Q5SzcUP2k2bI/+uvhOKqeaT
+         hJUM0s/lPFbJHfEiJ7AhNx7ktcnq+WFF8qVegWcHmNX9L3ZpK49i93+RAHpYAXwoLo
+         ivyZqOm4nh2trqHx4QCtEtnTzdy3P1IDNhF3B9+M=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1559084936-4610-5-git-send-email-skomatineni@nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com> <1559084936-4610-5-git-send-email-skomatineni@nvidia.com>
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        skomatineni@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
-        jonathanh@nvidia.com, linus.walleij@linaro.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
-        tglx@linutronix.de, thierry.reding@gmail.com
+In-Reply-To: <20190523132235.GZ9261@dragon>
+References: <20190522014832.29485-1-peng.fan@nxp.com> <20190523132235.GZ9261@dragon>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH V2 04/12] clk: tegra: add support for peripheral clock suspend and resume
+Subject: Re: [PATCH] clk: imx: imx8mm: correct audio_pll2_clk to audio_pll2_out
 User-Agent: alot/0.8.1
-Date:   Wed, 29 May 2019 16:30:48 -0700
-Message-Id: <20190529233049.A7E5924371@mail.kernel.org>
+Date:   Wed, 29 May 2019 16:35:46 -0700
+Message-Id: <20190529233547.B7F6F2435D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sowjanya Komatineni (2019-05-28 16:08:48)
-> This patch implements peripheral clock context save and restore
-> to support system suspend and resume operation.
+Quoting Shawn Guo (2019-05-23 06:22:36)
+> On Wed, May 22, 2019 at 01:34:46AM +0000, Peng Fan wrote:
+> > There is no audio_pll2_clk registered, it should be audio_pll2_out.
+> >=20
+> > Cc: <stable@vger.kernel.org>
+> > Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>=20
+> Stephen,
+>=20
+> I leave this to you, since it's a fix.
+>=20
 
-Again, why?
+Is it a critical fix? Or is it an annoyance that can wait in -next until
+the next merge window?
 
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index 6f2862eddad7..08b788766564 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -81,6 +81,10 @@ static struct clk **clks;
->  static int clk_num;
->  static struct clk_onecell_data clk_data;
-> =20
-> +#ifdef CONFIG_PM_SLEEP
-> +static u32 *periph_ctx;
-> +#endif
-
-Please move this into the ifdef below.
-
-> +
->  /* Handlers for SoC-specific reset lines */
->  static int (*special_reset_assert)(unsigned long);
->  static int (*special_reset_deassert)(unsigned long);
-> @@ -210,6 +214,65 @@ const struct tegra_clk_periph_regs *get_reg_bank(int=
- clkid)
->         }
->  }
-> =20
-> +#ifdef CONFIG_PM_SLEEP
-> +void tegra_clk_periph_suspend(void __iomem *clk_base)
-> +{
-> +       int i, idx;
-> +
-> +       idx =3D 0;
-> +       for (i =3D 0; i < periph_banks; i++, idx++)
-> +               periph_ctx[idx] =3D
-> +                       readl_relaxed(clk_base + periph_regs[i].rst_reg);
-> +
-> +       for (i =3D 0; i < periph_banks; i++, idx++)
-> +               periph_ctx[idx] =3D
-> +                       readl_relaxed(clk_base + periph_regs[i].enb_reg);
-> +}
-> +
-> +void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *cl=
-k_base)
-> +{
-> +       int i;
-> +
-> +       WARN_ON(count !=3D periph_banks);
-> +
-> +       for (i =3D 0; i < count; i++)
-> +               writel_relaxed(clks_on[i], clk_base + periph_regs[i].enb_=
-reg);
-> +}
-> +
-> +void tegra_clk_periph_resume(void __iomem *clk_base)
-> +{
-> +       int i, idx;
-> +
-> +       idx =3D 0;
-> +       for (i =3D 0; i < periph_banks; i++, idx++)
-> +               writel_relaxed(periph_ctx[idx],
-> +                              clk_base + periph_regs[i].rst_reg);
-> +
-> +       /* ensure all resets have propagated */
-> +       fence_udelay(2, clk_base);
-> +       tegra_read_chipid();
-> +
-> +       for (i =3D 0; i < periph_banks; i++, idx++)
-> +               writel_relaxed(periph_ctx[idx],
-> +                              clk_base + periph_regs[i].enb_reg);
-> +
-> +       /* ensure all enables have propagated */
-> +       fence_udelay(2, clk_base);
-> +       tegra_read_chipid();
-> +}
-> +
-> +static int tegra_clk_suspend_ctx_init(int banks)
-> +{
-> +       int err =3D 0;
-> +
-> +       periph_ctx =3D kzalloc(2 * banks * sizeof(*periph_ctx), GFP_KERNE=
-L);
-
-Is this kcalloc(2 * banks, sizeof(*periph_ctx)... ?
-
-> +       if (!periph_ctx)
-> +               err =3D -ENOMEM;
-> +
-> +       return err;
-> +}
-> +#endif
-> +
->  struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int ban=
-ks)
->  {
->         clk_base =3D regs;
-> @@ -226,11 +289,20 @@ struct clk ** __init tegra_clk_init(void __iomem *r=
-egs, int num, int banks)
->         periph_banks =3D banks;
-> =20
->         clks =3D kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
-> -       if (!clks)
-> +       if (!clks) {
->                 kfree(periph_clk_enb_refcnt);
-> +               return NULL;
-> +       }
-> =20
->         clk_num =3D num;
-> =20
-> +#ifdef CONFIG_PM_SLEEP
-
-Can you use if (IS_ENABLED(CONFIG_PM_SLEEP)) here?
-
-> +       if (tegra_clk_suspend_ctx_init(banks)) {
-> +               kfree(periph_clk_enb_refcnt);
-> +               kfree(clks);
-> +               return NULL;
-> +       }
-> +#endif
->         return clks;
->  }
-> =20
