@@ -2,94 +2,243 @@ Return-Path: <SRS0=s3ie=T5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE2AC28CC0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 09:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32ECC28CC0
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 09:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DCA20665
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 09:18:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Jn3w4pER"
+	by mail.kernel.org (Postfix) with ESMTP id 835602070D
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 09:39:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbfE2JSe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 05:18:34 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:5485 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbfE2JSe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 05:18:34 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cee4e690000>; Wed, 29 May 2019 02:18:33 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 29 May 2019 02:18:33 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 29 May 2019 02:18:33 -0700
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 May
- 2019 09:18:33 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 29 May 2019 09:18:33 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.21.132.148]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cee4e670004>; Wed, 29 May 2019 02:18:32 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] clk: tegra210: Fix default rates for HDA clocks
-Date:   Wed, 29 May 2019 10:18:21 +0100
-Message-ID: <1559121501-8566-1-git-send-email-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        id S1726015AbfE2Jjx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 05:39:53 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17604 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725894AbfE2Jjx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 May 2019 05:39:53 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A197A194D203AE1D13FD;
+        Wed, 29 May 2019 17:39:50 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 17:39:41 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <tony@atomide.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v3] clk: ti: Remove unused functions
+Date:   Wed, 29 May 2019 17:39:37 +0800
+Message-ID: <20190529093937.21748-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190512100328.27136-1-yuehaibing@huawei.com>
+References: <20190512100328.27136-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559121513; bh=R5/eMVjqBGrmlh8gW6+X0+5WtMkn8HWkBhV9avG/N5Q=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Jn3w4pERFvmYGnGKNbHOxcFr7QJNb39Zj3bROvKf0F4AxSQZF1kaWs1RMVNohBnF2
-         1RwdwKPpoXzKhr5VXVT5kaUuT1Czn/BmlR4hVzA9tbciN2JGK+2yMCyR0LF1CggEww
-         qV9R5waeZEoeZbpMHAiYAxm+OIb4eL+zxBGUXir2DzjEwQYcxup+SPC2qVpT1xx/VB
-         VtwRviEd9DblR/hnhsqB2vnrDvO1NP8Msa9vTOxhKbJSW30LfNuozW8BuqVwRST9Cx
-         ItsMK427/aWfvsLAG23MO/N94A7JoGpQaZhCKVW5J/8HwhJRT+oUZASv2khTjGsh8f
-         4N2Pl5ffVfySA==
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
-are both 19.2MHz. However, the default rates for these clocks should
-actually be 51MHz and 48MHz, respectively. Correct the default clock
-rates for these clocks by specifying them in the clock init table for
-Tegra210.
+They are not used any more since
+commit 7558562a70fb ("clk: ti: Drop legacy clk-3xxx-legacy code")
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 2 ++
- 1 file changed, 2 insertions(+)
+v3: remove ti_clk_build_component_div and _get_div_table_from_setup
+v2: also remove mux/div unused functions
+---
+ drivers/clk/ti/divider.c | 85 ----------------------------------------
+ drivers/clk/ti/gate.c    | 30 --------------
+ drivers/clk/ti/mux.c     | 31 ---------------
+ 3 files changed, 146 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index ed3c7df75d1e..8b3b3d771813 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3377,6 +3377,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_I2S3_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
- 	{ TEGRA210_CLK_I2S4_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
- 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
-+	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
- 	/* This MUST be the last entry. */
- 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
- };
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 4786e0ebc2e8..6cb863c13648 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -425,91 +425,6 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ 	return 0;
+ }
+ 
+-static const struct clk_div_table *
+-_get_div_table_from_setup(struct ti_clk_divider *setup, u8 *width)
+-{
+-	const struct clk_div_table *table = NULL;
+-
+-	ti_clk_parse_divider_data(setup->dividers, setup->num_dividers,
+-				  setup->max_div, setup->flags, width,
+-				  &table);
+-
+-	return table;
+-}
+-
+-struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+-{
+-	struct clk_omap_divider *div;
+-	struct clk_omap_reg *reg;
+-	int ret;
+-
+-	if (!setup)
+-		return NULL;
+-
+-	div = kzalloc(sizeof(*div), GFP_KERNEL);
+-	if (!div)
+-		return ERR_PTR(-ENOMEM);
+-
+-	reg = (struct clk_omap_reg *)&div->reg;
+-	reg->index = setup->module;
+-	reg->offset = setup->reg;
+-
+-	if (setup->flags & CLKF_INDEX_STARTS_AT_ONE)
+-		div->flags |= CLK_DIVIDER_ONE_BASED;
+-
+-	if (setup->flags & CLKF_INDEX_POWER_OF_TWO)
+-		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+-
+-	div->table = _get_div_table_from_setup(setup, &div->width);
+-	if (IS_ERR(div->table)) {
+-		ret = PTR_ERR(div->table);
+-		kfree(div);
+-		return ERR_PTR(ret);
+-	}
+-
+-
+-	div->shift = setup->bit_shift;
+-	div->latch = -EINVAL;
+-
+-	return &div->hw;
+-}
+-
+-struct clk *ti_clk_register_divider(struct ti_clk *setup)
+-{
+-	struct ti_clk_divider *div = setup->data;
+-	struct clk_omap_reg reg = {
+-		.index = div->module,
+-		.offset = div->reg,
+-	};
+-	u8 width;
+-	u32 flags = 0;
+-	u8 div_flags = 0;
+-	const struct clk_div_table *table;
+-	struct clk *clk;
+-
+-	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
+-		div_flags |= CLK_DIVIDER_ONE_BASED;
+-
+-	if (div->flags & CLKF_INDEX_POWER_OF_TWO)
+-		div_flags |= CLK_DIVIDER_POWER_OF_TWO;
+-
+-	if (div->flags & CLKF_SET_RATE_PARENT)
+-		flags |= CLK_SET_RATE_PARENT;
+-
+-	table = _get_div_table_from_setup(div, &width);
+-	if (IS_ERR(table))
+-		return (struct clk *)table;
+-
+-	clk = _register_divider(NULL, setup->name, div->parent,
+-				flags, &reg, div->bit_shift,
+-				width, -EINVAL, div_flags, table);
+-
+-	if (IS_ERR(clk))
+-		kfree(table);
+-
+-	return clk;
+-}
+-
+ static struct clk_div_table *
+ __init ti_clk_get_div_table(struct device_node *node)
+ {
+diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
+index 504c0e91cdc7..42389558418c 100644
+--- a/drivers/clk/ti/gate.c
++++ b/drivers/clk/ti/gate.c
+@@ -131,36 +131,6 @@ static struct clk *_register_gate(struct device *dev, const char *name,
+ 	return clk;
+ }
+ 
+-struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup)
+-{
+-	struct clk_hw_omap *gate;
+-	struct clk_omap_reg *reg;
+-	const struct clk_hw_omap_ops *ops = &clkhwops_wait;
+-
+-	if (!setup)
+-		return NULL;
+-
+-	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-	if (!gate)
+-		return ERR_PTR(-ENOMEM);
+-
+-	reg = (struct clk_omap_reg *)&gate->enable_reg;
+-	reg->index = setup->module;
+-	reg->offset = setup->reg;
+-
+-	gate->enable_bit = setup->bit_shift;
+-
+-	if (setup->flags & CLKF_NO_WAIT)
+-		ops = NULL;
+-
+-	if (setup->flags & CLKF_INTERFACE)
+-		ops = &clkhwops_iclk_wait;
+-
+-	gate->ops = ops;
+-
+-	return &gate->hw;
+-}
+-
+ static void __init _of_ti_gate_clk_setup(struct device_node *node,
+ 					 const struct clk_ops *ops,
+ 					 const struct clk_hw_omap_ops *hw_ops)
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index b7f9a4f068bf..0069e7cf3ebc 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -164,37 +164,6 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 	return clk;
+ }
+ 
+-struct clk *ti_clk_register_mux(struct ti_clk *setup)
+-{
+-	struct ti_clk_mux *mux;
+-	u32 flags;
+-	u8 mux_flags = 0;
+-	struct clk_omap_reg reg;
+-	u32 mask;
+-
+-	mux = setup->data;
+-	flags = CLK_SET_RATE_NO_REPARENT;
+-
+-	mask = mux->num_parents;
+-	if (!(mux->flags & CLKF_INDEX_STARTS_AT_ONE))
+-		mask--;
+-
+-	mask = (1 << fls(mask)) - 1;
+-	reg.index = mux->module;
+-	reg.offset = mux->reg;
+-	reg.ptr = NULL;
+-
+-	if (mux->flags & CLKF_INDEX_STARTS_AT_ONE)
+-		mux_flags |= CLK_MUX_INDEX_ONE;
+-
+-	if (mux->flags & CLKF_SET_RATE_PARENT)
+-		flags |= CLK_SET_RATE_PARENT;
+-
+-	return _register_mux(NULL, setup->name, mux->parents, mux->num_parents,
+-			     flags, &reg, mux->bit_shift, mask, -EINVAL,
+-			     mux_flags, NULL);
+-}
+-
+ /**
+  * of_mux_clk_setup - Setup function for simple mux rate clock
+  * @node: DT node for the clock
 -- 
-2.7.4
+2.17.1
+
 
