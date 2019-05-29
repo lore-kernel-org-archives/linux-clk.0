@@ -2,219 +2,175 @@ Return-Path: <SRS0=s3ie=T5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E28B0C28CC0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 14:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A278C28CC0
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 15:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE79723A57
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 14:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6351921902
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 15:31:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8JOsQlG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKA8q0dU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfE2Oav (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 10:30:51 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46326 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbfE2Oav (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 10:30:51 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r7so1924438wrr.13;
-        Wed, 29 May 2019 07:30:48 -0700 (PDT)
+        id S1726140AbfE2PbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 11:31:00 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38595 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfE2PbA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 11:31:00 -0400
+Received: by mail-lj1-f196.google.com with SMTP id o13so2915404lji.5;
+        Wed, 29 May 2019 08:30:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+mrvH5d9LnblMFOrU+glO76G4SJ6Ih/eDveF6jIta9Q=;
-        b=W8JOsQlGyoa8Jr2aFnmr9GTCVgVQPuDWb5dA8jyvf5hljd0EQOPlPcqfwGv+SjUXLy
-         porOr0Iv98gZ9Y7mR2bjcnU70c9NHxyTAMIa4Nf8gIv0DrvsK1xLCHWUZMmbHl0oUqr7
-         4TccOQzdz5Z8CpYqCEKmCTHP4wXt7tYhdsC3ZUySUSt9cVs1c+P2NSQ+tK7l9/PKDt68
-         jckUnUFNGI7iN3Llm0zLMU+ZWDlo3EJkggkKVJX7qjh4Nd6fjXrF4xP+Yy1BwgKaOO8l
-         ex/8ul9IQucbV2n6Wl0yLJrm4rvSKfsbAmoh02MoLTVvh9bQC5cTdrYlRW49PsM7OmPJ
-         pqcA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QNpp3+TXidOjskLGVibpmvR3MRh+7pSnFlPt1lVhXAg=;
+        b=NKA8q0dUoVO+aTq7Rqo9sd8x62qlwWNod/NJ5sZaeoRy8ZCEGzwWOoMC8Fuenf19nu
+         Bo7a7UuNPKal73cypz5P+XdcTFseO+8+KDypD6UuXhJpWUgg9UCbluRuzefcfzKdDXr/
+         uLzwYoYNbQxhxRTHR1GGO6MjPgR93dGZRisH0LHWPiNsytCk3dEz9mqSnLETXAWyERpq
+         +8FVfIafQRtKTL3ai8iTBXQ+7ZTRhibvIYcUjUwXEO3BxTu0yo5Q7pfkp54KK2rnJHru
+         B36vhsgeZ/G6pD88rwABCnIUs+g0rm38xl3AF4HmSoTSUPf+L1/eYk6BgGYWo5t2SQVq
+         hGxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+mrvH5d9LnblMFOrU+glO76G4SJ6Ih/eDveF6jIta9Q=;
-        b=If9tRhSAs7yZo2lKRprEg80SWlHlx06hXVeokYwrnrGYr5bb+ExF1rM5TwnwGxyQp1
-         gUuBCJf6fiuybWy59jJTYqjXrdV/Oy3pIyEmgiabgyVFxTQ3rGuzgZx8IVezujSpPj+h
-         24ZVxw3RtRb3X736ZAshmcDpBdpRkabestyaoeQ7q6jlzuuc9A8pTasxH9fk71Xo2CHF
-         xYkWsS5L3k+BhOBIoX0zxX0+pg/JunY8n7tMBXOteL7MqPGjIs8xloRFraYPVT+5hHwZ
-         DhntbFDS5rKzmF7tvZLmEd4iU01rM3g9Qm9YQti+buZ8m/x+sAH3SBYXc64e0hrh1IoZ
-         hpqw==
-X-Gm-Message-State: APjAAAWCF+KfPJRY14uCqeUrOgwuDGiukR86FwwjIWaC9VB3W2cetw7k
-        EFAvwzk2XR6WZSYL4NFdt8oXosKh
-X-Google-Smtp-Source: APXvYqwkTFr7sjDIT5btyNSIMcJc7h73x4bwa4wtzCODaT/zS9/J1zsFj3/ICGIgfnmRBZ7O4yOHqg==
-X-Received: by 2002:a5d:610e:: with SMTP id v14mr402211wrt.343.1559140248146;
-        Wed, 29 May 2019 07:30:48 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id n7sm6577025wrw.64.2019.05.29.07.30.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 29 May 2019 07:30:47 -0700 (PDT)
-Date:   Wed, 29 May 2019 16:30:46 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
-        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 08/12] soc/tegra: pmc: allow support for more tegra
- wake models
-Message-ID: <20190529143046.GF17679@ulmo>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QNpp3+TXidOjskLGVibpmvR3MRh+7pSnFlPt1lVhXAg=;
+        b=V69wezC6uXRH7dtOdgjOQIT519P2nV1zi8srIzHKM1wyycsT1NjlK3Et8aMZu+6iUb
+         78NSgTfT79shZb+/9HlshIboX/fFkf9RIniMQdWJ6JDQqS6viI2KAOtpR6eUPYaLnNAe
+         1L2nrdp3e9vSBv+F1PAmPkuBCuARxxjVYb2UlK7Oz0/yYQxXZSQ7lHHWbyVTsKSajEB/
+         ZeKf0SIsjRytbYRT1sRs8Dd8nZHtGEudOvI8iFkmHFUr87favI/RVj4N2TAQI2ecrPAj
+         NVRfB+84a1Ao49ptdVb6E9qLTnrS3vz8LGFGMHFLC7wJ7+xPFI3vgVpRwV/dsFVc406n
+         hhIA==
+X-Gm-Message-State: APjAAAUGsXPr6f0l1P07kegf5O4HnpWSdvoA1E2a+WQeZirl5G0Gsoz2
+        ZP2BXDlDM+3YrJoIk6t7g/ui9r4C
+X-Google-Smtp-Source: APXvYqxVea962JccPcGD+nidzhwVcdWpV3Mraq2NwASgddvLewsOBGWSeZUAHcTT2aBtS+2o2xTM0A==
+X-Received: by 2002:a2e:970e:: with SMTP id r14mr20439581lji.86.1559143857576;
+        Wed, 29 May 2019 08:30:57 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.35.141])
+        by smtp.googlemail.com with ESMTPSA id c10sm3497637lfh.79.2019.05.29.08.30.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 08:30:56 -0700 (PDT)
+Subject: Re: [PATCH V2 02/12] pinctrl: tegra: add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
 References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-9-git-send-email-skomatineni@nvidia.com>
+ <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6273a790-d4b7-c501-3fec-d9816288b139@gmail.com>
+Date:   Wed, 29 May 2019 18:29:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qp4W5+cUSnZs0RIF"
-Content-Disposition: inline
-In-Reply-To: <1559084936-4610-9-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---qp4W5+cUSnZs0RIF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 28, 2019 at 04:08:52PM -0700, Sowjanya Komatineni wrote:
-> This patch allows to create separate irq_set_wake and irq_set_type
-> implementations for different tegra designs PMC that has different
-> wake models which require difference wake registers and different
-> programming sequence.
->=20
-> AOWAKE model support is available for Tegra186 and Tegra194 only
-> and it resides within PMC and supports tiered wake architecture.
->=20
-> Tegra210 and prior tegra designs uses PMC directly to receive wake
-> events and coordinate the wake sequence.
->=20
+29.05.2019 2:08, Sowjanya Komatineni пишет:
+> This patch adds suspend and resume support for Tegra pinctrl driver
+> and registers them to syscore so the pinmux settings are restored
+> before the devices resume.
+> 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 5648e5c09ef5..974b4c9f6ada 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -235,6 +235,8 @@ struct tegra_pmc_soc {
->  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
->  				   struct device_node *np,
->  				   bool invert);
-> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
-> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
-> =20
->  	const char * const *reset_sources;
->  	unsigned int num_reset_sources;
-> @@ -1915,12 +1917,15 @@ static const struct irq_domain_ops tegra_pmc_irq_=
-domain_ops =3D {
->  	.alloc =3D tegra_pmc_irq_alloc,
->  };
-> =20
-> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int=
- on)
->  {
->  	struct tegra_pmc *pmc =3D irq_data_get_irq_chip_data(data);
->  	unsigned int offset, bit;
->  	u32 value;
-> =20
-> +	if (data->hwirq =3D=3D ULONG_MAX)
-> +		return 0;
+>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 68 +++++++++++++++++++++++++++++++-
+>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
+>  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>  7 files changed, 75 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> index a5008c066bac..bdc47e62c457 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -28,11 +28,18 @@
+>  #include <linux/pinctrl/pinmux.h>
+>  #include <linux/pinctrl/pinconf.h>
+>  #include <linux/slab.h>
+> +#include <linux/syscore_ops.h>
+>  
+>  #include "../core.h"
+>  #include "../pinctrl-utils.h"
+>  #include "pinctrl-tegra.h"
+>  
+> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+> +#define EMMC_DPD_PARKING			(0x1fff << 14)
 > +
->  	offset =3D data->hwirq / 32;
->  	bit =3D data->hwirq % 32;
-> =20
-
-I've submitted this hunk as a separate patch because I think we may end
-up needing to backport that to v5.0.
-
-No need for you to worry about that, though. I'll take care of it when I
-apply this patch.
-
-Thierry
-
-> @@ -1943,7 +1948,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *=
-data, unsigned int on)
->  	return 0;
->  }
-> =20
-> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int ty=
-pe)
-> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int=
- type)
+> +static struct tegra_pmx *pmx;
+> +
+>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
 >  {
->  	struct tegra_pmc *pmc =3D irq_data_get_irq_chip_data(data);
->  	u32 value;
-> @@ -1996,8 +2001,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pm=
-c)
->  	pmc->irq.irq_unmask =3D irq_chip_unmask_parent;
->  	pmc->irq.irq_eoi =3D irq_chip_eoi_parent;
->  	pmc->irq.irq_set_affinity =3D irq_chip_set_affinity_parent;
-> -	pmc->irq.irq_set_type =3D tegra_pmc_irq_set_type;
-> -	pmc->irq.irq_set_wake =3D tegra_pmc_irq_set_wake;
-> +	if (pmc->soc->irq_set_type)
-> +		pmc->irq.irq_set_type =3D pmc->soc->irq_set_type;
-> +	if (pmc->soc->irq_set_wake)
-> +		pmc->irq.irq_set_wake =3D pmc->soc->irq_set_wake;
-> =20
->  	pmc->domain =3D irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_no=
-de,
->  					       &tegra_pmc_irq_domain_ops, pmc);
-> @@ -2670,6 +2677,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc =
-=3D {
->  	.regs =3D &tegra186_pmc_regs,
->  	.init =3D NULL,
->  	.setup_irq_polarity =3D tegra186_pmc_setup_irq_polarity,
-> +	.irq_set_wake =3D tegra186_pmc_irq_set_wake,
-> +	.irq_set_type =3D tegra186_pmc_irq_set_type,
->  	.reset_sources =3D tegra186_reset_sources,
->  	.num_reset_sources =3D ARRAY_SIZE(tegra186_reset_sources),
->  	.reset_levels =3D tegra186_reset_levels,
-> @@ -2748,6 +2757,8 @@ static const struct tegra_pmc_soc tegra194_pmc_soc =
-=3D {
->  	.regs =3D &tegra186_pmc_regs,
->  	.init =3D NULL,
->  	.setup_irq_polarity =3D tegra186_pmc_setup_irq_polarity,
-> +	.irq_set_wake =3D tegra186_pmc_irq_set_wake,
-> +	.irq_set_type =3D tegra186_pmc_irq_set_type,
->  	.num_wake_events =3D ARRAY_SIZE(tegra194_wake_events),
->  	.wake_events =3D tegra194_wake_events,
->  };
-> --=20
-> 2.7.4
->=20
+>  	return readl(pmx->regs[bank] + reg);
+> @@ -629,6 +636,50 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>  	}
+>  }
+>  
+> +static int __maybe_unused tegra_pinctrl_suspend(void)
+> +{
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	int i, j;
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		regs = pmx->regs[i];
+> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+> +			*backup_regs++ = readl(regs++);
+> +	}
+> +
+> +	return pinctrl_force_sleep(pmx->pctl);
+> +}
+> +
+> +static void __maybe_unused tegra_pinctrl_resume(void)
+> +{
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	u32 val;
+> +	int i, j;
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		regs = pmx->regs[i];
+> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+> +			writel(*backup_regs++, regs++);
+> +	}
+> +
+> +	if (pmx->soc->has_park_padcfg) {
+> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+> +		val &= ~EMMC_DPD_PARKING;
+> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+> +
+> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+> +		val &= ~EMMC_DPD_PARKING;
+> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+> +	}
+> +}
+>
 
---qp4W5+cUSnZs0RIF
-Content-Type: application/pgp-signature; name="signature.asc"
+But the CFGPADCTRL registers are already programmed by restoring the
+backup_regs and hence the relevant EMMC's are already unparked. Hence
+why do you need to force-unpark both of the EMMC's? What if EMMC is
+unpopulated on a board, why do you need to unpark it then?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzul5YACgkQ3SOs138+
-s6EvRg//SiL8/cj7vXeGPNhShOjMQH5iYJIHqsX0WbMVVHn86pA6gpNyEYzZKaMU
-Sx9GsAU6QQSaitW2WJ+9Dd2+uNaHiOIFSqZwGEHUxDcYCyEsvNhq99mPVw+KOQXs
-u+hCCzhEN/4emURsfohOTDBRORr30tbLqzl3WinPLrseqLlY5oHXz5RmzXPY8wRV
-ZmBo6X5xXAr3IctQpZUlTDr/TiY60JLEN3zVqPHlNEShtlMVVVzMzR6ByP20NSh0
-fVL/P3iTC3nKHtwlqhaaMpu27wMNz+HHa6xaMRRkM+BLQyuDlN5cZEN3HsiFijB3
-lYn5sMz9bonxyaHX5ROFOeqCfGqPAhBde6d92X+/uq3xLAzt7VzHL9NCNlAjDzMi
-CK6H+9+Uv669KZqw1PG+DhPFNCyCJYx9rPTaR1xZ8T1M2pakLXl15CwSJMIvNWd3
-4hdhDYtCIcrlu23UkjwKZFOIxyMzijobk9FLRBRQoxkL8MXtqqPGlWlAF2Gw4nwi
-k1rcuUPgm/RCtnLa03zGehmKgiJpsGOSevI+ahEPeHSeSaPGbaxgLOXKO0D2PWA3
-80QpD6NO6NiU5VuM/BYomu29sZYWVEQxR1F2LIR4JB3nm2a77nh/eNo7TMlk1WSn
-NNL00bUomOFZXHk+D39puub7N443xeLpEg9PqWtia/nxhyFLrbM=
-=mmOw
------END PGP SIGNATURE-----
-
---qp4W5+cUSnZs0RIF--
+-- 
+Dmitry
