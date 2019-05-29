@@ -2,138 +2,247 @@ Return-Path: <SRS0=s3ie=T5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B27C28CC2
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F53C28CC0
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30735241E3
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B09622420A
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:25:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="0REuaA8f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1ReYKqi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfE2VLH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 17:11:07 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39030 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfE2VLH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 17:11:07 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a10so724039ljf.6
-        for <linux-clk@vger.kernel.org>; Wed, 29 May 2019 14:11:06 -0700 (PDT)
+        id S1726708AbfE2VZr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 17:25:47 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40635 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfE2VZr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 17:25:47 -0400
+Received: by mail-lf1-f68.google.com with SMTP id a9so1860499lff.7;
+        Wed, 29 May 2019 14:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=V+zBrsPH+2OSRodMwuZ9huc4K3MelCGCmI8U611rstQ=;
-        b=0REuaA8fosdgKFbOBIuJozgm9lBZ68FoXT2yD+5YI4lrRsvA6I79x+O02kdXYnnl2b
-         noNqxdxwRWggbwtv/hxmthcUjOUT+buBeWkUxo9u4JwJgtWAU/4ty2s8tJvorhtu6v/J
-         xwHPjRDhFn8ipEp4+V9LV3f6CgHh4g8vqY/6VqK+sXVKl+RPRZn/pkoXbmimLBhPLpS8
-         wrr2aDg9rgUIr6sTDbOPMejPGZhGSidvXnSC4XegwXYBtdSovyi4c24eTC/eYccmddzy
-         KRQlB36XN4v5fcLDfBhyq+lCv41WEy893RqAx9rTlTSl2IXCCu7FLA5wta7+cyN/y+UJ
-         h9vQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AHJUi6ywWg40R8ywUQxkqT+6QFkJHA8t+9/PSoqzOfw=;
+        b=A1ReYKqiHPO7CPdK/Qtmknka0d817WjVlxF5Og4nGKuBmZJx58JiO437luVA0iPlAI
+         jLo1Yct6MkVoS/qTZ5hv6OOamQ0Rg2N80GI1RpZKqfQ3/Dts5yffjy1jtAnPLzTp9was
+         3nkRud5bsUZ7hMtOf/Q0Uvz/gaPg5zXIKK5QSTvVvTBScaPX76iQJuOLHjIdf917V2gq
+         uuNMVRUK8Yj1RCp8tZWLleaS0tmGBTtqPXEN864x9q/0JrgdbjwwSydVTFvzrN9mhx8a
+         9eJ6eU3Xyv6hLlkbb15tXDaNvBOHPe247G+am4Bt+mVGsVZ1Ik2c5f3GYUm0q5/rmcwr
+         BDxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=V+zBrsPH+2OSRodMwuZ9huc4K3MelCGCmI8U611rstQ=;
-        b=prMMqyC17Cq01iklFX1hChuusntWcYYPbSekxY+31rbSphZ+1LQsnTJ6cDO3f33+Rh
-         dmzU8CCG285fqN3v1bIIy7dbe8mKPQyH/t482Y7R8GeF1pbA4+T+hz0Ev9/CbNkSTgTA
-         4fGcsNEzdfd+Zk4CdkJEzgiDc9LXt7Yw5xG2rl7XKy7I+orAXeh4GveDvQJ3w7+e60Hd
-         PSdMHIBKyj4WKU4DWunQXZFb1EB0nraXUE1CvW2Ivqr0rUPijNdlUzApbE0JGmLo9DGh
-         VVbBRGWHZvTzOItFBL/ex+ebEyIspcHiHCAtB89f3nLV1OLOJjvXdZetaN4DC/5HdyN/
-         lSJQ==
-X-Gm-Message-State: APjAAAVdD/UBOJAOH954iqRzXVjlKyAofkBzqzaCiS6QhcE90LoF9swN
-        9dIV6wNeLviYqDZVOj82R8hoNA==
-X-Google-Smtp-Source: APXvYqwr7b1fGmDWNtLOsTPY3vjoq3oQT4j6E7g6lnEvGipxMliij6ZazrR7mK0vgT9zj2rZ/lP6Sg==
-X-Received: by 2002:a2e:8555:: with SMTP id u21mr6576741ljj.133.1559164265570;
-        Wed, 29 May 2019 14:11:05 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id v20sm125883lfe.11.2019.05.29.14.11.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 14:11:04 -0700 (PDT)
-Date:   Wed, 29 May 2019 23:11:04 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Use genpd of_node instead of
- local copy
-Message-ID: <20190529211104.GP1651@bigcity.dyn.berto.se>
-References: <20190527123323.6912-1-geert+renesas@glider.be>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AHJUi6ywWg40R8ywUQxkqT+6QFkJHA8t+9/PSoqzOfw=;
+        b=uFDUKOqHjk24sUPvz+QZ4YuzcxX7hQ3pd61ZTBAgdKElzoBjkzexkJQLJKZcJ3ELZM
+         zvaBp9u7BleEc7Pts6jlSVeQOV81gt5VToQhcrhGwMq+DtF9vLDilAibY8lefg/B8PIa
+         iO5Cd7Ic2jba6MvVDf78WPB6c5RKQmfcXwCGea543V5z+uyw3kyfRZA0hbvkmoiNvZi0
+         E7ovtYpuUJ0RhV4E+o4ZXUTlxqpI6EVQG1pqMMD3ReLgVqH4bPoPQydtzfc9iLXYxwx5
+         4tZnVZhjVUO0HkAc/ehHvnufJ+IUIfZOTQ1kf9dJj7V82j76gXVqWqacY+ZZPAD6iOJn
+         YO2g==
+X-Gm-Message-State: APjAAAUfoQ3l141WijwhRr5/PTTsY7pCaSJfBoO4h8I+5ZEp6movU1bF
+        5n+YJRiT/3FFOrYamfLPB30stnoK
+X-Google-Smtp-Source: APXvYqyFPRkDc0wSAYjlbhjtnNfv53r10XxMwWp5zlzN7M/Si8wGYXONX586FagUAznrWFx7ilhEnw==
+X-Received: by 2002:a19:c512:: with SMTP id w18mr38609lfe.81.1559165143018;
+        Wed, 29 May 2019 14:25:43 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.35.141])
+        by smtp.googlemail.com with ESMTPSA id n10sm129059lfk.39.2019.05.29.14.25.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 14:25:42 -0700 (PDT)
+Subject: Re: [PATCH V2 02/12] pinctrl: tegra: add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+ <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
+ <6273a790-d4b7-c501-3fec-d9816288b139@gmail.com>
+ <d9d54f05-b0bf-6e65-9308-45e94454301e@nvidia.com>
+ <11fe4d9a-6d8e-bc4f-b764-a849571fb6b0@gmail.com>
+ <0f087659-cdde-9f89-55a2-d399ee539431@nvidia.com>
+ <34480b14-48da-2745-086d-6a8900c5a049@gmail.com>
+ <fc1f3c56-ab6b-478e-75d8-797d8e3bf21f@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5e074715-fd8c-908a-b880-9f1fd03a244f@gmail.com>
+Date:   Thu, 30 May 2019 00:25:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <fc1f3c56-ab6b-478e-75d8-797d8e3bf21f@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190527123323.6912-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
-
-Thanks for your work.
-
-On 2019-05-27 14:33:23 +0200, Geert Uytterhoeven wrote:
-> Since commit 6a0ae73d95956f7e ("PM / Domain: Add support to parse
-> domain's OPP table"), of_genpd_add_provider_simple() fills in
-> the dev.of_node field in the generic_pm_domain structure.
+29.05.2019 23:56, Sowjanya Komatineni пишет:
 > 
-> Hence cpg_mssr_is_pm_clk() can use that instead of its own copy in the
-> driver-private cpg_mssr_clk_domain structure.
+> On 5/29/19 1:47 PM, Dmitry Osipenko wrote:
+>> 29.05.2019 23:11, Sowjanya Komatineni пишет:
+>>> On 5/29/19 12:32 PM, Dmitry Osipenko wrote:
+>>>> 29.05.2019 21:14, Sowjanya Komatineni пишет:
+>>>>> On 5/29/19 8:29 AM, Dmitry Osipenko wrote:
+>>>>>> 29.05.2019 2:08, Sowjanya Komatineni пишет:
+>>>>>>> This patch adds suspend and resume support for Tegra pinctrl driver
+>>>>>>> and registers them to syscore so the pinmux settings are restored
+>>>>>>> before the devices resume.
+>>>>>>>
+>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>> ---
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra.c    | 68
+>>>>>>> +++++++++++++++++++++++++++++++-
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
+>>>>>>>     drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>>>>>>>     7 files changed, 75 insertions(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>>>>>> b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>>>>>> index a5008c066bac..bdc47e62c457 100644
+>>>>>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>>>>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>>>>>> @@ -28,11 +28,18 @@
+>>>>>>>     #include <linux/pinctrl/pinmux.h>
+>>>>>>>     #include <linux/pinctrl/pinconf.h>
+>>>>>>>     #include <linux/slab.h>
+>>>>>>> +#include <linux/syscore_ops.h>
+>>>>>>>       #include "../core.h"
+>>>>>>>     #include "../pinctrl-utils.h"
+>>>>>>>     #include "pinctrl-tegra.h"
+>>>>>>>     +#define EMMC2_PAD_CFGPADCTRL_0            0x1c8
+>>>>>>> +#define EMMC4_PAD_CFGPADCTRL_0            0x1e0
+>>>>>>> +#define EMMC_DPD_PARKING            (0x1fff << 14)
+>>>>>>> +
+>>>>>>> +static struct tegra_pmx *pmx;
+>>>>>>> +
+>>>>>>>     static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32
+>>>>>>> reg)
+>>>>>>>     {
+>>>>>>>         return readl(pmx->regs[bank] + reg);
+>>>>>>> @@ -629,6 +636,50 @@ static void
+>>>>>>> tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>>>>>>         }
+>>>>>>>     }
+>>>>>>>     +static int __maybe_unused tegra_pinctrl_suspend(void)
+>>>>>>> +{
+>>>>>>> +    u32 *backup_regs = pmx->backup_regs;
+>>>>>>> +    u32 *regs;
+>>>>>>> +    int i, j;
+>>>>>>> +
+>>>>>>> +    for (i = 0; i < pmx->nbanks; i++) {
+>>>>>>> +        regs = pmx->regs[i];
+>>>>>>> +        for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+>>>>>>> +            *backup_regs++ = readl(regs++);
+>>>>>>> +    }
+>>>>>>> +
+>>>>>>> +    return pinctrl_force_sleep(pmx->pctl);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void __maybe_unused tegra_pinctrl_resume(void)
+>>>>>>> +{
+>>>>>>> +    u32 *backup_regs = pmx->backup_regs;
+>>>>>>> +    u32 *regs;
+>>>>>>> +    u32 val;
+>>>>>>> +    int i, j;
+>>>>>>> +
+>>>>>>> +    for (i = 0; i < pmx->nbanks; i++) {
+>>>>>>> +        regs = pmx->regs[i];
+>>>>>>> +        for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+>>>>>>> +            writel(*backup_regs++, regs++);
+>>>>>>> +    }
+>>>>>>> +
+>>>>>>> +    if (pmx->soc->has_park_padcfg) {
+>>>>>>> +        val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>>>>>> +        val &= ~EMMC_DPD_PARKING;
+>>>>>>> +        pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>>>>>> +
+>>>>>>> +        val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>>>>>> +        val &= ~EMMC_DPD_PARKING;
+>>>>>>> +        pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>>>>>> +    }
+>>>>>>> +}
+>>>>>>>
+>>>>>> But the CFGPADCTRL registers are already programmed by restoring the
+>>>>>> backup_regs and hence the relevant EMMC's are already unparked. Hence
+>>>>>> why do you need to force-unpark both of the EMMC's? What if EMMC is
+>>>>>> unpopulated on a board, why do you need to unpark it then?
+>>>>> PARK bit for EMMC2/EMMC4 (EMMC2_PAD_CFGPADCTRL and
+>>>>> EMMC4_PAD_CFGPADCTRL)
+>>>>> are not part of pinmux.
+>>>>>
+>>>>> They are part of CFGPADCTRL register so pinctrl driver pingroup
+>>>>> doesn't
+>>>>> include these registers.
+>>>> I'm looking at the tegra210_groups and it clearly has these both
+>>>> registers as a part of pinctrl setup because the rest of the bits
+>>>> configure drive of the pads.
+>>>>
+>>>>   From pinctrl-tegra210.c:
+>>>>
+>>>> #define DRV_PINGROUP_REG_A        0x8d4    /* bank 0 */
+>>>>
+>>>> DRV_PINGROUP(sdmmc2, 0xa9c, 2,  6,  8,  6,  28, 2,  30, 2),
+>>>> DRV_PINGROUP(sdmmc4, 0xab4, 2,  6,  8,  6,  28, 2,  30, 2),
+>>>>
+>>>> ...
+>>>>
+>>>> 0xa9c - 0x8d4 = 0x1c8
+>>>> 0xab4 - 0x8d4 = 0x1e0
+>>>>
+>>>> Hence the PARK bits are already getting unset by restoring the
+>>>> backup_regs because the CFGPADCTRL registers are a part of the "bank 0"
+>>>> registers.
+>>>>
+>>>> Am I still missing something?
+>>> DRV_PINGROUP parked_bit is -1 and will not be programmed so store and
+>>> restore will not take care of it.
+>>>
+>>> Also EMMC PADCFG is the only padcfg register which has parked bit and
+>>> for other IO pads its part of pinmux
+>> You're storing raw values of all of the PINCTRL registers and then
+>> restoring the raw values (if I'm not misreading that part on the patch),
+>> it's absolutely meaningless that DRV_PINGROUP doesn't define the PARK
+>> bits.
+>>
+>> In a result, the backup_regs array contains raw CFGPADCTRL value with
+>> the PARK bits being unset on store, that value is written out on the
+>> restore as-is and hence the PARK bits are getting unset as well.
+>>
+>> And why DRV_PINGROUP misses PARK bits for the EMMC's? Looks like a
+>> driver's drawback that need to be addressed.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Parked bits from padcfg are available only for couple of EMMC registers.
+> 
+> default PARK bits are set so stored value contains park bit set. on
+> resume, after restoring park bit is cleared.
 
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+TRM says that the PARK bits are set on HW reset (and on DPD IIUC) and
+then SW should unset the bits. I assume that the PARK bits of the EMMC
+pads are unset by bootloader and that's why it doesn't cause problems
+for kernel, in oppose to PARK bits of the rest of pinmux that are unset
+by the driver in tegra_pinctrl_clear_parked_bits() on driver's probe.
 
-> ---
-> To be queued in clk-renesas-for-v5.3.
-> 
->  drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index 0201809bbd377df4..d1054204f3a75022 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -447,7 +447,6 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
->  
->  struct cpg_mssr_clk_domain {
->  	struct generic_pm_domain genpd;
-> -	struct device_node *np;
->  	unsigned int num_core_pm_clks;
->  	unsigned int core_pm_clks[0];
->  };
-> @@ -459,7 +458,7 @@ static bool cpg_mssr_is_pm_clk(const struct of_phandle_args *clkspec,
->  {
->  	unsigned int i;
->  
-> -	if (clkspec->np != pd->np || clkspec->args_count != 2)
-> +	if (clkspec->np != pd->genpd.dev.of_node || clkspec->args_count != 2)
->  		return false;
->  
->  	switch (clkspec->args[0]) {
-> @@ -549,7 +548,6 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
->  	if (!pd)
->  		return -ENOMEM;
->  
-> -	pd->np = np;
->  	pd->num_core_pm_clks = num_core_pm_clks;
->  	memcpy(pd->core_pm_clks, core_pm_clks, pm_size);
->  
-> -- 
-> 2.17.1
-> 
+> on subsequence DPD entry, stored value contains park bit 0 and HW clamps
+> park bit to logic 1 during DPD entry and cleared again on resume.
 
--- 
-Regards,
-Niklas S�derlund
+I assume that EMMC won't work properly if pads are "parked" and the PARK
+bits should be in unset state on kernel boot-up as I wrote above, hence
+stored value should always contain 0 for the EMMC PARK bits. No?
