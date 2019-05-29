@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3064C28CC0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 12:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C5EC28CC0
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 12:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB9B321019
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 12:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC89521019
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 12:27:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jhNy7wOu"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SRsMJ20W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfE2M05 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 08:26:57 -0400
-Received: from mail-eopbgr70079.outbound.protection.outlook.com ([40.107.7.79]:5830
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        id S1727314AbfE2M1p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 08:27:45 -0400
+Received: from mail-eopbgr30051.outbound.protection.outlook.com ([40.107.3.51]:23783
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727111AbfE2M04 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1727041AbfE2M04 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 29 May 2019 08:26:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PKqWuXfwnh3w+ek/x97sagMDlqoHboTZIFrrg1B+nlc=;
- b=jhNy7wOuXwW5T3nfaJs/ZrONIQO/TMC1zRIdOqZbTcFVBC73hUkPQ0tS68D+eiPKhPNF5/1UNseZ4vLcsAwIBEKGfLDnd3pgZlBVoGYmzNPZuSkJUD0kMURUlKzATuUfNVWmr2raLLRUBp3j8B8fqPuWx7eOfqoX1UP4eH2V180=
+ bh=WlZjdPJCp1MCmge1PPrAOrbXmogdvICvsR0Bf95MuxI=;
+ b=SRsMJ20WG7/B1E4flM/ZO2JNiTCKRwgt1MUDoAvey4qTt16N7JrYTMJX840wUrODKQOwICfLcxipVqs34DZ3jS63tP9I+Q5TPW4IBLnzda6VFlekFmwsR1feYLy1VQTs8k5qWiwI89q6Gy9rf3fj/CUP2PjVx+cV0ginwG/yF50=
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
  AM0PR04MB6049.eurprd04.prod.outlook.com (20.179.32.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.17; Wed, 29 May 2019 12:26:44 +0000
+ 15.20.1922.17; Wed, 29 May 2019 12:26:45 +0000
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::c19b:5964:bfcb:96a8]) by AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::c19b:5964:bfcb:96a8%7]) with mapi id 15.20.1922.021; Wed, 29 May 2019
- 12:26:44 +0000
+ 12:26:45 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -48,11 +48,13 @@ CC:     Fabio Estevam <fabio.estevam@nxp.com>,
         <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND 08/18] clk: imx: clk-pfd: Switch to clk_hw based API
-Thread-Topic: [RESEND 08/18] clk: imx: clk-pfd: Switch to clk_hw based API
-Thread-Index: AQHVFhnGDH4gbz1m4EOfBZyn4s+epQ==
+Subject: [RESEND 09/18] clk: imx: clk-gate-exclusive: Switch to clk_hw based
+ API
+Thread-Topic: [RESEND 09/18] clk: imx: clk-gate-exclusive: Switch to clk_hw
+ based API
+Thread-Index: AQHVFhnGT3lmZG8wxEOdWY3zvgoVIA==
 Date:   Wed, 29 May 2019 12:26:43 +0000
-Message-ID: <1559132773-12884-9-git-send-email-abel.vesa@nxp.com>
+Message-ID: <1559132773-12884-10-git-send-email-abel.vesa@nxp.com>
 References: <1559132773-12884-1-git-send-email-abel.vesa@nxp.com>
 In-Reply-To: <1559132773-12884-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
@@ -63,25 +65,25 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-originating-ip: [89.37.124.34]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 18437734-e8c3-469d-eea6-08d6e430e99a
+x-ms-office365-filtering-correlation-id: cdef34c2-068f-4398-d839-08d6e430e9e1
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6049;
 x-ms-traffictypediagnostic: AM0PR04MB6049:
-x-microsoft-antispam-prvs: <AM0PR04MB6049E92B3425708A2BF9558FF61F0@AM0PR04MB6049.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR04MB604999E4CF823094188AEA00F61F0@AM0PR04MB6049.eurprd04.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:2657;
 x-forefront-prvs: 0052308DC6
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(366004)(346002)(376002)(199004)(189003)(6436002)(476003)(73956011)(53936002)(486006)(11346002)(446003)(76116006)(186003)(5660300002)(102836004)(66446008)(66476007)(66946007)(26005)(44832011)(64756008)(36756003)(91956017)(66556008)(8936002)(316002)(2616005)(66066001)(99286004)(256004)(6116002)(6512007)(3846002)(76176011)(68736007)(305945005)(81156014)(81166006)(6486002)(6506007)(54906003)(110136005)(478600001)(2906002)(7736002)(8676002)(14454004)(86362001)(71190400001)(71200400001)(25786009)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6049;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: s3KyLtkTM/m+KmAXMcvx3K9YzZ5aQr98qIgoTg8DboJorfpZVs36SRhedkcTJCm2gBw5AXk5MxCg0/q/2+IAr4KT3A4Grlv9ScaSAKCcX/HjimMrTaFuQ2taMMPQ2hb7tnvWUbb4oqF8qZIFqOmT6vyP8R1i3ewPz0JJHtqU1DHILwvRc/HmHqAed10rYcYFZ3DgQI4X0/0oKAERpyD9dc8AHVgB4u90r1G3rsWWBkm94CMDUO5n9cYRuAHhD1/ALPr6PJnmaAnUwFHBhPfRffvbDFGDOOb3jBgKBW0yPDNkirDdKuDpfPzCCtZxINFw5tKaeIl+mHGiwrCGEOgXIxFsoB3ns4Z8Vo2Vwnxr1VihM8+jDEdsKPAF8vzAxTIkyHxSjMv3zToUWVXUxDlaiTfIWc3vV9P5zZPRwh9sDQQ=
+x-microsoft-antispam-message-info: mks3SNtiZ9jyk4uEbpJSUJJvvmO8JpaMAWCM/hUNDfBs+tLlfq1CriUpt1AL0CX93eu0KF8ZnmHELlKej1+z5jC2arJ6s2jExfFYPpgItrgS3rNvdBlQo/uO/G3gwDzBQQTL7eVjNq8EcCXKc/yHku9NsFbhSgUf1eBz/uyY1caMODiu62Xsi8rXcXl4zJ1QT37lOtH9a3V8icBNKWUWralCDwfdLKSOR+bNmaI+I9CWf8l2C02Swi6eglkcIFcxrd76H3FMh8cBurBaBMxLeAIyr5Upyyio8qJg/QRVXkKlrQITRttN6jnlugCKnp2LItT2V6bBpvsHO3mrpH+HoXisn2JdNZ+FR8pVppQBGTvNIPZ0ZOE0ORj6enES6OVpp2AROkIzaS0Vd7YZQfxvehOvTtboHH5YJnwhO4tJTAo=
 Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <A50375AB4485C5488EFCAF2E8E2D8134@eurprd04.prod.outlook.com>
+Content-ID: <87F380E5A3F9404BA3C8F9B0E29A4C57@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18437734-e8c3-469d-eea6-08d6e430e99a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2019 12:26:43.6508
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdef34c2-068f-4398-d839-08d6e430e9e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2019 12:26:44.0326
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -93,77 +95,82 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch the imx_clk_pfd function to clk_hw based API, rename accordingly
-and add a macro for clk based legacy. This allows us to move closer to
-a clear split between consumer and provider clk APIs.
+Switch the imx_clk_gate_exclusive function to clk_hw based API, rename
+accordingly and add a macro for clk based legacy. This allows us to move
+closer to a clear split between consumer and provider clk APIs.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/clk/imx/clk-pfd.c | 14 +++++++++-----
- drivers/clk/imx/clk.h     |  5 ++++-
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/clk/imx/clk-gate-exclusive.c | 17 +++++++++++------
+ drivers/clk/imx/clk.h                |  5 ++++-
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-pfd.c b/drivers/clk/imx/clk-pfd.c
-index 04a3e78..3b43d29 100644
---- a/drivers/clk/imx/clk-pfd.c
-+++ b/drivers/clk/imx/clk-pfd.c
-@@ -127,12 +127,13 @@ static const struct clk_ops clk_pfd_ops =3D {
- 	.is_enabled     =3D clk_pfd_is_enabled,
+diff --git a/drivers/clk/imx/clk-gate-exclusive.c b/drivers/clk/imx/clk-gat=
+e-exclusive.c
+index 3bd9dee..7bd9f14 100644
+--- a/drivers/clk/imx/clk-gate-exclusive.c
++++ b/drivers/clk/imx/clk-gate-exclusive.c
+@@ -58,13 +58,14 @@ static const struct clk_ops clk_gate_exclusive_ops =3D =
+{
+ 	.is_enabled =3D clk_gate_exclusive_is_enabled,
  };
 =20
--struct clk *imx_clk_pfd(const char *name, const char *parent_name,
-+struct clk_hw *imx_clk_hw_pfd(const char *name, const char *parent_name,
- 			void __iomem *reg, u8 idx)
+-struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
++struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *par=
+ent,
+ 	 void __iomem *reg, u8 shift, u32 exclusive_mask)
  {
- 	struct clk_pfd *pfd;
+ 	struct clk_gate_exclusive *exgate;
+ 	struct clk_gate *gate;
 -	struct clk *clk;
 +	struct clk_hw *hw;
  	struct clk_init_data init;
 +	int ret;
 =20
- 	pfd =3D kzalloc(sizeof(*pfd), GFP_KERNEL);
- 	if (!pfd)
-@@ -148,10 +149,13 @@ struct clk *imx_clk_pfd(const char *name, const char =
-*parent_name,
- 	init.num_parents =3D 1;
+ 	if (exclusive_mask =3D=3D 0)
+ 		return ERR_PTR(-EINVAL);
+@@ -86,9 +87,13 @@ struct clk *imx_clk_gate_exclusive(const char *name, con=
+st char *parent,
+ 	gate->hw.init =3D &init;
+ 	exgate->exclusive_mask =3D exclusive_mask;
 =20
- 	pfd->hw.init =3D &init;
-+	hw =3D &pfd->hw;
-=20
--	clk =3D clk_register(NULL, &pfd->hw);
+-	clk =3D clk_register(NULL, &gate->hw);
 -	if (IS_ERR(clk))
-+	ret =3D clk_hw_register(NULL, hw);
-+	if (ret) {
- 		kfree(pfd);
-+		return ERR_PTR(ret);
-+	}
+-		kfree(exgate);
++	hw =3D &gate->hw;
 =20
 -	return clk;
++	ret =3D clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(gate);
++		return ERR_PTR(ret);
++	}
++
 +	return hw;
  }
 diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8aadc92..87a1a88 100644
+index 87a1a88..1c6300a 100644
 --- a/drivers/clk/imx/clk.h
 +++ b/drivers/clk/imx/clk.h
-@@ -67,6 +67,9 @@ struct imx_pll14xx_clk {
- #define imx_clk_pllv3(type, name, parent_name, base, div_mask) \
- 	imx_clk_hw_pllv3(type, name, parent_name, base, div_mask)->clk
+@@ -70,6 +70,9 @@ struct imx_pll14xx_clk {
+ #define imx_clk_pfd(name, parent_name, reg, idx) \
+ 	imx_clk_hw_pfd(name, parent_name, reg, idx)->clk
 =20
-+#define imx_clk_pfd(name, parent_name, reg, idx) \
-+	imx_clk_hw_pfd(name, parent_name, reg, idx)->clk
++#define imx_clk_gate_exclusive(name, parent, reg, shift, exclusive_mask) \
++	imx_clk_hw_gate_exclusive(name, parent, reg, shift, exclusive_mask)->clk
 +
  struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
  		 void __iomem *base, const struct imx_pll14xx_clk *pll_clk);
 =20
-@@ -123,7 +126,7 @@ struct clk_hw *imx_obtain_fixed_clk_hw(struct device_no=
-de *np,
- struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+@@ -123,7 +126,7 @@ struct clk_hw *imx_obtain_fixed_clock_hw(
+ struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
+ 				       const char *name);
+=20
+-struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
++struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *par=
+ent,
  	 void __iomem *reg, u8 shift, u32 exclusive_mask);
 =20
--struct clk *imx_clk_pfd(const char *name, const char *parent_name,
-+struct clk_hw *imx_clk_hw_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
-=20
- struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
+ struct clk_hw *imx_clk_hw_pfd(const char *name, const char *parent_name,
 --=20
 2.7.4
