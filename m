@@ -6,54 +6,92 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E7AC28CC0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 10:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA56FC28CC0
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 11:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD3A2070D
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 10:35:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C120720B7C
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 11:12:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfE2KfZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 06:35:25 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:49864 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbfE2KfZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 06:35:25 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 7883525AEEC;
-        Wed, 29 May 2019 20:35:23 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 6F5C6940361; Wed, 29 May 2019 12:35:21 +0200 (CEST)
-Date:   Wed, 29 May 2019 12:35:21 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726029AbfE2LMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 07:12:49 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60795 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725894AbfE2LMt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 07:12:49 -0400
+X-Originating-IP: 90.88.147.134
+Received: from localhost (aaubervilliers-681-1-27-134.w90-88.abo.wanadoo.fr [90.88.147.134])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 26487C000B;
+        Wed, 29 May 2019 11:12:37 +0000 (UTC)
+Date:   Wed, 29 May 2019 13:12:36 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     megous@megous.com
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: mstp: Remove error messages on
- out-of-memory conditions
-Message-ID: <20190529103521.owcbusdsl6coq52d@verge.net.au>
-References: <20190527123514.7198-1-geert+renesas@glider.be>
- <20190529102939.ssdpktlqldexwgkv@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] ARM: dts: sun8i: a83t: Add device node for CSI
+ (Camera Sensor Interface)
+Message-ID: <20190529111236.gnk4bics5xrfxyql@flea>
+References: <20190520150637.23557-1-megous@megous.com>
+ <20190520150637.23557-4-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zlv4nldcdeunkux4"
 Content-Disposition: inline
-In-Reply-To: <20190529102939.ssdpktlqldexwgkv@verge.net.au>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190520150637.23557-4-megous@megous.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 29, 2019 at 12:29:39PM +0200, Simon Horman wrote:
-> On Mon, May 27, 2019 at 02:35:14PM +0200, Geert Uytterhoeven wrote:
-> > pm_clk_create() and pm_clk_add_clk() can fail only when running out of
-> > memory.  Hence there is no need to print error messages on failure, as
-> > the memory allocation core already takes care of that.
-> > 
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-On a closer look, I see that pm_clk_add_clk() can return
-errors for other reasons. Can they never occur in this use-case?
+--zlv4nldcdeunkux4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, May 20, 2019 at 05:06:37PM +0200, megous@megous.com wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+>
+> The A83T SoC has a camera sensor interface (known as CSI in Allwinner
+> lingo), which is similar to the one found on the A64 and H3. The only
+> difference seems to be that support of MIPI CSI through a connected
+> MIPI CSI-2 bridge.
+>
+> Add a device node for it, and pinctrl nodes for the commonly used MCLK
+> and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
+> the pinctrl nodes to keep the device tree blob size down if they are
+> unused.
+>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+
+Applied, thanks!
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--zlv4nldcdeunkux4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXO5pJAAKCRDj7w1vZxhR
+xfugAP9uM3nhnPYa61YOa1J7hJC/ogaqkG64ngXh7+5a0atLJgEAiFczeAYSxJpM
+w49Kak6GmlRewxlL2aBTHVZryI9C5gA=
+=G/QN
+-----END PGP SIGNATURE-----
+
+--zlv4nldcdeunkux4--
