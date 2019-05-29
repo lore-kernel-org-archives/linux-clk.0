@@ -4,74 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA8BC28CC0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B27C28CC2
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA02241E0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30735241E3
+	for <linux-clk@archiver.kernel.org>; Wed, 29 May 2019 21:11:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="q7RBmWip"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="0REuaA8f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfE2VKJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 May 2019 17:10:09 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33156 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfE2VKJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 17:10:09 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y17so3270818lfe.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 May 2019 14:10:07 -0700 (PDT)
+        id S1726155AbfE2VLH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 May 2019 17:11:07 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39030 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfE2VLH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 May 2019 17:11:07 -0400
+Received: by mail-lj1-f195.google.com with SMTP id a10so724039ljf.6
+        for <linux-clk@vger.kernel.org>; Wed, 29 May 2019 14:11:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=Mu5MGiwViAE+xq3hYJVecKhrhSmdgp+dy0KSK59tJJQ=;
-        b=q7RBmWipjWlju0c41VvigqOXIk1DHR+H76XwOrJtqCU1G+2CXeXcUuG3K44zkwDp+2
-         9LzH/KNMAYFMDhlBOwDGclMMxcSD7ElKD6PKZ4GoU4LF1uuXxuro7d5mFJi8jWcW/eZP
-         UnG4YFQJhGvLfF/CX4aL1/G9bIhMHL152eqyHiYUnRhAHKHO18OwU9Vrokd42Unt0UtR
-         LXR5ls+D2SdbpSSLA3wP4dwEXPeHujWC0q8qtoTijto1v/a2iLViNmUi0YGXvOc++HFc
-         u9IyM/GyDngsdEB+UUcuNSv8l7KPgk6QtkkfapeRBvwxv9J7xnwsLbqRzr5Luq883BcB
-         e2Cg==
+        bh=V+zBrsPH+2OSRodMwuZ9huc4K3MelCGCmI8U611rstQ=;
+        b=0REuaA8fosdgKFbOBIuJozgm9lBZ68FoXT2yD+5YI4lrRsvA6I79x+O02kdXYnnl2b
+         noNqxdxwRWggbwtv/hxmthcUjOUT+buBeWkUxo9u4JwJgtWAU/4ty2s8tJvorhtu6v/J
+         xwHPjRDhFn8ipEp4+V9LV3f6CgHh4g8vqY/6VqK+sXVKl+RPRZn/pkoXbmimLBhPLpS8
+         wrr2aDg9rgUIr6sTDbOPMejPGZhGSidvXnSC4XegwXYBtdSovyi4c24eTC/eYccmddzy
+         KRQlB36XN4v5fcLDfBhyq+lCv41WEy893RqAx9rTlTSl2IXCCu7FLA5wta7+cyN/y+UJ
+         h9vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=Mu5MGiwViAE+xq3hYJVecKhrhSmdgp+dy0KSK59tJJQ=;
-        b=rSXcvOOGva+7Xz150QxXiLaWjW5LBSjKABeVOH3YbcmmAy50SPSXE+dYoiqFAQgBnI
-         ZxAErRVpEG2uc8WQOJICcjofH8+YgO00ENrEZ6Qu5tIVFDKagtM6eKNt/nXQPZrvZZl8
-         DYO2dvaPIELf5QWuohHdY5mk98zKkaiVRaRGo1es7x4lPR0TfvmjFYHW1yrgdLFh/wzg
-         2G5GnlyFLG+erAAEN/EBRAafMyc5ZbIjM+zwYY7YIe89SXSFxzQqdXkhP+9fBpVlixy9
-         Q1/czp9wVHSQhnSKHVBlg0hn+8d/LEQ0NgrQweM2BLKyG71IFktJcEMIzjOKuZfe1I7z
-         Vavw==
-X-Gm-Message-State: APjAAAUq0kXdXp7Hz4MClsJm4hd6oBKUI1N7If0QWK1+Nc/TDtOpV/Gq
-        hjou29vVeDPn04JvLKSb9pdeFA==
-X-Google-Smtp-Source: APXvYqwzIF80yYZ/jteMvGKNCS+XyzpSGUWpSJfGRPE95IKFnWMZOJ2nNtFQbjiCMq5QxWGOxhABdw==
-X-Received: by 2002:ac2:43b7:: with SMTP id t23mr27804lfl.110.1559164207194;
-        Wed, 29 May 2019 14:10:07 -0700 (PDT)
+        bh=V+zBrsPH+2OSRodMwuZ9huc4K3MelCGCmI8U611rstQ=;
+        b=prMMqyC17Cq01iklFX1hChuusntWcYYPbSekxY+31rbSphZ+1LQsnTJ6cDO3f33+Rh
+         dmzU8CCG285fqN3v1bIIy7dbe8mKPQyH/t482Y7R8GeF1pbA4+T+hz0Ev9/CbNkSTgTA
+         4fGcsNEzdfd+Zk4CdkJEzgiDc9LXt7Yw5xG2rl7XKy7I+orAXeh4GveDvQJ3w7+e60Hd
+         PSdMHIBKyj4WKU4DWunQXZFb1EB0nraXUE1CvW2Ivqr0rUPijNdlUzApbE0JGmLo9DGh
+         VVbBRGWHZvTzOItFBL/ex+ebEyIspcHiHCAtB89f3nLV1OLOJjvXdZetaN4DC/5HdyN/
+         lSJQ==
+X-Gm-Message-State: APjAAAVdD/UBOJAOH954iqRzXVjlKyAofkBzqzaCiS6QhcE90LoF9swN
+        9dIV6wNeLviYqDZVOj82R8hoNA==
+X-Google-Smtp-Source: APXvYqwr7b1fGmDWNtLOsTPY3vjoq3oQT4j6E7g6lnEvGipxMliij6ZazrR7mK0vgT9zj2rZ/lP6Sg==
+X-Received: by 2002:a2e:8555:: with SMTP id u21mr6576741ljj.133.1559164265570;
+        Wed, 29 May 2019 14:11:05 -0700 (PDT)
 Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id g22sm83602lje.43.2019.05.29.14.10.06
+        by smtp.gmail.com with ESMTPSA id v20sm125883lfe.11.2019.05.29.14.11.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 14:10:06 -0700 (PDT)
-Date:   Wed, 29 May 2019 23:10:05 +0200
+        Wed, 29 May 2019 14:11:04 -0700 (PDT)
+Date:   Wed, 29 May 2019 23:11:04 +0200
 From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund@ragnatech.se>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Remove error messages on
- out-of-memory conditions
-Message-ID: <20190529211005.GO1651@bigcity.dyn.berto.se>
-References: <20190527123420.7057-1-geert+renesas@glider.be>
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Use genpd of_node instead of
+ local copy
+Message-ID: <20190529211104.GP1651@bigcity.dyn.berto.se>
+References: <20190527123323.6912-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190527123420.7057-1-geert+renesas@glider.be>
+In-Reply-To: <20190527123323.6912-1-geert+renesas@glider.be>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -80,12 +81,15 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Geert,
 
-Thanks for your patch.
+Thanks for your work.
 
-On 2019-05-27 14:34:20 +0200, Geert Uytterhoeven wrote:
-> pm_clk_create() and pm_clk_add_clk() can fail only when running out of
-> memory.  Hence there is no need to print error messages on failure, as
-> the memory allocation core already takes care of that.
+On 2019-05-27 14:33:23 +0200, Geert Uytterhoeven wrote:
+> Since commit 6a0ae73d95956f7e ("PM / Domain: Add support to parse
+> domain's OPP table"), of_genpd_add_provider_simple() fills in
+> the dev.of_node field in the generic_pm_domain structure.
+> 
+> Hence cpg_mssr_is_pm_clk() can use that instead of its own copy in the
+> driver-private cpg_mssr_clk_domain structure.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
@@ -94,31 +98,37 @@ Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > ---
 > To be queued in clk-renesas-for-v5.3.
 > 
->  drivers/clk/renesas/renesas-cpg-mssr.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
 > diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index d1054204f3a75022..082d0bf12ea7f219 100644
+> index 0201809bbd377df4..d1054204f3a75022 100644
 > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
 > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -509,16 +509,12 @@ int cpg_mssr_attach_dev(struct generic_pm_domain *unused, struct device *dev)
->  		return PTR_ERR(clk);
+> @@ -447,7 +447,6 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
 >  
->  	error = pm_clk_create(dev);
-> -	if (error) {
-> -		dev_err(dev, "pm_clk_create failed %d\n", error);
-> +	if (error)
->  		goto fail_put;
-> -	}
+>  struct cpg_mssr_clk_domain {
+>  	struct generic_pm_domain genpd;
+> -	struct device_node *np;
+>  	unsigned int num_core_pm_clks;
+>  	unsigned int core_pm_clks[0];
+>  };
+> @@ -459,7 +458,7 @@ static bool cpg_mssr_is_pm_clk(const struct of_phandle_args *clkspec,
+>  {
+>  	unsigned int i;
 >  
->  	error = pm_clk_add_clk(dev, clk);
-> -	if (error) {
-> -		dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
-> +	if (error)
->  		goto fail_destroy;
-> -	}
+> -	if (clkspec->np != pd->np || clkspec->args_count != 2)
+> +	if (clkspec->np != pd->genpd.dev.of_node || clkspec->args_count != 2)
+>  		return false;
 >  
->  	return 0;
+>  	switch (clkspec->args[0]) {
+> @@ -549,7 +548,6 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+>  	if (!pd)
+>  		return -ENOMEM;
+>  
+> -	pd->np = np;
+>  	pd->num_core_pm_clks = num_core_pm_clks;
+>  	memcpy(pd->core_pm_clks, core_pm_clks, pm_size);
 >  
 > -- 
 > 2.17.1
