@@ -4,75 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F64EC072B1
-	for <linux-clk@archiver.kernel.org>; Thu, 30 May 2019 05:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11324C072B1
+	for <linux-clk@archiver.kernel.org>; Thu, 30 May 2019 06:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8E9C2489A
-	for <linux-clk@archiver.kernel.org>; Thu, 30 May 2019 05:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E35B125AF4
+	for <linux-clk@archiver.kernel.org>; Thu, 30 May 2019 06:56:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfE3Fsg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 May 2019 01:48:36 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38034 "EHLO inva020.nxp.com"
+        id S1727297AbfE3G4E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 May 2019 02:56:04 -0400
+Received: from muru.com ([72.249.23.125]:51854 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfE3Fsg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 May 2019 01:48:36 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8E7061A0156;
-        Thu, 30 May 2019 07:48:34 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 407721A0630;
-        Thu, 30 May 2019 07:48:23 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7BEA8402B5;
-        Thu, 30 May 2019 13:48:09 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, maxime.ripard@bootlin.com, olof@lixom.net,
-        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
-        bjorn.andersson@linaro.org, leonard.crestez@nxp.com,
-        dinguyen@kernel.org, enric.balletbo@collabora.com,
-        aisheng.dong@nxp.com, ping.bai@nxp.com, abel.vesa@nxp.com,
-        l.stach@pengutronix.de, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 3/3] arm64: defconfig: Select CONFIG_CLK_IMX8MN by default
-Date:   Thu, 30 May 2019 13:49:58 +0800
-Message-Id: <20190530054958.33299-3-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190530054958.33299-1-Anson.Huang@nxp.com>
-References: <20190530054958.33299-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726743AbfE3G4E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 May 2019 02:56:04 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id E6E7A803A;
+        Thu, 30 May 2019 06:56:23 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH] clk: ti: clkctrl: Fix returning uninitialized data
+Date:   Wed, 29 May 2019 23:55:57 -0700
+Message-Id: <20190530065557.42741-1-tony@atomide.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+If we do a clk_get() for a clock that does not exists, we have
+_ti_omap4_clkctrl_xlate() return uninitialized data if no match
+is found. This can be seen in some cases with SLAB_DEBUG enabled:
 
-Enable CONFIG_CLK_IMX8MN to support i.MX8MN clock driver.
+Unable to handle kernel paging request at virtual address 5a5a5a5a
+...
+clk_hw_create_clk.part.33
+sysc_notifier_call
+notifier_call_chain
+blocking_notifier_call_chain
+device_add
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Let's fix this by setting a found flag only when we find a match.
+
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Fixes: 88a172526c32 ("clk: ti: add support for clkctrl clocks")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/ti/clkctrl.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8d4f25c..aef797c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -654,6 +654,7 @@ CONFIG_COMMON_CLK_CS2000_CP=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
-+CONFIG_CLK_IMX8MN=y
- CONFIG_CLK_IMX8MM=y
- CONFIG_CLK_IMX8MQ=y
- CONFIG_CLK_IMX8QXP=y
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -229,6 +229,7 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
+ {
+ 	struct omap_clkctrl_provider *provider = data;
+ 	struct omap_clkctrl_clk *entry;
++	bool found = false;
+ 
+ 	if (clkspec->args_count != 2)
+ 		return ERR_PTR(-EINVAL);
+@@ -238,11 +239,13 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
+ 
+ 	list_for_each_entry(entry, &provider->clocks, node) {
+ 		if (entry->reg_offset == clkspec->args[0] &&
+-		    entry->bit_offset == clkspec->args[1])
++		    entry->bit_offset == clkspec->args[1]) {
++			found = true;
+ 			break;
++		}
+ 	}
+ 
+-	if (!entry)
++	if (!found)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	return entry->clk;
 -- 
-2.7.4
-
+2.21.0
