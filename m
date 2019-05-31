@@ -7,98 +7,95 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58786C04AB6
-	for <linux-clk@archiver.kernel.org>; Fri, 31 May 2019 12:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BDFC04AB6
+	for <linux-clk@archiver.kernel.org>; Fri, 31 May 2019 14:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE4E23B17
-	for <linux-clk@archiver.kernel.org>; Fri, 31 May 2019 12:04:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7C826B20
+	for <linux-clk@archiver.kernel.org>; Fri, 31 May 2019 14:59:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JOUgheJZ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="A0g3YKJa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbfEaMEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 May 2019 08:04:38 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34080 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbfEaMEi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 May 2019 08:04:38 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4VC4TTI117248;
-        Fri, 31 May 2019 07:04:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559304269;
-        bh=rlE7J+DFRfJnFGPTUHYB3E0MgfOvRLqRsYOcEw4ujHQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JOUgheJZGvEQh3lnmfyZz/pOqYDaXbsjGQvIYXBmzcdG6518NDhX7CoxaL5CP7tmR
-         fl7DL6LMhpgSohnbFbTySDCIakoIkGEShgS+/NTvoatMOUf+U+nM+iOc1ICo6vkfuO
-         ehOberKU8A9HDJiJymJcH1Fq3QSP0k4qXCeutLy0=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4VC4Tob064540
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 May 2019 07:04:29 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 31
- May 2019 07:04:28 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 31 May 2019 07:04:28 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4VC4Rbr009149;
-        Fri, 31 May 2019 07:04:27 -0500
-Subject: Re: [PATCH] clk: ti: clkctrl: Fix returning uninitialized data
-To:     Tony Lindgren <tony@atomide.com>,
+        id S1726649AbfEaO7D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 May 2019 10:59:03 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:18680 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfEaO7D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 May 2019 10:59:03 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf141300000>; Fri, 31 May 2019 07:58:56 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 31 May 2019 07:58:57 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 31 May 2019 07:58:57 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 May
+ 2019 14:58:55 +0000
+Subject: Re: [PATCH] clk: tegra210: Fix default rates for HDA clocks
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>
-CC:     <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20190530065557.42741-1-tony@atomide.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <47c47d4f-54fe-956d-7936-eb4bc651c464@ti.com>
-Date:   Fri, 31 May 2019 15:04:26 +0300
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>
+References: <1559121501-8566-1-git-send-email-jonathanh@nvidia.com>
+ <20190529134625.GD17223@ulmo>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5f2b8f8d-f3e5-fab8-8cf0-fa8a3e917845@nvidia.com>
+Date:   Fri, 31 May 2019 15:58:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190530065557.42741-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190529134625.GD17223@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559314736; bh=09b8Hj8gT+YozScXT2vWayl8rWGsou6vOfDDno+ASS4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=A0g3YKJa/+HLaNBx+m+VrU8EYVw4tfLuSwscYdhmFJYQjvazlnZdrcrz0pk1L/uWP
+         9W03XicTcq9hvnaJr0voPnHYTPpQV8+JmYFP4YjFiDmuPEyNhbf8RkDjdmxsSabks3
+         59+mI4npWajCtrpHnLg650pHmzfupvK8TxEx6oowcmyRX1ISnIXtzZuzygaSZbqk4w
+         9YSGxeeRrDrt8M16zpD1qyAWbtY5G4bkacH/sFGArHuXtlD82ck4NKIeh0pkmnc4Iw
+         nDgNAVAwYAaXu5BUTKjVOlJ2h1M5D6L2a6iSI2RpF23bDtij4VfKg1C1JyBzh6PP+m
+         a3/yaIpYEzg9Q==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/05/2019 09:55, Tony Lindgren wrote:
-> If we do a clk_get() for a clock that does not exists, we have
-> _ti_omap4_clkctrl_xlate() return uninitialized data if no match
-> is found. This can be seen in some cases with SLAB_DEBUG enabled:
-> 
-> Unable to handle kernel paging request at virtual address 5a5a5a5a
-> ...
-> clk_hw_create_clk.part.33
-> sysc_notifier_call
-> notifier_call_chain
-> blocking_notifier_call_chain
-> device_add
-> 
-> Let's fix this by setting a found flag only when we find a match.
-> 
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Fixes: 88a172526c32 ("clk: ti: add support for clkctrl clocks")
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->   drivers/clk/ti/clkctrl.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
 
-I can boot again with this fix, thanks!
+On 29/05/2019 14:46, Thierry Reding wrote:
+> On Wed, May 29, 2019 at 10:18:21AM +0100, Jon Hunter wrote:
+>> Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+>> are both 19.2MHz. However, the default rates for these clocks should
+>> actually be 51MHz and 48MHz, respectively. Correct the default clock
+>> rates for these clocks by specifying them in the clock init table for
+>> Tegra210.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/clk/tegra/clk-tegra210.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+> 
+> Does this fix anything? Should this be backported to stable releases?
 
-Tested-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Good point. We are aligning the clock configuration with what we ship.
+So I thought for completeness it would be good to test HDA playback
+across the various sample-rates we support (32kHz to 192kHz) but with or
+without this patch I am not hearing anything. Let me check on this with
+Sameer as I would like to see if we need to mark this for stable or not.
+
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Thanks
+Jon
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+nvpublic
