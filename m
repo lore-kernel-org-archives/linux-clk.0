@@ -2,37 +2,38 @@ Return-Path: <SRS0=3uBl=UC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1C9C04AB6
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jun 2019 07:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBE6C04AB6
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jun 2019 07:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCF6272AC
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jun 2019 07:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B10FD272AC
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jun 2019 07:32:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MU9p6u1k"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MJMwKFHE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfFCHa0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jun 2019 03:30:26 -0400
-Received: from mail-eopbgr10050.outbound.protection.outlook.com ([40.107.1.50]:41538
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        id S1726260AbfFCHcS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jun 2019 03:32:18 -0400
+Received: from mail-eopbgr60069.outbound.protection.outlook.com ([40.107.6.69]:63523
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726136AbfFCHa0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Jun 2019 03:30:26 -0400
+        id S1725975AbfFCHcS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Jun 2019 03:32:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y0styPCxA2kXlg4P9JLhrWY2z3+c+PAly9DON3UUT0M=;
- b=MU9p6u1k/BOgFJMSe6V6ZX5i5KlXgKFMgbcoNEuTBBnuOwygwc3sMG6SruHe3GG0HNVzsL8KcBkfJOzUZteT/J63reauKt86MNsxhnyZ/Fe1B7Fs1uGhtNQuuVvuWKtasPBx11RbeG7FLk1KfcAQbJlHqlypEM4hoaiFHCPAcmc=
+ bh=5g4q9/O2dGLjm+Le6JzlgAyifZOQAHRKB743xmfbmoE=;
+ b=MJMwKFHEp3ciWisy0oaaakdlLbHf/kAmz+KTtV2wqBOOfkKim59lh123TRGvsfpQQaVlqBD2bNrFEMIESbRRxM6qcNApKZ/tIELGs7C+rbJl8vlF3Kq1iRnDY7I5Fzw6RZGhlszTcCqRMWuVBjXOKOyUxHTA4lwnH94gLXkDKi0=
 Received: from VI1PR04MB5790.eurprd04.prod.outlook.com (20.178.127.224) by
- VI1PR04MB5805.eurprd04.prod.outlook.com (20.178.204.27) with Microsoft SMTP
+ VI1PR04MB4078.eurprd04.prod.outlook.com (10.171.183.30) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.17; Mon, 3 Jun 2019 07:30:20 +0000
+ 15.20.1943.22; Mon, 3 Jun 2019 07:32:13 +0000
 Received: from VI1PR04MB5790.eurprd04.prod.outlook.com
  ([fe80::607a:a473:5c73:7d7e]) by VI1PR04MB5790.eurprd04.prod.outlook.com
  ([fe80::607a:a473:5c73:7d7e%5]) with mapi id 15.20.1943.018; Mon, 3 Jun 2019
- 07:30:20 +0000
+ 07:32:13 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Anson Huang <anson.huang@nxp.com>
 CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -62,14 +63,16 @@ CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2 2/3] clk: imx: Add support for i.MX8MN clock driver
-Thread-Topic: [PATCH V2 2/3] clk: imx: Add support for i.MX8MN clock driver
-Thread-Index: AQHVGaxevUMbLPz7GEiRBakv1/ckCqaJiQoA
-Date:   Mon, 3 Jun 2019 07:30:20 +0000
-Message-ID: <20190603073018.j236j57ooc7t5hp6@fsr-ub1664-175>
+Subject: Re: [PATCH V2 3/3] arm64: defconfig: Select CONFIG_CLK_IMX8MN by
+ default
+Thread-Topic: [PATCH V2 3/3] arm64: defconfig: Select CONFIG_CLK_IMX8MN by
+ default
+Thread-Index: AQHVGaxef4gq0FBOl0qNeIPzUu861qaJiZIA
+Date:   Mon, 3 Jun 2019 07:32:13 +0000
+Message-ID: <20190603073212.hgdc4mwqwqvrc6kg@fsr-ub1664-175>
 References: <20190603013503.40626-1-Anson.Huang@nxp.com>
- <20190603013503.40626-2-Anson.Huang@nxp.com>
-In-Reply-To: <20190603013503.40626-2-Anson.Huang@nxp.com>
+ <20190603013503.40626-3-Anson.Huang@nxp.com>
+In-Reply-To: <20190603013503.40626-3-Anson.Huang@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -78,81 +81,63 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-originating-ip: [89.37.124.34]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3081f70e-89dd-41c4-bf65-08d6e7f5552d
+x-ms-office365-filtering-correlation-id: bb8b84e5-1676-4817-04d8-08d6e7f5989b
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5805;
-x-ms-traffictypediagnostic: VI1PR04MB5805:
-x-microsoft-antispam-prvs: <VI1PR04MB5805D57728B5DF413B81A950F6140@VI1PR04MB5805.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:758;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR04MB4078;
+x-ms-traffictypediagnostic: VI1PR04MB4078:
+x-microsoft-antispam-prvs: <VI1PR04MB407811AFEED43EA1EBCA74C1F6140@VI1PR04MB4078.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:489;
 x-forefront-prvs: 0057EE387C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(39860400002)(376002)(136003)(346002)(366004)(189003)(199004)(53936002)(476003)(486006)(256004)(26005)(81156014)(7416002)(446003)(44832011)(8936002)(11346002)(305945005)(33716001)(68736007)(4326008)(7736002)(25786009)(186003)(229853002)(6636002)(6862004)(6486002)(6436002)(99286004)(66446008)(5660300002)(81166006)(66066001)(6246003)(64756008)(66556008)(8676002)(66476007)(66946007)(73956011)(6512007)(9686003)(71190400001)(71200400001)(14454004)(76116006)(54906003)(6506007)(86362001)(2906002)(3846002)(53546011)(6116002)(102836004)(478600001)(1076003)(76176011)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5805;H:VI1PR04MB5790.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(346002)(376002)(366004)(136003)(39860400002)(199004)(189003)(25786009)(99286004)(2906002)(305945005)(6436002)(71190400001)(4744005)(7736002)(476003)(71200400001)(7416002)(102836004)(6512007)(33716001)(9686003)(6862004)(8676002)(11346002)(81166006)(81156014)(53936002)(446003)(8936002)(6486002)(3846002)(1076003)(6246003)(6116002)(54906003)(6636002)(186003)(6506007)(486006)(66946007)(14454004)(76116006)(53546011)(66556008)(66476007)(66446008)(64756008)(86362001)(5660300002)(316002)(68736007)(478600001)(73956011)(66066001)(256004)(26005)(229853002)(4326008)(44832011)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4078;H:VI1PR04MB5790.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qaotL9fdM+dVKd4ZPG3fiJg7l1Na5uRru6qhe7eHg0Bk8jizNjkX9RATm/5YlEOECvFA6rlQWZKChqiYR3XGDkzhLuFDK8vGNGQqJFxYOZTJ9GWP6r8xMH/yUE63uiYh4zz/9rkYc3OQcrRG3G3MS/9dc+qxeXt8d12Ciit8bq5eLJu+nFw7mu2V4kYG4knuauTIn4PvWIUbuxeIOGavQhtzg8IYSekOpFAgMdMjvlc66xH5VArVx6Uzr8FCMWRbSe1B3pMGO8FEgYlGZzaMKxCFm0pn9vsFLtjvvW95360SqM3ASu1A9iITyritHBIf0DN3doKzPXvSVlExCPYlweZAp5IRkAfFnxprnv8HK3qvnKKoN4uffR5swtQrgAbQTnzmknqEybSKNKnjcpC1DfKcuJZiq9jDpMtBXSEiS1Y=
+x-microsoft-antispam-message-info: 1Bb+8gDj0J1DBVLMaac/pvmazLYa+LMCcUSBb0L9wlpsdhen6zYi05rtQgqgFrIskep9xmWhGaUYyCn4PkNNA79RAoJYVi8CLAGZU+gG+0XLwNY6F2AOv01mKXcdb2YKzxB5GwYrbJqHOYmjUecj1D4UaQ84b9UWFR1vHAQv0pOwH88HjbyQoVxcVWOEFHvzUpGL0yNYwMaYzA6e6Kp9v7uCEt4KgWDNyyREP9LS83pnwmfiILs5WamysfsIzQ27iyrUA6faYz9+/f41W7M5Fi+QWrc/k828AhXTnr/67e2eQODdO2NFIgfAXCbuqIHE026KjeKxmJVe87aeUtt0v7fm3XHGuZTL0vefTg85rRkDb+eQmCNTRw46YbajR2feCq3HTebiPDS1XTl0+0fofOuDUsAXC8y2BZsd2KxMp1A=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <051749EE44B0A8469CD620AEC45CD774@eurprd04.prod.outlook.com>
+Content-ID: <A1E0E3CAD1331D4C866338A97F69F3D0@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3081f70e-89dd-41c4-bf65-08d6e7f5552d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 07:30:20.0389
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb8b84e5-1676-4817-04d8-08d6e7f5989b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 07:32:13.2154
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: abel.vesa@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5805
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4078
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-06-03 09:35:02, Anson.Huang@nxp.com wrote:
+On 19-06-03 09:35:03, Anson.Huang@nxp.com wrote:
 > From: Anson Huang <Anson.Huang@nxp.com>
 >=20
-> This patch adds i.MX8MN clock driver support.
+> Enable CONFIG_CLK_IMX8MN to support i.MX8MN clock driver.
 >=20
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
-> Changes since V1:
-> 	- add GPIOx clocks.
+> No changes.
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 8d4f25c..aef797c 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -654,6 +654,7 @@ CONFIG_COMMON_CLK_CS2000_CP=3Dy
+>  CONFIG_COMMON_CLK_S2MPS11=3Dy
+>  CONFIG_CLK_QORIQ=3Dy
+>  CONFIG_COMMON_CLK_PWM=3Dy
+> +CONFIG_CLK_IMX8MN=3Dy
 
-...
+Nitpick: Move this after IMX8MM so it can stay alphabetically ordered.
 
-> +static struct imx_pll14xx_clk imx8mn_sys_pll __initdata =3D {
-> +		.type =3D PLL_1416X,
-> +		.rate_table =3D imx8mn_pll1416x_tbl,
-> +};
-> +
-> +static const char *pll_ref_sels[] =3D { "osc_24m", "dummy", "dummy", "du=
-mmy", };
-
-All of these should be "static const char * const ".
-
-> +static const char *audio_pll1_bypass_sels[] =3D {"audio_pll1", "audio_pl=
-l1_ref_sel", };
-> +static const char *audio_pll2_bypass_sels[] =3D {"audio_pll2", "audio_pl=
-l2_ref_sel", };
-
-...
-
-> +	clk_data.clks =3D clks;
-> +	clk_data.clk_num =3D ARRAY_SIZE(clks);
-> +	ret =3D of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +	if (ret < 0) {
-> +		pr_err("failed to register clks for i.MX8MN\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	imx_register_uart_clocks(uart_clks);
-> +
-> +	return 0;
-> +}
-> +CLK_OF_DECLARE_DRIVER(imx8mn, "fsl,imx8mn-ccm", imx8mn_clocks_init);
-
-Any reason why this cannot be a platform driver ?
-
+>  CONFIG_CLK_IMX8MM=3Dy
+>  CONFIG_CLK_IMX8MQ=3Dy
+>  CONFIG_CLK_IMX8QXP=3Dy
 > --=20
 > 2.7.4
 > =
