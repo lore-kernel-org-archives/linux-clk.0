@@ -2,101 +2,155 @@ Return-Path: <SRS0=hifp=UD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E579FC282CE
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 17:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F66CC282CE
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 20:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD1662075B
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 17:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BAA5207E0
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 20:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RH7wVy0/"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ge1KY/Qo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbfFDRzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jun 2019 13:55:38 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37320 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbfFDRzi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jun 2019 13:55:38 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x54HsRK4062059;
-        Tue, 4 Jun 2019 17:55:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=I2dCC54Yvnmy1Mikvg0ahxX3ZEk6+/nZ2fqx0icOOQ0=;
- b=RH7wVy0/Q8iRivqVWoWXZo44U48c3aBuTrgtDaWw35kXJAI4ahmqgNESKYru2xypWrQ0
- Fjlwj+tqc/jLZxGqV1pXYo/68jahHkofDvHF++vADB62YYOIB0cagumEhtu4apRyvhYf
- HWsw/SWNnYAdjNs4FEne/5q7D6bA3auHdjOqLw6DxIQvZcEGsqdKblnvE89+bc2ezMOS
- nIP8f+QOBhZWHftfzc1aptfa7QFPP4sMuc0thdnWczsztHYvHPEGdoZycAR9cuXcYLEf
- WY3PLqZrArs2dJMCgFSU2/ZNnVAVT8FzH2SvOX6eGss2iwW016hDr1PP5xwS1Ag7B9fX iw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2sugstekq6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Jun 2019 17:55:13 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x54HsS6e056383;
-        Tue, 4 Jun 2019 17:55:13 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2swnh9r200-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Jun 2019 17:55:13 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x54Ht7a6018917;
-        Tue, 4 Jun 2019 17:55:08 GMT
-Received: from [10.11.0.40] (/10.11.0.40)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Jun 2019 10:55:07 -0700
-Subject: Re: [PATCHv2 0/5] clk: keystone: clock optimizations / fixes
-To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, ssantosh@kernel.org,
-        nm@ti.com
-Cc:     linux-arm-kernel@lists.infradead.org
-References: <1559049024-30872-1-git-send-email-t-kristo@ti.com>
-From:   santosh.shilimkar@oracle.com
-Organization: Oracle Corporation
-Message-ID: <7d97db9a-71fd-0c44-a4ef-ef4d726cdb20@oracle.com>
-Date:   Tue, 4 Jun 2019 10:55:06 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1559049024-30872-1-git-send-email-t-kristo@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1726317AbfFDUN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jun 2019 16:13:28 -0400
+Received: from mail-eopbgr50050.outbound.protection.outlook.com ([40.107.5.50]:38629
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726211AbfFDUN2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Jun 2019 16:13:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cQgKmCxWL5uhQ45PzO7xtWZM46pb7Q/3ek6oP6HpdLE=;
+ b=Ge1KY/QopbO+9dx3fpfw4kheoxlYFGetUaPH6en5wddTmcGTHqfRyHqhkzzlE4SGEtaa5DitdxkNdLyjpytRNhpCj2rl+WAkUEbI8YLgwL37LO5w2fJWKz9W+NGceTCsW/n3SeO/gxZTGn8MTTuYjoxWQVWnw0QTWHMAKJSdPv8=
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
+ VI1PR04MB5919.eurprd04.prod.outlook.com (20.178.205.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Tue, 4 Jun 2019 20:13:18 +0000
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::9577:379c:2078:19a1]) by VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::9577:379c:2078:19a1%7]) with mapi id 15.20.1965.011; Tue, 4 Jun 2019
+ 20:13:18 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Patrick Titiano <ptitiano@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Emilio Lopez <emilio@elopez.com.ar>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Zening Wang <zening.wang@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <ccaione@baylibre.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [RFC PATCH 0/3] Add support of busfreq
+Thread-Topic: [RFC PATCH 0/3] Add support of busfreq
+Thread-Index: AQHU2dO+g7FtRU5+MUaLzLMJn01eLA==
+Date:   Tue, 4 Jun 2019 20:13:18 +0000
+Message-ID: <VI1PR04MB5055E9AB9BD3D68BB6C1F6C2EE150@VI1PR04MB5055.eurprd04.prod.outlook.com>
+References: <20190313193408.23740-1-abailon@baylibre.com>
+ <CAEG3pNA+U1tw4sWq9i2cTni6QKQkLyd3qyZXd2i8M7WFDF4ZsQ@mail.gmail.com>
+ <8af96425-a6f5-0114-7abb-c2a67b952e1b@baylibre.com>
+ <AM0PR04MB643434FB6A26B4D70F52F350EE080@AM0PR04MB6434.eurprd04.prod.outlook.com>
+ <DB3PR0402MB39167B9EAE9A741AB0F20E30F5150@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906040113
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906040114
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [192.88.166.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fc6a45d7-1d39-4d95-c153-08d6e92915a8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5919;
+x-ms-traffictypediagnostic: VI1PR04MB5919:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <VI1PR04MB59193C94A656BCAFBD65F5A3EE150@VI1PR04MB5919.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0058ABBBC7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(396003)(39860400002)(366004)(199004)(189003)(52084003)(5660300002)(6436002)(486006)(6506007)(53546011)(110136005)(54906003)(74316002)(33656002)(44832011)(7696005)(7416002)(476003)(186003)(6306002)(71200400001)(71190400001)(55016002)(26005)(9686003)(66946007)(73956011)(102836004)(66556008)(76116006)(446003)(64756008)(66446008)(66476007)(52536014)(91956017)(76176011)(3846002)(2906002)(68736007)(316002)(7736002)(14444005)(66066001)(256004)(6116002)(478600001)(305945005)(966005)(6246003)(4326008)(8936002)(53936002)(229853002)(25786009)(81156014)(81166006)(14454004)(86362001)(8676002)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5919;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7OLi5rOxRkW0300175HB9h8BZ5hRv16J792FSldcyWlvMol3t6WpiUHs36sfW5JIxJHE/29sM0upHznrxcuSWVuRXPGBeyR3dyR3zTiE2c/Nlz/aOKtokL3ZQ/wEykn342jZIPGLH8pRUv9VodSjjdspHjwh16Ikb7JFU58OEgY+fV19kVDZ3+/IKa4RzIJ3hwU0esnB8IVmf/xGqVtHrZ/xbS02Ljy2TDgTfzgNAh28PdDtT1yM0BeuVMGEKaxUotnGHIeJ/60XdVyt+TrBOibWVbuEzucUkiSY9livj83VohG5HvUVUT/VKNDQG9QKRdNaX0E0DryGTQvtRqL/W29P0ZEs+J8yLJReIXaiDh5mlH6mVTfvUzKmPoCI2FmnhYeAT7t5YNr1t39bfGF9+wrPJL2ekzBNjcmHFwHnVKU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc6a45d7-1d39-4d95-c153-08d6e92915a8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 20:13:18.4216
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5919
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/28/19 6:10 AM, Tero Kristo wrote:
-> Hi,
-> 
-> This is a re-base / re-spin of the Keystone clock optimization series [1].
-> 
-> Changes from v1:
-> - rebased on top of 5.2-rc1
-> - added support for clk-ids 255+
-> - changed patch #3 to parse also 'assigned-clocks' in addition to 'clocks'
->    DT nodes only. This allows automatic (DT based) programming of clocks
->    that are not directly touched by any driver.
-> 
-> Please note that there is hard dependency between patches 4 & 5, patch #5
-> must be applied after patch #4, otherwise bad things will happen (basically
-> boot breaks.) The cast magic in patch #4 is done also so that this order
-> of patches can be used and bisectability is retained.
-> 
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+On 6/4/2019 11:44 AM, Anson Huang wrote:=0A=
+>>>>> As exemple, this series implements busfreq for i.MX8MM whose=0A=
+>>>>> upstreaming is in progress. Because this relies on ATF to do the=0A=
+>>>>> frequency scaling, it won't be hard make it work.=0A=
+> =0A=
+> I have similar question as previous reviewer, is there any branch that we=
+ can test=0A=
+> this series?=0A=
+=0A=
+I've been looking at this and pushed a fixed-up functional variant to my =
+=0A=
+personal github:=0A=
+=0A=
+     https://github.com/cdleonard/linux/commits/next_imx8mm_busfreq=0A=
+=0A=
+It builds and probes and switches DRAM freq between low and high based =0A=
+on whether ethernet is down or up (for testing purposes). The pile of =0A=
+out-of-tree patches required to get this work is quite small.=0A=
+=0A=
+The DRAM freq switch is done via a clk wrapper previously sent as RFC:=0A=
+=0A=
+     https://patchwork.kernel.org/patch/10968303/=0A=
+=0A=
+That part needs more work but it could serve as a neat encapsulation =0A=
+similar to imx_cpu clk used for cpufreq-dt.=0A=
+=0A=
+> And, from the patch, it has multiple levels description of fabric arch, w=
+hile we ONLY=0A=
+> intend to scale "bus" frequency per devices' request, here "bus" includes=
+ DRAM, NOC and=0A=
+> AHB, AXI, should we make it more flatter, such as just a virtual fabric a=
+s a single provider, and then=0A=
+> all other devices as nodes under this provider?=0A=
+=0A=
+The imx8mm interconnect bindings describe many bus endpoints but all =0A=
+requests are aggregated to a single platform-level OPP which is =0A=
+equivalent to "low/audio/high mode" from NXP tree.=0A=
+=0A=
+It might be better to associate clks to several ICC nodes and this way =0A=
+scale NOC and DRAM separately? As far as I understand an interconnect =0A=
+provider is free to decide on granularity.=0A=
+=0A=
+As a wilder idea it might even be possible to use a stanard =0A=
+"devfreq-with-perfmon" for DDRC and have interconnect request a min freq =
+=0A=
+to that instead of doing clk_set_rate on dram directly. That could bring =
+=0A=
+features from both worlds, scaling both proactively and reactively.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
