@@ -2,159 +2,110 @@ Return-Path: <SRS0=hifp=UD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B88C282CE
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 20:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E2CC282CE
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 22:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D030C20657
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 20:52:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F0122067C
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jun 2019 22:32:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o95o2AtV"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a6SMCfW3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfFDUwp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jun 2019 16:52:45 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35852 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbfFDUwp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jun 2019 16:52:45 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v22so139056wml.1
-        for <linux-clk@vger.kernel.org>; Tue, 04 Jun 2019 13:52:44 -0700 (PDT)
+        id S1726373AbfFDWcM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jun 2019 18:32:12 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37176 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfFDWcM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jun 2019 18:32:12 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bh12so2824838plb.4
+        for <linux-clk@vger.kernel.org>; Tue, 04 Jun 2019 15:32:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HCHz30SDnTrnAv/weztZxXoYbAkSe2tsArruuDkoSAw=;
-        b=o95o2AtV3WDFGyw1md9OSwObrbp+2ZQKkNV6T0JhyFOOnZVCIONv7VMW3w2kRXmQrQ
-         Y1XC3qGKWVyhoR62ffMrKm80dj/uSTijSjWiIKa2mgSf1SrkeWTQYQIEXlCbeNcEWXKs
-         /k6m/rK93raHxP9W3lCee8kaKnDUlcuiWqj4+k6wG5YIJf35urPMB8GdwN28fg/SbR/v
-         DBTed768GKWrqbXE6cXIDf1ewEDRHu1nGJApaegknzDYL+UCwG7ptPm9hcLqH6pVAv0S
-         6C+1hT46h0GbPwjAqjv2gdjKRDBr5T94Wuz9u0HODtT0xlH00B0ZjRsXI7zY7MS2v7KU
-         4Pew==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7LrsWOu9H08D9VnyWoK4aMKFSqz39fLtN0sqw4NiYmE=;
+        b=a6SMCfW3Grszq2AuhWerX+Qret6+CW6/s7WM7ae6WCeNv1pzOjPcAAjhxtm4SMJcGw
+         bep+z6ve4HsBKKv2+9WzO3L68i4ehYfGyamPfhQOqc4dcrn70qgWiT9PBsSdV4ohOYs5
+         63QbziAKVPMzQ/8C7IHZCEsYkvSNHeIsA6E/Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HCHz30SDnTrnAv/weztZxXoYbAkSe2tsArruuDkoSAw=;
-        b=YYGuHVEud8efBqRTpRzA8S4MLSHHXeKI+oFCgh58X8w1jZp10X3MEe+Ozi9NEVBZjJ
-         NHfJikCY5ZWLRC2DrxuvUUI/nZu+06K1JzU3gJZrsvEw9OvViJ79oDgv/HQGbPjNF4CE
-         x8xzlZdggT/FYWv151GhWOX2+7KZKl4xdUs6TeR4jOB5zQQLERx3JT2t9ccgsfU9AsxY
-         LOwChc4cIwm1JwuB6WYbPJEei14Smqy54ozzUXLFYtCf1HaEO1grR6Abqw9MSszlVDi2
-         9Xu+AOF3ouRLO7VHTxIA6Gk6wi9CsYlPWKcKlxFwOdMILjUuPdRo/NjeJldMpQ5KD7ax
-         R/gQ==
-X-Gm-Message-State: APjAAAX2FLGqmT/51zwS5fLGXSFqFl1eJmYXybCIUkptWpvBi7Z5mNPN
-        nhwkDgELyKa3MJGzNfE207uL0nnqIEDsAIOGAymK
-X-Google-Smtp-Source: APXvYqxnV0SOZU/4nmV4NDSQJrqHsnlSq+yDN6cgoSvSwJwPyNnfdu2T/8ZwVNxho0MnA27Ys385vKc1uhUJ75TsjKc=
-X-Received: by 2002:a1c:f507:: with SMTP id t7mr19658456wmh.149.1559681563071;
- Tue, 04 Jun 2019 13:52:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7LrsWOu9H08D9VnyWoK4aMKFSqz39fLtN0sqw4NiYmE=;
+        b=nspBcSP0WHsQmd/hMil/Brt/IqwFJkjAby5SpQ8ZK1UImgzOyi9uCoB9vvA/oXhoUz
+         ucTdAswF3gjiTzal6qYm1ViIbHcJb0oX4HBvZ4/vyCL0QS/K7IrD2lY49jfzlX1RcinX
+         5/Kj3exfFlVDoP1GkkFhYh1rdIwo5nwcXJ6EYmC2KhcC6KqfMYO6D1W3v3FE8DtfSnRK
+         UFfMNu4AhNQ3BPHTCFl0V7wdZIAn3S0NpO3W3j7cuKLOFonroMq9l5PHDiY1DAyCA53i
+         SyBM9WEPkxPvOByJDkNuZtrhrWF2NsW4wwqjPmHhBwKq1V1BTM5dg6xOlX5qvYeCni+g
+         E/wQ==
+X-Gm-Message-State: APjAAAXQtM+Ai9X2yuT0qvau5HFaTpZ3SKnqRQH63bJkllqj/IEZ7hdd
+        w6utoROIT+3DatxavsHpycTdSQ==
+X-Google-Smtp-Source: APXvYqyP3mL6L3hXGIHj9/i/mpdSFQYcVM5JqdDzD0ZqHoQlEFBlN2xJ2cgV7XcUdPhRNGofv0hBsw==
+X-Received: by 2002:a17:902:6ac4:: with SMTP id i4mr37076584plt.75.1559687531967;
+        Tue, 04 Jun 2019 15:32:11 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id i5sm642508pjj.8.2019.06.04.15.32.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 15:32:11 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Stephen Boyd <sboyd@kernel.org>, mka@chromium.org,
+        seanpaul@chromium.org, Urja Rannikko <urjaman@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: rockchip: Remove 48 MHz PLL rate from rk3288
+Date:   Tue,  4 Jun 2019 15:31:59 -0700
+Message-Id: <20190604223200.345-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
 MIME-Version: 1.0
-References: <20190521130357.20803-1-miquel.raynal@bootlin.com>
- <20190521130357.20803-3-miquel.raynal@bootlin.com> <CAErSpo5i3y4CxZXV7E4tUR66uXaUa3B_-YT2+zfzZUGMmge7Ow@mail.gmail.com>
- <20190527154610.6d4d5eff@xps13>
-In-Reply-To: <20190527154610.6d4d5eff@xps13>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Tue, 4 Jun 2019 15:52:31 -0500
-Message-ID: <CAErSpo7fimH5QhHTLsF2ASyPqstkw7Zibe3CYB=KXTYBOh-4GQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] clk: mvebu: armada-37xx-periph: change
- suspend/resume time
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 27, 2019 at 8:46 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
->
-> Hi Bjorn,
->
-> Thanks for the feedback.
->
-> Bjorn Helgaas <bhelgaas@google.com> wrote on Tue, 21 May 2019 17:43:05
-> -0500:
->
-> > From: Miquel Raynal <miquel.raynal@bootlin.com>
-> > Date: Tue, May 21, 2019 at 8:04 AM
-> > To: Michael Turquette, Stephen Boyd, Rob Herring, Mark Rutland
-> > Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>, Thomas
-> > Petazzoni, Antoine Tenart, Gregory Clement, Maxime Chevallier, Nadav
-> > Haklai, Bjorn Helgaas, Rafael J . Wysocki, <linux-pm@vger.kernel.org>,
-> > Miquel Raynal
-> >
-> > > Armada 3700 PCIe IP relies on the PCIe clock managed by this
-> > > driver. For reasons related to the PCI core's organization when
-> > > suspending/resuming, PCI host controller drivers must reconfigure
-> > > their register at suspend_noirq()/resume_noirq() which happens after
-> > > suspend()/suspend_late() and before resume_early()/resume().
-> >
-> > "For reasons related to the PCI core's organization" manages to
-> > suggest that this change wouldn't be needed if only the PCI core did
-> > something differently, without actually being specific about what it
-> > would need to do differently.
-> >
-> > Is there something the PCI core could do better to make this easier?
-> > Or is it just something like "the PCI core needs to access registers
-> > after suspend_late()"?  You mention the host controller, but of course
-> > that's not itself a PCI device, so the PCI core doesn't have much to
-> > do with it directly.
->
-> Actually, if I understand correctly the below commit [1] and the core
-> [2] & [3], PCI device fixups can happen at any time, including at the
-> _noirq phase where, obviously, the PCI controller must be already
-> setup.
->
-> I don't think changing this behavior is a viable solution and I would
-> not see it as a "PCI core could do better" alternative.
->
-> ---8<---
->
-> [1]
-> commit ab14d45ea58eae67c739e4ba01871cae7b6c4586
-> Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Date:   Tue Mar 17 15:55:45 2015 +0100
->
->     PCI: mvebu: Add suspend/resume support
->
->     Add suspend/resume support for the mvebu PCIe host driver.  Without
->     this commit, the system will panic at resume time when PCIe devices
->     are connected.
->
->     Note that we have to use the ->suspend_noirq() and ->resume_noirq()
->     hooks, because at resume time, the PCI fixups are done at
->     ->resume_noirq() time, so the PCIe controller has to be ready at
->     this point.
->
->     Signed-off-by: Thomas Petazzoni
->     <thomas.petazzoni@free-electrons.com> Signed-off-by: Bjorn Helgaas
->     <bhelgaas@google.com> Acked-by: Jason Cooper <jason@lakedaemon.net>
->
-> [2] https://elixir.bootlin.com/linux/v5.2-rc1/source/drivers/pci/pci-driver.c#L1181
-> [3] https://elixir.bootlin.com/linux/v5.2-rc1/source/drivers/pci/pci-driver.c#L522
->
-> --->8---
->
-> >
-> > s/register/registers/ ?
->
-> Indeed. I would like to sort out the above technical point before
-> sending a v3 with this typo corrected.
+The 48 MHz PLL rate is not present in the downstream chromeos-3.14
+tree.  Looking at history, it was originally removed in
+<https://crrev.com/c/265810> ("CHROMIUM: clk: rockchip: expand more
+clocks support") with no explanation.  Much of that patch was later
+reverted in <https://crrev.com/c/284595> ("CHROMIUM: clk: rockchip:
+Revert more questionable PLL rates"), but that patch left in the
+removal of 48 MHz.  What I wrote in that patch:
 
-I don't have anything more to contribute here; just wanted to make
-sure this wasn't working around a fixable problem in PCI.
+> Note that the original change also removed the rate (48000000, 1,
+> 64, 32) from the table.  I have no idea why that was squashed in
+> there, but that rate was invalid anyway (it appears to have an out
+> of bounds NO).  I'm not putting that rate in.
 
-Bjorn
+Reading the TRM I see that NO is defined as
+- NO: 1, 2-16 (even only)
+...and furthermore only 4 bits are assigned for NO-1, which means that
+the highest NO we could even represent is 16.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+ drivers/clk/rockchip/clk-rk3288.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 152a22a69b04..51a26ff600a1 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -101,7 +101,6 @@ static struct rockchip_pll_rate_table rk3288_pll_rates[] = {
+ 	RK3066_PLL_RATE( 216000000, 1, 72, 8),
+ 	RK3066_PLL_RATE( 148500000, 2, 99, 8),
+ 	RK3066_PLL_RATE( 126000000, 1, 84, 16),
+-	RK3066_PLL_RATE(  48000000, 1, 64, 32),
+ 	{ /* sentinel */ },
+ };
+ 
+-- 
+2.22.0.rc1.311.g5d7573a151-goog
+
