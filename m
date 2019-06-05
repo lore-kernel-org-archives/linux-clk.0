@@ -2,141 +2,197 @@ Return-Path: <SRS0=XCXc=UE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E77DC282DE
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 06:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A466BC282DE
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 06:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD362075B
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 06:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A7392075B
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 06:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfFEGiF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jun 2019 02:38:05 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40401 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbfFEGiF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 02:38:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p11so13352070wre.7;
-        Tue, 04 Jun 2019 23:38:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+klUKp6jWG7xdxME2dnNCMXG3jZWOYDiu4Tg3HDj7jI=;
-        b=jUuIbKPlhHwVKrfjSVrv4S3n9gCPQtZWBv+I5zqb2YFuDu33PJLGVEbfSMfPogcIT2
-         SAdqNXqnC3tmDZ5C93bot2x7v8Lijh4ArADRWi9ezV+hY9PvHz+/96wxmCtwX0Z6g8O4
-         AH9tBpJPpz6A9cx5STmnhEaic7JN5ofhpPjkdcfdD69jsZSFp5LA/7oMGRmqflLVCYfq
-         oBESwnooV8jzdcCMNqj0j7UIEfc3/Dz0l4YPerT/PBNiowTQWlAc9376aylTi2Lwngus
-         KJni3TNLV5RjXW5//CBTqIhNw1cVr+DFmu6sYn0NY0WbzhcxNeCLM/11lvYAq8j7fzZ+
-         ivcA==
-X-Gm-Message-State: APjAAAVb3Sa3DnWDzzKo0eT2LiXf2Z1hoiED4+Qkuf+hg2FvPmB8dUC5
-        KfthZQZ+rQPwhHtKLAjjUxzmg58s
-X-Google-Smtp-Source: APXvYqzd70ELdFlVhEyIHHeLfwWenyN9fZTrvpZXTk/Ot6Ciy6/Jd7rovwJL86m8BmsTJjutcuIvMA==
-X-Received: by 2002:a5d:5446:: with SMTP id w6mr10101892wrv.164.1559716682836;
-        Tue, 04 Jun 2019 23:38:02 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id s10sm14197287wrt.66.2019.06.04.23.38.01
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 23:38:02 -0700 (PDT)
-Subject: Re: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
-To:     Gen Zhang <blackgod016574@gmail.com>, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190531011424.GA4374@zhanggen-UX430UQ>
-From:   Jiri Slaby <jslaby@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <eb8e2d33-e8f7-93a5-c8bc-98731c0d63b6@suse.cz>
-Date:   Wed, 5 Jun 2019 08:38:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726527AbfFEGto (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jun 2019 02:49:44 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:47939 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbfFEGtn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 02:49:43 -0400
+Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id CB24B100008;
+        Wed,  5 Jun 2019 06:49:33 +0000 (UTC)
+Date:   Wed, 5 Jun 2019 08:49:33 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for
+ PLL_MIPI
+Message-ID: <20190605064933.6bmskkxzzgn35xz7@flea>
+References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+ <20190124195900.22620-12-jagan@amarulasolutions.com>
+ <20190125212433.ni2jg3wvpyjazlxf@flea>
+ <CAMty3ZAsH2iZ+JEqTE3D58aXfGuhMSg9YoO56ZhhOeE4c4yQHQ@mail.gmail.com>
+ <20190129151348.mh27btttsqcmeban@flea>
+ <CAMty3ZAjAoti8Zu80c=OyCA+u-jtQnkidsKSNz_c2OaRswqc3w@mail.gmail.com>
+ <20190201143102.rcvrxstc365mezvx@flea>
+ <CAMty3ZC3_+z1upH4Y08R1z=Uq1C=OpWETNrBO8nGRoHhuNrHSA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190531011424.GA4374@zhanggen-UX430UQ>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zppxshyy34mh4cra"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZC3_+z1upH4Y08R1z=Uq1C=OpWETNrBO8nGRoHhuNrHSA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31. 05. 19, 3:14, Gen Zhang wrote:
-> In clk_cpy_name(), '*dst_p'('parent->name'and 'parent->fw_name') and 
-> 'dst' are allcoted by kstrdup_const(). According to doc: "Strings 
-> allocated by kstrdup_const should be freed by kfree_const". So 
-> 'parent->name', 'parent->fw_name' and 'dst' should be freed.
-> 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> ---
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index aa51756..85c4d3f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3435,6 +3435,7 @@ static int clk_cpy_name(const char **dst_p, const char *src, bool must_exist)
->  	if (!dst)
->  		return -ENOMEM;
->  
-> +	kfree_const(dst);
 
-So you are now returning a freed pointer in dst_p?
+--zppxshyy34mh4cra
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  	return 0;
->  }
->  
-> @@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct clk_core *core)
->  				kfree_const(parents[i].name);
->  				kfree_const(parents[i].fw_name);
->  			} while (--i >= 0);
-> +			kfree_const(parent->name);
-> +			kfree_const(parent->fw_name);
+Hi,
 
-Both of them were just freed in the loop above, no?
+I've reordered the mail a bit to work on chunks
 
-thanks,
--- 
-js
-suse labs
+On Fri, May 24, 2019 at 03:37:42PM +0530, Jagan Teki wrote:
+> > I wish it was in your commit log in the first place, instead of having
+> > to exchange multiple mails over this.
+> >
+> > However, I don't think that's quite true, and it might be a bug in
+> > Allwinner's implementation (or rather something quite confusing).
+> >
+> > You're right that the lcd_rate and pll_rate seem to be generated from
+> > the pixel clock, and it indeed looks like the ratio between the pixel
+> > clock and the TCON dotclock is defined through the number of bits per
+> > lanes.
+> >
+> > However, in this case, dsi_rate is actually the same than lcd_rate,
+> > since pll_rate is going to be divided by dsi_div:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L791
+> >
+> > Since lcd_div is 1, it also means that in this case, dsi_rate ==
+> > dclk_rate.
+> >
+> > The DSI module clock however, is always set to 148.5 MHz. Indeed, if
+> > we look at:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L804
+> >
+> > We can see that the rate in clk_info is used if it's different than
+> > 0. This is filled by disp_al_lcd_get_clk_info, which, in the case of a
+> > DSI panel, will hardcode it to 148.5 MHz:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L164
+>
+> Let me explain, something more.
+>
+> According to bsp there are clk_info.tcon_div which I will explain below.
+> clk_info.dsi_div which is dynamic and it depends on bpp/lanes, so it
+> is 6 for 24bpp and 4 lanes devices.
+>
+> PLL rate here depends on dsi_div (not tcon_div)
+>
+> Code here
+> https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L784
+>
+> is computing the actual set rate, which depends on dsi_rate.
+>
+> lcd_rate = dclk_rate * clk_info.dsi_div;
+> dsi_rate = pll_rate / clk_info.dsi_div;
+>
+> Say if the dclk_rate 148MHz then the dsi_rate is 888MHz which set rate
+> for above link you mentioned.
+>
+> Here are the evidence with some prints.
+>
+> https://gist.github.com/openedev/9bae2d87d2fcc06b999fe48c998b7043
+> https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
+
+Ok, so we agree up to this point, and the prints confirm that the
+analysis above is the right one.
+
+> > So, the DSI clock is set to this here:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L805
+
+Your patch doesn't address that, so let's leave that one alone.
+
+> > The TCON *module* clock (the one in the clock controller) has been set
+> > to lcd_rate (so the pixel clock times the number of bits per lane) here:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L800
+> >
+> > And the PLL has been set to the same rate here:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L794
+> >
+> > Let's take a step back now: that function we were looking at,
+> > lcd_clk_config, is called by lcd_clk_enable, which is in turn called
+> > by disp_lcd_enable here:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L1328
+> >
+> > The next function being called is disp_al_lcd_cfg, and that function
+> > will hardcode the TCON dotclock divider to 4, here:
+> > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L240
+>
+> tcon_div from BSP point-of-view of there are two variants
+> 00) clk_info.tcon_div which is 4 and same is set the divider position
+> in SUN4I_TCON0_DCLK_REG (like above link refer)
+> 01) tcon_div which is 4 and used for edge timings computation
+> https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L12
+>
+> The real reason for 01) is again 4 is they set the divider to 4 in 00)
+> which is technically wrong because the dividers which used during
+> dotclock in above (dsi_div) should be used here as well. Since there
+> is no dynamic way of doing this BSP hard-coding these values.
+>
+> Patches 5,6,7 on this series doing this
+> https://patchwork.freedesktop.org/series/60847/
+>
+> Hope this explanation helps?
+
+It doesn't.
+
+The clock tree is this one:
+
+PLL(s) -> TCON module clock -> TCON dotclock.
+
+The links I mentioned above show that the clock set to lcd_rate is the
+TCON module clocks (and it should be the one taking the bpp and lanes
+into account), while the TCON dotclock uses a fixed divider of 4.
+
+In your patches, you're using the bpp / lanes divider on the TCON
+dotclock, ie, the wrong clock.
+
+Again, I'm not saying that my analysis of the source code is correct
+here. But you haven't said anything to prove it's wrong either.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--zppxshyy34mh4cra
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPdl/QAKCRDj7w1vZxhR
+xVRiAQCGwYHPpjGwI8PBAolQDDh8EMQ4OwKHtPaRxqSpTh6aNgD/Uv1nSGajLUak
+r4VOaR3S8IynrXXXSDDBAo+8aG1nZgE=
+=eDpG
+-----END PGP SIGNATURE-----
+
+--zppxshyy34mh4cra--
