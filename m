@@ -3,101 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9270C28CC5
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 20:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EF9C28CC5
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 23:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8328520866
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 20:41:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBzOZzCW"
+	by mail.kernel.org (Postfix) with ESMTP id D23F720872
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 23:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559777489;
+	bh=Gv90T7rcmE4D6Bw1Jj/m4qXdxlWX226iKT0AddgAoBM=;
+	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
+	b=eiLzHwLAhIReet58+fQtjO/GlLgx+aVJRFxjOWaGfbQtDx+8Ow+ovep7ZrQX63inF
+	 XwLy+LKCfGDHbDW/YlFPu0GJRmLjcDH7x+vNMNAsbChYEVk1cjCOnECJ2hmmzLM0kJ
+	 vzL+bPX5B31rX1O5WkOWE+M1Cg9NDHOXB+WoYiec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfFEUln (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jun 2019 16:41:43 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43902 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfFEUln (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 16:41:43 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w79so10126004oif.10;
-        Wed, 05 Jun 2019 13:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VG7hExm5hhRslGMHfIJDbnrnuG2niFw1Ee1+Wn5GINw=;
-        b=dBzOZzCW4ZMvgQ3LJtEmT51cdQ5zsOJiWRWh8mUJ0hEeM/o9d0/v2qMz9OC9+YNoLO
-         fYCn1qON5pcQzWzNd2Qj8813NNaGDHPHKUlVgdYgvol5CRaXNc85W4nmIGP8qacTm+0z
-         Swz4vWodatwzbSCCralYISnr6/GCU9vFJ3GrgAKyFfpDW+eyAEqp/8YNZPePNEsjgptA
-         w4ijnZz/Mudnmbenf/LS2/Pz3YEDchiXsfiDpfdoXN8wGxNh5co4Rgh7Vg2peDZBvb9S
-         EdVHycKFzQ7e67ASS1asbM34MAdZVaMYs3OaGQUVUezKZsGK5gRFX7QHTKs/CdiPMBRg
-         5Ehw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VG7hExm5hhRslGMHfIJDbnrnuG2niFw1Ee1+Wn5GINw=;
-        b=k8yKtvL43G9VUGQQlxLXWfaSu/68hg/dVd1SL678Hb5Hfn4RIoAARVYfLysRspbO3n
-         z5wspc6NbOq3PARWnbNRhGMyEWuqppNJnavADeBhjr+0w/4YzQ3fEJZBE16O+E2YrSbD
-         iCMDcHsTjZI9fl1LxTAl4pXMwolzJUUgjD0ZdkFqpnUhWvKHh5/rRhJ0osraLneU9ead
-         T2lFWsy6BfUizytSXwYHpKkZtP9X2//+ELMSiib3FqC53ofo9t/rEJtYZepH2DoPdul+
-         CS41z6mPPfmcsuyCErKarOnG5kvKBDisJxg6CFlv6NiYZL6yAFIT//TOCFeCv57ijsWN
-         7Spw==
-X-Gm-Message-State: APjAAAXQFakMKl34mvtGq/vmojPqiN8jSPBZZ/V0RqZgTwRYZFGK4LSc
-        poTcFGkdb0abWVx3qhCpUaoyNTPG/2Ok2163mmE=
-X-Google-Smtp-Source: APXvYqwUI4OmGQQSr+ze4cMgtR7ECcegoUlrEFr63QH1//OisEkmROYxAFX68SNh/ZVKr04GbZ1HEW11r5w3QDnkVME=
-X-Received: by 2002:aca:3906:: with SMTP id g6mr9276536oia.106.1559767302061;
- Wed, 05 Jun 2019 13:41:42 -0700 (PDT)
+        id S1726597AbfFEXbZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jun 2019 19:31:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726543AbfFEXbY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Jun 2019 19:31:24 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC6DD2083E;
+        Wed,  5 Jun 2019 23:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559777483;
+        bh=Gv90T7rcmE4D6Bw1Jj/m4qXdxlWX226iKT0AddgAoBM=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=mM5nhpZ30n+cxkI7tGpiNIXusTJq40P+ZToze2Ml4tuE1e8D3nnDJWADhN9un3TPo
+         v5/nKmAeqfuuxIVQtsEYXWXH7zgGrtg+l7fV9B34O07X6PDhbdVXnJ9yb5picEb4+c
+         m45rcdzn9aga9qLDnbJIJxCdOTFbpptCwNv8Si60=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <1559754961-26783-6-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1559754961-26783-6-git-send-email-sricharan@codeaurora.org>
-From:   Christian Lamparter <chunkeey@gmail.com>
-Date:   Wed, 5 Jun 2019 22:41:28 +0200
-Message-ID: <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com>
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f5fd9068-134a-3343-9cca-94db67cd748f@nvidia.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com> <1559084936-4610-4-git-send-email-skomatineni@nvidia.com> <20190529232810.14A5224366@mail.kernel.org> <f5fd9068-134a-3343-9cca-94db67cd748f@nvidia.com>
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
+        jonathanh@nvidia.com, linus.walleij@linaro.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
+        tglx@linutronix.de, thierry.reding@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V2 03/12] clk: tegra: save and restore PLLs state for system
+User-Agent: alot/0.8.1
+Date:   Wed, 05 Jun 2019 16:31:22 -0700
+Message-Id: <20190605233123.AC6DD2083E@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
->
-> Add initial device tree support for the Qualcomm IPQ6018 SoC and
-> CP01 evaluation board.
->
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->
-> +       clocks {
-> +               sleep_clk: sleep_clk {
-> +                       compatible = "fixed-clock";
-> +                       clock-frequency = <32000>;
-> +                       #clock-cells = <0>;
-> +               };
-> +
-Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
-on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
-From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
-declares them at 32000 Hz. Since you probably have access to the BOM and
-datasheets. Can you please confirm what's the real clock frequency for
-the IPQ6018.
-(And maybe also for the sleep_clk of the IPQ4018 as well?).
+Quoting Sowjanya Komatineni (2019-05-31 12:52:44)
+>=20
+> On 5/29/19 4:28 PM, Stephen Boyd wrote:
+> > Quoting Sowjanya Komatineni (2019-05-28 16:08:47)
+> >> +               WARN_ON(1);
+> >> +               return;
+> >> +       }
+> >> +
+> >> +       parent_rate =3D clk_hw_get_rate(parent);
+> >> +
+> >> +       if (clk_frac_div_set_rate(hw, rate, parent_rate) < 0)
+> >> +               WARN_ON(1);
+> >> +}
+> >> +#endif
+> >> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> >> index 09bccbb9640c..e4d124cc5657 100644
+> >> --- a/drivers/clk/tegra/clk.h
+> >> +++ b/drivers/clk/tegra/clk.h
+> >> @@ -841,6 +841,15 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *p=
+ll, u8 p_div);
+> >>   int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+> >>                   u8 frac_width, u8 flags);
+> >>  =20
+> >> +#ifdef CONFIG_PM_SLEEP
+> > Can you remove this ifdef? It just complicates compilation testing.
+> OK, Will fix in next version
+> >> +void tegra_clk_pll_resume(struct clk *c, unsigned long rate);
+> >> +void tegra_clk_divider_resume(struct clk_hw *hw, unsigned long rate);
+> >> +void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate);
+> >> +void tegra_clk_plle_tegra210_resume(struct clk *c);
+> >> +void tegra_clk_sync_state_pll(struct clk *c);
+> >> +void tegra_clk_sync_state_pll_out(struct clk *clk);
+> > Do these APIs need to operate on struct clk? Why can't they operate on
+> > clk_hw or why can't we drive the suspend/resume sequence from the clk
+> > provider driver itself?
+> >
+> Yes can change to use clk_hw.
+>=20
+> By clk provider driver, are you referring to clk-tegra210?
 
-Cheers,
-Christian
+I guess so.
+
+>=20
+> clk-terga210 driver has suspend/resume implementation. These API's are=20
+> for corresponding clock specific implementations (clk-pll, clk-pll-out,=20
+> clk-divider) for enabling and restoring to proper rate and are invoked=20
+> during clk-tegra210 driver resume.
+
+Yes, so when the clk provider suspends it needs to do something? Our
+handling of clk rates and other state like enable/disable over
+suspend/resume isn't really well thought out or implemented so far. TI
+has some code to do some stuff, but otherwise I haven't seen drivers
+handling this. Ideally it would be something generic in the framework so
+that drivers don't have to work around stuff.
