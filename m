@@ -2,88 +2,350 @@ Return-Path: <SRS0=XCXc=UE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B752C28CC5
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 11:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C19F9C28CC5
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 12:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0058206DF
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 11:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DB12206C3
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jun 2019 12:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbfFELtx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jun 2019 07:49:53 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:44755 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727457AbfFELtx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 07:49:53 -0400
-X-Originating-IP: 90.88.144.139
-Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 80F091BF203;
-        Wed,  5 Jun 2019 11:49:48 +0000 (UTC)
-Date:   Wed, 5 Jun 2019 13:49:48 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     megous@megous.com
-Cc:     linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: sunxi-ng: sun50i-h6-r: Fix incorrect W1 clock
- gate register
-Message-ID: <20190605114948.a4m7g5zwdr23qgth@flea>
-References: <20190604154036.23211-1-megous@megous.com>
+        id S1727515AbfFEMX1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jun 2019 08:23:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39834 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727337AbfFEMX1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Jun 2019 08:23:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ECA9FAEF8;
+        Wed,  5 Jun 2019 12:23:24 +0000 (UTC)
+Message-ID: <3455ad811500486a9144bb45a0e0933c533e5b66.camel@suse.de>
+Subject: Re: [PATCH 2/4] clk: bcm283x: add driver interfacing with Raspberry
+ Pi's firmware
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stefan Wahren <wahrenst@gmx.net>, linux-kernel@vger.kernel.org
+Cc:     f.fainelli@gmail.com, ptesarik@suse.com, sboyd@kernel.org,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net, mbrugger@suse.de,
+        eric@anholt.net, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, ssuloev@orpaltech.com
+Date:   Wed, 05 Jun 2019 14:23:22 +0200
+In-Reply-To: <7ff78cd1-3c39-925d-c66c-f7f295fe6d6e@gmx.net>
+References: <20190604173223.4229-1-nsaenzjulienne@suse.de>
+         <20190604173223.4229-3-nsaenzjulienne@suse.de>
+         <7ff78cd1-3c39-925d-c66c-f7f295fe6d6e@gmx.net>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-CaIs5UzJsQf89/5WfJE7"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4kypn3dccdwbnuyz"
-Content-Disposition: inline
-In-Reply-To: <20190604154036.23211-1-megous@megous.com>
-User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---4kypn3dccdwbnuyz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-CaIs5UzJsQf89/5WfJE7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 04, 2019 at 05:40:36PM +0200, megous@megous.com wrote:
-> From: Ondrej Jirman <megous@megous.com>
->
-> The current code defines W1 clock gate to be at 0x1cc, overlaying it
-> with the IR gate.
->
-> Clock gate for r-apb1-w1 is at 0x1ec. This fixes issues with IR receiver
-> causing interrupt floods on H6 (because interrupt flags can't be cleared,
-> due to IR module's bus being disabled).
->
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> Fixes: b7c7b05065aa77ae ("clk: sunxi-ng: add support for H6 PRCM CCU")
+Hi Stefan,
+thanks for your review.
 
-Applied, thanks
+On Wed, 2019-06-05 at 12:44 +0200, Stefan Wahren wrote:
+> Hi Nicolas,
+>=20
+> Am 04.06.19 um 19:32 schrieb Nicolas Saenz Julienne:
+> > Raspberry Pi's firmware offers and interface though which update it's
+> > clock's frequencies. This is specially useful in order to change the CP=
+U
+> > clock (pllb_arm) which is 'owned' by the firmware and we're unable to
+> > scale using the register interface.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > ---
+> >=20
+> > Changes since RFC:
+> >   - Moved firmware interface into own driver
+> >   - Use of_find_compatible_node()
+> >   - Remove error message on rpi_firmware_get() failure
+> >   - Ratelimit messages on set_rate() failure
+> >   - Use __le32 on firmware interface definition
+> >=20
+> >  drivers/clk/bcm/Makefile          |   1 +
+> >  drivers/clk/bcm/clk-raspberrypi.c | 316 ++++++++++++++++++++++++++++++
+> >  2 files changed, 317 insertions(+)
+> >  create mode 100644 drivers/clk/bcm/clk-raspberrypi.c
+> >=20
+> > diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> > index 002661d39128..07abe92df9d1 100644
+> > --- a/drivers/clk/bcm/Makefile
+> > +++ b/drivers/clk/bcm/Makefile
+> > @@ -7,6 +7,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+=3D clk-bcm21664.o
+> >  obj-$(CONFIG_COMMON_CLK_IPROC)	+=3D clk-iproc-armpll.o clk-iproc-pll.o
+> > clk-iproc-asiu.o
+> >  obj-$(CONFIG_ARCH_BCM2835)	+=3D clk-bcm2835.o
+> >  obj-$(CONFIG_ARCH_BCM2835)	+=3D clk-bcm2835-aux.o
+> > +obj-$(CONFIG_ARCH_BCM2835)	+=3D clk-raspberrypi.o
+> Hm, on the one side it would be nice to avoid building this driver in
+> case the firmware driver is disabled on the other side it would be good
+> to keep compile test.
+> >  obj-$(CONFIG_ARCH_BCM_53573)	+=3D clk-bcm53573-ilp.o
+> >  obj-$(CONFIG_CLK_BCM_CYGNUS)	+=3D clk-cygnus.o
+> >  obj-$(CONFIG_CLK_BCM_HR2)	+=3D clk-hr2.o
+> > diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-
+> > raspberrypi.c
+> > new file mode 100644
+> > index 000000000000..485c00288414
+> > --- /dev/null
+> > +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> > @@ -0,0 +1,316 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Copyright (C) 2019 Nicolas Saenz Julienne
+> > + */
+> > +
+> > +#include <linux/clkdev.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include <soc/bcm2835/raspberrypi-firmware.h>
+> > +
+> > +#define RPI_FIRMWARE_ARM_CLK_ID		0x000000003
+> > +
+> > +#define RPI_FIRMWARE_STATE_ENABLE_BIT	0x1
+> > +#define RPI_FIRMWARE_STATE_WAIT_BIT	0x2
+> how about using the BIT() macro?
+> > +
+> > +/*
+> > + * Even though the firmware interface alters 'pllb' the frequencies ar=
+e
+> > + * provided as per 'pllb_arm'. We need to scale before passing them tr=
+ough.
+> > + */
+> > +#define RPI_FIRMWARE_PLLB_ARM_DIV_RATE	2
+> > +
+> > +#define A2W_PLL_FRAC_BITS		20
+> > +
+> > +struct raspberrypi_clk {
+> > +	struct device *dev;
+> > +	struct rpi_firmware *firmware;
+> > +
+> > +	unsigned long min_rate;
+> > +	unsigned long max_rate;
+> > +
+> > +	struct clk_hw pllb;
+> > +	struct clk_hw *pllb_arm;
+> > +	struct clk_lookup *pllb_arm_lookup;
+> > +};
+> > +
+> > +/*
+> > + * Structure of the message passed to Raspberry Pi's firmware in order=
+ to
+> > + * change clock rates. The 'disable_turbo' option is only available to=
+ the
+> > ARM
+> > + * clock (pllb) which we enable by default as turbo mode will alter
+> > multiple
+> > + * clocks at once.
+> > + *
+> > + * Even though we're able to access the clock registers directly we're
+> > bound to
+> > + * use the firmware interface as the firmware ultimately takes care of
+> > + * mitigating overheating/undervoltage situations and we would be chan=
+ging
+> > + * frequencies behind his back.
+> > + *
+> > + * For more information on the firmware interface check:
+> > + * https://github.com/raspberrypi/firmware/wiki/Mailbox-property-inter=
+face
+> > + */
+> > +struct raspberrypi_firmware_prop {
+> > +	__le32 id;
+> > +	__le32 val;
+> > +	__le32 disable_turbo;
+> > +} __packed;
+> > +
+> > +static int raspberrypi_clock_property(struct rpi_firmware *firmware, u=
+32
+> > tag,
+> > +				      u32 clk, u32 *val)
+> > +{
+> > +	struct raspberrypi_firmware_prop msg =3D {
+> > +		.id =3D clk,
+> > +		.val =3D *val,
+> > +		.disable_turbo =3D 1,
+> > +	};
+> > +	int ret;
+> > +
+> > +	ret =3D rpi_firmware_property(firmware, tag, &msg, sizeof(msg));
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	*val =3D msg.val;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int raspberrypi_fw_pll_is_on(struct clk_hw *hw)
+> > +{
+> > +	struct raspberrypi_clk *rpi =3D container_of(hw, struct raspberrypi_c=
+lk,
+> > +						   pllb);
+> > +	u32 val =3D 0;
+> > +	int ret;
+> > +
+> > +	ret =3D raspberrypi_clock_property(rpi->firmware,
+> > +					 RPI_FIRMWARE_GET_CLOCK_STATE,
+> > +					 RPI_FIRMWARE_ARM_CLK_ID, &val);
+> > +	if (ret)
+> > +		return 0;
+> > +
+> > +	return !!(val & RPI_FIRMWARE_STATE_ENABLE_BIT);
+> > +}
+> > +
+> > +
+> > +static unsigned long raspberrypi_fw_pll_get_rate(struct clk_hw *hw,
+> > +						 unsigned long parent_rate)
+> > +{
+> > +	struct raspberrypi_clk *rpi =3D container_of(hw, struct raspberrypi_c=
+lk,
+> > +						   pllb);
+> > +	u32 val =3D 0;
+> > +	int ret;
+> > +
+> > +	ret =3D raspberrypi_clock_property(rpi->firmware,
+> > +					 RPI_FIRMWARE_GET_CLOCK_RATE,
+> > +					 RPI_FIRMWARE_ARM_CLK_ID,
+> > +					 &val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return val * RPI_FIRMWARE_PLLB_ARM_DIV_RATE;
+> > +}
+> > +
+> > +static int raspberrypi_fw_pll_on(struct clk_hw *hw)
+> > +{
+> > +	struct raspberrypi_clk *rpi =3D container_of(hw, struct raspberrypi_c=
+lk,
+> > +						   pllb);
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	val =3D RPI_FIRMWARE_STATE_ENABLE_BIT | RPI_FIRMWARE_STATE_WAIT_BIT;
+> > +
+> > +	ret =3D raspberrypi_clock_property(rpi->firmware,
+> > +					 RPI_FIRMWARE_SET_CLOCK_STATE,
+> > +					 RPI_FIRMWARE_ARM_CLK_ID, &val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return 0;
+> return ret;
+> > +}
+> > +
+> > +static int raspberrypi_fw_pll_set_rate(struct clk_hw *hw, unsigned lon=
+g
+> > rate,
+> > +				       unsigned long parent_rate)
+> > +{
+> > +	struct raspberrypi_clk *rpi =3D container_of(hw, struct raspberrypi_c=
+lk,
+> > +						   pllb);
+> > +	u32 new_rate =3D rate / RPI_FIRMWARE_PLLB_ARM_DIV_RATE;
+> > +	int ret;
+> > +
+> > +	ret =3D raspberrypi_clock_property(rpi->firmware,
+> > +					 RPI_FIRMWARE_SET_CLOCK_RATE,
+> > +					 RPI_FIRMWARE_ARM_CLK_ID,
+> > +					 &new_rate);
+> > +	if (ret)
+> > +		dev_err_ratelimited(rpi->dev, "Failed to change %s frequency:
+> > %d",
+> > +				    clk_hw_get_name(hw), ret);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +/*
+> > + * Sadly there is no firmware rate rounding interface. We borred it fr=
+om
+> borrowed?
 
-Maxime
+Yes
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > + * clk-bcm2835.
+> > + */
+> > +static long raspberrypi_pll_round_rate(struct clk_hw *hw, unsigned lon=
+g
+> > rate,
+> > +				       unsigned long *parent_rate)
+> > +{
+> > +	struct raspberrypi_clk *rpi =3D container_of(hw, struct raspberrypi_c=
+lk,
+> > +						   pllb);
+> > +	u64 div, final_rate;
+> > +	u32 ndiv, fdiv;
+> > +
+> > +	rate =3D clamp(rate, rpi->min_rate, rpi->max_rate);
+> > +
+> > +	div =3D (u64)rate << A2W_PLL_FRAC_BITS;
+> > +	do_div(div, *parent_rate);
+> > +
+> > +	ndiv =3D div >> A2W_PLL_FRAC_BITS;
+> > +	fdiv =3D div & ((1 << A2W_PLL_FRAC_BITS) - 1);
+> > +
+> > +	/* We can't use rate directly as it would overflow */
+> > +	final_rate =3D ((u64)*parent_rate * ((ndiv << A2W_PLL_FRAC_BITS) + fd=
+iv));
+> > +
+> > +	return final_rate >> A2W_PLL_FRAC_BITS;
+> > +}
+> > +
+> > +static void raspberrypi_fw_pll_off(struct clk_hw *hw)
+> > +{
+> > +	struct raspberrypi_clk *rpi =3D container_of(hw, struct raspberrypi_c=
+lk,
+> > +						   pllb);
+> > +	u32 val =3D RPI_FIRMWARE_STATE_WAIT_BIT;
+> > +
+> > +	raspberrypi_clock_property(rpi->firmware,
+> > +				   RPI_FIRMWARE_SET_CLOCK_STATE,
+> > +				   RPI_FIRMWARE_ARM_CLK_ID, &val);
+> > +}
+> I'm not sure. Does this operation really make sense?
 
---4kypn3dccdwbnuyz
+You're right, I implemented it mindlessly as I saw the API available in the
+firmware interface. I'll remove both prepare and unprepare as one is redund=
+ant
+and the other harmful (though I wonder what whould happen if called).
+
+Regards,
+Nicolas
+
+
+--=-CaIs5UzJsQf89/5WfJE7
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPesXAAKCRDj7w1vZxhR
-xS0aAQDbqtubHM34CsRCm1ZafQXbbm/Co2Y9BfB0fqhizBC8EgD/ZVKxdfqHoRKr
-cdCJa+8u/cSpVJrFqhwWKTQ01004pwA=
-=OHOD
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlz3tDsACgkQlfZmHno8
+x/7O3Qf+PrJ/wkQhLSFrJaROEcNj//C0XizXWMOpsuRjn+bdm+w1i0ea9R7LAvuq
+v6vUqz9PQkIuP10YfD7xVhQhTTCkCjooavG0fCCmwry3fjT+UHCXihjegTlmuoIQ
+T0XTLdIcmhHRC6YW4lJFg5zfp8qj0ZgQzyHVToP2BUaX0ZT7+2sXT3Anyzz218TF
+LaeXkMoMGcZo1B5ajXfEgV/cAe+iU3zCIyAUJ9OIiJyeusA0DejX5KivhlrDWEsH
+mxqgc7DqxtvR8hqsdwgjlYSxOhV3R6qRFaXNihCBG/0XFQvaLZb4l1Wp42JVeG3t
+HmK4vqzmdr/VkSzW/NaQRejkuS1U9g==
+=paIB
 -----END PGP SIGNATURE-----
 
---4kypn3dccdwbnuyz--
+--=-CaIs5UzJsQf89/5WfJE7--
+
