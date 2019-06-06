@@ -4,111 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673CAC04AB5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 20:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FBEC04AB5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 20:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41576208C3
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 20:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B160F208E3
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 20:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559852214;
-	bh=dtO+5DakYD+OBjmih0j/tzf4TsEgQw8kAWSobV34pos=;
+	s=default; t=1559853313;
+	bh=FE9dK512c/wFHKFGlAS3dfE+HoQTVyNtrTLC+af8DVY=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=YLrBH2JtFTQJkWGwjNPYRkfKK2xfL7b+BkwixmDFOhXfUu6AaY4qf+0IH5gxVLOxn
-	 PgxJC5UVecuJKSKn+hNSnrVcGXGs+Qe8LXevV5OYBc4D72n3XkG5YUeSf0kLuG9ys0
-	 ggA/xfySnYoYXAnIOOQ+smVW2L7FV2qoQzJ0WKuk=
+	b=oldr/Om3+QpbqlnljCG7Ay3vOl4QQ0Dp9/RFmS0PmMFAuRKe0iHGzt6g/w9b4SYyO
+	 mwdiizQgS+8VqmhY8t29pcw8ooTyDXUsZM9xigmnOBYVHE/WHAKkK3XJwvpaGwTM5R
+	 nRfKUAlXeNCohwUWo80YvItWrXLFDY0kury4PTX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfFFUQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jun 2019 16:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53506 "EHLO mail.kernel.org"
+        id S1726870AbfFFUfN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jun 2019 16:35:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbfFFUQr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:16:47 -0400
+        id S1726631AbfFFUfN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:35:13 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4CC4206BB;
-        Thu,  6 Jun 2019 20:16:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96A80208C3;
+        Thu,  6 Jun 2019 20:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559852206;
-        bh=dtO+5DakYD+OBjmih0j/tzf4TsEgQw8kAWSobV34pos=;
+        s=default; t=1559853312;
+        bh=FE9dK512c/wFHKFGlAS3dfE+HoQTVyNtrTLC+af8DVY=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=auni+q2MkEs6XpdIx4TVt3rGKVBpTISGYV2lWzplv/HgVbnBkbp+TWJaf1JO/ZbFh
-         sLQaF2cKycyi5+/vb5dOZUwEoYfrbPEXQ7I7HcjVaoqTg/hgvjcaoZi0B7cYf2mxbY
-         vAGlb05B3a4l5vjuwDPvHqrHs18xVWrZOxVNatf4=
+        b=dBymB7Od4RlRir+NZNAly+YJeKeeWhTcLO7PIwfJDdVQvTdgIzADoTqU1q/tnjhAG
+         cNQ147DwvQMdwjB+8gN9O4AlKn/F/JV05mYih8RRvaocE2Q/XqDry8OuERh5EqRbB+
+         ULLY5j+iTLOrUOKXApW5wrsOTkB/c1Rs7YlFFn6U=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190605160043.GA4351@zhanggen-UX430UQ>
-References: <20190531011424.GA4374@zhanggen-UX430UQ> <eb8e2d33-e8f7-93a5-c8bc-98731c0d63b6@suse.cz> <20190605160043.GA4351@zhanggen-UX430UQ>
-To:     Gen Zhang <blackgod016574@gmail.com>, Jiri Slaby <jslaby@suse.cz>
+In-Reply-To: <20190509202956.6320-2-f.fainelli@gmail.com>
+References: <20190509202956.6320-1-f.fainelli@gmail.com> <20190509202956.6320-2-f.fainelli@gmail.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: bcm: Make BCM2835 clock drivers selectable
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com, wahrenst@gmx.net,
+        eric@anholt.net, stefan.wahren@i2se.com
 User-Agent: alot/0.8.1
-Date:   Thu, 06 Jun 2019 13:16:45 -0700
-Message-Id: <20190606201646.B4CC4206BB@mail.kernel.org>
+Date:   Thu, 06 Jun 2019 13:35:11 -0700
+Message-Id: <20190606203512.96A80208C3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gen Zhang (2019-06-05 09:00:43)
-> On Wed, Jun 05, 2019 at 08:38:00AM +0200, Jiri Slaby wrote:
-> > On 31. 05. 19, 3:14, Gen Zhang wrote:
-> > > In clk_cpy_name(), '*dst_p'('parent->name'and 'parent->fw_name') and =
-
-> > > 'dst' are allcoted by kstrdup_const(). According to doc: "Strings=20
-> > > allocated by kstrdup_const should be freed by kfree_const". So=20
-> > > 'parent->name', 'parent->fw_name' and 'dst' should be freed.
-> > >=20
-> > > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> > > ---
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index aa51756..85c4d3f 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -3435,6 +3435,7 @@ static int clk_cpy_name(const char **dst_p, con=
-st char *src, bool must_exist)
-> > >     if (!dst)
-> > >             return -ENOMEM;
-> > > =20
-> > > +   kfree_const(dst);
-> >=20
-> > So you are now returning a freed pointer in dst_p?
-> Thanks for your reply. I re-examined the code, and this kfree is=20
-> incorrect and it should be deleted.
-> >=20
-> > >     return 0;
-> > >  }
-> > > =20
-> > > @@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct =
-clk_core *core)
-> > >                             kfree_const(parents[i].name);
-> > >                             kfree_const(parents[i].fw_name);
-> > >                     } while (--i >=3D 0);
-> > > +                   kfree_const(parent->name);
-> > > +                   kfree_const(parent->fw_name);
-> >=20
-> > Both of them were just freed in the loop above, no?
-> for (i =3D 0, parent =3D parents; i < num_parents; i++, parent++)
-> Is 'parent' the same as the one from the loop above?
-
-Yes. Did it change somehow?
-
+Quoting Florian Fainelli (2019-05-09 13:29:55)
+> Make the BCM2835 clock driver selectable by other
+> architectures/platforms. ARCH_BRCMSTB will be selecting that driver in
+> the next commit since new chips like 7211 use the same CPRMAN clock
+> controller that this driver supports.
 >=20
-> Moreover, should 'parents[i].name' and 'parents[i].fw_name' be freed by
-> kfree_const()?
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  drivers/clk/bcm/Kconfig  | 9 +++++++++
+>  drivers/clk/bcm/Makefile | 4 ++--
+>  2 files changed, 11 insertions(+), 2 deletions(-)
 >=20
+> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> index 4c4bd85f707c..0b873e23f128 100644
+> --- a/drivers/clk/bcm/Kconfig
+> +++ b/drivers/clk/bcm/Kconfig
+> @@ -1,3 +1,12 @@
+> +config CLK_BCM2835
+> +       bool "Broadcom BCM2835 clock support"
+> +       depends on ARCH_BCM2835 || COMPILE_TEST
+> +       depends on COMMON_CLK
 
-Yes? They're allocated with kstrdup_const() in clk_cpy_name(), or
-they're NULL by virtue of the kcalloc and then kfree_const() does
-nothing.
+This whole thing is inside the COMMON_CLK menu so this line probably
+doesn't matter. Anyway, I'm just going to apply this to clk-next.
 
-I'm having a hard time following what this patch is trying to fix. It
-looks unnecessary though so I'm going to drop it from the clk review
-queue.
-
+> +       default ARCH_BCM2835
+> +       help
+> +         Enable common clock framework support for Broadcom BCM2835
+> +         SoCs.
