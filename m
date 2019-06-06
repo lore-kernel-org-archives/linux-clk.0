@@ -2,120 +2,118 @@ Return-Path: <SRS0=srpp=UF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B8EC04AB5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 17:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9246CC04AB5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 17:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8752083E
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 17:36:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9BDF20872
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 17:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559842570;
-	bh=pdq8qWIQe2AXVUfwDoQAl3L/f1GBHM2CtgEayvOOJOg=;
-	h=In-Reply-To:References:To:Subject:From:Cc:Date:List-ID:From;
-	b=0DBnIey4E/ir2RX8bn7+/8R9JzYEpaK8sLu/4dYm1u/halJRMvbgysDU+5MFqfqba
-	 NB9+MSJspKyOhKCLeFw2OcpzTmqejR5KjmHEmmoUMnk0JtMLpk6XfBYvS/1oJ21Tt6
-	 sVXqqzhETKkDZGms9mEFZrzzxj1uIeHCYLJ0tMWs=
+	s=default; t=1559843300;
+	bh=qxJXaHSpX6G/vQYp0vNXcqf+c/7Ggd4r9q6++tXx/nE=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=PEhZmWd5C+w4ALrZ+hlHCBzbFreZ1xGEWEZvAvYDBpnettxZYJXcEEO55VCFtL/DX
+	 FsC8NAZnS6LLj4RscUgO3wlrKC/6OalAtUEShhkaynBUKRWFQ2rgen8CvMROx11u/i
+	 DvLJaorVKCnBFT/0n4k5e83G/c9Gk4v+VYMQpMSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbfFFRgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jun 2019 13:36:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59536 "EHLO mail.kernel.org"
+        id S1728508AbfFFRsU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jun 2019 13:48:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbfFFRgJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:36:09 -0400
+        id S1727961AbfFFRsU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:48:20 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C3952083D;
-        Thu,  6 Jun 2019 17:36:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9747720868;
+        Thu,  6 Jun 2019 17:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559842569;
-        bh=pdq8qWIQe2AXVUfwDoQAl3L/f1GBHM2CtgEayvOOJOg=;
-        h=In-Reply-To:References:To:Subject:From:Cc:Date:From;
-        b=BwVfvF8v2Q979AL6mVsnn+nE3xjQrUjwkRimjqFEJhiFbEf8SR2T9nCVGTybohqdR
-         AOoYSR0emcwc0BLcR1DkGl8wBOGZukuLZfVlGmkot+thcQ2z546O2TpYYmzUUHW5zj
-         KTFdSDZq6kGs2i8xJJOqYFuh01E18mzPP7/+4R5Y=
+        s=default; t=1559843299;
+        bh=qxJXaHSpX6G/vQYp0vNXcqf+c/7Ggd4r9q6++tXx/nE=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=QrEKNot6jJmWjc64RDPVQh7xHmqY9EAhQ9SyYY2yOrdpERHsihoHjxdFWBUtf3sty
+         5gL/nNAtgmtq5Y6LeEMYYhwYlNr5wM4gd1xBPyiHkDcBkdAcdflT5oZbbNzk4/ZPux
+         4PRlrVRmQLwsevK5BmXx8Q13MSs3mIqAK2Jh0PUs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <eb72a26b55cf17c29df6a7fd3c5def08182e00af.camel@suse.de>
-References: <20190606142255.29454-1-nsaenzjulienne@suse.de> <20190606142255.29454-5-nsaenzjulienne@suse.de> <20190606170949.4A46720652@mail.kernel.org> <eb72a26b55cf17c29df6a7fd3c5def08182e00af.camel@suse.de>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>, stefan.wahren@i2se.com
-Subject: Re: [PATCH v2 4/7] cpufreq: add driver for Raspbery Pi
+In-Reply-To: <VI1PR07MB4432F4F275BC445289FF3D9CFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
+References: <VI1PR07MB4432F4F275BC445289FF3D9CFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
+To:     Philippe Mazenauer <philippe.mazenauer@outlook.de>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
-        ptesarik@suse.com, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eric@anholt.net, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        mbrugger@suse.de, ssuloev@orpaltech.com
+Subject: Re: [PATCH] clk: armada-xp: Remove unused variables
+Cc:     Philippe Mazenauer <philippe.mazenauer@outlook.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 User-Agent: alot/0.8.1
-Date:   Thu, 06 Jun 2019 10:36:08 -0700
-Message-Id: <20190606173609.2C3952083D@mail.kernel.org>
+Date:   Thu, 06 Jun 2019 10:48:18 -0700
+Message-Id: <20190606174819.9747720868@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nicolas Saenz Julienne (2019-06-06 10:22:16)
-> Hi Stephen,
-> Thanks for the review.
+Quoting Philippe Mazenauer (2019-05-21 01:58:41)
+> Variables 'mv98dx3236_gating_desc' and 'mv98dx3236_coreclks' are
+> declared static and initialized, but are not used in the file.
 >=20
-> On Thu, 2019-06-06 at 10:09 -0700, Stephen Boyd wrote:
-> > Quoting Nicolas Saenz Julienne (2019-06-06 07:22:56)
-> > > diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c
-> > > b/drivers/cpufreq/raspberrypi-cpufreq.c
-> > > new file mode 100644
-> > > index 000000000000..99b59d5a50aa
-> > > --- /dev/null
-> > > +++ b/drivers/cpufreq/raspberrypi-cpufreq.c
-> > [...]
-> > > +
-> > > +/*
-> > > + * Since the driver depends on clk-raspberrypi, which may return
-> > > EPROBE_DEFER,
-> > > + * all the activity is performed in the probe, which may be defered =
-as
-> > > well.
-> > > + */
-> > > +static struct platform_driver raspberrypi_cpufreq_driver =3D {
-> > > +       .driver =3D {
-> > > +               .name =3D "raspberrypi-cpufreq",
-> > > +       },
-> > > +       .probe          =3D raspberrypi_cpufreq_probe,
-> > > +       .remove         =3D raspberrypi_cpufreq_remove,
-> > > +};
-> > > +module_platform_driver(raspberrypi_cpufreq_driver);
-> >=20
-> > How does this driver probe? Do you have a node in DT named
-> > raspberrypi-cpufreq that matches and probes this? I would think this
-> > would follow the drivers/cpufreq/cpufreq-dt-platdev.c design where it's
-> > an initcall that probes the board compatible string.
-> >
-> > Or, if it depends on clk-raspberrypi probing, maybe it could create the
-> > platform device in that drivers probe function.
+> ../drivers/clk/mvebu/armada-xp.c:213:41: warning: =E2=80=98mv98dx3236_gat=
+ing_desc=E2=80=99 defined but not used [-Wunused-const-variable=3D]
+>  static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __initc=
+onst =3D {
+>                                          ^~~~~~~~~~~~~~~~~~~~~~
+> ../drivers/clk/mvebu/armada-xp.c:171:38: warning: =E2=80=98mv98dx3236_cor=
+eclks=E2=80=99 defined but not used [-Wunused-const-variable=3D]
+>  static const struct coreclk_soc_desc mv98dx3236_coreclks =3D {
+>                                       ^~~~~~~~~~~~~~~~~~~
 >=20
-> Well you just reviewed that patch :)
+> Signed-off-by: Philippe Mazenauer <philippe.mazenauer@outlook.de>
+> ---
 
-Ok. So what's your plan?
+The patch is base64 encoded.... Sigh outlook!
 
+>  drivers/clk/mvebu/armada-xp.c | 14 --------------
+>  1 file changed, 14 deletions(-)
 >=20
-> > > +
-> > > +MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de");
-> > > +MODULE_DESCRIPTION("Raspberry Pi cpufreq driver");
-> > > +MODULE_LICENSE("GPL");
-> > > +MODULE_ALIAS("platform:raspberrypi-cpufreq");
-> >=20
-> > I don't think the module alias is needed anymore.
->=20
-> That's surprising. I remember the driver not being loaded by udev without=
- it.
->=20
-
-Maybe I'm wrong. Could be not needed for DT based platform devices with
-an OF table.
-
+> diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+> index fa1568279c23..2ae24a5debd0 100644
+> --- a/drivers/clk/mvebu/armada-xp.c
+> +++ b/drivers/clk/mvebu/armada-xp.c
+> @@ -168,11 +168,6 @@ static const struct coreclk_soc_desc axp_coreclks =
+=3D {
+>         .num_ratios =3D ARRAY_SIZE(axp_coreclk_ratios),
+>  };
+> =20
+> -static const struct coreclk_soc_desc mv98dx3236_coreclks =3D {
+> -       .get_tclk_freq =3D mv98dx3236_get_tclk_freq,
+> -       .get_cpu_freq =3D mv98dx3236_get_cpu_freq,
+> -};
+> -
+>  /*
+>   * Clock Gating Control
+>   */
+> @@ -210,15 +205,6 @@ static const struct clk_gating_soc_desc axp_gating_d=
+esc[] __initconst =3D {
+>         { }
+>  };
+> =20
+> -static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __initc=
+onst =3D {
+> -       { "ge1", NULL, 3, 0 },
+> -       { "ge0", NULL, 4, 0 },
+> -       { "pex00", NULL, 5, 0 },
+> -       { "sdio", NULL, 17, 0 },
+> -       { "xor0", NULL, 22, 0 },
+> -       { }
+> -};
+> -
+>  static void __init axp_clk_init(struct device_node *np)
+>  {
+>         struct device_node *cgnp =3D
