@@ -2,411 +2,96 @@ Return-Path: <SRS0=srpp=UF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB85C28CC5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 01:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD82C28CC5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 02:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F86520872
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 01:32:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B17A8206C3
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 02:00:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9qObc4i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfFFBb5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jun 2019 21:31:57 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:54668 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726573AbfFFBb5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Jun 2019 21:31:57 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A99BD1A09D7;
-        Thu,  6 Jun 2019 03:31:53 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3251C1A0F76;
-        Thu,  6 Jun 2019 03:31:41 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 658A54029A;
-        Thu,  6 Jun 2019 09:31:27 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, maxime.ripard@bootlin.com, olof@lixom.net,
-        jagan@amarulasolutions.com, horms+renesas@verge.net.au,
-        bjorn.andersson@linaro.org, leonard.crestez@nxp.com,
-        dinguyen@kernel.org, enric.balletbo@collabora.com,
-        aisheng.dong@nxp.com, abel.vesa@nxp.com, ping.bai@nxp.com,
-        l.stach@pengutronix.de, peng.fan@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V4 1/4] dt-bindings: imx: Add clock binding doc for i.MX8MN
-Date:   Thu,  6 Jun 2019 09:33:20 +0800
-Message-Id: <20190606013323.3392-1-Anson.Huang@nxp.com>
+        id S1726694AbfFFCAR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jun 2019 22:00:17 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33379 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfFFCAR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 22:00:17 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x15so483715pfq.0;
+        Wed, 05 Jun 2019 19:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=x7qwOsCUljcPtS0zwGfT/F7OR260b2vj2I2Z3hV+0Vw=;
+        b=A9qObc4i5vO0woGJ3cg3uISuB5bxnGAL/+ozW+EhdwWNA31g3TMfQIeiD5NULF0cA2
+         XYZKt9Jel0pAbExfDGszMRiWtFxOpGfUZdzBnjShNA3K+lfXeNSH6udRdX4+puQDg2Y3
+         4HSQpALDaGVvKEKK2Q4DCpxqaNlx8q8f/AlKyRGLaqveYSPvXZC8oE3oNSHS2Hk2CGnh
+         p9SnF9IXb0e4J7wrfzdmPNULuKTVJg32mDvQFvYY7krDNRSOIu4cONvhSRc4KkUsAOxj
+         F0C9aaJ/XPNJmEbCyy10tF+mMPxNlNPvj2B/tzf8ZVFX2a67suPLpO5ksNbmU4VFxdPX
+         x9rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=x7qwOsCUljcPtS0zwGfT/F7OR260b2vj2I2Z3hV+0Vw=;
+        b=W7eqkk5JUNtAW2wUmL+wb/i/zXcKdTR1FvIM22+tKU4vk9mxqSxGPJTftEI19pW+Hf
+         fV4nTd0EPvDS1SnLEaytcSvw4sZRRtfd2J6nTYF/I1fgI4M5dbsc56s9B3NL0h+YZnAE
+         XNo3Gq79coTax+xjbW+kMUtVBNhq/wPcPk1V6kSeOcaPohamw6+Fw0mvivz30LJpEL4U
+         jZmMyqeRfImN5oQxoDnbsW49jAJDPTiiK8Q9vI48O3HppTJyWHSyu2xWkROeDcTTBwiS
+         VS5Zf6iplcqmp5T3yCYf+7jwm5BnCNKh2nDjjJTNIh70b1rE08otSKy3/TUUytYPCvhO
+         E0Uw==
+X-Gm-Message-State: APjAAAWZt4lD+14jNZhlami1UGTmssTyPM6NP9MukW4PXbQZ4946H+ar
+        J1FRGVrdrsqQct6YP2KNvcg=
+X-Google-Smtp-Source: APXvYqyPmqa7lqmty0IqA8/OiwgJIYtWHbs/vn7I7gtRg48rBH4l7U9lXE5gPHXIQWvvzkHtLfXb+w==
+X-Received: by 2002:a63:de53:: with SMTP id y19mr884162pgi.166.1559786416299;
+        Wed, 05 Jun 2019 19:00:16 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id k14sm185234pga.5.2019.06.05.19.00.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 19:00:15 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        marc.w.gonzalez@free.fr, jcrouse@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v2 0/3] MSM8998 GPUCC Support
+Date:   Wed,  5 Jun 2019 18:58:44 -0700
+Message-Id: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
 X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+The Adreno GPU on MSM8998 has its own clock controller, which is a
+dependency for bringing up the GPU.  This series gets the gpucc all in
+place as another step on the road to getting the GPU enabled.
 
-Add the clock binding doc for i.MX8MN.
+v2:
+-drop desd code
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V3:
-	- switch binding doc from .txt to .yaml.
----
- .../devicetree/bindings/clock/imx8mn-clock.yaml    | 115 +++++++++++
- include/dt-bindings/clock/imx8mn-clock.h           | 215 +++++++++++++++++++++
- 2 files changed, 330 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
- create mode 100644 include/dt-bindings/clock/imx8mn-clock.h
+Jeffrey Hugo (3):
+  dt-bindings: clock: Document gpucc for msm8998
+  clk: qcom: Add MSM8998 GPU Clock Controller (GPUCC) driver
+  arm64: dts: qcom: msm8998: Add gpucc node
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-new file mode 100644
-index 0000000..8cb8fcf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-@@ -0,0 +1,115 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/clock/imx8mn-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP i.MX8M Nano Clock Control Module Binding
-+
-+maintainers:
-+  - Anson Huang <Anson.Huang@nxp.com>
-+
-+description: |
-+  NXP i.MX8M Nano clock control module is an integrated clock controller, which
-+  generates and supplies to all modules.
-+
-+  This binding uses common clock bindings
-+  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+properties:
-+  compatible:
-+    const: fsl,imx8mn-ccm
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: 32k osc
-+      - description: 24m osc
-+      - description: ext1 clock input
-+      - description: ext2 clock input
-+      - description: ext3 clock input
-+      - description: ext4 clock input
-+
-+  clock-names:
-+    items:
-+      - const: osc_32k
-+      - const: osc_24m
-+      - const: clk_ext1
-+      - const: clk_ext2
-+      - const: clk_ext3
-+      - const: clk_ext4
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+examples:
-+  # Clock Control Module node:
-+  - |
-+    clk: clock-controller@30380000 {
-+        compatible = "fsl,imx8mn-ccm";
-+        reg = <0x0 0x30380000 0x0 0x10000>;
-+        #clock-cells = <1>;
-+        clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>,
-+                 <&clk_ext2>, <&clk_ext3>, <&clk_ext4>;
-+        clock-names = "osc_32k", "osc_24m", "clk_ext1",
-+                      "clk_ext2", "clk_ext3", "clk_ext4";
-+    };
-+
-+  # Required external clocks for Clock Control Module node:
-+  - |
-+    osc_32k: clock-osc-32k {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency = <32768>;
-+	clock-output-names = "osc_32k";
-+    };
-+
-+    osc_24m: clock-osc-24m {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency = <24000000>;
-+        clock-output-names = "osc_24m";
-+    };
-+
-+    clk_ext1: clock-ext1 {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency = <133000000>;
-+        clock-output-names = "clk_ext1";
-+    };
-+
-+    clk_ext2: clock-ext2 {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency = <133000000>;
-+        clock-output-names = "clk_ext2";
-+    };
-+
-+    clk_ext3: clock-ext3 {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency = <133000000>;
-+        clock-output-names = "clk_ext3";
-+    };
-+
-+    clk_ext4: clock-ext4 {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency= <133000000>;
-+        clock-output-names = "clk_ext4";
-+    };
-+
-+  # The clock consumer should specify the desired clock by having the clock
-+  # ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mn-clock.h
-+  # for the full list of i.MX8M Nano clock IDs.
-+
-+...
-diff --git a/include/dt-bindings/clock/imx8mn-clock.h b/include/dt-bindings/clock/imx8mn-clock.h
-new file mode 100644
-index 0000000..5255b1c
---- /dev/null
-+++ b/include/dt-bindings/clock/imx8mn-clock.h
-@@ -0,0 +1,215 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2018-2019 NXP
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_IMX8MN_H
-+#define __DT_BINDINGS_CLOCK_IMX8MN_H
-+
-+#define IMX8MN_CLK_DUMMY			0
-+#define IMX8MN_CLK_32K				1
-+#define IMX8MN_CLK_24M				2
-+#define IMX8MN_OSC_HDMI_CLK			3
-+#define IMX8MN_CLK_EXT1				4
-+#define IMX8MN_CLK_EXT2				5
-+#define IMX8MN_CLK_EXT3				6
-+#define IMX8MN_CLK_EXT4				7
-+#define IMX8MN_AUDIO_PLL1_REF_SEL		8
-+#define IMX8MN_AUDIO_PLL2_REF_SEL		9
-+#define IMX8MN_VIDEO_PLL1_REF_SEL		10
-+#define IMX8MN_DRAM_PLL_REF_SEL			11
-+#define IMX8MN_GPU_PLL_REF_SEL			12
-+#define IMX8MN_VPU_PLL_REF_SEL			13
-+#define IMX8MN_ARM_PLL_REF_SEL			14
-+#define IMX8MN_SYS_PLL1_REF_SEL			15
-+#define IMX8MN_SYS_PLL2_REF_SEL			16
-+#define IMX8MN_SYS_PLL3_REF_SEL			17
-+#define IMX8MN_AUDIO_PLL1			18
-+#define IMX8MN_AUDIO_PLL2			19
-+#define IMX8MN_VIDEO_PLL1			20
-+#define IMX8MN_DRAM_PLL				21
-+#define IMX8MN_GPU_PLL				22
-+#define IMX8MN_VPU_PLL				23
-+#define IMX8MN_ARM_PLL				24
-+#define IMX8MN_SYS_PLL1				25
-+#define IMX8MN_SYS_PLL2				26
-+#define IMX8MN_SYS_PLL3				27
-+#define IMX8MN_AUDIO_PLL1_BYPASS		28
-+#define IMX8MN_AUDIO_PLL2_BYPASS		29
-+#define IMX8MN_VIDEO_PLL1_BYPASS		30
-+#define IMX8MN_DRAM_PLL_BYPASS			31
-+#define IMX8MN_GPU_PLL_BYPASS			32
-+#define IMX8MN_VPU_PLL_BYPASS			33
-+#define IMX8MN_ARM_PLL_BYPASS			34
-+#define IMX8MN_SYS_PLL1_BYPASS			35
-+#define IMX8MN_SYS_PLL2_BYPASS			36
-+#define IMX8MN_SYS_PLL3_BYPASS			37
-+#define IMX8MN_AUDIO_PLL1_OUT			38
-+#define IMX8MN_AUDIO_PLL2_OUT			39
-+#define IMX8MN_VIDEO_PLL1_OUT			40
-+#define IMX8MN_DRAM_PLL_OUT			41
-+#define IMX8MN_GPU_PLL_OUT			42
-+#define IMX8MN_VPU_PLL_OUT			43
-+#define IMX8MN_ARM_PLL_OUT			44
-+#define IMX8MN_SYS_PLL1_OUT			45
-+#define IMX8MN_SYS_PLL2_OUT			46
-+#define IMX8MN_SYS_PLL3_OUT			47
-+#define IMX8MN_SYS_PLL1_40M			48
-+#define IMX8MN_SYS_PLL1_80M			49
-+#define IMX8MN_SYS_PLL1_100M			50
-+#define IMX8MN_SYS_PLL1_133M			51
-+#define IMX8MN_SYS_PLL1_160M			52
-+#define IMX8MN_SYS_PLL1_200M			53
-+#define IMX8MN_SYS_PLL1_266M			54
-+#define IMX8MN_SYS_PLL1_400M			55
-+#define IMX8MN_SYS_PLL1_800M			56
-+#define IMX8MN_SYS_PLL2_50M			57
-+#define IMX8MN_SYS_PLL2_100M			58
-+#define IMX8MN_SYS_PLL2_125M			59
-+#define IMX8MN_SYS_PLL2_166M			60
-+#define IMX8MN_SYS_PLL2_200M			61
-+#define IMX8MN_SYS_PLL2_250M			62
-+#define IMX8MN_SYS_PLL2_333M			63
-+#define IMX8MN_SYS_PLL2_500M			64
-+#define IMX8MN_SYS_PLL2_1000M			65
-+
-+/* CORE CLOCK ROOT */
-+#define IMX8MN_CLK_A53_SRC			66
-+#define IMX8MN_CLK_GPU_CORE_SRC			67
-+#define IMX8MN_CLK_GPU_SHADER_SRC		68
-+#define IMX8MN_CLK_A53_CG			69
-+#define IMX8MN_CLK_GPU_CORE_CG			70
-+#define IMX8MN_CLK_GPU_SHADER_CG		71
-+#define IMX8MN_CLK_A53_DIV			72
-+#define IMX8MN_CLK_GPU_CORE_DIV			73
-+#define IMX8MN_CLK_GPU_SHADER_DIV		74
-+
-+/* BUS CLOCK ROOT */
-+#define IMX8MN_CLK_MAIN_AXI			75
-+#define IMX8MN_CLK_ENET_AXI			76
-+#define IMX8MN_CLK_NAND_USDHC_BUS		77
-+#define IMX8MN_CLK_DISP_AXI			78
-+#define IMX8MN_CLK_DISP_APB			79
-+#define IMX8MN_CLK_USB_BUS			80
-+#define IMX8MN_CLK_GPU_AXI			81
-+#define IMX8MN_CLK_GPU_AHB			82
-+#define IMX8MN_CLK_NOC				83
-+#define IMX8MN_CLK_AHB				84
-+#define IMX8MN_CLK_AUDIO_AHB			85
-+
-+/* IPG CLOCK ROOT */
-+#define IMX8MN_CLK_IPG_ROOT			86
-+#define IMX8MN_CLK_IPG_AUDIO_ROOT		87
-+
-+/* IP */
-+#define IMX8MN_CLK_DRAM_CORE			88
-+#define IMX8MN_CLK_DRAM_ALT			89
-+#define IMX8MN_CLK_DRAM_APB			90
-+#define IMX8MN_CLK_DRAM_ALT_ROOT		91
-+#define IMX8MN_CLK_DISP_PIXEL			92
-+#define IMX8MN_CLK_SAI2				93
-+#define IMX8MN_CLK_SAI3				94
-+#define IMX8MN_CLK_SAI5				95
-+#define IMX8MN_CLK_SAI6				96
-+#define IMX8MN_CLK_SPDIF1			97
-+#define IMX8MN_CLK_ENET_REF			98
-+#define IMX8MN_CLK_ENET_TIMER			99
-+#define IMX8MN_CLK_ENET_PHY_REF			100
-+#define IMX8MN_CLK_NAND				101
-+#define IMX8MN_CLK_QSPI				102
-+#define IMX8MN_CLK_USDHC1			103
-+#define IMX8MN_CLK_USDHC2			104
-+#define IMX8MN_CLK_I2C1				105
-+#define IMX8MN_CLK_I2C2				106
-+#define IMX8MN_CLK_I2C3				107
-+#define IMX8MN_CLK_I2C4				118
-+#define IMX8MN_CLK_UART1			119
-+#define IMX8MN_CLK_UART2			110
-+#define IMX8MN_CLK_UART3			111
-+#define IMX8MN_CLK_UART4			112
-+#define IMX8MN_CLK_USB_CORE_REF			113
-+#define IMX8MN_CLK_USB_PHY_REF			114
-+#define IMX8MN_CLK_ECSPI1			115
-+#define IMX8MN_CLK_ECSPI2			116
-+#define IMX8MN_CLK_PWM1				117
-+#define IMX8MN_CLK_PWM2				118
-+#define IMX8MN_CLK_PWM3				119
-+#define IMX8MN_CLK_PWM4				120
-+#define IMX8MN_CLK_WDOG				121
-+#define IMX8MN_CLK_WRCLK			122
-+#define IMX8MN_CLK_CLKO1			123
-+#define IMX8MN_CLK_CLKO2			124
-+#define IMX8MN_CLK_DSI_CORE			125
-+#define IMX8MN_CLK_DSI_PHY_REF			126
-+#define IMX8MN_CLK_DSI_DBI			127
-+#define IMX8MN_CLK_USDHC3			128
-+#define IMX8MN_CLK_CAMERA_PIXEL			129
-+#define IMX8MN_CLK_CSI1_PHY_REF			130
-+#define IMX8MN_CLK_CSI2_PHY_REF			131
-+#define IMX8MN_CLK_CSI2_ESC			132
-+#define IMX8MN_CLK_ECSPI3			133
-+#define IMX8MN_CLK_PDM				134
-+#define IMX8MN_CLK_SAI7				135
-+
-+#define IMX8MN_CLK_ECSPI1_ROOT			136
-+#define IMX8MN_CLK_ECSPI2_ROOT			137
-+#define IMX8MN_CLK_ECSPI3_ROOT			138
-+#define IMX8MN_CLK_ENET1_ROOT			139
-+#define IMX8MN_CLK_GPIO1_ROOT			140
-+#define IMX8MN_CLK_GPIO2_ROOT			141
-+#define IMX8MN_CLK_GPIO3_ROOT			142
-+#define IMX8MN_CLK_GPIO4_ROOT			143
-+#define IMX8MN_CLK_GPIO5_ROOT			144
-+#define IMX8MN_CLK_I2C1_ROOT			145
-+#define IMX8MN_CLK_I2C2_ROOT			146
-+#define IMX8MN_CLK_I2C3_ROOT			147
-+#define IMX8MN_CLK_I2C4_ROOT			148
-+#define IMX8MN_CLK_MU_ROOT			149
-+#define IMX8MN_CLK_OCOTP_ROOT			150
-+#define IMX8MN_CLK_PWM1_ROOT			151
-+#define IMX8MN_CLK_PWM2_ROOT			152
-+#define IMX8MN_CLK_PWM3_ROOT			153
-+#define IMX8MN_CLK_PWM4_ROOT			154
-+#define IMX8MN_CLK_QSPI_ROOT			155
-+#define IMX8MN_CLK_NAND_ROOT			156
-+#define IMX8MN_CLK_SAI2_ROOT			157
-+#define IMX8MN_CLK_SAI2_IPG			158
-+#define IMX8MN_CLK_SAI3_ROOT			159
-+#define IMX8MN_CLK_SAI3_IPG			160
-+#define IMX8MN_CLK_SAI5_ROOT			161
-+#define IMX8MN_CLK_SAI5_IPG			162
-+#define IMX8MN_CLK_SAI6_ROOT			163
-+#define IMX8MN_CLK_SAI6_IPG			164
-+#define IMX8MN_CLK_SAI7_ROOT			165
-+#define IMX8MN_CLK_SAI7_IPG			166
-+#define IMX8MN_CLK_SDMA1_ROOT			167
-+#define IMX8MN_CLK_SDMA2_ROOT			168
-+#define IMX8MN_CLK_UART1_ROOT			169
-+#define IMX8MN_CLK_UART2_ROOT			170
-+#define IMX8MN_CLK_UART3_ROOT			171
-+#define IMX8MN_CLK_UART4_ROOT			172
-+#define IMX8MN_CLK_USB1_CTRL_ROOT		173
-+#define IMX8MN_CLK_USDHC1_ROOT			174
-+#define IMX8MN_CLK_USDHC2_ROOT			175
-+#define IMX8MN_CLK_WDOG1_ROOT			176
-+#define IMX8MN_CLK_WDOG2_ROOT			177
-+#define IMX8MN_CLK_WDOG3_ROOT			178
-+#define IMX8MN_CLK_GPU_BUS_ROOT			179
-+#define IMX8MN_CLK_ASRC_ROOT			180
-+#define IMX8MN_CLK_GPU3D_ROOT			181
-+#define IMX8MN_CLK_PDM_ROOT			182
-+#define IMX8MN_CLK_PDM_IPG			183
-+#define IMX8MN_CLK_DISP_AXI_ROOT		184
-+#define IMX8MN_CLK_DISP_APB_ROOT		185
-+#define IMX8MN_CLK_DISP_PIXEL_ROOT		186
-+#define IMX8MN_CLK_CAMERA_PIXEL_ROOT		187
-+#define IMX8MN_CLK_USDHC3_ROOT			188
-+#define IMX8MN_CLK_SDMA3_ROOT			189
-+#define IMX8MN_CLK_TMU_ROOT			190
-+#define IMX8MN_CLK_ARM				191
-+#define IMX8MN_CLK_NAND_USDHC_BUS_RAWNAND_CLK	192
-+#define IMX8MN_CLK_GPU_CORE_ROOT		193
-+
-+#define IMX8MN_CLK_END				194
-+
-+#endif
+ .../devicetree/bindings/clock/qcom,gpucc.txt  |   4 +-
+ arch/arm64/boot/dts/qcom/msm8998.dtsi         |  15 +
+ drivers/clk/qcom/Kconfig                      |   8 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/gpucc-msm8998.c              | 364 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,gpucc-msm8998.h    |  29 ++
+ 6 files changed, 420 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/qcom/gpucc-msm8998.c
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-msm8998.h
+
 -- 
-2.7.4
+2.17.1
 
