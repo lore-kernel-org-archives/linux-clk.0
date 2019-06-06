@@ -2,113 +2,228 @@ Return-Path: <SRS0=srpp=UF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309E0C28CC5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 03:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174AEC28D1A
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 08:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 042332070B
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 03:15:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZ3Fvdh/"
+	by mail.kernel.org (Postfix) with ESMTP id E400A20673
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 08:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfFFDP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jun 2019 23:15:29 -0400
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:39230 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfFFDP3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 23:15:29 -0400
-Received: by mail-pf1-f172.google.com with SMTP id j2so568709pfe.6
-        for <linux-clk@vger.kernel.org>; Wed, 05 Jun 2019 20:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aQaPbWDXavNRu7iOgwRHmYDUom2MXcE3ZI99h8uIByc=;
-        b=WZ3Fvdh/fIOmKtwoVSjN3gj8nuE5cMhxReyGHL+oQM9kaT3bVtXy34TL5mC7J49hhU
-         LRN13bJQACT1qMLH4c4haFMqz66iiDDvz2IzI/92IUs6DZlZyeMYecwylfSkvE3bS5Do
-         ardjEJSLUx8yI5ggqluKPlCFYPju3HLQPq4YC6YZg2V+XZv/2FexM4CTFiEaU5L4uXvx
-         aT4DAGPzbqf7v/OeXP1qDBZ8faJpWcR5eRqO+5Bov9N7XgwkDISA/BOef4xEO5MdkWE9
-         lOpQBvnNxHrYGIHbyxMCtworrsd5yaMo5Cz5uphqlYeuM2nNJXgApz1k2XvmFha1hxCO
-         Mv6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aQaPbWDXavNRu7iOgwRHmYDUom2MXcE3ZI99h8uIByc=;
-        b=iDsUcDULmWlmTgXHHhIZgGv2pQNDOMvcKXNC9wvVL0QcvzIZ0fFsQvh+HwygMf5L97
-         94Vmy7uytxqxvr5djPFvWz6hhxLO0DLaTBKU5yH42HEORRp4kgcsakHsr+KQpFzMlJkn
-         jQunN8OkFpMMrM/iWc/zOvuuovdrbckwOfy42U3nA4zGAf8Pav2EkaKXOl6udSZn/ws7
-         IV9O+6bSTwaXS1kkXdb64MI1mt4iAxI8sWeJJtL7la/4Ze5u010Cm9uxDi+rizvxaK0S
-         mcwUJ1unj6wBg8wZQwv2HabJy0Ig8GIL7aKU3M8Dfgqx2b3b3+sP2UzBkbrEfuECodEF
-         +aew==
-X-Gm-Message-State: APjAAAUEuOdK4YOIEwr6iHcAPLQJ61WL1CtPdoh+HoxCs9sE3ZuxeEJT
-        ddLbXGVAtnuGUEMlu1s1OIoujg==
-X-Google-Smtp-Source: APXvYqx3naFQT7F/C/KDKO36iTavZgfZJHhHPggIkqir5gQYvj8f0p7/nEzDq+JMzQ8ZwOdj+E/eJQ==
-X-Received: by 2002:a65:6295:: with SMTP id f21mr1221471pgv.416.1559790928747;
-        Wed, 05 Jun 2019 20:15:28 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id o20sm258525pgj.70.2019.06.05.20.15.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 20:15:28 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 08:45:26 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Anson Huang <Anson.Huang@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC] devfreq: Add generic devfreq-dt driver
-Message-ID: <20190606031526.xknv5qdoqufim6tr@vireshk-i7>
-References: <e48d7e3d71166cea20c3c200300e0ffa6d26d085.1559737589.git.leonard.crestez@nxp.com>
+        id S1727009AbfFFISH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jun 2019 04:18:07 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:58092 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfFFISH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jun 2019 04:18:07 -0400
+Received: from relay11.mail.gandi.net (unknown [217.70.178.231])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id AC74B3A136A;
+        Thu,  6 Jun 2019 07:40:53 +0000 (UTC)
+Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 17C8310000E;
+        Thu,  6 Jun 2019 07:40:36 +0000 (UTC)
+Date:   Thu, 6 Jun 2019 09:40:36 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Anson.Huang@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, olof@lixom.net, jagan@amarulasolutions.com,
+        horms+renesas@verge.net.au, bjorn.andersson@linaro.org,
+        leonard.crestez@nxp.com, dinguyen@kernel.org,
+        enric.balletbo@collabora.com, aisheng.dong@nxp.com,
+        abel.vesa@nxp.com, ping.bai@nxp.com, l.stach@pengutronix.de,
+        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V4 1/4] dt-bindings: imx: Add clock binding doc for
+ i.MX8MN
+Message-ID: <20190606074036.vx2smtauiwxy6wzx@flea>
+References: <20190606013323.3392-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lbx5fpk47vlzcrms"
 Content-Disposition: inline
-In-Reply-To: <e48d7e3d71166cea20c3c200300e0ffa6d26d085.1559737589.git.leonard.crestez@nxp.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20190606013323.3392-1-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05-06-19, 15:31, Leonard Crestez wrote:
-> +static const struct of_device_id devfreq_dt_of_match[] = {
-> +	{ .compatible = "generic-devfreq", },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, devfreq_dt_of_match);
 
-DT can't contain nodes for any virtual devices, this will have similar
-problems to cpufreq-dt. How is this driver going to get probed ? Who
-will create the device ?
+--lbx5fpk47vlzcrms
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +static struct platform_driver devfreq_dt_platdrv = {
-> +	.probe		= devfreq_dt_probe,
-> +	.shutdown	= devfreq_dt_shutdown,
-> +	.driver = {
-> +		.name	= "devfreq-dt",
-> +		.of_match_table = of_match_ptr(devfreq_dt_of_match),
-> +	},
-> +};
-> +module_platform_driver(devfreq_dt_platdrv);
+Hi,
+
+On Thu, Jun 06, 2019 at 09:33:20AM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+>
+> Add the clock binding doc for i.MX8MN.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> Changes since V3:
+> 	- switch binding doc from .txt to .yaml.
+> ---
+>  .../devicetree/bindings/clock/imx8mn-clock.yaml    | 115 +++++++++++
+>  include/dt-bindings/clock/imx8mn-clock.h           | 215 +++++++++++++++++++++
+>  2 files changed, 330 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/imx8mn-clock.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+> new file mode 100644
+> index 0000000..8cb8fcf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/imx8mn-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +MODULE_DESCRIPTION("Generic devfreq-dt driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.17.1
+> +title: NXP i.MX8M Nano Clock Control Module Binding
+> +
+> +maintainers:
+> +  - Anson Huang <Anson.Huang@nxp.com>
+> +
+> +description: |
+> +  NXP i.MX8M Nano clock control module is an integrated clock controller, which
+> +  generates and supplies to all modules.
+> +
+> +  This binding uses common clock bindings
+> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 
--- 
-viresh
+Which part exactly are you using?
+
+I'm not sure it's worth referring to. Any provider property should be
+listed here, and the consumer properties are already checked.
+
+> +properties:
+> +  compatible:
+> +    const: fsl,imx8mn-ccm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: 32k osc
+> +      - description: 24m osc
+> +      - description: ext1 clock input
+> +      - description: ext2 clock input
+> +      - description: ext3 clock input
+> +      - description: ext4 clock input
+> +
+> +  clock-names:
+> +    items:
+> +      - const: osc_32k
+> +      - const: osc_24m
+> +      - const: clk_ext1
+> +      - const: clk_ext2
+> +      - const: clk_ext3
+> +      - const: clk_ext4
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +examples:
+> +  # Clock Control Module node:
+> +  - |
+> +    clk: clock-controller@30380000 {
+> +        compatible = "fsl,imx8mn-ccm";
+> +        reg = <0x0 0x30380000 0x0 0x10000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>,
+> +                 <&clk_ext2>, <&clk_ext3>, <&clk_ext4>;
+> +        clock-names = "osc_32k", "osc_24m", "clk_ext1",
+> +                      "clk_ext2", "clk_ext3", "clk_ext4";
+> +    };
+> +
+> +  # Required external clocks for Clock Control Module node:
+> +  - |
+> +    osc_32k: clock-osc-32k {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <32768>;
+> +	clock-output-names = "osc_32k";
+> +    };
+> +
+> +    osc_24m: clock-osc-24m {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <24000000>;
+> +        clock-output-names = "osc_24m";
+> +    };
+> +
+> +    clk_ext1: clock-ext1 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <133000000>;
+> +        clock-output-names = "clk_ext1";
+> +    };
+> +
+> +    clk_ext2: clock-ext2 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <133000000>;
+> +        clock-output-names = "clk_ext2";
+> +    };
+> +
+> +    clk_ext3: clock-ext3 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <133000000>;
+> +        clock-output-names = "clk_ext3";
+> +    };
+> +
+> +    clk_ext4: clock-ext4 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency= <133000000>;
+> +        clock-output-names = "clk_ext4";
+> +    };
+> +
+> +  # The clock consumer should specify the desired clock by having the clock
+> +  # ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mn-clock.h
+> +  # for the full list of i.MX8M Nano clock IDs.
+
+I guess this could be part of the clock-cells description.
+
+Once fixed,
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--lbx5fpk47vlzcrms
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPjDdAAKCRDj7w1vZxhR
+xQf4AQDGmVlx49YWe4vIu1dehv4zttFw3oRaIsMiDSi4vzwyMQEA+e7hg+RgrL4i
+6aPykXgdE5sTJox+CRpk+KGv3Ovk3AU=
+=kpoe
+-----END PGP SIGNATURE-----
+
+--lbx5fpk47vlzcrms--
