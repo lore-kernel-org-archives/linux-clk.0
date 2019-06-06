@@ -2,118 +2,113 @@ Return-Path: <SRS0=srpp=UF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214BAC28CC5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 02:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309E0C28CC5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 03:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEAC52083E
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 02:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042332070B
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 03:15:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTuCSGE8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZ3Fvdh/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbfFFCCJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jun 2019 22:02:09 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41442 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfFFCCJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 22:02:09 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q17so461411pfq.8;
-        Wed, 05 Jun 2019 19:02:09 -0700 (PDT)
+        id S1726474AbfFFDP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jun 2019 23:15:29 -0400
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:39230 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbfFFDP3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jun 2019 23:15:29 -0400
+Received: by mail-pf1-f172.google.com with SMTP id j2so568709pfe.6
+        for <linux-clk@vger.kernel.org>; Wed, 05 Jun 2019 20:15:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=lTuCSGE8jGdHt1mpj8oE5y0pNaeqonUE94Pp4sA/I3REVC7LDjhxZGajzIRthAJO9Y
-         E1/KCnJbDAhiYGjZ0jeuf27dZG7ikrXgA3qZqXlGdI5zmDJSS3diC8XzgaLwE86WqVKT
-         DfPLFcyzUu6ZeVFRi3h0JOEt/fjr0h99BkH1V2wyU0xHsVlBZV3qIYfkzvmAIkMQXQGn
-         GnLDYuks2zgsat+9WE/IdQjuQwMyJk4GonhMW6LAOOZZ7YucZMDl18z9+LxQTC6DPXI1
-         uhcv3L9Mu7gbSgXc2umbMenT9iQyJs9leOiMLiIs5Sau+QLwsZr9SUPf9q67VoXmYtDe
-         8A4A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aQaPbWDXavNRu7iOgwRHmYDUom2MXcE3ZI99h8uIByc=;
+        b=WZ3Fvdh/fIOmKtwoVSjN3gj8nuE5cMhxReyGHL+oQM9kaT3bVtXy34TL5mC7J49hhU
+         LRN13bJQACT1qMLH4c4haFMqz66iiDDvz2IzI/92IUs6DZlZyeMYecwylfSkvE3bS5Do
+         ardjEJSLUx8yI5ggqluKPlCFYPju3HLQPq4YC6YZg2V+XZv/2FexM4CTFiEaU5L4uXvx
+         aT4DAGPzbqf7v/OeXP1qDBZ8faJpWcR5eRqO+5Bov9N7XgwkDISA/BOef4xEO5MdkWE9
+         lOpQBvnNxHrYGIHbyxMCtworrsd5yaMo5Cz5uphqlYeuM2nNJXgApz1k2XvmFha1hxCO
+         Mv6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=dSatX4DioFEk4cZxVFJiNjOR3t0Gr7EtyadR8gTg92gUKWieX2ufou0TsdMzJwmjal
-         Gz8FOqu2Kosx40euBUTcMlMIU6sv2bsiqLs+uLHMSGh7PnXorvrUlDUYAYUzaUdldSVk
-         /KkAWw/823w06oARLFA5/4FqWDl+VXqJ01SDg+UsKcHh7pSG/3n090HbdcSLwlB8cydi
-         oFaBB6NZyvdfGvOsFv/cm9TPBD6xe/mCYVOpRqRo5A669UoMPdG90E+uofzkuKaDCqmx
-         WjZKh/WXI0oze+vdZ95L52LbekMO9muyaEpEbjJisqxViTV+Ax4aeG9unCpJk66NjTc7
-         Y7sw==
-X-Gm-Message-State: APjAAAWHpz3OBdTVUKIlY7KoltbIgnOn96xTedPfzm9YQzbld9thbRjw
-        ZIObhlUZdVji2vNlNub+YQQ=
-X-Google-Smtp-Source: APXvYqzOgkLxlVaBoCV6UwBu57yiXAf6/1tBbA/MUmQ/Fq6F3ju9AQm2TVNVsXzsM6YQZdPCsdhJiw==
-X-Received: by 2002:a63:db47:: with SMTP id x7mr860524pgi.259.1559786528992;
-        Wed, 05 Jun 2019 19:02:08 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id o66sm247961pje.8.2019.06.05.19.02.07
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aQaPbWDXavNRu7iOgwRHmYDUom2MXcE3ZI99h8uIByc=;
+        b=iDsUcDULmWlmTgXHHhIZgGv2pQNDOMvcKXNC9wvVL0QcvzIZ0fFsQvh+HwygMf5L97
+         94Vmy7uytxqxvr5djPFvWz6hhxLO0DLaTBKU5yH42HEORRp4kgcsakHsr+KQpFzMlJkn
+         jQunN8OkFpMMrM/iWc/zOvuuovdrbckwOfy42U3nA4zGAf8Pav2EkaKXOl6udSZn/ws7
+         IV9O+6bSTwaXS1kkXdb64MI1mt4iAxI8sWeJJtL7la/4Ze5u010Cm9uxDi+rizvxaK0S
+         mcwUJ1unj6wBg8wZQwv2HabJy0Ig8GIL7aKU3M8Dfgqx2b3b3+sP2UzBkbrEfuECodEF
+         +aew==
+X-Gm-Message-State: APjAAAUEuOdK4YOIEwr6iHcAPLQJ61WL1CtPdoh+HoxCs9sE3ZuxeEJT
+        ddLbXGVAtnuGUEMlu1s1OIoujg==
+X-Google-Smtp-Source: APXvYqx3naFQT7F/C/KDKO36iTavZgfZJHhHPggIkqir5gQYvj8f0p7/nEzDq+JMzQ8ZwOdj+E/eJQ==
+X-Received: by 2002:a65:6295:: with SMTP id f21mr1221471pgv.416.1559790928747;
+        Wed, 05 Jun 2019 20:15:28 -0700 (PDT)
+Received: from localhost ([122.172.66.84])
+        by smtp.gmail.com with ESMTPSA id o20sm258525pgj.70.2019.06.05.20.15.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 19:02:08 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, marc.w.gonzalez@free.fr,
-        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v2 3/3] arm64: dts: qcom: msm8998: Add gpucc node
-Date:   Wed,  5 Jun 2019 19:00:27 -0700
-Message-Id: <20190606020027.2441-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
-References: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
+        Wed, 05 Jun 2019 20:15:28 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 08:45:26 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Anson Huang <Anson.Huang@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC] devfreq: Add generic devfreq-dt driver
+Message-ID: <20190606031526.xknv5qdoqufim6tr@vireshk-i7>
+References: <e48d7e3d71166cea20c3c200300e0ffa6d26d085.1559737589.git.leonard.crestez@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e48d7e3d71166cea20c3c200300e0ffa6d26d085.1559737589.git.leonard.crestez@nxp.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 GPU Clock Controller DT node.
+On 05-06-19, 15:31, Leonard Crestez wrote:
+> +static const struct of_device_id devfreq_dt_of_match[] = {
+> +	{ .compatible = "generic-devfreq", },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, devfreq_dt_of_match);
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+DT can't contain nodes for any virtual devices, this will have similar
+problems to cpufreq-dt. How is this driver going to get probed ? Who
+will create the device ?
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 574be78a936e..cf00bfeec6b3 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
- 
-@@ -763,6 +764,20 @@
- 			reg = <0x1f40000 0x20000>;
- 		};
- 
-+		gpucc: clock-controller@5065000 {
-+			compatible = "qcom,gpucc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x05065000 0x9000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
-+
-+
- 		apcs_glb: mailbox@9820000 {
- 			compatible = "qcom,msm8998-apcs-hmss-global";
- 			reg = <0x17911000 0x1000>;
+> +static struct platform_driver devfreq_dt_platdrv = {
+> +	.probe		= devfreq_dt_probe,
+> +	.shutdown	= devfreq_dt_shutdown,
+> +	.driver = {
+> +		.name	= "devfreq-dt",
+> +		.of_match_table = of_match_ptr(devfreq_dt_of_match),
+> +	},
+> +};
+> +module_platform_driver(devfreq_dt_platdrv);
+> +
+> +MODULE_DESCRIPTION("Generic devfreq-dt driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.17.1
+
 -- 
-2.17.1
-
+viresh
