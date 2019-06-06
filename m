@@ -2,70 +2,81 @@ Return-Path: <SRS0=srpp=UF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94A3C04AB5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 18:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450ACC04AB5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 18:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D932089E
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 18:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1439C2089E
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 18:29:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559845509;
-	bh=eZv3NhXyzehlZXb+F3mzuI1EXr1xshxZrr8mXEuyy5w=;
+	s=default; t=1559845782;
+	bh=OoC4nuWJqWE5iN/x6Gw9nBBptIg/ze0etoB1mALTSr8=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=MWd6BuUpkGkfSQ1kKB1klsiUx9EOZAH3h0O15rVgFI57koL4EybTMnoJkf1buSsCk
-	 aP97VHra0ToLxfnEtJJKULQC+YV6gmQtqUwime2rivbjoTT1JhOI8/wM+ythn7LxXV
-	 gf6otQGRO/J/rkYsFWV89nbZpfXolxvXgOHSmiS0=
+	b=AjCOcQcZ1o/pAF+xExoBRUH7iGVz8dNtL5QP6Nbh25Rx0vbs95HrB825fMwb8wJL9
+	 +cffw2g3CZiL5VZOxBLBPsdUxwFydOQ2Oub5mQb34S/eV9xtwJjtTRxPBzkIHKfj1D
+	 M8XPs5ECr2uiM5RikCEewfOFvfOVCwIueizav9B0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbfFFSZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jun 2019 14:25:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59646 "EHLO mail.kernel.org"
+        id S1730633AbfFFS3l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jun 2019 14:29:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729214AbfFFSZJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:25:09 -0400
+        id S1730630AbfFFS3l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:29:41 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 807E420872;
-        Thu,  6 Jun 2019 18:25:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0D8C20872;
+        Thu,  6 Jun 2019 18:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559845508;
-        bh=eZv3NhXyzehlZXb+F3mzuI1EXr1xshxZrr8mXEuyy5w=;
+        s=default; t=1559845781;
+        bh=OoC4nuWJqWE5iN/x6Gw9nBBptIg/ze0etoB1mALTSr8=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=a0IyxaGh9BRcF16GjgQkcHlnX5Hs92cOufnM8ug+6Fx6tE6szktnjNydTilwF/nHw
-         Kb4nH6X+g/6yLvYdMUymG4TVCrRy4uIH2EY1xOxNY3OnkzytzfaRPhiffBiVp6JQPr
-         8ebXvNWk6xXe6AFUTWCd57XgTm30yAD+Ka/WJj7g=
+        b=P94sqtESM6b3xMQNPs2CjFLVowQJbk6VUGVSpv8guH7GwtldZ6lxKUVT+sP2mIDVj
+         iwvC1wIFrZn6j796btdt+p6I/JHv9PyFivw6RXrRx8dq91v3LSpB9w5J/Sc8Xsn0QG
+         lWrA74hFBsg/O/8mabbl8C3pIsOAZlwnyBQNQmmE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190525142535.15040-1-yuehaibing@huawei.com>
-References: <20190525142535.15040-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>, mturquette@baylibre.com
+In-Reply-To: <1559132773-12884-1-git-send-email-abel.vesa@nxp.com>
+References: <1559132773-12884-1-git-send-email-abel.vesa@nxp.com>
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH -next] clk: mmp: frac: Remove set but not used variable 'prev_rate'
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [RESEND v2 00/18] clk: imx: Switch the imx6 and imx7 to clk_hw based API
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
 User-Agent: alot/0.8.1
-Date:   Thu, 06 Jun 2019 11:25:07 -0700
-Message-Id: <20190606182508.807E420872@mail.kernel.org>
+Date:   Thu, 06 Jun 2019 11:29:40 -0700
+Message-Id: <20190606182940.F0D8C20872@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting YueHaibing (2019-05-25 07:25:35)
-> Fixes gcc '-Wunused-but-set-variable' warning:
+Quoting Abel Vesa (2019-05-29 05:26:38)
+> Resend for the following:
 >=20
-> drivers/clk/mmp/clk-frac.c: In function clk_factor_set_rate:
-> drivers/clk/mmp/clk-frac.c:81:16: warning: variable prev_rate set but not=
- used [-Wunused-but-set-variable]
->=20
-> It's never used and can be removed.
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
+> https://lkml.org/lkml/2019/5/2/170
 
-Applied to clk-next
+What's left after this series to convert over to clk_hw based APIs? I'm
+happy to see this merge as long as we eventually delete the clk based
+versions of the code in the imx driver so that we can complete the task.
+
+I took a look over everything and nothing stuck out, so:
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+
+for the series.
 
