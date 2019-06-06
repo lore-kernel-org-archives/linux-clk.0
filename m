@@ -3,83 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67725C04AB5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 17:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40686C04AB5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 18:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43C282083E
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 17:57:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITY+t8MK"
+	by mail.kernel.org (Postfix) with ESMTP id 1CBB2208C0
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 18:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559844310;
+	bh=roTh66Wfk1nFLbDkmqhx6O5MZXierIvjjQKEXHkrTvE=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=Y0O27CYDzdBybmrkYiogWL7ZtqZix9rhd8PI/MoaNurzTEViT6sxsCyhNV3onH4B8
+	 Zg62iMsdf6hCms4HNsBzoGYkLUZwQDWHyZGOZ/dBuD/NHMELiE36rIrqLUb0Ge+TNY
+	 7G1guZS15IJV9TVVtf+v8kMS8FDxQ9XvAT2n6Xbg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfFFR5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jun 2019 13:57:19 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45756 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728762AbfFFR5T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jun 2019 13:57:19 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m23so2869485lje.12;
-        Thu, 06 Jun 2019 10:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ly20pHKe/5BQV2Vy9frpSyFeR9fKetS/f45r9cdaGWM=;
-        b=ITY+t8MKpFEUvhwatodiixs2GT4hQZoNa5Nt7USHWQ6q8J1rB2QKmLVAem0OUSjlPh
-         4fNPfxXeaMiVCTcBCoueZ2bw7Ow1QdH+ETuOt+sLRoBCAVGJijjxMdCLvaQ5Ug+d/HuF
-         I4D+ixvHrK49c2UYD8TD/8p4/R3o+6VmPYBwrI8ioUilAq1MV47B/5atcqacyg5mO4Gd
-         aOhlZeQzzUM5+I+iugxlHGIEi85LTGj3svOw4/OIY4JBtcsGGG28O8VQ7ENIUhrtd0Hp
-         oEUDQrklRnU1Epe4dy6XNYcSsBC9qGR0+PFWjP3tzYEFpfmW3OPGdrBg5APMjqL0yXgJ
-         VGBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ly20pHKe/5BQV2Vy9frpSyFeR9fKetS/f45r9cdaGWM=;
-        b=JBVNqv1E2ZyvT6DXFiCAyVB9qGGBuFv/7aSceg9cmaDHtzkef1mR2lYe2xcOT5j/D3
-         tZ8Ao7ZM1Vz00WKLHRqd4S7onNmfXeWHChOOkdz6/pqK5lW+9yToRzb/LPYiks9HoNY3
-         BEDCx0XBl8g4fQYfibQCcT+HwJ5QtXe7MAQwwgNoL+C7XAfbDpYIxbhPlRME3qLkuqt1
-         AEyxvaVeiWcT11i00EiqBhklE5XN965HEWhv8jgFappAwf6e2VY9fDb3JZu6UPvdOy0x
-         QYCYHFpO8LUL7hrXWE1BZG0vu7mkQO89KWfl15z8CiRGHogLgOTNulQT4vU+3ylHggn6
-         R7HQ==
-X-Gm-Message-State: APjAAAXtlDA6Rxxooyy+7JpDFxM6wi1M09LUtZw4Of4Qkh+WWmXSld8s
-        6//MZ1NYlXube38AAZO+zvOR4cnME9SUvSHKTwY=
-X-Google-Smtp-Source: APXvYqzM7F60xHXjH/n+f9YefH8IZW+j2LC3XzqKZlkKZuPT+kxy/2UcmD51IyRqDMuLh8bt43jI2IG9DTNJGJifaQ4=
-X-Received: by 2002:a2e:995a:: with SMTP id r26mr4912366ljj.107.1559843837436;
- Thu, 06 Jun 2019 10:57:17 -0700 (PDT)
+        id S1730399AbfFFSFJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jun 2019 14:05:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727559AbfFFSFJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:05:09 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A76F20868;
+        Thu,  6 Jun 2019 18:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559844308;
+        bh=roTh66Wfk1nFLbDkmqhx6O5MZXierIvjjQKEXHkrTvE=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=XKHKw5Ao+X2KNNiVVemOLkKuoMeS3NE7fP053Mat+egu94amOowaVTlopsA4hUIf4
+         pJcVCamp1Tte8uoFUneMts+HLGdXbRxx8UsHaUAEaqaHxmawuQYPTcOSxbPAx3eT5b
+         FwWtldpA7XFUUjBZd3WcaFrV4cBHOsx4fqDfo7P4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190606164443.6991-1-festevam@gmail.com> <20190606165546.6675520693@mail.kernel.org>
- <VI1PR04MB5055C4B288BC19F6E1EF9D65EE170@VI1PR04MB5055.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB5055C4B288BC19F6E1EF9D65EE170@VI1PR04MB5055.eurprd04.prod.outlook.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 6 Jun 2019 14:57:10 -0300
-Message-ID: <CAOMZO5Dt+3FOdvkWTGdLet8r9C1MPia=uwODNYc7T7k2EDdO-Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx8qxp: Use devm_platform_ioremap_resource()
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <96cb1e730ea5afd651d4c79f20f365df5fe8a29b.camel@upb.ro>
+References: <1472247978-29312-1-git-send-email-york.sun@nxp.com> <96cb1e730ea5afd651d4c79f20f365df5fe8a29b.camel@upb.ro>
+To:     Radu Nicolae Pirea <radu_nicolae.pirea@upb.ro>,
+        York Sun <york.sun@nxp.com>, linux-clk@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [Patch v9] driver/clk/clk-si5338: Add common clock framework driver for si5338
+Cc:     York Sun <yorksun@freescale.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Andrey Filippov <andrey@elphel.com>,
+        Paul Bolle <pebolle@tiscali.nl>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Thu, 06 Jun 2019 11:05:07 -0700
+Message-Id: <20190606180508.1A76F20868@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 2:15 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+Quoting Radu Nicolae Pirea (2019-05-31 07:06:03)
+> > +     remove_common_factor(&rate[1]);
+> > +     dev_dbg(&drvdata->client->dev,
+> > +             "PLL output frequency: %llu+%llu/%llu Hz\n",
+> > +             rate[0], rate[1], rate[2]);
+> > +
+> > +     return rate[0];
+> > +}
+> > +
+> > +static long si5338_pll_round_rate(struct clk_hw *hw, unsigned long
+> > rate,
+> > +                               unsigned long *parent_rate)
+> > +{
+> I think is a designs problem in clock subsystem.
+> Description of the function round_rate is this.
+>=20
+> @round_rate: Given a target rate as input, returns the closest rate
+> actually supported by the clock. The parent rate is an input/output
+> parameter.
+>=20
+> If given rate is unsigned long and the return value is long, we have a
+> problem. Return value can be an error value but can also be a 32 bit
+> frequency value that can be huge enoguh to set MSB bit and if MSB bit
+> is set, the return value is a negative value and will be considered
+> error code.
+>=20
+> In drivers/clk/clk.c, in function clk_core_determine_round_nolock, on
+> line 1199 is this sequence of code that checks if the value returned by
+> round_rate function is negative:
+>=20
+>          } else if (core->ops->round_rate) {
+>                  rate =3D core->ops->round_rate(core->hw, req->rate,
+>                                               &req->best_parent_rate);
+>                  if (rate < 0)
+>                          return rate;
+>=20
+> In drivers/clk/clk.c, in function clk_calc_new_rates, on line 1780, is
+> the next sequence of code that checks if
+> clk_core_determine_round_nolock returns a negative value:
+>=20
+>                  ret =3D clk_core_determine_round_nolock(core, &req);
+>                  if (ret < 0)
+>                           return NULL;
+>=20
+> and... if function clk_calc_new_rates returns NULL, in function
+> clk_core_set_rate_nolock from drivers/clk/clk.c, on line 2023, is the
+> next sequence of code that evaluates NULL, returned by
+> clk_calc_new_rates as -EINVAL
+>=20
+>          top =3D clk_calc_new_rates(core, req_rate);
+>          if (!top)
+>                  return -EINVAL;
+>=20
+> So... si5338_pll_round_rate can return 32 bit values like 2500000000 Hz
+> who have MSB bit set and are interpreted as error codes.
+>=20
+> Have someone a suggestion to fix this issue?
+>=20
 
-> An extremely similar patch was already submitted and then reverted
-> because it breaks boot:
->
->      https://patchwork.kernel.org/patch/10908807/
->
-> I tested and this new patch also breaks boot.
+Can you use the determine_rate clk op? It won't work for rounding
+outside of the framework though so things like clk_round_rate() still
+fail.
 
-Ops, sorry about that!
