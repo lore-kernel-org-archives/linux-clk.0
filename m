@@ -2,218 +2,124 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69893C2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 11:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DC6C2BCA1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 12:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4043D20868
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 11:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EA0A20B7C
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 12:07:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vd9U2BVx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfFGL6C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 07:58:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39404 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727388AbfFGL6B (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Jun 2019 07:58:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 32422AF19;
-        Fri,  7 Jun 2019 11:57:59 +0000 (UTC)
-Message-ID: <c1686c85beff2acbfec0b44fc2ad0e67099c6b94.camel@suse.de>
-Subject: Re: [PATCH v2 4/7] cpufreq: add driver for Raspbery Pi
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
-        ptesarik@suse.com, sboyd@kernel.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eric@anholt.net, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        mbrugger@suse.de, ssuloev@orpaltech.com
-Date:   Fri, 07 Jun 2019 13:57:57 +0200
-In-Reply-To: <c967bbfd-ce83-7c89-7f18-98f2c66aa333@i2se.com>
-References: <20190606142255.29454-1-nsaenzjulienne@suse.de>
-         <20190606142255.29454-5-nsaenzjulienne@suse.de>
-         <c967bbfd-ce83-7c89-7f18-98f2c66aa333@i2se.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-m2BvIrpJbVtYJFQFjMnr"
-User-Agent: Evolution 3.32.2 
+        id S1727047AbfFGMHa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 08:07:30 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43007 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727386AbfFGMHa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 08:07:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x17so1902036wrl.9;
+        Fri, 07 Jun 2019 05:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/OaEJfBR0xsC2fNRDUtUonZ/nH//Pb0hepbkfyw3/RI=;
+        b=Vd9U2BVxBdN4mlMul4jehfdsI+khyQ8bNYC+PbZUd+MLkJldq0QvPqlw67/TBgEj9a
+         YisCswUD8lyWjT+ne+NbBXnB0880+Q22bXGI2ydtUN9nduFOqOQ/jbTnnVUPzTmcwn7h
+         hCVLa+O8KOLJmFRB8X6lYdlYhQNDnwMLoE8hzkhT+SkuSzmxRDkQoAbJvOBvmx27pg/f
+         4WMav4+lrDRJnm/4dY9Sy1iLFnHWD+EwvWTMNrMXpyI0a6dWYI415XEBdVEeciUzBgfu
+         Y9nuI3HvDTAir5TfDv7sTbHd9bJlKcm3F9cWjGcw7DAPTEkhyJR8PANVX06uYpYwVOLM
+         j5LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/OaEJfBR0xsC2fNRDUtUonZ/nH//Pb0hepbkfyw3/RI=;
+        b=Sf0GXxoLInMTiiMEqTzgNteUa80VdkoXd+IQBRbp092v1uoP4lydQeYW1Ongzi2wpA
+         Wl/NXWwbA+Vl/nvTsDqH0Y9lqbtpLXVOMeQwpeLCFyZJdmkQuIslq8ezuMJQaKJ379zK
+         35MM7zlnvEeD0mlPvKcVDp6cqJxPr0VcS4gKhM0Y4N8GpIM7glr1qbroRVE39SgxAkw3
+         SnafJjZXljo6M2U6X+B0kvbmq7YR0NXYAZno4v8EnspPbSj2cfugNKbZ169/JBxg1GUX
+         tztRgjc6vE0VJ02oioSSQBmvT+Mn01JHJa8GII97RMdtXvo4kGsY90uGtoGcftwYKnm4
+         XYEw==
+X-Gm-Message-State: APjAAAWwyFVaoA3VrDksDwNl6xzGjppZQRj+9dW74pm7AcbHASTHsuvF
+        giKkFzvIxDZ7lhoYuhQ9DMA=
+X-Google-Smtp-Source: APXvYqzK/mt+UcZm1I3NP7PZiM+wVGTONiRjzP3kZpRLqca6N+PZrk2C6d/t/Ahk4y5O/JMEvU7JqA==
+X-Received: by 2002:adf:de8b:: with SMTP id w11mr9424156wrl.134.1559909248247;
+        Fri, 07 Jun 2019 05:07:28 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([108.61.173.19])
+        by smtp.gmail.com with ESMTPSA id o3sm1543243wrv.94.2019.06.07.05.07.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 05:07:27 -0700 (PDT)
+Date:   Fri, 7 Jun 2019 20:07:17 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
+Message-ID: <20190607120717.GA3109@zhanggen-UX430UQ>
+References: <20190531011424.GA4374@zhanggen-UX430UQ>
+ <eb8e2d33-e8f7-93a5-c8bc-98731c0d63b6@suse.cz>
+ <20190605160043.GA4351@zhanggen-UX430UQ>
+ <20190606201646.B4CC4206BB@mail.kernel.org>
+ <20190607015258.GA2660@zhanggen-UX430UQ>
+ <e5b4639b-3077-59bb-6383-0c2bccdd9191@suse.cz>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5b4639b-3077-59bb-6383-0c2bccdd9191@suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Jun 07, 2019 at 11:10:37AM +0200, Jiri Slaby wrote:
+> On 07. 06. 19, 3:52, Gen Zhang wrote:
+> >>>>> @@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct clk_core *core)
+> >>>>>                             kfree_const(parents[i].name);
+> >>>>>                             kfree_const(parents[i].fw_name);
+> >>>>>                     } while (--i >= 0);
+> >>>>> +                   kfree_const(parent->name);
+> >>>>> +                   kfree_const(parent->fw_name);
+> >>>>
+> >>>> Both of them were just freed in the loop above, no?
+> >>> for (i = 0, parent = parents; i < num_parents; i++, parent++)
+> >>> Is 'parent' the same as the one from the loop above?
+> >>
+> >> Yes. Did it change somehow?
+> > parent++?
+> 
+> parent++ is done after the loop body. Or what do you mean?
+> 
+> >>> Moreover, should 'parents[i].name' and 'parents[i].fw_name' be freed by
+> >>> kfree_const()?
+> >>>
+> >>
+> >> Yes? They're allocated with kstrdup_const() in clk_cpy_name(), or
+> >> they're NULL by virtue of the kcalloc and then kfree_const() does
+> >> nothing.
+> > I re-examined clk_cpy_name(). They are the second parameter of 
+> > clk_cpy_name(). The first parameter is allocated, not the second one.
+> > So 'parent->name' and 'parent->fw_name' should be freed, not 
+> > 'parents[i].name' or 'parents[i].fw_name'. Am I totally misunderstanding
+> > this clk_cpy_name()? :-(
+> 
+> The second parameter (the source) is parent_data[i].*, not parents[i].*
+> (the destination). parent->fw_name and parent->name are properly freed
+> in the do {} while loop as parents[i].name and parents[i].fw_name, given
+> i hasn't changed yet. I am not sure what you mean at all. Are you
+> uncertain about the C code flow?
+> 
+> thanks,
+> -- 
+> js
+> suse labs
+Thanks your patient explainaton. I think I need some time to figure out
+this part of code.
 
---=-m2BvIrpJbVtYJFQFjMnr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2019-06-07 at 13:42 +0200, Stefan Wahren wrote:
-> Hi Nicolas,
->=20
-> Am 06.06.19 um 16:22 schrieb Nicolas Saenz Julienne:
-> > Raspberry Pi's firmware offers and interface though which update it's
-> > performance requirements. It allows us to request for specific runtime
-> > frequencies, which the firmware might or might not respect, depending o=
-n
-> > the firmware configuration and thermals.
-> >=20
-> > As the maximum and minimum frequencies are configurable in the firmware
-> > there is no way to know in advance their values. So the Raspberry Pi
-> > cpufreq driver queries them, builds an opp frequency table to then
-> > launch cpufreq-dt.
-> >=20
-> > Also, as the firmware interface might be configured as a module, making
-> > the cpu clock unavailable during init, this implements a full fledged
-> > driver, as opposed to most drivers registering cpufreq-dt, which only
-> > make use of an init routine.
-> >=20
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > Acked-by: Eric Anholt <eric@anholt.net>
-> >=20
-> > ---
-> >=20
-> > Changes since v1:
-> >   - Remove compatible checks
-> >   - Add module support, now full fledged driver
-> >   - Use NULL in clk_get()
-> >=20
-> >  drivers/cpufreq/Kconfig.arm           |   8 +++
-> >  drivers/cpufreq/Makefile              |   1 +
-> >  drivers/cpufreq/raspberrypi-cpufreq.c | 100 ++++++++++++++++++++++++++
-> >  3 files changed, 109 insertions(+)
-> >  create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
-> >=20
-> > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> > index f8129edc145e..5e9204d443ff 100644
-> > --- a/drivers/cpufreq/Kconfig.arm
-> > +++ b/drivers/cpufreq/Kconfig.arm
-> > @@ -133,6 +133,14 @@ config ARM_QCOM_CPUFREQ_HW
-> >  	  The driver implements the cpufreq interface for this HW engine.
-> >  	  Say Y if you want to support CPUFreq HW.
-> > =20
-> > +config ARM_RASPBERRYPI_CPUFREQ
-> > +	tristate "Raspberry Pi cpufreq support"
-> > +	depends on CLK_RASPBERRYPI || COMPILE_TEST
-> > +	help
-> > +	  This adds the CPUFreq driver for Raspberry Pi
-> > +
-> > +	  If in doubt, say N.
-> > +
-> >  config ARM_S3C_CPUFREQ
-> >  	bool
-> >  	help
-> > diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> > index 689b26c6f949..121c1acb66c0 100644
-> > --- a/drivers/cpufreq/Makefile
-> > +++ b/drivers/cpufreq/Makefile
-> > @@ -64,6 +64,7 @@ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+=3D pxa2xx-cpufreq.=
-o
-> >  obj-$(CONFIG_PXA3xx)			+=3D pxa3xx-cpufreq.o
-> >  obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+=3D qcom-cpufreq-hw.o
-> >  obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+=3D qcom-cpufreq-kryo.o
-> > +obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+=3D raspberrypi-cpufreq.o
-> >  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+=3D s3c2410-cpufreq.o
-> >  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+=3D s3c2412-cpufreq.o
-> >  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+=3D s3c2416-cpufreq.o
-> > diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c
-> > b/drivers/cpufreq/raspberrypi-cpufreq.c
-> > new file mode 100644
-> > index 000000000000..99b59d5a50aa
-> > --- /dev/null
-> > +++ b/drivers/cpufreq/raspberrypi-cpufreq.c
-> > @@ -0,0 +1,100 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Raspberry Pi cpufreq driver
-> > + *
-> > + * Copyright (C) 2019, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/cpu.h>
-> > +#include <linux/cpufreq.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm_opp.h>
-> > +
-> > +static struct platform_device *cpufreq_dt;
-> > +
-> > +static int raspberrypi_cpufreq_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *cpu_dev;
-> > +	unsigned long min, max;
-> > +	unsigned long rate;
-> > +	struct clk *clk;
-> > +	int ret;
-> > +
-> > +	cpu_dev =3D get_cpu_device(0);
-> > +	if (!cpu_dev) {
-> > +		pr_err("Cannot get CPU for cpufreq driver\n");
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	clk =3D clk_get(cpu_dev, NULL);
-> > +	if (IS_ERR(clk)) {
-> > +		dev_err(cpu_dev, "Cannot get clock for CPU0\n");
-> > +		return PTR_ERR(clk);
-> > +	}
-> > +
-> > +	/*
-> > +	 * The max and min frequencies are configurable in the Raspberry Pi
-> > +	 * firmware, so we query them at runtime
-> > +	 */
-> > +	min =3D clk_round_rate(clk, 0);
-> > +	max =3D clk_round_rate(clk, ULONG_MAX);
-> > +	clk_put(clk);
-> > +
-> > +	for (rate =3D min; rate < max; rate +=3D 100000000) {
-> > +		ret =3D dev_pm_opp_add(cpu_dev, rate, 0);
-> > +		if (ret)
-> > +			goto remove_opp;
-> > +	}
->=20
-> i played a little bit with my Raspberry Pi Zero W and this series. Looks
-> fine so far.
->=20
-> Sorry for this nitpicking, but i expect user questions about the
-> differences between sysfs and vcgencmd measure_clock.
->=20
-> scaling_available_frequencies gives
->=20
-> 699999 799999 899999 999999
->=20
-> but vcgencmd measure_clock return the rounded up values.
->=20
-> I know we shouldn't fake anything, but adding the OPPs rounded up may
-> avoid confusion.
->=20
-> Stefan
-
-Agree, I'll change this in v3.
-
-
---=-m2BvIrpJbVtYJFQFjMnr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlz6UUUACgkQlfZmHno8
-x/7JCgf/Zk1fHhJfUoEiHOt3zSZ7agmFFGFgo6lyeQtztQd0/4Igo7AglYuknLit
-NnXmmlyf7AtGDtkZo3KkNfc0s5NrMI5EiFc4z5zB0oAiUY/sFfThl2pBDxVEcTs6
-1Vn7SLScGnKk7RMZKug58GnCg2FvrKogeouOHtoWDdw8jtnflsQK0U/TwQXg0Qk8
-CVakyVtX6aSmhQyMih6/Ohn0RSfUUQQ8tQN/sZlujEIEWJjrmHAsMpWGUBVAi2se
-Cn/XRt4o6vn9rx4bGyVURAjWyGjDM0OQAyojjqbd4864aDjwJFBpjyvG1a3s5BQA
-JMTNhMuoEtBWIB/E182qN9Zgz2Y6RA==
-=hgrI
------END PGP SIGNATURE-----
-
---=-m2BvIrpJbVtYJFQFjMnr--
-
+Thanks
+Gen
