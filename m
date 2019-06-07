@@ -2,92 +2,158 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFC2C2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 03:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E776C28CC3
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 03:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 621EC207E0
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 03:09:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jO3oZfMy"
+	by mail.kernel.org (Postfix) with ESMTP id 6379A208C3
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 03:12:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfFGDJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jun 2019 23:09:05 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38516 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbfFGDJF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jun 2019 23:09:05 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f97so246196plb.5
-        for <linux-clk@vger.kernel.org>; Thu, 06 Jun 2019 20:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l+eyft39Sxn5qe5vMNB20kZPpijDjrsF0Bx6tS0M+aU=;
-        b=jO3oZfMykEb2BKY03jwz+kXsoHKQu8zpBv3e9ZNS7BXIyYR/sEGVEFW9rSU68Zy1ot
-         IX0rtILNEioETVtdCXdqCOjaXhQ6/V04I0kMZnyT9uAFkUnJlsbn/FwJrqnKB2Os2ksT
-         R53jyDqUcEUCKxZhGJVubTxckdzTThcfvDdIz0S8HBVqukvgRLaV1siEQry2y5iZQAbl
-         vKBALUpv+YBPbjHlLhxwTRYoMGVBCwfChg8Ho7hryobzfamryOk1Du0IIkzBOZY3dsTX
-         JnQdwsgJ42i3qYhLFbv5re2YKfUGqR+mUm+ao0AZQrauGRw39/y/oWs7VXh57ppBrbIX
-         Wb7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l+eyft39Sxn5qe5vMNB20kZPpijDjrsF0Bx6tS0M+aU=;
-        b=PNZ7npxpKdX60zHNeqcNYwy4/avdXGu1sm7X4EXGzqsDQh+q4+SAC0jPQAWYAG1CWe
-         Wpbd/TaKb/Fqrgl+8m78Uw/h76qHop7/JzRvOf+QSCHX9Fe8QMVHArzznk6Wr37BzlVW
-         AJXJFr/bpWNf8KORE49SneUqIzJqAFktA4cnHeTRVpwUECHpMKepydQUsEDsv58Jx46M
-         xi3t8n76tYG7T8uteGomegZ7EmOQvQ4J9C56W7ovxq5GDmCrZYGgKjUlckHeY/zIiXg9
-         EKuz93s+S7I8C4rOqe1aPAvg5ADy4Z7gdCIunLFnMXaKEJP3MOCz6QdO8SYOQQdwVcmH
-         pRiw==
-X-Gm-Message-State: APjAAAW7Ejb4OGB1owp90JsHW2hDgP3VmxKraNliwU/vC6kaIQwyt+xH
-        PtXjEu2XfVDGHG5Q7QpHWuRNrQ==
-X-Google-Smtp-Source: APXvYqxSqWXpBXwjcMAABVRmHPcPaj26pGvwVZ6X1iptlArZMPbZRpUwdAHAy4afbL5j8QWqG+Rk4Q==
-X-Received: by 2002:a17:902:15c5:: with SMTP id a5mr54260265plh.39.1559876944294;
-        Thu, 06 Jun 2019 20:09:04 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id e184sm537134pfa.169.2019.06.06.20.09.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 20:09:03 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 08:39:01 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        stefan.wahren@i2se.com, linux-arm-kernel@lists.infradead.org,
-        f.fainelli@gmail.com, ptesarik@suse.com, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eric@anholt.net, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        mbrugger@suse.de, ssuloev@orpaltech.com
-Subject: Re: [PATCH v2 4/7] cpufreq: add driver for Raspbery Pi
-Message-ID: <20190607030901.qdnjj7udw7ky3sfx@vireshk-i7>
-References: <20190606142255.29454-1-nsaenzjulienne@suse.de>
- <20190606142255.29454-5-nsaenzjulienne@suse.de>
- <20190606170949.4A46720652@mail.kernel.org>
- <eb72a26b55cf17c29df6a7fd3c5def08182e00af.camel@suse.de>
- <20190606173609.2C3952083D@mail.kernel.org>
- <153579ddd7e6bd1e5c860a7a01115e47c78a1442.camel@suse.de>
- <20190606182335.1D15F20872@mail.kernel.org>
+        id S1726286AbfFGDMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jun 2019 23:12:19 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58479 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726157AbfFGDMS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jun 2019 23:12:18 -0400
+X-UUID: 2d15c3bc4f5046aa984be33b642ab73a-20190607
+X-UUID: 2d15c3bc4f5046aa984be33b642ab73a-20190607
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 266243261; Fri, 07 Jun 2019 11:12:12 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 7 Jun 2019 11:12:02 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 7 Jun 2019 11:12:03 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Dehui Sun <dehui.sun@mediatek.com>
+Subject: [PATCH v1] clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
+Date:   Fri, 7 Jun 2019 11:11:52 +0800
+Message-ID: <1559877112-21064-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606182335.1D15F20872@mail.kernel.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 361F3709E537D6F5F49004E16BF90773370E482A0C179B21688C2322A7FA06B42000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06-06-19, 11:23, Stephen Boyd wrote:
-> Yes, thanks. I see that largely follows the commit description so it
-> looks OK to me.
+The 13MHz clock should be registered before clocksource driver is
+initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
 
-Do you want to provide your Reviewed/Acked-by tag before I apply it ?
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt8183.c | 49 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 9d86510..a8f50bc 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -25,9 +25,11 @@
+ 	FIXED_CLK(CLK_TOP_UNIVP_192M, "univpll_192m", "univpll", 192000000),
+ };
+ 
++static const struct mtk_fixed_factor top_early_divs[] = {
++	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
++};
++
+ static const struct mtk_fixed_factor top_divs[] = {
+-	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1,
+-		2),
+ 	FACTOR(CLK_TOP_F26M_CK_D2, "csw_f26m_ck_d2", "clk26m", 1,
+ 		2),
+ 	FACTOR(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1,
+@@ -1167,37 +1169,62 @@ static int clk_mt8183_apmixed_probe(struct platform_device *pdev)
+ 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ }
+ 
++static struct clk_onecell_data *top_clk_data;
++
++static void clk_mt8183_top_init_early(struct device_node *node)
++{
++	int i;
++
++	if (!top_clk_data) {
++		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++
++		for (i = 0; i < CLK_TOP_NR_CLK; i++)
++			top_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
++	}
++
++	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
++			top_clk_data);
++
++	of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
++}
++
++CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
++			clk_mt8183_top_init_early);
++
+ static int clk_mt8183_top_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	void __iomem *base;
+-	struct clk_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
+ 
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++	if (!top_clk_data)
++		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+ 
+ 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+-		clk_data);
++		top_clk_data);
++
++	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
++		top_clk_data);
+ 
+-	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
++	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
+ 
+ 	mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
+-		node, &mt8183_clk_lock, clk_data);
++		node, &mt8183_clk_lock, top_clk_data);
+ 
+ 	mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_muxes),
+-		base, &mt8183_clk_lock, clk_data);
++		base, &mt8183_clk_lock, top_clk_data);
+ 
+ 	mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs),
+-		base, &mt8183_clk_lock, clk_data);
++		base, &mt8183_clk_lock, top_clk_data);
+ 
+ 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
+-		clk_data);
++		top_clk_data);
+ 
+-	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
+ }
+ 
+ static int clk_mt8183_infra_probe(struct platform_device *pdev)
 -- 
-viresh
+1.8.1.1.dirty
+
