@@ -2,81 +2,85 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6405C2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 15:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941A7C2BCA1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 17:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAB952089E
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 15:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6537C212F5
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 17:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559920378;
-	bh=PYE7F0VVjdf0vn+IZNw1mdkAtynuZLWLMkQ4OG1xVHM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=jaFd8Nd4x0AGMCkKo7vg5VzTtl9KHBtb1Ug7SmgmEtexjdBAnheG53k1vkNx+ZV2i
-	 045BAdPGw3rtoArmFUtsUSMDtUJP/uOBaTDoasqJLR7/1kTmgiH+Ef3z09xxiRM/6f
-	 CwI+fihg7nm+yJnGFkRPxmBqxU3cpO9XCWGkqxy8=
+	s=default; t=1559929434;
+	bh=gXf4g7NtG4W1D13TFXtjWxdNR+9w+PrxucbuPxyrkv0=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=EX7/T2sKhN6bMO3TBGXEdUoOf8ouSVsey8hm2vC//9CB0UURg4hhZY3q0IDC/kBOV
+	 uTv7dKF8zPY5VfYLqV+C4VrbGEsYCj9QytWxFAjPsyruvvEkQ8PSIH+OEWY3oh/F0q
+	 oBAlGA+bflYx5A3qcGkpwqfm2H6v7/qfuWtK3KE4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfFGPM6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 11:12:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53150 "EHLO mail.kernel.org"
+        id S1729738AbfFGRny (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 13:43:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729173AbfFGPM6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:12:58 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728684AbfFGRny (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:43:54 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E9E72089E;
-        Fri,  7 Jun 2019 15:12:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31EDA208C3;
+        Fri,  7 Jun 2019 17:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559920377;
-        bh=PYE7F0VVjdf0vn+IZNw1mdkAtynuZLWLMkQ4OG1xVHM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GCu5nhiQHWhVnddGDLLHNh3mQALfm432JmbJzsGfUqdMScXWnhNciawmGYUWbNXlN
-         DImU8IicdD2NyxGAnC9EB6/0lCxBhmhb6MU0xAWLKMbI0A0R4sGQkJOTxlc2Z6JbuJ
-         RQGBuG0oscXyAz7na8T1oSn1To9R/bqOGIxFkfzA=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        stable@vger.kernel.org
-Subject: [PATCH] clk: socfpga: stratix10: fix divider entry for the emac clocks
-Date:   Fri,  7 Jun 2019 10:12:46 -0500
-Message-Id: <20190607151246.8700-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.20.0
+        s=default; t=1559929433;
+        bh=gXf4g7NtG4W1D13TFXtjWxdNR+9w+PrxucbuPxyrkv0=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=mURIPArJDMacO6hbAVcSQ9mKR1J1RgcZijTvGQT4aBispznA1+9DnWRL1BqsVMs3L
+         tIm7vTdactHn1yPF/DTnSApajeXtsJKvmIW6ZRw8d39geCQxXeo0RHmHhLOwrONtuH
+         nf2g/9TQ7iVz6GhbSt+cBDRI6WMrrTi+9f0wtKIg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190607101234.30449-2-vkoul@kernel.org>
+References: <20190607101234.30449-1-vkoul@kernel.org> <20190607101234.30449-2-vkoul@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver for SM8150
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Fri, 07 Jun 2019 10:43:52 -0700
+Message-Id: <20190607174353.31EDA208C3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The fixed dividers for the emac clocks should be 2 not 4.
+Quoting Vinod Koul (2019-06-07 03:12:34)
+> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> new file mode 100644
+> index 000000000000..1cbc884444c9
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sm8150.c
+> +static const struct parent_map gcc_parent_map_0[] =3D {
+> +       { P_BI_TCXO, 0 },
+> +       { P_GPLL0_OUT_MAIN, 1 },
+> +       { P_GPLL0_OUT_EVEN, 6 },
+> +       { P_CORE_BI_PLL_TEST_SE, 7 },
+> +};
+> +
+> +static const char * const gcc_parent_names_0[] =3D {
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- drivers/clk/socfpga/clk-s10.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We have a new way of specifying clk parents now. Can you use that
+instead of using strings everywhere?
 
-diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-index 8281dfbf38c2..5bed36e12951 100644
---- a/drivers/clk/socfpga/clk-s10.c
-+++ b/drivers/clk/socfpga/clk-s10.c
-@@ -103,9 +103,9 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
- 	{ STRATIX10_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
- 	  0, 0, 0, 0x3C, 1},
- 	{ STRATIX10_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
--	  0, 0, 4, 0xB0, 0},
-+	  0, 0, 2, 0xB0, 0},
- 	{ STRATIX10_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
--	  0, 0, 4, 0xB0, 1},
-+	  0, 0, 2, 0xB0, 1},
- 	{ STRATIX10_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", NULL, emac_ptp_free_mux,
- 	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0, 4, 0xB0, 2},
- 	{ STRATIX10_GPIO_DB_FREE_CLK, "gpio_db_free_clk", NULL, gpio_db_free_mux,
--- 
-2.20.0
-
+> +       "bi_tcxo",
+> +       "gpll0",
+> +       "gpll0_out_even",
+> +       "core_bi_pll_test_se",
