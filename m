@@ -2,401 +2,121 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27304C2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 17:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11BBC2BCA1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 17:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2128208C0
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 17:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A61208C0
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 17:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559930145;
-	bh=MX/fuZ19/Q8W4niXDIk65px+1vun1Fu8DRq7pvgK/Ik=;
+	s=default; t=1559930367;
+	bh=9dKMZGCodIC7GBJF2KTazZroE2B9B8QOzrgq3LpSTsQ=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=EZn0wagxjxS6bwS8WA9S86USd+8o90a8N2SlLEbSCSmfgQtC/h20XqOx/yKximcoZ
-	 NHUHa6R5/SWuYwWpzrhU4PCwMr7T7Js7eMMe+vcr9kpu3soGcOr/1WhUCMHYzOnOGt
-	 GLal1J+OJw1GsQsoQTP9GOys6M1Rw6VTovWy/Qew=
+	b=K8GxCRMdFwOnUlod5OU7PcXmpqN31qLDDmWSVHW8n1HeCvF3+db81epnBq2WxA2JC
+	 GSd76hLyi03qYaxuvJz6tf8tHDztk9IbRBg6b0s+XHcoVhOQBPUc3NID6aYtELh5ac
+	 zfDRib+Mqsyka7lvaJPZfyGQQsJIDpWVU6G6M3VQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbfFGRzo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 13:55:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35830 "EHLO mail.kernel.org"
+        id S1731032AbfFGR7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 13:59:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbfFGRzo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Jun 2019 13:55:44 -0400
+        id S1730210AbfFGR7X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:59:23 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9D56208C0;
-        Fri,  7 Jun 2019 17:55:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D5F5208C0;
+        Fri,  7 Jun 2019 17:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559930143;
-        bh=MX/fuZ19/Q8W4niXDIk65px+1vun1Fu8DRq7pvgK/Ik=;
+        s=default; t=1559930362;
+        bh=9dKMZGCodIC7GBJF2KTazZroE2B9B8QOzrgq3LpSTsQ=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=IuawJLcX/j/+tWcwSLGnCb8HGXlB779YtfQTLuimnIL0uDkuQ4UbE5qW+RjBLHIx5
-         PWmM/6k3LN+aKEjPeaxDhq1LHPG1njsHvZc76IEVhzVaA+zg9e3yV9GjXm2iKwr7Ce
-         pztrw7/cXJq7Kn8Rc4SeeUQVkIaQFPrQ4jmu7xXc=
+        b=XfxpMEW6MNIwAhNik2mOzmu24+FyFp1A0uIkPo4OOO1D/9Ahk2YJUYbZwD0O9zBtn
+         QAoVzL/Dqg/4eXuX9bHK0ezkVRuJncdkBsJ7JrDMJAaDJ2o5ycXYr4yU+AIQcWtHLh
+         DTVFeJtIA/PeklsvZn15h5uskwVM/3/96b0yt+9w=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190607101234.30449-1-vkoul@kernel.org>
-References: <20190607101234.30449-1-vkoul@kernel.org>
-To:     Vinod Koul <vkoul@kernel.org>
+In-Reply-To: <1559877112-21064-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1559877112-21064-1-git-send-email-weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/2] clk: qcom: clk-alpha-pll: Add support for Trion PLLs
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v1] clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Dehui Sun <dehui.sun@mediatek.com>
 User-Agent: alot/0.8.1
-Date:   Fri, 07 Jun 2019 10:55:42 -0700
-Message-Id: <20190607175542.D9D56208C0@mail.kernel.org>
+Date:   Fri, 07 Jun 2019 10:59:21 -0700
+Message-Id: <20190607175922.6D5F5208C0@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-06-07 03:12:33)
-> From: Deepak Katragadda <dkatraga@codeaurora.org>
->=20
-> Add programming sequence support for managing the Trion
-> PLLs.
->=20
-> Signed-off-by: Deepak Katragadda <dkatraga@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> [vkoul: port to upstream and tidy-up]
-
-This tag isn't very useful. Maybe you can list out what you actually did
-instead of just "tidying"?
-
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
-a-pll.c
-> index 0ced4a5a9a17..bf36a929458b 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -120,6 +140,15 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->  #define FABIA_PLL_OUT_MASK     0x7
->  #define FABIA_PLL_RATE_MARGIN  500
-> =20
-> +#define TRION_PLL_CAL_VAL      0x44
-> +#define TRION_PLL_STANDBY      0x0
-> +#define TRION_PLL_RUN          0x1
-> +#define TRION_PLL_OUT_MASK     0x7
-> +#define TRION_PCAL_DONE                BIT(26)
-> +#define TRION_PLL_RATE_MARGIN  500
-
-These last two aren't used. Do we need them?
-
-> +
-> +#define XO_RATE                        19200000
-
-Please remove this define. It isn't used (thankfully!).
-
-> +
->  #define pll_alpha_width(p)                                     \
->                 ((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) =3D=3D 4) ? \
->                                  ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WID=
-TH)
-> @@ -392,6 +421,15 @@ alpha_pll_round_rate(unsigned long rate, unsigned lo=
-ng prate, u32 *l, u64 *a,
->         u64 remainder;
->         u64 quotient;
-> =20
-> +       /*
-> +        * The PLLs parent rate is zero probably since the parent hasn't
-> +        * registered yet. Return early with the requested rate.
-> +        */
-> +       if (!prate) {
-
-This hasn't been a problem before. Why is it a problem now?
-
-> +               pr_warn("PLLs parent rate hasn't been initialized.\n");
-> +               return rate;
-> +       }
-> +
->         quotient =3D rate;
->         remainder =3D do_div(quotient, prate);
->         *l =3D quotient;
-> @@ -730,6 +768,136 @@ static long alpha_pll_huayra_round_rate(struct clk_=
-hw *hw, unsigned long rate,
->         return alpha_huayra_pll_round_rate(rate, *prate, &l, &a);
+Quoting Weiyi Lu (2019-06-06 20:11:52)
+> diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk=
+-mt8183.c
+> index 9d86510..a8f50bc 100644
+> --- a/drivers/clk/mediatek/clk-mt8183.c
+> +++ b/drivers/clk/mediatek/clk-mt8183.c
+> @@ -1167,37 +1169,62 @@ static int clk_mt8183_apmixed_probe(struct platfo=
+rm_device *pdev)
+>         return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data=
+);
 >  }
 > =20
-> +static int trion_pll_is_enabled(struct clk_alpha_pll *pll,
-> +                               struct regmap *regmap)
+> +static struct clk_onecell_data *top_clk_data;
+> +
+> +static void clk_mt8183_top_init_early(struct device_node *node)
 > +{
-> +       u32 mode_regval, opmode_regval;
-> +       int ret;
+> +       int i;
 > +
-> +       ret =3D regmap_read(regmap, PLL_MODE(pll), &mode_regval);
-> +       ret |=3D regmap_read(regmap, PLL_OPMODE(pll), &opmode_regval);
-> +       if (ret)
-> +               return 0;
+> +       if (!top_clk_data) {
+
+Is this function ever called more than once? I believe the answer is no
+so this check should be removed.
+
+> +               top_clk_data =3D mtk_alloc_clk_data(CLK_TOP_NR_CLK);
 > +
-> +       return ((opmode_regval & TRION_PLL_RUN) && (mode_regval & PLL_OUT=
-CTRL));
-> +}
-> +
-> +static int clk_trion_pll_enable(struct clk_hw *hw)
-> +{
-> +       struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
-> +       struct regmap *regmap =3D pll->clkr.regmap;
-> +       u32 val;
-> +       int ret;
-> +
-> +       ret =3D regmap_read(regmap, PLL_MODE(pll), &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* If in FSM mode, just vote for it */
-> +       if (val & PLL_VOTE_FSM_ENA) {
-> +               ret =3D clk_enable_regmap(hw);
-> +               if (ret)
-> +                       return ret;
-> +               return wait_for_pll_enable_active(pll);
+> +               for (i =3D 0; i < CLK_TOP_NR_CLK; i++)
+> +                       top_clk_data->clks[i] =3D ERR_PTR(-EPROBE_DEFER);
 > +       }
 > +
-> +       /* Set operation mode to RUN */
-> +       regmap_write(regmap, PLL_OPMODE(pll), TRION_PLL_RUN);
+> +       mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_div=
+s),
+> +                       top_clk_data);
 > +
-> +       ret =3D wait_for_pll_enable_lock(pll);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* Enable the PLL outputs */
-> +       ret =3D regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> +                                TRION_PLL_OUT_MASK, TRION_PLL_OUT_MASK);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* Enable the global PLL outputs */
-> +       ret =3D regmap_update_bits(regmap, PLL_MODE(pll),
-> +                                PLL_OUTCTRL, PLL_OUTCTRL);
-> +       if (ret)
-> +               return ret;
-
-This if (ret) can be removed.
-
-> +
-> +       /* Ensure that the write above goes through before returning. */
-> +       mb();
-
-As far as I recall mb() does nothing to ensure the write above goes
-through, just that writes after this one are ordered with the write
-above.
-
-> +       return ret;
+> +       of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
 > +}
 > +
-> +static void clk_trion_pll_disable(struct clk_hw *hw)
-> +{
-> +       struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
-> +       struct regmap *regmap =3D pll->clkr.regmap;
-> +       u32 val;
-> +       int ret;
+> +CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
+> +                       clk_mt8183_top_init_early);
 > +
-> +       ret =3D regmap_read(regmap, PLL_MODE(pll), &val);
-> +       if (ret)
-> +               return;
-> +
-> +       /* If in FSM mode, just unvote it */
-> +       if (val & PLL_VOTE_FSM_ENA) {
-> +               clk_disable_regmap(hw);
-> +               return;
-> +       }
-> +
-> +       /* Disable the global PLL output */
-> +       ret =3D regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
-> +       if (ret)
-> +               return;
-> +
-> +       /* Disable the PLL outputs */
-> +       ret =3D regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> +                                TRION_PLL_OUT_MASK, 0);
-> +       if (ret)
-> +               return;
-> +
-> +       /* Place the PLL mode in STANDBY */
-> +       regmap_write(regmap, PLL_OPMODE(pll), TRION_PLL_STANDBY);
-> +       regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_=
-N);
-> +}
-> +
-> +static unsigned long
-> +clk_trion_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +       struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
-> +       struct regmap *regmap =3D pll->clkr.regmap;
-> +       u32 l, frac;
-> +       u64 prate =3D parent_rate;
-> +
-> +       regmap_read(regmap, PLL_L_VAL(pll), &l);
-> +       regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac);
-> +
-> +       return alpha_pll_calc_rate(prate, l, frac, ALPHA_REG_16BIT_WIDTH);
-> +}
-> +
-> +static int clk_trion_pll_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
-> +
-> +       return trion_pll_is_enabled(pll, pll->clkr.regmap);
-> +}
-
-Can you move this function right below trion_pll_is_enabled()?
-
-> +
-> +static long clk_trion_pll_round_rate(struct clk_hw *hw, unsigned long ra=
-te,
-> +                                    unsigned long *prate)
-> +{
-> +       struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
-> +       unsigned long min_freq, max_freq;
-> +       u32 l;
-> +       u64 a;
-> +
-> +       rate =3D alpha_pll_round_rate(rate, *prate,
-> +                                   &l, &a, ALPHA_REG_16BIT_WIDTH);
-> +       if (!pll->vco_table || alpha_pll_find_vco(pll, rate))
-> +               return rate;
-> +
-> +       min_freq =3D pll->vco_table[0].min_freq;
-> +       max_freq =3D pll->vco_table[pll->num_vco - 1].max_freq;
-> +
-> +       return clamp(rate, min_freq, max_freq);
-> +}
-> +
->  const struct clk_ops clk_alpha_pll_ops =3D {
->         .enable =3D clk_alpha_pll_enable,
->         .disable =3D clk_alpha_pll_disable,
-> @@ -902,6 +1079,10 @@ static int alpha_pll_fabia_enable(struct clk_hw *hw)
->         ret =3D regmap_read(regmap, PLL_OPMODE(pll), &opmode_val);
->         if (ret)
->                 return ret;
-> +       ret =3D regmap_update_bits(regmap, PLL_MODE(pll),
-> +                                PLL_BYPASSNL, PLL_BYPASSNL);
-> +       if (ret)
-> +               return ret;
-
-What is this?
-
-> =20
->         /* Skip If PLL is already running */
->         if ((opmode_val & FABIA_OPMODE_RUN) && (val & PLL_OUTCTRL))
-> @@ -1058,6 +1239,91 @@ static unsigned long clk_alpha_pll_postdiv_fabia_r=
-ecalc_rate(struct clk_hw *hw,
->         return (parent_rate / div);
->  }
-> =20
-> +static unsigned long
-> +clk_trion_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long paren=
-t_rate)
-> +{
-> +       struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
-);
-> +       struct regmap *regmap =3D pll->clkr.regmap;
-> +       u32 i, div =3D 1, val;
-> +
-> +       if (!pll->post_div_table) {
-> +               pr_err("Missing the post_div_table for the PLL\n");
-
-Ahhh!
-
-> +               return -EINVAL;
-> +       }
-> +
-> +       regmap_read(regmap, PLL_USER_CTL(pll), &val);
-> +
-> +       val >>=3D pll->post_div_shift;
-> +       val &=3D PLL_POST_DIV_MASK(pll);
-> +
-> +       for (i =3D 0; i < pll->num_post_div; i++) {
-> +               if (pll->post_div_table[i].val =3D=3D val) {
-> +                       div =3D pll->post_div_table[i].div;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       return (parent_rate / div);
-> +}
-> +
-> +static long
-> +clk_trion_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                                unsigned long *prate)
-> +{
-> +       struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
-);
-> +
-> +       if (!pll->post_div_table) {
-> +               pr_err("Missing the post_div_table for the PLL\n");
-> +               return -EINVAL;
-
-Does this ever happen? I'd rather see this removed and the code blow up
-if the driver author didn't test this.
-
-> +       }
-> +
-> +       return divider_round_rate(hw, rate, prate, pll->post_div_table,
-> +                                 pll->width, CLK_DIVIDER_ROUND_CLOSEST);
-> +};
-> +
-> +static int
-> +clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long parent_rate)
-> +{
-> +       struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
-);
-> +       struct regmap *regmap =3D pll->clkr.regmap;
-> +       int i, val =3D 0, div, ret;
-> +
-> +       /*
-> +        * If the PLL is in FSM mode, then treat the set_rate callback
-> +        * as a no-operation.
-> +        */
-> +       ret =3D regmap_read(regmap, PLL_MODE(pll), &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (val & PLL_VOTE_FSM_ENA)
-> +               return 0;
-> +
-> +       if (!pll->post_div_table) {
-> +               pr_err("Missing the post_div_table for the PLL\n");
-
-Again!
-
-> +               return -EINVAL;
-> +       }
-> +
-> +       div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-
-Is the cast necessary?
-
-> +       for (i =3D 0; i < pll->num_post_div; i++) {
-> +               if (pll->post_div_table[i].div =3D=3D div) {
-> +                       val =3D pll->post_div_table[i].val;
-> +                       break;
-> +               }
-> +       }
-> +       return regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> +                                 PLL_POST_DIV_MASK(pll) << PLL_POST_DIV_=
-SHIFT,
-> +                                 val << PLL_POST_DIV_SHIFT);
-> +}
-> +
-> +const struct clk_ops clk_trion_pll_postdiv_ops =3D {
-> +       .recalc_rate =3D clk_trion_pll_postdiv_recalc_rate,
-> +       .round_rate =3D clk_trion_pll_postdiv_round_rate,
-> +       .set_rate =3D clk_trion_pll_postdiv_set_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_trion_pll_postdiv_ops);
-> +
->  static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
->                                 unsigned long rate, unsigned long *prate)
+>  static int clk_mt8183_top_probe(struct platform_device *pdev)
 >  {
+>         struct resource *res =3D platform_get_resource(pdev, IORESOURCE_M=
+EM, 0);
+>         void __iomem *base;
+> -       struct clk_onecell_data *clk_data;
+>         struct device_node *node =3D pdev->dev.of_node;
+> =20
+>         base =3D devm_ioremap_resource(&pdev->dev, res);
+>         if (IS_ERR(base))
+>                 return PTR_ERR(base);
+> =20
+> -       clk_data =3D mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+> +       if (!top_clk_data)
+> +               top_clk_data =3D mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+
+And then this can be removed because top_clk_data must be allocated at
+this point.
+
