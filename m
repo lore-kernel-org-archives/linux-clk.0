@@ -2,158 +2,102 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E776C28CC3
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 03:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEDBC28CC3
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 07:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6379A208C3
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 03:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8663720B7C
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 07:24:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfFGDMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jun 2019 23:12:19 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58479 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726157AbfFGDMS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jun 2019 23:12:18 -0400
-X-UUID: 2d15c3bc4f5046aa984be33b642ab73a-20190607
-X-UUID: 2d15c3bc4f5046aa984be33b642ab73a-20190607
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 266243261; Fri, 07 Jun 2019 11:12:12 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 7 Jun 2019 11:12:02 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 7 Jun 2019 11:12:03 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Dehui Sun <dehui.sun@mediatek.com>
-Subject: [PATCH v1] clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
-Date:   Fri, 7 Jun 2019 11:11:52 +0800
-Message-ID: <1559877112-21064-1-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 361F3709E537D6F5F49004E16BF90773370E482A0C179B21688C2322A7FA06B42000:8
-X-MTK:  N
+        id S1727626AbfFGHY0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 03:24:26 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:38668 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbfFGHY0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 03:24:26 -0400
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id MjQP2000R3XaVaC01jQPpl; Fri, 07 Jun 2019 09:24:23 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hZ9Ed-0003jV-Cq; Fri, 07 Jun 2019 09:24:23 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hZ9Ed-0004Tv-B9; Fri, 07 Jun 2019 09:24:23 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v5.3
+Date:   Fri,  7 Jun 2019 09:24:19 +0200
+Message-Id: <20190607072419.17185-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 13MHz clock should be registered before clocksource driver is
-initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
+	Hi Mike, Stephen,
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/clk/mediatek/clk-mt8183.c | 49 ++++++++++++++++++++++++++++++---------
- 1 file changed, 38 insertions(+), 11 deletions(-)
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index 9d86510..a8f50bc 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -25,9 +25,11 @@
- 	FIXED_CLK(CLK_TOP_UNIVP_192M, "univpll_192m", "univpll", 192000000),
- };
- 
-+static const struct mtk_fixed_factor top_early_divs[] = {
-+	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
-+};
-+
- static const struct mtk_fixed_factor top_divs[] = {
--	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1,
--		2),
- 	FACTOR(CLK_TOP_F26M_CK_D2, "csw_f26m_ck_d2", "clk26m", 1,
- 		2),
- 	FACTOR(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1,
-@@ -1167,37 +1169,62 @@ static int clk_mt8183_apmixed_probe(struct platform_device *pdev)
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
- 
-+static struct clk_onecell_data *top_clk_data;
-+
-+static void clk_mt8183_top_init_early(struct device_node *node)
-+{
-+	int i;
-+
-+	if (!top_clk_data) {
-+		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-+
-+		for (i = 0; i < CLK_TOP_NR_CLK; i++)
-+			top_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
-+	}
-+
-+	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
-+			top_clk_data);
-+
-+	of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
-+			clk_mt8183_top_init_early);
-+
- static int clk_mt8183_top_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	void __iomem *base;
--	struct clk_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
- 
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-+	if (!top_clk_data)
-+		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
- 
- 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
--		clk_data);
-+		top_clk_data);
-+
-+	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
-+		top_clk_data);
- 
--	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
-+	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
- 
- 	mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
--		node, &mt8183_clk_lock, clk_data);
-+		node, &mt8183_clk_lock, top_clk_data);
- 
- 	mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_muxes),
--		base, &mt8183_clk_lock, clk_data);
-+		base, &mt8183_clk_lock, top_clk_data);
- 
- 	mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs),
--		base, &mt8183_clk_lock, clk_data);
-+		base, &mt8183_clk_lock, top_clk_data);
- 
- 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
--		clk_data);
-+		top_clk_data);
- 
--	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
- }
- 
- static int clk_mt8183_infra_probe(struct platform_device *pdev)
--- 
-1.8.1.1.dirty
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.3-tag1
+
+for you to fetch changes up to aad03a66f902e18bab612870261bde647fdbda2c:
+
+  clk: renesas: r9a06g032: Add clock domain support (2019-06-04 11:51:00 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.3
+
+  - Add TPU (Timer Pulse Unit / PWM) clocks on R-Car H3, M3-W, and M3-N,
+  - Add CMM (Color Management Module) clocks on R-Car M3-W,
+  - Add Clock Domain support on RZ/N1,
+  - Small cleanups.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Cao Van Dong (1):
+      clk: renesas: r8a779{5|6|65}: Add TPU clock
+
+Gareth Williams (2):
+      dt-bindings: clock: renesas: r9a06g032-sysctrl: Document power Domains
+      clk: renesas: r9a06g032: Add clock domain support
+
+Geert Uytterhoeven (3):
+      clk: renesas: cpg-mssr: Use genpd of_node instead of local copy
+      clk: renesas: cpg-mssr: Remove error messages on out-of-memory conditions
+      clk: renesas: mstp: Remove error messages on out-of-memory conditions
+
+Jacopo Mondi (1):
+      clk: renesas: r8a7796: Add CMM clocks
+
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   |   7 +-
+ drivers/clk/renesas/clk-mstp.c                     |   8 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |   1 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |   4 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r9a06g032-clocks.c             | 227 ++++++++++++++-------
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  12 +-
+ 7 files changed, 174 insertions(+), 86 deletions(-)
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
