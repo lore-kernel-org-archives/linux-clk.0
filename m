@@ -2,122 +2,95 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F46CC2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 22:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93B2C2BCA1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 23:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE972089E
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 22:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559947839;
-	bh=ApxVfHs8JnkHiww93//1LZR4TXbvN/4IO2MtYEzl9mo=;
-	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=QPDaXo5TtlhWD0IOIVIWm3mvIyvFCs/9HC0LypJmpdgVSKWTGVV9dBLu0E/QQN8hT
-	 r3aGHV/LL6EDsfzvc8CG4zKVnPVLL9xDkvHkjJ1K/cvr089LwNa6I2GY1DyZp5wRuN
-	 jnt0+alqWNL376o7Vr0awNR4t2+NEHe+KMICvq7A=
+	by mail.kernel.org (Postfix) with ESMTP id BE60B2089E
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 23:08:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FkVCVtLw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbfFGWuj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 18:50:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728756AbfFGWui (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:50:38 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02A5D20868;
-        Fri,  7 Jun 2019 22:50:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559947838;
-        bh=ApxVfHs8JnkHiww93//1LZR4TXbvN/4IO2MtYEzl9mo=;
-        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=xfujo2GLbkIM+KKtYFuiV81Iew3/QJfwEMbo2anGI8s4SiwI07Ah1j2/ciUOhTDOO
-         q3goGaFH8UPTc3Ej7pzCV+vxygsPZnRYStoVowZC3Jxm6bRTeQ9ni5Ny2lOQ1txxv7
-         PtMvH0dcM+c/REo3Y1kZ5cZB/lRKUS2wrJhduqGA=
-Content-Type: text/plain; charset="utf-8"
+        id S1730484AbfFGXIg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 19:08:36 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34139 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730617AbfFGXIc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 19:08:32 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j24so3108444ljg.1
+        for <linux-clk@vger.kernel.org>; Fri, 07 Jun 2019 16:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CJjAb+Z5ioBZ0AM/8mCFtzkkLn/OKSEL3IHSOtuKgfQ=;
+        b=FkVCVtLwoVP2xNToV3V9nLLFBH8qK0uahCMEKeFCpaR2z9IF0rpEg8YFqnUmGXZsgq
+         DfvxttPbgwKv51MItse2JF1YQ5TsRI5GCwNHRb9IYez7H3NYfXRNHgXB0gnp2gTndxNB
+         LwkbDBxTrRmHrzyvFF13obVOy9KBAFVFFzTocL3+JUOgAFqMpgZ+U41+ABtrRyWnIodz
+         eqN5ctPHY09xzgpkZFV2Tez9dxUvSL4e5wfFHFtt31VxWoUedzV9qMV9ZKUB51qacrdz
+         tTCqV/urQYCK3kC4ka+GuQTTXl3BE0wjaSiIPmANYwxUqfk3h0q8w6gczsAnBL5+4gOe
+         vC3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CJjAb+Z5ioBZ0AM/8mCFtzkkLn/OKSEL3IHSOtuKgfQ=;
+        b=A09MmB2LabtK1UMpd5fjAFE++TuNw7cbxxxUHcQOzrfFxQmxkaKdZiwva0PaCYnAvE
+         th5yxmJ+0F3ADM8fMnRgbZjsxMdd661ceRRqPbmV0TswClxStOEg6IUza+iS4ipuZSHR
+         1Q7QmQyWYYe3/1z4olryMrbwhEjRK3soJ719peAAxSN55siMS7/X1B6q/+6Orw1QQ+UD
+         /ZhrNZUOP7O+VNGjM0vJ2wz90vL7iLx6Bbqm17vmJeITNMFouiAZfWbSDBG7iR4XSHV2
+         gc0VnIR4eBoYmT99pKJ9ekKrsFnCPtXhZ3GzwYPYTRzcLAKP/0Nnmg6fniOaM7nlXxPe
+         x0eg==
+X-Gm-Message-State: APjAAAXKr1A43r4U5kqJ0ctZ4eu3iVfZlA6swb+A1DqYfQ4CotWn5+6V
+        1A3MBD0YE6itI1BtCgrxYkuJMboHMWagS2udOMUROg==
+X-Google-Smtp-Source: APXvYqxUOi2ComwroPYJqL0+HmrxnRaNzTbxCzwrLY351hzZwjGfd8PvKzmcThTDM6zJHWY6X2LcwPf0/66wKSkFxIw=
+X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr19985474lje.46.1559948910013;
+ Fri, 07 Jun 2019 16:08:30 -0700 (PDT)
 MIME-Version: 1.0
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 8 Jun 2019 01:08:22 +0200
+Message-ID: <CACRpkdbxUHR8Uo+M7+_0v77Pg6k_jmL79KeHKNzWmFhtq+mZXw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Add minimal boot support for IPQ6018
+To:     Sricharan R <sricharan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1559944794.11351.0@crapouillou.net>
-References: <20190521145141.9813-1-paul@crapouillou.net> <20190521145141.9813-6-paul@crapouillou.net> <20190607212819.A5FAE208C3@mail.kernel.org> <1559944794.11351.0@crapouillou.net>
-To:     Paul Cercueil <paul@crapouillou.net>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        James Hogan <jhogan@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, od@zcrc.me
-Subject: Re: [PATCH v12 05/13] clk: ingenic: Add driver for the TCU clocks
-User-Agent: alot/0.8.1
-Date:   Fri, 07 Jun 2019 15:50:37 -0700
-Message-Id: <20190607225038.02A5D20868@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2019-06-07 14:59:54)
-> Hi Stephen, thanks for the review.
-> > Quoting Paul Cercueil (2019-05-21 07:51:33)
-> >>  diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-> >>  new file mode 100644
-> >>  index 000000000000..7249225a6994
-> >>  --- /dev/null
-> >>  +++ b/drivers/clk/ingenic/tcu.c
-> >>  @@ -0,0 +1,458 @@
-> >>  +// SPDX-License-Identifier: GPL-2.0
-> >>  +/*
-> >>  + * JZ47xx SoCs TCU clocks driver
-> >>  + * Copyright (C) 2019 Paul Cercueil <paul@crapouillou.net>
-> >>  + */
-> >>  +
-> >>  +#include <linux/clk.h>
-> >>  +#include <linux/clk-provider.h>
-> >>  +#include <linux/clkdev.h>
-> >>  +#include <linux/clockchips.h>
-> >>  +#include <linux/mfd/ingenic-tcu.h>
-> >>  +#include <linux/regmap.h>
-> >>  +
-> >>  +#include <dt-bindings/clock/ingenic,tcu.h>
-> >>  +
-> >>  +/* 8 channels max + watchdog + OST */
-> >>  +#define TCU_CLK_COUNT  10
-> >>  +
-> >>  +#define TCU_ERR(...) pr_crit("ingenic-tcu-clk: " __VA_ARGS__)
-> >=20
-> > Why is it pr_crit instead of pr_err()?
->=20
-> If the TCU timer clocks are not provided for any reason, the system
-> will have no timer, and the kernel will hang very early in the init
-> process. That's why I chose pr_crit().
+On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote=
+:
 
-HMm. So maybe it should be TCU_CRIT() then? Or just drop the wrapper
-macro and define a pr_fmt for this file that has ingenic-tcu-clk: for
-it?
+> The IPQ6018 is Qualcomm=E2=80=99s 802.11ax SoC for Routers,
+> Gateways and Access Points.
+>
+> This series adds minimal board boot support for ipq6018-cp01
+> board.
+>
+> Sricharan R (6):
+>   pinctrl: qcom: Add ipq6018 pinctrl driver
+>   dt-bindings: qcom: Add ipq6018 bindings
 
->=20
-> Most of the code here works without a struct device, it wouldn't be=20
-> easy to
-> get it to work with runtime PM.
->=20
-> I can enable the "tcu" clock in the probe and just gate/ungate it in the
-> suspend/resume callbacks, that would work just fine. We don't need=20
-> anything
-> fancy here.
+I'm happy to merge these two if I can get a review from
+Bjorn Andersson on them.
 
-OK. That sounds like a better approach to gate and ungate in
-suspend/resume.
-
+Yours,
+Linus Walleij
