@@ -6,146 +6,124 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BA0C28CC3
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 09:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DECC28CC3
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 09:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 762FF20B7C
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 09:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB38F20B7C
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 09:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfFGJKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 05:10:42 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33609 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfFGJKl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 05:10:41 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so1392716wru.0;
-        Fri, 07 Jun 2019 02:10:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=BkHOgQp9ZNT+w4r/aHTtr9WepEQUBdYdl9/a+tV9soA=;
-        b=AlyPNiy/nmOz7yw1lGihpnVVQlGuhUdDTiGQj68Z+FYXMh7V+EybfUX8bjNjlospLn
-         iiY+OqQXAp/H4rCt7oralkYvo2GuwjsgNBk5Cf4TKceWap6ZBCrsmEwLQRSV/K+Y8Xkw
-         k4G6Gx0YRVRXDOBNQnOm0haE9NtF1abDeds0MZyYpJVGjVtpEeDjdTUCgBh6pzZz7vY5
-         l9e0eIJHWJcDuZyauBxcHvhi+5tRrQkt6MUWMruSzq3YUU4MajDndRFNUDCh2YdOQ/Ky
-         BWUuKTVdCEHFhVEEWSb02/9IJgFgNpklsZiL1Qdr5TB/blH1VO3LSC9aBKiiPlg3UAxo
-         HASw==
-X-Gm-Message-State: APjAAAWEsu1n4Y7JUUhrzJK01p3TitlMqUMTftMxrbJnLwk3UQ7UwQJG
-        5L7zZjQBWOICB4ypXDOQfomWWl24
-X-Google-Smtp-Source: APXvYqww0GZgtRbdcN4fLGmRxER87DrsdGTWzb/8L9RINKlwcWi6JWh+Uiq6bfjEfwgfX7zMxIFl0Q==
-X-Received: by 2002:adf:ea8b:: with SMTP id s11mr18664982wrm.100.1559898639593;
-        Fri, 07 Jun 2019 02:10:39 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id 34sm1727277wre.32.2019.06.07.02.10.38
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 02:10:38 -0700 (PDT)
-Subject: Re: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
-To:     Gen Zhang <blackgod016574@gmail.com>,
+        id S1727111AbfFGJOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 05:14:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:36173 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfFGJOW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 05:14:22 -0400
+Received: from [192.168.1.162] ([37.4.249.160]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1M2etD-1hXnMu3tcN-0049CZ; Fri, 07 Jun 2019 11:14:00 +0200
+Subject: Re: [PATCH v2 4/7] cpufreq: add driver for Raspbery Pi
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190531011424.GA4374@zhanggen-UX430UQ>
- <eb8e2d33-e8f7-93a5-c8bc-98731c0d63b6@suse.cz>
- <20190605160043.GA4351@zhanggen-UX430UQ>
- <20190606201646.B4CC4206BB@mail.kernel.org>
- <20190607015258.GA2660@zhanggen-UX430UQ>
-From:   Jiri Slaby <jslaby@suse.cz>
+Cc:     f.fainelli@gmail.com, ptesarik@suse.com, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, mbrugger@suse.de, eric@anholt.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        ssuloev@orpaltech.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org
+References: <20190606142255.29454-1-nsaenzjulienne@suse.de>
+ <20190606142255.29454-5-nsaenzjulienne@suse.de>
+ <20190606170949.4A46720652@mail.kernel.org>
+ <eb72a26b55cf17c29df6a7fd3c5def08182e00af.camel@suse.de>
+ <20190606173609.2C3952083D@mail.kernel.org>
+ <153579ddd7e6bd1e5c860a7a01115e47c78a1442.camel@suse.de>
+ <20190606182335.1D15F20872@mail.kernel.org>
+ <20190607030901.qdnjj7udw7ky3sfx@vireshk-i7>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e5b4639b-3077-59bb-6383-0c2bccdd9191@suse.cz>
-Date:   Fri, 7 Jun 2019 11:10:37 +0200
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ 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 AQ==
+Message-ID: <b021ae9d-a38e-b300-d82e-d4f88fb0fe7a@i2se.com>
+Date:   Fri, 7 Jun 2019 11:13:54 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190607015258.GA2660@zhanggen-UX430UQ>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-GB
+In-Reply-To: <20190607030901.qdnjj7udw7ky3sfx@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:dzBHllwQoC6lRPpa8G8aP63JOKNkgZ8EY82JJv10u1tvsvxLq4U
+ lw9QUuvcoVT3Fxo0s5Lo2EjjItN7dL6hC1ULxsyQhYUYKdpZMl7yD8G+PbRT5VyRVsrmRjy
+ ooc3AdUOm9zahvJ0igUPAOMgz0kF0FPGCZCGeksV9TR9kLtX5E/XSHpF6gnndv1TtmKXwSu
+ Oyo2zqU8T8fLX8kD4oFxA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ejinpiaIP6Q=:DxtkN/bF9QqcsKemJpIaaf
+ b3C9RbiTpxDd+gZYBiCgU25OyMvyFF/sBOWoqL9oi2zU9OoV8k5BuocWnd4N8LitXFs9geHKu
+ GszYHRVNhyRibl/3pphWE1kBvriVWIClPzk/OdEQY/UAlmHenrx8uhu52b84dguKO2RsheNHN
+ dE/vOY/k4LMxPrPXjEsVyag2wSF8SSGt+RyIiD22hBc1pXIPBj5jpGj294JV9pdZu6/AwDHhh
+ Vdk7U4uSctP2DqmvZw6AH6CxAGBN8lbPDvoRTja09FfZcBnNuxEUnCPmglTNzqVz7KZnF605A
+ QTrWx7g6Dk4Fc/epONuurPrgfhPjpsIt5ClHGIrnB9wdDnHbIylIQstu+CekOjkiYoW6YuLX5
+ hlstH8zB0arUHh2uHh43/3s2j9JMqcEhIGoUeYDe+ODnPBxtBf+FTDlMfj7tjjDiaRR+5U2QP
+ /5vV7N0mfR4l4V5hvvq4Bz91jWQf4UlZm+eZjab93/xYlAQ2QVf4fg1eVGO38zfFBXJuHbvM1
+ cJkk083WRhCC/NwENO3XsOhA4KMEXGO41U51f06hpdhfIe/CLZPZEwvNMkuZ1DBP2BS0A2kHj
+ LfR3U3zbXFFFLPmNufYhhSEN/3C0Ty2Gq7XamA6asw4IiDDJMaRhflvrsf9J8GrmpwRWSNtF5
+ YwZu7N5vV2zKgJ3h/0AFjdv4ESnXkcuKUvZGOCw61hoQOMD8jVPvp6UBcW/0l5WUo0VC/awNG
+ 0sx+52QngNxlASWxTZbpwVyOwJSDWzJyydgVQ4NgyGHKOlPWGO3uNBbnY44=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07. 06. 19, 3:52, Gen Zhang wrote:
->>>>> @@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct clk_core *core)
->>>>>                             kfree_const(parents[i].name);
->>>>>                             kfree_const(parents[i].fw_name);
->>>>>                     } while (--i >= 0);
->>>>> +                   kfree_const(parent->name);
->>>>> +                   kfree_const(parent->fw_name);
->>>>
->>>> Both of them were just freed in the loop above, no?
->>> for (i = 0, parent = parents; i < num_parents; i++, parent++)
->>> Is 'parent' the same as the one from the loop above?
->>
->> Yes. Did it change somehow?
-> parent++?
+Hi Viresh,
 
-parent++ is done after the loop body. Or what do you mean?
+Am 07.06.19 um 05:09 schrieb Viresh Kumar:
+> On 06-06-19, 11:23, Stephen Boyd wrote:
+>> Yes, thanks. I see that largely follows the commit description so it
+>> looks OK to me.
+> Do you want to provide your Reviewed/Acked-by tag before I apply it ?
 
->>> Moreover, should 'parents[i].name' and 'parents[i].fw_name' be freed by
->>> kfree_const()?
->>>
->>
->> Yes? They're allocated with kstrdup_const() in clk_cpy_name(), or
->> they're NULL by virtue of the kcalloc and then kfree_const() does
->> nothing.
-> I re-examined clk_cpy_name(). They are the second parameter of 
-> clk_cpy_name(). The first parameter is allocated, not the second one.
-> So 'parent->name' and 'parent->fw_name' should be freed, not 
-> 'parents[i].name' or 'parents[i].fw_name'. Am I totally misunderstanding
-> this clk_cpy_name()? :-(
+Nicolas wanted to send a V3 of this series and as a platform maintainer
+i need some time for testing this version.
 
-The second parameter (the source) is parent_data[i].*, not parents[i].*
-(the destination). parent->fw_name and parent->name are properly freed
-in the do {} while loop as parents[i].name and parents[i].fw_name, given
-i hasn't changed yet. I am not sure what you mean at all. Are you
-uncertain about the C code flow?
+Stefan
 
-thanks,
--- 
-js
-suse labs
