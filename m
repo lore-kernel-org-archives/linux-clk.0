@@ -1,86 +1,88 @@
-Return-Path: <SRS0=srpp=UF=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10118C04AB5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 23:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38913C04AB5
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 00:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D56FE208E4
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jun 2019 23:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E14B208E4
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 00:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559863797;
-	bh=s/IGr6FJIJTtmPkO0Rn/Sv11l8Exxwy3saMC055VrOk=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=FUKnDLYDXuOF3bGjCXpO3qgTjKC9ldEm5dQWC/mwcgpB2LR0OEe4bRgOk4Ep3XT41
-	 Lx/y6ILy7iJH2nka7u8LZIEn963G3GGxqX7nhgWLXjvOl1AKaNlHGk2ofRw5WoCX2D
-	 L3etT7KSwI6x4plwTUXWvQRZXEn/yOO3wB00SxuA=
+	s=default; t=1559868100;
+	bh=1vBgXQP1RrooBCqpqPpJd49Z0ROP6YAncbyQUWEg38E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tw+ofLeNIdaLIvaDY41yCb7iwZF9dcRnYxsvZ7d6+vdgIHKgL7Ex/wKDcH8xBMxO+
+	 ezp+BFIbu6qzwtSm5hp47BBHtqFJuOwLCvUjPats1cNdWOoyzwlFAFxzwIwa+GtnVj
+	 +OEebayZEIRs36Z/kF3aZee2dZ1jMqQuRtdgXQ5U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfFFX35 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jun 2019 19:29:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59358 "EHLO mail.kernel.org"
+        id S1727471AbfFGAlj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jun 2019 20:41:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbfFFX35 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Jun 2019 19:29:57 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727273AbfFGAlj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Jun 2019 20:41:39 -0400
+Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C742E20868;
-        Thu,  6 Jun 2019 23:29:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BF4B20840;
+        Fri,  7 Jun 2019 00:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559863796;
-        bh=s/IGr6FJIJTtmPkO0Rn/Sv11l8Exxwy3saMC055VrOk=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=VqBiD7KFYZ84pOvuOVKtaZhm5K5HuYc1LAGmMSPMVQ9a8n4+2/IvLRe03qqGchVbr
-         rMc7Sx8P6IGt4pWUFvfFTNGxN3sAxKQNOX58qNOFKrM4WQbkuvjsvhgr0Ut0gIZmBq
-         UdvS8FpNSz/Nb/RML4DckvRLWW1Tj5ceSrpvD1uo=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1559868099;
+        bh=1vBgXQP1RrooBCqpqPpJd49Z0ROP6YAncbyQUWEg38E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RfblBthgc+Z0mKHDGUh/hG3I+ddM9slbmysMntqXwK6uHew8pK3P9uBfAR0C26rH2
+         M3d22k7XkDog1lnm5AXAxFprI+6GH3qWBi4S9dAiA/VAxP+VGocEdVL1hEOzxfsYNj
+         B1jaIre4e8lxXu3jQaal2HsJ5+xikw6yp7BWGe2c=
+Date:   Fri, 7 Jun 2019 08:41:18 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND v2 00/18] clk: imx: Switch the imx6 and imx7 to clk_hw
+ based API
+Message-ID: <20190607004117.GZ29853@dragon>
+References: <1559132773-12884-1-git-send-email-abel.vesa@nxp.com>
+ <20190606182940.F0D8C20872@mail.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1558449993-20902-1-git-send-email-jhugo@codeaurora.org>
-References: <1558449843-19971-1-git-send-email-jhugo@codeaurora.org> <1558449993-20902-1-git-send-email-jhugo@codeaurora.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v4 1/6] dt-bindings: clock: Document external clocks for MSM8998 gcc
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        marc.w.gonzalez@free.fr, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 06 Jun 2019 16:29:55 -0700
-Message-Id: <20190606232956.C742E20868@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606182940.F0D8C20872@mail.kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-05-21 07:46:33)
-> The global clock controller on MSM8998 can consume a number of external
-> clocks.  Document them.
->=20
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,gcc.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Docum=
-entation/devicetree/bindings/clock/qcom,gcc.txt
-> index 8661c3c..7d45323 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-> @@ -28,6 +28,16 @@ Required properties :
->  - #clock-cells : shall contain 1
->  - #reset-cells : shall contain 1
-> =20
-> +For MSM8998 only:
+On Thu, Jun 06, 2019 at 11:29:40AM -0700, Stephen Boyd wrote:
+> Quoting Abel Vesa (2019-05-29 05:26:38)
+> > Resend for the following:
+> > 
+> > https://lkml.org/lkml/2019/5/2/170
+> 
+> What's left after this series to convert over to clk_hw based APIs? I'm
+> happy to see this merge as long as we eventually delete the clk based
+> versions of the code in the imx driver so that we can complete the task.
+> 
+> I took a look over everything and nothing stuck out, so:
+> 
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> 
+> for the series.
 
-It would be nice to get the rest of the SoCs supported by this binding
-to start listing clocks. But this is OK for now.
+I just applied the series to my for-next branch, so that it can be
+pulled into linux-next for testing.
+
+Shawn
