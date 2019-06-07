@@ -2,145 +2,287 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8FCC2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 21:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2320EC2BCA1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 22:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B195E208E3
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 21:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7FC420868
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 22:00:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V80xuj+q"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="wHLgUC9U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730361AbfFGVe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 17:34:58 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34946 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729731AbfFGVe6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 17:34:58 -0400
-Received: by mail-it1-f194.google.com with SMTP id n189so4997618itd.0;
-        Fri, 07 Jun 2019 14:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VR7uEffq8NFspXFmnfI2T/BRI4sqmyVwOkT2yO1GgUU=;
-        b=V80xuj+qA9FL52VHgkyQS1flAc5YTEHbuFIgDBcI1xWdvUNYPSSyEyQj4EsIWS01To
-         d6p95jIvVqoRHUw4XymUEFIRp7+OkukqYH3DwPucje3kqvAmdx8TjjhY/u10PhkWrFNS
-         GDYoGF6ocuvxOFmhwUk4gg03wgeE4fkt1kIDRlaN9/+RzskIPWHJil0aEcJ0Wt8JOAyv
-         B6qNq7bUtYtWJs0GhgKaCdfpR3jVaAbZZmRscGW08c4EcqSaDNYxpCuf0PDM1xsI2yqw
-         UqdOHOIoavggXKUMhRc+IDDbpEfF5Xw7l7/iGmp/DXpXoIRIQVlVj3Xr86LTY8Ve+RYN
-         bxlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VR7uEffq8NFspXFmnfI2T/BRI4sqmyVwOkT2yO1GgUU=;
-        b=AO7sSHSO15lhm7Ltav84eLA7Cj8iQ9012VUP8wYEMTswMfoVGVcl+BAtrTaQydjXhe
-         tiaRXzCTMHhP9rGPvwUd/gj/C3tmCujk8unVvqpcfOrmxcUH3MVO2rW9GBkqEH+PHHyD
-         PoRumovoj8n/RJvXOGZT8zo+cAFWVe9LLAxNG+QnTRva53smmXDTYjQ0Z4oyVemneL+Q
-         50gKrSxXscFoA1x9uwo+s12ZlBvZrZt8XDUvhNdnAhrtLkYwZE1W/KO08RB6I88sUMFW
-         J87YnmQJSbXoemBOTBInZjiz+THPh0hDYrRifq2fkP14uENVu4B12v/ft8BC3b3EMYZv
-         +vdg==
-X-Gm-Message-State: APjAAAU2dHDE4CbSYybPcIoI4N1JfzyF7eEMV6EXtSGbFdgqkex87ZEX
-        alzD3YUGvFtQrKsEcJ7tUc/Nb4iQIoBhsFFkM7g=
-X-Google-Smtp-Source: APXvYqyKPbDa+FOTD+B7z0V4g6ihqV1/C/R2tv2LemPd1z+Ctld1YNgoIQ8KLjSSPOSnP3DowNrUTfhlIT12DEDD+js=
-X-Received: by 2002:a24:7289:: with SMTP id x131mr6287772itc.62.1559943297481;
- Fri, 07 Jun 2019 14:34:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190528164616.38517-1-jeffrey.l.hugo@gmail.com>
- <20190528164803.38642-1-jeffrey.l.hugo@gmail.com> <20190606230050.2F33720645@mail.kernel.org>
- <CAOCk7NqYptsLkYyfUCSvh0J0FZd_9gPDZJoyjB5Ng4v8aLFUNw@mail.gmail.com> <20190607203245.3AEA320868@mail.kernel.org>
-In-Reply-To: <20190607203245.3AEA320868@mail.kernel.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Fri, 7 Jun 2019 15:34:46 -0600
-Message-ID: <CAOCk7NqpTDOe39pAEkMC0eLAVDm-mHc_Xk1Sci8gMDyc6EgqLQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: qcom: Add MSM8998 GPU Clock Controller (GPUCC) driver
+        id S1730440AbfFGWAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 18:00:07 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:43656 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729577AbfFGWAH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 18:00:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1559944803; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AQnb5MU0eTlAbqICypbJU3QjjXkMomI8LkFXc6D9/gI=;
+        b=wHLgUC9Uc0HVEIp4xayu9LNWKq3CBXZiBZEk9OaIFTwceB727iXzlZScQDW9N2VKYIB6vs
+        dQuGw9Fw+J9dUJ62mKkCNGMzTxKymtIhPHaepGmDuP4rlp6TfWj+4gL3C6J32hVq7/jSJt
+        nvmsbyuTAAm3zeNTuZnYLjjPl03rM8Y=
+Date:   Fri, 07 Jun 2019 23:59:54 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v12 05/13] clk: ingenic: Add driver for the TCU clocks
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me
+Message-Id: <1559944794.11351.0@crapouillou.net>
+In-Reply-To: <20190607212819.A5FAE208C3@mail.kernel.org>
+References: <20190521145141.9813-1-paul@crapouillou.net>
+        <20190521145141.9813-6-paul@crapouillou.net>
+        <20190607212819.A5FAE208C3@mail.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 2:32 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Jeffrey Hugo (2019-06-07 07:08:46)
-> >
-> > As you well know, XO is the root clock for pretty much everything on
-> > Qualcomm platforms.  We are trying to do things "properly" on 8998.
-> > We are planning on having rpmcc manage it (see my other series), and
->
-> I don't have the rpmcc series in my queue. I think it needs a resend?
+Hi Stephen, thanks for the review.
 
-See the "[PATCH v4 0/6] MSM8998 Multimedia Clock Controller" series.
+Le ven. 7 juin 2019 =E0 23:28, Stephen Boyd <sboyd@kernel.org> a =E9crit :
+> Quoting Paul Cercueil (2019-05-21 07:51:33)
+>>  diff --git a/drivers/clk/ingenic/Kconfig=20
+>> b/drivers/clk/ingenic/Kconfig
+>>  index 34dc0da79c39..434893133eb4 100644
+>>  --- a/drivers/clk/ingenic/Kconfig
+>>  +++ b/drivers/clk/ingenic/Kconfig
+>>  @@ -1,4 +1,4 @@
+>>  -menu "Ingenic JZ47xx CGU drivers"
+>>  +menu "Ingenic JZ47xx drivers"
+>>          depends on MIPS
+>>=20
+>>   config INGENIC_CGU_COMMON
+>>  @@ -44,4 +44,13 @@ config INGENIC_CGU_JZ4780
+>>=20
+>>            If building for a JZ4780 SoC, you want to say Y here.
+>>=20
+>>  +config INGENIC_TCU_CLK
+>>  +       bool "Ingenic JZ47xx TCU clocks driver"
+>>  +       default MACH_INGENIC
+>>  +       depends on COMMON_CLK
+>=20
+> Does the INGENIC_TCU_CLK config even exist if COMMON_CLK is disabled?=20
+> I
+> suspect it's all part of the menuconfig so this depends is not useful?
 
->
-> > all the other components consume xo from there.  Unfortunately we
-> > cannot control the probe order, particularly when things are built as
-> > modules, so its possible gpucc might be the first thing to probe.
-> > Currently, the clock framework will allow that since everything in
-> > gpucc will just be an orphan.  However that doesn't prevent gpucc
-> > consumers from grabbing their clocks, and we've seen that cause
-> > issues.
-> >
-> > As you've previously explained, you have a ton of work to do to
-> > refactor things so that a clock will probe defer if its dependencies
-> > are not present.  We'd prefer that functionality, but are not really
-> > willing to wait for it.  Thus, we are implementing the same
-> > functionality in the driver until the framework handles it for us, at
-> > which point we'll gladly rip this out.
->
-> Can you add more to the comment? Right now it doesn't explain the _why_
-> part that you describe in the first paragraph here. That's what I'm
-> asking to be put here as a comment. Also, GCC is the one exporting the
-> XO clk on this platform so I'm a little lost why we're talking about rpm
-> here.
+Right, it can be dropped.
 
-Oh, I see, you wanted the comment expanded.  Sorry I didn't understand
-that earlier.  Will do.
+>>  +       select INGENIC_TCU
+>>  +       help
+>>  +         Support the clocks of the Timer/Counter Unit (TCU) of the=20
+>> Ingenic
+>>  +         JZ47xx SoCs.
+>>  +
+>>   endmenu
+>>  diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+>>  new file mode 100644
+>>  index 000000000000..7249225a6994
+>>  --- /dev/null
+>>  +++ b/drivers/clk/ingenic/tcu.c
+>>  @@ -0,0 +1,458 @@
+>>  +// SPDX-License-Identifier: GPL-2.0
+>>  +/*
+>>  + * JZ47xx SoCs TCU clocks driver
+>>  + * Copyright (C) 2019 Paul Cercueil <paul@crapouillou.net>
+>>  + */
+>>  +
+>>  +#include <linux/clk.h>
+>>  +#include <linux/clk-provider.h>
+>>  +#include <linux/clkdev.h>
+>>  +#include <linux/clockchips.h>
+>>  +#include <linux/mfd/ingenic-tcu.h>
+>>  +#include <linux/regmap.h>
+>>  +
+>>  +#include <dt-bindings/clock/ingenic,tcu.h>
+>>  +
+>>  +/* 8 channels max + watchdog + OST */
+>>  +#define TCU_CLK_COUNT  10
+>>  +
+>>  +#define TCU_ERR(...) pr_crit("ingenic-tcu-clk: " __VA_ARGS__)
+>=20
+> Why is it pr_crit instead of pr_err()?
 
->
-> I guess I'm left to do the ton of work myself and get to have clk
-> providers like this be clk consumers so that probe ordering is correct
-> and clks aren't exposed until the whole parent chain exists. This is
-> taking a step backwards and causes me to be sad.
+If the TCU timer clocks are not provided for any reason, the system
+will have no timer, and the kernel will hang very early in the init
+process. That's why I chose pr_crit().
 
-I'll take a second look at the list of tasks you outlined, but what I
-recall was that most of them went over my head, so I wasn't really
-confident in poking my nose in there.
+>>  +
+>>  +enum tcu_clk_parent {
+>>  +       TCU_PARENT_PCLK,
+>>  +       TCU_PARENT_RTC,
+>>  +       TCU_PARENT_EXT,
+>>  +};
+>>  +
+> [...]
+>>  +
+>>  +static int __init ingenic_tcu_register_clock(struct ingenic_tcu=20
+>> *tcu,
+>>  +                       unsigned int idx, enum tcu_clk_parent=20
+>> parent,
+>>  +                       const struct ingenic_tcu_clk_info *info,
+>>  +                       struct clk_hw_onecell_data *clocks)
+>>  +{
+>>  +       struct ingenic_tcu_clk *tcu_clk;
+>>  +       int err;
+>>  +
+>>  +       tcu_clk =3D kzalloc(sizeof(*tcu_clk), GFP_KERNEL);
+>>  +       if (!tcu_clk)
+>>  +               return -ENOMEM;
+>>  +
+>>  +       tcu_clk->hw.init =3D &info->init_data;
+>>  +       tcu_clk->idx =3D idx;
+>>  +       tcu_clk->info =3D info;
+>>  +       tcu_clk->tcu =3D tcu;
+>>  +
+>>  +       /* Reset channel and clock divider, set default parent */
+>>  +       ingenic_tcu_enable_regs(&tcu_clk->hw);
+>>  +       regmap_update_bits(tcu->map, info->tcsr_reg, 0xffff,=20
+>> BIT(parent));
+>>  +       ingenic_tcu_disable_regs(&tcu_clk->hw);
+>>  +
+>>  +       err =3D clk_hw_register(NULL, &tcu_clk->hw);
+>>  +       if (err)
+>>  +               goto err_free_tcu_clk;
+>>  +
+>>  +       err =3D clk_hw_register_clkdev(&tcu_clk->hw,=20
+>> info->init_data.name, NULL);
+>=20
+> Do you have a use for clkdev? If DT lookups work just as well it would
+> be better to skip clkdev registration.
 
->
-> >
-> > >
-> > > > +       if (IS_ERR(xo))
-> > > > +               return PTR_ERR(xo);
-> > > > +       clk_put(xo);
-> > > > +
-> > > > +       regmap = qcom_cc_map(pdev, &gpucc_msm8998_desc);
-> > > > +       if (IS_ERR(regmap))
-> > > > +               return PTR_ERR(regmap);
-> > > > +
-> > > > +       /* force periph logic on to acoid perf counter corruption */
-> > >
-> > > avoid?
-> >
-> > Yes.  Do you want a v3 with this fixed?
->
-> Yes, please resend without the binding patch that I've already applied.
->
+OK.
 
-Will do.
+>>  +       if (err)
+>>  +               goto err_clk_unregister;
+>>  +
+>>  +       clocks->hws[idx] =3D &tcu_clk->hw;
+>>  +
+>>  +       return 0;
+>>  +
+>>  +err_clk_unregister:
+>>  +       clk_hw_unregister(&tcu_clk->hw);
+>>  +err_free_tcu_clk:
+>>  +       kfree(tcu_clk);
+>>  +       return err;
+>>  +}
+>>  +
+>>  +static const struct ingenic_soc_info jz4740_soc_info =3D {
+>>  +       .num_channels =3D 8,
+>>  +       .has_ost =3D false,
+>>  +       .has_tcu_clk =3D true,
+>>  +};
+>>  +
+>>  +static const struct ingenic_soc_info jz4725b_soc_info =3D {
+>>  +       .num_channels =3D 6,
+>>  +       .has_ost =3D true,
+>>  +       .has_tcu_clk =3D true,
+>>  +};
+>>  +
+>>  +static const struct ingenic_soc_info jz4770_soc_info =3D {
+>>  +       .num_channels =3D 8,
+>>  +       .has_ost =3D true,
+>>  +       .has_tcu_clk =3D false,
+>>  +};
+>>  +
+>>  +static const struct of_device_id ingenic_tcu_of_match[]=20
+>> __initconst =3D {
+>>  +       { .compatible =3D "ingenic,jz4740-tcu", .data =3D=20
+>> &jz4740_soc_info, },
+>>  +       { .compatible =3D "ingenic,jz4725b-tcu", .data =3D=20
+>> &jz4725b_soc_info, },
+>>  +       { .compatible =3D "ingenic,jz4770-tcu", .data =3D=20
+>> &jz4770_soc_info, },
+>>  +       { }
+>>  +};
+>>  +
+>>  +static int __init ingenic_tcu_probe(struct device_node *np)
+>>  +{
+>>  +       const struct of_device_id *id =3D=20
+>> of_match_node(ingenic_tcu_of_match, np);
+>>  +       struct ingenic_tcu *tcu;
+>>  +       struct regmap *map;
+>>  +       unsigned int i;
+>>  +       int ret;
+>>  +
+>>  +       map =3D ingenic_tcu_get_regmap(np);
+>>  +       if (IS_ERR(map))
+>>  +               return PTR_ERR(map);
+>>  +
+>>  +       tcu =3D kzalloc(sizeof(*tcu), GFP_KERNEL);
+>>  +       if (!tcu)
+>>  +               return -ENOMEM;
+>>  +
+>>  +       tcu->map =3D map;
+>>  +       tcu->soc_info =3D id->data;
+>>  +
+>>  +       if (tcu->soc_info->has_tcu_clk) {
+>>  +               tcu->clk =3D of_clk_get_by_name(np, "tcu");
+>=20
+> Is this clk necessary to read/write registers in this clk driver? And
+> this clk isn't the parent of the clks? Why is it managed by Linux at
+> all? Will there be a time when it's turned off?
+
+For the SoCs which have the "tcu" clock, it has to be enabled for the
+registers to be accessible, yes. And as you noticed, it is not the
+parent of the timer clocks.
+
+The "tcu" clock can be turned off during suspend, for instance.
+
+> I'm asking because it looks like we're calling clk APIs from within=20
+> clk
+> provider implementation. That works right now because of our locking
+> scheme, but this will put up another roadblock to making the prepare=20
+> and
+> enable locks not recursive. I've seen some drivers take an approach of
+> enabling the clk when the provider is PM runtime active, and disable=20
+> the
+> clk when the provider is runtime PM inactive. This gets it out of the
+> provider path and into the runtime PM path. If you take that approach
+> then when we move the runtime PM code in clk core outside of the=20
+> prepare
+> lock we should be able to avoid any recursive locking scenarios.
+
+Most of the code here works without a struct device, it wouldn't be=20
+easy to
+get it to work with runtime PM.
+
+I can enable the "tcu" clock in the probe and just gate/ungate it in the
+suspend/resume callbacks, that would work just fine. We don't need=20
+anything
+fancy here.
+
+>>  +               if (IS_ERR(tcu->clk)) {
+>>  +                       ret =3D PTR_ERR(tcu->clk);
+>>  +                       TCU_ERR("Cannot get TCU clock\n");
+>>  +                       goto err_free_tcu;
+>>  +               }
+>>  +
+
+=
+
