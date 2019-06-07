@@ -2,124 +2,139 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DC6C2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 12:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB69DC2BCA1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 14:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA0A20B7C
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 12:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E3F220B7C
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 14:08:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vd9U2BVx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oZzuXtFm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfFGMHa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 08:07:30 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43007 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfFGMHa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 08:07:30 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x17so1902036wrl.9;
-        Fri, 07 Jun 2019 05:07:28 -0700 (PDT)
+        id S1728199AbfFGOI5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 10:08:57 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35578 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727840AbfFGOI5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 10:08:57 -0400
+Received: by mail-io1-f68.google.com with SMTP id m24so1514512ioo.2;
+        Fri, 07 Jun 2019 07:08:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/OaEJfBR0xsC2fNRDUtUonZ/nH//Pb0hepbkfyw3/RI=;
-        b=Vd9U2BVxBdN4mlMul4jehfdsI+khyQ8bNYC+PbZUd+MLkJldq0QvPqlw67/TBgEj9a
-         YisCswUD8lyWjT+ne+NbBXnB0880+Q22bXGI2ydtUN9nduFOqOQ/jbTnnVUPzTmcwn7h
-         hCVLa+O8KOLJmFRB8X6lYdlYhQNDnwMLoE8hzkhT+SkuSzmxRDkQoAbJvOBvmx27pg/f
-         4WMav4+lrDRJnm/4dY9Sy1iLFnHWD+EwvWTMNrMXpyI0a6dWYI415XEBdVEeciUzBgfu
-         Y9nuI3HvDTAir5TfDv7sTbHd9bJlKcm3F9cWjGcw7DAPTEkhyJR8PANVX06uYpYwVOLM
-         j5LA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pCTc9jsipUoi63VdTLHDq+J3b8osAzXSjDn0slmiFY4=;
+        b=oZzuXtFmut9n4jR87BPzOqCINKRM9d9nSOlA6LqyRGYVMnHoDIUSN9iFKe90wej7tj
+         ER264ZUFfBAIEY7euu1cZrEfDEYSPp1k0fUGak9xE4t3kiVlffd9gM6ifqgbIsLm0wQT
+         EXMSkFJAQxgYbX4a/bNoZiaxCcIzhpCcFC8l4ydxf7k4krU3sb05f4qZAtfeb5dsW+Zk
+         UkTV30CxUjgiJghfILJ3nDVUnr8+55ZF3+0gu1qLivvcLNjC6yfjL8nf5lmjjlwcneqQ
+         2xWGjRySqeiw2Gd4OVJpRzLJQ9KmFmZV4xJTMWPDTp4DspPpPCbJWx3pjTe8ZxPlb6QB
+         Rjlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/OaEJfBR0xsC2fNRDUtUonZ/nH//Pb0hepbkfyw3/RI=;
-        b=Sf0GXxoLInMTiiMEqTzgNteUa80VdkoXd+IQBRbp092v1uoP4lydQeYW1Ongzi2wpA
-         Wl/NXWwbA+Vl/nvTsDqH0Y9lqbtpLXVOMeQwpeLCFyZJdmkQuIslq8ezuMJQaKJ379zK
-         35MM7zlnvEeD0mlPvKcVDp6cqJxPr0VcS4gKhM0Y4N8GpIM7glr1qbroRVE39SgxAkw3
-         SnafJjZXljo6M2U6X+B0kvbmq7YR0NXYAZno4v8EnspPbSj2cfugNKbZ169/JBxg1GUX
-         tztRgjc6vE0VJ02oioSSQBmvT+Mn01JHJa8GII97RMdtXvo4kGsY90uGtoGcftwYKnm4
-         XYEw==
-X-Gm-Message-State: APjAAAWwyFVaoA3VrDksDwNl6xzGjppZQRj+9dW74pm7AcbHASTHsuvF
-        giKkFzvIxDZ7lhoYuhQ9DMA=
-X-Google-Smtp-Source: APXvYqzK/mt+UcZm1I3NP7PZiM+wVGTONiRjzP3kZpRLqca6N+PZrk2C6d/t/Ahk4y5O/JMEvU7JqA==
-X-Received: by 2002:adf:de8b:: with SMTP id w11mr9424156wrl.134.1559909248247;
-        Fri, 07 Jun 2019 05:07:28 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([108.61.173.19])
-        by smtp.gmail.com with ESMTPSA id o3sm1543243wrv.94.2019.06.07.05.07.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 05:07:27 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 20:07:17 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
-Message-ID: <20190607120717.GA3109@zhanggen-UX430UQ>
-References: <20190531011424.GA4374@zhanggen-UX430UQ>
- <eb8e2d33-e8f7-93a5-c8bc-98731c0d63b6@suse.cz>
- <20190605160043.GA4351@zhanggen-UX430UQ>
- <20190606201646.B4CC4206BB@mail.kernel.org>
- <20190607015258.GA2660@zhanggen-UX430UQ>
- <e5b4639b-3077-59bb-6383-0c2bccdd9191@suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pCTc9jsipUoi63VdTLHDq+J3b8osAzXSjDn0slmiFY4=;
+        b=pOoJ/nFaKP1jDW2JnG66Uta608iDW3JQ+2mrdW8dyqrF+zyaiqeLZs+cSUfCgAQUbC
+         B2CfQEB1J+gYr7iMlwpzSNXERJyBo/uaqwMsjft114YVmMla97tszl79VP/QTzqP7Suw
+         uytPWnubjPpW577vWGBwjQgawFmRNBQdSm+c8+ExyYEUP8Nsth7fX47dba7SXguQwpLi
+         uO4axy8FIS4UmXjEZN+2Qcz1s/boCqEXkj26jwvGTGPJEG9keG8RoGl6/NaRk0T48jim
+         1PCK+yFZCVLnpx4r0DMJ1kDEUCENenvuDtS0tHhtymovlAiS1qKAnlL7+5FcrhB1RMca
+         soFw==
+X-Gm-Message-State: APjAAAUwLzxOpMYkCCYGBhoWYDiltf2Yf2AHvdvTRRayF0xWuYfVgrDb
+        0nVoQcEHFumWsd1g7+itEW95EaE36PLZcoyFLYc=
+X-Google-Smtp-Source: APXvYqwbSPhjuuMf9/v2tEx2rOUvzTVYr08r5T2FJscY80vogA7xlSoSgNUAMJ8dWw2gCLnxFBofO3r6QgiBpUMMqxE=
+X-Received: by 2002:a05:6602:2001:: with SMTP id y1mr15641346iod.166.1559916536908;
+ Fri, 07 Jun 2019 07:08:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5b4639b-3077-59bb-6383-0c2bccdd9191@suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190528164616.38517-1-jeffrey.l.hugo@gmail.com>
+ <20190528164803.38642-1-jeffrey.l.hugo@gmail.com> <20190606230050.2F33720645@mail.kernel.org>
+In-Reply-To: <20190606230050.2F33720645@mail.kernel.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Fri, 7 Jun 2019 08:08:46 -0600
+Message-ID: <CAOCk7NqYptsLkYyfUCSvh0J0FZd_9gPDZJoyjB5Ng4v8aLFUNw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: qcom: Add MSM8998 GPU Clock Controller (GPUCC) driver
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 11:10:37AM +0200, Jiri Slaby wrote:
-> On 07. 06. 19, 3:52, Gen Zhang wrote:
-> >>>>> @@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct clk_core *core)
-> >>>>>                             kfree_const(parents[i].name);
-> >>>>>                             kfree_const(parents[i].fw_name);
-> >>>>>                     } while (--i >= 0);
-> >>>>> +                   kfree_const(parent->name);
-> >>>>> +                   kfree_const(parent->fw_name);
-> >>>>
-> >>>> Both of them were just freed in the loop above, no?
-> >>> for (i = 0, parent = parents; i < num_parents; i++, parent++)
-> >>> Is 'parent' the same as the one from the loop above?
-> >>
-> >> Yes. Did it change somehow?
-> > parent++?
-> 
-> parent++ is done after the loop body. Or what do you mean?
-> 
-> >>> Moreover, should 'parents[i].name' and 'parents[i].fw_name' be freed by
-> >>> kfree_const()?
-> >>>
-> >>
-> >> Yes? They're allocated with kstrdup_const() in clk_cpy_name(), or
-> >> they're NULL by virtue of the kcalloc and then kfree_const() does
-> >> nothing.
-> > I re-examined clk_cpy_name(). They are the second parameter of 
-> > clk_cpy_name(). The first parameter is allocated, not the second one.
-> > So 'parent->name' and 'parent->fw_name' should be freed, not 
-> > 'parents[i].name' or 'parents[i].fw_name'. Am I totally misunderstanding
-> > this clk_cpy_name()? :-(
-> 
-> The second parameter (the source) is parent_data[i].*, not parents[i].*
-> (the destination). parent->fw_name and parent->name are properly freed
-> in the do {} while loop as parents[i].name and parents[i].fw_name, given
-> i hasn't changed yet. I am not sure what you mean at all. Are you
-> uncertain about the C code flow?
-> 
-> thanks,
-> -- 
-> js
-> suse labs
-Thanks your patient explainaton. I think I need some time to figure out
-this part of code.
+On Thu, Jun 6, 2019 at 5:00 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Jeffrey Hugo (2019-05-28 09:48:03)
+> > diff --git a/drivers/clk/qcom/gpucc-msm8998.c b/drivers/clk/qcom/gpucc-msm8998.c
+> > new file mode 100644
+> > index 000000000000..e45062e40718
+> > --- /dev/null
+> > +++ b/drivers/clk/qcom/gpucc-msm8998.c
+> > +
+> > +static int gpucc_msm8998_probe(struct platform_device *pdev)
+> > +{
+> > +       struct regmap *regmap;
+> > +       struct clk *xo;
+> > +
+> > +       /*
+> > +        * We must have a valid XO to continue until orphan probe defer is
+> > +        * implemented.
+> > +        */
+> > +       xo = clk_get(&pdev->dev, "xo");
+>
+> Why is this necessary?
 
-Thanks
-Gen
+As you well know, XO is the root clock for pretty much everything on
+Qualcomm platforms.  We are trying to do things "properly" on 8998.
+We are planning on having rpmcc manage it (see my other series), and
+all the other components consume xo from there.  Unfortunately we
+cannot control the probe order, particularly when things are built as
+modules, so its possible gpucc might be the first thing to probe.
+Currently, the clock framework will allow that since everything in
+gpucc will just be an orphan.  However that doesn't prevent gpucc
+consumers from grabbing their clocks, and we've seen that cause
+issues.
+
+As you've previously explained, you have a ton of work to do to
+refactor things so that a clock will probe defer if its dependencies
+are not present.  We'd prefer that functionality, but are not really
+willing to wait for it.  Thus, we are implementing the same
+functionality in the driver until the framework handles it for us, at
+which point we'll gladly rip this out.
+
+>
+> > +       if (IS_ERR(xo))
+> > +               return PTR_ERR(xo);
+> > +       clk_put(xo);
+> > +
+> > +       regmap = qcom_cc_map(pdev, &gpucc_msm8998_desc);
+> > +       if (IS_ERR(regmap))
+> > +               return PTR_ERR(regmap);
+> > +
+> > +       /* force periph logic on to acoid perf counter corruption */
+>
+> avoid?
+
+Yes.  Do you want a v3 with this fixed?
+
+>
+> > +       regmap_write_bits(regmap, gfx3d_clk.clkr.enable_reg, BIT(13), BIT(13));
+> > +       /* tweak droop detector (GPUCC_GPU_DD_WRAP_CTRL) to reduce leakage */
+> > +       regmap_write_bits(regmap, gfx3d_clk.clkr.enable_reg, BIT(0), BIT(0));
+> > +
+> > +       return qcom_cc_really_probe(pdev, &gpucc_msm8998_desc, regmap);
+> > +}
+> > +
