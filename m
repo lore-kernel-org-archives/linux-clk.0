@@ -2,139 +2,139 @@ Return-Path: <SRS0=Ii/d=UG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB69DC2BCA1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 14:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F07EC2BCA1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 14:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E3F220B7C
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 14:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD62212F5
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jun 2019 14:35:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oZzuXtFm"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Kzfzx5/K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfFGOI5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jun 2019 10:08:57 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35578 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727840AbfFGOI5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 10:08:57 -0400
-Received: by mail-io1-f68.google.com with SMTP id m24so1514512ioo.2;
-        Fri, 07 Jun 2019 07:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pCTc9jsipUoi63VdTLHDq+J3b8osAzXSjDn0slmiFY4=;
-        b=oZzuXtFmut9n4jR87BPzOqCINKRM9d9nSOlA6LqyRGYVMnHoDIUSN9iFKe90wej7tj
-         ER264ZUFfBAIEY7euu1cZrEfDEYSPp1k0fUGak9xE4t3kiVlffd9gM6ifqgbIsLm0wQT
-         EXMSkFJAQxgYbX4a/bNoZiaxCcIzhpCcFC8l4ydxf7k4krU3sb05f4qZAtfeb5dsW+Zk
-         UkTV30CxUjgiJghfILJ3nDVUnr8+55ZF3+0gu1qLivvcLNjC6yfjL8nf5lmjjlwcneqQ
-         2xWGjRySqeiw2Gd4OVJpRzLJQ9KmFmZV4xJTMWPDTp4DspPpPCbJWx3pjTe8ZxPlb6QB
-         Rjlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pCTc9jsipUoi63VdTLHDq+J3b8osAzXSjDn0slmiFY4=;
-        b=pOoJ/nFaKP1jDW2JnG66Uta608iDW3JQ+2mrdW8dyqrF+zyaiqeLZs+cSUfCgAQUbC
-         B2CfQEB1J+gYr7iMlwpzSNXERJyBo/uaqwMsjft114YVmMla97tszl79VP/QTzqP7Suw
-         uytPWnubjPpW577vWGBwjQgawFmRNBQdSm+c8+ExyYEUP8Nsth7fX47dba7SXguQwpLi
-         uO4axy8FIS4UmXjEZN+2Qcz1s/boCqEXkj26jwvGTGPJEG9keG8RoGl6/NaRk0T48jim
-         1PCK+yFZCVLnpx4r0DMJ1kDEUCENenvuDtS0tHhtymovlAiS1qKAnlL7+5FcrhB1RMca
-         soFw==
-X-Gm-Message-State: APjAAAUwLzxOpMYkCCYGBhoWYDiltf2Yf2AHvdvTRRayF0xWuYfVgrDb
-        0nVoQcEHFumWsd1g7+itEW95EaE36PLZcoyFLYc=
-X-Google-Smtp-Source: APXvYqwbSPhjuuMf9/v2tEx2rOUvzTVYr08r5T2FJscY80vogA7xlSoSgNUAMJ8dWw2gCLnxFBofO3r6QgiBpUMMqxE=
-X-Received: by 2002:a05:6602:2001:: with SMTP id y1mr15641346iod.166.1559916536908;
- Fri, 07 Jun 2019 07:08:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190528164616.38517-1-jeffrey.l.hugo@gmail.com>
- <20190528164803.38642-1-jeffrey.l.hugo@gmail.com> <20190606230050.2F33720645@mail.kernel.org>
-In-Reply-To: <20190606230050.2F33720645@mail.kernel.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Fri, 7 Jun 2019 08:08:46 -0600
-Message-ID: <CAOCk7NqYptsLkYyfUCSvh0J0FZd_9gPDZJoyjB5Ng4v8aLFUNw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: qcom: Add MSM8998 GPU Clock Controller (GPUCC) driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729222AbfFGOfs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jun 2019 10:35:48 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40430 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729582AbfFGOfj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jun 2019 10:35:39 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190607143537euoutp02f070585f24cbf611beeef6d1aa130aaf~l8UgY1VxP0257302573euoutp02V
+        for <linux-clk@vger.kernel.org>; Fri,  7 Jun 2019 14:35:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190607143537euoutp02f070585f24cbf611beeef6d1aa130aaf~l8UgY1VxP0257302573euoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559918137;
+        bh=Rv+G7xRM5W0qIJMO/1XEZpXdtXED3pTULKiTBpTxK9M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Kzfzx5/Kc6y0H0tBLJjCHxQ15qIYWq17ynlS5qUG4j7jTPFTtoI4U6H0sXIkKcKp8
+         gGAf2SQ84tkg27Kes/Kp6YOmONbEBphzN/vFTS0ix5zm8L8kPayXi/r6oKsoim1/Gv
+         qpdVi3WsMnM9lSNjjebE+bE0Q2ZE9u7zFiba2b6E=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190607143537eucas1p1d4078ed500ef168bce00f1b7bf4f12c4~l8UfulZtU1838418384eucas1p1H;
+        Fri,  7 Jun 2019 14:35:37 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 14.B3.04298.8367AFC5; Fri,  7
+        Jun 2019 15:35:36 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190607143536eucas1p2192a9061b835502ada88262ef427ce8a~l8Ue33_As2698526985eucas1p2q;
+        Fri,  7 Jun 2019 14:35:36 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190607143536eusmtrp16f054f06c43cb13eaba0140ebba26a00~l8UeoNpxL1284512845eusmtrp1j;
+        Fri,  7 Jun 2019 14:35:36 +0000 (GMT)
+X-AuditID: cbfec7f2-f13ff700000010ca-99-5cfa76382cb8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A0.D0.04140.7367AFC5; Fri,  7
+        Jun 2019 15:35:35 +0100 (BST)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190607143535eusmtip18e3f7879766c3a862c64d0d0f3ba6c69~l8UdsELSJ2929529295eusmtip1E;
+        Fri,  7 Jun 2019 14:35:34 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        cw00.choi@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com,
+        jroedel@suse.de, treding@nvidia.com, digetx@gmail.com,
+        gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH v9 13/13] ARM: exynos_defconfig: enable DMC driver
+Date:   Fri,  7 Jun 2019 16:35:07 +0200
+Message-Id: <20190607143507.30286-14-l.luba@partner.samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190607143507.30286-1-l.luba@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSWUxTQRSGnd4VtORaUSZupE1I1ChIADO4r+FGXyA+GBGjBa+lgYL2Ql3w
+        oUoUi1SMLKJAQNGgBYPWWsEQwEpEQCmLkU0UxASRRRAwolhse6u+/fOf7585Z2ZoTNJLLKaV
+        cQmcOk4eKyPdcfOL6aY1SPMzYu2YMQg9zCkjUPvkAIEKapsIVDLeD1ByURmJMhryRejVJRVK
+        7x/CkNX6gEKvzw1TqEu7FI2nvSdQ29M8Ek3oawHKsVaJ0P3aHgq1NOxC3Wfvkuj5cAqBbG8f
+        4qj6zW7U/csDfX/5EWz1Yr9PXcXZrx3nKTZX24KzFTd6KNZo0JFsdX4pxeqTR0n22WiliL1s
+        MgD2UWMSO2FcHjo33H3jES5WqeHUfpsPu0ebGyrJY2PEyanrnbgWZBOpwI2GTCDUp7TiqcCd
+        ljB3AcxKbiaFxSSA41mzrsoEgI+sXfYI7Yz0W6WOtIQpBtB8J/hf4N4bM+VgSMYXlhuOOxhP
+        JgfA3M97HQzGPMHgSPc74CgsYLbD4pIBzKFxxgemzOY4fTGzFX6ZnQZCe96w5EGNk3Gz+7nm
+        cmd3kNHTsL7S5JphJ9S3WClBL4Bf6kwuvRQ2ZqThguahVn/TtekZ2J+e72I2wOd1Lc7BMGYl
+        LHvqJ9jbYLL2l2teD9gxMt9hY3Z51XwNE2wxvHhBItAroCmtWSToRbC4NJsSEBZm2qKE28kA
+        cKjwgugK8L7x/6xCAAzAi0vkVQqO94/jTvjychWfGKfwjYpXGYH93zXa6r6Vg6nWSAtgaCCb
+        J2ap6QgJIdfwp1QWAGlM5inWNP+IkIiPyE+d5tTxh9SJsRxvAUtoXOYlTprTe0DCKOQJXAzH
+        HePUf6si2m2xFsRL9/3+FD6k3DI5GHZ+jWSMMLJhSXJ/qf05TOqM0JlNP3XS+ABYpAs8G9ge
+        Yjxom11ZnW6wcKtDIrsvznyQBvWheTsq9t/X+NRk7jnZUdN3VBcckP+4oLOqfszjtmqZUawc
+        XHhrS3Pewc21w7q2tqnsmHVmTpGnezyzPtNm6JThfLTcfxWm5uV/AFZEY71zAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsVy+t/xu7rmZb9iDJZMs7LYOGM9q8X1L89Z
+        LeYfOcdqsfrjY0aL5sXr2Swmn5rLZHGmO9ei//FrZovz5zewW5xtesNucatBxuJjzz1Wi8u7
+        5rBZfO49wmgx4/w+Jou1R+6yW1w85Wpxu3EFm8XhN+2sFv+ubWSx2H/Fy+L2bz6LbyceMTqI
+        e3z7OonF4/2NVnaP2Q0XWTx2zrrL7rFpVSebx/65a9g9epvfsXkcfLeHyaNvyypGj82nqz0+
+        b5IL4I7SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQ
+        y9h2ag9bwQfWiq8zb7I0ME5j7WLk4JAQMJF4fF6xi5GLQ0hgKaPE6lP7gOKcQHExiUn7trND
+        2MISf651sUEUfWKU6Gz6xgjSzCagJ7FjVSFIXERgDqPEz65tjCAOs8BZZondK94wgXQLCzhJ
+        LF/9nBnEZhFQlWj/P4MRxOYVcJB49f8nI8QGeYnVGw6A1XACxWdv28EGskBIwF5i1XOHCYx8
+        CxgZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgTG4LZjP7fsYOx6F3yIUYCDUYmHdwbTzxgh
+        1sSy4srcQ4wSHMxKIrxlF37ECPGmJFZWpRblxxeV5qQWH2I0BbppIrOUaHI+MD3klcQbmhqa
+        W1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLpY+LglGpgNBCfsqLHa/+vThku58qpubs/
+        zpKO/eu7cVXVsspHm1bOKlWb/WJ51VndmBlV8nyG/mFrfwVtCU2SO255XvWt+AzVC69PtGbz
+        Bljd2fp+bdvWT6UmLjUb/iUl/rkx7cqZ+nulJUqXapLVgvy+lCk7CrQ3aHv+5zaa6qW8a7vD
+        anGRp4XrVxtFKLEUZyQaajEXFScCAHlofL3XAgAA
+X-CMS-MailID: 20190607143536eucas1p2192a9061b835502ada88262ef427ce8a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190607143536eucas1p2192a9061b835502ada88262ef427ce8a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190607143536eucas1p2192a9061b835502ada88262ef427ce8a
+References: <20190607143507.30286-1-l.luba@partner.samsung.com>
+        <CGME20190607143536eucas1p2192a9061b835502ada88262ef427ce8a@eucas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 5:00 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Jeffrey Hugo (2019-05-28 09:48:03)
-> > diff --git a/drivers/clk/qcom/gpucc-msm8998.c b/drivers/clk/qcom/gpucc-msm8998.c
-> > new file mode 100644
-> > index 000000000000..e45062e40718
-> > --- /dev/null
-> > +++ b/drivers/clk/qcom/gpucc-msm8998.c
-> > +
-> > +static int gpucc_msm8998_probe(struct platform_device *pdev)
-> > +{
-> > +       struct regmap *regmap;
-> > +       struct clk *xo;
-> > +
-> > +       /*
-> > +        * We must have a valid XO to continue until orphan probe defer is
-> > +        * implemented.
-> > +        */
-> > +       xo = clk_get(&pdev->dev, "xo");
->
-> Why is this necessary?
+Enable driver for Exynos5422 Dynamic Memory Controller supporting
+dynamic frequency and voltage scaling in Exynos5422 SoCs.
 
-As you well know, XO is the root clock for pretty much everything on
-Qualcomm platforms.  We are trying to do things "properly" on 8998.
-We are planning on having rpmcc manage it (see my other series), and
-all the other components consume xo from there.  Unfortunately we
-cannot control the probe order, particularly when things are built as
-modules, so its possible gpucc might be the first thing to probe.
-Currently, the clock framework will allow that since everything in
-gpucc will just be an orphan.  However that doesn't prevent gpucc
-consumers from grabbing their clocks, and we've seen that cause
-issues.
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-As you've previously explained, you have a ton of work to do to
-refactor things so that a clock will probe defer if its dependencies
-are not present.  We'd prefer that functionality, but are not really
-willing to wait for it.  Thus, we are implementing the same
-functionality in the driver until the framework handles it for us, at
-which point we'll gladly rip this out.
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index c95c54284da2..0cd16c924941 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -290,6 +290,7 @@ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+ CONFIG_DEVFREQ_GOV_POWERSAVE=y
+ CONFIG_DEVFREQ_GOV_USERSPACE=y
+ CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
++CONFIG_ARM_EXYNOS5422_DMC=y
+ CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
+ CONFIG_EXYNOS_IOMMU=y
+ CONFIG_EXTCON=y
+-- 
+2.17.1
 
->
-> > +       if (IS_ERR(xo))
-> > +               return PTR_ERR(xo);
-> > +       clk_put(xo);
-> > +
-> > +       regmap = qcom_cc_map(pdev, &gpucc_msm8998_desc);
-> > +       if (IS_ERR(regmap))
-> > +               return PTR_ERR(regmap);
-> > +
-> > +       /* force periph logic on to acoid perf counter corruption */
->
-> avoid?
-
-Yes.  Do you want a v3 with this fixed?
-
->
-> > +       regmap_write_bits(regmap, gfx3d_clk.clkr.enable_reg, BIT(13), BIT(13));
-> > +       /* tweak droop detector (GPUCC_GPU_DD_WRAP_CTRL) to reduce leakage */
-> > +       regmap_write_bits(regmap, gfx3d_clk.clkr.enable_reg, BIT(0), BIT(0));
-> > +
-> > +       return qcom_cc_really_probe(pdev, &gpucc_msm8998_desc, regmap);
-> > +}
-> > +
