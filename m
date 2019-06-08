@@ -2,156 +2,112 @@ Return-Path: <SRS0=ATvf=UH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 266CEC28CC5
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 10:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9F6C28CC5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 11:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF71B208E3
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 10:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F686214AF
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 11:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559994187;
+	bh=Xu0+t3OhrCS1y2hn65l4oChxMZzBDiH0Hf5geJGUV18=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=HsliW2Jtzvhx201q7O3bcumIsas+hbPMmxgtqIVzm12NtmJkbyVOkV5jhbeLCjqRV
+	 UQh0QblHgWcUCaEoOhDiDl0ydQt/B+WqSq+eOjr5+4E+1J1owj8noCcNHg3ASr4yMz
+	 b0Ry0elWoxkgptMXEENLmiGXTF89OCWIfneUNcug=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfFHK4p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Jun 2019 06:56:45 -0400
-Received: from sauhun.de ([88.99.104.3]:51774 "EHLO pokefinder.org"
+        id S1728623AbfFHLnG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Jun 2019 07:43:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbfFHK4p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Jun 2019 06:56:45 -0400
-Received: from localhost (p5486CBCC.dip0.t-ipconnect.de [84.134.203.204])
-        by pokefinder.org (Postfix) with ESMTPSA id D0A142C3637;
-        Sat,  8 Jun 2019 12:56:40 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH 00/34] treewide: simplify getting the adapter of an I2C client
-Date:   Sat,  8 Jun 2019 12:55:39 +0200
-Message-Id: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.19.1
+        id S1728105AbfFHLnF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Jun 2019 07:43:05 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D39D7214D8;
+        Sat,  8 Jun 2019 11:43:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559994184;
+        bh=Xu0+t3OhrCS1y2hn65l4oChxMZzBDiH0Hf5geJGUV18=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=t69oJ4QFXNgyqJyixxZR+ObNsjdROR4B+Q6aMZlpZgdsCkYvKpwvNi6aKrYeA3Edq
+         hl/4DHRjPcscqBtJxpLmkg5pcjjofN4W6alR8N5qbjhIWKwYdXTop85KLts4iqZiez
+         kxLhZq9kRv/xwDVGiCAMpjCRvPxr/C3gO4W//+BE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tony Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 08/49] clk: ti: clkctrl: Fix clkdm_clk handling
+Date:   Sat,  8 Jun 2019 07:41:49 -0400
+Message-Id: <20190608114232.8731-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190608114232.8731-1-sashal@kernel.org>
+References: <20190608114232.8731-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While preparing a refactoring series, I noticed that some drivers use a
-complicated way of determining the adapter of a client. The easy way is
-to use the intended pointer: client->adapter
+From: Tony Lindgren <tony@atomide.com>
 
-These drivers do:
-	to_i2c_adapter(client->dev.parent);
+[ Upstream commit 1cc54078d104f5b4d7e9f8d55362efa5a8daffdb ]
 
-The I2C core populates the parent pointer as:
-	client->dev.parent = &client->adapter->dev;
+We need to always call clkdm_clk_enable() and clkdm_clk_disable() even
+the clkctrl clock(s) enabled for the domain do not have any gate register
+bits. Otherwise clockdomains may never get enabled except when devices get
+probed with the legacy "ti,hwmods" devicetree property.
 
-Now take into consideration that
-	to_i2c_adapter(&adapter->dev);
+Fixes: 88a172526c32 ("clk: ti: add support for clkctrl clocks")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/ti/clkctrl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-is a complicated way of saying 'adapter', then we can even formally
-prove that the complicated expression can be simplified by using
-client->adapter.
-
-The conversion was done using a coccinelle script with some manual
-indentation fixes applied on top.
-
-To avoid a brown paper bag mistake, I double checked this on a Renesas
-Salvator-XS board (R-Car M3N) and verified both expression result in the
-same pointer. Other than that, the series is only build tested.
-
-A branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/no_to_adapter
-
-Please apply the patches to the individual subsystem trees. There are no
-dependencies.
-
-Thanks and kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (34):
-  clk: clk-cdce706: simplify getting the adapter of a client
-  gpu: drm: bridge: sii9234: simplify getting the adapter of a client
-  iio: light: bh1780: simplify getting the adapter of a client
-  leds: leds-pca955x: simplify getting the adapter of a client
-  leds: leds-tca6507: simplify getting the adapter of a client
-  media: i2c: ak881x: simplify getting the adapter of a client
-  media: i2c: mt9m001: simplify getting the adapter of a client
-  media: i2c: mt9m111: simplify getting the adapter of a client
-  media: i2c: mt9p031: simplify getting the adapter of a client
-  media: i2c: ov2640: simplify getting the adapter of a client
-  media: i2c: tw9910: simplify getting the adapter of a client
-  misc: fsa9480: simplify getting the adapter of a client
-  misc: isl29003: simplify getting the adapter of a client
-  misc: tsl2550: simplify getting the adapter of a client
-  mtd: maps: pismo: simplify getting the adapter of a client
-  power: supply: bq24190_charger: simplify getting the adapter of a client
-  power: supply: bq24257_charger: simplify getting the adapter of a client
-  power: supply: bq25890_charger: simplify getting the adapter of a client
-  power: supply: max14656_charger_detector: simplify getting the adapter
-    of a client
-  power: supply: max17040_battery: simplify getting the adapter of a client
-  power: supply: max17042_battery: simplify getting the adapter of a client
-  power: supply: rt5033_battery: simplify getting the adapter of a client
-  power: supply: rt9455_charger: simplify getting the adapter of a client
-  power: supply: sbs-manager: simplify getting the adapter of a client
-  regulator: max8952: simplify getting the adapter of a client
-  rtc: fm3130: simplify getting the adapter of a client
-  rtc: m41t80: simplify getting the adapter of a client
-  rtc: rv8803: simplify getting the adapter of a client
-  rtc: rx8010: simplify getting the adapter of a client
-  rtc: rx8025: simplify getting the adapter of a client
-  staging: media: soc_camera: imx074: simplify getting the adapter of a client
-  staging: media: soc_camera: mt9t031: simplify getting the adapter of a client
-  staging: media: soc_camera: soc_mt9v022: simplify getting the adapter
-    of a client
-  usb: typec: tcpm: fusb302: simplify getting the adapter of a client
-
- drivers/clk/clk-cdce706.c                        | 2 +-
- drivers/gpu/drm/bridge/sii9234.c                 | 4 ++--
- drivers/iio/light/bh1780.c                       | 2 +-
- drivers/leds/leds-pca955x.c                      | 2 +-
- drivers/leds/leds-tca6507.c                      | 2 +-
- drivers/media/i2c/ak881x.c                       | 2 +-
- drivers/media/i2c/mt9m001.c                      | 2 +-
- drivers/media/i2c/mt9m111.c                      | 2 +-
- drivers/media/i2c/mt9p031.c                      | 2 +-
- drivers/media/i2c/ov2640.c                       | 2 +-
- drivers/media/i2c/tw9910.c                       | 3 +--
- drivers/misc/fsa9480.c                           | 2 +-
- drivers/misc/isl29003.c                          | 2 +-
- drivers/misc/tsl2550.c                           | 2 +-
- drivers/mtd/maps/pismo.c                         | 2 +-
- drivers/power/supply/bq24190_charger.c           | 2 +-
- drivers/power/supply/bq24257_charger.c           | 2 +-
- drivers/power/supply/bq25890_charger.c           | 2 +-
- drivers/power/supply/max14656_charger_detector.c | 2 +-
- drivers/power/supply/max17040_battery.c          | 2 +-
- drivers/power/supply/max17042_battery.c          | 2 +-
- drivers/power/supply/rt5033_battery.c            | 2 +-
- drivers/power/supply/rt9455_charger.c            | 2 +-
- drivers/power/supply/sbs-manager.c               | 2 +-
- drivers/regulator/max8952.c                      | 2 +-
- drivers/rtc/rtc-fm3130.c                         | 8 +++-----
- drivers/rtc/rtc-m41t80.c                         | 2 +-
- drivers/rtc/rtc-rv8803.c                         | 2 +-
- drivers/rtc/rtc-rx8010.c                         | 2 +-
- drivers/rtc/rtc-rx8025.c                         | 2 +-
- drivers/staging/media/soc_camera/imx074.c        | 2 +-
- drivers/staging/media/soc_camera/mt9t031.c       | 2 +-
- drivers/staging/media/soc_camera/soc_mt9v022.c   | 2 +-
- drivers/usb/typec/tcpm/fusb302.c                 | 3 +--
- 34 files changed, 37 insertions(+), 41 deletions(-)
-
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 421b05392220..ca3218337fd7 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -137,9 +137,6 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
+ 	int ret;
+ 	union omap4_timeout timeout = { 0 };
+ 
+-	if (!clk->enable_bit)
+-		return 0;
+-
+ 	if (clk->clkdm) {
+ 		ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
+ 		if (ret) {
+@@ -151,6 +148,9 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
+ 		}
+ 	}
+ 
++	if (!clk->enable_bit)
++		return 0;
++
+ 	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
+ 
+ 	val &= ~OMAP4_MODULEMODE_MASK;
+@@ -179,7 +179,7 @@ static void _omap4_clkctrl_clk_disable(struct clk_hw *hw)
+ 	union omap4_timeout timeout = { 0 };
+ 
+ 	if (!clk->enable_bit)
+-		return;
++		goto exit;
+ 
+ 	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
+ 
 -- 
-2.19.1
+2.20.1
 
