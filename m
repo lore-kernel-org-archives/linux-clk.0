@@ -2,117 +2,232 @@ Return-Path: <SRS0=ATvf=UH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA34C28CC5
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 07:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1918EC28CC5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 09:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C23521473
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 07:26:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TRWVuUpU"
+	by mail.kernel.org (Postfix) with ESMTP id D352C2146E
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 09:17:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559985473;
+	bh=OftYUILSnDdb/eqT0/mxG5cpnPjnXo5UUH4VESLsgxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Z/dVwFkIh8TsGdMrd/2KrfWCZRwTyS1shPJyhBQRBPSh/OfGdd+syRBERjf6y7vF+
+	 +xc8AXmD20sJATMKqMcJkrW5D6keApKzNQYU7bwZcQpbmkpJ7qSHOsNuRYhYxBm4DR
+	 zJrgwVaaHlj+hWnFNUzMfMmCzBQ+RsbbLlt54QsA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfFHH0P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Jun 2019 03:26:15 -0400
-Received: from mail-eopbgr140045.outbound.protection.outlook.com ([40.107.14.45]:39170
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726042AbfFHH0P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Jun 2019 03:26:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EOhtXOfOKXuRdNodB75bmf2sWe/Wd42LrJbBPvDrS+c=;
- b=TRWVuUpUl7J1mHAk70mj4bTlxTr7BqgVpGSwXGpMkXx9NsBJoUdQCKpauMiIvMB4SQhz50YaRGqCv95donYWQG+xV8dCOhdGO/KtgFgkdr9wye9HePl+0el/+PGSBr1loEg7pSA3T1hF3KO2soyddRRN05QkxffepCTX/hqWTtc=
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
- VI1PR04MB5599.eurprd04.prod.outlook.com (20.178.125.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.12; Sat, 8 Jun 2019 07:26:11 +0000
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::9577:379c:2078:19a1]) by VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::9577:379c:2078:19a1%7]) with mapi id 15.20.1965.011; Sat, 8 Jun 2019
- 07:26:11 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
+        id S1726595AbfFHJRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Jun 2019 05:17:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726478AbfFHJRx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Jun 2019 05:17:53 -0400
+Received: from localhost (unknown [106.200.229.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7FE52146E;
+        Sat,  8 Jun 2019 09:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559985471;
+        bh=OftYUILSnDdb/eqT0/mxG5cpnPjnXo5UUH4VESLsgxQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OyBe/S96kbRlP3oPh4qyC0R2dRR3COe/FfU2XcqwzES7pCOwrFh8slCMMJmvSwOCm
+         d1zFhqYDiyu73LHpSu5LVqHTgVJoxc+QYKarEmB7Xpnudtv2/PYPbgIlSKRvCmEmjm
+         UuUijOxRZQKe9c9Iwg3SnxtbXBt9HZT/8kk94x8M=
+Date:   Sat, 8 Jun 2019 14:44:36 +0530
+From:   Vinod Koul <vkoul@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: Add clk_parent entry in debugfs
-Thread-Topic: [PATCH] clk: Add clk_parent entry in debugfs
-Thread-Index: AQHVEgo8VzXmpj/WDkGGgiXI1N3a1Q==
-Date:   Sat, 8 Jun 2019 07:26:11 +0000
-Message-ID: <VI1PR04MB5055A1DBAC2C4AAC515CB494EE110@VI1PR04MB5055.eurprd04.prod.outlook.com>
-References: <057720844e78e615e46de34a73b16ffaf7dbfc10.1558686047.git.leonard.crestez@nxp.com>
- <20190607190522.D276520868@mail.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [2a04:241e:504:3000:e6e7:49ff:fe63:c221]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7a898073-9783-4127-cfd4-08d6ebe29511
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5599;
-x-ms-traffictypediagnostic: VI1PR04MB5599:
-x-microsoft-antispam-prvs: <VI1PR04MB5599EBCB02A0781FA2E1A081EE110@VI1PR04MB5599.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0062BDD52C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(39860400002)(346002)(396003)(199004)(189003)(2906002)(6116002)(7696005)(4326008)(52536014)(55016002)(25786009)(76176011)(256004)(102836004)(229853002)(4744005)(476003)(478600001)(54906003)(486006)(44832011)(6916009)(316002)(9686003)(305945005)(7736002)(14454004)(86362001)(71200400001)(71190400001)(6246003)(33656002)(81156014)(53936002)(68736007)(46003)(76116006)(186003)(73956011)(66446008)(64756008)(66556008)(66476007)(66946007)(81166006)(8936002)(446003)(53546011)(99286004)(6436002)(5660300002)(6506007)(74316002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5599;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LS61RIcA24PwEirLmqhw+wZzGlLcMlSdtMR4I2ea7CtNJ87YnCuPKCyw/ovphRnhMmZqFSSyt6KTnEEYRBnJUADKVqANy8TBf2LDuvLfai4e4NP+RiIsjlEnCtOwtYpw87ZBZpbAphffsjpfyWxKub5mYzIoqgBD7DN8B2LldYytcd6A5/Q8QmyXI7lOManuyterXFGe9u2b2yQtxiXOjyLuCcbvm4/9Xn5ZnZ0D4XPTc9vuyk/IHBrzVus7vpHXI/Syz4QbEMqtTra+qyh+frxDNthwO9rHUpKuoMA+1b8NpTo3CgzSNhW/gKR+EGvGy3xuqo9iqMWggdcOFb49eeulJi9RhW1SWb3G8ZcrgB85gjW3CYOZs6PwDNizK7JZpYXBLuH7EKNPZct6SQ1M69aAvHIVBV7MCL7+xePRr0I=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: qcom: clk-alpha-pll: Add support for Trion PLLs
+Message-ID: <20190608091436.GF9160@vkoul-mobl.Dlink>
+References: <20190607101234.30449-1-vkoul@kernel.org>
+ <20190607175542.D9D56208C0@mail.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a898073-9783-4127-cfd4-08d6ebe29511
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jun 2019 07:26:11.4693
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5599
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607175542.D9D56208C0@mail.kernel.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/7/19 10:05 PM, Stephen Boyd wrote:=0A=
-> Quoting Leonard Crestez (2019-05-24 01:25:25)=0A=
-=0A=
->> @@ -3040,10 +3051,11 @@ static void clk_debug_create_one(struct clk_core=
- *core, struct dentry *pdentry)=0A=
->>          debugfs_create_u32("clk_enable_count", 0444, root, &core->enabl=
-e_count);=0A=
->>          debugfs_create_u32("clk_protect_count", 0444, root, &core->prot=
-ect_count);=0A=
->>          debugfs_create_u32("clk_notifier_count", 0444, root, &core->not=
-ifier_count);=0A=
->>          debugfs_create_file("clk_duty_cycle", 0444, root, core,=0A=
->>                              &clk_duty_cycle_fops);=0A=
->> +       debugfs_create_file("clk_parent", 0444, root, core, &current_par=
-ent_fops);=0A=
-> =0A=
-> Shouldn't we skip creation of this file if core->num_parents =3D=3D 0? So=
-=0A=
-> put this under the if condition below?=0A=
-=0A=
-It's still useful to determine clk tree structure from debugfs fields, =0A=
-otherwise you'd have to extract by parsing other files.=0A=
-=0A=
-Would you hide clk_rate for fixed-rate? I'd rather have everything =0A=
-available for uniformity, even if it's otherwise constant at runtime.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+Thanks Stephen for a quick review
+
+On 07-06-19, 10:55, Stephen Boyd wrote:
+> Quoting Vinod Koul (2019-06-07 03:12:33)
+> > From: Deepak Katragadda <dkatraga@codeaurora.org>
+> > 
+> > Add programming sequence support for managing the Trion
+> > PLLs.
+> > 
+> > Signed-off-by: Deepak Katragadda <dkatraga@codeaurora.org>
+> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> > [vkoul: port to upstream and tidy-up]
+> 
+> This tag isn't very useful. Maybe you can list out what you actually did
+> instead of just "tidying"?
+
+First was to port and in process remove bunch of code which cant be
+upstreamed and has no user in current work. Had to rewrite bunch of
+stuff while upstreaming. Then fix format and style issue
+
+I will try to list..
+
+> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> > index 0ced4a5a9a17..bf36a929458b 100644
+> > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > @@ -120,6 +140,15 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+> >  #define FABIA_PLL_OUT_MASK     0x7
+> >  #define FABIA_PLL_RATE_MARGIN  500
+> >  
+> > +#define TRION_PLL_CAL_VAL      0x44
+> > +#define TRION_PLL_STANDBY      0x0
+> > +#define TRION_PLL_RUN          0x1
+> > +#define TRION_PLL_OUT_MASK     0x7
+> > +#define TRION_PCAL_DONE                BIT(26)
+> > +#define TRION_PLL_RATE_MARGIN  500
+> 
+> These last two aren't used. Do we need them?
+
+Not anymore, I removed the user as that was required for this, I will
+> 
+> > +
+> > +#define XO_RATE                        19200000
+> 
+> Please remove this define. It isn't used (thankfully!).
+
+Yes will remove this and other is the series :)
+
+> >  #define pll_alpha_width(p)                                     \
+> >                 ((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ? \
+> >                                  ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+> > @@ -392,6 +421,15 @@ alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
+> >         u64 remainder;
+> >         u64 quotient;
+> >  
+> > +       /*
+> > +        * The PLLs parent rate is zero probably since the parent hasn't
+> > +        * registered yet. Return early with the requested rate.
+> > +        */
+> > +       if (!prate) {
+> 
+> This hasn't been a problem before. Why is it a problem now?
+
+Good point, some how downstream thinks so, I will remove these checks
+
+> > +static int clk_trion_pll_enable(struct clk_hw *hw)
+> > +{
+> > +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +       struct regmap *regmap = pll->clkr.regmap;
+> > +       u32 val;
+> > +       int ret;
+> > +
+> > +       ret = regmap_read(regmap, PLL_MODE(pll), &val);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* If in FSM mode, just vote for it */
+> > +       if (val & PLL_VOTE_FSM_ENA) {
+> > +               ret = clk_enable_regmap(hw);
+> > +               if (ret)
+> > +                       return ret;
+> > +               return wait_for_pll_enable_active(pll);
+> > +       }
+> > +
+> > +       /* Set operation mode to RUN */
+> > +       regmap_write(regmap, PLL_OPMODE(pll), TRION_PLL_RUN);
+> > +
+> > +       ret = wait_for_pll_enable_lock(pll);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* Enable the PLL outputs */
+> > +       ret = regmap_update_bits(regmap, PLL_USER_CTL(pll),
+> > +                                TRION_PLL_OUT_MASK, TRION_PLL_OUT_MASK);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* Enable the global PLL outputs */
+> > +       ret = regmap_update_bits(regmap, PLL_MODE(pll),
+> > +                                PLL_OUTCTRL, PLL_OUTCTRL);
+> > +       if (ret)
+> > +               return ret;
+> 
+> This if (ret) can be removed.
+
+Yes we should return!
+
+> > +
+> > +       /* Ensure that the write above goes through before returning. */
+> > +       mb();
+> 
+> As far as I recall mb() does nothing to ensure the write above goes
+> through, just that writes after this one are ordered with the write
+> above.
+
+Agreed someone wasn't convinced, will remove this.
+
+> > +static int clk_trion_pll_is_enabled(struct clk_hw *hw)
+> > +{
+> > +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +
+> > +       return trion_pll_is_enabled(pll, pll->clkr.regmap);
+> > +}
+> 
+> Can you move this function right below trion_pll_is_enabled()?
+
+Sure
+
+> >  const struct clk_ops clk_alpha_pll_ops = {
+> >         .enable = clk_alpha_pll_enable,
+> >         .disable = clk_alpha_pll_disable,
+> > @@ -902,6 +1079,10 @@ static int alpha_pll_fabia_enable(struct clk_hw *hw)
+> >         ret = regmap_read(regmap, PLL_OPMODE(pll), &opmode_val);
+> >         if (ret)
+> >                 return ret;
+> > +       ret = regmap_update_bits(regmap, PLL_MODE(pll),
+> > +                                PLL_BYPASSNL, PLL_BYPASSNL);
+> > +       if (ret)
+> > +               return ret;
+> 
+> What is this?
+
+Sorry am not sure I understood the question. care to elaborate please?
+
+> > +static long
+> > +clk_trion_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +                                unsigned long *prate)
+> > +{
+> > +       struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
+> > +
+> > +       if (!pll->post_div_table) {
+> > +               pr_err("Missing the post_div_table for the PLL\n");
+> > +               return -EINVAL;
+> 
+> Does this ever happen? I'd rather see this removed and the code blow up
+> if the driver author didn't test this.
+
+Sounds right! will remove this and others.
+
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> 
+> Is the cast necessary?
+
+Dont think so, will remove
+-- 
+~Vinod
