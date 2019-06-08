@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E03AC28CC5
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 11:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AF7C28CC5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 11:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5C72168B
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 11:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE740214AE
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jun 2019 11:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559994751;
-	bh=DqdJoUiOexOk1nezwmUags9JJP3MTaMWMU/KBAzLsXc=;
+	s=default; t=1559994903;
+	bh=8r8ka3Dy5ssf2HI4AWlbCTlh4KKtCZC2Pzs6vACDIiE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vxAyjoGkVDBfxxb8ycc2EAOUJdZcovmTYIaDICWGzSKqRUdkgOKloTMFFuI986w95
-	 48ukJb+Efh8UJoyQ+1m987dD/TaTnQakdphDx7euq8NBtsolgtXNwsw23/nTcaPhAr
-	 uBahjXvZiNNZYzYefv+fojFUANuInQ4774Qwc45s=
+	b=kq7b86vMe2g3T3L/mRgfFju0vc0iKTk8bm34jRPNlIlmnOg7f3qYUBk8kWKHDXfy1
+	 4WZslJm3o5p317mY2KwSGEKEpdFVlKRf7IsO9uuNjaKAdy+8dxwjLZOes1u1cNRbnv
+	 kChDuMCR7V4VC1RUBcpKCy/BVTGhz14UuNwr2moA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbfFHLw3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Jun 2019 07:52:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
+        id S1727571AbfFHLy4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Jun 2019 07:54:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbfFHLrG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Jun 2019 07:47:06 -0400
+        id S1727387AbfFHLkN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Jun 2019 07:40:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D84E821530;
-        Sat,  8 Jun 2019 11:47:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 742A8214D8;
+        Sat,  8 Jun 2019 11:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559994425;
-        bh=DqdJoUiOexOk1nezwmUags9JJP3MTaMWMU/KBAzLsXc=;
+        s=default; t=1559994013;
+        bh=8r8ka3Dy5ssf2HI4AWlbCTlh4KKtCZC2Pzs6vACDIiE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hsJMVijlqzaWle/QLLBJXdLewvF7sT/Tscix21FkzvZPrgCwGuw4Pe5ZDbkJJNJTo
-         DOwpeZk09VSeCoZ55tC41FZ2meVZd/E8oCnoxbq2J600AAiOuoyy54m1bEGXMqhWLc
-         BJeWrCKfNnbAIBTzw7stLneCUyVHPNVGoDm5JtQE=
+        b=fh88KPAef2L/SR18dG27yn98hmwSamt2in2XQPK+yyvnJMb2A8DVPI3FOqsYe6Dfs
+         bCZWS+NRHGJuBD6CsSIJZe2bGoAarwV3B6Y1Y/ByL9PWFNaGyR9x1UnXkFb46TiD43
+         WgMHpRWenzH280Sv3p2Whj3GM8CuwlhXWXgcMH+0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tony Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 06/31] clk: ti: clkctrl: Fix clkdm_clk handling
-Date:   Sat,  8 Jun 2019 07:46:17 -0400
-Message-Id: <20190608114646.9415-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 16/70] clk: ti: clkctrl: Fix clkdm_clk handling
+Date:   Sat,  8 Jun 2019 07:38:55 -0400
+Message-Id: <20190608113950.8033-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190608114646.9415-1-sashal@kernel.org>
-References: <20190608114646.9415-1-sashal@kernel.org>
+In-Reply-To: <20190608113950.8033-1-sashal@kernel.org>
+References: <20190608113950.8033-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 53e71d0503ec..82e4d5cccf84 100644
+index 639f515e08f0..3325ee43bcc1 100644
 --- a/drivers/clk/ti/clkctrl.c
 +++ b/drivers/clk/ti/clkctrl.c
-@@ -124,9 +124,6 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
+@@ -137,9 +137,6 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
  	int ret;
  	union omap4_timeout timeout = { 0 };
  
@@ -89,7 +89,7 @@ index 53e71d0503ec..82e4d5cccf84 100644
  	if (clk->clkdm) {
  		ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
  		if (ret) {
-@@ -138,6 +135,9 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
+@@ -151,6 +148,9 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
  		}
  	}
  
@@ -99,7 +99,7 @@ index 53e71d0503ec..82e4d5cccf84 100644
  	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
  
  	val &= ~OMAP4_MODULEMODE_MASK;
-@@ -166,7 +166,7 @@ static void _omap4_clkctrl_clk_disable(struct clk_hw *hw)
+@@ -179,7 +179,7 @@ static void _omap4_clkctrl_clk_disable(struct clk_hw *hw)
  	union omap4_timeout timeout = { 0 };
  
  	if (!clk->enable_bit)
