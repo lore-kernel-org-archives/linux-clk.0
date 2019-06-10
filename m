@@ -2,113 +2,132 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78061C282DD
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 223CBC28CC7
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D06520859
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:10:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFCB92085A
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:19:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZUu4FyQ4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SaLCPnR1"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zxke5XTX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388708AbfFJKKE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 06:10:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46480 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388647AbfFJKKE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 06:10:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 03D88602F3; Mon, 10 Jun 2019 10:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560161403;
-        bh=oMzk0exJ+xInm/wmcPKtXW9VAu75APw0ZR5LIiqwBMA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZUu4FyQ4F3QEJLmauV8ESFFe6E8Wsayf9AmyCygmDWmL4yGaNIFiSk/K84j/JFl99
-         QuWVJf67fyJ/eJGBAXy/l3NDfCne5VePno+QCvl4fjHBHVId8nUfuIe72UFZespvT8
-         BqFVgkO74GArdKHGYQt3myV9/pAROEAoYExzHRkU=
-Received: from [10.201.2.161] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D6A0E60265;
-        Mon, 10 Jun 2019 10:09:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560161402;
-        bh=oMzk0exJ+xInm/wmcPKtXW9VAu75APw0ZR5LIiqwBMA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SaLCPnR1Et/BEyNk+ZcTTxeIwo8gyJ/n2d+q5Xul05WI4YqSh0wyjjYUlXeZt+8+Z
-         +O2BI26+KyHgNgyePciF/SQ4O9PzcgvrTyBtFsV+9RRbmDVIbSqwDUzeLy3D/3kh8l
-         P7GuAlKBKloZtGxGR4J58CeiejGr35K20apQDEdE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6A0E60265
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-To:     Christian Lamparter <chunkeey@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
- <1559754961-26783-6-git-send-email-sricharan@codeaurora.org>
- <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
-Date:   Mon, 10 Jun 2019 15:39:56 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2389293AbfFJKTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 06:19:22 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34011 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389292AbfFJKTV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 06:19:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id q15so2612500pgr.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Jun 2019 03:19:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Xl6v5F/D3VxC6oJtpVMTcWPj1WSUBStBszKQqnRd45o=;
+        b=Zxke5XTXYzZ1WpIKENuUCvQiJugmF6xmPmbVa+fQbXPRt5NLXE3XHZUNoUGyv8aLFk
+         0rjG9L8UqFlU/U4gpMjRlgJ8X3nE6ri7wGy68f6iQ0YzmFvk4qUWjWrM+LidoPGkcYmC
+         PQ9xxtOgJlxOvxLQsHD98QnhH9k+vQEifhuGZEw6YF5JG7SxcgV9Yrm+JHUTnexYbwAF
+         kXuHYrgJkBfViN9xWMijKskkhxv4JJjHTYC543USXdVVRRCXXHLpuHefM1TguMusR2yy
+         vc20X6vM3jkm2bt3gBKV0pla8vMhrOsmoUlAB2tkbEgoAhTb/u7PiuuxS5EVmWSF1W4W
+         /vug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xl6v5F/D3VxC6oJtpVMTcWPj1WSUBStBszKQqnRd45o=;
+        b=e5xRnkTRwUIEYaQRVBhJ3BDvvK5BofHIwG8GCmv/ghLFbjZyfJZBtX9NwT2+T4x0TS
+         b/Y829qpduz4v6A5KvDS+y09XkgC0eW8Qsvd6Afc4VXKLi6veKK11yQOYEF5GxaoB9eH
+         a6eqlQlXv7e330vrQX18WGzX0qnJMaLaHnC7F/mp6QZuc5j65AYFUp9mT46ainowai/4
+         Ptk8cOro2OvUcpiKUmoNOQWvShK2rvYK7SZwJnAleXmG+LovsNhBOrMR0cvBaEaYqV0D
+         OJjoMvHnOnzuCgrEE1GdiiqI+fzZcJ+OLo2Gy2xEe1JQ/n3LHYxizQEG0o0Xk1AAthKz
+         f6vQ==
+X-Gm-Message-State: APjAAAWxL6o5WL3OTn7ZpHDfW1gKMs57qSlug0t1X/pGclLi1v3uMPI1
+        NsuQwInF8xKgLJNcF0W2L6gfow==
+X-Google-Smtp-Source: APXvYqz3SI+6kD/ZaeTpbKZtNgBi0rdKkLPqyJFXIcZSqv4cqHNVPe2yimUvsPw0UUlmdDCXEymP1A==
+X-Received: by 2002:a65:6495:: with SMTP id e21mr993356pgv.383.1560161960609;
+        Mon, 10 Jun 2019 03:19:20 -0700 (PDT)
+Received: from localhost ([122.172.66.84])
+        by smtp.gmail.com with ESMTPSA id f186sm13630525pfb.5.2019.06.10.03.19.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 03:19:19 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 15:49:18 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc:     Christian Neubert <christian.neubert.86@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for
+ cpu clocks
+Message-ID: <20190610101918.sypafywc6fn4jsbo@vireshk-i7>
+References: <20190314134428.GA24768@apalos>
+ <874l85v8p6.fsf@FE-laptop>
+ <20190318112844.GA1708@apalos>
+ <87h8c0s955.fsf@FE-laptop>
+ <20190318122113.GA4834@apalos>
+ <20190424093015.rcr5auamfccxf6ei@vireshk-i7>
+ <20190425123303.GA12659@apalos>
+ <20190520112042.mpamnabxpwciih5m@vireshk-i7>
+ <20190522070341.GA32613@apalos>
+ <20190522070614.jhpo7nqrxinmlbcs@vireshk-i7>
 MIME-Version: 1.0
-In-Reply-To: <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522070614.jhpo7nqrxinmlbcs@vireshk-i7>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Christian,
-
-On 6/6/2019 2:11 AM, Christian Lamparter wrote:
-> On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
->>
->> Add initial device tree support for the Qualcomm IPQ6018 SoC and
->> CP01 evaluation board.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->>
->> +       clocks {
->> +               sleep_clk: sleep_clk {
->> +                       compatible = "fixed-clock";
->> +                       clock-frequency = <32000>;
->> +                       #clock-cells = <0>;
->> +               };
->> +
-> Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
-> on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
-> From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
-> declares them at 32000 Hz. Since you probably have access to the BOM and
-> datasheets. Can you please confirm what's the real clock frequency for
-> the IPQ6018.
-> (And maybe also for the sleep_clk of the IPQ4018 as well?).
+On 22-05-19, 12:36, Viresh Kumar wrote:
+> On 22-05-19, 10:03, Ilias Apalodimas wrote:
+> > Hi Viresh, Gregory
+> > On Mon, May 20, 2019 at 04:50:42PM +0530, Viresh Kumar wrote:
+> > > On 25-04-19, 15:33, Ilias Apalodimas wrote:
+> > > > Hi Viresh,
+> > > > 
+> > > > > > > Also, during this week-end, Christian suggested that the issue might
+> > > > > > > come from the AVS support.
+> > > > > > > 
+> > > > > > > Could you disable it and check you still have the issue?
+> > > > > > > 
+> > > > > > > For this, you just have to remove the avs node in
+> > > > > > > arch/arm64/boot/dts/marvell/armada-37xx.dtsi and rebuild the dtb.
+> > > > > > Sure. You'll have to wait for a week though. Currently on a trip. I'll run that
+> > > > > >  once i return
+> > > > > 
+> > > > > @Ilias: Can you please try this now and confirm to Gregory ?
+> > > > I am more overloaded than usual and totally forgot about this. Apologies.
+> > > > I'll try finding some time and do this.
+> > > 
+> > > Ping Ilias.
+> > Sorry for the huge delay. 
+> > Applying this patch and removing tha 'avs' node from
+> > arch/arm64/boot/dts/marvell/armada-37xx.dtsi seems to work.
+> > Changing between governors does not freeze the board any more. I haven't checked
+> > the actual impact on the CPU speed but the values on 
+> > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor are correct
 > 
+> Thanks for testing it out. Lets see what Gregory has to say now.
 
-What exactly is the issue that you faced ?
-Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
-
-Regards,
- Sricharan
+@Gregory: Do you have any further advice for Ilias ?
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+viresh
