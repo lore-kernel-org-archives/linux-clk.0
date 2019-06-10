@@ -2,107 +2,103 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6168C468BC
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 06:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A44EC468C1
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 07:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841FC207E0
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 06:00:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="WUqIHic7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tM2nXGqR"
+	by mail.kernel.org (Postfix) with ESMTP id 6403E2085A
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 07:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387728AbfFJGAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 02:00:52 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:56463 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387702AbfFJGAv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 02:00:51 -0400
-X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Jun 2019 02:00:51 EDT
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id A25F753B;
-        Mon, 10 Jun 2019 01:53:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 10 Jun 2019 01:53:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=73FhgraWVSKzZSRxr/hRTV6FPo7
-        e3zeeTj9HLIcXJQk=; b=WUqIHic7WiL1tl6Nzsn4mc6zoGABOQ4wN1sSg+/DfpX
-        eDR9LyWtAtAK7bmMv/djfvbd/hxQYLSyPTFiCJkSs7pwDA+k0zuHVPMzJFJSgHw3
-        /fxWavwxOH3ScjpJAJcV7enQ5mGX6eyxmbH1KHNrqvNU+GGf0HAk9BC/3UZIthby
-        L3w32R3fMKTTMA3CAt9oGM/50vrm7/R8XdtMg7+h5yRoA1DVwP7da0vwbZ3fgpVj
-        w6dw19Dx/eXaZLNh+dzO4XULbgjKZnLoNEGvzcvkXyiMerr3w9jFAF6nBmjVFpDL
-        hYNE1f6sH3iWw4pOsFv54YefTGgSGxYs09yyI9ca+/A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=73Fhgr
-        aWVSKzZSRxr/hRTV6FPo7e3zeeTj9HLIcXJQk=; b=tM2nXGqRR33HPPT5EI0HZc
-        F2cn6be9K0q2Zjy4ZtdN/jZyWSurdUkeJm28RoaoW1Y7aG4bNc1BgfPxhwZQhTWr
-        a3pP3gra77bTM4OOXH/lvsM8CEH9Uh3MRhb/+qyySxJ1w6emC8GCFxCZfmppaltT
-        PPpPBOvA3cbnw4RRrX9q62YiHf8w7lkQy2mpVZTQ1w6gLBprtnMRAeSuOX+m3ENw
-        AO/pfg62LPJp45hErJg78UgXMpKF3JZ2UI12n6BHLYlbw1TtwhXDezjHa+BuShqe
-        E6DWRzzPyaz9t1iITcWvgf0ut9YGi4P12WFgePoV0N+42zSWfKHzdTuWikXUC42w
-        ==
-X-ME-Sender: <xms:Y_D9XCL4I63YDmymPGTmvFniACribIhS_R6G5-uDS-stD5U9uiud2g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudehuddguddttdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepkhgvrhhnvg
-    hlrdhorhhgnecukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehmrghilhhf
-    rhhomhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:Y_D9XOYnvOUd54PI8pGbhMxykVnXYJoVVA1jQDiGLi5bu_LxxAdbFQ>
-    <xmx:Y_D9XNuNqNrVA0By10jYs1YGzm7VKi_8-jFV6QrdieaPayeCbkjS0Q>
-    <xmx:Y_D9XLsxGkhl8c6f5z_dsQOPItDQrZTLeRVHXYq0k2JG537PpwG_nA>
-    <xmx:ZPD9XFjGPjsUFuN9HmlXy1yi4HeYj3ADgjRU_n7EbK-YkbPp0OVaLICzGg4>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B6E34380073;
-        Mon, 10 Jun 2019 01:53:38 -0400 (EDT)
-Date:   Mon, 10 Jun 2019 07:53:37 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, stable@vger.kernel.org,
-        Dehui Sun <dehui.sun@mediatek.com>
-Subject: Re: [PATCH v2] clk: mediatek: mt8183: Register 13MHz clock earlier
- for clocksource
-Message-ID: <20190610055337.GB13825@kroah.com>
-References: <1560132969-1960-1-git-send-email-weiyi.lu@mediatek.com>
+        id S2387852AbfFJHPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 03:15:36 -0400
+Received: from sauhun.de ([88.99.104.3]:38844 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387541AbfFJHPg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jun 2019 03:15:36 -0400
+Received: from localhost (p54B33062.dip0.t-ipconnect.de [84.179.48.98])
+        by pokefinder.org (Postfix) with ESMTPSA id 0E8762C077A;
+        Mon, 10 Jun 2019 09:15:33 +0200 (CEST)
+Date:   Mon, 10 Jun 2019 09:15:32 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH 00/34] treewide: simplify getting the adapter of an I2C
+ client
+Message-ID: <20190610071532.GB2673@kunai>
+References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
+ <661f1084-da4e-75f0-e632-335134932801@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
 Content-Disposition: inline
-In-Reply-To: <1560132969-1960-1-git-send-email-weiyi.lu@mediatek.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <661f1084-da4e-75f0-e632-335134932801@axentia.se>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 10:16:09AM +0800, Weiyi Lu wrote:
-> The 13MHz clock should be registered before clocksource driver is
-> initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mt8183.c | 46 +++++++++++++++++++++++++++++----------
->  1 file changed, 34 insertions(+), 12 deletions(-)
 
-<formletter>
+--5/uDoXvLw7AC5HRs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+Hi Peter,
 
-</formletter>
+> Similar things go on in:
+>=20
+> drivers/hwmon/lm90.c
+> drivers/leds/leds-is31fl319x.c
+> drivers/of/unittest.c
+
+Right. I'll fix them, too.
+
+> And drivers/rtc/rtc-fm3130.c has a couple of these:
+
+These are fixed in patch 26 of this series.
+
+Thanks and happy hacking,
+
+   Wolfram
+
+--5/uDoXvLw7AC5HRs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlz+A5QACgkQFA3kzBSg
+KbYJ9A/8DYTbi6b0TbOp28F+nJSr8CHl41QgvGx/BuNEd1CKh7IiZjPg9sa3l14s
+3zzM5PQhqmR0ff/VzdUS7LJpAK6+ZN6NK8PqxZdgo0Zfm1TgJpYnwdlcEhASGDqQ
+5ttT6o7v/At/zuq8Oa1jL4DMyD3oFS2iXzhq3jydOemRGShD0REUpYVhSPdIBunD
+L+pNcqvwzGZmHgbwT50Flj7+tO1UB2Y9a8Q2KNKdbT1OXO+4yBgz5sJNT4nhCPQB
+2NSaYzPRXpVyzceBHQrT2RbYfR/LjaprvcZNg81cK3oa6mpSTbF7XAMOzMqRFmJj
+MMHHDJYejycQ8vBVCS5y2tpsgmZSocn/6oZDHntMJ0+ytyXxaxcibnYERDGc4SZC
+GaLHEF90ULPzLT/Ar0aD3jWM0q6mn3wgj3OZOmtXZnkinENc2zKqlk5a7K8KcJVP
+2hEqnYC3XjMKX3QcgOxMduau0A71LN2w6eUOa4C4InE/flgR9gcVQ14ll6Gmsi29
+OyasroZ/QMwCatiqo8r71RTo/9GVoum+g9myGBPalukTaicXIZIwu6cli7Ne94Cm
++nKmaL/VtYvEhh0MpjsVM3LYBa0mtlim419eCoys2ZEHrGyJiSypq+jDLxmJbl/0
+Xt5XhDpZiUMxj+7YmzLVJ8LfoVvxJrQlNk7WO8VtlG3BO7s8rOI=
+=VRPd
+-----END PGP SIGNATURE-----
+
+--5/uDoXvLw7AC5HRs--
