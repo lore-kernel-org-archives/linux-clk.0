@@ -2,115 +2,73 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C508C468BE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 03:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21ACC468C1
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 05:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3E2F20820
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 03:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 904DB206E0
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 05:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387475AbfFJDpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Jun 2019 23:45:14 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:24926 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387457AbfFJDpN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Jun 2019 23:45:13 -0400
-X-UUID: b2bb53f8932f442ca9a3f478ae319eea-20190610
-X-UUID: b2bb53f8932f442ca9a3f478ae319eea-20190610
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 740195698; Mon, 10 Jun 2019 11:44:56 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Jun 2019 11:44:54 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Jun 2019 11:44:55 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Biao Huang <biao.huang@mediatek.com>
-Subject: [RFC v1] clk: core: support clocks that need to be enabled during re-parent
-Date:   Mon, 10 Jun 2019 11:44:53 +0800
-Message-ID: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S2387537AbfFJFez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 01:34:55 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:35512 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387524AbfFJFey (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jun 2019 01:34:54 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 283922006F3;
+        Mon, 10 Jun 2019 07:34:53 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A95312006ED;
+        Mon, 10 Jun 2019 07:34:46 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 78C39402D2;
+        Mon, 10 Jun 2019 13:34:38 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        abel.vesa@nxp.com, l.stach@pengutronix.de, ccaione@baylibre.com,
+        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/2] clk: imx: Remove __init for imx_check_clocks() API
+Date:   Mon, 10 Jun 2019 13:36:33 +0800
+Message-Id: <20190610053634.14339-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When using property assigned-clock-parents to assign parent clocks,
-core clocks might still be disabled during re-parent.
-Add flag 'CLK_OPS_CORE_ENABLE' for those clocks must be enabled
-during re-parent.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Some of i.MX SoCs' clock driver use platform driver model,
+and they need to call imx_check_clocks() API, so
+imx_check_clocks() API should NOT be in .init section.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/clk/clk.c            | 9 +++++++++
- include/linux/clk-provider.h | 1 +
- 2 files changed, 10 insertions(+)
+ drivers/clk/imx/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 443711f..b2e6fe3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1717,6 +1717,10 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
- 		clk_core_prepare_enable(parent);
- 	}
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index 9cd7097..b1416b2 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -23,7 +23,7 @@ void __init imx_mmdc_mask_handshake(void __iomem *ccm_base,
+ 	writel_relaxed(reg, ccm_base + CCM_CCDR);
+ }
  
-+	/* enable core if CLK_OPS_CORE_ENABLE is set */
-+	if (core->flags & CLK_OPS_CORE_ENABLE)
-+		clk_core_prepare_enable(core);
-+
- 	/* migrate prepare count if > 0 */
- 	if (core->prepare_count) {
- 		clk_core_prepare_enable(parent);
-@@ -1744,6 +1748,10 @@ static void __clk_set_parent_after(struct clk_core *core,
- 		clk_core_disable_unprepare(old_parent);
- 	}
+-void __init imx_check_clocks(struct clk *clks[], unsigned int count)
++void imx_check_clocks(struct clk *clks[], unsigned int count)
+ {
+ 	unsigned i;
  
-+	/* re-balance ref counting if CLK_OPS_CORE_ENABLE is set */
-+	if (core->flags & CLK_OPS_CORE_ENABLE)
-+		clk_core_disable_unprepare(core);
-+
- 	/* re-balance ref counting if CLK_OPS_PARENT_ENABLE is set */
- 	if (core->flags & CLK_OPS_PARENT_ENABLE) {
- 		clk_core_disable_unprepare(parent);
-@@ -2973,6 +2981,7 @@ static int clk_dump_show(struct seq_file *s, void *data)
- 	ENTRY(CLK_IS_CRITICAL),
- 	ENTRY(CLK_OPS_PARENT_ENABLE),
- 	ENTRY(CLK_DUTY_CYCLE_PARENT),
-+	ENTRY(CLK_OPS_CORE_ENABLE),
- #undef ENTRY
- };
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index bb6118f..39a1fed 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -34,6 +34,7 @@
- #define CLK_OPS_PARENT_ENABLE	BIT(12)
- /* duty cycle call may be forwarded to the parent clock */
- #define CLK_DUTY_CYCLE_PARENT	BIT(13)
-+#define CLK_OPS_CORE_ENABLE	BIT(14)	/* core need enable during re-parent */
- 
- struct clk;
- struct clk_hw;
 -- 
-1.8.1.1.dirty
+2.7.4
 
