@@ -2,80 +2,89 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E08C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83716C31E40
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FAFE2085A
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8A920859
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560178921;
-	bh=OE8GdsTUm6Imy2zPdYlPLj1uy7lqP03V060qQqNy6s8=;
+	s=default; t=1560179207;
+	bh=GAtBfiR3zREvI6Pu53dNtAAJIcvNCR/uW8lccCTkAE8=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=LxWaS2Roq4xM2qvjU5Y4LAtDOpXAsSDI4y2YGUJLPglarVuafBp0Ml+p1jaMcyu87
-	 W0i3YwIKx6x4Do7FmVyTtdKenqsP870O5kDvCbYul8uz/SeuB1ieVwtOvp0UvdEJMp
-	 /9oYM0buyczpZ3XlXyYIdmyFze2ML5UC6GZg1U6g=
+	b=cJ8AH3iDEWpAv82YFTeSJ03ui5a5dUwgQRy2rpvkIjQAFVzDGcOl+s07qOggQO78z
+	 KGquicF2X68OeXkc1JvhRqdOcelaUtNHQbgVQiaXr5RlxKf2Ja68QwvBLTAboN+ggX
+	 8r2dYzeLS31nPPfeNwjogPUzt2s5SE9fQkELk2t4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbfFJPCB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 11:02:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55828 "EHLO mail.kernel.org"
+        id S2390167AbfFJPGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 11:06:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbfFJPCB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:02:01 -0400
+        id S2389368AbfFJPGq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:06:46 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A32220859;
-        Mon, 10 Jun 2019 15:02:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2003720859;
+        Mon, 10 Jun 2019 15:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560178920;
-        bh=OE8GdsTUm6Imy2zPdYlPLj1uy7lqP03V060qQqNy6s8=;
+        s=default; t=1560179206;
+        bh=GAtBfiR3zREvI6Pu53dNtAAJIcvNCR/uW8lccCTkAE8=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=09qdbjyTF0YwhwLeCe/ZJYYrjFSo7df/akOmOhnJL1Nz3+iRIEvhIDMmr6W1dCBIf
-         bE7KCXS2+R0ZyWXhbq4kpFl1epH3RXBDn+J48Pc3eOudwxKGJ4+mMIXjGfXhruxbkL
-         xuh+QFQ8z+yVqfnuBQzH1Utbh7+3X9fCqVIbXVQw=
+        b=YO6LX+A/rXUUAt7J2lnScTRJEu9pBSB/7qA31OiMuW8aNda8kB8F00mYuvm3bafPz
+         9X/fcFRmVuP9OK03Azt1e8T//lBBfvFh9ustqB2vz0Uw+lz26XOEXjTa4EEeL7o9Lf
+         Xj/ELXDXs4q8TdlZ3KhByfVX66Mhf/DtD2eHOwbk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190608195317.6336-2-manivannan.sadhasivam@linaro.org>
-References: <20190608195317.6336-1-manivannan.sadhasivam@linaro.org> <20190608195317.6336-2-manivannan.sadhasivam@linaro.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de, robh+dt@kernel.org, ulf.hansson@linaro.org
+In-Reply-To: <20190608091436.GF9160@vkoul-mobl.Dlink>
+References: <20190607101234.30449-1-vkoul@kernel.org> <20190607175542.D9D56208C0@mail.kernel.org> <20190608091436.GF9160@vkoul-mobl.Dlink>
+To:     Vinod Koul <vkoul@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 1/7] clk: actions: Fix factor clk struct member access
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: qcom: clk-alpha-pll: Add support for Trion PLLs
 User-Agent: alot/0.8.1
-Date:   Mon, 10 Jun 2019 08:01:59 -0700
-Message-Id: <20190610150200.8A32220859@mail.kernel.org>
+Date:   Mon, 10 Jun 2019 08:06:45 -0700
+Message-Id: <20190610150646.2003720859@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-06-08 12:53:11)
-> Since the helper "owl_factor_helper_round_rate" is shared between factor
-> and composite clocks, using the factor clk specific helper function
-> like "hw_to_owl_factor" to access its members will create issues when
-> called from composite clk specific code. Hence, pass the "factor_hw"
-> struct pointer directly instead of fetching it using factor clk specific
-> helpers.
+Quoting Vinod Koul (2019-06-08 02:14:36)
+> On 07-06-19, 10:55, Stephen Boyd wrote:
+> > Quoting Vinod Koul (2019-06-07 03:12:33)
 >=20
-> This issue has been observed when a composite clock like "sd0_clk" tried
-> to call "owl_factor_helper_round_rate" resulting in pointer dereferencing
-> error.
+> > >  const struct clk_ops clk_alpha_pll_ops =3D {
+> > >         .enable =3D clk_alpha_pll_enable,
+> > >         .disable =3D clk_alpha_pll_disable,
+> > > @@ -902,6 +1079,10 @@ static int alpha_pll_fabia_enable(struct clk_hw=
+ *hw)
+> > >         ret =3D regmap_read(regmap, PLL_OPMODE(pll), &opmode_val);
+> > >         if (ret)
+> > >                 return ret;
+> > > +       ret =3D regmap_update_bits(regmap, PLL_MODE(pll),
+> > > +                                PLL_BYPASSNL, PLL_BYPASSNL);
+> > > +       if (ret)
+> > > +               return ret;
+> >=20
+> > What is this?
 >=20
-> Fixes: 4bb78fc9744a ("clk: actions: Add factor clock support")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+> Sorry am not sure I understood the question. care to elaborate please?
 
-I agree with Andreas on the function name. With that change you can add
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+The bypass bit of a PLL is very generic so I'm confused why the enable
+function is only gaining this bit setting logic now. Plus, it's all
+grouped together with the previous line so it looks like a possible
+stray addition to the code? And after this there's an early exit from
+the function if the PLL is already running, so we would put the PLL into
+bypass and then return? What's going on here?
 
