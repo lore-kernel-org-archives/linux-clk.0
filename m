@@ -2,188 +2,122 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FF7C28D16
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6AAC468C1
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA0020859
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:47:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 893E22085A
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:13:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F/dI8LIP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HfPMGgqi"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K01tIZmp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389564AbfFJLrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 07:47:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58334 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389517AbfFJLrQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 07:47:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 410E86019D; Mon, 10 Jun 2019 11:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560167235;
-        bh=4XDPRPKTvdPgn7fWEq49BU4VLSuWjWWn+L9RjxS4Tr4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=F/dI8LIPkR1zdhwduM0KxCFEvB4R6ylEK+IMajctYv7slDZptEe5nU0lculLlTMZQ
-         Lg3tAfE9I7+Gk0OZiXfCU/WQagxn5xLuPfeRxffBFonuOox3TlDtWo7tIZ74Nrn7J2
-         AfjbGx6A3s0n0TQSFxBiSl2XXuIocxM3BIFaRuaw=
-Received: from [10.201.2.161] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5252560209;
-        Mon, 10 Jun 2019 11:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560167234;
-        bh=4XDPRPKTvdPgn7fWEq49BU4VLSuWjWWn+L9RjxS4Tr4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HfPMGgqiNfj2YJKVBh25nt5zqx5ec/y9KHWxNKJvfhFGKk9l84OrWrmGkfLDOvf4P
-         ZnJ65lj203tCDVTIr73AOpExlWf94+9F/aA6lBqjitMDM8gEWDEAnvkIM5H/H/FKAm
-         6iSahlOERBQTYbRiirWGS29X26w5VJh3hNTma+R8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5252560209
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH 4/6] clk: qcom: Add ipq6018 Global Clock Controller
- support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     robh+dt@kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linus.walleij@linaro.org, agross@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
- <1559754961-26783-5-git-send-email-sricharan@codeaurora.org>
- <20190608033229.GE24059@builder>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <6583f576-acf4-a71b-d691-bce548e2c008@codeaurora.org>
-Date:   Mon, 10 Jun 2019 17:17:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2389446AbfFJMNp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 08:13:45 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52404 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389229AbfFJMNo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 08:13:44 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5ACDagN037456;
+        Mon, 10 Jun 2019 07:13:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560168816;
+        bh=osAjUsWcdirwDiL6VFKp3uYcXBRHoQkePLbEhd8oePw=;
+        h=To:CC:From:Subject:Date;
+        b=K01tIZmpwlWUkHBndyup+SmEHWCoMTdxIZAy59z+agy8sOVLaV8Iy0rprwggndBW9
+         OAD18cgsya4KcXf0HVW69ne+E7GF0QytR0xADcegLgtJXTptZjiHrcO6M4TUyRM+9r
+         V+wutYy9RjBKWMUZUeiDBedmNrQybtYfXM9mfywA=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5ACDaOI082558
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Jun 2019 07:13:36 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 10
+ Jun 2019 07:13:36 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 10 Jun 2019 07:13:36 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5ACDY0v129308;
+        Mon, 10 Jun 2019 07:13:35 -0500
+To:     linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+From:   Tero Kristo <t-kristo@ti.com>
+Subject: [GIT PULL] clk: keystone: changes for 5.3
+Message-ID: <3bd8aa21-60a5-f36a-b86f-425ce4f0163e@ti.com>
+Date:   Mon, 10 Jun 2019 15:13:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190608033229.GE24059@builder>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
+Hi Stephen, Mike, Santosh,
 
-On 6/8/2019 9:02 AM, Bjorn Andersson wrote:
-> On Wed 05 Jun 10:15 PDT 2019, Sricharan R wrote:
-> 
->> This patch adds support for the global clock controller found on
->> the ipq6018 based devices.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> Signed-off-by: anusha <anusharao@codeaurora.org>
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> 
-> Please fix your s-o-b chain, as described in my reply to 1/8..
-> 
+Here's a pull request for the clock changes for keystone SoC for 5.3. 
+The patches were acked by Santosh, so I took liberty to create a 
+pull-request for these also. I snipped patch #5 out of the series (it is 
+against drivers/firmware) and am planning to send a separate 
+pull-request for this, or alternatively agree with Santosh how to handle it.
 
- ok.
+-Tero
 
->> ---
->>  drivers/clk/qcom/Kconfig       |    9 +
->>  drivers/clk/qcom/Makefile      |    1 +
->>  drivers/clk/qcom/gcc-ipq6018.c | 5267 ++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 5277 insertions(+)
->>  create mode 100644 drivers/clk/qcom/gcc-ipq6018.c
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index e1ff83c..e5fb091 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -120,6 +120,15 @@ config IPQ_GCC_8074
->>  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->>  	  of ipq8074.
->>  
->> +config IPQ_GCC_6018
-> 
-> Please maintain sort order.
-> 
+---
 
- ok.
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
->> +	tristate "IPQ6018 Global Clock Controller"
->> +	depends on COMMON_CLK_QCOM
->> +	help
->> +	  Support for global clock controller on ipq6018 devices.
->> +	  Say Y if you want to use peripheral devices such as UART, SPI,
->> +	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->> +	  of ipq6018.
->> +
->>  config MSM_GCC_8660
->>  	tristate "MSM8660 Global Clock Controller"
->>  	help
->> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->> index f0768fb..025137d 100644
->> --- a/drivers/clk/qcom/Makefile
->> +++ b/drivers/clk/qcom/Makefile
->> @@ -22,6 +22,7 @@ obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
->>  obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->>  obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
->>  obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
->> +obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
-> 
-> Ditto.
-> 
+   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
- ok.
+are available in the git repository at:
 
->>  obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
->>  obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
->>  obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
->> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-> [..]
->> +static int gcc_ipq6018_probe(struct platform_device *pdev)
->> +{
->> +	return qcom_cc_probe(pdev, &gcc_ipq6018_desc);
->> +}
->> +
->> +static int gcc_ipq6018_remove(struct platform_device *pdev)
->> +{
->> +	return 0;
-> 
-> Just omit .remove from the gcc_ipq6018_driver instead of providing a
-> dummy function.
-> 
+   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
+tags/keystone-clk-for-5.3
 
- ok.
+for you to fetch changes up to 3f1f22d8009035a641a359a09239bcc6ffac7bb9:
 
->> +}
->> +
->> +static struct platform_driver gcc_ipq6018_driver = {
->> +	.probe = gcc_ipq6018_probe,
->> +	.remove = gcc_ipq6018_remove,
->> +	.driver = {
->> +		.name   = "qcom,gcc-ipq6018",
->> +		.owner  = THIS_MODULE,
-> 
-> Don't specify .owner in platform drivers.
-> 
+   clk: keystone: sci-clk: extend clock IDs to 32 bits (2019-06-07 
+12:11:41 +0300)
 
- ok.
+----------------------------------------------------------------
+Keystone clk changes for 5.3 merge window.
 
-> [..]
->> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. GCC IPQ6018 Driver");
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_ALIAS("platform:gcc-ipq6018");
-> 
-> This modalias won't be used.
->
+- Add support for 32 bit clock IDs for sci-clks, this is needed
+   for the new J721e SoC which has a few devices that have more than
+   255 clocks associated to them.
+- Clock probing done from DT by default instead of firmware side.
+   Scanning clocks from DT is much faster than firmware, and also we
+   can omit unnecessary clocks which saves even more time. This has been
+   done in the interest of saving boot time.
+- Remove the device tree node path from the registered sci-clk names.
+   This mainly makes the debugfs interface more readable.
 
- ok. But it looks to be there in other clk drivers as well.
- 
-Regards,
- Sricharan
+----------------------------------------------------------------
+Tero Kristo (4):
+       clk: keystone: sci-clk: cut down the clock name length
+       clk: keystone: sci-clk: split out the fw clock parsing to own 
+function
+       clk: keystone: sci-clk: probe clocks from DT instead of firmware
+       clk: keystone: sci-clk: extend clock IDs to 32 bits
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+  drivers/clk/keystone/Kconfig   |  11 ++
+  drivers/clk/keystone/sci-clk.c | 239 
+++++++++++++++++++++++++++++++++++-------
+  2 files changed, 212 insertions(+), 38 deletions(-)
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
