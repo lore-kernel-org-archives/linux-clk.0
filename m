@@ -2,222 +2,104 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44B0C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 16:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FDDC31E43
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 16:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A990206C3
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 16:11:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkbcdtV1"
+	by mail.kernel.org (Postfix) with ESMTP id ADB4120820
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 16:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560185294;
+	bh=oFtb1o3AXLUr4k9TH9OD5ZZ8qF8S9a/ouxAXF91MYh0=;
+	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
+	b=W8bAyCjpCGMy0aTYBrNpJ0aEN3erGmofFsjg6c3pgecoT9I9rQXxwnQJinsPPJRkV
+	 2BXChQdMTclJI8n23o64yvE8vL5g/nNgNRBP9Uehjp6BT3Ezm8MmHQ58YU6CTnlzZ6
+	 YH/Jq/GJOYlBTm0+uUSVp6TZxHqOOZudnbkRCJhI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391462AbfFJQLg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 12:11:36 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35081 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390912AbfFJQLf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 12:11:35 -0400
-Received: by mail-pl1-f196.google.com with SMTP id p1so3856223plo.2
-        for <linux-clk@vger.kernel.org>; Mon, 10 Jun 2019 09:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=QET9pg+wg4oBG+Qp5Q1cj6O60aOdmHNnSi9zeIidUAw=;
-        b=UkbcdtV1H7m1I0gRKzsmcd6Znvvr4WjHTOqLxmQpJdxVjeRm7Wicg3zXZm6YupWk1j
-         cun43ZADHgOP6ggmqFg60lZfwvSO5MXKFTvFw0TRR0WfG2y9dypk517rd/2oJvXU/J5E
-         sKPo9mZF4qdBLlUNuZGELaTpcM2GyzwQVmK46iJ+kqInACxc88sScLfgvE05VFDIH4Vz
-         Bt6Ln5rCnz5Z0mBvxYns3xkVaMayygOxI55YjBX8w0hexmbY0+Ry37/8nIgI8Op41Ixn
-         3HKnTZoQzqIQo7H97TINZI6yh44gqpm6eVzlVjAKw1bRVO9fEy0dHbprol7ldHvDMvgH
-         g8QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=QET9pg+wg4oBG+Qp5Q1cj6O60aOdmHNnSi9zeIidUAw=;
-        b=Y6CjmfFUnEVKX4D9Rv4buG57vtoTJZqrgLpRrjg43c2dg1OgIARh/CHv+DOQBGSexF
-         mxkNYW3OmIwV/CU5bGoxTQTlg9dPQ3/XM5Wdb608V/b0+O+PGtxxpBZhC4vd8498FQZx
-         0Gp1RNwd5xrLZX5AFNklxvvWifnKbr10aV4qd91VEMpBAEKBXujigLItuYU6HpgzNCr1
-         iybNhZyaVUmt7sqxGBNuHO1cMEhFCwCvSL+Kf0wvQR6q4Jtymg6Ow8NTlO+zw0/RmlE6
-         BLAB3GZdqKjFs6lfWOEMaFHJ/llBVO//xyGjuLw6QkC0SdzNoghVK+GAP7FuhrH13/cr
-         PV7Q==
-X-Gm-Message-State: APjAAAVijz6CdgG6XWpKxjUaWn4WAw1/IzskHWLNHYX4uer+uRIdhpFq
-        GQULmO0qU0xD2U+WCaD9reQl
-X-Google-Smtp-Source: APXvYqy3Ql2jZPLLK7tXmhrVL1GGBblVr3ED1gm9qp676tSVKbCk6HseyNK9zBGjo0G0pvapjBsw8w==
-X-Received: by 2002:a17:902:d915:: with SMTP id c21mr4568605plz.335.1560183094968;
-        Mon, 10 Jun 2019 09:11:34 -0700 (PDT)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id 26sm11070938pfi.147.2019.06.10.09.11.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Jun 2019 09:11:34 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 21:41:28 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/7] arm64: dts: actions: Add uSD and eMMC support for
- Bubblegum96
-Message-ID: <20190610161128.GC31461@mani>
-References: <20190608195317.6336-1-manivannan.sadhasivam@linaro.org>
- <20190608195317.6336-5-manivannan.sadhasivam@linaro.org>
- <1381305a-8585-9dcf-6b43-34e852e785ab@suse.de>
+        id S1727860AbfFJQsG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 12:48:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726217AbfFJQsF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jun 2019 12:48:05 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18D15206C3;
+        Mon, 10 Jun 2019 16:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560185285;
+        bh=oFtb1o3AXLUr4k9TH9OD5ZZ8qF8S9a/ouxAXF91MYh0=;
+        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
+        b=tBcMESXBdsEGjobi+BHjlGd2RIqXKwu6aeRyd10RYmRrXjQpm69IIqrxRkhXkEUGP
+         AQyCw2PvGkD4ULELPPRFasXJIN7qpaewJiXRuwPJDsMS6aGgFogx+c/GJwb3W3C3dm
+         dVV/fDf3akooB5cM5Lom0XOdDCSitrtzKqlGPfuY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1381305a-8585-9dcf-6b43-34e852e785ab@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <048a25c0-3a2c-3906-84d4-5eb67f3ce2ef@codeaurora.org>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <1559754961-26783-6-git-send-email-sricharan@codeaurora.org> <20190608034835.GH24059@builder> <048a25c0-3a2c-3906-84d4-5eb67f3ce2ef@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sricharan R <sricharan@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     robh+dt@kernel.org, sboyd@codeaurora.org, linus.walleij@linaro.org,
+        agross@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
+User-Agent: alot/0.8.1
+Date:   Mon, 10 Jun 2019 09:48:04 -0700
+Message-Id: <20190610164805.18D15206C3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Sricharan R (2019-06-10 08:45:22)
+> On 6/8/2019 9:18 AM, Bjorn Andersson wrote:
+> > On Wed 05 Jun 10:16 PDT 2019, Sricharan R wrote:
+> >> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/d=
+ts/qcom/ipq6018.dtsi
+> >> new file mode 100644
+> >> index 0000000..79cccdd
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <32000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
+> >> +            xo: xo {
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <24000000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
+> >> +            bias_pll_cc_clk {
+> >=20
+> > Please give this a label and reference it from the node that uses it
+> > (regardless of the implementation matching by clock name).
+> >=20
+>  ok, in that case, so might have to remove these for now, till we add
+>  the corresponding users.
 
-Hi Andreas,
+Yes, please remove them. They don't look like board clks, instead
+they're SoC level details that need to be created by some clk driver
+like GCC.
 
-On Mon, Jun 10, 2019 at 04:08:26PM +0200, Andreas Färber wrote:
-> Hi Mani,
-> 
-> Am 08.06.19 um 21:53 schrieb Manivannan Sadhasivam:
-> > Add uSD and eMMC support for Bubblegum96 board based on Actions Semi
-> > Owl SoC.
-> 
-> What information does "based on Actions Semi Owl SoC" give us? :)
-> The board name should be unique enough - Owl is a family of SoCs,
-> "actions:" is in the subject and "s900-" is in the filename.
-> 
-
-Makes sense!
-
-> > SD0 is connected to uSD slot and SD2 is connected to eMMC.
-> 
-> Suggest to add that as comments above the two nodes instead.
-> 
-
-Okay.
-
-> > Since there is no PMIC support added yet, fixed regulator has been
-> > used as a regulator node.
-> 
-> Fine with me - maybe add a comment and make sure it's aligned with the
-> schematics naming wrt PMIC.
-> 
-
-Okay.
-
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../boot/dts/actions/s900-bubblegum-96.dts    | 50 +++++++++++++++++++
-> >  1 file changed, 50 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-> > index 732daaa6e9d3..3b596d72de25 100644
-> > --- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-> > +++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-> > @@ -13,6 +13,9 @@
-> >  
-> >  	aliases {
-> >  		serial5 = &uart5;
-> > +		mmc0 = &mmc0;
-> > +		mmc1 = &mmc1;
-> > +		mmc2 = &mmc2;
-> 
-> Sort them alphabetically?
-> 
-
-Ack.
-
-> >  	};
-> >  
-> >  	chosen {
-> > @@ -23,6 +26,14 @@
-> >  		device_type = "memory";
-> >  		reg = <0x0 0x0 0x0 0x80000000>;
-> >  	};
-> > +
-> > +	reg_3p1v: regulator-3p1v {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-name = "fixed-3.1V";
-> > +		regulator-min-microvolt = <3100000>;
-> > +		regulator-max-microvolt = <3100000>;
-> > +		regulator-always-on;
-> > +	};
-> >  };
-> >  
-> >  &i2c0 {
-> > @@ -241,6 +252,45 @@
-> >  			bias-pull-up;
-> >  		};
-> >  	};
-> > +
-> > +	mmc0_default: mmc0_default {
-> > +		pinmux {
-> > +			groups = "sd0_d0_mfp", "sd0_d1_mfp", "sd0_d2_d3_mfp",
-> > +				 "sd0_cmd_mfp", "sd0_clk_mfp";
-> > +			function = "sd0";
-> > +		};
-> > +	};
-> > +
-> > +	mmc2_default: mmc2_default {
-> > +		pinmux {
-> > +			groups = "nand0_d0_ceb3_mfp";
-> > +			function = "sd2";
-> > +		};
-> > +	};
-> 
-> Wouldn't it make more sense to move these and the below pinctrl-* to
-> s900.dtsi for sharing with other theoretical boards? I really dislike
-> the imx model where pin muxing is duplicated into each individual board.
-> 
-
-Matter of taste. IMO pinctrl config belongs to the board design and I don't
-wanna dump all combinations in the soc dtsi.
-
-Thanks,
-Mani
-
-> Regards,
-> Andreas
-> 
-> > +};
-> > +
-> > +&mmc0 {
-> > +	status = "okay";
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&mmc0_default>;
-> > +	no-sdio;
-> > +	no-mmc;
-> > +	no-1-8-v;
-> > +	cd-gpios = <&pinctrl 120 GPIO_ACTIVE_LOW>;
-> > +	bus-width = <4>;
-> > +	vmmc-supply = <&reg_3p1v>;
-> > +	vqmmc-supply = <&reg_3p1v>;
-> > +};
-> > +
-> > +&mmc2 {
-> > +	status = "okay";
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&mmc2_default>;
-> > +	no-sdio;
-> > +	no-sd;
-> > +	non-removable;
-> > +	bus-width = <8>;
-> > +	vmmc-supply = <&reg_3p1v>;
-> >  };
-> >  
-> >  &timer {
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-> HRB 21284 (AG Nürnberg)
+>=20
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <300000000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
+> >> +            bias_pll_nss_noc_clk {
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <416500000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
