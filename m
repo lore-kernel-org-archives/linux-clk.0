@@ -2,115 +2,188 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D60C282DD
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FF7C28D16
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B12152082E
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:06:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDA0020859
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:47:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F/dI8LIP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HfPMGgqi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388572AbfFJLGn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 07:06:43 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60852 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388373AbfFJLGn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Jun 2019 07:06:43 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C46A200775;
-        Mon, 10 Jun 2019 13:06:41 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F30E3200773;
-        Mon, 10 Jun 2019 13:06:40 +0200 (CEST)
-Received: from fsr-ub1864-112.ea.freescale.net (gw_auto.ea.freescale.net [10.171.94.100])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 926D02061D;
-        Mon, 10 Jun 2019 13:06:40 +0200 (CEST)
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] clk: Add clk_parent entry in debugfs
-Date:   Mon, 10 Jun 2019 14:06:38 +0300
-Message-Id: <82d6e1d63959ecb23bdcd363e93a27d08eee6859.1560164542.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2389564AbfFJLrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 07:47:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58334 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389517AbfFJLrQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 07:47:16 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 410E86019D; Mon, 10 Jun 2019 11:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560167235;
+        bh=4XDPRPKTvdPgn7fWEq49BU4VLSuWjWWn+L9RjxS4Tr4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=F/dI8LIPkR1zdhwduM0KxCFEvB4R6ylEK+IMajctYv7slDZptEe5nU0lculLlTMZQ
+         Lg3tAfE9I7+Gk0OZiXfCU/WQagxn5xLuPfeRxffBFonuOox3TlDtWo7tIZ74Nrn7J2
+         AfjbGx6A3s0n0TQSFxBiSl2XXuIocxM3BIFaRuaw=
+Received: from [10.201.2.161] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5252560209;
+        Mon, 10 Jun 2019 11:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560167234;
+        bh=4XDPRPKTvdPgn7fWEq49BU4VLSuWjWWn+L9RjxS4Tr4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HfPMGgqiNfj2YJKVBh25nt5zqx5ec/y9KHWxNKJvfhFGKk9l84OrWrmGkfLDOvf4P
+         ZnJ65lj203tCDVTIr73AOpExlWf94+9F/aA6lBqjitMDM8gEWDEAnvkIM5H/H/FKAm
+         6iSahlOERBQTYbRiirWGS29X26w5VJh3hNTma+R8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5252560209
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH 4/6] clk: qcom: Add ipq6018 Global Clock Controller
+ support
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     robh+dt@kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linus.walleij@linaro.org, agross@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+ <1559754961-26783-5-git-send-email-sricharan@codeaurora.org>
+ <20190608033229.GE24059@builder>
+From:   Sricharan R <sricharan@codeaurora.org>
+Message-ID: <6583f576-acf4-a71b-d691-bce548e2c008@codeaurora.org>
+Date:   Mon, 10 Jun 2019 17:17:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190608033229.GE24059@builder>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This allows to easily determine the parent in shell scripts without
-parsing more complex files.
+Hi Bjorn,
 
-Add the clk_parent file for all clks which can have a parent, not just
-muxes. This way it can be used to determine the clk tree structure
-without parsing more complex files.
+On 6/8/2019 9:02 AM, Bjorn Andersson wrote:
+> On Wed 05 Jun 10:15 PDT 2019, Sricharan R wrote:
+> 
+>> This patch adds support for the global clock controller found on
+>> the ipq6018 based devices.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> Signed-off-by: anusha <anusharao@codeaurora.org>
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> 
+> Please fix your s-o-b chain, as described in my reply to 1/8..
+> 
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+ ok.
 
----
-Changes since v1: Only add clk_parent if num_parents > 0
+>> ---
+>>  drivers/clk/qcom/Kconfig       |    9 +
+>>  drivers/clk/qcom/Makefile      |    1 +
+>>  drivers/clk/qcom/gcc-ipq6018.c | 5267 ++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 5277 insertions(+)
+>>  create mode 100644 drivers/clk/qcom/gcc-ipq6018.c
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index e1ff83c..e5fb091 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -120,6 +120,15 @@ config IPQ_GCC_8074
+>>  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>>  	  of ipq8074.
+>>  
+>> +config IPQ_GCC_6018
+> 
+> Please maintain sort order.
+> 
 
-It seems that num_parents is only initialized once and never changes so
-having a check here makes sense: skip the clk_parent file if the clk can
-never have parent (num_parent == 0) but keep it if the parent is
-constant (num_parents == 1).
+ ok.
 
-It seems the parent can be set to NULL later so keep the check for
-(core->parent != NULL) in the show function.
+>> +	tristate "IPQ6018 Global Clock Controller"
+>> +	depends on COMMON_CLK_QCOM
+>> +	help
+>> +	  Support for global clock controller on ipq6018 devices.
+>> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+>> +	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>> +	  of ipq6018.
+>> +
+>>  config MSM_GCC_8660
+>>  	tristate "MSM8660 Global Clock Controller"
+>>  	help
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index f0768fb..025137d 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -22,6 +22,7 @@ obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
+>>  obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
+>>  obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
+>>  obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
+>> +obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
+> 
+> Ditto.
+> 
 
-Link to v1: https://patchwork.kernel.org/patch/10959347/
----
- drivers/clk/clk.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ ok.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index aa51756fd4d6..d21a219deef8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3009,10 +3009,21 @@ static int possible_parents_show(struct seq_file *s, void *data)
+>>  obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
+>>  obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
+>>  obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
+>> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+> [..]
+>> +static int gcc_ipq6018_probe(struct platform_device *pdev)
+>> +{
+>> +	return qcom_cc_probe(pdev, &gcc_ipq6018_desc);
+>> +}
+>> +
+>> +static int gcc_ipq6018_remove(struct platform_device *pdev)
+>> +{
+>> +	return 0;
+> 
+> Just omit .remove from the gcc_ipq6018_driver instead of providing a
+> dummy function.
+> 
+
+ ok.
+
+>> +}
+>> +
+>> +static struct platform_driver gcc_ipq6018_driver = {
+>> +	.probe = gcc_ipq6018_probe,
+>> +	.remove = gcc_ipq6018_remove,
+>> +	.driver = {
+>> +		.name   = "qcom,gcc-ipq6018",
+>> +		.owner  = THIS_MODULE,
+> 
+> Don't specify .owner in platform drivers.
+> 
+
+ ok.
+
+> [..]
+>> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. GCC IPQ6018 Driver");
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_ALIAS("platform:gcc-ipq6018");
+> 
+> This modalias won't be used.
+>
+
+ ok. But it looks to be there in other clk drivers as well.
  
- 	return 0;
- }
- DEFINE_SHOW_ATTRIBUTE(possible_parents);
- 
-+static int current_parent_show(struct seq_file *s, void *data)
-+{
-+	struct clk_core *core = s->private;
-+
-+	if (core->parent)
-+		seq_printf(s, "%s\n", core->parent->name);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(current_parent);
-+
- static int clk_duty_cycle_show(struct seq_file *s, void *data)
- {
- 	struct clk_core *core = s->private;
- 	struct clk_duty *duty = &core->duty;
- 
-@@ -3041,10 +3052,14 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 	debugfs_create_u32("clk_protect_count", 0444, root, &core->protect_count);
- 	debugfs_create_u32("clk_notifier_count", 0444, root, &core->notifier_count);
- 	debugfs_create_file("clk_duty_cycle", 0444, root, core,
- 			    &clk_duty_cycle_fops);
- 
-+	if (core->num_parents > 0)
-+		debugfs_create_file("clk_parent", 0444, root, core,
-+				    &current_parent_fops);
-+
- 	if (core->num_parents > 1)
- 		debugfs_create_file("clk_possible_parents", 0444, root, core,
- 				    &possible_parents_fops);
- 
- 	if (core->ops->debug_init)
+Regards,
+ Sricharan
+
 -- 
-2.17.1
-
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
