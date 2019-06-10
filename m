@@ -2,132 +2,193 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223CBC28CC7
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC66C282DD
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFCB92085A
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 369C32082E
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 11:01:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zxke5XTX"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i8tCth4C";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zs7bRIFk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbfFJKTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 06:19:22 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34011 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389292AbfFJKTV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 06:19:21 -0400
-Received: by mail-pg1-f194.google.com with SMTP id q15so2612500pgr.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Jun 2019 03:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Xl6v5F/D3VxC6oJtpVMTcWPj1WSUBStBszKQqnRd45o=;
-        b=Zxke5XTXYzZ1WpIKENuUCvQiJugmF6xmPmbVa+fQbXPRt5NLXE3XHZUNoUGyv8aLFk
-         0rjG9L8UqFlU/U4gpMjRlgJ8X3nE6ri7wGy68f6iQ0YzmFvk4qUWjWrM+LidoPGkcYmC
-         PQ9xxtOgJlxOvxLQsHD98QnhH9k+vQEifhuGZEw6YF5JG7SxcgV9Yrm+JHUTnexYbwAF
-         kXuHYrgJkBfViN9xWMijKskkhxv4JJjHTYC543USXdVVRRCXXHLpuHefM1TguMusR2yy
-         vc20X6vM3jkm2bt3gBKV0pla8vMhrOsmoUlAB2tkbEgoAhTb/u7PiuuxS5EVmWSF1W4W
-         /vug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xl6v5F/D3VxC6oJtpVMTcWPj1WSUBStBszKQqnRd45o=;
-        b=e5xRnkTRwUIEYaQRVBhJ3BDvvK5BofHIwG8GCmv/ghLFbjZyfJZBtX9NwT2+T4x0TS
-         b/Y829qpduz4v6A5KvDS+y09XkgC0eW8Qsvd6Afc4VXKLi6veKK11yQOYEF5GxaoB9eH
-         a6eqlQlXv7e330vrQX18WGzX0qnJMaLaHnC7F/mp6QZuc5j65AYFUp9mT46ainowai/4
-         Ptk8cOro2OvUcpiKUmoNOQWvShK2rvYK7SZwJnAleXmG+LovsNhBOrMR0cvBaEaYqV0D
-         OJjoMvHnOnzuCgrEE1GdiiqI+fzZcJ+OLo2Gy2xEe1JQ/n3LHYxizQEG0o0Xk1AAthKz
-         f6vQ==
-X-Gm-Message-State: APjAAAWxL6o5WL3OTn7ZpHDfW1gKMs57qSlug0t1X/pGclLi1v3uMPI1
-        NsuQwInF8xKgLJNcF0W2L6gfow==
-X-Google-Smtp-Source: APXvYqz3SI+6kD/ZaeTpbKZtNgBi0rdKkLPqyJFXIcZSqv4cqHNVPe2yimUvsPw0UUlmdDCXEymP1A==
-X-Received: by 2002:a65:6495:: with SMTP id e21mr993356pgv.383.1560161960609;
-        Mon, 10 Jun 2019 03:19:20 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id f186sm13630525pfb.5.2019.06.10.03.19.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 03:19:19 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 15:49:18 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc:     Christian Neubert <christian.neubert.86@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix initialization for
- cpu clocks
-Message-ID: <20190610101918.sypafywc6fn4jsbo@vireshk-i7>
-References: <20190314134428.GA24768@apalos>
- <874l85v8p6.fsf@FE-laptop>
- <20190318112844.GA1708@apalos>
- <87h8c0s955.fsf@FE-laptop>
- <20190318122113.GA4834@apalos>
- <20190424093015.rcr5auamfccxf6ei@vireshk-i7>
- <20190425123303.GA12659@apalos>
- <20190520112042.mpamnabxpwciih5m@vireshk-i7>
- <20190522070341.GA32613@apalos>
- <20190522070614.jhpo7nqrxinmlbcs@vireshk-i7>
+        id S2389275AbfFJLBI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 07:01:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59498 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389191AbfFJLBI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 07:01:08 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BB26C6087F; Mon, 10 Jun 2019 11:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560164466;
+        bh=3trH4tk+FpSyNWsSjAcyso4X8iKz3q8bkwkkDW6kp0c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=i8tCth4CABKcWpiDev0U4v9Cd0hlZ2e6aN4vxx7m5ErpM6rGgwy5QBYdBSJtDvF5U
+         j8bzacfJIq/qf06qk7YwR/Gp6vzz5q8/TOC1wawsnW0cDxcjP6b/p3ehn5lkSO0Vpy
+         3iwXiU1dhYnMx0jz2KBnZnY34TruF0R1BQl+q66U=
+Received: from [10.201.2.161] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D3A9060271;
+        Mon, 10 Jun 2019 11:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560164465;
+        bh=3trH4tk+FpSyNWsSjAcyso4X8iKz3q8bkwkkDW6kp0c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Zs7bRIFkXPtBEcVN0IE3hG8C/WidjWXVwfjfZUssqzofuOtu47AoMtEwzeR2ie/QY
+         GGAv5OEPk1Xt899aW9drGqPiVD2eARuuAaZU03W5qIMRxlGDvUZTBFZiaCM/1+kM6K
+         AGqozjHVsq4h9oAHisZKzuUAsj48PMm85Iz6xaCY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D3A9060271
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH 1/6] pinctrl: qcom: Add ipq6018 pinctrl driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     robh+dt@kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linus.walleij@linaro.org, agross@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+ <1559754961-26783-2-git-send-email-sricharan@codeaurora.org>
+ <20190608032613.GC24059@builder>
+From:   Sricharan R <sricharan@codeaurora.org>
+Message-ID: <1766bee3-e4da-7c7c-9881-4a58885640dc@codeaurora.org>
+Date:   Mon, 10 Jun 2019 16:30:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522070614.jhpo7nqrxinmlbcs@vireshk-i7>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20190608032613.GC24059@builder>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-05-19, 12:36, Viresh Kumar wrote:
-> On 22-05-19, 10:03, Ilias Apalodimas wrote:
-> > Hi Viresh, Gregory
-> > On Mon, May 20, 2019 at 04:50:42PM +0530, Viresh Kumar wrote:
-> > > On 25-04-19, 15:33, Ilias Apalodimas wrote:
-> > > > Hi Viresh,
-> > > > 
-> > > > > > > Also, during this week-end, Christian suggested that the issue might
-> > > > > > > come from the AVS support.
-> > > > > > > 
-> > > > > > > Could you disable it and check you still have the issue?
-> > > > > > > 
-> > > > > > > For this, you just have to remove the avs node in
-> > > > > > > arch/arm64/boot/dts/marvell/armada-37xx.dtsi and rebuild the dtb.
-> > > > > > Sure. You'll have to wait for a week though. Currently on a trip. I'll run that
-> > > > > >  once i return
-> > > > > 
-> > > > > @Ilias: Can you please try this now and confirm to Gregory ?
-> > > > I am more overloaded than usual and totally forgot about this. Apologies.
-> > > > I'll try finding some time and do this.
-> > > 
-> > > Ping Ilias.
-> > Sorry for the huge delay. 
-> > Applying this patch and removing tha 'avs' node from
-> > arch/arm64/boot/dts/marvell/armada-37xx.dtsi seems to work.
-> > Changing between governors does not freeze the board any more. I haven't checked
-> > the actual impact on the CPU speed but the values on 
-> > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor are correct
-> 
-> Thanks for testing it out. Lets see what Gregory has to say now.
+Hi Bjorn,
 
-@Gregory: Do you have any further advice for Ilias ?
+On 6/8/2019 8:56 AM, Bjorn Andersson wrote:
+> On Wed 05 Jun 10:15 PDT 2019, Sricharan R wrote:
+> 
+>> Add initial pinctrl driver to support pin configuration with
+>> pinctrl framework for ipq6018.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
+>> Signed-off-by: speriaka <speriaka@codeaurora.org>
+> 
+
+ Thanks for the review !!
+
+> These should start with the author, then followed by each person that
+> handled the patch on its way to the list - so your name should probably
+> be last.  If you have more than one author add Co-developed-by, in
+> addition to the Signed-off-by.
+> 
+> And please spell our speriaka's first and last name.
+> 
+ 
+  ok, will fix it.
+
+> [..]
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.txt
+> [..]
+>> +- #gpio-cells:
+>> +	Usage: required
+>> +	Value type: <u32>
+>> +	Definition: must be 2. Specifying the pin number and flags, as defined
+>> +		    in <dt-bindings/gpio/gpio.h>
+> 
+> You're missing the required "gpio-ranges" property.
+> 
+
+ ok, will add.
+
+>> +
+> [..]
+>> +- function:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: Specify the alternative function to be configured for the
+>> +		    specified pins. Functions are only valid for gpio pins.
+>> +		    Valid values are:
+>> +	adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1, atest_char, atest_char0,
+> 
+> Please indent these.
+> 
+
+ ok.
+
+> [..]
+> 
+> The rest should be in a separate patch from the binding.
+> 
+>> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+> [..]
+>> +enum ipq6018_functions {
+> [..]
+>> +	msm_mux_NA,
+> 
+> I like when these are sorted, and if you make the last entry msm_mux__
+> the msm_pingroup array becomes easier to read.
+> 
+
+ ok.
+
+>> +};
+> [..]
+>> +static const struct msm_function ipq6018_functions[] = {
+> [..]
+>> +	FUNCTION(gcc_tlmm),
+> 
+> As above, please sort these.
+> 
+
+ ok.
+
+>> +};
+>> +
+>> +static const struct msm_pingroup ipq6018_groups[] = {
+>> +	PINGROUP(0, qpic_pad, wci20, qdss_traceclk_b, NA, burn0, NA, NA, NA,
+>> +		 NA),
+> 
+> Please ignore the 80-char and skip the line breaks.
+> 
+
+ ok.
+
+>> +	PINGROUP(1, qpic_pad, mac12, qdss_tracectl_b, NA, burn1, NA, NA, NA,
+>> +		 NA),
+>> +	PINGROUP(2, qpic_pad, wci20, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+>> +	PINGROUP(3, qpic_pad, mac01, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+>> +	PINGROUP(4, qpic_pad, mac01, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+>> +	PINGROUP(5, qpic_pad4, mac21, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+> 
+> Is there a reason to keep qpic_padN as separate functions from qpic_pad?
+> 
+  Hmm, the auto-gen scripts needs to be fixed. Will correct it.
+
+> [..]
+>> +static struct platform_driver ipq6018_pinctrl_driver = {
+>> +	.driver = {
+>> +		.name = "ipq6018-pinctrl",
+>> +		.owner = THIS_MODULE,
+> 
+> .owner is populated automagically by platform_driver_register, so please
+> omit this.
+> 
+
+ ok, missed it. will fix. 
+
+Regards,
+ Sricharan
 
 -- 
-viresh
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
