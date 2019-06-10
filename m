@@ -2,186 +2,113 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF1FC282DD
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 09:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78061C282DD
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E80AE2082E
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 09:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D06520859
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 10:10:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ngq5TC24"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZUu4FyQ4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SaLCPnR1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388749AbfFJJhV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 05:37:21 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33890 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388742AbfFJJhV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 05:37:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e16so8462921wrn.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Jun 2019 02:37:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=YmUQOBR/GJq7UaPzUNV4Rf8Mf+3yYG+dn3tRrCjRgF0=;
-        b=Ngq5TC241NWWOhW2wlmQgnfzQHe0pGNYYuPzePTgUZGjgqvK5wXoeSeRykP/JazfaD
-         8pH5UBa+KTIJYQ8tqZzStHpWFhGnc+wfqZENECv3w62t2RQf95+LJl2qwxTXS76w4l0I
-         JCZWrB7S001YzldoGJy2f7gqPhrdcJzIA1jelI0zp1Oq++2kF4LKd6MTyFrKwDIMJmmb
-         RhOJDOU/pUKounO3J7i9QKYSLzzeBUlPCZWbM1C/ImUSykTs56CTg8tvGe6bcB1iG7UA
-         x9YxV9KGhaWiRZ8DZSMZ2drVegOnHZWyIp6WsvicK/ECb08DbSwlzbL4N2IAHuX5QGdq
-         C7hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=YmUQOBR/GJq7UaPzUNV4Rf8Mf+3yYG+dn3tRrCjRgF0=;
-        b=kGCfqeFiVcgj0RO2UTfwqHBrkQqKN6KwPmFelXvHjAYyM8vxKiM6JhzqZUiD9Wxzaz
-         ZX3kW5HvynT1JTpBXRNGU6FGsZfpxGonoHsWq79gfasPvsvMiftV+4DxNkbq7l3erQHo
-         KTev73jrvgsZgQtkWZbuIb+DxjLwk/xLUNagM7Sofvs4XINkxUi6sA/RY7p7bC7IhSV1
-         /FRy0rJcxMd/wgVX1mCZ8Jjk9t2qn2YZoOufHpxAIb2I7ktBLRHWufViv9ZhhH2oZZbJ
-         aMjiFBwRHgo5sCLjLevTcsZQH1lvvWrqpyw/8uiTlKXyLo6zRx0zU6UEVvgh+c32aC1h
-         Homw==
-X-Gm-Message-State: APjAAAW7StI0dea7+6vtnatyGQyX/7PoVq9yA5k0b+0FGScbPLGMGsl/
-        TzscNr/ihuKBoSS9oxT0hSo3/QDs1sk=
-X-Google-Smtp-Source: APXvYqxkgrvxz7l9kXQsr8B6DVhFVzZ7aagx1lJLoxS4N3XnngCqcHBVUgnOJxELFpFwwO0m7VwIjg==
-X-Received: by 2002:a5d:498a:: with SMTP id r10mr44569262wrq.28.1560159439366;
-        Mon, 10 Jun 2019 02:37:19 -0700 (PDT)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id a125sm10149177wmf.42.2019.06.10.02.37.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 02:37:18 -0700 (PDT)
-Message-ID: <6394b7e46a7967f4a5a6f77215e670e3e7a7ef10.camel@baylibre.com>
-Subject: Re: [PATCH] clk: fix clock global name usage.
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        baylibre-upstreaming@groups.io
-Date:   Mon, 10 Jun 2019 11:37:16 +0200
-In-Reply-To: <20190606225438.F175A2089E@mail.kernel.org>
-References: <20190524072745.27398-1-amergnat@baylibre.com>
-         <20190524143355.5586D2133D@mail.kernel.org>
-         <c89ecb6f328014ce22ae5d6c634e5337dbbf3ea2.camel@baylibre.com>
-         <20190524174454.8043420879@mail.kernel.org>
-         <5795a73002f2c787b545308585f0437eb5aa2f72.camel@baylibre.com>
-         <20190606225438.F175A2089E@mail.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S2388708AbfFJKKE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 06:10:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388647AbfFJKKE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 06:10:04 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 03D88602F3; Mon, 10 Jun 2019 10:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560161403;
+        bh=oMzk0exJ+xInm/wmcPKtXW9VAu75APw0ZR5LIiqwBMA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ZUu4FyQ4F3QEJLmauV8ESFFe6E8Wsayf9AmyCygmDWmL4yGaNIFiSk/K84j/JFl99
+         QuWVJf67fyJ/eJGBAXy/l3NDfCne5VePno+QCvl4fjHBHVId8nUfuIe72UFZespvT8
+         BqFVgkO74GArdKHGYQt3myV9/pAROEAoYExzHRkU=
+Received: from [10.201.2.161] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D6A0E60265;
+        Mon, 10 Jun 2019 10:09:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560161402;
+        bh=oMzk0exJ+xInm/wmcPKtXW9VAu75APw0ZR5LIiqwBMA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SaLCPnR1Et/BEyNk+ZcTTxeIwo8gyJ/n2d+q5Xul05WI4YqSh0wyjjYUlXeZt+8+Z
+         +O2BI26+KyHgNgyePciF/SQ4O9PzcgvrTyBtFsV+9RRbmDVIbSqwDUzeLy3D/3kh8l
+         P7GuAlKBKloZtGxGR4J58CeiejGr35K20apQDEdE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6A0E60265
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
+To:     Christian Lamparter <chunkeey@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        =?UTF-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+ <1559754961-26783-6-git-send-email-sricharan@codeaurora.org>
+ <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com>
+From:   Sricharan R <sricharan@codeaurora.org>
+Message-ID: <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
+Date:   Mon, 10 Jun 2019 15:39:56 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2019-06-06 at 15:54 -0700, Stephen Boyd wrote:
-> > > > Do you think we could come up with a priority order which makes the first
-> > > > example work ?
-> > > 
-> > > Maybe? I'm open to suggestions.
-> > > 
-> > > > Something like:
-> > > > 
-> > > > if (hw) {
-> > > >          /* use pointer */
-> > > > } else if (name) {
-> > > >          /* use legacy global names */
-> > > 
-> > > I don't imagine we can get rid of legacy name for a long time, so this
-> > > can't be in this order. Otherwise we'll try to lookup the legacy name
-> > > before trying the DT lookup and suffer performance hits doing a big
-> > > global search while also skipping the DT lookup that we want drivers to
-> > > use if they're more modern.
-> > 
-> > You'll try to look up the legacy name only if it is defined, in which case you
-> > know you this is what you want to use, so I don't see the penalty.  Unless ...
-> 
-> We'll only try the legacy name if all else fails. We're hoping that
-> .fw_name or .hw is used instead because those are faster than string
-> comparisons on the entire tree.
-> 
-> > Are trying to support case where multiple fields among hw, name, fw_name, index
-> > would be defined simultaneously ??
-> 
-> Yes.
+Hi Christian,
 
-Then this where we have different views ont he matter. I think this makes the
-logic a lot more complex.
-
-A controller should *know* if a clock is coming from 'somewhere else' and how.
-I think we should not try multiple methods hoping one will eventually work.
-
-I has already caught us now and I'm willing to bet we won't be the last.
-
+On 6/6/2019 2:11 AM, Christian Lamparter wrote:
+> On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
+>>
+>> Add initial device tree support for the Qualcomm IPQ6018 SoC and
+>> CP01 evaluation board.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>>
+>> +       clocks {
+>> +               sleep_clk: sleep_clk {
+>> +                       compatible = "fixed-clock";
+>> +                       clock-frequency = <32000>;
+>> +                       #clock-cells = <0>;
+>> +               };
+>> +
+> Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
+> on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
+> From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
+> declares them at 32000 Hz. Since you probably have access to the BOM and
+> datasheets. Can you please confirm what's the real clock frequency for
+> the IPQ6018.
+> (And maybe also for the sleep_clk of the IPQ4018 as well?).
 > 
-> > IMO, it would be weird and very confusing.
-> 
-> Let's expand the table.
-> 
->     .fw_name   |  .index |  .name      | DT lookup? | fallback to legacy? 
->    +-----------+---------+-------------+----+----------------------------
->  1 | NULL      |    >= 0 |  NULL       |    Y       |         N
->  2 | NULL      |    -1   |  NULL       |    N       |         N
->  3 | non-NULL  |    -1   |  NULL       |    Y       |         N
->  4 | non-NULL  |    >= 0 |  NULL       |    Y       |         N
->  5 | NULL      |    >= 0 |  non-NULL   |    Y       |         Y
->  6 | NULL      |    -1   |  non-NULL   |    N       |         Y
->  7 | non-NULL  |    -1   |  non-NULL   |    Y       |         Y
->  8 | non-NULL  |    >= 0 |  non-NULL   |    Y       |         Y
-> 
-> And then if .hw is set we just don't even try to use the above table.
-> 
-> You want case #5 to skip the DT lookup because .fw_name is NULL, but the
-> index is 0. I stared at this for a few minutes and I think you're
-> arguing that we should only do the DT lookup when index is 0 if we can't
-> fallback to a legacy lookup.
-> 
-> Initially that sounds OK, but then we'll get stuck with legacy lookups
-> forever if someone doesn't put a matching .fw_name into the
-> 'clock-names' property. We don't want that to happen. We want to get off
-> legacy and into the new world where either .fw_name or .index is used to
-> specify a parent.
-> 
-> From my perspective you're suffering from static initializers setting
-> everything to 0 and that making the index 0 and "valid" for a DT lookup
-> hitting up against not wanting to set anything in the structure
-> unnecessarily. While at the same time, it's great that .fw_name is set
-> to NULL by the static initializer, so it's a case of wanting the same
-> thing to do different things.
 
-Sure ... but we are also suffering from the complexity of the logic behind this
-(and the table above)
+What exactly is the issue that you faced ?
+Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
 
-When I define .hw, I don't need to initialize the rest but when I define .name I
-must define (at least) .index to a specific value ... This is at least tricky,
-and IMO, inconsistent.
+Regards,
+ Sricharan
 
-> 
-> If we would have made it so the DT index started at 1 then this wouldn't
-> be a problem, but that's not possible. Or if we would have made a new
-> clk flag that said CLK_USE_INDEX_FOR_DT then it could have gotten over
-> this problem but that's basically the same as making the inverse set of
-> drivers use -1 for the index to indicate they don't want a DT lookup.
-> 
-> I still believe the large majority of clk drivers will either use .hw or
-> .fw_name to find parents, while falling back to the .name for legacy
-> reasons. The .index field won't see much use, but we'll support it for
-> the firmwares out there that don't use "clock-names". Similarly, we'll
-> have only a handful of drivers that only want to specify .name and
-> nothing else, and those few drivers can use .index = -1 to overcome
-> this.
-
-I'm sorry, I still find all this very confusing just to add a fallback
-mechanism. It would be simpler to ask people to choose the method they.
-
-The transition to DT can be done submitting DT part first and submitting the
-clock driver part later on
-
-Anyway, we'll define index to -1 since this how it is supposed to be. Thx for
-your explanation
-
-
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
