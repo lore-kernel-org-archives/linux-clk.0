@@ -2,90 +2,131 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0001FC31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DD4C31E41
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C11F720859
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 888CC208E3
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560179308;
-	bh=JQYAUerPzfaXfW/oMHU3MZDXQSjGooRupBafc1MH6NY=;
+	s=default; t=1560179667;
+	bh=P0dkD9ENiSJ+hO8sohQ82M4kCSPlYg9QTn6ACh1pGBM=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=hUXKD5GaFNhbnbyLP6juJxtRU4zRsEu8lcLkHNNNF79p3M/bzAyH/0Ol9rq4nDoTp
-	 4uGHop1/hHmkicPgj7Lu0NYwjZQfWrRMAfRX72TaoS3F3n/vRKftCAGqOFEoPE+lt1
-	 9LlftTEYHw0IS/kguGWl3/Te0qn7bNQhs0JZSPyQ=
+	b=ZXM4XPNrCkLndQTJTybnHbuDFO/sU8vEt1e7Zson5gTlr5Vycu+Q7cNGMBZwWHUxO
+	 /uYudEPjND6KF+UGKOYMviNO/k5F5L3lxhpZcxeWHKm7bdOa+fX7XIzsKL1K65mPiz
+	 8+ycKt/hlraJRW0Iy+hxO11lPftTohTFZ9Di/sNA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389624AbfFJPI2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 11:08:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60080 "EHLO mail.kernel.org"
+        id S2390298AbfFJPO1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 11:14:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388848AbfFJPI2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:08:28 -0400
+        id S2389999AbfFJPO0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:14:26 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 607F6207E0;
-        Mon, 10 Jun 2019 15:08:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8139207E0;
+        Mon, 10 Jun 2019 15:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560179307;
-        bh=JQYAUerPzfaXfW/oMHU3MZDXQSjGooRupBafc1MH6NY=;
+        s=default; t=1560179666;
+        bh=P0dkD9ENiSJ+hO8sohQ82M4kCSPlYg9QTn6ACh1pGBM=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=Q/tUUYE0afU6oJyVF2D4QZaMAdxh95qUMlZE9dRkENKCn/AtnnQc4B9ofyVVQf8N2
-         IEneCiffs5lswPU7rLJA9Sf7xtG8xgdbWHuDk/ffYnQXtgItI/jrHED+FYqElZYwHz
-         s3BHFq8OvV41Ftfj39rl4otGzqKTX8zFYRXCq1zY=
+        b=t/3aX0FvHhHEPaDvxLC/Zt72Z7M8KIX/RV4nCGE26f5wvCqRAHSDFsqqyMKDezdSK
+         Xl2KSBSHTNZKMlEfsDGPkQTwOxV+jTJYQSxnTn5KPI5682IJHA0IEh2WBH09u9Pabp
+         UNDXWvPZA+0vbsuahyuhEOhz5rGFaIGoHZHPVXOY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190608091537.GG9160@vkoul-mobl.Dlink>
-References: <20190607101234.30449-1-vkoul@kernel.org> <20190607101234.30449-2-vkoul@kernel.org> <20190607174353.31EDA208C3@mail.kernel.org> <20190608091537.GG9160@vkoul-mobl.Dlink>
-To:     Vinod Koul <vkoul@kernel.org>
+In-Reply-To: <DB3PR0402MB391678C245944942EA2A7F62F5110@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20190604015928.23157-1-Anson.Huang@nxp.com> <20190604015928.23157-3-Anson.Huang@nxp.com> <20190606162543.EFFB820645@mail.kernel.org> <DB3PR0402MB391625A0B3D838CE88C53E33F5100@DB3PR0402MB3916.eurprd04.prod.outlook.com> <20190607180039.611C7208C0@mail.kernel.org> <DB3PR0402MB391678C245944942EA2A7F62F5110@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+To:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "s.hauer@pengutronix .de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver for SM8150
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V3 3/4] clk: imx: Add support for i.MX8MN clock driver
 User-Agent: alot/0.8.1
-Date:   Mon, 10 Jun 2019 08:08:26 -0700
-Message-Id: <20190610150827.607F6207E0@mail.kernel.org>
+Date:   Mon, 10 Jun 2019 08:14:25 -0700
+Message-Id: <20190610151425.D8139207E0@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-06-08 02:15:37)
-> On 07-06-19, 10:43, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2019-06-07 03:12:34)
-> > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8=
-150.c
-> > > new file mode 100644
-> > > index 000000000000..1cbc884444c9
-> > > --- /dev/null
-> > > +++ b/drivers/clk/qcom/gcc-sm8150.c
-> > > +static const struct parent_map gcc_parent_map_0[] =3D {
-> > > +       { P_BI_TCXO, 0 },
-> > > +       { P_GPLL0_OUT_MAIN, 1 },
-> > > +       { P_GPLL0_OUT_EVEN, 6 },
-> > > +       { P_CORE_BI_PLL_TEST_SE, 7 },
-> > > +};
-> > > +
-> > > +static const char * const gcc_parent_names_0[] =3D {
-> >=20
-> > We have a new way of specifying clk parents now. Can you use that
-> > instead of using strings everywhere?
+Quoting Anson Huang (2019-06-08 02:58:18)
+> Hi, Stephen
 >=20
-> Okay I will update, any pointers on new implementation I can look up?
+> > -----Original Message-----
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > Sent: Saturday, June 8, 2019 2:01 AM
+> > To: bjorn.andersson@linaro.org; catalin.marinas@arm.com;
+> > devicetree@vger.kernel.org; dinguyen@kernel.org;
+> > enric.balletbo@collabora.com; festevam@gmail.com;
+> > horms+renesas@verge.net.au; jagan@amarulasolutions.com;
+> > kernel@pengutronix.de; l.stach@pengutronix.de; linux-arm-
+> > kernel@lists.infradead.org; linux-clk@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; mark.rutland@arm.com;
+> > maxime.ripard@bootlin.com; mturquette@baylibre.com; olof@lixom.net;
+> > robh+dt@kernel.org; s.hauer@pengutronix .de <s.hauer@pengutronix.de>;
+> > shawnguo@kernel.org; will.deacon@arm.com; Abel Vesa
+> > <abel.vesa@nxp.com>; Aisheng Dong <aisheng.dong@nxp.com>; Anson
+> > Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; Leonard
+> > Crestez <leonard.crestez@nxp.com>
+> > Cc: dl-linux-imx <linux-imx@nxp.com>
+> > Subject: RE: [PATCH V3 3/4] clk: imx: Add support for i.MX8MN clock dri=
+ver
+> >=20
+> > Quoting Anson Huang (2019-06-06 17:50:28)
+> > >
+> > > I will use devm_platform_ioremap_resource() instead of ioremap(), and
+> > > can you be more specific about devmified clk registration?
+> > >
+> >=20
+> > I mean using things like devm_clk_hw_register().
+>=20
+> Sorry, I am still a little confused, all the clock register(clk_register(=
+)) are via each different
+> clock types like imx_clk_gate4/imx_clk_pll14xx, if using clk_hw_register,=
+ means we need
+> to re-write the clock driver using different clk register method, that wi=
+ll make the driver
+> completely different from i.mx8mq/i.mx8mm, they are actually same series =
+of SoC as i.mx8mn,
+> it will introduce many confusion, is my understanding correct? And is it =
+OK to just keep what
+> it is and make them all aligned?
 >=20
 
-Not really yet. Chen-Yu is working on the Allwinner driver
-(drivers/clk/sunxi-ng/) and some work from Jeff for MSM8998 is on the
-list that you can look at.
+Ok, the problem I'm trying to point out is that clk registrations need
+to be undone, i.e. clk_unregister() needs to be called, when the driver
+fails to probe. devm_*() is one way to do this, but if you have other
+ways of removing all the registered clks then that works too. Makes
+sense?
 
