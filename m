@@ -2,492 +2,174 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3E4C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B023C31E40
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 16:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD82F20859
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE66220820
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 16:05:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dRox7VQ0";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GaUQuf0o"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VV9N9tGP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390379AbfFJPpf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 11:45:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50680 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390230AbfFJPpe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 11:45:34 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1D61E60275; Mon, 10 Jun 2019 15:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560181533;
-        bh=JLkeq82w7WKXfiw+H9jdcNpXmDI145eAKRmA3feEAeU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dRox7VQ03BzZZt9n8e+czaNKqicjCTGoyPmgb67fOXCWu/nR53/Y6L2K7XCASG4gg
-         jUy8yVAaIa0ovVh1xSkdUfzhLy6ZOP7ZfA1tNlAggiZUkRxut8qGbviLXTJmJKVhpz
-         IcfpvVxsLWNXQ9ST+JNpHd98DVySeQEoLc8bkhM0=
-Received: from [192.168.1.6] (unknown [171.60.244.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C24C060213;
-        Mon, 10 Jun 2019 15:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560181531;
-        bh=JLkeq82w7WKXfiw+H9jdcNpXmDI145eAKRmA3feEAeU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GaUQuf0o1Jem/Hq3U+CRNQ6OcnLIbVZ8RBw9wb66XqGcfQn/AITy8H6QhXQAN481x
-         gZ4FtBh6v7xiE1qfAFm+yfbVCpFh0Ih4gl83bY2U5R1wQelXVlY35ZPJ0qrJmF488p
-         2E1LyMUyZJ2nj/kD6z1eVWa3eVPMo/90g+PIKbvs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C24C060213
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     robh+dt@kernel.org, sboyd@codeaurora.org, linus.walleij@linaro.org,
-        agross@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
- <1559754961-26783-6-git-send-email-sricharan@codeaurora.org>
- <20190608034835.GH24059@builder>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <048a25c0-3a2c-3906-84d4-5eb67f3ce2ef@codeaurora.org>
-Date:   Mon, 10 Jun 2019 21:15:22 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2391426AbfFJQFH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 12:05:07 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37707 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391425AbfFJQFH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 12:05:07 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bh12so3842024plb.4
+        for <linux-clk@vger.kernel.org>; Mon, 10 Jun 2019 09:05:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=I97k1/yDNx0Ud4d53tFJ+yzis1/msAxhI7LkJXdDlMI=;
+        b=VV9N9tGP8t2WAQUQ+OSK2mKKCq5hw/N4x7i7RZ590iX541DGS+qpKTG/j+IEqxn3rZ
+         H21R38eWL4cZzvIqWG7yGw0Yx4RUYnU9IA3evlNHfq6dOXsAFoXgTAcwEqrrt/75qDWv
+         1WNhWrZEc0F/+0Ap5HW9EQB8XXHjjpSbB6ID2xPX1JuBstBbT7ctDcNGOvhu80VQPrY5
+         MUkeQgFjzhu8vYi6C7HA4Rt/jmQHHLQuvUs9a4wdno0iKRSy0ijN+2sbahr1MiseeeI2
+         YTg3k9hu+cDwt1c8aDmL0YZ4s0933Hol8De084L5JSPIBTCLwUBcgcKYL4aMYP0xWafo
+         mnSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=I97k1/yDNx0Ud4d53tFJ+yzis1/msAxhI7LkJXdDlMI=;
+        b=DOO29LbIU8WJIpHXa6QPPerwT2+jPJCxzC6IemCP8R380vCLAQ9+37xNTyp6zu8PUz
+         /r7QnCfyj22Ig993LIN6FbOgxdmhKrpM9uF6CQSszXKu9Y7Ec/LLwyIxNdYq0ae00WrS
+         kv8AxK1/c+ULeZpU3rWaK0PnCDAjGGMaB+HxDFb2XPCpytmCZ6pBEkPGR3o4nOSU0/Vw
+         tX5pojqIAiKSIf3478Xc9ISmcKFe9nkIpC5Exz4iLvTElAhfN7h+wkRgt6KJGooa5BUU
+         uD7tdAnX6bBCuCFjw6Y5al5GSwR2VVEBJKaZaZUX0hJIDjNYvA5OK0sVN8tfKIkgHa7j
+         kbpA==
+X-Gm-Message-State: APjAAAUgN/ZHJ3klzpEye0ioSeKEKPI4RfZzDggch/nxcWiQdKB8YtOk
+        ee6ZANtA/rtLTrxInjq/xZwX
+X-Google-Smtp-Source: APXvYqwH/NmDelm4Qk4hvpw7av9GCUs379dTbeOaPUH87D6Xn3audTYv6l3vxIFimcWYviwc+NPV4Q==
+X-Received: by 2002:a17:902:ac1:: with SMTP id 59mr9967531plp.168.1560182706367;
+        Mon, 10 Jun 2019 09:05:06 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id 144sm8900066pfa.180.2019.06.10.09.05.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Jun 2019 09:05:05 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 21:34:59 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: mmc: Add Actions Semi SD/MMC/SDIO
+ controller binding
+Message-ID: <20190610160459.GA31461@mani>
+References: <20190608195317.6336-1-manivannan.sadhasivam@linaro.org>
+ <20190608195317.6336-3-manivannan.sadhasivam@linaro.org>
+ <5d164528-c797-5f94-f905-719d4f69542c@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20190608034835.GH24059@builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5d164528-c797-5f94-f905-719d4f69542c@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
 
+Hi Andreas,
 
-On 6/8/2019 9:18 AM, Bjorn Andersson wrote:
-> On Wed 05 Jun 10:16 PDT 2019, Sricharan R wrote:
+On Mon, Jun 10, 2019 at 03:45:37PM +0200, Andreas Färber wrote:
+> Am 08.06.19 um 21:53 schrieb Manivannan Sadhasivam:
+> > Add devicetree binding for Actions Semi Owl SoC's SD/MMC/SDIO controller.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  .../devicetree/bindings/mmc/owl-mmc.txt       | 37 +++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mmc/owl-mmc.txt
 > 
->> Add initial device tree support for the Qualcomm IPQ6018 SoC and
->> CP01 evaluation board.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Rob, should this be YAML now?
 > 
-> Please fix the order of these (or add a Co-developed-by).
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mmc/owl-mmc.txt b/Documentation/devicetree/bindings/mmc/owl-mmc.txt
+> > new file mode 100644
+> > index 000000000000..a702f8d66cec
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mmc/owl-mmc.txt
+> > @@ -0,0 +1,37 @@
+> > +Actions Semi Owl SoCs SD/MMC/SDIO controller
+> > +
+> > +Required properties:
+> > +- compatible: should be "actions,owl-mmc"
+> > +- reg: offset and length of the register set for the device.
+> > +- interrupts: single interrupt specifier.
+> > +- clocks: single clock specifier of the controller clock.
+> > +- resets: phandle to the reset line.
+> > +- dma-names: should be "mmc".
+> > +- dmas: single DMA channel specifier
 > 
-
- ok
-
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile            |   1 +
->>  arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts |  35 ++++
->>  arch/arm64/boot/dts/qcom/ipq6018.dtsi        | 231 +++++++++++++++++++++++++++
->>  3 files changed, 267 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
->>  create mode 100644 arch/arm64/boot/dts/qcom/ipq6018.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index 21d548f..ac22dbb 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -2,6 +2,7 @@
->>  dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
-> 
-> Sort order.
-> 
-
- ok
-
->>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
->> diff --git a/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts b/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
->> new file mode 100644
->> index 0000000..ac7cb22
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
->> @@ -0,0 +1,35 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * IPQ6018 CP01 board device tree source
->> + *
->> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include "ipq6018.dtsi"
->> +
->> +/ {
->> +	#address-cells = <0x2>;
->> +	#size-cells = <0x2>;
-> 
-> This is a count, write it in base 10..
+> I recall the main blocker for MMC being regulators, i.e. the I²C
+> attached multi-function PMIC. Yet I don't see any such required property
+> here, nor any patch series implementing it. Seems like this relies on
+> U-Boot having initialized SD/eMMC? Do you intend to make them optional
+> or did you want to hold off merging this one until the rest is done?
 > 
 
- ok
+Yeah, I'm planning to rely on u-boot for regulator enablement. PMIC support
+in kernel will take some time because the floating SIRQ patchset is not yet
+finished.
 
->> +	model = "Qualcomm Technologies, Inc. IPQ6018/AP-CP01-C1";
->> +	compatible = "qcom,ipq6018-cp01", "qcom,ipq6018";
->> +	interrupt-parent = <&intc>;
+> > +
+> > +Optional properties:
+> > +- pinctrl-names: pinctrl state names "default" must be defined.
+> > +- pinctrl-0: phandle referencing pin configuration of the controller.
+> > +- bus-width: see mmc.txt
+> > +- cap-sd-highspeed: see mmc.txt
+> > +- cap-mmc-highspeed: see mmc.txt
+> > +- sd-uhs-sdr12: see mmc.txt
+> > +- sd-uhs-sdr25: see mmc.txt
+> > +- sd-uhs-sdr50: see mmc.txt
+> > +- non-removable: see mmc.txt
 > 
-> Changing #address-cells, #size-cells and interrupt-parent will break the
-> dtsi, so I think you should specify them there.
-> 
-
- ok, will move it to the dtsi.
-
->> +};
->> +
->> +&tlmm {
-> 
-> Please sort your nodes based on address, then node name, then label.
-> 
-
- ok
-
->> +	uart_pins: uart_pins {
->> +		mux {
->> +			pins = "gpio44", "gpio45";
->> +			function = "blsp2_uart";
->> +			drive-strength = <8>;
->> +			bias-pull-down;
->> +		};
->> +	};
->> +};
->> +
->> +&blsp1_uart3 {
->> +	pinctrl-0 = <&uart_pins>;
->> +	pinctrl-names = "default";
->> +	status = "ok";
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->> new file mode 100644
->> index 0000000..79cccdd
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->> @@ -0,0 +1,231 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * IPQ6018 SoC device tree source
->> + *
->> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/qcom,gcc-ipq6018.h>
->> +
->> +/ {
->> +	model = "Qualcomm Technologies, Inc. IPQ6018";
->> +	compatible = "qcom,ipq6018";
-> 
-> No need for model and compatible in the dtsi, these should always be
-> specified by the including file.
+> I'm not convinced duplicating common properties is a good idea here, in
+> particular pinctrl.
 > 
 
- ok, will move it to the dts.
+Hmmm, I thought of adding the MMC properties which were supported by the SoC.
+I can remove those if needed.
 
->> +
->> +	chosen {
->> +		bootargs = "console=ttyMSM0,115200,n8 rw init=/init";
+Thanks,
+Mani
+
+> Regards,
+> Andreas
 > 
-> Do you really need console? Can't you use stdout-path?
+> > +
+> > +Example:
+> > +
+> > +		mmc0: mmc@e0330000 {
+> > +			compatible = "actions,owl-mmc";
+> > +			reg = <0x0 0xe0330000 0x0 0x4000>;
+> > +			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks = <&cmu CLK_SD0>;
+> > +			resets = <&cmu RESET_SD0>;
+> > +			dmas = <&dma 2>;
+> > +			dma-names = "mmc";
+> > +			pinctrl-names = "default";
+> > +			pinctrl-0 = <&mmc0_default>;
+> > +			bus-width = <4>;
+> > +			cap-sd-highspeed;
+> > +		};
+> > 
 > 
-
- ok, will change.
-
-> And there's no need to specify init=/init.
 > 
-
- ok.
-
->> +		bootargs-append = " swiotlb=1 clk_ignore_unused";
-> 
-> I'm hoping that you will work on removing the need for
-> clk_ignore_unused.
-> 
-
- hmm, should not be required even now. will remove that.
-
->> +	};
->> +
->> +	reserved-memory {
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		ranges;
->> +
->> +		tz:tz@48500000 {
-> 
-> Space after :
-> 
-
- ok.
-
->> +			no-map;
->> +			reg = <0x0 0x48500000 0x0 0x00200000>;
-> 
-> I would prefer to have the reg first in these nodes, then the region's
-> properties.
-> 
-
- ok.
-
->> +		};
->> +	};
->> +
->> +	soc: soc {
->> +		#address-cells = <0x1>;
->> +		#size-cells = <0x1>;
->> +		ranges = <0 0 0 0xffffffff>;
->> +		dma-ranges;
->> +		compatible = "simple-bus";
->> +
->> +		intc: interrupt-controller@b000000 {
-> 
-> As described above, please sort your nodes based on address, node name
-> and lastly label name.
-> 
-
- ok.
-
->> +			compatible = "qcom,msm-qgic2";
->> +			interrupt-controller;
->> +			#interrupt-cells = <0x3>;
->> +			reg = <0xb000000 0x1000>, <0xb002000 0x1000>;
->> +		};
->> +
->> +		timer {
->> +			compatible = "arm,armv8-timer";
->> +			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->> +		};
->> +
->> +		timer@b120000 {
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			compatible = "arm,armv7-timer-mem";
->> +			reg = <0xb120000 0x1000>;
-> 
-> Please pad addresses in reg to 8 digits, to make them faster to compare.
-> 
-
- ok.
-
->> +			clock-frequency = <19200000>;
->> +
->> +			frame@b120000 {
->> +				frame-number = <0>;
->> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
->> +					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0xb121000 0x1000>,
->> +				      <0xb122000 0x1000>;
->> +			};
->> +
->> +			frame@b123000 {
->> +				frame-number = <1>;
->> +				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0xb123000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@b124000 {
->> +				frame-number = <2>;
->> +				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0xb124000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@b125000 {
->> +				frame-number = <3>;
->> +				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0xb125000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@b126000 {
->> +				frame-number = <4>;
->> +				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0xb126000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@b127000 {
->> +				frame-number = <5>;
->> +				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0xb127000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@b128000 {
->> +				frame-number = <6>;
->> +				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0xb128000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +		};
->> +
->> +		gcc: gcc@1800000 {
->> +			compatible = "qcom,gcc-ipq6018";
->> +			reg = <0x1800000 0x80000>;
->> +			#clock-cells = <0x1>;
-> 
-> This is a count, use base 10.
-> 
-
- ok.
-
->> +			#reset-cells = <0x1>;
->> +		};
->> +
->> +		blsp1_uart3: serial@78b1000 {
->> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
->> +			reg = <0x78b1000 0x200>;
->> +			interrupts = <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>,
->> +				<&gcc GCC_BLSP1_AHB_CLK>;
->> +			clock-names = "core", "iface";
->> +			status = "disabled";
->> +		};
->> +
->> +		tlmm: pinctrl@1000000 {
->> +			compatible = "qcom,ipq6018-pinctrl";
->> +			reg = <0x1000000 0x300000>;
->> +			interrupts = <GIC_SPI 0xd0 IRQ_TYPE_NONE>;
->> +			gpio-controller;
->> +			#gpio-cells = <0x2>;
-> 
-> gpio-ranges = <&tlmm 0 80>;
-> 
-
- ok.
-
->> +			interrupt-controller;
->> +			#interrupt-cells = <0x2>;
->> +
->> +			uart_pins: uart_pins {
->> +				pins = "gpio44", "gpio45";
->> +				function = "blsp2_uart";
->> +				drive-strength = <8>;
->> +				bias-pull-down;
->> +			};
->> +		};
->> +	};
->> +
->> +	psci: psci {
->> +		compatible = "arm,psci-1.0";
->> +		method = "smc";
->> +	};
->> +
->> +	cpus: cpus {
->> +		#address-cells = <0x1>;
->> +		#size-cells = <0x0>;
->> +
->> +		CPU0: cpu@0 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a53";
->> +			reg = <0x0>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_0>;
->> +		};
->> +
->> +		CPU1: cpu@1 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a53";
->> +			enable-method = "psci";
->> +			reg = <0x1>;
->> +			next-level-cache = <&L2_0>;
->> +		};
->> +
->> +		CPU2: cpu@2 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a53";
->> +			enable-method = "psci";
->> +			reg = <0x2>;
->> +			next-level-cache = <&L2_0>;
->> +		};
->> +
->> +		CPU3: cpu@3 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a53";
->> +			enable-method = "psci";
->> +			reg = <0x3>;
->> +			next-level-cache = <&L2_0>;
->> +		};
->> +
->> +		L2_0: l2-cache {
->> +			compatible = "cache";
->> +			cache-level = <0x2>;
->> +		};
->> +	};
->> +
->> +	pmuv8: pmu {
->> +		compatible = "arm,armv8-pmuv3";
->> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) |
->> +					 IRQ_TYPE_LEVEL_HIGH)>;
->> +	};
->> +
->> +	clocks {
->> +		sleep_clk: sleep_clk {
-> 
-> Don't use _ in the node names.
-> 
-
- ok.
-
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <32000>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		xo: xo {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <24000000>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		bias_pll_cc_clk {
-> 
-> Please give this a label and reference it from the node that uses it
-> (regardless of the implementation matching by clock name).
-> 
- ok, in that case, so might have to remove these for now, till we add
- the corresponding users.
-
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <300000000>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		bias_pll_nss_noc_clk {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <416500000>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		usb3phy_0_cc_pipe_clk {
-> 
-> This should come from the PHY.
-
-  ok, will remove it here and add it later when adding USB node
-
-Regards,
- Sricharan  
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
+> HRB 21284 (AG Nürnberg)
