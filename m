@@ -2,153 +2,130 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5FFC28CC7
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9F3C28CC7
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 13:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2774E2089E
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83626212F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 13:31:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXLPQq+o"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="x6+0Y7Qh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389737AbfFJMPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 08:15:33 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38128 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388866AbfFJMPd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 08:15:33 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d18so8935076wrs.5;
-        Mon, 10 Jun 2019 05:15:31 -0700 (PDT)
+        id S2390399AbfFJNb2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 09:31:28 -0400
+Received: from mail-eopbgr710073.outbound.protection.outlook.com ([40.107.71.73]:63568
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390345AbfFJNb2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jun 2019 09:31:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TNg7dffhdY0k328udTWVO2CXIL9HjzaUVHvDgf+GtK4=;
-        b=ZXLPQq+o6b0nHKPZK/M+Qxx+orok889VPYieNoCf6MJVzZ8VSDN1BzvcxpdKVntchY
-         C1/sw4NDZP0TUhAMPNkYtDw6AwrsqcnbUmdn4dXvq912jSdsDC+vSyAme9UkMRIga+J3
-         +GUHIdXkEjbWUNkxxNmHzZ3NCBqUeSEEeOtOsvnmfAsu23ey6WbVZSOhgpI+KOiGMzzn
-         fLpyI+p4nx5dS9N6aPzCZe0vE2r5t440mvO4FK7d60UbD6c8Eq2DPERRqehWbpfAeAHk
-         nt+1PpKw+OkF6i+jWmSEygcr4LEoAlH4aEdP/Oj15O7GQrB108NI0bjYSf9znu0e+Spn
-         ZWgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TNg7dffhdY0k328udTWVO2CXIL9HjzaUVHvDgf+GtK4=;
-        b=EdEbb2wG/+eo/ARWsgwlLnxMZVRN2i3c9V+s8olaU3J+cJXNhC+TR+kqpIkSfP48Wf
-         blsoYc23qBzrmOTPgQ62fV8mUQSCbacvcS6vFYUycH7Gws6qPoYXb96xdVZOhwuYfRDK
-         YTpTB0UdrVeG4WjW6ibMuyg/cyv9yA+COxNDOhUsy1Cgws8qG2DipgW45ducDBC9nY5v
-         IuW0MlhVvKOMSAbHDCPOyOxOmmswLrLFGVaKFrofhqpXvPp2tjndaTuuNA5k2Dx7ddSF
-         EwVKz4c8aL07AQTk145K6lG5UPYwa1ZplrVlTGxap/o7Si+lj33YnQPdTh8QBs82en8s
-         MfGQ==
-X-Gm-Message-State: APjAAAVo3Z9TaYZLe84vnKOQe6Xa2QNWWBgcmWVByIoF5Q2s0a2ILaMv
-        xSBbT0YHUrb2Gj6lB1LsdQXdbzRD91s=
-X-Google-Smtp-Source: APXvYqzlQSAtl9/8yztiGR6lp/ce64UZfTWo4eBT3hz9ZP/qGRp2sOkCeft5kX5JxyJgCWLCirAzxQ==
-X-Received: by 2002:adf:fb0b:: with SMTP id c11mr4158638wrr.56.1560168930388;
-        Mon, 10 Jun 2019 05:15:30 -0700 (PDT)
-Received: from debian64.daheim (pD9E29896.dip0.t-ipconnect.de. [217.226.152.150])
-        by smtp.gmail.com with ESMTPSA id v67sm11434321wme.24.2019.06.10.05.15.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 05:15:29 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
-        by debian64.daheim with esmtp (Exim 4.92)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1haJCy-0004Co-5N; Mon, 10 Jun 2019 14:15:28 +0200
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        =?utf-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-Date:   Mon, 10 Jun 2019 14:15:28 +0200
-Message-ID: <4056907.DrFocau5Ix@debian64>
-In-Reply-To: <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com> <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
+ d=analog.onmicrosoft.com; s=selector1-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D5aummxxU1hYNcU4kpvKgQlJrTanJ8YpXj96zFsOaw0=;
+ b=x6+0Y7Qh9uIEheDQYsUUVNOHxF+83Up5PPDi8sYwQheFToGVO1ggNk8FYfglioRo8oSAvkp67SneRhgJ9xYUnX0Fk+7nQuLUbTOqbw5Xb8f30v/1KoHqfJSpjwwV5UtUD5Ftqoax43UPkWbL6oZmabGOUBrPvC12lz7lOuoEhiI=
+Received: from BN3PR03CA0115.namprd03.prod.outlook.com (2603:10b6:400:4::33)
+ by BN6PR03MB3123.namprd03.prod.outlook.com (2603:10b6:405:44::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1965.12; Mon, 10 Jun
+ 2019 13:31:25 +0000
+Received: from CY1NAM02FT006.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::206) by BN3PR03CA0115.outlook.office365.com
+ (2603:10b6:400:4::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1965.15 via Frontend
+ Transport; Mon, 10 Jun 2019 13:31:25 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+ smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ CY1NAM02FT006.mail.protection.outlook.com (10.152.74.104) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1965.12
+ via Frontend Transport; Mon, 10 Jun 2019 13:31:25 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x5ADVO5U021077
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Mon, 10 Jun 2019 06:31:24 -0700
+Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
+ NWD2HUBCAS7.ad.analog.com ([fe80::595b:ced1:cc03:539d%12]) with mapi id
+ 14.03.0415.000; Mon, 10 Jun 2019 09:31:24 -0400
+From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Subject: [RFC] Supporting CLK frequencies above 4.29 Ghz
+Thread-Topic: [RFC] Supporting CLK frequencies above 4.29 Ghz
+Thread-Index: AQHVH5DMT+gj9BELpEK8P9ZZfFsVrg==
+Date:   Mon, 10 Jun 2019 13:31:23 +0000
+Message-ID: <3cceaaaa8fbbc0086dccbd6b009129c05519bdc0.camel@analog.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.65.129]
+x-adiroutedonprem: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B03CB295FEC9F54E8793CC9A7CB694B4@analog.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(396003)(39860400002)(2980300002)(199004)(189003)(2351001)(2501003)(126002)(305945005)(36756003)(8936002)(70206006)(70586007)(476003)(486006)(450100002)(7636002)(2616005)(966005)(26005)(7736002)(186003)(8676002)(246002)(2906002)(102836004)(14454004)(478600001)(6116002)(316002)(5640700003)(3846002)(54906003)(50466002)(106002)(47776003)(5660300002)(6306002)(6916009)(118296001)(336012)(86362001)(2486003)(23676004)(7696005)(426003)(436003)(356004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB3123;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 50f44bfa-676e-46dd-0146-08d6eda7ef9d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328)(7193020);SRVR:BN6PR03MB3123;
+X-MS-TrafficTypeDiagnostic: BN6PR03MB3123:
+X-MS-Exchange-PUrlCount: 2
+X-Microsoft-Antispam-PRVS: <BN6PR03MB31235A52B342FD703E75C42BF9130@BN6PR03MB3123.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 0064B3273C
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: S73Pj6jUt6DTYVd3HrAhj79Igx9aeRdRKRMdK7JIbTpg/exyZaGWAayHxzJpy7qNnicoPgd3EbWsGnnmiS3jHuceftV4MyBTqls3e7seQz9XH2fqqYJ/58N0ypzFRBrHYDJmrfQm38ITDYl3D46FJrYeWR6nDpcRDJBae2rMk1YwEybIQjpwGzQ101+jrzmaqyquz7bTIxGNfptMfF6vPD5aU1pCH11brsyupshO8C/t+0rllmqdzL33fHkh4Pd+0bKtkynIIMokugex3aZjxqpUUyQl5k1L2zV08yvt8sXty9awpTivIiYsyv2Ow7HZ2UOQypf8nIL6R1/IQadZmu3FbMa8+42+SQBZ//Em5Uy9B8dug1wYKPnBEcAgvnm7o0h4ZuQzuCXI1TZ+g4neDYb2iGytcrFUkZoFk0ADMUM=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2019 13:31:25.1456
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50f44bfa-676e-46dd-0146-08d6eda7ef9d
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB3123
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
-> Hi Christian,
-> 
-> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
-> > On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
-> >>
-> >> Add initial device tree support for the Qualcomm IPQ6018 SoC and
-> >> CP01 evaluation board.
-> >>
-> >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-> >>
-> >> +       clocks {
-> >> +               sleep_clk: sleep_clk {
-> >> +                       compatible = "fixed-clock";
-> >> +                       clock-frequency = <32000>;
-> >> +                       #clock-cells = <0>;
-> >> +               };
-> >> +
-> > Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
-> > on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
-> > From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
-> > declares them at 32000 Hz. Since you probably have access to the BOM and
-> > datasheets. Can you please confirm what's the real clock frequency for
-> > the IPQ6018.
-> > (And maybe also for the sleep_clk of the IPQ4018 as well?).
-> > 
-> 
-> What exactly is the issue that you faced ?
-> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
-
-We need just a confirmation.
-
-Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
-
-|		sleep_clk: sleep_clk {
-|			compatible = "fixed-clock";
-|			clock-frequency = <32768>;
-|			#clock-cells = <0>;
-|		};
-
-<https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
-
-Which makes sense, because all previous Qualcomm Atheros MIPS and the
-future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
-
-For example: The AR9344 derives the clock from the 25MHz/40MHz external
-oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
-Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
-depending whenever the external reference crystal has 40MHz or 25MHz.
-(1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
-in "10.19.11 Derived RTC Clock". 
-
-For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
-<http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
-"I was only able to verify for IPQ8072 that it had a 32.768 KHz
-sleep clock." 
-
-So this is pretty much "why there is an issue", it's confusing.
-Is possible can you please look if there are (fixed) divisors values
-listed in the documentation or the registers and bits that the values
-are stored in? Because then we could just calculate it. 
-
-Regards,
-Christian
-
-
+SGV5LA0KDQoNClRoaXMgZW1haWwgaXMgdGFyZ2V0ZWQgbW9zdGx5IHRvIHRoZSBDTEsgc3Vic3lz
+dGVtL2ZyYW1ld29yay4NCldlJ3ZlIGluY2x1ZGVkIHRoZSBJSU8gc3Vic3lzdGVtIGFzIHdlbGws
+IGFzIHRoZSBkcml2ZXJzIHRoYXQgd2UnbGwgY29uc2lkZXIgd3JpdGluZyB3aWxsIGJlIGFkZGVk
+IHVuZGVyDQpkcml2ZXJzL2lpby9mcmVxdWVuY3kgYW5kIHJlZ2lzdGVyIGFzIFtPRl0gQ0xLIHBy
+b3ZpZGVycy4NClRoZSByZWFzb24gZm9yIGluY2x1ZGluZyB0aGVtIHVuZGVyIElJTywgaXMgdHlw
+aWNhbGx5IHRoZSBmYWN0IHRoYXQgd2UgcHJlZmVyL2xpa2UgdGhlIHN5c2ZzIGNvbnRyb2wgdGhh
+dCBJSU8gaGFzLg0KDQpMb25nLXN0b3J5LXNob3J0ICh0aGUgaW50cm8gd2Fzbid0IHRvbyBzaG9y
+dCksIHdlIGhhdmUgc29tZSBDTEsgY2hpcHMgdGhhdCB3ZSdyZSB3cml0aW5nIHNvbWUgZHJpdmVy
+cyBmb3IsIHRoYXQgZ28gdXAgdG8NCjMyIEdoei4gQW5kIHdlIGhhdmUgYSBmZXcgbW9yZSBvZiB0
+aGVtIHRoYXQgZ28gYWJvdmUgNC4yOSBHaHouDQoNClRoZSBzdGFuZGFyZCBgY2xrX3tnZXQsc2V0
+fV9yYXRlKClgIHN1cHBvcnQgb25seSBgdW5zaWduZWQgbG9uZ2AgKHUzMikuDQoNCkludGVybmFs
+bHkgKGluIG91ciB0cmVlKSB3ZSB1c2UgYW4gbWVjaGFuaXNtIChub3QgdXBzdHJlYW1lZCkgZm9y
+IHdvcmtpbmcgYXJvdW5kIHRoZSA0LjI5IEdoeiBjYXAsIGJ5IHByb3ZpZGluZw0KbXVsdGlwbGll
+cnMvc2NhbGVzLg0KQW5kIHNvbWUgZ2V0L3NldCB2YXJpYW50cywgY2FsbGVkIGBjbGtfe2dldCxz
+ZXR9X3JhdGVfc2NhbGVkKClgDQpFeGFtcGxlczoNCmh0dHBzOi8vZ2l0aHViLmNvbS9hbmFsb2dk
+ZXZpY2VzaW5jL2xpbnV4L2Jsb2IvbWFzdGVyL2luY2x1ZGUvbGludXgvY2xrL2Nsa3NjYWxlLmgN
+Cmh0dHBzOi8vZ2l0aHViLmNvbS9hbmFsb2dkZXZpY2VzaW5jL2xpbnV4L2NvbW1pdC9mNjFhNjdl
+YzY1YjkxOTEwMjFkN2FmYTU2ZDM5YWJlOTU1YWMwZDQxI2RpZmYtMTE4ODg2NDI5Yzk0ZTY1Nzdm
+YmU1ZmU1OGI5OGU0OTgNCg0KQnV0LCB3ZSB0aG91Z2h0IHdlJ2Qgc3RhcnQgYSBkaXNjdXNzaW9u
+L1JGQyBhYm91dCBwb3RlbnRpYWxseSBzd2l0Y2hpbmcgZnJvbSB1MzIgKG9yIHVuc2lnbmVkIGxv
+bmcpIHRvIHU2NCAodW5zaWduZWQNCmxvbmcgbG9uZykgdHlwZXMuDQpUaGF0IHdvdWxkIGFsbG93
+IGZvciBzaWduaWZpY2FudGx5IGhpZ2hlciBmcmVxdWVuY2llcyB0aGFuIDQuMjlHaHoganVzdCB2
+aWEgYGNsa197Z2V0LHNldH1fcmF0ZSgpYA0KDQpUaGVyZSBhcmUgc29tZSBodXJkbGVzIHRvIGRv
+IGl0LCBhcyBtYW55IGRyaXZlcnMgc2hvdWxkIG5lZWQgc29tZSBpbnZlc3RpZ2F0aW9uL2NoYW5n
+aW5nLg0KSSdkIGJlIHdpbGxpbmcgdG8gaGVscCB3aXRoIHRoZSBjb252ZXJzaW9uIGlmIHRoYXQn
+cyBhIHBsYW4uDQoNCldoYXRldmVyIHRoZSBjb25zZW5zdXMgd291bGQgYmUgKHN3aXRjaGluZyB0
+byB1NjQsIG9yIGltcGxlbWVudGluZyBhIGNsb2NrX3NjYWxlIHN0cnVjdC9tZWNoYW5pc20pIGlz
+IGZpbmUgZnJvbSBteSBzaWRlLg0KV2Ugd291bGQgZmluZCBhIHdheSB0byBhZGFwdCBvdXIgZHJp
+dmVycyB0byBlaXRoZXIgdmFyaWFudC4NCkludGVybmFsbHkgKGluIG91ciBncm91cCksIHRoZXJl
+IGlzIGEgcHJlZmVyZW5jZSB0byB0aGUgc3dpdGNoIHRvIHU2NC4NCg0KVGhhbmtzDQpBbGV4DQo=
