@@ -2,78 +2,101 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C3AC468BC
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 05:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6168C468BC
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 06:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753A920820
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 05:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560146059;
-	bh=SdTHp/TyZpsY2HHoAFBFOvkMbdzwPg4g3t/s7P1llZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=04jl5XLAyLiw5pu6zXrDbkMQWu7KkDCmwJrndJiaFL7CEDiHopyU/VADxYEZ7NRH2
-	 /dd5SyD1y68ZlXl8VaVgAEp95oMtaOWygEvzSVWU4NCTqAxQoN8z8muZWTbiehyoVs
-	 P4cCSIm04EVV4jY2lUSXcFWfGvnMVqybD2il5p64=
+	by mail.kernel.org (Postfix) with ESMTP id 841FC207E0
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 06:00:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="WUqIHic7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tM2nXGqR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387614AbfFJFyT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 01:54:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387553AbfFJFyS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Jun 2019 01:54:18 -0400
+        id S2387728AbfFJGAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 02:00:52 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:56463 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387702AbfFJGAv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 02:00:51 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Jun 2019 02:00:51 EDT
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id A25F753B;
+        Mon, 10 Jun 2019 01:53:40 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 10 Jun 2019 01:53:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=73FhgraWVSKzZSRxr/hRTV6FPo7
+        e3zeeTj9HLIcXJQk=; b=WUqIHic7WiL1tl6Nzsn4mc6zoGABOQ4wN1sSg+/DfpX
+        eDR9LyWtAtAK7bmMv/djfvbd/hxQYLSyPTFiCJkSs7pwDA+k0zuHVPMzJFJSgHw3
+        /fxWavwxOH3ScjpJAJcV7enQ5mGX6eyxmbH1KHNrqvNU+GGf0HAk9BC/3UZIthby
+        L3w32R3fMKTTMA3CAt9oGM/50vrm7/R8XdtMg7+h5yRoA1DVwP7da0vwbZ3fgpVj
+        w6dw19Dx/eXaZLNh+dzO4XULbgjKZnLoNEGvzcvkXyiMerr3w9jFAF6nBmjVFpDL
+        hYNE1f6sH3iWw4pOsFv54YefTGgSGxYs09yyI9ca+/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=73Fhgr
+        aWVSKzZSRxr/hRTV6FPo7e3zeeTj9HLIcXJQk=; b=tM2nXGqRR33HPPT5EI0HZc
+        F2cn6be9K0q2Zjy4ZtdN/jZyWSurdUkeJm28RoaoW1Y7aG4bNc1BgfPxhwZQhTWr
+        a3pP3gra77bTM4OOXH/lvsM8CEH9Uh3MRhb/+qyySxJ1w6emC8GCFxCZfmppaltT
+        PPpPBOvA3cbnw4RRrX9q62YiHf8w7lkQy2mpVZTQ1w6gLBprtnMRAeSuOX+m3ENw
+        AO/pfg62LPJp45hErJg78UgXMpKF3JZ2UI12n6BHLYlbw1TtwhXDezjHa+BuShqe
+        E6DWRzzPyaz9t1iITcWvgf0ut9YGi4P12WFgePoV0N+42zSWfKHzdTuWikXUC42w
+        ==
+X-ME-Sender: <xms:Y_D9XCL4I63YDmymPGTmvFniACribIhS_R6G5-uDS-stD5U9uiud2g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudehuddguddttdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepkhgvrhhnvg
+    hlrdhorhhgnecukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehmrghilhhf
+    rhhomhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:Y_D9XOYnvOUd54PI8pGbhMxykVnXYJoVVA1jQDiGLi5bu_LxxAdbFQ>
+    <xmx:Y_D9XNuNqNrVA0By10jYs1YGzm7VKi_8-jFV6QrdieaPayeCbkjS0Q>
+    <xmx:Y_D9XLsxGkhl8c6f5z_dsQOPItDQrZTLeRVHXYq0k2JG537PpwG_nA>
+    <xmx:ZPD9XFjGPjsUFuN9HmlXy1yi4HeYj3ADgjRU_n7EbK-YkbPp0OVaLICzGg4>
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCDB5207E0;
-        Mon, 10 Jun 2019 05:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560146058;
-        bh=SdTHp/TyZpsY2HHoAFBFOvkMbdzwPg4g3t/s7P1llZM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IMlgVFjyjnXtceUTFfBCKuHy/svWO6lT6BbHXv7JMkg43JBZkqeA/rE0LPbldV1lX
-         JGzDs64HZz09AaDFyKmHtObcluRExtZsIWY7gfWxobq84KQiYsM8cgF3yU8usg6hYD
-         0o9avCKQZfMZyAGqos8pewoPXYsXKsF0lalC28Xw=
-Date:   Mon, 10 Jun 2019 07:54:15 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
+        by mail.messagingengine.com (Postfix) with ESMTPA id B6E34380073;
+        Mon, 10 Jun 2019 01:53:38 -0400 (EDT)
+Date:   Mon, 10 Jun 2019 07:53:37 +0200
+From:   Greg KH <greg@kroah.com>
 To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
         James Liao <jamesjj.liao@mediatek.com>,
         Fan Chen <fan.chen@mediatek.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
         srv_heupstream@mediatek.com, stable@vger.kernel.org,
-        Biao Huang <biao.huang@mediatek.com>
-Subject: Re: [RFC v1] clk: core: support clocks that need to be enabled
- during re-parent
-Message-ID: <20190610055415.GC13825@kroah.com>
-References: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com>
+        Dehui Sun <dehui.sun@mediatek.com>
+Subject: Re: [PATCH v2] clk: mediatek: mt8183: Register 13MHz clock earlier
+ for clocksource
+Message-ID: <20190610055337.GB13825@kroah.com>
+References: <1560132969-1960-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1560132969-1960-1-git-send-email-weiyi.lu@mediatek.com>
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 11:44:53AM +0800, Weiyi Lu wrote:
-> When using property assigned-clock-parents to assign parent clocks,
-> core clocks might still be disabled during re-parent.
-> Add flag 'CLK_OPS_CORE_ENABLE' for those clocks must be enabled
-> during re-parent.
+On Mon, Jun 10, 2019 at 10:16:09AM +0800, Weiyi Lu wrote:
+> The 13MHz clock should be registered before clocksource driver is
+> initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
 > 
 > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > ---
->  drivers/clk/clk.c            | 9 +++++++++
->  include/linux/clk-provider.h | 1 +
->  2 files changed, 10 insertions(+)
+>  drivers/clk/mediatek/clk-mt8183.c | 46 +++++++++++++++++++++++++++++----------
+>  1 file changed, 34 insertions(+), 12 deletions(-)
 
 <formletter>
 
