@@ -2,122 +2,153 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6AAC468C1
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5FFC28CC7
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 893E22085A
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2774E2089E
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 12:15:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K01tIZmp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXLPQq+o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389446AbfFJMNp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 08:13:45 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52404 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389229AbfFJMNo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 08:13:44 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5ACDagN037456;
-        Mon, 10 Jun 2019 07:13:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560168816;
-        bh=osAjUsWcdirwDiL6VFKp3uYcXBRHoQkePLbEhd8oePw=;
-        h=To:CC:From:Subject:Date;
-        b=K01tIZmpwlWUkHBndyup+SmEHWCoMTdxIZAy59z+agy8sOVLaV8Iy0rprwggndBW9
-         OAD18cgsya4KcXf0HVW69ne+E7GF0QytR0xADcegLgtJXTptZjiHrcO6M4TUyRM+9r
-         V+wutYy9RjBKWMUZUeiDBedmNrQybtYfXM9mfywA=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5ACDaOI082558
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Jun 2019 07:13:36 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 10
- Jun 2019 07:13:36 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 10 Jun 2019 07:13:36 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5ACDY0v129308;
-        Mon, 10 Jun 2019 07:13:35 -0500
-To:     linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-From:   Tero Kristo <t-kristo@ti.com>
-Subject: [GIT PULL] clk: keystone: changes for 5.3
-Message-ID: <3bd8aa21-60a5-f36a-b86f-425ce4f0163e@ti.com>
-Date:   Mon, 10 Jun 2019 15:13:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2389737AbfFJMPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 08:15:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38128 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388866AbfFJMPd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 08:15:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d18so8935076wrs.5;
+        Mon, 10 Jun 2019 05:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TNg7dffhdY0k328udTWVO2CXIL9HjzaUVHvDgf+GtK4=;
+        b=ZXLPQq+o6b0nHKPZK/M+Qxx+orok889VPYieNoCf6MJVzZ8VSDN1BzvcxpdKVntchY
+         C1/sw4NDZP0TUhAMPNkYtDw6AwrsqcnbUmdn4dXvq912jSdsDC+vSyAme9UkMRIga+J3
+         +GUHIdXkEjbWUNkxxNmHzZ3NCBqUeSEEeOtOsvnmfAsu23ey6WbVZSOhgpI+KOiGMzzn
+         fLpyI+p4nx5dS9N6aPzCZe0vE2r5t440mvO4FK7d60UbD6c8Eq2DPERRqehWbpfAeAHk
+         nt+1PpKw+OkF6i+jWmSEygcr4LEoAlH4aEdP/Oj15O7GQrB108NI0bjYSf9znu0e+Spn
+         ZWgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TNg7dffhdY0k328udTWVO2CXIL9HjzaUVHvDgf+GtK4=;
+        b=EdEbb2wG/+eo/ARWsgwlLnxMZVRN2i3c9V+s8olaU3J+cJXNhC+TR+kqpIkSfP48Wf
+         blsoYc23qBzrmOTPgQ62fV8mUQSCbacvcS6vFYUycH7Gws6qPoYXb96xdVZOhwuYfRDK
+         YTpTB0UdrVeG4WjW6ibMuyg/cyv9yA+COxNDOhUsy1Cgws8qG2DipgW45ducDBC9nY5v
+         IuW0MlhVvKOMSAbHDCPOyOxOmmswLrLFGVaKFrofhqpXvPp2tjndaTuuNA5k2Dx7ddSF
+         EwVKz4c8aL07AQTk145K6lG5UPYwa1ZplrVlTGxap/o7Si+lj33YnQPdTh8QBs82en8s
+         MfGQ==
+X-Gm-Message-State: APjAAAVo3Z9TaYZLe84vnKOQe6Xa2QNWWBgcmWVByIoF5Q2s0a2ILaMv
+        xSBbT0YHUrb2Gj6lB1LsdQXdbzRD91s=
+X-Google-Smtp-Source: APXvYqzlQSAtl9/8yztiGR6lp/ce64UZfTWo4eBT3hz9ZP/qGRp2sOkCeft5kX5JxyJgCWLCirAzxQ==
+X-Received: by 2002:adf:fb0b:: with SMTP id c11mr4158638wrr.56.1560168930388;
+        Mon, 10 Jun 2019 05:15:30 -0700 (PDT)
+Received: from debian64.daheim (pD9E29896.dip0.t-ipconnect.de. [217.226.152.150])
+        by smtp.gmail.com with ESMTPSA id v67sm11434321wme.24.2019.06.10.05.15.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 05:15:29 -0700 (PDT)
+Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
+        by debian64.daheim with esmtp (Exim 4.92)
+        (envelope-from <chunkeey@gmail.com>)
+        id 1haJCy-0004Co-5N; Mon, 10 Jun 2019 14:15:28 +0200
+From:   Christian Lamparter <chunkeey@gmail.com>
+To:     Sricharan R <sricharan@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        =?utf-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
+Date:   Mon, 10 Jun 2019 14:15:28 +0200
+Message-ID: <4056907.DrFocau5Ix@debian64>
+In-Reply-To: <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com> <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Mike, Santosh,
+On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
+> Hi Christian,
+> 
+> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
+> > On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
+> >>
+> >> Add initial device tree support for the Qualcomm IPQ6018 SoC and
+> >> CP01 evaluation board.
+> >>
+> >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> >>
+> >> +       clocks {
+> >> +               sleep_clk: sleep_clk {
+> >> +                       compatible = "fixed-clock";
+> >> +                       clock-frequency = <32000>;
+> >> +                       #clock-cells = <0>;
+> >> +               };
+> >> +
+> > Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
+> > on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
+> > From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
+> > declares them at 32000 Hz. Since you probably have access to the BOM and
+> > datasheets. Can you please confirm what's the real clock frequency for
+> > the IPQ6018.
+> > (And maybe also for the sleep_clk of the IPQ4018 as well?).
+> > 
+> 
+> What exactly is the issue that you faced ?
+> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
 
-Here's a pull request for the clock changes for keystone SoC for 5.3. 
-The patches were acked by Santosh, so I took liberty to create a 
-pull-request for these also. I snipped patch #5 out of the series (it is 
-against drivers/firmware) and am planning to send a separate 
-pull-request for this, or alternatively agree with Santosh how to handle it.
+We need just a confirmation.
 
--Tero
+Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
 
----
+|		sleep_clk: sleep_clk {
+|			compatible = "fixed-clock";
+|			clock-frequency = <32768>;
+|			#clock-cells = <0>;
+|		};
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+<https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
 
-   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Which makes sense, because all previous Qualcomm Atheros MIPS and the
+future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
 
-are available in the git repository at:
+For example: The AR9344 derives the clock from the 25MHz/40MHz external
+oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
+Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
+depending whenever the external reference crystal has 40MHz or 25MHz.
+(1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
+in "10.19.11 Derived RTC Clock". 
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
-tags/keystone-clk-for-5.3
+For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
+<http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
+"I was only able to verify for IPQ8072 that it had a 32.768 KHz
+sleep clock." 
 
-for you to fetch changes up to 3f1f22d8009035a641a359a09239bcc6ffac7bb9:
+So this is pretty much "why there is an issue", it's confusing.
+Is possible can you please look if there are (fixed) divisors values
+listed in the documentation or the registers and bits that the values
+are stored in? Because then we could just calculate it. 
 
-   clk: keystone: sci-clk: extend clock IDs to 32 bits (2019-06-07 
-12:11:41 +0300)
+Regards,
+Christian
 
-----------------------------------------------------------------
-Keystone clk changes for 5.3 merge window.
 
-- Add support for 32 bit clock IDs for sci-clks, this is needed
-   for the new J721e SoC which has a few devices that have more than
-   255 clocks associated to them.
-- Clock probing done from DT by default instead of firmware side.
-   Scanning clocks from DT is much faster than firmware, and also we
-   can omit unnecessary clocks which saves even more time. This has been
-   done in the interest of saving boot time.
-- Remove the device tree node path from the registered sci-clk names.
-   This mainly makes the debugfs interface more readable.
-
-----------------------------------------------------------------
-Tero Kristo (4):
-       clk: keystone: sci-clk: cut down the clock name length
-       clk: keystone: sci-clk: split out the fw clock parsing to own 
-function
-       clk: keystone: sci-clk: probe clocks from DT instead of firmware
-       clk: keystone: sci-clk: extend clock IDs to 32 bits
-
-  drivers/clk/keystone/Kconfig   |  11 ++
-  drivers/clk/keystone/sci-clk.c | 239 
-++++++++++++++++++++++++++++++++++-------
-  2 files changed, 212 insertions(+), 38 deletions(-)
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
