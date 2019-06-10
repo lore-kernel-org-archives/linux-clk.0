@@ -2,139 +2,501 @@ Return-Path: <SRS0=Sfi7=UJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D75C31E42
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7003C31E40
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADC7920859
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:20:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="ZpDt8TZe"
+	by mail.kernel.org (Postfix) with ESMTP id 6DDFB207E0
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jun 2019 15:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560180127;
+	bh=ohOZQ3uSJ69XY58rw6nO7YSebPCTbrdeqXflgbv6YU0=;
+	h=In-Reply-To:References:To:From:Subject:Date:List-ID:From;
+	b=ca4VldDoE0iSQ5i0SUSJdizgLMDDqW8d/rjm4Cr92Dz+fsVmU7FgRJqerxF3/JWTi
+	 xOcZO0VlBfUw8jDz76cwwdje1C19INFm/T0cHgWi+DZ/4v0D/vSNvoJ3yJO+9qQwgz
+	 52AgWhOlf0eH5sv4rtjwL1YHCxNMRpWR37qD+xDM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391128AbfFJPUM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jun 2019 11:20:12 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:63801 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390367AbfFJPUL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jun 2019 11:20:11 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="Codrin.Ciubotariu@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-X-IronPort-AV: E=Sophos;i="5.63,575,1557212400"; 
-   d="scan'208";a="33786257"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Jun 2019 08:20:10 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex04.mchp-main.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 10 Jun 2019 08:20:10 -0700
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
- Transport; Mon, 10 Jun 2019 08:20:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b8JCT5Kbub/4EXAub56AxlvqButQls5lDc4iPWwIpZY=;
- b=ZpDt8TZeBKYUccF6dc4ALbubMyzxSpRMRi/bFObH6gNTJWQGeycaoEXDVLGoQWLMSJEO05PQxhW9uK39TV9ca+ygZrQEn3jAqjyfBt01x0L57nmUURIhAgzYOy6lUhXDgCgMbdaXCtFzMqTPF/0LUSMOy+gISfrPMfQdDBVq36w=
-Received: from CY4PR11MB1256.namprd11.prod.outlook.com (10.169.252.10) by
- CY4PR11MB1862.namprd11.prod.outlook.com (10.175.80.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.17; Mon, 10 Jun 2019 15:20:08 +0000
-Received: from CY4PR11MB1256.namprd11.prod.outlook.com
- ([fe80::e595:70a9:abee:aeb8]) by CY4PR11MB1256.namprd11.prod.outlook.com
- ([fe80::e595:70a9:abee:aeb8%4]) with mapi id 15.20.1965.017; Mon, 10 Jun 2019
- 15:20:07 +0000
-From:   <Codrin.Ciubotariu@microchip.com>
-To:     <sboyd@kernel.org>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Codrin.Ciubotariu@microchip.com>
-Subject: [PATCH] clk: at91: generated: Truncate divisor to GENERATED_MAX_DIV +
- 1
-Thread-Topic: [PATCH] clk: at91: generated: Truncate divisor to
- GENERATED_MAX_DIV + 1
-Thread-Index: AQHVH5/8vNlxgKOf4EOJZ39uA10p3w==
-Date:   Mon, 10 Jun 2019 15:20:07 +0000
-Message-ID: <20190610151712.16572-1-codrin.ciubotariu@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P194CA0011.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:800:be::21) To CY4PR11MB1256.namprd11.prod.outlook.com
- (2603:10b6:903:25::10)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.20.1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e8eb4e3a-909b-4c2a-406a-08d6edb71eb7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR11MB1862;
-x-ms-traffictypediagnostic: CY4PR11MB1862:
-x-microsoft-antispam-prvs: <CY4PR11MB18623D4FB8473DA9FD80FFACE7130@CY4PR11MB1862.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:291;
-x-forefront-prvs: 0064B3273C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(136003)(346002)(366004)(396003)(189003)(199004)(1076003)(72206003)(54906003)(486006)(110136005)(50226002)(478600001)(68736007)(2616005)(86362001)(5660300002)(2906002)(25786009)(476003)(186003)(305945005)(4326008)(7736002)(316002)(107886003)(8936002)(81156014)(14454004)(8676002)(81166006)(52116002)(66476007)(6436002)(73956011)(64756008)(6486002)(66946007)(66556008)(53936002)(2501003)(6512007)(99286004)(6116002)(3846002)(6636002)(102836004)(386003)(6506007)(26005)(256004)(71200400001)(66446008)(36756003)(71190400001)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR11MB1862;H:CY4PR11MB1256.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +zgjZ2HYP8U9OxQUx2tKYQlFlu/BmQrMpsWHYhVwnpXWe1Osj8iZPX9dkPDtZR6bzyFc08LTHOLJyzp9OAPemK2DBocwV5bgG1LbfKjslqe3BFjlf9144znv71FsZ1Z8YfX7AcIwKAg16/BCdmkPvPEaZ2qA8Vtrp6UT+Vn9Jvq4WNiTU9XuiClaRqPnUh5bJBkXXqem4v0t3V0tc1wuQ7YllThwNrnlrK18V5kQ4RBC63iRaPRscmWE8e9zNRYj8x56OwgA7OLlZwikIOne32WXnmp8SGhgkY20xbtTFH14YLpIl0yLrycTVZF/gAOxMy6GQ+emnp4kyuwX/bnZ+HAFL87/YmMf0xEa/r1MrcNELvd0b5lrjHSXSNUCj/Kz2cG+NUmqDi6JBcKYqt7W4zQX31i9wIFvjD8aIYi5seM=
+        id S2390288AbfFJPWH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jun 2019 11:22:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390243AbfFJPWG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:22:06 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EC24207E0;
+        Mon, 10 Jun 2019 15:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560180125;
+        bh=ohOZQ3uSJ69XY58rw6nO7YSebPCTbrdeqXflgbv6YU0=;
+        h=In-Reply-To:References:To:From:Subject:Date:From;
+        b=TbY/eelfCY3JlfQcTR3Y2+vVNnHbQGqyHdPLLh+4CBVgGG+FS3G40fM/Fg/CsT+PY
+         GR4YNBZcXqXqid/3mVqrCf7JE6gmyUdKVVUhz8SewsvPgyFkDghakPZtap9dcuf+tr
+         ie39ArNlq+iYb/209aYj5CLM39TMQUPbE5JmwbHo=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8eb4e3a-909b-4c2a-406a-08d6edb71eb7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2019 15:20:07.6083
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Codrin.Ciubotariu@microchip.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1862
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1559755738-28643-5-git-send-email-sricharan@codeaurora.org>
+References: <1559755738-28643-1-git-send-email-sricharan@codeaurora.org> <1559755738-28643-5-git-send-email-sricharan@codeaurora.org>
+To:     Sricharan R <sricharan@codeaurora.org>, agross@kernel.org,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-soc@vger.kernel.org, robh+dt@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 4/6] clk: qcom: Add ipq6018 Global Clock Controller support
+User-Agent: alot/0.8.1
+Date:   Mon, 10 Jun 2019 08:22:04 -0700
+Message-Id: <20190610152205.1EC24207E0@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RnJvbTogQ29kcmluIENpdWJvdGFyaXUgPGNvZHJpbi5jaXVib3Rhcml1QG1pY3JvY2hpcC5jb20+
-DQoNCkluIGNsa19nZW5lcmF0ZWRfZGV0ZXJtaW5lX3JhdGUoKSwgaWYgdGhlIGRpdmlzb3IgaXMg
-Z3JlYXRlciB0aGFuDQpHRU5FUkFURURfTUFYX0RJViArIDEsIHRoZW4gdGhlIHdyb25nIGJlc3Rf
-cmF0ZSB3aWxsIGJlIHJldHVybmVkLg0KSWYgY2xrX2dlbmVyYXRlZF9zZXRfcmF0ZSgpIHdpbGwg
-YmUgY2FsbGVkIGxhdGVyIHdpdGggdGhpcyB3cm9uZw0KcmF0ZSwgaXQgd2lsbCByZXR1cm4gLUVJ
-TlZBTCwgc28gdGhlIGdlbmVyYXRlZCBjbG9jayB3b24ndCBjaGFuZ2UNCml0cyB2YWx1ZS4gRG8g
-bm8gbGV0IHRoZSBkaXZpc29yIGJlIGdyZWF0ZXIgdGhhbiBHRU5FUkFURURfTUFYX0RJViArIDEu
-DQoNCkZpeGVzOiA4YzdhYTYzMjg5NDcgKCJjbGs6IGF0OTE6IGNsay1nZW5lcmF0ZWQ6IHJlbW92
-ZSB1c2VsZXNzIGRpdmlzb3IgbG9vcCIpDQpTaWduZWQtb2ZmLWJ5OiBDb2RyaW4gQ2l1Ym90YXJp
-dSA8Y29kcmluLmNpdWJvdGFyaXVAbWljcm9jaGlwLmNvbT4NCi0tLQ0KIGRyaXZlcnMvY2xrL2F0
-OTEvY2xrLWdlbmVyYXRlZC5jIHwgMiArKw0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMo
-KykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2F0OTEvY2xrLWdlbmVyYXRlZC5jIGIvZHJp
-dmVycy9jbGsvYXQ5MS9jbGstZ2VuZXJhdGVkLmMNCmluZGV4IDVmMTg4NDc5NjVjMS4uMjkwY2Zm
-ZTM1ZGViIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jbGsvYXQ5MS9jbGstZ2VuZXJhdGVkLmMNCisr
-KyBiL2RyaXZlcnMvY2xrL2F0OTEvY2xrLWdlbmVyYXRlZC5jDQpAQCAtMTQ2LDYgKzE0Niw4IEBA
-IHN0YXRpYyBpbnQgY2xrX2dlbmVyYXRlZF9kZXRlcm1pbmVfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpo
-dywNCiAJCQljb250aW51ZTsNCiANCiAJCWRpdiA9IERJVl9ST1VORF9DTE9TRVNUKHBhcmVudF9y
-YXRlLCByZXEtPnJhdGUpOw0KKwkJaWYgKGRpdiA+IEdFTkVSQVRFRF9NQVhfRElWICsgMSkNCisJ
-CQlkaXYgPSBHRU5FUkFURURfTUFYX0RJViArIDE7DQogDQogCQljbGtfZ2VuZXJhdGVkX2Jlc3Rf
-ZGlmZihyZXEsIHBhcmVudCwgcGFyZW50X3JhdGUsIGRpdiwNCiAJCQkJCSZiZXN0X2RpZmYsICZi
-ZXN0X3JhdGUpOw0KLS0gDQoyLjIwLjENCg0K
+Quoting Sricharan R (2019-06-05 10:28:56)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index e1ff83c..e5fb091 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -120,6 +120,15 @@ config IPQ_GCC_8074
+>           i2c, USB, SD/eMMC, etc. Select this for the root clock
+>           of ipq8074.
+> =20
+> +config IPQ_GCC_6018
+> +       tristate "IPQ6018 Global Clock Controller"
+> +       depends on COMMON_CLK_QCOM
+
+Not sure I commented on this, but this should be removed. The whole
+thing is inside an if now.
+
+> +       help
+> +         Support for global clock controller on ipq6018 devices.
+> +         Say Y if you want to use peripheral devices such as UART, SPI,
+> +         i2c, USB, SD/eMMC, etc. Select this for the root clock
+> +         of ipq6018.
+> +
+>  config MSM_GCC_8660
+>         tristate "MSM8660 Global Clock Controller"
+>         help
+> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq601=
+8.c
+> new file mode 100644
+> index 0000000..9f4552b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-ipq6018.c
+> @@ -0,0 +1,5267 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <linux/reset-controller.h>
+> +#include <dt-bindings/clock/qcom,gcc-ipq6018.h>
+> +
+> +#include "common.h"
+> +#include "clk-regmap.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-branch.h"
+> +#include "clk-alpha-pll.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+> +#include "reset.h"
+> +
+> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+[...]
+> +
+> +static struct clk_alpha_pll gpll0_main =3D {
+> +       .offset =3D 0x21000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x0b000,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gpll0_main",
+> +                       .parent_names =3D (const char *[]){
+> +                               "xo"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_ops,
+> +                       .flags =3D CLK_IS_CRITICAL,
+
+Can you add a comment on why this is critical?
+
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_fixed_factor gpll0_out_main_div2 =3D {
+> +       .mult =3D 1,
+> +       .div =3D 2,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gpll0_out_main_div2",
+> +               .parent_names =3D (const char *[]){
+> +                       "gpll0_main"
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_fixed_factor_ops,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv gpll0 =3D {
+> +       .offset =3D 0x21000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +       .width =3D 4,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gpll0",
+> +               .parent_names =3D (const char *[]){
+> +                       "gpll0_main"
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_ro_ops,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll ubi32_pll_main =3D {
+> +       .offset =3D 0x25000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_HUAYRA],
+> +       .flags =3D SUPPORTS_DYNAMIC_UPDATE,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x0b000,
+> +               .enable_mask =3D BIT(6),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "ubi32_pll_main",
+> +                       .parent_names =3D (const char *[]){
+> +                               "xo"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_huayra_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv ubi32_pll =3D {
+> +       .offset =3D 0x25000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_HUAYRA],
+> +       .width =3D 2,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "ubi32_pll",
+> +               .parent_names =3D (const char *[]){
+> +                       "ubi32_pll_main"
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_ro_ops,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll gpll6_main =3D {
+> +       .offset =3D 0x37000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO],
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x0b000,
+> +               .enable_mask =3D BIT(7),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gpll6_main",
+> +                       .parent_names =3D (const char *[]){
+> +                               "xo"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_ops,
+> +                       .flags =3D CLK_IS_CRITICAL,
+
+Can you add a comment on why this is critical?
+
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv gpll6 =3D {
+> +       .offset =3D 0x37000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO],
+> +       .width =3D 2,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gpll6",
+> +               .parent_names =3D (const char *[]){
+> +                       "gpll6_main"
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_ro_ops,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll gpll4_main =3D {
+> +       .offset =3D 0x24000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x0b000,
+> +               .enable_mask =3D BIT(5),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gpll4_main",
+> +                       .parent_names =3D (const char *[]){
+> +                               "xo"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_ops,
+> +                       .flags =3D CLK_IS_CRITICAL,
+
+Can you add a comment on why this is critical?
+
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv gpll4 =3D {
+> +       .offset =3D 0x24000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +       .width =3D 4,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gpll4",
+> +               .parent_names =3D (const char *[]){
+> +                       "gpll4_main"
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_ro_ops,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_pcnoc_bfdcd_clk_src[] =3D {
+> +       F(24000000, P_XO, 1, 0, 0),
+> +       F(50000000, P_GPLL0, 16, 0, 0),
+> +       F(100000000, P_GPLL0, 8, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 pcnoc_bfdcd_clk_src =3D {
+> +       .cmd_rcgr =3D 0x27000,
+> +       .freq_tbl =3D ftbl_pcnoc_bfdcd_clk_src,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D gcc_xo_gpll0_gpll0_out_main_div2_map,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "pcnoc_bfdcd_clk_src",
+> +               .parent_names =3D gcc_xo_gpll0_gpll0_out_main_div2,
+> +               .num_parents =3D 3,
+> +               .ops =3D &clk_rcg2_ops,
+> +               .flags =3D CLK_IS_CRITICAL,
+
+Can you add a comment on why this is critical?
+
+> +       },
+> +};
+> +
+> +static struct clk_fixed_factor pcnoc_clk_src =3D {
+> +       .mult =3D 1,
+> +       .div =3D 1,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "pcnoc_clk_src",
+> +               .parent_names =3D (const char *[]){
+> +                       "pcnoc_bfdcd_clk_src"
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_fixed_factor_ops,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll gpll2_main =3D {
+> +       .offset =3D 0x4a000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x0b000,
+> +               .enable_mask =3D BIT(2),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gpll2_main",
+> +                       .parent_names =3D (const char *[]){
+> +                               "xo"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_ops,
+> +                       .flags =3D CLK_IS_CRITICAL,
+
+Can you add a comment on why this is critical?
+
+> +               },
+> +       },
+> +};
+> +
+[...]
+> +
+> +static struct clk_fixed_factor system_noc_clk_src =3D {
+> +       .mult =3D 1,
+> +       .div =3D 1,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "system_noc_clk_src",
+> +               .parent_names =3D (const char *[]){
+> +                       "system_noc_bfdcd_clk_src"
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_fixed_factor_ops,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +       },
+> +};
+
+What is the point of these fixed factor 1/1 clks? Just to rename things?
+Does it matter, or can we just specify system_noc_bfdcd_clk_src as the
+parent and drop this intermediate clk?
+
+> +
+> +static struct clk_branch gcc_sleep_clk_src =3D {
+> +       .halt_reg =3D 0x30000,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x30000,
+> +               .enable_mask =3D BIT(1),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_sleep_clk_src",
+> +                       .parent_names =3D (const char *[]){
+> +                               "sleep_clk"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_branch2_ops,
+> +                       .flags =3D CLK_IS_CRITICAL,
+> +               },
+> +       },
+> +};
+> +
+[...]
+> +
+> +static struct clk_branch gcc_qdss_at_clk =3D {
+> +       .halt_reg =3D 0x29024,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x29024,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_qdss_at_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "qdss_at_clk_src"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+
+Can you add a comment on why this is critical?
+
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_qdss_dap_clk =3D {
+> +       .halt_reg =3D 0x29084,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x29084,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_qdss_dap_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "qdss_dap_sync_clk_src"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+
+Can you add a comment on why this is critical?
+
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_qpic_ahb_clk =3D {
+> +       .halt_reg =3D 0x57024,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x57024,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_qpic_ahb_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "pcnoc_clk_src"
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+[...]
+> +static struct clk_branch gcc_dcc_clk =3D {
+> +       .halt_reg =3D 0x77004,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x77004,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_dcc_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "pcnoc_clk_src"
+> +                       },
+
+Can you use the new method of specifying clk parents here? That will
+make this simpler.
+
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static const struct alpha_pll_config ubi32_pll_config =3D {
+> +       .l =3D 0x3e,
+> +       .alpha =3D 0x57,
+> +       .config_ctl_val =3D 0x200d6aa8,
+> +       .config_ctl_hi_val =3D 0x3c2,
+> +       .main_output_mask =3D BIT(0),
+> +       .aux_output_mask =3D BIT(1),
+> +       .pre_div_val =3D 0x0,
+> +       .pre_div_mask =3D BIT(12),
+> +       .post_div_val =3D 0x0,
+> +       .post_div_mask =3D GENMASK(9, 8),
+> +};
+> +
+> +static const struct alpha_pll_config nss_crypto_pll_config =3D {
+> +       .l =3D 0x32,
+> +       .alpha =3D 0x0,
+> +       .alpha_hi =3D 0x0,
+> +       .config_ctl_val =3D 0x4001055b,
+> +       .main_output_mask =3D BIT(0),
+> +       .pre_div_val =3D 0x0,
+> +       .pre_div_mask =3D GENMASK(14, 12),
+> +       .post_div_val =3D 0x1 << 8,
+> +       .post_div_mask =3D GENMASK(11, 8),
+> +       .vco_mask =3D GENMASK(21, 20),
+> +       .vco_val =3D 0x0,
+> +       .alpha_en_mask =3D BIT(24),
+> +};
+> +
+> +static struct clk_hw *gcc_ipq6018_hws[] =3D {
+
+It would be nice to trim this down to a list of 0.
+
+> +       &gpll0_out_main_div2.hw,
+> +       &pcnoc_clk_src.hw,
+> +       &snoc_nssnoc_clk_src.hw,
+> +       &system_noc_clk_src.hw,
+> +       &gcc_xo_div4_clk_src.hw,
+> +       &ubi32_mem_noc_clk_src.hw,
+> +       &nss_ppe_cdiv_clk_src.hw,
+> +       &gpll6_out_main_div2.hw,
+
+Why do we need this? Does anyone use it?
+
+> +       &qdss_dap_sync_clk_src.hw,
+> +       &qdss_tsctr_div2_clk_src.hw,
+> +};
+> +
