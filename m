@@ -2,118 +2,110 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEF3C46477
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 19:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F007EC4321A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 20:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9E82183E
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 19:21:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XL0AUogK"
+	by mail.kernel.org (Postfix) with ESMTP id C91E421721
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 20:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560283259;
+	bh=s/Ht5+9CPxynHvmNGgca4LVS0zf0kgpTAEg3mLddkn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wwaP6V8uaanpVFd1KP1Jcga8wRErNzv/stgK0DvM9R0jPqYgt72RXQMZRRDZWKgRr
+	 TOumfkTeHE0mpKvgMSKRDNnV9sTtpUZqzC9TJxb2JlKr10nkpfdQG0Zopb2TcEnJfx
+	 CHR+o9P8JFmGrX/zzmepWng+j10r8oi5jtaFuC6k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407534AbfFKTVV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 15:21:21 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33642 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407527AbfFKTVV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 15:21:21 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g21so5548523plq.0;
-        Tue, 11 Jun 2019 12:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=XL0AUogKv6Cxj1o55F+H/u/jeXLI0x8/C754Uw2qjM+DoJhR91Fi3mcEZ68gY4v+kq
-         NlInBqn0UHjxqmEKlFK3dYtwZQc+TKSPXvD0uOvoJ8iuNUQNCax008E5a0DXfzKHpxBN
-         pTDcvpwV5W0HCPMLiEwX33vLLaEIBiWx0rB16luo9rM2PPahYhMYGFFYiHP555AcOif/
-         0RH+eQDsztBx+jbLeCw5tJp+sdNXoRgX5KaUHqK60vPDIZ3JUAuED/Nqok7rmxI6DYht
-         dntc/LH7EsxfsFex9bPNJU3k1D7VAlhJHTlnN06/ZSnEIM5lB08KL4a0Xk6JixyQjdBi
-         6DFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=nuctAf7lyTp08CPfv9YwjxQdEBVyKOOCxpMINwk17kc7shZywA8ajT6DxBSJqlD9Fg
-         vJJt3C517PfaRdwqxnpGlRuHP8khXsy+L61YCE2tEsF5SUigMaS4f9YcryFTLBCS4yxn
-         /VAEU5SLsOIk0IG/kOHdw7krsIqjK40wxa/7v7dlMf78zxkg0hVweXt1JZznE6uNvF3N
-         Elhx1axGN227BGPYP/T+F4va8/tsbaRWV9QsBtSK1TtWliUst+NcYqMO+ya9fP1F6rJB
-         E+VyT4bC2uSq8GH3otlKp9dV01eLwvxUiy13iaNFgz0f++E69uKZsOfQ3YS43mrAmvgg
-         bjHA==
-X-Gm-Message-State: APjAAAUPJD7ScX0UtpmaftNjQXtK2EMc2DSBvhgwVzmHA6EDc71WLgcU
-        hc9RNfW7fFI3SVSnPUuQIvg=
-X-Google-Smtp-Source: APXvYqxM45D6ih9NPop4Jnwxqresrp36WK7FBsVW0XTK9ysiGJzlc2i43YN/D1Vc1OShKwnlvGlETg==
-X-Received: by 2002:a17:902:b58f:: with SMTP id a15mr76885535pls.201.1560280880449;
-        Tue, 11 Jun 2019 12:21:20 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id z32sm14669727pgk.25.2019.06.11.12.21.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 12:21:19 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, marc.w.gonzalez@free.fr,
-        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v3 2/2] arm64: dts: qcom: msm8998: Add gpucc node
-Date:   Tue, 11 Jun 2019 12:21:16 -0700
-Message-Id: <20190611192116.15009-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190611191949.14906-1-jeffrey.l.hugo@gmail.com>
-References: <20190611191949.14906-1-jeffrey.l.hugo@gmail.com>
+        id S2406180AbfFKUAz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 16:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405168AbfFKUAz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Jun 2019 16:00:55 -0400
+Received: from earth.universe (unknown [185.62.205.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 130F120883;
+        Tue, 11 Jun 2019 20:00:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560283254;
+        bh=s/Ht5+9CPxynHvmNGgca4LVS0zf0kgpTAEg3mLddkn0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1UAFM7E6z32INie2ywpw1WxlvWw6gwAH+2ireN9vwA81UQSpOFkLHMVPrEzMmFQw2
+         UHWF+yTW2DbFptWnYRH5PbiVRaTx9FQ1l9HYpmzrVt3+fq0mqOTVo1ylBdok4j3RJR
+         0TsIk179NCnIeR/FUlhchmcMm98+HagiQBI57/Ko=
+Received: by earth.universe (Postfix, from userid 1000)
+        id C5AC53C0C77; Tue, 11 Jun 2019 22:00:43 +0200 (CEST)
+Date:   Tue, 11 Jun 2019 22:00:43 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+Message-ID: <20190611200043.eib3g3acc7ilawsx@earth.universe>
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qfajaxb2wnhwswu6"
+Content-Disposition: inline
+In-Reply-To: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 GPU Clock Controller DT node.
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+--qfajaxb2wnhwswu6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 574be78a936e..cf00bfeec6b3 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
- 
-@@ -763,6 +764,20 @@
- 			reg = <0x1f40000 0x20000>;
- 		};
- 
-+		gpucc: clock-controller@5065000 {
-+			compatible = "qcom,gpucc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x05065000 0x9000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
-+
-+
- 		apcs_glb: mailbox@9820000 {
- 			compatible = "qcom,msm8998-apcs-hmss-global";
- 			reg = <0x17911000 0x1000>;
--- 
-2.17.1
+Hi,
 
+On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> Patch series introducing support for ROHM BD70528 PMIC
+> [...]
+
+I think all patches have been reviewed by the respective subsystem
+maintainers. Lee, can you provide an immutable branch with the MFD
+patches (1, 2, 4)? Looks like the other patches only depend on those
+and can go through their respective subsystems.
+
+-- Sebastian
+
+--qfajaxb2wnhwswu6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0ACGsACgkQ2O7X88g7
++pqpvxAAiZzNy6zuuXZ4vjjMA7V17elDn9CTdWUe1RZBcvYxmFmOUWxTEPtRsmoC
+DSstvCVI3H0sOGanHoZ6WFe1R5cyV3jG4J9Xam7XQSQmVpWJPaQXSgQpSy4O6aMX
+3Hrs2E8Nv+zUuflVsm4yIOnX7avFBDxBdJlZzKNRzA2b3KOzmNvNr3Y/CbvS9IO4
+dTHBXDzcoo+XfrbOKD7Z/0LD6kPsVVkjI8qDiGMN0LCxVkkXV2IFFvMluaWzJHQl
+hDUheJRJkD1TXC6z1bCxHSzT4/DCDbWHXN191CnZSIeORMLeZxFFldSmKbYIvOV1
+DTJemYQUksIOl2usnvNvSl0GnxjrzZpw7PKbh3rXVlWaa52FEvRJJX++voIP3fNW
+zTHSYUTZrBqyLzC4Rp9AWeCy19ebFTrPjV3g3LZDIx0D37C3BeS71gNotRa9o91w
+aGBN/Um6Zm3PASbxAPk5TB9RIatlGSELFcVg4qa4of1Y7fY5+O/J5Civ/R1vQJkG
+iKE+ujAxYfKJkoUebhETYoHhonRh+naZuEgVC4yl9TsP2hGhz4rArD76kKTUnwNY
+g5rSpqb8LptHOkHdkP6ueQYIHavaNGfE6wJBfLqjG3uLU/8RU7YaOqZubQOH/WNT
+f2hxCJ76WfvTO5avZpYkykwOS0LwdP8MUoVz2tVnYLYm/q7DhB4=
+=2BRP
+-----END PGP SIGNATURE-----
+
+--qfajaxb2wnhwswu6--
