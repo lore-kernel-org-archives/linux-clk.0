@@ -2,142 +2,128 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A41C43218
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AFDC06508
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 16:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F48208E3
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560265039;
-	bh=PDMT40Esdo8UkFki3UsNcPeLwMVn2sjMM5JVniOL9yM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=rvauHgAbT3Zs6qFZe5BV0Kfs5Ff0qUgi2bYupwRmu0Qpezy5vXJEqvp0Y7pdpzEiM
-	 tCFjU5v/hu3ZkjN5K/70OIndNDpi29AFRxXyI64GroQVmdi9yJ8zkEUsGF7BP9yIFX
-	 emBo5Cl1O+zxJ92GTGR+5xcqOh0ZCIa6xDbBqYcY=
+	by mail.kernel.org (Postfix) with ESMTP id 1D72A2086D
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 16:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfFKO5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 10:57:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50186 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728412AbfFKO5T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:57:19 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6658F21744;
-        Tue, 11 Jun 2019 14:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560265037;
-        bh=PDMT40Esdo8UkFki3UsNcPeLwMVn2sjMM5JVniOL9yM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nu5wxM+HHrfkCtF1x7Or3Pfim08FfQSDgXG4CQD+Rc2l6fNTBFaPzIY/2oXtvKbaN
-         Xd2X+N0unRik84mrPZ5Wsm9KbLaZ3hB029Qef3sj2yLkRboL3jfNPIyy7ePHxgCGaw
-         lNfiD7EMj7AL+FTtGDAmI6iFUX19qQ1GOmATJvOo=
-Received: by mail-qt1-f181.google.com with SMTP id p15so7473511qtl.3;
-        Tue, 11 Jun 2019 07:57:17 -0700 (PDT)
-X-Gm-Message-State: APjAAAV1uWddM6YE7IIgAHlYvUIi6DxNUlLJ44rKVli56JkJB+vkQ3fo
-        9phEQQ6MCLddcQWH5s1yFFxs1alJFWo5+9Lhyw==
-X-Google-Smtp-Source: APXvYqwKXudcUIloIxvnM9Z3TUTq2TYTbIEqBlR3HwB9Ltpy5J5xKf3f0bzDLgxra6FePQCRpDyY/kcLrLWZl6w7kAo=
-X-Received: by 2002:a0c:acef:: with SMTP id n44mr5105568qvc.39.1560265036455;
- Tue, 11 Jun 2019 07:57:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190521145141.9813-1-paul@crapouillou.net> <20190521145141.9813-4-paul@crapouillou.net>
- <20190524202103.GA15650@bogus> <1558811596.2016.1@crapouillou.net>
-In-Reply-To: <1558811596.2016.1@crapouillou.net>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 11 Jun 2019 08:57:04 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+ZhoW9xM_7-7CcCm2RKRbMRzmXD-oEMfoVkvcaAFxGug@mail.gmail.com>
-Message-ID: <CAL_Jsq+ZhoW9xM_7-7CcCm2RKRbMRzmXD-oEMfoVkvcaAFxGug@mail.gmail.com>
-Subject: Re: [PATCH v12 03/13] dt-bindings: Add doc for the Ingenic TCU drivers
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S2404278AbfFKQda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 12:33:30 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43433 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404082AbfFKQd3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 12:33:29 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1haji5-00014z-KK; Tue, 11 Jun 2019 18:33:21 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1haji2-0006nE-Qd; Tue, 11 Jun 2019 18:33:18 +0200
+Date:   Tue, 11 Jun 2019 18:33:18 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-pwm@vger.kernel.org,
+        thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 04/14] pwm: meson: change MISC_CLK_SEL_WIDTH to
+ MISC_CLK_SEL_MASK
+Message-ID: <20190611163318.tfb5c4jbekjybj76@pengutronix.de>
+References: <20190608180626.30589-1-martin.blumenstingl@googlemail.com>
+ <20190608180626.30589-5-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190608180626.30589-5-martin.blumenstingl@googlemail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, May 25, 2019 at 1:13 PM Paul Cercueil <paul@crapouillou.net> wrote:
->
->
->
-> Le ven. 24 mai 2019 =C3=A0 22:21, Rob Herring <robh@kernel.org> a =C3=A9c=
-rit :
-> > On Tue, May 21, 2019 at 04:51:31PM +0200, Paul Cercueil wrote:
-> >>  Add documentation about how to properly use the Ingenic TCU
-> >>  (Timer/Counter Unit) drivers from devicetree.
-> >>
-> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>  ---
-> >>
-> >>  Notes:
-> >>      v4: New patch in this series. Corresponds to V2 patches 3-4-5
-> >> with
-> >>       added content.
-> >>
-> >>      v5: - Edited PWM/watchdog DT bindings documentation to point to
-> >> the new
-> >>         document.
-> >>       - Moved main document to
-> >>         Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> >>       - Updated documentation to reflect the new devicetree bindings.
-> >>
-> >>      v6: - Removed PWM/watchdog documentation files as asked by
-> >> upstream
-> >>       - Removed doc about properties that should be implicit
-> >>       - Removed doc about ingenic,timer-channel /
-> >>         ingenic,clocksource-channel as they are gone
-> >>       - Fix WDT clock name in the binding doc
-> >>       - Fix lengths of register areas in watchdog/pwm nodes
-> >>
-> >>      v7: No change
-> >>
-> >>      v8: - Fix address of the PWM node
-> >>       - Added doc about system timer and clocksource children nodes
-> >>
-> >>      v9: - Remove doc about system timer and clocksource children
-> >>         nodes...
-> >>      - Add doc about ingenic,pwm-channels-mask property
-> >>
-> >>      v10: No change
-> >>
-> >>      v11: Fix info about default value of ingenic,pwm-channels-mask
-> >>
-> >>      v12: Drop sub-nodes for now; they will be introduced in a
-> >> follow-up
-> >>               patchset.
-> >
-> > Why? I believe I acked them.
->
-> The patchset was too big, and I've already been trying to get it
-> upstream for
-> more than one year now. So I cut it in half in hope that it'll be
-> easier to
-> upstream it that way.
+Hello,
 
-You can drop the driver part and keep the binding. Unlike drivers, we
-don't want bindings to needlessly evolve, and you don't have to wait
-til a driver implements some functionality to add that to the binding.
+[added clk-people to recipients]
 
-Rob
+On Sat, Jun 08, 2019 at 08:06:16PM +0200, Martin Blumenstingl wrote:
+> MISC_CLK_SEL_WIDTH is only used in one place where it's converted into
+> a bit-mask. Rename and change the macro to be a bit-mask so that
+> conversion is not needed anymore. No functional changes intended.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/pwm/pwm-meson.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+> index c62a3ac924d0..84b28ba0f903 100644
+> --- a/drivers/pwm/pwm-meson.c
+> +++ b/drivers/pwm/pwm-meson.c
+> @@ -33,7 +33,7 @@
+>  #define MISC_A_CLK_DIV_SHIFT	8
+>  #define MISC_B_CLK_SEL_SHIFT	6
+>  #define MISC_A_CLK_SEL_SHIFT	4
+> -#define MISC_CLK_SEL_WIDTH	2
+> +#define MISC_CLK_SEL_MASK	0x3
+>  #define MISC_B_EN		BIT(1)
+>  #define MISC_A_EN		BIT(0)
+>  
+> @@ -463,7 +463,7 @@ static int meson_pwm_init_channels(struct meson_pwm *meson,
+>  
+>  		channel->mux.reg = meson->base + REG_MISC_AB;
+>  		channel->mux.shift = mux_reg_shifts[i];
+> -		channel->mux.mask = BIT(MISC_CLK_SEL_WIDTH) - 1;
+> +		channel->mux.mask = MISC_CLK_SEL_MASK;
+>  		channel->mux.flags = 0;
+>  		channel->mux.lock = &meson->lock;
+>  		channel->mux.table = NULL;
+
+IMHO clk_mux is ugly here. It could easily just take
+
+	.mask = 3 << mux_reg_shifts[i],
+
+as input parameter instead of
+
+	.mask = 3,
+	.shift = mux_reg_shifts[i],
+
+. Then the usage would be (IMHO) a bit more natural, the clock mask
+could then be defined as:
+
+	#define MISC_CLK_SEL_MASK(i)	GENMASK(5 + 2 * (i), 4 + 2 * (i))
+
+and this value could just be passed to the clk_mux.
+
+(OK, this could be done already now, and then we'd do
+
+	channel->mux.shift = ffs(MISC_CLK_SEL_MASK(i)) - 1;
+	channel->mux.mask = MISC_CLK_SEL_MASK(i) >> channel->mux.shift;
+
+.)
+
+Apart from that, I wonder if the pwm-meson driver should better use
+clk_register_mux instead of open coding it. (Though there doesn't seem
+to exists a devm_ variant of it.)
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
