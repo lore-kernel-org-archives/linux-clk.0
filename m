@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6331C4321A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37294C4321B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFBD205F4
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06DAB205F4
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:18:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560248318;
-	bh=5ibFskqlI67kY2ECjyFXtnNVAtBdgqJg4Cz1K4oHnkk=;
+	s=default; t=1560248319;
+	bh=9pP3OKj38O5IkaCOSE4CREy2A/7c7sgJ1J4PosN60ag=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AKCzHGtqfBSaYjWFDWQZJuY6ISbopW0JjOXNpS5A21z+akdD/i3Krcvk9TmZPpASv
-	 s7/HOr8wGvy8xL6Be5ypQOltACBdSoQb3MSiog66pnPItRzXXVNfJe/xs7D0A3IfQC
-	 o8uVLim6CWzdCjdSscDCt/reol2oxJ5k/B/ww+Rg=
+	b=R5SN4VsZphrysSb52Yb/HDbYtOaVrPZGQTqa5f/SSCjqiuo9fSewqiWONOnV+LMxa
+	 vTHpXE6mFlQmM1sPhSbgdpfyqbrQQNOwG3ygfMNzYYL8whpFOcZgq086IXLW9tyq3i
+	 6FZSKsZWHfxZuM1lvAr+82QJBNgp/+b1sO96bD2U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405545AbfFKKSi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S2405547AbfFKKSi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 11 Jun 2019 06:18:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45742 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:45898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405307AbfFKKRY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S2405314AbfFKKRY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 11 Jun 2019 06:17:24 -0400
 Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DAA721721;
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C2C321743;
         Tue, 11 Jun 2019 10:17:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1560248243;
-        bh=5ibFskqlI67kY2ECjyFXtnNVAtBdgqJg4Cz1K4oHnkk=;
+        bh=9pP3OKj38O5IkaCOSE4CREy2A/7c7sgJ1J4PosN60ag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZLZgL84/hvhtUfknRDNFZCpiFQQEN7ynIGa6b+99iWePO7YUt/rK1e4ts3xKXam+X
-         KyHYcYNFi+WBHr/rkFPkhMR8wRVJeLuDkUnv9e42ySRtNHhcbz/4XNhGFsFEFW9rFU
-         a4VlUwc5yWsvpr7PuBxH2uWDPbLKsdxC+M3zYcTU=
+        b=I3WfUcUXiekWEAT+fNA59IZv43uoQI5NzkILbpcZcSRa1AvEEitV9A8yetlJIF8bJ
+         X9nxNOXD66Xf4uSGP+UYZ2sFBPyFj5pe4tYyiA+AXftwlUZyi4UTxp2lph4Wx5mibv
+         IWQ4neS/eqfTKhGPb2sm67ULS8LtIivQ8oFhUE9s=
 Received: by wens.tw (Postfix, from userid 1000)
-        id 57E78606A0; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
+        id 35F6F602B7; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -47,9 +47,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 12/25] clk: sunxi-ng: a31: Use local parent references for CLK_FIXED_FACTOR
-Date:   Tue, 11 Jun 2019 18:16:45 +0800
-Message-Id: <20190611101658.23855-13-wens@kernel.org>
+Subject: [PATCH v2 06/25] clk: fixed-factor: Add CLK_FIXED_FACTOR_HWS which takes list of struct clk_hw *
+Date:   Tue, 11 Jun 2019 18:16:39 +0800
+Message-Id: <20190611101658.23855-7-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611101658.23855-1-wens@kernel.org>
 References: <20190611101658.23855-1-wens@kernel.org>
@@ -62,71 +62,46 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-With the new clk parenting code and CLK_FIXED_FACTOR_{HW,FW_NAME}
-macros, we can reference parents locally via pointers to struct clk_hw
-or DT clock-names.
+With the new clk parenting code, clk_init_data was expanded to include
+.parent_hws, for clk drivers to directly reference parents by clk_hw.
 
-Convert existing CLK_FIXED_FACTOR definitions to either the _HW or
-_FW_NAME variant based on whether the parent clock is internal or
-external to the CCU.
+Add a new macro, CLK_FIXED_FACTOR_HWS, that can take an array of pointers
+to struct clk_hw, instead of a string, as its parent. Taking an array
+instead of a direct pointer allows the reuse of the array for multiple
+clks, rather than having one compound literal with the same contents
+allocated for each clk declaration.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 39 ++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 14 deletions(-)
+ include/linux/clk-provider.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index b494c4fe0b2c..048c0d75d0b0 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -963,21 +963,32 @@ static struct ccu_common *sun6i_a31_ccu_clks[] = {
- 	&out_c_clk.common,
- };
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c85e9f3809f2..146a6859969e 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -996,6 +996,21 @@ extern struct of_device_id __clk_of_table;
+ 						 _flags),		\
+ 	}
  
-+static const struct clk_hw *clk_parent_pll_audio[] = {
-+	&pll_audio_base_clk.common.hw
-+};
++/*
++ * This macro allows the driver to reuse the _parent array for multiple
++ * fixed factor clk declarations.
++ */
++#define CLK_FIXED_FACTOR_HWS(_struct, _name, _parent,			\
++			     _div, _mult, _flags)			\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT_HWS(_name,		\
++						  _parent,		\
++						  &clk_fixed_factor_ops, \
++						  _flags),	\
++	}
 +
- /* We hardcode the divider to 1 for now */
--static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
--			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
--			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
--			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
--			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_periph_2x_clk, "pll-periph-2x",
--			"pll-periph", 1, 2, 0);
--static CLK_FIXED_FACTOR(pll_video0_2x_clk, "pll-video0-2x",
--			"pll-video0", 1, 2, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_video1_2x_clk, "pll-video1-2x",
--			"pll-video1", 1, 2, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
-+			    clk_parent_pll_audio,
-+			    1, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
-+			    clk_parent_pll_audio,
-+			    2, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
-+			    clk_parent_pll_audio,
-+			    1, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_8x_clk, "pll-audio-8x",
-+			    clk_parent_pll_audio,
-+			    1, 2, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HW(pll_periph_2x_clk, "pll-periph-2x",
-+			   &pll_periph_clk.common.hw,
-+			   1, 2, 0);
-+static CLK_FIXED_FACTOR_HW(pll_video0_2x_clk, "pll-video0-2x",
-+			   &pll_video0_clk.common.hw,
-+			   1, 2, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HW(pll_video1_2x_clk, "pll-video1-2x",
-+			   &pll_video1_clk.common.hw,
-+			   1, 2, CLK_SET_RATE_PARENT);
- 
- static struct clk_hw_onecell_data sun6i_a31_hw_clks = {
- 	.hws	= {
+ #ifdef CONFIG_OF
+ int of_clk_add_provider(struct device_node *np,
+ 			struct clk *(*clk_src_get)(struct of_phandle_args *args,
 -- 
 2.20.1
 
