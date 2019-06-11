@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551DFC43218
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B131C43218
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E6C2205F4
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:19:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 348DC205F4
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:19:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560248343;
-	bh=i0B2yKWgFIEvAKMI/QmOeIMqDZsEa7g7GDicC8lryn0=;
+	s=default; t=1560248344;
+	bh=525aOxhqLv6Y8ZrnilCkqiBQziTal4f1DRT+iqnr65Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UQBSyLQAiw5zZcnJmUudfRf2oWqGAI0jWOcgNn7FCMepGCdpJknHLEhl6gUgrpXMZ
-	 4CtVoNayFbkCOVMiMWBb5v6af5BIq2rOHeiS4X8xw4Ky+ONtugGoUGXMszXsOWbtOk
-	 Zh1mBWJGOVc6lQVo9kfFDqM9g/I7wZfYnPAZ1pgE=
+	b=O3D7Yt9hCXI6akl36xa5u9EbdlZGU4SxO6q0yqeNI5AHw2AR/RXRdLewkxdaydtVK
+	 dW/sH7GIMRa18dUJjuhWYJW/wnthIz8Yfco9BZSTVMw2QTII2Aw94PoXMqjIdXe43B
+	 6iIKAyue9bZ9aVDyCsVbFsRZFQbWoJhXppNw6j3U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405324AbfFKKS7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 06:18:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45786 "EHLO mail.kernel.org"
+        id S2405299AbfFKKRW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 06:17:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405309AbfFKKRX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:17:23 -0400
+        id S2404766AbfFKKRW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:17:22 -0400
 Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5353E2173B;
-        Tue, 11 Jun 2019 10:17:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AA17208E3;
+        Tue, 11 Jun 2019 10:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560248243;
-        bh=i0B2yKWgFIEvAKMI/QmOeIMqDZsEa7g7GDicC8lryn0=;
+        s=default; t=1560248241;
+        bh=525aOxhqLv6Y8ZrnilCkqiBQziTal4f1DRT+iqnr65Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Drz0VCn5Hmx5zfQP1b0rziWP4CDB+dhNluMzjRB9YHIbY6e99bX1G060yBDFLYcxX
-         Fw/pfmH0zyzmPBwXxSNy6buCAK1W+1LjPbJRnPUSg1rUm/Uccft5YG6BdQw4gZWjQF
-         ML4TGu6j+skip6u8wwq9XlHA8vZ2KcjkEEoO8Ogk=
+        b=K2JiZayT9S16Wgegak2Fw9lid9oEzQHR0gVib6XgxqJO4cIpqXPXpuT9Mdi1JbmeM
+         7rvC5A1n/JL8ggAaPY0SyaEx8vkqvkisLhvUUN2N/Yv2CzNAJ8UMm4D3PT6k+pb/jx
+         efL6jGN9V7erjha1KNNEgZrrGDsEfsRjXU4YFMQ4=
 Received: by wens.tw (Postfix, from userid 1000)
-        id 2EE09600FD; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
+        id 102045F92C; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -47,9 +47,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 05/25] clk: fixed-factor: Add CLK_FIXED_FACTOR_HW which takes clk_hw pointer as parent
-Date:   Tue, 11 Jun 2019 18:16:38 +0800
-Message-Id: <20190611101658.23855-6-wens@kernel.org>
+Subject: [PATCH v2 01/25] clk: Fix debugfs clk_possible_parents for clks without parent string names
+Date:   Tue, 11 Jun 2019 18:16:34 +0800
+Message-Id: <20190611101658.23855-2-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611101658.23855-1-wens@kernel.org>
 References: <20190611101658.23855-1-wens@kernel.org>
@@ -62,39 +62,82 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-With the new clk parenting code, clk_init_data was expanded to include
-.parent_hws, for clk drivers to directly reference parents by clk_hw.
+Following the commit fc0c209c147f ("clk: Allow parents to be specified
+without string names"), the parent name string is not always populated.
 
-Add a new macro, CLK_FIXED_FACTOR_HW, that can take a struct clk_hw
-pointer, instead of a string, as its parent.
+Instead, fetch the parents clk_core struct using the appropriate helper,
+and read its name directly. If that fails, go through the possible
+sources of parent names. The order in which they are used is different
+from how parents are looked up, with the global name having precedence
+over local fw_name and indices. This makes more sense as a) the
+parent_maps structure does not differentiate between legacy global names
+and fallback global names, and b) global names likely provide more
+information than local fw_names.
 
+Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- include/linux/clk-provider.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/clk.c | 44 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0fd14c4874d6..c85e9f3809f2 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -985,6 +985,17 @@ extern struct of_device_id __clk_of_table;
- 					      _flags),			\
- 	}
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index aa51756fd4d6..093161ca4dcc 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3000,12 +3000,50 @@ DEFINE_SHOW_ATTRIBUTE(clk_flags);
+ static int possible_parents_show(struct seq_file *s, void *data)
+ {
+ 	struct clk_core *core = s->private;
++	struct clk_core *parent;
+ 	int i;
  
-+#define CLK_FIXED_FACTOR_HW(_struct, _name, _parent,			\
-+			    _div, _mult, _flags)			\
-+	struct clk_fixed_factor _struct = {				\
-+		.div		= _div,					\
-+		.mult		= _mult,				\
-+		.hw.init	= CLK_HW_INIT_HW(_name,			\
-+						 _parent,		\
-+						 &clk_fixed_factor_ops,	\
-+						 _flags),		\
+-	for (i = 0; i < core->num_parents - 1; i++)
+-		seq_printf(s, "%s ", core->parents[i].name);
++	/*
++	 * Go through the following options to fetch a parent's name.
++	 *
++	 * 1. Fetch the registered parent clock and use its name
++	 * 2. Use the global (fallback) name if specified
++	 * 3. Use the local fw_name if provided
++	 * 4. Fetch parent clock's clock-output-name if DT index was set
++	 *
++	 * This may still fail in some cases, such as when the parent is
++	 * specified directly via a struct clk_hw pointer, but it isn't
++	 * registered (yet).
++	 */
++	for (i = 0; i < core->num_parents - 1; i++) {
++		parent = clk_core_get_parent_by_index(core, i);
++		if (parent)
++			seq_printf(s, "%s ", parent->name);
++		else if (core->parents[i].name)
++			seq_printf(s, "%s ", core->parents[i].name);
++		else if (core->parents[i].fw_name)
++			seq_printf(s, "<%s>(fw) ", core->parents[i].fw_name);
++		else if (core->parents[i].index >= 0)
++			seq_printf(s, "%s ",
++				   of_clk_get_parent_name(core->of_node,
++							  core->parents[i].index));
++		else
++			seq_puts(s, "(missing) ");
 +	}
-+
- #ifdef CONFIG_OF
- int of_clk_add_provider(struct device_node *np,
- 			struct clk *(*clk_src_get)(struct of_phandle_args *args,
+ 
+-	seq_printf(s, "%s\n", core->parents[i].name);
++	parent = clk_core_get_parent_by_index(core, i);
++	if (parent)
++		seq_printf(s, "%s", parent->name);
++	else if (core->parents[i].name)
++		seq_printf(s, "%s", core->parents[i].name);
++	else if (core->parents[i].fw_name)
++		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
++	else if (core->parents[i].index >= 0)
++		seq_printf(s, "%s",
++			   of_clk_get_parent_name(core->of_node,
++						  core->parents[i].index));
++	else
++		seq_puts(s, "(missing)");
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
