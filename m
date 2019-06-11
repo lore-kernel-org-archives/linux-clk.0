@@ -2,25 +2,25 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C147C4321B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFBCC43218
 	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8B2205ED
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D74F0205ED
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390496AbfFKOTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S2388663AbfFKOTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 11 Jun 2019 10:19:45 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:33450 "EHLO hermes.aosc.io"
+Received: from hermes.aosc.io ([199.195.250.187]:33448 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389510AbfFKOTn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S2389566AbfFKOTn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 11 Jun 2019 10:19:43 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id E9C69819F0;
-        Tue, 11 Jun 2019 14:10:35 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 6AFBA822A1;
+        Tue, 11 Jun 2019 14:12:42 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -30,68 +30,50 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 00/11] Support for Allwinner V3/S3L and Sochip S3
-Date:   Tue, 11 Jun 2019 22:09:29 +0800
-Message-Id: <20190611140940.14357-1-icenowy@aosc.io>
+Subject: [PATCH v2 10/11] dt-bindings: arm: sunxi: add binding for Lichee Zero Plus core board
+Date:   Tue, 11 Jun 2019 22:09:39 +0800
+Message-Id: <20190611140940.14357-11-icenowy@aosc.io>
+In-Reply-To: <20190611140940.14357-1-icenowy@aosc.io>
+References: <20190611140940.14357-1-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset tries to add support for Allwinner V3/S3L and Sochip S3.
+The Lichee Zero Plus is a core board made by Sipeed, with a microUSB
+connector on it, TF slot or WSON8 SD chip, optional eMMC or SPI Flash.
+It has a gold finger connector for expansion, and UART is available from
+reserved pins w/ 2.54mm pitch. The board can use either SoChip S3 or
+Allwinner V3L SoCs.
 
-Allwinner V3/V3s/S3L and Sochip S3 share the same die, but with
-different package. V3 is BGA w/o co-packaged DDR, V3s is QFP w/ DDR2,
-S3L is BGA w/ DDR2 and S3 is BGA w/ DDR3. (S3 and S3L is compatible
-for pinout, but because of different DDR, DDR voltage is different
-between the two variants). Because of the pin count of V3s is
-restricted due to the package, some pins are not bound on V3s, but
-they're bound on V3/S3/S3L.
+Add the device tree binding of the basic version of the core board --
+w/o eMMC or SPI Flash, w/ TF slot or WSON8 SD, and use S3 SoC.
 
-Currently the kernel is only prepared for the features available on V3s.
-This patchset adds the features missing on V3s for using them on
-V3/S3/S3L, and add bindings for V3/S3/S3L. It also adds a S3 SoM by
-Sipeed, called Lichee Zero Plus.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+New patch in v2.
 
-Icenowy Zheng (11):
-  dt-bindings: pinctrl: add missing compatible string for V3s
-  dt-bindings: pinctrl: add compatible string for Allwinner V3 pinctrl
-  pinctrl: sunxi: v3s: introduce support for V3
-  clk: sunxi-ng: v3s: add the missing PLL_DDR1
-  dt-bindings: clk: sunxi-ccu: add compatible string for V3 CCU
-  clk: sunxi-ng: v3s: add Allwinner V3 support
-  dt-bindings: vendor-prefixes: add SoChip
-  ARM: sunxi: dts: s3/s3l/v3: add DTSI files for S3/S3L/V3 SoCs
-  dt-bindings: vendor-prefixes: add Sipeed
-  dt-bindings: arm: sunxi: add binding for Lichee Zero Plus core board
-  ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
+ Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- .../devicetree/bindings/arm/sunxi.yaml        |   5 +
- .../clock/allwinner,sun4i-a10-ccu.yaml        |   1 +
- .../pinctrl/allwinner,sunxi-pinctrl.txt       |   2 +
- .../devicetree/bindings/vendor-prefixes.yaml  |   4 +
- arch/arm/boot/dts/Makefile                    |   1 +
- .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |   8 +
- .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    |  39 +++
- arch/arm/boot/dts/sun8i-s3.dtsi               |   6 +
- arch/arm/boot/dts/sun8i-s3l.dtsi              |   6 +
- arch/arm/boot/dts/sun8i-v3.dtsi               |  14 +
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c          | 244 +++++++++++++++-
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |   6 +-
- drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c     | 265 +++++++++++++++++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h         |   2 +
- include/dt-bindings/clock/sun8i-v3s-ccu.h     |   4 +
- include/dt-bindings/reset/sun8i-v3s-ccu.h     |   3 +
- 16 files changed, 597 insertions(+), 13 deletions(-)
- create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
- create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
- create mode 100644 arch/arm/boot/dts/sun8i-s3.dtsi
- create mode 100644 arch/arm/boot/dts/sun8i-s3l.dtsi
- create mode 100644 arch/arm/boot/dts/sun8i-v3.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
+index 000a00d12d6a..48c126a7a848 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.yaml
++++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+@@ -353,6 +353,11 @@ properties:
+           - const: licheepi,licheepi-zero
+           - const: allwinner,sun8i-v3s
+ 
++      - description: Lichee Zero Plus (with S3, without eMMC/SPI Flash)
++        items:
++          - const: sipeed,lichee-zero-plus
++          - const: allwinner,sun8i-s3
++
+       - description: Linksprite PCDuino
+         items:
+           - const: linksprite,a10-pcduino
 -- 
 2.21.0
 
