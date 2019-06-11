@@ -2,110 +2,99 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15045C4321A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 09:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79602C43218
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E42207E0
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 09:56:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="d6W435il"
+	by mail.kernel.org (Postfix) with ESMTP id 4F24D214AF
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560248242;
+	bh=KouIinatvemgGOpgiZa1tRYYMGvRXsqhx6dScroA1Vs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=s2akJXx0PYq+gbPDToF4dNmwhJpQ7H8QgJPJvatgk1R5JycsEfAVCOR/a850IWVa7
+	 M4NbYkpk166c93p9xjKBhvex/62qQAFQfHWlC3WuXo6zdUdRUmFT0ve6lRpDuJOESi
+	 +HTqZqXsKKM2gpRQVZqmbWFNBwkMeavm+8YpoCko=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbfFKJ4p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 05:56:45 -0400
-Received: from mail-eopbgr80077.outbound.protection.outlook.com ([40.107.8.77]:1856
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727726AbfFKJ4p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 05:56:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P2+iRFvcKX/B0Fgo8rl2Va9Wr5wecC2g8skImnvvOt4=;
- b=d6W435ilLK7PLGLjYDS65kjb9XWAWxAHO/05QG3z/K6WUnla3HS1p8YmhKuYy8XqN5MpO0Gr+vM5Y2JanNOk2Dy4OQeCdFLvKHPM+rTxjnlrHLgJ9SXaScnh2UB3g1OlVhFSOwLnO4mFFhE7olIqKc9A88WZ+jHZRm5uSIHz4Ik=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3677.eurprd04.prod.outlook.com (52.134.15.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Tue, 11 Jun 2019 09:56:41 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745%4]) with mapi id 15.20.1965.017; Tue, 11 Jun 2019
- 09:56:41 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC:     Chris Spencer <christopher.spencer@sea.co.uk>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] crypto: caam - do not initialise clocks on the
- i.MX8
-Thread-Topic: [PATCH v2 1/4] crypto: caam - do not initialise clocks on the
- i.MX8
-Thread-Index: AQHVHWwGsMxFSBPcUUWzlXHZD6TwyA==
-Date:   Tue, 11 Jun 2019 09:56:40 +0000
-Message-ID: <VI1PR0402MB34855AC8C617A3D7A584A1B798ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20190607200225.21419-1-andrew.smirnov@gmail.com>
- <20190607200225.21419-2-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1e8d4328-fb86-46c4-d806-08d6ee531a5d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3677;
-x-ms-traffictypediagnostic: VI1PR0402MB3677:
-x-microsoft-antispam-prvs: <VI1PR0402MB3677CB501F7CA9E8DBD6238098ED0@VI1PR0402MB3677.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 006546F32A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(39860400002)(346002)(396003)(136003)(189003)(199004)(4744005)(66066001)(3846002)(4326008)(52536014)(2906002)(74316002)(81156014)(6116002)(71200400001)(81166006)(71190400001)(8936002)(305945005)(55016002)(229853002)(7736002)(8676002)(478600001)(14454004)(2501003)(6436002)(66476007)(110136005)(66446008)(66556008)(476003)(53936002)(5660300002)(64756008)(316002)(102836004)(25786009)(54906003)(9686003)(76116006)(86362001)(66946007)(256004)(446003)(73956011)(53546011)(68736007)(76176011)(6246003)(33656002)(26005)(186003)(7696005)(6506007)(486006)(99286004)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3677;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4uFTjBb6zhrXMfmPlFhHOYmNtCiQlApNIOx70ctP1hwMNDQ67bZ+/atSKi20MNYngJ5dBvxqUUaQT4erMpdgwQN3I4kPZIMBXRcnQQY/El7bahjEJiTHxzyYHyHkQsJPlKn/5B8O/XDjaAejlQ1aHbIPF0v0mGPiYnsTz3L+PlK1YRW3kvXkQ9fnWubkTPlQ6i+tiRKelx+BghBpz+XD4dnbjIed2iVODQQ8bX4sWkP5bUyIYGD0cFAxQqHD00lhn79Ol3u2iSc0XPci6VS/7LevdcoZxoCFawBdJBHdOcN3vuQfqHSqTx3OiAtbQnDAta2739fWAolNnA0EECRO5PbzjkhGmqC71nruW33bw2Eou21L7eZfV79CFtfk4jg42DVw3olSD5pDLCBvSw4VZRpgR343ejwtvoVaLzGwDoE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2405183AbfFKKRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 06:17:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404521AbfFKKRV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:17:21 -0400
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 071F52089E;
+        Tue, 11 Jun 2019 10:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560248241;
+        bh=KouIinatvemgGOpgiZa1tRYYMGvRXsqhx6dScroA1Vs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CFB2YHMnvMkfpUyAFeJiyjHkB4CQZ6FHv6lpmcoKZfnpJyfbCudWCGLgpRvh8ORLO
+         OVzJW+8UiLiFiA9nyq3s/PnIJyJJJZAuZxlMuKF92saI7HPoZzPRRKMnOi66OCJFm7
+         g5TzEQ7GoTld8RtLC8HzWPDKi2kMtJ4bnIlbpvag=
+Received: by wens.tw (Postfix, from userid 1000)
+        id 2A0675FE53; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v2 04/25] clk: Add CLK_HW_INIT_PARENT_DATA macro using .parent_data
+Date:   Tue, 11 Jun 2019 18:16:37 +0800
+Message-Id: <20190611101658.23855-5-wens@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190611101658.23855-1-wens@kernel.org>
+References: <20190611101658.23855-1-wens@kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e8d4328-fb86-46c4-d806-08d6ee531a5d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 09:56:40.9638
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3677
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/7/2019 11:03 PM, Andrey Smirnov wrote:=0A=
-> From: Chris Spencer <christopher.spencer@sea.co.uk>=0A=
-> =0A=
-> There are no clocks that the CAAM driver needs to initialise on the=0A=
-> i.MX8.=0A=
-> =0A=
-RM lists 5 clocks for CAAM module (instance.clock): caam.aclk, caam.ipg_clk=
-,=0A=
-caam.ipg_clk_s, caam_exsc.aclk_exsc, caam_mem.clk=0A=
-				=0A=
-Wouldn't it be better to have these clocks in DT, instead of relying that t=
-heir=0A=
-root clocks (ccm_ahb_clk_root, ccm_ipg_clk_root) are critical / always on?=
-=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
-=0A=
+From: Chen-Yu Tsai <wens@csie.org>
+
+With the new clk parenting code, struct clk_init_data was expanded to
+include .parent_data, for clk drivers that have parents referenced using
+a combination of device tree clock-names, clock indices, and/or struct
+clk_hw pointers.
+
+Add a new macro that can take a list of struct clk_parent_data for
+drivers to use.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ include/linux/clk-provider.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index b19063512a29..0fd14c4874d6 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -956,6 +956,15 @@ extern struct of_device_id __clk_of_table;
+ 		.ops		= _ops,				\
+ 	})
+ 
++#define CLK_HW_INIT_PARENTS_DATA(_name, _parents, _ops, _flags)	\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_data	= _parents,			\
++		.num_parents	= ARRAY_SIZE(_parents),		\
++		.ops		= _ops,				\
++	})
++
+ #define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
+ 	(&(struct clk_init_data) {			\
+ 		.flags          = _flags,		\
+-- 
+2.20.1
+
