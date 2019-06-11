@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABCCC43218
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C7FC4321B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4880320896
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4534C20896
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:20:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389253AbfFKOTl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S2388994AbfFKOTl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 11 Jun 2019 10:19:41 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:33446 "EHLO hermes.aosc.io"
+Received: from hermes.aosc.io ([199.195.250.187]:33445 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388906AbfFKOTl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S2388808AbfFKOTl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 11 Jun 2019 10:19:41 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id B6DF982298;
-        Tue, 11 Jun 2019 14:11:58 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 8FCE78229F;
+        Tue, 11 Jun 2019 14:12:36 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -29,47 +29,45 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 07/11] dt-bindings: vendor-prefixes: add SoChip
-Date:   Tue, 11 Jun 2019 22:09:36 +0800
-Message-Id: <20190611140940.14357-8-icenowy@aosc.io>
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 09/11] dt-bindings: vendor-prefixes: add Sipeed
+Date:   Tue, 11 Jun 2019 22:09:38 +0800
+Message-Id: <20190611140940.14357-10-icenowy@aosc.io>
 In-Reply-To: <20190611140940.14357-1-icenowy@aosc.io>
 References: <20190611140940.14357-1-icenowy@aosc.io>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Shenzhen SoChip Technology Co., Ltd. is a hardware vendor that produces
-EVBs with Allwinner chips. There's also a SoC named S3 that is developed
-by Allwinner (based on Allwinner V3/V3s) but branded SoChip.
+Shenzhen Sipeed Technology Co., Ltd. is a company focused on development
+kits, which also contains rebranded Lichee Pi series.
 
-Add the vendor prefix for SoChip.
+Add its vendor prefix binding.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changes in v2:
-- Add the review tag by Rob.
+New patch in v2.
 
  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 91a1338267db..2c8a8b195c07 100644
+index 2c8a8b195c07..c0cd22e5672a 100644
 --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
 +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -803,6 +803,8 @@ patternProperties:
-     description: Standard Microsystems Corporation
-   "^snps,.*":
-     description: Synopsys, Inc.
-+  "^sochip,.*":
-+    description: Shenzhen SoChip Technology Co., Ltd.
-   "^socionext,.*":
-     description: Socionext Inc.
-   "^solidrun,.*":
+@@ -791,6 +791,8 @@ patternProperties:
+     description: Silicon Mitus, Inc.
+   "^simtek,.*":
+     description: Cypress Semiconductor Corporation (Simtek Corporation)
++  "^sipeed,.*":
++    description: Shenzhen Sipeed Technology Co., Ltd.
+   "^sirf,.*":
+     description: SiRF Technology, Inc.
+   "^sis,.*":
 -- 
 2.21.0
 
