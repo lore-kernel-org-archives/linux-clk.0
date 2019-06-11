@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1998C4321A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF2AC4321A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C3F2089E
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16905205F4
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560248271;
-	bh=uJeKLBS6fKTQ/nvA0FnBFJQrRlvrfsBQnK9IvrqNg7s=;
+	s=default; t=1560248283;
+	bh=ZGtrRINIfPWsus5xbfHP4O77h1tpjWJSwlAvFJfUW8Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N5DGfyLALsnOgs3q1KzwP1RVignxhSWOmF2VdUpyyJgxtDbmYMPTFj2j9Oraasg3w
-	 liC/aWdtjPiAWwO1hBtUonQWCEekSDV1p8Q7uAaoWiib5KUpv4sTBgAPZGbVxHn7tm
-	 t+NXkzohslUkzmizuvnMJ409iupWRtOby6y873X8=
+	b=f019a6wzJZJLgJ4fM67ogMEwmEzuV6vocV9hlxCaTB7HQMTX1LNT3lbATzMD+uyqm
+	 6h3cNLnKcAeQiG2Rk72H3HsRm4WgwlNyQEKDVgy80WNzsAy0ABec8ZxZpoDpO2wEHx
+	 owNAW73XmJ3yjHQPcjQYaYPHYTt5aOyBRWN1sQqY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405347AbfFKKR1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 06:17:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45904 "EHLO mail.kernel.org"
+        id S2405422AbfFKKRw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 06:17:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405341AbfFKKR0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:17:26 -0400
+        id S2405339AbfFKKR1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:17:27 -0400
 Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86E18217F9;
+        by mail.kernel.org (Postfix) with ESMTPSA id 909832182B;
         Tue, 11 Jun 2019 10:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1560248245;
-        bh=uJeKLBS6fKTQ/nvA0FnBFJQrRlvrfsBQnK9IvrqNg7s=;
+        bh=ZGtrRINIfPWsus5xbfHP4O77h1tpjWJSwlAvFJfUW8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fDcdUdswDYDQDHG+d5ZJRayMDbmyQwGi8EoB+nzcxHcYGBmHEmpq1M8RGUb9s4asg
-         bref+Y+yRyQy22Z9PJR1cm7+kbtvIhR/x4mlimha8jfcWZnkWd4XFgl6K4b7GieDP1
-         kTBMx1puq7jN4tb3fWpOSVI7lAAxPnJ9ZtrRBB20=
+        b=eygCUkMLZKUQaRb0FWLg5p0kNfOP9noMpLHBqjFIDwJPpVJKZ/oTFZICNn6wffwPN
+         HQo+lKR+C25E4nRmEANAbbEv47Ancl7h+k0GJ+5riVKKjmqzOwk50ODOHgYcrC08tF
+         uSEmTBNkYHWE0WrlNUcSCl3fXW1JT3QoedLHDKqk=
 Received: by wens.tw (Postfix, from userid 1000)
-        id 811C960C4E; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
+        id 8C94660C71; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -47,9 +47,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 18/25] clk: sunxi-ng: sun8i-r: Use local parent references for CLK_FIXED_FACTOR
-Date:   Tue, 11 Jun 2019 18:16:51 +0800
-Message-Id: <20190611101658.23855-19-wens@kernel.org>
+Subject: [PATCH v2 20/25] clk: sunxi-ng: a64: Use local parent references for CLK_FIXED_FACTOR
+Date:   Tue, 11 Jun 2019 18:16:53 +0800
+Message-Id: <20190611101658.23855-21-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611101658.23855-1-wens@kernel.org>
 References: <20190611101658.23855-1-wens@kernel.org>
@@ -73,22 +73,63 @@ external to the CCU.
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 41 +++++++++++++++++----------
+ 1 file changed, 26 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-index a43e8de873d7..4a111c28b8c3 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-@@ -57,7 +57,7 @@ static struct ccu_div ar100_clk = {
- 	},
- };
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index d3fc1f5bf396..97fd037ed0d9 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -605,23 +605,34 @@ static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
+ 			     0x1a0, 0, 3, BIT(31), CLK_SET_RATE_PARENT);
  
--static CLK_FIXED_FACTOR(ahb0_clk, "ahb0", "ar100", 1, 1, 0);
-+static CLK_FIXED_FACTOR_HW(ahb0_clk, "ahb0", &ar100_clk.common.hw, 1, 1, 0);
+ /* Fixed Factor clocks */
+-static CLK_FIXED_FACTOR(osc12M_clk, "osc12M", "osc24M", 2, 1, 0);
++static CLK_FIXED_FACTOR_FW_NAME(osc12M_clk, "osc12M", "hosc", 2, 1, 0);
++
++static const struct clk_hw *clk_parent_pll_audio[] = {
++	&pll_audio_base_clk.common.hw
++};
  
- static struct ccu_div apb0_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(0, 2, CLK_DIVIDER_POWER_OF_TWO),
+ /* We hardcode the divider to 1 for now */
+-static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
+-			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
+-			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
+-			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
+-			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
+-			"pll-periph0", 1, 2, 0);
+-static CLK_FIXED_FACTOR(pll_periph1_2x_clk, "pll-periph1-2x",
+-			"pll-periph1", 1, 2, 0);
+-static CLK_FIXED_FACTOR(pll_video0_2x_clk, "pll-video0-2x",
+-			"pll-video0", 1, 2, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
++			    clk_parent_pll_audio
++			    1, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
++			    clk_parent_pll_audio
++			    2, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
++			    clk_parent_pll_audio
++			    1, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HWS(pll_audio_8x_clk, "pll-audio-8x",
++			    clk_parent_pll_audio
++			    1, 2, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HW(pll_periph0_2x_clk, "pll-periph0-2x",
++			   &pll_periph0_clk.common.hw,
++			   1, 2, 0);
++static CLK_FIXED_FACTOR_HW(pll_periph1_2x_clk, "pll-periph1-2x",
++			   &pll_periph1_clk.common.hw,
++			   1, 2, 0);
++static CLK_FIXED_FACTOR_HW(pll_video0_2x_clk, "pll-video0-2x",
++			   &pll_video0_clk.common.hw,
++			   1, 2, CLK_SET_RATE_PARENT);
+ 
+ static struct ccu_common *sun50i_a64_ccu_clks[] = {
+ 	&pll_cpux_clk.common,
 -- 
 2.20.1
 
