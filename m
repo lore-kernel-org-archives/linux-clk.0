@@ -2,157 +2,286 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2945C4321A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 05:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5540AC4321A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 06:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E02920896
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 05:34:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 128662086A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 06:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560231282;
-	bh=xeIfb6Sa8fR5KV0lFC7utDBMZgDzjP9QTSwAJEd5VM8=;
+	s=default; t=1560233949;
+	bh=zAg8BR5dmZHz0GhzDvxgmJ5z7bh7GV7MwQeYYOMSX8o=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WnnM0K7t+0xhtMpzNEcAhCPsv5WLZywXsifVhDxHK0BbkkaRZ+HVZx6Eiv57Pb7bS
-	 nPok2uz4lxgH4bmz4MTc+ECDZTxK8yZUXA4isUzECxeNf/hUF4pVWkTFoS1XCLh3b7
-	 ke9Z4PYjp/eC4EFLQ7MiBkzt7zfz3DDE/MeuWIeU=
+	b=chNbZvTYsM+hYFIqtq/0VD+SPQsjOXxIGbLbdu8k8b5LqXdtVtnfhYm5+8ZGwWxfh
+	 telP4i2y31zftvmnN/xgXES1tXb/vT/VFO76FTdFziCDVnpr5k/WTFCGJ++qf1OEM7
+	 M0CUJl6B3W0ijToR0TdOcSprQ3V46YGZOannGhFY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391059AbfFKFem (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 01:34:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35830 "EHLO mail.kernel.org"
+        id S2403758AbfFKGTI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 02:19:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390492AbfFKFel (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:34:41 -0400
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        id S2391197AbfFKGTI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Jun 2019 02:19:08 -0400
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 428E1212F5;
-        Tue, 11 Jun 2019 05:34:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A22E621721;
+        Tue, 11 Jun 2019 06:19:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560231280;
-        bh=xeIfb6Sa8fR5KV0lFC7utDBMZgDzjP9QTSwAJEd5VM8=;
+        s=default; t=1560233947;
+        bh=zAg8BR5dmZHz0GhzDvxgmJ5z7bh7GV7MwQeYYOMSX8o=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mD8CoED0taYtnsyHoi8+sE6VqobrS/wTnxOvcfGtd8Z4CadjNhE3/P1zZcyAXUa7d
-         KQ4xvmmc+vCHnMlfXzwxbPovJve68U+aybhiZO/IGwW2La/UVdQFWXa/uDRHpvGDbc
-         z7ZVTwmXgl1oNDt75OU3DyGVIvlh6+eF7eBDK4bQ=
-Received: by mail-wr1-f54.google.com with SMTP id p11so11415272wre.7;
-        Mon, 10 Jun 2019 22:34:40 -0700 (PDT)
-X-Gm-Message-State: APjAAAU/42/NqxPZkxo8uL2mW+GcKmsJgx3OU96YBHPGTzZ7DovekAzf
-        A6+s9HrnKJXpYWcVGI/BK7g3JBbpDznJFtpfgDg=
-X-Google-Smtp-Source: APXvYqwv/LNlXWtcpF7Lorp2/yNYqYQ6FH2ipCH0ThQ3EW8WsmPijvPvzW5pI5PspawGCO4bJWuXFG5nwsKrLw2n/DE=
-X-Received: by 2002:adf:f946:: with SMTP id q6mr27730732wrr.109.1560231278797;
- Mon, 10 Jun 2019 22:34:38 -0700 (PDT)
+        b=VENhbnFYbx/WXplXzFt6V2uVy6xWv2QvdsHchlMRUvn32aFmfEa/RTLFqgesbtn7a
+         5Vn2Pl8EMdrkfaVw3fIq0zfvUM0Q6FN5bAHhKFqUaH81Gaozj3UVn4jWpZz5GIRijB
+         AjncSa6k0Zf7WTR3+JgvIiX7XVVWsHhQgs7nZpTo=
+Received: by mail-lj1-f182.google.com with SMTP id s21so10340234lji.8;
+        Mon, 10 Jun 2019 23:19:06 -0700 (PDT)
+X-Gm-Message-State: APjAAAWRQUeKrQBFhSb5QpYQmXjbsKxp+A+rPa86YWrYD4KvDXSzutjh
+        zxt1519XhpNhh1R95M7tlfyG+tx7jiWwZpVCw9k=
+X-Google-Smtp-Source: APXvYqxCFe4p5zlRmaqB4z0m9SNAEZkRno1BZHx+dIcGSMw57gobxcdysDyFElC+91e5QK0Z6gFqPQzkY5U87LkuzcY=
+X-Received: by 2002:a2e:9e83:: with SMTP id f3mr16999335ljk.47.1560233944850;
+ Mon, 10 Jun 2019 23:19:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190520080421.12575-1-wens@kernel.org> <20190520090327.iejd3q7c3iwomzlz@flea>
- <CAGb2v64VnzXv1-fDDM1bBFWEH7NZp=s5Uw3qRP05WiDvbyqVJA@mail.gmail.com> <20190607184621.D5C3F212F5@mail.kernel.org>
-In-Reply-To: <20190607184621.D5C3F212F5@mail.kernel.org>
-From:   Chen-Yu Tsai <wens@kernel.org>
-Date:   Tue, 11 Jun 2019 13:34:27 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65Y8u=EGfrgs5Km8tiT7QYiJpf8LTJH1QnVrDmPPRng8A@mail.gmail.com>
-Message-ID: <CAGb2v65Y8u=EGfrgs5Km8tiT7QYiJpf8LTJH1QnVrDmPPRng8A@mail.gmail.com>
-Subject: Re: [PATCH 00/25] clk: sunxi-ng: clk parent rewrite part 1
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Chen-Yu Tsai <wens@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <CGME20190607143531eucas1p11f6b3a63068d529dae8be16abaa60ed0@eucas1p1.samsung.com>
+ <20190607143507.30286-1-l.luba@partner.samsung.com> <20190607143507.30286-9-l.luba@partner.samsung.com>
+In-Reply-To: <20190607143507.30286-9-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 11 Jun 2019 08:18:53 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
+Message-ID: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
+Subject: Re: [PATCH v9 08/13] drivers: memory: add DMC driver for Exynos5422
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jun 8, 2019 at 2:46 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On Fri, 7 Jun 2019 at 16:35, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> Quoting Chen-Yu Tsai (2019-06-03 09:38:22)
-> > Hi Stephen,
-> >
-> > On Mon, May 20, 2019 at 5:03 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Mon, May 20, 2019 at 04:03:56PM +0800, Chen-Yu Tsai wrote:
-> > > > From: Chen-Yu Tsai <wens@csie.org>
-> > > >
-> > > > Hi everyone,
-> > > >
-> > > > This is series is the first part of a large series (I haven't done the
-> > > > rest) of patches to rewrite the clk parent relationship handling within
-> > > > the sunxi-ng clk driver. This is based on Stephen's recent work allowing
-> > > > clk drivers to specify clk parents using struct clk_hw * or parsing DT
-> > > > phandles in the clk node.
-> > > >
-> > > > This series can be split into a few major parts:
-> > > >
-> > > > 1) The first patch is a small fix for clk debugfs representation. This
-> > > >    was done before commit 1a079560b145 ("clk: Cache core in
-> > > >    clk_fetch_parent_index() without names") was posted, so it might or
-> > > >    might not be needed. Found this when checking my work using
-> > > >    clk_possible_parents.
-> > > >
-> > > > 2) A bunch of CLK_HW_INIT_* helper macros are added. These cover the
-> > > >    situations I encountered, or assume I will encounter, such as single
-> > > >    internal (struct clk_hw *) parent, single DT (struct clk_parent_data
-> > > >    .fw_name), multiple internal parents, and multiple mixed (internal +
-> > > >    DT) parents. A special variant for just an internal single parent is
-> > > >    added, CLK_HW_INIT_HWS, which lets the driver share the singular
-> > > >    list, instead of having the compiler create a compound literal every
-> > > >    time. It might even make sense to only keep this variant.
-> > > >
-> > > > 3) A bunch of CLK_FIXED_FACTOR_* helper macros are added. The rationale
-> > > >    is the same as the single parent CLK_HW_INIT_* helpers.
-> > > >
-> > > > 4) Bulk conversion of CLK_FIXED_FACTOR to use local parent references,
-> > > >    either struct clk_hw * or DT .fw_name types, whichever the hardware
-> > > >    requires.
-> > > >
-> > > > 5) The beginning of SUNXI_CCU_GATE conversion to local parent
-> > > >    references. This part is not done. They are included as justification
-> > > >    and examples for the shared list of clk parents case.
-> > >
-> > > That series is pretty neat. As far as sunxi is concerned, you can add my
-> > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > >
-> > > > I realize this is going to be many patches every time I convert a clock
-> > > > type. Going forward would the people involved prefer I send out
-> > > > individual patches like this series, or squash them all together?
-> > >
-> > > For bisection, I guess it would be good to keep the approach you've
-> > > had in this series. If this is really too much, I guess we can always
-> > > change oru mind later on.
-> >
-> > Any thoughts on this series and how to proceed?
-> >
+> This patch adds driver for Exynos5422 Dynamic Memory Controller.
+> The driver provides support for dynamic frequency and voltage scaling for
+> DMC and DRAM. It supports changing timings of DRAM running with different
+> frequency. There is also an algorithm to calculate timigns based on
+> memory description provided in DT.
+> The patch also contains needed MAINTAINERS file update.
 >
-> I have a few minor nitpicks but otherwise the series looks good to me.
-> I'm perfectly happy to see the individual patches unless you want to
-> squash them into one big patch. I can review the conversions either way.
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  MAINTAINERS                             |    8 +
+>  drivers/memory/samsung/Kconfig          |   17 +
+>  drivers/memory/samsung/Makefile         |    1 +
+>  drivers/memory/samsung/exynos5422-dmc.c | 1261 +++++++++++++++++++++++
+>  4 files changed, 1287 insertions(+)
+>  create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
 
-OK. Based on your and Maxime's response, I'll send them individually.
+(...)
 
-> Did you need me to apply any patches here? Or can I assume you'll resend
-> with a pull request so it can be merged into clk-next?
+> +
+> +/**
+> + * exynos5_performance_counters_init() - Initializes performance DMC's counters
+> + * @dmc:       DMC for which it does the setup
+> + *
+> + * Initialization of performance counters in DMC for estimating usage.
+> + * The counter's values are used for calculation of a memory bandwidth and based
+> + * on that the governor changes the frequency.
+> + * The counters are not used when the governor is GOVERNOR_USERSPACE.
+> + */
+> +static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
+> +{
+> +       int counters_size;
+> +       int ret, i;
+> +
+> +       dmc->num_counters = devfreq_event_get_edev_count(dmc->dev);
+> +       if (dmc->num_counters < 0) {
+> +               dev_err(dmc->dev, "could not get devfreq-event counters\n");
+> +               return dmc->num_counters;
+> +       }
+> +
+> +       counters_size = sizeof(struct devfreq_event_dev) * dmc->num_counters;
+> +       dmc->counter = devm_kzalloc(dmc->dev, counters_size, GFP_KERNEL);
+> +       if (!dmc->counter)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < dmc->num_counters; i++) {
+> +               dmc->counter[i] =
+> +                       devfreq_event_get_edev_by_phandle(dmc->dev, i);
+> +               if (IS_ERR_OR_NULL(dmc->counter[i]))
+> +                       return -EPROBE_DEFER;
+> +       }
+> +
+> +       ret = exynos5_counters_enable_edev(dmc);
+> +       if (ret < 0) {
+> +               dev_err(dmc->dev, "could not enable event counter\n");
+> +               return ret;
+> +       }
+> +
+> +       ret = exynos5_counters_set_event(dmc);
+> +       if (ret < 0) {
+> +               dev_err(dmc->dev, "counld not set event counter\n");
 
-I can send them as part of our normal pull request. Or did you want this
-as a separate topic?
+Missing cleanup - edev counters disable.
 
-I'll still send out a v2 to cover your review comments.
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * exynos5_dmc_set_pause_on_switching() - Controls a pause feature in DMC
+> + * @dmc:       device which is used for changing this feature
+> + * @set:       a boolean state passing enable/disable request
+> + *
+> + * There is a need of pausing DREX DMC when divider or MUX in clock tree
+> + * changes its configuration. In such situation access to the memory is blocked
+> + * in DMC automatically. This feature is used when clock frequency change
+> + * request appears and touches clock tree.
+> + */
+> +static inline int exynos5_dmc_set_pause_on_switching(struct exynos5_dmc *dmc)
+> +{
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       ret = regmap_read(dmc->clk_regmap, CDREX_PAUSE, &val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       val |= 1UL;
+> +       regmap_write(dmc->clk_regmap, CDREX_PAUSE, val);
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * exynos5_dmc_probe() - Probe function for the DMC driver
+> + * @pdev:      platform device for which the driver is going to be initialized
+> + *
+> + * Initialize basic components: clocks, regulators, performance counters, etc.
+> + * Read out product version and based on the information setup
+> + * internal structures for the controller (frequency and voltage) and for DRAM
+> + * memory parameters: timings for each operating frequency.
+> + * Register new devfreq device for controlling DVFS of the DMC.
+> + */
+> +static int exynos5_dmc_probe(struct platform_device *pdev)
+> +{
+> +       int ret = 0;
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct exynos5_dmc *dmc;
+> +       struct resource *res;
+> +
+> +       dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
+> +       if (!dmc)
+> +               return -ENOMEM;
+> +
+> +       mutex_init(&dmc->lock);
+> +
+> +       dmc->dev = dev;
+> +       platform_set_drvdata(pdev, dmc);
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       dmc->base_drexi0 = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(dmc->base_drexi0))
+> +               return PTR_ERR(dmc->base_drexi0);
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +       dmc->base_drexi1 = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(dmc->base_drexi1))
+> +               return PTR_ERR(dmc->base_drexi1);
+> +
+> +       dmc->clk_regmap = syscon_regmap_lookup_by_phandle(np,
+> +                               "samsung,syscon-clk");
+> +       if (IS_ERR(dmc->clk_regmap))
+> +               return PTR_ERR(dmc->clk_regmap);
+> +
+> +       ret = exynos5_init_freq_table(dmc, &exynos5_dmc_df_profile);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't initialize frequency settings\n");
+> +               return ret;
+> +       }
+> +
+> +       dmc->vdd_mif = devm_regulator_get(dev, "vdd");
+> +       if (IS_ERR(dmc->vdd_mif)) {
+> +               ret = PTR_ERR(dmc->vdd_mif);
+> +               return ret;
+> +       }
+> +
+> +       ret = exynos5_dmc_init_clks(dmc);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = of_get_dram_timings(dmc);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't initialize timings settings\n");
 
-> BTW, did you have to update any DT bindings or documentation? I didn't
-> see anything, so I'm a little surprised that all that stuff was already
-> in place.
+goto remove_clocks;
 
-The bindings had the clocks / clock-names all defined, and the DT all had
-the properties, because we had already gone through one rewrite. It's just
-the driver didn't follow them properly, because the parents were cross
-node / driver, and we had these statically initialized parent name arrays.
+> +               return ret;
+> +       }
+> +
+> +       ret = exynos5_performance_counters_init(dmc);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't probe performance counters\n");
+> +               goto remove_clocks;
+> +       }
+> +
+> +       ret = exynos5_dmc_set_pause_on_switching(dmc);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't get access to PAUSE register\n");
+> +               goto remove_clocks;
 
-I had started work on having the driver rewrite the parents lists based on
-fetching clock names via DT, but it was far from elegant. Then this came
-up. :)
+goto err_devfreq_add;
 
+Best regards,
+Krzysztof
 
-Regards
-ChenYu
+> +       }
+> +
+> +       /*
+> +        * Setup default thresholds for the devfreq governor.
+> +        * The values are chosen based on experiments.
+> +        */
+> +       dmc->gov_data.upthreshold = 30;
+> +       dmc->gov_data.downdifferential = 5;
+> +
+> +       dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
+> +                                         DEVFREQ_GOV_USERSPACE,
+> +                                         &dmc->gov_data);
+> +
+> +       if (IS_ERR(dmc->df)) {
+> +               ret = PTR_ERR(dmc->df);
+> +               goto err_devfreq_add;
+> +       }
+> +
+> +       dev_info(dev, "DMC initialized\n");
+> +
+> +       return 0;
+> +
+> +err_devfreq_add:
+> +       exynos5_counters_disable_edev(dmc);
+> +remove_clocks:
+> +       clk_disable_unprepare(dmc->mout_bpll);
+> +       clk_disable_unprepare(dmc->fout_bpll);
+> +
+> +       return ret;
+> +}
+> +
+>
