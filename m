@@ -2,286 +2,124 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5540AC4321A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 06:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FEFC4321A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 06:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 128662086A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 06:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560233949;
-	bh=zAg8BR5dmZHz0GhzDvxgmJ5z7bh7GV7MwQeYYOMSX8o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=chNbZvTYsM+hYFIqtq/0VD+SPQsjOXxIGbLbdu8k8b5LqXdtVtnfhYm5+8ZGwWxfh
-	 telP4i2y31zftvmnN/xgXES1tXb/vT/VFO76FTdFziCDVnpr5k/WTFCGJ++qf1OEM7
-	 M0CUJl6B3W0ijToR0TdOcSprQ3V46YGZOannGhFY=
+	by mail.kernel.org (Postfix) with ESMTP id 7709E2089E
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 06:46:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qj4QNTMg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403758AbfFKGTI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 02:19:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391197AbfFKGTI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 02:19:08 -0400
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A22E621721;
-        Tue, 11 Jun 2019 06:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560233947;
-        bh=zAg8BR5dmZHz0GhzDvxgmJ5z7bh7GV7MwQeYYOMSX8o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VENhbnFYbx/WXplXzFt6V2uVy6xWv2QvdsHchlMRUvn32aFmfEa/RTLFqgesbtn7a
-         5Vn2Pl8EMdrkfaVw3fIq0zfvUM0Q6FN5bAHhKFqUaH81Gaozj3UVn4jWpZz5GIRijB
-         AjncSa6k0Zf7WTR3+JgvIiX7XVVWsHhQgs7nZpTo=
-Received: by mail-lj1-f182.google.com with SMTP id s21so10340234lji.8;
-        Mon, 10 Jun 2019 23:19:06 -0700 (PDT)
-X-Gm-Message-State: APjAAAWRQUeKrQBFhSb5QpYQmXjbsKxp+A+rPa86YWrYD4KvDXSzutjh
-        zxt1519XhpNhh1R95M7tlfyG+tx7jiWwZpVCw9k=
-X-Google-Smtp-Source: APXvYqxCFe4p5zlRmaqB4z0m9SNAEZkRno1BZHx+dIcGSMw57gobxcdysDyFElC+91e5QK0Z6gFqPQzkY5U87LkuzcY=
-X-Received: by 2002:a2e:9e83:: with SMTP id f3mr16999335ljk.47.1560233944850;
- Mon, 10 Jun 2019 23:19:04 -0700 (PDT)
+        id S2403983AbfFKGqc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 02:46:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45524 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390485AbfFKGqb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 02:46:31 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f9so11568090wre.12;
+        Mon, 10 Jun 2019 23:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xaxK2cOJGhx/VdHimxeYocKNki8UteruN2DyLSA9lqE=;
+        b=qj4QNTMgASzEMOBpzYHzyHzzClLpXmTOL7qOUKCaZRQuJppoA/7/Z58q9TPjAfoqCK
+         RszQR+97Ii/JzYpegUzxhQqmyHCAeRIfz9uYce1pr0HQGfQhxm7HWei7ElNNmLKByt0M
+         8EemVEXbjp6yrZuPCu86eR0rIsWjqMW1f0gve+ZK7FEujP/IF2jJjUEI+iZq5XLwuxmJ
+         dsM+raIPUrM+6X2QFx+AT1bOTGxyJ6qkV+/dDxaG0mk1xs+ysui+4OLx57+ncD5GbXrd
+         8bK54wFvn3I4gA2Nul1a+LKuYE3lZ1Ps3C5n7ihasx8y+W3EaowQzlVg7AzwEc4fleGd
+         gxPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xaxK2cOJGhx/VdHimxeYocKNki8UteruN2DyLSA9lqE=;
+        b=IU+QI6ljqvMSV9Pwd8wsP7JlpltKJxm0ZSdxEnaDC7cQwc4oBnyWFGLNqNJkXFVX5+
+         eEt6dzIkcpcg7ubvCs4KKK24IwXn8tO904QO6mgzdL685D9tatMGT3GPmZ49ndR1s3wH
+         2WOvLFHsvUkFnheAO9FfSfggd3u0G9BX25hUn9BOhXyQv5jQzCrJ6pDmUAd/tQHfKL3B
+         H1YkfAQCpnaq5FImISlxMGwNGfE3lbtSJW1qRPLspJKWXiG9sZpfBVSxyo6TlVO1w3u7
+         QMYVN+DLiVQbGWQQ08eQhdWfhjyxBm6weD8rfHSUkcgq03OM3bwqhYjITFae4X9Co1eq
+         0KmQ==
+X-Gm-Message-State: APjAAAW165VUubk3EM5ykbKIICDq9kNQd8q2T7ta/T4MquhXdGbxFcRc
+        YlgVbmBzFl7X6Q7LefGS5Jo7Q5HmjZQS3XP2jJg=
+X-Google-Smtp-Source: APXvYqyiCGtrkBdd7wPq/5oueuA5FZMEmjCwiT3TZbB58uld1OzRrPn8KlwupjVbH5Q9WeW5FtiskSCWIhZQPzI7yyI=
+X-Received: by 2002:adf:fc85:: with SMTP id g5mr48329708wrr.324.1560235589961;
+ Mon, 10 Jun 2019 23:46:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20190607143531eucas1p11f6b3a63068d529dae8be16abaa60ed0@eucas1p1.samsung.com>
- <20190607143507.30286-1-l.luba@partner.samsung.com> <20190607143507.30286-9-l.luba@partner.samsung.com>
-In-Reply-To: <20190607143507.30286-9-l.luba@partner.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 11 Jun 2019 08:18:53 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
-Message-ID: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
-Subject: Re: [PATCH v9 08/13] drivers: memory: add DMC driver for Exynos5422
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        kyungmin.park@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
+References: <20190524072745.27398-1-amergnat@baylibre.com>
+In-Reply-To: <20190524072745.27398-1-amergnat@baylibre.com>
+From:   wens Tsai <wens213@gmail.com>
+Date:   Tue, 11 Jun 2019 14:46:17 +0800
+Message-ID: <CAGb2v661GYVmq9Xvw9j3RN1jV5Xe2c-naHkvEcVFSbHkeW3HBQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: fix clock global name usage.
+To:     Alexandre Mergnat <amergnat@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        baylibre-upstreaming@groups.io,
+        Jerome Brunet <jbrunet@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 7 Jun 2019 at 16:35, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+On Fri, May 24, 2019 at 3:29 PM Alexandre Mergnat <amergnat@baylibre.com> wrote:
 >
-> This patch adds driver for Exynos5422 Dynamic Memory Controller.
-> The driver provides support for dynamic frequency and voltage scaling for
-> DMC and DRAM. It supports changing timings of DRAM running with different
-> frequency. There is also an algorithm to calculate timigns based on
-> memory description provided in DT.
-> The patch also contains needed MAINTAINERS file update.
+> A recent patch allows the clock framework to specify the parent
+> relationship with either the clk_hw pointer, the global name or through
+> Device Tree name.
 >
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> But the global name isn't handled by the clk framework because the DT name
+> is considered valid even if it's NULL, so of_clk_get_hw() returns an
+> unexpected clock (the first clock specified in DT).
+>
+> This can be fixed by calling of_clk_get_hw() only when DT name is not NULL.
+>
+> Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 > ---
->  MAINTAINERS                             |    8 +
->  drivers/memory/samsung/Kconfig          |   17 +
->  drivers/memory/samsung/Makefile         |    1 +
->  drivers/memory/samsung/exynos5422-dmc.c | 1261 +++++++++++++++++++++++
->  4 files changed, 1287 insertions(+)
->  create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
+>  drivers/clk/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index bdb077ba59b9..9624a75e5a8d 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -368,7 +368,7 @@ static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
+>         const char *dev_id = dev ? dev_name(dev) : NULL;
+>         struct device_node *np = core->of_node;
+>
+> -       if (np && index >= 0)
+> +       if (name && np && index >= 0)
 
-(...)
+I think the opposite should be the case. If either the name or index is valid,
+and there's a device node backing it, the code path should be entered.
 
-> +
-> +/**
-> + * exynos5_performance_counters_init() - Initializes performance DMC's counters
-> + * @dmc:       DMC for which it does the setup
-> + *
-> + * Initialization of performance counters in DMC for estimating usage.
-> + * The counter's values are used for calculation of a memory bandwidth and based
-> + * on that the governor changes the frequency.
-> + * The counters are not used when the governor is GOVERNOR_USERSPACE.
-> + */
-> +static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
-> +{
-> +       int counters_size;
-> +       int ret, i;
-> +
-> +       dmc->num_counters = devfreq_event_get_edev_count(dmc->dev);
-> +       if (dmc->num_counters < 0) {
-> +               dev_err(dmc->dev, "could not get devfreq-event counters\n");
-> +               return dmc->num_counters;
-> +       }
-> +
-> +       counters_size = sizeof(struct devfreq_event_dev) * dmc->num_counters;
-> +       dmc->counter = devm_kzalloc(dmc->dev, counters_size, GFP_KERNEL);
-> +       if (!dmc->counter)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < dmc->num_counters; i++) {
-> +               dmc->counter[i] =
-> +                       devfreq_event_get_edev_by_phandle(dmc->dev, i);
-> +               if (IS_ERR_OR_NULL(dmc->counter[i]))
-> +                       return -EPROBE_DEFER;
-> +       }
-> +
-> +       ret = exynos5_counters_enable_edev(dmc);
-> +       if (ret < 0) {
-> +               dev_err(dmc->dev, "could not enable event counter\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = exynos5_counters_set_event(dmc);
-> +       if (ret < 0) {
-> +               dev_err(dmc->dev, "counld not set event counter\n");
+This is implied by the description of struct clk_parent_data:
 
-Missing cleanup - edev counters disable.
+    @index: parent index local to provider registering clk (if @fw_name absent)
 
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * exynos5_dmc_set_pause_on_switching() - Controls a pause feature in DMC
-> + * @dmc:       device which is used for changing this feature
-> + * @set:       a boolean state passing enable/disable request
-> + *
-> + * There is a need of pausing DREX DMC when divider or MUX in clock tree
-> + * changes its configuration. In such situation access to the memory is blocked
-> + * in DMC automatically. This feature is used when clock frequency change
-> + * request appears and touches clock tree.
-> + */
-> +static inline int exynos5_dmc_set_pause_on_switching(struct exynos5_dmc *dmc)
-> +{
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret = regmap_read(dmc->clk_regmap, CDREX_PAUSE, &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       val |= 1UL;
-> +       regmap_write(dmc->clk_regmap, CDREX_PAUSE, val);
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * exynos5_dmc_probe() - Probe function for the DMC driver
-> + * @pdev:      platform device for which the driver is going to be initialized
-> + *
-> + * Initialize basic components: clocks, regulators, performance counters, etc.
-> + * Read out product version and based on the information setup
-> + * internal structures for the controller (frequency and voltage) and for DRAM
-> + * memory parameters: timings for each operating frequency.
-> + * Register new devfreq device for controlling DVFS of the DMC.
-> + */
-> +static int exynos5_dmc_probe(struct platform_device *pdev)
-> +{
-> +       int ret = 0;
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *np = dev->of_node;
-> +       struct exynos5_dmc *dmc;
-> +       struct resource *res;
-> +
-> +       dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
-> +       if (!dmc)
-> +               return -ENOMEM;
-> +
-> +       mutex_init(&dmc->lock);
-> +
-> +       dmc->dev = dev;
-> +       platform_set_drvdata(pdev, dmc);
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       dmc->base_drexi0 = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(dmc->base_drexi0))
-> +               return PTR_ERR(dmc->base_drexi0);
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +       dmc->base_drexi1 = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(dmc->base_drexi1))
-> +               return PTR_ERR(dmc->base_drexi1);
-> +
-> +       dmc->clk_regmap = syscon_regmap_lookup_by_phandle(np,
-> +                               "samsung,syscon-clk");
-> +       if (IS_ERR(dmc->clk_regmap))
-> +               return PTR_ERR(dmc->clk_regmap);
-> +
-> +       ret = exynos5_init_freq_table(dmc, &exynos5_dmc_df_profile);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't initialize frequency settings\n");
-> +               return ret;
-> +       }
-> +
-> +       dmc->vdd_mif = devm_regulator_get(dev, "vdd");
-> +       if (IS_ERR(dmc->vdd_mif)) {
-> +               ret = PTR_ERR(dmc->vdd_mif);
-> +               return ret;
-> +       }
-> +
-> +       ret = exynos5_dmc_init_clks(dmc);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = of_get_dram_timings(dmc);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't initialize timings settings\n");
+So the code path should be valid regardless of the value of .index.
 
-goto remove_clocks;
+That would make it
 
-> +               return ret;
-> +       }
-> +
-> +       ret = exynos5_performance_counters_init(dmc);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't probe performance counters\n");
-> +               goto remove_clocks;
-> +       }
-> +
-> +       ret = exynos5_dmc_set_pause_on_switching(dmc);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't get access to PAUSE register\n");
-> +               goto remove_clocks;
+        if (np && (name || index >= 0)) ...
 
-goto err_devfreq_add;
+Regards
+ChenYu
 
-Best regards,
-Krzysztof
 
-> +       }
-> +
-> +       /*
-> +        * Setup default thresholds for the devfreq governor.
-> +        * The values are chosen based on experiments.
-> +        */
-> +       dmc->gov_data.upthreshold = 30;
-> +       dmc->gov_data.downdifferential = 5;
-> +
-> +       dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
-> +                                         DEVFREQ_GOV_USERSPACE,
-> +                                         &dmc->gov_data);
-> +
-> +       if (IS_ERR(dmc->df)) {
-> +               ret = PTR_ERR(dmc->df);
-> +               goto err_devfreq_add;
-> +       }
-> +
-> +       dev_info(dev, "DMC initialized\n");
-> +
-> +       return 0;
-> +
-> +err_devfreq_add:
-> +       exynos5_counters_disable_edev(dmc);
-> +remove_clocks:
-> +       clk_disable_unprepare(dmc->mout_bpll);
-> +       clk_disable_unprepare(dmc->fout_bpll);
-> +
-> +       return ret;
-> +}
-> +
+>                 hw = of_clk_get_hw(np, index, name);
+>
+>         /*
+> --
+> 2.17.1
 >
