@@ -2,133 +2,112 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9376C43218
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E41C4321A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 12:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2A0F205F4
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 10:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560248353;
-	bh=uAVNKwQsk008WMN9I4bdYYLY9j8+uUFL/Mq3nvXQu1E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gi1DaKjRU7tTYAHkszhaFqdwyBoQHoMlDtAnGkZnAlF5h2XjaWkmRUh3zVG5i0PC4
-	 LQV40TE0HPm1QHce29bzfMOVJMMaMW0gSZPclIHJhoUR5E2Kz2aTdVqIy4YN+xAT1l
-	 D08EWwUIPRJ3SexHImqUhswpZCJyyWfGu92mDcKA=
+	by mail.kernel.org (Postfix) with ESMTP id 482662089E
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 12:23:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YsYy1GQV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405238AbfFKKRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 06:17:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405038AbfFKKRV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:17:21 -0400
-Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 121C8212F5;
-        Tue, 11 Jun 2019 10:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560248241;
-        bh=uAVNKwQsk008WMN9I4bdYYLY9j8+uUFL/Mq3nvXQu1E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wQYoJEDm6ZJ8bMcz+vCo/iiV6bx2Ro5ZSfz/GPXanc9zscMEubXZd6D7REBTi0l9J
-         AvEf/8g1PHEnv974piDwhvmHKSRXS2Xlo2WVzVdDUqPdexkxhcv3lhqVaqBbPnD3oB
-         GRBzyiEn7cH8vNvFTUbxudmsfjopqV/+uBk0ODy0=
-Received: by wens.tw (Postfix, from userid 1000)
-        id 1871B60039; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
-From:   Chen-Yu Tsai <wens@kernel.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S2388708AbfFKMXh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 08:23:37 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:41415 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388573AbfFKMXg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 08:23:36 -0400
+Received: by mail-wr1-f42.google.com with SMTP id c2so12790223wrm.8
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jun 2019 05:23:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=c73N5jUPM/J0OD+sWtA4JTF4ruEO6lqjlOFnfBibFJ4=;
+        b=YsYy1GQVeHNTQznm9/zw9NwkAReGWAuXSF/wJB+OrCZRtpbp+rjw/uhQxFOTSY8jGc
+         cdTQUPKB3/YClD6yimkLAnJNgPN7iAnSGY+cR/dSXGqAsiMz2XE8rKZ7aSPlDT86B51W
+         i7fdCnAbqeSWReVeapblyV6F5E+MEs2t6CuVZt7ZlUWzx6s8PpiarBMxdMMHASnL0WqW
+         TRSyQ5adYSe7qyBtaq0M1yuGWTEg9GX010tMqlbD44g2Fwp2o9jLe0mi2tir4a4vHxTm
+         dQK3B9nExt6fKC7OAozQrP/Na35nKC9PWYko9AWsWNBQsV2GEoT/5iaPmiMBOMrbxVCa
+         xmcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=c73N5jUPM/J0OD+sWtA4JTF4ruEO6lqjlOFnfBibFJ4=;
+        b=Nc+wbVlmh+UelkRjP8BuPOpTywpnXeUR1OBkESmZeCjAUeXsckkRcMJD0YlD4koSF1
+         yjR/psXApSe6z+90/CKGqARZdkuuVp6ZHUJP/622oI6jA0UDguCytuQCJLoiiql98Vf+
+         gV+EgmWzeQKqZ+M1HZaJTuVbCPxr5wWhoADuUlrTobHYO3Zdwr3r1/J2MNVdILiG6Kw0
+         8oGIBrmw+R3EZCL+yE/XxlbfwXGny7998bfi4AXaNOvc1cuN5Jo+REGPVCAV/EfRAS8c
+         IipaCMRZN6RpGqwXh9fVg31xsAlpvWHHpZuxRwA7ieAA2CV8w7cr4Jyb5o1pJXRZe5P3
+         wy7w==
+X-Gm-Message-State: APjAAAUhanzPgQQoTWcDWbW4W8ncS5jnt2vflGc+7y3O2j2UnPDNxJaQ
+        ngAjLXxrIlXADE0+vVIU2LPVrA==
+X-Google-Smtp-Source: APXvYqwYlZ+zFYRWi8q9YLBImzdjepRt/8CxplAnJJHZ/hUrbiOzzjhfkLhOcltyUANCG0YK5OxoGQ==
+X-Received: by 2002:adf:fbc2:: with SMTP id d2mr2661934wrs.334.1560255814706;
+        Tue, 11 Jun 2019 05:23:34 -0700 (PDT)
+Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b2sm19572023wrp.72.2019.06.11.05.23.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 05:23:34 -0700 (PDT)
+Message-ID: <a834836da8de689ec541093f3226a853af001fe4.camel@baylibre.com>
+Subject: [GIT PULL] clk: meson: fixes for v5.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
-Cc:     Chen-Yu Tsai <wens@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 02/25] clk: Add CLK_HW_INIT_* macros using .parent_hws
-Date:   Tue, 11 Jun 2019 18:16:35 +0800
-Message-Id: <20190611101658.23855-3-wens@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190611101658.23855-1-wens@kernel.org>
-References: <20190611101658.23855-1-wens@kernel.org>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Date:   Tue, 11 Jun 2019 14:23:33 +0200
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+Dear clock maintainers,
 
-With the new clk parenting code, struct clk_init_data was expanded to
-include .parent_hws, for clk drivers to directly list parents by
-pointing to their respective struct clk_hw's.
+Below is a request to pull a couple of fixes on Amlogic clocks for v5.2
+These are typos in recently added clocks, the most annoying one being in
+the DT binding identifier on the MPLL50M which is used by the network PLL.
 
-Add macros that can take either one single struct clk_hw *, or an array
-of them, for drivers to use.
+Regards
 
-A special CLK_HW_INIT_HWS macro is included, which takes an array of
-struct clk_hw *, but sets .num_parents to 1. This variant is to allow
-the reuse of the array, instead of having a compound literal allocated
-for each clk sharing the same parent.
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- include/linux/clk-provider.h | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index bb6118f79784..70aad5cefea7 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -904,6 +904,29 @@ extern struct of_device_id __clk_of_table;
- 		.ops		= _ops,				\
- 	})
- 
-+#define CLK_HW_INIT_HW(_name, _parent, _ops, _flags)			\
-+	(&(struct clk_init_data) {					\
-+		.flags		= _flags,				\
-+		.name		= _name,				\
-+		.parent_hws	= (const struct clk_hw*[]) { _parent },	\
-+		.num_parents	= 1,					\
-+		.ops		= _ops,					\
-+	})
-+
-+/*
-+ * This macro is intended for drivers to be able to share the otherwise
-+ * individual struct clk_hw[] compound literals created by the compiler
-+ * when using CLK_HW_INIT_HW. It does NOT support multiple parents.
-+ */
-+#define CLK_HW_INIT_HWS(_name, _parent, _ops, _flags)			\
-+	(&(struct clk_init_data) {					\
-+		.flags		= _flags,				\
-+		.name		= _name,				\
-+		.parent_hws	= _parent,				\
-+		.num_parents	= 1,					\
-+		.ops		= _ops,					\
-+	})
-+
- #define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
- 	(&(struct clk_init_data) {				\
- 		.flags		= _flags,			\
-@@ -913,6 +936,15 @@ extern struct of_device_id __clk_of_table;
- 		.ops		= _ops,				\
- 	})
- 
-+#define CLK_HW_INIT_PARENTS_HW(_name, _parents, _ops, _flags)	\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_hws	= _parents,			\
-+		.num_parents	= ARRAY_SIZE(_parents),		\
-+		.ops		= _ops,				\
-+	})
-+
- #define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
- 	(&(struct clk_init_data) {			\
- 		.flags          = _flags,		\
--- 
-2.20.1
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/clk-meson-5.2-1-fixes
+
+for you to fetch changes up to 3ff46efbcd90d3d469de8eddaf03d12293aaa50c:
+
+  clk: meson: meson8b: fix a typo in the VPU parent names array variable (2019-05-20 12:11:08 +0200)
+
+----------------------------------------------------------------
+MPLL50M DT bindings typo fix
+Meson9 VPU typo fixes
+
+----------------------------------------------------------------
+Jerome Brunet (1):
+      clk: meson: fix MPLL 50M binding id typo
+
+Martin Blumenstingl (1):
+      clk: meson: meson8b: fix a typo in the VPU parent names array variable
+
+ drivers/clk/meson/g12a.c              |  4 ++--
+ drivers/clk/meson/g12a.h              |  2 +-
+ drivers/clk/meson/meson8b.c           | 10 +++++-----
+ include/dt-bindings/clock/g12a-clkc.h |  2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
+
+
 
