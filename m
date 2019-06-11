@@ -2,169 +2,91 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8870DC31E44
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 21:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE000C31E44
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 22:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4834920684
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 21:22:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7z3Fh5f"
+	by mail.kernel.org (Postfix) with ESMTP id 96BCC21721
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 22:43:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560293007;
+	bh=Xcz6EHqvF1fwvooCILtkOUW2oGP+dz8rXOPn5jzPbEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Mbyjm8el/fgHL6OKjx/EoQYt5yUw2JsucaaKJsXTvCoPRD61B0bickpvNsfAjzaGG
+	 kaq/ZZNRfC2oonzHYcatpTHw3ZjoOTPeyyQDj6i/9Ef2MQxe1gnnoG7+rjC4MbA6+F
+	 ToStaeYCUM57jQEwTenFvLYcZgLZjeS86UBdifj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407021AbfFKVWQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 17:22:16 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37514 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406946AbfFKVWQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 17:22:16 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w13so22240755eds.4;
-        Tue, 11 Jun 2019 14:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZvDeGR/wNqT7nOMQkm0Ei6/MAhF95DsutBrwnh8cH3s=;
-        b=Q7z3Fh5fzWq9bcK4IP/8MEwMrSw8CW0m7n3nOqyj5bzdr0meeKA1JdnRjaTCDY8ozs
-         o32BW+ApvBxoHTCj3wsx9vCMp+ivoKBfeVU857s1PhLu5E3xTUulMKuhAI5o9LabLFiE
-         ia/0b2DfvFn0f1YNanuJMHPmAK/4X66ZPjtKm06tH6s5hG1V94fV63uidPpoXSt29xEy
-         mSpvR3OsffwH0PLg7/t5oAKU2Njg2hmKaTcCkFr0UvVIbzmilRgIwoVPNyLY031Wvdhi
-         QPK3GM5A5vAPA3TO5W3bElsXvjFUaVPnxkZpaor1xWUYXIaQj4kgK/xEdUfse4eassQU
-         bb8A==
+        id S2436850AbfFKWnY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 18:43:24 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53325 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406846AbfFKWnX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 18:43:23 -0400
+Received: by mail-it1-f194.google.com with SMTP id m187so7709117ite.3;
+        Tue, 11 Jun 2019 15:43:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZvDeGR/wNqT7nOMQkm0Ei6/MAhF95DsutBrwnh8cH3s=;
-        b=Jw7e0MbexpnODuuVgQ2M4pGp58NC2w9ch2NLXL67eJDdR1SONlqqiqNNbU3XTMAGGz
-         e0ZP9S3+7JTd2ncI3k86xwXtUvhaynnH2eircd1N9CKns/PmB2lBdFvOq2IJxbYhWDqx
-         gNAhrnnyt99b0Vzhie+q75b/V+xzdUNx3dWXtbuxCm34ZQKLwEjc6Ix03+Oguttl1ySE
-         qsbif5OiuUsIXEvVqNVW6jagxH6nu0wlFkQrs+Ve7g/9k8w76Fn2LXFMMeRBUH5RXApg
-         p06+1/ZjE96GY0yqcge7fKxM2LaG9tbTli8a4qXVXLJFg6c5szg3u2wvylD5z+apLYpb
-         CqcA==
-X-Gm-Message-State: APjAAAUwefGzqGwXRsIGqPwFw2BvtOo5mz6e3lqXkI1kWSrIURkp4b72
-        ZEcyXZfcnd/NI6mSNgQf4xilrHI/wDQ//Q==
-X-Google-Smtp-Source: APXvYqxeTYD5ov8U36NvA1MemZk0d8Py+wZARKkwyKdpkG6LnIiBUf8EIK3irjPOL1rbqjsNMT6HTg==
-X-Received: by 2002:a50:a96d:: with SMTP id m42mr7027965edc.74.1560288134405;
-        Tue, 11 Jun 2019 14:22:14 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id m21sm3961069edv.83.2019.06.11.14.22.13
+        bh=8nxxEn9GbgHo/c/uHaViVZVzYLwnyBcVj1tzUwyfTXE=;
+        b=c3mEdVCp3UUzdxxiYTEg4Ts4PjAe3PScFq5AwVysmnxUG2EmdknEosaqmnjI2xIrL/
+         WGypynFhGfcwINJgsvQBqSEe6s+7ulDmhy8qpsgmXo+qcafgH3WCIEt17SLZG0QCGCNI
+         ic6Lmq8Jw+5TXJxKhNXzZvS+szgzfh3fhOg1fEvUXzU5YlNKuSD3oPbshS5DpJwkUu9R
+         dKZ1AWEBOmiR4bzi4O2a2B6BryTkAsA8/hl0JLNsZfDgScVLYZ3pBGIWQi6PdqY/60WQ
+         8IUChAbVJt28NiQr502UQyryNuzdGKSlEeNWR5WHz46SbPE4k74iY8p4BWtK8MTM/jpz
+         G8uA==
+X-Gm-Message-State: APjAAAWi6G6TkDwETTbmxKAWBUf+MkUpvKYWh27yYqred08rl9dyKin3
+        8nKg4E2W+jpZRHEAm0I57g==
+X-Google-Smtp-Source: APXvYqyYPzDNwyp2U254GigZfLpKWCiymLDeTo+GeW4sOy8Lv5bahE3i4I8XtJNJgmS7OnNw0C3Hjg==
+X-Received: by 2002:a05:660c:343:: with SMTP id b3mr15423273itl.52.1560293002720;
+        Tue, 11 Jun 2019 15:43:22 -0700 (PDT)
+Received: from localhost (ip-174-149-252-64.englco.spcsdns.net. [174.149.252.64])
+        by smtp.gmail.com with ESMTPSA id d133sm1933774itc.27.2019.06.11.15.43.21
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 14:22:13 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 14:22:11 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nathan Huckleberry <nhuck@google.com>
-Cc:     agross@kernel.org, david.brown@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] clk: qcom: Fix -Wunused-const-variable
-Message-ID: <20190611212211.GA6815@archlinux-epyc>
-References: <20190611211134.96159-1-nhuck@google.com>
+        Tue, 11 Jun 2019 15:43:22 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 16:43:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org,
+        kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com,
+        jroedel@suse.de, treding@nvidia.com, digetx@gmail.com,
+        gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v9 07/13] dt-bindings: memory-controllers: add Exynos5422
+  DMC device description
+Message-ID: <20190611224319.GA7484@bogus>
+References: <20190607143507.30286-1-l.luba@partner.samsung.com>
+ <CGME20190607143530eucas1p15c794d0f1401fc3a48f1408c3435084a@eucas1p1.samsung.com>
+ <20190607143507.30286-8-l.luba@partner.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190611211134.96159-1-nhuck@google.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190607143507.30286-8-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 02:11:34PM -0700, Nathan Huckleberry wrote:
-> Clang produces the following warning
+On Fri,  7 Jun 2019 16:35:01 +0200, Lukasz Luba wrote:
+> The patch adds description for DT binding for a new Exynos5422 Dynamic
+> Memory Controller device.
 > 
-> drivers/clk/qcom/gcc-msm8996.c:133:32: warning: unused variable
-> 'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map' [-Wunused-const-variable]
-> static const struct
-> parent_map gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map[] =
-> { ^drivers/clk/qcom/gcc-msm8996.c:141:27: warning: unused variable
-> 'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div' [-Wunused-const-variable] static
-> const char * const gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div[] = { ^
-> drivers/clk/qcom/gcc-msm8996.c:187:32: warning: unused variable
-> 'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map'
-> [-Wunused-const-variable] static const struct parent_map
-> gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map[] = { ^
-> drivers/clk/qcom/gcc-msm8996.c:197:27: warning: unused variable
-> 'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div'
-> [-Wunused-const-variable] static const char * const
-> gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div[] = {
-> 
-> It looks like these were never used.
-> 
-> Fixes: b1e010c0730a ("clk: qcom: Add MSM8996 Global Clock Control (GCC) driver")
-> Cc: clang-built-linux@googlegroups.com
-> Link: https://github.com/ClangBuiltLinux/linux/issues/518
-> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-
-LGTM, this doesn't introduce any warnings/errors on arm32 or arm64 for
-me.
-
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  drivers/clk/qcom/gcc-msm8996.c | 36 ----------------------------------
->  1 file changed, 36 deletions(-)
+>  .../memory-controllers/exynos5422-dmc.txt     | 75 +++++++++++++++++++
+>  1 file changed, 75 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
 > 
-> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-> index d2f39a972cad..d004cdaa0e39 100644
-> --- a/drivers/clk/qcom/gcc-msm8996.c
-> +++ b/drivers/clk/qcom/gcc-msm8996.c
-> @@ -130,22 +130,6 @@ static const char * const gcc_xo_gpll0_gpll4_gpll0_early_div[] = {
->  	"gpll0_early_div"
->  };
->  
-> -static const struct parent_map gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map[] = {
-> -	{ P_XO, 0 },
-> -	{ P_GPLL0, 1 },
-> -	{ P_GPLL2, 2 },
-> -	{ P_GPLL3, 3 },
-> -	{ P_GPLL0_EARLY_DIV, 6 }
-> -};
-> -
-> -static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div[] = {
-> -	"xo",
-> -	"gpll0",
-> -	"gpll2",
-> -	"gpll3",
-> -	"gpll0_early_div"
-> -};
-> -
->  static const struct parent_map gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div_map[] = {
->  	{ P_XO, 0 },
->  	{ P_GPLL0, 1 },
-> @@ -184,26 +168,6 @@ static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early
->  	"gpll0_early_div"
->  };
->  
-> -static const struct parent_map gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map[] = {
-> -	{ P_XO, 0 },
-> -	{ P_GPLL0, 1 },
-> -	{ P_GPLL2, 2 },
-> -	{ P_GPLL3, 3 },
-> -	{ P_GPLL1, 4 },
-> -	{ P_GPLL4, 5 },
-> -	{ P_GPLL0_EARLY_DIV, 6 }
-> -};
-> -
-> -static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div[] = {
-> -	"xo",
-> -	"gpll0",
-> -	"gpll2",
-> -	"gpll3",
-> -	"gpll1",
-> -	"gpll4",
-> -	"gpll0_early_div"
-> -};
-> -
->  static struct clk_fixed_factor xo = {
->  	.mult = 1,
->  	.div = 1,
-> -- 
-> 2.22.0.rc2.383.gf4fbbf30c2-goog
-> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
