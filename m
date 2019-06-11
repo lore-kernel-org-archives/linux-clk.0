@@ -2,136 +2,142 @@ Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808B1C43218
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A41C43218
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F189206BB
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:32:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86F48208E3
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560265039;
+	bh=PDMT40Esdo8UkFki3UsNcPeLwMVn2sjMM5JVniOL9yM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=rvauHgAbT3Zs6qFZe5BV0Kfs5Ff0qUgi2bYupwRmu0Qpezy5vXJEqvp0Y7pdpzEiM
+	 tCFjU5v/hu3ZkjN5K/70OIndNDpi29AFRxXyI64GroQVmdi9yJ8zkEUsGF7BP9yIFX
+	 emBo5Cl1O+zxJ92GTGR+5xcqOh0ZCIa6xDbBqYcY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390678AbfFKOcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 10:32:54 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:43911 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387551AbfFKOcy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 10:32:54 -0400
-X-Originating-IP: 90.88.159.246
-Received: from localhost (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 5C50FFF812;
-        Tue, 11 Jun 2019 14:32:45 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 16:32:39 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 11/11] ARM: dts: sun8i: s3: add devicetree for Lichee
- zero plus w/ S3
-Message-ID: <20190611143239.zvganlwaiku3bs63@flea>
-References: <20190611140940.14357-1-icenowy@aosc.io>
- <20190611140940.14357-12-icenowy@aosc.io>
+        id S1728251AbfFKO5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 10:57:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50186 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728412AbfFKO5T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:57:19 -0400
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6658F21744;
+        Tue, 11 Jun 2019 14:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560265037;
+        bh=PDMT40Esdo8UkFki3UsNcPeLwMVn2sjMM5JVniOL9yM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nu5wxM+HHrfkCtF1x7Or3Pfim08FfQSDgXG4CQD+Rc2l6fNTBFaPzIY/2oXtvKbaN
+         Xd2X+N0unRik84mrPZ5Wsm9KbLaZ3hB029Qef3sj2yLkRboL3jfNPIyy7ePHxgCGaw
+         lNfiD7EMj7AL+FTtGDAmI6iFUX19qQ1GOmATJvOo=
+Received: by mail-qt1-f181.google.com with SMTP id p15so7473511qtl.3;
+        Tue, 11 Jun 2019 07:57:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAV1uWddM6YE7IIgAHlYvUIi6DxNUlLJ44rKVli56JkJB+vkQ3fo
+        9phEQQ6MCLddcQWH5s1yFFxs1alJFWo5+9Lhyw==
+X-Google-Smtp-Source: APXvYqwKXudcUIloIxvnM9Z3TUTq2TYTbIEqBlR3HwB9Ltpy5J5xKf3f0bzDLgxra6FePQCRpDyY/kcLrLWZl6w7kAo=
+X-Received: by 2002:a0c:acef:: with SMTP id n44mr5105568qvc.39.1560265036455;
+ Tue, 11 Jun 2019 07:57:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6e3io72tcrt3erkz"
-Content-Disposition: inline
-In-Reply-To: <20190611140940.14357-12-icenowy@aosc.io>
-User-Agent: NeoMutt/20180716
+References: <20190521145141.9813-1-paul@crapouillou.net> <20190521145141.9813-4-paul@crapouillou.net>
+ <20190524202103.GA15650@bogus> <1558811596.2016.1@crapouillou.net>
+In-Reply-To: <1558811596.2016.1@crapouillou.net>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 11 Jun 2019 08:57:04 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+ZhoW9xM_7-7CcCm2RKRbMRzmXD-oEMfoVkvcaAFxGug@mail.gmail.com>
+Message-ID: <CAL_Jsq+ZhoW9xM_7-7CcCm2RKRbMRzmXD-oEMfoVkvcaAFxGug@mail.gmail.com>
+Subject: Re: [PATCH v12 03/13] dt-bindings: Add doc for the Ingenic TCU drivers
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---6e3io72tcrt3erkz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-On Tue, Jun 11, 2019 at 10:09:40PM +0800, Icenowy Zheng wrote:
-> Lichee zero plus is a core board made by Sipeed, which includes on-board
-> TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
-> header, a microUSB slot and a gold finger connector for expansion. It
-> can use either Sochip S3 or Allwinner S3L SoC.
+On Sat, May 25, 2019 at 1:13 PM Paul Cercueil <paul@crapouillou.net> wrote:
 >
-> Add the basic device tree for the core board, w/o optional onboard
-> storage, and with S3 SoC.
 >
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> New patch in v2.
 >
->  arch/arm/boot/dts/Makefile                    |  1 +
->  .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |  8 ++++
->  .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    | 39 +++++++++++++++++++
->  3 files changed, 48 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
->  create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+> Le ven. 24 mai 2019 =C3=A0 22:21, Rob Herring <robh@kernel.org> a =C3=A9c=
+rit :
+> > On Tue, May 21, 2019 at 04:51:31PM +0200, Paul Cercueil wrote:
+> >>  Add documentation about how to properly use the Ingenic TCU
+> >>  (Timer/Counter Unit) drivers from devicetree.
+> >>
+> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> >>  ---
+> >>
+> >>  Notes:
+> >>      v4: New patch in this series. Corresponds to V2 patches 3-4-5
+> >> with
+> >>       added content.
+> >>
+> >>      v5: - Edited PWM/watchdog DT bindings documentation to point to
+> >> the new
+> >>         document.
+> >>       - Moved main document to
+> >>         Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> >>       - Updated documentation to reflect the new devicetree bindings.
+> >>
+> >>      v6: - Removed PWM/watchdog documentation files as asked by
+> >> upstream
+> >>       - Removed doc about properties that should be implicit
+> >>       - Removed doc about ingenic,timer-channel /
+> >>         ingenic,clocksource-channel as they are gone
+> >>       - Fix WDT clock name in the binding doc
+> >>       - Fix lengths of register areas in watchdog/pwm nodes
+> >>
+> >>      v7: No change
+> >>
+> >>      v8: - Fix address of the PWM node
+> >>       - Added doc about system timer and clocksource children nodes
+> >>
+> >>      v9: - Remove doc about system timer and clocksource children
+> >>         nodes...
+> >>      - Add doc about ingenic,pwm-channels-mask property
+> >>
+> >>      v10: No change
+> >>
+> >>      v11: Fix info about default value of ingenic,pwm-channels-mask
+> >>
+> >>      v12: Drop sub-nodes for now; they will be introduced in a
+> >> follow-up
+> >>               patchset.
+> >
+> > Why? I believe I acked them.
 >
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 5559028b770e..2b5e6a1d20ff 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -1110,6 +1110,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
->  	sun8i-r16-nintendo-super-nes-classic.dtb \
->  	sun8i-r16-parrot.dtb \
->  	sun8i-r40-bananapi-m2-ultra.dtb \
-> +	sun8i-s3-lichee-zero-plus.dtb \
->  	sun8i-t3-cqa3t-bv3.dtb \
->  	sun8i-v3s-licheepi-zero.dtb \
->  	sun8i-v3s-licheepi-zero-dock.dtb \
-> diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-> new file mode 100644
-> index 000000000000..7d2f6b145190
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-> + */
-> +
-> +/dts-v1/;
-> +#include "sun8i-s3.dtsi"
-> +#include "sun8i-s3-s3l-lichee-zero-plus.dtsi"
-> diff --git a/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-> new file mode 100644
-> index 000000000000..bb148e796df7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-> + */
-> +
-> +#include "sunxi-common-regulators.dtsi"
+> The patchset was too big, and I've already been trying to get it
+> upstream for
+> more than one year now. So I cut it in half in hope that it'll be
+> easier to
+> upstream it that way.
 
-If possible, you should get rid of that include. What are you using it
-for?
+You can drop the driver part and keep the binding. Unlike drivers, we
+don't want bindings to needlessly evolve, and you don't have to wait
+til a driver implements some functionality to add that to the binding.
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---6e3io72tcrt3erkz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXP+7hwAKCRDj7w1vZxhR
-xXD5AQDzzGjJuMYqZOH2bt2UEka6SvuIrYluNOH8x3D+7GOsJAEA2rH3UjHc3GPu
-kpIKRxDM2YMRW103wJicTaDDoRvXeQc=
-=ySX5
------END PGP SIGNATURE-----
-
---6e3io72tcrt3erkz--
+Rob
