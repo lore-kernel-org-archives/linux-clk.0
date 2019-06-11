@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD14AC43218
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 808B1C43218
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24312145D
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F189206BB
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 14:32:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390264AbfFKO1t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 10:27:49 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:35815 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390032AbfFKO1t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 10:27:49 -0400
+        id S2390678AbfFKOcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 10:32:54 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:43911 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387551AbfFKOcy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 10:32:54 -0400
 X-Originating-IP: 90.88.159.246
 Received: from localhost (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
         (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 1965AE0011;
-        Tue, 11 Jun 2019 14:27:40 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 16:27:40 +0200
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 5C50FFF812;
+        Tue, 11 Jun 2019 14:32:45 +0000 (UTC)
+Date:   Tue, 11 Jun 2019 16:32:39 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Icenowy Zheng <icenowy@aosc.io>
 Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -31,15 +31,16 @@ Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 03/11] pinctrl: sunxi: v3s: introduce support for V3
-Message-ID: <20190611142740.2gqm3nxq2nl6sz7w@flea>
+Subject: Re: [PATCH v2 11/11] ARM: dts: sun8i: s3: add devicetree for Lichee
+ zero plus w/ S3
+Message-ID: <20190611143239.zvganlwaiku3bs63@flea>
 References: <20190611140940.14357-1-icenowy@aosc.io>
- <20190611140940.14357-4-icenowy@aosc.io>
+ <20190611140940.14357-12-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ttqlhhfclj7eb7xn"
+        protocol="application/pgp-signature"; boundary="6e3io72tcrt3erkz"
 Content-Disposition: inline
-In-Reply-To: <20190611140940.14357-4-icenowy@aosc.io>
+In-Reply-To: <20190611140940.14357-12-icenowy@aosc.io>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -47,68 +48,90 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ttqlhhfclj7eb7xn
+--6e3io72tcrt3erkz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-On Tue, Jun 11, 2019 at 10:09:32PM +0800, Icenowy Zheng wrote:
-> Introduce the GPIO pins that is only available on V3 (not on V3s) to the
-> V3s pinctrl driver.
+On Tue, Jun 11, 2019 at 10:09:40PM +0800, Icenowy Zheng wrote:
+> Lichee zero plus is a core board made by Sipeed, which includes on-board
+> TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
+> header, a microUSB slot and a gold finger connector for expansion. It
+> can use either Sochip S3 or Allwinner S3L SoC.
+>
+> Add the basic device tree for the core board, w/o optional onboard
+> storage, and with S3 SoC.
 >
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
-> Changes in v2:
-> - Dropped the driver rename patch and apply the changes directly on V3s
->   driver.
+> New patch in v2.
 >
->  drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c | 265 +++++++++++++++++++++-
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h     |   2 +
->  2 files changed, 262 insertions(+), 5 deletions(-)
+>  arch/arm/boot/dts/Makefile                    |  1 +
+>  .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |  8 ++++
+>  .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    | 39 +++++++++++++++++++
+>  3 files changed, 48 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+>  create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
 >
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> index 6704ce8e5e3d..9e82fd38cf21 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * Allwinner V3s SoCs pinctrl driver.
-> + * Allwinner V3/V3s SoCs pinctrl driver.
->   *
->   * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
->   *
-> @@ -77,6 +77,30 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
->  		  SUNXI_FUNCTION(0x2, "i2c1"),		/* SCK */
->  		  SUNXI_FUNCTION(0x3, "uart0"),		/* RX */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PB_EINT9 */
-> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(B, 10),
-> +		  PINCTRL_SUN8I_V3,
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "jtag"),		/* MS */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PB_EINT10 */
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 5559028b770e..2b5e6a1d20ff 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1110,6 +1110,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+>  	sun8i-r16-nintendo-super-nes-classic.dtb \
+>  	sun8i-r16-parrot.dtb \
+>  	sun8i-r40-bananapi-m2-ultra.dtb \
+> +	sun8i-s3-lichee-zero-plus.dtb \
+>  	sun8i-t3-cqa3t-bv3.dtb \
+>  	sun8i-v3s-licheepi-zero.dtb \
+>  	sun8i-v3s-licheepi-zero-dock.dtb \
+> diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+> new file mode 100644
+> index 000000000000..7d2f6b145190
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
+> + */
+> +
+> +/dts-v1/;
+> +#include "sun8i-s3.dtsi"
+> +#include "sun8i-s3-s3l-lichee-zero-plus.dtsi"
+> diff --git a/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+> new file mode 100644
+> index 000000000000..bb148e796df7
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+> @@ -0,0 +1,39 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
+> + */
+> +
+> +#include "sunxi-common-regulators.dtsi"
 
-The alignment should be on the parenthesis
+If possible, you should get rid of that include. What are you using it
+for?
 
-Looks good otherwise
-
-maxime
+Maxime
 
 --
 Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---ttqlhhfclj7eb7xn
+--6e3io72tcrt3erkz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXP+6WwAKCRDj7w1vZxhR
-xWvDAP4sUsS8lzwwMZirLseQPv9XAS76rNYD57+nctEZGaZNQwEAvNAXDoM60OLA
-47GX+cRJkvkgdUzlpDnXxMBujGw8qAA=
-=z2T/
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXP+7hwAKCRDj7w1vZxhR
+xXD5AQDzzGjJuMYqZOH2bt2UEka6SvuIrYluNOH8x3D+7GOsJAEA2rH3UjHc3GPu
+kpIKRxDM2YMRW103wJicTaDDoRvXeQc=
+=ySX5
 -----END PGP SIGNATURE-----
 
---ttqlhhfclj7eb7xn--
+--6e3io72tcrt3erkz--
