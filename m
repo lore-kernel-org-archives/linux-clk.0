@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EF3C31E46
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 18:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E41A3C31E46
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 18:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9BD020B7C
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 18:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8F0420896
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 18:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfFLSZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 14:25:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35360 "EHLO mx1.suse.de"
+        id S1726948AbfFLSZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 14:25:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35276 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726023AbfFLSZU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:25:20 -0400
+        id S1726023AbfFLSZR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:25:17 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5EA31B015;
-        Wed, 12 Jun 2019 18:25:18 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id AC8BAB00A;
+        Wed, 12 Jun 2019 18:25:15 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, linux-kernel@vger.kernel.org
+To:     stefan.wahren@i2se.com, Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
 Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, eric@anholt.net, f.fainelli@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, ptesarik@suse.com,
+        sboyd@kernel.org, ptesarik@suse.com,
         linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         mturquette@baylibre.com, linux-pm@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v4 3/7] firmware: raspberrypi: register clk device
-Date:   Wed, 12 Jun 2019 20:24:55 +0200
-Message-Id: <20190612182500.4097-4-nsaenzjulienne@suse.de>
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/7] clk: bcm2835: remove pllb
+Date:   Wed, 12 Jun 2019 20:24:53 +0200
+Message-Id: <20190612182500.4097-2-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190612182500.4097-1-nsaenzjulienne@suse.de>
 References: <20190612182500.4097-1-nsaenzjulienne@suse.de>
@@ -44,57 +48,58 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since clk-raspberrypi is tied to the VC4 firmware instead of particular
-hardware it's registration should be performed by the firmware driver.
+Raspberry Pi's firmware controls this pll, we should use the firmware
+interface to access it.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Acked-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/firmware/raspberrypi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-index 61be15d9df7d..da26a584dca0 100644
---- a/drivers/firmware/raspberrypi.c
-+++ b/drivers/firmware/raspberrypi.c
-@@ -20,6 +20,7 @@
- #define MBOX_CHAN_PROPERTY		8
+Changes since v1:
+  - Add comment to explain why pllb isn't there anymore
+
+ drivers/clk/bcm/clk-bcm2835.c | 28 ++++------------------------
+ 1 file changed, 4 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 770bb01f523e..867ae3c20041 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1651,30 +1651,10 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.fixed_divider = 1,
+ 		.flags = CLK_SET_RATE_PARENT),
  
- static struct platform_device *rpi_hwmon;
-+static struct platform_device *rpi_clk;
+-	/* PLLB is used for the ARM's clock. */
+-	[BCM2835_PLLB]		= REGISTER_PLL(
+-		.name = "pllb",
+-		.cm_ctrl_reg = CM_PLLB,
+-		.a2w_ctrl_reg = A2W_PLLB_CTRL,
+-		.frac_reg = A2W_PLLB_FRAC,
+-		.ana_reg_base = A2W_PLLB_ANA0,
+-		.reference_enable_mask = A2W_XOSC_CTRL_PLLB_ENABLE,
+-		.lock_mask = CM_LOCK_FLOCKB,
+-
+-		.ana = &bcm2835_ana_default,
+-
+-		.min_rate = 600000000u,
+-		.max_rate = 3000000000u,
+-		.max_fb_rate = BCM2835_MAX_FB_RATE),
+-	[BCM2835_PLLB_ARM]	= REGISTER_PLL_DIV(
+-		.name = "pllb_arm",
+-		.source_pll = "pllb",
+-		.cm_reg = CM_PLLB,
+-		.a2w_reg = A2W_PLLB_ARM,
+-		.load_mask = CM_PLLB_LOADARM,
+-		.hold_mask = CM_PLLB_HOLDARM,
+-		.fixed_divider = 1,
+-		.flags = CLK_SET_RATE_PARENT),
++	/*
++	 * PLLB is used for the ARM's clock. Controlled by firmware, see
++	 * clk-raspberrypi.c.
++	 */
  
- struct rpi_firmware {
- 	struct mbox_client cl;
-@@ -207,6 +208,12 @@ rpi_register_hwmon_driver(struct device *dev, struct rpi_firmware *fw)
- 						  -1, NULL, 0);
- }
- 
-+static void rpi_register_clk_driver(struct device *dev)
-+{
-+	rpi_clk = platform_device_register_data(dev, "raspberrypi-clk",
-+						-1, NULL, 0);
-+}
-+
- static int rpi_firmware_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -234,6 +241,7 @@ static int rpi_firmware_probe(struct platform_device *pdev)
- 
- 	rpi_firmware_print_firmware_revision(fw);
- 	rpi_register_hwmon_driver(dev, fw);
-+	rpi_register_clk_driver(dev);
- 
- 	return 0;
- }
-@@ -254,6 +262,8 @@ static int rpi_firmware_remove(struct platform_device *pdev)
- 
- 	platform_device_unregister(rpi_hwmon);
- 	rpi_hwmon = NULL;
-+	platform_device_unregister(rpi_clk);
-+	rpi_clk = NULL;
- 	mbox_free_channel(fw->chan);
- 
- 	return 0;
+ 	/*
+ 	 * PLLC is the core PLL, used to drive the core VPU clock.
 -- 
 2.21.0
 
