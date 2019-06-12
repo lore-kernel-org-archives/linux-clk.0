@@ -2,111 +2,78 @@ Return-Path: <SRS0=Rxbn=UL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45733C31E46
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 06:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A251C31E48
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 06:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C81520874
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 06:03:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kQgNEe7l"
+	by mail.kernel.org (Postfix) with ESMTP id 3050A20874
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 06:51:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725772AbfFLGDd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 02:03:33 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35850 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730806AbfFLGDc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 02:03:32 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n4so15480619wrs.3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jun 2019 23:03:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+13q810llW4ErXXIetgj/sg6McW6pFvv2Q8IXgzsfkA=;
-        b=kQgNEe7lU75z3OeBABAC6Q8trmmoqyeiGjh+GcqkEXYi72whxbc7gOEEHkeVhfjLhN
-         FU8ME53uN7CbcnKand3X6rJlYfGiD+5rRC+f/oCFUZmtLHbic1O7pMQlI9E3n0Z7uLtl
-         HqKADy95Q0V50tbehahY8zw/vnxoekQFiAQj6rg/4AwpzP410tAT4Dp5UC2K7d9UunNu
-         4L7jAh2jHoyUmhZzm90OIv/UXl1bZCLFjbZU8XKncBBv/I75Z86NRu71gLyMuFWB5uY3
-         zOYgwcDKZxQuPwetUB8A7f8OkJBhV4OugGkt76kHe7JTrlethDQpEDis/afWlkOOHl8J
-         56uw==
+        id S2405137AbfFLGvX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 02:51:23 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40207 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403835AbfFLGvX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 02:51:23 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a21so14071907ljh.7;
+        Tue, 11 Jun 2019 23:51:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+13q810llW4ErXXIetgj/sg6McW6pFvv2Q8IXgzsfkA=;
-        b=quI6rPhWHt39DDCIhS8l7LEA/2pP+LpKa7ersyMrw+g8eeXyDW92MIzGCP/lyxnoUG
-         189dVI3EKCUDxsTFp8UEswDyDE6bKkT/c7W9cc6edhCZN6Jyl+3XeHY9sBOr8tRjfNIC
-         CTrD3zSWeLfiiZnTnok82MF/GnCb+Jl6xcKlw6lzUljd7YsB0nlgQypjeO6S89s5OVW/
-         TMCNvb/ZrZety9KVq7ogwDpoA8KDCg9jvGZRf+Q/ofY1dE7QMxdR9gS6BYBSi1OBQ/y/
-         Ph+Q870dWWwN2dC4oiX414RTivH6SCQojRLAw324GXpSvF9qTC5+B4B+GnoT1W0TC4jC
-         wuaA==
-X-Gm-Message-State: APjAAAVQVNxAaPiLQ9+05E2iTU7ILAjqUoe/ZcWinXhDReBon0qiR5zZ
-        5P2McXXlpc6ZdhAjr0wQrvLLHg==
-X-Google-Smtp-Source: APXvYqyxgC+MOxZ/tRXB4Hv5XucD8WakihBGUs4FQKs/N+4M4iopyF7/hlrp1gR87azKIfrbFj6+Bw==
-X-Received: by 2002:a5d:4703:: with SMTP id y3mr669507wrq.248.1560319410440;
-        Tue, 11 Jun 2019 23:03:30 -0700 (PDT)
-Received: from dell ([2.27.35.243])
-        by smtp.gmail.com with ESMTPSA id w6sm23656976wro.71.2019.06.11.23.03.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Jun 2019 23:03:29 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 07:03:28 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pucwXE/QknbFy+/4qfyb+M5v0P4sVxwv2U7mjkNDhPQ=;
+        b=Tdd922gTUNgs+cBparXTgiFy2OnNkj28qIjnZYpXK3GWHo0ULPatA1RYD99lkGhwb8
+         /fJQjnDYn2oAtJgfAcClh+z5NNbocV9aFZjkd5s/bva6F2Am3EmjB/iSG1zSTcTroqCF
+         icOS22CVeVXG01/Cc6X2VcfirkHwj7IeJfLiQ56cFMSJZF+GTh5wDc5OXi1+tEIaVJxG
+         LbHcuIFpn0+6CkZUO9gxFqhrRtmepbJffb88XyGqqwv6tkfsKWZc/MDYS3vCfdfhkwRr
+         P38ijUTSu//vXBn07mtTl0v8evEymxHBs9S+WDoYVpwgillyHqZShswJLwbeQfCYfNUT
+         b1nw==
+X-Gm-Message-State: APjAAAX6ZMf1O9UNIb2IrS8c+AipRNzha0pF9uATxXjP/0kpvAHzUAXl
+        0pya9DEvS4FD6yEaZDlhL0beBfOA5ZfA+j+4wr8=
+X-Google-Smtp-Source: APXvYqxZX3SvmUqlpQPh/u3V+83oM1xF//NYqN8Vr/nAEHhftEAUyjR8v9uMGFiio+/Md5LYozZDDc2fWeBR7ZU1zvE=
+X-Received: by 2002:a2e:2b8d:: with SMTP id r13mr31488250ljr.145.1560322280979;
+ Tue, 11 Jun 2019 23:51:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <1560258401-9517-1-git-send-email-fabrizio.castro@bp.renesas.com> <1560258401-9517-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1560258401-9517-5-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 12 Jun 2019 08:51:08 +0200
+Message-ID: <CAMuHMdWPTOJTWnfjTFgz5iX6AKVcKABXJbfQoMYVR2vJXB7zkw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] clk: renesas: r8a774a1: Add TMU clock
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
-Message-ID: <20190612060328.GQ4797@dell>
-References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
- <20190611200043.eib3g3acc7ilawsx@earth.universe>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190611200043.eib3g3acc7ilawsx@earth.universe>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 11 Jun 2019, Sebastian Reichel wrote:
+On Tue, Jun 11, 2019 at 3:07 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds the TMU clocks to the R8A774A1 SoC.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-> Hi,
-> 
-> On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
-> > Patch series introducing support for ROHM BD70528 PMIC
-> > [...]
-> 
-> I think all patches have been reviewed by the respective subsystem
-> maintainers. Lee, can you provide an immutable branch with the MFD
-> patches (1, 2, 4)? Looks like the other patches only depend on those
-> and can go through their respective subsystems.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.3.
 
-Yes.  It's on my TODO list.
+Gr{oetje,eeting}s,
 
-Would you prefer this method over me just taking them all and sending
-out a PR?  The latter is my usual flow, but I'm happy with either.
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
