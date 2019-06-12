@@ -1,110 +1,102 @@
-Return-Path: <SRS0=yexa=UK=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Rxbn=UL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D57C31E46
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 22:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E18FC31E44
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 02:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE7621721
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jun 2019 22:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B31B2080A
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 02:01:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="hzo/7M2n"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p5WwRCYK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404061AbfFKWuh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jun 2019 18:50:37 -0400
-Received: from mail-eopbgr730126.outbound.protection.outlook.com ([40.107.73.126]:14512
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391638AbfFKWug (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Jun 2019 18:50:36 -0400
+        id S2406181AbfFLCB3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jun 2019 22:01:29 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52673 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405070AbfFLCB3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jun 2019 22:01:29 -0400
+Received: by mail-it1-f193.google.com with SMTP id l21so8287979ita.2;
+        Tue, 11 Jun 2019 19:01:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavesemi-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uyT2XrMU4bdbnRm2CT2ytKqdkRyAcSjYROHEyXXGKQ0=;
- b=hzo/7M2nh/X1jQiXQXYRv9jZuZFm1w7fJdaX5dPO/JAt341TlujQOCBX93l/am4oGTDuAHWE7b/d/oDo41i6QB4spR6THl8qkRPpB7lFZqTMBh/icpAizHgGjnMCtYOFRWLZrx3SRWAwch0tG4sakP8HUF3R0dAyOkx4voG/Fg8=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1373.namprd22.prod.outlook.com (10.174.162.140) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Tue, 11 Jun 2019 22:50:16 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::6975:b632:c85b:9e40]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::6975:b632:c85b:9e40%2]) with mapi id 15.20.1987.010; Tue, 11 Jun 2019
- 22:50:16 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, "od@zcrc.me" <od@zcrc.me>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 5/5] MIPS: Remove dead code
-Thread-Topic: [PATCH v2 5/5] MIPS: Remove dead code
-Thread-Index: AQHVIICnCC0E6RPYlEOSw1p5P/LHgKaXDw4A
-Date:   Tue, 11 Jun 2019 22:50:15 +0000
-Message-ID: <20190611225013.bkqmxczedrbg3nlk@pburton-laptop>
-References: <20190611180757.32299-1-paul@crapouillou.net>
- <20190611180757.32299-5-paul@crapouillou.net>
-In-Reply-To: <20190611180757.32299-5-paul@crapouillou.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR03CA0027.namprd03.prod.outlook.com
- (2603:10b6:a02:a8::40) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5fd418ed-ddff-412e-d2d5-08d6eebf2b6e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1373;
-x-ms-traffictypediagnostic: MWHPR2201MB1373:
-x-microsoft-antispam-prvs: <MWHPR2201MB13730A7FCC2AEB989577EE31C1ED0@MWHPR2201MB1373.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2657;
-x-forefront-prvs: 006546F32A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(39840400004)(396003)(376002)(346002)(366004)(199004)(189003)(99286004)(76176011)(386003)(52116002)(6506007)(305945005)(8676002)(6512007)(9686003)(71200400001)(71190400001)(6486002)(81156014)(81166006)(1076003)(7736002)(229853002)(42882007)(6436002)(2906002)(3846002)(478600001)(186003)(102836004)(6916009)(11346002)(446003)(26005)(6116002)(14454004)(66476007)(64756008)(66946007)(476003)(6246003)(66446008)(73956011)(4326008)(44832011)(53936002)(66066001)(25786009)(486006)(58126008)(33716001)(68736007)(8936002)(7416002)(5660300002)(66556008)(256004)(54906003)(558084003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1373;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 8E7OdQeWsInO3p8XTAMKxDXMH/exr3E8NvZyDObbCa7Ire6CTSEZk0xxMVtbF6dLE+DPxUpgIudW4VskoUrHYWGUA7WAUSIVr5jrQpH7kbwDxg9t7JGvOA6RtiLj0tHj1qv3IRBfUTv9yE6yJsF36a+FWmclTJ3MxgW4UZARajmlt045Xb0rokqRFH4JF0NcUYi7sLNims8V2H9ZCyRPFakfP/5QnvWo1fqJAN7RVcg8Yh+6hz28bEldVLpzPhN5YasNvFWru4Radc5S+wmLqUnJma54pgsDDLKgZbbx/gdaXUIinKpCGByH7owlb5PkYCHkm+1zti5Njl169HRFiFsLHPmqM/WNvxatSqCAOV2n2O1/yETLbxyTo39mvtc4H5b+pg8ckBNvnYpg/Mt0nHgx/QecEkXxZaWEwLJuKdk=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1D8F45445836954CAB4CD679FBCC66DF@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iHeTl9h5MAISC73trVD9Z9vYX3/i6GRbRI15G+TC7d4=;
+        b=p5WwRCYKXyFPfLjGMHtHkZUxI7g1Wr8ep6fol34IecTcd7Fen5hswE5Nfh3DSlIdet
+         hFaBAumqeGhSdfBtn7B0cy6w/YYTwzOQ/4SsRIAUYm2DSBua7fyiwx7PWPmK5zS6bD88
+         y+FGWaVEAB0y0rS8lmoPQUByuovlWqVYHFtH6fRVqxxBmdwnrtaEYsaaNyBq4fnvBZhV
+         ZrlMhfQXeZTEw9MtP6mp+b+exiU/xlbPG3/RayJA50MSpY1sd7Z+571sZ7yW9J5hOezz
+         7RSAq6CfmSwDjZEyXkEK0RJQqbV8/gCQKuUUmUtg9gcCLBaUIi4FZlMhBe1+KZIxfsVa
+         23gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iHeTl9h5MAISC73trVD9Z9vYX3/i6GRbRI15G+TC7d4=;
+        b=KmTsusZP+1XYL+vFLleVvrNREc5RHTbFldAP4qFXCil+5CNHm83Nn0jY0QHxEuaDsZ
+         aiOJk9eU/Mtj7lt8kdU+X4lXX69Tcu/0yPfQe5Mlc+eyqlhh1Q+BZ7xhZ4OljlBgbsHY
+         8AfcOgGHnX/jSVIuaZZxchfI7ViouEWEO2m8x9Nqxt9bE6KcmLPKdd2vRj+3v4efnA2w
+         sEH4GBFV37MZP0TIZ2owEeXzyqanfraBmhZoULmgSa9eYIUnlhm6NbUxIWjE1+gZniN1
+         3JKwrYl57pl6rq5iXi6QYoC3u4Hwjt1HpRs++xQtmmnm6s+b5cJ0iRG6x2+XLlwX8vNA
+         AcUg==
+X-Gm-Message-State: APjAAAVLUkV53stQa5qntCQtbq13oMuy+FOTXttXmep3FVi0+fxCHNmT
+        tptAeVP7OGJWBsWXeF94Wxd/8aGcuEeVFTvDzEk=
+X-Google-Smtp-Source: APXvYqydEFgmHWzcLByfz0Xbu9y58yiU4/4j49WJ5O9z2avVjWScConp9krearwOkeSkCy0gZjMRSftCqtqf5M+FICo=
+X-Received: by 2002:a02:5b05:: with SMTP id g5mr49218359jab.114.1560304888209;
+ Tue, 11 Jun 2019 19:01:28 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fd418ed-ddff-412e-d2d5-08d6eebf2b6e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 22:50:15.9425
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1373
+References: <20190607200225.21419-1-andrew.smirnov@gmail.com>
+ <20190607200225.21419-2-andrew.smirnov@gmail.com> <VI1PR0402MB34855AC8C617A3D7A584A1B798ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB34855AC8C617A3D7A584A1B798ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Tue, 11 Jun 2019 19:01:16 -0700
+Message-ID: <CAHQ1cqGcDm6MGnmn3=SKBYNkToP_T+-SEHSvOBtq8FGcRoTb6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] crypto: caam - do not initialise clocks on the i.MX8
+To:     Horia Geanta <horia.geanta@nxp.com>
+Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Chris Spencer <christopher.spencer@sea.co.uk>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
+On Tue, Jun 11, 2019 at 2:56 AM Horia Geanta <horia.geanta@nxp.com> wrote:
+>
+> On 6/7/2019 11:03 PM, Andrey Smirnov wrote:
+> > From: Chris Spencer <christopher.spencer@sea.co.uk>
+> >
+> > There are no clocks that the CAAM driver needs to initialise on the
+> > i.MX8.
+> >
+> RM lists 5 clocks for CAAM module (instance.clock): caam.aclk, caam.ipg_clk,
+> caam.ipg_clk_s, caam_exsc.aclk_exsc, caam_mem.clk
+>
+> Wouldn't it be better to have these clocks in DT, instead of relying that their
+> root clocks (ccm_ahb_clk_root, ccm_ipg_clk_root) are critical / always on?
+>
 
-On Tue, Jun 11, 2019 at 08:07:57PM +0200, Paul Cercueil wrote:
-> Remove the unused <asm/mach-jz4740/clock.h> include.
->=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-
-Presuming this goes via the clk tree:
-
-    Acked-by: Paul Burton <paul.burton@mips.com>
+Is it even possible to use the SoC in a meaningful way if
+ccm_ahb_clk_root or ccm_ipg_clk_root are disabled? It doesn't seem
+that dependency on either is expressed in a consistent manner for
+other IP blocks in imx8mq.dtsi. OTOH, it should be trivial to add
+<&clk IMX8MQ_CLK_IPG_ROOT> and <&clk IMX8MQ_CLK_AHB> as "ipg" and
+"aclk" to CAAM node and it would allow me to drop an extra patch from
+the series, so I may as well do it.
 
 Thanks,
-    Paul
+Andrey Smirnov
