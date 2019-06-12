@@ -2,97 +2,111 @@ Return-Path: <SRS0=Rxbn=UL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF5FC31E46
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 05:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45733C31E46
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 06:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A72512086A
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 05:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560316412;
-	bh=pjKLLa6fq6+zEJ2xlibCltc+p1HsSk01Pj5/MlY2ZJo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MBuGfMKQA/m2sznfpo0X/gpd0MO8bcwJJoIttCOMQWn9j4SL3+CCGvIcM7T3tvvtk
-	 xkjCwAcJYNEP6K+6oe1Et7OoOhnyeV0JhLTXUjyBOkGwuRULk1OGWp46NfRZI3CCFQ
-	 f2FV9C+WIMK6r0FOcD/RMH/B00kbKsjyN1d2UiCo=
+	by mail.kernel.org (Postfix) with ESMTP id 1C81520874
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 06:03:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kQgNEe7l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730528AbfFLFNc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 01:13:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfFLFNc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Jun 2019 01:13:32 -0400
-Received: from localhost (unknown [106.200.205.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7BDD2086A;
-        Wed, 12 Jun 2019 05:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560316411;
-        bh=pjKLLa6fq6+zEJ2xlibCltc+p1HsSk01Pj5/MlY2ZJo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iYYxV8F6CPWY6jYRCAxFVekOXxjV6WSlfOmq3HrlFylIR/l0p+NMLFFRO0Ng/HobZ
-         2HhHc1AA14PHqQZade24jDts7hKXRf/3+i9+9NNhe30osAKB+V8aWnmedaXKv5SDum
-         Pz6YeNmMVIa3ebGceiOEa207ktGusnctmqHNjM7I=
-Date:   Wed, 12 Jun 2019 10:40:23 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
+        id S1725772AbfFLGDd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 02:03:33 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35850 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730806AbfFLGDc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 02:03:32 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so15480619wrs.3
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jun 2019 23:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=+13q810llW4ErXXIetgj/sg6McW6pFvv2Q8IXgzsfkA=;
+        b=kQgNEe7lU75z3OeBABAC6Q8trmmoqyeiGjh+GcqkEXYi72whxbc7gOEEHkeVhfjLhN
+         FU8ME53uN7CbcnKand3X6rJlYfGiD+5rRC+f/oCFUZmtLHbic1O7pMQlI9E3n0Z7uLtl
+         HqKADy95Q0V50tbehahY8zw/vnxoekQFiAQj6rg/4AwpzP410tAT4Dp5UC2K7d9UunNu
+         4L7jAh2jHoyUmhZzm90OIv/UXl1bZCLFjbZU8XKncBBv/I75Z86NRu71gLyMuFWB5uY3
+         zOYgwcDKZxQuPwetUB8A7f8OkJBhV4OugGkt76kHe7JTrlethDQpEDis/afWlkOOHl8J
+         56uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+13q810llW4ErXXIetgj/sg6McW6pFvv2Q8IXgzsfkA=;
+        b=quI6rPhWHt39DDCIhS8l7LEA/2pP+LpKa7ersyMrw+g8eeXyDW92MIzGCP/lyxnoUG
+         189dVI3EKCUDxsTFp8UEswDyDE6bKkT/c7W9cc6edhCZN6Jyl+3XeHY9sBOr8tRjfNIC
+         CTrD3zSWeLfiiZnTnok82MF/GnCb+Jl6xcKlw6lzUljd7YsB0nlgQypjeO6S89s5OVW/
+         TMCNvb/ZrZety9KVq7ogwDpoA8KDCg9jvGZRf+Q/ofY1dE7QMxdR9gS6BYBSi1OBQ/y/
+         Ph+Q870dWWwN2dC4oiX414RTivH6SCQojRLAw324GXpSvF9qTC5+B4B+GnoT1W0TC4jC
+         wuaA==
+X-Gm-Message-State: APjAAAVQVNxAaPiLQ9+05E2iTU7ILAjqUoe/ZcWinXhDReBon0qiR5zZ
+        5P2McXXlpc6ZdhAjr0wQrvLLHg==
+X-Google-Smtp-Source: APXvYqyxgC+MOxZ/tRXB4Hv5XucD8WakihBGUs4FQKs/N+4M4iopyF7/hlrp1gR87azKIfrbFj6+Bw==
+X-Received: by 2002:a5d:4703:: with SMTP id y3mr669507wrq.248.1560319410440;
+        Tue, 11 Jun 2019 23:03:30 -0700 (PDT)
+Received: from dell ([2.27.35.243])
+        by smtp.gmail.com with ESMTPSA id w6sm23656976wro.71.2019.06.11.23.03.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Jun 2019 23:03:29 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 07:03:28 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: qcom: clk-alpha-pll: Add support for Trion PLLs
-Message-ID: <20190612051023.GB9160@vkoul-mobl.Dlink>
-References: <20190607101234.30449-1-vkoul@kernel.org>
- <20190607175542.D9D56208C0@mail.kernel.org>
- <20190608091436.GF9160@vkoul-mobl.Dlink>
- <20190610150646.2003720859@mail.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+Message-ID: <20190612060328.GQ4797@dell>
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190611200043.eib3g3acc7ilawsx@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190610150646.2003720859@mail.kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190611200043.eib3g3acc7ilawsx@earth.universe>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10-06-19, 08:06, Stephen Boyd wrote:
-> Quoting Vinod Koul (2019-06-08 02:14:36)
-> > On 07-06-19, 10:55, Stephen Boyd wrote:
-> > > Quoting Vinod Koul (2019-06-07 03:12:33)
-> > 
-> > > >  const struct clk_ops clk_alpha_pll_ops = {
-> > > >         .enable = clk_alpha_pll_enable,
-> > > >         .disable = clk_alpha_pll_disable,
-> > > > @@ -902,6 +1079,10 @@ static int alpha_pll_fabia_enable(struct clk_hw *hw)
-> > > >         ret = regmap_read(regmap, PLL_OPMODE(pll), &opmode_val);
-> > > >         if (ret)
-> > > >                 return ret;
-> > > > +       ret = regmap_update_bits(regmap, PLL_MODE(pll),
-> > > > +                                PLL_BYPASSNL, PLL_BYPASSNL);
-> > > > +       if (ret)
-> > > > +               return ret;
-> > > 
-> > > What is this?
-> > 
-> > Sorry am not sure I understood the question. care to elaborate please?
-> 
-> The bypass bit of a PLL is very generic so I'm confused why the enable
-> function is only gaining this bit setting logic now. Plus, it's all
-> grouped together with the previous line so it looks like a possible
-> stray addition to the code? And after this there's an early exit from
-> the function if the PLL is already running, so we would put the PLL into
-> bypass and then return? What's going on here?
+On Tue, 11 Jun 2019, Sebastian Reichel wrote:
 
-Thanks for spotting that is wrong. I am not sure why this crept in , I
-am not supposed to change this, will fix it in v2
+> Hi,
+> 
+> On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> > Patch series introducing support for ROHM BD70528 PMIC
+> > [...]
+> 
+> I think all patches have been reviewed by the respective subsystem
+> maintainers. Lee, can you provide an immutable branch with the MFD
+> patches (1, 2, 4)? Looks like the other patches only depend on those
+> and can go through their respective subsystems.
+
+Yes.  It's on my TODO list.
+
+Would you prefer this method over me just taking them all and sending
+out a PR?  The latter is my usual flow, but I'm happy with either.
 
 -- 
-~Vinod
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
