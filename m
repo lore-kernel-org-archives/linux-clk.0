@@ -2,248 +2,112 @@ Return-Path: <SRS0=Rxbn=UL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983ACC31E46
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 10:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8393AC31E46
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 11:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9D92080A
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 10:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53FBD2082C
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 11:42:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JOwPNAVn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408721AbfFLKIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 06:08:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39520 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405946AbfFLKII (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:08:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 431AFAF81;
-        Wed, 12 Jun 2019 10:08:06 +0000 (UTC)
-Message-ID: <0722a6e21b17b1c54c81fb71e3237e60ae4819b6.camel@suse.de>
-Subject: Re: [PATCH v3 4/7] cpufreq: add driver for Raspbery Pi
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     mbrugger@suse.de, sboyd@kernel.org, eric@anholt.net,
-        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
-        ptesarik@suse.com, linux-rpi-kernel@lists.infradead.org,
-        ssuloev@orpaltech.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 12 Jun 2019 12:08:03 +0200
-In-Reply-To: <20190611175839.28351-5-nsaenzjulienne@suse.de>
-References: <20190611175839.28351-1-nsaenzjulienne@suse.de>
-         <20190611175839.28351-5-nsaenzjulienne@suse.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-NucUMhJDBaNTXXV5xvf1"
-User-Agent: Evolution 3.32.2 
+        id S2406569AbfFLLmN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 07:42:13 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51272 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405753AbfFLLmN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 07:42:13 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5CBg7Y9056114;
+        Wed, 12 Jun 2019 06:42:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560339727;
+        bh=X9GWetnFoc3lyVeRgvGF28lI3oaQo9eTrBsWyExDUsY=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=JOwPNAVnxPF8akyfccJUGpSBZo4oNldJl+MyiUHAT5DGSW/s9vcEhctlJ9WhTQPW5
+         TTQljSJOcLcJ17Dw0D6E1MKSuICjjmW/1EzApRD9jSwR3dcPwuGKGLv4HYZzFF2fNN
+         HjHF9IEG795+FbYjvIde6Jkt8Cwpa98RqlZu6Ius=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5CBg63t037191
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Jun 2019 06:42:07 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 12
+ Jun 2019 06:42:06 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 12 Jun 2019 06:42:06 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5CBg4hW126419;
+        Wed, 12 Jun 2019 06:42:05 -0500
+Subject: Re: [GIT PULL] clk: keystone: changes for 5.3
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <santosh.shilimkar@oracle.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <3bd8aa21-60a5-f36a-b86f-425ce4f0163e@ti.com>
+ <fe1da566-d8f4-8f53-cad7-d3b2a6e2c638@oracle.com>
+ <885237d4-c7ce-3d08-472b-55cc12561e47@ti.com>
+Message-ID: <220b6f41-9eb9-0b7b-4113-d93ec4b5aed1@ti.com>
+Date:   Wed, 12 Jun 2019 14:42:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <885237d4-c7ce-3d08-472b-55cc12561e47@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 11/06/2019 10:24, Tero Kristo wrote:
+> On 10/06/2019 20:17, santosh.shilimkar@oracle.com wrote:
+>> On 6/10/19 5:13 AM, Tero Kristo wrote:
+>>> Hi Stephen, Mike, Santosh,
+>>>
+>>> Here's a pull request for the clock changes for keystone SoC for 5.3. 
+>>> The patches were acked by Santosh, so I took liberty to create a 
+>>> pull-request for these also. I snipped patch #5 out of the series (it 
+>>> is against drivers/firmware) and am planning to send a separate 
+>>> pull-request for this, or alternatively agree with Santosh how to 
+>>> handle it.
+>>>
+>> [...]
+>>>
+>>> The following changes since commit 
+>>> a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+>>>
+>>>    Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+>>>
+>>> are available in the git repository at:
+>>>
+>>>    git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
+>>> tags/keystone-clk-for-5.3
+>>>
+>> Am assuming Mike/Stephen will pick this up.
+> 
+> My email client accidentally picked up old email for Stephen, fixed now.
+> 
+> Stephen, do you want me to re-send this?
 
---=-NucUMhJDBaNTXXV5xvf1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Actually, please ignore this pull-req... I will send an updated one 
+which contains the firmware side change also. This seems like best 
+applied via clock tree to avoid any merge / cross dependency issues 
+between the two.
 
-On Tue, 2019-06-11 at 19:58 +0200, Nicolas Saenz Julienne wrote:
-> Raspberry Pi's firmware offers and interface though which update it's
-> performance requirements. It allows us to request for specific runtime
-> frequencies, which the firmware might or might not respect, depending on
-> the firmware configuration and thermals.
->=20
-> As the maximum and minimum frequencies are configurable in the firmware
-> there is no way to know in advance their values. So the Raspberry Pi
-> cpufreq driver queries them, builds an opp frequency table to then
-> launch cpufreq-dt.
->=20
-> Also, as the firmware interface might be configured as a module, making
-> the cpu clock unavailable during init, this implements a full fledged
-> driver, as opposed to most drivers registering cpufreq-dt, which only
-> make use of an init routine.
->=20
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Acked-by: Eric Anholt <eric@anholt.net>
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-
-Changes since v2:
-  - Round OPP rates
-
-> Changes since v1:
->   - Remove compatible checks
->   - Add module support, now full fledged driver
->   - Use NULL in clk_get()
->=20
->  drivers/cpufreq/Kconfig.arm           |  8 +++
->  drivers/cpufreq/Makefile              |  1 +
->  drivers/cpufreq/raspberrypi-cpufreq.c | 97 +++++++++++++++++++++++++++
->  3 files changed, 106 insertions(+)
->  create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
->=20
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 6f65b7f05496..56c31a78c692 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -142,6 +142,14 @@ config ARM_QCOM_CPUFREQ_HW
->  	  The driver implements the cpufreq interface for this HW engine.
->  	  Say Y if you want to support CPUFreq HW.
-> =20
-> +config ARM_RASPBERRYPI_CPUFREQ
-> +	tristate "Raspberry Pi cpufreq support"
-> +	depends on CLK_RASPBERRYPI || COMPILE_TEST
-> +	help
-> +	  This adds the CPUFreq driver for Raspberry Pi
-> +
-> +	  If in doubt, say N.
-> +
->  config ARM_S3C_CPUFREQ
->  	bool
->  	help
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 7bcda2273d0c..5a6c70d26c98 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+=3D pxa2xx-cpufreq.o
->  obj-$(CONFIG_PXA3xx)			+=3D pxa3xx-cpufreq.o
->  obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+=3D qcom-cpufreq-hw.o
->  obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+=3D qcom-cpufreq-kryo.o
-> +obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+=3D raspberrypi-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+=3D s3c2410-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+=3D s3c2412-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+=3D s3c2416-cpufreq.o
-> diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c
-> b/drivers/cpufreq/raspberrypi-cpufreq.c
-> new file mode 100644
-> index 000000000000..2bc7d9734272
-> --- /dev/null
-> +++ b/drivers/cpufreq/raspberrypi-cpufreq.c
-> @@ -0,0 +1,97 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Raspberry Pi cpufreq driver
-> + *
-> + * Copyright (C) 2019, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpufreq.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +
-> +#define RASPBERRYPI_FREQ_INTERVAL	100000000
-> +
-> +static struct platform_device *cpufreq_dt;
-> +
-> +static int raspberrypi_cpufreq_probe(struct platform_device *pdev)
-> +{
-> +	struct device *cpu_dev;
-> +	unsigned long min, max;
-> +	unsigned long rate;
-> +	struct clk *clk;
-> +	int ret;
-> +
-> +	cpu_dev =3D get_cpu_device(0);
-> +	if (!cpu_dev) {
-> +		pr_err("Cannot get CPU for cpufreq driver\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	clk =3D clk_get(cpu_dev, NULL);
-> +	if (IS_ERR(clk)) {
-> +		dev_err(cpu_dev, "Cannot get clock for CPU0\n");
-> +		return PTR_ERR(clk);
-> +	}
-> +
-> +	/*
-> +	 * The max and min frequencies are configurable in the Raspberry Pi
-> +	 * firmware, so we query them at runtime.
-> +	 */
-> +	min =3D roundup(clk_round_rate(clk, 0), RASPBERRYPI_FREQ_INTERVAL);
-> +	max =3D roundup(clk_round_rate(clk, ULONG_MAX),
-> RASPBERRYPI_FREQ_INTERVAL);
-> +	clk_put(clk);
-> +
-> +	for (rate =3D min; rate <=3D max; rate +=3D RASPBERRYPI_FREQ_INTERVAL) =
-{
-> +		ret =3D dev_pm_opp_add(cpu_dev, rate, 0);
-> +		if (ret)
-> +			goto remove_opp;
-> +	}
-> +
-> +	cpufreq_dt =3D platform_device_register_simple("cpufreq-dt", -1, NULL, =
-0);
-> +	ret =3D PTR_ERR_OR_ZERO(cpufreq_dt);
-> +	if (ret) {
-> +		dev_err(cpu_dev, "Failed to create platform device, %d\n", ret);
-> +		goto remove_opp;
-> +	}
-> +
-> +	return 0;
-> +
-> +remove_opp:
-> +	dev_pm_opp_remove_all_dynamic(cpu_dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int raspberrypi_cpufreq_remove(struct platform_device *pdev)
-> +{
-> +	struct device *cpu_dev;
-> +
-> +	cpu_dev =3D get_cpu_device(0);
-> +	if (cpu_dev)
-> +		dev_pm_opp_remove_all_dynamic(cpu_dev);
-> +
-> +	platform_device_unregister(cpufreq_dt);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Since the driver depends on clk-raspberrypi, which may return
-> EPROBE_DEFER,
-> + * all the activity is performed in the probe, which may be defered as w=
-ell.
-> + */
-> +static struct platform_driver raspberrypi_cpufreq_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "raspberrypi-cpufreq",
-> +	},
-> +	.probe          =3D raspberrypi_cpufreq_probe,
-> +	.remove		=3D raspberrypi_cpufreq_remove,
-> +};
-> +module_platform_driver(raspberrypi_cpufreq_driver);
-> +
-> +MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de");
-> +MODULE_DESCRIPTION("Raspberry Pi cpufreq driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:raspberrypi-cpufreq");
-
-
---=-NucUMhJDBaNTXXV5xvf1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl0AzwMACgkQlfZmHno8
-x/7XDwf6AmOp4z2If+9JyAnF9u7fjckQxW95msPdhyTenwMrGgbDfyVj1e/ll9jI
-rMRHVydv8Gi6mLQGb+GfY8z1awOkFZRHILG+cH82iyGCabWQKH/V9tFqvG4lLM/C
-lsTtGHKqW0yGn+dmw0A/Yj8CWPluaXEqqCVR3fWZEPwngqLPOuJOupRs2HkggRPa
-izeC8yLovNBlFT4DjQx7wnjDfoSYJfxDwGRwhiDVh8VCujVb6nqG+1d4nuKfIkCb
-J/SjEzmAMsGsoFtHKMEFbhXegEDPUU1eAIwTzckWPc/XxuzMvtseqfYYYzKoBuzo
-JfWawUIVoLH7JtMssfg8ViI4fOkoFw==
-=oVAV
------END PGP SIGNATURE-----
-
---=-NucUMhJDBaNTXXV5xvf1--
-
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
