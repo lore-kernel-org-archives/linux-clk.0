@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38223C31E46
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 09:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8180CC31E46
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 09:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00E7E20874
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 09:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D707208C2
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 09:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560331244;
-	bh=wOMJ9aM4tSyEIdMjxMkyFSSJTeyrR+hlsRS+FtmB2EE=;
+	s=default; t=1560331246;
+	bh=TqalOT6RU4JOZfiDL0C0YDqOJnKe84kysLBlQSgfPkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TxHFmAucCLZrOaE/rGTVUv3k54Vee5Od8aqdpsfrx2mqcmMKt4iEyJntGiXsOy8nF
-	 jTbC1UWSmgr3H83ELRLt92rcCMF4kTGVWgMmHPvlFOfQZX51sef7Xxu+ZrehOMuS5x
-	 BIhif0o0D1wQ0AGUq3wY7ziqhMRWIyBuK+j3KYvA=
+	b=raXULGhM9Fac147XSULR0iKdj06pwby4PSo3N5avX1PBq6pvjoXOhJk4+BQfB31FU
+	 t0fD4K1o4kAf5K1BjGjqpCGywTVcSe98U6cppbYYKeCXtC/K6YwrpX70o5y0FPZTmH
+	 CL2e9ciCgVAH5/xaPVuLKfIdDn2qlv93n4lSWyFI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406714AbfFLJUn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 05:20:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38622 "EHLO mail.kernel.org"
+        id S2436877AbfFLJUq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 05:20:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408705AbfFLJUn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:20:43 -0400
+        id S2436698AbfFLJUq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:20:46 -0400
 Received: from localhost.localdomain (unknown [106.200.205.167])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 751B120874;
-        Wed, 12 Jun 2019 09:20:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DFC0208C2;
+        Wed, 12 Jun 2019 09:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560331242;
-        bh=wOMJ9aM4tSyEIdMjxMkyFSSJTeyrR+hlsRS+FtmB2EE=;
+        s=default; t=1560331245;
+        bh=TqalOT6RU4JOZfiDL0C0YDqOJnKe84kysLBlQSgfPkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ucwNcsF9fFzm52dfqMbOLO2bEYmFH2ojYb2pLQaRNl8tZalYQ21g5hlWX+TRnGMK+
-         8wwDQ03J27J5NUNO/H+QuF/AkyfY2CSjOkeOVYUbbUyomGgXPRZGCzMgMXchFW1nZ+
-         o3LH3+8wGo3o5nt6JFZmMItEe9braSOyEQSY6X2A=
+        b=zoewmHeGO9DB/fz1vs803+8fAvzoU8zc7sIgynnTGpzwYQk3Jaww4vopBQH1yVEVW
+         S9VhrszpMLQ0LqQqkL+iARmMAhpCsvXquEi2t0YsqHk44BczOnItK76CtGsHnpegip
+         x4i4WxAIQXCqkwrDQGvdIZxdPfg7vW4YSqo9AlyM=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         David Brown <david.brown@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: qcom: clk-alpha-pll: Remove post_div_table checks
-Date:   Wed, 12 Jun 2019 14:47:19 +0530
-Message-Id: <20190612091722.9377-3-vkoul@kernel.org>
+Subject: [PATCH v2 3/5] clk: qcom: gcc-qcs404: Add MODULE_ALIAS
+Date:   Wed, 12 Jun 2019 14:47:20 +0530
+Message-Id: <20190612091722.9377-4-vkoul@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190612091722.9377-1-vkoul@kernel.org>
 References: <20190612091722.9377-1-vkoul@kernel.org>
@@ -59,54 +59,23 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We want users to code properly and fix the post_div_table missing and
-not reply on core to check. So remove the post_div_table check.
+MODULE_ALIAS was missing for this driver which can be built as a
+module, so add the MODULE_ALIAS.
 
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+ drivers/clk/qcom/gcc-qcs404.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index b48707693ffd..2c6773188761 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1036,11 +1036,6 @@ static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
- 	u32 i, div = 1, val;
- 	int ret;
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index a54807eb3b28..eb3ac7a26fb8 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -2828,3 +2828,4 @@ module_exit(gcc_qcs404_exit);
  
--	if (!pll->post_div_table) {
--		pr_err("Missing the post_div_table for the PLL\n");
--		return -EINVAL;
--	}
--
- 	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
- 	if (ret)
- 		return ret;
-@@ -1063,11 +1058,6 @@ static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
- {
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 
--	if (!pll->post_div_table) {
--		pr_err("Missing the post_div_table for the PLL\n");
--		return -EINVAL;
--	}
--
- 	return divider_round_rate(hw, rate, prate, pll->post_div_table,
- 				pll->width, CLK_DIVIDER_ROUND_CLOSEST);
- }
-@@ -1089,11 +1079,6 @@ static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
- 	if (val & PLL_VOTE_FSM_ENA)
- 		return 0;
- 
--	if (!pll->post_div_table) {
--		pr_err("Missing the post_div_table for the PLL\n");
--		return -EINVAL;
--	}
--
- 	div = DIV_ROUND_UP_ULL(parent_rate, rate);
- 	for (i = 0; i < pll->num_post_div; i++) {
- 		if (pll->post_div_table[i].div == div) {
+ MODULE_DESCRIPTION("Qualcomm GCC QCS404 Driver");
+ MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:gcc-qcs404");
 -- 
 2.20.1
 
