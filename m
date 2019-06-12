@@ -2,159 +2,248 @@ Return-Path: <SRS0=Rxbn=UL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98364C31E46
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 09:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983ACC31E46
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 10:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72566207E0
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 09:49:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EOISpQmt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jUP7os4j"
+	by mail.kernel.org (Postfix) with ESMTP id 6A9D92080A
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 10:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437583AbfFLJsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 05:48:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35540 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfFLJsz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 05:48:55 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 91AE96020A; Wed, 12 Jun 2019 09:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560332934;
-        bh=A5Q4nuwELYGPEsPIrnbKYM/7ycbeZUO8bLNEPplxKP4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EOISpQmtkRdbP7TYk/oMunKmp9D5WZQeue2/qI4s4fUHYLUI2np6EqiJXzsbCgxiI
-         +hNvMzvf3ZF8drF3xRrGeAofXI6+ZWWZW7qYJwLWiBMKSkrFBPd0C+w7HbGchpwv0R
-         9P7NXjypaMLC8dvkbdxUeaI9hoycPiMEQVDG1IuE=
-Received: from [10.201.2.161] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3C82E6020A;
-        Wed, 12 Jun 2019 09:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560332933;
-        bh=A5Q4nuwELYGPEsPIrnbKYM/7ycbeZUO8bLNEPplxKP4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jUP7os4jcFN03veZ3Wr9rOflWS/Gv9t7t/DDs3/Phz04lxOI1I1IYZhP8GWkeKVLf
-         HwdmFVVwUwBkfujUQfRazwZlcnCSsh3JK/jcPiN7azOgsylP/3i5ZIk0LEfhyTemIo
-         AQ9C0FuhgdNv7w0foiPlGo4DXg4QIWDSUXVx6D30=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C82E6020A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-To:     Christian Lamparter <chunkeey@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
- <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com>
- <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
- <4056907.DrFocau5Ix@debian64>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <1a00e8c8-d07c-3b02-8ea5-6d5f3e2c7b1a@codeaurora.org>
-Date:   Wed, 12 Jun 2019 15:18:48 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2408721AbfFLKIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 06:08:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39520 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2405946AbfFLKII (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:08:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 431AFAF81;
+        Wed, 12 Jun 2019 10:08:06 +0000 (UTC)
+Message-ID: <0722a6e21b17b1c54c81fb71e3237e60ae4819b6.camel@suse.de>
+Subject: Re: [PATCH v3 4/7] cpufreq: add driver for Raspbery Pi
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     stefan.wahren@i2se.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     mbrugger@suse.de, sboyd@kernel.org, eric@anholt.net,
+        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+        ptesarik@suse.com, linux-rpi-kernel@lists.infradead.org,
+        ssuloev@orpaltech.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 12 Jun 2019 12:08:03 +0200
+In-Reply-To: <20190611175839.28351-5-nsaenzjulienne@suse.de>
+References: <20190611175839.28351-1-nsaenzjulienne@suse.de>
+         <20190611175839.28351-5-nsaenzjulienne@suse.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-NucUMhJDBaNTXXV5xvf1"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-In-Reply-To: <4056907.DrFocau5Ix@debian64>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Christian,
 
-On 6/10/2019 5:45 PM, Christian Lamparter wrote:
-> On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
->> Hi Christian,
->>
->> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
->>> On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
->>>>
->>>> Add initial device tree support for the Qualcomm IPQ6018 SoC and
->>>> CP01 evaluation board.
->>>>
->>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->>>>
->>>> +       clocks {
->>>> +               sleep_clk: sleep_clk {
->>>> +                       compatible = "fixed-clock";
->>>> +                       clock-frequency = <32000>;
->>>> +                       #clock-cells = <0>;
->>>> +               };
->>>> +
->>> Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
->>> on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
->>> From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
->>> declares them at 32000 Hz. Since you probably have access to the BOM and
->>> datasheets. Can you please confirm what's the real clock frequency for
->>> the IPQ6018.
->>> (And maybe also for the sleep_clk of the IPQ4018 as well?).
->>>
->>
->> What exactly is the issue that you faced ?
->> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
-> 
-> We need just a confirmation.
-> 
-> Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
-> 
-> |		sleep_clk: sleep_clk {
-> |			compatible = "fixed-clock";
-> |			clock-frequency = <32768>;
-> |			#clock-cells = <0>;
-> |		};
-> 
-> <https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
-> 
-> Which makes sense, because all previous Qualcomm Atheros MIPS and the
-> future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
-> 
-> For example: The AR9344 derives the clock from the 25MHz/40MHz external
-> oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
-> Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
-> depending whenever the external reference crystal has 40MHz or 25MHz.
-> (1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
-> in "10.19.11 Derived RTC Clock". 
-> 
-> For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
-> <http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
-> "I was only able to verify for IPQ8072 that it had a 32.768 KHz
-> sleep clock." 
-> 
-> So this is pretty much "why there is an issue", it's confusing.
-> Is possible can you please look if there are (fixed) divisors values
-> listed in the documentation or the registers and bits that the values
-> are stored in? Because then we could just calculate it. 
-> 
+--=-NucUMhJDBaNTXXV5xvf1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Really sorry for the confusion. So looking little more, SLEEP_CLK is derived
-from an external 38.4MHZ crystal, it is 32.768 KHZ. Somehow the
-clk freq plan etc seems to mention them only as .032 MHZ and misses
-out. That means i will correct the patch for 32768 and probably the
-ipq8074.dtsi as well
+On Tue, 2019-06-11 at 19:58 +0200, Nicolas Saenz Julienne wrote:
+> Raspberry Pi's firmware offers and interface though which update it's
+> performance requirements. It allows us to request for specific runtime
+> frequencies, which the firmware might or might not respect, depending on
+> the firmware configuration and thermals.
+>=20
+> As the maximum and minimum frequencies are configurable in the firmware
+> there is no way to know in advance their values. So the Raspberry Pi
+> cpufreq driver queries them, builds an opp frequency table to then
+> launch cpufreq-dt.
+>=20
+> Also, as the firmware interface might be configured as a module, making
+> the cpu clock unavailable during init, this implements a full fledged
+> driver, as opposed to most drivers registering cpufreq-dt, which only
+> make use of an init routine.
+>=20
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Acked-by: Eric Anholt <eric@anholt.net>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Regards,
-  Sricharan
+Changes since v2:
+  - Round OPP rates
+
+> Changes since v1:
+>   - Remove compatible checks
+>   - Add module support, now full fledged driver
+>   - Use NULL in clk_get()
+>=20
+>  drivers/cpufreq/Kconfig.arm           |  8 +++
+>  drivers/cpufreq/Makefile              |  1 +
+>  drivers/cpufreq/raspberrypi-cpufreq.c | 97 +++++++++++++++++++++++++++
+>  3 files changed, 106 insertions(+)
+>  create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+>=20
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 6f65b7f05496..56c31a78c692 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -142,6 +142,14 @@ config ARM_QCOM_CPUFREQ_HW
+>  	  The driver implements the cpufreq interface for this HW engine.
+>  	  Say Y if you want to support CPUFreq HW.
+> =20
+> +config ARM_RASPBERRYPI_CPUFREQ
+> +	tristate "Raspberry Pi cpufreq support"
+> +	depends on CLK_RASPBERRYPI || COMPILE_TEST
+> +	help
+> +	  This adds the CPUFreq driver for Raspberry Pi
+> +
+> +	  If in doubt, say N.
+> +
+>  config ARM_S3C_CPUFREQ
+>  	bool
+>  	help
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 7bcda2273d0c..5a6c70d26c98 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -65,6 +65,7 @@ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+=3D pxa2xx-cpufreq.o
+>  obj-$(CONFIG_PXA3xx)			+=3D pxa3xx-cpufreq.o
+>  obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+=3D qcom-cpufreq-hw.o
+>  obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+=3D qcom-cpufreq-kryo.o
+> +obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+=3D raspberrypi-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+=3D s3c2410-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+=3D s3c2412-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+=3D s3c2416-cpufreq.o
+> diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c
+> b/drivers/cpufreq/raspberrypi-cpufreq.c
+> new file mode 100644
+> index 000000000000..2bc7d9734272
+> --- /dev/null
+> +++ b/drivers/cpufreq/raspberrypi-cpufreq.c
+> @@ -0,0 +1,97 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Raspberry Pi cpufreq driver
+> + *
+> + * Copyright (C) 2019, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpufreq.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +
+> +#define RASPBERRYPI_FREQ_INTERVAL	100000000
+> +
+> +static struct platform_device *cpufreq_dt;
+> +
+> +static int raspberrypi_cpufreq_probe(struct platform_device *pdev)
+> +{
+> +	struct device *cpu_dev;
+> +	unsigned long min, max;
+> +	unsigned long rate;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	cpu_dev =3D get_cpu_device(0);
+> +	if (!cpu_dev) {
+> +		pr_err("Cannot get CPU for cpufreq driver\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	clk =3D clk_get(cpu_dev, NULL);
+> +	if (IS_ERR(clk)) {
+> +		dev_err(cpu_dev, "Cannot get clock for CPU0\n");
+> +		return PTR_ERR(clk);
+> +	}
+> +
+> +	/*
+> +	 * The max and min frequencies are configurable in the Raspberry Pi
+> +	 * firmware, so we query them at runtime.
+> +	 */
+> +	min =3D roundup(clk_round_rate(clk, 0), RASPBERRYPI_FREQ_INTERVAL);
+> +	max =3D roundup(clk_round_rate(clk, ULONG_MAX),
+> RASPBERRYPI_FREQ_INTERVAL);
+> +	clk_put(clk);
+> +
+> +	for (rate =3D min; rate <=3D max; rate +=3D RASPBERRYPI_FREQ_INTERVAL) =
+{
+> +		ret =3D dev_pm_opp_add(cpu_dev, rate, 0);
+> +		if (ret)
+> +			goto remove_opp;
+> +	}
+> +
+> +	cpufreq_dt =3D platform_device_register_simple("cpufreq-dt", -1, NULL, =
+0);
+> +	ret =3D PTR_ERR_OR_ZERO(cpufreq_dt);
+> +	if (ret) {
+> +		dev_err(cpu_dev, "Failed to create platform device, %d\n", ret);
+> +		goto remove_opp;
+> +	}
+> +
+> +	return 0;
+> +
+> +remove_opp:
+> +	dev_pm_opp_remove_all_dynamic(cpu_dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int raspberrypi_cpufreq_remove(struct platform_device *pdev)
+> +{
+> +	struct device *cpu_dev;
+> +
+> +	cpu_dev =3D get_cpu_device(0);
+> +	if (cpu_dev)
+> +		dev_pm_opp_remove_all_dynamic(cpu_dev);
+> +
+> +	platform_device_unregister(cpufreq_dt);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Since the driver depends on clk-raspberrypi, which may return
+> EPROBE_DEFER,
+> + * all the activity is performed in the probe, which may be defered as w=
+ell.
+> + */
+> +static struct platform_driver raspberrypi_cpufreq_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "raspberrypi-cpufreq",
+> +	},
+> +	.probe          =3D raspberrypi_cpufreq_probe,
+> +	.remove		=3D raspberrypi_cpufreq_remove,
+> +};
+> +module_platform_driver(raspberrypi_cpufreq_driver);
+> +
+> +MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de");
+> +MODULE_DESCRIPTION("Raspberry Pi cpufreq driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:raspberrypi-cpufreq");
 
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+--=-NucUMhJDBaNTXXV5xvf1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl0AzwMACgkQlfZmHno8
+x/7XDwf6AmOp4z2If+9JyAnF9u7fjckQxW95msPdhyTenwMrGgbDfyVj1e/ll9jI
+rMRHVydv8Gi6mLQGb+GfY8z1awOkFZRHILG+cH82iyGCabWQKH/V9tFqvG4lLM/C
+lsTtGHKqW0yGn+dmw0A/Yj8CWPluaXEqqCVR3fWZEPwngqLPOuJOupRs2HkggRPa
+izeC8yLovNBlFT4DjQx7wnjDfoSYJfxDwGRwhiDVh8VCujVb6nqG+1d4nuKfIkCb
+J/SjEzmAMsGsoFtHKMEFbhXegEDPUU1eAIwTzckWPc/XxuzMvtseqfYYYzKoBuzo
+JfWawUIVoLH7JtMssfg8ViI4fOkoFw==
+=oVAV
+-----END PGP SIGNATURE-----
+
+--=-NucUMhJDBaNTXXV5xvf1--
+
