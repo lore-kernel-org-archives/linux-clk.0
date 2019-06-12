@@ -2,81 +2,94 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42028C31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F9BC31E45
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B0982063F
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:09:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qEi0As9F"
+	by mail.kernel.org (Postfix) with ESMTP id 4EFB1205ED
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560445841;
+	bh=z/CM3q0QFgMafRlvcoS3yJRC23xA3AlrEPJbgJvH5jU=;
+	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
+	b=h7XeZ/I2x2W23lAjZGXpefQ2nZapvqLwgdRasZosMc++tW70cFchZXqZmmoUzgyYw
+	 MSS2sj55zgr1iClnvKnB+ibvT6PNczDmk5QxYLPLY9rMtOwgmUdQ8JgA01PHoExYty
+	 Dpuuw/29oBfVvIVf1SenLzPh5lwg1pd9TzBdWjIk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbfFMRDl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 13:03:41 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33859 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389334AbfFMRDj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 13:03:39 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m29so23405950qtu.1
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2019 10:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=+fM9s+ZRu6a19ZVI0lc0MDu5AlmUc3QAgWfYbHMegA8=;
-        b=qEi0As9FjslOUPyhy3Net8r6QbVgxoEl6gBQAvYjq4/nRnz7G3BE7He7EpNC/OXmBy
-         q55XHN5KFNJpcOA/O+b9YOeBjoC219W355lHTG2oxWTzi/fcPQ6E9vhYB+iC8NgRq4vm
-         8sURicPrA7zOoCFDeJl/egMR5HLgU9Sb2DueqkXvjKTLguUlVuG7RRu7zsTBhnkYIvgt
-         fIPop3Ujnh2MeBfj1OeDEtCATPphFRkp3elQDHPRJ0z3FhRyAgHQPoweAVLo0ieppyRD
-         X+OWwLS7qqUfYtLrO02SWcySfoUVqHpYZXmMiw2l0gDYKfHOvOm6EfIx7oInZIi+Guh/
-         +X4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=+fM9s+ZRu6a19ZVI0lc0MDu5AlmUc3QAgWfYbHMegA8=;
-        b=lhbxJbx/mHjcpr2g0kzC/2ThkUvopQ+GR+00My1NFsZytV2CXVpJ0Z6thzFGSFQVS9
-         K2/SD/Flg/j9omKc+OHKrz6ZrSgq7VxzhvGFhDjAbJJXyR0yAq+r3FrbywF5f3X9Mm5c
-         dL2qbgSqkGlPlZdDjgMg0emSRcX3V5L4eLHTRcV8JWeWBHMQghdWmysLyG7dKBDGXG1J
-         sKgxyPWv0qhMDEnfg6e9Nrg635nl81a+U0dCYj3ggTKdVcSdEp7XCagIu6CI4RNAWdQA
-         Ba7pdSEq6w16ZklGG4pudoNqp3GoQ7Hi9BAphPr4g9wGlhbFs7zovMbMYA5GZi4oFS2I
-         6XFQ==
-X-Gm-Message-State: APjAAAW6xIWwM6DlQj+lB8WItphiWbWv+HuOFRbW0NvRQUNG8QvBdtgH
-        8DWh5p1tafOn7BcoYhTbyocsgNrYIJ8AD0ynDT2f1Q==
-X-Google-Smtp-Source: APXvYqxiy5kouzZBRbpjgIdOzVKd074tyypO+LFeT69dim/yHszXr0rChCoWGVx/P0+4hEwdMRtozIq6/hSSH8DadPI=
-X-Received: by 2002:a0c:ba21:: with SMTP id w33mr4559727qvf.122.1560445418047;
- Thu, 13 Jun 2019 10:03:38 -0700 (PDT)
+        id S2393543AbfFMRKk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 13:10:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729338AbfFLWmz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Jun 2019 18:42:55 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E2EA215EA;
+        Wed, 12 Jun 2019 22:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560379374;
+        bh=z/CM3q0QFgMafRlvcoS3yJRC23xA3AlrEPJbgJvH5jU=;
+        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
+        b=it7bebKmAU/aYbWt4bSiJsGg/sdkB5rSyh++hpwiSLWNO4i6j1hMYOfxYp7/GEA4+
+         h2+nhiwQjFPzHccevwb1HC7ZkmI5eAqJw7haeVx8s/D2dlyC3GCGyuDksWlEerLwhw
+         HWYRn+EMAcof7ivCZNgh8EWiOQedlZRd/8gYbcoU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From:   Nathan Huckleberry <nhuck@google.com>
-Date:   Thu, 13 Jun 2019 10:03:27 -0700
-Message-ID: <CAJkfWY4aYAwUWMGu02=0ibae05Qo3_Yqy-Q0eFw0k=2torhEHQ@mail.gmail.com>
-Subject: Cleanup of -Wunused-const-variable in drivers/clk/rockchip/clk-rv1108.c
-To:     shawn.lin@rock-chips.com,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        heiko@sntech.de
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <dc11a192-f8c6-f90f-8214-303291b03258@free.fr>
+References: <49b95f19-4da6-4491-6ed7-5238ecfc35a8@free.fr> <20190612191347.GE22737@tuxbook-pro> <20190612194915.8F5DD20866@mail.kernel.org> <dc11a192-f8c6-f90f-8214-303291b03258@free.fr>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH v1] clk: qcom: msm8916: Don't build support by default
+User-Agent: alot/0.8.1
+Date:   Wed, 12 Jun 2019 15:42:53 -0700
+Message-Id: <20190612224254.4E2EA215EA@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hey all,
+Quoting Marc Gonzalez (2019-06-12 13:03:22)
+> On 12/06/2019 21:49, Stephen Boyd wrote:
+>=20
+> > Quoting Bjorn Andersson (2019-06-12 12:13:47)
+> >
+> >> On Wed 12 Jun 08:52 PDT 2019, Marc Gonzalez wrote:
+> >>
+> >>> Build QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 by default only when
+> >>> we're building MSM_GCC_8916.
+> >>>
+> >>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> >>
+> >> Not sure why these are default at all.
+> >>
+> >> But both drivers are used on platforms other than 8916 as well, so if
+> >> anything a fix would be to rename the APCS_MSM8916 to something more
+> >> generic (such as QCOM_CLK_APCS_GLOBAL) - but then the content should be
+> >> updated and the APCS mailbox driver as well...
+> >=20
+> > I don't see any use in being this specific. I'd prefer we just leave
+> > this at the ARCH_FOO config level and not try anything more fancy.
+>=20
+> As Bjorn pointed out, why do these default "on" at all?
+>=20
+> https://elixir.bootlin.com/linux/latest/source/drivers/clk/qcom/Kconfig
+>=20
+> There are dozens of config knobs in drivers/clk/qcom/Kconfig
+> and only these two force the default.
+>=20
+> Let's remove the default altogether.
+>=20
 
-I'm looking into cleaning up ignored warnings in the kernel so we can
-remove compiler flags to ignore warnings. There's a variable
-(mux_pll_src_3plls_p) in clk-rv1108.c causing an unused const warning.
-Just wanted to reach out to ask if this variable is intended to be
-used.
+Sure.
 
-It doesn't look like it has been used since it was first introduced.
-If it is no longer needed I'd like to remove it.
-
-https://github.com/ClangBuiltLinux/linux/issues/524
-
-Thanks,
-Nathan Huckleberry
