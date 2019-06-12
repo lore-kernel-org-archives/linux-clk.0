@@ -2,116 +2,121 @@ Return-Path: <SRS0=Rxbn=UL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612C1C31E47
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 18:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345ACC31E46
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 19:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A7220896
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 18:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0813920B7C
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 19:10:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jHsuUnH0";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="huWUrGFl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfFLSZQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 14:25:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35240 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725497AbfFLSZQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:25:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9B2CAFFA;
-        Wed, 12 Jun 2019 18:25:14 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, linux-kernel@vger.kernel.org
-Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, eric@anholt.net, f.fainelli@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, ptesarik@suse.com,
-        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mturquette@baylibre.com, linux-pm@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v4 0/7] cpufreq support for Raspberry Pi
-Date:   Wed, 12 Jun 2019 20:24:52 +0200
-Message-Id: <20190612182500.4097-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727826AbfFLTKV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 15:10:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43990 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbfFLTKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 15:10:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7E48D60DAD; Wed, 12 Jun 2019 19:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560366620;
+        bh=PpXzJTcv8ItycyJTxzjx96xBpUQ+9JUzvtL8caAD2b4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jHsuUnH0IN/rWOzEPzsP4FTNnTIz2csMvFTh3+xmkJfaixp71MCv72/qMqILVOCzd
+         1uJ3OF+DdY6ukGi7BMrWaKEBW6Ab0GDD9qMkbaEumPxjVqj1SKhFnBeFcg78RbH9+b
+         oVVm6P0NdvNvJjTnOapBITnzDuW8JxGvXiA++OlE=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B6C8C60DAB;
+        Wed, 12 Jun 2019 19:10:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560366619;
+        bh=PpXzJTcv8ItycyJTxzjx96xBpUQ+9JUzvtL8caAD2b4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=huWUrGFlOUjsO4RjExq4Cy2hh+dNiS55XhKDTQriqE2QzSJyOmeF68j9fmh2IP3YD
+         +XuZ8FonCYvyK3+oRct2dLHxGn4UAdzyZ1CKpT9PerngQ0nr016/GFbm3koSbrc+te
+         HSPpRajmf0RpsdhcGPa+y6NvyoINQXtLbhaVCqTE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6C8C60DAB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v5 0/6] MSM8998 Multimedia Clock Controller
+Date:   Wed, 12 Jun 2019 13:10:00 -0600
+Message-Id: <1560366600-5826-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
-this aims at adding cpufreq support to the Raspberry Pi family of
-boards.
+The multimedia clock controller (mmcc) is the main clock controller for
+the multimedia subsystem and is required to enable things like display and
+camera.
 
-The series first factors out 'pllb' from clk-bcm2385 and creates a new
-clk driver that operates it over RPi's firmware interface[1]. We are
-forced to do so as the firmware 'owns' the pll and we're not allowed to
-change through the register interface directly as we might race with the
-over-temperature and under-voltage protections provided by the firmware.
+v5:
+-handle the case where gcc uses rpmcc for xo, but the link is not specified in dt
+-have gcc select rpmcc
 
-Next it creates a minimal cpufreq driver that populates the CPU's opp
-table, and registers cpufreq-dt. Which is needed as the firmware
-controls the max and min frequencies available.
+v4:
+-fix makefile to use correct config item
+-pick up tags
+-fix ordering of clocks and clock-names in dt
+-drop MODULE_ALIAS
+-wait for xo in mmcc since that was found to be useful in some debug configs
 
-This was tested on a RPi3b+ and RPI2b, both using multi_v7_defconfig and
-arm64's defconfig.
+v3:
+-Rebase onto linux-next to get the final version of the clk parent rewrite
+series
+-Moved the bindings header to the bindings patch per Rob
+-Made xo manditory for GCC to work around the lack of clk orphan probe defer
+to avoid the uart console glitch
 
-That's all,
-kind regards,
-Nicolas
+v2:
+-Rebased on the "Rewrite clk parent handling" series and updated to the clk init
+mechanisms introduced there.
+-Marked XO clk as CLK_IGNORE_UNUSED to avoid the concern about the XO going away
+"incorrectly" during late init
+-Corrected the name of the XO clock to "xo"
+-Dropped the fake XO clock in GCC to prevent a namespace conflict
+-Fully enumerated the external clocks (DSI PLLs, etc) in the DT binding
+-Cleaned up the weird newlines in the added DT node
+-Added DT header file to msm8998 DT for future clients
 
-[1] https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
+Jeffrey Hugo (6):
+  dt-bindings: clock: Document external clocks for MSM8998 gcc
+  arm64: dts: msm8998: Add xo clock to gcc node
+  clk: qcom: smd: Add XO clock for MSM8998
+  dt-bindings: clock: Add support for the MSM8998 mmcc
+  clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+  arm64: dts: qcom: msm8998: Add mmcc node
 
----
-
-Changes since v3:
-  - Fix sparse warnings in clk-raspberrypi.c
-  - Minor cleanups
-
-Changes since v2:
-  - Fixed configs to match Stefan's comments
-  - Round OPP frequencies
-  - Rebase onto linux-next
-  - Minor cleanups & checkpatch.pl
-
-Changes since v1:
-  - Enabled by default on the whole family of devices
-  - Added/Fixed module support
-  - clk device now registered by firmware driver
-  - raspberrypi-cpufreq device now registered by clk driver
-  - Reimplemented clk rounding unsing determine_rate()
-  - Enabled in configs for arm and arm64
-
-Changes since RFC:
-  - Move firmware clk device into own driver
-
-Nicolas Saenz Julienne (7):
-  clk: bcm2835: remove pllb
-  clk: bcm283x: add driver interfacing with Raspberry Pi's firmware
-  firmware: raspberrypi: register clk device
-  cpufreq: add driver for Raspberry Pi
-  clk: raspberrypi: register platform device for raspberrypi-cpufreq
-  ARM: defconfig: enable cpufreq driver for RPi
-  arm64: defconfig: enable cpufreq support for RPi3
-
- arch/arm/configs/bcm2835_defconfig    |   9 +
- arch/arm/configs/multi_v7_defconfig   |   2 +
- arch/arm64/configs/defconfig          |   2 +
- drivers/clk/bcm/Kconfig               |   7 +
- drivers/clk/bcm/Makefile              |   1 +
- drivers/clk/bcm/clk-bcm2835.c         |  28 +--
- drivers/clk/bcm/clk-raspberrypi.c     | 315 ++++++++++++++++++++++++++
- drivers/cpufreq/Kconfig.arm           |   8 +
- drivers/cpufreq/Makefile              |   1 +
- drivers/cpufreq/raspberrypi-cpufreq.c |  97 ++++++++
- drivers/firmware/raspberrypi.c        |  10 +
- 11 files changed, 456 insertions(+), 24 deletions(-)
- create mode 100644 drivers/clk/bcm/clk-raspberrypi.c
- create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+ .../devicetree/bindings/clock/qcom,gcc.txt    |   10 +
+ .../devicetree/bindings/clock/qcom,mmcc.txt   |   21 +
+ arch/arm64/boot/dts/qcom/msm8998.dtsi         |   16 +
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-smd-rpm.c                |   24 +-
+ drivers/clk/qcom/gcc-msm8998.c                |   29 +-
+ drivers/clk/qcom/mmcc-msm8998.c               | 2915 +++++++++++++++++
+ include/dt-bindings/clock/qcom,mmcc-msm8998.h |  210 ++
+ 9 files changed, 3214 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
 
 -- 
-2.21.0
+2.17.1
 
