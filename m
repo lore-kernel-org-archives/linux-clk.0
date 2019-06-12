@@ -2,106 +2,86 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE28C31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18884C31E4A
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEAF120665
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:55:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zqq8iBgd"
+	by mail.kernel.org (Postfix) with ESMTP id DB9B82080A
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560445391;
+	bh=+tsGRqVHjeMRxsoBEL+dBhG2hHJk5zEZ/qrS5yPoAuc=;
+	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
+	b=kwRJALXVj5ShjDl/kFcvd3Mupz7HI83ZB8y0wRo+PU3zeou0rNlxrwJWOYdyasYOb
+	 Y0Gq1zgIpUxxELyzgL4htrOo0j4w6y6AcudKFyQLOQnR4aOGLmMSYTXkPmebM2uNDV
+	 91XE7/t1xMclrnbkfLv9iOkdICTPNbzcfkx+15rQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392867AbfFMQze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:55:34 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37332 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729999AbfFMQzd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 12:55:33 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y57so23396846qtk.4
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2019 09:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cpeR1oqDMBZUpG954pBrUTTYYcn3Zggg2IBtHJxA5v4=;
-        b=Zqq8iBgdsPVPJLY4JGsFEQwdaxwUciGd2Fc5ZKjNs5jgV0Pu0qQ4GOxcUsMI/XM1bM
-         s2K4nQnJRAjktThjAVg+9xli/pUYEzrr9r5pyf8JN0ERtXwIjdz9JZr26sAWQm3PnuhU
-         fHlLpLHENwwr84jPnidvMqH07WJ+FXj/edyclsk/5Z83gjRf2p0qJMOXcXe04qO2TTQM
-         Paa3Hd2vsAa2oHswH87np/Sxkwi4jRwyeb/pAc9ThMgpOgmMWMCq1TLtghGHL8wnA5dV
-         NTz8Xt3LHq7CtAW2EciK3dRzh/h2aBYuLpp7IGRJOu3AWGBB2BvGtzuFKk2g6xydakGR
-         rhdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cpeR1oqDMBZUpG954pBrUTTYYcn3Zggg2IBtHJxA5v4=;
-        b=Cx82zLehgDyKpFDi5fRbFfRYPiXBQUJZlZ3zXhjyBiBSopy6hoMfSAuhaHz+tzNzuM
-         Sw0e2nUxyt3L93+gKGsuY34bbU2DulL1+0vA6gwrK/koarKJPagqdGQBm1Erk36ReGF3
-         /rLGiVsY2BXyrocG5JbnLjsNkcpoxH2mun81ltZpOuYTaXYKtbAXX1wKc+YgoRkbLXJ7
-         waUIi1Ptc1nSlNLxegiG/Cn/P43Ez735sP52VuAUBVInhhSeltBBvyeP8Qe7DbOKZ/HE
-         NNG6aOBw/wId5qQaek7mm29TQcGdEY3kvmJGPD7yHkWdK35E66b9C4K/8PfdW+l7e+lV
-         tdGg==
-X-Gm-Message-State: APjAAAU85XCkJ1GU+6Jwjf0RSdN8KjOfrCS1joY1DVeZaaeAYSeHFpKd
-        Tb6amtFXnFsm5CEmlo5AJxr7/mv5IeNuJaaB73/TeQ==
-X-Google-Smtp-Source: APXvYqz86ouH7qW11YhIdQ+/pUkNlNb42R0tYC+q9OD3ZyZ2tlhUGh65ELc9Aj3l+yGRkQyoKy8wbukUoOx4aP/oyNA=
-X-Received: by 2002:a0c:afeb:: with SMTP id t40mr4514204qvc.28.1560444932838;
- Thu, 13 Jun 2019 09:55:32 -0700 (PDT)
+        id S1726743AbfFMRDK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 13:03:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729473AbfFLXCB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Jun 2019 19:02:01 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3692F20896;
+        Wed, 12 Jun 2019 23:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560380521;
+        bh=+tsGRqVHjeMRxsoBEL+dBhG2hHJk5zEZ/qrS5yPoAuc=;
+        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
+        b=NWGxbm9OnP2Jw3us2CHmadnvpCXRaGa3/QohdvbyGHjdaV8G8tSOlnesslaFSK2Zo
+         8gpdUppUf16bSiZPYswEgH6kSoImMPPQZ6jxzxLsSLgs/fGgzwj6sodPHq/x6L+y/A
+         aqiW2dPzdE1elJI/Bo0mP9EJHRl0p7O+ltL0uw1A=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CAJkfWY5eShXAr6QyFjqyaL-JjgQ+OKU0LtComURBVf_sDCqGeA@mail.gmail.com>
-In-Reply-To: <CAJkfWY5eShXAr6QyFjqyaL-JjgQ+OKU0LtComURBVf_sDCqGeA@mail.gmail.com>
-From:   Nathan Huckleberry <nhuck@google.com>
-Date:   Thu, 13 Jun 2019 09:55:22 -0700
-Message-ID: <CAJkfWY7=JKBub9W9q85cqQhZ1P3VT02CMOHaSyNsHebW4-xikQ@mail.gmail.com>
-Subject: Re: Cleanup of -Wunused-const-variable in drivers/clk/mediatek/clk-mt8516.c
-To:     fparent@baylibre.com, Michael Turquette <mturquette@baylibre.com>,
-        matthias.bgg@gmail.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a834836da8de689ec541093f3226a853af001fe4.camel@baylibre.com>
+References: <a834836da8de689ec541093f3226a853af001fe4.camel@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [GIT PULL] clk: meson: fixes for v5.2
+User-Agent: alot/0.8.1
+Date:   Wed, 12 Jun 2019 16:02:00 -0700
+Message-Id: <20190612230201.3692F20896@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hey all,
+Quoting Jerome Brunet (2019-06-11 05:23:33)
+> Dear clock maintainers,
+>=20
+> Below is a request to pull a couple of fixes on Amlogic clocks for v5.2
+> These are typos in recently added clocks, the most annoying one being in
+> the DT binding identifier on the MPLL50M which is used by the network PLL.
+>=20
+> Regards
+>=20
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0eb=
+d9:
+>=20
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://github.com/BayLibre/clk-meson.git tags/clk-meson-5.2-1-fixes
+>=20
+> for you to fetch changes up to 3ff46efbcd90d3d469de8eddaf03d12293aaa50c:
+>=20
+>   clk: meson: meson8b: fix a typo in the VPU parent names array variable =
+(2019-05-20 12:11:08 +0200)
+>=20
+> ----------------------------------------------------------------
 
-I'm looking into cleaning up ignored warnings in the kernel so we can
-remove compiler flags to ignore warnings. There's a variable
-(ddrphycfg_parents) in clk-mt8516.c causing an unused const warning.
-Just wanted to reach out to ask if this variable is intended to be
-used.
+Thanks. Pulled into clk-next.
 
-It doesn't look like it has been used since it was first introduced.
-If it is no longer needed I'd like to remove it.
-
-https://github.com/ClangBuiltLinux/linux/issues/523
-
-Thanks,
-Nathan Huckleberry
-
-Re-sent in plaintext so mailing lists pick it up.
-
-
-On Thu, Jun 13, 2019 at 9:47 AM Nathan Huckleberry <nhuck@google.com> wrote=
-:
->
-> Hey all,
->
-> I'm looking into cleaning up ignored warnings in the kernel so we can rem=
-ove compiler flags to ignore warnings. There's a variable (ddrphycfg_parent=
-s) in clk-mt8516.c causing an unused const warning. Just wanted to reach ou=
-t to ask if this variable is intended to be used.
->
-> It doesn't look like it has been used since it was first introduced. If i=
-t is no longer needed I'd like to remove it.
->
-> https://github.com/ClangBuiltLinux/linux/issues/523
->
-> Thanks,
-> Nathan Huckleberry
