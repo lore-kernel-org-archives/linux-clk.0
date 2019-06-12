@@ -2,111 +2,111 @@ Return-Path: <SRS0=Rxbn=UL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AC9C31E46
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 19:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95964C31E46
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 19:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0761215EA
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 19:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 638C520866
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jun 2019 19:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Y18tx6kC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GBXD1+Mz"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="jCItuHIq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfFLTNa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jun 2019 15:13:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46820 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfFLTNa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 15:13:30 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4223E60DAB; Wed, 12 Jun 2019 19:13:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560366809;
-        bh=rrkZxoygQH/v8ARsngpOhTOqBfIXl3bsffCMyVrCKKk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y18tx6kCTxYem8FPyJNz4qiHS4UMXhrMMiyFCrcOraJbw+Wt81jTeMhL+RA7zg93J
-         oP8m7JS4FHFGSrNW5CuJyQ93fjm94NAl1p3hAGn43wHkFrhwmHnE1UxTpTBlole7gO
-         7LmUPTsPnB3hEVBAExw/+ONzzH0HLH8CpeJQ4qRI=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1AABF60237;
-        Wed, 12 Jun 2019 19:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560366806;
-        bh=rrkZxoygQH/v8ARsngpOhTOqBfIXl3bsffCMyVrCKKk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GBXD1+MzabYYY7BF/e1ARNeIFI3TKAWvUR/yH3QyDIf93mU/DRxqs8h+U+kEpKI/G
-         ESGvxRLNelvL4ShdfbrpwbFjNCWKm7qPRmpCNf7vDNmfrbMtC9So9mh6VUWFiaHxtk
-         IJObXCF7DmmBZo/b4ax8Q3gsQwcoj//emHu0aPY8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1AABF60237
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org
-Cc:     marc.w.gonzalez@free.fr, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v5 6/6] arm64: dts: qcom: msm8998: Add mmcc node
-Date:   Wed, 12 Jun 2019 13:13:17 -0600
-Message-Id: <1560366797-6155-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560366600-5826-1-git-send-email-jhugo@codeaurora.org>
-References: <1560366600-5826-1-git-send-email-jhugo@codeaurora.org>
+        id S1728124AbfFLTrU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jun 2019 15:47:20 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37263 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727924AbfFLTrT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 15:47:19 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t76so12610499oih.4;
+        Wed, 12 Jun 2019 12:47:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=EwdJu4okQ0L+2u52FXeBDXEGzF/ps8ei03aC+UR7txM=;
+        b=jCItuHIqjcFP/izwsSFnf5iZ4EN8OEZMF4/+XoTAcFGTIvjn8FEFSDtrZZEXarIJht
+         XFvZdFpsTYx2UKP8PreoZMEQCIurJCAtxHYRQnD1cDiUz4rMk9IZ5jwLjsMkH6YwbfV8
+         JK7juYY/NCn4SQ+bolXDhhhULZdOmNaiTFX6lctDPTgbJ6gXu4x0ppbCc25UIyEGVQtp
+         oUF9u4OeEsxLsGYmWkYR/KK1cMA1rXxJ0a5UKjCDFAyN28VcUBpUKp09Cc2KrkGEUmwm
+         uhHb8XCubFuUi3Xf0TqPGnVSzGzpC6kjENt0cAfNwGqVy32ibiYbhHmkyb1DMkDKOBAr
+         C6pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=EwdJu4okQ0L+2u52FXeBDXEGzF/ps8ei03aC+UR7txM=;
+        b=gXvgu8JXznQEOFUpkx3VQfZjre+qsxVSkSBWDeUeBCAx+ys68pIDj4Ks4FFIp4e/EJ
+         h+29HGMkoN60nArVODe7tR82MRa/3xynbqA2OEyay4xYMVsr/WVf8i+opHErm/x2Ve5s
+         5aJVYFFiNZYiFbOCaKfTPDrj1QfA+tr4+S2r/S3B3SD+xOtBL8WLlZ1hnkEnazyYlHB6
+         rHPU9ch8Ec9RjpgBdQ3lN9pJ0cdLMfEEOrlq1s76JLnqGtTyN2c+Jh/BsdZM2mKCI6Xr
+         KI6KmB8WhZB7+6Uu90vdrx+NMy4sC+EbyxqTjDq0S4y75Cn6lKc9NP0b9wNrP5/VFLRv
+         bVkQ==
+X-Gm-Message-State: APjAAAV6COKj6NLHhODnvxQeOxKTcs5CoINdV83wKQno45B4DnQlaWnr
+        auVjru0VupKoyars4LLFR8Dlgmrj8npApSvu+VU=
+X-Google-Smtp-Source: APXvYqxI6uMKFy/wojvtvvvIYK/SGmxdGD9fTWk5+T6YyUI+oS3PdPTdR1rtH6s0f//6So6WdhsACfIUlxQ2vDXFdDk=
+X-Received: by 2002:aca:f144:: with SMTP id p65mr598979oih.47.1560368838921;
+ Wed, 12 Jun 2019 12:47:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190608180626.30589-1-martin.blumenstingl@googlemail.com>
+ <20190608180626.30589-5-martin.blumenstingl@googlemail.com> <20190611163318.tfb5c4jbekjybj76@pengutronix.de>
+In-Reply-To: <20190611163318.tfb5c4jbekjybj76@pengutronix.de>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 12 Jun 2019 21:47:07 +0200
+Message-ID: <CAFBinCA1SVXVPJdLQr4S99qEoowqXsNqP5tr64xn46xjaKLqeA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/14] pwm: meson: change MISC_CLK_SEL_WIDTH to MISC_CLK_SEL_MASK
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     linux-amlogic@lists.infradead.org, linux-pwm@vger.kernel.org,
+        thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 Multimedia Clock Controller DT node.
+Hi Uwe,
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On Tue, Jun 11, 2019 at 6:33 PM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+[...]
+> > @@ -463,7 +463,7 @@ static int meson_pwm_init_channels(struct meson_pwm=
+ *meson,
+> >
+> >               channel->mux.reg =3D meson->base + REG_MISC_AB;
+> >               channel->mux.shift =3D mux_reg_shifts[i];
+> > -             channel->mux.mask =3D BIT(MISC_CLK_SEL_WIDTH) - 1;
+> > +             channel->mux.mask =3D MISC_CLK_SEL_MASK;
+> >               channel->mux.flags =3D 0;
+> >               channel->mux.lock =3D &meson->lock;
+> >               channel->mux.table =3D NULL;
+>
+> IMHO clk_mux is ugly here. It could easily just take
+>
+>         .mask =3D 3 << mux_reg_shifts[i],
+in most cases that would be even nicer to read because it could be expresse=
+d as:
+  .mask =3D GENMASK(5, 4)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 9c88801..856c8ec 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,mmcc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
- 
-@@ -1066,6 +1067,19 @@
- 			status = "disabled";
- 		};
- 
-+		mmcc: clock-controller@c8c0000 {
-+			compatible = "qcom,mmcc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x0c8c0000 0x40000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
-+
- 		timer@17920000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+so I like your idea in general
+though I think it should not block this patch
 
+[...]
+> Apart from that, I wonder if the pwm-meson driver should better use
+> clk_register_mux instead of open coding it. (Though there doesn't seem
+> to exists a devm_ variant of it.)
+I tried to use clk_register_mux in the past. it works but it's not as
+nice to read as the open-coded variant because it takes 10 parameters.
+I find it easier to read 13 separate lines compared to reading a
+function call with 10 parameters
+
+
+Martin
