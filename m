@@ -2,86 +2,116 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18884C31E4A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B8EC31E45
 	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB9B82080A
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72DEA2063F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1560445391;
-	bh=+tsGRqVHjeMRxsoBEL+dBhG2hHJk5zEZ/qrS5yPoAuc=;
+	bh=l4zTQw5iuVI5u2179hf0ZvOJfs8bcO/Q5NNJY+li7E4=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=kwRJALXVj5ShjDl/kFcvd3Mupz7HI83ZB8y0wRo+PU3zeou0rNlxrwJWOYdyasYOb
-	 Y0Gq1zgIpUxxELyzgL4htrOo0j4w6y6AcudKFyQLOQnR4aOGLmMSYTXkPmebM2uNDV
-	 91XE7/t1xMclrnbkfLv9iOkdICTPNbzcfkx+15rQ=
+	b=HAxJClqKoaZBfJr+BcYdx1L0s4ik87HRoFj5Ne6v8MhAYfcFCHC3Vr+bqxTsMQ1Fv
+	 AMawB0ROuOnf+4KjNg+vdtwlEC+nllb7e656nzhEL5N2HRcGIydqbwDph8FqU0f+bi
+	 36tzYYuISdgE8Se0ATRVomuGIrjZ5mn1ZlwW7vjQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfFMRDK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1729579AbfFMRDK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 13 Jun 2019 13:03:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729473AbfFLXCB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Jun 2019 19:02:01 -0400
+        id S1729469AbfFLXAi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Jun 2019 19:00:38 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3692F20896;
-        Wed, 12 Jun 2019 23:02:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52B5B20896;
+        Wed, 12 Jun 2019 23:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560380521;
-        bh=+tsGRqVHjeMRxsoBEL+dBhG2hHJk5zEZ/qrS5yPoAuc=;
+        s=default; t=1560380437;
+        bh=l4zTQw5iuVI5u2179hf0ZvOJfs8bcO/Q5NNJY+li7E4=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=NWGxbm9OnP2Jw3us2CHmadnvpCXRaGa3/QohdvbyGHjdaV8G8tSOlnesslaFSK2Zo
-         8gpdUppUf16bSiZPYswEgH6kSoImMPPQZ6jxzxLsSLgs/fGgzwj6sodPHq/x6L+y/A
-         aqiW2dPzdE1elJI/Bo0mP9EJHRl0p7O+ltL0uw1A=
+        b=rBSHgyy3EKq17XCPFCa5swhMphCseFqHCsP3YRVDFmBJv1AAjNo9DoD14m/roAUJ+
+         q0HpVndeHitDymOYBwyYoCam4uCtVGeAaH+lC84VcF/eTv2T6uG9leco/1PbwFJcwI
+         wNB0Y8KN3LP0z2CEuZsHnGiCK4/AxgoXKhHrTA2Y=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a834836da8de689ec541093f3226a853af001fe4.camel@baylibre.com>
-References: <a834836da8de689ec541093f3226a853af001fe4.camel@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAGb2v661GYVmq9Xvw9j3RN1jV5Xe2c-naHkvEcVFSbHkeW3HBQ@mail.gmail.com>
+References: <20190524072745.27398-1-amergnat@baylibre.com> <CAGb2v661GYVmq9Xvw9j3RN1jV5Xe2c-naHkvEcVFSbHkeW3HBQ@mail.gmail.com>
+To:     Alexandre Mergnat <amergnat@baylibre.com>,
+        wens Tsai <wens213@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: meson: fixes for v5.2
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        baylibre-upstreaming@groups.io,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH] clk: fix clock global name usage.
 User-Agent: alot/0.8.1
-Date:   Wed, 12 Jun 2019 16:02:00 -0700
-Message-Id: <20190612230201.3692F20896@mail.kernel.org>
+Date:   Wed, 12 Jun 2019 16:00:36 -0700
+Message-Id: <20190612230037.52B5B20896@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-06-11 05:23:33)
-> Dear clock maintainers,
+Quoting wens Tsai (2019-06-10 23:46:17)
+> On Fri, May 24, 2019 at 3:29 PM Alexandre Mergnat <amergnat@baylibre.com>=
+ wrote:
+> >
+> > A recent patch allows the clock framework to specify the parent
+> > relationship with either the clk_hw pointer, the global name or through
+> > Device Tree name.
+> >
+> > But the global name isn't handled by the clk framework because the DT n=
+ame
+> > is considered valid even if it's NULL, so of_clk_get_hw() returns an
+> > unexpected clock (the first clock specified in DT).
+> >
+> > This can be fixed by calling of_clk_get_hw() only when DT name is not N=
+ULL.
+> >
+> > Fixes: fc0c209c147f ("clk: Allow parents to be specified without string=
+ names")
+> > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> > ---
+> >  drivers/clk/clk.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index bdb077ba59b9..9624a75e5a8d 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -368,7 +368,7 @@ static struct clk_core *clk_core_get(struct clk_cor=
+e *core, u8 p_index)
+> >         const char *dev_id =3D dev ? dev_name(dev) : NULL;
+> >         struct device_node *np =3D core->of_node;
+> >
+> > -       if (np && index >=3D 0)
+> > +       if (name && np && index >=3D 0)
 >=20
-> Below is a request to pull a couple of fixes on Amlogic clocks for v5.2
-> These are typos in recently added clocks, the most annoying one being in
-> the DT binding identifier on the MPLL50M which is used by the network PLL.
+> I think the opposite should be the case. If either the name or index is v=
+alid,
+> and there's a device node backing it, the code path should be entered.
 >=20
-> Regards
+> This is implied by the description of struct clk_parent_data:
 >=20
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0eb=
-d9:
+>     @index: parent index local to provider registering clk (if @fw_name a=
+bsent)
 >=20
->   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> So the code path should be valid regardless of the value of .index.
 >=20
-> are available in the Git repository at:
+> That would make it
 >=20
->   git://github.com/BayLibre/clk-meson.git tags/clk-meson-5.2-1-fixes
+>         if (np && (name || index >=3D 0)) ...
 >=20
-> for you to fetch changes up to 3ff46efbcd90d3d469de8eddaf03d12293aaa50c:
->=20
->   clk: meson: meson8b: fix a typo in the VPU parent names array variable =
-(2019-05-20 12:11:08 +0200)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next.
+Sure. I'll post my fix and pick the patch into clk-fixes so that this
+works.
 
