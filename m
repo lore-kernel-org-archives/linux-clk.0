@@ -2,283 +2,137 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB78C31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E767C31E4A
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3C2206BB
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:32:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E168B2082C
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:37:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UKErXfoZ"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="CYJMshuw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfFMPcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:32:19 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6058 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728488AbfFMKtw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 06:49:52 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d022a4c0000>; Thu, 13 Jun 2019 03:49:49 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 13 Jun 2019 03:49:49 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 13 Jun 2019 03:49:49 -0700
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
- 2019 10:49:48 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id D21EA428B8; Thu, 13 Jun 2019 13:49:45 +0300 (EEST)
-Date:   Thu, 13 Jun 2019 13:49:45 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/8] clk: tegra20/30: Add custom EMC clock
- implementation
-Message-ID: <20190613104945.GJ29894@pdeschrijver-desktop.Nvidia.com>
-References: <20190524172353.29087-1-digetx@gmail.com>
- <20190524172353.29087-2-digetx@gmail.com>
+        id S1727931AbfFMPhT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 11:37:19 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:62965 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732733AbfFMPhT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 11:37:19 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,369,1557212400"; 
+   d="scan'208";a="37402039"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Jun 2019 08:37:18 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 13 Jun 2019 08:37:16 -0700
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Thu, 13 Jun 2019 08:37:16 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AIktsP4cJ0Blel6UI4Q+F0NVGLYjA+/zCrWlpWxqb78=;
+ b=CYJMshuw4WJff2zwcLVM2mkIPP6/ZgjWDKnAdMMqTWZoZo4ACk6Ng//iCz/aGkYAysK3WlptcsQ2t9YWgKU5l1R3biXO4Nn4dhn6Gxewbu413xwTXh8Losb2T9BvRP4DmMyduCWsc2Wb+fsq4ol5euPmhZgjp/CntXRGvyDeeJg=
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com (10.172.54.17) by
+ MWHPR11MB1822.namprd11.prod.outlook.com (10.175.54.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.11; Thu, 13 Jun 2019 15:37:16 +0000
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::316b:7774:8db6:30ec]) by MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::316b:7774:8db6:30ec%7]) with mapi id 15.20.1987.012; Thu, 13 Jun 2019
+ 15:37:16 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <claudiu.beznea@gmail.com>,
+        <Claudiu.Beznea@microchip.com>
+Subject: [PATCH 3/7] clk: at91: sckc: add support to free slow clock
+ osclillator
+Thread-Topic: [PATCH 3/7] clk: at91: sckc: add support to free slow clock
+ osclillator
+Thread-Index: AQHVIf3gvS79G8XBBE+EsYEDTZKNnA==
+Date:   Thu, 13 Jun 2019 15:37:15 +0000
+Message-ID: <1560440205-4604-4-git-send-email-claudiu.beznea@microchip.com>
+References: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR09CA0174.eurprd09.prod.outlook.com
+ (2603:10a6:800:120::28) To MWHPR11MB1549.namprd11.prod.outlook.com
+ (2603:10b6:301:c::17)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 409c25a2-15dc-4d97-2a7f-08d6f01502f6
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR11MB1822;
+x-ms-traffictypediagnostic: MWHPR11MB1822:
+x-microsoft-antispam-prvs: <MWHPR11MB1822E0C9072E10B4A5A5231587EF0@MWHPR11MB1822.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:418;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(366004)(376002)(39860400002)(396003)(189003)(199004)(14454004)(478600001)(110136005)(54906003)(256004)(68736007)(2906002)(72206003)(316002)(71200400001)(71190400001)(2501003)(36756003)(50226002)(4326008)(107886003)(25786009)(6512007)(8676002)(8936002)(81156014)(2616005)(476003)(446003)(11346002)(6436002)(6486002)(81166006)(5660300002)(66066001)(99286004)(305945005)(4744005)(53936002)(7736002)(52116002)(76176011)(66946007)(3846002)(6116002)(86362001)(486006)(66446008)(66556008)(186003)(26005)(6506007)(73956011)(386003)(102836004)(64756008)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1822;H:MWHPR11MB1549.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: v1ztfQLERIFHIsBepzEBPmZfMFWkWbC6YbEsZ/4mPjxKHMRUVnDaiGWdh4rlY1Xgjqiu2zWhv+o1zTlCx0SnZs6nQFqWSzJcT9nmDWCLOxcgvE7ZZaN4U672XJ992J0lqa6geMZ4hQO82xAzn+fNyQ2qIfxddLC9LNAkp8z2095R7OJWteaPkph9RubUVCL1Eb5FTaJJe+/XlNBAkiiZiZrfhMOZBWx/Hh5AwhcytwuphaJIoNrKaiKFCX2eeiAoJVCzZpU5E6G2TWwuqAWkHVGTQ+72GXpoW7VAo2ZLGn7lwnD7gzOjGumhk1N3gJvhE5avD8Yia4WVTMbDFUMaOZg+wLqsDA0ya8G/QpAVBd6qDBuLjL0ftsulEqai4fwWKtY5v687He+9QE6ECZXDwF0YKNzeYsjzRNMHif+fF4A=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190524172353.29087-2-digetx@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560422990; bh=Svkffrzg9Qo8t+19JaPU6eSSVSlhSnK0UJSc2PwhXqY=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=UKErXfoZX8fBeo8pJphs+pXKPN/qUdnPdhh3imY7LG5sN8OAz+LuncRLyMAgLSEdt
-         wXQIkM6Juzou5eZVAnilQQl2n9g5wqfZSIVDQdCGi4j14pK3cOGRaW1tdrQyXQP75l
-         s+hDhqTcpPsOTx/5fBqSWlc4eJaXuT4sOb6FgGWXzMfq3KJJYuwSZX7vMbr3BM7Ce0
-         Pt5kOtXEh5OyxULRG7WwJE2owokAKwPX3txvXSjQUJZnsZbVMNtrHLh6gcCFZeP8Nf
-         CXVAc4Ok5n/txeHnjhD/4sskTMEcISpcQeGRM/FRjq13Ipx3VSqlVcQ05w3BZKoGKo
-         1LsvbSMAeamCA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 409c25a2-15dc-4d97-2a7f-08d6f01502f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 15:37:15.8884
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: claudiu.beznea@microchip.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1822
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 24, 2019 at 08:23:46PM +0300, Dmitry Osipenko wrote:
-> A proper External Memory Controller clock rounding and parent selection
-> functionality is required by the EMC drivers. It is not available using
-> the generic clock implementation, hence add a custom one. The clock rate
-> rounding shall be done by the EMC drivers because they have information
-> about available memory timings, so the drivers will have to register a
-> callback that will round the requested rate. EMC clock users won't be able
-> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
-> and the callback is set up. The functionality is somewhat similar to the
-> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
-> more parent clock sources and the HW configuration and integration with
-> the EMC drivers differs a tad from the older gens, hence it's not really
-> worth to try to squash everything into a single source file.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/Makefile          |   2 +
->  drivers/clk/tegra/clk-tegra20-emc.c | 299 ++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk-tegra20.c     |  55 ++---
->  drivers/clk/tegra/clk-tegra30.c     |  38 +++-
->  drivers/clk/tegra/clk.h             |   6 +
->  include/linux/clk/tegra.h           |  14 ++
->  6 files changed, 362 insertions(+), 52 deletions(-)
->  create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 4812e45c2214..df966ca06788 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
->  obj-y					+= clk-tegra-super-gen4.o
->  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
-> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
-> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
-> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-tegra20-emc.c
-> new file mode 100644
-> index 000000000000..d971b5425ce3
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
-> @@ -0,0 +1,299 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/bits.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk/tegra.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +
-> +#include "clk.h"
-> +
-> +#define CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK	GENMASK(7, 0)
-> +#define CLK_SOURCE_EMC_2X_CLK_SRC_MASK		GENMASK(31, 30)
-> +#define CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT		30
-> +
-> +#define MC_EMC_SAME_FREQ	BIT(16)
-> +#define USE_PLLM_UD		BIT(29)
-> +
-> +#define EMC_SRC_PLL_M		0
-> +#define EMC_SRC_PLL_C		1
-> +#define EMC_SRC_PLL_P		2
-> +#define EMC_SRC_CLK_M		3
-> +
-> +static const char * const emc_parent_clk_names[] = {
-> +	"pll_m", "pll_c", "pll_p", "clk_m",
-> +};
-> +
-> +struct tegra_clk_emc {
-> +	struct clk_hw hw;
-> +	void __iomem *reg;
-> +	bool mc_same_freq;
-> +	bool want_low_jitter;
-> +
-> +	tegra20_clk_emc_round_cb *round_cb;
-> +	void *cb_arg;
-> +};
-> +
-> +static inline struct tegra_clk_emc *to_tegra_clk_emc(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct tegra_clk_emc, hw);
-> +}
-> +
-> +static unsigned long emc_recalc_rate(struct clk_hw *hw,
-> +				     unsigned long parent_rate)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	u32 val, div;
-> +
-> +	val = readl_relaxed(emc->reg);
-> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +
-> +	return DIV_ROUND_UP(parent_rate * 2, div + 2);
-> +}
-> +
-> +static u8 emc_get_parent(struct clk_hw *hw)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +
-> +	return readl_relaxed(emc->reg) >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +}
-> +
-> +static int emc_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	u32 val, div;
-> +
-> +	val = readl_relaxed(emc->reg);
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
-> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +
-> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +
-> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
-> +		val |= USE_PLLM_UD;
-> +	else
-> +		val &= ~USE_PLLM_UD;
-> +
-> +	if (emc->mc_same_freq)
-> +		val |= MC_EMC_SAME_FREQ;
-> +	else
-> +		val &= ~MC_EMC_SAME_FREQ;
-> +
-> +	writel_relaxed(val, emc->reg);
-> +
-
-I think technically you need a fence_udelay(1) here, but in practice
-this is probably not needed because you will poll some EMC register for
-the frequency completion anyway. Maybe add a comment about this?
-
-> +	return 0;
-> +}
-> +
-> +static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			unsigned long parent_rate)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	unsigned int index;
-> +	u32 val, div;
-> +
-> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
-> +
-> +	val = readl_relaxed(emc->reg);
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +	val |= div;
-> +
-> +	index = val >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +
-> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
-> +		val |= USE_PLLM_UD;
-> +	else
-> +		val &= ~USE_PLLM_UD;
-> +
-> +	if (emc->mc_same_freq)
-> +		val |= MC_EMC_SAME_FREQ;
-> +	else
-> +		val &= ~MC_EMC_SAME_FREQ;
-> +
-> +	writel_relaxed(val, emc->reg);
-> +
-
-Same here.
-
-> +	return 0;
-> +}
-> +
-> +static int emc_set_rate_and_parent(struct clk_hw *hw,
-> +				   unsigned long rate,
-> +				   unsigned long parent_rate,
-> +				   u8 index)
-> +{
-> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
-> +	u32 val, div;
-> +
-> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
-> +
-> +	val = readl_relaxed(emc->reg);
-> +
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
-> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
-> +
-> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
-> +	val |= div;
-> +
-> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
-> +		val |= USE_PLLM_UD;
-> +	else
-> +		val &= ~USE_PLLM_UD;
-> +
-> +	if (emc->mc_same_freq)
-> +		val |= MC_EMC_SAME_FREQ;
-> +	else
-> +		val &= ~MC_EMC_SAME_FREQ;
-> +
-> +	writel_relaxed(val, emc->reg);
-> +
-
-And here.
-
-> +	return 0;
-> +}
-
-Peter.
+RnJvbTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+DQoNCkFk
+ZCBzdXBwb3J0IHRvIGZyZWUgc2xvdyBjbG9jayBvc2NpbGxhdG9yIHJlc291cmNlcy4NCg0KU2ln
+bmVkLW9mZi1ieTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+
+DQotLS0NCiBkcml2ZXJzL2Nsay9hdDkxL3Nja2MuYyB8IDggKysrKysrKysNCiAxIGZpbGUgY2hh
+bmdlZCwgOCBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9hdDkxL3Nj
+a2MuYyBiL2RyaXZlcnMvY2xrL2F0OTEvc2NrYy5jDQppbmRleCA0OTJiMTM5YTdjMTUuLjJhNjc3
+YzU2ZjkwMSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvY2xrL2F0OTEvc2NrYy5jDQorKysgYi9kcml2
+ZXJzL2Nsay9hdDkxL3Nja2MuYw0KQEAgLTM1NSw2ICszNTUsMTQgQEAgYXQ5MV9jbGtfcmVnaXN0
+ZXJfc2FtOXg1X3Nsb3codm9pZCBfX2lvbWVtICpzY2tjciwNCiAJcmV0dXJuIGh3Ow0KIH0NCiAN
+CitzdGF0aWMgdm9pZCBhdDkxX2Nsa191bnJlZ2lzdGVyX3NhbTl4NV9zbG93KHN0cnVjdCBjbGtf
+aHcgKmh3KQ0KK3sNCisJc3RydWN0IGNsa19zYW05eDVfc2xvdyAqc2xvd2NrID0gdG9fY2xrX3Nh
+bTl4NV9zbG93KGh3KTsNCisNCisJY2xrX2h3X3VucmVnaXN0ZXIoaHcpOw0KKwlrZnJlZShzbG93
+Y2spOw0KK30NCisNCiBzdGF0aWMgdm9pZCBfX2luaXQgYXQ5MXNhbTl4NV9zY2tjX3JlZ2lzdGVy
+KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsDQogCQkJCQkgICAgdW5zaWduZWQgaW50IHJjX29zY19z
+dGFydHVwX3VzLA0KIAkJCQkJICAgIGNvbnN0IHN0cnVjdCBjbGtfc2xvd19iaXRzICpiaXRzKQ0K
+LS0gDQoyLjcuNA0KDQo=
