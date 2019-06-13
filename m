@@ -2,166 +2,195 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965F5C31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E65C31E45
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6154420673
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:43:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cde/w2Q/"
+	by mail.kernel.org (Postfix) with ESMTP id 2671D2082C
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392569AbfFMQm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:42:57 -0400
-Received: from mail-eopbgr20043.outbound.protection.outlook.com ([40.107.2.43]:40931
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730494AbfFMGrM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:47:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KvBbFKBXHONrnVYItC+/7DGk+khFnJxUBlWCKnPmSg8=;
- b=Cde/w2Q/TvAyC5cbd9DRBJyH7maB7u5Z5Ipc9NxmCyT5jKYVilFN7dm3oRhI4cxpL2GiXURpL3kY93bVf/mbXMicRWCZTmFl2riy8oaht5RJELX2JigjnWOOOSJ7e+aOdo0CjY0Rm/oMuETwcKz/6D6CIqRWIm6o1QyxGJ99Hds=
-Received: from VI1PR04MB4333.eurprd04.prod.outlook.com (52.134.122.155) by
- VI1PR04MB5440.eurprd04.prod.outlook.com (20.178.121.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.12; Thu, 13 Jun 2019 06:47:04 +0000
-Received: from VI1PR04MB4333.eurprd04.prod.outlook.com
- ([fe80::497a:768:c7b1:34e0]) by VI1PR04MB4333.eurprd04.prod.outlook.com
- ([fe80::497a:768:c7b1:34e0%6]) with mapi id 15.20.1987.010; Thu, 13 Jun 2019
- 06:47:04 +0000
-From:   Andy Tang <andy.tang@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4] clk: qoriq: add support for lx2160a
-Thread-Topic: [PATCH v4] clk: qoriq: add support for lx2160a
-Thread-Index: AQHU+/zGE8MPZcMnA0GP8h3OejDbYKZ1N2hwgAOwrbCAIIYIgA==
-Date:   Thu, 13 Jun 2019 06:47:03 +0000
-Message-ID: <VI1PR04MB43335E626999BA8F7A1811EAF3EF0@VI1PR04MB4333.eurprd04.prod.outlook.com>
-References: <1556261624-20504-1-git-send-email-vabhav.sharma@nxp.com>
- <AM6PR04MB4789787C4AB0613B1CF53DBCF3070@AM6PR04MB4789.eurprd04.prod.outlook.com>
- <VI1PR04MB4800AAC6A29E0F1001808CE8F3010@VI1PR04MB4800.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB4800AAC6A29E0F1001808CE8F3010@VI1PR04MB4800.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=andy.tang@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 744f9d66-9d51-4803-403a-08d6efcaf1f2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5440;
-x-ms-traffictypediagnostic: VI1PR04MB5440:
-x-ms-exchange-purlcount: 2
-x-microsoft-antispam-prvs: <VI1PR04MB54405B7B28F3106208C35D61F3EF0@VI1PR04MB5440.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:419;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(136003)(39860400002)(376002)(13464003)(189003)(199004)(66556008)(6306002)(102836004)(478600001)(476003)(53546011)(6436002)(74316002)(11346002)(446003)(52536014)(2906002)(305945005)(55016002)(68736007)(229853002)(5660300002)(8676002)(7696005)(66066001)(486006)(110136005)(44832011)(966005)(86362001)(6116002)(66946007)(3846002)(66476007)(73956011)(76116006)(6506007)(4326008)(76176011)(64756008)(66446008)(14444005)(256004)(8936002)(14454004)(81166006)(71200400001)(25786009)(316002)(9686003)(33656002)(186003)(6246003)(7736002)(71190400001)(99286004)(54906003)(26005)(81156014)(53936002)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5440;H:VI1PR04MB4333.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /W6KR0fGzfoMgSih3T11zBonBoe5ZY2t9oUdDoBTQMmUD+UeEbCIUaxDplq0Z/AqSzb0Gi2+S3sVRq26qFM96uOghET85WpmBJLB2u/sQLwiF4haXyqG3pm3iaRvdfs3SIj7yJ/i8GXQwGK6EkSl+cCDGajnRyZUelQC+ckhLLQDQqJjBZoIEL68L9VcsjCsEPvJZFiMgrhK9p9SyQfmr8dKeuS1RhWgDnbFr0S2aT9VJblvG/r3eZ9JYwgxt6/kd/17JbVWDdWSqjEUICBtzLMGrS0R23VfE2LseFgkmELIxvKB0mkLDqPx7mvXlypyZzLidBNZKGqFvx58RNB5u+Q7FlHPc15jr48/J3OBNS6imDYhXyiMeLuKR8lxrRCXPgp370cSmRhmvJDstbVNghaUN2NQqUNsXl9C++J46N4=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727640AbfFMQtb convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:49:31 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:56337 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727637AbfFMEcW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 00:32:22 -0400
+Received: from [192.168.1.162] ([37.4.249.160]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MZl1l-1i7PGS1Jwd-00WmSh; Thu, 13 Jun 2019 06:31:59 +0200
+Subject: Re: [PATCH v4 0/7] cpufreq support for Raspberry Pi
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        sboyd@kernel.org, eric@anholt.net,
+        bcm-kernel-feedback-list@broadcom.com, ptesarik@suse.com,
+        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, linux-pm@vger.kernel.org
+References: <20190612182500.4097-1-nsaenzjulienne@suse.de>
+ <6a9e1450-80ad-a13c-59d2-d0b39f25f67e@gmail.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ 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 AQ==
+Message-ID: <7acfd967-0a82-5429-4eed-8b802e6620f5@i2se.com>
+Date:   Thu, 13 Jun 2019 06:31:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 744f9d66-9d51-4803-403a-08d6efcaf1f2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 06:47:03.9672
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: andy.tang@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5440
+In-Reply-To: <6a9e1450-80ad-a13c-59d2-d0b39f25f67e@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Provags-ID: V03:K1:JVQIgpWCtEazzL5rYiYN0IJEAR5Tb9mY8miRG4xc6XNEwCRWInY
+ TBwHbJFIaEUrGyLOdt+lXcrTaziNHMDMs64ofG55owRH1Hd/pEOrQrkqoSTEKiQjrw3qqMT
+ PGjkYDSvB+3PNpnSt/fsfWOKgiKhM8yfyq8E4iBNUJab5rhepnrj4VioMJI95IQYvgQsocg
+ ukaDas5WPpS6ZzzEt5xgQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:qTId+nsNh3Q=:i8CAXhIIDdMqRAoBpJ9bt2
+ ElRxq5FvcgqdFuSs46Gehl0C5YDmpEC4nUw0cXizSVc+cWPR4aDgNyt5MPdUasAcqCukaufE0
+ A7rpfAf14PYX14/UuixSC8G6rwBWtySYTocpCMRNmuRIYvd/1IF1sc5EzGLAv3XPnQDORdHeL
+ FHFY0elcDduUGr00RxgyLZUa52To9/aHr0Jy+BzdK2szuPoTyPClXcwRZWx2CoOQY2jiAQwAz
+ VEhOgJ/NwhZ+nh18bkePYiEyoN1Et5gjqHD0vpa3a3BPC3XpGJbtTbuBeRsRlYe0hFyDjCXZj
+ a4hxDc4qiuzX4hIRjsZUkKVyyHKngdQWTY4199PaN16W8r3siQLEBtoTFOeO0zeSGLqnvebAv
+ e91JVWr0VJc/D7LOEr8ZAl+AgA9PGOq+tG4vaV1XKof8TU37n4eGKOFxIR8JrQ5KHC1cKyiHL
+ 0Plpno2LtvUS5UOjEfuMGSbLuMdsZHcyd0TxhmnQw5Wk71nHTwOunWsosug8d+btZr1JWHTE2
+ 2+a+C/kaaWlfoi7FInYZxLiYPCiCCwNkuWfwgiss98//YWHRwvEQCs9JbUC9Lv2BvCUHrpYHi
+ d8edz+iAQZ1HWZv5zZ/nAG6S8LXQM+jRAO4DNxlesBvt/RBD4nqViubNWwCk8zPu+U2X5dflG
+ M3hUe7u2xoBMl81wdQrWiXhYgk2o+pp2G8+E+KUd61+6gVOEOUSn0pHXeLQWn1TnEG73iTKBZ
+ 5eCFdS73IJl8M4suuTFS2oS17r+uowBuhkjRzVPTW60WV8bJZrvzTk78XUc=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgU3RlcGhlbiwgTXR1cnF1ZXR0ZSwNCg0KV2hvIHdpbGwgYXBwbHkgdGhpcyBwYXRjaD8gaHR0
-cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDkxODQwNy8NCkFsbCB0aGUgY29tbWVu
-dHMgYXJlIGFkZHJlc3NlZCBhbmQgZ290IGFja2VkIGJ5Og0KQWNrZWQtYnk6IFNjb3R0IFdvb2Qg
-PG9zc0BidXNlcnJvci5uZXQ+DQpBY2tlZC1ieTogU3RlcGhlbiBCb3lkIDxzYm95ZEBrZXJuZWwu
-b3JnPg0KQWNrZWQtYnk6IFZpcmVzaCBLdW1hciA8dmlyZXNoLmt1bWFyQGxpbmFyby5vcmc+DQoN
-CkNvdWxkIHlvdSBwbGVhc2UgYXBwbHkgaXQ/DQoNCkJSLA0KQW5keQ0KDQoNCj4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVmFiaGF2IFNoYXJtYQ0KPiBTZW50OiAyMDE55bm0
-NeaciDIz5pelIDIyOjA1DQo+IFRvOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51
-eC1jbGtAdmdlci5rZXJuZWwub3JnOw0KPiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRA
-a2VybmVsLm9yZw0KPiBDYzogbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNib3lkQGtlcm5lbC5v
-cmc7IEFuZHkgVGFuZw0KPiA8YW5keS50YW5nQG54cC5jb20+OyBZb2dlc2ggTmFyYXlhbiBHYXVy
-DQo+IDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNvbT4NCj4gU3ViamVjdDogUkU6IFtQQVRDSCB2
-NF0gY2xrOiBxb3JpcTogYWRkIHN1cHBvcnQgZm9yIGx4MjE2MGENCj4gDQo+ID4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0NCj4gPiBGcm9tOiBWYWJoYXYgU2hhcm1hDQo+ID4gU2VudDogVHVl
-c2RheSwgTWF5IDIxLCAyMDE5IDExOjE0IEFNDQo+ID4gVG86IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gc2JveWRAa2VybmVsLm9y
-Zw0KPiA+IENjOiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgQW5keSBUYW5nIDxhbmR5LnRhbmdA
-bnhwLmNvbT47IFlvZ2VzaA0KPiA+IE5hcmF5YW4gR2F1ciA8eW9nZXNobmFyYXlhbi5nYXVyQG54
-cC5jb20+DQo+ID4gU3ViamVjdDogUkU6IFtQQVRDSCB2NF0gY2xrOiBxb3JpcTogYWRkIHN1cHBv
-cnQgZm9yIGx4MjE2MGENCj4gPg0KPiA+IEhlbGxvIFN0ZXBoZW4sDQo+ID4gSSBoYXZlIGluY29y
-cG9yYXRlZCByZXZpZXcgY29tbWVudHMgZnJvbQ0KPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5l
-bC5vcmcvcGF0Y2gvMTA5MTcxNzEvDQo+IEhlbGxvIE1haW50YWluZXJzLA0KPiBBbGwgdGhlIGNv
-bW1lbnRzIGFyZSBhZGRyZXNzZWQsIENhbiB5b3UgcGxlYXNlIHRha2UgdGhlIHBhdGNoPw0KPiBQ
-bGVhc2Ugc2VlIHRoaXMgaXMgZXNzZW50aWFsIGZvciBuZXcgaGFyZHdhcmUgc3VwcG9ydC4NCj4g
-DQo+IFJlZ2FyZHMsDQo+IFZhYmhhdg0KPiA+DQo+ID4gQSBnZW50bGUgcmVtaW5kZXIgdG8gYXBw
-bHkgdGhlIHBhdGNoDQo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDkx
-ODQwNy8uDQo+ID4NCj4gPiBSZWdhcmRzLA0KPiA+IFZhYmhhdg0KPiA+DQo+ID4gPiAtLS0tLU9y
-aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJvbTogVmFiaGF2IFNoYXJtYSA8dmFiaGF2LnNo
-YXJtYUBueHAuY29tPg0KPiA+ID4gU2VudDogRnJpZGF5LCBBcHJpbCAyNiwgMjAxOSAxMjoyNCBQ
-TQ0KPiA+ID4gVG86IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWNsa0B2Z2Vy
-Lmtlcm5lbC5vcmcNCj4gPiA+IENjOiBzYm95ZEBrZXJuZWwub3JnOyBtdHVycXVldHRlQGJheWxp
-YnJlLmNvbTsgVmFiaGF2IFNoYXJtYQ0KPiA+ID4gPHZhYmhhdi5zaGFybWFAbnhwLmNvbT47IEFu
-ZHkgVGFuZyA8YW5keS50YW5nQG54cC5jb20+OyBZb2dlc2gNCj4gPiBOYXJheWFuDQo+ID4gPiBH
-YXVyIDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNvbT4NCj4gPiA+IFN1YmplY3Q6IFtQQVRDSCB2
-NF0gY2xrOiBxb3JpcTogYWRkIHN1cHBvcnQgZm9yIGx4MjE2MGENCj4gPiA+DQo+ID4gPiBBZGQg
-Y2xvY2tnZW4gc3VwcG9ydCBhbmQgY29uZmlndXJhdGlvbiBmb3IgTlhQIFNvQyBseDIxNjBhIHdp
-dGgNCj4gPiA+IGNvbXBhdGlibGUgcHJvcGVydHkgYXMgImZzbCxseDIxNjBhLWNsb2NrZ2VuIi4N
-Cj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBUYW5nIFl1YW50aWFuIDxhbmR5LnRhbmdAbnhw
-LmNvbT4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IFlvZ2VzaCBHYXVyIDx5b2dlc2huYXJheWFuLmdh
-dXJAbnhwLmNvbT4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IFZhYmhhdiBTaGFybWEgPHZhYmhhdi5z
-aGFybWFAbnhwLmNvbT4NCj4gPiA+IEFja2VkLWJ5OiBTY290dCBXb29kIDxvc3NAYnVzZXJyb3Iu
-bmV0Pg0KPiA+ID4gQWNrZWQtYnk6IFN0ZXBoZW4gQm95ZCA8c2JveWRAa2VybmVsLm9yZz4NCj4g
-PiA+IEFja2VkLWJ5OiBWaXJlc2ggS3VtYXIgPHZpcmVzaC5rdW1hckBsaW5hcm8ub3JnPg0KPiA+
-ID4gLS0tDQo+ID4gPiBDaGFuZ2VzIGZvciB2NDoNCj4gPiA+IC0gSW5jb3Jwb3JhdGVkIHJldmll
-dyBjb21tZW50cyBmcm9tIFN0ZXBoZW4gQm95ZA0KPiA+ID4NCj4gPiA+IENoYW5nZXMgZm9yIHYz
-Og0KPiA+ID4gLSBJbmNvcnBvcmF0ZWQgcmV2aWV3IGNvbW1lbnRzIG9mIFJhZmFlbCBKLiBXeXNv
-Y2tpDQo+ID4gPiAtIFVwZGF0ZWQgY29tbWl0IG1lc3NhZ2UNCj4gPiA+DQo+ID4gPiBDaGFuZ2Vz
-IGZvciB2MjoNCj4gPiA+IC0gU3ViamVjdCBsaW5lIHVwZGF0ZWQNCj4gPiA+DQo+ID4gPiAgZHJp
-dmVycy9jbGsvY2xrLXFvcmlxLmMgfCAxMiArKysrKysrKysrKysNCj4gPiA+ICAxIGZpbGUgY2hh
-bmdlZCwgMTIgaW5zZXJ0aW9ucygrKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2Nsay9jbGstcW9yaXEuYyBiL2RyaXZlcnMvY2xrL2Nsay1xb3JpcS5jIGluZGV4DQo+ID4gPiAz
-ZDUxZDdjLi4xYTE1MjAxIDEwMDY0NA0KPiA+ID4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXFvcmlx
-LmMNCj4gPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1xb3JpcS5jDQo+ID4gPiBAQCAtNTcwLDYg
-KzU3MCwxNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGNsb2NrZ2VuX2NoaXBpbmZvIGNoaXBpbmZv
-W10gPQ0KPiB7DQo+ID4gPiAgCQkuZmxhZ3MgPSBDR19WRVIzIHwgQ0dfTElUVExFX0VORElBTiwN
-Cj4gPiA+ICAJfSwNCj4gPiA+ICAJew0KPiA+ID4gKwkJLmNvbXBhdCA9ICJmc2wsbHgyMTYwYS1j
-bG9ja2dlbiIsDQo+ID4gPiArCQkuY211eF9ncm91cHMgPSB7DQo+ID4gPiArCQkJJmNsb2NrZ2Vu
-Ml9jbXV4X2NnYTEyLCAmY2xvY2tnZW4yX2NtdXhfY2diDQo+ID4gPiArCQl9LA0KPiA+ID4gKwkJ
-LmNtdXhfdG9fZ3JvdXAgPSB7DQo+ID4gPiArCQkJMCwgMCwgMCwgMCwgMSwgMSwgMSwgMSwgLTEN
-Cj4gPiA+ICsJCX0sDQo+ID4gPiArCQkucGxsX21hc2sgPSAweDM3LA0KPiA+ID4gKwkJLmZsYWdz
-ID0gQ0dfVkVSMyB8IENHX0xJVFRMRV9FTkRJQU4sDQo+ID4gPiArCX0sDQo+ID4gPiArCXsNCj4g
-PiA+ICAJCS5jb21wYXQgPSAiZnNsLHAyMDQxLWNsb2NrZ2VuIiwNCj4gPiA+ICAJCS5ndXRzX2Nv
-bXBhdCA9ICJmc2wscW9yaXEtZGV2aWNlLWNvbmZpZy0xLjAiLA0KPiA+ID4gIAkJLmluaXRfcGVy
-aXBoID0gcDIwNDFfaW5pdF9wZXJpcGgsIEBAIC0xNDI3LDYgKzE0MzgsNyBAQA0KPiA+ID4gQ0xL
-X09GX0RFQ0xBUkUocW9yaXFfY2xvY2tnZW5fbHMxMDQzYSwNCj4gPiA+ICJmc2wsbHMxMDQzYS1j
-bG9ja2dlbiIsIGNsb2NrZ2VuX2luaXQpOw0KPiA+ID4gQ0xLX09GX0RFQ0xBUkUocW9yaXFfY2xv
-Y2tnZW5fbHMxMDQ2YSwgImZzbCxsczEwNDZhLWNsb2NrZ2VuIiwNCj4gPiA+IGNsb2NrZ2VuX2lu
-aXQpOyAgQ0xLX09GX0RFQ0xBUkUocW9yaXFfY2xvY2tnZW5fbHMxMDg4YSwNCj4gPiA+ICJmc2ws
-bHMxMDg4YS0gY2xvY2tnZW4iLCBjbG9ja2dlbl9pbml0KTsNCj4gPiA+IENMS19PRl9ERUNMQVJF
-KHFvcmlxX2Nsb2NrZ2VuX2xzMjA4MGEsDQo+ID4gPiAiZnNsLGxzMjA4MGEtY2xvY2tnZW4iLCBj
-bG9ja2dlbl9pbml0KTsNCj4gPiA+ICtDTEtfT0ZfREVDTEFSRShxb3JpcV9jbG9ja2dlbl9seDIx
-NjBhLCAiZnNsLGx4MjE2MGEtY2xvY2tnZW4iLA0KPiA+ID4gK2Nsb2NrZ2VuX2luaXQpOw0KPiA+
-ID4gIENMS19PRl9ERUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX3AyMDQxLCAiZnNsLHAyMDQxLWNsb2Nr
-Z2VuIiwNCj4gPiA+IGNsb2NrZ2VuX2luaXQpOyBDTEtfT0ZfREVDTEFSRShxb3JpcV9jbG9ja2dl
-bl9wMzA0MSwNCj4gPiA+ICJmc2wscDMwNDEtY2xvY2tnZW4iLCBjbG9ja2dlbl9pbml0KTsNCj4g
-PiA+IENMS19PRl9ERUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX3A0MDgwLCAiZnNsLHA0MDgwLWNsb2Nr
-Z2VuIiwNCj4gPiA+IGNsb2NrZ2VuX2luaXQpOw0KPiA+ID4gLS0NCj4gPiA+IDIuNy40DQoNCg==
+Hi Florian,
+hi Stephen,
+
+Am 13.06.19 um 05:31 schrieb Florian Fainelli:
+>
+> On 6/12/2019 11:24 AM, Nicolas Saenz Julienne wrote:
+>> Hi all,
+>> this aims at adding cpufreq support to the Raspberry Pi family of
+>> boards.
+>>
+>> The series first factors out 'pllb' from clk-bcm2385 and creates a new
+>> clk driver that operates it over RPi's firmware interface[1]. We are
+>> forced to do so as the firmware 'owns' the pll and we're not allowed to
+>> change through the register interface directly as we might race with the
+>> over-temperature and under-voltage protections provided by the firmware.
+>>
+>> Next it creates a minimal cpufreq driver that populates the CPU's opp
+>> table, and registers cpufreq-dt. Which is needed as the firmware
+>> controls the max and min frequencies available.
+>>
+>> This was tested on a RPi3b+ and RPI2b, both using multi_v7_defconfig and
+>> arm64's defconfig.
+> How do we go about merging this? Stefan, will you pick up patch 3, 6 and
+> 7 and submit them for 5.3/5.4? Viresh has already picked up patch 4.
+
+is it possible to let patches 1,2, 3 and 5 go via clk-tree?
+
+I would take care of 6 and 7.
+
+Stefan
+
+>
+>> That's all,
+>> kind regards,
+>> Nicolas
+>>
+>> [1] https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
+>>
+>> ---
+>>
+>> Changes since v3:
+>>   - Fix sparse warnings in clk-raspberrypi.c
+>>   - Minor cleanups
+>>
+>> Changes since v2:
+>>   - Fixed configs to match Stefan's comments
+>>   - Round OPP frequencies
+>>   - Rebase onto linux-next
+>>   - Minor cleanups & checkpatch.pl
+>>
+>> Changes since v1:
+>>   - Enabled by default on the whole family of devices
+>>   - Added/Fixed module support
+>>   - clk device now registered by firmware driver
+>>   - raspberrypi-cpufreq device now registered by clk driver
+>>   - Reimplemented clk rounding unsing determine_rate()
+>>   - Enabled in configs for arm and arm64
+>>
+>> Changes since RFC:
+>>   - Move firmware clk device into own driver
+>>
+>> Nicolas Saenz Julienne (7):
+>>   clk: bcm2835: remove pllb
+>>   clk: bcm283x: add driver interfacing with Raspberry Pi's firmware
+>>   firmware: raspberrypi: register clk device
+>>   cpufreq: add driver for Raspberry Pi
+>>   clk: raspberrypi: register platform device for raspberrypi-cpufreq
+>>   ARM: defconfig: enable cpufreq driver for RPi
+>>   arm64: defconfig: enable cpufreq support for RPi3
+>>
+>>  arch/arm/configs/bcm2835_defconfig    |   9 +
+>>  arch/arm/configs/multi_v7_defconfig   |   2 +
+>>  arch/arm64/configs/defconfig          |   2 +
+>>  drivers/clk/bcm/Kconfig               |   7 +
+>>  drivers/clk/bcm/Makefile              |   1 +
+>>  drivers/clk/bcm/clk-bcm2835.c         |  28 +--
+>>  drivers/clk/bcm/clk-raspberrypi.c     | 315 ++++++++++++++++++++++++++
+>>  drivers/cpufreq/Kconfig.arm           |   8 +
+>>  drivers/cpufreq/Makefile              |   1 +
+>>  drivers/cpufreq/raspberrypi-cpufreq.c |  97 ++++++++
+>>  drivers/firmware/raspberrypi.c        |  10 +
+>>  11 files changed, 456 insertions(+), 24 deletions(-)
+>>  create mode 100644 drivers/clk/bcm/clk-raspberrypi.c
+>>  create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+>>
+
