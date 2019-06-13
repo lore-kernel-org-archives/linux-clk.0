@@ -2,108 +2,98 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA50C31E49
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 20:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C9AC31E45
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 22:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DFC021537
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 20:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 413F8206BB
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 22:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560458887;
-	bh=H1APmz4uK9ccVsYdF4n6bh54danBGEaWI7jnHJJpFp8=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=U1/kuuP/6FP9GtpSoUt677v1aLxazYCERYswKAoiyrNDpgoynd5JEpW3vqDcgNKCP
-	 JypW2Gj5EOWw/NnHb9VUVyr4G5Xl6/LCFHAAtXYWvNM01/ZrawW/KOgtCxlWFUlEcH
-	 FQo2gh1nOpprE40le7X72pM/I/PxtAuR5agGAwg0=
+	s=default; t=1560465715;
+	bh=w0/OSWvI2qn+JSy2YoLSNy6vitU/yELlhLrNJyi+bZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IUaalAAxq8/gZDl2ljxsJxSVp7toD0WMJBqXu8soVsCId2MtFeaDF+FZwHVYYZ4oQ
+	 HibjOd1yKzX4GVKSjBArgxRSr2sT71z+dWpCk84Z3n1IvUQsOeZL1HRrMXeMShrY3x
+	 SpCZNPaalfSryW10+I9JGznL7NXka3F260MJdI2c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbfFMUsG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 16:48:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfFMUsG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:48:06 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EF442133D;
-        Thu, 13 Jun 2019 20:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560458885;
-        bh=H1APmz4uK9ccVsYdF4n6bh54danBGEaWI7jnHJJpFp8=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=QmXkX+dJzVMh+SLeIpnwXUylGjU6fGNxVFA58oQA4FajliSdoIldV6QKDDg9N2NnY
-         KbEyl8LL9ZMgLRA3rHwTpcvo/g1XMCcdW0fB2Xipz9BJUw8LzlRZg53IjVHaoELOU7
-         ecV8aCW0wcLKLotoavMl77xvKJ4jsjY7h4fWjSwE=
-Content-Type: text/plain; charset="utf-8"
+        id S1725941AbfFMWly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 18:41:54 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36678 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfFMWly (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 18:41:54 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g18so492006qkl.3;
+        Thu, 13 Jun 2019 15:41:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=555W8SlOEWdbOmtVeCHjPCQVdc/MKI4w8OP/WDqt3z8=;
+        b=qx//8Yf0gVSHXYZL+432RNJe2E6hPhn2fNe/bp/R4w+6I56gEyz/4/FujBKesnffL9
+         MiQaXshokMBco6iPV2/yLvbX9f4RmOmaySlALpTvKvkK43wcwNTHei/bHCw/S+9mmALd
+         DKs4HGy8CTL8ZS4lVW0wTr1esboEk8KFjKIzjAUb+qHjfmc9mKCKU6iGurxQRMSVylVH
+         SGAd7EWUZfIEWJ74zaHgPEMKx2yJ4T5Mej26TcpM3ZBBOfIBy75q0evTichmAWZrOB9Q
+         JHCTz25K93S5VVnVpvsD/bwnH88BNx+ogW4ghz6PJlr1f5r1wU5KyGjLijgm/sIw9AqJ
+         mZ1Q==
+X-Gm-Message-State: APjAAAU6eouH9TUTPjOVFUvjyEGjLOm2QkcAlHuC9tBdF8innhZFT2U+
+        WuOO8yyPBbB9YXxEmHaniw==
+X-Google-Smtp-Source: APXvYqzBvDkee2tbRQ7LDu7J0RLvPSx9PFA+ewlhL0hdgzb8u7tmMhGmcaUxchrxz5GjWKXYafhucw==
+X-Received: by 2002:a37:b044:: with SMTP id z65mr72541781qke.294.1560465713376;
+        Thu, 13 Jun 2019 15:41:53 -0700 (PDT)
+Received: from localhost ([64.188.179.243])
+        by smtp.gmail.com with ESMTPSA id o54sm706848qtb.63.2019.06.13.15.41.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 15:41:52 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 16:41:51 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH v3] dt-bindings: clock: Add silabs,si5341
+Message-ID: <20190613224151.GA32304@bogus>
+References: <20190424090216.18417-1-mike.looijmans@topic.nl>
+ <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com>
+ <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl>
+ <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com>
+ <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl>
+ <20190507140413.28335-1-mike.looijmans@topic.nl>
+ <20190513203146.GA24085@bogus>
+ <20190517132020.31081-1-mike.looijmans@topic.nl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7hlfy54836.fsf@baylibre.com>
-References: <a834836da8de689ec541093f3226a853af001fe4.camel@baylibre.com> <20190612230201.3692F20896@mail.kernel.org> <df0dad551db9f344e53db134a3c5a25d5d51ae63.camel@baylibre.com> <7hlfy54836.fsf@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] clk: meson: fixes for v5.2
-Cc:     "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 13 Jun 2019 13:48:04 -0700
-Message-Id: <20190613204805.1EF442133D@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190517132020.31081-1-mike.looijmans@topic.nl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kevin Hilman (2019-06-13 12:07:57)
-> Jerome Brunet <jbrunet@baylibre.com> writes:
->=20
-> > On Wed, 2019-06-12 at 16:02 -0700, Stephen Boyd wrote:
-> >> Quoting Jerome Brunet (2019-06-11 05:23:33)
-> >> > Dear clock maintainers,
-> >> >=20
-> >> > Below is a request to pull a couple of fixes on Amlogic clocks for v=
-5.2
-> >> > These are typos in recently added clocks, the most annoying one bein=
-g in
-> >> > the DT binding identifier on the MPLL50M which is used by the networ=
-k PLL.
-> >> >=20
-> >> > Regards
-> >> >=20
-> >> > The following changes since commit a188339ca5a396acc588e5851ed7e19f6=
-6b0ebd9:
-> >> >=20
-> >> >   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> >> >=20
-> >> > are available in the Git repository at:
-> >> >=20
-> >> >   git://github.com/BayLibre/clk-meson.git tags/clk-meson-5.2-1-fixes
-> >> >=20
-> >> > for you to fetch changes up to 3ff46efbcd90d3d469de8eddaf03d12293aaa=
-50c:
-> >> >=20
-> >> >   clk: meson: meson8b: fix a typo in the VPU parent names array vari=
-able (2019-05-20 12:11:08 +0200)
-> >> >=20
-> >> > ----------------------------------------------------------------
-> >>=20
-> >> Thanks. Pulled into clk-next.
-> >>=20
-> >
-> > Hi Stephen,
-> >
-> > This was actually meant for clk-fixes
-> > We could probably cope with next, but it would be preferable if the typ=
-o in the
-> > bindings was fixed by the 5.2 release.
->=20
-> Yes please.  That would help my dependency management also.
->=20
+On Fri, 17 May 2019 15:20:20 +0200, Mike Looijmans wrote:
+> Adds the devicetree bindings for the Si5341 and Si5340 chips from
+> Silicon Labs. These are multiple-input multiple-output clock
+> synthesizers.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> 
+> ---
+> v3: Remove synthesizers child nodes
+>     Fix typo
+> v2: Add data sheet reference.
+>     Restructured to enable use of "assigned-clock*" properties to set
+>     up both outputs and internal synthesizers.
+>     Nicer indentation.
+>     Updated subject line and body of commit message.
+> 
+>  .../bindings/clock/silabs,si5341.txt          | 162 ++++++++++++++++++
+>  1 file changed, 162 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
+> 
 
-I pulled it into fixes. Don't worry, it was just a typo due to my usage
-of wrong key binding.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
