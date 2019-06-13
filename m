@@ -2,437 +2,106 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3ADC31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE28C31E45
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6171020665
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEAF120665
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 16:55:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CCWlvNd9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kdJllu6n"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zqq8iBgd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389390AbfFMQx1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:53:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56026 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730078AbfFMDEJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jun 2019 23:04:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3F3BB60A44; Thu, 13 Jun 2019 03:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560395048;
-        bh=XbtWoV104PBr3s3yr8owdLtGVSUq1RM6UfCbbiYNFWU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=CCWlvNd993PkNbPYLWrPvuy8Emx+cyJ9ZXEU7LvIBCobFz5YJMwSgFBmKmc/OefWl
-         Wn1gOT05HqirJ3/nk53LIL2n/NDdGH6Yv2jeo2jyf+2aUnbC/2uYpmgGWkQxYZWhOW
-         2uLKGJXz6NRjSjC1AVvvPUO7YDI9I9LXj4+l+2OQ=
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D81560271;
-        Thu, 13 Jun 2019 03:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560395046;
-        bh=XbtWoV104PBr3s3yr8owdLtGVSUq1RM6UfCbbiYNFWU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=kdJllu6nup7WXqnkKcJW3k5B3lAfABkxMyGsiRbYN5A/Lc+Y9qegD2jOTzbns5uYl
-         n0el3bI8V2IP4qXNe8nOfjnGK8jVrBhsqvr+mUfWsQy8+je+Z4ZRjLn9pLdl/sJNZa
-         iO1cdyPa+THqikGlqlQy6cjQDkSF7lwwGz8TJjqA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D81560271
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 4/5] clk: qcom: clk-alpha-pll: Add support for Trion
- PLLs
-To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-References: <20190612091722.9377-1-vkoul@kernel.org>
- <20190612091722.9377-5-vkoul@kernel.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <c7be6307-51cd-46ce-8d1c-b464e510e3f7@codeaurora.org>
-Date:   Thu, 13 Jun 2019 08:34:01 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2392867AbfFMQze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:55:34 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37332 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729999AbfFMQzd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 12:55:33 -0400
+Received: by mail-qt1-f195.google.com with SMTP id y57so23396846qtk.4
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2019 09:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cpeR1oqDMBZUpG954pBrUTTYYcn3Zggg2IBtHJxA5v4=;
+        b=Zqq8iBgdsPVPJLY4JGsFEQwdaxwUciGd2Fc5ZKjNs5jgV0Pu0qQ4GOxcUsMI/XM1bM
+         s2K4nQnJRAjktThjAVg+9xli/pUYEzrr9r5pyf8JN0ERtXwIjdz9JZr26sAWQm3PnuhU
+         fHlLpLHENwwr84jPnidvMqH07WJ+FXj/edyclsk/5Z83gjRf2p0qJMOXcXe04qO2TTQM
+         Paa3Hd2vsAa2oHswH87np/Sxkwi4jRwyeb/pAc9ThMgpOgmMWMCq1TLtghGHL8wnA5dV
+         NTz8Xt3LHq7CtAW2EciK3dRzh/h2aBYuLpp7IGRJOu3AWGBB2BvGtzuFKk2g6xydakGR
+         rhdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cpeR1oqDMBZUpG954pBrUTTYYcn3Zggg2IBtHJxA5v4=;
+        b=Cx82zLehgDyKpFDi5fRbFfRYPiXBQUJZlZ3zXhjyBiBSopy6hoMfSAuhaHz+tzNzuM
+         Sw0e2nUxyt3L93+gKGsuY34bbU2DulL1+0vA6gwrK/koarKJPagqdGQBm1Erk36ReGF3
+         /rLGiVsY2BXyrocG5JbnLjsNkcpoxH2mun81ltZpOuYTaXYKtbAXX1wKc+YgoRkbLXJ7
+         waUIi1Ptc1nSlNLxegiG/Cn/P43Ez735sP52VuAUBVInhhSeltBBvyeP8Qe7DbOKZ/HE
+         NNG6aOBw/wId5qQaek7mm29TQcGdEY3kvmJGPD7yHkWdK35E66b9C4K/8PfdW+l7e+lV
+         tdGg==
+X-Gm-Message-State: APjAAAU85XCkJ1GU+6Jwjf0RSdN8KjOfrCS1joY1DVeZaaeAYSeHFpKd
+        Tb6amtFXnFsm5CEmlo5AJxr7/mv5IeNuJaaB73/TeQ==
+X-Google-Smtp-Source: APXvYqz86ouH7qW11YhIdQ+/pUkNlNb42R0tYC+q9OD3ZyZ2tlhUGh65ELc9Aj3l+yGRkQyoKy8wbukUoOx4aP/oyNA=
+X-Received: by 2002:a0c:afeb:: with SMTP id t40mr4514204qvc.28.1560444932838;
+ Thu, 13 Jun 2019 09:55:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190612091722.9377-5-vkoul@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAJkfWY5eShXAr6QyFjqyaL-JjgQ+OKU0LtComURBVf_sDCqGeA@mail.gmail.com>
+In-Reply-To: <CAJkfWY5eShXAr6QyFjqyaL-JjgQ+OKU0LtComURBVf_sDCqGeA@mail.gmail.com>
+From:   Nathan Huckleberry <nhuck@google.com>
+Date:   Thu, 13 Jun 2019 09:55:22 -0700
+Message-ID: <CAJkfWY7=JKBub9W9q85cqQhZ1P3VT02CMOHaSyNsHebW4-xikQ@mail.gmail.com>
+Subject: Re: Cleanup of -Wunused-const-variable in drivers/clk/mediatek/clk-mt8516.c
+To:     fparent@baylibre.com, Michael Turquette <mturquette@baylibre.com>,
+        matthias.bgg@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Vinod,
+Hey all,
 
-The trion PLL needs to be configured before it is enabled. The PLL 
-cannot LOCK without the calibration.
+I'm looking into cleaning up ignored warnings in the kernel so we can
+remove compiler flags to ignore warnings. There's a variable
+(ddrphycfg_parents) in clk-mt8516.c causing an unused const warning.
+Just wanted to reach out to ask if this variable is intended to be
+used.
 
-Could you please add "clk_trion_pll_configure()" function?
+It doesn't look like it has been used since it was first introduced.
+If it is no longer needed I'd like to remove it.
+
+https://github.com/ClangBuiltLinux/linux/issues/523
+
+Thanks,
+Nathan Huckleberry
+
+Re-sent in plaintext so mailing lists pick it up.
 
 
-On 6/12/2019 2:47 PM, Vinod Koul wrote:
-> From: Deepak Katragadda <dkatraga@codeaurora.org>
-> 
-> Add programming sequence support for managing the Trion
-> PLLs.
-> 
-> Signed-off-by: Deepak Katragadda <dkatraga@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> [vkoul: Fix style and format issues
->    convert to use pll type infrastructure
->    remove unnecessary checks in code
->    remove unused code]
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->   drivers/clk/qcom/clk-alpha-pll.c | 228 +++++++++++++++++++++++++++++++
->   drivers/clk/qcom/clk-alpha-pll.h |   7 +
->   2 files changed, 235 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 2c6773188761..30210f5c6726 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -32,6 +32,7 @@
->   # define PLL_LOCK_DET		BIT(31)
->   
->   #define PLL_L_VAL(p)		((p)->offset + (p)->regs[PLL_OFF_L_VAL])
-> +#define PLL_CAL_L_VAL(p)	((p)->offset + (p)->regs[PLL_OFF_CAL_L_VAL])
->   #define PLL_ALPHA_VAL(p)	((p)->offset + (p)->regs[PLL_OFF_ALPHA_VAL])
->   #define PLL_ALPHA_VAL_U(p)	((p)->offset + (p)->regs[PLL_OFF_ALPHA_VAL_U])
->   
-> @@ -44,14 +45,17 @@
->   # define PLL_VCO_MASK		0x3
->   
->   #define PLL_USER_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_USER_CTL_U])
-> +#define PLL_USER_CTL_U1(p)	((p)->offset + (p)->regs[PLL_OFF_USER_CTL_U1])
->   
->   #define PLL_CONFIG_CTL(p)	((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL])
->   #define PLL_CONFIG_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U])
-> +#define PLL_CONFIG_CTL_U1(p)	((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U11])
->   #define PLL_TEST_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
->   #define PLL_TEST_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
->   #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
->   #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
->   #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
-> +#define PLL_CAL_VAL(p)		((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
->   
->   const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->   	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
-> @@ -96,6 +100,22 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->   		[PLL_OFF_OPMODE] = 0x2c,
->   		[PLL_OFF_FRAC] = 0x38,
->   	},
-> +	[CLK_ALPHA_PLL_TYPE_TRION] = {
-> +		[PLL_OFF_L_VAL] = 0x04,
-> +		[PLL_OFF_CAL_L_VAL] = 0x08,
-> +		[PLL_OFF_USER_CTL] = 0x0c,
-> +		[PLL_OFF_USER_CTL_U] = 0x10,
-> +		[PLL_OFF_USER_CTL_U1] = 0x14,
-> +		[PLL_OFF_CONFIG_CTL] = 0x18,
-> +		[PLL_OFF_CONFIG_CTL_U] = 0x1c,
-> +		[PLL_OFF_CONFIG_CTL_U1] = 0x20,
-> +		[PLL_OFF_TEST_CTL] = 0x24,
-> +		[PLL_OFF_TEST_CTL_U] = 0x28,
-> +		[PLL_OFF_STATUS] = 0x30,
-> +		[PLL_OFF_OPMODE] = 0x38,
-> +		[PLL_OFF_ALPHA_VAL] = 0x40,
-> +		[PLL_OFF_CAL_VAL] = 0x44,
-> +	},
->   };
->   EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->   
-> @@ -120,6 +140,10 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->   #define FABIA_PLL_OUT_MASK	0x7
->   #define FABIA_PLL_RATE_MARGIN	500
->   
-> +#define TRION_PLL_STANDBY	0x0
-> +#define TRION_PLL_RUN		0x1
-> +#define TRION_PLL_OUT_MASK	0x7
-> +
->   #define pll_alpha_width(p)					\
->   		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
->   				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
-> @@ -730,6 +754,130 @@ static long alpha_pll_huayra_round_rate(struct clk_hw *hw, unsigned long rate,
->   	return alpha_huayra_pll_round_rate(rate, *prate, &l, &a);
->   }
->   
-> +static int trion_pll_is_enabled(struct clk_alpha_pll *pll,
-> +				struct regmap *regmap)
-> +{
-> +	u32 mode_regval, opmode_regval;
-> +	int ret;
-> +
-> +	ret = regmap_read(regmap, PLL_MODE(pll), &mode_regval);
-> +	ret |= regmap_read(regmap, PLL_OPMODE(pll), &opmode_regval);
-> +	if (ret)
-> +		return 0;
-> +
-> +	return ((opmode_regval & TRION_PLL_RUN) && (mode_regval & PLL_OUTCTRL));
-> +}
-> +
-> +static int clk_trion_pll_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +
-> +	return trion_pll_is_enabled(pll, pll->clkr.regmap);
-> +}
-> +
-> +static int clk_trion_pll_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	struct regmap *regmap = pll->clkr.regmap;
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* If in FSM mode, just vote for it */
-> +	if (val & PLL_VOTE_FSM_ENA) {
-> +		ret = clk_enable_regmap(hw);
-> +		if (ret)
-> +			return ret;
-> +		return wait_for_pll_enable_active(pll);
-> +	}
-> +
-> +	/* Set operation mode to RUN */
-> +	regmap_write(regmap, PLL_OPMODE(pll), TRION_PLL_RUN);
-> +
-> +	ret = wait_for_pll_enable_lock(pll);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable the PLL outputs */
-> +	ret = regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> +				 TRION_PLL_OUT_MASK, TRION_PLL_OUT_MASK);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable the global PLL outputs */
-> +	return regmap_update_bits(regmap, PLL_MODE(pll),
-> +				 PLL_OUTCTRL, PLL_OUTCTRL);
-> +}
-> +
-> +static void clk_trion_pll_disable(struct clk_hw *hw)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	struct regmap *regmap = pll->clkr.regmap;
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
-> +	if (ret)
-> +		return;
-> +
-> +	/* If in FSM mode, just unvote it */
-> +	if (val & PLL_VOTE_FSM_ENA) {
-> +		clk_disable_regmap(hw);
-> +		return;
-> +	}
-> +
-> +	/* Disable the global PLL output */
-> +	ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
-> +	if (ret)
-> +		return;
-> +
-> +	/* Disable the PLL outputs */
-> +	ret = regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> +				 TRION_PLL_OUT_MASK, 0);
-> +	if (ret)
-> +		return;
-> +
-> +	/* Place the PLL mode in STANDBY */
-> +	regmap_write(regmap, PLL_OPMODE(pll), TRION_PLL_STANDBY);
-> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
-> +}
-> +
-> +static unsigned long
-> +clk_trion_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	struct regmap *regmap = pll->clkr.regmap;
-> +	u32 l, frac;
-> +	u64 prate = parent_rate;
-> +
-> +	regmap_read(regmap, PLL_L_VAL(pll), &l);
-> +	regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac);
-> +
-> +	return alpha_pll_calc_rate(prate, l, frac, ALPHA_REG_16BIT_WIDTH);
-> +}
-> +
-> +static long clk_trion_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				     unsigned long *prate)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	unsigned long min_freq, max_freq;
-> +	u32 l;
-> +	u64 a;
-> +
-> +	rate = alpha_pll_round_rate(rate, *prate,
-> +				    &l, &a, ALPHA_REG_16BIT_WIDTH);
-> +	if (!pll->vco_table || alpha_pll_find_vco(pll, rate))
-> +		return rate;
-> +
-> +	min_freq = pll->vco_table[0].min_freq;
-> +	max_freq = pll->vco_table[pll->num_vco - 1].max_freq;
-> +
-> +	return clamp(rate, min_freq, max_freq);
-> +}
-> +
->   const struct clk_ops clk_alpha_pll_ops = {
->   	.enable = clk_alpha_pll_enable,
->   	.disable = clk_alpha_pll_disable,
-> @@ -760,6 +908,15 @@ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
->   };
->   EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
->   
-> +const struct clk_ops clk_trion_fixed_pll_ops = {
-> +	.enable = clk_trion_pll_enable,
-> +	.disable = clk_trion_pll_disable,
-> +	.is_enabled = clk_trion_pll_is_enabled,
-> +	.recalc_rate = clk_trion_pll_recalc_rate,
-> +	.round_rate = clk_trion_pll_round_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_trion_fixed_pll_ops);
-> +
->   static unsigned long
->   clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->   {
-> @@ -1053,6 +1210,77 @@ static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
->   	return (parent_rate / div);
->   }
->   
-> +static unsigned long
-> +clk_trion_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> +	struct regmap *regmap = pll->clkr.regmap;
-> +	u32 i, div = 1, val;
-> +
-> +	regmap_read(regmap, PLL_USER_CTL(pll), &val);
-> +
-> +	val >>= pll->post_div_shift;
-> +	val &= PLL_POST_DIV_MASK(pll);
-> +
-> +	for (i = 0; i < pll->num_post_div; i++) {
-> +		if (pll->post_div_table[i].val == val) {
-> +			div = pll->post_div_table[i].div;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return (parent_rate / div);
-> +}
-> +
-> +static long
-> +clk_trion_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				 unsigned long *prate)
-> +{
-> +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> +
-> +	return divider_round_rate(hw, rate, prate, pll->post_div_table,
-> +				  pll->width, CLK_DIVIDER_ROUND_CLOSEST);
-> +};
-> +
-> +static int
-> +clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long parent_rate)
-> +{
-> +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> +	struct regmap *regmap = pll->clkr.regmap;
-> +	int i, val = 0, div, ret;
-> +
-> +	/*
-> +	 * If the PLL is in FSM mode, then treat the set_rate callback
-> +	 * as a no-operation.
-> +	 */
-> +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val & PLL_VOTE_FSM_ENA)
-> +		return 0;
-> +
-> +	div = DIV_ROUND_UP_ULL(parent_rate, rate);
-> +	for (i = 0; i < pll->num_post_div; i++) {
-> +		if (pll->post_div_table[i].div == div) {
-> +			val = pll->post_div_table[i].val;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> +				  PLL_POST_DIV_MASK(pll) << PLL_POST_DIV_SHIFT,
-> +				  val << PLL_POST_DIV_SHIFT);
-> +}
-> +
-> +const struct clk_ops clk_trion_pll_postdiv_ops = {
-> +	.recalc_rate = clk_trion_pll_postdiv_recalc_rate,
-> +	.round_rate = clk_trion_pll_postdiv_round_rate,
-> +	.set_rate = clk_trion_pll_postdiv_set_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_trion_pll_postdiv_ops);
-> +
->   static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
->   				unsigned long rate, unsigned long *prate)
->   {
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index 66755f0f84fc..15f27f4b06df 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -13,22 +13,27 @@ enum {
->   	CLK_ALPHA_PLL_TYPE_HUAYRA,
->   	CLK_ALPHA_PLL_TYPE_BRAMMO,
->   	CLK_ALPHA_PLL_TYPE_FABIA,
-> +	CLK_ALPHA_PLL_TYPE_TRION,
->   	CLK_ALPHA_PLL_TYPE_MAX,
->   };
->   
->   enum {
->   	PLL_OFF_L_VAL,
-> +	PLL_OFF_CAL_L_VAL,
->   	PLL_OFF_ALPHA_VAL,
->   	PLL_OFF_ALPHA_VAL_U,
->   	PLL_OFF_USER_CTL,
->   	PLL_OFF_USER_CTL_U,
-> +	PLL_OFF_USER_CTL_U1,
->   	PLL_OFF_CONFIG_CTL,
->   	PLL_OFF_CONFIG_CTL_U,
-> +	PLL_OFF_CONFIG_CTL_U1,
->   	PLL_OFF_TEST_CTL,
->   	PLL_OFF_TEST_CTL_U,
->   	PLL_OFF_STATUS,
->   	PLL_OFF_OPMODE,
->   	PLL_OFF_FRAC,
-> +	PLL_OFF_CAL_VAL,
->   	PLL_OFF_MAX_REGS
->   };
->   
-> @@ -117,5 +122,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->   			     const struct alpha_pll_config *config);
->   void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->   				const struct alpha_pll_config *config);
-> +extern const struct clk_ops clk_trion_fixed_pll_ops;
-> +extern const struct clk_ops clk_trion_pll_postdiv_ops;
->   
->   #endif
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+On Thu, Jun 13, 2019 at 9:47 AM Nathan Huckleberry <nhuck@google.com> wrote=
+:
+>
+> Hey all,
+>
+> I'm looking into cleaning up ignored warnings in the kernel so we can rem=
+ove compiler flags to ignore warnings. There's a variable (ddrphycfg_parent=
+s) in clk-mt8516.c causing an unused const warning. Just wanted to reach ou=
+t to ask if this variable is intended to be used.
+>
+> It doesn't look like it has been used since it was first introduced. If i=
+t is no longer needed I'd like to remove it.
+>
+> https://github.com/ClangBuiltLinux/linux/issues/523
+>
+> Thanks,
+> Nathan Huckleberry
