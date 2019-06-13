@@ -2,94 +2,77 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F9BC31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE74C31E45
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFB1205ED
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560445841;
-	bh=z/CM3q0QFgMafRlvcoS3yJRC23xA3AlrEPJbgJvH5jU=;
-	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=h7XeZ/I2x2W23lAjZGXpefQ2nZapvqLwgdRasZosMc++tW70cFchZXqZmmoUzgyYw
-	 MSS2sj55zgr1iClnvKnB+ibvT6PNczDmk5QxYLPLY9rMtOwgmUdQ8JgA01PHoExYty
-	 Dpuuw/29oBfVvIVf1SenLzPh5lwg1pd9TzBdWjIk=
+	by mail.kernel.org (Postfix) with ESMTP id 0A42A218BB
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:41:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uqOVke8S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393543AbfFMRKk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 13:10:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729338AbfFLWmz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Jun 2019 18:42:55 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E2EA215EA;
-        Wed, 12 Jun 2019 22:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560379374;
-        bh=z/CM3q0QFgMafRlvcoS3yJRC23xA3AlrEPJbgJvH5jU=;
-        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=it7bebKmAU/aYbWt4bSiJsGg/sdkB5rSyh++hpwiSLWNO4i6j1hMYOfxYp7/GEA4+
-         h2+nhiwQjFPzHccevwb1HC7ZkmI5eAqJw7haeVx8s/D2dlyC3GCGyuDksWlEerLwhw
-         HWYRn+EMAcof7ivCZNgh8EWiOQedlZRd/8gYbcoU=
-Content-Type: text/plain; charset="utf-8"
+        id S1726965AbfFMRly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 13:41:54 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39806 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfFMRly (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 13:41:54 -0400
+Received: by mail-qk1-f194.google.com with SMTP id i125so13316760qkd.6
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2019 10:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=znrYd7kPsXyXAwfYH7xJxUXj1XKDDXu18nA2wghybU4=;
+        b=uqOVke8S1gDDw3ySGtzk/HZT47/YVoOjoN4s0HDDuOIOSuaHS9k96Z1JDh/vnC0E6r
+         rbRSjY6vEttsVgnNnU4X9PI4saELaVwM8sgvPpU4uALHGymqT537Vl+AthqX/r10fFTN
+         gCv8hKu+2ygLzEclE3xTJ18ejBNbQITsR2YuW4fW/dXtXWd0kIxah3rTz9vnHB0BgqoB
+         HLJNQ2segz6drY+Exhq3u76N3T+zwInfYL7Y2D2B73ZLb7MlCgd8tOuk5/nUPwRbuOYg
+         85GF3H2innfQJbamjaqSD0OirVIIVh18L8uy7rXWdGz+gcDUY5XXoGQ4BdWLOQ4w7Cy8
+         +NaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=znrYd7kPsXyXAwfYH7xJxUXj1XKDDXu18nA2wghybU4=;
+        b=ai4lmlC6+WjitUw5Mnbp4i9T6pqBkUeyHhoVjXqqMSijUNRSl6F1jCT6cC9a4qEujK
+         LccPRgkD/QL1SUo+qZvjIzWdpDOiZcShEJ00Y6G6tmPobkqtIvXa2QzqpurmHGn2ql9D
+         ImY6oPJVdkqMR5YIZq2sXxsVCn7Q/BM244OxODMXgyMaUFrcI2pMmjABg7OIGc4raNTd
+         SGOa8RDOPRy/eYyZPC7eUJZNSNIdX6Z5wbVGWpgK8nL8MIwEIQKJpMmGQtF7PE6a4CQ5
+         hqf0MwSpC51vqPvRpwHLYARV3zqWBlU6VKjUe9HAH4pj4AooTty55zfqgJe7KsiHExvR
+         T06g==
+X-Gm-Message-State: APjAAAVRsjkqHdcWjNJzfjA+MGAHteI6I3xDGwsOor1uIDVlf6UBwGHq
+        Q2jPXGB9dfsi/ocSJ/bAfuwVdBkPYDmljSL2Il+s9A==
+X-Google-Smtp-Source: APXvYqy2LZudB8Tf21SWqHPQSyT/yXKbAb3NdC/zLYsVWNbgvN7vIx0nABVWEKQPSl0WcxnjiteVbF1pdfvZ+1ZubRc=
+X-Received: by 2002:a37:634f:: with SMTP id x76mr70478855qkb.205.1560447713808;
+ Thu, 13 Jun 2019 10:41:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <dc11a192-f8c6-f90f-8214-303291b03258@free.fr>
-References: <49b95f19-4da6-4491-6ed7-5238ecfc35a8@free.fr> <20190612191347.GE22737@tuxbook-pro> <20190612194915.8F5DD20866@mail.kernel.org> <dc11a192-f8c6-f90f-8214-303291b03258@free.fr>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH v1] clk: qcom: msm8916: Don't build support by default
-User-Agent: alot/0.8.1
-Date:   Wed, 12 Jun 2019 15:42:53 -0700
-Message-Id: <20190612224254.4E2EA215EA@mail.kernel.org>
+From:   Nathan Huckleberry <nhuck@google.com>
+Date:   Thu, 13 Jun 2019 10:41:43 -0700
+Message-ID: <CAJkfWY7qEX3AX3BMqYUranCeQ1j-MvQiZtqesBfwOOW-ZpqkcQ@mail.gmail.com>
+Subject: Cleanup of -Wunused-const-variable in drivers/clk/clk-qoriq.c
+To:     scottwood@freescale.com,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        tglx@linutronix.de
+Cc:     linux-clk@vger.kernel.org, clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marc Gonzalez (2019-06-12 13:03:22)
-> On 12/06/2019 21:49, Stephen Boyd wrote:
->=20
-> > Quoting Bjorn Andersson (2019-06-12 12:13:47)
-> >
-> >> On Wed 12 Jun 08:52 PDT 2019, Marc Gonzalez wrote:
-> >>
-> >>> Build QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 by default only when
-> >>> we're building MSM_GCC_8916.
-> >>>
-> >>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> >>
-> >> Not sure why these are default at all.
-> >>
-> >> But both drivers are used on platforms other than 8916 as well, so if
-> >> anything a fix would be to rename the APCS_MSM8916 to something more
-> >> generic (such as QCOM_CLK_APCS_GLOBAL) - but then the content should be
-> >> updated and the APCS mailbox driver as well...
-> >=20
-> > I don't see any use in being this specific. I'd prefer we just leave
-> > this at the ARCH_FOO config level and not try anything more fancy.
->=20
-> As Bjorn pointed out, why do these default "on" at all?
->=20
-> https://elixir.bootlin.com/linux/latest/source/drivers/clk/qcom/Kconfig
->=20
-> There are dozens of config knobs in drivers/clk/qcom/Kconfig
-> and only these two force the default.
->=20
-> Let's remove the default altogether.
->=20
+Hey all,
 
-Sure.
+I'm investigating compiler warnings in the kernel and noticed a couple
+unused variables.
 
+https://github.com/ClangBuiltLinux/linux/issues/525
+
+It looks like the wrong clockgen_muxinfo is being used in the p5020's
+clockgen_chipinfo. Just wanted to make sure this is not intended
+behavior before submitting a patch.
+
+Thanks,
+Nathan Huckleberry
