@@ -2,82 +2,125 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C02EAC31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B03C31E49
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4C320896
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C74052054F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560439129;
+	bh=9nw7s7Y1QRBTXFeeD1F8tOL9Kaizm2l7e3Ph/Xz+h50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CpV+BwT6SB69g3qVYjMOAU+FoDuBEl6PBPAPcM4K975yPbT+HGgbjA12guKX5i0es
+	 yruVGO00DYwJyXTg1bI9D7Na7UaD2K8roAjNVlqX1sJBu3WU5CK3x1yJGryR80d6mC
+	 TCkpPdCGYxmlQ4ZxVkewTzc5Sa5piupxF1Yu9WRQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732892AbfFMPJg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:09:36 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:59686 "EHLO ns.iliad.fr"
+        id S1727065AbfFMPSi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 11:18:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732357AbfFMPJf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:09:35 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 29F3320C0F;
-        Thu, 13 Jun 2019 17:09:34 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 13F6920BC5;
-        Thu, 13 Jun 2019 17:09:34 +0200 (CEST)
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v2] clk: qcom: msm8916: Don't build by default
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Message-ID: <d654907d-a3a2-a00f-d6f5-3a34ae25ebcf@free.fr>
-Date:   Thu, 13 Jun 2019 17:09:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1732155AbfFMNFd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:05:33 -0400
+Received: from earth.universe (dyndsl-095-033-011-189.ewe-ip-backbone.de [95.33.11.189])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67C3B205ED;
+        Thu, 13 Jun 2019 13:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560431132;
+        bh=9nw7s7Y1QRBTXFeeD1F8tOL9Kaizm2l7e3Ph/Xz+h50=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wzRm/x10/pYWTJzw5naJiqba5efR9LYMIKMLRdFAtvkvh4JkXIQ56p6+ZjI0kXE0E
+         4jpE1a6LzXszIazL6ARJUwzldZdqylsrebyOpqTNJ5qL7VHd/4wQCvVTMNCCqflaAB
+         cl/R3NEOjn2v+4zgAZE6fn0tBF9DEiTradMT58MI=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 0F2303C0C77; Thu, 13 Jun 2019 15:05:30 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 15:05:29 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+Message-ID: <20190613130529.kgswgbuszb24itxz@earth.universe>
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190611200043.eib3g3acc7ilawsx@earth.universe>
+ <20190612060328.GQ4797@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun 13 17:09:34 2019 +0200 (CEST)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="z7gwwmvwfgzls6v6"
+Content-Disposition: inline
+In-Reply-To: <20190612060328.GQ4797@dell>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 stand out as the only options
-built by default. Let's bring them back in line with the rest.
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
-Changes from v1:
-- Drop the default altogether, instead of changing it to 'default MSM_GCC_8916'
----
- drivers/clk/qcom/Kconfig | 2 --
- 1 file changed, 2 deletions(-)
+--z7gwwmvwfgzls6v6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e1ff83cc361e..6461a1aa7325 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -21,7 +21,6 @@ if COMMON_CLK_QCOM
- 
- config QCOM_A53PLL
- 	tristate "MSM8916 A53 PLL"
--	default ARCH_QCOM
- 	help
- 	  Support for the A53 PLL on MSM8916 devices. It provides
- 	  the CPU with frequencies above 1GHz.
-@@ -31,7 +30,6 @@ config QCOM_A53PLL
- config QCOM_CLK_APCS_MSM8916
- 	tristate "MSM8916 APCS Clock Controller"
- 	depends on QCOM_APCS_IPC || COMPILE_TEST
--	default ARCH_QCOM
- 	help
- 	  Support for the APCS Clock Controller on msm8916 devices. The
- 	  APCS is managing the mux and divider which feeds the CPUs.
--- 
-2.17.1
+Hi,
+
+On Wed, Jun 12, 2019 at 07:03:28AM +0100, Lee Jones wrote:
+> On Tue, 11 Jun 2019, Sebastian Reichel wrote:
+> > On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> > > Patch series introducing support for ROHM BD70528 PMIC
+> > > [...]
+> >=20
+> > I think all patches have been reviewed by the respective subsystem
+> > maintainers. Lee, can you provide an immutable branch with the MFD
+> > patches (1, 2, 4)? Looks like the other patches only depend on those
+> > and can go through their respective subsystems.
+>=20
+> Yes.  It's on my TODO list.
+
+Thanks.
+
+> Would you prefer this method over me just taking them all and sending
+> out a PR?  The latter is my usual flow, but I'm happy with either.
+
+Both methods are fine with me. I usually go with "my" method, since
+that results in less shared commits. It simplifies potential
+follow-up bug fixes, since there is only one tree to fix.
+
+-- Sebastian
+
+--z7gwwmvwfgzls6v6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0CShYACgkQ2O7X88g7
++pr+dQ//UKZYRSKZHKIkw81U/LPaGmkXOWyyYGwVfxHDYeMyeHur/klljg+mU4bW
+gMCGCns23SP/L4c9lOc3aY/Ovkjuq2gjonKtMFo66fY9slf6MdnC4L9FNXXUqsPK
+oa8Fir0ful7FdJ4HxsxLqkiTT1wWDNRgchMI/iNEhcjMt14rlzwIM7wyktT8O/Zr
+9Om2Cx282JEE5hGbl2D98VPrR67vqNRqOwIhZ+lQBNgXiOUgvlh2UDqpXziOjdwX
+vxgmoxUB1v72itnyz0qf46L+ayqnPmBH6MSEdTYs5vYz4l64c4jIXoyyJ/pPr+ck
+rb6eygO0LkADnW6zab11yWn1HH/CYJG1TUNMNOw8a4RFPpCyDW17U5ksICi55hhx
+HrG1YXCPgpiGV2d0MawLwLhEbv3FXIYDPPt6xEne0FXUHg53apOQjmyPoGP404RN
+M7jJJlpkGyHd5N2iskFU79NBES64aHkc/uvmEZw56xHUVg0SZ9e/V7zLKWwxMYeM
+C0kaTjsN86xnoNwsMoVx94RiIjk38xDz1anaAafOtpkUxdFb2xL9qpGWiUlwZKVJ
+ALa7k8jleI0Mzv/fOFHGBZzkGoPCdqURkANKyCLHBA8Pi++nGR4RHF2Om/goK/mb
+pLme4LVfDKswR8HYUbrfCBLsG/uBNX1GfoEH9/CQ2gNKSphUZ90=
+=ScGm
+-----END PGP SIGNATURE-----
+
+--z7gwwmvwfgzls6v6--
