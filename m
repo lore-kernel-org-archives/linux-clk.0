@@ -2,79 +2,127 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE18C31E4A
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08256C31E4A
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6E9C206BB
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2ADD21773
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 15:53:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TecXneTy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbfFMPnr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:43:47 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:40438 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731832AbfFMJp5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 05:45:57 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 6274225B7FA;
-        Thu, 13 Jun 2019 19:45:55 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 5CE8B940483; Thu, 13 Jun 2019 11:45:53 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 11:45:53 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/34] clk: clk-cdce706: simplify getting the adapter of
- a client
-Message-ID: <20190613094553.k7shy2w32cdkkfrb@verge.net.au>
-References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
- <20190608105619.593-2-wsa+renesas@sang-engineering.com>
+        id S1727668AbfFMPx2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 11:53:28 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9822 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728558AbfFMPx2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 11:53:28 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d0271760001>; Thu, 13 Jun 2019 08:53:26 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 13 Jun 2019 08:53:26 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 13 Jun 2019 08:53:26 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
+ 2019 15:53:24 +0000
+Subject: Re: [PATCH V2] clk: tegra210: Fix default rates for HDA clocks
+To:     Sasha Levin <sashal@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <1559743299-11576-1-git-send-email-jonathanh@nvidia.com>
+ <20190607002314.4AEF321019@mail.kernel.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d69e549b-1509-b249-0a4e-16417b2ce3e8@nvidia.com>
+Date:   Thu, 13 Jun 2019 16:53:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190608105619.593-2-wsa+renesas@sang-engineering.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190607002314.4AEF321019@mail.kernel.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560441206; bh=7kUpFFpRMuOMI9kyrgi28sxzCDqI4E0BfWOUhr+G4+s=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=TecXneTy+K46gqE29Dgo0E0GKMaJ8/SpshUuqqkUGKwcN3k9hqz0IXjbNhAs/Uwzd
+         lRIAIQ8FRuiRw2iph+6kVxK9I30rMCshr3HPGBrlATXBAzfNdCUDQO9VTpkJRSl6tR
+         jv8ZvBmgXBVlgBtOhxVa1nPp+E0xSBNRr331fdNiftCeI7eiUz3yre07RrLTsL1CKx
+         xP9mpf8ijZ6c5fP3prwCBs0EhzAEtPEQ4vlFSp1jTcc1gX8+wen+NDcSYPhRV/YLnH
+         yeYp9asmz5K160Vtzi36kNqqUiH+tFcfy3f59IWCRueKyW5I88mgcewUtHnM3S1ZZa
+         DsnIWsmC5oJ3w==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jun 08, 2019 at 12:55:40PM +0200, Wolfram Sang wrote:
-> We have a dedicated pointer for that, so use it. Much easier to read and
-> less computation involved.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On 07/06/2019 01:23, Sasha Levin wrote:
+> Hi,
+> 
+> [This is an automated email]
+> 
+> This commit has been processed because it contains a -stable tag.
+> The stable tag indicates that it's relevant for the following trees: all
+> 
+> The bot has tested the following trees: v5.1.7, v5.0.21, v4.19.48, v4.14.123, v4.9.180, v4.4.180.
+> 
+> v5.1.7: Build OK!
+> v5.0.21: Build OK!
+> v4.19.48: Failed to apply! Possible dependencies:
+>     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
+> 
+> v4.14.123: Failed to apply! Possible dependencies:
+>     26f8590c4a1f ("clk: tegra: Make vic03 a child of pll_c3")
+>     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
+>     c485ad63abb4 ("clk: tegra: Specify VDE clock rate")
+> 
+> v4.9.180: Failed to apply! Possible dependencies:
+>     24c3ebef1ab6 ("clk: tegra: Add aclk")
+>     26f8590c4a1f ("clk: tegra: Make vic03 a child of pll_c3")
+>     319af7975c9f ("clk: tegra: Define Tegra210 DMIC sync clocks")
+>     34ac2c278b30 ("clk: tegra: Fix ISP clock modelling")
+>     3843832fc8ca ("clk: tegra: Handle UTMIPLL IDDQ")
+>     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
+>     8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
+>     9326947f2215 ("clk: tegra: Fix pll_a1 iddq register, add pll_a1")
+>     bfa34832df1f ("clk: tegra: Add CEC clock")
+>     c485ad63abb4 ("clk: tegra: Specify VDE clock rate")
+>     e745f992cf4b ("clk: tegra: Rework pll_u")
+> 
+> v4.4.180: Failed to apply! Possible dependencies:
+>     26f8590c4a1f ("clk: tegra: Make vic03 a child of pll_c3")
+>     385f9adf625f ("clk: tegra: Constify pdiv-to-hw mappings")
+>     407254da291c ("clk: tegra: pll: Add logic for out-of-table rates for T210")
+>     6583a6309e83 ("clk: tegra: pll: Add tegra_pll_wait_for_lock to clk header")
+>     845d782d9144 ("clk: tegra: Fix maximum audio sync clock for Tegra124/210")
+>     86c679a52294 ("clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate")
+>     8d99704fde54 ("clk: tegra: Format tables consistently")
+>     c485ad63abb4 ("clk: tegra: Specify VDE clock rate")
+>     c4947e364b50 ("clk: tegra: Fix 26 MHz oscillator frequency")
+>     d907f4b4a178 ("clk: tegra: pll: Add logic for handling SDM data")
+>     dd322f047d22 ("clk: tegra: pll: Add specialized logic for Tegra210")
+>     e52d7c04bb39 ("clk: tegra: Miscellaneous coding style cleanups")
+>     e745f992cf4b ("clk: tegra: Rework pll_u")
+> 
+> 
+> How should we proceed with this patch?
 
-> ---
-> 
-> Please apply to your subsystem tree.
-> 
->  drivers/clk/clk-cdce706.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
-> index f21d9092564f..476d29c013e5 100644
-> --- a/drivers/clk/clk-cdce706.c
-> +++ b/drivers/clk/clk-cdce706.c
-> @@ -633,7 +633,7 @@ of_clk_cdce_get(struct of_phandle_args *clkspec, void *data)
->  static int cdce706_probe(struct i2c_client *client,
->  			 const struct i2c_device_id *id)
->  {
-> -	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
-> +	struct i2c_adapter *adapter = client->adapter;
->  	struct cdce706_dev_data *cdce;
->  	int ret;
->  
-> -- 
-> 2.19.1
-> 
+I think that applying to 5.0 and 5.1 is fine for now.
+
+Thanks
+Jon
+
+-- 
+nvpublic
