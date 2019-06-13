@@ -2,77 +2,88 @@ Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE74C31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FE3C31E45
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A42A218BB
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:41:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uqOVke8S"
+	by mail.kernel.org (Postfix) with ESMTP id BFD282063F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 17:57:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560448620;
+	bh=tmdZp5eaejiAieo6n/fEMpsT+qSMa1brGWrzPf1qjfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eRDUeWjA+J/SovzQf8trpfAFZMbPpUQEImPf9mNkj9yP6OXMabE5iejSHBAZ+gxU0
+	 NkVFgE7pZyH+G+d+Luvwn/egkJ1npflFdi9re+0UInLIpUQyHlh66s47rMt1bB4vQi
+	 DqtErLI0lwU6hk0F7mjNbZMToWy5xtpV8WpbO2KQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfFMRly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 13:41:54 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39806 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfFMRly (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 13:41:54 -0400
-Received: by mail-qk1-f194.google.com with SMTP id i125so13316760qkd.6
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2019 10:41:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=znrYd7kPsXyXAwfYH7xJxUXj1XKDDXu18nA2wghybU4=;
-        b=uqOVke8S1gDDw3ySGtzk/HZT47/YVoOjoN4s0HDDuOIOSuaHS9k96Z1JDh/vnC0E6r
-         rbRSjY6vEttsVgnNnU4X9PI4saELaVwM8sgvPpU4uALHGymqT537Vl+AthqX/r10fFTN
-         gCv8hKu+2ygLzEclE3xTJ18ejBNbQITsR2YuW4fW/dXtXWd0kIxah3rTz9vnHB0BgqoB
-         HLJNQ2segz6drY+Exhq3u76N3T+zwInfYL7Y2D2B73ZLb7MlCgd8tOuk5/nUPwRbuOYg
-         85GF3H2innfQJbamjaqSD0OirVIIVh18L8uy7rXWdGz+gcDUY5XXoGQ4BdWLOQ4w7Cy8
-         +NaQ==
+        id S1726965AbfFMR5A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 13:57:00 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35216 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbfFMR5A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 13:57:00 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d23so23600741qto.2;
+        Thu, 13 Jun 2019 10:56:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=znrYd7kPsXyXAwfYH7xJxUXj1XKDDXu18nA2wghybU4=;
-        b=ai4lmlC6+WjitUw5Mnbp4i9T6pqBkUeyHhoVjXqqMSijUNRSl6F1jCT6cC9a4qEujK
-         LccPRgkD/QL1SUo+qZvjIzWdpDOiZcShEJ00Y6G6tmPobkqtIvXa2QzqpurmHGn2ql9D
-         ImY6oPJVdkqMR5YIZq2sXxsVCn7Q/BM244OxODMXgyMaUFrcI2pMmjABg7OIGc4raNTd
-         SGOa8RDOPRy/eYyZPC7eUJZNSNIdX6Z5wbVGWpgK8nL8MIwEIQKJpMmGQtF7PE6a4CQ5
-         hqf0MwSpC51vqPvRpwHLYARV3zqWBlU6VKjUe9HAH4pj4AooTty55zfqgJe7KsiHExvR
-         T06g==
-X-Gm-Message-State: APjAAAVRsjkqHdcWjNJzfjA+MGAHteI6I3xDGwsOor1uIDVlf6UBwGHq
-        Q2jPXGB9dfsi/ocSJ/bAfuwVdBkPYDmljSL2Il+s9A==
-X-Google-Smtp-Source: APXvYqy2LZudB8Tf21SWqHPQSyT/yXKbAb3NdC/zLYsVWNbgvN7vIx0nABVWEKQPSl0WcxnjiteVbF1pdfvZ+1ZubRc=
-X-Received: by 2002:a37:634f:: with SMTP id x76mr70478855qkb.205.1560447713808;
- Thu, 13 Jun 2019 10:41:53 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yIbFZhqWp4VvUdb5YMW6F3G68rcscnXDxiUaVCPUjcY=;
+        b=n4hGPBAa5qkZ5FQ4tBfvmxJuSlqdwXWBTZF5vjw0Lb8SzUR/Gn/cYyons9xeVCrExM
+         sGXXuV1/oUha/PVqDfBnWAIDVceiRWT3dnuzA6PxUCRi19YWIUU7qS76AaI1wMiH0Xz4
+         z8hXewqOjS2xzlOxW+0YtB7EWbL06aLAvi/ZhtPXWB6Cwfgb/2SzEyh3Qjy1kzvNLrpF
+         eWNECzR7YFtEed89AjDiRKJYRYI9OcuFwST6P4aRJM4hUhGBHTEzdkeaZI+PfybWVJ56
+         /H66xf9HGYYxlalMuF1F8KHrPWb/xChZC8enTGUqbbeW//ZeF2feSRUB9+pED//65M5I
+         EfKA==
+X-Gm-Message-State: APjAAAXWwVHIiZw3CYt6D76qb86+S/o7ixDt9NFQprzTyXHE2O+Z9N5N
+        h3SMy/JHl3bWEwnmfpt4aA==
+X-Google-Smtp-Source: APXvYqy8BdUexEXBNkk/aBNzoTj1hmYlo9Pn7u6ueypiXsiR+qsvuB8ysYW+UHV0ykEpRo3Wdy1qUQ==
+X-Received: by 2002:a0c:fde3:: with SMTP id m3mr4638216qvu.205.1560448618362;
+        Thu, 13 Jun 2019 10:56:58 -0700 (PDT)
+Received: from localhost ([64.188.179.243])
+        by smtp.gmail.com with ESMTPSA id n10sm131242qke.72.2019.06.13.10.56.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 10:56:57 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 11:56:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: Re: [PATCH v5 1/6] dt-bindings: clock: Document external clocks for
+ MSM8998 gcc
+Message-ID: <20190613175655.GA13079@bogus>
+References: <1560366600-5826-1-git-send-email-jhugo@codeaurora.org>
+ <1560366648-5886-1-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-From:   Nathan Huckleberry <nhuck@google.com>
-Date:   Thu, 13 Jun 2019 10:41:43 -0700
-Message-ID: <CAJkfWY7qEX3AX3BMqYUranCeQ1j-MvQiZtqesBfwOOW-ZpqkcQ@mail.gmail.com>
-Subject: Cleanup of -Wunused-const-variable in drivers/clk/clk-qoriq.c
-To:     scottwood@freescale.com,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        tglx@linutronix.de
-Cc:     linux-clk@vger.kernel.org, clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560366648-5886-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hey all,
+On Wed, 12 Jun 2019 13:10:48 -0600, Jeffrey Hugo wrote:
+> The global clock controller on MSM8998 can consume a number of external
+> clocks.  Document them.
+> 
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-I'm investigating compiler warnings in the kernel and noticed a couple
-unused variables.
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-https://github.com/ClangBuiltLinux/linux/issues/525
-
-It looks like the wrong clockgen_muxinfo is being used in the p5020's
-clockgen_chipinfo. Just wanted to make sure this is not intended
-behavior before submitting a patch.
-
-Thanks,
-Nathan Huckleberry
+If a tag was not added on purpose, please state why and what changed.
