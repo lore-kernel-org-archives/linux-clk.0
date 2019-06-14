@@ -2,427 +2,411 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41088C31E44
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 05:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3343FC31E44
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 08:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5342133D
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 05:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560491114;
-	bh=rSAWQpppASD5LkzP3TFLJeCUIJDhuj6YCl22Ph8KoBg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ubXiezHQwORE3AJJ0Agva0MltzQDKFF+vZ7w6XMJRooU9D0r7+vZmmdp5ZfOwk5rL
-	 m6NcsQXByXqGO7wy8JCZtb3P1gergVMymwotFHvzj49AQazo3jBgI/bUO+UtmukS4m
-	 sZJF22PY37GJUQ/nzZ+l7Wg/xWGvNNFT8CVKyo7M=
+	by mail.kernel.org (Postfix) with ESMTP id F356120851
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 08:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbfFNFpN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 01:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47056 "EHLO mail.kernel.org"
+        id S1726598AbfFNIgU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 04:36:20 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:59424 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfFNFpN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 01:45:13 -0400
-Received: from localhost (unknown [106.201.34.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 722E42133D;
-        Fri, 14 Jun 2019 05:45:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560491111;
-        bh=rSAWQpppASD5LkzP3TFLJeCUIJDhuj6YCl22Ph8KoBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Orn6y7KAhJya4eJan8aWY4NMVXtY2SDfcq/ilhqYUGXIjD6Oezgr4azyz+z9d3T2x
-         we5SF/WacOOCCcJoBNFnU/hJYCrxXp5vEDFxOhzbdMnNYF/2kRghvk0PmZ4t9nNvTq
-         71mNYj3DqST1yO2n8qr68gZYt1GduI6/Vcdb4pco=
-Date:   Fri, 14 Jun 2019 11:12:01 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] clk: qcom: clk-alpha-pll: Add support for Trion
- PLLs
-Message-ID: <20190614054201.GA2962@vkoul-mobl>
-References: <20190612091722.9377-1-vkoul@kernel.org>
- <20190612091722.9377-5-vkoul@kernel.org>
- <c7be6307-51cd-46ce-8d1c-b464e510e3f7@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7be6307-51cd-46ce-8d1c-b464e510e3f7@codeaurora.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726519AbfFNIgU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:36:20 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9EA8E200E46;
+        Fri, 14 Jun 2019 10:36:17 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 551B4200077;
+        Fri, 14 Jun 2019 10:36:05 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8657A402A0;
+        Fri, 14 Jun 2019 16:35:51 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, maxime.ripard@bootlin.com,
+        horms+renesas@verge.net.au, olof@lixom.net,
+        jagan@amarulasolutions.com, bjorn.andersson@linaro.org,
+        leonard.crestez@nxp.com, dinguyen@kernel.org,
+        enric.balletbo@collabora.com, aisheng.dong@nxp.com,
+        ping.bai@nxp.com, abel.vesa@nxp.com, l.stach@pengutronix.de,
+        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V5 1/5] dt-bindings: imx: Add clock binding doc for i.MX8MN
+Date:   Fri, 14 Jun 2019 16:37:43 +0800
+Message-Id: <20190614083747.28762-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Taniya,
+From: Anson Huang <Anson.Huang@nxp.com>
 
-On 13-06-19, 08:34, Taniya Das wrote:
-> Hi Vinod,
-> 
-> The trion PLL needs to be configured before it is enabled. The PLL cannot
-> LOCK without the calibration.
-> 
-> Could you please add "clk_trion_pll_configure()" function?
+Add the clock binding doc for i.MX8MN.
 
-First it is not recommended to top post! Please reply inline.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+Changes since V4:
+	- remove unnecessary reference statement for common clock binding;
+	- move the description about clock cell to clock-cells node.
+---
+ .../devicetree/bindings/clock/imx8mn-clock.yaml    | 112 +++++++++++
+ include/dt-bindings/clock/imx8mn-clock.h           | 215 +++++++++++++++++++++
+ 2 files changed, 327 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+ create mode 100644 include/dt-bindings/clock/imx8mn-clock.h
 
-Yes I did see that, I will check that. Is there any way to find PLL is
-configured or not? I want to avoid using inited variable as done in
-downstream.
-
-Thanks
-
-> On 6/12/2019 2:47 PM, Vinod Koul wrote:
-> > From: Deepak Katragadda <dkatraga@codeaurora.org>
-> > 
-> > Add programming sequence support for managing the Trion
-> > PLLs.
-> > 
-> > Signed-off-by: Deepak Katragadda <dkatraga@codeaurora.org>
-> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > [vkoul: Fix style and format issues
-> >    convert to use pll type infrastructure
-> >    remove unnecessary checks in code
-> >    remove unused code]
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > ---
-> >   drivers/clk/qcom/clk-alpha-pll.c | 228 +++++++++++++++++++++++++++++++
-> >   drivers/clk/qcom/clk-alpha-pll.h |   7 +
-> >   2 files changed, 235 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> > index 2c6773188761..30210f5c6726 100644
-> > --- a/drivers/clk/qcom/clk-alpha-pll.c
-> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> > @@ -32,6 +32,7 @@
-> >   # define PLL_LOCK_DET		BIT(31)
-> >   #define PLL_L_VAL(p)		((p)->offset + (p)->regs[PLL_OFF_L_VAL])
-> > +#define PLL_CAL_L_VAL(p)	((p)->offset + (p)->regs[PLL_OFF_CAL_L_VAL])
-> >   #define PLL_ALPHA_VAL(p)	((p)->offset + (p)->regs[PLL_OFF_ALPHA_VAL])
-> >   #define PLL_ALPHA_VAL_U(p)	((p)->offset + (p)->regs[PLL_OFF_ALPHA_VAL_U])
-> > @@ -44,14 +45,17 @@
-> >   # define PLL_VCO_MASK		0x3
-> >   #define PLL_USER_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_USER_CTL_U])
-> > +#define PLL_USER_CTL_U1(p)	((p)->offset + (p)->regs[PLL_OFF_USER_CTL_U1])
-> >   #define PLL_CONFIG_CTL(p)	((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL])
-> >   #define PLL_CONFIG_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U])
-> > +#define PLL_CONFIG_CTL_U1(p)	((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U11])
-> >   #define PLL_TEST_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
-> >   #define PLL_TEST_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
-> >   #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
-> >   #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
-> >   #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
-> > +#define PLL_CAL_VAL(p)		((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
-> >   const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
-> >   	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
-> > @@ -96,6 +100,22 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
-> >   		[PLL_OFF_OPMODE] = 0x2c,
-> >   		[PLL_OFF_FRAC] = 0x38,
-> >   	},
-> > +	[CLK_ALPHA_PLL_TYPE_TRION] = {
-> > +		[PLL_OFF_L_VAL] = 0x04,
-> > +		[PLL_OFF_CAL_L_VAL] = 0x08,
-> > +		[PLL_OFF_USER_CTL] = 0x0c,
-> > +		[PLL_OFF_USER_CTL_U] = 0x10,
-> > +		[PLL_OFF_USER_CTL_U1] = 0x14,
-> > +		[PLL_OFF_CONFIG_CTL] = 0x18,
-> > +		[PLL_OFF_CONFIG_CTL_U] = 0x1c,
-> > +		[PLL_OFF_CONFIG_CTL_U1] = 0x20,
-> > +		[PLL_OFF_TEST_CTL] = 0x24,
-> > +		[PLL_OFF_TEST_CTL_U] = 0x28,
-> > +		[PLL_OFF_STATUS] = 0x30,
-> > +		[PLL_OFF_OPMODE] = 0x38,
-> > +		[PLL_OFF_ALPHA_VAL] = 0x40,
-> > +		[PLL_OFF_CAL_VAL] = 0x44,
-> > +	},
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
-> > @@ -120,6 +140,10 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
-> >   #define FABIA_PLL_OUT_MASK	0x7
-> >   #define FABIA_PLL_RATE_MARGIN	500
-> > +#define TRION_PLL_STANDBY	0x0
-> > +#define TRION_PLL_RUN		0x1
-> > +#define TRION_PLL_OUT_MASK	0x7
-> > +
-> >   #define pll_alpha_width(p)					\
-> >   		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
-> >   				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
-> > @@ -730,6 +754,130 @@ static long alpha_pll_huayra_round_rate(struct clk_hw *hw, unsigned long rate,
-> >   	return alpha_huayra_pll_round_rate(rate, *prate, &l, &a);
-> >   }
-> > +static int trion_pll_is_enabled(struct clk_alpha_pll *pll,
-> > +				struct regmap *regmap)
-> > +{
-> > +	u32 mode_regval, opmode_regval;
-> > +	int ret;
-> > +
-> > +	ret = regmap_read(regmap, PLL_MODE(pll), &mode_regval);
-> > +	ret |= regmap_read(regmap, PLL_OPMODE(pll), &opmode_regval);
-> > +	if (ret)
-> > +		return 0;
-> > +
-> > +	return ((opmode_regval & TRION_PLL_RUN) && (mode_regval & PLL_OUTCTRL));
-> > +}
-> > +
-> > +static int clk_trion_pll_is_enabled(struct clk_hw *hw)
-> > +{
-> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> > +
-> > +	return trion_pll_is_enabled(pll, pll->clkr.regmap);
-> > +}
-> > +
-> > +static int clk_trion_pll_enable(struct clk_hw *hw)
-> > +{
-> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> > +	struct regmap *regmap = pll->clkr.regmap;
-> > +	u32 val;
-> > +	int ret;
-> > +
-> > +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	/* If in FSM mode, just vote for it */
-> > +	if (val & PLL_VOTE_FSM_ENA) {
-> > +		ret = clk_enable_regmap(hw);
-> > +		if (ret)
-> > +			return ret;
-> > +		return wait_for_pll_enable_active(pll);
-> > +	}
-> > +
-> > +	/* Set operation mode to RUN */
-> > +	regmap_write(regmap, PLL_OPMODE(pll), TRION_PLL_RUN);
-> > +
-> > +	ret = wait_for_pll_enable_lock(pll);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	/* Enable the PLL outputs */
-> > +	ret = regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> > +				 TRION_PLL_OUT_MASK, TRION_PLL_OUT_MASK);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	/* Enable the global PLL outputs */
-> > +	return regmap_update_bits(regmap, PLL_MODE(pll),
-> > +				 PLL_OUTCTRL, PLL_OUTCTRL);
-> > +}
-> > +
-> > +static void clk_trion_pll_disable(struct clk_hw *hw)
-> > +{
-> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> > +	struct regmap *regmap = pll->clkr.regmap;
-> > +	u32 val;
-> > +	int ret;
-> > +
-> > +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
-> > +	if (ret)
-> > +		return;
-> > +
-> > +	/* If in FSM mode, just unvote it */
-> > +	if (val & PLL_VOTE_FSM_ENA) {
-> > +		clk_disable_regmap(hw);
-> > +		return;
-> > +	}
-> > +
-> > +	/* Disable the global PLL output */
-> > +	ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
-> > +	if (ret)
-> > +		return;
-> > +
-> > +	/* Disable the PLL outputs */
-> > +	ret = regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> > +				 TRION_PLL_OUT_MASK, 0);
-> > +	if (ret)
-> > +		return;
-> > +
-> > +	/* Place the PLL mode in STANDBY */
-> > +	regmap_write(regmap, PLL_OPMODE(pll), TRION_PLL_STANDBY);
-> > +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
-> > +}
-> > +
-> > +static unsigned long
-> > +clk_trion_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> > +{
-> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> > +	struct regmap *regmap = pll->clkr.regmap;
-> > +	u32 l, frac;
-> > +	u64 prate = parent_rate;
-> > +
-> > +	regmap_read(regmap, PLL_L_VAL(pll), &l);
-> > +	regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac);
-> > +
-> > +	return alpha_pll_calc_rate(prate, l, frac, ALPHA_REG_16BIT_WIDTH);
-> > +}
-> > +
-> > +static long clk_trion_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> > +				     unsigned long *prate)
-> > +{
-> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> > +	unsigned long min_freq, max_freq;
-> > +	u32 l;
-> > +	u64 a;
-> > +
-> > +	rate = alpha_pll_round_rate(rate, *prate,
-> > +				    &l, &a, ALPHA_REG_16BIT_WIDTH);
-> > +	if (!pll->vco_table || alpha_pll_find_vco(pll, rate))
-> > +		return rate;
-> > +
-> > +	min_freq = pll->vco_table[0].min_freq;
-> > +	max_freq = pll->vco_table[pll->num_vco - 1].max_freq;
-> > +
-> > +	return clamp(rate, min_freq, max_freq);
-> > +}
-> > +
-> >   const struct clk_ops clk_alpha_pll_ops = {
-> >   	.enable = clk_alpha_pll_enable,
-> >   	.disable = clk_alpha_pll_disable,
-> > @@ -760,6 +908,15 @@ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
-> > +const struct clk_ops clk_trion_fixed_pll_ops = {
-> > +	.enable = clk_trion_pll_enable,
-> > +	.disable = clk_trion_pll_disable,
-> > +	.is_enabled = clk_trion_pll_is_enabled,
-> > +	.recalc_rate = clk_trion_pll_recalc_rate,
-> > +	.round_rate = clk_trion_pll_round_rate,
-> > +};
-> > +EXPORT_SYMBOL_GPL(clk_trion_fixed_pll_ops);
-> > +
-> >   static unsigned long
-> >   clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> >   {
-> > @@ -1053,6 +1210,77 @@ static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
-> >   	return (parent_rate / div);
-> >   }
-> > +static unsigned long
-> > +clk_trion_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> > +{
-> > +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> > +	struct regmap *regmap = pll->clkr.regmap;
-> > +	u32 i, div = 1, val;
-> > +
-> > +	regmap_read(regmap, PLL_USER_CTL(pll), &val);
-> > +
-> > +	val >>= pll->post_div_shift;
-> > +	val &= PLL_POST_DIV_MASK(pll);
-> > +
-> > +	for (i = 0; i < pll->num_post_div; i++) {
-> > +		if (pll->post_div_table[i].val == val) {
-> > +			div = pll->post_div_table[i].div;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	return (parent_rate / div);
-> > +}
-> > +
-> > +static long
-> > +clk_trion_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
-> > +				 unsigned long *prate)
-> > +{
-> > +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> > +
-> > +	return divider_round_rate(hw, rate, prate, pll->post_div_table,
-> > +				  pll->width, CLK_DIVIDER_ROUND_CLOSEST);
-> > +};
-> > +
-> > +static int
-> > +clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			       unsigned long parent_rate)
-> > +{
-> > +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> > +	struct regmap *regmap = pll->clkr.regmap;
-> > +	int i, val = 0, div, ret;
-> > +
-> > +	/*
-> > +	 * If the PLL is in FSM mode, then treat the set_rate callback
-> > +	 * as a no-operation.
-> > +	 */
-> > +	ret = regmap_read(regmap, PLL_MODE(pll), &val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (val & PLL_VOTE_FSM_ENA)
-> > +		return 0;
-> > +
-> > +	div = DIV_ROUND_UP_ULL(parent_rate, rate);
-> > +	for (i = 0; i < pll->num_post_div; i++) {
-> > +		if (pll->post_div_table[i].div == div) {
-> > +			val = pll->post_div_table[i].val;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	return regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> > +				  PLL_POST_DIV_MASK(pll) << PLL_POST_DIV_SHIFT,
-> > +				  val << PLL_POST_DIV_SHIFT);
-> > +}
-> > +
-> > +const struct clk_ops clk_trion_pll_postdiv_ops = {
-> > +	.recalc_rate = clk_trion_pll_postdiv_recalc_rate,
-> > +	.round_rate = clk_trion_pll_postdiv_round_rate,
-> > +	.set_rate = clk_trion_pll_postdiv_set_rate,
-> > +};
-> > +EXPORT_SYMBOL_GPL(clk_trion_pll_postdiv_ops);
-> > +
-> >   static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
-> >   				unsigned long rate, unsigned long *prate)
-> >   {
-> > diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> > index 66755f0f84fc..15f27f4b06df 100644
-> > --- a/drivers/clk/qcom/clk-alpha-pll.h
-> > +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> > @@ -13,22 +13,27 @@ enum {
-> >   	CLK_ALPHA_PLL_TYPE_HUAYRA,
-> >   	CLK_ALPHA_PLL_TYPE_BRAMMO,
-> >   	CLK_ALPHA_PLL_TYPE_FABIA,
-> > +	CLK_ALPHA_PLL_TYPE_TRION,
-> >   	CLK_ALPHA_PLL_TYPE_MAX,
-> >   };
-> >   enum {
-> >   	PLL_OFF_L_VAL,
-> > +	PLL_OFF_CAL_L_VAL,
-> >   	PLL_OFF_ALPHA_VAL,
-> >   	PLL_OFF_ALPHA_VAL_U,
-> >   	PLL_OFF_USER_CTL,
-> >   	PLL_OFF_USER_CTL_U,
-> > +	PLL_OFF_USER_CTL_U1,
-> >   	PLL_OFF_CONFIG_CTL,
-> >   	PLL_OFF_CONFIG_CTL_U,
-> > +	PLL_OFF_CONFIG_CTL_U1,
-> >   	PLL_OFF_TEST_CTL,
-> >   	PLL_OFF_TEST_CTL_U,
-> >   	PLL_OFF_STATUS,
-> >   	PLL_OFF_OPMODE,
-> >   	PLL_OFF_FRAC,
-> > +	PLL_OFF_CAL_VAL,
-> >   	PLL_OFF_MAX_REGS
-> >   };
-> > @@ -117,5 +122,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-> >   			     const struct alpha_pll_config *config);
-> >   void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-> >   				const struct alpha_pll_config *config);
-> > +extern const struct clk_ops clk_trion_fixed_pll_ops;
-> > +extern const struct clk_ops clk_trion_pll_postdiv_ops;
-> >   #endif
-> > 
-> 
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation.
-> 
-> --
-
+diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+new file mode 100644
+index 0000000..454c5b4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+@@ -0,0 +1,112 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/imx8mn-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP i.MX8M Nano Clock Control Module Binding
++
++maintainers:
++  - Anson Huang <Anson.Huang@nxp.com>
++
++description: |
++  NXP i.MX8M Nano clock control module is an integrated clock controller, which
++  generates and supplies to all modules.
++
++properties:
++  compatible:
++    const: fsl,imx8mn-ccm
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: 32k osc
++      - description: 24m osc
++      - description: ext1 clock input
++      - description: ext2 clock input
++      - description: ext3 clock input
++      - description: ext4 clock input
++
++  clock-names:
++    items:
++      - const: osc_32k
++      - const: osc_24m
++      - const: clk_ext1
++      - const: clk_ext2
++      - const: clk_ext3
++      - const: clk_ext4
++
++  '#clock-cells':
++    const: 1
++    description: |
++      The clock consumer should specify the desired clock by having the clock
++      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mn-clock.h
++      for the full list of i.MX8M Nano clock IDs.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++examples:
++  # Clock Control Module node:
++  - |
++    clk: clock-controller@30380000 {
++        compatible = "fsl,imx8mn-ccm";
++        reg = <0x0 0x30380000 0x0 0x10000>;
++        #clock-cells = <1>;
++        clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>,
++                 <&clk_ext2>, <&clk_ext3>, <&clk_ext4>;
++        clock-names = "osc_32k", "osc_24m", "clk_ext1",
++                      "clk_ext2", "clk_ext3", "clk_ext4";
++    };
++
++  # Required external clocks for Clock Control Module node:
++  - |
++    osc_32k: clock-osc-32k {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <32768>;
++	clock-output-names = "osc_32k";
++    };
++
++    osc_24m: clock-osc-24m {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <24000000>;
++        clock-output-names = "osc_24m";
++    };
++
++    clk_ext1: clock-ext1 {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <133000000>;
++        clock-output-names = "clk_ext1";
++    };
++
++    clk_ext2: clock-ext2 {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <133000000>;
++        clock-output-names = "clk_ext2";
++    };
++
++    clk_ext3: clock-ext3 {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <133000000>;
++        clock-output-names = "clk_ext3";
++    };
++
++    clk_ext4: clock-ext4 {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency= <133000000>;
++        clock-output-names = "clk_ext4";
++    };
++
++...
+diff --git a/include/dt-bindings/clock/imx8mn-clock.h b/include/dt-bindings/clock/imx8mn-clock.h
+new file mode 100644
+index 0000000..5255b1c
+--- /dev/null
++++ b/include/dt-bindings/clock/imx8mn-clock.h
+@@ -0,0 +1,215 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2018-2019 NXP
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_IMX8MN_H
++#define __DT_BINDINGS_CLOCK_IMX8MN_H
++
++#define IMX8MN_CLK_DUMMY			0
++#define IMX8MN_CLK_32K				1
++#define IMX8MN_CLK_24M				2
++#define IMX8MN_OSC_HDMI_CLK			3
++#define IMX8MN_CLK_EXT1				4
++#define IMX8MN_CLK_EXT2				5
++#define IMX8MN_CLK_EXT3				6
++#define IMX8MN_CLK_EXT4				7
++#define IMX8MN_AUDIO_PLL1_REF_SEL		8
++#define IMX8MN_AUDIO_PLL2_REF_SEL		9
++#define IMX8MN_VIDEO_PLL1_REF_SEL		10
++#define IMX8MN_DRAM_PLL_REF_SEL			11
++#define IMX8MN_GPU_PLL_REF_SEL			12
++#define IMX8MN_VPU_PLL_REF_SEL			13
++#define IMX8MN_ARM_PLL_REF_SEL			14
++#define IMX8MN_SYS_PLL1_REF_SEL			15
++#define IMX8MN_SYS_PLL2_REF_SEL			16
++#define IMX8MN_SYS_PLL3_REF_SEL			17
++#define IMX8MN_AUDIO_PLL1			18
++#define IMX8MN_AUDIO_PLL2			19
++#define IMX8MN_VIDEO_PLL1			20
++#define IMX8MN_DRAM_PLL				21
++#define IMX8MN_GPU_PLL				22
++#define IMX8MN_VPU_PLL				23
++#define IMX8MN_ARM_PLL				24
++#define IMX8MN_SYS_PLL1				25
++#define IMX8MN_SYS_PLL2				26
++#define IMX8MN_SYS_PLL3				27
++#define IMX8MN_AUDIO_PLL1_BYPASS		28
++#define IMX8MN_AUDIO_PLL2_BYPASS		29
++#define IMX8MN_VIDEO_PLL1_BYPASS		30
++#define IMX8MN_DRAM_PLL_BYPASS			31
++#define IMX8MN_GPU_PLL_BYPASS			32
++#define IMX8MN_VPU_PLL_BYPASS			33
++#define IMX8MN_ARM_PLL_BYPASS			34
++#define IMX8MN_SYS_PLL1_BYPASS			35
++#define IMX8MN_SYS_PLL2_BYPASS			36
++#define IMX8MN_SYS_PLL3_BYPASS			37
++#define IMX8MN_AUDIO_PLL1_OUT			38
++#define IMX8MN_AUDIO_PLL2_OUT			39
++#define IMX8MN_VIDEO_PLL1_OUT			40
++#define IMX8MN_DRAM_PLL_OUT			41
++#define IMX8MN_GPU_PLL_OUT			42
++#define IMX8MN_VPU_PLL_OUT			43
++#define IMX8MN_ARM_PLL_OUT			44
++#define IMX8MN_SYS_PLL1_OUT			45
++#define IMX8MN_SYS_PLL2_OUT			46
++#define IMX8MN_SYS_PLL3_OUT			47
++#define IMX8MN_SYS_PLL1_40M			48
++#define IMX8MN_SYS_PLL1_80M			49
++#define IMX8MN_SYS_PLL1_100M			50
++#define IMX8MN_SYS_PLL1_133M			51
++#define IMX8MN_SYS_PLL1_160M			52
++#define IMX8MN_SYS_PLL1_200M			53
++#define IMX8MN_SYS_PLL1_266M			54
++#define IMX8MN_SYS_PLL1_400M			55
++#define IMX8MN_SYS_PLL1_800M			56
++#define IMX8MN_SYS_PLL2_50M			57
++#define IMX8MN_SYS_PLL2_100M			58
++#define IMX8MN_SYS_PLL2_125M			59
++#define IMX8MN_SYS_PLL2_166M			60
++#define IMX8MN_SYS_PLL2_200M			61
++#define IMX8MN_SYS_PLL2_250M			62
++#define IMX8MN_SYS_PLL2_333M			63
++#define IMX8MN_SYS_PLL2_500M			64
++#define IMX8MN_SYS_PLL2_1000M			65
++
++/* CORE CLOCK ROOT */
++#define IMX8MN_CLK_A53_SRC			66
++#define IMX8MN_CLK_GPU_CORE_SRC			67
++#define IMX8MN_CLK_GPU_SHADER_SRC		68
++#define IMX8MN_CLK_A53_CG			69
++#define IMX8MN_CLK_GPU_CORE_CG			70
++#define IMX8MN_CLK_GPU_SHADER_CG		71
++#define IMX8MN_CLK_A53_DIV			72
++#define IMX8MN_CLK_GPU_CORE_DIV			73
++#define IMX8MN_CLK_GPU_SHADER_DIV		74
++
++/* BUS CLOCK ROOT */
++#define IMX8MN_CLK_MAIN_AXI			75
++#define IMX8MN_CLK_ENET_AXI			76
++#define IMX8MN_CLK_NAND_USDHC_BUS		77
++#define IMX8MN_CLK_DISP_AXI			78
++#define IMX8MN_CLK_DISP_APB			79
++#define IMX8MN_CLK_USB_BUS			80
++#define IMX8MN_CLK_GPU_AXI			81
++#define IMX8MN_CLK_GPU_AHB			82
++#define IMX8MN_CLK_NOC				83
++#define IMX8MN_CLK_AHB				84
++#define IMX8MN_CLK_AUDIO_AHB			85
++
++/* IPG CLOCK ROOT */
++#define IMX8MN_CLK_IPG_ROOT			86
++#define IMX8MN_CLK_IPG_AUDIO_ROOT		87
++
++/* IP */
++#define IMX8MN_CLK_DRAM_CORE			88
++#define IMX8MN_CLK_DRAM_ALT			89
++#define IMX8MN_CLK_DRAM_APB			90
++#define IMX8MN_CLK_DRAM_ALT_ROOT		91
++#define IMX8MN_CLK_DISP_PIXEL			92
++#define IMX8MN_CLK_SAI2				93
++#define IMX8MN_CLK_SAI3				94
++#define IMX8MN_CLK_SAI5				95
++#define IMX8MN_CLK_SAI6				96
++#define IMX8MN_CLK_SPDIF1			97
++#define IMX8MN_CLK_ENET_REF			98
++#define IMX8MN_CLK_ENET_TIMER			99
++#define IMX8MN_CLK_ENET_PHY_REF			100
++#define IMX8MN_CLK_NAND				101
++#define IMX8MN_CLK_QSPI				102
++#define IMX8MN_CLK_USDHC1			103
++#define IMX8MN_CLK_USDHC2			104
++#define IMX8MN_CLK_I2C1				105
++#define IMX8MN_CLK_I2C2				106
++#define IMX8MN_CLK_I2C3				107
++#define IMX8MN_CLK_I2C4				118
++#define IMX8MN_CLK_UART1			119
++#define IMX8MN_CLK_UART2			110
++#define IMX8MN_CLK_UART3			111
++#define IMX8MN_CLK_UART4			112
++#define IMX8MN_CLK_USB_CORE_REF			113
++#define IMX8MN_CLK_USB_PHY_REF			114
++#define IMX8MN_CLK_ECSPI1			115
++#define IMX8MN_CLK_ECSPI2			116
++#define IMX8MN_CLK_PWM1				117
++#define IMX8MN_CLK_PWM2				118
++#define IMX8MN_CLK_PWM3				119
++#define IMX8MN_CLK_PWM4				120
++#define IMX8MN_CLK_WDOG				121
++#define IMX8MN_CLK_WRCLK			122
++#define IMX8MN_CLK_CLKO1			123
++#define IMX8MN_CLK_CLKO2			124
++#define IMX8MN_CLK_DSI_CORE			125
++#define IMX8MN_CLK_DSI_PHY_REF			126
++#define IMX8MN_CLK_DSI_DBI			127
++#define IMX8MN_CLK_USDHC3			128
++#define IMX8MN_CLK_CAMERA_PIXEL			129
++#define IMX8MN_CLK_CSI1_PHY_REF			130
++#define IMX8MN_CLK_CSI2_PHY_REF			131
++#define IMX8MN_CLK_CSI2_ESC			132
++#define IMX8MN_CLK_ECSPI3			133
++#define IMX8MN_CLK_PDM				134
++#define IMX8MN_CLK_SAI7				135
++
++#define IMX8MN_CLK_ECSPI1_ROOT			136
++#define IMX8MN_CLK_ECSPI2_ROOT			137
++#define IMX8MN_CLK_ECSPI3_ROOT			138
++#define IMX8MN_CLK_ENET1_ROOT			139
++#define IMX8MN_CLK_GPIO1_ROOT			140
++#define IMX8MN_CLK_GPIO2_ROOT			141
++#define IMX8MN_CLK_GPIO3_ROOT			142
++#define IMX8MN_CLK_GPIO4_ROOT			143
++#define IMX8MN_CLK_GPIO5_ROOT			144
++#define IMX8MN_CLK_I2C1_ROOT			145
++#define IMX8MN_CLK_I2C2_ROOT			146
++#define IMX8MN_CLK_I2C3_ROOT			147
++#define IMX8MN_CLK_I2C4_ROOT			148
++#define IMX8MN_CLK_MU_ROOT			149
++#define IMX8MN_CLK_OCOTP_ROOT			150
++#define IMX8MN_CLK_PWM1_ROOT			151
++#define IMX8MN_CLK_PWM2_ROOT			152
++#define IMX8MN_CLK_PWM3_ROOT			153
++#define IMX8MN_CLK_PWM4_ROOT			154
++#define IMX8MN_CLK_QSPI_ROOT			155
++#define IMX8MN_CLK_NAND_ROOT			156
++#define IMX8MN_CLK_SAI2_ROOT			157
++#define IMX8MN_CLK_SAI2_IPG			158
++#define IMX8MN_CLK_SAI3_ROOT			159
++#define IMX8MN_CLK_SAI3_IPG			160
++#define IMX8MN_CLK_SAI5_ROOT			161
++#define IMX8MN_CLK_SAI5_IPG			162
++#define IMX8MN_CLK_SAI6_ROOT			163
++#define IMX8MN_CLK_SAI6_IPG			164
++#define IMX8MN_CLK_SAI7_ROOT			165
++#define IMX8MN_CLK_SAI7_IPG			166
++#define IMX8MN_CLK_SDMA1_ROOT			167
++#define IMX8MN_CLK_SDMA2_ROOT			168
++#define IMX8MN_CLK_UART1_ROOT			169
++#define IMX8MN_CLK_UART2_ROOT			170
++#define IMX8MN_CLK_UART3_ROOT			171
++#define IMX8MN_CLK_UART4_ROOT			172
++#define IMX8MN_CLK_USB1_CTRL_ROOT		173
++#define IMX8MN_CLK_USDHC1_ROOT			174
++#define IMX8MN_CLK_USDHC2_ROOT			175
++#define IMX8MN_CLK_WDOG1_ROOT			176
++#define IMX8MN_CLK_WDOG2_ROOT			177
++#define IMX8MN_CLK_WDOG3_ROOT			178
++#define IMX8MN_CLK_GPU_BUS_ROOT			179
++#define IMX8MN_CLK_ASRC_ROOT			180
++#define IMX8MN_CLK_GPU3D_ROOT			181
++#define IMX8MN_CLK_PDM_ROOT			182
++#define IMX8MN_CLK_PDM_IPG			183
++#define IMX8MN_CLK_DISP_AXI_ROOT		184
++#define IMX8MN_CLK_DISP_APB_ROOT		185
++#define IMX8MN_CLK_DISP_PIXEL_ROOT		186
++#define IMX8MN_CLK_CAMERA_PIXEL_ROOT		187
++#define IMX8MN_CLK_USDHC3_ROOT			188
++#define IMX8MN_CLK_SDMA3_ROOT			189
++#define IMX8MN_CLK_TMU_ROOT			190
++#define IMX8MN_CLK_ARM				191
++#define IMX8MN_CLK_NAND_USDHC_BUS_RAWNAND_CLK	192
++#define IMX8MN_CLK_GPU_CORE_ROOT		193
++
++#define IMX8MN_CLK_END				194
++
++#endif
 -- 
-~Vinod
+2.7.4
+
