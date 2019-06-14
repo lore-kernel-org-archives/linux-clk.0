@@ -2,162 +2,182 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AD6C31E44
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEE1C31E44
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B643721721
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 329A4217F5
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:53:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n1mKsNsN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfFNJua (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 05:50:30 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:38404 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbfFNJua (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:50:30 -0400
-Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hbiqn-0004Fn-2b; Fri, 14 Jun 2019 11:50:25 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     "Leonidas P. Papadakos" <papadakospan@gmail.com>
-Cc:     itdaniher@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: rockchip: add clock for the watchdog pclk on rk3328
-Date:   Fri, 14 Jun 2019 11:50:24 +0200
-Message-ID: <5657669.4RvfzeBcXs@phil>
-In-Reply-To: <1559821340.1384.0@gmail.com>
-References: <20190605235714.22432-1-papadakospan@gmail.com> <3485393.4UdOu2YNQE@phil> <1559821340.1384.0@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1727238AbfFNJxX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 05:53:23 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35840 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727201AbfFNJxX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 05:53:23 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190614095322euoutp01214fff18bacdee9b29ea6e5097794222~oB-D9UaAF0797907979euoutp01E
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2019 09:53:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190614095322euoutp01214fff18bacdee9b29ea6e5097794222~oB-D9UaAF0797907979euoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1560506002;
+        bh=VRDKye2EsO1AxFVr5sLghiB3/pqyTiHrDNIPj88z9vw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=n1mKsNsNynOOtWGTaPmIyBoAOQ74X3JEXe+PtjWYrtSi0YXeKQNUprhd69KlGEibt
+         VAzL5/wl8cP7CKfytnvvBNLs0iDQcNgdFavi220qYb23xh+lhGBQd+qzv42zLDs5NG
+         w6GseG9U3gvJmjrLMyzmMhaBNXmXuKlQ52fcV4HQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190614095321eucas1p25ce0807b519ac9d672f35b6c86befaf3~oB-DLT-qp0491404914eucas1p2x;
+        Fri, 14 Jun 2019 09:53:21 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 10.F1.04325.19E630D5; Fri, 14
+        Jun 2019 10:53:21 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190614095320eucas1p2919a6169c997bb81c80416e8a0ede538~oB-CYnlER0493104931eucas1p21;
+        Fri, 14 Jun 2019 09:53:20 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190614095320eusmtrp285e6e8b91811b632afb9bd6ebeaf5c9f~oB-CX5U-a2148521485eusmtrp2x;
+        Fri, 14 Jun 2019 09:53:20 +0000 (GMT)
+X-AuditID: cbfec7f5-b75ff700000010e5-0a-5d036e916fc7
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 79.30.04146.09E630D5; Fri, 14
+        Jun 2019 10:53:20 +0100 (BST)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190614095319eusmtip2bc51f0a36a033d54d5b0ff46ba566799~oB-Bff0YW2266622666eusmtip2u;
+        Fri, 14 Jun 2019 09:53:19 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        cw00.choi@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com,
+        jroedel@suse.de, treding@nvidia.com, digetx@gmail.com,
+        gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH v10 01/13] clk: samsung: add needed IDs for DMC clocks in
+ Exynos5420
+Date:   Fri, 14 Jun 2019 11:52:57 +0200
+Message-Id: <20190614095309.24100-2-l.luba@partner.samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190614095309.24100-1-l.luba@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSWUwTURSGvZ2ZdgCrYyVyRJSkxoAkgAvGq7hh1Iw8GBONMSKRChNcaIUO
+        KILGqhEtUNEapFJZ1AewQMoWLEjYFwOyVI0bYgyoRQUMoSBGUqS26tt//vOd+5+cXJqQDFCe
+        9HFFPKdUyGKkQleyqu1nj/9NBRG+ylLojst0Rgq/sloonNfSTeGisUGELz8wCvGtjhwBfpom
+        xxmD3wjc01Mqwl2XhkX4rcoLj6W/p/DzmrtCPK5pQVjXUyfAJS39Imzu2In7LhYKcfPwVQrb
+        XpaRuP5FKO77NQ9PPhlA2zzYyQktyX5/fUXE6lVmkq3O7hex5Qa1kK3PKRaxmsujQrZxtFbA
+        Xq80ILaiM5kdL1+21+2Q66YoLub4aU4ZuCXC9Zi+tA3F1s5PrLDokAqpxanIhQYmCDLNWkEq
+        cqUlTCGCmSGrs7AiqPqmFzqKcQSN6ir0d+Tq0BDpaBQg+NyYT/0bmXjWNUvRtJAJAJMhzj7g
+        zugQ6If22RmCeUTASN+7P8xC5gDobW52hmRWgPrVDGXXYmYrVBRMO8O8oai0gbBrF2YbtOYN
+        /9kIGA0NJqPNCe2AhuJMwqEXwtf2SpFDe8FMdZ7AoXlQae45+XMwmJHjZIKhud1M2fchmJVg
+        rAl02CFQ25RL2m1g5sHrkQV2m5iV2qoswmGL4VqKxEH7QmV6rzNoERQU33Y+zoLNmOs81S0E
+        A2/GiBvIO/t/WD5CBuTBJfDyaI5fq+DOBPAyOZ+giA6IPCUvR7M/r9PWPmFCddNHmxBDI+lc
+        ccNGQbiEkp3mz8qbENCE1F2cG0yES8RRsrNJnPLUEWVCDMc3oSU0KfUQJ8/5ECZhomXx3EmO
+        i+WUf7sC2sVThWI/UcHPitI2r+632rRJiR/X3PhxMTgla8S0PLSOnZl037U+5UJ7d83NsGVT
+        OSFra7NrFltN5sO9cWXbr/hHxELoUot6w2PD+qiPFecjbbt/7g/6cvDE8H2fvheJPiXZumL9
+        Hm1Y63SE77uoqc7ehxZFvqZNqfdrXZeUaZv61TF1p1dK8sdkq/0IJS/7DSB1wyJ1AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsVy+t/xe7oT8phjDXpu61tsnLGe1eL6l+es
+        FvOPnGO1WP3xMaNF8+L1bBaTT81lsjjTnWvR//g1s8X58xvYLc42vWG3uNUgY/Gx5x6rxeVd
+        c9gsPvceYbSYcX4fk8XaI3fZLS6ecrW43biCzeLwm3ZWi3/XNrJY7L/iZXH7N5/FtxOPGB3E
+        Pb59ncTi8f5GK7vH7IaLLB47Z91l99i0qpPNY//cNewevc3v2DwOvtvD5NG3ZRWjx+bT1R6f
+        N8kFcEfp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
+        ZczecIyxYA9/xebnMxgbGDt5uxg5OSQETCTaX7xg6WLk4hASWMoosWjiFiaIhJjEpH3b2SFs
+        YYk/17rYIIo+MUqsaLkB1MHBwSagJ7FjVSFIXERgDqPEz65tjCAOs8BZZondK96ATRIWCJE4
+        NukAmM0ioCrRef0/K4jNK2AvsXn5H0aIDfISqzccYAaxOQUcJI7Of8MGskAIqOb7DP4JjHwL
+        GBlWMYqklhbnpucWG+oVJ+YWl+al6yXn525iBEbhtmM/N+9gvLQx+BCjAAejEg/vASumWCHW
+        xLLiytxDjBIczEoivPOsmWOFeFMSK6tSi/Lji0pzUosPMZoC3TSRWUo0OR+YIPJK4g1NDc0t
+        LA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTDmzL43pTGnY35e/NGj818tOHfC
+        TzJpWcUCsxvmfby91+5+jblo/M4jTqrl8E1XaeFqrlDWdyLKjd3PLlpdjP8n4ZjWnjvlfRrr
+        Ktvs6dNaa3O7s7T/z9/b/rYwcs2TaXuiYwwyYxf19iaEzXOImRMdJCF246nUpeVLHwXnNayR
+        ePh032dF/T9KLMUZiYZazEXFiQDXjeGl2AIAAA==
+X-CMS-MailID: 20190614095320eucas1p2919a6169c997bb81c80416e8a0ede538
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190614095320eucas1p2919a6169c997bb81c80416e8a0ede538
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190614095320eucas1p2919a6169c997bb81c80416e8a0ede538
+References: <20190614095309.24100-1-l.luba@partner.samsung.com>
+        <CGME20190614095320eucas1p2919a6169c997bb81c80416e8a0ede538@eucas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Define new IDs for clocks used by Dynamic Memory Controller in
+Exynos5422 SoC.
 
-Am Donnerstag, 6. Juni 2019, 13:42:20 CEST schrieb Leonidas P. Papadakos:
-> 
-> Hi,
-> > 
-> > Am Donnerstag, 6. Juni 2019, 01:57:13 CEST schrieb Leonidas P. 
-> > Papadakos:
-> >>  From: <itdaniher@gmail.com>
-> > 
-> > Why is the From different from the Signed-off-by? Would also need a 
-> > full name.
-> > If the patch is from you, please just use the same From as for the 
-> > Signed-off-by.
-> > 
-> 
-> I mistakenly though this was the way to credit someone for a patch, but 
-> it seems to be different.
-> I'll Cc: the author of this patch
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+---
+ include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-Were you able yet to take a look at the clock-patches I Cc'ed you on
-and look at reworking your patch accrodingly?
-
-
-Thanks
-Heiko
-
-> 
-> >> 
-> >>  Following the discussion here:
-> >>  https://github.com/rockchip-linux/kernel/issues/123
-> >> 
-> >>  it can be seen that these are the changes needed to enable the use 
-> >> of the hardware watchdog in the rk3328 SoC.
-> >> 
-> >>  This is in line with past changes for the rk3288:
-> >>  
-> >> http://lists.infradead.org/pipermail/linux-rockchip/2015-January/002314.html
-> >> 
-> >>  Signed-off-by: Leonidas P. Papadakos <papadakospan@gmail.com>
-> >>  ---
-> >>   drivers/clk/rockchip/clk-rk3328.c      | 9 +++++++++
-> >>   include/dt-bindings/clock/rk3328-cru.h | 1 +
-> >>   2 files changed, 10 insertions(+)
-> >> 
-> >>  diff --git a/drivers/clk/rockchip/clk-rk3328.c 
-> >> b/drivers/clk/rockchip/clk-rk3328.c
-> >>  index 076b9777a..546ee0ab7 100644
-> >>  --- a/drivers/clk/rockchip/clk-rk3328.c
-> >>  +++ b/drivers/clk/rockchip/clk-rk3328.c
-> >>  @@ -876,6 +876,8 @@ static const char *const 
-> >> rk3328_critical_clocks[] __initconst = {
-> >> 
-> >>   static void __init rk3328_clk_init(struct device_node *np)
-> >>   {
-> >>  +	struct clk *clk;
-> >>  +
-> >>   	struct rockchip_clk_provider *ctx;
-> >>   	void __iomem *reg_base;
-> >> 
-> >>  @@ -892,6 +894,13 @@ static void __init rk3328_clk_init(struct 
-> >> device_node *np)
-> >>   		return;
-> >>   	}
-> >> 
-> >>  +	clk = clk_register_fixed_factor(NULL, "pclk_wdt", "pclk_bus", 0, 
-> >> 1, 1);
-> >>  +	if (IS_ERR(clk))
-> >>  +		pr_warn("%s: could not register clock pclk_wdt: %ld\n",
-> >>  +			__func__, PTR_ERR(clk));
-> >>  +	else
-> >>  +		rockchip_clk_add_lookup(ctx, clk, PCLK_WDT);
-> >>  +
-> > 
-> > I've just Cc'ed you on 2 patches adding a SGRF_GATE clock-type. Please
-> > use that as base for you rk3328-wdt-clock, so that we don't introduce 
-> > more
-> > boilderplate code.
-> > 
-> > 
-> >>   	rockchip_clk_register_plls(ctx, rk3328_pll_clks,
-> >>   				   ARRAY_SIZE(rk3328_pll_clks),
-> >>   				   RK3328_GRF_SOC_STATUS0);
-> > 
-> >>  diff --git a/include/dt-bindings/clock/rk3328-cru.h 
-> >> b/include/dt-bindings/clock/rk3328-cru.h
-> >>  index afb811340..555b4ff66 100644
-> >>  --- a/include/dt-bindings/clock/rk3328-cru.h
-> >>  +++ b/include/dt-bindings/clock/rk3328-cru.h
-> >>  @@ -164,6 +164,7 @@
-> >>   #define PCLK_DCF		233
-> >>   #define PCLK_SARADC		234
-> >>   #define PCLK_ACODECPHY		235
-> >>  +#define PCLK_WDT		236
-> >> 
-> >>   /* hclk gates */
-> >>   #define HCLK_PERI		308
-> > 
-> > please split the addition of the clock-id into a separate patch only 
-> > adding
-> > said id.
-> > 
-> > 
-> > Thanks
-> > Heiko
-> > 
-> 
-> I know less than him on this, but I want the feedback to be visible in 
-> the Cc:
-> 
-> 
-> 
-
-
-
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 355f469943f1..02d5ac469a3d 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -60,6 +60,7 @@
+ #define CLK_MAU_EPLL		159
+ #define CLK_SCLK_HSIC_12M	160
+ #define CLK_SCLK_MPHY_IXTAL24	161
++#define CLK_SCLK_BPLL		162
+ 
+ /* gate clocks */
+ #define CLK_UART0		257
+@@ -195,6 +196,16 @@
+ #define CLK_ACLK432_CAM		518
+ #define CLK_ACLK_FL1550_CAM	519
+ #define CLK_ACLK550_CAM		520
++#define CLK_CLKM_PHY0		521
++#define CLK_CLKM_PHY1		522
++#define CLK_ACLK_PPMU_DREX0_0	523
++#define CLK_ACLK_PPMU_DREX0_1	524
++#define CLK_ACLK_PPMU_DREX1_0	525
++#define CLK_ACLK_PPMU_DREX1_1	526
++#define CLK_PCLK_PPMU_DREX0_0	527
++#define CLK_PCLK_PPMU_DREX0_1	528
++#define CLK_PCLK_PPMU_DREX1_0	529
++#define CLK_PCLK_PPMU_DREX1_1	530
+ 
+ /* mux clocks */
+ #define CLK_MOUT_HDMI		640
+@@ -217,6 +228,8 @@
+ #define CLK_MOUT_EPLL		657
+ #define CLK_MOUT_MAU_EPLL	658
+ #define CLK_MOUT_USER_MAU_EPLL	659
++#define CLK_MOUT_SCLK_SPLL	660
++#define CLK_MOUT_MX_MSPLL_CCORE_PHY	661
+ 
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
+@@ -248,8 +261,11 @@
+ #define CLK_DOUT_CCLK_DREX0	794
+ #define CLK_DOUT_CLK2X_PHY0	795
+ #define CLK_DOUT_PCLK_CORE_MEM	796
++#define CLK_FF_DOUT_SPLL2	797
++#define CLK_DOUT_PCLK_DREX0	798
++#define CLK_DOUT_PCLK_DREX1	799
+ 
+ /* must be greater than maximal clock id */
+-#define CLK_NR_CLKS		797
++#define CLK_NR_CLKS		800
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
+-- 
+2.17.1
 
