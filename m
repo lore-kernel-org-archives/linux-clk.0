@@ -2,105 +2,123 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EE7C31E4B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E5CC31E4B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E8162183E
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560536679;
-	bh=YbbA1R/wR3/o92dBrCRglYZG5dyadCxtJskphLWqUEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hGuU1CxrJqXleqtamgUc1u+UWXzOEExHM7maa3qCtXtJlaWaaDQxCeVgKtyOs2bhn
-	 qikdCDEKNSS1LZbHLJdHjVW6oWBfgJjvyWyZe7vDxVPf4swWtDrGqD8LmqOV2Fhi9h
-	 KLdCxyMTh/SIohwfEz8SIEhTEAzPEYfZV8vkvUT8=
+	by mail.kernel.org (Postfix) with ESMTP id B35B220850
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfFNSYf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 14:24:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42774 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfFNSYe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 14:24:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TC1DIbwZfF3TMyvcbViFGCwFe/sxI0poVP7S8t8eBkE=; b=L6PAY7gXR8eXr6P33xSeUZj+U
-        yEIp9AKwS4nTSsPfdUPjwRMP48ZS7U/8yvWHno2h4fIzlKQ9aKM19v210bkKioSACeA45EYDl4+D5
-        xIx3jMGWULyRK88mfuEkTVuSrFOIYGx5X60j6jbLHlAu4EnbdQzheeuxK6QcxUXRMGdDg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id S1725889AbfFNScm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 14:32:42 -0400
+Received: from outgoing2.flk.host-h.net ([188.40.0.84]:36479 "EHLO
+        outgoing2.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfFNScm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 14:32:42 -0400
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam3-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hbqsA-0000FE-Fg; Fri, 14 Jun 2019 18:24:22 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id CA8F3440046; Fri, 14 Jun 2019 19:24:21 +0100 (BST)
-Date:   Fri, 14 Jun 2019 19:24:21 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Tony Xie <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v9 3/6] regulator: rk808: add RK809 and RK817 support.
-Message-ID: <20190614182421.GI5316@sirena.org.uk>
-References: <20190614031425.15741-1-tony.xie@rock-chips.com>
- <20190614031425.15741-4-tony.xie@rock-chips.com>
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hbr09-0000Gh-Tj; Fri, 14 Jun 2019 20:32:38 +0200
+Received: from roundcubeweb1.flk1.host-h.net ([138.201.244.33] helo=webmail9.konsoleh.co.za)
+        by www31.flk1.host-h.net with esmtpa (Exim 4.84_2)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hbr08-0002bc-PJ; Fri, 14 Jun 2019 20:32:36 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="je2i5r69C8+2chMc"
-Content-Disposition: inline
-In-Reply-To: <20190614031425.15741-4-tony.xie@rock-chips.com>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 14 Jun 2019 20:32:35 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 3/4] ARM: dts: rockchip: add display nodes for rk322x
+Organization: Rising Edge Consulting (Pty) Ltd.
+In-Reply-To: <20190614174526.6F805217D6@mail.kernel.org>
+References: <20190614165454.13743-1-heiko@sntech.de>
+ <20190614165454.13743-4-heiko@sntech.de>
+ <20190614174526.6F805217D6@mail.kernel.org>
+Message-ID: <19cea8f7c279ef6efb12d1ec0822767d@risingedge.co.za>
+X-Sender: justin.swartz@risingedge.co.za
+User-Agent: Roundcube Webmail/1.2.3
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25480/Fri Jun 14 10:12:45 2019)
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.03)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0aEcKiGOen0TgGQo14QTNxSpSDasLI4SayDByyq9LIhV4YGQVCHTr0wX
+ cP01XXBQRUTNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3KFNW5P+sC1d5KWTsAHMRz4hem
+ BDpwq0ekkTx9eIg4zRRkb1KnYnbQAcslLHvuRCRWaGyEJJTV3MrNB+6juypzRsZB14E0iQtvqvjt
+ p9rD8IfLQwUzwmYYR9K+P2sLHYhi7NC7kipiXczoEqFwrbflV/NeYyvqMkknc5/rb3pedp1/RxVy
+ sY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGQf7SNHjJ/utM0RsPmIHE4GA/raTj0LtVBy7MiTm
+ x8wLQWyC1bDOw2oEv3DmjqX5Rdlnibl3vcBqVmvQB4A18acPoPuScha9mtPz2mOPDddbmH6eQvWp
+ DWTULXV1jJ5bfceEJeNruLKdflVX7oFNsdHVhnpudkCyIg6Nob+f0OfCg2lBMt3xu9nbye2CdJLN
+ jSo1M+TSg3TNDI3/M5s9/ot3ko3rrae7IifWc6pL546YUVQwaYLh3di89W/ji5iahyCgJgyv93tC
+ 61cbiLYl3RCqADG/Ryndzp4OfbK7c6EqHwlqvaI+zok/BsKQK4gft4+8sY8CNaDDoRMm0CGce/eR
+ NtlfJySsZ2eS9qGTagUdlCnL4IjEaJi/Te03jgZkriNJs+0XIAXn1Ie+HcHl8lOi8gnN+VQO0b1v
+ xxohqsS9Q4vjfJZCa/7ru+hcV3qy2r6xT6/ToAAJ7pkQGcMvuOIaxlHt0+FCc1pvcmHgLAF+EhY3
+ a9HVLrEqCQymRpkPmbqFsDBc6VdTgr76BrtpImWjsA4Z+r84QcqrGrinA6acWqpoByflgDsG24P0
+ bZjqDBpiAOoh+1qN2rbgvDZlJzPY/RdmiK0Zdwcq7WqJxp4Gp2qnVW06BkjrfxpqPrbH09M+m4Wp
+ RRDP6YzwkAPgQJbWosiwuQOYUcnYOSO7mW1OBrz96gclqEeyvm/wFZzBr4ExwImoky3hvPor6xlJ
+ 91x5em3fSnGjC0MY22e6cVDsZuM7jUXIESohoO51xWmU8epLuQ6AlI64+tPy8xM9qWPEX9Stl4rj
+ MDcWV8dcwmItP+eLAc3RVz4KjqXB2lFLCYn9TDvfbJbimDcSbTO4QszeNHk15VolAGHS5rCXQKDy
+ G9IFICpfYwbtmVFtzX/1jFBp21i62SsUn3KsaNY+4eSGHfTOXf670dxTbCnoHvieMS+4ayUpOtEh
+ dxekWDmK9g==
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Stephen,
 
---je2i5r69C8+2chMc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2019-06-14 19:45, Stephen Boyd wrote:
 
-On Thu, Jun 13, 2019 at 11:14:22PM -0400, Tony Xie wrote:
->     Add support for the rk809 and rk817 regulator driver.
->     Their specifications are as follows=EF=BC=9A
->     1. The RK809 and RK809 consist of 5 DCDCs, 9 LDOs
->        and have the same registers for these components except dcdc5.
->     2. The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
->     3. The RK817 has one switch but The Rk809 has two.
->=20
->     The output voltages are configurable and are meant to supply power
->     to the main processor and other components.
+>> diff --git a/arch/arm/boot/dts/rk322x.dtsi 
+>> b/arch/arm/boot/dts/rk322x.dtsi
+>> index da102fff96a2..148f9b5157ea 100644
+>> --- a/arch/arm/boot/dts/rk322x.dtsi
+>> +++ b/arch/arm/boot/dts/rk322x.dtsi
+>> @@ -143,6 +143,11 @@
+>> #clock-cells = <0>;
+>> };
+>> 
+>> +       display_subsystem: display-subsystem {
+>> +               compatible = "rockchip,display-subsystem";
+>> +               ports = <&vop_out>;
+>> +       };
+>> +
+> 
+> What is this? It doesn't have a reg property so it looks like a virtual
+> device. Why is it in DT?
 
-Acked-by: Mark Brown <broonie@kernel.org>
+This is a virtual device.
 
---je2i5r69C8+2chMc
-Content-Type: application/pgp-signature; name="signature.asc"
+I assumed it would be acceptable to it find in a device tree due to 
+binding documentation, 
+"Documentation/devicetree/bindings/display/rockchip/rockchip-drm.txt, 
+which states:
 
------BEGIN PGP SIGNATURE-----
+<quote>
+The Rockchip DRM master device is a virtual device needed to list all
+vop devices or other display interface nodes that comprise the
+graphics subsystem.
+</quote>
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0D5lQACgkQJNaLcl1U
-h9Cg3gf+PI+oNUSN6SISGiEj0NLwGYqM6Zuaotd0ItoKH0gSxFrTbuNhIGdsI/mN
-fjDHx3QiGEsRBgKLaae3GP35+L2B7d4sUs7+ZpVC0DrldSFUQ3G6xbsez1CKm5wB
-o3u5dBWZSKGHHxjJV/VH27wu6BonLndiAbFuwA/vjB2tTr7003bRMYeVDoI3uPik
-o7vU+ZwFhCGUuh4TmPusYRWepB5cyGCuo9j/IX+HfWnLeVvcOlz0qtIVcr0DARzF
-ZPAxMHqtm2lvyldzgU456YAA1wTVihRwRvhSyz3hAKgZLzlngjGxPrrgszbJJ05I
-SUAgVqBJ/phpgaL6BBLqlGNDtUXPmg==
-=Qfnw
------END PGP SIGNATURE-----
+Without the "display_subsystem" device node, the HDMI PHY and 
+rockchipdrmfb frame buffer device are not initialized.
 
---je2i5r69C8+2chMc--
+Perhaps I should have included this in my commit message? :)
+
+Regards
+Justin
