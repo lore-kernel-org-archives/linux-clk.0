@@ -2,38 +2,41 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A561DC31E4B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AD6C31E44
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87465208CA
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B643721721
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfFNJSP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 05:18:15 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:37706 "EHLO gloria.sntech.de"
+        id S1727205AbfFNJua (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 05:50:30 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:38404 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbfFNJSP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:18:15 -0400
+        id S1726900AbfFNJua (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:50:30 -0400
 Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.localnet)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1hbiLY-00041V-D9; Fri, 14 Jun 2019 11:18:08 +0200
+        id 1hbiqn-0004Fn-2b; Fri, 14 Jun 2019 11:50:25 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
-To:     Justin Swartz <justin.swartz@risingedge.co.za>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     "Leonidas P. Papadakos" <papadakospan@gmail.com>
+Cc:     itdaniher@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: select hdmiphy clock source for rk3228
-Date:   Fri, 14 Jun 2019 11:18:07 +0200
-Message-ID: <4689860.tqrvb1PrOO@phil>
-In-Reply-To: <20190612133343.28309-1-justin.swartz@risingedge.co.za>
-References: <20190612133343.28309-1-justin.swartz@risingedge.co.za>
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: rockchip: add clock for the watchdog pclk on rk3328
+Date:   Fri, 14 Jun 2019 11:50:24 +0200
+Message-ID: <5657669.4RvfzeBcXs@phil>
+In-Reply-To: <1559821340.1384.0@gmail.com>
+References: <20190605235714.22432-1-papadakospan@gmail.com> <3485393.4UdOu2YNQE@phil> <1559821340.1384.0@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -44,41 +47,115 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-Am Mittwoch, 12. Juni 2019, 15:33:43 CEST schrieb Justin Swartz:
-> Unless explictly configured by a bootloader, the hdmiphy clock parent
-> defaults to the xin24m clock source. This configuration does not yield
-> any HDMI video output, so let hdmiphy_phy (the HDMI PHY output clock)
-> be the parent instead.
+Am Donnerstag, 6. Juni 2019, 13:42:20 CEST schrieb Leonidas P. Papadakos:
 > 
-> Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+> Hi,
+> > 
+> > Am Donnerstag, 6. Juni 2019, 01:57:13 CEST schrieb Leonidas P. 
+> > Papadakos:
+> >>  From: <itdaniher@gmail.com>
+> > 
+> > Why is the From different from the Signed-off-by? Would also need a 
+> > full name.
+> > If the patch is from you, please just use the same From as for the 
+> > Signed-off-by.
+> > 
+> 
+> I mistakenly though this was the way to credit someone for a patch, but 
+> it seems to be different.
+> I'll Cc: the author of this patch
 
-Mainly for having breadcrumbs for people skimming the lists,
-I've adapted this to use assigned-clocks instead of hardcoding.
+Were you able yet to take a look at the clock-patches I Cc'ed you on
+and look at reworking your patch accrodingly?
 
-See the dts-thread for further infos:
-https://lore.kernel.org/linux-arm-kernel/1854794.0zkvb3x0FP@phil/T/#mf86ab45e07442ab2b25c67f423ebc4130259f6b0
 
+Thanks
 Heiko
 
-
-> ---
->  drivers/clk/rockchip/clk-rk3228.c | 3 +++
->  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-> index 1c5267d134ee..00a195e6c014 100644
-> --- a/drivers/clk/rockchip/clk-rk3228.c
-> +++ b/drivers/clk/rockchip/clk-rk3228.c
-> @@ -699,6 +699,9 @@ static void __init rk3228_clk_init(struct device_node *np)
->  		return;
->  	}
->  
-> +	/* Let hdmiphy_phy be the parent of the hdmiphy clock. */
-> +	writel_relaxed(HIWORD_UPDATE(0, 1, 13), reg_base + RK2928_MISC_CON);
-> +
->  	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
->  	if (IS_ERR(ctx)) {
->  		pr_err("%s: rockchip clk init failed\n", __func__);
+> >> 
+> >>  Following the discussion here:
+> >>  https://github.com/rockchip-linux/kernel/issues/123
+> >> 
+> >>  it can be seen that these are the changes needed to enable the use 
+> >> of the hardware watchdog in the rk3328 SoC.
+> >> 
+> >>  This is in line with past changes for the rk3288:
+> >>  
+> >> http://lists.infradead.org/pipermail/linux-rockchip/2015-January/002314.html
+> >> 
+> >>  Signed-off-by: Leonidas P. Papadakos <papadakospan@gmail.com>
+> >>  ---
+> >>   drivers/clk/rockchip/clk-rk3328.c      | 9 +++++++++
+> >>   include/dt-bindings/clock/rk3328-cru.h | 1 +
+> >>   2 files changed, 10 insertions(+)
+> >> 
+> >>  diff --git a/drivers/clk/rockchip/clk-rk3328.c 
+> >> b/drivers/clk/rockchip/clk-rk3328.c
+> >>  index 076b9777a..546ee0ab7 100644
+> >>  --- a/drivers/clk/rockchip/clk-rk3328.c
+> >>  +++ b/drivers/clk/rockchip/clk-rk3328.c
+> >>  @@ -876,6 +876,8 @@ static const char *const 
+> >> rk3328_critical_clocks[] __initconst = {
+> >> 
+> >>   static void __init rk3328_clk_init(struct device_node *np)
+> >>   {
+> >>  +	struct clk *clk;
+> >>  +
+> >>   	struct rockchip_clk_provider *ctx;
+> >>   	void __iomem *reg_base;
+> >> 
+> >>  @@ -892,6 +894,13 @@ static void __init rk3328_clk_init(struct 
+> >> device_node *np)
+> >>   		return;
+> >>   	}
+> >> 
+> >>  +	clk = clk_register_fixed_factor(NULL, "pclk_wdt", "pclk_bus", 0, 
+> >> 1, 1);
+> >>  +	if (IS_ERR(clk))
+> >>  +		pr_warn("%s: could not register clock pclk_wdt: %ld\n",
+> >>  +			__func__, PTR_ERR(clk));
+> >>  +	else
+> >>  +		rockchip_clk_add_lookup(ctx, clk, PCLK_WDT);
+> >>  +
+> > 
+> > I've just Cc'ed you on 2 patches adding a SGRF_GATE clock-type. Please
+> > use that as base for you rk3328-wdt-clock, so that we don't introduce 
+> > more
+> > boilderplate code.
+> > 
+> > 
+> >>   	rockchip_clk_register_plls(ctx, rk3328_pll_clks,
+> >>   				   ARRAY_SIZE(rk3328_pll_clks),
+> >>   				   RK3328_GRF_SOC_STATUS0);
+> > 
+> >>  diff --git a/include/dt-bindings/clock/rk3328-cru.h 
+> >> b/include/dt-bindings/clock/rk3328-cru.h
+> >>  index afb811340..555b4ff66 100644
+> >>  --- a/include/dt-bindings/clock/rk3328-cru.h
+> >>  +++ b/include/dt-bindings/clock/rk3328-cru.h
+> >>  @@ -164,6 +164,7 @@
+> >>   #define PCLK_DCF		233
+> >>   #define PCLK_SARADC		234
+> >>   #define PCLK_ACODECPHY		235
+> >>  +#define PCLK_WDT		236
+> >> 
+> >>   /* hclk gates */
+> >>   #define HCLK_PERI		308
+> > 
+> > please split the addition of the clock-id into a separate patch only 
+> > adding
+> > said id.
+> > 
+> > 
+> > Thanks
+> > Heiko
+> > 
+> 
+> I know less than him on this, but I want the feedback to be visible in 
+> the Cc:
+> 
+> 
 > 
 
 
