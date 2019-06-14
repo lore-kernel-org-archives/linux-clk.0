@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39B1C31E4C
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 08:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B296EC31E4B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 08:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9975D2168B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 08:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88E1521721
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 08:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbfFNIgZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 04:36:25 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59562 "EHLO inva021.nxp.com"
+        id S1726979AbfFNIge (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 04:36:34 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59606 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbfFNIgY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:36:24 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3281B2005D5;
-        Fri, 14 Jun 2019 10:36:22 +0200 (CEST)
+        id S1726951AbfFNIgd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:36:33 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AE0501A05C7;
+        Fri, 14 Jun 2019 10:36:31 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 76A512005F5;
-        Fri, 14 Jun 2019 10:36:10 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 38AC51A05EE;
+        Fri, 14 Jun 2019 10:36:19 +0200 (CEST)
 Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4E1CB402CA;
-        Fri, 14 Jun 2019 16:35:56 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2623840310;
+        Fri, 14 Jun 2019 16:36:01 +0800 (SGT)
 From:   Anson.Huang@nxp.com
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
@@ -41,9 +41,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V5 3/5] clk: imx: Add API for clk unregister when driver probe fail
-Date:   Fri, 14 Jun 2019 16:37:45 +0800
-Message-Id: <20190614083747.28762-3-Anson.Huang@nxp.com>
+Subject: [PATCH V5 5/5] arm64: defconfig: Select CONFIG_CLK_IMX8MN by default
+Date:   Fri, 14 Jun 2019 16:37:47 +0800
+Message-Id: <20190614083747.28762-5-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190614083747.28762-1-Anson.Huang@nxp.com>
 References: <20190614083747.28762-1-Anson.Huang@nxp.com>
@@ -55,49 +55,27 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Anson Huang <Anson.Huang@nxp.com>
 
-For i.MX clock drivers probe fail case, clks should be unregistered
-in the return path, this patch adds a common API for i.MX clock
-drivers to unregister clocks when fail.
+Enable CONFIG_CLK_IMX8MN to support i.MX8MN clock driver.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-New patch.
+No changes.
 ---
- drivers/clk/imx/clk.c | 8 ++++++++
- drivers/clk/imx/clk.h | 1 +
- 2 files changed, 9 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index f241189..14a6161 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -13,6 +13,14 @@
- 
- DEFINE_SPINLOCK(imx_ccm_lock);
- 
-+void imx_unregister_clocks(struct clk *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		clk_unregister(clks[i]);
-+}
-+
- void __init imx_mmdc_mask_handshake(void __iomem *ccm_base,
- 				    unsigned int chn)
- {
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 19d7b8b..bb4ec1b 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -12,6 +12,7 @@ void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
- void imx_register_uart_clocks(struct clk ** const clks[]);
- void imx_register_uart_clocks_hws(struct clk_hw ** const hws[]);
- void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
-+void imx_unregister_clocks(struct clk *clks[], unsigned int count);
- 
- extern void imx_cscmr1_fixup(u32 *val);
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 3dfbd6a..b2de9d0 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -658,6 +658,7 @@ CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_CLK_QORIQ=y
+ CONFIG_COMMON_CLK_PWM=y
+ CONFIG_CLK_IMX8MM=y
++CONFIG_CLK_IMX8MN=y
+ CONFIG_CLK_IMX8MQ=y
+ CONFIG_CLK_IMX8QXP=y
+ CONFIG_TI_SCI_CLK=y
 -- 
 2.7.4
 
