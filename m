@@ -2,92 +2,151 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95DDC31E4B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC20C31E4D
 	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A55208CA
+	by mail.kernel.org (Postfix) with ESMTP id AE6DD208CA
 	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 09:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7LRvmk3"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N5oXs0NM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfFNJyX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 05:54:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37358 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfFNJyX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 05:54:23 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v14so1845907wrr.4;
-        Fri, 14 Jun 2019 02:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:message-id:in-reply-to:references
-         :mime-version;
-        bh=LWEB8ckSGavXUOifK/FNIHz754vMT8jwdxRqtMwH6kE=;
-        b=G7LRvmk3POU+NfRGqqYuCSJMz3UH106Tx4DzVHDT00eqoT1JMmhdt419m+q4PA4cWA
-         GqS1td5Y02NnWmca3NBhGZ5RBdkUD+ftxMiA9ng1vLPGpejuSv9CL3XQd33bCsAaSHNJ
-         GKYUb/ViSQxYFVPB3UYyAgTmuWyXk2zxoMZDwM40Xh6np86G664ZmIzHrfKP2ZdGc1/c
-         /OeckQtPvyK2glURjFGggu9hCmnZqO5K8PgMK9VwNdO0QevYdQjgZ54kMy/kFwEgnDRJ
-         6O95dLwZSw6adB/ygzgxQJ2XGUMzjxktFd5atTerYJWKce7h6hL1A7DcdxzcOwhgPg5U
-         8Z4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
-         :references:mime-version;
-        bh=LWEB8ckSGavXUOifK/FNIHz754vMT8jwdxRqtMwH6kE=;
-        b=K6/bNTMK4mNrBKks9mzGkMSgyNlw1M5Cq/9F57YfqwSddGbqhRkrU8SfIBiCDPKFks
-         Py3XfSzunJJkhIKSvi8sdSaRzmcqDGvag6hQHvImWqvyrgb7g2xF/LW/VPdKSzLbwPLn
-         2h1J6UTAdNmEyKjL0GlkHsVJNv23hYv6g8aHHH8CF5zUX08aw9MoHPwcetL3APAbgl81
-         p7O5w/zrgcBcXsor+rVFSBdEgyTb5EboVyDKCMXXtzA+UCragisVQ3p9W2XAgKJcjQtS
-         /In8DNZbbHLn3dF3jmO6KjTtYNnVzZeFkTVusPu1dZ+kvNMBnDTaEv+kOtW7nq2FvdpP
-         3T+A==
-X-Gm-Message-State: APjAAAVm19H9GxNZ1zr3IlcCAWkAv6tFq9qTcTViUI6fo+3r7CI5Lbrs
-        QTBed0HW3tE1SRa1glZKb50/bzli9Gc=
-X-Google-Smtp-Source: APXvYqzB7aNgd0DaRCc0E3obAyX4lpX8BdOe5J7ACbuWSLX34+034VaK+l8Z/815LR4vBxwXv2kD4w==
-X-Received: by 2002:adf:f3c7:: with SMTP id g7mr62795063wrp.133.1560506061675;
-        Fri, 14 Jun 2019 02:54:21 -0700 (PDT)
-Received: from X555LD ([2a02:85f:51e:5d00:f1ab:2da6:d378:d0de])
-        by smtp.gmail.com with ESMTPSA id h84sm3825923wmf.43.2019.06.14.02.54.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 02:54:21 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 12:54:14 +0300
-From:   "Leonidas P. Papadakos" <papadakospan@gmail.com>
-Subject: Re: [PATCH 1/2] clk: rockchip: add clock for the watchdog pclk on
- rk3328
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     itdaniher@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Message-Id: <1560506054.1367.0@gmail.com>
-In-Reply-To: <5657669.4RvfzeBcXs@phil>
-References: <20190605235714.22432-1-papadakospan@gmail.com>
-        <3485393.4UdOu2YNQE@phil> <1559821340.1384.0@gmail.com>
-        <5657669.4RvfzeBcXs@phil>
-X-Mailer: geary/3.32.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+        id S1726482AbfFNJyY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 05:54:24 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54535 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbfFNJx0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 05:53:26 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190614095325euoutp02154faceec5a40a28e7e129ebfe61a993~oB-GuOghw1627416274euoutp02R
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2019 09:53:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190614095325euoutp02154faceec5a40a28e7e129ebfe61a993~oB-GuOghw1627416274euoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1560506005;
+        bh=Q/+AVLIuT+hp4vYMuUP4aL41jpAGDZPWXeXLXgkKE2s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=N5oXs0NMXbPia1X622D15B3Sbm/7Glx6IZHVXW+YfLVLkvFYB2d5xz/ZFxz6thZe5
+         vlUWj7uBTaMYx+G3bmSbfeJX0QZQQf/dPc0U5sxBp0PRfAXFQ/wML991lzJ5YWNB42
+         KGEouznLPuW2Qlc8z0Cv92Br85c8LdytPOaPdKOY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190614095324eucas1p1f7d84cef4ed1eb552cc7605d04e2ec5b~oB-GLFomN1137311373eucas1p1g;
+        Fri, 14 Jun 2019 09:53:24 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id F8.A5.04298.49E630D5; Fri, 14
+        Jun 2019 10:53:24 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190614095324eucas1p2eab4def0ed8c912303e4bb3e422bb255~oB-FW51-p0490704907eucas1p2D;
+        Fri, 14 Jun 2019 09:53:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190614095323eusmtrp2d1fa02cedd6037af72e18c7d354f14d5~oB-FHJFo42148621486eusmtrp22;
+        Fri, 14 Jun 2019 09:53:23 +0000 (GMT)
+X-AuditID: cbfec7f2-f13ff700000010ca-2e-5d036e940b6e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4F.DA.04140.39E630D5; Fri, 14
+        Jun 2019 10:53:23 +0100 (BST)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190614095322eusmtip2ebafa8178e1fe43289df42fdb413484c~oB-EK05gt2269122691eusmtip21;
+        Fri, 14 Jun 2019 09:53:22 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        cw00.choi@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com,
+        jroedel@suse.de, treding@nvidia.com, digetx@gmail.com,
+        gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH v10 04/13] dt-bindings: ddr: rename lpddr2 directory
+Date:   Fri, 14 Jun 2019 11:53:00 +0200
+Message-Id: <20190614095309.24100-5-l.luba@partner.samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190614095309.24100-1-l.luba@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSWUwTURSGvZ2lA1gyFpQbRNGKBjSCxCU34IIGk1EfJNEXMUSLTKiRVuhY
+        FVmsFjdWF0QCIhgjkLbIYtkUZbUlCAJKFGWRAEZkE6wQjQFlHIxv3/nPf7abS2HSPsKZOq46
+        xapV8jAZaYuXmX+2rk9VYUEbZlLdUHF6IYHeff9MoOyGVwQyTA4ApHtQSKJbTVki1JygRCkD
+        IxhqbS0So5aLo2L0QeuCJhN7CfTmyV0SWZMaAEpvfS5CBQ09YtTetBt1XcgnUf3oFQLNvi3G
+        UXXHXtT1yx5NN/YDPydmeuomznztvCRmMrXtOFOZ0SNmSvTXSKY6yyhmknTjJFM7XiVikk16
+        wDx+GcVYS5YH2AXabg1hw46fZtVe24/aKvS1eiw8TnLWmFeKacEzu3hgQ0F6E2zTpeHxwJaS
+        0vkAVrQkkkLwHcCMWQMQAiuAxt5BcTyg/pYMJjvw1VI6D8C0VFeB5wqqRtx5C0l7wgp9BC87
+        0ukAZg4d4NtgdDkGx7q6AZ9woP3hpwkTwTNOr4b95l84zxJ6B/xRasWF7VyhoagG49mG9oMv
+        skf/LgfpJAo+7ZjBBJM/LLrwkRTYAQ5bTGKBXeDvymyRwBzUJt0HAkfDgZSseY8vrLe0E/zS
+        GO0BC594CfJOONFRIxLOtYedY4t4GZvDm2V3MEGWwKuXpYLbHZoS2+YHLYF5xrT55gxsL+Yv
+        5F/wFoDZHfdF14Frxv9hOQDogROr4ZShLOetYs94cnIlp1GFeh47qSwBc//u5azlWwWYeh1c
+        B2gKyBZKanxEQVJCfpqLVNYBSGEyR8k9XyxIKgmRR55j1SePqDVhLFcHllK4zEkStaDvsJQO
+        lZ9iT7BsOKv+lxVRNs5acLB47yFJ8A2PZZ47tpW34es2eRWsd7v2c+O0udoSG5Mbhc40L3aP
+        634fuKa65FGsecOloz2kY4DPxaqh33HDVz7l9jfisw9l3yzvfuhiErie/MFVa3TmCOl5Rawm
+        eo/BLyxGdtuwcmWLXOHqu2+zIi9hOjRzhXGL//4c+y+7mqc0B2U4p5B7r8XUnPwP36mN/XMD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsVy+t/xe7qT85hjDe68VLfYOGM9q8X1L89Z
+        LeYfOcdqsfrjY0aL5sXr2Swmn5rLZHGmO9ei//FrZovz5zewW5xtesNucatBxuJjzz1Wi8u7
+        5rBZfO49wmgx4/w+Jou1R+6yW1w85Wpxu3EFm8XhN+2sFv+ubWSx2H/Fy+L2bz6LbyceMTqI
+        e3z7OonF4/2NVnaP2Q0XWTx2zrrL7rFpVSebx/65a9g9epvfsXkcfLeHyaNvyypGj82nqz0+
+        b5IL4I7SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQ
+        y1h1cBVzQQtvxZrlW5kbGPdydzFycEgImEg86RPuYuTiEBJYyiix6GYbexcjJ1BcTGLSvu1Q
+        trDEn2tdbBBFnxglNl9tYAZpZhPQk9ixqhAkLiIwh1HiZ9c2RhCHWeAss8TuFW+YQLqFBVwk
+        nn7YwgpiswioSjw69psFxOYVsJf4sfUzC8QGeYnVGw4wg9icAg4SR+e/YQNZIARU830G/wRG
+        vgWMDKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECY3DbsZ9bdjB2vQs+xCjAwajEw3vAiilW
+        iDWxrLgy9xCjBAezkgjvPGvmWCHelMTKqtSi/Pii0pzU4kOMpkA3TWSWEk3OB6aHvJJ4Q1ND
+        cwtLQ3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjNOlSjKXFPOraooeU07WVxCd
+        upbzyOpTE234j8dNz/zpu0sr6zxTvJtkRJWJFeNlhojVtg6VDckc/aqWAh6bz2aGu1vUz/R/
+        aJvcmzGx8fjmBZbZrec81WZEsm/2WuUw++bWjtSWDf6VqecW7j3ymOlm0B+zg8+C72dM+ch0
+        t+iT0EQpIUtZJZbijERDLeai4kQATkrqt9cCAAA=
+X-CMS-MailID: 20190614095324eucas1p2eab4def0ed8c912303e4bb3e422bb255
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190614095324eucas1p2eab4def0ed8c912303e4bb3e422bb255
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190614095324eucas1p2eab4def0ed8c912303e4bb3e422bb255
+References: <20190614095309.24100-1-l.luba@partner.samsung.com>
+        <CGME20190614095324eucas1p2eab4def0ed8c912303e4bb3e422bb255@eucas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Change directory name to be ready for new types of memories.
 
-> Were you able yet to take a look at the clock-patches I Cc'ed you on
-> and look at reworking your patch accrodingly?
-> 
-> 
-> Thanks
-> Heiko
-> 
-My time is limited due to exams, and I have no knowledge on how the clk 
-stuff works, but I'll read up when I have the time. The patched you 
-CCed me on is certainly helpful in this regard
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+---
+ .../devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt      | 0
+ Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt    | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt (100%)
+ rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt (96%)
 
+diff --git a/Documentation/devicetree/bindings/lpddr2/lpddr2-timings.txt b/Documentation/devicetree/bindings/ddr/lpddr2-timings.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/lpddr2/lpddr2-timings.txt
+rename to Documentation/devicetree/bindings/ddr/lpddr2-timings.txt
+diff --git a/Documentation/devicetree/bindings/lpddr2/lpddr2.txt b/Documentation/devicetree/bindings/ddr/lpddr2.txt
+similarity index 96%
+rename from Documentation/devicetree/bindings/lpddr2/lpddr2.txt
+rename to Documentation/devicetree/bindings/ddr/lpddr2.txt
+index 58354a075e13..ddd40121e6f6 100644
+--- a/Documentation/devicetree/bindings/lpddr2/lpddr2.txt
++++ b/Documentation/devicetree/bindings/ddr/lpddr2.txt
+@@ -36,7 +36,7 @@ Child nodes:
+   "lpddr2-timings" provides AC timing parameters of the device for
+   a given speed-bin. The user may provide the timings for as many
+   speed-bins as is required. Please see Documentation/devicetree/
+-  bindings/lpddr2/lpddr2-timings.txt for more information on "lpddr2-timings"
++  bindings/ddr/lpddr2-timings.txt for more information on "lpddr2-timings"
+ 
+ Example:
+ 
+-- 
+2.17.1
 
