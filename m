@@ -2,276 +2,161 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33463C31E4B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 13:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D7AC31E4B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 14:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F045F21537
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 13:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560520063;
-	bh=WFBozKxYqQEonoT4h0aSSk2Zmh1qoKLPSOxNH5ODZ9M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=O/in76P/GDmkxXoIM3H2o9kXSzuPWC471uIFrD/HUnGZvYQrPY2Mevf80C0Rh2XWG
-	 HmrhEPwsk/G6RW/+2CTEPHz56J9Ha4IJrXUXCC97cqKgjSrLnhzRAB/07z4IPt7G1q
-	 wllSG6V0GrT6wTeZS0aeWk6tJfiDqxdR9a47gyLg=
+	by mail.kernel.org (Postfix) with ESMTP id E0F4A21537
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 14:08:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/5MbF6P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbfFNNrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 09:47:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727898AbfFNNrm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:47:42 -0400
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E0C82173C;
-        Fri, 14 Jun 2019 13:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560520060;
-        bh=WFBozKxYqQEonoT4h0aSSk2Zmh1qoKLPSOxNH5ODZ9M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FYatgmTAcCkPXky//dCZs0Trtr0rqG3p6svkCrePUqAi+M5Zzof+VnnjbQd4DR5cY
-         F6fS1cw7CnN9t1nUhYjjU6/8V/qpntZ/Dz/qWbUpSz3c6X8Fpd6vLOVJH7cK+H2z6m
-         hS0cPX/f5+oyqjr+ea1I1ByLWAJGXcHI4XIQdr8A=
-Received: by mail-lf1-f54.google.com with SMTP id a25so1801070lfg.2;
-        Fri, 14 Jun 2019 06:47:40 -0700 (PDT)
-X-Gm-Message-State: APjAAAUML4FTNlvb5fXPUnkbZGqGCDJLRRKJ2cMxvns/7EhTQOzsT+We
-        RZ/WqCO3UGTCLSnkr7MJQxjQCoHHdkoj9AbS0QU=
-X-Google-Smtp-Source: APXvYqx2ZETgwnfahYusNzjsSqNLovsXo1qYbm72cWLYRguPHT5ZcoKjFKqSKIXCs8HuPhTbNDMgWwrAtYJVmJPaVGI=
-X-Received: by 2002:ac2:4891:: with SMTP id x17mr12871311lfc.60.1560520058567;
- Fri, 14 Jun 2019 06:47:38 -0700 (PDT)
+        id S1728218AbfFNOIo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 10:08:44 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38027 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727954AbfFNOIo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 10:08:44 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r9so2554424ljg.5
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2019 07:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DJhALp3LWMh0qCM+eEsHNwGuHJ70BSRE+Bgf7lg+Xk8=;
+        b=A/5MbF6PcMfbf03AYg0ZkRmS19BcApvaxWaMu5j9yEUs+G/S/LclxxGy7wEUfIBZk+
+         jRNsNXhtY5wGh5lrzmtnaq/wUXRn7cLEOfJUZO8JYwA8+fV3G22O7mtcKMWcWSLEUq+F
+         EeAfjkIHc17rM9pOgKePsDRb7Air1QU1V+iXpfUdEVqwDZZfvlUJfnTdYnMJf4pt0Zcy
+         DIkd6l6VETgaZSYpgWWeYhy+ZH1ESRAW35DZaRdX9Pu/7TCv7+f0sQQwO+Htbq4tytk/
+         uSZCD8vJHfyZDtsaN+ADVwZASino3XmKGBDx+hu4e+nI9OamDXWpPfjRjgjrp2uwFp1y
+         iXzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DJhALp3LWMh0qCM+eEsHNwGuHJ70BSRE+Bgf7lg+Xk8=;
+        b=KZqXbFW1cfVYaVxcqyUNJPL0pMCcdxeyxNG39E/g3M+nOcRzbPDTcz9tH4ynMEPR0h
+         YRDWV1W117A9Sg+wf33jXihpoyaUkmyVsPnQ7pZzUiu+S91UNdSfPziW43EuKspkg9Iz
+         t+AtEKIXWo1AJhHzrry970cGdv1xbDPmdYySUe/NmI4ZXSjP9+TCvnhf1wCCgam1FDQ4
+         RupnSokqwNS6nSvPSVUCe2sEQYO+BChBt++O6z+4fskWc99rDhcK3A+LOOkJLUKN3Fqj
+         M2cqmbQv4JlXKBO/9Oa+Oop3+0pnScCoS437KSrc24dIl34HwY3rnnSoHkD8yINQNAUe
+         zK2w==
+X-Gm-Message-State: APjAAAXZBk1C12LxRDVrM3ovbTtQeIXzTtJUBXHNxxwNnhAYhBXIbQpp
+        UncDM2E/9lBItSLSSECuNlBVp3+opcs=
+X-Google-Smtp-Source: APXvYqzbqjDRFE66FD3O+jfqWBZm4K8B/EdCvG81ms3nRSTsWDbkz1r+Ld28AmXD6Xg1u0YXzbUSLQ==
+X-Received: by 2002:a2e:94ca:: with SMTP id r10mr154241ljh.196.1560521321768;
+        Fri, 14 Jun 2019 07:08:41 -0700 (PDT)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id n24sm611607ljc.25.2019.06.14.07.08.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 07:08:41 -0700 (PDT)
+Subject: Re: [PATCH v2] clk: qcom: msm8916: Don't build by default
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <d654907d-a3a2-a00f-d6f5-3a34ae25ebcf@free.fr>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <0bc8b740-c421-8ecb-3716-b89ad73a243c@linaro.org>
+Date:   Fri, 14 Jun 2019 17:08:38 +0300
 MIME-Version: 1.0
-References: <CGME20190614095327eucas1p19b6e522efa15c8fd21c51f3900e376e9@eucas1p1.samsung.com>
- <20190614095309.24100-1-l.luba@partner.samsung.com> <20190614095309.24100-9-l.luba@partner.samsung.com>
-In-Reply-To: <20190614095309.24100-9-l.luba@partner.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 14 Jun 2019 15:47:27 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdjXhfcNRL-XMS6K1jrUQoqoNHXGirjXoeoL4GyXzarpg@mail.gmail.com>
-Message-ID: <CAJKOXPdjXhfcNRL-XMS6K1jrUQoqoNHXGirjXoeoL4GyXzarpg@mail.gmail.com>
-Subject: Re: [PATCH v10 08/13] drivers: memory: add DMC driver for Exynos5422
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        kyungmin.park@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d654907d-a3a2-a00f-d6f5-3a34ae25ebcf@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 14 Jun 2019 at 11:53, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> This patch adds driver for Exynos5422 Dynamic Memory Controller.
-> The driver provides support for dynamic frequency and voltage scaling for
-> DMC and DRAM. It supports changing timings of DRAM running with different
-> frequency. There is also an algorithm to calculate timigns based on
-> memory description provided in DT.
-> The patch also contains needed MAINTAINERS file update.
->
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+On 6/13/19 18:09, Marc Gonzalez wrote:
+> QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 stand out as the only options
+> built by default. Let's bring them back in line with the rest.
+> 
+
+This change looks fine, but maybe we should enable these in defconfig?
+
+Thanks,
+Georgi
+
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 > ---
->  MAINTAINERS                             |    8 +
->  drivers/memory/samsung/Kconfig          |   17 +
->  drivers/memory/samsung/Makefile         |    1 +
->  drivers/memory/samsung/exynos5422-dmc.c | 1262 +++++++++++++++++++++++
->  4 files changed, 1288 insertions(+)
->  create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 57f496cff999..6ffccfd95351 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3470,6 +3470,14 @@ S:       Maintained
->  F:     drivers/devfreq/exynos-bus.c
->  F:     Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->
-> +DMC FREQUENCY DRIVER FOR SAMSUNG EXYNOS5422
-> +M:     Lukasz Luba <l.luba@partner.samsung.com>
-> +L:     linux-pm@vger.kernel.org
-> +L:     linux-samsung-soc@vger.kernel.org
-> +S:     Maintained
-> +F:     drivers/memory/samsung/exynos5422-dmc.c
-> +F:     Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
-> +
->  BUSLOGIC SCSI DRIVER
->  M:     Khalid Aziz <khalid@gonehiking.org>
->  L:     linux-scsi@vger.kernel.org
-> diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
-> index 79ce7ea58903..c93baa029654 100644
-> --- a/drivers/memory/samsung/Kconfig
-> +++ b/drivers/memory/samsung/Kconfig
-> @@ -5,6 +5,23 @@ config SAMSUNG_MC
->           Support for the Memory Controller (MC) devices found on
->           Samsung Exynos SoCs.
->
-> +config ARM_EXYNOS5422_DMC
-> +       tristate "ARM EXYNOS5422 Dynamic Memory Controller driver"
-> +       depends on ARCH_EXYNOS
-> +       select DDR
-> +       select PM_DEVFREQ
-> +       select DEVFREQ_GOV_SIMPLE_ONDEMAND
-> +       select DEVFREQ_GOV_USERSPACE
-> +       select PM_DEVFREQ_EVENT
-> +       select PM_OPP
-> +       help
-> +         This adds driver for Exynos5422 DMC (Dynamic Memory Controller).
-> +         The driver provides support for Dynamic Voltage and Frequency Scaling in
-> +         DMC and DRAM. It also supports changing timings of DRAM running with
-> +         different frequency. The timings are calculated based on DT memory
-> +         information.
-> +
-> +
->  if SAMSUNG_MC
->
->  config EXYNOS_SROM
-> diff --git a/drivers/memory/samsung/Makefile b/drivers/memory/samsung/Makefile
-> index 00587be66211..4f6e4383bab7 100644
-> --- a/drivers/memory/samsung/Makefile
-> +++ b/drivers/memory/samsung/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_ARM_EXYNOS5422_DMC)       += exynos5422-dmc.o
->  obj-$(CONFIG_EXYNOS_SROM)      += exynos-srom.o
-> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-> new file mode 100644
-> index 000000000000..b397efe0da57
-> --- /dev/null
-> +++ b/drivers/memory/samsung/exynos5422-dmc.c
-> @@ -0,0 +1,1262 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019 Samsung Electronics Co., Ltd.
-> + * Author: Lukasz Luba <l.luba@partner.samsung.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/devfreq.h>
-> +#include <linux/devfreq-event.h>
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/slab.h>
-> +#include <memory/jedec_ddr.h>
-> +#include "../of_memory.h"
-> +
-> +#define EXYNOS5_DREXI_TIMINGAREF               (0x0030)
-> +#define EXYNOS5_DREXI_TIMINGROW0               (0x0034)
-> +#define EXYNOS5_DREXI_TIMINGDATA0              (0x0038)
-> +#define EXYNOS5_DREXI_TIMINGPOWER0             (0x003C)
-> +#define EXYNOS5_DREXI_TIMINGROW1               (0x00E4)
-> +#define EXYNOS5_DREXI_TIMINGDATA1              (0x00E8)
-> +#define EXYNOS5_DREXI_TIMINGPOWER1             (0x00EC)
-> +#define CDREX_PAUSE                            (0x2091c)
-> +#define CDREX_LPDDR3PHY_CON3                   (0x20a20)
-> +#define EXYNOS5_TIMING_SET_SWI                 (1UL << 28)
-> +#define USE_MX_MSPLL_TIMINGS                   (1)
-> +#define USE_BPLL_TIMINGS                       (0)
-> +#define EXYNOS5_AREF_NORMAL                    (0x2e)
-> +
-> +/**
-> + * struct dmc_opp_table - Operating level desciption
-> + *
-> + * Covers frequency and voltage settings of the DMC operating mode.
-> + */
-> +struct dmc_opp_table {
-> +       u32 freq_hz;
-> +       u32 volt_uv;
-> +};
-> +
-> +/**
-> + * struct exynos5_dmc - main structure describing DMC device
-> + *
-> + * The main structure for the Dynamic Memory Controller which covers clocks,
-> + * memory regions, HW information, parameters and current operating mode.
-> + */
-> +struct exynos5_dmc {
-> +       struct device *dev;
-> +       struct devfreq *df;
-> +       struct devfreq_simple_ondemand_data gov_data;
-> +       void __iomem *base_drexi0;
-> +       void __iomem *base_drexi1;
-> +       struct regmap *clk_regmap;
-> +       struct mutex lock;
-> +       unsigned long curr_rate;
-> +       unsigned long curr_volt;
-> +       unsigned long bypass_rate;
-> +       struct dmc_opp_table *opp;
-> +       struct dmc_opp_table opp_bypass;
-> +       int opp_count;
-> +       u32 timings_arr_size;
-> +       u32 *timing_row;
-> +       u32 *timing_data;
-> +       u32 *timing_power;
-> +       const struct lpddr3_timings *timings;
-> +       const struct lpddr3_min_tck *min_tck;
-> +       u32 bypass_timing_row;
-> +       u32 bypass_timing_data;
-> +       u32 bypass_timing_power;
-> +       struct regulator *vdd_mif;
-> +       struct clk *fout_spll;
-> +       struct clk *fout_bpll;
-> +       struct clk *mout_spll;
-> +       struct clk *mout_bpll;
-> +       struct clk *mout_mclk_cdrex;
-> +       struct clk *mout_mx_mspll_ccore;
-> +       struct clk *mx_mspll_ccore_phy;
-> +       struct clk *mout_mx_mspll_ccore_phy;
-> +       struct devfreq_event_dev **counter;
-> +       int num_counters;
-> +};
-> +
-> +#define TIMING_FIELD(t_name, t_bit_beg, t_bit_end) \
-> +       { .name = t_name, .bit_beg = t_bit_beg, .bit_end = t_bit_end }
-> +
-> +#define TIMING_VAL(timing_array, id, t_val)                    \
-> +({                                                             \
-> +               u32 __val;                              \
-> +               __val = t_val << timing_array[id].bit_beg;      \
-> +               __val;                                          \
-> +})
-> +
-> +#define TIMING_VAL2REG(timing, t_val)                  \
-> +({                                                             \
-> +               u32 __val;                              \
-> +               __val = t_val << timing->bit_beg;       \
-> +               __val;                                          \
-> +})
-> +
-> +#define TIMING_REG2VAL(reg, timing)                    \
-
-It seems that only some of these defines are used. Please clean them up.
-You have also a lot of checkpatch --strict suggestions:
-    CHECK: Macro argument 'reg' may be better as '(reg)' to avoid
-precedence issues
-which seems to be valid.
-
-While at it please also fix few other --strict errors:
-CHECK: Please don't use multiple blank lines
-CHECK: Alignment should match open parenthesis
-CHECK: Prefer using the BIT macro
-CHECK: struct mutex definition without comment
-
-Best regards,
-Krzysztof
+> Changes from v1:
+> - Drop the default altogether, instead of changing it to 'default MSM_GCC_8916'
+> ---
+>  drivers/clk/qcom/Kconfig | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index e1ff83cc361e..6461a1aa7325 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -21,7 +21,6 @@ if COMMON_CLK_QCOM
+>  
+>  config QCOM_A53PLL
+>  	tristate "MSM8916 A53 PLL"
+> -	default ARCH_QCOM
+>  	help
+>  	  Support for the A53 PLL on MSM8916 devices. It provides
+>  	  the CPU with frequencies above 1GHz.
+> @@ -31,7 +30,6 @@ config QCOM_A53PLL
+>  config QCOM_CLK_APCS_MSM8916
+>  	tristate "MSM8916 APCS Clock Controller"
+>  	depends on QCOM_APCS_IPC || COMPILE_TEST
+> -	default ARCH_QCOM
+>  	help
+>  	  Support for the APCS Clock Controller on msm8916 devices. The
+>  	  APCS is managing the mux and divider which feeds the CPUs.
+> 
