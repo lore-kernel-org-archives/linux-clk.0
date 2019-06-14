@@ -2,26 +2,25 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E097C31E45
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 03:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DCDC31E49
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 03:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBBA20645
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 03:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF4920645
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 03:22:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfFNDWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 23:22:18 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:51970 "EHLO
+        id S1726807AbfFNDWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 23:22:06 -0400
+Received: from lucky1.263xmail.com ([211.157.147.130]:38100 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfFNDWH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 23:22:07 -0400
+        with ESMTP id S1726028AbfFNDWF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 23:22:05 -0400
 Received: from tony.xie?rock-chips.com (unknown [192.168.167.229])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 594E936A2C;
-        Fri, 14 Jun 2019 11:14:44 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id B29D95E8A4;
+        Fri, 14 Jun 2019 11:14:37 +0800 (CST)
 X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 1
 X-MAIL-DELIVERY: 0
@@ -32,9 +31,9 @@ X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P13273T140214467016448S1560482074692142_;
-        Fri, 14 Jun 2019 11:14:43 +0800 (CST)
+        Fri, 14 Jun 2019 11:14:36 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <389d14951bffabbc1d871a1212109d1c>
+X-UNIQUE-TAG: <da7045de40a53e67fa1df5b4903fd717>
 X-RL-SENDER: tony.xie@rock-chips.com
 X-SENDER: xxx@rock-chips.com
 X-LOGIN-NAME: tony.xie@rock-chips.com
@@ -53,107 +52,84 @@ Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
         xsf@rock-chips.com, zhangqing@rock-chips.com,
         huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v9 4/6] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
-Date:   Thu, 13 Jun 2019 23:14:23 -0400
-Message-Id: <20190614031425.15741-5-tony.xie@rock-chips.com>
+Subject: [PATCH v9 0/6] support a new type of PMIC,including two chips(rk817 and rk809)
+Date:   Thu, 13 Jun 2019 23:14:19 -0400
+Message-Id: <20190614031425.15741-1-tony.xie@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614031425.15741-1-tony.xie@rock-chips.com>
-References: <20190614031425.15741-1-tony.xie@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+Most of functions and registers of the rk817 and rk808 are the same,
+so they can share allmost all codes.
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/rk808.txt         | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Their specifications are as follows:
+  1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same
+registers
+     for these components except dcdc5.
+  2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+  3) The RK817 has one switch but The Rk809 has two.
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 1683ec3245bc..04df07f6f793 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
- The rk8xx family current members:
- rk805
- rk808
-+rk809
-+rk817
- rk818
- 
- Required properties:
- - compatible: "rockchip,rk805"
- - compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk809"
-+- compatible: "rockchip,rk817"
- - compatible: "rockchip,rk818"
- - reg: I2C slave address
- - interrupts: the interrupt outputs of the controller.
-@@ -45,6 +49,23 @@ Optional RK808 properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
-+Optional shared RK809 and RK817 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+
-+Optional RK809 properties:
-+- vcc8-supply:  The input supply for SWITCH_REG1
-+- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-+
-+Optional RK817 properties:
-+- vcc8-supply:  The input supply for BOOST
-+- vcc9-supply:  The input supply for OTG_SWITCH
-+
- Optional RK818 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
-@@ -86,6 +107,21 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK809 and RK817 PMIC blocks are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK809 and RK817 datasheets.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 5 for RK809.
-+		- valid values for n are 1 to 4 for RK817.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9 for RK809.
-+		- valid values for n are 1 to 9 for RK817.
-+	- SWITCH_REGn
-+		- valid values for n are 1 to 2 for RK809.
-+	- BOOST for RK817
-+	- OTG_SWITCH for RK817
-+
- Following regulators of the RK818 PMIC block are supported. Note that
- the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
- number as described in RK818 datasheet.
-@@ -98,6 +134,14 @@ number as described in RK818 datasheet.
- 	- HDMI_SWITCH
- 	- OTG_SWITCH
- 
-+It is necessary to configure three pins for both the RK809 and RK817, the three
-+pins are "gpio_ts" "gpio_gt" "gpio_slp".
-+	The gpio_gt and gpio_ts pins support the gpio function.
-+	The gpio_slp pin is for controlling the pmic states, as below:
-+		- reset
-+		- power down
-+		- sleep
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
+Changes in V2:
+1. initialize the pm_pwroff_fn to NULL.
+2. use EXPORT_SYMBOL_GPL to export pm_power_off_prepare.
+3. change patch 2/3/4/5 subjects.
+
+Changes in V3
+1. change patch 4 subjects
+2. replace pr_ with dev_ for printing in patch 2
+3. modify switch1 and switch2 configs in patch 2
+4. explain gpio information for rk809 and rk817 in patch 4
+
+Changes in V4:
+1. modify some codes for patch 2 and patch 5 according to comments
+2. add reviewer mail lists for patch 3 and 4
+
+Changes in V5:
+modify some codes for patch 1 according to reveiw comments for v3.
+ 1) remove the pm_power_off_prepare() and replace with shutdown
+call-back from syscore
+ 2) move the macro REGMAP_IRQ_M into the regmap.h and rename it
+REGMAP_IRQ_LINE
+ 3) make some dev_warn() log clear
+
+Changes in V6:
+modify some codes according to reveiw comments for v5.
+
+Changes in V7:
+modify some codes for patch 2 according to reveiw comments.
+
+Changes in V8:
+For helping me promote this work, Heiko send the V8
+
+Changes in V9:
+1.base on the V8
+2.modify some codes according to reveiw comments for V8 from Mark Brown
+
+Tony Xie (6):
+  mfd: rk808: remove the id_table
+  mfd: rk808: Add RK817 and RK809 support
+  regulator: rk808: add RK809 and RK817 support.
+  dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+  rtc: rk808: add RK809 and RK817 support.
+  clk: RK808: add RK809 and RK817 support.
+
+ .../devicetree/bindings/mfd/rk808.txt         |  44 ++
+ drivers/clk/Kconfig                           |   9 +-
+ drivers/clk/clk-rk808.c                       |  64 +-
+ drivers/mfd/Kconfig                           |   6 +-
+ drivers/mfd/rk808.c                           | 199 +++++-
+ drivers/regulator/Kconfig                     |   4 +-
+ drivers/regulator/rk808-regulator.c           | 646 +++++++++++++++++-
+ drivers/rtc/Kconfig                           |   4 +-
+ drivers/rtc/rtc-rk808.c                       |  68 +-
+ include/linux/mfd/rk808.h                     | 175 +++++
+ 10 files changed, 1155 insertions(+), 64 deletions(-)
+
 -- 
 2.17.1
 
