@@ -2,64 +2,60 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D5DC31E4C
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 16:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4DFC31E4B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 16:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E9B2183F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 16:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD3B92183F
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 16:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbfFNQzG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 12:55:06 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:43218 "EHLO gloria.sntech.de"
+        id S1726083AbfFNQ5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 12:57:42 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:43354 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfFNQzG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:55:06 -0400
-Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.dip.tu-dresden.de)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id S1725801AbfFNQ5m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Jun 2019 12:57:42 -0400
+Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1hbpTc-0006Tl-WD; Fri, 14 Jun 2019 18:54:57 +0200
+        id 1hbpWE-0006XT-5C; Fri, 14 Jun 2019 18:57:38 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-rockchip@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        justin.swartz@risingedge.co.za, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 0/4] hdmi on rk3229
-Date:   Fri, 14 Jun 2019 18:54:50 +0200
-Message-Id: <20190614165454.13743-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.20.1
+To:     linux-clk@vger.kernel.org
+Cc:     linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, papadakospan@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: rockchip: add a type from SGRF-controlled gate clocks
+Date:   Fri, 14 Jun 2019 18:57:37 +0200
+Message-ID: <2861779.VsSVQ8N6Tg@phil>
+In-Reply-To: <20190606090934.4443-1-heiko@sntech.de>
+References: <20190606090934.4443-1-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The hdmiphy needs its clock reparented to the actual hdmiphy-pll
-that gets generated in the hdmiphy itself.
+Am Donnerstag, 6. Juni 2019, 11:09:33 CEST schrieb Heiko Stuebner:
+> Some clk gates on Rockchip SoCs are part of the SGRF (secure general
+> register files) and thus only controllable from secure mode, with the
+> most prominent example being the watchdog.
+> 
+> In most cases we still want to define this as a real clock though,
+> to have complete clock tree and not reference the generic base-clock
+> from the devicetree.
+> 
+> So far we've just defined this as factor-1-1 clocks in the clock init,
+> so define a special clock-type for it so that this definition can be
+> part of the general tree-definition and save some boilerplate code.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-This incorporates adapted versions of Justin's original patches
-and also the needed clock adaptions to make it possible to
-reparent the hdmiphy clock.
+applied both for 5.3
 
-Heiko Stuebner (2):
-  clk: rockchip: add clock id for hdmi_phy special clock
-  clk: rockchip: export HDMIPHY clock
-
-Justin Swartz (2):
-  ARM: dts: rockchip: add display nodes for rk322x
-  ARM: dts: rockchip: fix vop iommu-cells on rk322x
-
- arch/arm/boot/dts/rk322x.dtsi          | 85 +++++++++++++++++++++++++-
- drivers/clk/rockchip/clk-rk3228.c      |  2 +-
- include/dt-bindings/clock/rk3228-cru.h |  1 +
- 3 files changed, 86 insertions(+), 2 deletions(-)
-
--- 
-2.20.1
 
