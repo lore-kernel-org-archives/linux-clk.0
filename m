@@ -2,87 +2,105 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D542C31E4B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EE7C31E4B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE2C217F9
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E8162183E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 18:24:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560535842;
-	bh=RoVrUcyIWDYlQsDoGzut/rOUiJEZ7mu/TgpgJsHQHY8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=d2r76Q0/uzbExsCHQU73MBqYzC01AlrN5zFpgs8J6S89303gxX22LpGArY/0ZlwOW
-	 FeYKbHDju+HJ+U1OpGm9THVXeRABBBiPXGotArHd0C/LklHdeIRR8lYf7GpOeC9thy
-	 7mtleduaJIj9sPRkE/1vzizVmmiUWZmK9KgHfAKM=
+	s=default; t=1560536679;
+	bh=YbbA1R/wR3/o92dBrCRglYZG5dyadCxtJskphLWqUEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hGuU1CxrJqXleqtamgUc1u+UWXzOEExHM7maa3qCtXtJlaWaaDQxCeVgKtyOs2bhn
+	 qikdCDEKNSS1LZbHLJdHjVW6oWBfgJjvyWyZe7vDxVPf4swWtDrGqD8LmqOV2Fhi9h
+	 KLdCxyMTh/SIohwfEz8SIEhTEAzPEYfZV8vkvUT8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfFNSKl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 14:10:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725825AbfFNSKl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:10:41 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEA732064A;
-        Fri, 14 Jun 2019 18:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560535841;
-        bh=RoVrUcyIWDYlQsDoGzut/rOUiJEZ7mu/TgpgJsHQHY8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ksDHq0Gwp9gG1l4rQ1nQWfs9ZcUDYHJMCe5LpSoBebGt3Q3D2paO0qReGMOGznmsC
-         bgDpCeeWPaoL0Y7rS4NNrx3l3EnuupBIdX3pDErhpB9wndlZBFWie8tMt2scJicbxI
-         t8F1yjxfKhF1UwP6OvmPcN+v/O9wMd2FhQILEiCw=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH] clk: Do a DT parent lookup even when index < 0
-Date:   Fri, 14 Jun 2019 11:10:40 -0700
-Message-Id: <20190614181040.67326-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+        id S1726552AbfFNSYf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 14:24:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42774 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfFNSYe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 14:24:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TC1DIbwZfF3TMyvcbViFGCwFe/sxI0poVP7S8t8eBkE=; b=L6PAY7gXR8eXr6P33xSeUZj+U
+        yEIp9AKwS4nTSsPfdUPjwRMP48ZS7U/8yvWHno2h4fIzlKQ9aKM19v210bkKioSACeA45EYDl4+D5
+        xIx3jMGWULyRK88mfuEkTVuSrFOIYGx5X60j6jbLHlAu4EnbdQzheeuxK6QcxUXRMGdDg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hbqsA-0000FE-Fg; Fri, 14 Jun 2019 18:24:22 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id CA8F3440046; Fri, 14 Jun 2019 19:24:21 +0100 (BST)
+Date:   Fri, 14 Jun 2019 19:24:21 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v9 3/6] regulator: rk808: add RK809 and RK817 support.
+Message-ID: <20190614182421.GI5316@sirena.org.uk>
+References: <20190614031425.15741-1-tony.xie@rock-chips.com>
+ <20190614031425.15741-4-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="je2i5r69C8+2chMc"
+Content-Disposition: inline
+In-Reply-To: <20190614031425.15741-4-tony.xie@rock-chips.com>
+X-Cookie: Editing is a rewording activity.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We want to allow the parent lookup to happen even if the index is some
-value less than 0. This may be the case if a clk provider only specifies
-the .name member to match a string in the "clock-names" DT property. We
-shouldn't require that the index be >= 0 to make this use case work.
 
-Fixes: 601b6e93304a ("clk: Allow parents to be specified via clkspec index")
-Reported-by: Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--je2i5r69C8+2chMc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index aa51756fd4d6..87b410d6e51d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -368,7 +368,7 @@ static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
- 	struct device_node *np = core->of_node;
- 
--	if (np && index >= 0)
-+	if (np && (name || index >= 0))
- 		hw = of_clk_get_hw(np, index, name);
- 
- 	/*
--- 
-Sent by a computer through tubes
+On Thu, Jun 13, 2019 at 11:14:22PM -0400, Tony Xie wrote:
+>     Add support for the rk809 and rk817 regulator driver.
+>     Their specifications are as follows=EF=BC=9A
+>     1. The RK809 and RK809 consist of 5 DCDCs, 9 LDOs
+>        and have the same registers for these components except dcdc5.
+>     2. The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+>     3. The RK817 has one switch but The Rk809 has two.
+>=20
+>     The output voltages are configurable and are meant to supply power
+>     to the main processor and other components.
 
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--je2i5r69C8+2chMc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0D5lQACgkQJNaLcl1U
+h9Cg3gf+PI+oNUSN6SISGiEj0NLwGYqM6Zuaotd0ItoKH0gSxFrTbuNhIGdsI/mN
+fjDHx3QiGEsRBgKLaae3GP35+L2B7d4sUs7+ZpVC0DrldSFUQ3G6xbsez1CKm5wB
+o3u5dBWZSKGHHxjJV/VH27wu6BonLndiAbFuwA/vjB2tTr7003bRMYeVDoI3uPik
+o7vU+ZwFhCGUuh4TmPusYRWepB5cyGCuo9j/IX+HfWnLeVvcOlz0qtIVcr0DARzF
+ZPAxMHqtm2lvyldzgU456YAA1wTVihRwRvhSyz3hAKgZLzlngjGxPrrgszbJJ05I
+SUAgVqBJ/phpgaL6BBLqlGNDtUXPmg==
+=Qfnw
+-----END PGP SIGNATURE-----
+
+--je2i5r69C8+2chMc--
