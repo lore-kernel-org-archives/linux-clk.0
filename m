@@ -2,60 +2,75 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4DFC31E4B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 16:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CDAC31E4B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 17:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD3B92183F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 16:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4041217D6
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 17:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560534227;
+	bh=BtDCf12TGdb1xn6LpgZ0JJLH/0SL+ngyj/+nSlrc6Es=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=gDk5oRO8sqd8m8ToAfjQDyeVnkQm2IfiJ6ltrT5EWmBmQ5JYAVaqNJEugjQpnOFNg
+	 Nf1TbGa/UnQIGBOZ6kVMTHHuvjO3kBV1FjDlpkBogmVt6obeHTHrsRKhUncQpd0Zu/
+	 mbUrvm+z3pF2uASTSZA60iyxrbkldDmyqyFGwc+c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbfFNQ5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 12:57:42 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:43354 "EHLO gloria.sntech.de"
+        id S1726209AbfFNRnn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 13:43:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbfFNQ5m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:57:42 -0400
-Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hbpWE-0006XT-5C; Fri, 14 Jun 2019 18:57:38 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, papadakospan@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: rockchip: add a type from SGRF-controlled gate clocks
-Date:   Fri, 14 Jun 2019 18:57:37 +0200
-Message-ID: <2861779.VsSVQ8N6Tg@phil>
-In-Reply-To: <20190606090934.4443-1-heiko@sntech.de>
-References: <20190606090934.4443-1-heiko@sntech.de>
+        id S1726082AbfFNRnn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:43:43 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBED2217D6;
+        Fri, 14 Jun 2019 17:43:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560534223;
+        bh=BtDCf12TGdb1xn6LpgZ0JJLH/0SL+ngyj/+nSlrc6Es=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=vsFm6CaywHnFbxL0coOrDPK9iTyz03GVrC6NChXvyDD9cOdQMwR3X/S/mHfqsNA/E
+         K0NPrm27dMLVr8svfuhNq77NUgNETjucsJpVVW+xEO6k1RfnoI/ianDlZs5gVGtoo0
+         Bq2DRwEPGVfdXZGiVbq1pk5QV1CBPXydhxHUOuuo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1559743299-11576-1-git-send-email-jonathanh@nvidia.com>
+References: <1559743299-11576-1-git-send-email-jonathanh@nvidia.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V2] clk: tegra210: Fix default rates for HDA clocks
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Fri, 14 Jun 2019 10:43:42 -0700
+Message-Id: <20190614174342.DBED2217D6@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Donnerstag, 6. Juni 2019, 11:09:33 CEST schrieb Heiko Stuebner:
-> Some clk gates on Rockchip SoCs are part of the SGRF (secure general
-> register files) and thus only controllable from secure mode, with the
-> most prominent example being the watchdog.
-> 
-> In most cases we still want to define this as a real clock though,
-> to have complete clock tree and not reference the generic base-clock
-> from the devicetree.
-> 
-> So far we've just defined this as factor-1-1 clocks in the clock init,
-> so define a special clock-type for it so that this definition can be
-> part of the general tree-definition and save some boilerplate code.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Quoting Jon Hunter (2019-06-05 07:01:39)
+> Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+> are both 19.2MHz. However, the default rates for these clocks should
+> actually be 51MHz and 48MHz, respectively. The current clock settings
+> results in a distorted output during audio playback. Correct the default
+> clock rates for these clocks by specifying them in the clock init table
+> for Tegra210.
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
 
-applied both for 5.3
-
+Applied to clk-fixes
 
