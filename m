@@ -1,99 +1,185 @@
-Return-Path: <SRS0=o7Wn=UM=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C9AC31E45
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 22:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941D9C31E45
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 03:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413F8206BB
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jun 2019 22:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560465715;
-	bh=w0/OSWvI2qn+JSy2YoLSNy6vitU/yELlhLrNJyi+bZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IUaalAAxq8/gZDl2ljxsJxSVp7toD0WMJBqXu8soVsCId2MtFeaDF+FZwHVYYZ4oQ
-	 HibjOd1yKzX4GVKSjBArgxRSr2sT71z+dWpCk84Z3n1IvUQsOeZL1HRrMXeMShrY3x
-	 SpCZNPaalfSryW10+I9JGznL7NXka3F260MJdI2c=
+	by mail.kernel.org (Postfix) with ESMTP id 6FC7B2073F
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 03:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbfFMWly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jun 2019 18:41:54 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36678 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfFMWly (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 18:41:54 -0400
-Received: by mail-qk1-f194.google.com with SMTP id g18so492006qkl.3;
-        Thu, 13 Jun 2019 15:41:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=555W8SlOEWdbOmtVeCHjPCQVdc/MKI4w8OP/WDqt3z8=;
-        b=qx//8Yf0gVSHXYZL+432RNJe2E6hPhn2fNe/bp/R4w+6I56gEyz/4/FujBKesnffL9
-         MiQaXshokMBco6iPV2/yLvbX9f4RmOmaySlALpTvKvkK43wcwNTHei/bHCw/S+9mmALd
-         DKs4HGy8CTL8ZS4lVW0wTr1esboEk8KFjKIzjAUb+qHjfmc9mKCKU6iGurxQRMSVylVH
-         SGAd7EWUZfIEWJ74zaHgPEMKx2yJ4T5Mej26TcpM3ZBBOfIBy75q0evTichmAWZrOB9Q
-         JHCTz25K93S5VVnVpvsD/bwnH88BNx+ogW4ghz6PJlr1f5r1wU5KyGjLijgm/sIw9AqJ
-         mZ1Q==
-X-Gm-Message-State: APjAAAU6eouH9TUTPjOVFUvjyEGjLOm2QkcAlHuC9tBdF8innhZFT2U+
-        WuOO8yyPBbB9YXxEmHaniw==
-X-Google-Smtp-Source: APXvYqzBvDkee2tbRQ7LDu7J0RLvPSx9PFA+ewlhL0hdgzb8u7tmMhGmcaUxchrxz5GjWKXYafhucw==
-X-Received: by 2002:a37:b044:: with SMTP id z65mr72541781qke.294.1560465713376;
-        Thu, 13 Jun 2019 15:41:53 -0700 (PDT)
-Received: from localhost ([64.188.179.243])
-        by smtp.gmail.com with ESMTPSA id o54sm706848qtb.63.2019.06.13.15.41.52
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 15:41:52 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 16:41:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Mike Looijmans <mike.looijmans@topic.nl>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v3] dt-bindings: clock: Add silabs,si5341
-Message-ID: <20190613224151.GA32304@bogus>
-References: <20190424090216.18417-1-mike.looijmans@topic.nl>
- <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com>
- <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl>
- <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com>
- <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl>
- <20190507140413.28335-1-mike.looijmans@topic.nl>
- <20190513203146.GA24085@bogus>
- <20190517132020.31081-1-mike.looijmans@topic.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517132020.31081-1-mike.looijmans@topic.nl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726447AbfFNDUG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jun 2019 23:20:06 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:34690 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfFNDUF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jun 2019 23:20:05 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.152])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 28D7C54DEB;
+        Fri, 14 Jun 2019 11:17:43 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P20303T139952891324160S1560482259794024_;
+        Fri, 14 Jun 2019 11:17:41 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <253e62f960b9431d8ca182157cc282f4>
+X-RL-SENDER: tony.xie@rock-chips.com
+X-SENDER: xxx@rock-chips.com
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Tony Xie <tony.xie@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v9 6/6] clk: RK808: add RK809 and RK817 support.
+Date:   Thu, 13 Jun 2019 23:17:38 -0400
+Message-Id: <20190614031738.15909-1-tony.xie@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190614031425.15741-1-tony.xie@rock-chips.com>
+References: <20190614031425.15741-1-tony.xie@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 17 May 2019 15:20:20 +0200, Mike Looijmans wrote:
-> Adds the devicetree bindings for the Si5341 and Si5340 chips from
-> Silicon Labs. These are multiple-input multiple-output clock
-> synthesizers.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> 
-> ---
-> v3: Remove synthesizers child nodes
->     Fix typo
-> v2: Add data sheet reference.
->     Restructured to enable use of "assigned-clock*" properties to set
->     up both outputs and internal synthesizers.
->     Nicer indentation.
->     Updated subject line and body of commit message.
-> 
->  .../bindings/clock/silabs,si5341.txt          | 162 ++++++++++++++++++
->  1 file changed, 162 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
-> 
+RK809 and RK817 are power management IC chips for multimedia products.
+most of their functions and registers are same, including the clkout
+funciton.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/Kconfig     |  9 +++---
+ drivers/clk/clk-rk808.c | 64 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 67 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e5b2fe80eab4..532ab112fa8a 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -52,13 +52,12 @@ config COMMON_CLK_MAX9485
+ 	  This driver supports Maxim 9485 Programmable Audio Clock Generator
+ 
+ config COMMON_CLK_RK808
+-	tristate "Clock driver for RK805/RK808/RK818"
++	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
+ 	depends on MFD_RK808
+ 	---help---
+-	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
+-	  multi-function devices have two fixed-rate oscillators,
+-	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+-	  by control register.
++	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
++	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
++	  Clkout1 is always on, Clkout2 can off by control register.
+ 
+ config COMMON_CLK_HI655X
+ 	tristate "Clock driver for Hi655x" if EXPERT
+diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+index 8d90bdf5b946..75f2cf0dfc9f 100644
+--- a/drivers/clk/clk-rk808.c
++++ b/drivers/clk/clk-rk808.c
+@@ -96,6 +96,68 @@ of_clk_rk808_get(struct of_phandle_args *clkspec, void *data)
+ 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
+ }
+ 
++static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++	struct rk808 *rk808 = rk808_clkout->rk808;
++
++	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
++				  RK817_CLK32KOUT2_EN,
++				  enable ? RK817_CLK32KOUT2_EN : 0);
++}
++
++static int rk817_clkout2_prepare(struct clk_hw *hw)
++{
++	return rk817_clkout2_enable(hw, true);
++}
++
++static void rk817_clkout2_unprepare(struct clk_hw *hw)
++{
++	rk817_clkout2_enable(hw, false);
++}
++
++static int rk817_clkout2_is_prepared(struct clk_hw *hw)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++	struct rk808 *rk808 = rk808_clkout->rk808;
++	unsigned int val;
++
++	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
++
++	if (ret < 0)
++		return 0;
++
++	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
++}
++
++static const struct clk_ops rk817_clkout2_ops = {
++	.prepare = rk817_clkout2_prepare,
++	.unprepare = rk817_clkout2_unprepare,
++	.is_prepared = rk817_clkout2_is_prepared,
++	.recalc_rate = rk808_clkout_recalc_rate,
++};
++
++static const struct clk_ops *rkpmic_get_ops(long variant)
++{
++	switch (variant) {
++	case RK809_ID:
++	case RK817_ID:
++		return &rk817_clkout2_ops;
++	/*
++	 * For the default case, it match the following PMIC type.
++	 * RK805_ID
++	 * RK808_ID
++	 * RK818_ID
++	 */
++	default:
++		return &rk808_clkout2_ops;
++	}
++}
++
+ static int rk808_clkout_probe(struct platform_device *pdev)
+ {
+ 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+@@ -127,7 +189,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	init.name = "rk808-clkout2";
+-	init.ops = &rk808_clkout2_ops;
++	init.ops = rkpmic_get_ops(rk808->variant);
+ 	rk808_clkout->clkout2_hw.init = &init;
+ 
+ 	/* optional override of the clockname */
+-- 
+2.17.1
+
+
+
