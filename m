@@ -2,102 +2,109 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 250E9C31E4B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 19:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59A4C31E4E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 20:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DA0217D6
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 19:47:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7NvstzZ"
+	by mail.kernel.org (Postfix) with ESMTP id 83A1C217F9
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 20:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560544583;
+	bh=RQFeY7ClB3qfZKUqanGUTFvCrvIQv9xp/N5O5ZqmrGM=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=BWDIikPbszOuGL/l6gdOpjwptN5FEkWk+K5jVBJqXMpp5qT2lnmq4hxuQoay8QF9g
+	 N29s9crs61EBfXipVLqxaGFu70kAxodWu7hrZq0VyAW9Lls9sz6gj+GK3WE669+xZO
+	 fCLw1WtYb/wDOUtHYRB9eXdW14UzF3oonVBjgc1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725808AbfFNTrM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 15:47:12 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33107 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfFNTrM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 15:47:12 -0400
-Received: by mail-wm1-f67.google.com with SMTP id h19so140408wme.0;
-        Fri, 14 Jun 2019 12:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:message-id:in-reply-to:references
-         :mime-version;
-        bh=w7hWwTYJqqdtzNOgI2SlOoDpVDK4IVNaEZYhxTxW1ms=;
-        b=E7NvstzZwUvIUkg8f3C5Owi9vBiTS+92/z/pEcuqA6hibXdSEb2sDw6Dn53Jj3fVrZ
-         9K8Fp+1yWBowk4sbqNrKo/vC0yR//ZOlgCMTv09SH1iYKSr19Ea01b0EZu+tIflSlf8n
-         KgT8Dk1suYc5/O0WG+rjESkWTjh0N6eJPOEGD90G5Ry9UzbHCMwkmFZ5W8MTIXcacMzE
-         ZAorz2dWJpYNBIqNV/uTnimyE7hot3tGiDdpaaWoouPoCOju6iP1CMUMpFzOQnxi5oN7
-         tyCTvUWST16V1kTGb+k4uY/SPK9bFqGJujeR6sWOZcicH0dtS1Iw2Nr5inoQOE0kjz4b
-         0Sdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
-         :references:mime-version;
-        bh=w7hWwTYJqqdtzNOgI2SlOoDpVDK4IVNaEZYhxTxW1ms=;
-        b=CiO0JaX1Wk2xsJBPInqjvfthAmzTSQ2P8+SagfZd5QrgJ6/U0u1tMswfyGv36I2qc+
-         LqVA+TsHvktR3zVipd71gAFfmT7JMAhiMseWPKO0CR12u3xu5a7cLnO6Cs3HopJG2RT1
-         ojbuA7x/CkkFkj2B3vNjulDFFdGroc42qhN/UfKlnFJGvfupzdYdBy+0AtkULFDaiPcj
-         9ivzEQdECZUC1nPg5SoUx+CMKaYGc/vDFJj2S4l9SQJH0l9KHweC0VamxePTHn7D+Cha
-         TzGbQqW++e98ayTj9iuqTEKzenAG1yJD12hu0oRmWYarwdQMQUh1Jgax2H/LGj7D3v8C
-         egPg==
-X-Gm-Message-State: APjAAAWSFc2GwT7WplcTpVUzoKlkUUwzSizKTH4RhcW+3UnF/QEhDjEP
-        6kxwTtxnzTCFoU6DdyZhx18=
-X-Google-Smtp-Source: APXvYqw+/lotMGB1kmoHtHxy2mEXLLxX8UP1pU2bI/ymsVBaIhukGMPveKI+vAdOPbMWJLLKawenZg==
-X-Received: by 2002:a1c:3d41:: with SMTP id k62mr8215153wma.61.1560541630216;
-        Fri, 14 Jun 2019 12:47:10 -0700 (PDT)
-Received: from X555LD ([2a02:85f:51e:5d00:f1ab:2da6:d378:d0de])
-        by smtp.gmail.com with ESMTPSA id 139sm4385668wmb.19.2019.06.14.12.47.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 12:47:09 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 22:47:06 +0300
-From:   "Leonidas P. Papadakos" <papadakospan@gmail.com>
-Subject: Re: [PATCH 1/2] clk: rockchip: add clock for the watchdog pclk on
- rk3328
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     itdaniher@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Message-Id: <1560541626.1367.2@gmail.com>
-In-Reply-To: <2207770.HSO279VB62@phil>
-References: <20190605235714.22432-1-papadakospan@gmail.com>
-        <5657669.4RvfzeBcXs@phil> <1560506054.1367.0@gmail.com>
-        <2207770.HSO279VB62@phil>
-X-Mailer: geary/3.32.1
+        id S1727530AbfFNUgL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 16:36:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727177AbfFNUgL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:36:11 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 959DA217F9;
+        Fri, 14 Jun 2019 20:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560544570;
+        bh=RQFeY7ClB3qfZKUqanGUTFvCrvIQv9xp/N5O5ZqmrGM=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=fr/TmeQBEPKbLUgkDfSTEhkYS/y4YHrr57CLOtIcGW9sNuajAET5wxTQr07bnOLMh
+         7hE0zaI6D/yrtKuLXwSnBM8hQhS5xdVHThZ7fMOEmZ7C8C+zVH7d80njyK4SeX5nv0
+         p/a54K9i3XcPK0xQHnK47DZ6q/7T0QjynQ0+X/6Q=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <13456600.FWPkgmLa5g@phil>
+References: <20190614165454.13743-1-heiko@sntech.de> <20190614174526.6F805217D6@mail.kernel.org> <19cea8f7c279ef6efb12d1ec0822767d@risingedge.co.za> <13456600.FWPkgmLa5g@phil>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        Justin Swartz <justin.swartz@risingedge.co.za>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 3/4] ARM: dts: rockchip: add display nodes for rk322x
+Cc:     linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com
+User-Agent: alot/0.8.1
+Date:   Fri, 14 Jun 2019 13:36:09 -0700
+Message-Id: <20190614203610.959DA217F9@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Heiko Stuebner (2019-06-14 12:33:12)
+> Am Freitag, 14. Juni 2019, 20:32:35 CEST schrieb Justin Swartz:
+> > On 2019-06-14 19:45, Stephen Boyd wrote:
+> > >> diff --git a/arch/arm/boot/dts/rk322x.dtsi=20
+> > >> b/arch/arm/boot/dts/rk322x.dtsi
+> > >> index da102fff96a2..148f9b5157ea 100644
+> > >> --- a/arch/arm/boot/dts/rk322x.dtsi
+> > >> +++ b/arch/arm/boot/dts/rk322x.dtsi
+> > >> @@ -143,6 +143,11 @@
+> > >> #clock-cells =3D <0>;
+> > >> };
+> > >>=20
+> > >> +       display_subsystem: display-subsystem {
+> > >> +               compatible =3D "rockchip,display-subsystem";
+> > >> +               ports =3D <&vop_out>;
+> > >> +       };
+> > >> +
+> > >=20
+> > > What is this? It doesn't have a reg property so it looks like a virtu=
+al
+> > > device. Why is it in DT?
+> >=20
+> > This is a virtual device.
+> >=20
+> > I assumed it would be acceptable to it find in a device tree due to=20
+> > binding documentation,=20
+> > "Documentation/devicetree/bindings/display/rockchip/rockchip-drm.txt,=20
+> > which states:
+> >=20
+> > <quote>
+> > The Rockchip DRM master device is a virtual device needed to list all
+> > vop devices or other display interface nodes that comprise the
+> > graphics subsystem.
+> > </quote>
+> >=20
+> > Without the "display_subsystem" device node, the HDMI PHY and=20
+> > rockchipdrmfb frame buffer device are not initialized.
+> >=20
+> > Perhaps I should have included this in my commit message? :)
+>=20
+> As Justin said, that is very much common as the root of the components
+> that make up the drm device and pretty much common in a lot of devicetrees
+> for the last 5 years and longer ;-) .
+>=20
+> Also gpio-keys also don't have a reg property ;-) .
+>=20
 
-ok. I have tested the conversion on the platforms I did convert there,
-> so I'll just apply the 2 patches later on.
-> 
-> Should I wait on you respinning the rk3328 watchdog patch, or just
-> add the rk3328 watchdog pclk myself?
-> 
-> 
-> Heiko
-> 
-
-Would be awesome if you added it yourself. You seem to understand this 
-a lot better.
-
-Also, I checked out the patch you CCed me on and I'm happy to see that 
-the reused code has been replaced with a single unified macro. So much 
-tidier.
-
-As far as I understand then, it's a case of adding the pclk id, the 
-sgrf thing and enable it in the dts. Cool!
-Hoping to see it in 5.3
-
+Do you have a SoC node? If so, this virtual device should live in the
+root, away from the nodes that have reg properties and are thus in the
+SoC node.
 
