@@ -2,161 +2,243 @@ Return-Path: <SRS0=ubJx=UN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D7AC31E4B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 14:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BBAC31E4B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 14:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0F4A21537
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 14:08:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/5MbF6P"
+	by mail.kernel.org (Postfix) with ESMTP id 9CCDF21537
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jun 2019 14:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbfFNOIo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jun 2019 10:08:44 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38027 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727954AbfFNOIo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 10:08:44 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r9so2554424ljg.5
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2019 07:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DJhALp3LWMh0qCM+eEsHNwGuHJ70BSRE+Bgf7lg+Xk8=;
-        b=A/5MbF6PcMfbf03AYg0ZkRmS19BcApvaxWaMu5j9yEUs+G/S/LclxxGy7wEUfIBZk+
-         jRNsNXhtY5wGh5lrzmtnaq/wUXRn7cLEOfJUZO8JYwA8+fV3G22O7mtcKMWcWSLEUq+F
-         EeAfjkIHc17rM9pOgKePsDRb7Air1QU1V+iXpfUdEVqwDZZfvlUJfnTdYnMJf4pt0Zcy
-         DIkd6l6VETgaZSYpgWWeYhy+ZH1ESRAW35DZaRdX9Pu/7TCv7+f0sQQwO+Htbq4tytk/
-         uSZCD8vJHfyZDtsaN+ADVwZASino3XmKGBDx+hu4e+nI9OamDXWpPfjRjgjrp2uwFp1y
-         iXzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DJhALp3LWMh0qCM+eEsHNwGuHJ70BSRE+Bgf7lg+Xk8=;
-        b=KZqXbFW1cfVYaVxcqyUNJPL0pMCcdxeyxNG39E/g3M+nOcRzbPDTcz9tH4ynMEPR0h
-         YRDWV1W117A9Sg+wf33jXihpoyaUkmyVsPnQ7pZzUiu+S91UNdSfPziW43EuKspkg9Iz
-         t+AtEKIXWo1AJhHzrry970cGdv1xbDPmdYySUe/NmI4ZXSjP9+TCvnhf1wCCgam1FDQ4
-         RupnSokqwNS6nSvPSVUCe2sEQYO+BChBt++O6z+4fskWc99rDhcK3A+LOOkJLUKN3Fqj
-         M2cqmbQv4JlXKBO/9Oa+Oop3+0pnScCoS437KSrc24dIl34HwY3rnnSoHkD8yINQNAUe
-         zK2w==
-X-Gm-Message-State: APjAAAXZBk1C12LxRDVrM3ovbTtQeIXzTtJUBXHNxxwNnhAYhBXIbQpp
-        UncDM2E/9lBItSLSSECuNlBVp3+opcs=
-X-Google-Smtp-Source: APXvYqzbqjDRFE66FD3O+jfqWBZm4K8B/EdCvG81ms3nRSTsWDbkz1r+Ld28AmXD6Xg1u0YXzbUSLQ==
-X-Received: by 2002:a2e:94ca:: with SMTP id r10mr154241ljh.196.1560521321768;
-        Fri, 14 Jun 2019 07:08:41 -0700 (PDT)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id n24sm611607ljc.25.2019.06.14.07.08.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 07:08:41 -0700 (PDT)
-Subject: Re: [PATCH v2] clk: qcom: msm8916: Don't build by default
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <d654907d-a3a2-a00f-d6f5-3a34ae25ebcf@free.fr>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <0bc8b740-c421-8ecb-3716-b89ad73a243c@linaro.org>
-Date:   Fri, 14 Jun 2019 17:08:38 +0300
+        id S1728313AbfFNOv6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jun 2019 10:51:58 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:56602 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbfFNOv6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jun 2019 10:51:58 -0400
+Received: from relay4-d.mail.gandi.net (unknown [217.70.183.196])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 38F383AEE3F;
+        Fri, 14 Jun 2019 14:24:17 +0000 (UTC)
+X-Originating-IP: 90.88.23.150
+Received: from localhost (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 61125E0019;
+        Fri, 14 Jun 2019 14:24:06 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 16:24:06 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for
+ PLL_MIPI
+Message-ID: <20190614142406.ybdiqfppo5mc5bgq@flea>
+References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+ <20190124195900.22620-12-jagan@amarulasolutions.com>
+ <20190125212433.ni2jg3wvpyjazlxf@flea>
+ <CAMty3ZAsH2iZ+JEqTE3D58aXfGuhMSg9YoO56ZhhOeE4c4yQHQ@mail.gmail.com>
+ <20190129151348.mh27btttsqcmeban@flea>
+ <CAMty3ZAjAoti8Zu80c=OyCA+u-jtQnkidsKSNz_c2OaRswqc3w@mail.gmail.com>
+ <20190201143102.rcvrxstc365mezvx@flea>
+ <CAMty3ZC3_+z1upH4Y08R1z=Uq1C=OpWETNrBO8nGRoHhuNrHSA@mail.gmail.com>
+ <20190605064933.6bmskkxzzgn35xz7@flea>
+ <CAMty3ZCCP=oCqm5=49BsjwoxdDETgBfU_5g8fQ=bz=iWApV0tw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d654907d-a3a2-a00f-d6f5-3a34ae25ebcf@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="npvcnqi5yg4bofaa"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZCCP=oCqm5=49BsjwoxdDETgBfU_5g8fQ=bz=iWApV0tw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/13/19 18:09, Marc Gonzalez wrote:
-> QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 stand out as the only options
-> built by default. Let's bring them back in line with the rest.
-> 
 
-This change looks fine, but maybe we should enable these in defconfig?
+--npvcnqi5yg4bofaa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Georgi
+On Wed, Jun 05, 2019 at 01:03:16PM +0530, Jagan Teki wrote:
+> On Wed, Jun 5, 2019 at 12:19 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > Hi,
+> >
+> > I've reordered the mail a bit to work on chunks
+> >
+> > On Fri, May 24, 2019 at 03:37:42PM +0530, Jagan Teki wrote:
+> > > > I wish it was in your commit log in the first place, instead of having
+> > > > to exchange multiple mails over this.
+> > > >
+> > > > However, I don't think that's quite true, and it might be a bug in
+> > > > Allwinner's implementation (or rather something quite confusing).
+> > > >
+> > > > You're right that the lcd_rate and pll_rate seem to be generated from
+> > > > the pixel clock, and it indeed looks like the ratio between the pixel
+> > > > clock and the TCON dotclock is defined through the number of bits per
+> > > > lanes.
+> > > >
+> > > > However, in this case, dsi_rate is actually the same than lcd_rate,
+> > > > since pll_rate is going to be divided by dsi_div:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L791
+> > > >
+> > > > Since lcd_div is 1, it also means that in this case, dsi_rate ==
+> > > > dclk_rate.
+> > > >
+> > > > The DSI module clock however, is always set to 148.5 MHz. Indeed, if
+> > > > we look at:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L804
+> > > >
+> > > > We can see that the rate in clk_info is used if it's different than
+> > > > 0. This is filled by disp_al_lcd_get_clk_info, which, in the case of a
+> > > > DSI panel, will hardcode it to 148.5 MHz:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L164
+> > >
+> > > Let me explain, something more.
+> > >
+> > > According to bsp there are clk_info.tcon_div which I will explain below.
+> > > clk_info.dsi_div which is dynamic and it depends on bpp/lanes, so it
+> > > is 6 for 24bpp and 4 lanes devices.
+> > >
+> > > PLL rate here depends on dsi_div (not tcon_div)
+> > >
+> > > Code here
+> > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L784
+> > >
+> > > is computing the actual set rate, which depends on dsi_rate.
+> > >
+> > > lcd_rate = dclk_rate * clk_info.dsi_div;
+> > > dsi_rate = pll_rate / clk_info.dsi_div;
+> > >
+> > > Say if the dclk_rate 148MHz then the dsi_rate is 888MHz which set rate
+> > > for above link you mentioned.
+> > >
+> > > Here are the evidence with some prints.
+> > >
+> > > https://gist.github.com/openedev/9bae2d87d2fcc06b999fe48c998b7043
+> > > https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
+> >
+> > Ok, so we agree up to this point, and the prints confirm that the
+> > analysis above is the right one.
+> >
+> > > > So, the DSI clock is set to this here:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L805
+> >
+> > Your patch doesn't address that, so let's leave that one alone.
+>
+> Basically this is final pll set rate when sun4i_dotclock.c called the
+> desired rate with ccu_nkm.c so it ended the final rate with parent as
+> Line 8 of
+> https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
 
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> ---
-> Changes from v1:
-> - Drop the default altogether, instead of changing it to 'default MSM_GCC_8916'
-> ---
->  drivers/clk/qcom/Kconfig | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index e1ff83cc361e..6461a1aa7325 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -21,7 +21,6 @@ if COMMON_CLK_QCOM
->  
->  config QCOM_A53PLL
->  	tristate "MSM8916 A53 PLL"
-> -	default ARCH_QCOM
->  	help
->  	  Support for the A53 PLL on MSM8916 devices. It provides
->  	  the CPU with frequencies above 1GHz.
-> @@ -31,7 +30,6 @@ config QCOM_A53PLL
->  config QCOM_CLK_APCS_MSM8916
->  	tristate "MSM8916 APCS Clock Controller"
->  	depends on QCOM_APCS_IPC || COMPILE_TEST
-> -	default ARCH_QCOM
->  	help
->  	  Support for the APCS Clock Controller on msm8916 devices. The
->  	  APCS is managing the mux and divider which feeds the CPUs.
-> 
+If that's important to the driver, it should be set explicitly then,
+and not work by accident.
+
+> > > > The TCON *module* clock (the one in the clock controller) has been set
+> > > > to lcd_rate (so the pixel clock times the number of bits per lane) here:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L800
+> > > >
+> > > > And the PLL has been set to the same rate here:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L794
+> > > >
+> > > > Let's take a step back now: that function we were looking at,
+> > > > lcd_clk_config, is called by lcd_clk_enable, which is in turn called
+> > > > by disp_lcd_enable here:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L1328
+> > > >
+> > > > The next function being called is disp_al_lcd_cfg, and that function
+> > > > will hardcode the TCON dotclock divider to 4, here:
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L240
+> > >
+> > > tcon_div from BSP point-of-view of there are two variants
+> > > 00) clk_info.tcon_div which is 4 and same is set the divider position
+> > > in SUN4I_TCON0_DCLK_REG (like above link refer)
+> > > 01) tcon_div which is 4 and used for edge timings computation
+> > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L12
+> > >
+> > > The real reason for 01) is again 4 is they set the divider to 4 in 00)
+> > > which is technically wrong because the dividers which used during
+> > > dotclock in above (dsi_div) should be used here as well. Since there
+> > > is no dynamic way of doing this BSP hard-coding these values.
+> > >
+> > > Patches 5,6,7 on this series doing this
+> > > https://patchwork.freedesktop.org/series/60847/
+> > >
+> > > Hope this explanation helps?
+> >
+> > It doesn't.
+> >
+> > The clock tree is this one:
+> >
+> > PLL(s) -> TCON module clock -> TCON dotclock.
+> >
+> > The links I mentioned above show that the clock set to lcd_rate is the
+> > TCON module clocks (and it should be the one taking the bpp and lanes
+> > into account), while the TCON dotclock uses a fixed divider of 4.
+>
+> Sorry, I can argue much other-than giving some code snips, according to [1]
+>
+> 00) Line 785, 786 with dclk_rate 148000000
+>
+> lcd_rate = dclk_rate * clk_info.dsi_div;
+> pll_rate = lcd_rate * clk_info.lcd_div;
+>
+> Since dsi_div is 6 (bpp/lanes), lcd_div 1
+>
+> lcd_rate = 888000000, pll_rate = 888000000
+>
+> 01)  Line 801, 804 are final rates computed as per clock driver (say
+> ccu_nkm in mainline)
+>
+> lcd_rate_set=891000000
+>
+> As per your comments if it would be 4 then the desired numbers are
+> would be 592000000 not 888000000.
+>
+> This is what I'm trying to say in all mails, and same as verified with
+> 2-lanes devices as well where the dsi_div is 12 so the final rate is
+> 290MHz * 12
+
+In the code you sent, you're forcing a divider on the internal TCON
+clock, while that one is fixed in the BSP.
+
+There's indeed the bpp / lanes divider, but it's used in the *parent*
+clock of the one you're changing.
+
+And the dsi0_clk clock you pointed out in the code snippet is yet
+another clock, the MIPI DSI module clock.
+
+The analysis you have is probably correct, you're just not
+implementing it properly in your patch.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--npvcnqi5yg4bofaa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQOuBgAKCRDj7w1vZxhR
+xVScAPwJAh0zbjS2D2GVNKLA/jet+pw0LYampil65HFHY37fKgEAj5hO1cJdHIPM
+IjOKl6B/qRBrtcW9BEpz5/abyaOyogE=
+=uMQI
+-----END PGP SIGNATURE-----
+
+--npvcnqi5yg4bofaa--
