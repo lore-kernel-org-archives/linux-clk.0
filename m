@@ -4,34 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098B4C31E50
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Jun 2019 15:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741C1C31E52
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Jun 2019 15:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F6621841
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Jun 2019 15:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5433C2183F
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Jun 2019 15:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfFOPai (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1727018AbfFOPai (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 15 Jun 2019 11:30:38 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:53344 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([185.11.138.130]:53358 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726936AbfFOPai (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726998AbfFOPai (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Sat, 15 Jun 2019 11:30:38 -0400
 Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=phil.fritz.box)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1hcAdX-0002kc-Og; Sat, 15 Jun 2019 17:30:35 +0200
+        id 1hcAdY-0002kc-38; Sat, 15 Jun 2019 17:30:36 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
 To:     linux-rockchip@lists.infradead.org
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, papadakospan@gmail.com,
         sboyd@kernel.org, mturquette@baylibre.com,
         Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 2/3] clk: rockchip: add watchdog pclk on rk3328
-Date:   Sat, 15 Jun 2019 17:30:31 +0200
-Message-Id: <20190615153032.27772-2-heiko@sntech.de>
+Subject: [PATCH 3/3] arm64: dts: rockchip: enable rk3328 watchdog clock
+Date:   Sat, 15 Jun 2019 17:30:32 +0200
+Message-Id: <20190615153032.27772-3-heiko@sntech.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190615153032.27772-1-heiko@sntech.de>
 References: <20190615153032.27772-1-heiko@sntech.de>
@@ -42,30 +43,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The watchdog pclk is controlled from the secure GRF but we still
-want to mention it explicitly to not use arbitary parent clocks
-in the devicetree wdt node, so add a SGRF_GATE for it.
+From: Leonidas P. Papadakos <papadakospan@gmail.com>
 
-Suggested-by: Leonidas P. Papadakos <papadakospan@gmail.com>
+Add the missing clock property for the watchdog on rk3328.
+
+Signed-off-by: Leonidas P. Papadakos <papadakospan@gmail.com>
+[set wdt node to always enabled, as it is not board-specific]
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/rockchip/clk-rk3328.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index 076b9777a955..c186a1985bf4 100644
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -791,6 +791,9 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 	GATE(PCLK_SARADC, "pclk_saradc", "pclk_bus", 0, RK3328_CLKGATE_CON(17), 15, GFLAGS),
- 	GATE(0, "pclk_pmu", "pclk_bus", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(28), 3, GFLAGS),
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index 994468671b19..e9fefd8a7e02 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -407,6 +407,7 @@
+ 		compatible = "snps,dw-wdt";
+ 		reg = <0x0 0xff1a0000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru PCLK_WDT>;
+ 	};
  
-+	/* Watchdog pclk is controlled from the secure GRF */
-+	SGRF_GATE(PCLK_WDT, "pclk_wdt", "pclk_bus"),
-+
- 	GATE(PCLK_USB3PHY_OTG, "pclk_usb3phy_otg", "pclk_phy_pre", 0, RK3328_CLKGATE_CON(28), 1, GFLAGS),
- 	GATE(PCLK_USB3PHY_PIPE, "pclk_usb3phy_pipe", "pclk_phy_pre", 0, RK3328_CLKGATE_CON(28), 2, GFLAGS),
- 	GATE(PCLK_USB3_GRF, "pclk_usb3_grf", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(17), 2, GFLAGS),
+ 	pwm0: pwm@ff1b0000 {
 -- 
 2.20.1
 
