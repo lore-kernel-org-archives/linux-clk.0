@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8B7C31E50
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66EBC31E50
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 330E12087F
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E6922087F
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o4XbwT/z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAsh4YgD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfFPXgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Jun 2019 19:36:17 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43700 "EHLO
+        id S1727544AbfFPXgn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Jun 2019 19:36:43 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43689 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbfFPXgQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jun 2019 19:36:16 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 16so7467761ljv.10;
-        Sun, 16 Jun 2019 16:36:14 -0700 (PDT)
+        with ESMTP id S1727491AbfFPXgL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jun 2019 19:36:11 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 16so7467645ljv.10;
+        Sun, 16 Jun 2019 16:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=t2V7RCk27WCmUusM85nZL0QgT3ShS/tiovCYzrgWfsY=;
-        b=o4XbwT/zpwZwYLrQ4m8YDgj621PjLQfcjEol41vgybx8ypDk40VFypufhxsC/bgDRi
-         ogWG90ShNvIF9kvf/1zS256dZjMc78CjxsD+BlzXdPVC95eS5tHjOrUkfEOZYGznxPpK
-         KIJOUYY8J3nAWTpr6Dp9QFu+bMZOTgNM+TwkCzYWkkdROqor/yEMOQw3RtYLpmAm5ht2
-         FhgUt71iu/G0jWWB5IjjOzT6GiBZQO36sve+4kIP1HybGAMpd9bau40ruS1EnY9aAgRG
-         r37zepZlaXLrxv/t2SgpiMLdxl0MGntkzYIvPfW5+XVdfi0/Lek084GFXE0JIbPVChRb
-         SVNw==
+        bh=MLcVzTC0IaxbESeka8YOusn41kpWSvPViTyvRdxCIn4=;
+        b=YAsh4YgDg7WErbR21/+wFVb57h35BN/D7dwoqVfRSbLsa+1mJfsZKft9zNEeM4FaYm
+         +4cyKvqhbD3cNV52b8j/ESBPvr8hpXw4Le3dbzzmNsiT62YxTGQvmkesDvXC6yNm6KaM
+         vuMMCpeQzEh/jptv7uZZtShzw8D1ROTp/H9o5fQGPPYmPmVW3VwtBBKZgd9/N/1pQsva
+         6kUJXtCjexQYhXNNf33VhnImnKjS5OQQ9Kbt+2E9igelolFvV1DEZMsvoF5ice8qDeMm
+         0jG4GNmfcgTGH8TTbpHezAA4uwWBANxit1NaqK1z9Z1hMypnWoEklRSkcdoQvnPYbpHM
+         okmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=t2V7RCk27WCmUusM85nZL0QgT3ShS/tiovCYzrgWfsY=;
-        b=PGyY2etGVcr9W4JM0Jf/5Tvpgv6zwXqM+cm5ax+99ZgoywnZikNMaz+EQE62He6x27
-         4OYkq7MWAydwbeMkr/H6gdDZCnbHvRq2itdY+J65ds6SdUaxWHN0kPGsJk8LGzY4H7rA
-         TfiMhd7IW1vAA7UTy0Mi5xknYLYp0BJntGjq1kNHST/+bYWBdVl9CxReDokFbdcGdQVH
-         5MdbsjGD4hoC0zNZIEhXNA6VxCI7wFf2AnYkWN8mu8paWHqoU3Ei2R6/4I2YBVlYETuU
-         Lya73C6wgeoLSGVqZLbSSvGzch/eQGAeQ+uol+x+tJ5NexSWQLriH5xMUKMPG+8TfNus
-         UwMw==
-X-Gm-Message-State: APjAAAXWXckgHnIllcU1Dq/n0dvWd8Wxvo+V8ruBb9rfKgQ/UR3YxmdA
-        0YE725kqGB9IuEcebsXMZ+E=
-X-Google-Smtp-Source: APXvYqwOcczRwLkBHBL5rDESBQ+g3ZJMJA4SKCrxSh6v46W43ahnBQFMHehiS8PlLWBeH+RWY/X46Q==
-X-Received: by 2002:a2e:9cd4:: with SMTP id g20mr6704131ljj.205.1560728174046;
-        Sun, 16 Jun 2019 16:36:14 -0700 (PDT)
+        bh=MLcVzTC0IaxbESeka8YOusn41kpWSvPViTyvRdxCIn4=;
+        b=rtqn2PVcYdJtrYVyQy4VA0xlGvAn3GcPpuzzAUcWeIDksYIZfbihTIDl0tdY3sVXva
+         Qw2VS4Yxmaji6orCQA6D2G7nbmjsRGCQZg0q6Sr1IQqQjOE28l20VQx/WsRjFdkDCjAP
+         GM3Di2D93yY8usMRq5A/bX0uictXT2ngwIu2dyxRH+CuuOHdPXMXiNW3HFAr6Suyio77
+         kM+Nzjnt2QYEA0kLzkAoo7P4W4Oty5xFmBzSOB9nEbmlexYmaEdac/0+pn6VgbD0KDBx
+         ssdlFBU1fU++6wcWFgjonlCKilKQo2wo+5aSN1+yDOgdGifEsvTkkcY+tdGibT6bHs8k
+         iXsw==
+X-Gm-Message-State: APjAAAXa/ENDdNfkdQlzYFKQ2umVgp/zVwyNtc8UZAkWBPwlviripoB1
+        DJLlx1kAZA1L36LowGEd28Y=
+X-Google-Smtp-Source: APXvYqyuvXRfe8AHcpXDXE1lcVXJXVWk482SzjTXIDhIq9j+KWdEs9H6/aBgi9YfgzrZG+jjW+a48A==
+X-Received: by 2002:a2e:2b57:: with SMTP id q84mr10518197lje.105.1560728169216;
+        Sun, 16 Jun 2019 16:36:09 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.12
+        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Jun 2019 16:36:13 -0700 (PDT)
+        Sun, 16 Jun 2019 16:36:08 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -66,9 +66,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 08/10] memory: tegra: Ensure timing control debug features are disabled
-Date:   Mon, 17 Jun 2019 02:35:49 +0300
-Message-Id: <20190616233551.6838-9-digetx@gmail.com>
+Subject: [PATCH v4 04/10] memory: tegra20-emc: Include io.h instead of iopoll.h
+Date:   Mon, 17 Jun 2019 02:35:45 +0300
+Message-Id: <20190616233551.6838-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190616233551.6838-1-digetx@gmail.com>
 References: <20190616233551.6838-1-digetx@gmail.com>
@@ -79,43 +79,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Timing control debug features should be disabled at a boot time, but you
-never now and hence it's better to disable them explicitly because some of
-those features are crucial for the driver to do a proper thing.
+The register polling code was gone, but the included header change was
+missed. Fix it up for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/mc.c | 3 +++
- drivers/memory/tegra/mc.h | 2 ++
- 2 files changed, 5 insertions(+)
+ drivers/memory/tegra/tegra20-emc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index eaebe371625c..4c1492c653e1 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -660,6 +660,9 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 	} else
- #endif
- 	{
-+		/* ensure that debug features are disabled */
-+		mc_writel(mc, 0x00000000, MC_TIMING_CONTROL_DBG);
-+
- 		err = tegra_mc_setup_latency_allowance(mc);
- 		if (err < 0) {
- 			dev_err(&pdev->dev,
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index 0720a1d2023e..abc565b42225 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -33,6 +33,8 @@
- #define MC_EMEM_ARB_OVERRIDE				0xe8
- #define MC_EMEM_ARB_OVERRIDE_EACK_MASK			0x3
- 
-+#define MC_TIMING_CONTROL_DBG				0xf8
-+
- #define MC_TIMING_CONTROL				0xfc
- #define MC_TIMING_UPDATE				BIT(0)
- 
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index d3e1f898d745..43aef3614b65 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -10,7 +10,7 @@
+ #include <linux/completion.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+-#include <linux/iopoll.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
 -- 
 2.22.0
 
