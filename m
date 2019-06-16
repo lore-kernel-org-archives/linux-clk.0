@@ -2,58 +2,59 @@ Return-Path: <SRS0=Xpuc=UP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 920D7C31E50
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26144C31E53
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53DB52087F
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F229420861
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlwvpwq8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSRSWdUK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbfFPXgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Jun 2019 19:36:07 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40526 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbfFPXgH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jun 2019 19:36:07 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a21so7494255ljh.7;
-        Sun, 16 Jun 2019 16:36:05 -0700 (PDT)
+        id S1727238AbfFPXgO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Jun 2019 19:36:14 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43690 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbfFPXgN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jun 2019 19:36:13 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 16so7467660ljv.10;
+        Sun, 16 Jun 2019 16:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=L+LU7+GDzyc9Nezc+LMmj0Gd4S4WEMfsuAb4Lyp6cQA=;
-        b=mlwvpwq8BYWuen554yfnPbl0SQlVE/+XpwxFTQ2pMNUOtCLzgPsUsRBVAbYQ+Zx5Vh
-         cxMaJA8DaR+sAk1NI8/B6tH8egUZizK9iIlbHpSJcEzU3iNC9ofxm4spRjiixGNopPce
-         8Ga0tRXayoEE4dU4AmPb6aWwJgruB2DQP2ClVTn82jyI5ZtoFeMpDJZAL6OE9S+00YHT
-         25g4JiyLwyzKCdMti9mfxzU8Kl1BUAT5P4lolJfZT6MPjhOhtAcvkAXD5MZlorIthfW+
-         lD8farvJ6fbxK6nxnOOajxrFDfeyaV4KktMCpfcKGI46kAdZSw66WCN1uqOb61Z0YdZS
-         XxKw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qSGWfyGgts7/ACGUx3NwBZ4EU3S1UppuppDAwYa+a/0=;
+        b=BSRSWdUKGozsTDN4tXaeO4A7jbuKpBt71UNSuQo/xNKqwqmoTGSiTL2ddHSA3wA92/
+         4i8jqm0zSsnqkOB6pffvf4jiF4j1Ev1GCCN5bm8iTFBw5OX/TiqSFdnPl8SRLFXUJe24
+         zWnyLiCHFIVgigjnuq3z0+golgy0aO4BrFwzwucjvRWRHyJy9cvjiHGT3GWJNNOKkigp
+         UslUpzhtIctQuile3kX8OgTB1+heUUdIoQ8Xu32SwXhPG+uDQaJp7mw5GjylSq2oQeie
+         IIgKh3no3AuBzrh89c03H+Gh6PvZNcD1isnDi0YMiCvf4wSEYzqjuzsUyefO3f4MFjaR
+         65tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=L+LU7+GDzyc9Nezc+LMmj0Gd4S4WEMfsuAb4Lyp6cQA=;
-        b=pIyciNegFiHr+sLg+xNawtn9rk/T0r83I2eaDw2+IOYD77THPqRVhHTvbUOQ0CR1Aj
-         VF7lYdmPoz7v442x5NDXtP1qnX+Gjs66YN8lqEGH9XYw2jF8161+i9MtsuH9VPtxDTRd
-         2IcO6ka/jGiKFp0nH5KrNltN+LsekSoyYwSKxEbNW8SxsfwrXZunBtZyPq45kg4bTvPP
-         r7NePlOiAwHR4iGb+ptHD/i0kfJmsf8T9lAupgsPoxW0kuiLML7RYR+N/SxYpAYHvfm4
-         Du3E1dtuhiX9K04p++MrJtzPouNtt7UGznGnKzLh0kEC1Enhj2NV3x0CW0Iaazw0bPYy
-         eCyQ==
-X-Gm-Message-State: APjAAAV9N+pFVbwr/9ReEfxtlV/ImAtgfUOMhuedl1sFcpkl2CManfnY
-        dnDyYfGGammDEvBW3X9BccI=
-X-Google-Smtp-Source: APXvYqzfF1XY4C9BCOmR4qJUkLfJ0SYMovCjrMqGNLFtbazopEydcGQi6N2rFSrgtNIRIDFtePQGlQ==
-X-Received: by 2002:a2e:3013:: with SMTP id w19mr45588286ljw.73.1560728164706;
-        Sun, 16 Jun 2019 16:36:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qSGWfyGgts7/ACGUx3NwBZ4EU3S1UppuppDAwYa+a/0=;
+        b=MBITJmuW5OZK8JzwkC5XB3rwvbeQpP7LidEdb/EsiYMN1IRwI/ed/WYfqaOIMONwJ2
+         LbAO4ON44OgrTKGz2mzX+pWqJy+HigCEuayC36Edc2xFPmwAgnPW/tQh8iJedm6r34mo
+         VT+6/fZBwIOCdN3t5f/0rvzRunk1yw95aCDD9vufwRxvXR1kvHSV4CdcQUiluTA4NCj1
+         y235tsKGh6yxjJahe9NM+0wmp0J1y0fm4zFGBEmH4dK71U4z4OjIx423aVn+jxgmdh9i
+         HM8MPocz46efzBew5PCwaHOMQ+fwPQljgaYFSgQ+LAtoM1b5nJrNk8roHAUWaLGs6KwI
+         DxUA==
+X-Gm-Message-State: APjAAAVl0WYNI3dv9hM7dU6ujFiKH1pcm2FbDZ2p7eWw5VQWb/N4ETur
+        308iuTcgg24x8FAzbOm5YyM=
+X-Google-Smtp-Source: APXvYqwSkmBdIBpprG/cKABiWTNsfDQOuRSS4JhueH2eCr04/WhLzruIsne2m/uF5EoJdNIWW3mP4Q==
+X-Received: by 2002:a2e:87d0:: with SMTP id v16mr160701ljj.24.1560728170254;
+        Sun, 16 Jun 2019 16:36:10 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.03
+        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Jun 2019 16:36:03 -0700 (PDT)
+        Sun, 16 Jun 2019 16:36:09 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -65,10 +66,12 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 00/10] memory: tegra: Introduce Tegra30 EMC driver
-Date:   Mon, 17 Jun 2019 02:35:41 +0300
-Message-Id: <20190616233551.6838-1-digetx@gmail.com>
+Subject: [PATCH v4 05/10] memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
+Date:   Mon, 17 Jun 2019 02:35:46 +0300
+Message-Id: <20190616233551.6838-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190616233551.6838-1-digetx@gmail.com>
+References: <20190616233551.6838-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -76,115 +79,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+There is no problem for drivers to request pll_m and pll_p clocks for
+the device, hence there is no need to use clk_get_sys() and it could be
+replaced with devm_clk_get() for consistency.
 
-This series introduces driver for the External Memory Controller (EMC)
-found on Tegra30 chips, it controls the external DRAM on the board. The
-purpose of this driver is to program memory timing for external memory on
-the EMC clock rate change. The driver was tested using the ACTMON devfreq
-driver that performs memory frequency scaling based on memory-usage load.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/tegra/tegra20-emc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Changelog:
-
-v4: - Addressed review comments that were made by Peter De Schrijver to v3
-      by adding fence_udelay() after writes in the "Add custom EMC clock
-      implementation" patch.
-
-    - Added two new minor patches:
-
-        memory: tegra: Ensure timing control debug features are disabled
-        memory: tegra: Consolidate registers definition into one place
-
-      The first one is needed to ensure that EMC driver will work
-      properly regardless of hardware configuration left after boot.
-      The second patch is just a minor code cleanup.
-
-    - The "Introduce Tegra30 EMC driver" got also few very minor changes.
-      Now every possible error case is handled, nothing is ignored.
-      The EMC_DBG register is explicitly initialized during probe to be
-      on the safe side.
-
-v3: - Addressed review comments that were made by Stephen Boyd to v2 by
-      adding explicit typing for the callback variable, by including
-      "clk-provider.h" directly in the code and by dropping __clk_lookup
-      usage where possible.
-
-    - Added more patches into this series:
-
-        memory: tegra20-emc: Drop setting EMC rate to max on probe
-        memory: tegra20-emc: Adapt for clock driver changes
-        memory: tegra20-emc: Include io.h instead of iopoll.h
-        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-
-      Initially I was going to include these patches into other patchset,
-      but changed my mind after rearranging things a tad. The "Adapt for
-      clock driver changes" patch is directly related to the clock changes
-      done in the first patch of this series, the rest are minor cleanups
-      that are fine to include here as well.
-
-    - Added some more words to the commit message of "Add binding for NVIDIA
-      Tegra30 External Memory Controller" patch, clarifying why common DDR
-      timing device-tree form isn't suitable for Tegra30.
-
-    - The Tegra30 EMC driver now explicitly selects the registers access
-      mode (EMC_DBG mux), not relying on the setting left from bootloader.
-
-v2: - Added support for changing MC clock diver configuration based on
-      Memory Controller (MC) configuration which is part of the memory
-      timing.
-
-    - Merged the "Add custom EMC clock implementation" patch into this
-      series because the "Introduce Tegra30 EMC driver" patch directly
-      depends on it. Please note that Tegra20 EMC driver will need to be
-      adapted for the clock changes as well, I'll send out the Tegra20
-      patches after this series will be applied because of some other
-      dependencies (devfreq) and because the temporary breakage won't
-      be critical (driver will just error out on probe).
-
-    - EMC driver now performs MC configuration validation by checking
-      that the number of MC / EMC timings matches and that the timings
-      rate is the same.
-
-    - EMC driver now supports timings that want to change the MC clock
-      configuration.
-
-    - Other minor prettifying changes of the code.
-
-Dmitry Osipenko (10):
-  clk: tegra20/30: Add custom EMC clock implementation
-  memory: tegra20-emc: Drop setting EMC rate to max on probe
-  memory: tegra20-emc: Adapt for clock driver changes
-  memory: tegra20-emc: Include io.h instead of iopoll.h
-  memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
-    Controller
-  memory: tegra: Introduce Tegra30 EMC driver
-  memory: tegra: Ensure timing control debug features are disabled
-  memory: tegra: Consolidate registers definition into one place
-  ARM: dts: tegra30: Add External Memory Controller node
-
- .../memory-controllers/nvidia,tegra30-emc.txt |  249 ++++
- arch/arm/boot/dts/tegra30.dtsi                |   11 +
- drivers/clk/tegra/Makefile                    |    2 +
- drivers/clk/tegra/clk-tegra20-emc.c           |  305 +++++
- drivers/clk/tegra/clk-tegra20.c               |   55 +-
- drivers/clk/tegra/clk-tegra30.c               |   38 +-
- drivers/clk/tegra/clk.h                       |    6 +
- drivers/memory/tegra/Kconfig                  |   10 +
- drivers/memory/tegra/Makefile                 |    1 +
- drivers/memory/tegra/mc.c                     |   42 +-
- drivers/memory/tegra/mc.h                     |   74 +-
- drivers/memory/tegra/tegra124.c               |   20 -
- drivers/memory/tegra/tegra20-emc.c            |   94 +-
- drivers/memory/tegra/tegra30-emc.c            | 1197 +++++++++++++++++
- drivers/memory/tegra/tegra30.c                |   24 +
- include/linux/clk/tegra.h                     |   14 +
- include/soc/tegra/mc.h                        |    2 +-
- 17 files changed, 1973 insertions(+), 171 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.txt
- create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
- create mode 100644 drivers/memory/tegra/tegra30-emc.c
-
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 43aef3614b65..527aa4b90e95 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -527,33 +527,29 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 		goto unset_cb;
+ 	}
+ 
+-	emc->pll_m = clk_get_sys(NULL, "pll_m");
++	emc->pll_m = devm_clk_get(&pdev->dev, "pll_m");
+ 	if (IS_ERR(emc->pll_m)) {
+ 		err = PTR_ERR(emc->pll_m);
+ 		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
+ 		goto unset_cb;
+ 	}
+ 
+-	emc->backup_clk = clk_get_sys(NULL, "pll_p");
++	emc->backup_clk = devm_clk_get(&pdev->dev, "pll_p");
+ 	if (IS_ERR(emc->backup_clk)) {
+ 		err = PTR_ERR(emc->backup_clk);
+ 		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
+-		goto put_pll_m;
++		goto unset_cb;
+ 	}
+ 
+ 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
+ 			err);
+-		goto put_backup;
++		goto unset_cb;
+ 	}
+ 
+ 	return 0;
+ 
+-put_backup:
+-	clk_put(emc->backup_clk);
+-put_pll_m:
+-	clk_put(emc->pll_m);
+ unset_cb:
+ 	tegra20_clk_set_emc_round_callback(NULL, NULL);
+ 
 -- 
 2.22.0
 
