@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D27C31E50
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8B7C31E50
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B78B62087F
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 330E12087F
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jun 2019 23:36:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2yYGjNr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o4XbwT/z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfFPXgg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Jun 2019 19:36:36 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39467 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfFPXgS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jun 2019 19:36:18 -0400
-Received: by mail-lf1-f67.google.com with SMTP id p24so5144339lfo.6;
-        Sun, 16 Jun 2019 16:36:17 -0700 (PDT)
+        id S1727546AbfFPXgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Jun 2019 19:36:17 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43700 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727538AbfFPXgQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jun 2019 19:36:16 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 16so7467761ljv.10;
+        Sun, 16 Jun 2019 16:36:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/LoNLOLC4v22fCk8MRxYZiVyFU9l44MdyNDw1bDmHwQ=;
-        b=m2yYGjNriXkaj18ueVpnD4vnoouUICdAj4mYFBxnqWOZGiwAaR5Bs62vrnNjku/2vP
-         X67mpJWA+Abgp3FLwUmzC4yHD/IIBAci1l5sCvSuG+RQj1QTQ4TBNADrYYOoJbkuKhZB
-         w56N3l17SwypZ6jd/tRs51e+XOyJr/UyXacC/6cZkB715iKmYAC2qQq3oVJZ2CdMIM8/
-         xiqV/zALHGyJE0dADZZDSa2AGYqQoRM85PqPwEFDpRKyfwFdjgM1tJGkTjxbivOYl5Bv
-         YlTMe6qRuDuKUcifzd1nvbQtVzFmLd8jB2MlIK4Zi0M+rUhN188PdRy25B6MGy6lxBzE
-         +wYg==
+        bh=t2V7RCk27WCmUusM85nZL0QgT3ShS/tiovCYzrgWfsY=;
+        b=o4XbwT/zpwZwYLrQ4m8YDgj621PjLQfcjEol41vgybx8ypDk40VFypufhxsC/bgDRi
+         ogWG90ShNvIF9kvf/1zS256dZjMc78CjxsD+BlzXdPVC95eS5tHjOrUkfEOZYGznxPpK
+         KIJOUYY8J3nAWTpr6Dp9QFu+bMZOTgNM+TwkCzYWkkdROqor/yEMOQw3RtYLpmAm5ht2
+         FhgUt71iu/G0jWWB5IjjOzT6GiBZQO36sve+4kIP1HybGAMpd9bau40ruS1EnY9aAgRG
+         r37zepZlaXLrxv/t2SgpiMLdxl0MGntkzYIvPfW5+XVdfi0/Lek084GFXE0JIbPVChRb
+         SVNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/LoNLOLC4v22fCk8MRxYZiVyFU9l44MdyNDw1bDmHwQ=;
-        b=JldVCg+NoqVj19IuB9My4zeUyA0WRDy70zx1prCZJ8lQANPP9hwpJMMqssyuW5GhZ9
-         Bm/7kbbNLkehqyoNb1KPPEwuvFNqGQL9ZTK0fOpcVXyyWk9G4o0rfz8eZE5XiA0Qf48U
-         nueNDBNzMIhTjLSClEweKB9E+XPi6xxzAvaBcGT266WBSfOOx5PCrazRHRsJBZXyQ3US
-         eDJHLAhY+CHd2OHt9eeRy8YsPcxc8OcOvfbF6bl0bs7FJyKoCkgH8O7+Yh62+MBKg9Ui
-         qMd/ph65XVD9hQl4IxY6fn6m/pxO4cmvu8wCfC+lLbKT1OMSgEtOPMqI1tqEyFvSBmsp
-         Hclw==
-X-Gm-Message-State: APjAAAVgmEFqD1DjY82Pzm8FkI72eO5uDmxu5DpoUFO8CC/skRLTVs5D
-        7zyPTx4gWklVHPKwsVfiSHw=
-X-Google-Smtp-Source: APXvYqzrZ4HrWxTmGdAtjCWvopnaULhASTi++CVRUtOFAy27Rd4qfCGCV/jA8t8SLbcC9nAlQ6DX4A==
-X-Received: by 2002:ac2:5212:: with SMTP id a18mr46653296lfl.50.1560728176194;
-        Sun, 16 Jun 2019 16:36:16 -0700 (PDT)
+        bh=t2V7RCk27WCmUusM85nZL0QgT3ShS/tiovCYzrgWfsY=;
+        b=PGyY2etGVcr9W4JM0Jf/5Tvpgv6zwXqM+cm5ax+99ZgoywnZikNMaz+EQE62He6x27
+         4OYkq7MWAydwbeMkr/H6gdDZCnbHvRq2itdY+J65ds6SdUaxWHN0kPGsJk8LGzY4H7rA
+         TfiMhd7IW1vAA7UTy0Mi5xknYLYp0BJntGjq1kNHST/+bYWBdVl9CxReDokFbdcGdQVH
+         5MdbsjGD4hoC0zNZIEhXNA6VxCI7wFf2AnYkWN8mu8paWHqoU3Ei2R6/4I2YBVlYETuU
+         Lya73C6wgeoLSGVqZLbSSvGzch/eQGAeQ+uol+x+tJ5NexSWQLriH5xMUKMPG+8TfNus
+         UwMw==
+X-Gm-Message-State: APjAAAXWXckgHnIllcU1Dq/n0dvWd8Wxvo+V8ruBb9rfKgQ/UR3YxmdA
+        0YE725kqGB9IuEcebsXMZ+E=
+X-Google-Smtp-Source: APXvYqwOcczRwLkBHBL5rDESBQ+g3ZJMJA4SKCrxSh6v46W43ahnBQFMHehiS8PlLWBeH+RWY/X46Q==
+X-Received: by 2002:a2e:9cd4:: with SMTP id g20mr6704131ljj.205.1560728174046;
+        Sun, 16 Jun 2019 16:36:14 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.15
+        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Jun 2019 16:36:15 -0700 (PDT)
+        Sun, 16 Jun 2019 16:36:13 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -66,9 +66,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/10] ARM: dts: tegra30: Add External Memory Controller node
-Date:   Mon, 17 Jun 2019 02:35:51 +0300
-Message-Id: <20190616233551.6838-11-digetx@gmail.com>
+Subject: [PATCH v4 08/10] memory: tegra: Ensure timing control debug features are disabled
+Date:   Mon, 17 Jun 2019 02:35:49 +0300
+Message-Id: <20190616233551.6838-9-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190616233551.6838-1-digetx@gmail.com>
 References: <20190616233551.6838-1-digetx@gmail.com>
@@ -79,35 +79,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add External Memory Controller node to the device-tree.
+Timing control debug features should be disabled at a boot time, but you
+never now and hence it's better to disable them explicitly because some of
+those features are crucial for the driver to do a proper thing.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/memory/tegra/mc.c | 3 +++
+ drivers/memory/tegra/mc.h | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e074258d4518..92c4aeafab29 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -732,6 +732,17 @@
- 		#reset-cells = <1>;
- 	};
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index eaebe371625c..4c1492c653e1 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -660,6 +660,9 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 	} else
+ #endif
+ 	{
++		/* ensure that debug features are disabled */
++		mc_writel(mc, 0x00000000, MC_TIMING_CONTROL_DBG);
++
+ 		err = tegra_mc_setup_latency_allowance(mc);
+ 		if (err < 0) {
+ 			dev_err(&pdev->dev,
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index 0720a1d2023e..abc565b42225 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -33,6 +33,8 @@
+ #define MC_EMEM_ARB_OVERRIDE				0xe8
+ #define MC_EMEM_ARB_OVERRIDE_EACK_MASK			0x3
  
-+	memory-controller@7000f400 {
-+		compatible = "nvidia,tegra30-emc";
-+		reg = <0x7000f400 0x400>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_EMC>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++#define MC_TIMING_CONTROL_DBG				0xf8
 +
-+		nvidia,memory-controller = <&mc>;
-+	};
-+
- 	fuse@7000f800 {
- 		compatible = "nvidia,tegra30-efuse";
- 		reg = <0x7000f800 0x400>;
+ #define MC_TIMING_CONTROL				0xfc
+ #define MC_TIMING_UPDATE				BIT(0)
+ 
 -- 
 2.22.0
 
