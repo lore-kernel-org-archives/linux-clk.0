@@ -2,110 +2,147 @@ Return-Path: <SRS0=KwYV=UQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790D5C31E5C
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E5AC31E57
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52BBA20861
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7525A20861
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:50:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfFQMkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jun 2019 08:40:12 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:51560 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfFQMkL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 08:40:11 -0400
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id Rofo2000C3XaVaC01ofohs; Mon, 17 Jun 2019 14:39:58 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hcqvM-0001q0-CS; Mon, 17 Jun 2019 14:39:48 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hcqvM-0003OR-AO; Mon, 17 Jun 2019 14:39:48 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] clk: renesas: mstp: Combine group-private and clock array allocation
-Date:   Mon, 17 Jun 2019 14:39:43 +0200
-Message-Id: <20190617123943.12990-4-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617123943.12990-1-geert+renesas@glider.be>
-References: <20190617123943.12990-1-geert+renesas@glider.be>
+        id S1726673AbfFQMuM convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jun 2019 08:50:12 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:41657 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfFQMuM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 08:50:12 -0400
+X-Originating-IP: 90.88.23.150
+Received: from xps13 (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 7F0EC40005;
+        Mon, 17 Jun 2019 12:50:05 +0000 (UTC)
+Date:   Mon, 17 Jun 2019 14:50:04 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] clk: mvebu: armada-37xx-periph: change
+ suspend/resume time
+Message-ID: <20190617145004.7b11988f@xps13>
+In-Reply-To: <CAErSpo7fimH5QhHTLsF2ASyPqstkw7Zibe3CYB=KXTYBOh-4GQ@mail.gmail.com>
+References: <20190521130357.20803-1-miquel.raynal@bootlin.com>
+        <20190521130357.20803-3-miquel.raynal@bootlin.com>
+        <CAErSpo5i3y4CxZXV7E4tUR66uXaUa3B_-YT2+zfzZUGMmge7Ow@mail.gmail.com>
+        <20190527154610.6d4d5eff@xps13>
+        <CAErSpo7fimH5QhHTLsF2ASyPqstkw7Zibe3CYB=KXTYBOh-4GQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make mstp_clock_group.clks[] a flexible array member, and use the new
-struct_size() helper, to combine the allocation of the group-private
-structure and array of module clocks.
+Hi Bjorn,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/clk-mstp.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Bjorn Helgaas <bhelgaas@google.com> wrote on Tue, 4 Jun 2019 15:52:31
+-0500:
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index a5e9f9edf04079c7..dfbef37eed4a82e8 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -30,11 +30,12 @@
- /**
-  * struct mstp_clock_group - MSTP gating clocks group
-  *
-- * @data: clocks in this group
-+ * @data: clock specifier translation for clocks in this group
-  * @smstpcr: module stop control register
-  * @mstpsr: module stop status register (optional)
-  * @lock: protects writes to SMSTPCR
-  * @width_8bit: registers are 8-bit, not 32-bit
-+ * @clks: clocks in this group
-  */
- struct mstp_clock_group {
- 	struct clk_onecell_data data;
-@@ -42,6 +43,7 @@ struct mstp_clock_group {
- 	void __iomem *mstpsr;
- 	spinlock_t lock;
- 	bool width_8bit;
-+	struct clk *clks[];
- };
- 
- /**
-@@ -187,14 +189,13 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 	struct clk **clks;
- 	unsigned int i;
- 
--	group = kzalloc(sizeof(*group), GFP_KERNEL);
--	clks = kmalloc_array(MSTP_MAX_CLOCKS, sizeof(*clks), GFP_KERNEL);
--	if (group == NULL || clks == NULL) {
-+	group = kzalloc(struct_size(group, clks, MSTP_MAX_CLOCKS), GFP_KERNEL);
-+	if (group == NULL) {
- 		kfree(group);
--		kfree(clks);
- 		return;
- 	}
- 
-+	clks = group->clks;
- 	spin_lock_init(&group->lock);
- 	group->data.clks = clks;
- 
-@@ -204,7 +205,6 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 	if (group->smstpcr == NULL) {
- 		pr_err("%s: failed to remap SMSTPCR\n", __func__);
- 		kfree(group);
--		kfree(clks);
- 		return;
- 	}
- 
--- 
-2.17.1
+> On Mon, May 27, 2019 at 8:46 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> >
+> > Hi Bjorn,
+> >
+> > Thanks for the feedback.
+> >
+> > Bjorn Helgaas <bhelgaas@google.com> wrote on Tue, 21 May 2019 17:43:05
+> > -0500:
+> >  
+> > > From: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > Date: Tue, May 21, 2019 at 8:04 AM
+> > > To: Michael Turquette, Stephen Boyd, Rob Herring, Mark Rutland
+> > > Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>, Thomas
+> > > Petazzoni, Antoine Tenart, Gregory Clement, Maxime Chevallier, Nadav
+> > > Haklai, Bjorn Helgaas, Rafael J . Wysocki, <linux-pm@vger.kernel.org>,
+> > > Miquel Raynal
+> > >  
+> > > > Armada 3700 PCIe IP relies on the PCIe clock managed by this
+> > > > driver. For reasons related to the PCI core's organization when
+> > > > suspending/resuming, PCI host controller drivers must reconfigure
+> > > > their register at suspend_noirq()/resume_noirq() which happens after
+> > > > suspend()/suspend_late() and before resume_early()/resume().  
+> > >
+> > > "For reasons related to the PCI core's organization" manages to
+> > > suggest that this change wouldn't be needed if only the PCI core did
+> > > something differently, without actually being specific about what it
+> > > would need to do differently.
+> > >
+> > > Is there something the PCI core could do better to make this easier?
+> > > Or is it just something like "the PCI core needs to access registers
+> > > after suspend_late()"?  You mention the host controller, but of course
+> > > that's not itself a PCI device, so the PCI core doesn't have much to
+> > > do with it directly.  
+> >
+> > Actually, if I understand correctly the below commit [1] and the core
+> > [2] & [3], PCI device fixups can happen at any time, including at the
+> > _noirq phase where, obviously, the PCI controller must be already
+> > setup.
+> >
+> > I don't think changing this behavior is a viable solution and I would
+> > not see it as a "PCI core could do better" alternative.
+> >
+> > ---8<---
+> >
+> > [1]
+> > commit ab14d45ea58eae67c739e4ba01871cae7b6c4586
+> > Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> > Date:   Tue Mar 17 15:55:45 2015 +0100
+> >
+> >     PCI: mvebu: Add suspend/resume support
+> >
+> >     Add suspend/resume support for the mvebu PCIe host driver.  Without
+> >     this commit, the system will panic at resume time when PCIe devices
+> >     are connected.
+> >
+> >     Note that we have to use the ->suspend_noirq() and ->resume_noirq()
+> >     hooks, because at resume time, the PCI fixups are done at  
+> >     ->resume_noirq() time, so the PCIe controller has to be ready at  
+> >     this point.
+> >
+> >     Signed-off-by: Thomas Petazzoni
+> >     <thomas.petazzoni@free-electrons.com> Signed-off-by: Bjorn Helgaas
+> >     <bhelgaas@google.com> Acked-by: Jason Cooper <jason@lakedaemon.net>
+> >
+> > [2] https://elixir.bootlin.com/linux/v5.2-rc1/source/drivers/pci/pci-driver.c#L1181
+> > [3] https://elixir.bootlin.com/linux/v5.2-rc1/source/drivers/pci/pci-driver.c#L522
+> >  
+> > --->8---  
+> >  
+> > >
+> > > s/register/registers/ ?  
+> >
+> > Indeed. I would like to sort out the above technical point before
+> > sending a v3 with this typo corrected.  
+> 
+> I don't have anything more to contribute here; just wanted to make
+> sure this wasn't working around a fixable problem in PCI.
 
+Great! Would you mind adding a A-b/R-b tag then?
+
+
+Thanks,
+Miquèl
