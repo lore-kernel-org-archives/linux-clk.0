@@ -2,96 +2,85 @@ Return-Path: <SRS0=KwYV=UQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8925BC31E44
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 06:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488A4C31E44
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 08:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BE052087F
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 06:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560752408;
-	bh=Y0B8T6Yjt3xB30Dg0gZDSWuAIJHo9I8LumWU7FWdu3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2AvWoONWaN1DsclhPKFM/AoegOZvwiTIWUR4ic4TBazSE3LdXX9DPvdtREQHOzVM3
-	 C/GXgxzYr+HdHGLmrzG6/Gwp8o22FTAqOzXq0ws+N8vFrSUNqE/ZMQlZ4EizXnjGvc
-	 GE9GlY/djM5bivt8D/nFndyGN3i3oSFUrFGVuCr4=
+	by mail.kernel.org (Postfix) with ESMTP id 16A5B21C38
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 08:21:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lns8r5gP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725554AbfFQGUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jun 2019 02:20:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725372AbfFQGUH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 Jun 2019 02:20:07 -0400
-Received: from localhost (unknown [122.178.208.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FBF22087F;
-        Mon, 17 Jun 2019 06:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560752407;
-        bh=Y0B8T6Yjt3xB30Dg0gZDSWuAIJHo9I8LumWU7FWdu3Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aX67L/7J7v7cWYa16rtyl7KLXzFI0GXfAaK7Tx7g/FwOex7VyFlgFW52YI7cPXgF9
-         h5QLQDtHaApzI30hAxfc+/8z5tnyNpJ2nycL0JOCURsdzH2EKKMbxJPrcUEEbvaaeY
-         uU/exeRv1EarWdNAYyKjcIMxiMrJY8u6tFjfHeuk=
-Date:   Mon, 17 Jun 2019 11:46:56 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
+        id S1725810AbfFQIVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jun 2019 04:21:47 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:1403 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfFQIVq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 04:21:46 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d074d9a0000>; Mon, 17 Jun 2019 01:21:46 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 17 Jun 2019 01:21:45 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 17 Jun 2019 01:21:45 -0700
+Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
+ HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Mon, 17 Jun 2019 08:21:45 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 3EE624290D; Mon, 17 Jun 2019 11:21:43 +0300 (EEST)
+Date:   Mon, 17 Jun 2019 11:21:43 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] clk: qcom: clk-alpha-pll: Add support for Trion
- PLLs
-Message-ID: <20190617061656.GF2962@vkoul-mobl>
-References: <20190612091722.9377-1-vkoul@kernel.org>
- <20190612091722.9377-5-vkoul@kernel.org>
- <c7be6307-51cd-46ce-8d1c-b464e510e3f7@codeaurora.org>
- <20190614054201.GA2962@vkoul-mobl>
- <51ec56b7-a276-67e6-c196-ac80281c65e1@codeaurora.org>
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 00/10] memory: tegra: Introduce Tegra30 EMC driver
+Message-ID: <20190617082143.GM29894@pdeschrijver-desktop.Nvidia.com>
+References: <20190616233551.6838-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <51ec56b7-a276-67e6-c196-ac80281c65e1@codeaurora.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190616233551.6838-1-digetx@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560759706; bh=q1GTVxxG4wQEkdmVxEanQhrDdAHn88DSedSSw0xO7FM=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=lns8r5gP5HFIRZUZ/RBQXPL7CD7SAWsEnS7ivj9HeLMiyfe30AZUYVdWXhPGMdeSJ
+         EiYAC9g28wEZJBKkxj2RJaEON1xB3vtovK3tzeRmUkDyg24tUSxcJLSD/K9uLV3quy
+         IKPBBScmpoClrfkX3yhbmbf2CVEImL4f0WnluwHZ+KbzICLJ3Qm49wmer0UULrPgEx
+         Le9CZwUxP6ham7pXHCZEh9tFg8BWn7HEsoKVncFhDHNy80jX310EfJ8vQJVOYHYdQu
+         FAiN86Oz9713BlTakFjtZ83ESdmw5HWzTCyYYuClmHFleDApinrzlW2N6VSyvhwlYU
+         ycDx4Su27hTcg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17-06-19, 11:40, Taniya Das wrote:
-> Hi Vinod,
+On Mon, Jun 17, 2019 at 02:35:41AM +0300, Dmitry Osipenko wrote:
+> Hello,
 > 
-> On 6/14/2019 11:12 AM, Vinod Koul wrote:
-> > Hi Taniya,
-> > 
-> > On 13-06-19, 08:34, Taniya Das wrote:
-> > > Hi Vinod,
-> > > 
-> > > The trion PLL needs to be configured before it is enabled. The PLL cannot
-> > > LOCK without the calibration.
-> > > 
-> > > Could you please add "clk_trion_pll_configure()" function?
-> > 
-> > First it is not recommended to top post! Please reply inline.
-> > 
-> > Yes I did see that, I will check that. Is there any way to find PLL is
-> > configured or not? I want to avoid using inited variable as done in
-> > downstream.
-> > 
-> 
-> These PLLs which are controlled by High Level OS would not be configured and
-> we should not rely on the configurations which are done previously for these
-> PLLs.
+> This series introduces driver for the External Memory Controller (EMC)
+> found on Tegra30 chips, it controls the external DRAM on the board. The
+> purpose of this driver is to program memory timing for external memory on
+> the EMC clock rate change. The driver was tested using the ACTMON devfreq
+> driver that performs memory frequency scaling based on memory-usage load.
 
-Thanks, would it make sense then to do the initialization of the PLL in
-driver probe. That would ensure HLOS is configuring them properly.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
--- 
-~Vinod
