@@ -2,106 +2,97 @@ Return-Path: <SRS0=KwYV=UQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4012EC31E57
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 10:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BB4C31E57
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 11:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15D172084D
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 10:43:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="X+44mihJ"
+	by mail.kernel.org (Postfix) with ESMTP id E608F2084D
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 11:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfFQKnf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jun 2019 06:43:35 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6722 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfFQKnf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 06:43:35 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d076ed60001>; Mon, 17 Jun 2019 03:43:34 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 17 Jun 2019 03:43:34 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 17 Jun 2019 03:43:34 -0700
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 17 Jun
- 2019 10:43:30 +0000
-Subject: Re: [PATCH 3/3] clk: tegra: Do not enable PLL_RE_VCO on Tegra210
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Alex Frid <afrid@nvidia.com>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <20190613161225.2531-1-thierry.reding@gmail.com>
- <20190613161225.2531-3-thierry.reding@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <da08f3e8-65d5-7051-8ee5-b76d206cd9c5@nvidia.com>
-Date:   Mon, 17 Jun 2019 11:43:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727637AbfFQLML (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jun 2019 07:12:11 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:40901 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfFQLML (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 07:12:11 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N32y5-1idHyv43rh-013RP4; Mon, 17 Jun 2019 13:12:01 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Abel Vesa <abel.vesa@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx6q: fix section mismatch warning
+Date:   Mon, 17 Jun 2019 13:11:35 +0200
+Message-Id: <20190617111159.2124152-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190613161225.2531-3-thierry.reding@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560768214; bh=oMjmLsaCco78LbUTwLXoRRUJz8wezGvJ9pb4I2FfSJ8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=X+44mihJDEro78eEVjVIk/4lt5uLCnr2ZaYZgLahlrB3ZGeHZ1X8CmKoBEyVYUBEs
-         t6gxCFTW8MeFtp6gmTNu2pLetNWFEBE/15Wtebt1+UIp4meWTyzWqx/zxgBIg5T+4+
-         9zM8GwCNQpfwJmxNtE66EQ7wLFu9OMmmucUbWiUdJh5A/bcD9NwS6kIGvC3hsglh6v
-         B4WoiXrlimdMZJPQCN92GaykPX4Q2R9jF9WtELEAxHnjUr8Xr0d495hl+q4Fk4xXI1
-         uzcrFCYWU1ioAoHkug8mqwsrQx8hk9B8XZBm/XEd56LaH1N80ZnEhDDJsqFtcdnIG9
-         g1fvCcrkEV9WA==
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:luZvn4Kw4EBR3RZaXipNa456cw8n9WOMC2IEWpCkVsAMKIG9gyf
+ Th7DcL93IXtSxW5GN6oGVvRO4qNociCYcoTyC6k9h91t+wCGdSDVEnnK99TtMYieeczzjce
+ TtDhTLgMfYl53zOD+f9PVhF6IwrEPIgWIxTCcOP4Zf5dIvjTSMHxmkpBZda2gbOuYSf2paE
+ RKvO5Om4GSzeijIMxk+HQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:M3B5Knar0Ik=:A+6jFaGJ6IonTlxDIyFvi7
+ gEa4cgrbowRmLVoa0iMQU1P1GYnSiU2VRShQMF1ULKS4MZtmzGY7IBMo1dJd9Y1M8qxsaYjrQ
+ wVyx/F2362nHnaj3rKglLoq+Prt92d5dd/D4Nqur0Sz1+s/gVrRN8hz0jYOxGOKWhMkmC9jNv
+ ZZ9lS7KTgc8/wdABoPeaTI+7eVeA2+VvqJJQsrTZOMm2cDhB7BgvwItmUsAAZy6jWI/XHFaZE
+ VJ7FABvEEU9hwK9AKqUOGA0QpSjJ1WlF53J+7B3x1u2ZoNdsbwqouAAQJqljGIiuTIVlvBipk
+ ZNir5dVDGvprYRQVzLlyinh78mFDamwd4fOnyKniEmhKAjfonrt/6RQFPXF6oaHOMsp0DMlv1
+ 21z12ITap2G/izeQTekeLukhqf64x4w65h0jz8Ry3Cc0SceHMDOO9TYgtH39WqroVrY/3eo0p
+ 3xHZ7CGdjNtqoPS0WK/ibk13QYv6iKX/cK7Hx/ywGB2OoUHDC9ivgXAxf8WI7dGwpEfhaccgO
+ i91HiWGI9UQvTD5MFAt1nNt/VBSsgc1j0zW6E2wVRXup1iLl8hbUpzu+s4/+4I+e5GacGAOI7
+ R8W+FofVhOq/qOAuX1BfoSGgytorucDElYDjEZQOyQB2y832ZANXRJNiuIqCzktWVv8Udzk3v
+ CkREuhO7uCqcdV8yXdfkI5yYj1iBg+qu4Dc1mGc6aW+vBD/eM/CEwATLznPECjp3Gy83CPe4p
+ qQnrLatlgY5nAhzrlKagqWXzTjU/xlpv4pbriw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The imx6q_obtain_fixed_clk_hw lacks an __init marker, which
+leads to this otherwise harmless warning:
 
-On 13/06/2019 17:12, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> It turns out that this PLL is not used on Tegra210, so there's no need
-> to enable it via the init table. Remove the init table entry for this
-> PLL to avoid it getting enabled at boot time. If the bootloader enabled
-> it and forgot to turn it off, the common clock framework will now know
-> to disable it because it is unused.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 793c7acaf4e2..13537e4458b5 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -3337,7 +3337,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->  	{ TEGRA210_CLK_DFLL_SOC, TEGRA210_CLK_PLL_P, 51000000, 1 },
->  	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
->  	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
-> -	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
->  	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
->  	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
+WARNING: vmlinux.o(.text+0x495358): Section mismatch in reference from the function imx6q_obtain_fixed_clk_hw() to the function .init.text:imx_obtain_fixed_clock_hw()
+The function imx6q_obtain_fixed_clk_hw() references
+the function __init imx_obtain_fixed_clock_hw().
+This is often because imx6q_obtain_fixed_clk_hw lacks a __init
+annotation or the annotation of imx_obtain_fixed_clock_hw is wrong.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: 992b703b5b38 ("clk: imx6q: Switch to clk_hw based API")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/imx/clk-imx6q.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Cheers
-Jon
-
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 2caa71e91119..a875d0bc12ee 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -418,8 +418,9 @@ static void disable_anatop_clocks(void __iomem *anatop_base)
+ 	writel_relaxed(reg, anatop_base + CCM_ANALOG_PLL_VIDEO);
+ }
+ 
+-static struct clk_hw *imx6q_obtain_fixed_clk_hw(struct device_node *np,
+-						const char *name, unsigned long rate)
++static struct clk_hw * __init imx6q_obtain_fixed_clk_hw(struct device_node *np,
++							const char *name,
++							unsigned long rate)
+ {
+ 	struct clk *clk = of_clk_get_by_name(np, name);
+ 	struct clk_hw *hw;
 -- 
-nvpublic
+2.20.0
+
