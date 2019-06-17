@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACA5C31E5B
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 15:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AFEC31E5B
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 15:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98EE208CB
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 15:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C87842084A
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 15:01:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfkYfsJX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I9HyP1Dl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbfFQPAr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jun 2019 11:00:47 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55358 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728449AbfFQPAq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 11:00:46 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a15so9638815wmj.5;
-        Mon, 17 Jun 2019 08:00:45 -0700 (PDT)
+        id S1727121AbfFQPBg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jun 2019 11:01:36 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34871 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728520AbfFQPBg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 11:01:36 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m3so10358376wrv.2;
+        Mon, 17 Jun 2019 08:01:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ymEXm01lQbZ5JsOJLEyNUJ2oidzFEFtqzRRB3b8GyvI=;
-        b=hfkYfsJX5SFaiJ58VyVBXlCQV7k150u9NSGLP8qmAGhNoT7pnx/Ay5GDcSJvUlssqC
-         14f8ziBEcsNiXKpR6VZwFn1D52ZUCllxuplqU1E/zR+TT2TwyCUIzzkpJ39heL8JTLJU
-         q8WTbphSR4+oqyGZe7rEls2QP/YKqrRZQ3KxRNgzW1ppF4CPIssBd1qo/NLid7Inx0Jq
-         w+kc9bS7Is1p2RS/Mci53zy5O59H41Y1XP0HaTGGuQJoAsGbmbmweLVmg98n888Ouch1
-         mNzJvak2JCGp3tAXuBWVdLlqvaUGb1vpAKeLmSC8MDNgBHKphTHEdJW5ZqSilu76ntgu
-         q3Gw==
+        bh=vIJkWrJfyxWYUDsQW4fhx8mVPinUeTZ/tiAX2FB2DeE=;
+        b=I9HyP1DlWFTX4NSLL+MG/STQvwPLGlv5Zd3gJlQDO/w6i84n4kFmDeApMTePkSwcC4
+         RVfB20DmZF5rvG1jeyLm6AKS8nyb51GwrH6GGLW/IsQMmkr9wfo+X4wPgl3Is87ceF9H
+         cw468Wv69s1KtiDhBIcuazZ/PnrlF7h428U6JWnTZ0QqeTRKn37R3+7RydrGI4Qn0EL4
+         GqDdrl7JL9a5tD8eDju/nER3uXSS5olHbqR+JdRDL1gIUtuoAt7+KgEgFz31xP77lA94
+         jtKNXC6HYDkDmIQCdFW8a1APMQuw/zh4co033U0zkiXETZrXIbo6+LhdZ9funrtwJEtw
+         fqWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ymEXm01lQbZ5JsOJLEyNUJ2oidzFEFtqzRRB3b8GyvI=;
-        b=hJ5BBddERAQMoPBe/C7VuLABYWuCyr30CAhy/BL592ErIlB0c83zL+zL+Xnow87SSA
-         dz1DXiYh/7FhFJd0z0zT2KFIGbC0Zoo/xjcAvvDIX3LrjBEZZIMb2H/CqnX2jKVy/EmC
-         ItS+5MzkWPweGYBU4oSvUJsiZG1oeLpJYtzusu98FbYvGbF4Vz/FTW6vU2uZPaS1atNt
-         Ap00dVhGu5TCVgHrfC5K2HWCoD0IWdSf0lVPFGmt2dL7OLQ+ZLDlxlcuNo7CX8mkSeOL
-         fU7H1M9AF+uUsaka2ZelN23RYo6coiEipYfKu44na4Qwm9Eum2ZclydGCFYdqe+2XZF8
-         MZVg==
-X-Gm-Message-State: APjAAAXcUuCz1En0pbHiTSn9q5R2RMBu9/p8WTNqmGC9aT9+JeZS3l80
-        7iCHn6BmNr7/ulE9fTu3TCXIEmsC
-X-Google-Smtp-Source: APXvYqwJyWZZq7dWw9wPc2GM/qpPpTih7lBmjvkoujngYX5TSub1leBer4k1StC1ijZSFNPpBWhy+Q==
-X-Received: by 2002:a1c:9dc5:: with SMTP id g188mr19836239wme.93.1560783644169;
-        Mon, 17 Jun 2019 08:00:44 -0700 (PDT)
+        bh=vIJkWrJfyxWYUDsQW4fhx8mVPinUeTZ/tiAX2FB2DeE=;
+        b=Hog53pfzXcRcAuMxa4RSkm/GGRixSoPixQe0Fd1Hu0WE1sTatVo12RJbwGcVE0DTpk
+         gQyiqP9y3YiP9scZt1PZv0zgue+74FNBKsqVqM5MQ28yCjI8/6Das4N5QGlacmGgaRFQ
+         23epH6YNB/13JNrFOiBIpbf6pUyQfhdFrmvBo7jBvXLlNUudc0nxAN5Cz+Mq4qOuvz6x
+         hshVthCiszk0R7DhMkW4CLSiPuFX0NfT9z7bASvKzPrh2QpGBc7XBaMLREpeKMl/Wlom
+         Zughgz27yB8RShaz/EiCdltIZ0bFORif8BvoWbf3i/PvBs2NqbrrPKsXzYRKHATBUqUO
+         D4vg==
+X-Gm-Message-State: APjAAAXmEy2V9C8jJjjvGptTcpbrCcDkmio793FUzFb4vKjjS8u4TO4b
+        Pc0opYF27ntzxaVXL6vIKCMtVvgy
+X-Google-Smtp-Source: APXvYqzI85jGF00H08XkQKAeJwEAv+JQOpUckJBA+V+jvzDanX4zwiUo/yB2zEEhL5tjqp7HG9a+Bw==
+X-Received: by 2002:adf:df10:: with SMTP id y16mr19123329wrl.302.1560783693281;
+        Mon, 17 Jun 2019 08:01:33 -0700 (PDT)
 Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id x6sm13697447wru.0.2019.06.17.08.00.42
+        by smtp.googlemail.com with ESMTPSA id 72sm4623261wrk.22.2019.06.17.08.01.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 08:00:43 -0700 (PDT)
-Subject: Re: [PATCH v4 01/10] clk: tegra20/30: Add custom EMC clock
- implementation
+        Mon, 17 Jun 2019 08:01:32 -0700 (PDT)
+Subject: Re: [PATCH v4 05/10] memory: tegra20-emc: Replace clk_get_sys with
+ devm_clk_get
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -68,14 +68,14 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20190616233551.6838-1-digetx@gmail.com>
- <20190616233551.6838-2-digetx@gmail.com> <20190617093555.GB508@ulmo>
+ <20190616233551.6838-6-digetx@gmail.com> <20190617094602.GC508@ulmo>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <596703d3-ce13-ff69-e685-7eb8cf7eb0d4@gmail.com>
-Date:   Mon, 17 Jun 2019 18:00:42 +0300
+Message-ID: <204a38c2-90ff-3a44-d320-bdc031679ec3@gmail.com>
+Date:   Mon, 17 Jun 2019 18:01:31 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.1
 MIME-Version: 1.0
-In-Reply-To: <20190617093555.GB508@ulmo>
+In-Reply-To: <20190617094602.GC508@ulmo>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -84,95 +84,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-17.06.2019 12:35, Thierry Reding пишет:
-> On Mon, Jun 17, 2019 at 02:35:42AM +0300, Dmitry Osipenko wrote:
->> A proper External Memory Controller clock rounding and parent selection
->> functionality is required by the EMC drivers. It is not available using
->> the generic clock implementation, hence add a custom one. The clock rate
->> rounding shall be done by the EMC drivers because they have information
->> about available memory timings, so the drivers will have to register a
->> callback that will round the requested rate. EMC clock users won't be able
->> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
->> and the callback is set up. The functionality is somewhat similar to the
->> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
->> more parent clock sources and the HW configuration and integration with
->> the EMC drivers differs a tad from the older gens, hence it's not really
->> worth to try to squash everything into a single source file.
+17.06.2019 12:46, Thierry Reding пишет:
+> On Mon, Jun 17, 2019 at 02:35:46AM +0300, Dmitry Osipenko wrote:
+>> There is no problem for drivers to request pll_m and pll_p clocks for
+>> the device, hence there is no need to use clk_get_sys() and it could be
+>> replaced with devm_clk_get() for consistency.
 >>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/clk/tegra/Makefile          |   2 +
->>  drivers/clk/tegra/clk-tegra20-emc.c | 305 ++++++++++++++++++++++++++++
->>  drivers/clk/tegra/clk-tegra20.c     |  55 ++---
->>  drivers/clk/tegra/clk-tegra30.c     |  38 +++-
->>  drivers/clk/tegra/clk.h             |   6 +
->>  include/linux/clk/tegra.h           |  14 ++
->>  6 files changed, 368 insertions(+), 52 deletions(-)
->>  create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
+>>  drivers/memory/tegra/tegra20-emc.c | 12 ++++--------
+>>  1 file changed, 4 insertions(+), 8 deletions(-)
 >>
->> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
->> index 4812e45c2214..df966ca06788 100644
->> --- a/drivers/clk/tegra/Makefile
->> +++ b/drivers/clk/tegra/Makefile
->> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
->>  obj-y					+= clk-tegra-super-gen4.o
->>  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
->> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->>  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
->> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-tegra20-emc.c
->> new file mode 100644
->> index 000000000000..b7f64ad5c04c
->> --- /dev/null
->> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
->> @@ -0,0 +1,305 @@
->> +// SPDX-License-Identifier: GPL-2.0
+>> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+>> index 43aef3614b65..527aa4b90e95 100644
+>> --- a/drivers/memory/tegra/tegra20-emc.c
+>> +++ b/drivers/memory/tegra/tegra20-emc.c
+>> @@ -527,33 +527,29 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>>  		goto unset_cb;
+>>  	}
+>>  
+>> -	emc->pll_m = clk_get_sys(NULL, "pll_m");
+>> +	emc->pll_m = devm_clk_get(&pdev->dev, "pll_m");
 > 
-> Perhaps you want to add copyright information here? Part of this is
-> copied from other drivers, so keep that copyright intact. But there's
-> also quite a bit of new code here, so also make sure to add yourself.
-
-Okay! And it's true that I initially used clk-emc as a template.
-
-[snip]
-
->> +void tegra30_clk_set_emc_round_callback(tegra30_clk_emc_round_cb *round_cb,
->> +					void *cb_arg)
->> +{
->> +	tegra20_clk_set_emc_round_callback(round_cb, cb_arg);
->> +}
->> +
->> +bool tegra30_clk_emc_driver_available(struct clk_hw *emc_hw)
->> +{
->> +	return tegra20_clk_emc_driver_available(emc_hw);
->> +}
+> Interesting... I didn't know that clk_get() had a fallback path to
+> return clk_get_sys() if the named clock wasn't found in DT. That's
+> nice.
 > 
-> Do we really need to make this distinction? Do you have any work in
-> progress patches that would need to override these Tegra30 specific bits
-> by code that's not the same as the Tegra20 variant? I don't see why you
-> would want to duplicate this if there's no use to it. Or perhaps I'm
-> missing something?
+> Looks good to me.
 
-There are no other patches planned for this code. The primary reason for the
-distinction is that I don't like to have T20 functions mixed with T30 because this
-leads to inconsistency and confusion.
-
-[snip]
-
-> Again, I don't see any advantage in quirky things like this. It seems to
-> me like the only reason why this exists is so that Tegra30 code doesn't
-> have to call functions that start with a tegra20_ prefix. However, we
-> already have code that does similar things elsewhere, so I think this
-> can be considered "common" practice. No need for this duplication.
-
-Oh, well. But this is not a very good practice in my opinion. I'll adhere to yours
-comment in v5.
-
-> Again, if I'm missing something please let me know. Might be worth
-> noting why this is done in a code comment or the commit message.
-
-You got everything right.
+Yes, I didn't know either until recently. Thanks!
