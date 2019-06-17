@@ -2,77 +2,145 @@ Return-Path: <SRS0=KwYV=UQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 134DDC31E57
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A333C31E57
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB34A20657
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:25:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4837820861
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 12:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfFQMZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jun 2019 08:25:40 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:42052 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfFQMZk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 08:25:40 -0400
+        id S1725995AbfFQMjv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jun 2019 08:39:51 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:50448 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbfFQMju (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 08:39:50 -0400
 Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id RoRe2000W3XaVaC01oReQC; Mon, 17 Jun 2019 14:25:39 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id Rofo2000W3XaVaC01ofoz7; Mon, 17 Jun 2019 14:39:48 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hcqhe-0001jZ-MV; Mon, 17 Jun 2019 14:25:38 +0200
+        id 1hcqvM-0001pv-A7; Mon, 17 Jun 2019 14:39:48 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hcqhe-0002z0-K2; Mon, 17 Jun 2019 14:25:38 +0200
+        id 1hcqvM-0003OL-95; Mon, 17 Jun 2019 14:39:48 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: cpg-mssr: Update kerneldoc for struct cpg_mssr_priv
-Date:   Mon, 17 Jun 2019 14:25:37 +0200
-Message-Id: <20190617122537.11423-1-geert+renesas@glider.be>
+Subject: [PATCH 1/3] clk: renesas: cpg-mssr: Combine driver-private and clock array allocation
+Date:   Mon, 17 Jun 2019 14:39:41 +0200
+Message-Id: <20190617123943.12990-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190617123943.12990-1-geert+renesas@glider.be>
+References: <20190617123943.12990-1-geert+renesas@glider.be>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-New fields were added, but kerneldoc was forgotten, or inserted at the
-wrong place.
+Make cpg_mssr_priv.clks[] a flexible array member, and use the new
+struct_size() helper, to combine the allocation of the driver-private
+structure and array of available clocks.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in clk-renesas-for-v5.3.
-
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 082d0bf12ea7f219..4ddf688b8bcc7ed8 100644
+index 4ddf688b8bcc7ed8..7c241ff3ae2f0153 100644
 --- a/drivers/clk/renesas/renesas-cpg-mssr.c
 +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -112,14 +112,15 @@ static const u16 srcr[] = {
-  * @dev: CPG/MSSR device
+@@ -113,7 +113,6 @@ static const u16 srcr[] = {
   * @base: CPG/MSSR register block base address
   * @rmw_lock: protects RMW register accesses
-+ * @np: Device node in DT for this CPG/MSSR module
-  * @clks: Array containing all Core and Module Clocks
+  * @np: Device node in DT for this CPG/MSSR module
+- * @clks: Array containing all Core and Module Clocks
   * @num_core_clks: Number of Core Clocks in clks[]
   * @num_mod_clks: Number of Module Clocks in clks[]
   * @last_dt_core_clk: ID of the last Core Clock exported to DT
-+ * @stbyctrl: This device has Standby Control Registers
+@@ -121,6 +120,7 @@ static const u16 srcr[] = {
   * @notifiers: Notifier chain to save/restore clock state for system resume
   * @smstpcr_saved[].mask: Mask of SMSTPCR[] bits under our control
   * @smstpcr_saved[].val: Saved values of SMSTPCR[]
-- * @stbyctrl: This device has Standby Control Registers
++ * @clks: Array containing all Core and Module Clocks
   */
  struct cpg_mssr_priv {
  #ifdef CONFIG_RESET_CONTROLLER
+@@ -131,7 +131,6 @@ struct cpg_mssr_priv {
+ 	spinlock_t rmw_lock;
+ 	struct device_node *np;
+ 
+-	struct clk **clks;
+ 	unsigned int num_core_clks;
+ 	unsigned int num_mod_clks;
+ 	unsigned int last_dt_core_clk;
+@@ -142,6 +141,8 @@ struct cpg_mssr_priv {
+ 		u32 mask;
+ 		u32 val;
+ 	} smstpcr_saved[ARRAY_SIZE(smstpcr)];
++
++	struct clk *clks[];
+ };
+ 
+ static struct cpg_mssr_priv *cpg_mssr_priv;
+@@ -891,7 +892,6 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 				       const struct cpg_mssr_info *info)
+ {
+ 	struct cpg_mssr_priv *priv;
+-	struct clk **clks = NULL;
+ 	unsigned int nclks, i;
+ 	int error;
+ 
+@@ -901,7 +901,8 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 			return error;
+ 	}
+ 
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	nclks = info->num_total_core_clks + info->num_hw_mod_clks;
++	priv = kzalloc(struct_size(priv, clks, nclks), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+@@ -915,15 +916,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 		goto out_err;
+ 	}
+ 
+-	nclks = info->num_total_core_clks + info->num_hw_mod_clks;
+-	clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
+-	if (!clks) {
+-		error = -ENOMEM;
+-		goto out_err;
+-	}
+-
+ 	cpg_mssr_priv = priv;
+-	priv->clks = clks;
+ 	priv->num_core_clks = info->num_total_core_clks;
+ 	priv->num_mod_clks = info->num_hw_mod_clks;
+ 	priv->last_dt_core_clk = info->last_dt_core_clk;
+@@ -931,7 +924,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 	priv->stbyctrl = info->stbyctrl;
+ 
+ 	for (i = 0; i < nclks; i++)
+-		clks[i] = ERR_PTR(-ENOENT);
++		priv->clks[i] = ERR_PTR(-ENOENT);
+ 
+ 	error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
+ 	if (error)
+@@ -940,7 +933,6 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 	return 0;
+ 
+ out_err:
+-	kfree(clks);
+ 	if (priv->base)
+ 		iounmap(priv->base);
+ 	kfree(priv);
 -- 
 2.17.1
 
