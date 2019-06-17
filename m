@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A15C31E54
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 04:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196E2C31E44
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 04:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32CE2189F
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 04:26:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E20F2218A0
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 04:27:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u3kYQd8f"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H/R982Rw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbfFQE0B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jun 2019 00:26:01 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38519 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfFQE0B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 00:26:01 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v11so5028247pgl.5
-        for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2019 21:26:01 -0700 (PDT)
+        id S1726127AbfFQE1h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jun 2019 00:27:37 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39458 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfFQE1h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 00:27:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 196so5033233pgc.6
+        for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2019 21:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=qysG3nPvhaAKSI9smIDIahzbODrHWbyjnj/GEJuZrXc=;
-        b=u3kYQd8fFjb8wpRDhwAa5rO79xLm9+fj8aqWcR2QSKCMXe2jRFJkOBK2DwnPsnNUrZ
-         Yb8M9Tbrlj9cEnJJtGXUmhl64KEdwxX/bCgynnsWorkVUsQUw9zjJc1Vo5xkQE/Muadi
-         FzcfohxA99T67AJNG4hw0HWjdMYJrUtCg7QM/kxIgjz0Gm4oyEmGDjPcHcnsayJrYhVu
-         dMEv3DIceOVTok1s1OgSH1aMjgEvOQtJoHd7Sjb7/fKi7K8CvKcHclOauZXnHEHm9LIN
-         lJBGRAnFuf+vVDw5VmpBc1e3sDTSoWLjGDlq5HVnKTM1ab7HlG68Ys0yiJ8SUcWv+ezD
-         D3xQ==
+        bh=5qgzRnTwZ7FtFwZOU+qTtQKChjBDOB5x4Llf0yxx6b8=;
+        b=H/R982RwyR0I6XYbqdeqJDv1GUYVOIzWAfsvHLzIm/e/jZZZcXvLRyuPiowvWP368J
+         GovOR51IK3hRrS9xCpj/xwaJd7jORnXpuS8zYaBwQI07YHFwmprSWSjXytg7+APpYxKK
+         Pj3M8OB2aq7cmczvjKvUEen5RKi+B/F1UZcfqkXbDpXbN2JrtsPGmYLoEvm5CzUNDOj5
+         QemIwmCj9EjD5M2LGX6O8kctyGv9HLsKu7hhUxON8/tZnW0V1YS9bZ8pwfKTI3Qhz0nM
+         SQXuzUrRt/KSHcxcUumBmnPe7X+Kx023NDloZaPWTN4H5uMVEWrrQPsRraa4tvbOpmtX
+         VVBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qysG3nPvhaAKSI9smIDIahzbODrHWbyjnj/GEJuZrXc=;
-        b=fOU2oS01GgL6cCdpiTROqZpY52OQyGfC1R/zLtUvb6+/2dC8Cuv8zaJ9mnn76QM56C
-         gmyougOuXE+7UC6+GLkfaIP0nuirwV5oVEAC6513BqsoI3S0rcfL1pIRoGnV+ubaZoM8
-         7+zCombEhSR2vIYx6Z+pu+kBHxRe9vFAAOb9MrXCuOkC4h4kk6jXRe2mEXY1kHx2gAlH
-         ioCN/1q71jpoCcFw4+aCn/lSblJhH36MR+dcgK/3Q6kYd2pfJDkLINiKEprvgnExHaem
-         gbXPGwKJr0bd1rdZ7OL+O4U5Zwg87IpyhTzyu4VH/ZldjN+SL2ozeSHs7JLx0rTmcrba
-         lhFA==
-X-Gm-Message-State: APjAAAXWgeffWT08A+6MDDMiDtPdedZDOfkyT6TevzGLNPWVrKF/ZFaE
-        TIMh8xHcswuzNKvTb3w9IijH0A==
-X-Google-Smtp-Source: APXvYqyJeQVOiKNn2uH00eViwNZ2A0p4ruEvZhX33ERCjJ1TqcY9/NohX8ZMrMRGnZinEjIAN8823w==
-X-Received: by 2002:a17:90a:9bc5:: with SMTP id b5mr24261795pjw.109.1560745560700;
-        Sun, 16 Jun 2019 21:26:00 -0700 (PDT)
+        bh=5qgzRnTwZ7FtFwZOU+qTtQKChjBDOB5x4Llf0yxx6b8=;
+        b=boyViaNvggu9ePMh59zt4QS5gR974RbdA64EPCkUFOSunQV/mplZbfcQPTWEOqrFeS
+         EV/Uu+29bhSDS3omh2t66U+CFz/EPiQm815L+3d5EUj8qDcmksxPqmNxnxqUmdrFrx0o
+         e7gH9RSnGhLJspbL6YLnzNk0/+ithddtm9BhKSO++fe+CY6IPA5W3kf369efuYSKMLDI
+         ppFBYbMxtSZMGLdCbMc2z554z5ystNViNXbKeb1UFldeeXJcLFijrrRgOPy8LtErNIoq
+         7FUFiunbssxQZAYHynXlDM6Xp6NhjWH8PQ+eHa1/oOshuOg7/HS1ocAYJSL2Pj/C7UTw
+         7mLQ==
+X-Gm-Message-State: APjAAAXD9Irhw2zGMCoA20mkd8usPzI6mK3YjpiUnlL5el7Gltha4FLj
+        Tfn19ju1gqzFRlALz5mDmLlmxQ==
+X-Google-Smtp-Source: APXvYqwozCNH33lvb2buafYwWs0k3/dkAS5T1YAfsM8xG7pjgIEkQGCh0uZcOBUNb6wTCKDL4bKVPg==
+X-Received: by 2002:a63:1208:: with SMTP id h8mr45853756pgl.377.1560745656729;
+        Sun, 16 Jun 2019 21:27:36 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p9sm9513938pjo.26.2019.06.16.21.25.59
+        by smtp.gmail.com with ESMTPSA id p65sm11149648pfp.58.2019.06.16.21.27.35
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 16 Jun 2019 21:26:00 -0700 (PDT)
-Date:   Sun, 16 Jun 2019 21:26:49 -0700
+        Sun, 16 Jun 2019 21:27:36 -0700 (PDT)
+Date:   Sun, 16 Jun 2019 21:28:25 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
@@ -62,14 +62,15 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         David Brown <david.brown@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] clk: qcom: gcc-qcs404: Add MODULE_ALIAS
-Message-ID: <20190617042649.GF750@tuxbook-pro>
+Subject: Re: [PATCH v2 2/5] clk: qcom: clk-alpha-pll: Remove post_div_table
+ checks
+Message-ID: <20190617042825.GG750@tuxbook-pro>
 References: <20190612091722.9377-1-vkoul@kernel.org>
- <20190612091722.9377-4-vkoul@kernel.org>
+ <20190612091722.9377-3-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190612091722.9377-4-vkoul@kernel.org>
+In-Reply-To: <20190612091722.9377-3-vkoul@kernel.org>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -78,40 +79,57 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Wed 12 Jun 02:17 PDT 2019, Vinod Koul wrote:
 
-> MODULE_ALIAS was missing for this driver which can be built as a
-> module, so add the MODULE_ALIAS.
+> We want users to code properly and fix the post_div_table missing and
+> not reply on core to check. So remove the post_div_table check.
 > 
 
-MODULE_ALIAS() serves the purpose of providing an module alias for the
-driver, which allows the automatic kernel module loader to insmod the
-driver as a device needing it is being registered.
-
-When the device is instantiated through the OF code path the compatible
-will be matched against the MODULE_DEVICE_TABLE(of, ) and if the device
-is programmatically registered (through platform_device_register_*())
-then the alias "platform:XYZ" will be used.
-
-
-So, unless we're going to support module autoloading of this driver from
-a board file no alias should be needed.
-
-Regards,
-Bjorn
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 > Signed-off-by: Vinod Koul <vkoul@kernel.org>
 > ---
->  drivers/clk/qcom/gcc-qcs404.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/qcom/clk-alpha-pll.c | 15 ---------------
+>  1 file changed, 15 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> index a54807eb3b28..eb3ac7a26fb8 100644
-> --- a/drivers/clk/qcom/gcc-qcs404.c
-> +++ b/drivers/clk/qcom/gcc-qcs404.c
-> @@ -2828,3 +2828,4 @@ module_exit(gcc_qcs404_exit);
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index b48707693ffd..2c6773188761 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -1036,11 +1036,6 @@ static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
+>  	u32 i, div = 1, val;
+>  	int ret;
 >  
->  MODULE_DESCRIPTION("Qualcomm GCC QCS404 Driver");
->  MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:gcc-qcs404");
+> -	if (!pll->post_div_table) {
+> -		pr_err("Missing the post_div_table for the PLL\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+>  	if (ret)
+>  		return ret;
+> @@ -1063,11 +1058,6 @@ static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
+>  {
+>  	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
+>  
+> -	if (!pll->post_div_table) {
+> -		pr_err("Missing the post_div_table for the PLL\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	return divider_round_rate(hw, rate, prate, pll->post_div_table,
+>  				pll->width, CLK_DIVIDER_ROUND_CLOSEST);
+>  }
+> @@ -1089,11 +1079,6 @@ static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
+>  	if (val & PLL_VOTE_FSM_ENA)
+>  		return 0;
+>  
+> -	if (!pll->post_div_table) {
+> -		pr_err("Missing the post_div_table for the PLL\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	div = DIV_ROUND_UP_ULL(parent_rate, rate);
+>  	for (i = 0; i < pll->num_post_div; i++) {
+>  		if (pll->post_div_table[i].div == div) {
 > -- 
 > 2.20.1
 > 
