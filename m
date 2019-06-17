@@ -2,86 +2,112 @@ Return-Path: <SRS0=KwYV=UQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C69BC31E59
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4260FC31E59
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 10:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2DF20833
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A4262084D
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jun 2019 10:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="egLGVkaJ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Xkz+egEt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbfFQKE5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jun 2019 06:04:57 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50908 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728085AbfFQKEr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 06:04:47 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5D8A3806A8;
-        Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1560765884;
-        bh=9TpEGxHoVApXP2xLWWFd+WbRCiDRhmBeG+15sZtDkzI=;
-        h=From:To:Cc:Subject:Date;
-        b=egLGVkaJOy4SKnBeqUY9fYo6IV/6Ys5fal7z2qTJ/DlqBSCjr1hz6IJwJrNuY3EdE
-         e9p7YxcLRCp9k1cKlcWJTo9QUUGejZrk5+GE5eyPtoDUJukOg19BVxUa6mLChv2tns
-         LrATW1fxZWkBH7BVZ1NLuyIC4EKfxvaxHI9EgD0xgSjo0AmOe6UWC3Jz326GlOevjv
-         iu/3fd3fyigLsNiaH6ius07s3i/bXxr7SvB6s5iQ/ZgKNiINH6Skq758URaQsF/w2A
-         +psnuWVfbIo+gDvikFiuZZUl/Rgpb52CEHVB0MdnCEGICKpCrXeNgaatYGvG20X4+w
-         1sQGPDKbgVIqA==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d0765bc0000>; Mon, 17 Jun 2019 22:04:44 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 4985E13EED3;
-        Mon, 17 Jun 2019 22:04:45 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 1E69B1E04F0; Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linus.walleij@linaro.org,
-        jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
-        sebastian.hesselbarth@gmail.com, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 0/4] Add support for Marvell 98DX1135
-Date:   Mon, 17 Jun 2019 22:04:28 +1200
-Message-Id: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.21.0
+        id S1727109AbfFQKcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jun 2019 06:32:52 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6371 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfFQKcw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jun 2019 06:32:52 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d076c530000>; Mon, 17 Jun 2019 03:32:51 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 17 Jun 2019 03:32:51 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 17 Jun 2019 03:32:51 -0700
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 17 Jun
+ 2019 10:32:49 +0000
+Subject: Re: [PATCH 1/3] clk: tegra: Do not warn unnecessarily
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Alex Frid <afrid@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <20190613161225.2531-1-thierry.reding@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <cad0866c-3667-8a17-8351-222e3cca73cb@nvidia.com>
+Date:   Mon, 17 Jun 2019 11:32:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+In-Reply-To: <20190613161225.2531-1-thierry.reding@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560767572; bh=sgUi3SjZ1T5o88iiK/A31ZDmOrHPfKalXGMR/PxBLHc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Xkz+egEtKsrF6ab4spRleRS5+4UXWYQmoOqaccMl1LRFoXWGTFke3pa66fbnFAbhb
+         5vdl30vX61VV//AIT3q/xV/ACCTBfSYZpLssRucEEUfoBoFGL+MHUkl1Mj1Lf+WrI2
+         VwnnvKPvCj+cj8A46+F+8Mowj+CCaylywBhjBC5OJ0CA0hGwJbreQhWRtjQOAbkqzV
+         n3vkMgKif63n4RSrel9bojwiKv4C0wbiuBg3c2U+twBQMpTRYLdXHAi14Nd3zHRjDi
+         oQHrkODHhmxiw/Ai9BcX0ODLFrGmqNmYSQWMZ/yF7QcmHYU5lgfLZ6fZMeHk8zhxza
+         xGXr26bCh51+g==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Marvell 98DX1135 is a switch chip with an integrated ARMv5 CPU, it is
-similar to the 98DX4122 with differences in clocking and pin control.
 
-I haven't added a separate dts for the SoC since it would be so similar t=
-o
-kirkwood-98dx4122.dtsi.
+On 13/06/2019 17:12, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> There is no need to warn if the reference PLL is enabled with the
+> correct defaults. Only warn if the boot values don't match the defaults.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index e1ba62d2b1a0..4904ac4a75db 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -984,8 +984,6 @@ static void tegra210_pllre_set_defaults(struct tegra_clk_pll *pllre)
+>  	pllre->params->defaults_set = true;
+>  
+>  	if (val & PLL_ENABLE) {
+> -		pr_warn("PLL_RE already enabled. Postponing set full defaults\n");
+> -
+>  		/*
+>  		 * PLL is ON: check if defaults already set, then set those
+>  		 * that can be updated in flight.
+> @@ -1012,6 +1010,9 @@ static void tegra210_pllre_set_defaults(struct tegra_clk_pll *pllre)
+>  		writel_relaxed(val, clk_base + pllre->params->ext_misc_reg[0]);
+>  		udelay(1);
+>  
+> +		if (!pllre->params->defaults_set)
+> +			pr_warn("PLL_RE already enabled. Postponing set full defaults\n");
+> +
+>  		return;
+>  	}
 
-Chris Packham (4):
-  dt-bindings: pinctrl: mvebu: Document bindings for 98DX1135
-  dt-bindings: clock: mvebu: Add compatible string for 98dx1135 core
-    clock
-  pinctrl: mvebu: Add support for MV98DX1135
-  clk: kirkwood: Add support for MV98DX1135
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
- .../bindings/clock/mvebu-core-clock.txt       |   1 +
- .../pinctrl/marvell,kirkwood-pinctrl.txt      |  44 +-
- drivers/clk/mvebu/kirkwood.c                  |  17 +
- drivers/pinctrl/mvebu/pinctrl-kirkwood.c      | 576 +++++++++---------
- 4 files changed, 357 insertions(+), 281 deletions(-)
+Cheers
+Jon
 
---=20
-2.21.0
-
+-- 
+nvpublic
