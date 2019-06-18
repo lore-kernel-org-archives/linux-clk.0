@@ -2,89 +2,55 @@ Return-Path: <SRS0=tHi7=UR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E009C31E51
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 09:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D387CC31E5E
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 10:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C44C2084B
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 09:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B62692080C
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 10:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfFRJz0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jun 2019 05:55:26 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:34991 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfFRJzZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 05:55:25 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 95FB3FF81A;
-        Tue, 18 Jun 2019 09:55:22 +0000 (UTC)
-Date:   Tue, 18 Jun 2019 11:55:21 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        Nicolas.Ferre@microchip.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        claudiu.beznea@gmail.com
-Subject: Re: [PATCH 0/7] clk: at91: sckc: improve error path
-Message-ID: <20190618095521.GE23549@piout.net>
-References: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
+        id S1729325AbfFRKrU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jun 2019 06:47:20 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:52330 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729369AbfFRKrT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 06:47:19 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 477F325AED3;
+        Tue, 18 Jun 2019 20:47:18 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 4BF7C9408C4; Tue, 18 Jun 2019 12:47:16 +0200 (CEST)
+Date:   Tue, 18 Jun 2019 12:47:16 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Update kerneldoc for struct
+ cpg_mssr_priv
+Message-ID: <20190618104715.kpug2wuniw56zu4z@verge.net.au>
+References: <20190617122537.11423-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190617122537.11423-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/06/2019 15:37:06+0000, Claudiu.Beznea@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+On Mon, Jun 17, 2019 at 02:25:37PM +0200, Geert Uytterhoeven wrote:
+> New fields were added, but kerneldoc was forgotten, or inserted at the
+> wrong place.
 > 
-> Hi,
-> 
-> This series tries to improve error path for slow clock registrations
-> by adding functions to free resources and using them on failures.
-> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Does the platform even boot when the slow clock is not available? 
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-The TCB clocksource would fail at:
-
-        tc.slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
-        if (IS_ERR(tc.slow_clk))
-                return PTR_ERR(tc.slow_clk);
-
-
-> It is created on top of patch series at [1].
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> [1] https://lore.kernel.org/lkml/1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com/
-> 
-> Claudiu Beznea (7):
->   clk: at91: sckc: add support to free slow oscillator
->   clk: at91: sckc: add support to free slow rc oscillator
->   clk: at91: sckc: add support to free slow clock osclillator
->   clk: at91: sckc: improve error path for sam9x5 sck register
->   clk: at91: sckc: remove unnecessary line
->   clk: at91: sckc: improve error path for sama5d4 sck registration
->   clk: at91: sckc: use dedicated functions to unregister clock
-> 
->  drivers/clk/at91/sckc.c | 122 ++++++++++++++++++++++++++++++++++--------------
->  1 file changed, 86 insertions(+), 36 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
