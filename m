@@ -2,206 +2,475 @@ Return-Path: <SRS0=tHi7=UR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9B8C31E5B
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 17:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2C5C31E5B
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 17:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0052084D
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 17:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37992206B7
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 17:58:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kwGAzBsQ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jR8Wquhk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbfFRRfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jun 2019 13:35:04 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10677 "EHLO
+        id S1729337AbfFRR6p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jun 2019 13:58:45 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12210 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729586AbfFRRfD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 13:35:03 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0920c60002>; Tue, 18 Jun 2019 10:35:02 -0700
+        with ESMTP id S1729349AbfFRR6o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 13:58:44 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d0926530002>; Tue, 18 Jun 2019 10:58:43 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Jun 2019 10:35:01 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 18 Jun 2019 10:58:42 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Jun 2019 10:35:01 -0700
-Received: from [10.2.168.217] (10.124.1.5) by HQMAIL107.nvidia.com
+        by hqpgpgate102.nvidia.com on Tue, 18 Jun 2019 10:58:42 -0700
+Received: from [10.2.168.217] (172.20.13.39) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
- 2019 17:34:58 +0000
-Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Stephen Warren <swarren@wwwdotorg.org>,
-        Dmitry Osipenko <digetx@gmail.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>,
-        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
+ 2019 17:58:39 +0000
+Subject: Re: [PATCH V3 11/17] clk: tegra210: support for Tegra210 clocks
+ suspend and resume
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
 References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
- <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
- <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
- <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
- <e53bf16a-681e-da31-1e9c-4ed2a24ed3a6@nvidia.com>
-Message-ID: <cff9b6a2-dc33-d03b-9945-799b158deb07@nvidia.com>
-Date:   Tue, 18 Jun 2019 10:34:59 -0700
+ <1560843991-24123-12-git-send-email-skomatineni@nvidia.com>
+ <20190618121607.GN28892@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <491e0b18-11e7-837c-4591-06ed30950e1d@nvidia.com>
+Date:   Tue, 18 Jun 2019 10:58:40 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <e53bf16a-681e-da31-1e9c-4ed2a24ed3a6@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+In-Reply-To: <20190618121607.GN28892@ulmo>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
  HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560879302; bh=EtLjwWpiDtqSfPhNA/8G8Clz5OAG+A5COmGeaCrkKVg=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+        t=1560880723; bh=EZsFDs+jzXTMfQC/Kn7gXDe1CR7sMkPUl6QccPbfO5Y=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
          Content-Language;
-        b=kwGAzBsQ1yoTWwKlo2/UOXv2gkDJ8firGCWiN14gqHzMxIIzL+NJZ9lpPELHx7++8
-         C93tekf3G0sFEXan2CyLBApX5uH4osQ5xuNl+ata+wnHZmNVrOtlPPhO6hhKsV/Juf
-         bZZ27nnu7W7H0ZnSISHtqcoPE+/xNqqhYTqKlosqswoYZXizfVaeos2MrmAZ08rpAS
-         yLrxRqjT/pGG5gMZ13xiR+i9Huo6g16m5gpObtCMD/6v8RkLqVDaMmayD+7Pe8lziR
-         FxzKA/nr4019w/Sj8inE7uex06rlPkDCg+nyeUgJDyr2rcvucvqnbVPNXZILdkVwtR
-         xtp0jurZ5tT0Q==
+        b=jR8WquhkrocPgWQ1vEIvs1EDxkSv75AdwJyVBJNuPl1kC/9pzufogNsvaaseFu7WD
+         6AxOrtTWac3gf3FPbMrQJM/TIAMHrfWa6R+NwDfzfMr3wvBnbjaMgu1jE6pMJdbSxG
+         4FknJ8+dScDMNzSsTlfiWeHYe1b0yZliwz2su55whwpOibpzMm3n1eDeqENGIGzAWS
+         yOh6Yzk9MiXrTvgPaQUdUWXdWulqy1l64rx+I9yW8Rzzu5CvKiqozOG6wCU3m4bMWd
+         63tg84riQcuQ9oTDCss8b8vS5417RULIb97BfxBjrdAcf2YfvgEUSl5w7+gWMGBGW2
+         4NGHTJ96N+8ZQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 6/18/19 9:50 AM, Sowjanya Komatineni wrote:
->
-> On 6/18/19 8:41 AM, Stephen Warren wrote:
->> On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
->>> 18.06.2019 12:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> 18.06.2019 10:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> This patch adds suspend and resume support for Tegra pinctrl driver
->>>>> and registers them to syscore so the pinmux settings are restored
->>>>> before the devices resume.
->>>>>
->>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>> ---
->>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra.c=C2=A0=C2=A0=C2=A0 | 62=20
->>>>> ++++++++++++++++++++++++++++++++
->>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra.h=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 5 +++
->>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra114.c |=C2=A0 1 +
->>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra124.c |=C2=A0 1 +
->>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra20.c=C2=A0 |=C2=A0 1 +
->>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
->>>>> =C2=A0 drivers/pinctrl/tegra/pinctrl-tegra30.c=C2=A0 |=C2=A0 1 +
->>>>> =C2=A0 7 files changed, 84 insertions(+)
->>>>>
->>>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c=20
->>>>> b/drivers/pinctrl/tegra/pinctrl-tegra.c
->>>>> index 34596b246578..ceced30d8bd1 100644
->>>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
->>>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
->>>>> @@ -20,11 +20,16 @@
->>>>> =C2=A0 #include <linux/pinctrl/pinmux.h>
->>>>> =C2=A0 #include <linux/pinctrl/pinconf.h>
->>>>> =C2=A0 #include <linux/slab.h>
->>>>> +#include <linux/syscore_ops.h>
->>>>> =C2=A0 =C2=A0 #include "../core.h"
->>>>> =C2=A0 #include "../pinctrl-utils.h"
->>>>> =C2=A0 #include "pinctrl-tegra.h"
->>>>> =C2=A0 +#define EMMC2_PAD_CFGPADCTRL_0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1c8
->>>>> +#define EMMC4_PAD_CFGPADCTRL_0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1e0
->>>>> +#define EMMC_DPD_PARKING=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 (0x1fff << 14)
->>>>> +
->>>>> =C2=A0 static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u=
-32=20
->>>>> reg)
->>>>> =C2=A0 {
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return readl(pmx->regs[bank] + reg);
->>>>> @@ -619,6 +624,48 @@ static void=20
->>>>> tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>> +
->>>>> +=C2=A0=C2=A0=C2=A0 if (pmx->soc->has_park_padcfg) {
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D pmx_readl(pmx, 0,=
- EMMC2_PAD_CFGPADCTRL_0);
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val &=3D ~EMMC_DPD_PARKIN=
-G;
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmx_writel(pmx, val, 0, E=
-MMC2_PAD_CFGPADCTRL_0);
->>>>> +
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D pmx_readl(pmx, 0,=
- EMMC4_PAD_CFGPADCTRL_0);
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val &=3D ~EMMC_DPD_PARKIN=
-G;
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmx_writel(pmx, val, 0, E=
-MMC4_PAD_CFGPADCTRL_0);
->>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>> +}
->>>>
->>>> Is there any reason why parked_bit can't be changed to=20
->>>> parked_bitmask like I was
->>>> asking in a comment to v2?
->>>>
->>>> I suppose that it's more preferable to keep pinctrl-tegra.c=20
->>>> platform-agnostic for
->>>> consistency when possible, hence adding platform specifics here=20
->>>> should be discouraged.
->>>> And then the parked_bitmask will also result in a proper hardware=20
->>>> description in the code.
->>>>
->>>
->>> I'm now also vaguely recalling that Stephen Warren had some kind of=20
->>> a "code generator"
->>> for the pinctrl drivers. So I guess all those tables were=20
->>> auto-generated initially.
->>>
->>> Stephen, maybe you could adjust the generator to take into account=20
->>> the bitmask (of
->>> course if that's a part of the generated code) and then re-gen it=20
->>> all for Sowjanya?
+On 6/18/19 5:16 AM, Thierry Reding wrote:
+> On Tue, Jun 18, 2019 at 12:46:25AM -0700, Sowjanya Komatineni wrote:
+>> This patch adds system suspend and resume support for Tegra210
+>> clocks.
 >>
->> https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that=20
->> generate tegra-pinctrlNNN.c. See soc-to-kernel-pinctrl-driver.py.=20
->> IIRC, tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya=20
->> is welcome to send a patch to that repo if the code needs to be updated.
+>> All the CAR controller settings are lost on suspend when core power
+>> goes off.
+>>
+>> This patch has implementation for saving and restoring all the PLLs
+>> and clocks context during system suspend and resume to have the
+>> system back to operating state.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/clk/tegra/clk-tegra210.c | 218 +++++++++++++++++++++++++++++++++++++--
+>>   1 file changed, 211 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>> index e1ba62d2b1a0..c34d92e871f4 100644
+>> --- a/drivers/clk/tegra/clk-tegra210.c
+>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>> @@ -9,10 +9,12 @@
+>>   #include <linux/clkdev.h>
+>>   #include <linux/of.h>
+>>   #include <linux/of_address.h>
+>> +#include <linux/of_platform.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/export.h>
+>>   #include <linux/mutex.h>
+>>   #include <linux/clk/tegra.h>
+>> +#include <linux/syscore_ops.h>
+>>   #include <dt-bindings/clock/tegra210-car.h>
+>>   #include <dt-bindings/reset/tegra210-car.h>
+>>   #include <linux/iopoll.h>
+>> @@ -20,6 +22,7 @@
+>>   #include <soc/tegra/pmc.h>
+>>   
+>>   #include "clk.h"
+>> +#include "clk-dfll.h"
+>>   #include "clk-id.h"
+>>   
+>>   /*
+>> @@ -36,6 +39,8 @@
+>>   #define CLK_SOURCE_LA 0x1f8
+>>   #define CLK_SOURCE_SDMMC2 0x154
+>>   #define CLK_SOURCE_SDMMC4 0x164
+>> +#define CLK_OUT_ENB_Y 0x298
+>> +#define CLK_ENB_PLLP_OUT_CPU BIT(31)
+>>   
+>>   #define PLLC_BASE 0x80
+>>   #define PLLC_OUT 0x84
+>> @@ -225,6 +230,7 @@
+>>   
+>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+>> +#define CPU_SOFTRST_CTRL 0x380
+>>   
+>>   #define LVL2_CLK_GATE_OVRA 0xf8
+>>   #define LVL2_CLK_GATE_OVRC 0x3a0
+>> @@ -2820,6 +2826,7 @@ static int tegra210_enable_pllu(void)
+>>   	struct tegra_clk_pll_freq_table *fentry;
+>>   	struct tegra_clk_pll pllu;
+>>   	u32 reg;
+>> +	int ret;
+>>   
+>>   	for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
+>>   		if (fentry->input_rate == pll_ref_freq)
+>> @@ -2836,7 +2843,7 @@ static int tegra210_enable_pllu(void)
+>>   	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
+>>   	reg &= ~BIT(pllu.params->iddq_bit_idx);
+>>   	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
+>> -	udelay(5);
+>> +	fence_udelay(5, clk_base);
+>>   
+>>   	reg = readl_relaxed(clk_base + PLLU_BASE);
+>>   	reg &= ~GENMASK(20, 0);
+>> @@ -2844,13 +2851,13 @@ static int tegra210_enable_pllu(void)
+>>   	reg |= fentry->n << 8;
+>>   	reg |= fentry->p << 16;
+>>   	writel(reg, clk_base + PLLU_BASE);
+>> -	udelay(1);
+>> +	fence_udelay(1, clk_base);
+> These udelay() -> fence_udelay() seem like they should be a separate
+> patch.
 >
+>>   	reg |= PLL_ENABLE;
+>>   	writel(reg, clk_base + PLLU_BASE);
+>> +	fence_udelay(1, clk_base);
+>>   
+>> -	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
+>> -					  reg & PLL_BASE_LOCK, 2, 1000);
+>> -	if (!(reg & PLL_BASE_LOCK)) {
+>> +	ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
+>> +	if (ret) {
+>>   		pr_err("Timed out waiting for PLL_U to lock\n");
+>>   		return -ETIMEDOUT;
+>>   	}
+>> @@ -2890,12 +2897,12 @@ static int tegra210_init_pllu(void)
+>>   		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
+>>   		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
+>>   		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
+>> -		udelay(1);
+>> +		fence_udelay(1, clk_base);
+>>   
+>>   		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
+>>   		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
+>>   		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
+>> -		udelay(1);
+>> +		fence_udelay(1, clk_base);
+>>   
+>>   		reg = readl_relaxed(clk_base + PLLU_BASE);
+>>   		reg &= ~PLLU_BASE_CLKENABLE_USB;
+>> @@ -3282,6 +3289,188 @@ static void tegra210_disable_cpu_clock(u32 cpu)
+>>   }
+>>   
+>>   #ifdef CONFIG_PM_SLEEP
+>> +static u32 cpu_softrst_ctx[3];
+>> +static struct platform_device *dfll_pdev;
+>> +static u32 *periph_clk_src_ctx;
+>> +struct periph_source_bank {
+> Blank line between the above two.
 >
-> Hi Dmitry,
+>> +	u32 start;
+>> +	u32 end;
+>> +};
+>> +
+>> +static struct periph_source_bank periph_srcs[] = {
+>> +	[0] = {
+>> +		.start = 0x100,
+>> +		.end = 0x198,
+>> +	},
+>> +	[1] = {
+>> +		.start = 0x1a0,
+>> +		.end = 0x1f8,
+>> +	},
+>> +	[2] = {
+>> +		.start = 0x3b4,
+>> +		.end = 0x42c,
+>> +	},
+>> +	[3] = {
+>> +		.start = 0x49c,
+>> +		.end = 0x4b4,
+>> +	},
+>> +	[4] = {
+>> +		.start = 0x560,
+>> +		.end = 0x564,
+>> +	},
+>> +	[5] = {
+>> +		.start = 0x600,
+>> +		.end = 0x678,
+>> +	},
+>> +	[6] = {
+>> +		.start = 0x694,
+>> +		.end = 0x6a0,
+>> +	},
+>> +	[7] = {
+>> +		.start = 0x6b8,
+>> +		.end = 0x718,
+>> +	},
+>> +};
+>> +
+>> +/* This array lists the valid clocks for each periph clk bank */
+>> +static u32 periph_clks_on[] = {
+>> +	0xdcd7dff9,
+>> +	0x87d1f3e7,
+>> +	0xf3fed3fa,
+>> +	0xffc18cfb,
+>> +	0x793fb7ff,
+>> +	0x3fe66fff,
+>> +	0xfc1fc7ff,
+>> +};
+> Hm... this is a bunch of magic. Perhaps replace this by a list of the
+> clock IDs? That's perhaps a little more verbose, but if we ever need to
+> tweak the list of IDs in that periph_clks_on array, that'll be quite the
+> challenge.
 >
-> Just want to be clear on my understanding of your request.
+> Also, is this list a "guess" or are these all guaranteed to be always
+> on? What if some of these ended up getting disabled as part of suspend
+> already (by their users). If we force them on, won't their references
+> become unbalanced if the driver later enables them again on resume?
+
+Yes, will replace with list of peripheral clock names..
+
+This list is not a guess. Each entry of this list maps to CLK_ENB set 
+register.
+
+Total 7 registers are available and each bit of these registers is for 
+enable/disable clock to corresponding peripheral.
+
+Some of the bits are off as those peripheral clocks don't need to be 
+enabled as we are not changing source or not using them like MIPIBIF, 
+PLLG_REF..
+
+This list of peripheral clocks are enabled during resume before changing 
+clock sources and after clock source update, they are restored back to 
+the state they were before suspend. So their references don't become 
+unbalanced.
+
+>> +
+>> +static struct platform_device *dfll_pdev;
+> I think you already predeclared this one above.
 >
-> "change parked_bit to parked_bitmask" are you requested to change=20
-> parked_bit of PINGROUP and DRV_PINGROUP to use bitmask value rather=20
-> than bit position inorder to have parked bit configuration for EMMC=20
-> PADs as well to happen by masking rather than checking for existence=20
-> of parked_bit?
+>> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) + ((_off) * 4))
+>> +#define car_writel(_val, _base, _off) \
+>> +		writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
+>> +
+>> +static u32 * __init tegra210_init_suspend_ctx(void)
+>> +{
+>> +	int i, size = 0;
+> Can both be unsigned int.
 >
-> Trying to understand the reason/benefit for changing parked_bit to=20
-> parked_bitmask.
-Also, Park bits in CFGPAD registers are not common for all CFGPAD=20
-registers. Park bits are available only for EMMC and also those bits are=20
-used for something else on other CFGPAD registers so bitmask can't be=20
-common and this also need an update to DRV_PINGROUP macro args just only=20
-to handle EMMC parked_bitmask. So not sure of the benefit in using=20
-bitmask rather than parked_bit
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
+>> +		size += periph_srcs[i].end - periph_srcs[i].start + 4;
+>> +
+>> +	periph_clk_src_ctx = kmalloc(size, GFP_KERNEL);
+>> +
+>> +	return periph_clk_src_ctx;
+> It's somewhat wasteful to return a global variable since you can access
+> it anyway. Perhaps it'd be more useful to make the function return a
+> boolean?
 >
-> thanks
+>> +}
+>> +
+>> +static int tegra210_clk_suspend(void)
+>> +{
+>> +	int i;
+> unsigned int.
 >
-> Sowjanya
+>> +	unsigned long off;
+>> +	struct device_node *node;
+>> +	u32 *clk_rst_ctx = periph_clk_src_ctx;
+>> +	u32 val;
+>> +
+>> +	tegra_cclkg_burst_policy_save_context();
+>> +
+>> +	if (!dfll_pdev) {
+>> +		node = of_find_compatible_node(NULL, NULL,
+>> +					       "nvidia,tegra210-dfll");
+>> +		if (node)
+>> +			dfll_pdev = of_find_device_by_node(node);
+>> +		of_node_put(node);
+>> +		if (!dfll_pdev)
+>> +			pr_err("dfll node not found. no suspend for dfll\n");
+>> +	}
+> Wouldn't it make sense to run this only once, perhaps as part of
+> tegra210_init_suspend_ctx()?
 >
+>> +
+>> +	if (dfll_pdev)
+>> +		tegra_dfll_suspend(dfll_pdev);
+>> +
+>> +	/* Enable PLLP_OUT_CPU after dfll suspend */
+>> +	val = car_readl(CLK_OUT_ENB_Y, 0);
+>> +	val |= CLK_ENB_PLLP_OUT_CPU;
+>> +	car_writel(val, CLK_OUT_ENB_Y, 0);
+>> +
+>> +	tegra_clk_periph_suspend(clk_base);
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
+>> +		for (off = periph_srcs[i].start; off <= periph_srcs[i].end;
+>> +		     off += 4)
+>> +			*clk_rst_ctx++ = car_readl(off, 0);
+>> +
+>> +	tegra_sclk_cclklp_burst_policy_save_context();
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
+>> +		cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
+>> +
+>> +	clk_save_context();
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void tegra210_clk_resume(void)
+>> +{
+>> +	int i;
+>> +	unsigned long off;
+>> +	u32 val;
+>> +	u32 *clk_rst_ctx = periph_clk_src_ctx;
+>> +	struct clk_hw *parent;
+>> +	struct clk *clk;
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
+>> +		car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
+>> +
+>> +	tegra_clk_osc_resume(clk_base);
+>> +
+>> +	/*
+>> +	 * restore all the plls before configuring clocks and resetting
+>> +	 * the devices.
+>> +	 */
+>> +	tegra210_init_pllu();
+>> +	tegra_sclk_cpulp_burst_policy_restore_context();
+>> +	clk_restore_context();
+>> +
+>> +	/* enable all clocks before configuring clock sources */
+>> +	tegra_clk_periph_force_on(periph_clks_on, ARRAY_SIZE(periph_clks_on),
+>> +				  clk_base);
+>> +	/* wait for all writes to happen to have all the clocks enabled */
+>> +	wmb();
+>> +	fence_udelay(2, clk_base);
+>> +
+>> +	/* restore all the devices clock sources */
+>> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
+>> +		for (off = periph_srcs[i].start; off <= periph_srcs[i].end;
+>> +		     off += 4)
+>> +			car_writel(*clk_rst_ctx++, off, 0);
+>> +
+>> +	/* propagate and restore resets, restore clock state */
+>> +	fence_udelay(5, clk_base);
+>> +	tegra_clk_periph_resume(clk_base);
+>> +
+>> +	/*
+>> +	 * restore CPUG clocks:
+>> +	 * - enable DFLL in open loop mode
+>> +	 * - switch CPUG to DFLL clock source
+>> +	 * - close DFLL loop
+>> +	 * - sync PLLX state
+>> +	 */
+>> +	if (dfll_pdev)
+>> +		tegra_dfll_resume(dfll_pdev, false);
+>> +
+>> +	tegra_cclkg_burst_policy_restore_context();
+>> +	fence_udelay(2, clk_base);
+>> +
+>> +	if (dfll_pdev)
+>> +		tegra_dfll_resume(dfll_pdev, true);
+>> +
+>> +	parent = clk_hw_get_parent(__clk_get_hw(clks[TEGRA210_CLK_CCLK_G]));
+>> +	clk = clks[TEGRA210_CLK_PLL_X];
+>> +	if (parent != __clk_get_hw(clk))
+>> +		tegra_clk_sync_state_pll(__clk_get_hw(clk));
+>> +
+>> +	/* Disable PLL_OUT_CPU after DFLL resume */
+>> +	val = car_readl(CLK_OUT_ENB_Y, 0);
+>> +	val &= ~CLK_ENB_PLLP_OUT_CPU;
+>> +	car_writel(val, CLK_OUT_ENB_Y, 0);
+>> +}
+> I'm surprised by the amount of work that we need to do here. I had hoped
+> that the clock framework's save/restore infrastructure would be enough.
+> I suppose you do call clk_restore_context() somewhere in there, so maybe
+> this really is as good as it gets.
+>
+> Thierry
+
+Reason is there are dependencies b/w the clocks and DFLL resume and 
+clocks resume order needed is not same as clock tree list.
+
+during resume as per clock tree, CPU clock configs to use DFLL will 
+happen first as its first in the clock tree but DFLL resume should be 
+done prior to switching CPU to use from DFLL output.
+
+To resume DFLL, peripheral clocks should be restored.
+
+Considering these dependencies, performing peripheral and DFLL/CPU 
+resume in Tegra210 clock driver rather than in corresponding peripheral 
+clk_ops using save and restore context callback.
+
+>> +
+>>   static void tegra210_cpu_clock_suspend(void)
+>>   {
+>>   	/* switch coresite to clk_m, save off original source */
+>> @@ -3295,8 +3484,20 @@ static void tegra210_cpu_clock_resume(void)
+>>   	writel(tegra210_cpu_clk_sctx.clk_csite_src,
+>>   				clk_base + CLK_SOURCE_CSITE);
+>>   }
+>> +#else
+>> +#define tegra210_clk_suspend	NULL
+>> +#define tegra210_clk_resume	NULL
+>> +static inline u32 *tegra210_init_suspend_ctx(void)
+>> +{
+>> +	return NULL;
+>> +}
+>>   #endif
+>>   
+>> +static struct syscore_ops tegra_clk_syscore_ops = {
+>> +	.suspend = tegra210_clk_suspend,
+>> +	.resume = tegra210_clk_resume,
+>> +};
+>> +
+>>   static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
+>>   	.wait_for_reset	= tegra210_wait_cpu_in_reset,
+>>   	.disable_clock	= tegra210_disable_cpu_clock,
+>> @@ -3580,5 +3781,8 @@ static void __init tegra210_clock_init(struct device_node *np)
+>>   	tegra210_mbist_clk_init();
+>>   
+>>   	tegra_cpu_car_ops = &tegra210_cpu_car_ops;
+>> +
+>> +	if (tegra210_init_suspend_ctx())
+>> +		register_syscore_ops(&tegra_clk_syscore_ops);
+>>   }
+>>   CLK_OF_DECLARE(tegra210, "nvidia,tegra210-car", tegra210_clock_init);
+>> -- 
+>> 2.7.4
+>>
