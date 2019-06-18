@@ -2,117 +2,132 @@ Return-Path: <SRS0=tHi7=UR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1244CC31E5E
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 14:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9394C46477
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 15:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E026820B1F
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 14:40:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jq1e67QV"
+	by mail.kernel.org (Postfix) with ESMTP id AD57B21670
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 15:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbfFROkX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jun 2019 10:40:23 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35692 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729327AbfFROkX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 10:40:23 -0400
-Received: by mail-ed1-f65.google.com with SMTP id p26so22134594edr.2;
-        Tue, 18 Jun 2019 07:40:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FPmqGlLqRaYsv5QgGolRusboFAose75I5VSohz4ueiE=;
-        b=jq1e67QVaCOiRylO+VQp9tG5iEzpSV3Duy6Vx85CDYXe8syEMBWuDUdmcD64H7IpMq
-         W9c6L4lHj15dOo76pOWnvBzGNVVnK+864NonAnwpaJGSU/lMFPE/C1mkzH7N4SJNHquM
-         FAponMKenVFYn31s8XhfkSR3a1P07b8s+/oWqJhqIIBrRTnISjK5AcxEj4IciiQxG+3Z
-         0OO4hXNX7uvzkpFJzCYKBSMLmOx9nqkEqf4aGjHAlGnSS68Et9fTjaC6yNGjDOPhB86U
-         n1OJF0/6KNCxofUYqcZDFXmwZg7lnW79IZvBg3OWyXsJUimsAnvornV5k/a4v2WbL9aL
-         Ybtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FPmqGlLqRaYsv5QgGolRusboFAose75I5VSohz4ueiE=;
-        b=rJuDrVbp0kxbpQaXH24sS8j4vYSMXP6WWM5MmXH77l6gESgQDKkVtX/z/EUWD/ZYi/
-         qQbMt2dFMSZJ/WNx189bbGCux95sRpZoxGQiSGUnSzaZc/mcmI3Z4PULi7N/x/JuDD1p
-         /+EmWH6puIVn7QV0lMBXcc//e4CAqsY6bMzve0gI33W/yyMtoWOEgpj7ZPda+cBHb/Fj
-         K5fbvFsr0JAtTFvKr8AjCsyCG8pOUcgvbwR/LjXxz9hDquVj9hrv+IOwwqpbDwYYuW0C
-         KYVm6zL6Sz+4WsAP5MyxIuCt8x4Ei2WvCZRtoosrwi3Qfi526Qox1uUybwNlfe3bKumt
-         rgYA==
-X-Gm-Message-State: APjAAAV4bdwAbATVGo6i1gdfJrQN90NJKJN99PsRfr8QBZcUSBDN4Sdv
-        r1lbcztgkmdCXZc6bE6thNU=
-X-Google-Smtp-Source: APXvYqxt5h1W6a2Ca8NWGsKSDu10az3ukyEF1VBfMOe5R41qedc4r8PZzY8U/w815tPnxWZXL9raBg==
-X-Received: by 2002:a50:996e:: with SMTP id l43mr102049233edb.187.1560868821425;
-        Tue, 18 Jun 2019 07:40:21 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id y22sm4810536edl.29.2019.06.18.07.40.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 07:40:20 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 07:40:18 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] clk: imx6q: Annotate imx6q_obtain_fixed_clk_hw with
- __init
-Message-ID: <20190618144018.GA63161@archlinux-epyc>
-References: <20190618022405.27952-1-natechancellor@gmail.com>
- <20190618134253.GK1959@dragon>
+        id S1729477AbfFRPsX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jun 2019 11:48:23 -0400
+Received: from avon.wwwdotorg.org ([104.237.132.123]:60274 "EHLO
+        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729209AbfFRPsX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 11:48:23 -0400
+X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Jun 2019 11:48:22 EDT
+Received: from [10.20.204.51] (unknown [216.228.112.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 95AB01C015A;
+        Tue, 18 Jun 2019 09:41:05 -0600 (MDT)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
+Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+ <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+ <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+From:   Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
+Date:   Tue, 18 Jun 2019 09:41:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618134253.GK1959@dragon>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 09:42:55PM +0800, Shawn Guo wrote:
-> On Mon, Jun 17, 2019 at 07:24:05PM -0700, Nathan Chancellor wrote:
-> > When building with clang, the following modpost warning occurs:
-> > 
-> > WARNING: vmlinux.o(.text+0x974dbc): Section mismatch in reference from
-> > the function imx6q_obtain_fixed_clk_hw() to the function
-> > .init.text:imx_obtain_fixed_clock_hw()
-> > The function imx6q_obtain_fixed_clk_hw() references
-> > the function __init imx_obtain_fixed_clock_hw().
-> > This is often because imx6q_obtain_fixed_clk_hw lacks a __init
-> > annotation or the annotation of imx_obtain_fixed_clock_hw is wrong.
-> > 
-> > imx6q_obtain_fixed_clk_hw is only used in imx6q_clocks_init, which is
-> > marked __init so do that to imx6q_obtain_fixed_clk_hw to avoid this
-> > warning.
-> > 
-> > Fixes: 992b703b5b38 ("clk: imx6q: Switch to clk_hw based API")
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/541
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
+> 18.06.2019 12:22, Dmitry Osipenko пишет:
+>> 18.06.2019 10:46, Sowjanya Komatineni пишет:
+>>> This patch adds suspend and resume support for Tegra pinctrl driver
+>>> and registers them to syscore so the pinmux settings are restored
+>>> before the devices resume.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>>>   7 files changed, 84 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> index 34596b246578..ceced30d8bd1 100644
+>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> @@ -20,11 +20,16 @@
+>>>   #include <linux/pinctrl/pinmux.h>
+>>>   #include <linux/pinctrl/pinconf.h>
+>>>   #include <linux/slab.h>
+>>> +#include <linux/syscore_ops.h>
+>>>   
+>>>   #include "../core.h"
+>>>   #include "../pinctrl-utils.h"
+>>>   #include "pinctrl-tegra.h"
+>>>   
+>>> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+>>> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+>>> +#define EMMC_DPD_PARKING			(0x1fff << 14)
+>>> +
+>>>   static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>>>   {
+>>>   	return readl(pmx->regs[bank] + reg);
+>>> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>>   			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+>>>   		}
+>>>   	}
+>>> +
+>>> +	if (pmx->soc->has_park_padcfg) {
+>>> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +
+>>> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +	}
+>>> +}
+>>
+>> Is there any reason why parked_bit can't be changed to parked_bitmask like I was
+>> asking in a comment to v2?
+>>
+>> I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
+>> consistency when possible, hence adding platform specifics here should be discouraged.
+>> And then the parked_bitmask will also result in a proper hardware description in the code.
+>>
 > 
-> Thanks for the patch, Nathan.  But we already queued up a patch [1]
-> from Arnd for that.
+> I'm now also vaguely recalling that Stephen Warren had some kind of a "code generator"
+> for the pinctrl drivers. So I guess all those tables were auto-generated initially.
 > 
-> Shawn
-> 
-> [1] https://lkml.org/lkml/2019/6/17/317
+> Stephen, maybe you could adjust the generator to take into account the bitmask (of
+> course if that's a part of the generated code) and then re-gen it all for Sowjanya?
 
-Ugh, sorry for the noise, I should have done a search and seen if
-someone had sent out a fix already.
-
-Cheers,
-Nathan
+https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that 
+generate tegra-pinctrlNNN.c. See  	soc-to-kernel-pinctrl-driver.py. 
+IIRC, tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya is 
+welcome to send a patch to that repo if the code needs to be updated.
