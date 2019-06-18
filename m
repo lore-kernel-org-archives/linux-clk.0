@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB7AC31E51
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 06:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDBBC31E51
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 06:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E202080A
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 06:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4290F2080C
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 06:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560840733;
-	bh=aCHd527iEyPOQrGtxKzpIz/rVHqvtEEHCM75bJPOonc=;
+	s=default; t=1560840796;
+	bh=8L1sOBtKkOdBG9JnByNFuljhi61mfWOhgOyCwTLXC0w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qz3MDNd755OaVKeJD9C9hgs99LOAhK27Xbai2DAJ1rbn/CRHfDHwxr5b/8OE119xA
-	 aABEngG864Jc4EHUN8V0eKrFg39l5ifI2ovFcMdIa8OIsCB9xdhtgOtomsflgi/6NA
-	 4T6vZJVnCTuq5cP2OkUg5Bi3gaTMmhjNt3McrYak=
+	b=g2E7edSlWbz9mqtc6cT8kmmnXapwqQBVjxNxCHnB9WKsmJEl2TEIVSVsTSfHcRPz0
+	 SjNOzbUYfbZ89s8pqPwAwtYRAa1rSRjwVGYIKC6gNdaLxxF2tpTjMWJZwiQZl7OntE
+	 gM0uq/TvqYQxh8PeKyOK6LwIqNjGY+CxraIsz3d0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbfFRGwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jun 2019 02:52:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
+        id S1728847AbfFRGxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jun 2019 02:53:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728455AbfFRGwM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:52:12 -0400
+        id S1726307AbfFRGxP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:53:15 -0400
 Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D39020679;
-        Tue, 18 Jun 2019 06:52:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B22A420673;
+        Tue, 18 Jun 2019 06:53:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560840731;
-        bh=aCHd527iEyPOQrGtxKzpIz/rVHqvtEEHCM75bJPOonc=;
+        s=default; t=1560840794;
+        bh=8L1sOBtKkOdBG9JnByNFuljhi61mfWOhgOyCwTLXC0w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OiTQ44nLfa5pPquo//DDSOvtfEk9pMHAkszfOQdVf6bDJr+dp3yEgN/oBFVFVDFRk
-         Xeqtmq5acyTULJq+UNzhMIQ7oe7AT2foIANW1p9z7WG3zO9wvTzCU4GHMv4F75M4MC
-         cQ07bkLQKCeeu3Flpf8XiLjLf0pWa7zhbpmm1ujU=
-Date:   Tue, 18 Jun 2019 14:51:17 +0800
+        b=fUFegAn05uCokc7L6tkxyWBBinzbsqUPsz+U4qQrCZLo+FCdeopsaML8pxAmFz+KV
+         /avcenHn3FIubbM3hzBbdTHRMLxo5LJ84OSYHhYcKaDEfeoEjj07OzVGQOtwk2oAYG
+         Pzr314E/1fMi0mwnj2Yc2r5bU7Tj8i2vmXAiPCJA=
+Date:   Tue, 18 Jun 2019 14:52:22 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Anson.Huang@nxp.com
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
@@ -47,26 +47,27 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
         leonard.crestez@nxp.com, aisheng.dong@nxp.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH 1/2] clk: imx: Remove __init for imx_check_clocks() API
-Message-ID: <20190618065116.GA29881@dragon>
-References: <20190610053634.14339-1-Anson.Huang@nxp.com>
+Subject: Re: [PATCH] clk: imx8mq: Use devm_platform_ioremap_resource()
+ instead of of_iomap()
+Message-ID: <20190618065221.GB29881@dragon>
+References: <20190610053922.30355-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190610053634.14339-1-Anson.Huang@nxp.com>
+In-Reply-To: <20190610053922.30355-1-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 01:36:33PM +0800, Anson.Huang@nxp.com wrote:
+On Mon, Jun 10, 2019 at 01:39:22PM +0800, Anson.Huang@nxp.com wrote:
 > From: Anson Huang <Anson.Huang@nxp.com>
 > 
-> Some of i.MX SoCs' clock driver use platform driver model,
-> and they need to call imx_check_clocks() API, so
-> imx_check_clocks() API should NOT be in .init section.
+> i.MX8MQ clock driver uses platform driver model, better to use
+> devm_platform_ioremap_resource() instead of of_iomap() to get
+> IO base.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Applied both, thanks.
+Applied, thanks.
