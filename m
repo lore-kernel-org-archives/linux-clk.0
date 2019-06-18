@@ -7,35 +7,38 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD94C31E5D
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0D0C31E51
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4100D2082C
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4430A2084D
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="OB9/UxJy"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Wkp4Qxu1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbfFRHrT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jun 2019 03:47:19 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:19691 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729226AbfFRHrT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 03:47:19 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0897070000>; Tue, 18 Jun 2019 00:47:19 -0700
+        id S1729213AbfFRHrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jun 2019 03:47:17 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14193 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbfFRHrQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jun 2019 03:47:16 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d0897030000>; Tue, 18 Jun 2019 00:47:15 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Jun 2019 00:47:18 -0700
+  Tue, 18 Jun 2019 00:47:15 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Jun 2019 00:47:18 -0700
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
- 2019 07:47:18 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 18 Jun 2019 07:47:17 +0000
+        by hqpgpgate101.nvidia.com on Tue, 18 Jun 2019 00:47:15 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
+ 2019 07:47:15 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
+ 2019 07:47:15 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 18 Jun 2019 07:47:15 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.168.217]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d0897030001>; Tue, 18 Jun 2019 00:47:17 -0700
+        id <B5d0897000006>; Tue, 18 Jun 2019 00:47:15 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -48,9 +51,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V3 16/17] soc/tegra: pmc: configure deep sleep control settings
-Date:   Tue, 18 Jun 2019 00:46:30 -0700
-Message-ID: <1560843991-24123-17-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V3 15/17] soc/tegra: pmc: configure core power request polarity
+Date:   Tue, 18 Jun 2019 00:46:29 -0700
+Message-ID: <1560843991-24123-16-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
 References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
@@ -58,84 +61,56 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560844039; bh=nQJmjDHX/yyz71fC5Ramf2lDdXrwkLYirADexX5oFCU=;
+        t=1560844035; bh=ZIM1lgKmGOLI8vjBUZA7Djdy5mObSNe1HI0kza+VS88=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=OB9/UxJyZ+AG0aOpRR1NfNDxjMOzFg6yaSD0RkvrR/nkxWcSxlrQIhNyp08qu4bqF
-         mc3bSzjBRkcKi+/QmOsuqURXHxkL5HmEbwP9fUtQElV7IP6ue/UFHbYWH4reGbeNFH
-         GQHEVzXK4shiMQgFqBKYGmQryX9RpdPUvodtlBBPXWdfFoGxGETUiTNFR7wQhaRFos
-         YBpmbb/V79N7A9CI+Y3uoyvQ+Jwl9zpovqBiRVY9p4NknXrVPq+l5SNIfEdTCdxATc
-         zEhDU8C59HI3GImfFXPi2s8JK6PiVFxau46UrEbM3dhoBFsaH1zsJfbYDaX/3Okxn7
-         /XfU5qxT3W6dQ==
+        b=Wkp4Qxu1JqsaH8jdLmvAIkoRC95+Ax2jKrePMPbf+rOcKLuTcrM9b9uJQyWNi8E7V
+         BCX2c8EhvV06SxEXy4k98Gw3gWjzK3zFXdarlfVBEANy8yIyR45GV5a8HF47Bpx7TQ
+         F8szrzHmPD0mZYmcCVm7FLCq6dYFaDjOH728DNWqXu5YfsKRcVDMGFBVkzmnHBHMqC
+         gkfbXglYAP1LDpOd6SOBkIET/b+YmHq2poXiI1k9Y9yJZOQ1JWaoBo+SIDL/Iiinlv
+         N0TmSvRWUM1pr44OxVOLhFnqUVBPXmjatk/w1TEmfPrHDylCV9kS7KlbgsGZdvxAzQ
+         hnxLNiPFjE7KA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
-timings which are platform specific that should be configured before
-entering into deep sleep.
+This patch configures polarity of the core power request signal
+in PMC control register based on the device tree property.
 
-Below are the timing specific configurations for deep sleep entry and
-wakeup.
-- Core rail power-on stabilization timer
-- OSC clock stabilization timer after SOC rail power is stabilized.
-- Core power off time is the minimum wake delay to keep the system
-  in deep sleep state irrespective of any quick wake event.
-
-These values depends on the discharge time of regulators and turn OFF
-time of the PMIC to allow the complete system to finish entering into
-deep sleep state.
-
-These values vary based on the platform design and are specified
-through the device tree.
-
-This patch has implementation to configure these timings which are must
-to have for proper deep sleep and wakeup operations.
+PMC asserts and de-asserts power request signal based on it polarity
+when it need to power-up and power-down the core rail during SC7.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/soc/tegra/pmc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index c9eea5ef008a..1b2ecda88a26 100644
+index 603fc3bd73f5..c9eea5ef008a 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -89,6 +89,8 @@
+@@ -56,6 +56,7 @@
+ #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
+ #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+ #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
++#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
+ #define  PMC_CNTRL_MAIN_RST		BIT(4)
+ #define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
  
- #define PMC_CPUPWRGOOD_TIMER		0xc8
- #define PMC_CPUPWROFF_TIMER		0xcc
-+#define PMC_COREPWRGOOD_TIMER		0x3c
-+#define PMC_COREPWROFF_TIMER		0xe0
+@@ -2304,6 +2305,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	else
+ 		value |= PMC_CNTRL_SYSCLK_POLARITY;
  
- #define PMC_PWR_DET_VALUE		0xe4
- 
-@@ -2292,6 +2294,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
- static void tegra20_pmc_init(struct tegra_pmc *pmc)
- {
- 	u32 value;
-+	unsigned long osc, pmu, off;
- 
- 	/* Always enable CPU power request */
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
-@@ -2317,6 +2320,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
- 	value |= PMC_CNTRL_SYSCLK_OE;
- 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
++	if (pmc->corereq_high)
++		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
++	else
++		value |= PMC_CNTRL_PWRREQ_POLARITY;
 +
-+	osc = DIV_ROUND_UP_ULL(pmc->core_osc_time * 8192, 1000000);
-+	pmu = DIV_ROUND_UP_ULL(pmc->core_pmu_time * 32768, 1000000);
-+	off = DIV_ROUND_UP_ULL(pmc->core_off_time * 32768, 1000000);
-+	if (osc && pmu)
-+		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
-+				 PMC_COREPWRGOOD_TIMER);
-+	if (off)
-+		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
- }
+ 	/* configure the output polarity while the request is tristated */
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
  
- static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
 -- 
 2.7.4
 
