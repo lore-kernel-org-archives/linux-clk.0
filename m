@@ -2,200 +2,179 @@ Return-Path: <SRS0=vPCn=US=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB58C31E49
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E88AFC31E49
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 10:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58CF62084A
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B706020B1F
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 10:01:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bQOMYAqQ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Cqxp1Ob7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfFSJkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jun 2019 05:40:04 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:58185 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfFSJkD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 05:40:03 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190619094001epoutp0425fe8f5d964e2e53722a2ae9fe605e1c~pkB0_Ve-q0491104911epoutp04j;
-        Wed, 19 Jun 2019 09:40:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190619094001epoutp0425fe8f5d964e2e53722a2ae9fe605e1c~pkB0_Ve-q0491104911epoutp04j
+        id S1731410AbfFSKBQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jun 2019 06:01:16 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52539 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731358AbfFSKBQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 06:01:16 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190619100114euoutp027d96f39ef1e5f7d27ef68e6a01123f70~pkUXL3s5j0947609476euoutp02U
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2019 10:01:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190619100114euoutp027d96f39ef1e5f7d27ef68e6a01123f70~pkUXL3s5j0947609476euoutp02U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1560937201;
-        bh=W9bQ728cpO/H9vXkzkisz2dKYSz5Av9MwD+IvykvPQU=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=bQOMYAqQgdkJTQ/yz9Z0mxjnds1x/2YRLOJeti3E1RauMPD05GkAccb2W3uqhq1aH
-         zlOz6UqoOXyXxXeph7TtGP0dJ9SoKEPy48S2ZZ8Gmfor6oZczcdUn7jbphJezpDLzw
-         ngM79fXVlS9qpoy2rpUu0V48GlEtvMzRIDYfsNZ8=
-Received: from epsmges1p1.samsung.com (unknown [182.195.42.53]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190619094000epcas1p101d9104971d4f6d4d99eacb65ac34e62~pkB0rVY652009020090epcas1p1t;
-        Wed, 19 Jun 2019 09:40:00 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        59.4C.04139.0F20A0D5; Wed, 19 Jun 2019 18:40:00 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441~pkB0Rzjqs0438504385epcas1p3e;
-        Wed, 19 Jun 2019 09:40:00 +0000 (GMT)
-X-AuditID: b6c32a35-973ff7000000102b-91-5d0a02f0a203
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 11.1B.03598.0F20A0D5; Wed, 19 Jun
-        2019 18:40:00 +0900 (KST)
-Received: from AMDC3061.DIGITAL.local ([106.120.51.75]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PTC00A4NAU0QYA0@mmp2.samsung.com>; Wed, 19 Jun 2019
-        18:40:00 +0900 (KST)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/2] clk: Add devm_clk_bulk_get_optional() function
-Date:   Wed, 19 Jun 2019 11:39:26 +0200
-Message-id: <20190619093926.21719-2-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-reply-to: <20190619093926.21719-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCmru4HJq5Yg2VXDSw2zljPanH+/AZ2
-        i48991gt1h65y25x8ZSrxeE37awW/65tZHFg93h/o5XdY9OqTjaPvi2rGD0+b5ILYInisklJ
-        zcksSy3St0vgyrjwUaXgolzFg3XzWRoY+yW7GDk5JARMJHbOm80EYgsJ7GCUuPUjoIuRC8j+
-        zigxY905VpiizWu+sUMkNjBK9B//xAzh/GSUWLPmMgtIFZuAoUTv0T5GEFtEQFbi1rGfbCBF
-        zAKLGSUuTDwPViQs4Cxxbf1/MJtFQFXi3OTLzCA2r4C1xO62G0wQ6+QlVm84ABbnFLCRmD33
-        PCPIIAmBRjaJlb0LoG5ykTh+czVQEQeQLS1x6agtRE0zo0TP7tvsEM4ERon7xxcwQjRYSxw+
-        fhGsmVmAT+Ld1x5WiGZeiY42IYgSD4kprfsZIV7rZ5TY9v8BE9CIBYwMqxjFUguKc9NTiw0L
-        DPWKE3OLS/PS9ZLzczcxgmNLy3QH45RzPocYBTgYlXh4M75yxAqxJpYVV+YeYpTgYFYS4eVu
-        5owV4k1JrKxKLcqPLyrNSS0+xCjNwaIkzhvPfTNGSCA9sSQ1OzW1ILUIJsvEwSnVwLhagZtR
-        3nLL0xbGVTudVnSZqPov3fzzwX4V83k1FR438g99zNL7Z/LzsNXhVMbSg/sWFX3Mi2rjjV1t
-        LP/H55D7Rr76dq1J8/9vcGbgF5d9bv4+anbT3bKYGGGmaRIat3V8HxvN41OVeWqfZaCllLpJ
-        3vmRrV/F6gmMbQk1TczGe5adE1MrUmIpzkg01GIuKk4EANZFri+pAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjluLIzCtJLcpLzFFi42I5/e+xoO4HJq5Yg7aVIhYbZ6xntTh/fgO7
-        xceee6wWa4/cZbe4eMrV4vCbdlaLf9c2sjiwe7y/0crusWlVJ5tH35ZVjB6fN8kFsERx2aSk
-        5mSWpRbp2yVwZVz4qFJwUa7iwbr5LA2M/ZJdjJwcEgImEpvXfGPvYuTiEBJYxygxffN/KOcn
-        o8SZ10vYQarYBAwleo/2MYLYIgKyEreO/WQDKWIWWMwo8f/JfbAiYQFniWvr/7OA2CwCqhLn
-        Jl9mBrF5BawldrfdYIJYJy+xesMBsDingI3E7LnnwYYKAdW8erqTcQIjzwJGhlWMkqkFxbnp
-        ucVGBYZ5qeV6xYm5xaV56XrJ+bmbGIGhs+2wVt8OxvtL4g8xCnAwKvHwCnzmiBViTSwrrsw9
-        xCjBwawkwsvdzBkrxJuSWFmVWpQfX1Sak1p8iFGag0VJnPd23rFIIYH0xJLU7NTUgtQimCwT
-        B6dUA+OiB/xdaR4ss66Zr80JVnoXL/5SPz7ERzHw+vz8yY3nXp86t0KpQkHXZzOr5zyvLS9L
-        tgStZ93I4iVlaqpqneBm/PQ0f96vhIvy/fUGIl/vTpo44XvsriknXn495Ff+bs1sP+V0c+ZN
-        Ygskdgoder6MaWuSVaHnSuvuZSLnWvSERRlOf/xaelyJpTgj0VCLuag4EQBnosCQGQIAAA==
-X-CMS-MailID: 20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441
-References: <20190619093926.21719-1-s.nawrocki@samsung.com>
-        <CGME20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441@epcas1p3.samsung.com>
+        s=mail20170921; t=1560938474;
+        bh=+5Aoi9KusrDIevbz701jCID7pa2iYGWJAx0tkxsUsaU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Cqxp1Ob7vCTqgYhcChErG/Ouc9Qh2EaLV8Ac0THGlOa7Xj/9q3X+RJu1UxW5mz5yp
+         nq09w7x14cBoXGW5TWtaWMCYMau7zy9+GaOppvHjW59fy9KmTWMgKE08e59AyBltjd
+         c+jZ/Ti0nNtUzKLI1wb18QX+DqUi6Gm33krWQesQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190619100113eucas1p1685d5fcb85feeb41af812d7b1e65c533~pkUWILYHC0885208852eucas1p17;
+        Wed, 19 Jun 2019 10:01:13 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4E.44.04377.9E70A0D5; Wed, 19
+        Jun 2019 11:01:13 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190619100112eucas1p25eb0476f1b1dc1bb80c3662c3528c254~pkUVTw3YT0942809428eucas1p2d;
+        Wed, 19 Jun 2019 10:01:12 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190619100112eusmtrp1124545bd7f52fa019bebe98b7452f910~pkUVFfwp73261132611eusmtrp15;
+        Wed, 19 Jun 2019 10:01:12 +0000 (GMT)
+X-AuditID: cbfec7f4-12dff70000001119-d7-5d0a07e9a40f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 9F.85.04146.8E70A0D5; Wed, 19
+        Jun 2019 11:01:12 +0100 (BST)
+Received: from [106.120.50.25] (unknown [106.120.50.25]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190619100111eusmtip242ed98c0f3f696e11dec29ab5b2bf902~pkUUHPMIF2666626666eusmtip2_;
+        Wed, 19 Jun 2019 10:01:11 +0000 (GMT)
+Subject: Re: [RFT 01/10] dt-bindings: gpu: mali: Add Samsung compatibles for
+ Midgard and Utgard
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Joseph Kogut <joseph.kogut@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <9d16d4f7-8353-e0f0-a005-1b04457d70f0@samsung.com>
+Date:   Wed, 19 Jun 2019 12:01:10 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.1
+MIME-Version: 1.0
+In-Reply-To: <20190618190534.4951-2-krzk@kernel.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURT1zU6lOBaVG9xLNGoUxfUZl7gmY9RojB9GJDrKBIxs6YDrhwuu
+        pW74AVaQiqKmqSAVATFFi0BFkyJCBDQKCkhcCEIrLlSRMqj8nXPuue+cmzyO1FxlArmdMfGS
+        LkaM0jIqKr/8h3PaB1YVNiPRHoBPOysI/Cu5nMW5qTk0br9uQLjW3UrjnvzzJM4oddK45ms7
+        g5MbzlHYcMJD47NNn0hcWXmbxdamFzTuMLyhcXVRGoNTK4sJnFVbReCqJyvxk1oXg4/ZSln8
+        6PMJGv9+kUthc5EH4Q8dj6klIFguW5DQ/TMZCe11x1jB1mWihHvG16xgNZ9ihIKuRlpoSHIQ
+        wp1rB4Wax0do4UyeGQku65j1vptVC8OlqJ27Jd30xdtUkfU2OxX33m9v+c8k4hDK9NUjHw74
+        2WA4+x7pkYrT8DcRvGp5TSvEjSC3uZhUiAvB97yjzN+VmsIkShncQJDjcfaTNgSZZXba6/Ln
+        RXB12ljvYBhfT0OBNbHPRfJXETy9cLjvLYYPAX2bvg+r+cXw5WEFoUccR/ETwH0qzisP57dA
+        amErpViGQsXF5j7s01ujx9lJeDHJj4WCtjRSwQHwsjmD8GYB38jB+eff+nuvgJS6DFbB/vDR
+        kdePR/X2MVDKQiKCt85brEIMCKqPpCLFtQAeOapobzuSnww5RdMVeSnUd5gZrwy8H9S1DVVK
+        +EFyfgqpyGo4eVyjuCeC0ZH9L9b+7Dl5DmmNA04zDjjHOOAc4/9cE6LMKEBKkKMjJHlmjLQn
+        WBaj5YSYiOAdsdFW1Pt1n/52uAtRkWd7CeI5pPVV8y4uTEOLu+V90SUIOFI7TD040SdMow4X
+        9+2XdLFbdQlRklyCRnKUNkB9YFBjqIaPEOOlXZIUJ+n+TgnOJ/AQmjvi22hPaJch1HJ3FYR0
+        7yFbUsYvlS7pMyoMl8zy+Enpsya0N4R3L1MV7xoXu/bCZHHWukrLopsH7Ku3nJmXeSX9flm8
+        /+E12ZM2NQzpKU3PCeo8Onx+1wbLjaypJtW86rQVp3W27JGDjrsfBJqso5cHLTDdamqZc3l9
+        3Meywe/Sv7du1FJypBgyhdTJ4h+XsRu4tgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe89lO1MXp9PEF0mtRQRdVmdqvqYuPxgcqCioKErTpQcnuR3b
+        mXb70DDE3Kx0H8KGaBeNGEFNy1JYpZW3SJuZpl2s7KKoWXkBL2lbK/Db732e/+/heeGhcOYu
+        GUxlGEy80aDNVEr8iGdzTe/XD0j9kjbaukLRubYWDP22NUqRs+QWiUavFwLUPf6NRPM1xTgq
+        f9JGos6JUQmy9RURqDB/lkQX+odw1N5+W4qq+rtI9LPwPYle1pVKUEn7AwxVdrsx5G7dilq7
+        xyQoz/VEih4P55NorstJIEfdLECDP5uJeMjdLLsJuJlpG+BGX+dJOdfkZYKrtb+TclWOAgl3
+        b/IDyfVZmzCuuuI019mcS3Ln7zgAN1YVuivggCrWKGSb+OU6QTTFKQ+ySK1io5FKHRGtYsOj
+        kjarI5UbNLFpfGZGDm/coElR6Xpc9UTW18XHG6etmBlcDbAAGQXpCNh530pYgB/F0JUAzj19
+        CHyNZbDlopn08VI422WR+EJDAHa4S/+GltJaOPbLJfU2FHQPCXsrhnDvA6evAdhjLZf6FKdH
+        cbpwryKhWWgZ8c6SUXJaA388asEsgKIIehUcL8jylgPpRPiw/g3hiyyBLZc+/2WZZ9f5tl+Y
+        l3F6Eyyr/oj7OAzeGyn9x0Gw93M5VgQY+wLdvkCxL1DsC5TLgHAABZ8t6tP1IqsStXox25Cu
+        ShX0VcBzMjWNU9X3QYdzdwOgKaAMkOsmqCSG1OaIJ/QNAFK4UiH3PyNLYuRp2hMneaOQbMzO
+        5MUGEOn5WzEeHJgqeA7QYEpmI9koFM1GhUeFb0LKIPlZuj6RodO1Jv4Iz2fxxv8eRsmCzSDh
+        hrWOKDJMr9MNpsYrruwwzwSl0+I2NDUY96X/mIrCE2pt/st3L4p8e8vY/DVgS5h72LFz+9qI
+        8AGBeZV79G2ikMgcnq0dOci8WM24zcK+45oVCUWHavwqhOcxIEuREzKgDklNiWj6fqo4c2+f
+        Rv2GjLE+/zQyvPI6t2e/o1xJiDotuwY3ito/yg4JmkgDAAA=
+X-CMS-MailID: 20190619100112eucas1p25eb0476f1b1dc1bb80c3662c3528c254
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190618190551epcas2p38f3c93da2a05117c7741468bb5a7784c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190618190551epcas2p38f3c93da2a05117c7741468bb5a7784c
+References: <20190618190534.4951-1-krzk@kernel.org>
+        <CGME20190618190551epcas2p38f3c93da2a05117c7741468bb5a7784c@epcas2p3.samsung.com>
+        <20190618190534.4951-2-krzk@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add managed version of the clk_bulk_get_optional() helper function.
+Hi Krzysztof,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/clk-devres.c | 22 +++++++++++++++++++---
- include/linux/clk.h      | 28 ++++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+), 3 deletions(-)
+On 2019-06-18 21:05, Krzysztof Kozlowski wrote:
+> Add vendor compatibles for specific implementation of Mali Utgard
+> (Exynos3250, Exynos4-family) and Midgard (Exynos5433, Exynos7).
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>   Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt | 1 +
+>   Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt  | 1 +
+>   2 files changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> index e5ad3b2afe17..9b298edec5b2 100644
+> --- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> @@ -17,6 +17,7 @@ Required properties:
+>     * which must be preceded by one of the following vendor specifics:
+>       + "allwinner,sun50i-h6-mali"
+>       + "amlogic,meson-gxm-mali"
+> +    + "samsung,exynos5433-mali"
+>       + "rockchip,rk3288-mali"
+>       + "rockchip,rk3399-mali"
+>   
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+> index ae63f09fda7d..519018cb860b 100644
+> --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+> @@ -17,6 +17,7 @@ Required properties:
+>         + amlogic,meson8b-mali
+>         + amlogic,meson-gxbb-mali
+>         + amlogic,meson-gxl-mali
+> +      + samsung,exynos3250-mali
+I would prefer 'samsung,exynos4-mali', because historically Exynos4 was 
+the first SoC with Mali400 and such prefix is already used for many hw 
+blocks.
+>         + rockchip,rk3036-mali
+>         + rockchip,rk3066-mali
+>         + rockchip,rk3188-mali
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index daa1fc8fba537..f5f310ef001ac 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -52,8 +52,8 @@ static void devm_clk_bulk_release(struct device *dev, void *res)
- 	clk_bulk_put(devres->num_clks, devres->clks);
- }
- 
--int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
--		      struct clk_bulk_data *clks)
-+int __devm_clk_bulk_get(struct device *dev, int num_clks,
-+			struct clk_bulk_data *clks, bool optional)
- {
- 	struct clk_bulk_devres *devres;
- 	int ret;
-@@ -63,7 +63,10 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 	if (!devres)
- 		return -ENOMEM;
- 
--	ret = clk_bulk_get(dev, num_clks, clks);
-+	if (optional)
-+		ret = clk_bulk_get_optional(dev, num_clks, clks);
-+	else
-+		ret = clk_bulk_get(dev, num_clks, clks);
- 	if (!ret) {
- 		devres->clks = clks;
- 		devres->num_clks = num_clks;
-@@ -74,8 +77,21 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 
- 	return ret;
- }
-+
-+int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
-+		      struct clk_bulk_data *clks)
-+{
-+	return __devm_clk_bulk_get(dev, num_clks, clks, false);
-+}
- EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
- 
-+int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
-+		      struct clk_bulk_data *clks)
-+{
-+	return __devm_clk_bulk_get(dev, num_clks, clks, true);
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_bulk_get_optional);
-+
- int __must_check devm_clk_bulk_get_all(struct device *dev,
- 				       struct clk_bulk_data **clks)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 98ea3e29f34b1..d943ee204d68b 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -359,6 +359,28 @@ int __must_check clk_bulk_get_optional(struct device *dev, int num_clks,
-  */
- int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 				   struct clk_bulk_data *clks);
-+/**
-+ * devm_clk_bulk_get_optional - managed get multiple optional consumer clocks
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * Behaves the same as devm_clk_bulk_get() except where there is no clock
-+ * producer.  In this case, instead of returning -ENOENT, the function returns
-+ * NULL for given clk. It is assumed all clocks in clk_bulk_data are optional.
-+ *
-+ * Returns 0 if all clocks specified in clk_bulk_data table are obtained
-+ * successfully or for any clk there was no clk provider available, otherwise
-+ * returns valid IS_ERR() condition containing errno.
-+ * The implementation uses @dev and @clk_bulk_data.id to determine the
-+ * clock consumer, and thereby the clock producer.
-+ * The clock returned is stored in each @clk_bulk_data.clk field.
-+ *
-+ * Drivers must assume that the clock source is not enabled.
-+ *
-+ * clk_bulk_get should not be called from within interrupt context.
-+ */
-+int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
-+					    struct clk_bulk_data *clks);
- /**
-  * devm_clk_bulk_get_all - managed get multiple clk consumers
-  * @dev: device for clock "consumer"
-@@ -760,6 +782,12 @@ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clk
- 	return 0;
- }
- 
-+static inline int __must_check devm_clk_bulk_get_optional(struct device *dev,
-+				int num_clks, struct clk_bulk_data *clks)
-+{
-+	return 0;
-+}
-+
- static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
- 						     struct clk_bulk_data **clks)
- {
+Best regards
 -- 
-2.17.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
