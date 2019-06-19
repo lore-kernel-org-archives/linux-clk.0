@@ -7,46 +7,38 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9823C31E49
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 05:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB64C31E5D
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 07:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C136E20B1F
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 05:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35AB420B1F
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 07:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbfFSFv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jun 2019 01:51:26 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47522 "EHLO inva021.nxp.com"
+        id S1731063AbfFSHLC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jun 2019 03:11:02 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:48558 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbfFSFvZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 19 Jun 2019 01:51:25 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EDB8C200166;
-        Wed, 19 Jun 2019 07:51:22 +0200 (CEST)
+        id S1725892AbfFSHLC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Jun 2019 03:11:02 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3FBA61A05A1;
+        Wed, 19 Jun 2019 09:10:58 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 71836200E3B;
-        Wed, 19 Jun 2019 07:51:10 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2B68A1A05A3;
+        Wed, 19 Jun 2019 09:10:52 +0200 (CEST)
 Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 12C67402F7;
-        Wed, 19 Jun 2019 13:50:57 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6BD8D402F0;
+        Wed, 19 Jun 2019 15:10:44 +0800 (SGT)
 From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, maxime.ripard@bootlin.com, olof@lixom.net,
-        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
-        leonard.crestez@nxp.com, bjorn.andersson@linaro.org,
-        dinguyen@kernel.org, enric.balletbo@collabora.com,
-        aisheng.dong@nxp.com, ping.bai@nxp.com, abel.vesa@nxp.com,
-        l.stach@pengutronix.de, peng.fan@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        abel.vesa@nxp.com, ccaione@baylibre.com, leonard.crestez@nxp.com,
+        aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V5 3/5] clk: imx: Add API for clk unregister when driver probe fail
-Date:   Wed, 19 Jun 2019 13:52:45 +0800
-Message-Id: <20190619055247.35771-3-Anson.Huang@nxp.com>
+Subject: [PATCH 1/2] clk: imx: Remove __init for imx_register_uart_clocks() API
+Date:   Wed, 19 Jun 2019 15:12:39 +0800
+Message-Id: <20190619071240.38503-1-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190619055247.35771-1-Anson.Huang@nxp.com>
-References: <20190619055247.35771-1-Anson.Huang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -55,49 +47,39 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Anson Huang <Anson.Huang@nxp.com>
 
-For i.MX clock drivers probe fail case, clks should be unregistered
-in the return path, this patch adds a common API for i.MX clock
-drivers to unregister clocks when fail.
+Some of i.MX SoCs' clock driver use platform driver model,
+and they need to call imx_register_uart_clocks() API, so
+imx_register_uart_clocks() API should NOT be in .init section.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-New patch.
----
- drivers/clk/imx/clk.c | 8 ++++++++
- drivers/clk/imx/clk.h | 1 +
- 2 files changed, 9 insertions(+)
+ drivers/clk/imx/clk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index f241189..8616967 100644
+index f241189..76457b2 100644
 --- a/drivers/clk/imx/clk.c
 +++ b/drivers/clk/imx/clk.c
-@@ -13,6 +13,14 @@
+@@ -123,8 +123,8 @@ void imx_cscmr1_fixup(u32 *val)
+ 	return;
+ }
  
- DEFINE_SPINLOCK(imx_ccm_lock);
+-static int imx_keep_uart_clocks __initdata;
+-static struct clk ** const *imx_uart_clocks __initdata;
++static int imx_keep_uart_clocks;
++static struct clk ** const *imx_uart_clocks;
  
-+void imx_unregister_clocks(struct clk *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		clk_unregister(clks[i]);
-+}
-+
- void __init imx_mmdc_mask_handshake(void __iomem *ccm_base,
- 				    unsigned int chn)
+ static int __init imx_keep_uart_clocks_param(char *str)
  {
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 19d7b8b..bb4ec1b 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -12,6 +12,7 @@ void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
- void imx_register_uart_clocks(struct clk ** const clks[]);
- void imx_register_uart_clocks_hws(struct clk_hw ** const hws[]);
- void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
-+void imx_unregister_clocks(struct clk *clks[], unsigned int count);
+@@ -137,7 +137,7 @@ __setup_param("earlycon", imx_keep_uart_earlycon,
+ __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+ 	      imx_keep_uart_clocks_param, 0);
  
- extern void imx_cscmr1_fixup(u32 *val);
- 
+-void __init imx_register_uart_clocks(struct clk ** const clks[])
++void imx_register_uart_clocks(struct clk ** const clks[])
+ {
+ 	if (imx_keep_uart_clocks) {
+ 		int i;
 -- 
 2.7.4
 
