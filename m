@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4B3C31E5E
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3561CC31E49
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33BB21670
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F9002183F
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730782AbfFSOQV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jun 2019 10:16:21 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:43559 "EHLO
+        id S1730764AbfFSOQ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jun 2019 10:16:28 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:56553 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730764AbfFSOQU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 10:16:20 -0400
+        with ESMTP id S1730844AbfFSOQ1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 10:16:27 -0400
 X-Originating-IP: 92.137.69.152
 Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
         (Authenticated sender: gregory.clement@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 8D01B40017;
-        Wed, 19 Jun 2019 14:16:16 +0000 (UTC)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 980F94000D;
+        Wed, 19 Jun 2019 14:16:23 +0000 (UTC)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -38,9 +38,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v6 4/6] clk: mvebu: ap806: Fix clock name for the cluster
-Date:   Wed, 19 Jun 2019 16:15:37 +0200
-Message-Id: <20190619141539.16884-5-gregory.clement@bootlin.com>
+Subject: [PATCH v6 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+Date:   Wed, 19 Jun 2019 16:15:39 +0200
+Message-Id: <20190619141539.16884-7-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190619141539.16884-1-gregory.clement@bootlin.com>
 References: <20190619141539.16884-1-gregory.clement@bootlin.com>
@@ -51,37 +51,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Actually, the clocks exposed for the cluster are not the CPU clocks, but
-the PLL clock used as entry clock for the CPU clocks. The CPU clock will
-be managed by a driver submitting in the following patches.
+Add cpu clock node on AP
 
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- drivers/clk/mvebu/ap806-system-controller.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi | 4 ++++
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi      | 7 +++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 0a58824ff053..73ba8fd7860f 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -97,7 +97,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
- 	cpuclk_freq *= 1000 * 1000;
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
+index 2baafe12ebd4..472211159979 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
+@@ -20,24 +20,28 @@
+ 			compatible = "arm,cortex-a72";
+ 			reg = <0x000>;
+ 			enable-method = "psci";
++			clocks = <&cpu_clk 0>;
+ 		};
+ 		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			reg = <0x001>;
+ 			enable-method = "psci";
++			clocks = <&cpu_clk 0>;
+ 		};
+ 		cpu2: cpu@100 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			reg = <0x100>;
+ 			enable-method = "psci";
++			clocks = <&cpu_clk 1>;
+ 		};
+ 		cpu3: cpu@101 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a72";
+ 			reg = <0x101>;
+ 			enable-method = "psci";
++			clocks = <&cpu_clk 1>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+index 91dad7e4ee59..ed039aa8188f 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+@@ -280,6 +280,13 @@
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
  
- 	/* CPU clocks depend on the Sample At Reset configuration */
--	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-0");
-+	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-0");
- 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
- 						0, cpuclk_freq);
- 	if (IS_ERR(ap806_clks[0])) {
-@@ -105,7 +105,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
- 		goto fail0;
- 	}
- 
--	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-1");
-+	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-1");
- 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
- 						cpuclk_freq);
- 	if (IS_ERR(ap806_clks[1])) {
++				cpu_clk: clock-cpu@0 {
++					compatible = "marvell,ap806-cpu-clock";
++					clocks = <&ap_clk 0>, <&ap_clk 1>;
++					#clock-cells = <1>;
++					reg = <0x278 0xa30>;
++				};
++
+ 				ap_thermal: thermal-sensor@80 {
+ 					compatible = "marvell,armada-ap806-thermal";
+ 					reg = <0x80 0x10>;
 -- 
 2.20.1
 
