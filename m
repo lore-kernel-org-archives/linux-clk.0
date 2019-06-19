@@ -7,191 +7,194 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F00DC31E49
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB58C31E49
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232BE2084A
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:39:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58CF62084A
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:40:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pwiK5BFX"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bQOMYAqQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfFSJjx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jun 2019 05:39:53 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:36416 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfFSJjx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 05:39:53 -0400
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190619093951epoutp03603e3a22e013bfabe056ff68a8967819~pkBsLI7LR1020010200epoutp03g;
-        Wed, 19 Jun 2019 09:39:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190619093951epoutp03603e3a22e013bfabe056ff68a8967819~pkBsLI7LR1020010200epoutp03g
+        id S1727068AbfFSJkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jun 2019 05:40:04 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:58185 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfFSJkD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 05:40:03 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190619094001epoutp0425fe8f5d964e2e53722a2ae9fe605e1c~pkB0_Ve-q0491104911epoutp04j;
+        Wed, 19 Jun 2019 09:40:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190619094001epoutp0425fe8f5d964e2e53722a2ae9fe605e1c~pkB0_Ve-q0491104911epoutp04j
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1560937191;
-        bh=w8ToiajD+xwFaA3WYkpktFcDTg2yYN2g78Kb1gX01BU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=pwiK5BFXjw0jCE8N9+etp7EfXqoxR7yCJy2Wkd9EaRLVjCY1hk4vg7VkOMb4ljRnk
-         pelhOVt8IDYBgfVtYT7sRUYf7BNemmHBuSKUmEZPyWAA/hKnI3ScJ0cWefGh2ifYmD
-         BbMbOdHAnrBewg6wcQuqpKGJ1eWRFcMX1Z4UBLcY=
-Received: from epsmges2p4.samsung.com (unknown [182.195.42.72]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20190619093950epcas2p21ca35cb46123037c21f8c1e639aaff7a~pkBrTzxpM1790717907epcas2p28;
-        Wed, 19 Jun 2019 09:39:50 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DA.8E.04207.6E20A0D5; Wed, 19 Jun 2019 18:39:50 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190619093950epcas2p3d6f7c26564844432f8153ee9b6a6007c~pkBrCq3e13026130261epcas2p3q;
-        Wed, 19 Jun 2019 09:39:50 +0000 (GMT)
-X-AuditID: b6c32a48-6a1ff7000000106f-b4-5d0a02e644c8
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id E3.F8.03620.6E20A0D5; Wed, 19 Jun
-        2019 18:39:50 +0900 (KST)
+        s=mail20170921; t=1560937201;
+        bh=W9bQ728cpO/H9vXkzkisz2dKYSz5Av9MwD+IvykvPQU=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=bQOMYAqQgdkJTQ/yz9Z0mxjnds1x/2YRLOJeti3E1RauMPD05GkAccb2W3uqhq1aH
+         zlOz6UqoOXyXxXeph7TtGP0dJ9SoKEPy48S2ZZ8Gmfor6oZczcdUn7jbphJezpDLzw
+         ngM79fXVlS9qpoy2rpUu0V48GlEtvMzRIDYfsNZ8=
+Received: from epsmges1p1.samsung.com (unknown [182.195.42.53]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190619094000epcas1p101d9104971d4f6d4d99eacb65ac34e62~pkB0rVY652009020090epcas1p1t;
+        Wed, 19 Jun 2019 09:40:00 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        59.4C.04139.0F20A0D5; Wed, 19 Jun 2019 18:40:00 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441~pkB0Rzjqs0438504385epcas1p3e;
+        Wed, 19 Jun 2019 09:40:00 +0000 (GMT)
+X-AuditID: b6c32a35-973ff7000000102b-91-5d0a02f0a203
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 11.1B.03598.0F20A0D5; Wed, 19 Jun
+        2019 18:40:00 +0900 (KST)
 Received: from AMDC3061.DIGITAL.local ([106.120.51.75]) by mmp2.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PTC00A4NAU0QYA0@mmp2.samsung.com>; Wed, 19 Jun 2019
-        18:39:50 +0900 (KST)
+        18:40:00 +0900 (KST)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     linux-clk@vger.kernel.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
         krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/2] clk: Add clk_bulk_get_optional() function
-Date:   Wed, 19 Jun 2019 11:39:25 +0200
-Message-id: <20190619093926.21719-1-s.nawrocki@samsung.com>
+Subject: [PATCH 2/2] clk: Add devm_clk_bulk_get_optional() function
+Date:   Wed, 19 Jun 2019 11:39:26 +0200
+Message-id: <20190619093926.21719-2-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42LZdljTQvcZE1eswYX5WhYbZ6xntTh/fgO7
+In-reply-to: <20190619093926.21719-1-s.nawrocki@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCmru4HJq5Yg2VXDSw2zljPanH+/AZ2
+        i48991gt1h65y25x8ZSrxeE37awW/65tZHFg93h/o5XdY9OqTjaPvi2rGD0+b5ILYInisklJ
+        zcksSy3St0vgyrjwUaXgolzFg3XzWRoY+yW7GDk5JARMJHbOm80EYgsJ7GCUuPUjoIuRC8j+
+        zigxY905VpiizWu+sUMkNjBK9B//xAzh/GSUWLPmMgtIFZuAoUTv0T5GEFtEQFbi1rGfbCBF
+        zAKLGSUuTDwPViQs4Cxxbf1/MJtFQFXi3OTLzCA2r4C1xO62G0wQ6+QlVm84ABbnFLCRmD33
+        PCPIIAmBRjaJlb0LoG5ykTh+czVQEQeQLS1x6agtRE0zo0TP7tvsEM4ERon7xxcwQjRYSxw+
+        fhGsmVmAT+Ld1x5WiGZeiY42IYgSD4kprfsZIV7rZ5TY9v8BE9CIBYwMqxjFUguKc9NTiw0L
+        DPWKE3OLS/PS9ZLzczcxgmNLy3QH45RzPocYBTgYlXh4M75yxAqxJpYVV+YeYpTgYFYS4eVu
+        5owV4k1JrKxKLcqPLyrNSS0+xCjNwaIkzhvPfTNGSCA9sSQ1OzW1ILUIJsvEwSnVwLhagZtR
+        3nLL0xbGVTudVnSZqPov3fzzwX4V83k1FR438g99zNL7Z/LzsNXhVMbSg/sWFX3Mi2rjjV1t
+        LP/H55D7Rr76dq1J8/9vcGbgF5d9bv4+anbT3bKYGGGmaRIat3V8HxvN41OVeWqfZaCllLpJ
+        3vmRrV/F6gmMbQk1TczGe5adE1MrUmIpzkg01GIuKk4EANZFri+pAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjluLIzCtJLcpLzFFi42I5/e+xoO4HJq5Yg7aVIhYbZ6xntTh/fgO7
         xceee6wWa4/cZbe4eMrV4vCbdlaLf9c2sjiwe7y/0crusWlVJ5tH35ZVjB6fN8kFsERx2aSk
-        5mSWpRbp2yVwZUxoP8tc8F+64vyJ7awNjGfEuhg5OSQETCQ6z99iArGFBHYwSkw7ItLFyAVk
-        f2eUOL19JSNM0Z+FrWwQiQ2MEjO+72SBcH4ySnzd+4kNpIpNwFCi92gfWIeIgKzErWM/wTqY
-        BRYzSlyYeJ4FJCEsYCex6dMjsAYWAVWJCwc7wHbzClhLbHwwiwlinbzE6g0HmEGaJQReskrs
-        vt3NBpFwkZj78zSULS3xbNVGRoiiZkaJnt232SGcCYwS948vgLrcWuLw8YusIDazAJ9Ex+G/
-        QEUcQHFeiY42IYgSD4n/X+YwQ0IgVmLCtfssExjFFzAyrGIUSy0ozk1PLTYqMNErTswtLs1L
-        10vOz93ECI4iLY8djAfO+RxiFOBgVOLh3fCSI1aINbGsuDL3EKMEB7OSCC93M2esEG9KYmVV
-        alF+fFFpTmrxIUZpDhYlcd5N3DdjhATSE0tSs1NTC1KLYLJMHJxSDYy2rKqbNX7PiSp48br2
-        3BuevCyFi5pVjRsvB3b6/LVmDVRbbfEwoOj6UqNFUU6Hs/Ynib29ntnXKns6tI/rgevUrGUm
-        k+JT1yq9XhYlmR+Zs3nigqWGqbOFFKf0OquKCJvtFXkh4G3+Xc1Q+r7BLkuxc38Ks8+Erp/4
-        09sw9An7uQjW5nmbGpVYijMSDbWYi4oTAV41KL6eAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPJMWRmVeSWpSXmKPExsVy+t9jQd1nTFyxBvf/iltsnLGe1eL8+Q3s
-        Fh977rFarD1yl93i4ilXi8Nv2lkt/l3byOLA7vH+Riu7x6ZVnWwefVtWMXp83iQXwBLFZZOS
-        mpNZllqkb5fAlTGh/SxzwX/pivMntrM2MJ4R62Lk5JAQMJH4s7CVrYuRi0NIYB2jxPneP8wQ
-        zk9Gic+dLewgVWwChhK9R/sYQWwRAVmJW8d+gnUwCyxmlPj/5D5YkbCAncSmT4/YQGwWAVWJ
-        Cwc7mEBsXgFriY0PZjFBrJOXWL3hAPMERq4FjAyrGCVTC4pz03OLjQqM8lLL9YoTc4tL89L1
-        kvNzNzECg2HbYa3+HYyPl8QfYhTgYFTi4d3xgSNWiDWxrLgy9xCjBAezkggvdzNnrBBvSmJl
-        VWpRfnxRaU5q8SFGaQ4WJXFe/vxjkUIC6YklqdmpqQWpRTBZJg5OqQZGpz0WhxepxZ9y1GvQ
-        6opL0DdeH/3N94ixctzmIPGpHzc2JPF6zw456vfq3L6ESRY/Z3ootpt/SijS3Xgl7mLLmc/v
-        THb+e8rBeP771ImHKm5WxshquvW/bc70Kv8skR+z7tTUwEPX9Sr8ey7cv8swe1mKY9x6/ZkJ
-        7g2/UiODFN9fOBa1WblRiaU4I9FQi7moOBEA3OkK+AICAAA=
-X-CMS-MailID: 20190619093950epcas2p3d6f7c26564844432f8153ee9b6a6007c
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190619093950epcas2p3d6f7c26564844432f8153ee9b6a6007c
-References: <CGME20190619093950epcas2p3d6f7c26564844432f8153ee9b6a6007c@epcas2p3.samsung.com>
+        5mSWpRbp2yVwZVz4qFJwUa7iwbr5LA2M/ZJdjJwcEgImEpvXfGPvYuTiEBJYxygxffN/KOcn
+        o8SZ10vYQarYBAwleo/2MYLYIgKyEreO/WQDKWIWWMwo8f/JfbAiYQFniWvr/7OA2CwCqhLn
+        Jl9mBrF5BawldrfdYIJYJy+xesMBsDingI3E7LnnwYYKAdW8erqTcQIjzwJGhlWMkqkFxbnp
+        ucVGBYZ5qeV6xYm5xaV56XrJ+bmbGIGhs+2wVt8OxvtL4g8xCnAwKvHwCnzmiBViTSwrrsw9
+        xCjBwawkwsvdzBkrxJuSWFmVWpQfX1Sak1p8iFGag0VJnPd23rFIIYH0xJLU7NTUgtQimCwT
+        B6dUA+OiB/xdaR4ss66Zr80JVnoXL/5SPz7ERzHw+vz8yY3nXp86t0KpQkHXZzOr5zyvLS9L
+        tgStZ93I4iVlaqpqneBm/PQ0f96vhIvy/fUGIl/vTpo44XvsriknXn495Ff+bs1sP+V0c+ZN
+        Ygskdgoder6MaWuSVaHnSuvuZSLnWvSERRlOf/xaelyJpTgj0VCLuag4EQBnosCQGQIAAA==
+X-CMS-MailID: 20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441
+References: <20190619093926.21719-1-s.nawrocki@samsung.com>
+        <CGME20190619094000epcas1p364fdcb03f801ec0ea3a533ead5ac2441@epcas1p3.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_bulk_get_optional() allows to get a group of clocks where one
-or more is optional.  For a not available clock, e.g. not specifed
-in the clock consumer node in DT, its respective struct clk pointer
-will be NULL.  This allows for operating on a group of returned
-clocks (struct clk_bulk_data array) with existing clk_bulk* APIs.
+Add managed version of the clk_bulk_get_optional() helper function.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/clk/clk-bulk.c | 23 ++++++++++++++++++++---
- include/linux/clk.h    | 19 +++++++++++++++++++
- 2 files changed, 39 insertions(+), 3 deletions(-)
+ drivers/clk/clk-devres.c | 22 +++++++++++++++++++---
+ include/linux/clk.h      | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 06499568cf076..524bf9a530985 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -75,8 +75,8 @@ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index daa1fc8fba537..f5f310ef001ac 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -52,8 +52,8 @@ static void devm_clk_bulk_release(struct device *dev, void *res)
+ 	clk_bulk_put(devres->num_clks, devres->clks);
  }
- EXPORT_SYMBOL_GPL(clk_bulk_put);
  
--int __must_check clk_bulk_get(struct device *dev, int num_clks,
--			      struct clk_bulk_data *clks)
-+static int __clk_bulk_get(struct device *dev, int num_clks,
-+			  struct clk_bulk_data *clks, bool optional)
+-int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+-		      struct clk_bulk_data *clks)
++int __devm_clk_bulk_get(struct device *dev, int num_clks,
++			struct clk_bulk_data *clks, bool optional)
  {
+ 	struct clk_bulk_devres *devres;
  	int ret;
- 	int i;
-@@ -88,10 +88,14 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 		clks[i].clk = clk_get(dev, clks[i].id);
- 		if (IS_ERR(clks[i].clk)) {
- 			ret = PTR_ERR(clks[i].clk);
-+			clks[i].clk = NULL;
-+
-+			if (ret == -ENOENT && optional)
-+				continue;
-+
- 			if (ret != -EPROBE_DEFER)
- 				dev_err(dev, "Failed to get clk '%s': %d\n",
- 					clks[i].id, ret);
--			clks[i].clk = NULL;
- 			goto err;
- 		}
- 	}
-@@ -103,8 +107,21 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+@@ -63,7 +63,10 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 	if (!devres)
+ 		return -ENOMEM;
+ 
+-	ret = clk_bulk_get(dev, num_clks, clks);
++	if (optional)
++		ret = clk_bulk_get_optional(dev, num_clks, clks);
++	else
++		ret = clk_bulk_get(dev, num_clks, clks);
+ 	if (!ret) {
+ 		devres->clks = clks;
+ 		devres->num_clks = num_clks;
+@@ -74,8 +77,21 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
  
  	return ret;
  }
 +
-+int __must_check clk_bulk_get(struct device *dev, int num_clks,
-+			      struct clk_bulk_data *clks)
++int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
++		      struct clk_bulk_data *clks)
 +{
-+	return __clk_bulk_get(dev, num_clks, clks, false);
++	return __devm_clk_bulk_get(dev, num_clks, clks, false);
 +}
- EXPORT_SYMBOL(clk_bulk_get);
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
  
-+int __must_check clk_bulk_get_optional(struct device *dev, int num_clks,
-+				       struct clk_bulk_data *clks)
++int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
++		      struct clk_bulk_data *clks)
 +{
-+	return __clk_bulk_get(dev, num_clks, clks, true);
++	return __devm_clk_bulk_get(dev, num_clks, clks, true);
 +}
-+EXPORT_SYMBOL_GPL(clk_bulk_get_optional);
++EXPORT_SYMBOL_GPL(devm_clk_bulk_get_optional);
 +
- void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
+ int __must_check devm_clk_bulk_get_all(struct device *dev,
+ 				       struct clk_bulk_data **clks)
  {
- 	if (IS_ERR_OR_NULL(clks))
 diff --git a/include/linux/clk.h b/include/linux/clk.h
-index f689fc58d7be3..98ea3e29f34b1 100644
+index 98ea3e29f34b1..d943ee204d68b 100644
 --- a/include/linux/clk.h
 +++ b/include/linux/clk.h
-@@ -332,6 +332,19 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+@@ -359,6 +359,28 @@ int __must_check clk_bulk_get_optional(struct device *dev, int num_clks,
   */
- int __must_check clk_bulk_get_all(struct device *dev,
- 				  struct clk_bulk_data **clks);
-+
+ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 				   struct clk_bulk_data *clks);
 +/**
-+ * clk_bulk_get_optional - lookup and obtain a number of references to clock producer.
++ * devm_clk_bulk_get_optional - managed get multiple optional consumer clocks
 + * @dev: device for clock "consumer"
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
++ * @clks: pointer to the clk_bulk_data table of consumer
 + *
-+ * Behaves the same as clk_bulk_get() except where there is no clock producer.
-+ * In this case, instead of returning -ENOENT, the function returns 0 and
-+ * NULL for a clk for which a clock producer could not be determined.
++ * Behaves the same as devm_clk_bulk_get() except where there is no clock
++ * producer.  In this case, instead of returning -ENOENT, the function returns
++ * NULL for given clk. It is assumed all clocks in clk_bulk_data are optional.
++ *
++ * Returns 0 if all clocks specified in clk_bulk_data table are obtained
++ * successfully or for any clk there was no clk provider available, otherwise
++ * returns valid IS_ERR() condition containing errno.
++ * The implementation uses @dev and @clk_bulk_data.id to determine the
++ * clock consumer, and thereby the clock producer.
++ * The clock returned is stored in each @clk_bulk_data.clk field.
++ *
++ * Drivers must assume that the clock source is not enabled.
++ *
++ * clk_bulk_get should not be called from within interrupt context.
 + */
-+int __must_check clk_bulk_get_optional(struct device *dev, int num_clks,
-+				       struct clk_bulk_data *clks);
++int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
++					    struct clk_bulk_data *clks);
  /**
-  * devm_clk_bulk_get - managed get multiple clk consumers
+  * devm_clk_bulk_get_all - managed get multiple clk consumers
   * @dev: device for clock "consumer"
-@@ -718,6 +731,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+@@ -760,6 +782,12 @@ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clk
  	return 0;
  }
  
-+static inline int __must_check clk_bulk_get_optional(struct device *dev,
++static inline int __must_check devm_clk_bulk_get_optional(struct device *dev,
 +				int num_clks, struct clk_bulk_data *clks)
 +{
 +	return 0;
 +}
 +
- static inline int __must_check clk_bulk_get_all(struct device *dev,
- 					 struct clk_bulk_data **clks)
+ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
+ 						     struct clk_bulk_data **clks)
  {
 -- 
 2.17.1
