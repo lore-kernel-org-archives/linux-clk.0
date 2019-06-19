@@ -2,400 +2,136 @@ Return-Path: <SRS0=vPCn=US=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FC2C31E49
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 08:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CBCC31E49
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6902F20B1F
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 08:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E7A1215EA
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 09:17:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROA09wuW"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="boobkESB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbfFSI5d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jun 2019 04:57:33 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36417 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730783AbfFSI5d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 04:57:33 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so2468095wrs.3;
-        Wed, 19 Jun 2019 01:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y4h+Xa4lwzYaamlWTcvoqvwriJhW9ZXsKjY8QP3vMPk=;
-        b=ROA09wuWK9x884f2IhQOoE75Z09z5v3ZxL4H7nZwxMP1DJZo209PvkHBI3WI/ElpTE
-         ASgI+BJzOWa1HTa46xeUgKDN6I9+8rE+eL6grHQrPHFEPj+j4wU8M0MLLfC5NngtxEbB
-         ubN4SfGvLL3qXGFL4teBlIKLrkpZ16AALJ11mNJXUtUYPxmbBa9Dyl9h1cA8Hr3kxIIr
-         9pYlVAxoQsElEsilhDTkokNnzcMfCei/fdaV8XWP33u+OD84KGYgKpYjbMS1hAcAQtxR
-         4utHyDI3qgEIRW45EYiKkOV2CX/l8zwJZFR6zNz/m3fOWYP86L5hivffDAoZsOPvXT41
-         gCtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y4h+Xa4lwzYaamlWTcvoqvwriJhW9ZXsKjY8QP3vMPk=;
-        b=lGKJ94Ry+87YigmSTCclu5zc0xDd9ZIFrlnN4+TcVtITy2bhWZRo+KTVHQ5MlplPB6
-         s3F9JhbiLVhDNpOy7fWgDqqAWmkPb7epia+u+wUODyj+4iGxgkAgLtCSHrqzpocgiyO5
-         eJeEtgK2kdo7JGCEN1tp8/2TZ2kNeZlI9BQsxcKNxK1sScn/Y/JjzuJ7LnVYAiMEfbq/
-         q1zOlhUuo43NH8SXWK0b5DC2JkzIeQ0iCUVeF+a7mfnyX/2kQT6Z1oK6Fq5TWy/ef0VX
-         sEXW3wQNDx8pdiZN16wFHJSQTyVjcB5bAQz+QOqfBjnUSlKjiFB0jSmPw9C3buMYkI43
-         sFPw==
-X-Gm-Message-State: APjAAAVp5t7IiTdpjgP/q4RK0pwKR/ZG++aWKTyStnnooeSwQcVYtX+D
-        dkWKSPAcnBkvyawv0Ib2Ps4=
-X-Google-Smtp-Source: APXvYqy/cnFRylcBhzCDqYaZh+o3gKyXCm7v9hJq/YKZGeEZjQZ7ipcYX0rKUcSVZsQuZ7DnYDzDJg==
-X-Received: by 2002:adf:f84a:: with SMTP id d10mr5132857wrq.319.1560934648397;
-        Wed, 19 Jun 2019 01:57:28 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id q12sm13946853wrp.50.2019.06.19.01.57.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 01:57:27 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 10:57:26 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stephen Warren <swarren@wwwdotorg.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
-        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
-Message-ID: <20190619085726.GN3187@ulmo>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
- <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
- <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
- <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
- <20190619083308.GM3187@ulmo>
+        id S1731347AbfFSJR7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jun 2019 05:17:59 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35920 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731164AbfFSJR7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 05:17:59 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190619091756euoutp02dd98083192bcb0a71c3d61b6e0f66acd~pjujj6IWG1960019600euoutp02B
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2019 09:17:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190619091756euoutp02dd98083192bcb0a71c3d61b6e0f66acd~pjujj6IWG1960019600euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1560935876;
+        bh=tkIJ6Zdk/r4opylr6EAzPBGo0oQmTLvcNpJPcBJpEcA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=boobkESBTTT8izIV5hAugqN3CjPDR0jVkm8uDBSWwKrvS49mWUY6GiSGr4x3IfTmB
+         HFPkylAIygkGnfCg630V2rvIPzAQDM0D4Id+1lXCUbiggHAnv0G31IaXc034NyzyLI
+         y2kk55jjXDWjmdNqLzXSez/fHKwFWYWcg6T8aofo=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190619091755eucas1p2c7036ec9b6c8be09b2cf2f8a5ae6f103~pjuihnVfu2998329983eucas1p2G;
+        Wed, 19 Jun 2019 09:17:55 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id DA.9D.04377.3CDF90D5; Wed, 19
+        Jun 2019 10:17:55 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190619091754eucas1p2edbfee21d2ec8feacc183927de9a0eae~pjuhufNCy2132521325eucas1p2l;
+        Wed, 19 Jun 2019 09:17:54 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190619091754eusmtrp196587f03ea943b7a4b68b6e3d4d171c5~pjuhfdH3d0190801908eusmtrp1L;
+        Wed, 19 Jun 2019 09:17:54 +0000 (GMT)
+X-AuditID: cbfec7f4-12dff70000001119-0a-5d09fdc3d42f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A9.B8.04140.2CDF90D5; Wed, 19
+        Jun 2019 10:17:54 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190619091753eusmtip1fa0a4c315cf7b4226f56c37589e72378~pjugkhlax2980129801eusmtip1b;
+        Wed, 19 Jun 2019 09:17:53 +0000 (GMT)
+Subject: Re: [RFT 02/10] clk: samsung: Add bus clock for GPU/G3D on
+ Exynos4412
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Olof Johansson <olof@lixom.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Joseph Kogut <joseph.kogut@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <97cf3337-44da-b5b0-0b45-e44ef5c90615@samsung.com>
+Date:   Wed, 19 Jun 2019 11:17:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FhKpTYimqQF2+bfE"
-Content-Disposition: inline
-In-Reply-To: <20190619083308.GM3187@ulmo>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190618190534.4951-3-krzk@kernel.org>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SaUxTWRj19q0Fiq8FwxecjGOjiZiouOZGjdHESd4/ifNDU0O06hMN0Gof
+        RdEQEUShrcqgE51ChIgIVg1aCEgVFwQKkoANCAbEusW6IWLrymbbVyO5f879vnPuOSe5LKE6
+        R8eyu3RpgkGnTVHTYWRty/fOeffG5InxtUWAj3W0yfBYYQuDr52povDQBQvCvT4PhSdq/yVw
+        SVMHhbs/D9G40F1AYsvRUQqfePGOwJ2dVxlsf9FD4WHLEwp3OYppfKbzlgxfaRpgcHmvS4Zd
+        9//G93u9NM5taGLweM81Etscowi/GW4lVwN/+exlxI/8KET80KNchm/4Ukry9dYBhrfb8mm+
+        7stTinebnTK++vxBvrs1m+KP19gQ77X/mRChCVu5XUjZlS4YFqzaErazaNBD7i5B++pvPkdZ
+        /mNCcha4JdDv+c6YUBir4ioRNA9bCeniQ9BRZw6yVJwXQUlf+i/FwLc+JJEqEHi7ykKKQQTv
+        i1voACuKS4D3+e+oAI7m4qB37CsVIBGci4aRLjMZWNDcQjjWfDxooeBWwfilHFkAk9xs+Hiq
+        J/jQNG4j+OrtIY4S2v5/GdTK/THOPssLcgguBrJ9FykJz4C6weJgIuAes3Dz4SGZlHstmKpc
+        odZR8NZZw0j4D2g/aSElQQ4Cy41+RroUIHA7S0OKFXDP6fJbsH6LOKhyLJDGa6C5/QMZGAMX
+        CY8GlVKISCisPU1IYwXkHVFJ7FkwYjsdihML5pcTZAFSWydVs06qY51Ux/rbtxSRNhQjGMXU
+        JEFcpBP2zhe1qaJRlzR/mz7Vjvw/t33c6buOHKNbGxHHInWEgvOyiSpKmy5mpDYiYAl1tCI8
+        R56oUmzXZuwXDPrNBmOKIDai6SypjlEcmPJ0k4pL0qYJyYKwWzD82spYeWwW0lQsDb/zsVy5
+        OK+oIX/TbWrm5w3L64+a1fod6w9nxP+X2ZHVvawyd0tEfE3PMs+JU/80RbUaybLItMyE6PRP
+        1Zk1erZa09Vnyp1z8Ea2vU/vKHe47657KJIXpyaLylee/ornE0Weeev3/GVi4pQzdA+S28I1
+        FZqcI5Wl7teevYJRTYo7tQvnEgZR+xPtrR3etQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTURzAObuP3VmD21Q8GGRdiDJoNnXtGCZ9ES5GURkUltitLiq6zXY3
+        yz6UVPYwNV1WNs2tSCN7zlapOKGL+SpaPpplLp8gIWZl2UutzRHI+fKD/+/HOQf+FKZwEKFU
+        us7IG3RcJkMG4C/mWj1rxVlZ8rrH3WGo8FW7BM2aW6TIXvaAQJPVBQD1fhsj0N8nJRiyNr8i
+        UM/3SRKZB4pxVHBmhkAXRsYx5HI9lKLaETeBvhR8IFB3QwWJylxNEnSv2SNFVb2dEtTZEY86
+        eqdIlOdslqI5tx1HNQ0zAH380oZvguzdyruA/fPbDNjJt3lS1jltw9l6i0fK1tacI9mn04ME
+        O3C+VcI+unmc7Wk7QbBFjhrATtUu27Y4SRlr0JuM/PI0vWDcyOxRoUilKgYpI6NjlKooTfKG
+        SDUTERd7kM9Mz+YNEXH7lGnlE2N4lhUcqW8cBrnekw9kFKSjoednn5cDKAVdBWCRWIrlA8o7
+        CIXWU4zfCYQz7nzS74wDeOX1MOEbBNJb4cV3/RIfB9HhsHf2B+GTMPoNCW+Jbwh/YQewrGAY
+        81kkrYKFz4vmr5bTcXDuzsn5GqdXws+lbtLHwfRuWN6Qi/udJbD96ug8y7xPrRw6O+9g9Co4
+        U9mF+TkEnvh2m/BzGHw6UYEVA4VlQW5ZkFgWJJYFiQ3gNSCINwnaVK0QqRQ4rWDSpSoP6LW1
+        wLsxT1p+OepA/qdEEdAUYBbL6z5TyQqCyxZytCKAFMYEyRedlCUr5Ae5nKO8QZ9iMGXyggjU
+        3s+VYKHBB/Te/dMZU1RqlQbFqDRRmqj1iAmRn6Wf7VXQqZyRz+D5LN7wv5NQstBcUJEqjnwP
+        cVS3JXQ7u4OtN0wZMcUR239nfV1eGV2iv2w/HNLXyt1fe8dqtbcZpxN6LomaXeJU4NIq86Bt
+        s3l112B4Y9oml8Rmix9LURx6vyKg0910Xbf/fWbfosIzOTsCkzhh8nRYoro/TDmalHhtKO+R
+        Z3RLF0M6jyW+3KmmnAwupHGqNZhB4P4BuA4FGkcDAAA=
+X-CMS-MailID: 20190619091754eucas1p2edbfee21d2ec8feacc183927de9a0eae
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190618190558epcas3p211c71991aba4f3a2273be82be41324a8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190618190558epcas3p211c71991aba4f3a2273be82be41324a8
+References: <20190618190534.4951-1-krzk@kernel.org>
+        <CGME20190618190558epcas3p211c71991aba4f3a2273be82be41324a8@epcas3p2.samsung.com>
+        <20190618190534.4951-3-krzk@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 6/18/19 21:05, Krzysztof Kozlowski wrote:
+> Add ID and gate for bus clock for GPU (Mali 400) on Exynos4412.
 
---FhKpTYimqQF2+bfE
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 19, 2019 at 10:33:08AM +0200, Thierry Reding wrote:
-> On Tue, Jun 18, 2019 at 09:41:03AM -0600, Stephen Warren wrote:
-> > On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
-> > > 18.06.2019 12:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > > 18.06.2019 10:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
-> > > > > This patch adds suspend and resume support for Tegra pinctrl driv=
-er
-> > > > > and registers them to syscore so the pinmux settings are restored
-> > > > > before the devices resume.
-> > > > >=20
-> > > > > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > > > > ---
-> > > > >   drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 +++++++++++++++++=
-+++++++++++++++
-> > > > >   drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
-> > > > >   drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
-> > > > >   drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
-> > > > >   drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
-> > > > >   drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
-> > > > >   drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
-> > > > >   7 files changed, 84 insertions(+)
-> > > > >=20
-> > > > > diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinc=
-trl/tegra/pinctrl-tegra.c
-> > > > > index 34596b246578..ceced30d8bd1 100644
-> > > > > --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > > > +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > > > @@ -20,11 +20,16 @@
-> > > > >   #include <linux/pinctrl/pinmux.h>
-> > > > >   #include <linux/pinctrl/pinconf.h>
-> > > > >   #include <linux/slab.h>
-> > > > > +#include <linux/syscore_ops.h>
-> > > > >   #include "../core.h"
-> > > > >   #include "../pinctrl-utils.h"
-> > > > >   #include "pinctrl-tegra.h"
-> > > > > +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
-> > > > > +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
-> > > > > +#define EMMC_DPD_PARKING			(0x1fff << 14)
-> > > > > +
-> > > > >   static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u3=
-2 reg)
-> > > > >   {
-> > > > >   	return readl(pmx->regs[bank] + reg);
-> > > > > @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(=
-struct tegra_pmx *pmx)
-> > > > >   			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
-> > > > >   		}
-> > > > >   	}
-> > > > > +
-> > > > > +	if (pmx->soc->has_park_padcfg) {
-> > > > > +		val =3D pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
-> > > > > +		val &=3D ~EMMC_DPD_PARKING;
-> > > > > +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
-> > > > > +
-> > > > > +		val =3D pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
-> > > > > +		val &=3D ~EMMC_DPD_PARKING;
-> > > > > +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
-> > > > > +	}
-> > > > > +}
-> > > >=20
-> > > > Is there any reason why parked_bit can't be changed to parked_bitma=
-sk like I was
-> > > > asking in a comment to v2?
-> > > >=20
-> > > > I suppose that it's more preferable to keep pinctrl-tegra.c platfor=
-m-agnostic for
-> > > > consistency when possible, hence adding platform specifics here sho=
-uld be discouraged.
-> > > > And then the parked_bitmask will also result in a proper hardware d=
-escription in the code.
-> > > >=20
-> > >=20
-> > > I'm now also vaguely recalling that Stephen Warren had some kind of a=
- "code generator"
-> > > for the pinctrl drivers. So I guess all those tables were auto-genera=
-ted initially.
-> > >=20
-> > > Stephen, maybe you could adjust the generator to take into account th=
-e bitmask (of
-> > > course if that's a part of the generated code) and then re-gen it all=
- for Sowjanya?
-> >=20
-> > https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that
-> > generate tegra-pinctrlNNN.c. See  	soc-to-kernel-pinctrl-driver.py. IIR=
-C,
-> > tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya is welco=
-me to
-> > send a patch to that repo if the code needs to be updated.
->=20
-> If we want to do that, we may need to start off by bringing the pinmux
-> scripts up to date with the latest version of the generated files. There
-> have been a number of changes in the meantime that cause the scripts to
-> generate a bit of diff with regards to what's currently upstream. Sounds
-> like something fairly trivial, though.
-
-Something like the below should do the trick.
-
-Thierry
-
---- >8 ---
-=46rom 9a684d2ad3c0e0c7b4dbda5904db1fda3757072b Mon Sep 17 00:00:00 2001
-=46rom: Thierry Reding <treding@nvidia.com>
-Date: Wed, 19 Jun 2019 10:50:57 +0200
-Subject: [pinmux scripts PATCH] Update kernel driver template
-
-Some changes in recent years have modified the upstream kernel driver in
-some ways that make it incompatible with the current template. Update
-the template to take into account changes introduced by the following
-commits:
-
-	commit e3d2160f12d6aa7a87d9db09d8458b4a3492cd45
-	Author: Paul Gortmaker <paul.gortmaker@windriver.com>
-	Date:   Mon May 22 16:56:47 2017 -0400
-
-	    pinctrl: tegra: clean up modular vs. non-modular distinctions
-
-	    None of the Kconfigs for any of these drivers are tristate,
-	    meaning that they currently are not being built as a module by anyone.
-
-	    Lets remove the modular code that is essentially orphaned, so that
-	    when reading the drivers there is no doubt they are builtin-only.  All
-	    drivers get similar changes, so they are handled in batch.
-
-	    We remove module.h from code that isn't doing anything modular at
-	    all;  if they have __init sections, then replace it with init.h.
-
-	    A couple drivers have module_exit() code that is essentially orphaned,
-	    and so we remove that.
-
-	    Quite a few bool drivers (hence non-modular) are converted over to
-	    to builtin_platform_driver().
-
-	    Since module_platform_driver() uses the same init level priority as
-	    builtin_platform_driver() the init ordering remains unchanged with
-	    this commit.
-
-	    Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-	    We also delete the MODULE_LICENSE tag etc. since all that information
-	    was (or is now) contained at the top of the file in the comments.
-
-	    Cc: Linus Walleij <linus.walleij@linaro.org>
-	    Cc: Stephen Warren <swarren@wwwdotorg.org>
-	    Cc: Thierry Reding <thierry.reding@gmail.com>
-	    Cc: Alexandre Courbot <gnurou@gmail.com>
-	    Cc: Pritesh Raithatha <praithatha@nvidia.com>
-	    Cc: Ashwini Ghuge <aghuge@nvidia.com>
-	    Cc: linux-gpio@vger.kernel.org
-	    Cc: linux-tegra@vger.kernel.org
-	    Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-	    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-	commit 3c94d2d08a032d911bbe34f2edb24cb63a63644a
-	Author: Stefan Agner <stefan@agner.ch>
-	Date:   Thu Jul 26 17:40:24 2018 +0200
-
-	    pinctrl: tegra: define GPIO compatible node per SoC
-
-	    Tegra 2 uses a different GPIO controller which uses "tegra20-gpio" as
-	    compatible string.
-
-	    Make the compatible string the GPIO node is using a SoC specific
-	    property. This prevents the kernel from registering the GPIO range
-	    twice in case the GPIO range is specified in the device tree.
-
-	    Fixes: 9462510ce31e ("pinctrl: tegra: Only set the gpio range if neede=
-d")
-	    Signed-off-by: Stefan Agner <stefan@agner.ch>
-	    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-	commit 1e0813ee5599932c856bda64a568895ed7a33d3a
-	Author: Dmitry Osipenko <digetx@gmail.com>
-	Date:   Thu Aug 2 14:11:43 2018 +0300
-
-	    pinctrl: tegra: Move drivers registration to arch_init level
-
-	    There is a bug in regards to deferred probing within the drivers core
-	    that causes GPIO-driver to suspend after its users. The bug appears if
-	    GPIO-driver probe is getting deferred, which happens after introducing
-	    dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ran=
-ges"
-	    property in device-tree. The bug in the drivers core is old (more than=
- 4
-	    years now) and is well known, unfortunately there is no easy fix for i=
-t.
-	    The good news is that we can workaround the deferred probe issue by
-	    changing GPIO / PINCTRL drivers registration order and hence by moving
-	    PINCTRL driver registration to the arch_init level and GPIO to the
-	    subsys_init.
-
-	    Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-	    Acked-by: Stefan Agner <stefan@agner.ch>
-	    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-Note that the last one is something that we probably should fix
-correctly by using device links rather than working around it by playing
-init level tricks.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- soc-to-kernel-pinctrl-driver.py | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
-
-diff --git a/soc-to-kernel-pinctrl-driver.py b/soc-to-kernel-pinctrl-driver=
-=2Epy
-index 65e4c604f1c9..37f34b15db2b 100755
---- a/soc-to-kernel-pinctrl-driver.py
-+++ b/soc-to-kernel-pinctrl-driver.py
-@@ -41,22 +41,16 @@ if dbg: print(args)
- soc =3D tegra_pmx_soc_parser.load_soc(args.soc)
-=20
- print('''\
-+// SPDX-License-Identifier: GPL-2.0-only
- /*
-  * Pinctrl data for the NVIDIA %s pinmux
-  *
-- * Copyright (c) %s, NVIDIA CORPORATION.  All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-+ * Author: %s
-  *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License f=
-or
-- * more details.
-+ * Copyright (c) %s, NVIDIA CORPORATION.  All rights reserved.
-  */
-=20
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -68,7 +62,7 @@ print('''\
-  * Most pins affected by the pinmux can also be GPIOs. Define these first.
-  * These must match how the GPIO driver names/numbers its pins.
-  */
--''' % (soc.titlename, soc.kernel_copyright_years), end=3D'')
-+''' % (soc.titlename, soc.kernel_author, soc.kernel_copyright_years), end=
-=3D'')
-=20
- # Do not add any more exceptions here; new SoCs should be formatted correc=
-tly
- if soc.name =3D=3D 'tegra30':
-@@ -615,6 +609,7 @@ print('''\
-=20
- static const struct tegra_pinctrl_soc_data %(soc)s_pinctrl =3D {
- 	.ngpios =3D NUM_GPIOS,
-+	.gpio_compatible =3D "nvidia,%(soc)s-gpio",
- 	.pins =3D %(soc)s_pins,
- 	.npins =3D ARRAY_SIZE(%(soc)s_pins),
- 	.functions =3D %(soc)s_functions,
-@@ -635,7 +630,6 @@ static const struct of_device_id %(soc)s_pinctrl_of_mat=
-ch[] =3D {
- 	{ .compatible =3D "nvidia,%(soc)s-pinmux", },
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, %(soc)s_pinctrl_of_match);
-=20
- static struct platform_driver %(soc)s_pinctrl_driver =3D {
- 	.driver =3D {
-@@ -644,9 +638,10 @@ static struct platform_driver %(soc)s_pinctrl_driver =
-=3D {
- 	},
- 	.probe =3D %(soc)s_pinctrl_probe,
- };
--module_platform_driver(%(soc)s_pinctrl_driver);
-=20
--MODULE_AUTHOR("%(author)s");
--MODULE_DESCRIPTION("NVIDIA %(usoc)s pinctrl driver");
--MODULE_LICENSE("GPL v2");
-+static int __init %(soc)s_pinctrl_init(void)
-+{
-+	return platform_driver_register(&%(soc)s_pinctrl_driver);
-+}
-+arch_initcall(%(soc)s_pinctrl_init);
- ''' % socvars, end=3D'')
---=20
-2.21.0
-
-
---FhKpTYimqQF2+bfE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0J+PMACgkQ3SOs138+
-s6F7mA//QYHaEaJxzYynVY4xVthWaA3pDmSdZ0MD6RnUjFQJeGZNrTTimNQIAFif
-ERQYS0tFkl1c86OzaXJVGUAQVY/WeqO8NIT9WlMQynBaHLf3iiTcnUelQL+/MoQr
-TDQgs+leuo7SRru8xI2gxltthpO8pxxMkJDlcfwNs31sG0d7Ne9tq9FyXDfduYtI
-0dOGDFh6iqeqN1XywDM8bmT3dM23llO+q86M9SRJXP0RJrf+j3+uGUX1cyujslR3
-FlOuMFT4GEgpegNsaSKrK+XNFzPaeVHB/upGWM/dRqm5FwHY3YjRp6DtpiONRc4/
-CnA+Rx+5xiTTngGmE+0AtMx9JWoZkrirFxhMH5s+9ys1wSP/w+9M6mVvqclyqqgI
-sobUjvRa7HRSep1yj9egOKPtt6WAiEeD30V1lH/NtFbQjsgcHYNI391dkvlrytop
-sL4TPw7PIhFehEDws2Kx8VhtMwJ1OzBvZ3TgxB1MBgXA7rLOAn2xgKXriekNElU9
-SPwaIAnP7sOCVehgltly96Yf/6T9Ava+ipQLlUzspq5Q48vIzU9TRFvrSdmBHqo4
-HaWGm9aGTiARGTSvJuTmaDvvNloRouYqLy4uMfuUyn4hvFaR2iW0g0OcN532Lxva
-qDpiu1JqjdO1ZGiFB/TsMY+VcufZKSDeDxJt4RU0EheUp3IDGG0=
-=fdi4
------END PGP SIGNATURE-----
-
---FhKpTYimqQF2+bfE--
+Patch applied to clk/samsung tree, thanks.
