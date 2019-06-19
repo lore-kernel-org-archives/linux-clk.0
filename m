@@ -2,94 +2,69 @@ Return-Path: <SRS0=vPCn=US=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CEFC31E49
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 11:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC75C31E49
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 12:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1051921479
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 11:44:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E79621530
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 12:44:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfFSLoc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jun 2019 07:44:32 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:53654 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbfFSLoc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 19 Jun 2019 07:44:32 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id C96CD20564;
-        Wed, 19 Jun 2019 13:44:30 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id ACE482017A;
-        Wed, 19 Jun 2019 13:44:30 +0200 (CEST)
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v3] clk: qcom: msm8916: Don't build drivers by default
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Message-ID: <0171956f-b367-9f3b-f690-71657d8c50ec@free.fr>
-Date:   Wed, 19 Jun 2019 13:44:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Jun 19 13:44:30 2019 +0200 (CEST)
+        id S1731742AbfFSMoF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jun 2019 08:44:05 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:48264 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727244AbfFSMoF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 08:44:05 -0400
+Received: from ramsan ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id Sck22000e3XaVaC06ck3wV; Wed, 19 Jun 2019 14:44:03 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hdZwY-00041U-SG; Wed, 19 Jun 2019 14:44:02 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hdZwY-0003G4-QL; Wed, 19 Jun 2019 14:44:02 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: cpg-mssr: Use [] to denote a flexible array member
+Date:   Wed, 19 Jun 2019 14:44:01 +0200
+Message-Id: <20190619124401.12478-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 stand out as the only options
-built by default. List them in defconfig after dropping the default.
+Flexible array members should be denoted using [] instead of [0], else
+gcc will not warn when they are no longer at the end of the structure.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/configs/defconfig | 2 ++
- drivers/clk/qcom/Kconfig     | 2 --
- 2 files changed, 2 insertions(+), 2 deletions(-)
+To be queued in clk-renesas-for-v5.3.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5a8e853833cf..3277944626c2 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -658,6 +658,8 @@ CONFIG_CLK_IMX8MQ=y
- CONFIG_CLK_IMX8QXP=y
- CONFIG_TI_SCI_CLK=y
- CONFIG_COMMON_CLK_QCOM=y
-+CONFIG_QCOM_A53PLL=y
-+CONFIG_QCOM_CLK_APCS_MSM8916=y
- CONFIG_QCOM_CLK_SMD_RPM=y
- CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_GCC_8074=y
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e1ff83cc361e..6461a1aa7325 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -21,7 +21,6 @@ if COMMON_CLK_QCOM
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 7c241ff3ae2f0153..52bbb9ce3807db31 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -450,7 +450,7 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
+ struct cpg_mssr_clk_domain {
+ 	struct generic_pm_domain genpd;
+ 	unsigned int num_core_pm_clks;
+-	unsigned int core_pm_clks[0];
++	unsigned int core_pm_clks[];
+ };
  
- config QCOM_A53PLL
- 	tristate "MSM8916 A53 PLL"
--	default ARCH_QCOM
- 	help
- 	  Support for the A53 PLL on MSM8916 devices. It provides
- 	  the CPU with frequencies above 1GHz.
-@@ -31,7 +30,6 @@ config QCOM_A53PLL
- config QCOM_CLK_APCS_MSM8916
- 	tristate "MSM8916 APCS Clock Controller"
- 	depends on QCOM_APCS_IPC || COMPILE_TEST
--	default ARCH_QCOM
- 	help
- 	  Support for the APCS Clock Controller on msm8916 devices. The
- 	  APCS is managing the mux and divider which feeds the CPUs.
+ static struct cpg_mssr_clk_domain *cpg_mssr_clk_domain;
 -- 
 2.17.1
+
