@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF61C31E49
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4B3C31E5E
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 795182182B
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33BB21670
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jun 2019 14:16:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfFSOQK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jun 2019 10:16:10 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40283 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfFSOQK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 10:16:10 -0400
+        id S1730782AbfFSOQV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jun 2019 10:16:21 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:43559 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730764AbfFSOQU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jun 2019 10:16:20 -0400
 X-Originating-IP: 92.137.69.152
 Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
         (Authenticated sender: gregory.clement@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id A914AE0003;
-        Wed, 19 Jun 2019 14:16:03 +0000 (UTC)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 8D01B40017;
+        Wed, 19 Jun 2019 14:16:16 +0000 (UTC)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -38,9 +38,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v6 1/6] dt-bindings: ap806: add the cluster clock node in the syscon file
-Date:   Wed, 19 Jun 2019 16:15:34 +0200
-Message-Id: <20190619141539.16884-2-gregory.clement@bootlin.com>
+Subject: [PATCH v6 4/6] clk: mvebu: ap806: Fix clock name for the cluster
+Date:   Wed, 19 Jun 2019 16:15:37 +0200
+Message-Id: <20190619141539.16884-5-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190619141539.16884-1-gregory.clement@bootlin.com>
 References: <20190619141539.16884-1-gregory.clement@bootlin.com>
@@ -51,47 +51,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the device tree binding for the cluster clock controllers found
-in the Armada 7K/8K SoCs.
+Actually, the clocks exposed for the cluster are not the CPU clocks, but
+the PLL clock used as entry clock for the CPU clocks. The CPU clock will
+be managed by a driver submitting in the following patches.
 
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- .../arm/marvell/ap806-system-controller.txt   | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/clk/mvebu/ap806-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-index 7b8b8eb0191f..4a3bb9c12312 100644
---- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-@@ -143,3 +143,28 @@ ap_syscon1: system-controller@6f8000 {
- 		#thermal-sensor-cells = <1>;
- 	};
- };
-+
-+Cluster clocks:
-+---------------
-+
-+Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
-+cluster contain up to 2 CPUs running at the same frequency.
-+
-+Required properties:
-+- compatible: must be  "marvell,ap806-cpu-clock";
-+- #clock-cells : should be set to 1.
-+- clocks : shall be the input parents clock phandle for the clock.
-+- reg: register range associated with the cluster clocks
-+
-+
-+ap_syscon1: system-controller@6f8000 {
-+	compatible = "marvell,armada-ap806-syscon1", "syscon", "simple-mfd";
-+	reg = <0x6f8000 0x1000>;
-+
-+	cpu_clk: clock-cpu@0 {
-+		compatible = "marvell,ap806-cpu-clock";
-+		clocks = <&ap_clk 0>, <&ap_clk 1>;
-+		#clock-cells = <1>;
-+		reg = <0x274 0xa30>;
-+	};
-+};
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 0a58824ff053..73ba8fd7860f 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -97,7 +97,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	cpuclk_freq *= 1000 * 1000;
+ 
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+-	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-0");
++	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-0");
+ 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+@@ -105,7 +105,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 		goto fail0;
+ 	}
+ 
+-	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-1");
++	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-1");
+ 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
 -- 
 2.20.1
 
