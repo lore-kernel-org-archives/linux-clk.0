@@ -2,241 +2,286 @@ Return-Path: <SRS0=jKhQ=UT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 791CCC48BE4
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jun 2019 15:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B2AC43613
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jun 2019 18:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51D4F2070B
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jun 2019 15:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6A772089C
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jun 2019 18:27:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3I2j4ci"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="RaSwuXUg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfFTPc0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jun 2019 11:32:26 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43906 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfFTPc0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jun 2019 11:32:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p13so3471253wru.10;
-        Thu, 20 Jun 2019 08:32:23 -0700 (PDT)
+        id S1727700AbfFTS16 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jun 2019 14:27:58 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:32887 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbfFTS16 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jun 2019 14:27:58 -0400
+Received: by mail-io1-f66.google.com with SMTP id u13so1070487iop.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2019 11:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=twKREVP4dM76TlVVsHi0mp9knkKfShom6a8O1rWrEqA=;
-        b=h3I2j4ciufcpKsQ5gfJM/DTpOBVP9ObrBX99kiBPaZ3Mfqh40mklLdWMeGl9lg2mIL
-         sKfcEyRUOXUMxrXO37Z5miyEthTdi0anVI8MIAfOv16cWbo+89vGWTBivfwhb/NlK8z/
-         KlklbFZfP1n3aVJqPFP1HMpotaneYBS6wCEs3jJ7wt5U5PSPl5p4SDdgG9U6eNJcjMru
-         +CNoYQ3pRBHs/rFR+tSpwZAa8yB5IgiZVJcL5ntVJTY4M06nJ1SHTbFyZ/e/VYbJHCwy
-         JxNU9Dah4QdXuKEaLlE6tjzzifk6aGOgs+PIiLcedS2+fE1gBEY9npPqmQ4X13uS01Wt
-         9nXQ==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mwbErLJ3V6vC6WVVwdxU2Qgp0s+ZMnyIhMQtnjCFBbU=;
+        b=RaSwuXUgC2LGddvftTsyMnDwQc4TrrqRNVm39hHPxMkFPpDShnxaupG/vuw6CFLbWo
+         DyN9e8hA5ArOojTwZxq9NdZpcSJG470rqjoGTPE9jkWmP4iE155nFyVjL6NebM1S29iE
+         YlG2Gtsn76EGrMkPGgJhBVv4qRBeMZuQvJaM4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=twKREVP4dM76TlVVsHi0mp9knkKfShom6a8O1rWrEqA=;
-        b=MoHuKZ6m6P6XVqXDunkjwFE0G0h0NcRnl9JQYnsQc9MB/6ro3Ko9AQCwWRz8tlS5Ds
-         +9P56fDcnHa5IhZKj/rvO+zZcHK+pA2Nps3ggJMObohIMTwlLX6DdK4yV+HxtfxWNhFd
-         PUipVY34UG/cibSu9cl3LJKbyTO5EUPOTwYFdha9NK4CQZfeLcry70OXx+m5IjdbxhK5
-         aIHGZPpqyh+JuejiqB3n60tazQil3hygF1kr8WktuPLan8m/q+f3N13fc+xDu1mgKhPM
-         XnV+m/LYiPsUErr3Pywe/5lx8twXj2CjHAWNShef+mfPgWWjYdPfTbVtA/QZhiKI/e+7
-         zf/w==
-X-Gm-Message-State: APjAAAU6Fn499kLjCFDacO84RNL29snJlHfGp67mZmwFZZGjr0yOqGRH
-        1kgDCqEpIoGAHEo8U0Iso0Q=
-X-Google-Smtp-Source: APXvYqxezO6uB6L4KgkL7Xs0u+cI6dkJWDdisTd5axsPvkukVNXGFDtFUmm2ifdZ4GWp24gRMXMJJQ==
-X-Received: by 2002:a5d:4fce:: with SMTP id h14mr14572739wrw.231.1561044742105;
-        Thu, 20 Jun 2019 08:32:22 -0700 (PDT)
-Received: from debian64.daheim (pD9E29A96.dip0.t-ipconnect.de. [217.226.154.150])
-        by smtp.gmail.com with ESMTPSA id w23sm6218936wmi.45.2019.06.20.08.32.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 08:32:20 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
-        by debian64.daheim with esmtp (Exim 4.92)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1hdz2y-0003SE-6i; Thu, 20 Jun 2019 17:32:20 +0200
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        =?utf-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-Date:   Thu, 20 Jun 2019 17:32:20 +0200
-Message-ID: <2600627.FlAEz51UtF@debian64>
-In-Reply-To: <96fd8992-e333-6b3b-15c0-2845984120aa@codeaurora.org>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <1981742.H2rzviYcjI@debian64> <96fd8992-e333-6b3b-15c0-2845984120aa@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mwbErLJ3V6vC6WVVwdxU2Qgp0s+ZMnyIhMQtnjCFBbU=;
+        b=eRsNOWzMR13nw5q0u/pL7uyRcmmrfyUx7xKDYrHI5tYnA9vVTHu6E+JQqi/YXtFlKp
+         wVwI8fC963W+DGHhOAcBkVmdBEG074z+1NTn7WdAh5zU7o5cm1IKes64I41SWpD5Cvd9
+         4GbDT+BH8rgf1pKOQOqd3FeN+JYqGTAWoAqsX/1LjJZbj0j8aGlcdHRK9pRGhcMM7kvT
+         uk2m5opEVtlTWQkMo7AlAT6Jnb7L/IIfrEd2Ytr+HggRtHppqNFncHlo2kCO7Op0jqXs
+         kz2w85gEjAMy1mTATxHjcFPk8cE1G/tb5oV2XdF586vORhGXL9dPAiXh62ba4TK/nRkQ
+         eJ+Q==
+X-Gm-Message-State: APjAAAWNUwJdL5NtZycrxvjUBfCz+tvZBJUESklf8IQtqLhTnosAE6pl
+        EZfZGoJXzJi+78xfGKzNPj3w9OUnW+zjMM0qyoBvjQ==
+X-Google-Smtp-Source: APXvYqy4fUuMM1AjTIRVaQrstaOthDZ0Ysq8Fh3ybDJt6I0bHpFOzpD0N6IDrxhFGMaXznlVFY5rQRjVws2S1bG4c3I=
+X-Received: by 2002:a02:3308:: with SMTP id c8mr36993457jae.103.1561055276862;
+ Thu, 20 Jun 2019 11:27:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+ <20190124195900.22620-12-jagan@amarulasolutions.com> <20190125212433.ni2jg3wvpyjazlxf@flea>
+ <CAMty3ZAsH2iZ+JEqTE3D58aXfGuhMSg9YoO56ZhhOeE4c4yQHQ@mail.gmail.com>
+ <20190129151348.mh27btttsqcmeban@flea> <CAMty3ZAjAoti8Zu80c=OyCA+u-jtQnkidsKSNz_c2OaRswqc3w@mail.gmail.com>
+ <20190201143102.rcvrxstc365mezvx@flea> <CAMty3ZC3_+z1upH4Y08R1z=Uq1C=OpWETNrBO8nGRoHhuNrHSA@mail.gmail.com>
+ <20190605064933.6bmskkxzzgn35xz7@flea> <CAMty3ZCCP=oCqm5=49BsjwoxdDETgBfU_5g8fQ=bz=iWApV0tw@mail.gmail.com>
+ <20190614142406.ybdiqfppo5mc5bgq@flea>
+In-Reply-To: <20190614142406.ybdiqfppo5mc5bgq@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 20 Jun 2019 23:57:44 +0530
+Message-ID: <CAMty3ZB45cHx3WeXnywBh2_UA_bTmFs6yBTqLWA1BNf4fQtVvQ@mail.gmail.com>
+Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Sricharan,
+On Fri, Jun 14, 2019 at 7:54 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Wed, Jun 05, 2019 at 01:03:16PM +0530, Jagan Teki wrote:
+> > On Wed, Jun 5, 2019 at 12:19 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > I've reordered the mail a bit to work on chunks
+> > >
+> > > On Fri, May 24, 2019 at 03:37:42PM +0530, Jagan Teki wrote:
+> > > > > I wish it was in your commit log in the first place, instead of having
+> > > > > to exchange multiple mails over this.
+> > > > >
+> > > > > However, I don't think that's quite true, and it might be a bug in
+> > > > > Allwinner's implementation (or rather something quite confusing).
+> > > > >
+> > > > > You're right that the lcd_rate and pll_rate seem to be generated from
+> > > > > the pixel clock, and it indeed looks like the ratio between the pixel
+> > > > > clock and the TCON dotclock is defined through the number of bits per
+> > > > > lanes.
+> > > > >
+> > > > > However, in this case, dsi_rate is actually the same than lcd_rate,
+> > > > > since pll_rate is going to be divided by dsi_div:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L791
+> > > > >
+> > > > > Since lcd_div is 1, it also means that in this case, dsi_rate ==
+> > > > > dclk_rate.
+> > > > >
+> > > > > The DSI module clock however, is always set to 148.5 MHz. Indeed, if
+> > > > > we look at:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L804
+> > > > >
+> > > > > We can see that the rate in clk_info is used if it's different than
+> > > > > 0. This is filled by disp_al_lcd_get_clk_info, which, in the case of a
+> > > > > DSI panel, will hardcode it to 148.5 MHz:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L164
+> > > >
+> > > > Let me explain, something more.
+> > > >
+> > > > According to bsp there are clk_info.tcon_div which I will explain below.
+> > > > clk_info.dsi_div which is dynamic and it depends on bpp/lanes, so it
+> > > > is 6 for 24bpp and 4 lanes devices.
+> > > >
+> > > > PLL rate here depends on dsi_div (not tcon_div)
+> > > >
+> > > > Code here
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L784
+> > > >
+> > > > is computing the actual set rate, which depends on dsi_rate.
+> > > >
+> > > > lcd_rate = dclk_rate * clk_info.dsi_div;
+> > > > dsi_rate = pll_rate / clk_info.dsi_div;
+> > > >
+> > > > Say if the dclk_rate 148MHz then the dsi_rate is 888MHz which set rate
+> > > > for above link you mentioned.
+> > > >
+> > > > Here are the evidence with some prints.
+> > > >
+> > > > https://gist.github.com/openedev/9bae2d87d2fcc06b999fe48c998b7043
+> > > > https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
+> > >
+> > > Ok, so we agree up to this point, and the prints confirm that the
+> > > analysis above is the right one.
+> > >
+> > > > > So, the DSI clock is set to this here:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L805
+> > >
+> > > Your patch doesn't address that, so let's leave that one alone.
+> >
+> > Basically this is final pll set rate when sun4i_dotclock.c called the
+> > desired rate with ccu_nkm.c so it ended the final rate with parent as
+> > Line 8 of
+> > https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
+>
+> If that's important to the driver, it should be set explicitly then,
+> and not work by accident.
+>
+> > > > > The TCON *module* clock (the one in the clock controller) has been set
+> > > > > to lcd_rate (so the pixel clock times the number of bits per lane) here:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L800
+> > > > >
+> > > > > And the PLL has been set to the same rate here:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L794
+> > > > >
+> > > > > Let's take a step back now: that function we were looking at,
+> > > > > lcd_clk_config, is called by lcd_clk_enable, which is in turn called
+> > > > > by disp_lcd_enable here:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L1328
+> > > > >
+> > > > > The next function being called is disp_al_lcd_cfg, and that function
+> > > > > will hardcode the TCON dotclock divider to 4, here:
+> > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L240
+> > > >
+> > > > tcon_div from BSP point-of-view of there are two variants
+> > > > 00) clk_info.tcon_div which is 4 and same is set the divider position
+> > > > in SUN4I_TCON0_DCLK_REG (like above link refer)
+> > > > 01) tcon_div which is 4 and used for edge timings computation
+> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L12
+> > > >
+> > > > The real reason for 01) is again 4 is they set the divider to 4 in 00)
+> > > > which is technically wrong because the dividers which used during
+> > > > dotclock in above (dsi_div) should be used here as well. Since there
+> > > > is no dynamic way of doing this BSP hard-coding these values.
+> > > >
+> > > > Patches 5,6,7 on this series doing this
+> > > > https://patchwork.freedesktop.org/series/60847/
+> > > >
+> > > > Hope this explanation helps?
+> > >
+> > > It doesn't.
+> > >
+> > > The clock tree is this one:
+> > >
+> > > PLL(s) -> TCON module clock -> TCON dotclock.
+> > >
+> > > The links I mentioned above show that the clock set to lcd_rate is the
+> > > TCON module clocks (and it should be the one taking the bpp and lanes
+> > > into account), while the TCON dotclock uses a fixed divider of 4.
+> >
+> > Sorry, I can argue much other-than giving some code snips, according to [1]
+> >
+> > 00) Line 785, 786 with dclk_rate 148000000
+> >
+> > lcd_rate = dclk_rate * clk_info.dsi_div;
+> > pll_rate = lcd_rate * clk_info.lcd_div;
+> >
+> > Since dsi_div is 6 (bpp/lanes), lcd_div 1
+> >
+> > lcd_rate = 888000000, pll_rate = 888000000
+> >
+> > 01)  Line 801, 804 are final rates computed as per clock driver (say
+> > ccu_nkm in mainline)
+> >
+> > lcd_rate_set=891000000
+> >
+> > As per your comments if it would be 4 then the desired numbers are
+> > would be 592000000 not 888000000.
+> >
+> > This is what I'm trying to say in all mails, and same as verified with
+> > 2-lanes devices as well where the dsi_div is 12 so the final rate is
+> > 290MHz * 12
+>
+> In the code you sent, you're forcing a divider on the internal TCON
+> clock, while that one is fixed in the BSP.
+>
+> There's indeed the bpp / lanes divider, but it's used in the *parent*
+> clock of the one you're changing.
+>
+> And the dsi0_clk clock you pointed out in the code snippet is yet
+> another clock, the MIPI DSI module clock.
 
-On Wednesday, June 19, 2019 4:42:11 PM CEST Sricharan R wrote:
-> On 6/15/2019 2:11 AM, Christian Lamparter wrote:
-> > On Wednesday, June 12, 2019 11:48:48 AM CEST Sricharan R wrote:
-> >> Hi Christian,
-> >>
-> >> On 6/10/2019 5:45 PM, Christian Lamparter wrote:
-> >>> On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
-> >>>> Hi Christian,
-> >>>>
-> >>>> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
-> >>>>> On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
-> >>>>>>
-> >>>>>> Add initial device tree support for the Qualcomm IPQ6018 SoC and
-> >>>>>> CP01 evaluation board.
-> >>>>>>
-> >>>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> >>>>>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-> >>>>>>
-> >>>>>> +       clocks {
-> >>>>>> +               sleep_clk: sleep_clk {
-> >>>>>> +                       compatible = "fixed-clock";
-> >>>>>> +                       clock-frequency = <32000>;
-> >>>>>> +                       #clock-cells = <0>;
-> >>>>>> +               };
-> >>>>>> +
-> >>>>> Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
-> >>>>> on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
-> >>>>> From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
-> >>>>> declares them at 32000 Hz. Since you probably have access to the BOM and
-> >>>>> datasheets. Can you please confirm what's the real clock frequency for
-> >>>>> the IPQ6018.
-> >>>>> (And maybe also for the sleep_clk of the IPQ4018 as well?).
-> >>>>>
-> >>>>
-> >>>> What exactly is the issue that you faced ?
-> >>>> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
-> >>>
-> >>> We need just a confirmation.
-> >>>
-> >>> Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
-> >>>
-> >>> |		sleep_clk: sleep_clk {
-> >>> |			compatible = "fixed-clock";
-> >>> |			clock-frequency = <32768>;
-> >>> |			#clock-cells = <0>;
-> >>> |		};
-> >>>
-> >>> <https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
-> >>>
-> >>> Which makes sense, because all previous Qualcomm Atheros MIPS and the
-> >>> future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
-> >>>
-> >>> For example: The AR9344 derives the clock from the 25MHz/40MHz external
-> >>> oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
-> >>> Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
-> >>> depending whenever the external reference crystal has 40MHz or 25MHz.
-> >>> (1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
-> >>> in "10.19.11 Derived RTC Clock". 
-> >>>
-> >>> For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
-> >>> <http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
-> >>> "I was only able to verify for IPQ8072 that it had a 32.768 KHz
-> >>> sleep clock." 
-> >>>
-> >>> So this is pretty much "why there is an issue", it's confusing.
-> >>> Is possible can you please look if there are (fixed) divisors values
-> >>> listed in the documentation or the registers and bits that the values
-> >>> are stored in? Because then we could just calculate it. 
-> >>>
-> >>
-> >> Really sorry for the confusion. So looking little more, SLEEP_CLK is derived
-> >> from an external 38.4MHZ crystal, it is 32.768 KHZ.
-> > That's really valuable information to have. Thank you!
-> > 
-> >> Somehow the clk freq plan etc seems to mention them only as .032 MHZ and misses
-> >> out. That means i will correct the patch for 32768 and probably the
-> >> ipq8074.dtsi as well
-> > 
-> > Ok, there's one more issue that Paul found (at least with the IPQ4019),
-> > https://patchwork.ozlabs.org/patch/1099482
-> > 
-> > it seems that the "sleep_clk" node in the qcom-ipq4019.dtsi is not used by
-> > the gcc-ipq4019.c clk driver. this causes both wifi rtc_clks and the usb sleep
-> > clks to dangle in the /sys/kernel/debug/clk/clk_summary (from a RT-AC58U)
-> > 
-> >    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
-> > ----------------------------------------------------------------------------------------
-> >  xo                                       9            9    48000000          0 0
-> >  [...]
-> >  sleep_clk                                1            1       32768          0 0  
-> >  gcc_wcss5g_rtc_clk                       1            1           0          0 0  
-> >  gcc_wcss2g_rtc_clk                       1            1           0          0 0  
-> >  gcc_usb3_sleep_clk                       1            1           0          0 0  
-> >  gcc_usb2_sleep_clk                       1            1           0          0 0  
-> > 
-> > with his patch the /sys/kernel/debug/clk/clk_summary looks "better" 
-> > 
-> > (something like this:)
-> > 
-> >    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
-> > ----------------------------------------------------------------------------------------
-> >  xo                                       9            9    48000000          0 0
-> >  [...] 
-> >  gcc_sleep_clk_src                        5            5       32000          0 0  
-> >     gcc_wcss5g_rtc_clk                    1            1       32000          0 0  
-> >     gcc_wcss2g_rtc_clk                    1            1       32000          0 0  
-> >     gcc_usb3_sleep_clk                    1            1       32000          0 0  
-> >     gcc_usb2_sleep_clk                    1            1       32000          0 0  
-> > 
-> > but judging from your comment "SLEEP_CLK is derived from an
-> > external 38.4MHZ crystal" the gcc_sleep_clk_src / sleep_clk
-> > should have xo as the parent. so the ideal output should be:
-> > 
-> >    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
-> > ----------------------------------------------------------------------------------------
-> >  xo                                      10           10    48000000          0 0
-> >  [...] 
-> >     gcc_sleep_clk                         5            5       32768          0 0  
-> >        gcc_wcss5g_rtc_clk                 1            1       32768          0 0  
-> >        gcc_wcss2g_rtc_clk                 1            1       32768          0 0  
-> >        gcc_usb3_sleep_clk                 1            1       32768          0 0  
-> >        gcc_usb2_sleep_clk                 1            1       32768          0 0  
-> > 
-> > or am I missing/skipping over something important? 
-> > 
-> 
-> Sorry for the delayed response. So what i said above (32768 clk) looks
-> like true only for ipq8074. For ipq4019, looks like 32000.
-> 
-> That means, there is still some thing unclear. I am checking for precise
-> information from HW team for ipq4019/8074/6018. Please hang on, will
-> update you asap.
+Correct, look like I refereed wrong reference in the above mail. sorry
+for the noise.
 
-Thank you for looking this up! I'll definitely stick around for the final
-verdict.
+Actually I'm trying to explain about pll_rate here which indeed
+depends on dsi.div
+https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L786
 
-Also, I think the "xo" clk of your IPQ6018 dts should get the
-"always-on;" property (any maybe sleep_clk as well?).
+lcd_rate = dclk_rate * clk_info.dsi_div;
+pll_rate = lcd_rate * clk_info.lcd_div;
 
-Paul discovered that the QSDK had this extra commit
-<https://lore.kernel.org/patchwork/patch/1089385/>
-(Maybe the changeid can help you look it up internally)
+Say
 
-For IPQ4019, this enables the high resolution with a 1ns resolution
-instead of 10ms.
+1) For 148MHz dclk_rate with dsi_div is 6 (24/4) lcd_div is 1 which
+resulting pll_rate is 888MHz.
 
-(echo q > /proc/sysrq-trigger can be used to check this just look for
-the "resolution" value before and after.) 
+2) For 30MHz dclk_rate with 4 lane and 24 RGB the resulting pll_rate is 180MHz
 
-Cheers,
-Christian
+3) For 27.5MHz dclk_rate with 2 lane and 24 RGB the resulting pll_rate is 330MHz
 
+Here is the few more logs in code, for case 2)
 
+[    1.920441] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 30000000
+[    1.920505] ideal = 180000000, rounded = 178200000
+[    1.920509] sun4i_dclk_round_rate: div = 6 rate = 29700000
+[    1.920514] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 30000000
+[    1.920532] ideal = 180000000, rounded = 178200000
+[    1.920535] sun4i_dclk_round_rate: div = 6 rate = 29700000
+[    1.920572] sun4i_dclk_recalc_rate: val = 1, rate = 178200000
+[    1.920576] sun4i_dclk_recalc_rate: val = 1, rate = 178200000
+[    1.920597] rate = 178200000
+[    1.920599] parent_rate = 297000000
+[    1.920602] reg = 0x90c00000
+[    1.920605] _nkm.n = 3, nkm->n.offset = 0x1, nkm->n.shift = 8
+[    1.920609] _nkm.k = 2, nkm->k.offset = 0x1, nkm->k.shift = 4
+[    1.920612] _nkm.m = 10, nkm->m.offset = 0x1, nkm->m.shift = 0
+[    1.920958] sun4i_dclk_set_rate div 6
+[    1.920966] sun4i_dclk_recalc_rate: val = 6, rate = 29700000
+
+and clk_summary:
+
+    pll-video0                        1        1        1   297000000
+        0     0  50000
+       hdmi                           0        0        0   297000000
+        0     0  50000
+       tcon1                          0        0        0   297000000
+        0     0  50000
+       pll-mipi                       1        1        1   178200000
+        0     0  50000
+          tcon0                       2        2        1   178200000
+        0     0  50000
+             tcon-pixel-clock         1        1        1    29700000
+        0     0  50000
+       pll-video0-2x                  0        0        0   594000000
+        0     0  50000
