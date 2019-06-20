@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C016C48BE5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D70C43613
 	for <linux-clk@archiver.kernel.org>; Thu, 20 Jun 2019 15:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E58472084A
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jun 2019 15:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A95F2084A
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jun 2019 15:01:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SZ6V1yjL"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nSkCypdi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731802AbfFTPAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jun 2019 11:00:24 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40385 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfFTPAX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jun 2019 11:00:23 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v19so3496313wmj.5
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2019 08:00:22 -0700 (PDT)
+        id S1731943AbfFTPBa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jun 2019 11:01:30 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37465 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731790AbfFTPAZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jun 2019 11:00:25 -0400
+Received: by mail-wm1-f65.google.com with SMTP id f17so3510353wme.2
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2019 08:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LYe7DDXQIL9cgrU/J6+VemHeiSBNByBQZKqrYUm/eeo=;
-        b=SZ6V1yjLoHGVxYhYdXZ8SkshTMpt0KSi4NFSU2/xx/+B0QFCZ/xBQx3++HsNUvz09q
-         f8371/tpFqWte+O1B0mJZDY/m+oXsJXHnkEbSDAAnhNkUO8PnzGSlg4II9sJ3hdcTjOd
-         J9WFwVcXw1Db8/Z5WDM1EbNM6t7arljsdr1fNxbt9cblHpMLQs1tfjOgBG2COUK6/X/6
-         7OSdVHmMLNv3VZoB/VKHC6lVJjxUgqUX9LPBujDSjUYkKdwn8GW7yX10YVjW2J9tabmQ
-         cir+m7HPer+bOdYUNrInyBmC6SndMtZN6uaPzr+/1Qtquu9r+rrXslmH7bFbqZz3QtqX
-         JdnA==
+        bh=QF6xtFv2zQ8ZUqjO9Cs7FIQcWQGqk9AuakROnInyaSE=;
+        b=nSkCypdicbMvzFde8ADW9XsWBHulHw3kmRE8NVsSDhiNU9QV9y34VQOdlTCfxpb+sw
+         X+G3BrQTyvHKj7eQwbrTOepLT7WcjxFVj3A5M89EbKEa9Axioltwu5qzvF9jTkZ8edEN
+         Q4Mv0UdlWa6iOfYosGgzfWMkKj04C3u5usJyfcuEUJWvXRSl8+P3pKsmM3bAyuVPVeD2
+         kxXfFRjwB47pasGLL+C+A5Qa3ZetS84bsJOjMy1giV4UjPZX6uZubJnzIIv4x86hxMUp
+         3TIBs5eImSfag7zw6MSXwlV0hnojcV3godzRrRFFRaH5+Voy92CeN5TMVbfUTwHPTiO9
+         DNGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LYe7DDXQIL9cgrU/J6+VemHeiSBNByBQZKqrYUm/eeo=;
-        b=bzBwjloWK5lQqCMwi4XO3ckx60QijNtfvbmYsC1lBhTF0lfbLaymrclJYYVnMaqZJa
-         O7FOKBBcv+TQS8lsgT44GY4hHgqIInhoEQkLrOi27vkrSt/swG2GMRvnfhP6v0/Qpupf
-         PnXEdF8PlacyLipgkFw6n8XPmIawhJFappiIJWDpkVMRG5ST9RRad3rxKZxj8hQgEGBa
-         KeH+cJKTWSDVzJQvhrZFrdc8PoSQC6m8JyE8idS71lNZvZoTd5p37QykuLm9O5F1I303
-         FoAlwcw9fgu3FIMW29LJF9Cmf6UNqtqmH17+AtENJAIlnkFo0LsGKDYYx6ywGap1Ks9y
-         1RbA==
-X-Gm-Message-State: APjAAAXwwdXga0atKQuivkNDaaoXHIBmluLHQaot6mmVIUcp/fhQOjyu
-        e3rK4jJTH0rqEo3EcaIMENG1vw==
-X-Google-Smtp-Source: APXvYqyNNg0N3Vh+whUhU6uiroJxzDG3nOrILtRfiPwOSwkxjLjsRkVzUds9/M79qG+gl3Xaq9YOhg==
-X-Received: by 2002:a1c:3587:: with SMTP id c129mr69933wma.90.1561042821614;
-        Thu, 20 Jun 2019 08:00:21 -0700 (PDT)
+        bh=QF6xtFv2zQ8ZUqjO9Cs7FIQcWQGqk9AuakROnInyaSE=;
+        b=gdiDSbLG9QhTNh924NixyoDosciw4I4d7afJH6FdpM3daLq3ZjDqDsg1NUTdxw/VdC
+         +uLgqG+TUeAXbdplCJ6JbvR3wtSzGptXGzcCpT2oiBz8CMTC0TIqdumElsOSPNmiXxJv
+         LG6kghzLl+U6d3PGst2fwig1Kjz5KdzosbllNfOJee7a4pCpC8zDl/fXn/hJU2poHdX7
+         cQnN5CMJ9Qx/Iu8Cl0IdZRgOF7dscwTpcaQMDUkCYhRJQdvuI46BmmT6x1zV1LptOaYP
+         CorsV7TLEGj3DwlCvRnFIC8AncUHF3Yknspsw3cIJ4Z73u6DFZtm5WCWegyLSSR7hiKv
+         bB6Q==
+X-Gm-Message-State: APjAAAVb6786gQ09RaBBJklZjB8m6gohvots7BjkjJBYnKhkQ9sD3MzC
+        6YWKyw4N5W5KNEysKcxAlyAY/g==
+X-Google-Smtp-Source: APXvYqzjmqHVz8xwAG831JB73JOZR/BWWaiZvTceHova+YlkcqDqCYo2mGzLMMF5bUKcnzoT/ZYDHg==
+X-Received: by 2002:a1c:3c8a:: with SMTP id j132mr52731wma.172.1561042823556;
+        Thu, 20 Jun 2019 08:00:23 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o126sm6802520wmo.1.2019.06.20.08.00.20
+        by smtp.gmail.com with ESMTPSA id o126sm6802520wmo.1.2019.06.20.08.00.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Jun 2019 08:00:20 -0700 (PDT)
+        Thu, 20 Jun 2019 08:00:22 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com, khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT 01/14] pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
-Date:   Thu, 20 Jun 2019 17:00:00 +0200
-Message-Id: <20190620150013.13462-2-narmstrong@baylibre.com>
+Subject: [RFC/RFT 03/14] clk: meson: regmap: export regmap_div ops functions
+Date:   Thu, 20 Jun 2019 17:00:02 +0200
+Message-Id: <20190620150013.13462-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190620150013.13462-1-narmstrong@baylibre.com>
 References: <20190620150013.13462-1-narmstrong@baylibre.com>
@@ -73,54 +73,69 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the missing pinmux for the pwm_a function on the GPIOE_2 pin.
+The G12A CPU Clock Postmux divider needs a custom div_set_rate() call.
+
+Export the clk_regmap_div_round_rate() and clk_regmap_div_recalc_rate()
+to be able to override the default clk_regmap_div_set_rate() callback.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson-g12a.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clk/meson/clk-regmap.c | 10 ++++++----
+ drivers/clk/meson/clk-regmap.h |  5 +++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index 3475cd7bd2af..582665fd362a 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -801,6 +801,9 @@ static const unsigned int remote_ao_input_pins[]	= { GPIOAO_5 };
- /* ir_out */
- static const unsigned int remote_ao_out_pins[]		= { GPIOAO_4 };
- 
-+/* pwm_a_e */
-+static const unsigned int pwm_a_e_pins[]		= { GPIOE_2 };
-+
- /* pwm_ao_a */
- static const unsigned int pwm_ao_a_pins[]		= { GPIOAO_11 };
- static const unsigned int pwm_ao_a_hiz_pins[]		= { GPIOAO_11 };
-@@ -888,6 +891,7 @@ static struct meson_pmx_group meson_g12a_aobus_groups[] = {
- 	GROUP(i2c_ao_slave_sda,		3),
- 	GROUP(remote_ao_input,		1),
- 	GROUP(remote_ao_out,		1),
-+	GROUP(pwm_a_e,			3),
- 	GROUP(pwm_ao_a,			3),
- 	GROUP(pwm_ao_a_hiz,		2),
- 	GROUP(pwm_ao_b,			3),
-@@ -1192,6 +1196,10 @@ static const char * const remote_ao_out_groups[] = {
- 	"remote_ao_out",
+diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+index dcd1757cc5df..26c8c74a8cf0 100644
+--- a/drivers/clk/meson/clk-regmap.c
++++ b/drivers/clk/meson/clk-regmap.c
+@@ -56,8 +56,8 @@ const struct clk_ops clk_regmap_gate_ro_ops = {
  };
+ EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
  
-+static const char * const pwm_a_e_groups[] = {
-+	"pwm_a_e",
-+};
+-static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
+-						unsigned long prate)
++unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
++					 unsigned long prate)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+@@ -74,9 +74,10 @@ static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
+ 	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
+ 				   div->width);
+ }
++EXPORT_SYMBOL_GPL(clk_regmap_div_recalc_rate);
+ 
+-static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
+-				      unsigned long *prate)
++long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+@@ -100,6 +101,7 @@ static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return divider_round_rate(hw, rate, prate, div->table, div->width,
+ 				  div->flags);
+ }
++EXPORT_SYMBOL_GPL(clk_regmap_div_round_rate);
+ 
+ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long parent_rate)
+diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+index 1dd0abe3ba91..d22b83fb9bad 100644
+--- a/drivers/clk/meson/clk-regmap.h
++++ b/drivers/clk/meson/clk-regmap.h
+@@ -78,6 +78,11 @@ clk_get_regmap_div_data(struct clk_regmap *clk)
+ 	return (struct clk_regmap_div_data *)clk->data;
+ }
+ 
++unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
++					 unsigned long prate);
++long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate);
 +
- static const char * const pwm_ao_a_groups[] = {
- 	"pwm_ao_a", "pwm_ao_a_hiz",
- };
-@@ -1290,6 +1298,7 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
- 	FUNCTION(i2c_ao_slave),
- 	FUNCTION(remote_ao_input),
- 	FUNCTION(remote_ao_out),
-+	FUNCTION(pwm_a_e),
- 	FUNCTION(pwm_ao_a),
- 	FUNCTION(pwm_ao_b),
- 	FUNCTION(pwm_ao_c),
+ extern const struct clk_ops clk_regmap_divider_ops;
+ extern const struct clk_ops clk_regmap_divider_ro_ops;
+ 
 -- 
 2.21.0
 
