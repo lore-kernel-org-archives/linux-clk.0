@@ -2,76 +2,105 @@ Return-Path: <SRS0=rhXi=UU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D41C43613
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 11:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF2EC43613
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 13:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A0F5208CA
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 11:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FD2B2083B
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 13:13:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfFULgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jun 2019 07:36:01 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:60418 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbfFULgB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Jun 2019 07:36:01 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 2EFD0206B9;
-        Fri, 21 Jun 2019 13:36:00 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 1364E20687;
-        Fri, 21 Jun 2019 13:36:00 +0200 (CEST)
-Subject: Re: [PATCH v3] clk: qcom: msm8916: Don't build drivers by default
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <0171956f-b367-9f3b-f690-71657d8c50ec@free.fr>
- <fe935706-b18d-8966-a447-c1fb2be25c85@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <d6f20e7b-2609-faf3-3dfa-aba644d8a9b6@free.fr>
-Date:   Fri, 21 Jun 2019 13:36:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <fe935706-b18d-8966-a447-c1fb2be25c85@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Fri Jun 21 13:36:00 2019 +0200 (CEST)
+        id S1726757AbfFUNN5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jun 2019 09:13:57 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41460 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbfFUNN5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jun 2019 09:13:57 -0400
+Received: from ramsan ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id TRDv2000W3XaVaC01RDvCY; Fri, 21 Jun 2019 15:13:56 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1heJMZ-00040d-Ig; Fri, 21 Jun 2019 15:13:55 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1heHiT-0000p0-VR; Fri, 21 Jun 2019 13:28:25 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v5.3 (take two)
+Date:   Fri, 21 Jun 2019 13:28:21 +0200
+Message-Id: <20190621112821.3104-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/06/2019 15:47, Georgi Djakov wrote:
+	Hi Mike, Stephen,
 
-> On 19.06.19 14:44, Marc Gonzalez wrote:
-> 
->> QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 stand out as the only options
->> built by default. List them in defconfig after dropping the default.
->> 
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
->> ---
->>  arch/arm64/configs/defconfig | 2 ++
->>  drivers/clk/qcom/Kconfig     | 2 --
->>  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> Sorry, I wasn't very clear. IMHO the defconfig change should be a
-> separate patch and the v2 of this patch is ok as it is. It would just
-> make things easier to merge.
+The following changes since commit aad03a66f902e18bab612870261bde647fdbda2c:
 
-Oh, I see. Could you give your Ack on patch 2 then?
+  clk: renesas: r9a06g032: Add clock domain support (2019-06-04 11:51:00 +0200)
 
-Would the defconfig change go through the clk tree?
-Or maybe through the qcom tree?
+are available in the Git repository at:
 
-Regards.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.3-tag2
+
+for you to fetch changes up to ec2b827be39624bab743730385bc170d29472965:
+
+  clk: renesas: cpg-mssr: Use [] to denote a flexible array member (2019-06-20 11:37:16 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.3 (take two)
+
+  - Add CMM (Color Management Module) clocks on R-Car H3, M3-N, E3, and
+    D3,
+  - Add TPU (Timer Pulse Unit / PWM) clocks on RZ/G2M,
+  - Small cleanups and fixes.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Fabrizio Castro (1):
+      clk: renesas: r8a774a1: Add TMU clock
+
+Geert Uytterhoeven (5):
+      clk: renesas: cpg-mssr: Update kerneldoc for struct cpg_mssr_priv
+      clk: renesas: div6: Combine clock-private and parent array allocation
+      clk: renesas: mstp: Combine group-private and clock array allocation
+      clk: renesas: cpg-mssr: Combine driver-private and clock array allocation
+      clk: renesas: cpg-mssr: Use [] to denote a flexible array member
+
+Jacopo Mondi (4):
+      clk: renesas: r8a7795: Add CMM clocks
+      clk: renesas: r8a77965: Add CMM clocks
+      clk: renesas: r8a77990: Add CMM clocks
+      clk: renesas: r8a77995: Add CMM clocks
+
+ drivers/clk/renesas/clk-div6.c          | 19 +++++--------------
+ drivers/clk/renesas/clk-mstp.c          | 12 ++++++------
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c |  5 +++++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  |  4 ++++
+ drivers/clk/renesas/r8a77965-cpg-mssr.c |  3 +++
+ drivers/clk/renesas/r8a77990-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a77995-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/renesas-cpg-mssr.c  | 25 +++++++++----------------
+ 8 files changed, 36 insertions(+), 36 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
