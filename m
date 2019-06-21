@@ -4,29 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA24CC48BE3
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 07:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87388C43613
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 07:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4AC7208CA
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 07:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61D39208CA
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 07:05:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfFUHFu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jun 2019 03:05:50 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:38570 "EHLO inva021.nxp.com"
+        id S1726079AbfFUHFm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jun 2019 03:05:42 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:38390 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbfFUHFp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Jun 2019 03:05:45 -0400
+        id S1726008AbfFUHFl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Jun 2019 03:05:41 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2296A200911;
-        Fri, 21 Jun 2019 09:05:44 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D5F3220090B;
+        Fri, 21 Jun 2019 09:05:37 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E309D200902;
-        Fri, 21 Jun 2019 09:05:33 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9F2BD2000C5;
+        Fri, 21 Jun 2019 09:05:27 +0200 (CEST)
 Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 67799402DF;
-        Fri, 21 Jun 2019 15:05:21 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8DF7140323;
+        Fri, 21 Jun 2019 15:05:15 +0800 (SGT)
 From:   Anson.Huang@nxp.com
 To:     catalin.marinas@arm.com, will@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
@@ -37,12 +38,10 @@ To:     catalin.marinas@arm.com, will@kernel.org, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH 4/4] arm64: dts: imx8mm: Add system counter node
-Date:   Fri, 21 Jun 2019 15:07:20 +0800
-Message-Id: <20190621070720.12395-4-Anson.Huang@nxp.com>
+Subject: [PATCH 1/4] arm64: Enable TIMER_IMX_SYS_CTR for ARCH_MXC platforms
+Date:   Fri, 21 Jun 2019 15:07:17 +0800
+Message-Id: <20190621070720.12395-1-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190621070720.12395-1-Anson.Huang@nxp.com>
-References: <20190621070720.12395-1-Anson.Huang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -51,34 +50,26 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Anson Huang <Anson.Huang@nxp.com>
 
-Add i.MX8MM system counter node to enable timer-imx-sysctr
-broadcast timer driver.
+ARCH_MXC platforms needs system counter as broadcast timer
+to support cpuidle, enable it by default.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 232a741..f606efa 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -510,6 +510,15 @@
- 				#pwm-cells = <2>;
- 				status = "disabled";
- 			};
-+
-+			system_counter: timer@306a0000 {
-+				compatible = "nxp,sysctr-timer";
-+				reg = <0x306a0000 0x30000>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clk IMX8MM_CLK_SYS_CTR>;
-+				clock-names = "per";
-+			};
- 		};
- 
- 		aips3: bus@30800000 {
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4778c77..f5e623f 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -173,6 +173,7 @@ config ARCH_MXC
+ 	select PM
+ 	select PM_GENERIC_DOMAINS
+ 	select SOC_BUS
++	select TIMER_IMX_SYS_CTR
+ 	help
+ 	  This enables support for the ARMv8 based SoCs in the
+ 	  NXP i.MX family.
 -- 
 2.7.4
 
