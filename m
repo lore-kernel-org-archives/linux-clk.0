@@ -2,86 +2,103 @@ Return-Path: <SRS0=rhXi=UU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7704CC43613
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 09:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 382C5C43613
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 10:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4144721530
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 09:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09B7921537
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 10:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbfFUJdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:33:08 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40477 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJdH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jun 2019 05:33:07 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id E0B1160007;
-        Fri, 21 Jun 2019 09:33:03 +0000 (UTC)
-Date:   Fri, 21 Jun 2019 11:33:02 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        Nicolas.Ferre@microchip.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        claudiu.beznea@gmail.com
-Subject: Re: [PATCH 0/7] clk: at91: sckc: improve error path
-Message-ID: <20190621093302.GJ23549@piout.net>
-References: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
- <20190618095521.GE23549@piout.net>
- <929ac20b-db1d-3f7a-b37c-0dfb253156d5@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <929ac20b-db1d-3f7a-b37c-0dfb253156d5@microchip.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1726417AbfFUKdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jun 2019 06:33:08 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:35984 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfFUKdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jun 2019 06:33:08 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.192])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 86781568C5;
+        Fri, 21 Jun 2019 18:33:04 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P14435T140356020590336S1561113180405822_;
+        Fri, 21 Jun 2019 18:33:03 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <088971abcfd62b37d88279f7980530e4>
+X-RL-SENDER: tony.xie@rock-chips.com
+X-SENDER: xxx@rock-chips.com
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Tony Xie <tony.xie@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v10 1/6] mfd: rk808: remove the id_table
+Date:   Fri, 21 Jun 2019 06:32:53 -0400
+Message-Id: <20190621103258.8154-2-tony.xie@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190621103258.8154-1-tony.xie@rock-chips.com>
+References: <20190621103258.8154-1-tony.xie@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/06/2019 10:30:42+0000, Claudiu.Beznea@microchip.com wrote:
-> Hi,
-> 
-> On 18.06.2019 12:55, Alexandre Belloni wrote:
-> > On 13/06/2019 15:37:06+0000, Claudiu.Beznea@microchip.com wrote:
-> >> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> >>
-> >> Hi,
-> >>
-> >> This series tries to improve error path for slow clock registrations
-> >> by adding functions to free resources and using them on failures.
-> >>
-> > 
-> > Does the platform even boot when the slow clock is not available? 
-> > 
-> > The TCB clocksource would fail at:
-> > 
-> >         tc.slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
-> >         if (IS_ERR(tc.slow_clk))
-> >                 return PTR_ERR(tc.slow_clk);
-> > 
-> 
-> In case of using TC as clocksource, yes, the platform wouldn't boot if slow
-> clock is not available, because, anyway the TC needs it. PIT may work
-> without it (if slow clock is not used to drive the PIT).
-> 
-> For sure there are other IPs (which may be or are driven by slow clock)
-> which may not work if slow clock is driven them.
-> 
-> Anyway, please let me know if you feel this series has no meaning.
-> 
+Remove the id_table because it's not used.
 
-Well, I'm not sure it is worth it but at the same time, it is not adding
-many lines and you already developed it...
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+---
+ drivers/mfd/rk808.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index 216fbf6adec9..94377782d208 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -568,14 +568,6 @@ static int rk808_remove(struct i2c_client *client)
+ 	return 0;
+ }
+ 
+-static const struct i2c_device_id rk808_ids[] = {
+-	{ "rk805" },
+-	{ "rk808" },
+-	{ "rk818" },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(i2c, rk808_ids);
+-
+ static struct i2c_driver rk808_i2c_driver = {
+ 	.driver = {
+ 		.name = "rk808",
+@@ -583,7 +575,6 @@ static struct i2c_driver rk808_i2c_driver = {
+ 	},
+ 	.probe    = rk808_probe,
+ 	.remove   = rk808_remove,
+-	.id_table = rk808_ids,
+ };
+ 
+ module_i2c_driver(rk808_i2c_driver);
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.1
+
+
+
