@@ -1,486 +1,170 @@
-Return-Path: <SRS0=rhXi=UU=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=3Kxj=UV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B29AC43613
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 20:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A1FC43613
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Jun 2019 02:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53C732089E
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jun 2019 20:44:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="dOPOOF91"
+	by mail.kernel.org (Postfix) with ESMTP id 25FDC2070B
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Jun 2019 02:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561169698;
+	bh=Gw3/H1gb74X47RvwF/uGMRSSiLRpYocUROtj7YIJTQg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=UyxJjLso1KqYPIzohKeuY06ekMNBSWgYM8tQ7A/F/O87fUudt54ITNUoisVIb24G5
+	 iOeShvy45qksPtNWKbFqTljsfJ9j5p9buK0Fyd0IDnxPI1qUvSmmahvF7MN4b8Yeoq
+	 1U9P91rlTlKjAf/uNqpOJ95rdBDlMY5lAHasaFRc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbfFUUob (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jun 2019 16:44:31 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6721 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUUob (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jun 2019 16:44:31 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0d41ac0001>; Fri, 21 Jun 2019 13:44:29 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 21 Jun 2019 13:44:27 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 21 Jun 2019 13:44:27 -0700
-Received: from [10.2.174.126] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Jun
- 2019 20:44:23 +0000
-Subject: Re: [PATCH V3 11/17] clk: tegra210: support for Tegra210 clocks
- suspend and resume
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-12-git-send-email-skomatineni@nvidia.com>
- <20190618121607.GN28892@ulmo>
- <491e0b18-11e7-837c-4591-06ed30950e1d@nvidia.com>
- <20190619081541.GA3187@ulmo>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <467eec6e-87fd-0b59-f2f6-75eae4a15a34@nvidia.com>
-Date:   Fri, 21 Jun 2019 13:44:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726070AbfFVCO5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jun 2019 22:14:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbfFVCO5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Jun 2019 22:14:57 -0400
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC8AB20881
+        for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2019 02:14:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561169696;
+        bh=Gw3/H1gb74X47RvwF/uGMRSSiLRpYocUROtj7YIJTQg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VehpLnHup/AkdWVOKWpqRHTZ5wzoPU2KUaZaLoB8UYKQZyV0VUgPdaYXsO87OR8AC
+         7loe/VSVGCebHeTXoMtnOklXOgH1A3Ol0n1uu3C1qyFHmomObt85qGctZ4Y5UitpX0
+         nwdD7io4jS5WHomi60BwUN/6pwcvjTMEOxmnaCmI=
+Received: by mail-wr1-f49.google.com with SMTP id f9so8194806wre.12
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2019 19:14:55 -0700 (PDT)
+X-Gm-Message-State: APjAAAWkKjn6BY6O9Nu8VqDmvs0ZPWBdyJFwbTEOHWeBviahR/lPCUen
+        DLnq/ccM9BfclgqHk9XKoFRNcWQ7oKKTP9UA4YY=
+X-Google-Smtp-Source: APXvYqwvTIqSCbtB4S32cImo7307egfKoTitBiG9J1m3Ljc//NNauJ9wSYq+YM5mYMOCX+q+HStxsMAjvW2mvaBRzYA=
+X-Received: by 2002:adf:f946:: with SMTP id q6mr12293105wrr.109.1561169694434;
+ Fri, 21 Jun 2019 19:14:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190619081541.GA3187@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561149869; bh=rMya3Lsh8UkESwXjmICg3L7PVGzynThgYAA0U3Q3z+s=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=dOPOOF916qaV1KpO9gd7faBpvrrghFMtQD9ge9fbbRSusg1fu+QAFB968lGK9VlGa
-         attGAfjJBg9gbLLjFG9fL4VCi8JiYwEYWmW2fBlYoyq0p6dlWJrAMMLUk3WT0+bL3R
-         uVn/72IcURycFECcFOfSnsWHCHwTdHh4Ugdf7P176JlTIIFsok1NAWrOreDihpkZng
-         LvnmfEezHR7J8sagnlrFj2n1nCURIUj//1PlFtgeSz+/0Uuk5UqgmYc2QB1VZnGETc
-         pfF84AV1PuoLYcwgmw4MP9vPKSHPqFdw/J5pqXQAVz8quN6XFHBoioJ9zDbcySeVli
-         hBjCtUUw/vppg==
+References: <20190619082307.GA27382@wens.csie.org>
+In-Reply-To: <20190619082307.GA27382@wens.csie.org>
+From:   Chen-Yu Tsai <wens@kernel.org>
+Date:   Sat, 22 Jun 2019 10:14:42 +0800
+X-Gmail-Original-Message-ID: <CAGb2v660Wc12DnQ-OPQ67M4KT=Up+eA3aeAuCD71HDyJ5iy8gg@mail.gmail.com>
+Message-ID: <CAGb2v660Wc12DnQ-OPQ67M4KT=Up+eA3aeAuCD71HDyJ5iy8gg@mail.gmail.com>
+Subject: Re: [GIT PULL] clk: sunxi-ng: clk parent rewrite part 1
+To:     Chen-Yu Tsai <wens@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 6/19/19 1:15 AM, Thierry Reding wrote:
-> On Tue, Jun 18, 2019 at 10:58:40AM -0700, Sowjanya Komatineni wrote:
->> On 6/18/19 5:16 AM, Thierry Reding wrote:
->>> On Tue, Jun 18, 2019 at 12:46:25AM -0700, Sowjanya Komatineni wrote:
->>>> This patch adds system suspend and resume support for Tegra210
->>>> clocks.
->>>>
->>>> All the CAR controller settings are lost on suspend when core power
->>>> goes off.
->>>>
->>>> This patch has implementation for saving and restoring all the PLLs
->>>> and clocks context during system suspend and resume to have the
->>>> system back to operating state.
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>>    drivers/clk/tegra/clk-tegra210.c | 218 +++++++++++++++++++++++++++++++++++++--
->>>>    1 file changed, 211 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->>>> index e1ba62d2b1a0..c34d92e871f4 100644
->>>> --- a/drivers/clk/tegra/clk-tegra210.c
->>>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>>> @@ -9,10 +9,12 @@
->>>>    #include <linux/clkdev.h>
->>>>    #include <linux/of.h>
->>>>    #include <linux/of_address.h>
->>>> +#include <linux/of_platform.h>
->>>>    #include <linux/delay.h>
->>>>    #include <linux/export.h>
->>>>    #include <linux/mutex.h>
->>>>    #include <linux/clk/tegra.h>
->>>> +#include <linux/syscore_ops.h>
->>>>    #include <dt-bindings/clock/tegra210-car.h>
->>>>    #include <dt-bindings/reset/tegra210-car.h>
->>>>    #include <linux/iopoll.h>
->>>> @@ -20,6 +22,7 @@
->>>>    #include <soc/tegra/pmc.h>
->>>>    #include "clk.h"
->>>> +#include "clk-dfll.h"
->>>>    #include "clk-id.h"
->>>>    /*
->>>> @@ -36,6 +39,8 @@
->>>>    #define CLK_SOURCE_LA 0x1f8
->>>>    #define CLK_SOURCE_SDMMC2 0x154
->>>>    #define CLK_SOURCE_SDMMC4 0x164
->>>> +#define CLK_OUT_ENB_Y 0x298
->>>> +#define CLK_ENB_PLLP_OUT_CPU BIT(31)
->>>>    #define PLLC_BASE 0x80
->>>>    #define PLLC_OUT 0x84
->>>> @@ -225,6 +230,7 @@
->>>>    #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
->>>>    #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
->>>> +#define CPU_SOFTRST_CTRL 0x380
->>>>    #define LVL2_CLK_GATE_OVRA 0xf8
->>>>    #define LVL2_CLK_GATE_OVRC 0x3a0
->>>> @@ -2820,6 +2826,7 @@ static int tegra210_enable_pllu(void)
->>>>    	struct tegra_clk_pll_freq_table *fentry;
->>>>    	struct tegra_clk_pll pllu;
->>>>    	u32 reg;
->>>> +	int ret;
->>>>    	for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
->>>>    		if (fentry->input_rate == pll_ref_freq)
->>>> @@ -2836,7 +2843,7 @@ static int tegra210_enable_pllu(void)
->>>>    	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
->>>>    	reg &= ~BIT(pllu.params->iddq_bit_idx);
->>>>    	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
->>>> -	udelay(5);
->>>> +	fence_udelay(5, clk_base);
->>>>    	reg = readl_relaxed(clk_base + PLLU_BASE);
->>>>    	reg &= ~GENMASK(20, 0);
->>>> @@ -2844,13 +2851,13 @@ static int tegra210_enable_pllu(void)
->>>>    	reg |= fentry->n << 8;
->>>>    	reg |= fentry->p << 16;
->>>>    	writel(reg, clk_base + PLLU_BASE);
->>>> -	udelay(1);
->>>> +	fence_udelay(1, clk_base);
->>> These udelay() -> fence_udelay() seem like they should be a separate
->>> patch.
->>>
->>>>    	reg |= PLL_ENABLE;
->>>>    	writel(reg, clk_base + PLLU_BASE);
->>>> +	fence_udelay(1, clk_base);
->>>> -	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
->>>> -					  reg & PLL_BASE_LOCK, 2, 1000);
->>>> -	if (!(reg & PLL_BASE_LOCK)) {
->>>> +	ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
->>>> +	if (ret) {
->>>>    		pr_err("Timed out waiting for PLL_U to lock\n");
->>>>    		return -ETIMEDOUT;
->>>>    	}
->>>> @@ -2890,12 +2897,12 @@ static int tegra210_init_pllu(void)
->>>>    		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
->>>>    		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
->>>>    		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
->>>> -		udelay(1);
->>>> +		fence_udelay(1, clk_base);
->>>>    		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
->>>>    		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
->>>>    		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
->>>> -		udelay(1);
->>>> +		fence_udelay(1, clk_base);
->>>>    		reg = readl_relaxed(clk_base + PLLU_BASE);
->>>>    		reg &= ~PLLU_BASE_CLKENABLE_USB;
->>>> @@ -3282,6 +3289,188 @@ static void tegra210_disable_cpu_clock(u32 cpu)
->>>>    }
->>>>    #ifdef CONFIG_PM_SLEEP
->>>> +static u32 cpu_softrst_ctx[3];
->>>> +static struct platform_device *dfll_pdev;
->>>> +static u32 *periph_clk_src_ctx;
->>>> +struct periph_source_bank {
->>> Blank line between the above two.
->>>
->>>> +	u32 start;
->>>> +	u32 end;
->>>> +};
->>>> +
->>>> +static struct periph_source_bank periph_srcs[] = {
->>>> +	[0] = {
->>>> +		.start = 0x100,
->>>> +		.end = 0x198,
->>>> +	},
->>>> +	[1] = {
->>>> +		.start = 0x1a0,
->>>> +		.end = 0x1f8,
->>>> +	},
->>>> +	[2] = {
->>>> +		.start = 0x3b4,
->>>> +		.end = 0x42c,
->>>> +	},
->>>> +	[3] = {
->>>> +		.start = 0x49c,
->>>> +		.end = 0x4b4,
->>>> +	},
->>>> +	[4] = {
->>>> +		.start = 0x560,
->>>> +		.end = 0x564,
->>>> +	},
->>>> +	[5] = {
->>>> +		.start = 0x600,
->>>> +		.end = 0x678,
->>>> +	},
->>>> +	[6] = {
->>>> +		.start = 0x694,
->>>> +		.end = 0x6a0,
->>>> +	},
->>>> +	[7] = {
->>>> +		.start = 0x6b8,
->>>> +		.end = 0x718,
->>>> +	},
->>>> +};
->>>> +
->>>> +/* This array lists the valid clocks for each periph clk bank */
->>>> +static u32 periph_clks_on[] = {
->>>> +	0xdcd7dff9,
->>>> +	0x87d1f3e7,
->>>> +	0xf3fed3fa,
->>>> +	0xffc18cfb,
->>>> +	0x793fb7ff,
->>>> +	0x3fe66fff,
->>>> +	0xfc1fc7ff,
->>>> +};
->>> Hm... this is a bunch of magic. Perhaps replace this by a list of the
->>> clock IDs? That's perhaps a little more verbose, but if we ever need to
->>> tweak the list of IDs in that periph_clks_on array, that'll be quite the
->>> challenge.
->>>
->>> Also, is this list a "guess" or are these all guaranteed to be always
->>> on? What if some of these ended up getting disabled as part of suspend
->>> already (by their users). If we force them on, won't their references
->>> become unbalanced if the driver later enables them again on resume?
->> Yes, will replace with list of peripheral clock names..
->>
->> This list is not a guess. Each entry of this list maps to CLK_ENB set
->> register.
->>
->> Total 7 registers are available and each bit of these registers is for
->> enable/disable clock to corresponding peripheral.
->>
->> Some of the bits are off as those peripheral clocks don't need to be enabled
->> as we are not changing source or not using them like MIPIBIF, PLLG_REF..
->>
->> This list of peripheral clocks are enabled during resume before changing
->> clock sources and after clock source update, they are restored back to the
->> state they were before suspend. So their references don't become unbalanced.
-> Okay, good. Can you maybe put a version of that explanation in a comment
-> on top of the periph_clks_on declaration? And perhaps also describe this
-> in the commit message.
+On Wed, Jun 19, 2019 at 4:29 PM Chen-Yu Tsai <wens@kernel.org> wrote:
 >
-> Or maybe even better, add some comments in the main suspend/resume paths
-> to sort of "guide" through what's happening.
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 >
->>>> +
->>>> +static struct platform_device *dfll_pdev;
->>> I think you already predeclared this one above.
->>>
->>>> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) + ((_off) * 4))
->>>> +#define car_writel(_val, _base, _off) \
->>>> +		writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
->>>> +
->>>> +static u32 * __init tegra210_init_suspend_ctx(void)
->>>> +{
->>>> +	int i, size = 0;
->>> Can both be unsigned int.
->>>
->>>> +
->>>> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
->>>> +		size += periph_srcs[i].end - periph_srcs[i].start + 4;
->>>> +
->>>> +	periph_clk_src_ctx = kmalloc(size, GFP_KERNEL);
->>>> +
->>>> +	return periph_clk_src_ctx;
->>> It's somewhat wasteful to return a global variable since you can access
->>> it anyway. Perhaps it'd be more useful to make the function return a
->>> boolean?
->>>
->>>> +}
->>>> +
->>>> +static int tegra210_clk_suspend(void)
->>>> +{
->>>> +	int i;
->>> unsigned int.
->>>
->>>> +	unsigned long off;
->>>> +	struct device_node *node;
->>>> +	u32 *clk_rst_ctx = periph_clk_src_ctx;
->>>> +	u32 val;
->>>> +
->>>> +	tegra_cclkg_burst_policy_save_context();
->>>> +
->>>> +	if (!dfll_pdev) {
->>>> +		node = of_find_compatible_node(NULL, NULL,
->>>> +					       "nvidia,tegra210-dfll");
->>>> +		if (node)
->>>> +			dfll_pdev = of_find_device_by_node(node);
->>>> +		of_node_put(node);
->>>> +		if (!dfll_pdev)
->>>> +			pr_err("dfll node not found. no suspend for dfll\n");
->>>> +	}
->>> Wouldn't it make sense to run this only once, perhaps as part of
->>> tegra210_init_suspend_ctx()?
-
-tegra210_init_suspend_ctx is invoked during tegra210_clock_init and as 
-clock init happens earlier than dfll probe,
-
-dfll platform device will not be available at that time. So acquiring 
-dfll pdev during 1st suspend.
-
->>>> +
->>>> +	if (dfll_pdev)
->>>> +		tegra_dfll_suspend(dfll_pdev);
->>>> +
->>>> +	/* Enable PLLP_OUT_CPU after dfll suspend */
->>>> +	val = car_readl(CLK_OUT_ENB_Y, 0);
->>>> +	val |= CLK_ENB_PLLP_OUT_CPU;
->>>> +	car_writel(val, CLK_OUT_ENB_Y, 0);
->>>> +
->>>> +	tegra_clk_periph_suspend(clk_base);
->>>> +
->>>> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
->>>> +		for (off = periph_srcs[i].start; off <= periph_srcs[i].end;
->>>> +		     off += 4)
->>>> +			*clk_rst_ctx++ = car_readl(off, 0);
->>>> +
->>>> +	tegra_sclk_cclklp_burst_policy_save_context();
->>>> +
->>>> +	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->>>> +		cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
->>>> +
->>>> +	clk_save_context();
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static void tegra210_clk_resume(void)
->>>> +{
->>>> +	int i;
->>>> +	unsigned long off;
->>>> +	u32 val;
->>>> +	u32 *clk_rst_ctx = periph_clk_src_ctx;
->>>> +	struct clk_hw *parent;
->>>> +	struct clk *clk;
->>>> +
->>>> +	for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->>>> +		car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
->>>> +
->>>> +	tegra_clk_osc_resume(clk_base);
->>>> +
->>>> +	/*
->>>> +	 * restore all the plls before configuring clocks and resetting
->>>> +	 * the devices.
->>>> +	 */
->>>> +	tegra210_init_pllu();
->>>> +	tegra_sclk_cpulp_burst_policy_restore_context();
->>>> +	clk_restore_context();
->>>> +
->>>> +	/* enable all clocks before configuring clock sources */
->>>> +	tegra_clk_periph_force_on(periph_clks_on, ARRAY_SIZE(periph_clks_on),
->>>> +				  clk_base);
->>>> +	/* wait for all writes to happen to have all the clocks enabled */
->>>> +	wmb();
->>>> +	fence_udelay(2, clk_base);
->>>> +
->>>> +	/* restore all the devices clock sources */
->>>> +	for (i = 0; i < ARRAY_SIZE(periph_srcs); i++)
->>>> +		for (off = periph_srcs[i].start; off <= periph_srcs[i].end;
->>>> +		     off += 4)
->>>> +			car_writel(*clk_rst_ctx++, off, 0);
->>>> +
->>>> +	/* propagate and restore resets, restore clock state */
->>>> +	fence_udelay(5, clk_base);
->>>> +	tegra_clk_periph_resume(clk_base);
->>>> +
->>>> +	/*
->>>> +	 * restore CPUG clocks:
->>>> +	 * - enable DFLL in open loop mode
->>>> +	 * - switch CPUG to DFLL clock source
->>>> +	 * - close DFLL loop
->>>> +	 * - sync PLLX state
->>>> +	 */
->>>> +	if (dfll_pdev)
->>>> +		tegra_dfll_resume(dfll_pdev, false);
->>>> +
->>>> +	tegra_cclkg_burst_policy_restore_context();
->>>> +	fence_udelay(2, clk_base);
->>>> +
->>>> +	if (dfll_pdev)
->>>> +		tegra_dfll_resume(dfll_pdev, true);
->>>> +
->>>> +	parent = clk_hw_get_parent(__clk_get_hw(clks[TEGRA210_CLK_CCLK_G]));
->>>> +	clk = clks[TEGRA210_CLK_PLL_X];
->>>> +	if (parent != __clk_get_hw(clk))
->>>> +		tegra_clk_sync_state_pll(__clk_get_hw(clk));
->>>> +
->>>> +	/* Disable PLL_OUT_CPU after DFLL resume */
->>>> +	val = car_readl(CLK_OUT_ENB_Y, 0);
->>>> +	val &= ~CLK_ENB_PLLP_OUT_CPU;
->>>> +	car_writel(val, CLK_OUT_ENB_Y, 0);
->>>> +}
->>> I'm surprised by the amount of work that we need to do here. I had hoped
->>> that the clock framework's save/restore infrastructure would be enough.
->>> I suppose you do call clk_restore_context() somewhere in there, so maybe
->>> this really is as good as it gets.
->>>
->>> Thierry
->> Reason is there are dependencies b/w the clocks and DFLL resume and clocks
->> resume order needed is not same as clock tree list.
->>
->> during resume as per clock tree, CPU clock configs to use DFLL will happen
->> first as its first in the clock tree but DFLL resume should be done prior to
->> switching CPU to use from DFLL output.
->>
->> To resume DFLL, peripheral clocks should be restored.
->>
->> Considering these dependencies, performing peripheral and DFLL/CPU resume in
->> Tegra210 clock driver rather than in corresponding peripheral clk_ops using
->> save and restore context callback.
-> Okay makes sense. As mentioned above, I think it'd be great if you could
-> add more comments throughout the tegra210_clk_{suspend,resume}() code to
-> guide the reader through what you're doing, given that this is far from
-> obvious. You already do quite a bit of that, but it's perhaps better to
-> explain more what's going on and, perhaps more importantly, why. You're
-> currently mostly repeating the code sequence in the code. It'd be great
-> to have the general suspend/resume sequence detailed and highlight why
-> the sequence is the way it is and what the dependencies are, etc.
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 >
-> Thierry
+> are available in the Git repository at:
 >
-OK, Will add more comments in V4
->>>> +
->>>>    static void tegra210_cpu_clock_suspend(void)
->>>>    {
->>>>    	/* switch coresite to clk_m, save off original source */
->>>> @@ -3295,8 +3484,20 @@ static void tegra210_cpu_clock_resume(void)
->>>>    	writel(tegra210_cpu_clk_sctx.clk_csite_src,
->>>>    				clk_base + CLK_SOURCE_CSITE);
->>>>    }
->>>> +#else
->>>> +#define tegra210_clk_suspend	NULL
->>>> +#define tegra210_clk_resume	NULL
->>>> +static inline u32 *tegra210_init_suspend_ctx(void)
->>>> +{
->>>> +	return NULL;
->>>> +}
->>>>    #endif
->>>> +static struct syscore_ops tegra_clk_syscore_ops = {
->>>> +	.suspend = tegra210_clk_suspend,
->>>> +	.resume = tegra210_clk_resume,
->>>> +};
->>>> +
->>>>    static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
->>>>    	.wait_for_reset	= tegra210_wait_cpu_in_reset,
->>>>    	.disable_clock	= tegra210_disable_cpu_clock,
->>>> @@ -3580,5 +3781,8 @@ static void __init tegra210_clock_init(struct device_node *np)
->>>>    	tegra210_mbist_clk_init();
->>>>    	tegra_cpu_car_ops = &tegra210_cpu_car_ops;
->>>> +
->>>> +	if (tegra210_init_suspend_ctx())
->>>> +		register_syscore_ops(&tegra_clk_syscore_ops);
->>>>    }
->>>>    CLK_OF_DECLARE(tegra210, "nvidia,tegra210-car", tegra210_clock_init);
->>>> -- 
->>>> 2.7.4
->>>>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-ng-parent-rewrite-part-1
+>
+> for you to fetch changes up to 594d7e8fbe906ad3162ad84ae74acfbdcf8fa3a5:
+>
+>   clk: sunxi-ng: sun8i-r: Use local parent references for SUNXI_CCU_GATE (2019-06-18 19:53:33 +0800)
+>
+> ----------------------------------------------------------------
+> Allwinner sunxi-ng clk driver parent relation rewrite part 1
+>
+> The first part of ongoing work to convert the sunxi-ng clk driver from
+> using global clock name strings to describe clk parenting, to having
+> direct struct clk_hw pointers, or local names based on clock-names from
+> the device tree binding.
+>
+> This is based on Stephen Boyd's recent work allowing clk drivers to
+> specify clk parents using struct clk_hw * or parsing DT phandles in the
+> clk node.
+>
+> This series can be split into a few major parts:
+>
+> 1) The first patch is a small fix for clk debugfs representation.
+>
+> 2) A bunch of CLK_HW_INIT_* helper macros are added. These cover the
+>    situations I encountered, or assume I will encounter, such as single
+>    internal (struct clk_hw *) parent, single DT (struct clk_parent_data
+>    .fw_name), multiple internal parents, and multiple mixed (internal +
+>    DT) parents. A special variant for just an internal single parent is
+>    added, CLK_HW_INIT_HWS, which lets the driver share the singular
+>    list, instead of having the compiler create a compound literal every
+>    time. It might even make sense to only keep this variant.
+>
+> 3) A bunch of CLK_FIXED_FACTOR_* helper macros are added. The rationale
+>    is the same as the single parent CLK_HW_INIT_* helpers.
+>
+> 4) Bulk conversion of CLK_FIXED_FACTOR to use local parent references,
+>    either struct clk_hw * or DT .fw_name types, whichever the hardware
+>    requires.
+>
+> 5) The beginning of SUNXI_CCU_GATE conversion to local parent
+>    references. This part is not done. They are included as justification
+>    and examples for the shared list of clk parents case.
+>
+> ----------------------------------------------------------------
+> Chen-Yu Tsai (25):
+>       clk: Fix debugfs clk_possible_parents for clks without parent string names
+>       clk: Add CLK_HW_INIT_* macros using .parent_hws
+>       clk: Add CLK_HW_INIT_FW_NAME macro using .fw_name in .parent_data
+>       clk: Add CLK_HW_INIT_PARENT_DATA macro using .parent_data
+>       clk: fixed-factor: Add CLK_FIXED_FACTOR_HW which takes clk_hw pointer as parent
+>       clk: fixed-factor: Add CLK_FIXED_FACTOR_HWS which takes list of struct clk_hw *
+>       clk: fixed-factor: Add CLK_FIXED_FACTOR_FW_NAME for DT clock-names parent
+>       clk: sunxi-ng: switch to of_clk_hw_register() for registering clks
+>       clk: sunxi-ng: sun8i-r: Use local parent references for CLK_HW_INIT_*
+>       clk: sunxi-ng: a10: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: sun5i: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: a31: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: a23: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: a33: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: h3: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: r40: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: v3s: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: sun8i-r: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: f1c100s: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: a64: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: h6: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: h6-r: Use local parent references for CLK_FIXED_FACTOR
+>       clk: sunxi-ng: gate: Add macros for referencing local clock parents
+>       clk: sunxi-ng: a80-usb: Use local parent references for SUNXI_CCU_GATE
+>       clk: sunxi-ng: sun8i-r: Use local parent references for SUNXI_CCU_GATE
+>
+>  drivers/clk/clk.c                        |  44 ++++++++++++-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     |  39 +++++++-----
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c    |  41 +++++++-----
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   |   2 +-
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c     |  69 ++++++++++++--------
+>  drivers/clk/sunxi-ng/ccu-sun5i.c         |  34 ++++++----
+>  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     |  39 +++++++-----
+>  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     |  34 ++++++----
+>  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     |  34 ++++++----
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      |  29 ++++++---
+>  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 104 +++++++++++++++----------------
+>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c     |  46 +++++++++-----
+>  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     |  29 ++++++---
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c |  32 ++++++----
+>  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c |  29 ++++++---
+
+This has some build errors in it. I'll respin.
+Sorry for the noise.
+
+ChenYu
+
+>  drivers/clk/sunxi-ng/ccu_common.c        |   2 +-
+>  drivers/clk/sunxi-ng/ccu_gate.h          |  53 ++++++++++++++++
+>  include/linux/clk-provider.h             |  89 ++++++++++++++++++++++++++
+>  18 files changed, 526 insertions(+), 223 deletions(-)
