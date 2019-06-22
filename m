@@ -2,59 +2,85 @@ Return-Path: <SRS0=3Kxj=UV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2D5C48BE8
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Jun 2019 12:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC4DC43613
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Jun 2019 13:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51E320679
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Jun 2019 12:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C38320679
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Jun 2019 13:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="TPezhZpc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqTqJkmk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfFVMVy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Jun 2019 08:21:54 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:42082 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbfFVMVy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Jun 2019 08:21:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561206110; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AcJP+F7zzArO1aHbhKRqb5EiXnIEhX3CopkWcQGeA34=;
-        b=TPezhZpcdABh8N8LO4bNhWS4FIx9TmAYvj4yeuCLdDs4ojk8C6DROwldqNUr6UMdyEp6DU
-        jnWIJpi2MEG6s+1gbFGf+EJBKyfre3Dd2oCgG1tsgpwx2XPT+3qKyXU5earohHgPNcQhrW
-        HF1bdoxRNHp9UwrpXry4jky/iuSPLiY=
-Date:   Sat, 22 Jun 2019 14:21:42 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v12 04/13] mfd: Add Ingenic TCU driver
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S1726289AbfFVNKs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Jun 2019 09:10:48 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44396 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbfFVNKr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Jun 2019 09:10:47 -0400
+Received: by mail-lj1-f196.google.com with SMTP id k18so8390894ljc.11;
+        Sat, 22 Jun 2019 06:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=JKJ7NdLuEooMFWo6LA3qa+n1zarZyBvo2gr/w64oEhU=;
+        b=cqTqJkmkzCJZgmZraBOEPTF4KFzVDxCz/wKOmehscUGO3xmmVvpoNvDfAFfDtJgdhd
+         6afLLU5VEDA0WzPYHeGc4SvNbWt3fkZewR/vK/epUG5aLa2FgLUtBnVfgEVhS/NTRHxI
+         UEoOyERmH5DWxyHzaKLt3jEMin17d7R3511BrX9Eqn0nmV5iwOQF9H05uRovkUpYp+iq
+         A3bmmp9lvnD3+eLNnWbGwR2/OHfhFpTGaaLu1yqWgZWJDaiGzIwpoQFs6x+itvhLI5hd
+         dR3x0ahsaq2djScI0cbXG0kavaXkRXWyd0AwH6eeQ5plXpsjrdy0lzTyF9Li3tVTTXOh
+         42/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=JKJ7NdLuEooMFWo6LA3qa+n1zarZyBvo2gr/w64oEhU=;
+        b=kSCJJ1YzA70yUS4pE2YIgn7JA0GVaXE52yLcDjDapqT/Kf4TacENQm551egLUqnT6W
+         Li1CDuTwY73jorFbQ1qpND5HazITD7ici9ZfZ6eizzXie1FSwkxP0wPzJaMPxx7z3ekR
+         vFgxyco9PPz+pWHnuxrfU5/bWx1vB/u/X8p5dUmlOLCEnOQqPKC9jDCypWLS5FbqHCL7
+         dKPFBCQI6BYwMsSxe9Q7v2qGSX96e89KVQ92uqwHGM2N6spsTAzv1qSVCxZZMDtV4QpI
+         rw9SjNM18i/3PWoTxruREbyVpKfTDrlqKbAso+tx22GaAnJkV0mIgeW4Anu4s0ts58wu
+         OOPA==
+X-Gm-Message-State: APjAAAUVeshEkWuR29o6XVQ7pfKBIp84k9hy7hyr9qhyJXO5JJ9bEb/F
+        6jvi7dOBuf71Iit7CWNjqyv32n6wCtnmQi5wFgk=
+X-Google-Smtp-Source: APXvYqynjFLmTvY2JnFGiymi/s20MlB0RGAJBCuFJ20xD8lz5r0YsMLTewzKzTDqvog/w8S1ySij9keN4DPpz60sff4=
+X-Received: by 2002:a2e:8945:: with SMTP id b5mr35153457ljk.93.1561209044837;
+ Sat, 22 Jun 2019 06:10:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <CGME20190614095328eucas1p24009b3a07322fd12e49eabb7a08baf50@eucas1p2.samsung.com>
+ <20190614095309.24100-1-l.luba@partner.samsung.com> <20190614095309.24100-10-l.luba@partner.samsung.com>
+In-Reply-To: <20190614095309.24100-10-l.luba@partner.samsung.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Sat, 22 Jun 2019 22:10:08 +0900
+Message-ID: <CAGTfZH35X0zE2LhGWJJp2xZNNk1ew7zNMoMqL+eZ5rcBFcPvew@mail.gmail.com>
+Subject: Re: [PATCH v10 09/13] drivers: devfreq: events: add Exynos PPMU new events
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
-Message-Id: <1561206102.1777.2@crapouillou.net>
-In-Reply-To: <20190521145141.9813-5-paul@crapouillou.net>
-References: <20190521145141.9813-1-paul@crapouillou.net>
-        <20190521145141.9813-5-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, keescook@chromium.org,
+        Tony Lindgren <tony@atomide.com>, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -63,222 +89,43 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-I'll make a V13 of this patchset on top of -rc6, any feedback
-for this MFD driver? It's been already one month.
-
-Thanks,
--Paul
-
-
-
-Le mar. 21 mai 2019 =E0 16:51, Paul Cercueil <paul@crapouillou.net> a=20
-=E9crit :
-> This driver will provide a regmap that can be retrieved very early in
-> the boot process through the API function ingenic_tcu_get_regmap().
->=20
-> Additionally, it will call devm_of_platform_populate() so that all the
-> children devices will be probed.
->=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+2019=EB=85=84 6=EC=9B=94 14=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 6:54, L=
+ukasz Luba <l.luba@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
+=B1:
+>
+> Define new performance events supported by Exynos5422 SoC counters.
+> The counters are built-in in Dynamic Memory Controller and provide
+> information regarding memory utilization.
+>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->=20
-> Notes:
->     v12: New patch
->=20
->  drivers/mfd/Kconfig             |   8 +++
->  drivers/mfd/Makefile            |   1 +
->  drivers/mfd/ingenic-tcu.c       | 113=20
-> ++++++++++++++++++++++++++++++++
->  include/linux/mfd/ingenic-tcu.h |   8 +++
->  4 files changed, 130 insertions(+)
->  create mode 100644 drivers/mfd/ingenic-tcu.c
->=20
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 294d9567cc71..a13544474e05 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -494,6 +494,14 @@ config HTC_I2CPLD
->  	  This device provides input and output GPIOs through an I2C
->  	  interface to one or more sub-chips.
->=20
-> +config INGENIC_TCU
-> +	bool "Ingenic Timer/Counter Unit (TCU) support"
-> +	depends on MIPS || COMPILE_TEST
-> +	select REGMAP_MMIO
-> +	help
-> +	  Say yes here to support the Timer/Counter Unit (TCU) IP present
-> +	  in the JZ47xx SoCs from Ingenic.
+>  drivers/devfreq/event/exynos-ppmu.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/=
+exynos-ppmu.c
+> index c2ea94957501..ce658c262c27 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -89,6 +89,12 @@ static struct __exynos_ppmu_events {
+>         PPMU_EVENT(d1-cpu),
+>         PPMU_EVENT(d1-general),
+>         PPMU_EVENT(d1-rt),
 > +
->  config MFD_INTEL_QUARK_I2C_GPIO
->  	tristate "Intel Quark MFD I2C GPIO"
->  	depends on PCI
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 52b1a90ff515..fb89e131ae98 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -180,6 +180,7 @@ obj-$(CONFIG_AB8500_CORE)	+=3D ab8500-core.o=20
-> ab8500-sysctrl.o
->  obj-$(CONFIG_MFD_TIMBERDALE)    +=3D timberdale.o
->  obj-$(CONFIG_PMIC_ADP5520)	+=3D adp5520.o
->  obj-$(CONFIG_MFD_KEMPLD)	+=3D kempld-core.o
-> +obj-$(CONFIG_INGENIC_TCU)	+=3D ingenic-tcu.o
->  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+=3D intel_quark_i2c_gpio.o
->  obj-$(CONFIG_LPC_SCH)		+=3D lpc_sch.o
->  obj-$(CONFIG_LPC_ICH)		+=3D lpc_ich.o
-> diff --git a/drivers/mfd/ingenic-tcu.c b/drivers/mfd/ingenic-tcu.c
-> new file mode 100644
-> index 000000000000..6c1d5e4310c1
-> --- /dev/null
-> +++ b/drivers/mfd/ingenic-tcu.c
-> @@ -0,0 +1,113 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * JZ47xx SoCs TCU MFD driver
-> + * Copyright (C) 2019 Paul Cercueil <paul@crapouillou.net>
-> + */
-> +
-> +#include <linux/mfd/ingenic-tcu.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +struct ingenic_soc_info {
-> +	unsigned int num_channels;
-> +};
-> +
-> +static struct regmap *tcu_regmap __initdata;
-> +
-> +static const struct regmap_config ingenic_tcu_regmap_config =3D {
-> +	.reg_bits =3D 32,
-> +	.val_bits =3D 32,
-> +	.reg_stride =3D 4,
-> +	.max_register =3D TCU_REG_OST_CNTHBUF,
-> +};
-> +
-> +static const struct ingenic_soc_info jz4740_soc_info =3D {
-> +	.num_channels =3D 8,
-> +};
-> +
-> +static const struct ingenic_soc_info jz4725b_soc_info =3D {
-> +	.num_channels =3D 6,
-> +};
-> +
-> +static const struct of_device_id ingenic_tcu_of_match[] =3D {
-> +	{ .compatible =3D "ingenic,jz4740-tcu", .data =3D &jz4740_soc_info, },
-> +	{ .compatible =3D "ingenic,jz4725b-tcu", .data =3D &jz4725b_soc_info, }=
-,
-> +	{ .compatible =3D "ingenic,jz4770-tcu", .data =3D &jz4740_soc_info, },
-> +	{ }
-> +};
-> +
-> +static struct regmap * __init ingenic_tcu_create_regmap(struct=20
-> device_node *np)
-> +{
-> +	struct resource res;
-> +	void __iomem *base;
-> +	struct regmap *map;
-> +
-> +	if (!of_match_node(ingenic_tcu_of_match, np))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	base =3D of_io_request_and_map(np, 0, "TCU");
-> +	if (IS_ERR(base))
-> +		return ERR_PTR(PTR_ERR(base));
-> +
-> +	map =3D regmap_init_mmio(NULL, base, &ingenic_tcu_regmap_config);
-> +	if (IS_ERR(map))
-> +		goto err_iounmap;
-> +
-> +	return map;
-> +
-> +err_iounmap:
-> +	iounmap(base);
-> +	of_address_to_resource(np, 0, &res);
-> +	release_mem_region(res.start, resource_size(&res));
-> +
-> +	return map;
-> +}
-> +
-> +static int __init ingenic_tcu_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *map =3D ingenic_tcu_get_regmap(pdev->dev.of_node);
-> +
-> +	platform_set_drvdata(pdev, map);
-> +
-> +	regmap_attach_dev(&pdev->dev, map, &ingenic_tcu_regmap_config);
-> +
-> +	return devm_of_platform_populate(&pdev->dev);
-> +}
-> +
-> +static struct platform_driver ingenic_tcu_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "ingenic-tcu",
-> +		.of_match_table =3D ingenic_tcu_of_match,
-> +	},
-> +};
-> +
-> +static int __init ingenic_tcu_platform_init(void)
-> +{
-> +	return platform_driver_probe(&ingenic_tcu_driver,
-> +				     ingenic_tcu_probe);
-> +}
-> +subsys_initcall(ingenic_tcu_platform_init);
-> +
-> +struct regmap * __init ingenic_tcu_get_regmap(struct device_node *np)
-> +{
-> +	if (!tcu_regmap)
-> +		tcu_regmap =3D ingenic_tcu_create_regmap(np);
-> +
-> +	return tcu_regmap;
-> +}
-> +
-> +bool ingenic_tcu_pwm_can_use_chn(struct device *dev, unsigned int=20
-> channel)
-> +{
-> +	const struct ingenic_soc_info *soc =3D=20
-> device_get_match_data(dev->parent);
-> +
-> +	/* Enable all TCU channels for PWM use by default except channels=20
-> 0/1 */
-> +	u32 pwm_channels_mask =3D GENMASK(soc->num_channels - 1, 2);
-> +
-> +	device_property_read_u32(dev->parent, "ingenic,pwm-channels-mask",
-> +				 &pwm_channels_mask);
-> +
-> +	return !!(pwm_channels_mask & BIT(channel));
-> +}
-> +EXPORT_SYMBOL_GPL(ingenic_tcu_pwm_can_use_chn);
-> diff --git a/include/linux/mfd/ingenic-tcu.h=20
-> b/include/linux/mfd/ingenic-tcu.h
-> index 2083fa20821d..21df23916cd2 100644
-> --- a/include/linux/mfd/ingenic-tcu.h
-> +++ b/include/linux/mfd/ingenic-tcu.h
-> @@ -6,6 +6,11 @@
->  #define __LINUX_MFD_INGENIC_TCU_H_
->=20
->  #include <linux/bitops.h>
-> +#include <linux/init.h>
-> +
-> +struct device;
-> +struct device_node;
-> +struct regmap;
->=20
->  #define TCU_REG_WDT_TDR		0x00
->  #define TCU_REG_WDT_TCER	0x04
-> @@ -53,4 +58,7 @@
->  #define TCU_REG_TCNTc(c)	(TCU_REG_TCNT0 + ((c) * TCU_CHANNEL_STRIDE))
->  #define TCU_REG_TCSRc(c)	(TCU_REG_TCSR0 + ((c) * TCU_CHANNEL_STRIDE))
->=20
-> +struct regmap * __init ingenic_tcu_get_regmap(struct device_node=20
-> *np);
-> +bool ingenic_tcu_pwm_can_use_chn(struct device *dev, unsigned int=20
-> channel);
-> +
->  #endif /* __LINUX_MFD_INGENIC_TCU_H_ */
+> +       /* For Exynos5422 SoC */
+> +       PPMU_EVENT(dmc0_0),
+> +       PPMU_EVENT(dmc0_1),
+> +       PPMU_EVENT(dmc1_0),
+> +       PPMU_EVENT(dmc1_1),
+>  };
+>
+>  static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
 > --
-> 2.21.0.593.g511ec345e18
->=20
+> 2.17.1
+>
 
-=
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
+--=20
+Best Regards,
+Chanwoo Choi
