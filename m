@@ -2,127 +2,98 @@ Return-Path: <SRS0=8svT=UW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174E8C43613
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jun 2019 11:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32546C43613
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jun 2019 18:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF63D20679
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jun 2019 11:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3235206BA
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jun 2019 18:54:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VZ1oHWJZ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WXW9FMSz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbfFWLUk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jun 2019 07:20:40 -0400
-Received: from mail-eopbgr130050.outbound.protection.outlook.com ([40.107.13.50]:21984
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726350AbfFWLUk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 Jun 2019 07:20:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NllZTFARPBiLY5Ad+Gn0ez9Ow5idh95H78uOc3HLrG4=;
- b=VZ1oHWJZDm0K6Yel+lNvz179U9+FfZv2wzp22DJcbwKfV74qd7QBqIl03hRL5Pu1q2+jd/V5lDuh02WyuK5IgHKnxBjtlv5b8gDgdcSgLKRYE1wVeOYzhd/CMYEpaWHEaSp3WvptQLTDU0f/fe0LpgWeRvQtiNj3RGlD8DuQqsk=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3899.eurprd04.prod.outlook.com (52.134.71.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Sun, 23 Jun 2019 11:20:35 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::3945:fcda:5bdd:8191]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::3945:fcda:5bdd:8191%4]) with mapi id 15.20.2008.014; Sun, 23 Jun 2019
- 11:20:34 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Martin Kepplinger <martink@posteo.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 4/4] arm64: dts: imx8mm: Add system counter node
-Thread-Topic: [PATCH 4/4] arm64: dts: imx8mm: Add system counter node
-Thread-Index: AQHVJ/+/0SOBOWGUd0q/sAmaJpF3+6anlvCAgAGD/jA=
-Date:   Sun, 23 Jun 2019 11:20:34 +0000
-Message-ID: <DB3PR0402MB39164587E2F6F56DBB47BCE2F5E10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <20190621070720.12395-1-Anson.Huang@nxp.com>
- <20190621070720.12395-4-Anson.Huang@nxp.com>
- <9f411a1c-50d2-e26b-a4e6-83e02b626378@posteo.de>
-In-Reply-To: <9f411a1c-50d2-e26b-a4e6-83e02b626378@posteo.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8feae21b-1f88-4472-bac9-08d6f7cccfa9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3899;
-x-ms-traffictypediagnostic: DB3PR0402MB3899:
-x-microsoft-antispam-prvs: <DB3PR0402MB38996365D3EBF2A84A5120C1F5E10@DB3PR0402MB3899.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3968;
-x-forefront-prvs: 00770C4423
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(366004)(136003)(13464003)(199004)(189003)(6506007)(53546011)(66476007)(2501003)(3846002)(68736007)(52536014)(446003)(11346002)(6116002)(6436002)(76176011)(256004)(476003)(2906002)(5660300002)(99286004)(110136005)(25786009)(7696005)(186003)(66066001)(71200400001)(55016002)(6246003)(71190400001)(229853002)(66946007)(305945005)(102836004)(33656002)(53936002)(8936002)(26005)(9686003)(73956011)(44832011)(316002)(8676002)(66556008)(7736002)(7416002)(14454004)(76116006)(4326008)(486006)(74316002)(478600001)(86362001)(81156014)(2201001)(81166006)(66446008)(64756008)(32563001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3899;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NxgQWbB5WrEz7EaW/3PVZ3s9P2bwHnvQURvM5Itr8NOAtmo0X9hCMDtsuYmGBUa1cg8YJTDYbMy5dV6MkAyKWFkDuYjk812RM8kaT3qUcp6WmAkVQvNP04aXUzCfBM3RcpVllZlZWyxraSSNPF3vb2Y9eUm6kumyfVDayadeUygVPWDzwRkvFPWJpM8MXxWBb4rQsXoLfPtBxIOB2y9CFwJ0DaSLpBBYGvm6HMTvNBtHCwVDYNTONiIPopV+hvidbew8fCztY4qSLOBX+197iegyGMVgYrEqj7dqBm/efcTNo/JRWkldVTNfgx4CkAfiY2FBx7jfEmw+qwEvv+TfFT0t35PT/a9F7R29wlNB5LXwMdsMFgW4SGzvg8+EskKqZzVIHlIkzowLEJD8yNOYr9pnZk/6RKr3K98KlK/tvpI=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726285AbfFWSyj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jun 2019 14:54:39 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:33579 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbfFWSyj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jun 2019 14:54:39 -0400
+Received: by mail-ua1-f65.google.com with SMTP id f20so4911149ual.0
+        for <linux-clk@vger.kernel.org>; Sun, 23 Jun 2019 11:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nwiVA+zdiXVtcAA48z1FRqgt/DlrA/D4evtHSh23uZY=;
+        b=WXW9FMSzc1UsTJ9rcjpMCaBxf1C5ZoHQ14UHz9qlPWDHQ33TLNnXHqXeCW1ClW/+ST
+         XQwra40eUZSCdu4HdPc9kJ1NmaHLfVy1gGjvaL1awaEzqtNkPwTte9x7gYkuYF0fhGnF
+         GU5wQy9BmQqlbvy6M6Z44zI4no0tW6MjFIU/7bFpx7Tl3VPemNK1v+iApt6V8tkbxPPB
+         pr3hMV+RUiwIsvrH15F4EshfYsykku4k2+kHzf2Cpz0WEDF/utrZSZBCbTYCw/jLYpor
+         O++P00M0YlBYp2h7ISt02IDLepKg3z9WgCBPolmvzaWqrpK92FeNZwoIYiCLcEXPSgvM
+         ekMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nwiVA+zdiXVtcAA48z1FRqgt/DlrA/D4evtHSh23uZY=;
+        b=l3cMEFv6xflTz/94e3xx6IV9VvgPzk9hOkQG7eXEIkUusAtKzar7Flvk8/9GN/J0sy
+         XOIym/YvD4TXn4EHFsZTk4KEtXW/pQN2Ih7KCG7cAc653sN0bOgj+ymC9KbSBn5kwzmR
+         CuD/sDYqTSfMYE6Gyfz5TqmluJcaOAVff4ZesXiqB6Dp1yu2vW8bWhsvU2NJ0xhO/nh4
+         Y8yncaECtDh6TpzEnPIF4pWm++5wueZurFRERQiyhrlj+JItPElEKazgRc/10X1O12MK
+         bHpCvIBGW3lLKV62qDMbKtQftda/DLJokIBafJ8E2nyK4YPvKcZzj0y3yp0tS6hlHutf
+         kvTg==
+X-Gm-Message-State: APjAAAXHHQOKJWugAmAmZp249gdQDOonzmYJx9Ar9HmTxLYkcklFjZ02
+        qtHO3xey9MOcnQ/8HpPZeVYKDfHzeUryyH+P4qhVWg==
+X-Google-Smtp-Source: APXvYqzCzRAym8rh7cPGxz5P73v27dCWRwG4pG1j4xoLUfqZS/QTXvBWM1/a80OjBJmtJ0Ubodh9P1H1ZuNsZ8OVOQY=
+X-Received: by 2002:ab0:23ce:: with SMTP id c14mr9036423uan.77.1561316078413;
+ Sun, 23 Jun 2019 11:54:38 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8feae21b-1f88-4472-bac9-08d6f7cccfa9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2019 11:20:34.8050
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3899
+References: <0171956f-b367-9f3b-f690-71657d8c50ec@free.fr> <fe935706-b18d-8966-a447-c1fb2be25c85@linaro.org>
+ <d6f20e7b-2609-faf3-3dfa-aba644d8a9b6@free.fr>
+In-Reply-To: <d6f20e7b-2609-faf3-3dfa-aba644d8a9b6@free.fr>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Mon, 24 Jun 2019 00:24:27 +0530
+Message-ID: <CAHLCerP-dwpEdquSJ8F-tWatp97LHaF-uCxPNrvB4FStdTw0gw@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: qcom: msm8916: Don't build drivers by default
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGksIE1hcnRpbg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1hcnRp
-biBLZXBwbGluZ2VyIDxtYXJ0aW5rQHBvc3Rlby5kZT4NCj4gU2VudDogU2F0dXJkYXksIEp1bmUg
-MjIsIDIwMTkgODoxMCBQTQ0KPiBUbzogQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+
-OyBjYXRhbGluLm1hcmluYXNAYXJtLmNvbTsNCj4gd2lsbEBrZXJuZWwub3JnOyByb2JoK2R0QGtl
-cm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOw0KPiBzaGF3bmd1b0BrZXJuZWwub3JnOyBz
-LmhhdWVyQHBlbmd1dHJvbml4LmRlOyBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7DQo+IGZlc3RldmFt
-QGdtYWlsLmNvbTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNib3lkQGtlcm5lbC5vcmc7DQo+
-IExlb25hcmQgQ3Jlc3RleiA8bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+OyBBaXNoZW5nIERvbmcN
-Cj4gPGFpc2hlbmcuZG9uZ0BueHAuY29tPjsgSmFja3kgQmFpIDxwaW5nLmJhaUBueHAuY29tPjsg
-RGFuaWVsIEJhbHV0YQ0KPiA8ZGFuaWVsLmJhbHV0YUBueHAuY29tPjsgUGVuZyBGYW4gPHBlbmcu
-ZmFuQG54cC5jb20+OyBBYmVsIFZlc2ENCj4gPGFiZWwudmVzYUBueHAuY29tPjsgbGludXgtYXJt
-LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBjbGtAdmdlci5rZXJu
-ZWwub3JnDQo+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPg0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIIDQvNF0gYXJtNjQ6IGR0czogaW14OG1tOiBBZGQgc3lzdGVtIGNvdW50ZXIg
-bm9kZQ0KPiANCj4gT24gMjEuMDYuMTkgMDk6MDcsIEFuc29uLkh1YW5nQG54cC5jb20gd3JvdGU6
-DQo+ID4gRnJvbTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+ID4NCj4gPiBB
-ZGQgaS5NWDhNTSBzeXN0ZW0gY291bnRlciBub2RlIHRvIGVuYWJsZSB0aW1lci1pbXgtc3lzY3Ry
-IGJyb2FkY2FzdA0KPiA+IHRpbWVyIGRyaXZlci4NCj4gPg0KPiANCj4gDQo+IGRvIHdlIG5lZWQg
-c2ltaWxhciBhZGRpdGlvbnMgdG8gaW14OG1xPyBJZiBzbywgSSB0aGluayB0aGVzZSB3b3VsZCBm
-aXQgaW4gaGVyZQ0KPiB0b28uDQoNCmkuTVg4TVEgaGFzIHNvbWV0aGluZyBkaWZmZXJlbnQgYWJv
-dXQgc3lzdGVtIGNvdW50ZXIgZHJpdmVyIGVuYWJsZW1lbnQsIEkgZGlkDQppdCBpbiBhbm90aGVy
-IHBhdGNoIHNlcmllcy4NCg0KQW5zb24uDQoNCj4gDQo+IHRoYW5rcywNCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBtYXJ0aW4NCg0K
+On Fri, Jun 21, 2019 at 5:06 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
+>
+> On 19/06/2019 15:47, Georgi Djakov wrote:
+>
+> > On 19.06.19 14:44, Marc Gonzalez wrote:
+> >
+> >> QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 stand out as the only options
+> >> built by default. List them in defconfig after dropping the default.
+> >>
+> >> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> >> ---
+> >>  arch/arm64/configs/defconfig | 2 ++
+> >>  drivers/clk/qcom/Kconfig     | 2 --
+> >>  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > Sorry, I wasn't very clear. IMHO the defconfig change should be a
+> > separate patch and the v2 of this patch is ok as it is. It would just
+> > make things easier to merge.
+>
+> Oh, I see. Could you give your Ack on patch 2 then?
+>
+> Would the defconfig change go through the clk tree?
+> Or maybe through the qcom tree?
+
+This defconfig change could easily go through the qcom tree IMO.
