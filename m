@@ -2,82 +2,167 @@ Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CF7C43613
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 13:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29574C43613
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 13:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED05212F5
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 13:26:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0844F208E4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 13:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbfFXN0H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jun 2019 09:26:07 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:48576 "EHLO ns.iliad.fr"
+        id S1729845AbfFXNnh convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jun 2019 09:43:37 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:51985 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729221AbfFXN0H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:26:07 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id AA2C0202C7;
-        Mon, 24 Jun 2019 15:26:05 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 9275D2020F;
-        Mon, 24 Jun 2019 15:26:05 +0200 (CEST)
-Subject: [PATCH] clk: qcom: msm8916: Add 2 clk options in defconfig
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-References: <d654907d-a3a2-a00f-d6f5-3a34ae25ebcf@free.fr>
- <f96ab735-1001-5319-a314-b8079efd9046@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <5d1ff6a7-7b3b-9bbf-f737-5347555a2076@free.fr>
-Date:   Mon, 24 Jun 2019 15:26:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729815AbfFXNnh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Jun 2019 09:43:37 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id F0E2A6CACE;
+        Mon, 24 Jun 2019 13:43:30 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 21:43:23 +0800
+In-Reply-To: <20190624124301.chwhfalk5o53fm5x@flea>
+References: <20190623043801.14040-1-icenowy@aosc.io> <20190623043801.14040-10-icenowy@aosc.io> <20190624124301.chwhfalk5o53fm5x@flea>
 MIME-Version: 1.0
-In-Reply-To: <f96ab735-1001-5319-a314-b8079efd9046@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Jun 24 15:26:05 2019 +0200 (CEST)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v3 9/9] ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
+To:     linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC:     devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <1E6AB747-5A4C-4515-A0EB-F0E89F520CF7@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 used to be enabled by default
-in drivers/clk/qcom/Kconfig. A recent patch changed that by dropping
-the 'default ARCH_QCOM' directive.
 
-Add the two options explicitly in the arm64 defconfig, to avoid
-functional regressions.
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
-Bjorn, Andy, I believe you can take this patch through the qcom tree,
-once Stephen takes the parent patch.
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+于 2019年6月24日 GMT+08:00 下午8:43:01, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Sun, Jun 23, 2019 at 12:38:01PM +0800, Icenowy Zheng wrote:
+>> Lichee zero plus is a core board made by Sipeed, which includes
+>on-board
+>> TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
+>> header, a microUSB slot and a gold finger connector for expansion. It
+>> can use either Sochip S3 or Allwinner S3L SoC.
+>>
+>> Add the basic device tree for the core board, w/o optional onboard
+>> storage, and with S3 SoC.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>> Changes in v3:
+>> - Drop common regulator DTSI usage and added vcc3v3 regulator.
+>>
+>>  arch/arm/boot/dts/Makefile                    |  1 +
+>>  .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |  8 ++++
+>>  .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    | 44
+>+++++++++++++++++++
+>>  3 files changed, 53 insertions(+)
+>>  create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+>>  create mode 100644
+>arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+>>
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>> index c4742afe41a7..d24dec29245e 100644
+>> --- a/arch/arm/boot/dts/Makefile
+>> +++ b/arch/arm/boot/dts/Makefile
+>> @@ -1113,6 +1113,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+>>  	sun8i-r16-nintendo-super-nes-classic.dtb \
+>>  	sun8i-r16-parrot.dtb \
+>>  	sun8i-r40-bananapi-m2-ultra.dtb \
+>> +	sun8i-s3-lichee-zero-plus.dtb \
+>>  	sun8i-t3-cqa3t-bv3.dtb \
+>>  	sun8i-v3s-licheepi-zero.dtb \
+>>  	sun8i-v3s-licheepi-zero-dock.dtb \
+>> diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+>b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+>> new file mode 100644
+>> index 000000000000..7d2f6b145190
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+>> @@ -0,0 +1,8 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
+>> + */
+>> +
+>> +/dts-v1/;
+>> +#include "sun8i-s3.dtsi"
+>> +#include "sun8i-s3-s3l-lichee-zero-plus.dtsi"
+>> diff --git a/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+>b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+>> new file mode 100644
+>> index 000000000000..e68f738c3046
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+>> @@ -0,0 +1,46 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
+>> + */
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +
+>> +/ {
+>> +	aliases {
+>> +		serial0 = &uart0;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	reg_vcc3v3: vcc3v3 {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vcc3v3";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +	};
+>> +};
+>> +
+>> +&mmc0 {
+>> +	broken-cd;
+>> +	bus-width = <4>;
+>> +	vmmc-supply = <&reg_vcc3v3>;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&uart0 {
+>> +	pinctrl-0 = <&uart0_pb_pins>;
+>> +	pinctrl-names = "default";
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_otg {
+>> +	dr_mode = "otg";
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usbphy {
+>> +	usb0_id_det-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>;
+>> +	status = "okay";
+>> +};
+>
+>How can it do OTG if there's no controllable VBUS regulator?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5a8e853833cf..3277944626c2 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -658,6 +658,8 @@ CONFIG_CLK_IMX8MQ=y
- CONFIG_CLK_IMX8QXP=y
- CONFIG_TI_SCI_CLK=y
- CONFIG_COMMON_CLK_QCOM=y
-+CONFIG_QCOM_A53PLL=y
-+CONFIG_QCOM_CLK_APCS_MSM8916=y
- CONFIG_QCOM_CLK_SMD_RPM=y
- CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_GCC_8074=y
+All 5V's are connected together, like Orange Pi Zero.
+
+>
+>Maxime
+>
+>--
+>Maxime Ripard, Bootlin
+>Embedded Linux and Kernel engineering
+>https://bootlin.com
+
 -- 
-2.17.1
+使用 K-9 Mail 发送自我的Android设备。
