@@ -2,164 +2,153 @@ Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0319CC43613
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 15:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7BDC43613
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 16:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC33820673
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 15:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561390611;
-	bh=nQCGscNj+O8LozAIbKzRYPUMqcYVm8/zAFTWN0z8usw=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=bxeJtXYHqvWgVBTkI/acgS7MDtVwGcnF2imVgSSXrLGANlmIB2TisYb9EUe9iNVGM
-	 7Gh7j4PAkr12MK0z8ClUnvdTD45yOII41oJk3uDuGewodgEgVsy+fB1AeNyfYQUhd/
-	 HKfny9Pt7gwl0JYb330Az+me6UiEZX0mBu5u8x/k=
+	by mail.kernel.org (Postfix) with ESMTP id 53D5120673
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 16:21:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pEd8vglz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbfFXPgv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jun 2019 11:36:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbfFXPgv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:36:51 -0400
-Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76F0420652;
-        Mon, 24 Jun 2019 15:36:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561390610;
-        bh=nQCGscNj+O8LozAIbKzRYPUMqcYVm8/zAFTWN0z8usw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VZwLui3eS08gH9W27JP8goYPWjymvy6o3GGB2DTJ7YnynAwQw9hLr2VBDz8+B8ulL
-         gI3DcH2gXdZ7FjVSUvmiL1epya80kXTZ35DC4uVCbygZhHw3ZocqlSsp5cR47sLgQm
-         7pjb4JTjnnMAOOVpGTyaFTwJ54vnl/IthFA7gsBU=
-Date:   Mon, 24 Jun 2019 23:36:35 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
-        kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] i.MX clock changes for 5.3
-Message-ID: <20190624153615.GA20480@dragon>
+        id S1732038AbfFXQVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jun 2019 12:21:47 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18242 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732017AbfFXQVr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jun 2019 12:21:47 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d10f8970001>; Mon, 24 Jun 2019 09:21:43 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 24 Jun 2019 09:21:45 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 24 Jun 2019 09:21:45 -0700
+Received: from [10.2.174.126] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
+ 2019 16:21:41 +0000
+Subject: Re: [PATCH V4 13/18] soc/tegra: pmc: allow support for more tegra
+ wake
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+ <1561345379-2429-14-git-send-email-skomatineni@nvidia.com>
+ <86d0j3pfga.wl-marc.zyngier@arm.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <dc320c81-6601-4e6d-a7a0-57df8771bd99@nvidia.com>
+Date:   Mon, 24 Jun 2019 09:21:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <86d0j3pfga.wl-marc.zyngier@arm.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561393303; bh=XARYCg4Be2F4cVbObRkOiXOwjOP0Mst/Yjb4BxYksk0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=pEd8vglzapKb+YjH1kGdq1VvI2uMA+mEhIyqxyWrXHKcbEabHER36cmfheBuAXH/+
+         vwgY3pHKBGeLWWTaPihZ7JnQckG/pIOcjGpxkG22i4HM/fv2VvmS1F751NssxwWs5q
+         yB1ylptYE7DJ09259Ltst/0zXgzj5VU0voWZe3SFKU5ZnE8Yyhr/rKGTYMb+GaYgbu
+         BQNNfXXuCKZElcuZOLzroNxOOAtdMv2S8BOeu/AA92VpmzH7QwZxjzqXk17B/lN5B/
+         apDiv7TaS+FHvQhgcDOylFeDL7wanZT2PtbhHQECsfolUVLfW3PDzKdo/quVC0BXQm
+         VYS4YczznrIJg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
 
-Here is i.MX clock driver changes I queued for 5.3.  Please keep commit
-53c6a2ec018b ("clk: imx8m: Add GIC clock") stable, as I pulled it into
-i.MX DT tree as dependency.  Thanks!
+On 6/24/19 1:15 AM, Marc Zyngier wrote:
+> On Mon, 24 Jun 2019 04:02:54 +0100,
+> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+>> This patch allows to create separate irq_set_wake and irq_set_type
+>> implementations for different tegra designs PMC that has different
+>> wake models which require difference wake registers and different
+>> programming sequence.
+>>
+>> AOWAKE model support is available for Tegra186 and Tegra194 only
+>> and it resides within PMC and supports tiered wake architecture.
+>>
+>> Tegra210 and prior tegra designs uses PMC directly to receive wake
+>> events and coordinate the wake sequence.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/soc/tegra/pmc.c | 14 ++++++++++----
+>>   1 file changed, 10 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index edd4fe06810f..e87f29a35fcf 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -226,6 +226,8 @@ struct tegra_pmc_soc {
+>>   	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+>>   				   struct device_node *np,
+>>   				   bool invert);
+>> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
+>> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+>>   
+>>   	const char * const *reset_sources;
+>>   	unsigned int num_reset_sources;
+>> @@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>>   	.alloc = tegra_pmc_irq_alloc,
+>>   };
+>>   
+>> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>   {
+>>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>   	unsigned int offset, bit;
+>> @@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>   	return 0;
+>>   }
+>>   
+>> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>>   {
+>>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>   	u32 value;
+>> @@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+>>   	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+>>   	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+>>   	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+>> -	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+>> -	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
+>> +	if (pmc->soc->irq_set_type)
+>> +		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+>> +	if (pmc->soc->irq_set_wake)
+>> +		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+> I already commented on how superfluous these 'if ()' where. If you
+> disagree, please let me know why.
+>
+> Thanks,
+>
+> 	M.
 
-Shawn
+Sorry Marc, missed it. Will fix in next version...
 
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+Thanks
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Sowjanya
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-5.3
-
-for you to fetch changes up to 15c64ff7625513c551e2b50c1ae28f729b61c5d3:
-
-  clk: imx8mq: Keep uart clocks on during system boot (2019-06-24 09:43:40 +0800)
-
-----------------------------------------------------------------
-i.MX clock changes for 5.3:
- - A series from Abel Vesa to switch i.MX6 and i.MX7 clock drivers to
-   clk_hw based API.
- - Add GPIO, SNVS and GIC clocks for i.MX8 drivers.
- - Create a common function imx_mmdc_mask_handshake() for masking MMDC
-   handshake.
- - Drop __init for function imx_check_clocks() and imx_register_uart_clocks(),
-   so that they can be used by i.MX8 clock drivers which use driver model.
- - Use devm_platform_ioremap_resource() instead of of_iomap() for imx8mq
-   clock driver.
- - Mark imx6sx/ul/ull/sll MMDC_P1_IPG and imx8mm DRAM_APB as critical clock.
- - Correct imx7ulp nic1_bus_clk and imx8mm audio_pll2_clk clock setting.
-
-----------------------------------------------------------------
-Abel Vesa (18):
-      clk: imx: Add imx_obtain_fixed_clock clk_hw based variant
-      clk: imx6sx: Do not reparent to unregistered IMX6SX_CLK_AXI
-      clk: imx6q: Do not reparent uninitialized IMX6QDL_CLK_PERIPH2 clock
-      clk: imx: clk-busy: Switch to clk_hw based API
-      clk: imx: clk-cpu: Switch to clk_hw based API
-      clk: imx: clk-gate2: Switch to clk_hw based API
-      clk: imx: clk-pllv3: Switch to clk_hw based API
-      clk: imx: clk-pfd: Switch to clk_hw based API
-      clk: imx: clk-gate-exclusive: Switch to clk_hw based API
-      clk: imx: clk-fixup-div: Switch to clk_hw based API
-      clk: imx: clk-fixup-mux: Switch to clk_hw based API
-      clk: imx: Switch wrappers to clk_hw based API
-      clk: imx6sl: Switch to clk_hw based API
-      clk: imx6q: Switch to clk_hw based API
-      clk: imx6sx: Switch to clk_hw based API
-      clk: imx6ul: Switch to clk_hw based API
-      clk: imx7d: Switch to clk_hw based API
-      clk: imx6sll: Switch to clk_hw based API
-
-Anson Huang (14):
-      dt-bindings: clock: imx8mm: Add GPIO clocks
-      clk: imx8mm: add GPIO clocks to clock tree
-      dt-bindings: clock: imx8mq: Add SNVS clock
-      clk: imx8mq: add SNVS clock to clock tree
-      dt-bindings: clock: imx8mm: Add SNVS clock
-      clk: imx8mm: add SNVS clock to clock tree
-      clk: imx: Add common API for masking MMDC handshake
-      clk: imx: Use imx_mmdc_mask_handshake() API for masking MMDC channel
-      clk: imx7ulp: update nic1_bus_clk parent info
-      clk: imx: Remove __init for imx_check_clocks() API
-      clk: imx8mq: Use imx_check_clocks() API directly
-      clk: imx8mq: Use devm_platform_ioremap_resource() instead of of_iomap()
-      clk: imx: Remove __init for imx_register_uart_clocks() API
-      clk: imx8mq: Keep uart clocks on during system boot
-
-Arnd Bergmann (1):
-      clk: imx6q: fix section mismatch warning
-
-Jacky Bai (1):
-      clk: imx: keep the mmdc p1 ipg clock always on on 6sx/ul/ull/sll
-
-Leonard Crestez (3):
-      dt-bindings: clock: imx8m: Add GIC clock
-      clk: imx8m: Add GIC clock
-      clk: imx8mm: Mark dram_apb critical
-
-Peng Fan (1):
-      clk: imx: imx8mm: correct audio_pll2_clk to audio_pll2_out
-
- drivers/clk/imx/clk-busy.c               |  30 +-
- drivers/clk/imx/clk-cpu.c                |  14 +-
- drivers/clk/imx/clk-fixup-div.c          |  15 +-
- drivers/clk/imx/clk-fixup-mux.c          |  15 +-
- drivers/clk/imx/clk-gate-exclusive.c     |  17 +-
- drivers/clk/imx/clk-gate2.c              |  14 +-
- drivers/clk/imx/clk-imx6q.c              | 781 ++++++++++++------------
- drivers/clk/imx/clk-imx6sl.c             | 409 ++++++-------
- drivers/clk/imx/clk-imx6sll.c            | 433 +++++++-------
- drivers/clk/imx/clk-imx6sx.c             | 661 +++++++++++----------
- drivers/clk/imx/clk-imx6ul.c             | 579 +++++++++---------
- drivers/clk/imx/clk-imx7d.c              | 983 ++++++++++++++++---------------
- drivers/clk/imx/clk-imx7ulp.c            |   2 +-
- drivers/clk/imx/clk-imx8mm.c             |  18 +-
- drivers/clk/imx/clk-imx8mq.c             |  27 +-
- drivers/clk/imx/clk-pfd.c                |  14 +-
- drivers/clk/imx/clk-pllv3.c              |  14 +-
- drivers/clk/imx/clk.c                    |  34 +-
- drivers/clk/imx/clk.h                    | 143 +++--
- include/dt-bindings/clock/imx8mm-clock.h |  11 +-
- include/dt-bindings/clock/imx8mq-clock.h |   5 +-
- 21 files changed, 2225 insertions(+), 1994 deletions(-)
