@@ -2,222 +2,183 @@ Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6295CC43613
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 09:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E890C43613
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 10:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BFA42054F
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 09:46:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qSCxSb4W"
+	by mail.kernel.org (Postfix) with ESMTP id 5BDB220820
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 10:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfFXJqd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jun 2019 05:46:33 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37544 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbfFXJqd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jun 2019 05:46:33 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d11so9546681lfb.4;
-        Mon, 24 Jun 2019 02:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ev9Tj2wrV2sHVa78lJSUKLNtj813pnRYEFAtRIvugjE=;
-        b=qSCxSb4WXeoEdWJZpY6yBNK8LXScRMNlFQ6qW4vetx44ieE7bfXpvvHAA9dVyGi6W0
-         CkXlZVeJ6Xyz60NBJHmRkxeu60aF9Pmh1rLzqqpvUJ/J60YEk0b7O6F/yzgnKUHkMl3r
-         kSNAhNA0ozuVh4xziklAIjJ7ns5zqobvE0Z3I5SsdcXpc2MJM9jkpt55hD8UX98RjocV
-         Ay5xrZK/YLYBdbtMPBGacuWXzKMSsfDpEX7jhBfWUgInyyJi3DkMwMDM+XA+/4/2rnBm
-         3ZhfaUXVPaEKQQnlb1bL1Yft4giSc7pfAiB53860HM0iLNlHPY78Jov5uUZGTV/Mq2pI
-         sxOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ev9Tj2wrV2sHVa78lJSUKLNtj813pnRYEFAtRIvugjE=;
-        b=Zm4dJUm/ViY1+n/hC6GJHb5weR5KeYLtdJ2Vvs4YXDkj5l42+o/YOYxRN/0AUK3enh
-         KUIP1opHVQuITyHfSbgmmEwhTAGcTboj6xJRA7VmHMRnzD2KeIfokTmTpansB43DlWVM
-         E77bbu71oAemMpo4Ta9VjUiCO+fKWhf9xfd3VZ+bASQY46rHKEpR2q4zSptPMzzNAww0
-         RPea3h1NSLWda4rV5Q7I0tNxVCtIhkNgL4ICbtaf05jKGMgviIFn5YbZPVCDPwYzxEWu
-         oew2e4R1jwBkoKAMJRbyRdZBW1gB9P0H8O3d7s0LEBzcrUlZCHiD9oEbr4JqDcw+dr6z
-         Pi4w==
-X-Gm-Message-State: APjAAAVas0V/XpGsgSmXW/PQgK/MfQRYWPLoOB/XqWT9njEzWuT+4w3M
-        P0E4uhUMuzxe02s71Uz1V4vyxB7w
-X-Google-Smtp-Source: APXvYqzsFhhIEFfn6HM3ZO8SBA4KV8ZzTlRkGff2B0yMJxryYKBTwQTW/XWgiiIfqrsVyzbYuiKkow==
-X-Received: by 2002:a19:550f:: with SMTP id n15mr3464871lfe.34.1561369590174;
-        Mon, 24 Jun 2019 02:46:30 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id z26sm1643515ljz.64.2019.06.24.02.46.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 02:46:29 -0700 (PDT)
-Subject: Re: [PATCH V4 02/18] pinctrl: tegra: add suspend and resume support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a03ce644-5efd-e721-fb06-16de097171bb@gmail.com>
-Date:   Mon, 24 Jun 2019 12:46:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <1561345379-2429-3-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728996AbfFXKyw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jun 2019 06:54:52 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:42214 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728761AbfFXKyw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:54:52 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6FA6B2005E1;
+        Mon, 24 Jun 2019 12:54:49 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F92B2005D9;
+        Mon, 24 Jun 2019 12:54:49 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D2033205D1;
+        Mon, 24 Jun 2019 12:54:48 +0200 (CEST)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx8mm: Switch to platform driver
+Date:   Mon, 24 Jun 2019 13:54:32 +0300
+Message-Id: <1561373672-3533-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-24.06.2019 6:02, Sowjanya Komatineni пишет:
-> This patch adds support for Tegra pinctrl driver suspend and resume.
-> 
-> During suspend, context of all pinctrl registers are stored and
-> on resume they are all restored to have all the pinmux and pad
-> configuration for normal operation.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c    | 47 ++++++++++++++++++++++++++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra.h    |  4 +++
->  drivers/pinctrl/tegra/pinctrl-tegra210.c |  6 ++++
->  3 files changed, 57 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index b03c465917b8..c0ba6fa63ad1 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -631,6 +631,38 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->  	}
->  }
->  
-> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev)
+In order to make the clock provider a platform driver
+all the data and code needs to be outside of .init section.
 
-The "maybe_unused" attribute isn't needed for global functions because
-compiler always assumes that such functions are used somewhere outside.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mm.c | 52 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 18 deletions(-)
 
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	unsigned int i, j;
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];
-> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			*backup_regs++ = readl(regs++);
-> +	}
-> +
-> +	return pinctrl_force_sleep(pmx->pctl);
-> +}
-> +
-> +int __maybe_unused tegra_pinctrl_resume(struct device *dev)
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	unsigned int i, j;
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];
-> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			writel(*backup_regs++, regs++);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static bool gpio_node_has_range(const char *compatible)
->  {
->  	struct device_node *np;
-> @@ -655,6 +687,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  	int i;
->  	const char **group_pins;
->  	int fn, gn, gfn;
-> +	unsigned long backup_regs_size = 0;
->  
->  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
->  	if (!pmx)
-> @@ -707,6 +740,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		if (!res)
->  			break;
-> +		backup_regs_size += resource_size(res);
->  	}
->  	pmx->nbanks = i;
->  
-> @@ -715,11 +749,24 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  	if (!pmx->regs)
->  		return -ENOMEM;
->  
-> +	pmx->reg_bank_size = devm_kcalloc(&pdev->dev, pmx->nbanks,
-> +					  sizeof(*pmx->reg_bank_size),
-> +					  GFP_KERNEL);
-> +	if (!pmx->reg_bank_size)
-> +		return -ENOMEM;
-> +
-> +	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
-> +					GFP_KERNEL);
-> +	if (!pmx->backup_regs)
-> +		return -ENOMEM;
-> +
->  	for (i = 0; i < pmx->nbanks; i++) {
->  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
->  		if (IS_ERR(pmx->regs[i]))
->  			return PTR_ERR(pmx->regs[i]);
-> +
-> +		pmx->reg_bank_size[i] = resource_size(res);
->  	}
->  
->  	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-> index 32642af3f871..65fcbf8c7579 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-> @@ -17,6 +17,8 @@ struct tegra_pmx {
->  
->  	int nbanks;
->  	void __iomem **regs;
-> +	size_t *reg_bank_size;
-> +	u32 *backup_regs;
->  };
->  
->  enum tegra_pinconf_param {
-> @@ -195,4 +197,6 @@ struct tegra_pinctrl_soc_data {
->  
->  int tegra_pinctrl_probe(struct platform_device *pdev,
->  			const struct tegra_pinctrl_soc_data *soc_data);
-> +int __maybe_unused tegra_pinctrl_suspend(struct device *dev);
-> +int __maybe_unused tegra_pinctrl_resume(struct device *dev);
->  #endif
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> index 617ad963f5ad..4616bbc2efba 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> @@ -1562,6 +1562,11 @@ static int tegra210_pinctrl_probe(struct platform_device *pdev)
->  	return tegra_pinctrl_probe(pdev, &tegra210_pinctrl);
->  }
->  
-> +static const struct dev_pm_ops tegra_pinctrl_pm = {
-> +	.suspend = &tegra_pinctrl_suspend,
-> +	.resume = &tegra_pinctrl_resume
-> +};
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 6b8e75d..f2516c5 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -68,43 +68,43 @@ static const struct imx_pll14xx_rate_table imx8mm_drampll_tbl[] = {
+ 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_audio_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_audio_pll = {
+ 		.type = PLL_1443X,
+ 		.rate_table = imx8mm_audiopll_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_audiopll_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_video_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_video_pll = {
+ 		.type = PLL_1443X,
+ 		.rate_table = imx8mm_videopll_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_videopll_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_dram_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_dram_pll = {
+ 		.type = PLL_1443X,
+ 		.rate_table = imx8mm_drampll_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_drampll_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_arm_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_arm_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_gpu_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_gpu_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_vpu_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_vpu_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_sys_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_sys_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+@@ -374,7 +374,7 @@ static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m",
+ static struct clk *clks[IMX8MM_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
+-static struct clk ** const uart_clks[] __initconst = {
++static struct clk ** const uart_clks[] = {
+ 	&clks[IMX8MM_CLK_UART1_ROOT],
+ 	&clks[IMX8MM_CLK_UART2_ROOT],
+ 	&clks[IMX8MM_CLK_UART3_ROOT],
+@@ -382,19 +382,20 @@ static struct clk ** const uart_clks[] __initconst = {
+ 	NULL
+ };
+ 
+-static int __init imx8mm_clocks_init(struct device_node *ccm_node)
++static int imx8mm_clocks_probe(struct platform_device *pdev)
+ {
+-	struct device_node *np;
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
+ 	void __iomem *base;
+ 	int ret;
+ 
+ 	clks[IMX8MM_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+-	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(ccm_node, "osc_24m");
+-	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(ccm_node, "osc_32k");
+-	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(ccm_node, "clk_ext1");
+-	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(ccm_node, "clk_ext2");
+-	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(ccm_node, "clk_ext3");
+-	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(ccm_node, "clk_ext4");
++	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(np, "osc_24m");
++	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(np, "osc_32k");
++	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(np, "clk_ext1");
++	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(np, "clk_ext2");
++	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(np, "clk_ext3");
++	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(np, "clk_ext4");
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
+ 	base = of_iomap(np, 0);
+@@ -480,7 +481,7 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX8MM_SYS_PLL2_500M] = imx_clk_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
+ 	clks[IMX8MM_SYS_PLL2_1000M] = imx_clk_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
+ 
+-	np = ccm_node;
++	np = dev->of_node;
+ 	base = of_iomap(np, 0);
+ 	if (WARN_ON(!base))
+ 		return -ENOMEM;
+@@ -682,4 +683,19 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
+ 
+ 	return 0;
+ }
+-CLK_OF_DECLARE_DRIVER(imx8mm, "fsl,imx8mm-ccm", imx8mm_clocks_init);
++
++static const struct of_device_id imx8mm_clk_of_match[] = {
++	{ .compatible = "fsl,imx8mm-ccm" },
++	{ /* Sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
++
++
++static struct platform_driver imx8mm_clk_driver = {
++	.probe = imx8mm_clocks_probe,
++	.driver = {
++		.name = "imx8mm-ccm",
++		.of_match_table = of_match_ptr(imx8mm_clk_of_match),
++	},
++};
++module_platform_driver(imx8mm_clk_driver);
+-- 
+2.7.4
 
-What about to move tegra_pinctrl_pm out into pinctrl-tegra.c to make it
-common for all of the drivers?
