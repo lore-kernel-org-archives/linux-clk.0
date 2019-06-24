@@ -2,106 +2,96 @@ Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63410C4646C
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 13:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290DFC48BE9
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 14:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEB320652
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 13:57:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZUFFbp/v"
+	by mail.kernel.org (Postfix) with ESMTP id F34F7213F2
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 14:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbfFXN5u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jun 2019 09:57:50 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36753 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728464AbfFXN5u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jun 2019 09:57:50 -0400
-Received: by mail-qt1-f194.google.com with SMTP id p15so14544279qtl.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2019 06:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QqK3B7nF5SYG8tflVUOWfn/TwUeaesQ9Kp4ntpERzxE=;
-        b=ZUFFbp/vqXHm8ROouiCONAXZOuz9SHKSQ2Mg52Y39diFq6ScyeLHHzC3T9upjJCxSw
-         R6qOWeXrWvhvwXM6GexvTB7U+tbywAkXOgZkKX7X6BcOfqwNh9szXrMBOBGUil+QPwY0
-         qqoviKcCt3/pif8gmhijxBL8cFvVOTgyHUhfM+XRcjJSVWrTcHbCcsBA8bGeFMG6HKM4
-         vrXGWThxwhUqF7Uwka2nBex8qU09MJ4sqtOEsLZxjJXJdg7/rlqFOvpWd4Bt7CjPEqYz
-         eQhbscP5W2RFfJ1cy7a7TdDTDK+CuBJ0twLpo/mSscJuqbfP2jy2aao/jBfR82CS9znT
-         VGBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QqK3B7nF5SYG8tflVUOWfn/TwUeaesQ9Kp4ntpERzxE=;
-        b=g8q1vr3se48K74LSwlhIiWppDc8V4+gZP4F1tdLbA+2WJ/xS6sGNBHwSXNQ9r66o8+
-         lNVdocF7Uwo2fFwlclWxLZXUuqHDzdtBoHvwcpEv1SjySaxJBp417TrfQDpD635Ha69Y
-         qr4jkoVgS9qOaWVIT6uZoxKDk/FM5pdc6Nb7V2B7ErKsNlcoPJ0qNKi+Jcm4+XIWFE4I
-         vUVPwmvCGZlZ6P2cQ7mOyHgRlO7v11W0o2Q/y6NCTa3L4vLfyUypL5YccSoeKJ+mZNAp
-         3jG90F6l19M2Rne5nqBbRwf+oSFCcOLycFjvAUdbceOUsx1cBc6PtTyB97d02xOql+Nm
-         +7VQ==
-X-Gm-Message-State: APjAAAXTL0/Sz4a+g5ZaQB3ZySqa9nrjv3vLd4gxkG3bAyOabSclrPOl
-        JRyqfCV7G7M1vkrV77EpladrcBrb/zfQ2jnRq+OFVTLU
-X-Google-Smtp-Source: APXvYqzahao66RH4Ei4UrfD64a+p0ylgYwwI5RitOzNtZRoa6gNBzWpKRI5QtbhqMbGILXLo76TjK48sYxNFYa5Sti0=
-X-Received: by 2002:a0c:b885:: with SMTP id y5mr2877647qvf.31.1561384669393;
- Mon, 24 Jun 2019 06:57:49 -0700 (PDT)
+        id S1728130AbfFXOKB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jun 2019 10:10:01 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:51848 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbfFXOKA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jun 2019 10:10:00 -0400
+Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 996DF3AB767;
+        Mon, 24 Jun 2019 13:49:07 +0000 (UTC)
+X-Originating-IP: 90.88.16.156
+Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 7056A20015;
+        Mon, 24 Jun 2019 13:48:57 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 15:48:56 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 9/9] ARM: dts: sun8i: s3: add devicetree for Lichee
+ zero plus w/ S3
+Message-ID: <20190624134856.4cez7m3uc3tzkpuc@flea>
+References: <20190623043801.14040-1-icenowy@aosc.io>
+ <20190623043801.14040-10-icenowy@aosc.io>
+ <20190624124301.chwhfalk5o53fm5x@flea>
+ <1E6AB747-5A4C-4515-A0EB-F0E89F520CF7@aosc.io>
 MIME-Version: 1.0
-References: <d654907d-a3a2-a00f-d6f5-3a34ae25ebcf@free.fr> <f96ab735-1001-5319-a314-b8079efd9046@linaro.org>
- <5d1ff6a7-7b3b-9bbf-f737-5347555a2076@free.fr>
-In-Reply-To: <5d1ff6a7-7b3b-9bbf-f737-5347555a2076@free.fr>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 24 Jun 2019 19:27:38 +0530
-Message-ID: <CAP245DWbC8vY1pVuYnGvZ=7LVAAaqAm9TtccCktdxNWuuoxf5w@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: msm8916: Add 2 clk options in defconfig
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zxvkkmn55l32dkjm"
+Content-Disposition: inline
+In-Reply-To: <1E6AB747-5A4C-4515-A0EB-F0E89F520CF7@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 6:56 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
->
-> QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 used to be enabled by default
-> in drivers/clk/qcom/Kconfig. A recent patch changed that by dropping
-> the 'default ARCH_QCOM' directive.
->
-> Add the two options explicitly in the arm64 defconfig, to avoid
-> functional regressions.
->
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
-Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
-> Bjorn, Andy, I believe you can take this patch through the qcom tree,
-> once Stephen takes the parent patch.
-> ---
->  arch/arm64/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
+--zxvkkmn55l32dkjm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jun 24, 2019 at 09:43:23PM +0800, Icenowy Zheng wrote:
+> >> +&usb_otg {
+> >> +	dr_mode = "otg";
+> >> +	status = "okay";
+> >> +};
+> >> +
+> >> +&usbphy {
+> >> +	usb0_id_det-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>;
+> >> +	status = "okay";
+> >> +};
+> >
+> >How can it do OTG if there's no controllable VBUS regulator?
 >
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 5a8e853833cf..3277944626c2 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -658,6 +658,8 @@ CONFIG_CLK_IMX8MQ=y
->  CONFIG_CLK_IMX8QXP=y
->  CONFIG_TI_SCI_CLK=y
->  CONFIG_COMMON_CLK_QCOM=y
-> +CONFIG_QCOM_A53PLL=y
-> +CONFIG_QCOM_CLK_APCS_MSM8916=y
->  CONFIG_QCOM_CLK_SMD_RPM=y
->  CONFIG_QCOM_CLK_RPMH=y
->  CONFIG_IPQ_GCC_8074=y
-> --
-> 2.17.1
+> All 5V's are connected together, like Orange Pi Zero.
+
+So it's a "it can't"?
+
+And the orange pi zero says that it can only do peripheral.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--zxvkkmn55l32dkjm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRDUyAAKCRDj7w1vZxhR
+xf0zAQCi5yMphtVy7Fni1inyxiANdxNrQlQW3OVimG6brkVyVwEAo7h8m+NLImGt
+4bQgRfzj3aMgbAemt9y56Z7FeLYepwg=
+=+IOZ
+-----END PGP SIGNATURE-----
+
+--zxvkkmn55l32dkjm--
