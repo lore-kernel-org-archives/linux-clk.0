@@ -1,99 +1,275 @@
-Return-Path: <SRS0=8svT=UW=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32546C43613
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jun 2019 18:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82135C43613
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 01:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3235206BA
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jun 2019 18:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AC7322CEB
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 01:40:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WXW9FMSz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qh3d5gfp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbfFWSyj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jun 2019 14:54:39 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:33579 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbfFWSyj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jun 2019 14:54:39 -0400
-Received: by mail-ua1-f65.google.com with SMTP id f20so4911149ual.0
-        for <linux-clk@vger.kernel.org>; Sun, 23 Jun 2019 11:54:39 -0700 (PDT)
+        id S1726343AbfFXBk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jun 2019 21:40:26 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34221 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbfFXBk0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jun 2019 21:40:26 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p17so10934992ljg.1;
+        Sun, 23 Jun 2019 18:40:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nwiVA+zdiXVtcAA48z1FRqgt/DlrA/D4evtHSh23uZY=;
-        b=WXW9FMSzc1UsTJ9rcjpMCaBxf1C5ZoHQ14UHz9qlPWDHQ33TLNnXHqXeCW1ClW/+ST
-         XQwra40eUZSCdu4HdPc9kJ1NmaHLfVy1gGjvaL1awaEzqtNkPwTte9x7gYkuYF0fhGnF
-         GU5wQy9BmQqlbvy6M6Z44zI4no0tW6MjFIU/7bFpx7Tl3VPemNK1v+iApt6V8tkbxPPB
-         pr3hMV+RUiwIsvrH15F4EshfYsykku4k2+kHzf2Cpz0WEDF/utrZSZBCbTYCw/jLYpor
-         O++P00M0YlBYp2h7ISt02IDLepKg3z9WgCBPolmvzaWqrpK92FeNZwoIYiCLcEXPSgvM
-         ekMA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5P6VYJ1+hQDw92+7+bBRSMzmzrw3hI9cXPsaHrG3nMk=;
+        b=Qh3d5gfp9z2HVfeJKDJvqvTLURcbZGg0Tc6Bc3tZv7RInTZ3YXOQnGu+NFVKDt17fN
+         CPO38PkYgH5k+2YL/Ze3KtrZ5NEoBh+hHb5qzjIXTEJoBDgdtwzCEo68ZHLYXcDVBBnZ
+         +WEVRsbJmDnoi1bO0fIVCSLlM4AEHGTJjpDw/Ydsl/VC+kmgJwtzkDvEV9AlGATS/xfP
+         drbO5nn6dvSXoxQFxdmSIYNTBPlSNeigd+eMzAv57tXMP/NpKCj9iiFIVkLxnE2ILsfV
+         iGqs130DZQ2HGmhVkiZOWY7rkdEVHXaThk+f2AfRshDcePzO81CqbFqv5WQ3LGYHKkq6
+         6kng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nwiVA+zdiXVtcAA48z1FRqgt/DlrA/D4evtHSh23uZY=;
-        b=l3cMEFv6xflTz/94e3xx6IV9VvgPzk9hOkQG7eXEIkUusAtKzar7Flvk8/9GN/J0sy
-         XOIym/YvD4TXn4EHFsZTk4KEtXW/pQN2Ih7KCG7cAc653sN0bOgj+ymC9KbSBn5kwzmR
-         CuD/sDYqTSfMYE6Gyfz5TqmluJcaOAVff4ZesXiqB6Dp1yu2vW8bWhsvU2NJ0xhO/nh4
-         Y8yncaECtDh6TpzEnPIF4pWm++5wueZurFRERQiyhrlj+JItPElEKazgRc/10X1O12MK
-         bHpCvIBGW3lLKV62qDMbKtQftda/DLJokIBafJ8E2nyK4YPvKcZzj0y3yp0tS6hlHutf
-         kvTg==
-X-Gm-Message-State: APjAAAXHHQOKJWugAmAmZp249gdQDOonzmYJx9Ar9HmTxLYkcklFjZ02
-        qtHO3xey9MOcnQ/8HpPZeVYKDfHzeUryyH+P4qhVWg==
-X-Google-Smtp-Source: APXvYqzCzRAym8rh7cPGxz5P73v27dCWRwG4pG1j4xoLUfqZS/QTXvBWM1/a80OjBJmtJ0Ubodh9P1H1ZuNsZ8OVOQY=
-X-Received: by 2002:ab0:23ce:: with SMTP id c14mr9036423uan.77.1561316078413;
- Sun, 23 Jun 2019 11:54:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <0171956f-b367-9f3b-f690-71657d8c50ec@free.fr> <fe935706-b18d-8966-a447-c1fb2be25c85@linaro.org>
- <d6f20e7b-2609-faf3-3dfa-aba644d8a9b6@free.fr>
-In-Reply-To: <d6f20e7b-2609-faf3-3dfa-aba644d8a9b6@free.fr>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 24 Jun 2019 00:24:27 +0530
-Message-ID: <CAHLCerP-dwpEdquSJ8F-tWatp97LHaF-uCxPNrvB4FStdTw0gw@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: qcom: msm8916: Don't build drivers by default
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5P6VYJ1+hQDw92+7+bBRSMzmzrw3hI9cXPsaHrG3nMk=;
+        b=rtHKOQnnybUu/xxlUf9OdS6iqfJGRQ7cnyJD7EXPOlG435rVDjVwRzRLLTByAtKaOf
+         QAyOvULmKzdg1xyJkZIVQCKqSuAzMxiveNN173tJUPodVZOcW5Jq3qmgJspiga7DYup5
+         NerXudqog/1Dykunbwr+wU9PKbiUvcYux50XZnmsxY6qn7FLHNTmW0WV49A0A619eFQJ
+         e9cNSt2wSkOJtTUak5M7t1emS0wGVvMbSvK7QkldD8YiUvGVZvAbVDlqwVOIrFSrcY0Q
+         /Gs44apIz0AsB/0Jw2lxrxVXmhifJyMIKcFie87Y/DsRyHDDzcIr+DejXZp0jvrr2eqr
+         S7NA==
+X-Gm-Message-State: APjAAAXmr82K2gc1bszarj4CIxwmAcB4NaHyhOMeheLn+FBRZHL2BZyd
+        7z8B8lNVy43pAFb6rLVczFhawfJW
+X-Google-Smtp-Source: APXvYqywm3r3hGWZqZ+BjjyFtDR1ZcB5X4C1iAFpZjB39gk0c241tHxuJogdCjBEVeCozRi8Tbl70Q==
+X-Received: by 2002:a2e:9c43:: with SMTP id t3mr15244837ljj.157.1561336325979;
+        Sun, 23 Jun 2019 17:32:05 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.gmail.com with ESMTPSA id y5sm1495146ljj.5.2019.06.23.17.32.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Jun 2019 17:32:05 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 09/10] memory: tegra: Consolidate registers definition into common header
+Date:   Mon, 24 Jun 2019 03:31:31 +0300
+Message-Id: <20190624003132.29473-10-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190624003132.29473-1-digetx@gmail.com>
+References: <20190624003132.29473-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 5:06 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
->
-> On 19/06/2019 15:47, Georgi Djakov wrote:
->
-> > On 19.06.19 14:44, Marc Gonzalez wrote:
-> >
-> >> QCOM_A53PLL and QCOM_CLK_APCS_MSM8916 stand out as the only options
-> >> built by default. List them in defconfig after dropping the default.
-> >>
-> >> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> >> ---
-> >>  arch/arm64/configs/defconfig | 2 ++
-> >>  drivers/clk/qcom/Kconfig     | 2 --
-> >>  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > Sorry, I wasn't very clear. IMHO the defconfig change should be a
-> > separate patch and the v2 of this patch is ok as it is. It would just
-> > make things easier to merge.
->
-> Oh, I see. Could you give your Ack on patch 2 then?
->
-> Would the defconfig change go through the clk tree?
-> Or maybe through the qcom tree?
+The Memory Controller registers definition is sparse and duplicated,
+let's consolidate everything into a common place for consistency.
 
-This defconfig change could easily go through the qcom tree IMO.
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/tegra/mc.c       | 30 -------------------
+ drivers/memory/tegra/mc.h       | 52 +++++++++++++++++++++++++++++----
+ drivers/memory/tegra/tegra124.c | 20 -------------
+ drivers/memory/tegra/tegra30.c  | 20 -------------
+ 4 files changed, 47 insertions(+), 75 deletions(-)
+
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index 4c1492c653e1..c926aa81a6ac 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -21,36 +21,6 @@
+ 
+ #include "mc.h"
+ 
+-#define MC_INTSTATUS 0x000
+-
+-#define MC_INTMASK 0x004
+-
+-#define MC_ERR_STATUS 0x08
+-#define  MC_ERR_STATUS_TYPE_SHIFT 28
+-#define  MC_ERR_STATUS_TYPE_INVALID_SMMU_PAGE (6 << MC_ERR_STATUS_TYPE_SHIFT)
+-#define  MC_ERR_STATUS_TYPE_MASK (0x7 << MC_ERR_STATUS_TYPE_SHIFT)
+-#define  MC_ERR_STATUS_READABLE (1 << 27)
+-#define  MC_ERR_STATUS_WRITABLE (1 << 26)
+-#define  MC_ERR_STATUS_NONSECURE (1 << 25)
+-#define  MC_ERR_STATUS_ADR_HI_SHIFT 20
+-#define  MC_ERR_STATUS_ADR_HI_MASK 0x3
+-#define  MC_ERR_STATUS_SECURITY (1 << 17)
+-#define  MC_ERR_STATUS_RW (1 << 16)
+-
+-#define MC_ERR_ADR 0x0c
+-
+-#define MC_GART_ERROR_REQ		0x30
+-#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
+-#define MC_SECURITY_VIOLATION_STATUS	0x74
+-
+-#define MC_EMEM_ARB_CFG 0x90
+-#define  MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE(x)	(((x) & 0x1ff) << 0)
+-#define  MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE_MASK	0x1ff
+-#define MC_EMEM_ARB_MISC0 0xd8
+-
+-#define MC_EMEM_ADR_CFG 0x54
+-#define MC_EMEM_ADR_CFG_EMEM_NUMDEV BIT(0)
+-
+ static const struct of_device_id tegra_mc_of_match[] = {
+ #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ 	{ .compatible = "nvidia,tegra20-mc-gart", .data = &tegra20_mc_soc },
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index abc565b42225..65783063612f 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -15,6 +15,37 @@
+ 
+ #include <soc/tegra/mc.h>
+ 
++#define MC_INTSTATUS					0x00
++#define MC_INTMASK					0x04
++#define MC_ERR_STATUS					0x08
++#define MC_ERR_ADR					0x0c
++#define MC_GART_ERROR_REQ				0x30
++#define MC_EMEM_ADR_CFG					0x54
++#define MC_DECERR_EMEM_OTHERS_STATUS			0x58
++#define MC_SECURITY_VIOLATION_STATUS			0x74
++#define MC_EMEM_ARB_CFG					0x90
++#define MC_EMEM_ARB_OUTSTANDING_REQ			0x94
++#define MC_EMEM_ARB_TIMING_RCD				0x98
++#define MC_EMEM_ARB_TIMING_RP				0x9c
++#define MC_EMEM_ARB_TIMING_RC				0xa0
++#define MC_EMEM_ARB_TIMING_RAS				0xa4
++#define MC_EMEM_ARB_TIMING_FAW				0xa8
++#define MC_EMEM_ARB_TIMING_RRD				0xac
++#define MC_EMEM_ARB_TIMING_RAP2PRE			0xb0
++#define MC_EMEM_ARB_TIMING_WAP2PRE			0xb4
++#define MC_EMEM_ARB_TIMING_R2R				0xb8
++#define MC_EMEM_ARB_TIMING_W2W				0xbc
++#define MC_EMEM_ARB_TIMING_R2W				0xc0
++#define MC_EMEM_ARB_TIMING_W2R				0xc4
++#define MC_EMEM_ARB_DA_TURNS				0xd0
++#define MC_EMEM_ARB_DA_COVERS				0xd4
++#define MC_EMEM_ARB_MISC0				0xd8
++#define MC_EMEM_ARB_MISC1				0xdc
++#define MC_EMEM_ARB_RING1_THROTTLE			0xe0
++#define MC_EMEM_ARB_OVERRIDE				0xe8
++#define MC_TIMING_CONTROL_DBG				0xf8
++#define MC_TIMING_CONTROL				0xfc
++
+ #define MC_INT_DECERR_MTS				BIT(16)
+ #define MC_INT_SECERR_SEC				BIT(13)
+ #define MC_INT_DECERR_VPR				BIT(12)
+@@ -25,17 +56,28 @@
+ #define MC_INT_INVALID_GART_PAGE			BIT(7)
+ #define MC_INT_DECERR_EMEM				BIT(6)
+ 
+-#define MC_EMEM_ARB_OUTSTANDING_REQ			0x94
++#define MC_ERR_STATUS_TYPE_SHIFT			28
++#define MC_ERR_STATUS_TYPE_INVALID_SMMU_PAGE		(0x6 << 28)
++#define MC_ERR_STATUS_TYPE_MASK				(0x7 << 28)
++#define MC_ERR_STATUS_READABLE				BIT(27)
++#define MC_ERR_STATUS_WRITABLE				BIT(26)
++#define MC_ERR_STATUS_NONSECURE				BIT(25)
++#define MC_ERR_STATUS_ADR_HI_SHIFT			20
++#define MC_ERR_STATUS_ADR_HI_MASK			0x3
++#define MC_ERR_STATUS_SECURITY				BIT(17)
++#define MC_ERR_STATUS_RW				BIT(16)
++
++#define MC_EMEM_ADR_CFG_EMEM_NUMDEV			BIT(0)
++
++#define MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE(x)		((x) & 0x1ff)
++#define MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE_MASK		0x1ff
++
+ #define MC_EMEM_ARB_OUTSTANDING_REQ_MAX_MASK		0x1ff
+ #define MC_EMEM_ARB_OUTSTANDING_REQ_HOLDOFF_OVERRIDE	BIT(30)
+ #define MC_EMEM_ARB_OUTSTANDING_REQ_LIMIT_ENABLE	BIT(31)
+ 
+-#define MC_EMEM_ARB_OVERRIDE				0xe8
+ #define MC_EMEM_ARB_OVERRIDE_EACK_MASK			0x3
+ 
+-#define MC_TIMING_CONTROL_DBG				0xf8
+-
+-#define MC_TIMING_CONTROL				0xfc
+ #define MC_TIMING_UPDATE				BIT(0)
+ 
+ static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+index 6985a4e33325..daff801db569 100644
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -13,26 +13,6 @@
+ 
+ #include "mc.h"
+ 
+-#define MC_EMEM_ARB_CFG				0x90
+-#define MC_EMEM_ARB_OUTSTANDING_REQ		0x94
+-#define MC_EMEM_ARB_TIMING_RCD			0x98
+-#define MC_EMEM_ARB_TIMING_RP			0x9c
+-#define MC_EMEM_ARB_TIMING_RC			0xa0
+-#define MC_EMEM_ARB_TIMING_RAS			0xa4
+-#define MC_EMEM_ARB_TIMING_FAW			0xa8
+-#define MC_EMEM_ARB_TIMING_RRD			0xac
+-#define MC_EMEM_ARB_TIMING_RAP2PRE		0xb0
+-#define MC_EMEM_ARB_TIMING_WAP2PRE		0xb4
+-#define MC_EMEM_ARB_TIMING_R2R			0xb8
+-#define MC_EMEM_ARB_TIMING_W2W			0xbc
+-#define MC_EMEM_ARB_TIMING_R2W			0xc0
+-#define MC_EMEM_ARB_TIMING_W2R			0xc4
+-#define MC_EMEM_ARB_DA_TURNS			0xd0
+-#define MC_EMEM_ARB_DA_COVERS			0xd4
+-#define MC_EMEM_ARB_MISC0			0xd8
+-#define MC_EMEM_ARB_MISC1			0xdc
+-#define MC_EMEM_ARB_RING1_THROTTLE		0xe0
+-
+ static const struct tegra_mc_client tegra124_mc_clients[] = {
+ 	{
+ 		.id = 0x00,
+diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
+index 67676677fd6a..f17488a0c5c7 100644
+--- a/drivers/memory/tegra/tegra30.c
++++ b/drivers/memory/tegra/tegra30.c
+@@ -13,26 +13,6 @@
+ 
+ #include "mc.h"
+ 
+-#define MC_EMEM_ARB_CFG				0x90
+-#define MC_EMEM_ARB_OUTSTANDING_REQ		0x94
+-#define MC_EMEM_ARB_TIMING_RCD			0x98
+-#define MC_EMEM_ARB_TIMING_RP			0x9c
+-#define MC_EMEM_ARB_TIMING_RC			0xa0
+-#define MC_EMEM_ARB_TIMING_RAS			0xa4
+-#define MC_EMEM_ARB_TIMING_FAW			0xa8
+-#define MC_EMEM_ARB_TIMING_RRD			0xac
+-#define MC_EMEM_ARB_TIMING_RAP2PRE		0xb0
+-#define MC_EMEM_ARB_TIMING_WAP2PRE		0xb4
+-#define MC_EMEM_ARB_TIMING_R2R			0xb8
+-#define MC_EMEM_ARB_TIMING_W2W			0xbc
+-#define MC_EMEM_ARB_TIMING_R2W			0xc0
+-#define MC_EMEM_ARB_TIMING_W2R			0xc4
+-#define MC_EMEM_ARB_DA_TURNS			0xd0
+-#define MC_EMEM_ARB_DA_COVERS			0xd4
+-#define MC_EMEM_ARB_MISC0			0xd8
+-#define MC_EMEM_ARB_MISC1			0xdc
+-#define MC_EMEM_ARB_RING1_THROTTLE		0xe0
+-
+ static const unsigned long tegra30_mc_emem_regs[] = {
+ 	MC_EMEM_ARB_CFG,
+ 	MC_EMEM_ARB_OUTSTANDING_REQ,
+-- 
+2.22.0
+
