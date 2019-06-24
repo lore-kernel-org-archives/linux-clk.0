@@ -2,183 +2,248 @@ Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E890C43613
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 10:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E2CC48BE9
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 12:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BDB220820
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 10:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6297213F2
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 12:08:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h9pJqog2";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c/cNt6ab"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbfFXKyw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jun 2019 06:54:52 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42214 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728761AbfFXKyw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:54:52 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6FA6B2005E1;
-        Mon, 24 Jun 2019 12:54:49 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F92B2005D9;
-        Mon, 24 Jun 2019 12:54:49 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D2033205D1;
-        Mon, 24 Jun 2019 12:54:48 +0200 (CEST)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx8mm: Switch to platform driver
-Date:   Mon, 24 Jun 2019 13:54:32 +0300
-Message-Id: <1561373672-3533-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728078AbfFXMIK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jun 2019 08:08:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34036 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbfFXMIJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jun 2019 08:08:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D7F77609F3; Mon, 24 Jun 2019 12:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561378087;
+        bh=9ujNcqd3Jlk3Z/TiNKetSI2m/c0UKKDThlftDiCds6c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=h9pJqog2KLZX2/CZvlRhbXHEzNCMAQzo5TGj+iu443rfjrQ+4njhrLR9DW7ewOPn3
+         DBUzKIXYZWR4KGP6jytD6O6kyVWHNhTgfCztOyv2QVOYo5v1n0bUPWCWtxPr9xVyFS
+         arKJsBlfFCr4f+mRJjy78JBCZiiGHlOSf+s5Pgv4=
+Received: from [10.201.2.161] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E619660741;
+        Mon, 24 Jun 2019 12:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561378086;
+        bh=9ujNcqd3Jlk3Z/TiNKetSI2m/c0UKKDThlftDiCds6c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=c/cNt6ab0JnsACEdMUTWK8p12ZkhjGvGmOB4Z0EKau0tn0Y9V+YljIe2zNvb9ELjB
+         k8cL6vc0otLqpc3sFowUcEv+qu1D1Qw+4MRHw7oMNl3QESYStoAdTHXebgyJGpfoBd
+         YLUX/tzSnLy4okEaUFilCKJNyX9y1oRkC/TpdIF8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E619660741
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
+To:     Christian Lamparter <chunkeey@gmail.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+ <1981742.H2rzviYcjI@debian64>
+ <96fd8992-e333-6b3b-15c0-2845984120aa@codeaurora.org>
+ <2600627.FlAEz51UtF@debian64>
+From:   Sricharan R <sricharan@codeaurora.org>
+Message-ID: <e2a447f8-6024-0369-f698-2027b6edcf9e@codeaurora.org>
+Date:   Mon, 24 Jun 2019 17:38:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <2600627.FlAEz51UtF@debian64>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to make the clock provider a platform driver
-all the data and code needs to be outside of .init section.
+Hi Christian,
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/clk-imx8mm.c | 52 +++++++++++++++++++++++++++++---------------
- 1 file changed, 34 insertions(+), 18 deletions(-)
+On 6/20/2019 9:02 PM, Christian Lamparter wrote:
+> Hello Sricharan,
+> 
+> On Wednesday, June 19, 2019 4:42:11 PM CEST Sricharan R wrote:
+>> On 6/15/2019 2:11 AM, Christian Lamparter wrote:
+>>> On Wednesday, June 12, 2019 11:48:48 AM CEST Sricharan R wrote:
+>>>> Hi Christian,
+>>>>
+>>>> On 6/10/2019 5:45 PM, Christian Lamparter wrote:
+>>>>> On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
+>>>>>> Hi Christian,
+>>>>>>
+>>>>>> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
+>>>>>>> On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
+>>>>>>>>
+>>>>>>>> Add initial device tree support for the Qualcomm IPQ6018 SoC and
+>>>>>>>> CP01 evaluation board.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>>>>>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>>>>>>>> --- /dev/null
+>>>>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>>>>>>>>
+>>>>>>>> +       clocks {
+>>>>>>>> +               sleep_clk: sleep_clk {
+>>>>>>>> +                       compatible = "fixed-clock";
+>>>>>>>> +                       clock-frequency = <32000>;
+>>>>>>>> +                       #clock-cells = <0>;
+>>>>>>>> +               };
+>>>>>>>> +
+>>>>>>> Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
+>>>>>>> on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
+>>>>>>> From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
+>>>>>>> declares them at 32000 Hz. Since you probably have access to the BOM and
+>>>>>>> datasheets. Can you please confirm what's the real clock frequency for
+>>>>>>> the IPQ6018.
+>>>>>>> (And maybe also for the sleep_clk of the IPQ4018 as well?).
+>>>>>>>
+>>>>>>
+>>>>>> What exactly is the issue that you faced ?
+>>>>>> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
+>>>>>
+>>>>> We need just a confirmation.
+>>>>>
+>>>>> Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
+>>>>>
+>>>>> |		sleep_clk: sleep_clk {
+>>>>> |			compatible = "fixed-clock";
+>>>>> |			clock-frequency = <32768>;
+>>>>> |			#clock-cells = <0>;
+>>>>> |		};
+>>>>>
+>>>>> <https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
+>>>>>
+>>>>> Which makes sense, because all previous Qualcomm Atheros MIPS and the
+>>>>> future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
+>>>>>
+>>>>> For example: The AR9344 derives the clock from the 25MHz/40MHz external
+>>>>> oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
+>>>>> Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
+>>>>> depending whenever the external reference crystal has 40MHz or 25MHz.
+>>>>> (1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
+>>>>> in "10.19.11 Derived RTC Clock". 
+>>>>>
+>>>>> For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
+>>>>> <http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
+>>>>> "I was only able to verify for IPQ8072 that it had a 32.768 KHz
+>>>>> sleep clock." 
+>>>>>
+>>>>> So this is pretty much "why there is an issue", it's confusing.
+>>>>> Is possible can you please look if there are (fixed) divisors values
+>>>>> listed in the documentation or the registers and bits that the values
+>>>>> are stored in? Because then we could just calculate it. 
+>>>>>
+>>>>
+>>>> Really sorry for the confusion. So looking little more, SLEEP_CLK is derived
+>>>> from an external 38.4MHZ crystal, it is 32.768 KHZ.
+>>> That's really valuable information to have. Thank you!
+>>>
+>>>> Somehow the clk freq plan etc seems to mention them only as .032 MHZ and misses
+>>>> out. That means i will correct the patch for 32768 and probably the
+>>>> ipq8074.dtsi as well
+>>>
+>>> Ok, there's one more issue that Paul found (at least with the IPQ4019),
+>>> https://patchwork.ozlabs.org/patch/1099482
+>>>
+>>> it seems that the "sleep_clk" node in the qcom-ipq4019.dtsi is not used by
+>>> the gcc-ipq4019.c clk driver. this causes both wifi rtc_clks and the usb sleep
+>>> clks to dangle in the /sys/kernel/debug/clk/clk_summary (from a RT-AC58U)
+>>>
+>>>    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+>>> ----------------------------------------------------------------------------------------
+>>>  xo                                       9            9    48000000          0 0
+>>>  [...]
+>>>  sleep_clk                                1            1       32768          0 0  
+>>>  gcc_wcss5g_rtc_clk                       1            1           0          0 0  
+>>>  gcc_wcss2g_rtc_clk                       1            1           0          0 0  
+>>>  gcc_usb3_sleep_clk                       1            1           0          0 0  
+>>>  gcc_usb2_sleep_clk                       1            1           0          0 0  
+>>>
+>>> with his patch the /sys/kernel/debug/clk/clk_summary looks "better" 
+>>>
+>>> (something like this:)
+>>>
+>>>    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+>>> ----------------------------------------------------------------------------------------
+>>>  xo                                       9            9    48000000          0 0
+>>>  [...] 
+>>>  gcc_sleep_clk_src                        5            5       32000          0 0  
+>>>     gcc_wcss5g_rtc_clk                    1            1       32000          0 0  
+>>>     gcc_wcss2g_rtc_clk                    1            1       32000          0 0  
+>>>     gcc_usb3_sleep_clk                    1            1       32000          0 0  
+>>>     gcc_usb2_sleep_clk                    1            1       32000          0 0  
+>>>
+>>> but judging from your comment "SLEEP_CLK is derived from an
+>>> external 38.4MHZ crystal" the gcc_sleep_clk_src / sleep_clk
+>>> should have xo as the parent. so the ideal output should be:
+>>>
+>>>    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+>>> ----------------------------------------------------------------------------------------
+>>>  xo                                      10           10    48000000          0 0
+>>>  [...] 
+>>>     gcc_sleep_clk                         5            5       32768          0 0  
+>>>        gcc_wcss5g_rtc_clk                 1            1       32768          0 0  
+>>>        gcc_wcss2g_rtc_clk                 1            1       32768          0 0  
+>>>        gcc_usb3_sleep_clk                 1            1       32768          0 0  
+>>>        gcc_usb2_sleep_clk                 1            1       32768          0 0  
+>>>
+>>> or am I missing/skipping over something important? 
+>>>
+>>
+>> Sorry for the delayed response. So what i said above (32768 clk) looks
+>> like true only for ipq8074. For ipq4019, looks like 32000.
+>>
+>> That means, there is still some thing unclear. I am checking for precise
+>> information from HW team for ipq4019/8074/6018. Please hang on, will
+>> update you asap.
+> 
+> Thank you for looking this up! I'll definitely stick around for the final
+> verdict.
+> 
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 6b8e75d..f2516c5 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -68,43 +68,43 @@ static const struct imx_pll14xx_rate_table imx8mm_drampll_tbl[] = {
- 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
- };
- 
--static struct imx_pll14xx_clk imx8mm_audio_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_audio_pll = {
- 		.type = PLL_1443X,
- 		.rate_table = imx8mm_audiopll_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_audiopll_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_video_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_video_pll = {
- 		.type = PLL_1443X,
- 		.rate_table = imx8mm_videopll_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_videopll_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_dram_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_dram_pll = {
- 		.type = PLL_1443X,
- 		.rate_table = imx8mm_drampll_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_drampll_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_arm_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_arm_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_gpu_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_gpu_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_vpu_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_vpu_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_sys_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_sys_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
-@@ -374,7 +374,7 @@ static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m",
- static struct clk *clks[IMX8MM_CLK_END];
- static struct clk_onecell_data clk_data;
- 
--static struct clk ** const uart_clks[] __initconst = {
-+static struct clk ** const uart_clks[] = {
- 	&clks[IMX8MM_CLK_UART1_ROOT],
- 	&clks[IMX8MM_CLK_UART2_ROOT],
- 	&clks[IMX8MM_CLK_UART3_ROOT],
-@@ -382,19 +382,20 @@ static struct clk ** const uart_clks[] __initconst = {
- 	NULL
- };
- 
--static int __init imx8mm_clocks_init(struct device_node *ccm_node)
-+static int imx8mm_clocks_probe(struct platform_device *pdev)
- {
--	struct device_node *np;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
- 	void __iomem *base;
- 	int ret;
- 
- 	clks[IMX8MM_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
--	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(ccm_node, "osc_24m");
--	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(ccm_node, "osc_32k");
--	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(ccm_node, "clk_ext1");
--	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(ccm_node, "clk_ext2");
--	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(ccm_node, "clk_ext3");
--	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(ccm_node, "clk_ext4");
-+	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(np, "osc_24m");
-+	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(np, "osc_32k");
-+	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(np, "clk_ext1");
-+	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(np, "clk_ext2");
-+	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(np, "clk_ext3");
-+	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(np, "clk_ext4");
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
- 	base = of_iomap(np, 0);
-@@ -480,7 +481,7 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
- 	clks[IMX8MM_SYS_PLL2_500M] = imx_clk_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
- 	clks[IMX8MM_SYS_PLL2_1000M] = imx_clk_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
- 
--	np = ccm_node;
-+	np = dev->of_node;
- 	base = of_iomap(np, 0);
- 	if (WARN_ON(!base))
- 		return -ENOMEM;
-@@ -682,4 +683,19 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
- 
- 	return 0;
- }
--CLK_OF_DECLARE_DRIVER(imx8mm, "fsl,imx8mm-ccm", imx8mm_clocks_init);
-+
-+static const struct of_device_id imx8mm_clk_of_match[] = {
-+	{ .compatible = "fsl,imx8mm-ccm" },
-+	{ /* Sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
-+
-+
-+static struct platform_driver imx8mm_clk_driver = {
-+	.probe = imx8mm_clocks_probe,
-+	.driver = {
-+		.name = "imx8mm-ccm",
-+		.of_match_table = of_match_ptr(imx8mm_clk_of_match),
-+	},
-+};
-+module_platform_driver(imx8mm_clk_driver);
+So the HW guys responded and as per that, ipq4019/ipq6018 it is 32000.
+It is derived from a 48M wifi refclk
+
+48M wifi ref clk -> [/2 divider] -> [/750 divider] -> sleep_clk (32000)
+
+In case of ipq8074, it is derived from the pmic and 32768.
+
+
+> Also, I think the "xo" clk of your IPQ6018 dts should get the
+> "always-on;" property (any maybe sleep_clk as well?).
+> 
+> Paul discovered that the QSDK had this extra commit
+> <https://lore.kernel.org/patchwork/patch/1089385/>
+> (Maybe the changeid can help you look it up internally)
+> 
+> For IPQ4019, this enables the high resolution with a 1ns resolution
+> instead of 10ms.
+> 
+
+ho ok, this patch is needed.
+
+Regards,
+ Sricharan
+
 -- 
-2.7.4
-
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
