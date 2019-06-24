@@ -2,86 +2,124 @@ Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6902C43613
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 07:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B92C43613
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 08:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA3C2083D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 07:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561363099;
-	bh=kVDcI31FJiBeQjNCXXdfs7eUHWmy92Y3czi8wuLH5wI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PF/ER389Sxi8goY5Je3WiQylQ3r8SbIjQGdT3vv80ie0LOUmelXHGGdcfqz3ORB05
-	 hjk73SU4pt8WLlT6gao/DY8KY+SlmsGh52QuecLnpygsU1Qsi2HrMUJXXqqzAntzKn
-	 io4WQ9C0i0vmmPIYMlOalSeJvb0+205V4YChHg54=
+	by mail.kernel.org (Postfix) with ESMTP id 22A6B2083D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 08:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfFXH6T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jun 2019 03:58:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50814 "EHLO mail.kernel.org"
+        id S1727445AbfFXIPH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jun 2019 04:15:07 -0400
+Received: from foss.arm.com ([217.140.110.172]:43394 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbfFXH6T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:58:19 -0400
-Received: from localhost (unknown [106.201.35.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D35E32083D;
-        Mon, 24 Jun 2019 07:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561363098;
-        bh=kVDcI31FJiBeQjNCXXdfs7eUHWmy92Y3czi8wuLH5wI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gPTtIiAselJiL7oUTaniU7q2/RVh73sobFdW2O5+XihToq6h6heKCbEVvcaB9lgFL
-         IrvSEmlzyReh8B2NoQLQ5qRURdF+LLPDbu6Cas/pEtIZksLtsEFpTOe9cHY1IyMdye
-         wF0UJd9brQf+ubvGMzWV3KP2GukvJ0AjZYgi2RAM=
-Date:   Mon, 24 Jun 2019 13:25:09 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] clk: qcom: gcc-qcs404: Add MODULE_ALIAS
-Message-ID: <20190624075509.GY2962@vkoul-mobl>
-References: <20190612091722.9377-1-vkoul@kernel.org>
- <20190612091722.9377-4-vkoul@kernel.org>
- <20190617042649.GF750@tuxbook-pro>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617042649.GF750@tuxbook-pro>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1725881AbfFXIPH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Jun 2019 04:15:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8393C2B;
+        Mon, 24 Jun 2019 01:15:06 -0700 (PDT)
+Received: from big-swifty.misterjones.org (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E19C33F71E;
+        Mon, 24 Jun 2019 01:15:02 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 09:15:01 +0100
+Message-ID: <86d0j3pfga.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V4 13/18] soc/tegra: pmc: allow support for more tegra wake
+In-Reply-To: <1561345379-2429-14-git-send-email-skomatineni@nvidia.com>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+        <1561345379-2429-14-git-send-email-skomatineni@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16-06-19, 21:26, Bjorn Andersson wrote:
-> On Wed 12 Jun 02:17 PDT 2019, Vinod Koul wrote:
+On Mon, 24 Jun 2019 04:02:54 +0100,
+Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
 > 
-> > MODULE_ALIAS was missing for this driver which can be built as a
-> > module, so add the MODULE_ALIAS.
-> > 
+> This patch allows to create separate irq_set_wake and irq_set_type
+> implementations for different tegra designs PMC that has different
+> wake models which require difference wake registers and different
+> programming sequence.
 > 
-> MODULE_ALIAS() serves the purpose of providing an module alias for the
-> driver, which allows the automatic kernel module loader to insmod the
-> driver as a device needing it is being registered.
+> AOWAKE model support is available for Tegra186 and Tegra194 only
+> and it resides within PMC and supports tiered wake architecture.
 > 
-> When the device is instantiated through the OF code path the compatible
-> will be matched against the MODULE_DEVICE_TABLE(of, ) and if the device
-> is programmatically registered (through platform_device_register_*())
-> then the alias "platform:XYZ" will be used.
+> Tegra210 and prior tegra designs uses PMC directly to receive wake
+> events and coordinate the wake sequence.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index edd4fe06810f..e87f29a35fcf 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -226,6 +226,8 @@ struct tegra_pmc_soc {
+>  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+>  				   struct device_node *np,
+>  				   bool invert);
+> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
+> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+>  
+>  	const char * const *reset_sources;
+>  	unsigned int num_reset_sources;
+> @@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>  	.alloc = tegra_pmc_irq_alloc,
+>  };
+>  
+> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>  {
+>  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>  	unsigned int offset, bit;
+> @@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>  	return 0;
+>  }
+>  
+> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>  {
+>  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>  	u32 value;
+> @@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+>  	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+>  	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+>  	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+> -	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+> -	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
+> +	if (pmc->soc->irq_set_type)
+> +		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+> +	if (pmc->soc->irq_set_wake)
+> +		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
 
-Thanks for the explanation Bjorn :)
-> 
-> So, unless we're going to support module autoloading of this driver from
-> a board file no alias should be needed.
+I already commented on how superfluous these 'if ()' where. If you
+disagree, please let me know why.
 
-Nope we dont, so will drop this one and as well as from SM8150 driver
+Thanks,
+
+	M.
 
 -- 
-~Vinod
+Jazz is not dead, it just smells funny.
