@@ -2,125 +2,141 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE76C48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 16:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A21CC48BD4
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42095204FD
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 16:48:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 020F420883
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:30:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xbo7XSFN"
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="GcTgXpx1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfFYQsu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 12:48:50 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55918 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730674AbfFYQrm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 12:47:42 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a15so3541578wmj.5
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2019 09:47:41 -0700 (PDT)
+        id S1728016AbfFYRad (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 13:30:33 -0400
+Received: from mail-eopbgr750122.outbound.protection.outlook.com ([40.107.75.122]:56192
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727652AbfFYRad (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:30:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DnmUUmlBFAOJ6r0lO2j/n/ft2AG+WeYI8h0EcXuhXCs=;
-        b=Xbo7XSFN9rED5NZS/+c+eS51wLoYcSb+HfUkS0fXp+WEVZI/klmyc/xzDQcSk6kbda
-         PLkTwD+LzBS3AZ94fFA8beUaDPzXToHiAtQGtYgMEa7xGSHRnmt9i8HHb4RkAENDHe5e
-         IsL0oKoIDRchTHu/mEX4S5wUizdEf+RMRPLLMDrB7AmcmgO+P7E3pn73quB2Juy8UxTW
-         jEED9bkXwE57LB6U9SOCXArx0Oju7R8iZ1WfU5HvlkhPqgCsPcO1+tnAvFeSoPUrrDae
-         33cxR70DEVqATeHx9PamU6pz/v/4lzjTi/KGso5mz5Zz8Vhl6pl2nCo9mmky/EQOLFvo
-         3uUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DnmUUmlBFAOJ6r0lO2j/n/ft2AG+WeYI8h0EcXuhXCs=;
-        b=Gv6LN7DXwNS2BBGUNV8hQD9UOQ6l+JJzjjuWqwfh/HaGR4Ui0NLWwuiLTVQ3yM4CJR
-         YgyZd/43Z8/1z8javMiddmi5MWjfmzvXUJhBtRjeAW4eRXr6aGVFeujyzPqmhcBx7gAV
-         CaaIjwQ92c+lsSbF3oaTaxr4iZSbaZJ8VKWuoaUdeTtD7JYfm9Z0kjQCKmwSMtlcdOtt
-         m/VLbRV6t7/X2BoOo42V+rTVHpfokHXD33yKw5xibBMOzz0HhlqRmmxHVtqyfv10gWJc
-         fNR+Y9J2HwZBgRTRuJChIaRGHXlNUmMN5Y5No8p9OsizRfisXG614tGjJoH0a6/gmWVc
-         gVWw==
-X-Gm-Message-State: APjAAAWQagGsZs34UzD1RfhJK5SL9HpDZ0znlRalEHI7gyyXGsirgT2V
-        I8tBvQ3qjWyCYXYW5UtUJvXNsg==
-X-Google-Smtp-Source: APXvYqw0MlFamdgw8IfuZ/mw6IFGIsihCgTjA9lyv6BtUZRI3MTMXO+uUOMmyuh2w+RBxwxPXQqvxw==
-X-Received: by 2002:a1c:cb4d:: with SMTP id b74mr14944322wmg.43.1561481260999;
-        Tue, 25 Jun 2019 09:47:40 -0700 (PDT)
-Received: from localhost.localdomain (30.red-83-34-200.dynamicip.rima-tde.net. [83.34.200.30])
-        by smtp.gmail.com with ESMTPSA id d18sm42594476wrb.90.2019.06.25.09.47.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Jun 2019 09:47:40 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, david.brown@linaro.org,
-        jassisinghbrar@gmail.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org, will.deacon@arm.com,
-        arnd@arndb.de, horms+renesas@verge.net.au, heiko@sntech.de,
-        sibis@codeaurora.org, enric.balletbo@collabora.com,
-        jagan@amarulasolutions.com, olof@lixom.net
-Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
-        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: [PATCH v3 02/14] mbox: qcom: add APCS child device for QCS404
-Date:   Tue, 25 Jun 2019 18:47:21 +0200
-Message-Id: <20190625164733.11091-3-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
-References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
+ d=wavesemi.onmicrosoft.com; s=selector1-wavesemi-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rLaO9QWBVrbx1WHdWWcpHYHC7RcnT/IaFQfxF+WZUWQ=;
+ b=GcTgXpx1p5Ev5wCCmWM868S5FeQxAVrewWsehXbfli40a4ZsnjOq+NBw4+Hndw3XXhfsfqRyBkC81NpnLU5LHkdNxJz3g+6FdWscnd1fh1D3h/02oVUW4BcOE4xGGQot60ZckFliV22JXypxbYsMKJqZivDlnf9C5ofCI5M+9QM=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
+ MWHPR2201MB1341.namprd22.prod.outlook.com (10.172.63.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Tue, 25 Jun 2019 17:30:29 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::6975:b632:c85b:9e40]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::6975:b632:c85b:9e40%2]) with mapi id 15.20.2008.017; Tue, 25 Jun 2019
+ 17:30:28 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+CC:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        "od@zcrc.me" <od@zcrc.me>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: Re: [PATCH v13 04/13] mfd: Add Ingenic TCU driver
+Thread-Topic: [PATCH v13 04/13] mfd: Add Ingenic TCU driver
+Thread-Index: AQHVKuBSgPmYVawSQ0eFKnC+vy7xnKasoZqA
+Date:   Tue, 25 Jun 2019 17:30:28 +0000
+Message-ID: <20190625173026.dbvx44iwywnijjql@pburton-laptop>
+References: <20190624225759.18299-1-paul@crapouillou.net>
+ <20190624225759.18299-5-paul@crapouillou.net>
+In-Reply-To: <20190624225759.18299-5-paul@crapouillou.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR01CA0063.prod.exchangelabs.com (2603:10b6:a03:94::40)
+ To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:18::12)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [12.94.197.246]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a0554db2-ea68-411f-b3a9-08d6f992d0b8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1341;
+x-ms-traffictypediagnostic: MWHPR2201MB1341:
+x-microsoft-antispam-prvs: <MWHPR2201MB1341128582984F2461DC3983C1E30@MWHPR2201MB1341.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0079056367
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(366004)(396003)(136003)(39840400004)(376002)(346002)(199004)(189003)(66066001)(81166006)(446003)(33716001)(58126008)(476003)(8676002)(54906003)(6116002)(44832011)(186003)(81156014)(6246003)(316002)(11346002)(4326008)(7416002)(478600001)(53936002)(3846002)(26005)(305945005)(1076003)(7736002)(8936002)(14454004)(6512007)(6506007)(25786009)(76176011)(486006)(5660300002)(4744005)(102836004)(6916009)(6486002)(2906002)(386003)(6436002)(14444005)(71200400001)(71190400001)(256004)(99286004)(64756008)(66446008)(66556008)(66476007)(42882007)(73956011)(66946007)(9686003)(68736007)(52116002)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1341;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: oB4wAzcuoF+S/KJh0iA8dcAOQUARodytMY4ybVoFZGXn4FkT2ZgLYT8cHfpaC/R2XP52B1GzdkuNk50IFMDM+Fr0vV/TMESh58fr7aDlVdC8hLr1e09doRZuk/Z64gh7VchexPbVQ08cTmiqu9yV8QSDW7zeFAeyJnGo7sP6MgmunELcc31UGXx0uCcKi4geXv1LMO2b3XXffrWK559fcTReCLD4vv69bfnHvuDA65GPJbxY83UDHbjNwosA9qzd7vHo8d0v/3hbeIN1zAzz1z2NhE6vyzsSC5cSpvw73YfyZdUw1Tu7BcEYK5MzwikT+pXhY3rv78bsI92u6Fjh21jxkTh7ZIPhHKDfxKf0BP+4QMGhBSjz50UHvmjm8TBHN+im6RfSePZ9RKnqew1Z9mTybRFWVFz5av0Z5yIy448=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9BAE9DD0984EBD4FBCD7F23175005B2A@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0554db2-ea68-411f-b3a9-08d6f992d0b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 17:30:28.7845
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1341
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is clock controller functionality in the APCS hardware block of
-qcs404 devices similar to msm8916.
+Hi Paul,
 
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+On Tue, Jun 25, 2019 at 12:57:50AM +0200, Paul Cercueil wrote:
+> +static const struct of_device_id ingenic_tcu_of_match[] =3D {
+> +	{ .compatible =3D "ingenic,jz4740-tcu", .data =3D &jz4740_soc_info, },
+> +	{ .compatible =3D "ingenic,jz4725b-tcu", .data =3D &jz4725b_soc_info, }=
+,
+> +	{ .compatible =3D "ingenic,jz4770-tcu", .data =3D &jz4740_soc_info, },
+> +	{ }
+> +};
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 705e17a5479c..a05dc3aabac7 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -89,16 +89,18 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
--		apcs->clk = platform_device_register_data(&pdev->dev,
--							  "qcom-apcs-msm8916-clk",
--							  -1, NULL, 0);
--		if (IS_ERR(apcs->clk))
--			dev_err(&pdev->dev, "failed to register APCS clk\n");
--	}
--
- 	platform_set_drvdata(pdev, apcs);
- 
-+	if (!of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global") &&
-+	    !of_device_is_compatible(np, "qcom,qcs404-apcs-apps-global"))
-+		return 0;
-+
-+	apcs->clk = platform_device_register_data(&pdev->dev,
-+						  "qcom-apcs-msm8916-clk",
-+						  -1, NULL, 0);
-+	if (IS_ERR(apcs->clk))
-+		dev_err(&pdev->dev, "failed to register APCS clk\n");
-+
- 	return 0;
- }
- 
--- 
-2.21.0
+Nit: why not order these numerically? ie. 25b, 40, 70.
 
+> +static struct regmap * __init ingenic_tcu_create_regmap(struct device_no=
+de *np)
+> +{
+> +	struct resource res;
+> +	void __iomem *base;
+> +	struct regmap *map;
+> +
+> +	if (!of_match_node(ingenic_tcu_of_match, np))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	base =3D of_io_request_and_map(np, 0, "TCU");
+> +	if (IS_ERR(base))
+> +		return ERR_PTR(PTR_ERR(base));
+
+This is equivalent to:
+
+    return ERR_CAST(base);
+
+Apart from those:
+
+    Reviewed-by: Paul Burton <paul.burton@mips.com>
+
+Thanks,
+    Paul
