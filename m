@@ -6,61 +6,58 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 683BBC48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03E6C48BD5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396C62086D
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B53602133F
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561499437;
-	bh=GwgZoYHEjDqDV6/GDo7hMDaoiuZJidjKMue8bkbmYQw=;
+	s=default; t=1561499505;
+	bh=zJpQRqXOj6DwCE1GBSj6EfyABK5ll9X4V3VtqR4B+8I=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=Xe9Fm0C/hJu9BYhyv5vhs5fCXPSS3+dulQz/QjVi9Kf3UWBTZsD4iQ7U1GgpUlF/v
-	 9uxj3LS/SzLR4edq7KuIVd/tl3f8TsPTBLzy9MnYL/n/KEqPuVgWF0oF2tHNHzn7vA
-	 S4/qiBve0DDH5bCS9Sxe3eP5wLWYEwCtXCAnJc2U=
+	b=tF16AL1d4cWHU8hvEpmXjEQILAnT97Ean+pDhhecRMA0Ps7wK32dff192c/yh96Ji
+	 yjuoA9a7/7a8ghrtWcvrjD1SYVo0+Gm3GYPmAU+JPlSDdA8LMYLQ2ZmWNAgdNZK5cl
+	 S/LEmbs25ODewPyfIc7/SowWOZCasV4YKO3dXuWo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfFYVuh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 17:50:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52750 "EHLO mail.kernel.org"
+        id S1726341AbfFYVvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 17:51:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfFYVug (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 17:50:36 -0400
+        id S1725914AbfFYVvp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 17:51:45 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0698D2085A;
-        Tue, 25 Jun 2019 21:50:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A5B82086D;
+        Tue, 25 Jun 2019 21:51:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561499436;
-        bh=GwgZoYHEjDqDV6/GDo7hMDaoiuZJidjKMue8bkbmYQw=;
+        s=default; t=1561499504;
+        bh=zJpQRqXOj6DwCE1GBSj6EfyABK5ll9X4V3VtqR4B+8I=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=cw7hMuw8Yh7yn6pgURC7S9h226i5Ed/QVj0CiLsHuJCLgxGNA+xUTPDlB0P36Hh/2
-         fAwssMDQ2dDffRd2gl4wf3kSHL4EU+fZYrTZD2eV2/bLArpswzX2GIPimr1cI8YqXs
-         VttiYWrTNS/BFhdymu+WJulhOByKWtCH5+hqLpP0=
+        b=FixI2VzZO5Nhs1oXo3I3h7qsVVQtRa6pqivxgXefsZnDxrFJcrRpiaa1bum2lMwwu
+         J6tUdYZ09Z32NzeTSCit8EbD76vmPRbpIrx8Iscswky8JOENRfIg3dx0FRcJLLPugr
+         p6QEsBAua1Xs6JT0+J267jkN5VHR8Pj+vV/P5yA4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190617120248.9590-1-geert+renesas@glider.be>
-References: <20190617120248.9590-1-geert+renesas@glider.be>
+In-Reply-To: <20190617135602.32766-1-geert+renesas@glider.be>
+References: <20190617135602.32766-1-geert+renesas@glider.be>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: Simplify clk_core_can_round()
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH trivial] clk: Grammar missing "and", Spelling s/statisfied/satisfied/
+Cc:     Jiri Kosina <trivial@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 14:50:35 -0700
-Message-Id: <20190625215036.0698D2085A@mail.kernel.org>
+Date:   Tue, 25 Jun 2019 14:51:43 -0700
+Message-Id: <20190625215144.1A5B82086D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-06-17 05:02:48)
-> A boolean expression already evaluates to true or false, so there is no
-> need to check the result and return true or false explicitly.
->=20
+Quoting Geert Uytterhoeven (2019-06-17 06:56:02)
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 
