@@ -4,68 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C1CC48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9F3C48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84EEC20883
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B1BE208E3
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561498550;
-	bh=XKjXGt7wBC/YazY7KhXqUWQeoN5TSITXr1HNZAKEqJ8=;
+	s=default; t=1561498621;
+	bh=BLzSmjR9b+HaZLX9oIqe+r8P8oHxFdm13l5nu5siGNU=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=Ca9nfJR9p80DWKbZuLgo7RYy9qZ5nBSgd4QJkGVGo3d2ZHXEe1clPFOzZgSrYRl79
-	 zjxu69Y+FR/l47N+4beAuSjxVnxIUk35TOLA/wdVW9MRAa3TQZsPg+ILF8fQCqAOG0
-	 9J3ySVqsOybif2aaAVwdNr07bgG9bNM+4qP+uKvo=
+	b=RCIn7jcS3l2H1+5PhFGNAfKhTFI1ClkHMNN1sa3zBR6nYp8udcD4jwrj09EuZJaoG
+	 0V+0rmNCAVbo5oNfX4LRyGmpRTSQXhPGhdsE5jh8UkS4aLABlcR6wTL6vqKuy8OoCd
+	 2VClNSb4Me3J4fWQrk5/S0fx/sngPTCOOu883W/E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfFYVft (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 17:35:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36616 "EHLO mail.kernel.org"
+        id S1726334AbfFYVhB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 17:37:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfFYVft (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 17:35:49 -0400
+        id S1725914AbfFYVhB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 17:37:01 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 785BF2085A;
-        Tue, 25 Jun 2019 21:35:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 256D920883;
+        Tue, 25 Jun 2019 21:37:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561498548;
-        bh=XKjXGt7wBC/YazY7KhXqUWQeoN5TSITXr1HNZAKEqJ8=;
+        s=default; t=1561498620;
+        bh=BLzSmjR9b+HaZLX9oIqe+r8P8oHxFdm13l5nu5siGNU=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=MhD7Oj77rhAVh4rKM8EbBRm++EskHFsfmlsSM/P9qlhtezwO43hkKOH3Tq/Vfh1gw
-         T5ng2UlIuncLTuLaLuhLO374aHdGKnM0sMwKW7LiyXPWlOIZZyaqQhsdXobWykEgrk
-         prG9p444fFRYfPs47oQnDSDH5iVNentt9Am5fTKw=
+        b=q4k7lDYZtDNT1A/IS9RSFJj/VROHbBZ0mN9Sap5YYfXAp/ly5TtBnlxI4Na94D+Ql
+         Ozy0HkKwoL1XFw1aolZA+ypBFeCUypAKcJpMMlNKgvqxOtpTIbw7rUDco+XAJys5bb
+         3mvM95JRKrTNAf7gI3PV1QbUhop37ekroxKd8cuo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190617215458.32688-5-chris.packham@alliedtelesis.co.nz>
-References: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz> <20190617215458.32688-5-chris.packham@alliedtelesis.co.nz>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>, andrew@lunn.ch,
-        gregory.clement@bootlin.com, jason@lakedaemon.net,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
-        sebastian.hesselbarth@gmail.com
+In-Reply-To: <20190624214710.11836-1-dinguyen@kernel.org>
+References: <20190624214710.11836-1-dinguyen@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 4/4] clk: kirkwood: Add support for MV98DX1135
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH] clk: socfpga: stratix10: add additional clocks needed for the NAND IP
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 14:35:47 -0700
-Message-Id: <20190625213548.785BF2085A@mail.kernel.org>
+Date:   Tue, 25 Jun 2019 14:36:59 -0700
+Message-Id: <20190625213700.256D920883@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chris Packham (2019-06-17 14:54:58)
-> The 98DX1135 is a switch chip with an integrated CPU. This is similar to
-> the 98DX4122 except that the core clock speed is fixed to 166Mhz.
+Quoting Dinh Nguyen (2019-06-24 14:47:10)
+> The nand_clk is actually called the nand_x_clk and the parent is the
+> l4_mp_clk, not the l4_main_clk. The nand_clk is a child of the
+> nand_x_clk and has a fixed divider of 4. The same is true for the
+> nand_ecc_clk.
 >=20
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
 
 Applied to clk-next
