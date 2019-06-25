@@ -2,103 +2,115 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBA3C48BD4
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 09:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7973C48BD4
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 09:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2C62146E
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 09:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7705420883
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 09:26:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="W/ctZ5sK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbfFYJK2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 05:10:28 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:62323 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729530AbfFYJK2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 05:10:28 -0400
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="Codrin.Ciubotariu@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-X-IronPort-AV: E=Sophos;i="5.63,415,1557212400"; 
-   d="scan'208";a="38246879"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jun 2019 02:10:27 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex03.mchp-main.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 25 Jun 2019 02:10:48 -0700
-Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Tue, 25 Jun 2019 02:10:24 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <sboyd@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: [RESEND][PATCH] clk: at91: generated: Truncate divisor to GENERATED_MAX_DIV + 1
-Date:   Tue, 25 Jun 2019 12:10:02 +0300
-Message-ID: <20190625091002.27567-1-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.20.1
+        id S1725921AbfFYJ0V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 05:26:21 -0400
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:37102 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731495AbfFYJ0V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 05:26:21 -0400
+Received: by mail-wm1-f41.google.com with SMTP id f17so2180838wme.2
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2019 02:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=/458Fsfbmxm3r35MW4l5JCPflKQAaAPGKlBQ13aGDYg=;
+        b=W/ctZ5sKpFFzLmeDLTZeNdA1KRnAT3H/e+0IDSuP05zSFgDWJNknbQJSqU8zh5bjRy
+         Hb4A51RLamU36+wFsxxVZ0brdvip6L6rSxRQzNjZ09B0kXdQZd/t3DlIjResWXl/wr7f
+         6OKNSNY9XGBCfQN9ZOIB/5Qmxm5g4HXxMcRAWZrc/ksWHbfd96X4CBlBitTg7S+fQjzk
+         9o9gyTb1GbbgUg1zCRax/pWViIPPALnts1xRSZAdzymSyMXIajjpC1Wjg84UcYU2HT29
+         9UauFzSCwlr6pzQwDL0ob7TEXs10/YDeJrj9JxfkXVZI8rgc1bwyXl5n3k0kDoWsCYlB
+         ZkpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=/458Fsfbmxm3r35MW4l5JCPflKQAaAPGKlBQ13aGDYg=;
+        b=CcrV6AY+bKDlOvGEseWLLAqlNmfpqqBXw1vQ7I6an8FRBisH0hwt6wpmRi11736gII
+         7PwoXElwnMp+DyvQWGzle4vyo+H1nOlddReRnGVIvI2g3FNMufG8EYjwuZeC9LX/56MD
+         QiFpF1hiGi1hZhg0IiE3XhteXGmKZxKS8ZqUzT66qSKS5dgTpMHcptK11aW6oizRNMuk
+         UMyY9CTO7iqgMIDatbZ4n12mh6PehmDnzot7O5L1hzcsginzaEiA6ZtUKTNcIr2X08ft
+         CN9LyUFNTsWZIwYcuTPHOnq7e5aQseaIjtgH40qN7vl3KluztLycUt59WPVuL9SfpmkA
+         vZYQ==
+X-Gm-Message-State: APjAAAXBsb2MOo7QHuZmwH40zxDT9isQjGgh3/Mk1OxE8pHE5/BLY5fX
+        Bai469SAj10n+Z7JHA04GrHu4Q==
+X-Google-Smtp-Source: APXvYqxKxw5Ug545jBsBa5P365/JMaSJWj3VKzQDexpDtRW8cZ87UyO23ZxOXVh5oOzKqh7FmzClAA==
+X-Received: by 2002:a1c:18a:: with SMTP id 132mr19341185wmb.101.1561454778702;
+        Tue, 25 Jun 2019 02:26:18 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id a67sm2140439wmh.40.2019.06.25.02.26.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 02:26:18 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Kevin Hilman <khilman@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "open list\:ARM\/Amlogic Meson..." 
+        <linux-amlogic@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [GIT PULL] clk: meson: update for v5.3
+In-Reply-To: <1jv9wuyrfh.fsf@starbuckisacylon.baylibre.com>
+References: <39ccc93ddd8bc64af85541086190e563fa13f038.camel@baylibre.com> <1jv9wuyrfh.fsf@starbuckisacylon.baylibre.com>
+Date:   Tue, 25 Jun 2019 11:26:17 +0200
+Message-ID: <1jsgryyq12.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In clk_generated_determine_rate(), if the divisor is greater than
-GENERATED_MAX_DIV + 1, then the wrong best_rate will be returned.
-If clk_generated_set_rate() will be called later with this wrong
-rate, it will return -EINVAL, so the generated clock won't change
-its value. Do no let the divisor be greater than GENERATED_MAX_DIV + 1.
+On Tue 25 Jun 2019 at 10:56, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-Fixes: 8c7aa6328947 ("clk: at91: clk-generated: remove useless divisor loop")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
+> On Tue 11 Jun 2019 at 14:38, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+>> Dear clock maintainers,
+>>
+>> Below is a request to pull Amlogic clock update for v5.3 based on the fixes
+>> we just send. This update add the init() callback to the mpll clock driver
+>> as discussed in the previous cycle. As promised, the rework to register/deregister
+>> will follow.
+>>
+>> Apart from this, we've got a fairly regular update, adding a bunch of new
+>> clocks to several SoC families. It also adds support for g12b derived from the
+>> g12a, which explains the significant line count in the g12a file.
+>>
+>> The following changes since commit 3ff46efbcd90d3d469de8eddaf03d12293aaa50c:
+>>
+>>   clk: meson: meson8b: fix a typo in the VPU parent names array variable (2019-05-20 12:11:08 +0200)
+>>
+>> are available in the Git repository at:
+>>
+>>   git://github.com/BayLibre/clk-meson.git tags/clk-meson-5.3-1
+>>
+>> for you to fetch changes up to eda91833f099277998814105c77b5b12cbfab6db:
+>>
+>>   clk: meson: g12a: mark fclk_div3 as critical (2019-06-11 11:28:44 +0200)
+>>
+>
+> Hi Stephen,
+>
+> Could let us if you intend to take this PR as it is or if you are expecting
+> any change ?
+>
+> Best regards
+> Jerome
 
-- The email-server was converting my patches to base64, so I resend it
-  using another server;
-- Added acked-bys from Nicolas and Ludovic;
+Nevermind, I missed your reply.
+Thanks for merging.
 
- drivers/clk/at91/clk-generated.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 5f18847965c1..290cffe35deb 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -146,6 +146,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-+		if (div > GENERATED_MAX_DIV + 1)
-+			div = GENERATED_MAX_DIV + 1;
- 
- 		clk_generated_best_diff(req, parent, parent_rate, div,
- 					&best_diff, &best_rate);
--- 
-2.20.1
-
+Regards
