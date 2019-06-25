@@ -4,69 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673C9C48BD6
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B503C48BD5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4A9208E3
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:15:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF73520883
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:17:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561500915;
-	bh=8qTkfS/4sezfPP01RsGhg7FS4aonLn9/wHCnef6132A=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=LOgsajgQIgxid48ocqfi46nofEFeJKaQ6ZIn9c0VKaNRuiZvgtU/DZ4f8EXws8zmJ
-	 rpGee8WycqiaiV6ybW891gIBHS6C/4IdJwIgun55sAv8Pf3fUyqy7UsrckLmilbG6E
-	 nlyzN25uwyRc0jIc+2LhoFxvLa+Muy3GgBq3P87c=
+	s=default; t=1561501062;
+	bh=HQ27fxr0ZnCr/zXy05lhsA8/iiTCNB/xaDEjAfuRrro=;
+	h=In-Reply-To:References:To:Cc:Subject:From:Date:List-ID:From;
+	b=khVTWQy5WCWUDrdMN6aZ5oezxoS8RD2+AV88PgGLXaqi41ffjs9qwHQ+yaz77KTUq
+	 3KNtQuMV6z3E/3uXm4JEJ49m/x+WgwHuLMgVS8AwUSozSyb/wWgtRH6TNXwB2Puwpj
+	 DSErC5z2mzSXpFTN0/JyzcBo3gP79KujRAjn9Pfw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfFYWPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 18:15:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55274 "EHLO mail.kernel.org"
+        id S1726274AbfFYWRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 18:17:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfFYWPN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:15:13 -0400
+        id S1725914AbfFYWRh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 18:17:37 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B691620883;
-        Tue, 25 Jun 2019 22:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 853892086D;
+        Tue, 25 Jun 2019 22:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561500912;
-        bh=8qTkfS/4sezfPP01RsGhg7FS4aonLn9/wHCnef6132A=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=IMLS8thwDC59JuDZtM/8G3qRVOM2sezntC8PHj1xZ0qDsIiNEj84uIQyOEmW2cpW/
-         HMh1Mjwkz1NCiK5UiJs6gquxhP6o2hX7S6LK0zbxrQU8KMtmWfn+6VxPDogxO4d6qS
-         FIu9kLNyG2yKp/5PnHIt5OVkYflxji5DYbW1kuKI=
+        s=default; t=1561501056;
+        bh=HQ27fxr0ZnCr/zXy05lhsA8/iiTCNB/xaDEjAfuRrro=;
+        h=In-Reply-To:References:To:Cc:Subject:From:Date:From;
+        b=n79BUbixZSY08kOmfpVsAsuUWP2HiIMOwm0Y5SZEZqQH3cJsb0dMSLNOCJh1KNvCV
+         OzxzQ7LRTkwFiSb8TeZkzAAk1foGrXfAoLmmTdtGKSDYkJXnBgqfwKVERoJ1pC53u1
+         J6dzbYKJH1bCIMHEBXTOdDMbK0BdWB9HV5+XUJC0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1560132969-1960-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1560132969-1960-1-git-send-email-weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh@kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+In-Reply-To: <20190611180757.32299-1-paul@crapouillou.net>
+References: <20190611180757.32299-1-paul@crapouillou.net>
+To:     James Hogan <jhogan@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>
+Cc:     od@zcrc.me, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/5] clk: ingenic: Add missing header in cgu.h
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
-Cc:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, stable@vger.kernel.org,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Dehui Sun <dehui.sun@mediatek.com>
 User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 15:15:12 -0700
-Message-Id: <20190625221512.B691620883@mail.kernel.org>
+Date:   Tue, 25 Jun 2019 15:17:35 -0700
+Message-Id: <20190625221736.853892086D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Weiyi Lu (2019-06-09 19:16:09)
-> The 13MHz clock should be registered before clocksource driver is
-> initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
+Quoting Paul Cercueil (2019-06-11 11:07:53)
+> The cgu.h has structures that contain 'clk_onecell_data' and 'clk_hw'
+> structures (no pointers), so the <linux/clk-provider.h> header should be
+> included.
 >=20
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>=20
+> Notes:
+>     v2: Rebase on v5.2-rc4
 
-Do you have a Fixes: tag in mind? Otherwise, the patch looks OK to me.
+You seemed to miss my review comments on patch set #1.
+
+https://lkml.kernel.org/r/155726035790.14659.7321778387595703949@swboyd.mtv=
+.corp.google.com
 
