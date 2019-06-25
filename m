@@ -2,97 +2,100 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D02C48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 20:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9150C48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 20:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FAA72133F
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 20:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561494424;
-	bh=4DjDMXCFMiEPojnFZTh8l0f8w6EVPLy4ezbvE1XggGw=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=e0uWxxgnC2AE+Kijq6L49Rgqa0RoOoVQZ/wKb3nQ4xxC6zkta5GdNL2o5vKKbpe+w
-	 weUfcVRKsROZ2LypMFD/LZjZdWrQQAsGk+UfTKm1EQImWY1lSiKT9uu+QMHHVVAoaZ
-	 /NCo/dTtkh4VHY3x5GHhNkT3hNatTKri78Xt2DD0=
+	by mail.kernel.org (Postfix) with ESMTP id B9FDA208CB
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 20:30:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="VjItwXPk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfFYU1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 16:27:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51104 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726455AbfFYU1D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:27:03 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1726557AbfFYUah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 16:30:37 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:36600 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbfFYUah (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 16:30:37 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9A9B208CB;
-        Tue, 25 Jun 2019 20:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561494422;
-        bh=4DjDMXCFMiEPojnFZTh8l0f8w6EVPLy4ezbvE1XggGw=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=HGnMUm36tBd89ZCYMpakSYGFEW5Ra8p8ujQXGTZBj7wplR2/DDy55cLSCmDONvdHY
-         zvRbTWOTcuq+e3106aW7m2laV8C4uUGsBk5uzvJeZKwhWPPPmBSq+savdLyIs9SkPO
-         50vQuTR/sLQeXqmcCO0A4QBjA4XFwhvT87/QcdKc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 65CCE886BF;
+        Wed, 26 Jun 2019 08:30:33 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1561494633;
+        bh=1kY+bwPF4p0YA079A5v673sAjTxOqECEQoGaHNKiN3s=;
+        h=From:To:CC:Subject:Date:References;
+        b=VjItwXPkxG2jYM8fucFA+6U+KKGhMJlV1pdLCHpbaf911rG7qGBsY0AB0hlpWYuia
+         GERmgX6YTcY7luDgnRBGjpfrtQ7DM0drgyzazpNM+oY3TQger5V1kQJe6qWlzsiLvt
+         eNVRPu/JO7KHxEDJ0DEk/PYNC08SVexa9tmgu0aJUvTjJ55RdLs2S6kaM6DcJxVuZk
+         OiJ5TE4tEbuDLpxPAafNDfPX4P4qEQ/aN1E26WVnWZXJP5UZHm4KmP9EIKysdHFf87
+         TG+9MrQ4gB+8YmT+zVWnLdCSBrrkP9kfuQ9bBHlslQK+vdHrAtafiqh4jVcudHu8jf
+         fdQywZbAJ2sXg==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d1284690001>; Wed, 26 Jun 2019 08:30:33 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Wed, 26 Jun 2019 08:30:33 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Wed, 26 Jun 2019 08:30:33 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] pinctrl: mvebu: Add support for MV98DX1135
+Thread-Topic: [PATCH v2 3/4] pinctrl: mvebu: Add support for MV98DX1135
+Thread-Index: AQHVJVdQehuQXtWHL0SatF2H1kpYDA==
+Date:   Tue, 25 Jun 2019 20:30:33 +0000
+Message-ID: <f08d52a1c4864c6981f3631523965cf5@svr-chch-ex1.atlnz.lc>
+References: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz>
+ <20190617215458.32688-4-chris.packham@alliedtelesis.co.nz>
+ <CACRpkdbSS18us3o=v7ki_=8cLXYjfDd8q321xMCounXPh11GAQ@mail.gmail.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190620150013.13462-6-narmstrong@baylibre.com>
-References: <20190620150013.13462-1-narmstrong@baylibre.com> <20190620150013.13462-6-narmstrong@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        khilman@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC/RFT 05/14] soc: amlogic: meson-clk-measure: protect measure with a mutex
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
-        Neil Armstrong <narmstrong@baylibre.com>
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 13:27:01 -0700
-Message-Id: <20190625202702.B9A9B208CB@mail.kernel.org>
+MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Neil Armstrong (2019-06-20 08:00:04)
-> In order to protect clock measuring when multiple process asks for
-> a mesure, protect the main measure function with mutexes.
->=20
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogi=
-c/meson-clk-measure.c
-> index 19d4cbc93a17..c470e24f1dfa 100644
-> --- a/drivers/soc/amlogic/meson-clk-measure.c
-> +++ b/drivers/soc/amlogic/meson-clk-measure.c
-> @@ -11,6 +11,8 @@
->  #include <linux/debugfs.h>
->  #include <linux/regmap.h>
-> =20
-> +static DEFINE_MUTEX(measure_lock);
-> +
->  #define MSR_CLK_DUTY           0x0
->  #define MSR_CLK_REG0           0x4
->  #define MSR_CLK_REG1           0x8
-> @@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *clk=
-_msr_id,
->         unsigned int val;
->         int ret;
-> =20
-> +       ret =3D mutex_lock_interruptible(&measure_lock);
-
-Why interruptible?
-
-> +       if (ret)
-> +               return ret;
-> +
->         regmap_write(priv->regmap, MSR_CLK_REG0, 0);
-> =20
->         /* Set measurement duration */
+On 26/06/19 12:27 AM, Linus Walleij wrote:=0A=
+> On Mon, Jun 17, 2019 at 11:55 PM Chris Packham=0A=
+> <chris.packham@alliedtelesis.co.nz> wrote:=0A=
+> =0A=
+>> The 98DX1135 is a switch chip with an integrated CPU. This is similar to=
+=0A=
+>> the 98DX4122 except the MPP assignments differ.=0A=
+>>=0A=
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>=0A=
+> =0A=
+> Patch applied.=0A=
+> I just assume this one has no dependency on the clock patches=0A=
+> so I can merge it separately.=0A=
+=0A=
+Correct. There's no dependency between the patches but they're all =0A=
+needed to successfully boot a board.=0A=
