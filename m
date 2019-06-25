@@ -1,114 +1,94 @@
-Return-Path: <SRS0=7bnF=UX=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E07EC4646B
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 22:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC60C4646B
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 00:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A59220663
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jun 2019 22:59:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="mv+/ByF6"
+	by mail.kernel.org (Postfix) with ESMTP id A8214206DD
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 00:47:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561423663;
+	bh=nXbVttwPSdyo0MJiTGhWsGVRpNRpHSHCugsaouhmoEM=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=KJZ0K+lTnbKGq8gs/k6oCBIEd95mpLzzRefk2vobO481dvWv0hCIPbpkB+/GremRo
+	 QarCCTcFyCP7EbkCZDss5lBxQQaFjF/K7UOsajVP0z/sQdJoj1cuyUe2LA0iflDHqy
+	 WuHwSJ7SymFthXNvGHAz+83WfabTPG+nUb6zRp54=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbfFXW6O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jun 2019 18:58:14 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:32948 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbfFXW6N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jun 2019 18:58:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561417091; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EXDpRAr6ae6pdfysqa9Ws5+SbU/ykTOQNDRM1bF/k8E=;
-        b=mv+/ByF6C16QiakfHuD6x/Q0NCsGmxRQpHp2CcaeP+HtBJeywOjPYoFMBv+jVRJYlYBStd
-        r6FLxL9VzMsZAikAiP2ywSz7octOvOVRIcp8uxkLgVIsG0a7Rr1HdlVW88TSPMur3WtUZy
-        8eXFi0yJ3qisoNjV9KcE4Ri4dJ8pmSw=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Artur Rojek <contact@artur-rojek.eu>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v13 01/13] dt-bindings: ingenic: Add DT bindings for TCU clocks
-Date:   Tue, 25 Jun 2019 00:57:47 +0200
-Message-Id: <20190624225759.18299-2-paul@crapouillou.net>
-In-Reply-To: <20190624225759.18299-1-paul@crapouillou.net>
-References: <20190624225759.18299-1-paul@crapouillou.net>
+        id S1729602AbfFYArn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jun 2019 20:47:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727648AbfFYArn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Jun 2019 20:47:43 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74CB9205F4;
+        Tue, 25 Jun 2019 00:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561423662;
+        bh=nXbVttwPSdyo0MJiTGhWsGVRpNRpHSHCugsaouhmoEM=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=HHuqYrFYafJN4/0eKxhqNsbydN9YFFwbIVbSf3w/tayv1bG5juuB0nykTCkOnEoP0
+         Cimxk28rvHw5hOGAXPmVz24LGt20avX//WZYjefzCL6DP2pSi2oOGQwHH9S9v3xOox
+         nc4bHnJ4vuHpyPmYN0UeNW/by+0Ry0hxSdZqqzwE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <39ccc93ddd8bc64af85541086190e563fa13f038.camel@baylibre.com>
+References: <39ccc93ddd8bc64af85541086190e563fa13f038.camel@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [GIT PULL] clk: meson: update for v5.3
+Cc:     Kevin Hilman <khilman@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+User-Agent: alot/0.8.1
+Date:   Mon, 24 Jun 2019 17:47:41 -0700
+Message-Id: <20190625004742.74CB9205F4@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This header provides clock numbers for the ingenic,tcu
-DT binding.
+Quoting Jerome Brunet (2019-06-11 05:38:17)
+> Dear clock maintainers,
+>=20
+> Below is a request to pull Amlogic clock update for v5.3 based on the fix=
+es
+> we just send. This update add the init() callback to the mpll clock driver
+> as discussed in the previous cycle. As promised, the rework to register/d=
+eregister
+> will follow.
+>=20
+> Apart from this, we've got a fairly regular update, adding a bunch of new
+> clocks to several SoC families. It also adds support for g12b derived fro=
+m the
+> g12a, which explains the significant line count in the g12a file.
+>=20
+> The following changes since commit 3ff46efbcd90d3d469de8eddaf03d12293aaa5=
+0c:
+>=20
+>   clk: meson: meson8b: fix a typo in the VPU parent names array variable =
+(2019-05-20 12:11:08 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://github.com/BayLibre/clk-meson.git tags/clk-meson-5.3-1
+>=20
+> for you to fetch changes up to eda91833f099277998814105c77b5b12cbfab6db:
+>=20
+>   clk: meson: g12a: mark fclk_div3 as critical (2019-06-11 11:28:44 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Tested-by: Artur Rojek <contact@artur-rojek.eu>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
-
-Notes:
-    v2: Use SPDX identifier for the license
-    
-    v3/v4: No change
-    
-    v5: s/JZ47*_/TCU_/ and dropped *_CLK_LAST defines
-    
-    v6-v13: No change
-
- include/dt-bindings/clock/ingenic,tcu.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
-
-diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
-new file mode 100644
-index 000000000000..d569650a7945
---- /dev/null
-+++ b/include/dt-bindings/clock/ingenic,tcu.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,tcu DT binding.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+
-+#define TCU_CLK_TIMER0	0
-+#define TCU_CLK_TIMER1	1
-+#define TCU_CLK_TIMER2	2
-+#define TCU_CLK_TIMER3	3
-+#define TCU_CLK_TIMER4	4
-+#define TCU_CLK_TIMER5	5
-+#define TCU_CLK_TIMER6	6
-+#define TCU_CLK_TIMER7	7
-+#define TCU_CLK_WDT	8
-+#define TCU_CLK_OST	9
-+
-+#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
--- 
-2.21.0.593.g511ec345e18
+Thanks. Pulled into clk-next
 
