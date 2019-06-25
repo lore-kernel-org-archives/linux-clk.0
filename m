@@ -2,95 +2,114 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32460C48BD4
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21963C48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DECF214DA
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561484360;
-	bh=uN+wDDacNJwqx+v/3/n9nLahoHqzeiFAwdlzYipdI4Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=uzzERrFpvP0wybUYzRxyaPQg8jXN6yz28SIcWeMbjdZHduQJth5QK6tilCddYJCAr
-	 xHxchTxicLpS5mz1itwuvJq1fsnk/wh00nFSq+6tAesC9wv2KD3En93g/mays+bLYi
-	 JbAVaQZyH5HgCNcI5LRVM/kiBZTlH6QpWIbKcT38=
+	by mail.kernel.org (Postfix) with ESMTP id E9D7820663
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:47:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="I5VaVXau"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbfFYRjQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 13:39:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbfFYRjQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:39:16 -0400
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5318208CA;
-        Tue, 25 Jun 2019 17:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561484354;
-        bh=uN+wDDacNJwqx+v/3/n9nLahoHqzeiFAwdlzYipdI4Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DZClxw/ihopBvtSbOR8Z1H0A4Pac9E37GVJDGLb5uGZFu+kZDSY5rK6XQLgx77MGu
-         PZWac+VgZuLeOQlZkw5MTWkK76V3Cvn5l724U3UUKKRahQ4StmpEdHw7+tMuFEZ35w
-         f0pAHmJoix4gJmL4t9ALd8FeAQUbyBDdcKOUDJ8U=
-Received: by mail-qt1-f173.google.com with SMTP id p15so19354822qtl.3;
-        Tue, 25 Jun 2019 10:39:14 -0700 (PDT)
-X-Gm-Message-State: APjAAAVO5ney6DEo3qabSQJNJcu36eDXk52uhyQKMPG96eD5MtkSrRbV
-        j/61dSEllkxBdWFljIcko+TjbjjxLYbO6gtv0g==
-X-Google-Smtp-Source: APXvYqyklRzybJRVDTEpfp0SeahUkH+awTTyyTlDMslpGY15qipWFkQLHnSeins0DWa3Bf2iY4HJCCw2GsgIen75KcU=
-X-Received: by 2002:a0c:b627:: with SMTP id f39mr65154134qve.72.1561484354003;
- Tue, 25 Jun 2019 10:39:14 -0700 (PDT)
+        id S1730429AbfFYRrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 13:47:46 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:40816 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729493AbfFYRrp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 13:47:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1561484862; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EVTVbMsCSjQzsSGM7XCSUEIELSlkRRQLrdI9FXq1fYg=;
+        b=I5VaVXau0WYEvLY0+ThTCn8lOoVV25LOpS4WXggxtDRrOTlkMd1je79pyQQADeqrXUuEDs
+        4KVxkYs0sLV0LEQgVmb0LvE0ep2awhNb5yLGjDccUym35LLBRhSoRhcZyUcP3CQ9v1i+B9
+        fero1NZR8XqCyr37PzfLE+FpxGb8NKE=
+Date:   Tue, 25 Jun 2019 19:47:32 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v13 04/13] mfd: Add Ingenic TCU driver
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
+Message-Id: <1561484852.10069.0@crapouillou.net>
+In-Reply-To: <20190625173026.dbvx44iwywnijjql@pburton-laptop>
+References: <20190624225759.18299-1-paul@crapouillou.net>
+        <20190624225759.18299-5-paul@crapouillou.net>
+        <20190625173026.dbvx44iwywnijjql@pburton-laptop>
 MIME-Version: 1.0
-References: <20190623043801.14040-1-icenowy@aosc.io> <20190623043801.14040-6-icenowy@aosc.io>
- <CACRpkdbbxgeGPh1oKfyKKOMhpXiz4sQWjZv23FbYaafCz6NyCQ@mail.gmail.com>
-In-Reply-To: <CACRpkdbbxgeGPh1oKfyKKOMhpXiz4sQWjZv23FbYaafCz6NyCQ@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 25 Jun 2019 11:39:01 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+w-+cRwfAMu=kZPK=e85ujq8hu9Lh=jjf+Qy=R7C-AQA@mail.gmail.com>
-Message-ID: <CAL_Jsq+w-+cRwfAMu=kZPK=e85ujq8hu9Lh=jjf+Qy=R7C-AQA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] dt-bindings: vendor-prefixes: add SoChip
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 7:55 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Sun, Jun 23, 2019 at 6:39 AM Icenowy Zheng <icenowy@aosc.io> wrote:
->
-> > Shenzhen SoChip Technology Co., Ltd. is a hardware vendor that produces
-> > EVBs with Allwinner chips. There's also a SoC named S3 that is developed
-> > by Allwinner (based on Allwinner V3/V3s) but branded SoChip.
-> >
-> > Add the vendor prefix for SoChip.
-> >
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> > No changes in v3.
-> >
-> > Changes in v2:
-> > - Add the review tag by Rob.
->
-> Should I apply this to the pinctrl tree? Rob?
 
-I'd like to take these 2 because we have lots of vendor prefix changes
-(adding a bunch of undocumented ones) this cycle.
 
-Rob
+Le mar. 25 juin 2019 =E0 19:30, Paul Burton <paul.burton@mips.com> a=20
+=E9crit :
+> Hi Paul,
+>=20
+> On Tue, Jun 25, 2019 at 12:57:50AM +0200, Paul Cercueil wrote:
+>>  +static const struct of_device_id ingenic_tcu_of_match[] =3D {
+>>  +	{ .compatible =3D "ingenic,jz4740-tcu", .data =3D &jz4740_soc_info, }=
+,
+>>  +	{ .compatible =3D "ingenic,jz4725b-tcu", .data =3D &jz4725b_soc_info,=
+=20
+>> },
+>>  +	{ .compatible =3D "ingenic,jz4770-tcu", .data =3D &jz4740_soc_info, }=
+,
+>>  +	{ }
+>>  +};
+>=20
+> Nit: why not order these numerically? ie. 25b, 40, 70.
+
+They are in chronological order - the jz4725b is newer than the jz4740.
+
+>>  +static struct regmap * __init ingenic_tcu_create_regmap(struct=20
+>> device_node *np)
+>>  +{
+>>  +	struct resource res;
+>>  +	void __iomem *base;
+>>  +	struct regmap *map;
+>>  +
+>>  +	if (!of_match_node(ingenic_tcu_of_match, np))
+>>  +		return ERR_PTR(-EINVAL);
+>>  +
+>>  +	base =3D of_io_request_and_map(np, 0, "TCU");
+>>  +	if (IS_ERR(base))
+>>  +		return ERR_PTR(PTR_ERR(base));
+>=20
+> This is equivalent to:
+>=20
+>     return ERR_CAST(base);
+
+Alright - I'll fix it in a following patch if this V13 gets merged,
+or in the V14 patchset.
+
+> Apart from those:
+>=20
+>     Reviewed-by: Paul Burton <paul.burton@mips.com>
+>=20
+> Thanks,
+>     Paul
+
+=
+
