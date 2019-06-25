@@ -2,72 +2,92 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 029ADC48BD6
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B1EC48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAE582086D
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31AC82086D
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 22:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561502934;
-	bh=pb5ovXb0zeOxnunbndzV3GrY3lbUPIvRAV9/N0BT1co=;
+	s=default; t=1561503007;
+	bh=2OyQRpTPZ5dKGVtMN2kaLXoBNGQnIFNE3L3zmlzRXiQ=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=e6lktog8m4zmysWMxPm7qkmYTUBshkokcwebFi0GkBjvTSnwKSKV9LyJ0v3ig6EvU
-	 SwdRyIUosKni6pz+gCf+Vb/ZUoOrjkL3g5qB8WfSVIAxaDaf0yRbMx/2YTg//Aa0+5
-	 ETWPmp8cF39CQ/Xpc8YlYG4H1nlDWnbipgkS8Yy8=
+	b=ifLUSdoZ5ORQuaatYBeUOXjxNslhJLftBdT9o/p3DWypg8auwspQ1Jv3B+eKPkxjb
+	 rHU/+v4EurPlRQrqjsdXXUf9oHPIy0aCK8k/luJ1Slv1/FpXF6BsAMcxjpeZTHk2X4
+	 H12IKe8GKCMPJLJO34IXGbelfIUxK1eQZ0j/wjAA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbfFYWsf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 18:48:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44840 "EHLO mail.kernel.org"
+        id S1726037AbfFYWt5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 18:49:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbfFYWsf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:48:35 -0400
+        id S1725782AbfFYWt4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 18:49:56 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BEAF20645;
-        Tue, 25 Jun 2019 22:48:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6D5F20645;
+        Tue, 25 Jun 2019 22:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561502914;
-        bh=pb5ovXb0zeOxnunbndzV3GrY3lbUPIvRAV9/N0BT1co=;
+        s=default; t=1561502995;
+        bh=2OyQRpTPZ5dKGVtMN2kaLXoBNGQnIFNE3L3zmlzRXiQ=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=bwcAF5vykiCIf86n4i2Xh1mnupdT8BkNDcHO83ix2w3l+c6FxyQHtyK1TnS810Q7j
-         ftA8vl1I2y/2t4fSVAF4mJcYiaABVn/SImdjHDC18EFudVRD480omETVcxRK0ePBBj
-         LhyzLnxZfbTzzLS0IyqF7K9XXzcRi8vZ1Q2u584Y=
+        b=UK3K3cByXRfSTvFjI5jUzuEbZvQpf/kSdue5tPgOv/xYY/ykWy9HEScIMfyEFwj+g
+         VqyqcWRMyHH0uLxhx0T4OIyPNnwouuGAcd/LyM96KDM+ToApCNg/5ojZRpA48C73oO
+         puKPFbJHjZJMrRBDgk346f2yu05JDImchrvbnW+U=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190611180757.32299-2-paul@crapouillou.net>
-References: <20190611180757.32299-1-paul@crapouillou.net> <20190611180757.32299-2-paul@crapouillou.net>
-To:     James Hogan <jhogan@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Ralf Baechle <ralf@linux-mips.org>
+In-Reply-To: <20190611211134.96159-1-nhuck@google.com>
+References: <20190611211134.96159-1-nhuck@google.com>
+To:     Nathan Huckleberry <nhuck@google.com>, agross@kernel.org,
+        david.brown@linaro.org, mturquette@baylibre.com
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 2/5] clk: ingenic: Handle setting the Low-Power Mode bit
-Cc:     od@zcrc.me, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] clk: qcom: Fix -Wunused-const-variable
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
 User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 15:48:33 -0700
-Message-Id: <20190625224834.4BEAF20645@mail.kernel.org>
+Date:   Tue, 25 Jun 2019 15:49:54 -0700
+Message-Id: <20190625224955.B6D5F20645@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2019-06-11 11:07:54)
-> The Low-Power Mode, when enabled, will make the "wait" MIPS instruction
-> suspend the system.
+Quoting Nathan Huckleberry (2019-06-11 14:11:34)
+> Clang produces the following warning
 >=20
-> This is not really clock-related, but this bit happens to be in the
-> register set of the CGU.
+> drivers/clk/qcom/gcc-msm8996.c:133:32: warning: unused variable
+> 'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map' [-Wunused-const-variable]
+> static const struct
+> parent_map gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map[] =3D
+> { ^drivers/clk/qcom/gcc-msm8996.c:141:27: warning: unused variable
+> 'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div' [-Wunused-const-variable] stat=
+ic
+> const char * const gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div[] =3D { ^
+> drivers/clk/qcom/gcc-msm8996.c:187:32: warning: unused variable
+> 'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map'
+> [-Wunused-const-variable] static const struct parent_map
+> gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map[] =3D { ^
+> drivers/clk/qcom/gcc-msm8996.c:197:27: warning: unused variable
+> 'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div'
+> [-Wunused-const-variable] static const char * const
+> gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div[] =3D {
 >=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> It looks like these were never used.
+>=20
+> Fixes: b1e010c0730a ("clk: qcom: Add MSM8996 Global Clock Control (GCC) d=
+river")
+> Cc: clang-built-linux@googlegroups.com
+> Link: https://github.com/ClangBuiltLinux/linux/issues/518
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
 > ---
 
 Applied to clk-next
