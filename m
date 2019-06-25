@@ -2,114 +2,113 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21963C48BD6
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADF2C48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 18:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9D7820663
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 17:47:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="I5VaVXau"
+	by mail.kernel.org (Postfix) with ESMTP id 00BBC208E3
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 18:55:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561488932;
+	bh=CU/pi1jDqoAxTEEO83+4ZsORpoB/lyIbsA7mD6/R9HY=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=Do45FTCJKdRNegCmoXkaD0auwnvuea+4Fys24UXYam+Gwfx6/1LZ4fkQzuTu1widn
+	 e3UJi6ZjzDf+ENFwGtncaosyVX/G5LOvxAr3jGLD/KzCA4NNyMzaT8tMnd6paN3ujg
+	 39advGy0B5CgG7wx1KmIGtrggYMBCgn3D0goqmas=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730429AbfFYRrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 13:47:46 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:40816 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729493AbfFYRrp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 13:47:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561484862; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EVTVbMsCSjQzsSGM7XCSUEIELSlkRRQLrdI9FXq1fYg=;
-        b=I5VaVXau0WYEvLY0+ThTCn8lOoVV25LOpS4WXggxtDRrOTlkMd1je79pyQQADeqrXUuEDs
-        4KVxkYs0sLV0LEQgVmb0LvE0ep2awhNb5yLGjDccUym35LLBRhSoRhcZyUcP3CQ9v1i+B9
-        fero1NZR8XqCyr37PzfLE+FpxGb8NKE=
-Date:   Tue, 25 Jun 2019 19:47:32 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v13 04/13] mfd: Add Ingenic TCU driver
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
-Message-Id: <1561484852.10069.0@crapouillou.net>
-In-Reply-To: <20190625173026.dbvx44iwywnijjql@pburton-laptop>
-References: <20190624225759.18299-1-paul@crapouillou.net>
-        <20190624225759.18299-5-paul@crapouillou.net>
-        <20190625173026.dbvx44iwywnijjql@pburton-laptop>
+        id S1733039AbfFYSzb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 14:55:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53000 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730588AbfFYSzb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 14:55:31 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACAF52085A;
+        Tue, 25 Jun 2019 18:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561488929;
+        bh=CU/pi1jDqoAxTEEO83+4ZsORpoB/lyIbsA7mD6/R9HY=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=vcR9gmJZJ9TmQdBp8TcKLhGKYvrdW1PlBKzqzOSCiwznX260bcm2xeLhLjpjalFuk
+         xIaSshROHzPyZCwur+DKJZ6juJUGyYx9W6LpDJGP5JB7u6t0ZYIS/mNnSdc8oNM+rr
+         fQiOUa2dbEWCZem77UsrtRicO7pQh2JeTvZrIVms=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2ba035cc-2381-ce36-3b7d-f5027ef9ef40@ti.com>
+References: <1deb7a85-0859-54f1-950a-33de3a08f9fd@ti.com> <20190625011711.3D2D520663@mail.kernel.org> <2ba035cc-2381-ce36-3b7d-f5027ef9ef40@ti.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [GIT PULL] clk: keystone: changes for 5.3 v2
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+User-Agent: alot/0.8.1
+Date:   Tue, 25 Jun 2019 11:55:28 -0700
+Message-Id: <20190625185529.ACAF52085A@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-Le mar. 25 juin 2019 =E0 19:30, Paul Burton <paul.burton@mips.com> a=20
-=E9crit :
-> Hi Paul,
+Quoting Tero Kristo (2019-06-25 03:33:50)
+> On 25/06/2019 04:17, Stephen Boyd wrote:
+> > Quoting Tero Kristo (2019-06-12 04:56:15)
+> >> Hi Stephen, Mike, Santosh,
+> >>
+> >> Here's a 2nd take of the pull request for the clock changes for keysto=
+ne
+> >> SoC for 5.3. The only change compared to the v1 is to add the required
+> >> drivers/firmware change in. This avoids the nasty dependency between t=
+he
+> >> pull requests between the clock driver and firmware driver.
+> >>
+> >> -Tero
+> >=20
+> > Thanks. Pulled into clk-next. I guess we should increase the size of the
+> > number of parents that can exist to be more than a u8? We're close to
+> > getting there with the new way of specifying clk parents, so maybe we
+> > should expand it to an unsigned int, but then we may need to optimize
+> > finding parents when searching through all the parents of a clk.
 >=20
-> On Tue, Jun 25, 2019 at 12:57:50AM +0200, Paul Cercueil wrote:
->>  +static const struct of_device_id ingenic_tcu_of_match[] =3D {
->>  +	{ .compatible =3D "ingenic,jz4740-tcu", .data =3D &jz4740_soc_info, }=
-,
->>  +	{ .compatible =3D "ingenic,jz4725b-tcu", .data =3D &jz4725b_soc_info,=
-=20
->> },
->>  +	{ .compatible =3D "ingenic,jz4770-tcu", .data =3D &jz4740_soc_info, }=
-,
->>  +	{ }
->>  +};
->=20
-> Nit: why not order these numerically? ie. 25b, 40, 70.
+> For now, this is not an issue with TI SoC:s at least, I think we only=20
+> have like 64 parents at max for muxes.
 
-They are in chronological order - the jz4725b is newer than the jz4740.
+Ok. It doesn't sound like a priority then.
 
->>  +static struct regmap * __init ingenic_tcu_create_regmap(struct=20
->> device_node *np)
->>  +{
->>  +	struct resource res;
->>  +	void __iomem *base;
->>  +	struct regmap *map;
->>  +
->>  +	if (!of_match_node(ingenic_tcu_of_match, np))
->>  +		return ERR_PTR(-EINVAL);
->>  +
->>  +	base =3D of_io_request_and_map(np, 0, "TCU");
->>  +	if (IS_ERR(base))
->>  +		return ERR_PTR(PTR_ERR(base));
 >=20
-> This is equivalent to:
+> > Also, there isn't any quantification of how much better it is to scan DT
+> > for all the clks that are used and only register those ones. It would be
+> > nice to understand how much better it is to do that sort of scan vs.
+> > just populating all clks at boot time.
 >=20
->     return ERR_CAST(base);
+> I haven't done measurements lately, but it provides pretty drastic=20
+> improvement. On am65x for example, it cuts the scan time from bit more=20
+> than 1 second to couple of hundred milliseconds. I don't have=20
+> measurements for the new j721e SoC, but I would believe the improvement=20
+> is even more with that one.
 
-Alright - I'll fix it in a following patch if this V13 gets merged,
-or in the V14 patchset.
+Cool. Thanks for the numbers.
 
-> Apart from those:
 >=20
->     Reviewed-by: Paul Burton <paul.burton@mips.com>
+> > It may be useful to make the code
+> > generic because NXP folks also want to populate clks from DT so maybe we
+> > should provide this from the core framework somehow to ask providers to
+> > register a particular clk or not. I haven't thought about it at all, but
+> > it may come up that we totally rewrite this code in the future to be
+> > shared outside of the TI clk driver.
 >=20
-> Thanks,
->     Paul
+> It might also be worth thinking whether some sort of lazy clock probe=20
+> would be possible... now we register everything at one go, but would it=20
+> be possible to only register / reparent clocks once they are actually=20
+> requested by some driver?
 
-=
+Sure. Ideally the optimization isn't vendor driver specific.
 
