@@ -2,129 +2,96 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4977BC48BD6
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D2EC48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 216F4213F2
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0425213F2
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:55:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjpTBDGA"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HBCIky80"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfFYNkg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 09:40:36 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40463 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfFYNkg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 09:40:36 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v19so3008329wmj.5;
-        Tue, 25 Jun 2019 06:40:34 -0700 (PDT)
+        id S1728022AbfFYNzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 09:55:14 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46176 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727807AbfFYNzN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 09:55:13 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z15so12663538lfh.13
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2019 06:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QJ3vVIahs8Gyu6o4xBxgNpPv/R2B40HTjKibjIh27os=;
-        b=MjpTBDGAkMtRwPjH+//H8EJ/MWqjs4M+v3aRalto2IlqB7ngwlJ390Tpkt+7GXhMpo
-         TexjJIuAuUS3pLozIuSJRPdQ+iF/b1ahALGQnip+SKd1x2uWUDge2NRJYsCBLonY8SXE
-         x+VMFqFWhvpKDmFPcRS2ssRQ5Q99M9gd1CFl2wuVps/f+2mHfeyo/rECxM1Mob3NY9X0
-         KxxL9i2KGsqMFXKEexUPO0CunMep33lfeEuGyvLrIklJ3t2WeNSmefKuXgtjqK6dpFcJ
-         HQLtfs9TjJ8Iy7/qFXCU7lJj7NBSnvx1+wv67M502MkIaB5Z0oufzFsC6AvaWBCOz0Fj
-         vdbw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FMqlAp58Lm3MdFL1/oLfn8r6VrExYv+Qlr+51/E8+CI=;
+        b=HBCIky80cw7b2VS9iWLL0Ww6oY2T4Czf/fAe41KlVer5eCS70N2T9N6i+HMJWbByYC
+         s+fMTPIHVitU4jqxF2KA93qimnYLgc650UEYlCKuf1gfuyyQ33gDonObiXqXZe+gjs8O
+         waAx5wLbgWDVZc3uKTHvWP6rM/o1xiWun8bYPuYn4HvHH+wq2MYhGCsRznPA1MyLWkA1
+         /ZYctoRM+yOUBYmZXs29rpsTNWSfiQjdOe2MFcf487r4GU8KskEXpOGER/nADBI5ZvoK
+         ABMpuOMCDGJwjkf6gnqacfGJeTxgqj9SsNuIcRnbDZ0aJsB+cfzaUGMtzb0UkeOYZUqV
+         97DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QJ3vVIahs8Gyu6o4xBxgNpPv/R2B40HTjKibjIh27os=;
-        b=G7h/IERhV8nwnAYYp8cXs9UcbOV9S7WFMAj160l2bresvCkrmG20miCbmo9fuoPLfb
-         JgEldCI/j3YqjlQYwf1qj1bjMdlq/8jNpBacqjMrlQdHJMA6YLCcpF86VLc0aNrTbSAH
-         oRj4wgTORIcTXibq9mGnc4jPkCEP2P5ffOVyXgV6uAHaQn5Ujeh87B6iLKPWMbeAQ0Jp
-         kvxARXYoQxoUXRj3GnFeyKMEbQ4Nhe0TVVVPwiuWTiDEeARK9e5u2risCdDLX3yNu6Nh
-         g7IglMIafi3EcUgO5rYWzvCB+BrzGIBfvu2Ty0NMkZKOGUSKdsQhsKALi3nbTzh3sKwl
-         sycQ==
-X-Gm-Message-State: APjAAAVpPxbMGmMNyIcg3AUuNyk0NA0HbqndAmCmb9f7U6AYf+zUGbWL
-        S0ThZ+do2pABEuO+IgxHcJ4=
-X-Google-Smtp-Source: APXvYqxlXKjVk17RP8Zhg4eoVhsbQZMM5EjUjUE+3lmuhZpEBA/oCKVvP3rJqt4BUFNb3QlRd38gkg==
-X-Received: by 2002:a1c:be05:: with SMTP id o5mr2665591wmf.52.1561470033332;
-        Tue, 25 Jun 2019 06:40:33 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id j18sm17333213wre.23.2019.06.25.06.40.32
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 06:40:32 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 15:40:31 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
-        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio
- resume
-Message-ID: <20190625134031.GA22491@ulmo>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FMqlAp58Lm3MdFL1/oLfn8r6VrExYv+Qlr+51/E8+CI=;
+        b=UKKz0VLiQE7UXNGV5km0Y22j889HZmHsen0rHWVzLOKMc8406cSpEkB2lbXovr2Wob
+         frC5qWBfmdevmtty+nbcMzeEXqcNZQGP9/a2ZbNAOCkKSGWWd5TQiNnktgTSPIV6VerK
+         qzTSOr8AXJYfxdOwlbim7BMQR5xjYb5qZvwqUFkTKx8orABE4qGEN5m/zXYSFG9RxBvG
+         +pXUJeZkL/5Z0OLWobgRWYWUEHxfifWNqVLFDorcGB3kGnWTjrYmCUbUDjz/FGC/Kzdn
+         tfKvRX/GGqQeqW1Kd6iqRElfUQQV5tudHBfJ1skMkZpV9grgDTRSz/xihrXoesRwnGs8
+         fVEA==
+X-Gm-Message-State: APjAAAWQOjorIBY4f3GbOFQqS9ItfvDbm24C5rCHNEFwwQMf7kohVNrj
+        0hwVnNzX/+Wv4TZmMOmioCDZ6FDA8HKV5yVRT5o3sg==
+X-Google-Smtp-Source: APXvYqx4zfh4abumT8QCcMwPsQ4kGAi3uQZl6qg+f4xwtibi7ko9pWMCa9GCVANnvSnW7NG6HG7bW+OUwbld6KRMjBE=
+X-Received: by 2002:ac2:598d:: with SMTP id w13mr250893lfn.165.1561470912218;
+ Tue, 25 Jun 2019 06:55:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
-Content-Disposition: inline
-In-Reply-To: <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190623043801.14040-1-icenowy@aosc.io> <20190623043801.14040-6-icenowy@aosc.io>
+In-Reply-To: <20190623043801.14040-6-icenowy@aosc.io>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 15:55:00 +0200
+Message-ID: <CACRpkdbbxgeGPh1oKfyKKOMhpXiz4sQWjZv23FbYaafCz6NyCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/9] dt-bindings: vendor-prefixes: add SoChip
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sun, Jun 23, 2019 at 6:39 AM Icenowy Zheng <icenowy@aosc.io> wrote:
 
---TB36FDmn/VVEgNH/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jun 23, 2019 at 08:02:44PM -0700, Sowjanya Komatineni wrote:
-> During SC7 resume, PARKED bit clear from the pinmux registers may
-> cause a glitch on the GPIO lines.
->=20
-> So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
-> to keep the GPIO lines in a known good state prior to clearing PARKED
-> bit.
->=20
-> This patch has fix for this by moving Tegra GPIOs restore to happen
-> very early than pinctrl resume.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Shenzhen SoChip Technology Co., Ltd. is a hardware vendor that produces
+> EVBs with Allwinner chips. There's also a SoC named S3 that is developed
+> by Allwinner (based on Allwinner V3/V3s) but branded SoChip.
+>
+> Add the vendor prefix for SoChip.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/gpio/gpio-tegra.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> No changes in v3.
+>
+> Changes in v2:
+> - Add the review tag by Rob.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Should I apply this to the pinctrl tree? Rob?
 
---TB36FDmn/VVEgNH/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0SJEsACgkQ3SOs138+
-s6Gc4RAAuL9MGdkEhgzl61Ta2oBYD0aZWJ66SqDoCR4N4IOJUbUigecf27fp/Aq2
-hSdNG1GPkruQ9M2Dr/R7aQAVgYnZZRbxTTtGvylvkSa8nPDRWVESZSBGlKERb1oE
-tbBTktBKqYuZNv5tfxAoUnG7elNy/6LLbw942vtoblJdLPDGnuIiJw0wWhUj6bMM
-iaskxrSUg5K8ekrAqc5XTkZm92lxCGKHDYucMxyUF/nZCW8iczUGo+d2hzd3JFvj
-ruyTZuaYf6Pw2VhNJbsMpK+hqi3ou8RdVUjhc2DmUT/f5CTcjp0bO5UqjSH0U2LZ
-7v4aqh12UFukfwgb3UGq5Zj/qJoCXJKcIYeD4mZa/kKJUjgA0P6mCmrv+Qq6lEbB
-2+n2dMn1GmJdr9wTYATGeCIY794k2bWBOwYKiKx3AcOwBa4yp6rtLDbdPefKZsp7
-id8JXupBhHFiWbF4G7vLg9lmnPwTBHnJ1gD5oqBrtoryZMJyTD1XQNHMudiOyGL/
-ENdep/ewpV3jK7zVVpOomS8CDNa/0joXlyvGjHBtK341eCEyIxGD9nFytIPzqvFP
-+zdfiN5ioTRBBNpEaKcP5JRZiLMpUC00uT32vJlTKJb51V5q0MP1YxO8BGQ6EV8m
-dceqZShedBlFvgND7IuZ3JhX2Kgo6YtoGpdy0jzsSlDVi7xTU/Y=
-=Xgxt
------END PGP SIGNATURE-----
-
---TB36FDmn/VVEgNH/--
+Yours,
+Linus Walleij
