@@ -2,115 +2,150 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7973C48BD4
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 09:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B18C48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 10:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7705420883
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 09:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75E12215EA
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 10:34:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="W/ctZ5sK"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fBaksqcq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725921AbfFYJ0V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 05:26:21 -0400
-Received: from mail-wm1-f41.google.com ([209.85.128.41]:37102 "EHLO
-        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731495AbfFYJ0V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 05:26:21 -0400
-Received: by mail-wm1-f41.google.com with SMTP id f17so2180838wme.2
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2019 02:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=/458Fsfbmxm3r35MW4l5JCPflKQAaAPGKlBQ13aGDYg=;
-        b=W/ctZ5sKpFFzLmeDLTZeNdA1KRnAT3H/e+0IDSuP05zSFgDWJNknbQJSqU8zh5bjRy
-         Hb4A51RLamU36+wFsxxVZ0brdvip6L6rSxRQzNjZ09B0kXdQZd/t3DlIjResWXl/wr7f
-         6OKNSNY9XGBCfQN9ZOIB/5Qmxm5g4HXxMcRAWZrc/ksWHbfd96X4CBlBitTg7S+fQjzk
-         9o9gyTb1GbbgUg1zCRax/pWViIPPALnts1xRSZAdzymSyMXIajjpC1Wjg84UcYU2HT29
-         9UauFzSCwlr6pzQwDL0ob7TEXs10/YDeJrj9JxfkXVZI8rgc1bwyXl5n3k0kDoWsCYlB
-         ZkpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=/458Fsfbmxm3r35MW4l5JCPflKQAaAPGKlBQ13aGDYg=;
-        b=CcrV6AY+bKDlOvGEseWLLAqlNmfpqqBXw1vQ7I6an8FRBisH0hwt6wpmRi11736gII
-         7PwoXElwnMp+DyvQWGzle4vyo+H1nOlddReRnGVIvI2g3FNMufG8EYjwuZeC9LX/56MD
-         QiFpF1hiGi1hZhg0IiE3XhteXGmKZxKS8ZqUzT66qSKS5dgTpMHcptK11aW6oizRNMuk
-         UMyY9CTO7iqgMIDatbZ4n12mh6PehmDnzot7O5L1hzcsginzaEiA6ZtUKTNcIr2X08ft
-         CN9LyUFNTsWZIwYcuTPHOnq7e5aQseaIjtgH40qN7vl3KluztLycUt59WPVuL9SfpmkA
-         vZYQ==
-X-Gm-Message-State: APjAAAXBsb2MOo7QHuZmwH40zxDT9isQjGgh3/Mk1OxE8pHE5/BLY5fX
-        Bai469SAj10n+Z7JHA04GrHu4Q==
-X-Google-Smtp-Source: APXvYqxKxw5Ug545jBsBa5P365/JMaSJWj3VKzQDexpDtRW8cZ87UyO23ZxOXVh5oOzKqh7FmzClAA==
-X-Received: by 2002:a1c:18a:: with SMTP id 132mr19341185wmb.101.1561454778702;
-        Tue, 25 Jun 2019 02:26:18 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a67sm2140439wmh.40.2019.06.25.02.26.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 02:26:18 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
+        id S1728911AbfFYKeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 06:34:24 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47020 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729593AbfFYKeX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 06:34:23 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5PAYFqq013146;
+        Tue, 25 Jun 2019 05:34:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561458855;
+        bh=fZaTxdX6cMr4APD67girU2VhKY98+DcMFL2HQdL2v/M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=fBaksqcqVH0Tu6N1hxoupL6sdm6CVSb7gQkjgmTYYRyew8asmWMR/PzR9CVaSNNDL
+         0t+OnhrvNRz7ak4uvfC5YYn/YT4whKfkW4cV94rsCzJmCaBNvUD8feAka33WfKkBEp
+         HucpiUpUc4xFZ+YgTtcKYE6YvEXN8ehMFFtRQpW4=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5PAYFKF002868
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Jun 2019 05:34:15 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 25
+ Jun 2019 05:33:53 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 25 Jun 2019 05:33:53 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5PAXqb0014333;
+        Tue, 25 Jun 2019 05:33:52 -0500
+Subject: Re: [GIT PULL] clk: keystone: changes for 5.3 v2
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Kevin Hilman <khilman@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "open list\:ARM\/Amlogic Meson..." 
-        <linux-amlogic@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: meson: update for v5.3
-In-Reply-To: <1jv9wuyrfh.fsf@starbuckisacylon.baylibre.com>
-References: <39ccc93ddd8bc64af85541086190e563fa13f038.camel@baylibre.com> <1jv9wuyrfh.fsf@starbuckisacylon.baylibre.com>
-Date:   Tue, 25 Jun 2019 11:26:17 +0200
-Message-ID: <1jsgryyq12.fsf@starbuckisacylon.baylibre.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <1deb7a85-0859-54f1-950a-33de3a08f9fd@ti.com>
+ <20190625011711.3D2D520663@mail.kernel.org>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <2ba035cc-2381-ce36-3b7d-f5027ef9ef40@ti.com>
+Date:   Tue, 25 Jun 2019 13:33:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190625011711.3D2D520663@mail.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 25 Jun 2019 at 10:56, Jerome Brunet <jbrunet@baylibre.com> wrote:
+On 25/06/2019 04:17, Stephen Boyd wrote:
+> Quoting Tero Kristo (2019-06-12 04:56:15)
+>> Hi Stephen, Mike, Santosh,
+>>
+>> Here's a 2nd take of the pull request for the clock changes for keystone
+>> SoC for 5.3. The only change compared to the v1 is to add the required
+>> drivers/firmware change in. This avoids the nasty dependency between the
+>> pull requests between the clock driver and firmware driver.
+>>
+>> -Tero
+>>
+>> ---
+> 
+> Thanks. Pulled into clk-next. I guess we should increase the size of the
+> number of parents that can exist to be more than a u8? We're close to
+> getting there with the new way of specifying clk parents, so maybe we
+> should expand it to an unsigned int, but then we may need to optimize
+> finding parents when searching through all the parents of a clk.
 
-> On Tue 11 Jun 2019 at 14:38, Jerome Brunet <jbrunet@baylibre.com> wrote:
->
->> Dear clock maintainers,
->>
->> Below is a request to pull Amlogic clock update for v5.3 based on the fixes
->> we just send. This update add the init() callback to the mpll clock driver
->> as discussed in the previous cycle. As promised, the rework to register/deregister
->> will follow.
->>
->> Apart from this, we've got a fairly regular update, adding a bunch of new
->> clocks to several SoC families. It also adds support for g12b derived from the
->> g12a, which explains the significant line count in the g12a file.
->>
->> The following changes since commit 3ff46efbcd90d3d469de8eddaf03d12293aaa50c:
->>
->>   clk: meson: meson8b: fix a typo in the VPU parent names array variable (2019-05-20 12:11:08 +0200)
->>
->> are available in the Git repository at:
->>
->>   git://github.com/BayLibre/clk-meson.git tags/clk-meson-5.3-1
->>
->> for you to fetch changes up to eda91833f099277998814105c77b5b12cbfab6db:
->>
->>   clk: meson: g12a: mark fclk_div3 as critical (2019-06-11 11:28:44 +0200)
->>
->
-> Hi Stephen,
->
-> Could let us if you intend to take this PR as it is or if you are expecting
-> any change ?
->
-> Best regards
-> Jerome
+For now, this is not an issue with TI SoC:s at least, I think we only 
+have like 64 parents at max for muxes.
 
-Nevermind, I missed your reply.
-Thanks for merging.
+> Also, there isn't any quantification of how much better it is to scan DT
+> for all the clks that are used and only register those ones. It would be
+> nice to understand how much better it is to do that sort of scan vs.
+> just populating all clks at boot time.
 
-Regards
+I haven't done measurements lately, but it provides pretty drastic 
+improvement. On am65x for example, it cuts the scan time from bit more 
+than 1 second to couple of hundred milliseconds. I don't have 
+measurements for the new j721e SoC, but I would believe the improvement 
+is even more with that one.
+
+> It may be useful to make the code
+> generic because NXP folks also want to populate clks from DT so maybe we
+> should provide this from the core framework somehow to ask providers to
+> register a particular clk or not. I haven't thought about it at all, but
+> it may come up that we totally rewrite this code in the future to be
+> shared outside of the TI clk driver.
+
+It might also be worth thinking whether some sort of lazy clock probe 
+would be possible... now we register everything at one go, but would it 
+be possible to only register / reparent clocks once they are actually 
+requested by some driver?
+
+> 
+> FYI: I had to apply this patch on top to make sparse happy.
+
+Ok looks good to me, thanks.
+
+-Tero
+
+> 
+> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+> index b417cef35769..92b77d38dd1f 100644
+> --- a/drivers/firmware/ti_sci.c
+> +++ b/drivers/firmware/ti_sci.c
+> @@ -2402,12 +2402,13 @@ devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
+>   	if (!res)
+>   		return ERR_PTR(-ENOMEM);
+>   
+> -	res->sets = of_property_count_elems_of_size(dev_of_node(dev), of_prop,
+> +	ret = of_property_count_elems_of_size(dev_of_node(dev), of_prop,
+>   						    sizeof(u32));
+> -	if (res->sets < 0) {
+> +	if (ret < 0) {
+>   		dev_err(dev, "%s resource type ids not available\n", of_prop);
+> -		return ERR_PTR(res->sets);
+> +		return ERR_PTR(ret);
+>   	}
+> +	res->sets = ret;
+>   
+>   	res->desc = devm_kcalloc(dev, res->sets, sizeof(*res->desc),
+>   				 GFP_KERNEL);
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
