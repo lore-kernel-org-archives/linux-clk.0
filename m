@@ -2,107 +2,129 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E410DC48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4977BC48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC86C215EA
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 216F4213F2
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:40:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1mbYUFt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjpTBDGA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbfFYNin (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 09:38:43 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43433 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728070AbfFYNin (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 09:38:43 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j29so12642916lfk.10
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2019 06:38:42 -0700 (PDT)
+        id S1727227AbfFYNkg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 09:40:36 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40463 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfFYNkg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 09:40:36 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v19so3008329wmj.5;
+        Tue, 25 Jun 2019 06:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LSvTpOLyyXh49qYBGomCHftsOmnYZkhBKlFO4JP7Wco=;
-        b=M1mbYUFtUWy7KV2CuQ8M5nj8o/ooJsFihAJz7osC5AgX0PriOKLOv/57c+Ud2pPZYz
-         WabUrZRYC8iJuFTzI+CQWCu+xBqiuAf8oRQcslmGumQMVZ8/HwBktQVUQspZBYce1zfd
-         taGw+T6bJepqGs0Y5bw2kZRLDxW4ifJKz3myqKSs5EOoMyqCaY61mJtrIZyu7pBjOPZg
-         m6FQARBJw27QQbskEvQ3AdcukASou0VIzpTSRdz1ayrC68xRuw55bhY/bfgKdqRJoDng
-         cO9dQwy4TpzMe3SEJovusplELhe37+JoMC9g22TShMSob/tkCjfUqp2LJKCayQgtTFzk
-         DOLw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QJ3vVIahs8Gyu6o4xBxgNpPv/R2B40HTjKibjIh27os=;
+        b=MjpTBDGAkMtRwPjH+//H8EJ/MWqjs4M+v3aRalto2IlqB7ngwlJ390Tpkt+7GXhMpo
+         TexjJIuAuUS3pLozIuSJRPdQ+iF/b1ahALGQnip+SKd1x2uWUDge2NRJYsCBLonY8SXE
+         x+VMFqFWhvpKDmFPcRS2ssRQ5Q99M9gd1CFl2wuVps/f+2mHfeyo/rECxM1Mob3NY9X0
+         KxxL9i2KGsqMFXKEexUPO0CunMep33lfeEuGyvLrIklJ3t2WeNSmefKuXgtjqK6dpFcJ
+         HQLtfs9TjJ8Iy7/qFXCU7lJj7NBSnvx1+wv67M502MkIaB5Z0oufzFsC6AvaWBCOz0Fj
+         vdbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LSvTpOLyyXh49qYBGomCHftsOmnYZkhBKlFO4JP7Wco=;
-        b=Npr97eLtlBoWDsKD8U9qy+bUENwRqrlKYIc27XY/QivHUykhRmT/xQF8FhFedJAWoK
-         1ujjnRAx9jDLCJyyzZ0tvkvcV7qeCnWTNKa2vP5n8hcsDCMGoy0MW3L9Bm23Xuj3wyse
-         Gfy1xYOpv9x/HTB9EpaBglCfWHvTBYBx7GrwKmAXSwSc+1u0fpv7gPKwuWqEOMYkANg4
-         /bbJf86AfXLyQLDYYpj6mpnrD4f2BiACVoi3LQTGVZW+uaEmVl337PgIDxts5Tnhw0WL
-         3GfwRwEfxsAmo364KBanMKc90vqIIwR/Y5zoca6tvb1KwX0rd/gqtTw0g/1v5Ps661hJ
-         sKEg==
-X-Gm-Message-State: APjAAAVns+K11peGtJPQFgPT5GI5ZnLWv4E1NmmCy3VEyriPGJtnuySq
-        XCgi/VSJOQYOeqwxkcTIzwi9pCCRBbuCEn/7DlRp+A==
-X-Google-Smtp-Source: APXvYqw1szRm5IYELBubgoE074wOtxRYIQ93MVfFMiHW+jrrnby9r1otXbCpvLC/2ZO07gSJ2SF1xJN/82oqxqNsyBo=
-X-Received: by 2002:ac2:50c4:: with SMTP id h4mr25221480lfm.61.1561469921507;
- Tue, 25 Jun 2019 06:38:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com> <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 15:38:29 +0200
-Message-ID: <CACRpkda0=HeRco8kExdf6TmiLOnCec3Ek06s-MdjNJvVGw3ZNQ@mail.gmail.com>
-Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio resume
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QJ3vVIahs8Gyu6o4xBxgNpPv/R2B40HTjKibjIh27os=;
+        b=G7h/IERhV8nwnAYYp8cXs9UcbOV9S7WFMAj160l2bresvCkrmG20miCbmo9fuoPLfb
+         JgEldCI/j3YqjlQYwf1qj1bjMdlq/8jNpBacqjMrlQdHJMA6YLCcpF86VLc0aNrTbSAH
+         oRj4wgTORIcTXibq9mGnc4jPkCEP2P5ffOVyXgV6uAHaQn5Ujeh87B6iLKPWMbeAQ0Jp
+         kvxARXYoQxoUXRj3GnFeyKMEbQ4Nhe0TVVVPwiuWTiDEeARK9e5u2risCdDLX3yNu6Nh
+         g7IglMIafi3EcUgO5rYWzvCB+BrzGIBfvu2Ty0NMkZKOGUSKdsQhsKALi3nbTzh3sKwl
+         sycQ==
+X-Gm-Message-State: APjAAAVpPxbMGmMNyIcg3AUuNyk0NA0HbqndAmCmb9f7U6AYf+zUGbWL
+        S0ThZ+do2pABEuO+IgxHcJ4=
+X-Google-Smtp-Source: APXvYqxlXKjVk17RP8Zhg4eoVhsbQZMM5EjUjUE+3lmuhZpEBA/oCKVvP3rJqt4BUFNb3QlRd38gkg==
+X-Received: by 2002:a1c:be05:: with SMTP id o5mr2665591wmf.52.1561470033332;
+        Tue, 25 Jun 2019 06:40:33 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id j18sm17333213wre.23.2019.06.25.06.40.32
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 06:40:32 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 15:40:31 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
+        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
+        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio
+ resume
+Message-ID: <20190625134031.GA22491@ulmo>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+ <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Disposition: inline
+In-Reply-To: <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 5:03 AM Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
 
+--TB36FDmn/VVEgNH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Jun 23, 2019 at 08:02:44PM -0700, Sowjanya Komatineni wrote:
 > During SC7 resume, PARKED bit clear from the pinmux registers may
 > cause a glitch on the GPIO lines.
->
+>=20
 > So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
 > to keep the GPIO lines in a known good state prior to clearing PARKED
 > bit.
->
+>=20
 > This patch has fix for this by moving Tegra GPIOs restore to happen
 > very early than pinctrl resume.
->
+>=20
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Can this patch be applied in isolation from the other patches?
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-WOuld be nice to have at least Thierry's ACK on it before I
-apply it.
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yours,
-Linus Walleij
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0SJEsACgkQ3SOs138+
+s6Gc4RAAuL9MGdkEhgzl61Ta2oBYD0aZWJ66SqDoCR4N4IOJUbUigecf27fp/Aq2
+hSdNG1GPkruQ9M2Dr/R7aQAVgYnZZRbxTTtGvylvkSa8nPDRWVESZSBGlKERb1oE
+tbBTktBKqYuZNv5tfxAoUnG7elNy/6LLbw942vtoblJdLPDGnuIiJw0wWhUj6bMM
+iaskxrSUg5K8ekrAqc5XTkZm92lxCGKHDYucMxyUF/nZCW8iczUGo+d2hzd3JFvj
+ruyTZuaYf6Pw2VhNJbsMpK+hqi3ou8RdVUjhc2DmUT/f5CTcjp0bO5UqjSH0U2LZ
+7v4aqh12UFukfwgb3UGq5Zj/qJoCXJKcIYeD4mZa/kKJUjgA0P6mCmrv+Qq6lEbB
+2+n2dMn1GmJdr9wTYATGeCIY794k2bWBOwYKiKx3AcOwBa4yp6rtLDbdPefKZsp7
+id8JXupBhHFiWbF4G7vLg9lmnPwTBHnJ1gD5oqBrtoryZMJyTD1XQNHMudiOyGL/
+ENdep/ewpV3jK7zVVpOomS8CDNa/0joXlyvGjHBtK341eCEyIxGD9nFytIPzqvFP
++zdfiN5ioTRBBNpEaKcP5JRZiLMpUC00uT32vJlTKJb51V5q0MP1YxO8BGQ6EV8m
+dceqZShedBlFvgND7IuZ3JhX2Kgo6YtoGpdy0jzsSlDVi7xTU/Y=
+=Xgxt
+-----END PGP SIGNATURE-----
+
+--TB36FDmn/VVEgNH/--
