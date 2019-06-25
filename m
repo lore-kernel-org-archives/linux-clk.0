@@ -3,148 +3,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130CFC48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 20:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3761C48BD6
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD8F12063F
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 20:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 857FC2085A
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 21:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561495606;
-	bh=4zflnPJOjSzJah74cHqrZgjnWn4XRJGSe8xqS8yMJt4=;
+	s=default; t=1561497737;
+	bh=MYKr4ILtOi6qNQAnYQJDVyF0uLX5agNROqYO/aQVkig=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=vMWW7OiA3z01M3fNS9e0v6a5V8M58igHVAhF2Hx5gJVWOBCLrG9Cic5aCbs75vALI
-	 687b+oopMu9yGtyd7fHaF/jTgiG86bnEEYB5mjAQauN3+HqVgL1CLDN/7QuZwQqXGJ
-	 2ZryFALtK020WHUHyyuJvC8fQseMmnsifwkZsxu8=
+	b=TLf3K9yvsBDrtEE/FKh4U5+bxfRej76dYfTTX/Hf2k0DG3TqdXHLF0mlu8+RMt32F
+	 GkfUa/oABdsZr4N69Gx8q3IKAWkBmnxIP/bqFPr6PvoOs0drwi1yyX3DXz4Dxzfrw1
+	 fdrmJb1Ha9qNnfZzAqsBwheCie9Th6F4+rlTNFes=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfFYUqm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 16:46:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43984 "EHLO mail.kernel.org"
+        id S1725782AbfFYVWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 17:22:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfFYUqm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:46:42 -0400
+        id S1725290AbfFYVWR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 17:22:17 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D640E205ED;
-        Tue, 25 Jun 2019 20:46:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E065205ED;
+        Tue, 25 Jun 2019 21:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561495600;
-        bh=4zflnPJOjSzJah74cHqrZgjnWn4XRJGSe8xqS8yMJt4=;
+        s=default; t=1561497736;
+        bh=MYKr4ILtOi6qNQAnYQJDVyF0uLX5agNROqYO/aQVkig=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=1IBQKZ4QdO9mARvZO4fdimMmjFiTYyPvYCcleQH84/+xvmlxpz2ZLt+7vlYvJO/Rd
-         MetUEuXkt6V+Mf82FiEQb7OL3AjJEWviaNLdmYjswYyq7kIa5yAPxZ9jVKnmPmdfBU
-         +uvHaijX0g2RMbCAesFySwxy8qll5906VdBCxCO8=
+        b=N/bWVRlIYTCliQQUQ91JwQP6b1k9grk56P6gyczW07Z+BxGVCwP7DdNFG/IkRxE3o
+         ipbh3VzWjd1ikNAiNYFee4vhuxn5wvu86DJ9jJOzVzYiXrmLG/or3iwXUmuBNKXTnH
+         8MaBRTUidUW6dACJ5lBojo+cSYjpWdJdfUdM6wBU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1560843991-24123-7-git-send-email-skomatineni@nvidia.com>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com> <1560843991-24123-7-git-send-email-skomatineni@nvidia.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
-        jonathanh@nvidia.com, linus.walleij@linaro.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
-        tglx@linutronix.de, thierry.reding@gmail.com
+In-Reply-To: <20190619093926.21719-1-s.nawrocki@samsung.com>
+References: <CGME20190619093950epcas2p3d6f7c26564844432f8153ee9b6a6007c@epcas2p3.samsung.com> <20190619093926.21719-1-s.nawrocki@samsung.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-clk@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH V3 06/17] clk: tegra: pll: save and restore pll context
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        skomatineni@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
-        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: Add clk_bulk_get_optional() function
+Cc:     mturquette@baylibre.com, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com, krzk@kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
 User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 13:46:40 -0700
-Message-Id: <20190625204640.D640E205ED@mail.kernel.org>
+Date:   Tue, 25 Jun 2019 14:22:15 -0700
+Message-Id: <20190625212216.4E065205ED@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sowjanya Komatineni (2019-06-18 00:46:20)
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 1583f5fc992f..4b0ed8fc6268 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -1008,6 +1008,54 @@ static unsigned long clk_plle_recalc_rate(struct c=
-lk_hw *hw,
->         return rate;
->  }
-> =20
-> +void tegra_clk_sync_state_pll(struct clk_hw *hw)
-> +{
-> +       if (!__clk_get_enable_count(hw->clk))
-> +               clk_pll_disable(hw);
-> +       else
-> +               clk_pll_enable(hw);
-> +}
-> +
-> +static int tegra_clk_pll_save_context(struct clk_hw *hw)
-> +{
-> +       struct tegra_clk_pll *pll =3D to_clk_pll(hw);
-> +
-> +       pll->rate =3D clk_hw_get_rate(hw);
-> +
-> +       if (!strcmp(__clk_get_name(hw->clk), "pll_mb"))
-> +               pll->pllbase_ctx =3D pll_readl_base(pll);
-> +       else if (!strcmp(__clk_get_name(hw->clk), "pll_re_vco"))
-> +               pll->pllbase_ctx =3D pll_readl_base(pll) & (0xf << 16);
-> +
-> +       return 0;
-> +}
-> +
-> +static void tegra_clk_pll_restore_context(struct clk_hw *hw)
-> +{
-> +       struct tegra_clk_pll *pll =3D to_clk_pll(hw);
-> +       u32 val;
-> +
-> +       if (clk_pll_is_enabled(hw))
-> +               return;
-> +
-> +       if (!strcmp(__clk_get_name(hw->clk), "pll_mb")) {
+Quoting Sylwester Nawrocki (2019-06-19 02:39:25)
+> clk_bulk_get_optional() allows to get a group of clocks where one
+> or more is optional.  For a not available clock, e.g. not specifed
+> in the clock consumer node in DT, its respective struct clk pointer
+> will be NULL.  This allows for operating on a group of returned
+> clocks (struct clk_bulk_data array) with existing clk_bulk* APIs.
+>=20
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
 
-Is there any way to avoid doing a string comparison here, and instead do
-something like a pointer comparison? Or maybe look at some flag in the
-tegra_clk_pll to figure out what to do differently? Using a string
-comparison is not too nice. Or even have different clk ops for the
-different clks and then do different things in this restore clk_op?
+Applied to clk-next
 
-> +               pll_writel_base(pll->pllbase_ctx, pll);
-> +       } else if (!strcmp(__clk_get_name(hw->clk), "pll_re_vco")) {
-> +               val =3D pll_readl_base(pll);
-> +               val &=3D ~(0xf << 16);
-> +               pll_writel_base(pll->pllbase_ctx | val, pll);
-> +       }
-> +
-> +       if (pll->params->set_defaults)
-> +               pll->params->set_defaults(pll);
-> +
-> +       clk_set_rate(hw->clk, pll->rate);
-
-Do you need to call clk_set_rate() here to change the frequency of the
-clk or just the parents of the clk, or both? I'd think that when we're
-restoring the clk the cached rate of the clk would match whatever we're
-restoring to, so this is a NOP. So does this do anything?
-
-I'd prefer that the restore ops just restore the clk hardware state of
-the clk_hw passed in, and not try to fix up the entire tree around a
-certain clk, if that's even possible.
-
-> +
-> +       /* do not sync pllx state here. pllx is sync'd after dfll resume =
-*/
-> +       if (strcmp(__clk_get_name(hw->clk), "pll_x"))
-> +               tegra_clk_sync_state_pll(hw);
-> +}
-> +
->  const struct clk_ops tegra_clk_pll_ops =3D {
->         .is_enabled =3D clk_pll_is_enabled,
->         .enable =3D clk_pll_enable,
-> @@ -1015,6 +1063,8 @@ const struct clk_ops tegra_clk_pll_ops =3D {
->         .recalc_rate =3D clk_pll_recalc_rate,
->         .round_rate =3D clk_pll_round_rate,
->         .set_rate =3D clk_pll_set_rate,
-> +       .save_context =3D tegra_clk_pll_save_context,
-> +       .restore_context =3D tegra_clk_pll_restore_context,
