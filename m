@@ -4,95 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82BCC48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 23:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7CFC48BD5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 23:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80A9820657
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 23:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0071208E3
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 23:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561505306;
-	bh=6+te7mpJt5x4SRywvdcyKAoVs6nKqWEZS+6deQkXGH8=;
+	s=default; t=1561506302;
+	bh=2srRusj4JiJ9dqvGnl1rSyXYmKaGPjVC3wWbEnqs4f4=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=CWBu//6cIpwR26HXwQkuEhXk/9T2KTcuQhc/KAN6nusKC/NNppIo8vBDV+urEAtpA
-	 TD6rXpQF8ZjSXI6Qaspk0sF3y5Of03UWiEpl51rxhPRNxx4221L6NB5r6K0bRk2h64
-	 dQek0yPV8Ke9gEWbuF9B9XhCqPYjZh963keA7co0=
+	b=akRxveaQOb0XfweUeGWjv1BLbc2kaZvBFZ1GgX89NBNz7oQMPOIzikclpbvCgbCNq
+	 Dwlz+1PczOOIe28ZcllAz5nR21Mi6a+rjqrHSaW4XEwbvDbWtovlQUTgzRSJrjbYyN
+	 EomaxYyfuv+UjnqKEBIxAKTJzJ4Fo/T+brV4iTb0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726068AbfFYX2W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 19:28:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58032 "EHLO mail.kernel.org"
+        id S1726037AbfFYXpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 19:45:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbfFYX2W (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 19:28:22 -0400
+        id S1726068AbfFYXpA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 19:45:00 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1D4A20645;
-        Tue, 25 Jun 2019 23:28:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14A052086D;
+        Tue, 25 Jun 2019 23:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561505300;
-        bh=6+te7mpJt5x4SRywvdcyKAoVs6nKqWEZS+6deQkXGH8=;
+        s=default; t=1561506300;
+        bh=2srRusj4JiJ9dqvGnl1rSyXYmKaGPjVC3wWbEnqs4f4=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=mNi8EavtpgSP7114DE4Fp5biFG5wHsOt3mCwaHqAvPfToIR33ip/aGcRxUCsKxc0s
-         EXhLCkwtAoStCqe+GzLtuLgPgtQZ1pupbmDvgjVncKJH5h41SuyDXxIch7EZ52g+6a
-         B0t6ZoE7uS0Gi+Lpb5A0gDs/i/stm1Y4Kn4Lr/kU=
+        b=NYCeh9IdMT50gUdsLrYoU6+GeJ46EI4ORhgTE55UFDk4/2ggmTr3cLCbhxda/ctUT
+         65LP6ayWHaMSjXoTDZQ6fpT7nzBBwIWJloIqtFy2RCzmW1NSIOVCH+Ef3X1VPOMJv3
+         2ebbjGfJMCIyr694oi0ZI4wfuVh3o84wsHAj15P8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1561502227.10069.1@crapouillou.net>
-References: <20190624225759.18299-1-paul@crapouillou.net> <20190624225759.18299-6-paul@crapouillou.net> <20190625220931.2F69B2086D@mail.kernel.org> <1561502227.10069.1@crapouillou.net>
-To:     Paul Cercueil <paul@crapouillou.net>
+In-Reply-To: <20190625131053.25407-1-ckeepax@opensource.cirrus.com>
+References: <20190625131053.25407-1-ckeepax@opensource.cirrus.com>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        mturquette@baylibre.com
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v13 05/13] clk: ingenic: Add driver for the TCU clocks
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        James Hogan <jhogan@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
+Subject: Re: [PATCH v3 RESEND] clk: lochnagar: Use new parent_data approach to register clock parents
+Cc:     linux-clk@vger.kernel.org, patches@opensource.cirrus.com
 User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 16:28:20 -0700
-Message-Id: <20190625232820.D1D4A20645@mail.kernel.org>
+Date:   Tue, 25 Jun 2019 16:44:59 -0700
+Message-Id: <20190625234500.14A052086D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2019-06-25 15:37:07)
-> >=20
-> > Do you need to get the clk by name? Or can that clk be "known" to the
-> > TCU somehow so we can already have a direct clk pointer?
->=20
-> This clock is provided by a separate driver, so I have to obtain the
-> clock pointer from devicetree.
+Quoting Charles Keepax (2019-06-25 06:10:53)
+> -static const char * const lochnagar1_clk_parents[] =3D {
+> -       "ln-none",
+> -       "ln-spdif-mclk",
+> -       "ln-psia1-mclk",
+> -       "ln-psia2-mclk",
+> -       "ln-cdc-clkout",
+> -       "ln-dsp-clkout",
+> -       "ln-pmic-32k",
+> -       "ln-gf-mclk1",
+> -       "ln-gf-mclk3",
+> -       "ln-gf-mclk2",
+> -       "ln-gf-mclk4",
+> +#define LN_PARENT(NAME) { .name =3D NAME, .fw_name =3D NAME }
+> +
+> +static const struct clk_parent_data lochnagar1_clk_parents[] =3D {
+> +       LN_PARENT("ln-none"),
+> +       LN_PARENT("ln-spdif-mclk"),
 
-Ok.
+The above two aren't documented in the binding. Is it intentional? I'd
+like to apply this patch, but I don't want it to use undocumented
+bindings.
 
-> >>  +}
-> >>  +
-> >>  +static int __maybe_unused tcu_pm_suspend(void)
-> >>  +{
-> >>  +       struct ingenic_tcu *tcu =3D ingenic_tcu;
-> >>  +
-> >>  +       if (tcu->clk)
-> >>  +               clk_disable(tcu->clk);
-> >=20
-> > Do you need to unprepare? Or it just isn't possible because this is
-> > called from syscore and thus we can't sleep?
->=20
-> I thought that clk_disable() was enough. We don't actually need to
-> unprepare, do we? And yes, as you pointed out, this call cannot sleep.
-
-Yeah unprepare isn't necessary, but it will be different on different
-platforms. This is a highly platform specific driver though so I suspect
-this is all fine.
-
+> +       LN_PARENT("ln-psia1-mclk"),
+> +       LN_PARENT("ln-psia2-mclk"),
+> +       LN_PARENT("ln-cdc-clkout"),
+> +       LN_PARENT("ln-dsp-clkout"),
+> +       LN_PARENT("ln-pmic-32k"),
+> +       LN_PARENT("ln-gf-mclk1"),
+> +       LN_PARENT("ln-gf-mclk3"),
+> +       LN_PARENT("ln-gf-mclk2"),
+> +       LN_PARENT("ln-gf-mclk4"),
+>  };
+> =20
