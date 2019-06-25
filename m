@@ -2,96 +2,80 @@ Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D2EC48BD6
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 111AEC48BD5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0425213F2
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:55:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HBCIky80"
+	by mail.kernel.org (Postfix) with ESMTP id CE84220644
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 13:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561470948;
+	bh=PC7gSfqUEtkeTD3iRdN69HyrVN7sD1+21zTnnFyaSG4=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=dOgj5vuv5v5Ej3+zrRcir43Oz8JBcfEjbIxWRG4+6cS26ktVrXZ82gdj3iihtno+q
+	 aEjDypCanBGV5uhvszwib6SO6kVo4vyl+k4+6ZRjXBPLBq5p/BvmX9aLK7fThDbHov
+	 8SHCKtvmpWS8FXMBxtcuVvOXX4Gqwu+dyC4TlSYw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbfFYNzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 09:55:14 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46176 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbfFYNzN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 09:55:13 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z15so12663538lfh.13
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2019 06:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FMqlAp58Lm3MdFL1/oLfn8r6VrExYv+Qlr+51/E8+CI=;
-        b=HBCIky80cw7b2VS9iWLL0Ww6oY2T4Czf/fAe41KlVer5eCS70N2T9N6i+HMJWbByYC
-         s+fMTPIHVitU4jqxF2KA93qimnYLgc650UEYlCKuf1gfuyyQ33gDonObiXqXZe+gjs8O
-         waAx5wLbgWDVZc3uKTHvWP6rM/o1xiWun8bYPuYn4HvHH+wq2MYhGCsRznPA1MyLWkA1
-         /ZYctoRM+yOUBYmZXs29rpsTNWSfiQjdOe2MFcf487r4GU8KskEXpOGER/nADBI5ZvoK
-         ABMpuOMCDGJwjkf6gnqacfGJeTxgqj9SsNuIcRnbDZ0aJsB+cfzaUGMtzb0UkeOYZUqV
-         97DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FMqlAp58Lm3MdFL1/oLfn8r6VrExYv+Qlr+51/E8+CI=;
-        b=UKKz0VLiQE7UXNGV5km0Y22j889HZmHsen0rHWVzLOKMc8406cSpEkB2lbXovr2Wob
-         frC5qWBfmdevmtty+nbcMzeEXqcNZQGP9/a2ZbNAOCkKSGWWd5TQiNnktgTSPIV6VerK
-         qzTSOr8AXJYfxdOwlbim7BMQR5xjYb5qZvwqUFkTKx8orABE4qGEN5m/zXYSFG9RxBvG
-         +pXUJeZkL/5Z0OLWobgRWYWUEHxfifWNqVLFDorcGB3kGnWTjrYmCUbUDjz/FGC/Kzdn
-         tfKvRX/GGqQeqW1Kd6iqRElfUQQV5tudHBfJ1skMkZpV9grgDTRSz/xihrXoesRwnGs8
-         fVEA==
-X-Gm-Message-State: APjAAAWQOjorIBY4f3GbOFQqS9ItfvDbm24C5rCHNEFwwQMf7kohVNrj
-        0hwVnNzX/+Wv4TZmMOmioCDZ6FDA8HKV5yVRT5o3sg==
-X-Google-Smtp-Source: APXvYqx4zfh4abumT8QCcMwPsQ4kGAi3uQZl6qg+f4xwtibi7ko9pWMCa9GCVANnvSnW7NG6HG7bW+OUwbld6KRMjBE=
-X-Received: by 2002:ac2:598d:: with SMTP id w13mr250893lfn.165.1561470912218;
- Tue, 25 Jun 2019 06:55:12 -0700 (PDT)
+        id S1727091AbfFYNzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 09:55:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbfFYNzs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 09:55:48 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7670920644;
+        Tue, 25 Jun 2019 13:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561470948;
+        bh=PC7gSfqUEtkeTD3iRdN69HyrVN7sD1+21zTnnFyaSG4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=D9UQYmGO3fHeSGPf9KHZ1bwYIpoHKFvWXJJN7KFb/VOtyGE9bmgHRw7sLKsaYkIoR
+         pfxcAX8pIdR6v3xqjU1rBw0oxlMSUnjGxGHU/YLgsdHrFLA2w582VV9eP5h3fA8vpo
+         hrJceze069zpi1ydHXofQNje1GQTl/6+7RV2/4yM=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     sboyd@kernel.org
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] clk: socfpga: stratix10: fix divider entry for the emac clocks
+Date:   Tue, 25 Jun 2019 08:55:35 -0500
+Message-Id: <20190625135535.14179-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <20190623043801.14040-1-icenowy@aosc.io> <20190623043801.14040-6-icenowy@aosc.io>
-In-Reply-To: <20190623043801.14040-6-icenowy@aosc.io>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 15:55:00 +0200
-Message-ID: <CACRpkdbbxgeGPh1oKfyKKOMhpXiz4sQWjZv23FbYaafCz6NyCQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] dt-bindings: vendor-prefixes: add SoChip
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jun 23, 2019 at 6:39 AM Icenowy Zheng <icenowy@aosc.io> wrote:
+The fixed dividers for the emac clocks should be 2 not 4.
 
-> Shenzhen SoChip Technology Co., Ltd. is a hardware vendor that produces
-> EVBs with Allwinner chips. There's also a SoC named S3 that is developed
-> by Allwinner (based on Allwinner V3/V3s) but branded SoChip.
->
-> Add the vendor prefix for SoChip.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> No changes in v3.
->
-> Changes in v2:
-> - Add the review tag by Rob.
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ drivers/clk/socfpga/clk-s10.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Should I apply this to the pinctrl tree? Rob?
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index 8281dfbf38c2..5bed36e12951 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -103,9 +103,9 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
+ 	{ STRATIX10_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
+ 	  0, 0, 0, 0x3C, 1},
+ 	{ STRATIX10_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
+-	  0, 0, 4, 0xB0, 0},
++	  0, 0, 2, 0xB0, 0},
+ 	{ STRATIX10_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
+-	  0, 0, 4, 0xB0, 1},
++	  0, 0, 2, 0xB0, 1},
+ 	{ STRATIX10_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", NULL, emac_ptp_free_mux,
+ 	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0, 4, 0xB0, 2},
+ 	{ STRATIX10_GPIO_DB_FREE_CLK, "gpio_db_free_clk", NULL, gpio_db_free_mux,
+-- 
+2.20.0
 
-Yours,
-Linus Walleij
