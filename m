@@ -2,99 +2,100 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3C9C4646B
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 03:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1861FC4646B
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 03:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B095205ED
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 03:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E41EF2086D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 03:52:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561520801;
-	bh=l0sV3wiaJXOEwcEu1BXGGj9r65jtZ9vymvP9nJxOSH4=;
-	h=In-Reply-To:References:To:From:Subject:Date:List-ID:From;
-	b=h9vAwmjmLK50moqukfMe+d6sC40ydJIE+bNq13v0Kb/5xHooCNmO8dXs5/xR/9Ngz
-	 skZa+vtMjKQL0vR5fHzigLPXeCQv3THHk3v+l3cB7clvlvIXZvG1nGwLlnqxA4KXqu
-	 zA4VmsAeebVq49t7VXUgWUMcSArMG4RZ4AFk1NiA=
+	s=default; t=1561521168;
+	bh=YtbDfJl0BWbBYAdPqlHUFfwmDl41K3e4m55oYYuQFmo=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=ntv+FO6IA9sRhR+YeJlqv7tEkxixTderv/ao3OhCPCt4Fuvbk/YRk1DFaCodiYIS3
+	 4nvpk04XDo2VdTMp5k97CdhsrwleCBN14kr3DhfHJWvcEs3ecshLYn8XzRc6l2xQxN
+	 8SO89bbrlIMRrOiMdYvg6A6qBGmRWeWqrntjkDYg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfFZDqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 23:46:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58470 "EHLO mail.kernel.org"
+        id S1726640AbfFZDwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 23:52:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728012AbfFZDqj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:46:39 -0400
+        id S1726558AbfFZDwr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Jun 2019 23:52:47 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 369CA20659;
-        Wed, 26 Jun 2019 03:46:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4591A20659;
+        Wed, 26 Jun 2019 03:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561520798;
-        bh=l0sV3wiaJXOEwcEu1BXGGj9r65jtZ9vymvP9nJxOSH4=;
-        h=In-Reply-To:References:To:From:Subject:Date:From;
-        b=J3F19NCJb6TnAKknu+M99cgLhs32wonOcvzLvolY5WS0Ap/sV5POOb2pPwtBCWxfM
-         jvl0IK97zvY2DkLBaH3cwOSJItiW1/KZRNSm9MdYQacOw9uWiAzUc8Qprw2PSNNnbX
-         RaC2q84bNuCVYo/fBlIND7m4knf/DufGEmnviCcg=
+        s=default; t=1561521166;
+        bh=YtbDfJl0BWbBYAdPqlHUFfwmDl41K3e4m55oYYuQFmo=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=bPsaerdHt5VMFIeTHZlGLf2VI08qXlLs9kDyiLi5peBR1pEi2qEpNBqFLRFqHt2tJ
+         sJFDz0U1eeN6X9MULqO9W6PnSJib8wD826AlNWh7Kkis6a8vESxxO0+Po1znPJvX9G
+         y06ljy6KIeOz0PidhfhJwl59jSvNEJSW2fiWZAC4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1bf34693-a4e9-bbdd-9066-ff5dc5c6ce32@electromag.com.au>
-References: <1560484363-77239-1-git-send-email-preid@electromag.com.au> <20190625225453.1BDD020665@mail.kernel.org> <1bf34693-a4e9-bbdd-9066-ff5dc5c6ce32@electromag.com.au>
-To:     Phil Reid <preid@electromag.com.au>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
+In-Reply-To: <1561511122.24282.10.camel@mtksdaap41>
+References: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com> <20190625221415.B0DC22086D@mail.kernel.org> <1561511122.24282.10.camel@mtksdaap41>
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/1] clk: clk-cdce925: Add regulator support
+Subject: Re: [RFC v1] clk: core: support clocks that need to be enabled during re-parent
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, Biao Huang <biao.huang@mediatek.com>
 User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 20:46:37 -0700
-Message-Id: <20190626034638.369CA20659@mail.kernel.org>
+Date:   Tue, 25 Jun 2019 20:52:45 -0700
+Message-Id: <20190626035246.4591A20659@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Phil Reid (2019-06-25 18:06:29)
-> On 26/06/2019 06:54, Stephen Boyd wrote:
-> > Quoting Phil Reid (2019-06-13 20:52:43)
-> >> +               return PTR_ERR(regulator);
-> >> +
-> >> +       err =3D regulator_enable(regulator);
+Quoting Weiyi Lu (2019-06-25 18:05:22)
+> On Tue, 2019-06-25 at 15:14 -0700, Stephen Boyd wrote:
+> > Quoting Weiyi Lu (2019-06-09 20:44:53)
+> > > When using property assigned-clock-parents to assign parent clocks,
+> > > core clocks might still be disabled during re-parent.
+> > > Add flag 'CLK_OPS_CORE_ENABLE' for those clocks must be enabled
+> > > during re-parent.
+> > >=20
+> > > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > >=20
-> G'day Stephen,
+> > Can you further describe the scenario where this is a problem? Is it
+> > some sort of clk that is enabled by default out of the bootloader and is
+> > then configured to have an 'assigned-clock-parents' property to change
+> > the parent, but that clk needs to be "enabled" so that the framework
+> > turns on the parents for the parent switch?
 >=20
-> Thanks for looking at this.
-> > The regulator is never turned off though. Are these regulators really
-> > just always on regulators that don't need to be managed by this driver?
-> >=20
-> For our system the regulator needs to be enabled before we try talking to=
- the chip.
-> Funny that.
-> Unloading the driver will disable the regulator thru the devm call to
-> cdce925_regulator_disable
+> When driver is built as module(.ko) and install at runtime after the
+> whole initialization stage. Clk might already be turned off before
+> configuring by assigned-clock-parents. For such clock design that need
+> to have clock enabled during re-parent, the configuration of
+> assigned-clock-parents might be failed. That's the problem we have now.
 
-Ok. Is it a regulator that is expected to just always be on though? Or
-does the datasheet for this device indicate that these supplies can be
-turned on and off when the device isn't in use?
+Great. Please put this sort of information in the commit text.
 
->=20
-> > +     return devm_add_action_or_reset(dev, cdce925_regulator_disable,
-> > +                                     regulator);
-> > +}
->=20
-> In the future suspend/resume support could be added to power the device d=
-own.
-> The system I have doesn't support suspending thou.
->=20
-> > Also, is there an update to the DT binding somewhere?
-> >=20
-> No I didn't update that.
-> It seems a bit adhoc if supply reference are including in the DT docs.
-> I can add something if your happy with the pathc in general.
+> Do you have any suggestion for such usage of clocks? Many thanks.
 >=20
 
-Yes, the binding needs an update to list out the supplies. If they're
-not always going to be enabled because they're controlled supplies in
-the design then it makes sense to me to add them to the binding and use
-them from this driver so that things operate properly.
+Ok, and in this case somehow CLK_OPS_PARENT_ENABLE flag doesn't work? Is
+that because the clk itself doesn't do anything unless it's enabled?  I
+seem to recall that we usually work around this by caching the state of
+the clk parents or frequencies and then when the clk prepare or enable
+op is called we actually write the hardware to change the state. There
+are some qcom clks like this and we basically just use the hardware
+itself to cache the state of the clk while it hasn't actually changed to
+be at that rate, because the clk is not enabled yet.
+
+The main concern is that we're having to turn on clks to make things
+work, when it would be best to not turn on clks just so that register
+writes actually make a difference to what the hardware does.
 
