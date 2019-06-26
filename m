@@ -4,101 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C691C48BD3
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F72FC48BD6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3860B21726
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46AEB21743
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561572408;
-	bh=2AI6vfXRA9shlQqJsOONaBOLJB2mY6s1tLqu+00O3F0=;
+	s=default; t=1561572999;
+	bh=sab0MWfiVzl74QqPr+RXCGs4tGCyw2k4Qdv+3xOa4JE=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=C39kUa4fpuchu+4RH5yHp/tKq0nFP63FgV8fIZhIZV4h/f/jIstZkrB6Bo5tWW0Ey
-	 ozKiMmhe/ZIeVLsGwmMN1GLdGPxc9rK14JUslDlxG4UIcX51jFf8mdIkRTrHQlAN3z
-	 zqLKKAz3LxKMAkWtv9B6JL2o+v5nuZMX4ASLicu4=
+	b=arRUpsLClB/tWpYQyMH+PGANodan2B1s8D5zWjzwB3NkFJX3dwnCokh1ykYB4YHNv
+	 xkHJ9rwUuSvffTBYullRLqoMMxUnRC680HeMwzDRnhsq8Pz6ggo8m+TWsir9mOgHUp
+	 pcAyB2uv3yb2fqlJVPzaKLX2culZGdN5aM43VxPE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfFZSGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 14:06:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53596 "EHLO mail.kernel.org"
+        id S1726595AbfFZSQj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 14:16:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbfFZSGr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Jun 2019 14:06:47 -0400
+        id S1726239AbfFZSQi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 Jun 2019 14:16:38 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CC94208E3;
-        Wed, 26 Jun 2019 18:06:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFA6321726;
+        Wed, 26 Jun 2019 18:16:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561572406;
-        bh=2AI6vfXRA9shlQqJsOONaBOLJB2mY6s1tLqu+00O3F0=;
+        s=default; t=1561572997;
+        bh=sab0MWfiVzl74QqPr+RXCGs4tGCyw2k4Qdv+3xOa4JE=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=Spp9kx2SEGbyBvjRg7Rp8spfvABoWi0hW76zUYOM3FD6kqNq++B2bm2kKQRidP1z0
-         qbLDeSCNP/lRY/2juCiLRkpXT4YSb6yqvqCgP6zTHA4HD4gWppy9wOI3qThityAkRa
-         01Dxm3PzcYD9reVtw4Q1xhoPmvwMf05PC91C/YSU=
+        b=q4reBCx0kjurRaRwQCFE39ixbHBA2Xo4uCyhZOrdRVtkOSq4ksMmBuWxBZ/ncAR+V
+         WcKjBtg17QGOSQFwRdt62OI1c10cduhAP01gt9k9k7shRRzAZDGvfPy3uQ3aXeQJmc
+         lXi5yN5NLGb4ob6mJix5G6MAaeGT/9Hx9/EpSPDs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2ceca0ca-8f8e-78a8-df39-67a763f28f30@baylibre.com>
-References: <20190620150013.13462-1-narmstrong@baylibre.com> <20190620150013.13462-6-narmstrong@baylibre.com> <20190625202702.B9A9B208CB@mail.kernel.org> <2ceca0ca-8f8e-78a8-df39-67a763f28f30@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        khilman@baylibre.com
+In-Reply-To: <20190522011504.19342-2-zhang.chunyan@linaro.org>
+References: <20190522011504.19342-1-zhang.chunyan@linaro.org> <20190522011504.19342-2-zhang.chunyan@linaro.org>
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC/RFT 05/14] soc: amlogic: meson-clk-measure: protect measure with a mutex
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com
+Subject: Re: [PATCH v2 1/3] clk: sprd: Switch from of_iomap() to devm_ioremap_resource()
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>
 User-Agent: alot/0.8.1
-Date:   Wed, 26 Jun 2019 11:06:45 -0700
-Message-Id: <20190626180646.9CC94208E3@mail.kernel.org>
+Date:   Wed, 26 Jun 2019 11:16:36 -0700
+Message-Id: <20190626181637.CFA6321726@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Neil Armstrong (2019-06-26 01:24:47)
-> On 25/06/2019 22:27, Stephen Boyd wrote:
-> > Quoting Neil Armstrong (2019-06-20 08:00:04)
-> >> In order to protect clock measuring when multiple process asks for
-> >> a mesure, protect the main measure function with mutexes.
-
-s/mesure/measure/
-
-> >>
-> >> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> >> ---
-> >>  drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
-> >>  1 file changed, 11 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/aml=
-ogic/meson-clk-measure.c
-> >> index 19d4cbc93a17..c470e24f1dfa 100644
-> >> --- a/drivers/soc/amlogic/meson-clk-measure.c
-> >> +++ b/drivers/soc/amlogic/meson-clk-measure.c
-> >> @@ -11,6 +11,8 @@
-> >>  #include <linux/debugfs.h>
-> >>  #include <linux/regmap.h>
-> >> =20
-> >> +static DEFINE_MUTEX(measure_lock);
-> >> +
-> >>  #define MSR_CLK_DUTY           0x0
-> >>  #define MSR_CLK_REG0           0x4
-> >>  #define MSR_CLK_REG1           0x8
-> >> @@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *=
-clk_msr_id,
-> >>         unsigned int val;
-> >>         int ret;
-> >> =20
-> >> +       ret =3D mutex_lock_interruptible(&measure_lock);
-> >=20
-> > Why interruptible?
+Quoting Chunyan Zhang (2019-05-21 18:15:01)
+> devm_ioremap_resources() automatically requests resources and devm_ wrapp=
+ers
+> do better error handling and unmapping of the I/O region when needed,
+> that would make drivers more clean and simple.
 >=20
->=20
-> I supposed _interruptible was needed since it's called from userspace via
-> debugfs, locking indefinitely isn't wanted, no ? or maybe I missed someth=
-ing...
->=20
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 
-Sounds plausible to me.
+Applied to clk-next
 
+> diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+> index e038b0447206..9ce690999eaa 100644
+> --- a/drivers/clk/sprd/common.c
+> +++ b/drivers/clk/sprd/common.c
+> @@ -50,7 +51,11 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
+>                         return PTR_ERR(regmap);
+>                 }
+>         } else {
+> -               base =3D of_iomap(node, 0);
+> +               res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +               base =3D devm_ioremap_resource(&pdev->dev, res);
+> +               if (IS_ERR(base))
+
+There's also devm_platform_ioremap_resource() if you want to save even
+more lines!
+
+> +                       return PTR_ERR(base);
+> +
