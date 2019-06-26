@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4DCC48BD6
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 902BCC48BD6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56732216FD
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:35:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A4E21738
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:37:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561574107;
-	bh=6drANE0jdBR8TSbXn+6m0cELmaHGSwlfyabSGJEiOlQ=;
+	s=default; t=1561574220;
+	bh=rPjrA5UKDItDDeBvMzrvupA/HE7q5dkO/2GejoVYEsU=;
 	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
-	b=sUP2H/DOOl4HgX6bP54xOAuBeUS7r4GnBiyyugDLhajo3qm8Y2YFDEI+Nq83cRg2V
-	 VVybnbmXK1suARlzWNG9FhjvA25hHQ4tZfoapKqZPS9bSQWq5v81Je6lxzYoyQNWMy
-	 M2uLHCinwzOvyv231DSiHia4KX8FYwwi6tR7hGec=
+	b=ZIiLoY/ZSzxVNS1GrBxkxnXHqwEyJpU+O19Op9bIWJcnwbwK3Bi8vylzli2jN8syf
+	 TxzzVuBm3R0ZDxSAYHX8q+zj8dEg3Bbxyo2w9tmxLdvEbPC0h40FF7gvxaTLHubvgA
+	 Y6m8VX2iOJsOZAVLbGIRtL0Vd/HNw8NALiF67RLA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfFZSex (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 14:34:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43858 "EHLO mail.kernel.org"
+        id S1726328AbfFZShA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 14:37:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbfFZSew (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Jun 2019 14:34:52 -0400
+        id S1726104AbfFZSg7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 Jun 2019 14:36:59 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F33B421738;
-        Wed, 26 Jun 2019 18:34:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA53A216FD;
+        Wed, 26 Jun 2019 18:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561574092;
-        bh=6drANE0jdBR8TSbXn+6m0cELmaHGSwlfyabSGJEiOlQ=;
+        s=default; t=1561574218;
+        bh=rPjrA5UKDItDDeBvMzrvupA/HE7q5dkO/2GejoVYEsU=;
         h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=00ltJhESB5AzYaorZMI4UZtPZH5m2wTzAfVNf2PPYL+faguz48AA/v8MZt1AR5HD9
-         O34DLXDK9wKigvsvXQAAWgzUdMlUv68sFIvjOO9QDz/PhR1dRned2rajKG9Cgw8jLB
-         UCwakFRS43+p/KtQPtwHN07sfxESgsNQA6BdzmZ8=
+        b=pyiZmAQTWwmV9IucQm5qJLcRgqCJyBirwquRA9A0YFbOVE7WcEhB0PDd0LFoFh5Ux
+         Q83RYbitSQbtdPIkzJtkHGO+01GyWUg6bJwAIrpsMyR9912CITIh7IHLBXagIsyHaJ
+         FKm1pvMRlGh1yefdXwX/3Iz7HKwi3ncOw+5djHXA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1558433454-27971-3-git-send-email-claudiu.beznea@microchip.com>
-References: <1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com> <1558433454-27971-3-git-send-email-claudiu.beznea@microchip.com>
-Subject: Re: [PATCH v4 2/4] clk: at91: sckc: add support to specify registers bit offsets
+In-Reply-To: <1558433454-27971-5-git-send-email-claudiu.beznea@microchip.com>
+References: <1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com> <1558433454-27971-5-git-send-email-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH v4 4/4] clk: at91: sckc: add support for SAM9X60
 To:     Claudiu.Beznea@microchip.com, Ludovic.Desroches@microchip.com,
         Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
         mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
@@ -51,21 +51,24 @@ Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Claudiu.Beznea@microchip.com
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Wed, 26 Jun 2019 11:34:51 -0700
-Message-Id: <20190626183451.F33B421738@mail.kernel.org>
+Date:   Wed, 26 Jun 2019 11:36:58 -0700
+Message-Id: <20190626183658.BA53A216FD@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Claudiu.Beznea@microchip.com (2019-05-21 03:11:26)
+Quoting Claudiu.Beznea@microchip.com (2019-05-21 03:11:33)
 > From: Claudiu Beznea <claudiu.beznea@microchip.com>
 >=20
-> Different IPs uses different bit offsets in registers for the same
-> functionality, thus adapt the driver to support this.
+> Add support for SAM9X60's slow clock.
 >=20
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
 
-Applied to clk-next
+FYI, this patch is base64 encoded and causes my MUA to have lots of
+pain. It would be nice if you could send plain text emails, otherwise it
+takes me a few more seconds to extract the patch. Of course, it reminds
+me that I need to fix my MUA so maybe this is OK!
 
