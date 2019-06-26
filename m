@@ -2,149 +2,104 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E994DC48BD3
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 10:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920B9C48BD6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 11:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C243E20B1F
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 10:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60D3420663
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 11:52:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="al0bdWja"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FrNk6Np4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfFZK22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 06:28:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43990 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfFZK22 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 06:28:28 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p13so2072574wru.10;
-        Wed, 26 Jun 2019 03:28:26 -0700 (PDT)
+        id S1727323AbfFZLw4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 07:52:56 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44742 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbfFZLwz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 07:52:55 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r16so2362281wrl.11
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2019 04:52:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kCaYA/FnXYJJu+TrRy4BKJsDWzoGNXiaayKbDb94w+c=;
-        b=al0bdWjaXkyCAS0ALgnrSOkTpGyasqItumozaBvYJ9hKll3uPqhNuo0j8JBUgn6Bss
-         01ltiSi2eTbREMnFv/OvMWWfICrmgPDqlAT171DJDrMF8UmjtdBxFkmegsK10yg0nfKE
-         Wv/uuLppeicqllMyoUa+xKzwMOKDRnrwuAas2oTHR9muXb3FDJnL9P8Vu0owk/CIRx0o
-         AkK8bRttG1k2XVK+ipSzf1D0UwBFppp5TzLxZJSPmsPacioK/MF8uhRs6m82m1lwDFea
-         QAEQYzw8Se/dXO5TtXcfxr+NUynP6i4FWTg6EIxjBUP+6zYQWu6/W/cqjGxbQdD1DoDB
-         4udg==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=pno/4ff/EmVlLZf+cwJB7HjSbJVtgJvFvXzyjJWjZww=;
+        b=FrNk6Np4dKzBgiOqvrCZ9v1nd+0v7nIXo4/H33U5FzHgCYLYA7hOtdyTBWOdQOfNX+
+         HHHdIpZFYCq/JEgJAPOlqWgVVH5FH0Htlv97hysKhCBtqAImccVHJyM7hmvvjtmBlO5J
+         1XrPbvBR/SNIwt+CNPfox7kegKCZVc0GtF0J9p9QlRplCJktwjufwGWfa1a0VOvBluan
+         vijqvZns8aBq6RG8cqZbQpEwGAu65ZB7lPyhQSdpj6KETAVoirRV21LbJLw6qB5yfcnG
+         WbNKGD5apEUUHpkgiva3bhaZ4xPkax61wvAsSwaGPOyQM22WpthkyWzvdDCKu2I5kXfl
+         f0Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kCaYA/FnXYJJu+TrRy4BKJsDWzoGNXiaayKbDb94w+c=;
-        b=Tgc6xAy28eM3DMetuDIePu4KK7iQxOUhK55VDo8iDD1Ki4i5V0EulCrx6ZNSUpwK2J
-         eXs+Iy2uonOhBqxR/BbZXeoRqum2fiHCMY7H+eUpzdf/YwIU4v2mYMn+Bd+b5+ZRGpvI
-         KVQ5MJUbXDHit3mkPM1pgF0jBp3ncgzIV5SC5NuRuFAcnmyzBAhH3pviy2rd7f7xMCCa
-         8Ljt9qqbClSfX0gytR1YYX6jiKLAXJGr42AIDyeeBENciGLlvC6rW7PmDlfKvga/7S4k
-         MzIFgzY9vEu8Ul0TwL4iO4GsX/XV20j6Vy+OPG7zNt1oqug1T3gszhP0x11ybY2aaALD
-         LWtQ==
-X-Gm-Message-State: APjAAAW82xCuifiDx3mSK743vuysRTF4WBkK0WLkQMzv2qwUEYrEotq7
-        itrMSjxIef8sc1XwUk2btqs=
-X-Google-Smtp-Source: APXvYqwzL9B7b8q6dp307iySl6j91+IQ7iFGWkUjNojhUJMBDYWB/J9F0rnm0ZW538lTIC7sUVzO6w==
-X-Received: by 2002:adf:f104:: with SMTP id r4mr3290900wro.140.1561544905806;
-        Wed, 26 Jun 2019 03:28:25 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id r79sm1567240wme.2.2019.06.26.03.28.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 03:28:24 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 12:28:24 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
-        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V4 18/18] arm64: dts: tegra210-p2180: Jetson TX1 SC7
- timings
-Message-ID: <20190626102824.GG6362@ulmo>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=pno/4ff/EmVlLZf+cwJB7HjSbJVtgJvFvXzyjJWjZww=;
+        b=KA1rRZwjVurQIyhpTiyZ6xQ+terpMCRrAQNuQrbhbU1B6taLRJMgWbdgmtXvBvG5Pa
+         VHxXtseVsOsY8xx4DJVMngwH6fYKhxgohxi4BJ7/A5Gr+UnXPA9kH7q1CDO6UDnZ23px
+         sk9+kC7s4NL8z3NROsmBZu6ukkycBhPkl8N1NvV7TpKZrt07grQA3YI6mFN14s1YHFGm
+         7y/Fi6lD9Hs+obPtquXTRLCRLgk8hzcZQ6xbTlIxtLP1XNuzDdZlUvEB4Zdyl62hmZSZ
+         gczGZojdaNnHDIpHE271/4LZkIce+tVLma17KytGn6V4nrDF5EdhQy9KT3HUZcH8NuLf
+         RdhQ==
+X-Gm-Message-State: APjAAAVZlE3gOiPEQJaNBRqJiXLPF9JhOlqaiFbOc5EmDf/Ekz5JiMlz
+        i1WFUn2f/5LcNsQSvslnYibvgg==
+X-Google-Smtp-Source: APXvYqzkue4b4T2/iz5KX/SFk9Swrlx2jlSbM8pLLMgMOTqmDRsgOwIKUpjFoXL5NkloPNPI8a1GxQ==
+X-Received: by 2002:a5d:53c2:: with SMTP id a2mr3508180wrw.8.1561549973997;
+        Wed, 26 Jun 2019 04:52:53 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id y2sm14535504wrl.4.2019.06.26.04.52.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Jun 2019 04:52:53 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 12:52:51 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v10 0/6] support a new type of PMIC,including two
+ chips(rk817 and rk809)
+Message-ID: <20190626115251.GR21119@dell>
+References: <20190621103258.8154-1-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190621103258.8154-1-tony.xie@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, 21 Jun 2019, Tony Xie wrote:
 
---APlYHCtpeOhspHkB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Most of functions and registers of the rk817 and rk808 are the same,
+> so they can share allmost all codes.
+> 
+> Their specifications are as follows:
+>   1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same
+> registers
+>      for these components except dcdc5.
+>   2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+>   3) The RK817 has one switch but The Rk809 has two.
 
-On Sun, Jun 23, 2019 at 08:02:59PM -0700, Sowjanya Komatineni wrote:
-> This patch has Jetson TX1 platform specific SC7 timing configuration
-> in device tree.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
+Just tried to apply this set to a v5.2-rc1 base, but it doesn't seem
+to do so cleanly.  Would you be able to rebase and resend please?
 
-Can you provide a similar patch for Jetson Nano (p3450-0000)? It'd be
-great if we can make new features like this available across all boards.
-
-Thierry
-
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra210-p2180.dtsi
-> index 27723829d033..cb58f79deb48 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-> @@ -279,6 +279,13 @@
-> =20
->  	pmc@7000e400 {
->  		nvidia,invert-interrupt;
-> +		nvidia,suspend-mode =3D <0>;
-> +		nvidia,cpu-pwr-good-time =3D <0>;
-> +		nvidia,cpu-pwr-off-time =3D <0>;
-> +		nvidia,core-pwr-good-time =3D <4587 3876>;
-> +		nvidia,core-pwr-off-time =3D <39065>;
-> +		nvidia,core-power-req-active-high;
-> +		nvidia,sys-clock-req-active-high;
->  	};
-> =20
->  	/* eMMC */
-> --=20
-> 2.7.4
->=20
-
---APlYHCtpeOhspHkB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0TSMcACgkQ3SOs138+
-s6Hobg//bHL6IZg0MNnz6irMk4CtJYVFtTftwwB09UP8JKkxLxrMaYT9yjBG9AjT
-bjtGZeRdj66yVRCU0sj8xPSNJZjXMepVk6TXaEjuzFtQcJtrSH1kAz8b+dCPHspT
-5+GT3DXacuBqBB6rRQdbSA4MXFC7HWOoMgVPj9afqR4vu50+qhuimRjYQChjE6vF
-OM/IcV1NoGwoYWuWmg6JDgPIydS/XoEfifaSLxnCiJ/Xkx13xdTY7FFrcPWGHIjT
-X68dbzqKk/6nREuQaT/U9xsTkijD92PW0qTK4jfGEFK6d+DrMfNszfDudIYatw1/
-IkP0wgUN7ldmbVCvwArBaSWxZRfIBgAixFniBNjYhaFJ8ctNkXGkedNio20TDdne
-CRxgVQXQtmqgSXCbgFryl1NQk8vJGTOVDsYZlaJEBpPSlANx9IZNTOVpqXnD52FN
-jcJ+PrD83WUVvT1RCRw0p43Bjc2iCpxcfuYsSxU5AWpvf9P/Om6A0WmpMyZADIXB
-K5IUhJtRjBKZblfWPkJv6qX9eYLKx+QqwNy8AAl9Rqf3vjN0aH4J+JWuqSXHK/ko
-9hlH7D2x+dQv4PzCvq/FAmquMz+RIo9fT4IZk4Voi0iZ9Zolm7lbTFcOpFJWye5E
-wHh7HUyfgxxNYKYGzJFqPeBXPO30Ib6MaYUUQZdL4mM5D1M1IUg=
-=DNYf
------END PGP SIGNATURE-----
-
---APlYHCtpeOhspHkB--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
