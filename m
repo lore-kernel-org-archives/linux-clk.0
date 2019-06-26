@@ -2,68 +2,69 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7521EC4646B
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4187C4646B
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CA8D20663
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD84208E3
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="z39lVS78"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="b9t/P33L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726006AbfFZIWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 04:22:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37086 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfFZIWe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 04:22:34 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f17so1100497wme.2
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2019 01:22:32 -0700 (PDT)
+        id S1726716AbfFZIYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 04:24:51 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44607 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfFZIYu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 04:24:50 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r16so1594017wrl.11
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2019 01:24:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=+1vXdrly/KKiPqvFxYM7XB433XMEyXUZAd1m9h/Udp0=;
-        b=z39lVS78Qd8LsObNTDJptYvZFlnljYD1/l9S+K88DbOWu+RAaVyti1qPZXmOS5JlEN
-         zvBt9xhrfQcCo5TkUbYdU6LzGPUVUMLzA7IEkmpTibZVuTzrx7/bvqj7Kn6qApO2QHBZ
-         FwwpFO0alongPRREarxn4HXCZLCWwq1w61zkw/JiqFC79fgWcAOQZIA+2BwuEl5grCpd
-         JVf9RVZzWZigZJMN/xOd/XUgd1IZO4OCmFPStSToFbLa2rwDU7F4OfSfEUSPCA7X/ky9
-         S/yLYTk7wjhJq6KrC7+xO/l2fSpM/ZflP0Z55+uvnVIykoCK+eiHPNcBk0+ZaYXgjVaa
-         tCzw==
+        bh=9DNJHIe0qI38aHs6zqZk/jm9gpEnYcn1ir7ZTOFghgk=;
+        b=b9t/P33LvmT09EMKcIF/dqMZIzt/imOy4XjK9VeRcY3ci1NkBIF/d40sjvfCuZpGiU
+         CHJrzGD1fomMeyyEob7kR0zvl9AwvfSpoOPde8/RK9xgFFR/xSCysiGX6kG44MZs+wYn
+         JFMfCyhAi2rw3nnMiLaNqLxcR0VKoSTc7SQpoOKtBw6+tvOJZpcsc3e+VihESro2sd2u
+         XhPYKF3ws98z9nnV3QqlHHSNL/einLNmMMkuRw8U2nICg7q7D6L723wClwxpcxpHrei+
+         U3lbt2Z+BrO/B9508QBxJn/NlJl1epkfqJ739P2AJ5iTs2aR2bMQTWOL1fm/f7suLW1G
+         ROtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=+1vXdrly/KKiPqvFxYM7XB433XMEyXUZAd1m9h/Udp0=;
-        b=OqROPI65PqYZ1ZrlQDIVsupbf7b2dMQzOREbX5JcN4ZpdQbs7LngWTL8PnSXaCHvzw
-         6yqx5bXMUKK+l5fN+gNIa8BnzgM628OPNryzbQF2TfWUNlj/H8OVid0bg30CJiB4oHiU
-         1lD1caedpG37VW9q6MFJcuH/JCDG8EkXj+8nHvoWAc8WKTcX/w3jouncA+05KCwr6rmf
-         BKlExPLdp3N5NT5tCOt2UdS9kZmiZ+F+IgYrogEBypB2QQyIeR27Ha2gwo+x8Tl+9/w3
-         H8DZ+VJwFzujDb39Frtb5GWR2BEupJKuNaqRwuiypTQSWP/wMbSCake82zsvXzBm2H2Q
-         2jTQ==
-X-Gm-Message-State: APjAAAXlT8jL5iclaENWI4Npv5OFCLFIgGrZiDlSXcMBZH9gB53NmMkE
-        iwA/th1z/0y+Azw+ZQ64RLlj5Q==
-X-Google-Smtp-Source: APXvYqwAfu7tVUTxwap7hfLOj6FWPZA+a9/PN312n5G/314+TAkWHAFN38HC0Xj6e+8HLxE6+VdIcA==
-X-Received: by 2002:a1c:6154:: with SMTP id v81mr1754258wmb.92.1561537351305;
-        Wed, 26 Jun 2019 01:22:31 -0700 (PDT)
+        bh=9DNJHIe0qI38aHs6zqZk/jm9gpEnYcn1ir7ZTOFghgk=;
+        b=cOyii8XvLshAmqdeic8lK5uFPgPjXInoRWK6h0rh4vTXETC+UU+aSMNDVKOl4paMv7
+         lI+BHVvmNi5MMiLxJg25OLRDsw4blqArdhLjDKeD3rWH48LWFD6sEj4G3EuUHrR1gABm
+         P/dnjegYrzecmb31FUwfXhCw63sFHgJdMniyo1rWisbRZIz2QyFiJZAtfuHdo1yCwn4W
+         t+3CmPoXFxC9NCr9AzRgE9uAxCrE+UL7CZj0d4CtN8d2atUv6JibmiPbLXDKa7IZsn1/
+         ZZv2bqLblzDAVFbPw9RS48BJfMHUuwsA0U7r4R42hKeMPK0882drw+1hlUkUYEhEVZdq
+         a4Mw==
+X-Gm-Message-State: APjAAAXC3cXjFC+ym/sYBLAOgGX0mdBV7TWJbRruoKeq7m6jAqr0o7W7
+        /HKIVkZv0U8r8Hv4E+c5D2NK8g==
+X-Google-Smtp-Source: APXvYqxw4uXdQXnl1JQoMpPwH+BTgm/Vm1yy7dvntOu+4GNB7u/9X8yDsEyIB0PGWAfFOwPV7e2ZYw==
+X-Received: by 2002:a5d:4d81:: with SMTP id b1mr1537872wru.27.1561537488672;
+        Wed, 26 Jun 2019 01:24:48 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t63sm1162851wmt.6.2019.06.26.01.22.30
+        by smtp.gmail.com with ESMTPSA id j32sm38163601wrj.43.2019.06.26.01.24.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 01:22:30 -0700 (PDT)
-Subject: Re: [RFC/RFT 02/14] clk: core: introduce clk_hw_set_parent()
+        Wed, 26 Jun 2019 01:24:48 -0700 (PDT)
+Subject: Re: [RFC/RFT 05/14] soc: amlogic: meson-clk-measure: protect measure
+ with a mutex
 To:     Stephen Boyd <sboyd@kernel.org>, jbrunet@baylibre.com,
         khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com
 References: <20190620150013.13462-1-narmstrong@baylibre.com>
- <20190620150013.13462-3-narmstrong@baylibre.com>
- <20190625203227.9696920665@mail.kernel.org>
+ <20190620150013.13462-6-narmstrong@baylibre.com>
+ <20190625202702.B9A9B208CB@mail.kernel.org>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -116,12 +117,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <64441b77-1d99-44ec-d4b1-c18f1c75d523@baylibre.com>
-Date:   Wed, 26 Jun 2019 10:22:29 +0200
+Message-ID: <2ceca0ca-8f8e-78a8-df39-67a763f28f30@baylibre.com>
+Date:   Wed, 26 Jun 2019 10:24:47 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190625203227.9696920665@mail.kernel.org>
+In-Reply-To: <20190625202702.B9A9B208CB@mail.kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -130,30 +131,48 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/06/2019 22:32, Stephen Boyd wrote:
-> Quoting Neil Armstrong (2019-06-20 08:00:01)
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index aa51756fd4d6..3e98f7dec626 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2490,6 +2490,11 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
->>         return ret;
->>  }
+On 25/06/2019 22:27, Stephen Boyd wrote:
+> Quoting Neil Armstrong (2019-06-20 08:00:04)
+>> In order to protect clock measuring when multiple process asks for
+>> a mesure, protect the main measure function with mutexes.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+>> index 19d4cbc93a17..c470e24f1dfa 100644
+>> --- a/drivers/soc/amlogic/meson-clk-measure.c
+>> +++ b/drivers/soc/amlogic/meson-clk-measure.c
+>> @@ -11,6 +11,8 @@
+>>  #include <linux/debugfs.h>
+>>  #include <linux/regmap.h>
 >>  
->> +int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *parent)
->> +{
->> +       return clk_core_set_parent_nolock(hw->core, parent->core);
->> +}
-> 
-> Will this be used from a module? Maybe it needs an EXPORT_SYMBOL_GPL().
-
-Probably since it's in clk-provider.h
-
-Will add.
-
-> 
+>> +static DEFINE_MUTEX(measure_lock);
 >> +
->>  /**
->>   * clk_set_parent - switch the parent of a mux clk
->>   * @clk: the mux clk whose input we are switching
+>>  #define MSR_CLK_DUTY           0x0
+>>  #define MSR_CLK_REG0           0x4
+>>  #define MSR_CLK_REG1           0x8
+>> @@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+>>         unsigned int val;
+>>         int ret;
+>>  
+>> +       ret = mutex_lock_interruptible(&measure_lock);
+> 
+> Why interruptible?
+
+
+I supposed _interruptible was needed since it's called from userspace via
+debugfs, locking indefinitely isn't wanted, no ? or maybe I missed something...
+
+Neil
+
+> 
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         regmap_write(priv->regmap, MSR_CLK_REG0, 0);
+>>  
+>>         /* Set measurement duration */
 
