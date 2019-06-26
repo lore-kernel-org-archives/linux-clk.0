@@ -2,126 +2,304 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23413C48BD6
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 13:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC64C48BD6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 13:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F023C214DA
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 13:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AC7C21670
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 13:18:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="FjuGCbrO"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDIZmNOa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbfFZNSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 09:18:07 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:9436 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726599AbfFZNSH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 09:18:07 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5QDFRRZ024310;
-        Wed, 26 Jun 2019 08:18:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=9x7ieykS+IyQbN06xr+YUpt1YDVMVJvEsUxN+0EF/jc=;
- b=FjuGCbrO6MFd0U1wUpuNgBOR/29CfV/079IOIuJfkp3EQ/ngkw4p0Qmq1c6Rnh6EtkPO
- 1eaXJMoMnnWEv5PiNOtQzsX9MfnsTasfFi0h6hYGWn6Cws30VFrgMnydoBdrgflzPMd0
- rDek0UAoxiIw1WJhl5CjbBNwoiwHZIvo6C7RmmCLfFpo8iIJljLpRz6aJGPIcojbGHjz
- 76KUECnqdxWAD+Y4HBIWfRzweQVeQ6ZTCMrfi/DHIXJCWjACrK/XtfdXZ0+3gNOQXogk
- TaOI5L8asI38HtuxRqDzomFvlKk1aSZoVre7nwHJju0R0xbjIp8ecsxxfFK3eJBt6wit Ew== 
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail2.cirrus.com (mail2.cirrus.com [141.131.128.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2tc7gt868x-1;
-        Wed, 26 Jun 2019 08:18:03 -0500
-Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
-        by mail2.cirrus.com (Postfix) with ESMTP id 53380605A680;
-        Wed, 26 Jun 2019 08:18:03 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 26 Jun
- 2019 14:18:02 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Wed, 26 Jun 2019 14:18:02 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 9B7F944;
-        Wed, 26 Jun 2019 14:18:02 +0100 (BST)
-Date:   Wed, 26 Jun 2019 14:18:02 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v3 RESEND] clk: lochnagar: Use new parent_data approach
- to register clock parents
-Message-ID: <20190626131802.GE54126@ediswmail.ad.cirrus.com>
-References: <20190625131053.25407-1-ckeepax@opensource.cirrus.com>
- <20190625234500.14A052086D@mail.kernel.org>
+        id S1727409AbfFZNS4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 09:18:56 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44166 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbfFZNSz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 09:18:55 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r16so2684277wrl.11
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2019 06:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=oABEezfN1nTsjGlHAHlBaTiMmQz4aDhMSWiIeYwjCbc=;
+        b=BDIZmNOapw0wdnKowhcOVanLGYEGq8PTEJMCMEAi5Gmar5Q38mp+SuSWavLqPxHywy
+         8DjOMgEcMNmJvYylzQIUqfY4ha2dJx7Ev26rvPoEUOaiZNdQvNOnjo3tPjcYd4E7gDQ1
+         EB4e4f9LPZmMjeUtItGOQkI3h91OQPmAGV9v11aozKdHUDLTlDI1lkMS1W/9SXm1zbGa
+         NU7pNwWbw9oJ356oHDNn5sofavNR7JNLfjx67l4zDyhIBvE1Q3IJ+ybOwMl3OXASi9s8
+         9fBT+RBMD2WUvIG7gK6kpKE5AM/Fk56Bu3K0qZ/SrFStlDCHxNVvg2TTEZHxsqc6aKyR
+         Fr1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=oABEezfN1nTsjGlHAHlBaTiMmQz4aDhMSWiIeYwjCbc=;
+        b=iMSCjRQ6pIzQ6AqltkHYp15OA5+7Vw4uD1M05XwTEYL77AnZTLQ7Ts0oiwkiZfcRyp
+         HZm36qPIwLvE70SJimVAoqaAcF9JGWxHXbcemi0wp+BhDu4G+C4aayQuTViwqf+nr8yS
+         wMyBM3tN4ogXab0QQcr4ZtcDzusNix7RRgPfaDRxfGg6umRIxXGwfZk2hfDYtwbkVJyk
+         kt5duiZWVFVMXJXz/st+2fIDblBztmY+BEeUZwhLuQIuxqhfP6imI27oFiuGl7ywoQ8f
+         y8pKXV02YtKF1NcB0O3CTCyFPt/W48Mj9ZLNFQ3mEpn1yXGXZoRfOF+wapyEZwa5cgjV
+         kCxQ==
+X-Gm-Message-State: APjAAAVhwOYqqxlIe4NAhKB8xxvTcre6ncClh9swP5zFNyPjH34QHc1K
+        e3d5bXbElGzWbfekH9G/PpPoyw==
+X-Google-Smtp-Source: APXvYqxeT+oP2oju/Ny+91153pq74b2segQ2icEC+8amXSZq3egEC6TwFkM8vrRk+uofNHXcuWkhBQ==
+X-Received: by 2002:a5d:61cd:: with SMTP id q13mr3741341wrv.114.1561555133168;
+        Wed, 26 Jun 2019 06:18:53 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id z5sm15058643wrh.16.2019.06.26.06.18.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Jun 2019 06:18:52 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 14:18:50 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me
+Subject: Re: [PATCH v12 04/13] mfd: Add Ingenic TCU driver
+Message-ID: <20190626131850.GW21119@dell>
+References: <20190521145141.9813-1-paul@crapouillou.net>
+ <20190521145141.9813-5-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190625234500.14A052086D@mail.kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906260158
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190521145141.9813-5-paul@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 04:44:59PM -0700, Stephen Boyd wrote:
-> Quoting Charles Keepax (2019-06-25 06:10:53)
-> > -static const char * const lochnagar1_clk_parents[] = {
-> > -       "ln-none",
-> > -       "ln-spdif-mclk",
-> > -       "ln-psia1-mclk",
-> > -       "ln-psia2-mclk",
-> > -       "ln-cdc-clkout",
-> > -       "ln-dsp-clkout",
-> > -       "ln-pmic-32k",
-> > -       "ln-gf-mclk1",
-> > -       "ln-gf-mclk3",
-> > -       "ln-gf-mclk2",
-> > -       "ln-gf-mclk4",
-> > +#define LN_PARENT(NAME) { .name = NAME, .fw_name = NAME }
-> > +
-> > +static const struct clk_parent_data lochnagar1_clk_parents[] = {
-> > +       LN_PARENT("ln-none"),
-> > +       LN_PARENT("ln-spdif-mclk"),
+On Tue, 21 May 2019, Paul Cercueil wrote:
+
+> This driver will provide a regmap that can be retrieved very early in
+> the boot process through the API function ingenic_tcu_get_regmap().
 > 
-> The above two aren't documented in the binding. Is it intentional? I'd
-> like to apply this patch, but I don't want it to use undocumented
-> bindings.
+> Additionally, it will call devm_of_platform_populate() so that all the
+> children devices will be probed.
 > 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>     v12: New patch
+> 
+>  drivers/mfd/Kconfig             |   8 +++
+>  drivers/mfd/Makefile            |   1 +
+>  drivers/mfd/ingenic-tcu.c       | 113 ++++++++++++++++++++++++++++++++
+>  include/linux/mfd/ingenic-tcu.h |   8 +++
+>  4 files changed, 130 insertions(+)
+>  create mode 100644 drivers/mfd/ingenic-tcu.c
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 294d9567cc71..a13544474e05 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -494,6 +494,14 @@ config HTC_I2CPLD
+>  	  This device provides input and output GPIOs through an I2C
+>  	  interface to one or more sub-chips.
+>  
+> +config INGENIC_TCU
+> +	bool "Ingenic Timer/Counter Unit (TCU) support"
+> +	depends on MIPS || COMPILE_TEST
+> +	select REGMAP_MMIO
+> +	help
+> +	  Say yes here to support the Timer/Counter Unit (TCU) IP present
+> +	  in the JZ47xx SoCs from Ingenic.
+> +
+>  config MFD_INTEL_QUARK_I2C_GPIO
+>  	tristate "Intel Quark MFD I2C GPIO"
+>  	depends on PCI
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 52b1a90ff515..fb89e131ae98 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -180,6 +180,7 @@ obj-$(CONFIG_AB8500_CORE)	+= ab8500-core.o ab8500-sysctrl.o
+>  obj-$(CONFIG_MFD_TIMBERDALE)    += timberdale.o
+>  obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+>  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+> +obj-$(CONFIG_INGENIC_TCU)	+= ingenic-tcu.o
+>  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
+>  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
+>  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+> diff --git a/drivers/mfd/ingenic-tcu.c b/drivers/mfd/ingenic-tcu.c
+> new file mode 100644
+> index 000000000000..6c1d5e4310c1
+> --- /dev/null
+> +++ b/drivers/mfd/ingenic-tcu.c
+> @@ -0,0 +1,113 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * JZ47xx SoCs TCU MFD driver
 
-ln-none is intentionally missing from the binding, it isn't really
-used at the moment, it is really more of a place holder for when
-the clocks are not parented to anything as many will generate a
-clock in that case. Maybe in the future it might be used to allow
-clocks to be put back into that state after being parented but that
-probably requires more thought.
+Nit: Another line here please.
 
-ln-spdif-mclk should be in the binding though I will do a patch
-to add it. Do you want me to resend this patch as well? Feels
-like this stuff is orthogonal to what this patch is doing.
+> + * Copyright (C) 2019 Paul Cercueil <paul@crapouillou.net>
+> + */
+> +
+> +#include <linux/mfd/ingenic-tcu.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +struct ingenic_soc_info {
+> +	unsigned int num_channels;
+> +};
+> +
+> +static struct regmap *tcu_regmap __initdata;
+> +
+> +static const struct regmap_config ingenic_tcu_regmap_config = {
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +	.max_register = TCU_REG_OST_CNTHBUF,
+> +};
+> +
+> +static const struct ingenic_soc_info jz4740_soc_info = {
+> +	.num_channels = 8,
+> +};
+> +
+> +static const struct ingenic_soc_info jz4725b_soc_info = {
+> +	.num_channels = 6,
+> +};
+> +
+> +static const struct of_device_id ingenic_tcu_of_match[] = {
+> +	{ .compatible = "ingenic,jz4740-tcu", .data = &jz4740_soc_info, },
+> +	{ .compatible = "ingenic,jz4725b-tcu", .data = &jz4725b_soc_info, },
+> +	{ .compatible = "ingenic,jz4770-tcu", .data = &jz4740_soc_info, },
+> +	{ }
+> +};
+> +
+> +static struct regmap * __init ingenic_tcu_create_regmap(struct device_node *np)
+> +{
+> +	struct resource res;
+> +	void __iomem *base;
+> +	struct regmap *map;
+> +
+> +	if (!of_match_node(ingenic_tcu_of_match, np))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	base = of_io_request_and_map(np, 0, "TCU");
+> +	if (IS_ERR(base))
+> +		return ERR_PTR(PTR_ERR(base));
+> +
+> +	map = regmap_init_mmio(NULL, base, &ingenic_tcu_regmap_config);
+> +	if (IS_ERR(map))
+> +		goto err_iounmap;
+> +
+> +	return map;
+> +
+> +err_iounmap:
+> +	iounmap(base);
+> +	of_address_to_resource(np, 0, &res);
+> +	release_mem_region(res.start, resource_size(&res));
+> +
+> +	return map;
+> +}
 
-Thanks,
-Charles
+Why does this need to be set-up earlier than probe()?
 
-> > +       LN_PARENT("ln-psia1-mclk"),
-> > +       LN_PARENT("ln-psia2-mclk"),
-> > +       LN_PARENT("ln-cdc-clkout"),
-> > +       LN_PARENT("ln-dsp-clkout"),
-> > +       LN_PARENT("ln-pmic-32k"),
-> > +       LN_PARENT("ln-gf-mclk1"),
-> > +       LN_PARENT("ln-gf-mclk3"),
-> > +       LN_PARENT("ln-gf-mclk2"),
-> > +       LN_PARENT("ln-gf-mclk4"),
-> >  };
-> >  
+> +static int __init ingenic_tcu_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *map = ingenic_tcu_get_regmap(pdev->dev.of_node);
+> +
+> +	platform_set_drvdata(pdev, map);
+> +
+> +	regmap_attach_dev(&pdev->dev, map, &ingenic_tcu_regmap_config);
+> +
+> +	return devm_of_platform_populate(&pdev->dev);
+> +}
+> +
+> +static struct platform_driver ingenic_tcu_driver = {
+> +	.driver = {
+> +		.name = "ingenic-tcu",
+> +		.of_match_table = ingenic_tcu_of_match,
+> +	},
+> +};
+> +
+> +static int __init ingenic_tcu_platform_init(void)
+> +{
+> +	return platform_driver_probe(&ingenic_tcu_driver,
+> +				     ingenic_tcu_probe);
+
+What?  Why?
+
+> +}
+> +subsys_initcall(ingenic_tcu_platform_init);
+> +
+> +struct regmap * __init ingenic_tcu_get_regmap(struct device_node *np)
+> +{
+> +	if (!tcu_regmap)
+> +		tcu_regmap = ingenic_tcu_create_regmap(np);
+> +
+> +	return tcu_regmap;
+> +}
+
+This makes me pretty uncomfortable.
+
+What calls it?
+
+> +bool ingenic_tcu_pwm_can_use_chn(struct device *dev, unsigned int channel)
+> +{
+> +	const struct ingenic_soc_info *soc = device_get_match_data(dev->parent);
+> +
+> +	/* Enable all TCU channels for PWM use by default except channels 0/1 */
+> +	u32 pwm_channels_mask = GENMASK(soc->num_channels - 1, 2);
+> +
+> +	device_property_read_u32(dev->parent, "ingenic,pwm-channels-mask",
+> +				 &pwm_channels_mask);
+> +
+> +	return !!(pwm_channels_mask & BIT(channel));
+> +}
+> +EXPORT_SYMBOL_GPL(ingenic_tcu_pwm_can_use_chn);
+> diff --git a/include/linux/mfd/ingenic-tcu.h b/include/linux/mfd/ingenic-tcu.h
+> index 2083fa20821d..21df23916cd2 100644
+> --- a/include/linux/mfd/ingenic-tcu.h
+> +++ b/include/linux/mfd/ingenic-tcu.h
+> @@ -6,6 +6,11 @@
+>  #define __LINUX_MFD_INGENIC_TCU_H_
+>  
+>  #include <linux/bitops.h>
+> +#include <linux/init.h>
+> +
+> +struct device;
+> +struct device_node;
+> +struct regmap;
+>  
+>  #define TCU_REG_WDT_TDR		0x00
+>  #define TCU_REG_WDT_TCER	0x04
+> @@ -53,4 +58,7 @@
+>  #define TCU_REG_TCNTc(c)	(TCU_REG_TCNT0 + ((c) * TCU_CHANNEL_STRIDE))
+>  #define TCU_REG_TCSRc(c)	(TCU_REG_TCSR0 + ((c) * TCU_CHANNEL_STRIDE))
+>  
+> +struct regmap * __init ingenic_tcu_get_regmap(struct device_node *np);
+> +bool ingenic_tcu_pwm_can_use_chn(struct device *dev, unsigned int channel);
+> +
+>  #endif /* __LINUX_MFD_INGENIC_TCU_H_ */
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
