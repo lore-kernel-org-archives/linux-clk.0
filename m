@@ -2,96 +2,137 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95881C48BD3
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 19:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E66DBC48BD6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 21:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E582216FD
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 19:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7517216FD
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 21:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561584251;
+	bh=EDc7fUe3Q9b1829b2b+AJfN4Y88B5C30t7QV0u7qKUY=;
+	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
+	b=e0C6TKzyJlF+hOJetiQRC3YdwWph5L9+PRSuxoxYjSR8cOehuDPgyNSOMEBoAA5J5
+	 CCTtTJQwY0sJDLBza0S2NdII1LckG8pY7vhCNewzqUxUySFWupj1m1+HKzv/wAIBDI
+	 Q9c31abBv+dgp6OVbMHx1GfODxa2AW6DbOTcf+c0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbfFZTBE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 15:01:04 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:55411 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfFZTBD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 15:01:03 -0400
-X-Originating-IP: 90.65.161.137
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 8E5E6C0006;
-        Wed, 26 Jun 2019 19:00:53 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 21:00:53 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Claudiu.Beznea@microchip.com, mturquette@baylibre.com,
-        Nicolas.Ferre@microchip.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        claudiu.beznea@gmail.com
-Subject: Re: [PATCH 0/7] clk: at91: sckc: improve error path
-Message-ID: <20190626190053.GA3692@piout.net>
-References: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
- <20190618095521.GE23549@piout.net>
- <929ac20b-db1d-3f7a-b37c-0dfb253156d5@microchip.com>
- <20190621093302.GJ23549@piout.net>
- <20190626185359.D90C120B1F@mail.kernel.org>
+        id S1726271AbfFZVYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 17:24:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726227AbfFZVYL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 Jun 2019 17:24:11 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C0E6208E3;
+        Wed, 26 Jun 2019 21:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561584249;
+        bh=EDc7fUe3Q9b1829b2b+AJfN4Y88B5C30t7QV0u7qKUY=;
+        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
+        b=fK6R01FDqc9RKpZKNZFTy7N7NHsXQZx8Dqpuvy0wA1cisncjw6lgw3dFb59VIoWt9
+         l7RQIsJdvTSKQHSdX8tcD6tErcWU6Yh/KMXgbjbUPoQmCx4kBL3r11oBCshn1IuTdO
+         bsP+yICDFOUN2eVtZCrCxIoPr3QIjpBnzRSYFaoo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626185359.D90C120B1F@mail.kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c7f5184f-f484-e8ad-33ae-36b0da061113@topic.nl>
+References: <20190424090216.18417-1-mike.looijmans@topic.nl> <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com> <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl> <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com> <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl> <155658342800.168659.4922821141203707564@swboyd.mtv.corp.google.com> <c7f5184f-f484-e8ad-33ae-36b0da061113@topic.nl>
+Subject: Re: [PATCH] dt-bindings: Add silabs,si5341
+To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 26 Jun 2019 14:24:08 -0700
+Message-Id: <20190626212409.9C0E6208E3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/06/2019 11:53:59-0700, Stephen Boyd wrote:
-> Quoting Alexandre Belloni (2019-06-21 02:33:02)
-> > On 20/06/2019 10:30:42+0000, Claudiu.Beznea@microchip.com wrote:
-> > > Hi,
-> > > 
-> > > On 18.06.2019 12:55, Alexandre Belloni wrote:
-> > > > On 13/06/2019 15:37:06+0000, Claudiu.Beznea@microchip.com wrote:
-> > > >> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> > > >>
-> > > >> Hi,
-> > > >>
-> > > >> This series tries to improve error path for slow clock registrations
-> > > >> by adding functions to free resources and using them on failures.
-> > > >>
-> > > > 
-> > > > Does the platform even boot when the slow clock is not available? 
-> > > > 
-> > > > The TCB clocksource would fail at:
-> > > > 
-> > > >         tc.slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
-> > > >         if (IS_ERR(tc.slow_clk))
-> > > >                 return PTR_ERR(tc.slow_clk);
-> > > > 
-> > > 
-> > > In case of using TC as clocksource, yes, the platform wouldn't boot if slow
-> > > clock is not available, because, anyway the TC needs it. PIT may work
-> > > without it (if slow clock is not used to drive the PIT).
-> > > 
-> > > For sure there are other IPs (which may be or are driven by slow clock)
-> > > which may not work if slow clock is driven them.
-> > > 
-> > > Anyway, please let me know if you feel this series has no meaning.
-> > > 
-> > 
-> > Well, I'm not sure it is worth it but at the same time, it is not adding
-> > many lines and you already developed it...
-> > 
-> 
-> Is that a Reviewed-by or a Rejected-by tag?
-> 
+Sorry, I'm getting through my inbox pile and saw this one.
 
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Quoting Mike Looijmans (2019-04-30 22:46:55)
+> On 30-04-19 02:17, Stephen Boyd wrote:
+> >=20
+> > Why can't that driver call clk_prepare_enable()? Is there some sort of
+> > assumption that this clk will always be enabled and not have a driver
+> > that configures the rate and gates/ungates it?
+>=20
+> Not only clk_prepare_enable(), but the driver could also call clk_set_rat=
+e()=20
+> and clk_set_parent() and the likes, but it doesn't, so that's why there i=
+s=20
+> "assigned-clocks" right?
+>=20
+> There are multiple scenario's, similar to why regulators also have proper=
+ties=20
+> like these.
+>=20
+> - The clock is related to hardware that the kernel is not aware of.
+> - The clock is for a driver that isn't aware of its clock requirements. I=
+t=20
+> might be an extra clock for an FPGA implemented controller that mimics=20
+> existing hardware.
 
+Are these hypothetical scenarios or actual scenarios you need to
+support?
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>=20
+> I'd also consider patching "assigned-clocks" to call "clk_prepare_enable(=
+)",=20
+> would that make sense, or is it intentional that assigned-clocks doesn't =
+do that?
+>=20
+
+It's intentional that assigned-clocks doesn't really do anything besides
+setup the list of clks to operate on with the rate or parent settings
+specified in other properties. We would need to add another property
+indicating which clks we want to mark as 'critical' or 'always-on'.
+
+There have been prior discussions where we had developers want to mark
+clks with the CLK_IS_CRITICAL flag from DT, but we felt like that was
+putting SoC level details into the DT. While that was correct for SoC
+specific clk drivers, I can see board designs where it's configurable
+and we want to express that a board has some clks that must be enabled
+early on and left enabled forever because the hardware engineer has
+design the board that way. In this case, marking the clk with the
+CLK_IS_CRITICAL flag needs to be done from DT.
+
+In fact, we pretty much already have support for this with
+of_clk_detect_critical(). Maybe we should re-use that binding with
+'clock-critical' to let clk providers indicate that they have some clks
+that should be marked critical once they're registered. We could
+probably add another property too that indicates certain clks are
+enabled out of the bootloader, similar to the regulator-boot-on
+property, but where it takes a clock-cells wide list for the provider
+the property is inside of.
+
+We need to be careful though and make sure that clk drivers don't start
+putting everything in DT. In your example, it sounds like you have a
+consumer driver that wants to make sure the clk is prepared or enabled
+when the consumer probes. In this case the prepare/enable calls should
+be put directly into the consumer driver so it can manage the clk state.
+For the case of rates and parents, it's essentially a oneshot
+configuration of the rate or the parents of a clk. We don't need to
+"undo" the configuration when the device driver is removed. For prepare
+and enable though, we typically want to disable clks when the hardware
+is not in use to save power. Adding a property to DT should only be done
+to indicate a clk must always be on in this board configuration, not to
+avoid calling clk_prepare_enable() in the driver probe.
+
+To put it another way, I'm looking to describe how the board is designed
+and to indicate that certain clks are always enabled at power on or are
+enabled by the bootloader. Configuration has it's place too, just that
+configuration is a oneshot sort of thing that never needs to change at
+runtime.
+
