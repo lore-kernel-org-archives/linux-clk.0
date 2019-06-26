@@ -2,100 +2,108 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1861FC4646B
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 03:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B85AFC4646B
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 04:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E41EF2086D
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 03:52:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561521168;
-	bh=YtbDfJl0BWbBYAdPqlHUFfwmDl41K3e4m55oYYuQFmo=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=ntv+FO6IA9sRhR+YeJlqv7tEkxixTderv/ao3OhCPCt4Fuvbk/YRk1DFaCodiYIS3
-	 4nvpk04XDo2VdTMp5k97CdhsrwleCBN14kr3DhfHJWvcEs3ecshLYn8XzRc6l2xQxN
-	 8SO89bbrlIMRrOiMdYvg6A6qBGmRWeWqrntjkDYg=
+	by mail.kernel.org (Postfix) with ESMTP id 98AA82082F
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 04:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfFZDwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 23:52:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfFZDwr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:52:47 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4591A20659;
-        Wed, 26 Jun 2019 03:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561521166;
-        bh=YtbDfJl0BWbBYAdPqlHUFfwmDl41K3e4m55oYYuQFmo=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=bPsaerdHt5VMFIeTHZlGLf2VI08qXlLs9kDyiLi5peBR1pEi2qEpNBqFLRFqHt2tJ
-         sJFDz0U1eeN6X9MULqO9W6PnSJib8wD826AlNWh7Kkis6a8vESxxO0+Po1znPJvX9G
-         y06ljy6KIeOz0PidhfhJwl59jSvNEJSW2fiWZAC4=
-Content-Type: text/plain; charset="utf-8"
+        id S1726522AbfFZEDX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 00:03:23 -0400
+Received: from anchovy3.45ru.net.au ([203.30.46.155]:56580 "EHLO
+        anchovy3.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbfFZEDX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 00:03:23 -0400
+Received: (qmail 4984 invoked by uid 5089); 26 Jun 2019 04:03:21 -0000
+Received: by simscan 1.2.0 ppid: 4911, pid: 4914, t: 0.0564s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+Received: from unknown (HELO ?192.168.0.128?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy2.45ru.net.au with ESMTPA; 26 Jun 2019 04:03:20 -0000
+Subject: Re: [PATCH 1/1] clk: clk-cdce925: Add regulator support
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
+References: <1560484363-77239-1-git-send-email-preid@electromag.com.au>
+ <20190625225453.1BDD020665@mail.kernel.org>
+ <1bf34693-a4e9-bbdd-9066-ff5dc5c6ce32@electromag.com.au>
+ <20190626034638.369CA20659@mail.kernel.org>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <7bc0046c-d66e-a614-5eee-59a1e72de050@electromag.com.au>
+Date:   Wed, 26 Jun 2019 12:03:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1561511122.24282.10.camel@mtksdaap41>
-References: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com> <20190625221415.B0DC22086D@mail.kernel.org> <1561511122.24282.10.camel@mtksdaap41>
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC v1] clk: core: support clocks that need to be enabled during re-parent
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, Biao Huang <biao.huang@mediatek.com>
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 20:52:45 -0700
-Message-Id: <20190626035246.4591A20659@mail.kernel.org>
+In-Reply-To: <20190626034638.369CA20659@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Weiyi Lu (2019-06-25 18:05:22)
-> On Tue, 2019-06-25 at 15:14 -0700, Stephen Boyd wrote:
-> > Quoting Weiyi Lu (2019-06-09 20:44:53)
-> > > When using property assigned-clock-parents to assign parent clocks,
-> > > core clocks might still be disabled during re-parent.
-> > > Add flag 'CLK_OPS_CORE_ENABLE' for those clocks must be enabled
-> > > during re-parent.
-> > >=20
-> > > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> >=20
-> > Can you further describe the scenario where this is a problem? Is it
-> > some sort of clk that is enabled by default out of the bootloader and is
-> > then configured to have an 'assigned-clock-parents' property to change
-> > the parent, but that clk needs to be "enabled" so that the framework
-> > turns on the parents for the parent switch?
->=20
-> When driver is built as module(.ko) and install at runtime after the
-> whole initialization stage. Clk might already be turned off before
-> configuring by assigned-clock-parents. For such clock design that need
-> to have clock enabled during re-parent, the configuration of
-> assigned-clock-parents might be failed. That's the problem we have now.
+On 26/06/2019 11:46, Stephen Boyd wrote:
+> Quoting Phil Reid (2019-06-25 18:06:29)
+>> On 26/06/2019 06:54, Stephen Boyd wrote:
+>>> Quoting Phil Reid (2019-06-13 20:52:43)
+>>>> +               return PTR_ERR(regulator);
+>>>> +
+>>>> +       err = regulator_enable(regulator);
+>>>
+>> G'day Stephen,
+>>
+>> Thanks for looking at this.
+>>> The regulator is never turned off though. Are these regulators really
+>>> just always on regulators that don't need to be managed by this driver?
+>>>
+>> For our system the regulator needs to be enabled before we try talking to the chip.
+>> Funny that.
+>> Unloading the driver will disable the regulator thru the devm call to
+>> cdce925_regulator_disable
+> 
+> Ok. Is it a regulator that is expected to just always be on though? Or
+> does the datasheet for this device indicate that these supplies can be
+> turned on and off when the device isn't in use?
 
-Great. Please put this sort of information in the commit text.
+Sorry I'm not understanding what your asking.
+Should we be using some other method to ensure there is power to this device
+before probingHow do I then ensure the dependency to that power supply?
 
-> Do you have any suggestion for such usage of clocks? Many thanks.
->=20
+I can't see why that part of the system can't be shut down, provided that inputs
+are also isolated correctly when the regulator is disabled etc.
+The data sheet says that input can execeed VDD / VDDOUT provide
+clamp current ratings are observed.
 
-Ok, and in this case somehow CLK_OPS_PARENT_ENABLE flag doesn't work? Is
-that because the clk itself doesn't do anything unless it's enabled?  I
-seem to recall that we usually work around this by caching the state of
-the clk parents or frequencies and then when the clk prepare or enable
-op is called we actually write the hardware to change the state. There
-are some qcom clks like this and we basically just use the hardware
-itself to cache the state of the clk while it hasn't actually changed to
-be at that rate, because the clk is not enabled yet.
+It is also seems permissible to disable Vddout independently of Vdd (for some variants).
 
-The main concern is that we're having to turn on clks to make things
-work, when it would be best to not turn on clks just so that register
-writes actually make a difference to what the hardware does.
+> 
+>>
+>>> +     return devm_add_action_or_reset(dev, cdce925_regulator_disable,
+>>> +                                     regulator);
+>>> +}
+>>
+>> In the future suspend/resume support could be added to power the device down.
+>> The system I have doesn't support suspending thou.
+>>
+>>> Also, is there an update to the DT binding somewhere?
+>>>
+>> No I didn't update that.
+>> It seems a bit adhoc if supply reference are including in the DT docs.
+>> I can add something if your happy with the pathc in general.
+>>
+> 
+> Yes, the binding needs an update to list out the supplies. If they're
+> not always going to be enabled because they're controlled supplies in
+> the design then it makes sense to me to add them to the binding and use
+> them from this driver so that things operate properly.
+> 
+> 
+> 
 
+
+-- 
+Regards
+Phil Reid
