@@ -2,69 +2,70 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4187C4646B
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4986BC48BD3
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD84208E3
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0637720663
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 08:27:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="b9t/P33L"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zSNPgz9Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfFZIYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 04:24:51 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44607 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfFZIYu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 04:24:50 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16so1594017wrl.11
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2019 01:24:49 -0700 (PDT)
+        id S1725379AbfFZI1N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 04:27:13 -0400
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:39574 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfFZI1N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 04:27:13 -0400
+Received: by mail-wr1-f41.google.com with SMTP id x4so1631782wrt.6
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2019 01:27:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=9DNJHIe0qI38aHs6zqZk/jm9gpEnYcn1ir7ZTOFghgk=;
-        b=b9t/P33LvmT09EMKcIF/dqMZIzt/imOy4XjK9VeRcY3ci1NkBIF/d40sjvfCuZpGiU
-         CHJrzGD1fomMeyyEob7kR0zvl9AwvfSpoOPde8/RK9xgFFR/xSCysiGX6kG44MZs+wYn
-         JFMfCyhAi2rw3nnMiLaNqLxcR0VKoSTc7SQpoOKtBw6+tvOJZpcsc3e+VihESro2sd2u
-         XhPYKF3ws98z9nnV3QqlHHSNL/einLNmMMkuRw8U2nICg7q7D6L723wClwxpcxpHrei+
-         U3lbt2Z+BrO/B9508QBxJn/NlJl1epkfqJ739P2AJ5iTs2aR2bMQTWOL1fm/f7suLW1G
-         ROtA==
+        bh=NjBGXtFI+1wAIIWeuIukIDBT9tMDnuLj71B1BtmpDZE=;
+        b=zSNPgz9Y1rwKcXVLQx+zKjzciItrBD+k4lDHZWa8hHV6YpBL6UjAOj0Pyfl6ze3FJB
+         qBeuIyyKJZlQ3Ayc25Rh5W1WtVES4FKtnNBNEjzoYlvf7ypvp8jl1MUeCjrbCZ+jnxqC
+         bEJT2/QeyZMlMyrcN8UMa9ghOROLEf5JAC5iRXwK4OZQpxHx7AUI5qESWqid3fdqC4qG
+         mtCa4n0QvQpxKEwzxV33Bla3gnGMkxUtKcfpn/nsAXrAmFrEEl86knSACc/CjwbUzb4F
+         MXuYZ9nn585t29wqh7njys4dlZ+JDatAgqi+rSdj3jFr/JTqAorlhREUc6WADX0Wm+/o
+         vjFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=9DNJHIe0qI38aHs6zqZk/jm9gpEnYcn1ir7ZTOFghgk=;
-        b=cOyii8XvLshAmqdeic8lK5uFPgPjXInoRWK6h0rh4vTXETC+UU+aSMNDVKOl4paMv7
-         lI+BHVvmNi5MMiLxJg25OLRDsw4blqArdhLjDKeD3rWH48LWFD6sEj4G3EuUHrR1gABm
-         P/dnjegYrzecmb31FUwfXhCw63sFHgJdMniyo1rWisbRZIz2QyFiJZAtfuHdo1yCwn4W
-         t+3CmPoXFxC9NCr9AzRgE9uAxCrE+UL7CZj0d4CtN8d2atUv6JibmiPbLXDKa7IZsn1/
-         ZZv2bqLblzDAVFbPw9RS48BJfMHUuwsA0U7r4R42hKeMPK0882drw+1hlUkUYEhEVZdq
-         a4Mw==
-X-Gm-Message-State: APjAAAXC3cXjFC+ym/sYBLAOgGX0mdBV7TWJbRruoKeq7m6jAqr0o7W7
-        /HKIVkZv0U8r8Hv4E+c5D2NK8g==
-X-Google-Smtp-Source: APXvYqxw4uXdQXnl1JQoMpPwH+BTgm/Vm1yy7dvntOu+4GNB7u/9X8yDsEyIB0PGWAfFOwPV7e2ZYw==
-X-Received: by 2002:a5d:4d81:: with SMTP id b1mr1537872wru.27.1561537488672;
-        Wed, 26 Jun 2019 01:24:48 -0700 (PDT)
+        bh=NjBGXtFI+1wAIIWeuIukIDBT9tMDnuLj71B1BtmpDZE=;
+        b=L+uyqZs7Lp97MgizvOMd+nuEjNiMgFjXAiEhtEgVWG1mFHqQi6357w0glo/NNqz4xe
+         gV97JsAb/+s9yosn3tU2GRBcPwjnszedMmJDPsrOFg7U+h04oRIY0d2EvA1yx62In5Ik
+         Dus5Gjy+752bq1K0XcqXs5MijeheygiPmljKbzKGqxglTaqEC3xKaTHUmDT6NrIXpSsP
+         k8EZ4fqXs+8t3CbgKslEWxWsqNv8Al1LV17EM7rJ1MmvwylohwZ3qD9xBku3oqtlKkST
+         QQE15HJYjRwTSfTc+1w1orE2W0eRvozW8VY06uNcbzGvM/lUIibuHanR7gGrVShS9n3N
+         +QYw==
+X-Gm-Message-State: APjAAAU4oT0YU2Pmx2kH7Rixwdb8naCJ7OB5NZZbeuVRmZiKCFYNz0pD
+        TvUDIpJbwB2uXCiKpF62NRmUSg==
+X-Google-Smtp-Source: APXvYqx8jZMG+o/ryqCcSbWtbD/Zxzh9yUy++b6b++28BbzW4GYCR/z53WHOE3pwgzCp9z/4l84VJA==
+X-Received: by 2002:adf:ce82:: with SMTP id r2mr2419082wrn.223.1561537628908;
+        Wed, 26 Jun 2019 01:27:08 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id j32sm38163601wrj.43.2019.06.26.01.24.47
+        by smtp.gmail.com with ESMTPSA id h133sm1039910wme.28.2019.06.26.01.27.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 01:24:48 -0700 (PDT)
-Subject: Re: [RFC/RFT 05/14] soc: amlogic: meson-clk-measure: protect measure
- with a mutex
+        Wed, 26 Jun 2019 01:27:08 -0700 (PDT)
+Subject: Re: [RFC/RFT 07/14] clk: meson: g12a: add notifiers to handle cpu
+ clock change
 To:     Stephen Boyd <sboyd@kernel.org>, jbrunet@baylibre.com,
         khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com
 References: <20190620150013.13462-1-narmstrong@baylibre.com>
- <20190620150013.13462-6-narmstrong@baylibre.com>
- <20190625202702.B9A9B208CB@mail.kernel.org>
+ <20190620150013.13462-8-narmstrong@baylibre.com>
+ <20190625203152.6060B208CB@mail.kernel.org>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -117,12 +118,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <2ceca0ca-8f8e-78a8-df39-67a763f28f30@baylibre.com>
-Date:   Wed, 26 Jun 2019 10:24:47 +0200
+Message-ID: <0e9d3dbe-ec5d-c4dc-478a-7a21561b0910@baylibre.com>
+Date:   Wed, 26 Jun 2019 10:27:07 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190625202702.B9A9B208CB@mail.kernel.org>
+In-Reply-To: <20190625203152.6060B208CB@mail.kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -131,48 +132,162 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/06/2019 22:27, Stephen Boyd wrote:
-> Quoting Neil Armstrong (2019-06-20 08:00:04)
->> In order to protect clock measuring when multiple process asks for
->> a mesure, protect the main measure function with mutexes.
+On 25/06/2019 22:31, Stephen Boyd wrote:
+> Quoting Neil Armstrong (2019-06-20 08:00:06)
+>> In order to implement clock switching for the CLKID_CPU_CLK and
+>> CLKID_CPUB_CLK, notifiers are added on specific points of the
+>> clock tree :
+>>
+>> cpu_clk / cpub_clk
+>> |   \- cpu_clk_dyn
+>> |      |  \- cpu_clk_premux0
+>> |      |        |- cpu_clk_postmux0
+>> |      |        |    |- cpu_clk_dyn0_div
+>> |      |        |    \- xtal/fclk_div2/fclk_div3
+>> |      |        \- xtal/fclk_div2/fclk_div3
+>> |      \- cpu_clk_premux1
+>> |            |- cpu_clk_postmux1
+>> |            |    |- cpu_clk_dyn1_div
+>> |            |    \- xtal/fclk_div2/fclk_div3
+>> |            \- xtal/fclk_div2/fclk_div3
+>> \ sys_pll / sys1_pll
+>>
+>> This for each cluster, a single one for G12A, two for G12B.
+>>
+>> Each cpu_clk_premux1 tree is marked as read-only and CLK_SET_RATE_NO_REPARENT,
+>> to be used as "parking" clock in a safe clock frequency.
+>>
+>> A notifier is added on each cpu_clk_premux0 to detech when CCF want to
+>> change the frequency of the cpu_clk_dyn tree.
+>> In this notifier, the cpu_clk_premux1 tree is configured to use the xtal
+>> clock and then the cpu_clk_dyn is switch to cpu_clk_premux1 while CCF
+>> updates the cpu_clk_premux0 tree.
+>>
+>> A notifier is added on each sys_pll/sys1_pll to detect when CCF wants to
+>> change the PLL clock source of the cpu_clk.
+>> In this notifier, the cpu_clk is switched to cpu_clk_dyn while CCF
+>> updates the sys_pll/sys1_pll frequency.
+>>
+>> A third small notifier is added on each cpu_clk / cpub_clk and cpu_clk_dyn,
+>> add a small delay at PRE_RATE_CHANGE/POST_RATE_CHANGE to let the other
+>> notofiers change propagate before changing the cpu_clk_premux0 and sys_pll
+>> clock trees.
+>>
+>> This notifier set permits switching the cpu_clk / cpub_clk without any
+>> glitches and using a safe parking clock while switching between sub-GHz
+>> clocks using the cpu_clk_dyn tree.
+>>
+>> This setup has been tested and validated on the Amlogic G12A and G12B
+>> SoCs running the arm64 cpuburn at [1] and cycling between all the possible
+>> cpufreq translations of each cluster and checking the final frequency using
+>> the clock-measurer, script at [2].
+>>
+>> [1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
+>> [2] https://gist.github.com/superna9999/d4de964dbc0f84b7d527e1df2ddea25f
 >>
 >> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
->> index 19d4cbc93a17..c470e24f1dfa 100644
->> --- a/drivers/soc/amlogic/meson-clk-measure.c
->> +++ b/drivers/soc/amlogic/meson-clk-measure.c
->> @@ -11,6 +11,8 @@
->>  #include <linux/debugfs.h>
->>  #include <linux/regmap.h>
+> [...]
+>> @@ -418,6 +458,35 @@ static struct clk_regmap g12b_cpub_clk_premux0 = {
+>>         },
+>>  };
 >>  
->> +static DEFINE_MUTEX(measure_lock);
+>> +/* This divider uses bit 26 to take change in account */
+>> +static int g12b_cpub_clk_mux0_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                         unsigned long parent_rate)
+>> +{
+>> +       struct clk_regmap *clk = to_clk_regmap(hw);
+>> +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+>> +       unsigned int val;
+>> +       int ret;
 >> +
->>  #define MSR_CLK_DUTY           0x0
->>  #define MSR_CLK_REG0           0x4
->>  #define MSR_CLK_REG1           0x8
->> @@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
->>         unsigned int val;
->>         int ret;
->>  
->> +       ret = mutex_lock_interruptible(&measure_lock);
-> 
-> Why interruptible?
-
-
-I supposed _interruptible was needed since it's called from userspace via
-debugfs, locking indefinitely isn't wanted, no ? or maybe I missed something...
-
-Neil
-
-> 
->> +       if (ret)
+>> +       ret = divider_get_val(rate, parent_rate, div->table, div->width,
+>> +                             div->flags);
+>> +       if (ret < 0)
 >> +               return ret;
 >> +
->>         regmap_write(priv->regmap, MSR_CLK_REG0, 0);
->>  
->>         /* Set measurement duration */
+>> +       val = (unsigned int)ret << div->shift;
+>> +
+>> +       regmap_update_bits(clk->map, HHI_SYS_CPUB_CLK_CNTL,
+>> +                          SYS_CPU_DYN_ENABLE, SYS_CPU_DYN_ENABLE);
+>> +
+>> +       return regmap_update_bits(clk->map, div->offset,
+>> +                                 clk_div_mask(div->width) << div->shift | SYS_CPU_DYN_ENABLE, val);
+>> +};
+>> +
+>> +const struct clk_ops g12b_cpub_clk_mux0_div_ops = {
+> 
+> static?
 
+Ack
+
+> 
+>> +       .recalc_rate = clk_regmap_div_recalc_rate,
+>> +       .round_rate = clk_regmap_div_round_rate,
+>> +       .set_rate = g12b_cpub_clk_mux0_div_set_rate,
+>> +};
+>> +
+>>  /* Datasheet names this field as "mux0_divn_tcnt" */
+>>  static struct clk_regmap g12b_cpub_clk_mux0_div = {
+>>         .data = &(struct clk_regmap_div_data){
+> [...]
+>>  
+>> +static int g12a_cpu_clk_mux_notifier_cb(struct notifier_block *nb,
+>> +                                       unsigned long event, void *data)
+>> +{
+>> +       switch (event) {
+>> +       case POST_RATE_CHANGE:
+>> +       case PRE_RATE_CHANGE:
+>> +               /* Wait for clock propagation before/after changing the mux */
+>> +               udelay(100);
+>> +               return NOTIFY_OK;
+>> +
+>> +       default:
+>> +               return NOTIFY_DONE;
+>> +       }
+> 
+> Maybe convert this into a if statement and then have a default return
+> of NOTIFY_DONE otherwise?
+
+Would be similar, I'm not against it.
+
+> 
+>> +}
+>> +
+>> +struct notifier_block g12a_cpu_clk_mux_nb = {
+> 
+> static?
+
+Ack
+
+> 
+>> +       .notifier_call = g12a_cpu_clk_mux_notifier_cb,
+>> +};
+>> +
+>> +struct g12a_cpu_clk_postmux_nb_data {
+>> +       struct notifier_block nb;
+>> +       struct clk_hw *xtal;
+>> +       struct clk_hw *cpu_clk_dyn;
+>> +       struct clk_hw *cpu_clk_postmux0;
+>> +       struct clk_hw *cpu_clk_postmux1;
+>> +       struct clk_hw *cpu_clk_premux1;
+>> +};
+>> +
+>> +static int g12a_cpu_clk_postmux_notifier_cb(struct notifier_block *nb,
+>> +                                        unsigned long event, void *data)
+>> +{
+>> +       struct g12a_cpu_clk_postmux_nb_data *nb_data =
+>> +               container_of(nb, struct g12a_cpu_clk_postmux_nb_data, nb);
+>> +
+>> +       switch (event) {
+>> +       case PRE_RATE_CHANGE:
+>> +               /*
+>> +                * This notifier means cpu_clk_postmux0 clock will be changed
+>> +                * to feed cpu_clk, this the current path :
+> 
+> Maybe write "this is the current path"?
+> 
+
+Ack
+
+Thanks,
+Neil
