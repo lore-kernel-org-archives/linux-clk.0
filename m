@@ -1,91 +1,83 @@
-Return-Path: <SRS0=Kcvz=UY=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7CFC48BD5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 23:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5AB3C48BD6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 01:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0071208E3
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jun 2019 23:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561506302;
-	bh=2srRusj4JiJ9dqvGnl1rSyXYmKaGPjVC3wWbEnqs4f4=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=akRxveaQOb0XfweUeGWjv1BLbc2kaZvBFZ1GgX89NBNz7oQMPOIzikclpbvCgbCNq
-	 Dwlz+1PczOOIe28ZcllAz5nR21Mi6a+rjqrHSaW4XEwbvDbWtovlQUTgzRSJrjbYyN
-	 EomaxYyfuv+UjnqKEBIxAKTJzJ4Fo/T+brV4iTb0=
+	by mail.kernel.org (Postfix) with ESMTP id 7715A208CA
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 01:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbfFYXpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jun 2019 19:45:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbfFYXpA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jun 2019 19:45:00 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14A052086D;
-        Tue, 25 Jun 2019 23:45:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561506300;
-        bh=2srRusj4JiJ9dqvGnl1rSyXYmKaGPjVC3wWbEnqs4f4=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=NYCeh9IdMT50gUdsLrYoU6+GeJ46EI4ORhgTE55UFDk4/2ggmTr3cLCbhxda/ctUT
-         65LP6ayWHaMSjXoTDZQ6fpT7nzBBwIWJloIqtFy2RCzmW1NSIOVCH+Ef3X1VPOMJv3
-         2ebbjGfJMCIyr694oi0ZI4wfuVh3o84wsHAj15P8=
-Content-Type: text/plain; charset="utf-8"
+        id S1726304AbfFZBF2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jun 2019 21:05:28 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46290 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726223AbfFZBF1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jun 2019 21:05:27 -0400
+X-UUID: 6130bc13c6334e4485ec934b11c452d9-20190626
+X-UUID: 6130bc13c6334e4485ec934b11c452d9-20190626
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 87491432; Wed, 26 Jun 2019 09:05:23 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 26 Jun 2019 09:05:22 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Jun 2019 09:05:22 +0800
+Message-ID: <1561511122.24282.10.camel@mtksdaap41>
+Subject: Re: [RFC v1] clk: core: support clocks that need to be enabled
+ during re-parent
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Biao Huang <biao.huang@mediatek.com>
+Date:   Wed, 26 Jun 2019 09:05:22 +0800
+In-Reply-To: <20190625221415.B0DC22086D@mail.kernel.org>
+References: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com>
+         <20190625221415.B0DC22086D@mail.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190625131053.25407-1-ckeepax@opensource.cirrus.com>
-References: <20190625131053.25407-1-ckeepax@opensource.cirrus.com>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 RESEND] clk: lochnagar: Use new parent_data approach to register clock parents
-Cc:     linux-clk@vger.kernel.org, patches@opensource.cirrus.com
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 16:44:59 -0700
-Message-Id: <20190625234500.14A052086D@mail.kernel.org>
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Charles Keepax (2019-06-25 06:10:53)
-> -static const char * const lochnagar1_clk_parents[] =3D {
-> -       "ln-none",
-> -       "ln-spdif-mclk",
-> -       "ln-psia1-mclk",
-> -       "ln-psia2-mclk",
-> -       "ln-cdc-clkout",
-> -       "ln-dsp-clkout",
-> -       "ln-pmic-32k",
-> -       "ln-gf-mclk1",
-> -       "ln-gf-mclk3",
-> -       "ln-gf-mclk2",
-> -       "ln-gf-mclk4",
-> +#define LN_PARENT(NAME) { .name =3D NAME, .fw_name =3D NAME }
-> +
-> +static const struct clk_parent_data lochnagar1_clk_parents[] =3D {
-> +       LN_PARENT("ln-none"),
-> +       LN_PARENT("ln-spdif-mclk"),
+On Tue, 2019-06-25 at 15:14 -0700, Stephen Boyd wrote:
+> Quoting Weiyi Lu (2019-06-09 20:44:53)
+> > When using property assigned-clock-parents to assign parent clocks,
+> > core clocks might still be disabled during re-parent.
+> > Add flag 'CLK_OPS_CORE_ENABLE' for those clocks must be enabled
+> > during re-parent.
+> > 
+> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> 
+> Can you further describe the scenario where this is a problem? Is it
+> some sort of clk that is enabled by default out of the bootloader and is
+> then configured to have an 'assigned-clock-parents' property to change
+> the parent, but that clk needs to be "enabled" so that the framework
+> turns on the parents for the parent switch?
 
-The above two aren't documented in the binding. Is it intentional? I'd
-like to apply this patch, but I don't want it to use undocumented
-bindings.
+When driver is built as module(.ko) and install at runtime after the
+whole initialization stage. Clk might already be turned off before
+configuring by assigned-clock-parents. For such clock design that need
+to have clock enabled during re-parent, the configuration of
+assigned-clock-parents might be failed. That's the problem we have now.
+Do you have any suggestion for such usage of clocks? Many thanks.
 
-> +       LN_PARENT("ln-psia1-mclk"),
-> +       LN_PARENT("ln-psia2-mclk"),
-> +       LN_PARENT("ln-cdc-clkout"),
-> +       LN_PARENT("ln-dsp-clkout"),
-> +       LN_PARENT("ln-pmic-32k"),
-> +       LN_PARENT("ln-gf-mclk1"),
-> +       LN_PARENT("ln-gf-mclk3"),
-> +       LN_PARENT("ln-gf-mclk2"),
-> +       LN_PARENT("ln-gf-mclk4"),
->  };
-> =20
+> 
+
+
