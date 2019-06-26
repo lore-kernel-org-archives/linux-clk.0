@@ -2,120 +2,105 @@ Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 479D7C48BD6
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 17:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6A6C48BD3
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 17:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C79920665
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 17:06:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LqeDd8wd"
+	by mail.kernel.org (Postfix) with ESMTP id AF33F21726
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 17:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561571746;
+	bh=uYYE+2xmmJ6VAbTTEa9ncedJrgUwTnScGw/RDgSJMnY=;
+	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
+	b=J9m04NzPJq2Gq/erZQzdFjAK5rAQ44gXYNSCFD/AwHRbWl67esQc0FUDKSjqJEZrO
+	 P85ae8J71HoimtJpB9s03VGcgUE48hEmIEKTPKIOF/32el22ZTjfofHzmc0Qto4YIP
+	 P9MY/wVhY4Aqb75UfXA1XWgG9dS9FbFoQSY2/t9Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfFZRGk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 13:06:40 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7386 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfFZRGk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jun 2019 13:06:40 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d13a61d0002>; Wed, 26 Jun 2019 10:06:37 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 26 Jun 2019 10:06:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 26 Jun 2019 10:06:39 -0700
-Received: from [10.2.169.244] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Jun
- 2019 17:06:36 +0000
-Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio
- resume
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        <jckuo@nvidia.com>, "Joseph Lo" <josephl@nvidia.com>,
-        <talho@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Mikko Perttunen" <mperttunen@nvidia.com>, <spatra@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
- <CACRpkda0=HeRco8kExdf6TmiLOnCec3Ek06s-MdjNJvVGw3ZNQ@mail.gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <7b97ec08-212e-76fb-ad12-6d1be5ab6149@nvidia.com>
-Date:   Wed, 26 Jun 2019 10:06:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726289AbfFZRzq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 13:55:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbfFZRzq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 Jun 2019 13:55:46 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40B15208E3;
+        Wed, 26 Jun 2019 17:55:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561571745;
+        bh=uYYE+2xmmJ6VAbTTEa9ncedJrgUwTnScGw/RDgSJMnY=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=r1q0xsbUOEXAdi9ST7oAxyxL9fcywDKRltBBbMOamJBKHelPaDZxvtdkhDrn6nonm
+         e9DX0Aj6Oi+3dfLeHB/0ph2lf4aS3hlk1yeAgTq3NHsuYD73bjDpDpbpS7W0s1Wh8s
+         +EyG6kKjprlKptKS6D+AtRH5RktQH89rhC50eG/M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CACRpkda0=HeRco8kExdf6TmiLOnCec3Ek06s-MdjNJvVGw3ZNQ@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561568797; bh=zlmsmRF54TEZsHZsCgzpp/eYKMziW5k+1GvPOKK2I8s=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=LqeDd8wdUbjIj0U9o9KaU5Athl/vrt0CLSzZZwLZlRAdvUBD9ilPs7FTXha4rPqio
-         97IOCU6Qo9mibFQMRF9NiZ9YcVoVHGhUNH1A1nyNn/C1JEmPxe8TpYTbVScGs0ZuM6
-         B3W1inZLLyLgEg1Smy2gxG5jm1ZFFGRA6tsRsY4V4Q+gIJvKhu1oNxnKuuwH8CHIdZ
-         m7BtRlN8Ic9ql5I86rGuMvWopX/SAhbuWIoQc3aGUSsB46VPKTNtKnsyqxNU3ko8Ay
-         /Jawls9cOAe4aqKdjikiLNSVZg54Oziuz1eG3ok9PK+nh2vRxHydo+htGkNHEgN+Z6
-         Y1TG3gtDy1TdQ==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190626131802.GE54126@ediswmail.ad.cirrus.com>
+References: <20190625131053.25407-1-ckeepax@opensource.cirrus.com> <20190625234500.14A052086D@mail.kernel.org> <20190626131802.GE54126@ediswmail.ad.cirrus.com>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 RESEND] clk: lochnagar: Use new parent_data approach to register clock parents
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        patches@opensource.cirrus.com
+User-Agent: alot/0.8.1
+Date:   Wed, 26 Jun 2019 10:55:44 -0700
+Message-Id: <20190626175545.40B15208E3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Charles Keepax (2019-06-26 06:18:02)
+> On Tue, Jun 25, 2019 at 04:44:59PM -0700, Stephen Boyd wrote:
+> > Quoting Charles Keepax (2019-06-25 06:10:53)
+> > > -static const char * const lochnagar1_clk_parents[] =3D {
+> > > -       "ln-none",
+> > > -       "ln-spdif-mclk",
+> > > -       "ln-psia1-mclk",
+> > > -       "ln-psia2-mclk",
+> > > -       "ln-cdc-clkout",
+> > > -       "ln-dsp-clkout",
+> > > -       "ln-pmic-32k",
+> > > -       "ln-gf-mclk1",
+> > > -       "ln-gf-mclk3",
+> > > -       "ln-gf-mclk2",
+> > > -       "ln-gf-mclk4",
+> > > +#define LN_PARENT(NAME) { .name =3D NAME, .fw_name =3D NAME }
+> > > +
+> > > +static const struct clk_parent_data lochnagar1_clk_parents[] =3D {
+> > > +       LN_PARENT("ln-none"),
+> > > +       LN_PARENT("ln-spdif-mclk"),
+> >=20
+> > The above two aren't documented in the binding. Is it intentional? I'd
+> > like to apply this patch, but I don't want it to use undocumented
+> > bindings.
+> >=20
+>=20
+> ln-none is intentionally missing from the binding, it isn't really
+> used at the moment, it is really more of a place holder for when
+> the clocks are not parented to anything as many will generate a
+> clock in that case. Maybe in the future it might be used to allow
+> clocks to be put back into that state after being parented but that
+> probably requires more thought.
 
-On 6/25/19 6:38 AM, Linus Walleij wrote:
-> On Mon, Jun 24, 2019 at 5:03 AM Sowjanya Komatineni
-> <skomatineni@nvidia.com> wrote:
->
->> During SC7 resume, PARKED bit clear from the pinmux registers may
->> cause a glitch on the GPIO lines.
->>
->> So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
->> to keep the GPIO lines in a known good state prior to clearing PARKED
->> bit.
->>
->> This patch has fix for this by moving Tegra GPIOs restore to happen
->> very early than pinctrl resume.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> Can this patch be applied in isolation from the other patches?
->
-> WOuld be nice to have at least Thierry's ACK on it before I
-> apply it.
->
-> Yours,
-> Linus Walleij
+Hmm.. So basically it's a way to configure the clk to have no parent
+anymore and not be orphaned but output a clk signal? I'll have to think
+about this more but maybe this means we should let clks parent to
+themselves to indicate that they're not using anything else to output a
+clk signal, i.e. clk_set_parent(clk, clk) would make it a root clk if
+it's possible.
 
-Just to confirm, Will not include this in V5 as you are planning to 
-apply this patch separately.
+>=20
+> ln-spdif-mclk should be in the binding though I will do a patch
+> to add it. Do you want me to resend this patch as well? Feels
+> like this stuff is orthogonal to what this patch is doing.
+>=20
 
-Thanks
-
-Sowjanya
-
+A follow-up patch is fine for this. I'll stack it on top and merge it up
+to clk-next.
 
