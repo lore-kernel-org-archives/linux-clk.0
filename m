@@ -6,63 +6,65 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 647CBC48BD6
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1942EC48BD6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399E621726
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0D0D21783
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 18:34:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561573009;
-	bh=ngfloKnnEljm5koGJ5y0rZ8cyy4BPg9KdJZKx/SEddk=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=CHk9E29u8sWNptKfuk0FIt8BOzc0KnXLOSBBnrCCaSPUDNKFHd4y0+cNe+V+UICtG
-	 N8KEMvJ/4oAX0Knc0v0b1n8D8yZcopFXGhbJUL2VWrR0714V39g1ZlCEByaj/GDzQL
-	 eRF2kBBlWjyHR2EmYxlDv/yrZU5I3YXihyuMILnM=
+	s=default; t=1561574090;
+	bh=WjGB0eiWQn5FUh3OK8rEyzBNxU/rZ51gQaiaGETiBF8=;
+	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
+	b=bzR+d6yRVOaB7U1P2FThQPzLDcEj+1dHNekDtLFyjro8PbHV3tKz5tbaK0Hag71xL
+	 ZevtbY5NiRSfgW02ucOh/1RQPsfhJuBtMXZOsyiwyy6jtSgBQeGU43245TygV/j14g
+	 FqYyS0v1iCL37c/JZm7d+TnnMDUHOyH2gX3mLLMM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfFZSQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 14:16:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60540 "EHLO mail.kernel.org"
+        id S1726564AbfFZSet (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jun 2019 14:34:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbfFZSQs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Jun 2019 14:16:48 -0400
+        id S1726341AbfFZSet (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 Jun 2019 14:34:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 993C221726;
-        Wed, 26 Jun 2019 18:16:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C47B216FD;
+        Wed, 26 Jun 2019 18:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561573007;
-        bh=ngfloKnnEljm5koGJ5y0rZ8cyy4BPg9KdJZKx/SEddk=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=2rBqUqBZkbNa47oKYmqOlCjsXw7fvrPVeaLx3mkT665MfNL2CP8LtDZM1AaGPICRt
-         TphgoDg2KmGK3cMU/FMdW3vXX+c2+D+CUS4nQkjeQThHu42C6vpRTp0cDyh8xN7GzO
-         QtzeTx5T3Z7Nig2Y4fx7qYmoUSfRnLTC7iOIK+3s=
+        s=default; t=1561574088;
+        bh=WjGB0eiWQn5FUh3OK8rEyzBNxU/rZ51gQaiaGETiBF8=;
+        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
+        b=lKYo/7yWYJiNUYnbY8N8lmL+9CYor2vU0UmkTOKms3YvPV6/mv47ECbrfziZjqjyX
+         yIItidnyt2bxrhZlBBBJ8YBTfwUfp2uWSMxF5Rhc8VytdCnIPhaI6C8+rSpX/Hr6gj
+         Qg3eEJkoiwXGhwfpWvnr+xRe0ZSZcJse5Gig/2fA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190522011504.19342-4-zhang.chunyan@linaro.org>
-References: <20190522011504.19342-1-zhang.chunyan@linaro.org> <20190522011504.19342-4-zhang.chunyan@linaro.org>
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>
+In-Reply-To: <1558433454-27971-2-git-send-email-claudiu.beznea@microchip.com>
+References: <1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com> <1558433454-27971-2-git-send-email-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH v4 1/4] clk: at91: sckc: sama5d4 has no bypass support
+To:     Claudiu.Beznea@microchip.com, Ludovic.Desroches@microchip.com,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Claudiu.Beznea@microchip.com
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 3/3] clk: sprd: Add check for return value of sprd_clk_regmap_init()
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>
 User-Agent: alot/0.8.1
-Date:   Wed, 26 Jun 2019 11:16:46 -0700
-Message-Id: <20190626181647.993C221726@mail.kernel.org>
+Date:   Wed, 26 Jun 2019 11:34:47 -0700
+Message-Id: <20190626183448.2C47B216FD@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chunyan Zhang (2019-05-21 18:15:03)
-> sprd_clk_regmap_init() doesn't always return success, adding check
-> for its return value should make the code more strong.
+Quoting Claudiu.Beznea@microchip.com (2019-05-21 03:11:22)
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
 >=20
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+> The slow clock of SAMA5D4 has no bypass support thus remove it.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
 
 Applied to clk-next
