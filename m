@@ -2,174 +2,66 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7887C004E6
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 20:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0F3C004E6
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 20:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7D92133F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 20:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50AF8205C9
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 20:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561668200;
-	bh=Xd6rIJtf3H8X+yslIzEPNG9SJGOP8h1KGRQYdi+Nh74=;
+	s=default; t=1561668785;
+	bh=6DUV+PIFMrf8iCORnsjlMTylpfnz0MDPQhy6ykxXKyM=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=F6yCd1FbLUVdoDHf9SqdSk1DeyyQVy22mDA0VS4H+dgYjd/yV60q2sCawpy84KLa0
-	 NwAoRA61vSIFEntJQTHZUrO2KqVpIYeOGGMhebhDBQhwNBvBiICLHz/ODkYHtUIkSz
-	 MVbOIq7/R6zcHjVf9z9VUUp5PUsUUqoAiQyYbyxU=
+	b=bddCFUKAg6GgS98jBqlN8V/nSKD5SmUeGtuuklaqmtRVE9GA3KXzAk7yLgtt0qX1y
+	 wuwDQ5hS7Ff60D27Oc0CJ3GE+YpzzT9iClX2mHJyxAl9A7eWdyvERCWs3HCsQZVodu
+	 69Xaf2VlFiDUWZBmkw5r69aAGwZmdeUV50SREcJw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfF0UnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 16:43:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57582 "EHLO mail.kernel.org"
+        id S1726564AbfF0UxF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 16:53:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbfF0UnU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 16:43:20 -0400
+        id S1726559AbfF0UxF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Jun 2019 16:53:05 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 828302075E;
-        Thu, 27 Jun 2019 20:43:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00F2E2075E;
+        Thu, 27 Jun 2019 20:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561668198;
-        bh=Xd6rIJtf3H8X+yslIzEPNG9SJGOP8h1KGRQYdi+Nh74=;
+        s=default; t=1561668443;
+        bh=6DUV+PIFMrf8iCORnsjlMTylpfnz0MDPQhy6ykxXKyM=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=VPoIQktnV79R1ByGMdQqofepgjBWQBTXBQYDHXfjll3u6vNPWMS7IkorEvqw6CVcG
-         64tzppQNstnhRP4JyA0oWDWXNiUUVhFymsaCDFaVEu87/aUfdkB+WbpH2FCuvQCXhD
-         6uy9BzIfMNKT9NLrociDwbC5ygMesCVCcn+zG9Wc=
+        b=itqa6Ah4EHOb3PMxe73umTQ/36BJhc6+G0vsjh1r3fx/70+PBcWybQXvaVvlG9Hcl
+         1j3bTnsrLn4m66yztm4uw3Vd6CNtj9wHTxttTSKzZyEXRKs6l0Rpf12K97zfMo78K7
+         68qmSSZ2wESgFJQ+4IxN/0NddOKgAtLHm0sZQ1vM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190502122657.15577-3-jonas.gorski@gmail.com>
-References: <20190502122657.15577-1-jonas.gorski@gmail.com> <20190502122657.15577-3-jonas.gorski@gmail.com>
-To:     Jonas Gorski <jonas.gorski@gmail.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org
+In-Reply-To: <20190507135110.27979-1-mike.looijmans@topic.nl>
+References: <20190507135110.27979-1-mike.looijmans@topic.nl>
+To:     Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 2/3] clk: add BCM63XX gated clock controller driver
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
+Subject: Re: [PATCH] clk: clk-si544: Implement small frequency change support
+Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        Mike Looijmans <mike.looijmans@topic.nl>
 User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 13:43:17 -0700
-Message-Id: <20190627204318.828302075E@mail.kernel.org>
+Date:   Thu, 27 Jun 2019 13:47:22 -0700
+Message-Id: <20190627204723.00F2E2075E@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonas Gorski (2019-05-02 05:26:56)
-> Add a driver for the gated clock controller found on MIPS based BCM63XX
-> SoCs.
+Quoting Mike Looijmans (2019-05-07 06:51:10)
+> The Si544 supports changing frequencies "on the fly" when the change is
+> less than 950 ppm from the current center frequency. The driver now
+> uses the small adjustment routine for implementing this.
 >=20
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 > ---
 
-Applied to clk-next with some extra fixes
-
-diff --git a/drivers/clk/bcm/clk-bcm63xx-gate.c b/drivers/clk/bcm/clk-bcm63=
-xx-gate.c
-index 4fd10645a192..9e1dcd43258c 100644
---- a/drivers/clk/bcm/clk-bcm63xx-gate.c
-+++ b/drivers/clk/bcm/clk-bcm63xx-gate.c
-@@ -1,8 +1,7 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+// SPDX-License-Identifier: GPL-2.0
-=20
- #include <linux/clk-provider.h>
- #include <linux/init.h>
--#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-@@ -20,7 +19,7 @@ struct clk_bcm63xx_hw {
- 	struct clk_hw_onecell_data data;
- };
-=20
--const struct clk_bcm63xx_table_entry bcm3368_clocks[] =3D {
-+static const struct clk_bcm63xx_table_entry bcm3368_clocks[] =3D {
- 	{ .name =3D "mac", .bit =3D 3, },
- 	{ .name =3D "tc", .bit =3D 5, },
- 	{ .name =3D "us_top", .bit =3D 6, },
-@@ -41,7 +40,7 @@ const struct clk_bcm63xx_table_entry bcm3368_clocks[] =3D=
- {
- 	{ },
- };
-=20
--const struct clk_bcm63xx_table_entry bcm6328_clocks[] =3D {
-+static const struct clk_bcm63xx_table_entry bcm6328_clocks[] =3D {
- 	{ .name =3D "phy_mips", .bit =3D 0, },
- 	{ .name =3D "adsl_qproc", .bit =3D 1, },
- 	{ .name =3D "adsl_afe", .bit =3D 2, },
-@@ -57,7 +56,7 @@ const struct clk_bcm63xx_table_entry bcm6328_clocks[] =3D=
- {
- 	{ },
- };
-=20
--const struct clk_bcm63xx_table_entry bcm6358_clocks[] =3D {
-+static const struct clk_bcm63xx_table_entry bcm6358_clocks[] =3D {
- 	{ .name =3D "enet", .bit =3D 4, },
- 	{ .name =3D "adslphy", .bit =3D 5, },
- 	{ .name =3D "pcm", .bit =3D 8, },
-@@ -72,7 +71,7 @@ const struct clk_bcm63xx_table_entry bcm6358_clocks[] =3D=
- {
- 	{ },
- };
-=20
--const struct clk_bcm63xx_table_entry bcm6362_clocks[] =3D {
-+static const struct clk_bcm63xx_table_entry bcm6362_clocks[] =3D {
- 	{ .name =3D "adsl_qproc", .bit =3D 1, },
- 	{ .name =3D "adsl_afe", .bit =3D 2, },
- 	{ .name =3D "adsl", .bit =3D 3, },
-@@ -95,7 +94,7 @@ const struct clk_bcm63xx_table_entry bcm6362_clocks[] =3D=
- {
- 	{ },
- };
-=20
--const struct clk_bcm63xx_table_entry bcm6368_clocks[] =3D {
-+static const struct clk_bcm63xx_table_entry bcm6368_clocks[] =3D {
- 	{ .name =3D "vdsl_qproc", .bit =3D 2, },
- 	{ .name =3D "vdsl_afe", .bit =3D 3, },
- 	{ .name =3D "vdsl_bonding", .bit =3D 4, },
-@@ -116,7 +115,7 @@ const struct clk_bcm63xx_table_entry bcm6368_clocks[] =
-=3D {
- 	{ },
- };
-=20
--const struct clk_bcm63xx_table_entry bcm63268_clocks[] =3D {
-+static const struct clk_bcm63xx_table_entry bcm63268_clocks[] =3D {
- 	{ .name =3D "disable_gless", .bit =3D 0, },
- 	{ .name =3D "vdsl_qproc", .bit =3D 1, },
- 	{ .name =3D "vdsl_afe", .bit =3D 2, },
-@@ -225,22 +224,15 @@ static const struct of_device_id clk_bcm63xx_dt_ids[]=
- =3D {
- 	{ .compatible =3D "brcm,bcm6362-clocks", .data =3D &bcm6362_clocks, },
- 	{ .compatible =3D "brcm,bcm6368-clocks", .data =3D &bcm6368_clocks, },
- 	{ .compatible =3D "brcm,bcm63268-clocks", .data =3D &bcm63268_clocks, },
--	{ },
-+	{ }
- };
-=20
--MODULE_DEVICE_TABLE(of, clk_bcm63xx_dt_ids);
--
- static struct platform_driver clk_bcm63xx =3D {
- 	.probe =3D clk_bcm63xx_probe,
- 	.remove =3D clk_bcm63xx_remove,
- 	.driver =3D {
- 		.name =3D "bcm63xx-clock",
--		.of_match_table =3D of_match_ptr(clk_bcm63xx_dt_ids),
-+		.of_match_table =3D clk_bcm63xx_dt_ids,
- 	},
- };
--
- builtin_platform_driver(clk_bcm63xx);
--
--MODULE_AUTHOR("Jonas Gorski <jonas.gorski@gmail.com>");
--MODULE_DESCRIPTION("BCM63XX (MIPS) gated clock controller driver");
--MODULE_LICENSE("GPL");
+Applied to clk-next
 
