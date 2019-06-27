@@ -1,138 +1,286 @@
-Return-Path: <SRS0=IhfR=UZ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66DBC48BD6
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 21:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF88C48BD6
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 06:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7517216FD
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jun 2019 21:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561584251;
-	bh=EDc7fUe3Q9b1829b2b+AJfN4Y88B5C30t7QV0u7qKUY=;
-	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
-	b=e0C6TKzyJlF+hOJetiQRC3YdwWph5L9+PRSuxoxYjSR8cOehuDPgyNSOMEBoAA5J5
-	 CCTtTJQwY0sJDLBza0S2NdII1LckG8pY7vhCNewzqUxUySFWupj1m1+HKzv/wAIBDI
-	 Q9c31abBv+dgp6OVbMHx1GfODxa2AW6DbOTcf+c0=
+	by mail.kernel.org (Postfix) with ESMTP id 453B82063F
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 06:58:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMHWAg1l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfFZVYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jun 2019 17:24:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfFZVYL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Jun 2019 17:24:11 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C0E6208E3;
-        Wed, 26 Jun 2019 21:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561584249;
-        bh=EDc7fUe3Q9b1829b2b+AJfN4Y88B5C30t7QV0u7qKUY=;
-        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=fK6R01FDqc9RKpZKNZFTy7N7NHsXQZx8Dqpuvy0wA1cisncjw6lgw3dFb59VIoWt9
-         l7RQIsJdvTSKQHSdX8tcD6tErcWU6Yh/KMXgbjbUPoQmCx4kBL3r11oBCshn1IuTdO
-         bsP+yICDFOUN2eVtZCrCxIoPr3QIjpBnzRSYFaoo=
-Content-Type: text/plain; charset="utf-8"
+        id S1726052AbfF0G6O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 02:58:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43269 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbfF0G6O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 02:58:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p13so1134898wru.10
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2019 23:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=vFy6jEDHceuk/3jGMaqb8AnDamOE2+mcptMv87pigdE=;
+        b=YMHWAg1lUxpHQE9Mf1wmC08lojIisrFBK6+owiCxxraUUaDgVXqwGGctf2EQiGXXvt
+         ASgKY9CLvoyUnIYVXmIAxIgG3bcF433dxlgZ13Dz3xcVzOQYM8qMNpMHbFO63unX7YID
+         IB+kEW28VwK8NvtOaXHyPPGzrDXf288boYWIe+4LKB4usq3MDjkOOtSEjQ7a0e8ejlbd
+         Yia+wMsR0tcR02JqwB8pFNdOMArd654olgRC5zzUUt7K6AHirEimYmwhevAiR2w6iXnJ
+         qlYSg2Ktvk+rEpPpj5j2SMC1OnFa58u8jKiUcZcNB9igfTLKuuYJc3kM2SxslMixZkRL
+         Z4WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=vFy6jEDHceuk/3jGMaqb8AnDamOE2+mcptMv87pigdE=;
+        b=aeN2jft9x4gpNmvY+fDluZ7nxrNZYRo7kyB2wl2SPbHtG/lY2frHmjpoDF7PnH9bMW
+         Z3zG1GI0HGUBxNnA2+l/PiJ6kSp0FgcszCpeqX/dLUYU4GSHDbS0rRBizrPANx6ad0Kr
+         FN0MmPvyCg26p9260mJBfVFnUYgvNMI02mWdTzUWsDuBrcVxS8OJZcS2Fguf0fYERhHV
+         LJ8txWb43y6wrJyNSJ3I904X+oKMNk6ijFO+ietTS62pSR5w7NfFrLLgqWIw9ohBYqHf
+         vgwzcbYDLMzcE9BVCqBfXWFjEULP7vv/66HFBHCZJSGnvcHjC5FRCalJ/92m4UfipELj
+         t9pw==
+X-Gm-Message-State: APjAAAVYOoclA1oWQB6IUYGNOVZt22tZbT2JnqdcUyXadOhmm//afcu9
+        4osHyRVu7luGheTyhjDXlrYoPA==
+X-Google-Smtp-Source: APXvYqyv+gw5AENjLw6j2SwOLBiHY3tyMM8wLQQq5f9meYMIoGmh2gkD+8y5POuKQ8u3jfHvR0Rj5A==
+X-Received: by 2002:a5d:6190:: with SMTP id j16mr1747852wru.49.1561618691175;
+        Wed, 26 Jun 2019 23:58:11 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id p4sm1198380wrx.97.2019.06.26.23.58.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Jun 2019 23:58:10 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 07:58:08 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me
+Subject: Re: [PATCH v12 04/13] mfd: Add Ingenic TCU driver
+Message-ID: <20190627065808.GY21119@dell>
+References: <20190521145141.9813-1-paul@crapouillou.net>
+ <20190521145141.9813-5-paul@crapouillou.net>
+ <20190626131850.GW21119@dell>
+ <1561557350.1872.0@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c7f5184f-f484-e8ad-33ae-36b0da061113@topic.nl>
-References: <20190424090216.18417-1-mike.looijmans@topic.nl> <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com> <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl> <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com> <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl> <155658342800.168659.4922821141203707564@swboyd.mtv.corp.google.com> <c7f5184f-f484-e8ad-33ae-36b0da061113@topic.nl>
-Subject: Re: [PATCH] dt-bindings: Add silabs,si5341
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 26 Jun 2019 14:24:08 -0700
-Message-Id: <20190626212409.9C0E6208E3@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1561557350.1872.0@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sorry, I'm getting through my inbox pile and saw this one.
+On Wed, 26 Jun 2019, Paul Cercueil wrote:
+> Le mer. 26 juin 2019 à 15:18, Lee Jones <lee.jones@linaro.org> a écrit :
+> > On Tue, 21 May 2019, Paul Cercueil wrote:
+> > 
+> > >  This driver will provide a regmap that can be retrieved very early
+> > > in
+> > >  the boot process through the API function ingenic_tcu_get_regmap().
+> > > 
+> > >  Additionally, it will call devm_of_platform_populate() so that all
+> > > the
+> > >  children devices will be probed.
+> > > 
+> > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> > >  ---
+> > > 
+> > >  Notes:
+> > >      v12: New patch
+> > > 
+> > >   drivers/mfd/Kconfig             |   8 +++
+> > >   drivers/mfd/Makefile            |   1 +
+> > >   drivers/mfd/ingenic-tcu.c       | 113
+> > > ++++++++++++++++++++++++++++++++
+> > >   include/linux/mfd/ingenic-tcu.h |   8 +++
+> > >   4 files changed, 130 insertions(+)
+> > >   create mode 100644 drivers/mfd/ingenic-tcu.c
 
-Quoting Mike Looijmans (2019-04-30 22:46:55)
-> On 30-04-19 02:17, Stephen Boyd wrote:
-> >=20
-> > Why can't that driver call clk_prepare_enable()? Is there some sort of
-> > assumption that this clk will always be enabled and not have a driver
-> > that configures the rate and gates/ungates it?
->=20
-> Not only clk_prepare_enable(), but the driver could also call clk_set_rat=
-e()=20
-> and clk_set_parent() and the likes, but it doesn't, so that's why there i=
-s=20
-> "assigned-clocks" right?
->=20
-> There are multiple scenario's, similar to why regulators also have proper=
-ties=20
-> like these.
->=20
-> - The clock is related to hardware that the kernel is not aware of.
-> - The clock is for a driver that isn't aware of its clock requirements. I=
-t=20
-> might be an extra clock for an FPGA implemented controller that mimics=20
-> existing hardware.
+[...]
 
-Are these hypothetical scenarios or actual scenarios you need to
-support?
+> > >  +static struct regmap * __init ingenic_tcu_create_regmap(struct
+> > > device_node *np)
+> > >  +{
+> > >  +	struct resource res;
+> > >  +	void __iomem *base;
+> > >  +	struct regmap *map;
+> > >  +
+> > >  +	if (!of_match_node(ingenic_tcu_of_match, np))
+> > >  +		return ERR_PTR(-EINVAL);
 
->=20
-> I'd also consider patching "assigned-clocks" to call "clk_prepare_enable(=
-)",=20
-> would that make sense, or is it intentional that assigned-clocks doesn't =
-do that?
->=20
+Drop this check.
 
-It's intentional that assigned-clocks doesn't really do anything besides
-setup the list of clks to operate on with the rate or parent settings
-specified in other properties. We would need to add another property
-indicating which clks we want to mark as 'critical' or 'always-on'.
+> > >  +	base = of_io_request_and_map(np, 0, "TCU");
+> > >  +	if (IS_ERR(base))
+> > >  +		return ERR_PTR(PTR_ERR(base));
+> > >  +
+> > >  +	map = regmap_init_mmio(NULL, base, &ingenic_tcu_regmap_config);
+> > >  +	if (IS_ERR(map))
+> > >  +		goto err_iounmap;
 
-There have been prior discussions where we had developers want to mark
-clks with the CLK_IS_CRITICAL flag from DT, but we felt like that was
-putting SoC level details into the DT. While that was correct for SoC
-specific clk drivers, I can see board designs where it's configurable
-and we want to express that a board has some clks that must be enabled
-early on and left enabled forever because the hardware engineer has
-design the board that way. In this case, marking the clk with the
-CLK_IS_CRITICAL flag needs to be done from DT.
+Place this inside probe().
 
-In fact, we pretty much already have support for this with
-of_clk_detect_critical(). Maybe we should re-use that binding with
-'clock-critical' to let clk providers indicate that they have some clks
-that should be marked critical once they're registered. We could
-probably add another property too that indicates certain clks are
-enabled out of the bootloader, similar to the regulator-boot-on
-property, but where it takes a clock-cells wide list for the provider
-the property is inside of.
+> > >  +	return map;
+> > >  +
+> > >  +err_iounmap:
+> > >  +	iounmap(base);
+> > >  +	of_address_to_resource(np, 0, &res);
+> > >  +	release_mem_region(res.start, resource_size(&res));
+> > >  +
+> > >  +	return map;
+> > >  +}
+> > 
+> > Why does this need to be set-up earlier than probe()?
+> 
+> See the explanation below.
 
-We need to be careful though and make sure that clk drivers don't start
-putting everything in DT. In your example, it sounds like you have a
-consumer driver that wants to make sure the clk is prepared or enabled
-when the consumer probes. In this case the prepare/enable calls should
-be put directly into the consumer driver so it can manage the clk state.
-For the case of rates and parents, it's essentially a oneshot
-configuration of the rate or the parents of a clk. We don't need to
-"undo" the configuration when the device driver is removed. For prepare
-and enable though, we typically want to disable clks when the hardware
-is not in use to save power. Adding a property to DT should only be done
-to indicate a clk must always be on in this board configuration, not to
-avoid calling clk_prepare_enable() in the driver probe.
+I think the answer is, it doesn't.
 
-To put it another way, I'm looking to describe how the board is designed
-and to indicate that certain clks are always enabled at power on or are
-enabled by the bootloader. Configuration has it's place too, just that
-configuration is a oneshot sort of thing that never needs to change at
-runtime.
+> > >  +static int __init ingenic_tcu_probe(struct platform_device *pdev)
+> > >  +{
+> > >  +	struct regmap *map = ingenic_tcu_get_regmap(pdev->dev.of_node);
+> > >  +
+> > >  +	platform_set_drvdata(pdev, map);
+> > >  +
+> > >  +	regmap_attach_dev(&pdev->dev, map, &ingenic_tcu_regmap_config);
+> > >  +
+> > >  +	return devm_of_platform_populate(&pdev->dev);
+> > >  +}
+> > >  +
+> > >  +static struct platform_driver ingenic_tcu_driver = {
+> > >  +	.driver = {
+> > >  +		.name = "ingenic-tcu",
+> > >  +		.of_match_table = ingenic_tcu_of_match,
+> > >  +	},
+> > >  +};
+> > >  +
+> > >  +static int __init ingenic_tcu_platform_init(void)
+> > >  +{
+> > >  +	return platform_driver_probe(&ingenic_tcu_driver,
+> > >  +				     ingenic_tcu_probe);
+> > 
+> > What?  Why?
+> 
+> The device driver probed here will populate the children devices,
+> which will be able to retrieve the pointer to the regmap through
+> device_get_regmap(dev->parent).
 
+I've never heard of this call.  Where is it?
+
+> The children devices are normal platform drivers that can be probed
+> the normal way. These are the PWM driver, the watchdog driver, and the
+> OST (OS Timer) clocksource driver, all part of the same hardware block
+> (the Timer/Counter Unit or TCU).
+
+If they are normal devices, then there is no need to roll your own
+regmap-getter implementation like this.
+
+> > >  +}
+> > >  +subsys_initcall(ingenic_tcu_platform_init);
+> > >  +
+> > >  +struct regmap * __init ingenic_tcu_get_regmap(struct device_node
+> > > *np)
+> > >  +{
+> > >  +	if (!tcu_regmap)
+> > >  +		tcu_regmap = ingenic_tcu_create_regmap(np);
+> > >  +
+> > >  +	return tcu_regmap;
+> > >  +}
+> > 
+> > This makes me pretty uncomfortable.
+> > 
+> > What calls it?
+> 
+> The TCU IRQ driver (patch [06/13]), clocks driver (patch [05/13]), and the
+> non-OST clocksource driver (patch [07/13]) all probe very early in the boot
+> process, and share the same devicetree node. They call this function to get
+> a pointer to the regmap.
+
+Horrible!
+
+Instead, you should send it through platform_set_drvdata() and collect
+it in the child drivers with platform_get_drvdata(dev->parent).
+
+> > >  +bool ingenic_tcu_pwm_can_use_chn(struct device *dev, unsigned int
+> > > channel)
+> > >  +{
+> > >  +	const struct ingenic_soc_info *soc =
+> > > device_get_match_data(dev->parent);
+> > >  +
+> > >  +	/* Enable all TCU channels for PWM use by default except channels
+> > > 0/1 */
+> > >  +	u32 pwm_channels_mask = GENMASK(soc->num_channels - 1, 2);
+> > >  +
+> > >  +	device_property_read_u32(dev->parent, "ingenic,pwm-channels-mask",
+> > >  +				 &pwm_channels_mask);
+
+Doesn't this call overwrite the previous assignment above?
+
+> > >  +	return !!(pwm_channels_mask & BIT(channel));
+> > >  +}
+> > >  +EXPORT_SYMBOL_GPL(ingenic_tcu_pwm_can_use_chn);
+
+Where is this called from?
+
+I think this needs a review by the DT guys.
+
+> > >  diff --git a/include/linux/mfd/ingenic-tcu.h
+> > > b/include/linux/mfd/ingenic-tcu.h
+> > >  index 2083fa20821d..21df23916cd2 100644
+> > >  --- a/include/linux/mfd/ingenic-tcu.h
+> > >  +++ b/include/linux/mfd/ingenic-tcu.h
+> > >  @@ -6,6 +6,11 @@
+> > >   #define __LINUX_MFD_INGENIC_TCU_H_
+> > > 
+> > >   #include <linux/bitops.h>
+> > >  +#include <linux/init.h>
+> > >  +
+> > >  +struct device;
+> > >  +struct device_node;
+> > >  +struct regmap;
+> > > 
+> > >   #define TCU_REG_WDT_TDR		0x00
+> > >   #define TCU_REG_WDT_TCER	0x04
+> > >  @@ -53,4 +58,7 @@
+> > >   #define TCU_REG_TCNTc(c)	(TCU_REG_TCNT0 + ((c) *
+> > > TCU_CHANNEL_STRIDE))
+> > >   #define TCU_REG_TCSRc(c)	(TCU_REG_TCSR0 + ((c) *
+> > > TCU_CHANNEL_STRIDE))
+> > > 
+> > >  +struct regmap * __init ingenic_tcu_get_regmap(struct device_node
+> > > *np);
+> > >  +bool ingenic_tcu_pwm_can_use_chn(struct device *dev, unsigned int
+> > > channel);
+> > >  +
+> > >   #endif /* __LINUX_MFD_INGENIC_TCU_H_ */
+> > 
+> 
+> 
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
