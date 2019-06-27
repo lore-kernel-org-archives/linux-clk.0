@@ -2,68 +2,110 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A9AC48BD7
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F935C48BD7
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD362146E
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561647823;
-	bh=9dRzJf1rsWkfWTu0ToX4+aWY5ycqC1dpc9g5Yw8Jh0Q=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=0WukCOc9ZqATsU+0pnH29kn0Ol4EjrT8ow9e63pM0HjyuSdpgYQ7LDBesuLDmJpfy
-	 rlH1EJW8AtbKukBkEWgp0QALeDSMr/bGR7j2cHtNOHhWv6VLHEmroArVeV1sSBtCti
-	 97kedB2r0y6DySC1WdvmtQ42QgKz35kpdXweNhaQ=
+	by mail.kernel.org (Postfix) with ESMTP id 7A0E920663
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfF0PDi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 11:03:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
+        id S1726384AbfF0PWA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 11:22:00 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:37070 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbfF0PDi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:03:38 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A233320B1F;
-        Thu, 27 Jun 2019 15:03:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561647817;
-        bh=9dRzJf1rsWkfWTu0ToX4+aWY5ycqC1dpc9g5Yw8Jh0Q=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=PCdi9WNkUdNkeOnM37HFHkZUCXv33cJ0PYLTwP2k6PPaZd2eYJ1BRSGAGJF+1teGV
-         qzJ3EzWvpetvUKxCcuAY1gojA8KQ0UCfkJW+OZf4+oZvv4DGmgCTVzT580x6J1rcBB
-         9s6YmZhQ5kqh7JHcv/malFvvkudboo0ddeXqK8pw=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
-To:     Claudiu.Beznea@microchip.com, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 0/7] clk: at91: sckc: improve error path
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, claudiu.beznea@gmail.com,
-        Claudiu.Beznea@microchip.com
-User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 08:03:36 -0700
-Message-Id: <20190627150337.A233320B1F@mail.kernel.org>
+        id S1726187AbfF0PV7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:21:59 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 91244200C47;
+        Thu, 27 Jun 2019 17:21:57 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 82D48200C45;
+        Thu, 27 Jun 2019 17:21:57 +0200 (CEST)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 25F39205DB;
+        Thu, 27 Jun 2019 17:21:57 +0200 (CEST)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: Add clk_min/max_rate entries in debugfs
+Date:   Thu, 27 Jun 2019 18:21:49 +0300
+Message-Id: <35dca44e929f49c7a00125bf18c3455198d4e18e.1561648504.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Claudiu.Beznea@microchip.com (2019-06-13 08:37:06)
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
->=20
-> Hi,
->=20
-> This series tries to improve error path for slow clock registrations
-> by adding functions to free resources and using them on failures.
+Add two files to expose min/max clk rates as determined by
+clk_core_get_boundaries, taking all consumer requests into account.
 
-If possible, resend this patch series in plain text. Thanks.
+This information does not appear to be otherwise exposed to userspace.
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+---
+ drivers/clk/clk.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fbf63daa62bc..a51d8ffb2d40 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3031,10 +3031,34 @@ static int clk_duty_cycle_show(struct seq_file *s, void *data)
+ 
+ 	return 0;
+ }
+ DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
+ 
++static int clk_min_rate_show(struct seq_file *s, void *data)
++{
++	struct clk_core *core = s->private;
++	unsigned long min_rate, max_rate;
++
++	clk_core_get_boundaries(core, &min_rate, &max_rate);
++	seq_printf(s, "%lu\n", min_rate);
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(clk_min_rate);
++
++static int clk_max_rate_show(struct seq_file *s, void *data)
++{
++	struct clk_core *core = s->private;
++	unsigned long min_rate, max_rate;
++
++	clk_core_get_boundaries(core, &min_rate, &max_rate);
++	seq_printf(s, "%lu\n", max_rate);
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(clk_max_rate);
++
+ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ {
+ 	struct dentry *root;
+ 
+ 	if (!core || !pdentry)
+@@ -3042,10 +3066,12 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 
+ 	root = debugfs_create_dir(core->name, pdentry);
+ 	core->dentry = root;
+ 
+ 	debugfs_create_ulong("clk_rate", 0444, root, &core->rate);
++	debugfs_create_file("clk_min_rate", 0444, root, core, &clk_min_rate_fops);
++	debugfs_create_file("clk_max_rate", 0444, root, core, &clk_max_rate_fops);
+ 	debugfs_create_ulong("clk_accuracy", 0444, root, &core->accuracy);
+ 	debugfs_create_u32("clk_phase", 0444, root, &core->phase);
+ 	debugfs_create_file("clk_flags", 0444, root, core, &clk_flags_fops);
+ 	debugfs_create_u32("clk_prepare_count", 0444, root, &core->prepare_count);
+ 	debugfs_create_u32("clk_enable_count", 0444, root, &core->enable_count);
+-- 
+2.17.1
 
