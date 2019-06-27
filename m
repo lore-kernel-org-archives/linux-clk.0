@@ -7,18 +7,18 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C97C48BD7
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA45C48BD7
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A3E220663
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ED4420663
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfF0PyH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 11:54:07 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:18603 "EHLO
+        id S1726681AbfF0Px7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 11:53:59 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:18587 "EHLO
         esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfF0PyG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 11:54:06 -0400
+        with ESMTP id S1726405AbfF0Px6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 11:53:58 -0400
 Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
   Claudiu.Beznea@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
@@ -39,16 +39,16 @@ Received-SPF: None (esa6.microchip.iphmx.com: no sender
   x-conformance=spf_only
 Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
 X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
-   d="scan'208";a="36125221"
+   d="scan'208";a="36125166"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 08:54:06 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 08:53:57 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
  chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 27 Jun 2019 08:54:02 -0700
+ 15.1.1713.5; Thu, 27 Jun 2019 08:53:54 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 08:54:00 -0700
+ 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 08:53:51 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -57,9 +57,9 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 5/7] clk: at91: sckc: remove unnecessary line
-Date:   Thu, 27 Jun 2019 18:53:43 +0300
-Message-ID: <1561650825-11213-6-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH v2 2/7] clk: at91: sckc: add support to free slow rc oscillator
+Date:   Thu, 27 Jun 2019 18:53:40 +0300
+Message-ID: <1561650825-11213-3-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561650825-11213-1-git-send-email-claudiu.beznea@microchip.com>
 References: <1561650825-11213-1-git-send-email-claudiu.beznea@microchip.com>
@@ -70,26 +70,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove unnecessary line.
+Add support to free slow rc oscillator resources.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/clk/at91/sckc.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/at91/sckc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index a2b905c91085..c61b6c9ddb94 100644
+index c1d7edd33416..492b139a7c15 100644
 --- a/drivers/clk/at91/sckc.c
 +++ b/drivers/clk/at91/sckc.c
-@@ -601,7 +601,6 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
- 	osc->startup_usec = 1200000;
- 	osc->bits = &at91sama5d4_bits;
+@@ -268,6 +268,14 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
+ 	return hw;
+ }
  
--	hw = &osc->hw;
- 	ret = clk_hw_register(NULL, &osc->hw);
- 	if (ret) {
- 		kfree(osc);
++static void at91_clk_unregister_slow_rc_osc(struct clk_hw *hw)
++{
++	struct clk_slow_rc_osc *osc = to_clk_slow_rc_osc(hw);
++
++	clk_hw_unregister(hw);
++	kfree(osc);
++}
++
+ static int clk_sam9x5_slow_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct clk_sam9x5_slow *slowck = to_clk_sam9x5_slow(hw);
 -- 
 2.7.4
 
