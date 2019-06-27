@@ -2,128 +2,127 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC9FC48BD9
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 13:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92861C48BD7
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 14:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A35D62084B
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 13:59:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ooazNoLW"
+	by mail.kernel.org (Postfix) with ESMTP id 6E31020828
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 14:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfF0N7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 09:59:51 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33612 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbfF0N7v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 09:59:51 -0400
-Received: by mail-wm1-f65.google.com with SMTP id h19so7159204wme.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2019 06:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=HZ7QyNPTvF6/RgnmII34ur/JGsTqdFkUnUKXTuvqG/w=;
-        b=ooazNoLWOxU7IwbCJhoA5ND74omxfkNA0U1UpIkyKlNt0uKAfdvPmkJmQH421o+src
-         vHLl/RyQplDDT1tW40Dp93vFXUKuqLfSJXg+XUzCJcoYTZZGO4+o0KU/ZfLagw0bgegz
-         wZBSx99uweaNbb2vAFhf51jahF3xYUMLdJMKzZid2NhISCpPSl25DVCmAaHc/iCEvqzt
-         V15JjUpQIM1tcn7pXWbEW6dhtbporZSui1zZxUUr7YTVTg347Lia76DJHNyeo5Dbwg1w
-         hv1riHzjcdEwAokiYUSBUrUU76pCTDr2HpASIT86s3UXxmXaVYUxyRFIB2OcBe61Dt1L
-         f56Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=HZ7QyNPTvF6/RgnmII34ur/JGsTqdFkUnUKXTuvqG/w=;
-        b=pEFqAv61Ihb42oHziJR8YVUCqaZr453RmPs+dnL4N1OsUxyZvLX5ZbO8m3A8aJ3U4f
-         vXugvJ7asf1FHFj6lKMfZwNpEFiLoWi1+pLKHyVfS7RimxCqlgm76Kk/fKeNdI4751qJ
-         4U87IeFHiCLd90oBzI26mzS6Bi4XV2Yk5vHbbMZo4tGC93zDwB+sGqeQ7cDJ/uidxX7g
-         QxiPet/swAGCnxor/XUTYqyu91FmXjUjEDBesOtCu46X4M0AluZaiIh2gUakeULRpsyH
-         z1mh8zOxTnS74565FZiqpua+FekgiDkzXyvFAv7NOCnuA322IirrXRXX8fQxd7DvWnje
-         F62w==
-X-Gm-Message-State: APjAAAVjZgqxrUW8OoyyJ17MSLm++9S3AtyODLiEUczPJz9f+IOJkNMS
-        BDqdLlekfMGNDJG6/fjXMTJs1Q==
-X-Google-Smtp-Source: APXvYqwaxWiKD/K7An3E8jt0LE3Y8mQ4GeKWfysCY8bRIdbz0ryFrlEPnonTiu8gbtoYhCpar5TrSg==
-X-Received: by 2002:a1c:b146:: with SMTP id a67mr3282875wmf.124.1561643989260;
-        Thu, 27 Jun 2019 06:59:49 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id y184sm5473350wmg.14.2019.06.27.06.59.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Jun 2019 06:59:48 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 14:59:46 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Tony Xie <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: [GIT PULL] Immutable branch between MFD, Clk, Regulator and RTC due
- for the v5.3 merge window
-Message-ID: <20190627135946.GI2000@dell>
-References: <20190621103258.8154-1-tony.xie@rock-chips.com>
+        id S1726425AbfF0Or6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 10:47:58 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:54717 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbfF0Or6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 10:47:58 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
+   d="scan'208";a="37606820"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 07:47:57 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex04.mchp-main.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 27 Jun 2019 07:47:56 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 07:47:52 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v5 0/4] add slow clock support for SAM9X60
+Date:   Thu, 27 Jun 2019 17:47:17 +0300
+Message-ID: <1561646841-7663-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190621103258.8154-1-tony.xie@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enjoy!
+Hi,
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+This series add slow clock support for SAM9X60. Apart from previous IPs, this
+one uses different offsets in control register for different functionalities.
+The series adapt current driver to work for all IPs using per IP
+configurations initialized at probe.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Stephen,
 
-are available in the Git repository at:
+I send a new version of this since I'm not seeing the patches on clk-next
+and I though you may had issues with the previous version of this series.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-clk-regulator-rtc-v5.3
+Thank you,
+Claudiu Beznea
 
-for you to fetch changes up to 8ed14401974830f316a419b073e58ef75a473a63:
+Changes in v5:
+- get rid of Content-Transfer-Encoding: base64
+- collect Ack-by tag
 
-  clk: RK808: Add RK809 and RK817 support. (2019-06-27 14:57:59 +0100)
+Changes in v4:
+- remove macros which were used to access IP specific bits for control
+  register
+- collect Acked-by, Reviewed-by tags
 
-----------------------------------------------------------------
-Immutable branch between MFD, Clk, Regulator and RTC due for the v5.3 merge window
+Changes in v3:
+- add patch 1/1 that remove bypass code in the code specific to SAMA5D4
+  (there is no bypass support on SAMA5D4)
+- adapt review comments
+- register clock with of_clk_hw_onecell_get to emphasize that this IP has
+  2 output clocks MD_SLKC and TD_SLCK (I considered not necessary to
+  introduce new constants to be shared b/w driver and DT bindings; if
+  you consider otherwise, let me know)
+- adapt dt-binding patch with clock-cells changes (thus didn't introduced
+  Reviewed-by tag)
+- renamed struct clk_slow_offsets to struct clk_slow_bits and the
+  corresponding instances of it
 
-----------------------------------------------------------------
-Heiko Stuebner (1):
-      regulator: rk808: Add RK809 and RK817 support.
+Changes in v2:
+- split patch 1/1 from v1 in 2 patches: one adding register bit offsets
+  support (patch 1/3 from this series), one adding support for SAM9X60
+  (patch 2/3 from this series)
+- fix compatible string from "microchip,at91sam9x60-sckc" to
+  "microchip,sam9x60-sckc"
 
-Tony Xie (4):
-      mfd: rk808: Add RK817 and RK809 support
-      dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
-      rtc: rk808: Add RK809 and RK817 support.
-      clk: RK808: Add RK809 and RK817 support.
+Claudiu Beznea (4):
+  clk: at91: sckc: sama5d4 has no bypass support
+  clk: at91: sckc: add support to specify registers bit offsets
+  dt-bindings: clk: at91: add bindings for SAM9X60's slow clock
+    controller
+  clk: at91: sckc: add support for SAM9X60
 
- Documentation/devicetree/bindings/mfd/rk808.txt |  44 ++
- drivers/clk/Kconfig                             |   9 +-
- drivers/clk/clk-rk808.c                         |  64 ++-
- drivers/mfd/Kconfig                             |   6 +-
- drivers/mfd/rk808.c                             | 192 ++++++-
- drivers/regulator/Kconfig                       |   4 +-
- drivers/regulator/rk808-regulator.c             | 646 +++++++++++++++++++++++-
- drivers/rtc/Kconfig                             |   4 +-
- drivers/rtc/rtc-rk808.c                         |  68 ++-
- include/linux/mfd/rk808.h                       | 175 +++++++
- 10 files changed, 1156 insertions(+), 56 deletions(-)
+ .../devicetree/bindings/clock/at91-clock.txt       |   7 +-
+ drivers/clk/at91/sckc.c                            | 173 ++++++++++++++++-----
+ 2 files changed, 139 insertions(+), 41 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
+
