@@ -2,121 +2,67 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AF0C4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D087C4321A
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14BFC20B7C
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07E5D2133F
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561670095;
-	bh=aF18PB9ndCbQ/0tO043NbIEQd0ErKNrDAli6X2roWq0=;
+	s=default; t=1561670255;
+	bh=tjUVhNwUylYppI6L6ObcmsGvQ+mV0tCzi7qFIIABWjY=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=ekGwh2/hMW/cNtOqRGHWOft+VbzAS48oS1sMNm0g7osjKYYk6HRDtldI5j19XpJCr
-	 99pBFNrdodhnCrHYNThUPHkMDi+aAohUG436oD2LqRPv6FqGWjLSe9cP6czkIulIzi
-	 zXDel1mFcSPXG8pq/0ynKyMNK6j8kjYvmnP/xLr8=
+	b=e4pg2ph8DuG04Rg113FmmaM2TcUfiPbKS6VFbxzugOyJyKqO5B92kLz68jVkzifCJ
+	 07qTOw7tT0qNI2XWe8IxcJ0Y/QJJnh8WHW+n767kwMCfa5j2KqAyAkpk/7bR1wKRxF
+	 HEm6olz4k34+VoWUswa6/vvL1deB3oNmpikyp0lk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfF0VOy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 17:14:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51460 "EHLO mail.kernel.org"
+        id S1726497AbfF0VRe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 17:17:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726441AbfF0VOy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 17:14:54 -0400
+        id S1726595AbfF0VRe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Jun 2019 17:17:34 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37FF4208CB;
-        Thu, 27 Jun 2019 21:14:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAF71208CB;
+        Thu, 27 Jun 2019 21:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561670093;
-        bh=aF18PB9ndCbQ/0tO043NbIEQd0ErKNrDAli6X2roWq0=;
+        s=default; t=1561670253;
+        bh=tjUVhNwUylYppI6L6ObcmsGvQ+mV0tCzi7qFIIABWjY=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=CNMciDmGkyUYWNkDg4WtU6vSG5PpIaJeyI1Upn0mozqwrcBTJRUhBZhl8YEV0+/Zv
-         WN4ik+trQwPg6qycA+od0fYc9/pkYm3PLK6t//UKhFyPMmNX0+GkThhgWqnArchKwB
-         PXUS29YhxcVR4eRS9/ga35BFDW8O+jwqMn5mUEJo=
+        b=aWl5mqAk/vpVHjuT4R7MHOR602Sabl1/FTGMf9lDfznlYJKf/cslkrOdOoRm2rFBh
+         EC9vqz3p0DLCo95kIUJnNUlhQATKxV3UoWXeJZEz4YGYGVP6fThubszzVZ8tsVayD1
+         Rc/7iZEs4/VddxPSRsOK7+gi5DGcxUSnPseEA674=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <475e0250b1e77a660c095749e78427fde318d5f6.1559200405.git.leonard.crestez@nxp.com>
-References: <475e0250b1e77a660c095749e78427fde318d5f6.1559200405.git.leonard.crestez@nxp.com>
-To:     Alexandre Bailon <abailon@baylibre.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20190627085517.17587-1-ckeepax@opensource.cirrus.com>
+References: <20190627085517.17587-1-ckeepax@opensource.cirrus.com>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        mturquette@baylibre.com
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC] clk: imx8mm: Add dram freq switch support
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Cedric Neveux <cedric.neveux@nxp.com>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        Nitin Garg <nitin.garg@nxp.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: lochnagar: Update DT binding doc to include the primary SPDIF MCLK
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@opensource.cirrus.com
 User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 14:14:52 -0700
-Message-Id: <20190627211453.37FF4208CB@mail.kernel.org>
+Date:   Thu, 27 Jun 2019 14:17:33 -0700
+Message-Id: <20190627211733.BAF71208CB@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Leonard Crestez (2019-05-30 00:13:51)
-> Add a wrapper clock encapsulating dram frequency switch support for
-> imx8m chips. This allows higher-level DVFS code to manipulate dram
-> frequency using standard clock framework APIs.
+Quoting Charles Keepax (2019-06-27 01:55:17)
+> This clock was missed when the binding was initially merged but is
+> supported by the driver, so add it to the binding document.
 >=20
-> Linux-side implementation is similar in principle to imx_clk_cpu or a
-> composite clock. Only some preparation is done inside the kernel, the
-> actual freq switch is performed from TF-A code which runs from an SRAM
-> area. Cores other than the one performing the switch are also made to
-> spin inside TF-A by sending each an IRQ.
->=20
-> This is an early proof-of-concept which only support low/high mode on
-> imx8mm but NXP has secure-world dram freq switching implementations for
-> multiple other chips and this approach can be extended.
->=20
-> This was tested using a large pile of NXP out-of-tree patches. Code for
-> the "busfreq core" from last release can be seen here:
-> https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/soc/imx=
-/busfreq-imx8mq.c?h=3Dimx_4.14.98_2.0.0_ga
->=20
-> It can be likely made to work with interconnect RFC:
-> https://patchwork.kernel.org/cover/10851705/
->=20
-> This RFC effectively refactors a common part between them.
->=20
-> Among the possible cleanups:
->  * Handle errors in low/high busfreq code and back off
->  * Move irq to secure world
->  * Try to use fewer clk parameters
->  * More chips and frequencies
->=20
-> Many platforms handle this kind of stuff externally but cpufreq is quite
-> insistent that actual rates are set by clk code and that new platforms
-> use cpufreq-dt.
->=20
-> Let me know if there are objections to handling dram freq via clk.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
 
-Can it be an interconnect driver instead? I don't see how this is a clk
-driver. It looks more like a driver that itself manages a collection of
-clks, and you've put the coordination of those clks behind the clk_ops
-interface. We don't want to have clk_ops calling clk consumer APIs in
-general, so the whole approach doesn't seem correct. Hopefully this can
-work out as some other sort of driver that is used directly from devfreq
-or interconnect core instead and then have a different consumer driver
-of devfreq or interconnect core that knows how to drive the clk tree.
+Applied to clk-next
 
