@@ -2,130 +2,121 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8F2C4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AF0C4321A
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8023020828
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:06:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14BFC20B7C
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:14:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561669595;
-	bh=nYdmMhUFK9FMRPU5WZYEIvshwyqtXLC0Q1Sl/ireAKo=;
+	s=default; t=1561670095;
+	bh=aF18PB9ndCbQ/0tO043NbIEQd0ErKNrDAli6X2roWq0=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=RTzBWXCwKdcLwNRJV0c2A19XcQAFulEYSvELsm6gKjEiJhBqmpIyjld1FlJ4mf6jM
-	 /Xf5Gnu0HRxiOAgoffdG0r/4ev5wYpd3t/2IfxQcCBYS2wDMYg8x6JL+Luv5nfxod/
-	 O5Jw7xNzwVkPxzFNaXZkd85+mNn1w3/h67O8wlp4=
+	b=ekGwh2/hMW/cNtOqRGHWOft+VbzAS48oS1sMNm0g7osjKYYk6HRDtldI5j19XpJCr
+	 99pBFNrdodhnCrHYNThUPHkMDi+aAohUG436oD2LqRPv6FqGWjLSe9cP6czkIulIzi
+	 zXDel1mFcSPXG8pq/0ynKyMNK6j8kjYvmnP/xLr8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfF0VGf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 17:06:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45708 "EHLO mail.kernel.org"
+        id S1726524AbfF0VOy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 17:14:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfF0VGf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 17:06:35 -0400
+        id S1726441AbfF0VOy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Jun 2019 17:14:54 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A21EC2075E;
-        Thu, 27 Jun 2019 21:06:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37FF4208CB;
+        Thu, 27 Jun 2019 21:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561669593;
-        bh=nYdmMhUFK9FMRPU5WZYEIvshwyqtXLC0Q1Sl/ireAKo=;
+        s=default; t=1561670093;
+        bh=aF18PB9ndCbQ/0tO043NbIEQd0ErKNrDAli6X2roWq0=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=TrwmsBZG7FdloHabc4flDFrUpF+Ho9SkvJT79k5vOTBQa5al9KNxNtsNAKd49EJG+
-         ah/haztTqqiUhIKjDddKYfQ7g6844bSHhbSoP5Qgx1dwEkfumbt/FbSTsWvAREC6TT
-         kSq+tc/MZtIwx3+83FJpdYR06bfEPj4qSqSARIcM=
+        b=CNMciDmGkyUYWNkDg4WtU6vSG5PpIaJeyI1Upn0mozqwrcBTJRUhBZhl8YEV0+/Zv
+         WN4ik+trQwPg6qycA+od0fYc9/pkYm3PLK6t//UKhFyPMmNX0+GkThhgWqnArchKwB
+         PXUS29YhxcVR4eRS9/ga35BFDW8O+jwqMn5mUEJo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190517132352.31221-1-mike.looijmans@topic.nl>
-References: <20190424090038.18353-1-mike.looijmans@topic.nl> <155623538292.15276.10999401088770081919@swboyd.mtv.corp.google.com> <20190517132352.31221-1-mike.looijmans@topic.nl>
-To:     Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
+In-Reply-To: <475e0250b1e77a660c095749e78427fde318d5f6.1559200405.git.leonard.crestez@nxp.com>
+References: <475e0250b1e77a660c095749e78427fde318d5f6.1559200405.git.leonard.crestez@nxp.com>
+To:     Alexandre Bailon <abailon@baylibre.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3] clk: Add Si5341/Si5340 driver
-Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [RFC] clk: imx8mm: Add dram freq switch support
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Cedric Neveux <cedric.neveux@nxp.com>,
+        Silvano Di Ninno <silvano.dininno@nxp.com>,
+        Nitin Garg <nitin.garg@nxp.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
 User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 14:06:32 -0700
-Message-Id: <20190627210633.A21EC2075E@mail.kernel.org>
+Date:   Thu, 27 Jun 2019 14:14:52 -0700
+Message-Id: <20190627211453.37FF4208CB@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mike Looijmans (2019-05-17 06:23:52)
-> Adds a driver for the Si5341 and Si5340 chips. The driver does not fully
-> support all features of these chips, but allows the chip to be used
-> without any support from the "clockbuilder pro" software.
+Quoting Leonard Crestez (2019-05-30 00:13:51)
+> Add a wrapper clock encapsulating dram frequency switch support for
+> imx8m chips. This allows higher-level DVFS code to manipulate dram
+> frequency using standard clock framework APIs.
 >=20
-> If the chip is preprogrammed, that is, you bought one with some defaults
-> burned in, or you programmed the NVM in some way, the driver will just
-> take over the current settings and only change them on demand. Otherwise
-> the input must be a fixed XTAL in its most basic configuration (no
-> predividers, no feedback, etc.).
+> Linux-side implementation is similar in principle to imx_clk_cpu or a
+> composite clock. Only some preparation is done inside the kernel, the
+> actual freq switch is performed from TF-A code which runs from an SRAM
+> area. Cores other than the one performing the switch are also made to
+> spin inside TF-A by sending each an IRQ.
 >=20
-> The driver supports dynamic changes of multisynth, output dividers and
-> enabling or powering down outputs and multisynths.
+> This is an early proof-of-concept which only support low/high mode on
+> imx8mm but NXP has secure-world dram freq switching implementations for
+> multiple other chips and this approach can be extended.
 >=20
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> ---
+> This was tested using a large pile of NXP out-of-tree patches. Code for
+> the "busfreq core" from last release can be seen here:
+> https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/soc/imx=
+/busfreq-imx8mq.c?h=3Dimx_4.14.98_2.0.0_ga
+>=20
+> It can be likely made to work with interconnect RFC:
+> https://patchwork.kernel.org/cover/10851705/
+>=20
+> This RFC effectively refactors a common part between them.
+>=20
+> Among the possible cleanups:
+>  * Handle errors in low/high busfreq code and back off
+>  * Move irq to secure world
+>  * Try to use fewer clk parameters
+>  * More chips and frequencies
+>=20
+> Many platforms handle this kind of stuff externally but cpufreq is quite
+> insistent that actual rates are set by clk code and that new platforms
+> use cpufreq-dt.
+>=20
+> Let me know if there are objections to handling dram freq via clk.
 
-Applied to clk-next + some fixes. I'm not super thrilled about the kHz
-thing but we don't have a solution for it right now so might as well
-come back to it later.
-
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index 1a310835b53c..72424eb7e5f8 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -374,7 +374,7 @@ static unsigned long si5341_clk_recalc_rate(struct clk_=
-hw *hw,
- 	 */
- 	shift =3D 0;
- 	res =3D m_num;
--	while (res & 0xffff00000000) {
-+	while (res & 0xffff00000000ULL) {
- 		++shift;
- 		res >>=3D 1;
- 	}
-@@ -921,7 +921,7 @@ static int si5341_write_multiple(struct clk_si5341 *dat=
-a,
- 	return 0;
- }
-=20
--const struct si5341_reg_default si5341_preamble[] =3D {
-+static const struct si5341_reg_default si5341_preamble[] =3D {
- 	{ 0x0B25, 0x00 },
- 	{ 0x0502, 0x01 },
- 	{ 0x0505, 0x03 },
-@@ -994,7 +994,7 @@ static const struct regmap_range si5341_regmap_volatile=
-_range[] =3D {
- 	regmap_reg_range(SI5341_SYNTH_N_UPD(4), SI5341_SYNTH_N_UPD(4)),
- };
-=20
--const struct regmap_access_table si5341_regmap_volatile =3D {
-+static const struct regmap_access_table si5341_regmap_volatile =3D {
- 	.yes_ranges =3D si5341_regmap_volatile_range,
- 	.n_yes_ranges =3D ARRAY_SIZE(si5341_regmap_volatile_range),
- };
-@@ -1016,7 +1016,6 @@ static const struct regmap_config si5341_regmap_confi=
-g =3D {
- 	.reg_bits =3D 8,
- 	.val_bits =3D 8,
- 	.cache_type =3D REGCACHE_RBTREE,
--	.max_register =3D 0,
- 	.ranges =3D si5341_regmap_ranges,
- 	.num_ranges =3D ARRAY_SIZE(si5341_regmap_ranges),
- 	.max_register =3D SI5341_REGISTER_MAX,
-@@ -1328,7 +1327,7 @@ MODULE_DEVICE_TABLE(i2c, si5341_id);
- static const struct of_device_id clk_si5341_of_match[] =3D {
- 	{ .compatible =3D "silabs,si5340" },
- 	{ .compatible =3D "silabs,si5341" },
--	{ },
-+	{ }
- };
- MODULE_DEVICE_TABLE(of, clk_si5341_of_match);
-=20
+Can it be an interconnect driver instead? I don't see how this is a clk
+driver. It looks more like a driver that itself manages a collection of
+clks, and you've put the coordination of those clks behind the clk_ops
+interface. We don't want to have clk_ops calling clk consumer APIs in
+general, so the whole approach doesn't seem correct. Hopefully this can
+work out as some other sort of driver that is used directly from devfreq
+or interconnect core instead and then have a different consumer driver
+of devfreq or interconnect core that knows how to drive the clk tree.
 
