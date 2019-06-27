@@ -2,218 +2,113 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C55AC48BE7
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 18:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60054C004E6
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 20:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 652DD205F4
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 18:28:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F6A520665
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 20:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561660107;
-	bh=taqyQ1APEgX+EVCAzATmMcA2vqF2xWfz1x10hWSRsgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Afqb4OU+ghlto78pWmf2zjhvr5gvgggit5564Bow4rS/yQgNzJoezxO82+ePaj104
-	 +vL0kPlArks+06sbexG9H+4TVqHNb/P933NjYlGNTYfcZeZNSTjOOhDMUti5c8QmbG
-	 xc1vWktDrTol1ZWtiXkIlyEUri4w5Qr4dAKhiubk=
+	s=default; t=1561667151;
+	bh=I9NSv9sbBhwgKZQjsXY6lP1+iWLSMecAorV7s1EJEfU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=fKx6MDcJEcuLpC//oN8bZ1LJwrKvNFef+fDSGGOM23WimB9Yl5zbZt2PWWgPqK5iY
+	 V71ofaZz4brgak7InenEtzz6s0PltWZ82Vczz7G7EHOXuRCxG96GFrIT1ur+uZxT5M
+	 YMqHh6jRltJF8HgB9jnMf6zNf6BnwLQzuCpNdlbs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfF0S2V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 14:28:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56674 "EHLO mail.kernel.org"
+        id S1726497AbfF0UZu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 16:25:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfF0S2V (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:28:21 -0400
-Received: from earth.universe (unknown [185.62.205.103])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726484AbfF0UZu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Jun 2019 16:25:50 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D92F205F4;
-        Thu, 27 Jun 2019 18:28:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8148820665;
+        Thu, 27 Jun 2019 20:25:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561660100;
-        bh=taqyQ1APEgX+EVCAzATmMcA2vqF2xWfz1x10hWSRsgI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hR15WHn5VGnYjJBJF3P3KfFz2mIU6gWMdyBW1J9JfNrAe3Wkox4nvnMreFyFc8Oga
-         gHHKlRxzScRITQpZl1lYB4jheGTy3CTkrWujVUNozMy3/DQtRu1+16z5GQ7OQZL9gE
-         dfQ26EIv4VN+fxjVF3qFiQDlpLL05BiHlURmYc7g=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 66ADF3C08D5; Thu, 27 Jun 2019 20:28:17 +0200 (CEST)
-Date:   Thu, 27 Jun 2019 20:28:17 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 00/34] treewide: simplify getting the adapter of an I2C
- client
-Message-ID: <20190627182817.5vrfmuzn7kanvtwu@earth.universe>
-References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
+        s=default; t=1561667149;
+        bh=I9NSv9sbBhwgKZQjsXY6lP1+iWLSMecAorV7s1EJEfU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Ym7msgxzEJB1mvNZbYNhb2tCXlGFP2wQ/LhbO2+Or6fksQcvqQjGjvw2zfGS+Qq0o
+         bKZCgjGCh8ND7DAU0NqDm27NzBrkG+C6s5v2xKyoAiPnnSS/KG+u2rbkr0vytSoBge
+         wdF4IM+oXFxm1Hzi4cFT0wm+1QoqNV5WM0eLd9Lo=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.2-rc6
+Date:   Thu, 27 Jun 2019 13:25:49 -0700
+Message-Id: <20190627202549.45667-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dtrjmbi6re7vojrt"
-Content-Disposition: inline
-In-Reply-To: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The following changes since commit 1cc54078d104f5b4d7e9f8d55362efa5a8daffdb:
 
---dtrjmbi6re7vojrt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  clk: ti: clkctrl: Fix clkdm_clk handling (2019-05-21 11:43:40 -0700)
 
-Hi,
+are available in the Git repository at:
 
-On Sat, Jun 08, 2019 at 12:55:39PM +0200, Wolfram Sang wrote:
-> While preparing a refactoring series, I noticed that some drivers use a
-> complicated way of determining the adapter of a client. The easy way is
-> to use the intended pointer: client->adapter
->=20
-> These drivers do:
-> 	to_i2c_adapter(client->dev.parent);
->=20
-> The I2C core populates the parent pointer as:
-> 	client->dev.parent =3D &client->adapter->dev;
->=20
-> Now take into consideration that
-> 	to_i2c_adapter(&adapter->dev);
->=20
-> is a complicated way of saying 'adapter', then we can even formally
-> prove that the complicated expression can be simplified by using
-> client->adapter.
->=20
-> The conversion was done using a coccinelle script with some manual
-> indentation fixes applied on top.
->=20
-> To avoid a brown paper bag mistake, I double checked this on a Renesas
-> Salvator-XS board (R-Car M3N) and verified both expression result in the
-> same pointer. Other than that, the series is only build tested.
->=20
-> A branch can be found here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/no_to_ada=
-pter
->=20
-> Please apply the patches to the individual subsystem trees. There are no
-> dependencies.
->=20
-> Thanks and kind regards,
->=20
->    Wolfram
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Thanks, I queued the patches prefixed with "power: supply: [...]".
+for you to fetch changes up to 74684cce5ebd567b01e9bc0e9a1945c70a32f32f:
 
--- Sebastian
+  clk: socfpga: stratix10: fix divider entry for the emac clocks (2019-06-25 13:40:05 -0700)
 
-> Wolfram Sang (34):
->   clk: clk-cdce706: simplify getting the adapter of a client
->   gpu: drm: bridge: sii9234: simplify getting the adapter of a client
->   iio: light: bh1780: simplify getting the adapter of a client
->   leds: leds-pca955x: simplify getting the adapter of a client
->   leds: leds-tca6507: simplify getting the adapter of a client
->   media: i2c: ak881x: simplify getting the adapter of a client
->   media: i2c: mt9m001: simplify getting the adapter of a client
->   media: i2c: mt9m111: simplify getting the adapter of a client
->   media: i2c: mt9p031: simplify getting the adapter of a client
->   media: i2c: ov2640: simplify getting the adapter of a client
->   media: i2c: tw9910: simplify getting the adapter of a client
->   misc: fsa9480: simplify getting the adapter of a client
->   misc: isl29003: simplify getting the adapter of a client
->   misc: tsl2550: simplify getting the adapter of a client
->   mtd: maps: pismo: simplify getting the adapter of a client
->   power: supply: bq24190_charger: simplify getting the adapter of a client
->   power: supply: bq24257_charger: simplify getting the adapter of a client
->   power: supply: bq25890_charger: simplify getting the adapter of a client
->   power: supply: max14656_charger_detector: simplify getting the adapter
->     of a client
->   power: supply: max17040_battery: simplify getting the adapter of a clie=
-nt
->   power: supply: max17042_battery: simplify getting the adapter of a clie=
-nt
->   power: supply: rt5033_battery: simplify getting the adapter of a client
->   power: supply: rt9455_charger: simplify getting the adapter of a client
->   power: supply: sbs-manager: simplify getting the adapter of a client
->   regulator: max8952: simplify getting the adapter of a client
->   rtc: fm3130: simplify getting the adapter of a client
->   rtc: m41t80: simplify getting the adapter of a client
->   rtc: rv8803: simplify getting the adapter of a client
->   rtc: rx8010: simplify getting the adapter of a client
->   rtc: rx8025: simplify getting the adapter of a client
->   staging: media: soc_camera: imx074: simplify getting the adapter of a c=
-lient
->   staging: media: soc_camera: mt9t031: simplify getting the adapter of a =
-client
->   staging: media: soc_camera: soc_mt9v022: simplify getting the adapter
->     of a client
->   usb: typec: tcpm: fusb302: simplify getting the adapter of a client
->=20
->  drivers/clk/clk-cdce706.c                        | 2 +-
->  drivers/gpu/drm/bridge/sii9234.c                 | 4 ++--
->  drivers/iio/light/bh1780.c                       | 2 +-
->  drivers/leds/leds-pca955x.c                      | 2 +-
->  drivers/leds/leds-tca6507.c                      | 2 +-
->  drivers/media/i2c/ak881x.c                       | 2 +-
->  drivers/media/i2c/mt9m001.c                      | 2 +-
->  drivers/media/i2c/mt9m111.c                      | 2 +-
->  drivers/media/i2c/mt9p031.c                      | 2 +-
->  drivers/media/i2c/ov2640.c                       | 2 +-
->  drivers/media/i2c/tw9910.c                       | 3 +--
->  drivers/misc/fsa9480.c                           | 2 +-
->  drivers/misc/isl29003.c                          | 2 +-
->  drivers/misc/tsl2550.c                           | 2 +-
->  drivers/mtd/maps/pismo.c                         | 2 +-
->  drivers/power/supply/bq24190_charger.c           | 2 +-
->  drivers/power/supply/bq24257_charger.c           | 2 +-
->  drivers/power/supply/bq25890_charger.c           | 2 +-
->  drivers/power/supply/max14656_charger_detector.c | 2 +-
->  drivers/power/supply/max17040_battery.c          | 2 +-
->  drivers/power/supply/max17042_battery.c          | 2 +-
->  drivers/power/supply/rt5033_battery.c            | 2 +-
->  drivers/power/supply/rt9455_charger.c            | 2 +-
->  drivers/power/supply/sbs-manager.c               | 2 +-
->  drivers/regulator/max8952.c                      | 2 +-
->  drivers/rtc/rtc-fm3130.c                         | 8 +++-----
->  drivers/rtc/rtc-m41t80.c                         | 2 +-
->  drivers/rtc/rtc-rv8803.c                         | 2 +-
->  drivers/rtc/rtc-rx8010.c                         | 2 +-
->  drivers/rtc/rtc-rx8025.c                         | 2 +-
->  drivers/staging/media/soc_camera/imx074.c        | 2 +-
->  drivers/staging/media/soc_camera/mt9t031.c       | 2 +-
->  drivers/staging/media/soc_camera/soc_mt9v022.c   | 2 +-
->  drivers/usb/typec/tcpm/fusb302.c                 | 3 +--
->  34 files changed, 37 insertions(+), 41 deletions(-)
->=20
-> --=20
-> 2.19.1
->=20
+----------------------------------------------------------------
+A handful of clk driver fixes and one core framework fix
 
---dtrjmbi6re7vojrt
-Content-Type: application/pgp-signature; name="signature.asc"
+ - Do a DT/firmware lookup in clk_core_get() even when the DT index is a
+   nonsensical value
 
------BEGIN PGP SIGNATURE-----
+ - Fix some clk data typos in the Amlogic DT headers/code
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0VCsEACgkQ2O7X88g7
-+poEpxAAm77/GZ4czva5lDqclyAk1YfbiV55qi+jow32xQwZ17FXo8Ch9G11Qrwl
-famQPiB/pD3r3m2TfihhFAcFjOGiwl9GxQJ+4at64Atab2w5BWh9zwDQWdtT80jF
-3ytFncogbL36MVBgIv5YQUZQiqIiZlUei6lTOnnyfv3PLtvNVbIodxSVYp5qJWMy
-M+qrdy6tAVsuK6yqAwPRhfjBzlmlLZVudUZqbAWKMbK1YBt0rkkSNw9xpF1pLrv6
-zLbGdmBngoivDyNJldn+5bhMiwsDyxf/8E7eblcAMkO/D1oPrb51zV92FFX7qyzT
-eI5KRHwY88XkUuIK25aDnO1bR3eDn3RDcxtW8MMMeRihWX3gNSL+hKZ24XGxOgz5
-L3tL9nm6X6sHg867+V5voAxNACnbgFT/Mrzhal4HGbN8adctDoaSEuiMPAQlAkEG
-PbW3c2B0n+Bav3XksRT4h19t7drSk4a3aR04I/GHc3l9jDQicnDr4DwiVaPpd1UF
-gpPhBXgO4NSZr5yUEzoVOSOsW6WS2k5SFV+sQjU1C5R+oXBH59J9oIMlOOaNKo0w
-rTXxOtxQ38vqyMiQZBLwoTh1remxiOBp+5lwmYWGWYpBDVcr9HB+kzNJPFxDVk5A
-YgiEzXje0LsgjUBgpmiq5YPAmsNIntDezydWTc20Otk1+Vgotgo=
-=CJhg
------END PGP SIGNATURE-----
+ - Avoid returning junk in the TI clk driver when an invalid clk is
+   looked for
 
---dtrjmbi6re7vojrt--
+ - Fix dividers for the emac clks on Stratix10 SoCs
+
+ - Fix default HDA rates on Tegra210 to correct distorted audio
+
+----------------------------------------------------------------
+Dinh Nguyen (1):
+      clk: socfpga: stratix10: fix divider entry for the emac clocks
+
+Jerome Brunet (1):
+      clk: meson: fix MPLL 50M binding id typo
+
+Jon Hunter (1):
+      clk: tegra210: Fix default rates for HDA clocks
+
+Martin Blumenstingl (1):
+      clk: meson: meson8b: fix a typo in the VPU parent names array variable
+
+Stephen Boyd (2):
+      Merge tag 'clk-meson-5.2-1-fixes' of https://github.com/BayLibre/clk-meson into clk-fixes
+      clk: Do a DT parent lookup even when index < 0
+
+Tony Lindgren (1):
+      clk: ti: clkctrl: Fix returning uninitialized data
+
+ drivers/clk/clk.c                     |  2 +-
+ drivers/clk/meson/g12a.c              |  4 ++--
+ drivers/clk/meson/g12a.h              |  2 +-
+ drivers/clk/meson/meson8b.c           | 10 +++++-----
+ drivers/clk/socfpga/clk-s10.c         |  4 ++--
+ drivers/clk/tegra/clk-tegra210.c      |  2 ++
+ drivers/clk/ti/clkctrl.c              |  7 +++++--
+ include/dt-bindings/clock/g12a-clkc.h |  2 +-
+ 8 files changed, 19 insertions(+), 14 deletions(-)
+
+-- 
+Sent by a computer through tubes
