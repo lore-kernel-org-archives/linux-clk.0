@@ -2,152 +2,102 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904C6C4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6C0C4321A
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 22:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DD132063F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561672229;
-	bh=+hnLXFnOo9VFV9gApTYWkYCpMs8WYGse15USRK+DkWA=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=fWaSHc5Rw5FafiBeClWeaBQ4zoqrUIbDt/8O8YB7IGF0lAadbmzrnsuRQTHbSos4o
-	 tmFm5qQv7FUgIvJvDQy949QpSJSEKq5AQAS8nIKm5U/D/sH+xtERu9LvQ9DDPwTLrq
-	 QBcqUan16iNo2aoLcRAeA52ofQGhNqzetKA0Tql0=
+	by mail.kernel.org (Postfix) with ESMTP id 6B338205F4
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 22:06:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jSDkNA5L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfF0Vu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 17:50:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfF0Vu3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 17:50:29 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 757982063F;
-        Thu, 27 Jun 2019 21:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561672227;
-        bh=+hnLXFnOo9VFV9gApTYWkYCpMs8WYGse15USRK+DkWA=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=nvqJiF3RGfDK9ZM/Klv4gK3SaINpieIK6jbGjahb1SD1jabIfv8ddey4f5RgBgSdf
-         GzA+zcjrF8FuVVty7+HfCHYz3fhGplKhuLN1ZPb3zuZCfk9TS/NyxSLv6goadj4FFU
-         HdCBE/OqVMgulzoChl6/ZWwWn2VNXMPbtbuLwxBQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190625063140.17106-3-vkoul@kernel.org>
-References: <20190625063140.17106-1-vkoul@kernel.org> <20190625063140.17106-3-vkoul@kernel.org>
-To:     Vinod Koul <vkoul@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 2/3] clk: qcom: clk-alpha-pll: Add support for Trion PLLs
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 14:50:26 -0700
-Message-Id: <20190627215027.757982063F@mail.kernel.org>
+        id S1726513AbfF0WGu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 18:06:50 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:53611 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbfF0WGu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 18:06:50 -0400
+Received: by mail-pg1-f202.google.com with SMTP id w22so2002663pgc.20
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2019 15:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=iOIuT1w8SKhqU0tOLmAe3kv4MDfWt/x8OJo6YX/y9oc=;
+        b=jSDkNA5LQH+FSb/Qia4R2KWHwPty4yHuIwp6TJEEqqLl1T/gXBFnKMEi9LxoaWJHZQ
+         hH+hOrQqD7UnMmr3mWtGH49tjIW16QGlONkTFjiQtqKyEZaPLDcUcZ+htsFAUCqCO48K
+         zGHef5GViOZGayMfOhTwZs+NLQgMHai+TYSVybcPcbVxXFX1UbEiO22y4eQPV/GlxQUk
+         gzdH2QAw2DoxRDrmf5YUa/qHP6bOaqEIKMQUrUAY+a+WmT+kAm+P0JZJEb7Elb13rN1v
+         6xr2884AZ6xA/T4W+TYMeYPLdT5gx69GJohtrUjGVT9jmCD2TlmcE4LQFq9rrDdi3ozi
+         mEyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=iOIuT1w8SKhqU0tOLmAe3kv4MDfWt/x8OJo6YX/y9oc=;
+        b=ZOX7pg3oKrmWKFhYuGQZsYTLohAKg3Gur8J+P+2NZK2c0UiC8Lc86ZOGztWSW/dPsQ
+         CHmo38p9VK0+F7TfKDmU0L9A3e97BWvTbkvAi4i41GgS1M2cWLGsLZmaa4wZabNXTchk
+         IQ0n/c0gnnpStWW4+WF6mubiL8U74ocYsOOT6KQRQ6rJmk4+k/AfwX41NxukbL7kBcaL
+         qU6fiFPnZ2/hQVpSCmGdhGtLvHqYGMJqAfQb4APsr87/JW7ujbwG9WMuTcFQcf6IAX5C
+         6BbzBg2tytFLXF4QjfC1ykyCVSwDXK56TozxXO7P7YOaiTefUY56QzqDhqAHNtjkIJLV
+         gL6g==
+X-Gm-Message-State: APjAAAVMEegyqnDlQy3C17P58QHelFt5f1szpTbLxtoKAv9ScMrIfVZh
+        HmasyweYIZtVam+ZUBIOd1rh9o9yvQ==
+X-Google-Smtp-Source: APXvYqw0vM2adqB+1ViXyVQ+eZ77pfsjezHBzZi9i6+3YHTu/RBpst5O7BkRfwtHoSrYiz3lcajuOqBxrA==
+X-Received: by 2002:a63:6986:: with SMTP id e128mr6240631pgc.220.1561673209121;
+ Thu, 27 Jun 2019 15:06:49 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 15:06:42 -0700
+Message-Id: <20190627220642.78575-1-nhuck@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH] clk: qoriq: Fix -Wunused-const-variable
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        yogeshnarayan.gaur@nxp.com, oss@buserror.net
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-06-24 23:31:39)
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
-a-pll.c
-> index 2c6773188761..30210f5c6726 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -32,6 +32,7 @@
->  # define PLL_LOCK_DET          BIT(31)
-> =20
->  #define PLL_L_VAL(p)           ((p)->offset + (p)->regs[PLL_OFF_L_VAL])
-> +#define PLL_CAL_L_VAL(p)       ((p)->offset + (p)->regs[PLL_OFF_CAL_L_VA=
-L])
->  #define PLL_ALPHA_VAL(p)       ((p)->offset + (p)->regs[PLL_OFF_ALPHA_VA=
-L])
->  #define PLL_ALPHA_VAL_U(p)     ((p)->offset + (p)->regs[PLL_OFF_ALPHA_VA=
-L_U])
-> =20
-> @@ -44,14 +45,17 @@
->  # define PLL_VCO_MASK          0x3
-> =20
->  #define PLL_USER_CTL_U(p)      ((p)->offset + (p)->regs[PLL_OFF_USER_CTL=
-_U])
-> +#define PLL_USER_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_USER_CTL=
-_U1])
-> =20
->  #define PLL_CONFIG_CTL(p)      ((p)->offset + (p)->regs[PLL_OFF_CONFIG_C=
-TL])
->  #define PLL_CONFIG_CTL_U(p)    ((p)->offset + (p)->regs[PLL_OFF_CONFIG_C=
-TL_U])
-> +#define PLL_CONFIG_CTL_U1(p)   ((p)->offset + (p)->regs[PLL_OFF_CONFIG_C=
-TL_U11])
+drivers/clk/clk-qoriq.c:138:38: warning: unused variable
+'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp1
 
-This looks like a typo, U11 vs U1. So I don't think this has been
-compile tested....
+drivers/clk/clk-qoriq.c:146:38: warning: unused variable
+'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp2
 
->  #define PLL_TEST_CTL(p)                ((p)->offset + (p)->regs[PLL_OFF_=
-TEST_CTL])
->  #define PLL_TEST_CTL_U(p)      ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL=
-_U])
->  #define PLL_STATUS(p)          ((p)->offset + (p)->regs[PLL_OFF_STATUS])
->  #define PLL_OPMODE(p)          ((p)->offset + (p)->regs[PLL_OFF_OPMODE])
->  #define PLL_FRAC(p)            ((p)->offset + (p)->regs[PLL_OFF_FRAC])
-> +#define PLL_CAL_VAL(p)         ((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
-> =20
->  const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] =3D {
->         [CLK_ALPHA_PLL_TYPE_DEFAULT] =3D  {
->  const struct clk_ops clk_alpha_pll_ops =3D {
->         .enable =3D clk_alpha_pll_enable,
->         .disable =3D clk_alpha_pll_disable,
-> @@ -1053,6 +1210,77 @@ static unsigned long clk_alpha_pll_postdiv_fabia_r=
-ecalc_rate(struct clk_hw *hw,
-[...]
-> +
-> +static int
-> +clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long parent_rate)
-> +{
-> +       struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
-);
-> +       struct regmap *regmap =3D pll->clkr.regmap;
-> +       int i, val =3D 0, div, ret;
-> +
-> +       /*
-> +        * If the PLL is in FSM mode, then treat the set_rate callback
-> +        * as a no-operation.
+In the definition of the p5020 chip, the p2041 chip's info was used
+instead.  The p5020 and p2041 chips have different info. This is most
+likely a typo.
 
-And this is OK? Shouldn't we fail because we can't change to the rate
-that's desired?
+Link: https://github.com/ClangBuiltLinux/linux/issues/525
+Cc: clang-built-linux@googlegroups.com
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+---
+ drivers/clk/clk-qoriq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +        */
-> +       ret =3D regmap_read(regmap, PLL_MODE(pll), &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (val & PLL_VOTE_FSM_ENA)
-> +               return 0;
-> +
-> +       div =3D DIV_ROUND_UP_ULL(parent_rate, rate);
-> +       for (i =3D 0; i < pll->num_post_div; i++) {
-> +               if (pll->post_div_table[i].div =3D=3D div) {
-> +                       val =3D pll->post_div_table[i].val;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       return regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> +                                 PLL_POST_DIV_MASK(pll) << PLL_POST_DIV_=
-SHIFT,
-> +                                 val << PLL_POST_DIV_SHIFT);
-> +}
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 4739a47ec8bd..0f8870527940 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -678,7 +678,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p5020_init_periph,
+ 		.cmux_groups = {
+-			&p2041_cmux_grp1, &p2041_cmux_grp2
++			&p5020_cmux_grp1, &p5020_cmux_grp2
+ 		},
+ 		.cmux_to_group = {
+ 			0, 1, -1
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
