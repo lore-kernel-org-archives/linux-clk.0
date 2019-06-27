@@ -3,73 +3,151 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC25C4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904C6C4321A
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 902BC2075E
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DD132063F
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 21:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561671462;
-	bh=BhvTO9iM0Nsao/9cTaXxE5CBmVbZ+tgky6uuV5SvCsw=;
+	s=default; t=1561672229;
+	bh=+hnLXFnOo9VFV9gApTYWkYCpMs8WYGse15USRK+DkWA=;
 	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=lRD8ZUfqXC2aULT1wDfVwRRW2rpLzT2pUeB6VXrfez4/DCt9u3CogBpPynOriKNow
-	 bLgU202668DbgW9XgZHeT9ogjbMgDSyMQOQRSPLS/EdzMGV/pqHGkvWemwI0LeTccU
-	 kL9u7FOWk5SrONcM92odewJVESqzuzy94Awv4vkw=
+	b=fWaSHc5Rw5FafiBeClWeaBQ4zoqrUIbDt/8O8YB7IGF0lAadbmzrnsuRQTHbSos4o
+	 tmFm5qQv7FUgIvJvDQy949QpSJSEKq5AQAS8nIKm5U/D/sH+xtERu9LvQ9DDPwTLrq
+	 QBcqUan16iNo2aoLcRAeA52ofQGhNqzetKA0Tql0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbfF0Vhm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 17:37:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34086 "EHLO mail.kernel.org"
+        id S1726441AbfF0Vu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 17:50:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfF0Vhm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 17:37:42 -0400
+        id S1726384AbfF0Vu3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Jun 2019 17:50:29 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BEFD2075E;
-        Thu, 27 Jun 2019 21:37:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 757982063F;
+        Thu, 27 Jun 2019 21:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561671461;
-        bh=BhvTO9iM0Nsao/9cTaXxE5CBmVbZ+tgky6uuV5SvCsw=;
+        s=default; t=1561672227;
+        bh=+hnLXFnOo9VFV9gApTYWkYCpMs8WYGse15USRK+DkWA=;
         h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=sIh+t5btWI1aeDdEsYnXH/Z10Zp3bKUsTsPdQIzYHZJxOUprvI6BjYUqs3/GCxOf2
-         iYn53O4dAW8ENyJ0DXdirvejozK7cLnmPjsdezvumYPsbIsZfM/KXglFdOf20hvmEg
-         6umpGCJHhIgeDvTKssKsEbVRh8oPz7J7aOLsjHS8=
+        b=nvqJiF3RGfDK9ZM/Klv4gK3SaINpieIK6jbGjahb1SD1jabIfv8ddey4f5RgBgSdf
+         GzA+zcjrF8FuVVty7+HfCHYz3fhGplKhuLN1ZPb3zuZCfk9TS/NyxSLv6goadj4FFU
+         HdCBE/OqVMgulzoChl6/ZWwWn2VNXMPbtbuLwxBQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190625063140.17106-2-vkoul@kernel.org>
-References: <20190625063140.17106-1-vkoul@kernel.org> <20190625063140.17106-2-vkoul@kernel.org>
+In-Reply-To: <20190625063140.17106-3-vkoul@kernel.org>
+References: <20190625063140.17106-1-vkoul@kernel.org> <20190625063140.17106-3-vkoul@kernel.org>
 To:     Vinod Koul <vkoul@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/3] clk: qcom: clk-alpha-pll: Remove post_div_table checks
+Subject: Re: [PATCH v3 2/3] clk: qcom: clk-alpha-pll: Add support for Trion PLLs
 Cc:     linux-arm-msm@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
         Deepak Katragadda <dkatraga@codeaurora.org>,
         Andy Gross <agross@kernel.org>,
         David Brown <david.brown@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 14:37:40 -0700
-Message-Id: <20190627213741.5BEFD2075E@mail.kernel.org>
+Date:   Thu, 27 Jun 2019 14:50:26 -0700
+Message-Id: <20190627215027.757982063F@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-06-24 23:31:38)
-> We want users to code properly and fix the post_div_table missing and
-> not reply on core to check. So remove the post_div_table check.
->=20
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+Quoting Vinod Koul (2019-06-24 23:31:39)
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
+a-pll.c
+> index 2c6773188761..30210f5c6726 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -32,6 +32,7 @@
+>  # define PLL_LOCK_DET          BIT(31)
+> =20
+>  #define PLL_L_VAL(p)           ((p)->offset + (p)->regs[PLL_OFF_L_VAL])
+> +#define PLL_CAL_L_VAL(p)       ((p)->offset + (p)->regs[PLL_OFF_CAL_L_VA=
+L])
+>  #define PLL_ALPHA_VAL(p)       ((p)->offset + (p)->regs[PLL_OFF_ALPHA_VA=
+L])
+>  #define PLL_ALPHA_VAL_U(p)     ((p)->offset + (p)->regs[PLL_OFF_ALPHA_VA=
+L_U])
+> =20
+> @@ -44,14 +45,17 @@
+>  # define PLL_VCO_MASK          0x3
+> =20
+>  #define PLL_USER_CTL_U(p)      ((p)->offset + (p)->regs[PLL_OFF_USER_CTL=
+_U])
+> +#define PLL_USER_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_USER_CTL=
+_U1])
+> =20
+>  #define PLL_CONFIG_CTL(p)      ((p)->offset + (p)->regs[PLL_OFF_CONFIG_C=
+TL])
+>  #define PLL_CONFIG_CTL_U(p)    ((p)->offset + (p)->regs[PLL_OFF_CONFIG_C=
+TL_U])
+> +#define PLL_CONFIG_CTL_U1(p)   ((p)->offset + (p)->regs[PLL_OFF_CONFIG_C=
+TL_U11])
 
-This doesn't apply. Not sure why. Can you please format-patch with
---base=3D so I can know what baseline commit you've based your patches on?
-Helps me avoid needing to ask, like right now.
+This looks like a typo, U11 vs U1. So I don't think this has been
+compile tested....
 
+>  #define PLL_TEST_CTL(p)                ((p)->offset + (p)->regs[PLL_OFF_=
+TEST_CTL])
+>  #define PLL_TEST_CTL_U(p)      ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL=
+_U])
+>  #define PLL_STATUS(p)          ((p)->offset + (p)->regs[PLL_OFF_STATUS])
+>  #define PLL_OPMODE(p)          ((p)->offset + (p)->regs[PLL_OFF_OPMODE])
+>  #define PLL_FRAC(p)            ((p)->offset + (p)->regs[PLL_OFF_FRAC])
+> +#define PLL_CAL_VAL(p)         ((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
+> =20
+>  const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] =3D {
+>         [CLK_ALPHA_PLL_TYPE_DEFAULT] =3D  {
+>  const struct clk_ops clk_alpha_pll_ops =3D {
+>         .enable =3D clk_alpha_pll_enable,
+>         .disable =3D clk_alpha_pll_disable,
+> @@ -1053,6 +1210,77 @@ static unsigned long clk_alpha_pll_postdiv_fabia_r=
+ecalc_rate(struct clk_hw *hw,
+[...]
+> +
+> +static int
+> +clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                              unsigned long parent_rate)
+> +{
+> +       struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
+);
+> +       struct regmap *regmap =3D pll->clkr.regmap;
+> +       int i, val =3D 0, div, ret;
+> +
+> +       /*
+> +        * If the PLL is in FSM mode, then treat the set_rate callback
+> +        * as a no-operation.
+
+And this is OK? Shouldn't we fail because we can't change to the rate
+that's desired?
+
+> +        */
+> +       ret =3D regmap_read(regmap, PLL_MODE(pll), &val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (val & PLL_VOTE_FSM_ENA)
+> +               return 0;
+> +
+> +       div =3D DIV_ROUND_UP_ULL(parent_rate, rate);
+> +       for (i =3D 0; i < pll->num_post_div; i++) {
+> +               if (pll->post_div_table[i].div =3D=3D div) {
+> +                       val =3D pll->post_div_table[i].val;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       return regmap_update_bits(regmap, PLL_USER_CTL(pll),
+> +                                 PLL_POST_DIV_MASK(pll) << PLL_POST_DIV_=
+SHIFT,
+> +                                 val << PLL_POST_DIV_SHIFT);
+> +}
