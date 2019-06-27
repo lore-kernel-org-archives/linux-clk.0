@@ -2,26 +2,26 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 142EBC48BD7
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E07C48BD9
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C0120663
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2004520663
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfF0Pxx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 11:53:53 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:19412 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfF0Pxx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 11:53:53 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+        id S1726405AbfF0PyA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 11:54:00 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:18587 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfF0Px7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 11:53:59 -0400
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
   Claudiu.Beznea@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
   envelope-from="Claudiu.Beznea@microchip.com";
   x-sender="Claudiu.Beznea@microchip.com";
   x-conformance=spf_only; x-record-type="v=spf1";
@@ -29,25 +29,25 @@ Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
   a:smtpout.microchip.com a:mx1.microchip.iphmx.com
   a:mx2.microchip.iphmx.com include:servers.mcsv.net
   include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
   authenticity information available from domain of
   postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
   envelope-from="Claudiu.Beznea@microchip.com";
   x-sender="postmaster@email.microchip.com";
   x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
 X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
-   d="scan'208";a="39276574"
+   d="scan'208";a="36125169"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 08:53:51 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 08:53:58 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex04.mchp-main.com (10.10.87.151) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 27 Jun 2019 08:53:51 -0700
+ 15.1.1713.5; Thu, 27 Jun 2019 08:53:57 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 08:53:48 -0700
+ 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 08:53:54 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -56,9 +56,9 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 1/7] clk: at91: sckc: add support to free slow oscillator
-Date:   Thu, 27 Jun 2019 18:53:39 +0300
-Message-ID: <1561650825-11213-2-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH v2 3/7] clk: at91: sckc: add support to free slow clock osclillator
+Date:   Thu, 27 Jun 2019 18:53:41 +0300
+Message-ID: <1561650825-11213-4-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561650825-11213-1-git-send-email-claudiu.beznea@microchip.com>
 References: <1561650825-11213-1-git-send-email-claudiu.beznea@microchip.com>
@@ -69,7 +69,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support to free slow oscillator resources.
+Add support to free slow clock oscillator resources.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
@@ -78,24 +78,24 @@ Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
  1 file changed, 8 insertions(+)
 
 diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index 2c410f41b413..c1d7edd33416 100644
+index 492b139a7c15..2a677c56f901 100644
 --- a/drivers/clk/at91/sckc.c
 +++ b/drivers/clk/at91/sckc.c
-@@ -166,6 +166,14 @@ at91_clk_register_slow_osc(void __iomem *sckcr,
+@@ -355,6 +355,14 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
  	return hw;
  }
  
-+static void at91_clk_unregister_slow_osc(struct clk_hw *hw)
++static void at91_clk_unregister_sam9x5_slow(struct clk_hw *hw)
 +{
-+	struct clk_slow_osc *osc = to_clk_slow_osc(hw);
++	struct clk_sam9x5_slow *slowck = to_clk_sam9x5_slow(hw);
 +
 +	clk_hw_unregister(hw);
-+	kfree(osc);
++	kfree(slowck);
 +}
 +
- static unsigned long clk_slow_rc_osc_recalc_rate(struct clk_hw *hw,
- 						 unsigned long parent_rate)
- {
+ static void __init at91sam9x5_sckc_register(struct device_node *np,
+ 					    unsigned int rc_osc_startup_us,
+ 					    const struct clk_slow_bits *bits)
 -- 
 2.7.4
 
