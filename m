@@ -2,98 +2,99 @@ Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7178C48BD6
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB54C48BD6
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BB242146E
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF99A20B1F
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 15:53:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfF0Pe0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 11:34:26 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43069 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfF0Pe0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 11:34:26 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w79so1875051oif.10
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2019 08:34:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oFbMfBYeaLKlhTqvQGiwOcE96tiMpSTCWtMG1/gEUaY=;
-        b=UXbB//xlym7JCjSz99ldR7NTUqZFtUqP7nxO8lDomMbky607uL+bmncBRh0CHrcJvN
-         Mv9rSlDfSAyyrcP8SruS7cFQyVSdBuSRSXw9j/G2Bq4ArNxcsb2uG8NWg4PjlT8M3XHt
-         NpsCD13cbNCBueTkL94/0ne5O4ZnB9+ywrhdMkFV7a7+WyL59dNP/dCzXQJ/yABulhH8
-         p1u+9sgZTZPO6pb4V7CLRLP+E/5UId0Wk9eiMHhZ8xzW+qXPbm/Ra7Cqd11ByeYg5zNj
-         TzyN59wNqbewltzmi/GSSqGKGNJG8LaKhPEJRWo6F9ywadgBEDiGmO4xXAlz5q/oUfPo
-         xYuQ==
-X-Gm-Message-State: APjAAAUzH24ThCbFLMCzJRtVXrI68xmsVM5icBmIo68/UNLx7La2bVpw
-        81gkGBd+N8BFqf5FqvSW+df3tK24LPYeBnHPMos=
-X-Google-Smtp-Source: APXvYqyBJFVgH2hPYgiDr4NuGy+Mt3H0uRDFop6WEKLlnnxAIFRJogNDd05ZjfKmohuv2LqyQ036224+I/XwGTJaZqA=
-X-Received: by 2002:aca:338a:: with SMTP id z132mr2753780oiz.54.1561649665440;
- Thu, 27 Jun 2019 08:34:25 -0700 (PDT)
+        id S1726487AbfF0Pxt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 11:53:49 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:30546 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfF0Pxt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 11:53:49 -0400
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
+   d="scan'208";a="39173426"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 08:53:48 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex03.mchp-main.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 27 Jun 2019 08:53:48 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 08:53:45 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v2 0/7] clk: at91: sckc: improve error path
+Date:   Thu, 27 Jun 2019 18:53:38 +0300
+Message-ID: <1561650825-11213-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <35dca44e929f49c7a00125bf18c3455198d4e18e.1561648504.git.leonard.crestez@nxp.com>
-In-Reply-To: <35dca44e929f49c7a00125bf18c3455198d4e18e.1561648504.git.leonard.crestez@nxp.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 27 Jun 2019 17:34:14 +0200
-Message-ID: <CAMuHMdWCJW_=9r1QndJeydFGaOAAe0pZrcC0xiAnY+iH8atENA@mail.gmail.com>
-Subject: Re: [PATCH] clk: Add clk_min/max_rate entries in debugfs
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Leonard,
+Hi,
 
-On Thu, Jun 27, 2019 at 5:22 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> Add two files to expose min/max clk rates as determined by
-> clk_core_get_boundaries, taking all consumer requests into account.
->
-> This information does not appear to be otherwise exposed to userspace.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+This series tries to improve error path for slow clock registrations
+by adding functions to free resources and using them on failures.
 
-Thanks for your patch!
+It is created on top of patch series at [1].
 
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3031,10 +3031,34 @@ static int clk_duty_cycle_show(struct seq_file *s, void *data)
->
->         return 0;
->  }
->  DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
->
-> +static int clk_min_rate_show(struct seq_file *s, void *data)
-> +{
-> +       struct clk_core *core = s->private;
-> +       unsigned long min_rate, max_rate;
-> +
-> +       clk_core_get_boundaries(core, &min_rate, &max_rate);
+Thank you,
+Claudiu Beznea
 
-Probably you should clk_prepare_lock() first?
+[1] https://lore.kernel.org/lkml/1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com/
 
-Gr{oetje,eeting}s,
+Changes in v2:
+- collect Reviewed-by tags
+- get rid of Content-Transfer-Encoding: base64
 
-                        Geert
+Claudiu Beznea (7):
+  clk: at91: sckc: add support to free slow oscillator
+  clk: at91: sckc: add support to free slow rc oscillator
+  clk: at91: sckc: add support to free slow clock osclillator
+  clk: at91: sckc: improve error path for sam9x5 sck register
+  clk: at91: sckc: remove unnecessary line
+  clk: at91: sckc: improve error path for sama5d4 sck registration
+  clk: at91: sckc: use dedicated functions to unregister clock
+
+ drivers/clk/at91/sckc.c | 122 ++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 86 insertions(+), 36 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
