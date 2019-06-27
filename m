@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-22.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48511C4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 22:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E72C4321A
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 22:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5B5208CB
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 22:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4ADB208E3
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 22:22:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FUoTSiWG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u6SlpeiC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfF0WPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 18:15:33 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:57017 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbfF0WPd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 18:15:33 -0400
-Received: by mail-pl1-f201.google.com with SMTP id o6so2190760plk.23
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2019 15:15:33 -0700 (PDT)
+        id S1726583AbfF0WWc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 18:22:32 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:49893 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbfF0WWc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 18:22:32 -0400
+Received: by mail-pg1-f201.google.com with SMTP id 30so2029060pgk.16
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2019 15:22:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Symvyf/Uz9S5oKdNsFmtumlityXOKZm70HtIggCwFnk=;
-        b=FUoTSiWGUAtMmT6Erkt4yAeuT0+qjeYcWls6gB3JPv82xDHkgN1hirWiFjVAqnnOVq
-         j3Z9Td4BjBrcCMOH4skPnJx3La72XnsWPgIHKbkYMkKrnLi/LFiskUO8f5MhH+PQ6C4e
-         KObEoLRcNyNt5RjzC3mElSNiGYJYULWFrsg3bezwh3jABhgWyneK+vjFogRmjHykQlLG
-         pWevR8tpcYknyHIgomouTnrqo+1ywloJhMER3s2boTItwF3cssClvvIVSZ0lh6YyFYQq
-         9Ik5+4zmwGMCXlH03L6WSLUMi7or2zDUnDFVYXyfNH8gVHiYWki8yp+UMawuPW1mVK8/
-         yMgg==
+        bh=oX4nX7Je7bFeJ+xtEsKgjynmAqj73RNM30dvkWhgvsQ=;
+        b=u6SlpeiCjQGV5rE4yogrmSSkVZ43A8E5N6bKYKjy5TX4t8pbsrRRF9GSDcsxe+5XzD
+         waGb2JTgqg+tTulN5BPPf+VqpjEptpmBs6DdyVgw7RfwK8PF8bmfqu8pLJofZoU5PIEb
+         Kj3FKoiC/6L/gkMotLHT4aB/DGPvtBb9jGk8MY+tUS3gOocY4PEemi6MUJKx1H992F5K
+         GSVi99x53zSc0+lXP6Fn6Mi7G5UJ+v4x0VjuC3Nw/zsJxN0mgrCZgcSVGvpqvlvYJkGH
+         IM3Zt9xGBETZoaCBOmfbhevkuZjxNEaJ0Qm++R6L/06tU/5xVQglwV6olNEjSZMU+Eqr
+         I7Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Symvyf/Uz9S5oKdNsFmtumlityXOKZm70HtIggCwFnk=;
-        b=n2ZI07CjGrPXHvE7X3WGZPRLhMbY/4lkOv9QZO5jDkX5nddNU5A/D2fjDYa/amytmo
-         nm3hqaFg4zM+soQg61aKvdOoHFXnphdo6UpnaEXVks7PNyqwjmN0lDlz1UkyDrfJN9U4
-         S0N84l0U0emZzFJokrr4A86U1QQMB7qmUM+f5zC0RyYBFJrhhuahoUv/q8V6zUFshPZm
-         i6f5cxjTYW+jwz+6996dbh1FrY2ASc/KF4NGEywdlVAPswqytuCkOdXj4FNkAsLKcadk
-         FXl3CwZ9HgbK1rA0fIQEeKG6y6RIzuCFsBj/TD1m9Dl/C7j4GAxOMZvalEsdOGJdGzCA
-         MqiQ==
-X-Gm-Message-State: APjAAAU2f/UE8RQvCqopBNqnGyu32XQox0hQwwmEcAFQJmOwQomxuv15
-        6cg/mCugltyK16Y7nHpyzVdH7T6s4g==
-X-Google-Smtp-Source: APXvYqxUVrAymwj/ugIGi6sQXo8Sqq04CVHfX4dFLvmyXHderTB1493KLtyO4xlY6inwpt5jVs2FxtQjAQ==
-X-Received: by 2002:a65:6656:: with SMTP id z22mr5733329pgv.197.1561673732735;
- Thu, 27 Jun 2019 15:15:32 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 15:15:07 -0700
-Message-Id: <20190627221507.83942-1-nhuck@google.com>
+        bh=oX4nX7Je7bFeJ+xtEsKgjynmAqj73RNM30dvkWhgvsQ=;
+        b=F81+BeuWkdYaXsxDeJZWu2BUJ7+nf9oMfjw+0McozCtQQArn4kY4Bp/UvAmouze4Fp
+         K2LaL1sslOwtChv52ThSufP1X2tk0XiKZQaBxbbalkgjz9Dzq2HJ5DasJoKeCDvDdt8y
+         dZZNRMeIKMFP4WBC6Abxc/wBGh/rEnp4BGIfAfKCKvxoChD+zRDkptKSszGoV6s508pY
+         iAi2gMHnf06cUB0ODN+dbBeu/oE0LZAP6pueZnrR4mtwEN2Qm/0B/IDgCSOnDvVvujiU
+         T0So2txhpu0mImrbCdtsKM6Lbvz/Uw5YTPR7170VW9/NA1EQT9yL5uvJHk0YfIkxVHwt
+         G4oQ==
+X-Gm-Message-State: APjAAAX+ZIGDzwzP+cPKeM/P2VAkI2Joa9N1wvLSPipaNKARtflC5r/u
+        CbMkoXezUFpk4xudZfMH1/GlArptLA==
+X-Google-Smtp-Source: APXvYqwHdCQ9FmNfXU+U4FhmBmrMgqd++q8o9kCPOcsO7E5yJTw5lhpjjg+JoI0rSKl+FpJ1fCN7HC5W5Q==
+X-Received: by 2002:a65:41c6:: with SMTP id b6mr5812268pgq.399.1561674151183;
+ Thu, 27 Jun 2019 15:22:31 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 15:22:20 -0700
+Message-Id: <20190627222220.89175-1-nhuck@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH] clk: mediatek: Fix -Wunused-const-variable
+Subject: [PATCH] clk: rockchip: Fix -Wunused-const-variable
 From:   Nathan Huckleberry <nhuck@google.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        fparent@baylibre.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de,
+        andy.yan@rock-chips.com, zhangqing@rock-chips.com
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         Nathan Huckleberry <nhuck@google.com>,
         clang-built-linux@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -69,35 +69,32 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Clang produces the following warning
 
-drivers/clk/mediatek/clk-mt8516.c:234:27: warning: unused variable
-'ddrphycfg_parents' [-Wunused-const-variable] static const char * const
-ddrphycfg_parents[] __initconst = {
+drivers/clk/rockchip/clk-rv1108.c:125:7: warning: unused variable
+'mux_pll_src_3plls_p' [-Wunused-const-variable]
+PNAME(mux_pll_src_3plls_p)      = { "apll", "gpll", "dpll" };
 
-This variable has never been used. Deleting it to cleanup the warning.
+Looks like this variable was never used. Deleting it to remove the
+warning.
 
 Cc: clang-built-linux@googlegroups.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/523
+Link: https://github.com/ClangBuiltLinux/linux/issues/524
 Signed-off-by: Nathan Huckleberry <nhuck@google.com>
 ---
- drivers/clk/mediatek/clk-mt8516.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/clk/rockchip/clk-rv1108.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8516.c b/drivers/clk/mediatek/clk-mt8516.c
-index 26fe43cc9ea2..9d4261ecc760 100644
---- a/drivers/clk/mediatek/clk-mt8516.c
-+++ b/drivers/clk/mediatek/clk-mt8516.c
-@@ -231,11 +231,6 @@ static const char * const nfi1x_pad_parents[] __initconst = {
- 	"nfi1x_ck"
- };
- 
--static const char * const ddrphycfg_parents[] __initconst = {
--	"clk26m_ck",
--	"mainpll_d16"
--};
--
- static const char * const usb_78m_parents[] __initconst = {
- 	"clk_null",
- 	"clk26m_ck",
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 96cc6af5632c..5947d3192866 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -122,7 +122,6 @@ PNAME(mux_usb480m_pre_p)	= { "usbphy", "xin24m" };
+ PNAME(mux_hdmiphy_phy_p)	= { "hdmiphy", "xin24m" };
+ PNAME(mux_dclk_hdmiphy_pre_p)	= { "dclk_hdmiphy_src_gpll", "dclk_hdmiphy_src_dpll" };
+ PNAME(mux_pll_src_4plls_p)	= { "dpll", "gpll", "hdmiphy", "usb480m" };
+-PNAME(mux_pll_src_3plls_p)	= { "apll", "gpll", "dpll" };
+ PNAME(mux_pll_src_2plls_p)	= { "dpll", "gpll" };
+ PNAME(mux_pll_src_apll_gpll_p)	= { "apll", "gpll" };
+ PNAME(mux_aclk_peri_src_p)	= { "aclk_peri_src_gpll", "aclk_peri_src_dpll" };
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
