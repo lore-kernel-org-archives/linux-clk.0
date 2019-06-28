@@ -2,155 +2,146 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E22C4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 07:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BBFC4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 07:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 908A92133F
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 07:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C632B206E0
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 07:40:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfF1HXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 03:23:18 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34275 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727220AbfF1HXP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 03:23:15 -0400
-X-UUID: c38864b4810846c69f48c68396d2c7d4-20190628
-X-UUID: c38864b4810846c69f48c68396d2c7d4-20190628
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 416449884; Fri, 28 Jun 2019 15:22:52 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Jun 2019 15:22:50 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Jun 2019 15:22:50 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Dehui Sun <dehui.sun@mediatek.com>
-Subject: [PATCH v3] clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
-Date:   Fri, 28 Jun 2019 15:22:34 +0800
-Message-ID: <1561706554-27770-1-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S1726549AbfF1HkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 03:40:03 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54520 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726385AbfF1HkD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Jun 2019 03:40:03 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D542E1A0DB5;
+        Fri, 28 Jun 2019 09:40:00 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B8FD71A033F;
+        Fri, 28 Jun 2019 09:40:00 +0200 (CEST)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CC6BC205D5;
+        Fri, 28 Jun 2019 09:39:59 +0200 (CEST)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Saravana Kannan <saravanak@google.com>, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [RFCv2 0/8] Add imx8mm bus frequency switching
+Date:   Fri, 28 Jun 2019 10:39:48 +0300
+Message-Id: <cover.1561707104.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 13MHz clock should be registered before clocksource driver is
-initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
+This series attempts to add upstream DVFS support for imx8mm, covering dynamic
+scaling of internal buses and dram. It uses the interconnect framework for
+proactive scaling (in response to explicit bandwidth requests from devices) and
+devfreq in order expose the buses and eventually implement reactive scaling (in
+response to measuredtraffic).
 
-Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/clk/mediatek/clk-mt8183.c | 46 +++++++++++++++++++++++++++++----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+Actual scaling is performed through the clk framework: The NOC and main NICs
+are driven by composite clks and a new 'imx8m-dram' clk is included for
+scaling dram using firmware calls.
 
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index 9d86510..bc01611 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -25,9 +25,11 @@
- 	FIXED_CLK(CLK_TOP_UNIVP_192M, "univpll_192m", "univpll", 192000000),
- };
- 
-+static const struct mtk_fixed_factor top_early_divs[] = {
-+	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
-+};
-+
- static const struct mtk_fixed_factor top_divs[] = {
--	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1,
--		2),
- 	FACTOR(CLK_TOP_F26M_CK_D2, "csw_f26m_ck_d2", "clk26m", 1,
- 		2),
- 	FACTOR(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1,
-@@ -1167,37 +1169,57 @@ static int clk_mt8183_apmixed_probe(struct platform_device *pdev)
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
- 
-+static struct clk_onecell_data *top_clk_data;
-+
-+static void clk_mt8183_top_init_early(struct device_node *node)
-+{
-+	int i;
-+
-+	top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-+
-+	for (i = 0; i < CLK_TOP_NR_CLK; i++)
-+		top_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
-+
-+	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
-+			top_clk_data);
-+
-+	of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
-+			clk_mt8183_top_init_early);
-+
- static int clk_mt8183_top_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	void __iomem *base;
--	struct clk_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
- 
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
--
- 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
--		clk_data);
-+		top_clk_data);
-+
-+	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
-+		top_clk_data);
- 
--	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
-+	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
- 
- 	mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
--		node, &mt8183_clk_lock, clk_data);
-+		node, &mt8183_clk_lock, top_clk_data);
- 
- 	mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_muxes),
--		base, &mt8183_clk_lock, clk_data);
-+		base, &mt8183_clk_lock, top_clk_data);
- 
- 	mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs),
--		base, &mt8183_clk_lock, clk_data);
-+		base, &mt8183_clk_lock, top_clk_data);
- 
- 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
--		clk_data);
-+		top_clk_data);
- 
--	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
- }
- 
- static int clk_mt8183_infra_probe(struct platform_device *pdev)
+The interconnect and devfreq parts do not communicate explicitly: they both
+just call clk_set_min_rate and the clk core picks the minimum value that can
+satisfy both. They are thus completely independent.
+
+This is easily extensible to more members of the imx8m family, some of which
+expose more detailed controls over interconnect fabric frequencies.
+
+TODO:
+* Clarify DT bindings
+* Clarify interconnect OPP picking logic
+* Implement devfreq_event for imx8m ddrc
+* Expose more dram frequencies
+
+The clk_set_min_rate approach does not mesh very well with the OPP framework.
+Some of interconnect nodes on imx8m can run at different voltages: OPP can
+handle this well but not in response to a clk_set_min_rate from an unrelated
+subsystem. Maybe set voltage on a clk notifier?
+
+Vendor tree does not support voltage switching, independent freqs for
+different parts of the fabric or any reactive scaling. I think it's important
+to pick an upstreaming approach which can support as much as possible.
+
+Feedback welcome.
+
+Some objections were apparently raised to doing DRAM switch inside CLK:
+perhaps ICC should make min_freq requests to devfreq instead?
+
+Link to v1 (multiple chunks):
+ * https://patchwork.kernel.org/patch/10976897/
+ * https://patchwork.kernel.org/patch/10968303/
+ * https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=91251
+
+Also as a github branch (with few other changes):
+    https://github.com/cdleonard/linux/tree/next_imx8mm_busfreq
+
+Alexandre Bailon (2):
+  interconnect: Add generic driver for imx
+  interconnect: imx: Add platform driver for imx8mm
+
+Leonard Crestez (6):
+  clk: imx8mm: Add dram freq switch support
+  clk: imx8m-composite: Switch to determine_rate
+  arm64: dts: imx8mm: Add dram dvfs irqs to ccm node
+  devfreq: Add imx-devfreq driver
+  arm64: dts: imx8mm: Add interconnect node
+  arm64: dts: imx8mm: Add devfreq-imx nodes
+
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi |  73 +++
+ drivers/clk/imx/Makefile                  |   1 +
+ drivers/clk/imx/clk-composite-8m.c        |  34 +-
+ drivers/clk/imx/clk-imx8m-dram.c          | 357 ++++++++++++
+ drivers/clk/imx/clk-imx8mm.c              |  12 +
+ drivers/clk/imx/clk.h                     |  13 +
+ drivers/devfreq/Kconfig                   |  10 +
+ drivers/devfreq/Makefile                  |   1 +
+ drivers/devfreq/imx-devfreq.c             | 142 +++++
+ drivers/interconnect/Kconfig              |   1 +
+ drivers/interconnect/Makefile             |   1 +
+ drivers/interconnect/imx/Kconfig          |  17 +
+ drivers/interconnect/imx/Makefile         |   2 +
+ drivers/interconnect/imx/busfreq-imx8mm.c | 151 ++++++
+ drivers/interconnect/imx/busfreq.c        | 628 ++++++++++++++++++++++
+ drivers/interconnect/imx/busfreq.h        | 123 +++++
+ include/dt-bindings/clock/imx8mm-clock.h  |   4 +-
+ include/dt-bindings/interconnect/imx8mm.h |  49 ++
+ 18 files changed, 1606 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/clk/imx/clk-imx8m-dram.c
+ create mode 100644 drivers/devfreq/imx-devfreq.c
+ create mode 100644 drivers/interconnect/imx/Kconfig
+ create mode 100644 drivers/interconnect/imx/Makefile
+ create mode 100644 drivers/interconnect/imx/busfreq-imx8mm.c
+ create mode 100644 drivers/interconnect/imx/busfreq.c
+ create mode 100644 drivers/interconnect/imx/busfreq.h
+ create mode 100644 include/dt-bindings/interconnect/imx8mm.h
+
 -- 
-1.8.1.1.dirty
+2.17.1
 
