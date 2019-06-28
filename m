@@ -2,165 +2,162 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9D6C5B57E
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 07:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5228FC4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1236C2133F
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 07:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24D6F2070D
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:19:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfF1HkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 03:40:10 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:55130 "EHLO inva020.nxp.com"
+        id S1726420AbfF1ITV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 04:19:21 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:49448 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbfF1HkJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Jun 2019 03:40:09 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AA7961A0DC4;
-        Fri, 28 Jun 2019 09:40:08 +0200 (CEST)
+        id S1726416AbfF1ITU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Jun 2019 04:19:20 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 23B76200373;
+        Fri, 28 Jun 2019 10:19:18 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9D9231A0346;
-        Fri, 28 Jun 2019 09:40:08 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1700520034C;
+        Fri, 28 Jun 2019 10:19:18 +0200 (CEST)
 Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B4496205D5;
-        Fri, 28 Jun 2019 09:40:07 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C945A205D5;
+        Fri, 28 Jun 2019 10:19:17 +0200 (CEST)
 From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Saravana Kannan <saravanak@google.com>, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-pm@vger.kernel.org,
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [RFCv2 8/8] arm64: dts: imx8mm: Add devfreq-imx nodes
-Date:   Fri, 28 Jun 2019 10:39:56 +0300
-Message-Id: <f5714b11a0f46b20cef3cad0cf615bc1093499de.1561707104.git.leonard.crestez@nxp.com>
+Subject: [PATCH v2] clk: Add clk_min/max_rate entries in debugfs
+Date:   Fri, 28 Jun 2019 11:19:15 +0300
+Message-Id: <0c12208398cadb7450b6b7745e99c55770c0ccf8.1561709827.git.leonard.crestez@nxp.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1561707104.git.leonard.crestez@nxp.com>
-References: <cover.1561707104.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1561707104.git.leonard.crestez@nxp.com>
-References: <cover.1561707104.git.leonard.crestez@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The imx8mm has multiple buses which can be scaled with some degree of
-independence. Expose them as devfreq devices for userspace scaling.
+Add two files to expose min/max clk rates as determined by
+clk_core_get_boundaries, taking all consumer requests into account.
 
-It shouldn't be possible to get the system in a non-working state this
-way. It is primarily aimed at testing and fine performance tuning.
+This information does not appear to be otherwise exposed to userspace.
 
 Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 54 +++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 3b4b112814f7..aa9ed418652d 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -121,10 +121,32 @@
- 			opp-supported-hw = <0x8>, <0x7>;
- 			clock-latency-ns = <150000>;
- 		};
- 	};
+---
+ drivers/clk/clk.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+Changes since v1:
+* Call clk_prepare_lock/clk_prepare_unlock (Geert)
+* Also include in clk_dump, but only with non-default values
+Link to v1: https://patchwork.kernel.org/patch/11019873/
+
+Didn't add to clk_summary because min/max rates are rarely used and
+clk_summary already has too many columns.
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index efa593ecbfa9..8cec1954580b 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -591,10 +591,12 @@ static void clk_core_get_boundaries(struct clk_core *core,
+ 				    unsigned long *min_rate,
+ 				    unsigned long *max_rate)
+ {
+ 	struct clk *clk_user;
  
-+	ddrc_opp_table: ddrc-opp-table {
-+		compatible = "operating-points-v2";
++	lockdep_assert_held(&prepare_lock);
 +
-+		opp-25M {
-+			opp-hz = /bits/ 64 <25000000>;
-+		};
-+		opp-750M {
-+			opp-hz = /bits/ 64 <750000000>;
-+		};
-+	};
-+
-+	noc_opp_table: noc-opp-table {
-+		compatible = "operating-points-v2";
-+
-+		opp-150M {
-+			opp-hz = /bits/ 64 <150000000>;
-+		};
-+		opp-750M {
-+			opp-hz = /bits/ 64 <750000000>;
-+		};
-+	};
-+
- 	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x0 0x40000000 0 0x80000000>;
- 	};
+ 	*min_rate = core->min_rate;
+ 	*max_rate = core->max_rate;
  
-@@ -748,10 +770,35 @@
- 				status = "disabled";
- 			};
+ 	hlist_for_each_entry(clk_user, &core->clks, clks_node)
+ 		*min_rate = max(*min_rate, clk_user->min_rate);
+@@ -2894,19 +2896,26 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(clk_summary);
  
- 		};
+ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+ {
++	unsigned long min_rate, max_rate;
++
+ 	if (!c)
+ 		return;
  
-+		pl301_main: nic@32000000 {
-+			compatible = "fsl,imx8mm-nic";
-+			reg = <0x32000000 0x100000>;
-+			clocks = <&clk IMX8MM_CLK_MAIN_AXI>;
-+		};
+ 	/* This should be JSON format, i.e. elements separated with a comma */
+ 	seq_printf(s, "\"%s\": { ", c->name);
+ 	seq_printf(s, "\"enable_count\": %d,", c->enable_count);
+ 	seq_printf(s, "\"prepare_count\": %d,", c->prepare_count);
+ 	seq_printf(s, "\"protect_count\": %d,", c->protect_count);
+ 	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
++	clk_core_get_boundaries(c, &min_rate, &max_rate);
++	if (min_rate != 0)
++		seq_printf(s, "\"min_rate\": %lu,", min_rate);
++	if (max_rate != ULONG_MAX)
++		seq_printf(s, "\"max_rate\": %lu,", max_rate);
+ 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
+ 	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
+ 	seq_printf(s, "\"duty_cycle\": %u",
+ 		   clk_core_get_scaled_duty_cycle(c, 100000));
+ }
+@@ -3062,10 +3071,38 @@ static int clk_duty_cycle_show(struct seq_file *s, void *data)
+ 
+ 	return 0;
+ }
+ DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
+ 
++static int clk_min_rate_show(struct seq_file *s, void *data)
++{
++	struct clk_core *core = s->private;
++	unsigned long min_rate, max_rate;
 +
-+		pl301_wakeup: nic@32100000 {
-+			compatible = "fsl,imx8mm-nic";
-+			reg = <0x32100000 0x100000>;
-+			clocks = <&clk IMX8MM_CLK_AHB>;
-+		};
++	clk_prepare_lock();
++	clk_core_get_boundaries(core, &min_rate, &max_rate);
++	seq_printf(s, "%lu\n", min_rate);
++	clk_prepare_unlock();
 +
-+		pl301_enet: nic@32400000 {
-+			compatible = "fsl,imx8mm-nic";
-+			reg = <0x32400000 0x100000>;
-+			clocks = <&clk IMX8MM_CLK_ENET_AXI>;
-+		};
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(clk_min_rate);
 +
-+		noc: noc@32700000 {
-+			compatible = "fsl,imx8mm-noc";
-+			reg = <0x32700000 0x100000>;
-+			clocks = <&clk IMX8MM_CLK_NOC>;
-+			operating-points-v2 = <&noc_opp_table>;
-+		};
++static int clk_max_rate_show(struct seq_file *s, void *data)
++{
++	struct clk_core *core = s->private;
++	unsigned long min_rate, max_rate;
 +
- 		aips4: bus@32c00000 {
- 			compatible = "fsl,aips-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x32c00000 0x32c00000 0x400000>;
-@@ -835,7 +882,14 @@
- 			      <0x38880000 0xc0000>; /* GICR (RD_base + SGI_base) */
- 			#interrupt-cells = <3>;
- 			interrupt-controller;
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		};
++	clk_prepare_lock();
++	clk_core_get_boundaries(core, &min_rate, &max_rate);
++	seq_printf(s, "%lu\n", max_rate);
++	clk_prepare_unlock();
 +
-+		ddrc: dram-controller@3d400000 {
-+			compatible = "fsl,imx8mm-ddrc";
-+			reg = <0x3d400000 0x400000>;
-+			clocks = <&clk IMX8MM_CLK_DRAM>;
-+			operating-points-v2 = <&ddrc_opp_table>;
-+		};
- 	};
- };
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(clk_max_rate);
++
+ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ {
+ 	struct dentry *root;
+ 
+ 	if (!core || !pdentry)
+@@ -3073,10 +3110,12 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 
+ 	root = debugfs_create_dir(core->name, pdentry);
+ 	core->dentry = root;
+ 
+ 	debugfs_create_ulong("clk_rate", 0444, root, &core->rate);
++	debugfs_create_file("clk_min_rate", 0444, root, core, &clk_min_rate_fops);
++	debugfs_create_file("clk_max_rate", 0444, root, core, &clk_max_rate_fops);
+ 	debugfs_create_ulong("clk_accuracy", 0444, root, &core->accuracy);
+ 	debugfs_create_u32("clk_phase", 0444, root, &core->phase);
+ 	debugfs_create_file("clk_flags", 0444, root, core, &clk_flags_fops);
+ 	debugfs_create_u32("clk_prepare_count", 0444, root, &core->prepare_count);
+ 	debugfs_create_u32("clk_enable_count", 0444, root, &core->enable_count);
 -- 
 2.17.1
 
