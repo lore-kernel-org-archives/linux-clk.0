@@ -2,257 +2,145 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F63BC4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6349C4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE7EF208C4
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:56:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9F3lclH"
+	by mail.kernel.org (Postfix) with ESMTP id 911AA2086D
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfF1L4j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 07:56:39 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44138 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfF1L4j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 07:56:39 -0400
-Received: by mail-qk1-f196.google.com with SMTP id p144so4494162qke.11;
-        Fri, 28 Jun 2019 04:56:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2jERR1htLsj0259opQP6iZqdbvhKo7IE5BZi1R4vL58=;
-        b=a9F3lclHUqf2w2vrqdAORV4XYJ3g9/cLzsfgk/JstGgHK33pSf9iEtBhoSDAILnNCb
-         lHMMWX5duZyOPY6YhTDMXXvfhUBM+xTLgIPxOvcGD74VpCCjlw1yZbAPAqdTUxKw/SHG
-         Zob6rus59DDu59lTgDDC4oDSpLYqDAb1hU2L3U6aEwH7QaF2kK2CfbrDT/uIsPjxl7To
-         TNVDN0lZNbTjufWiehayKvTMnVFzdgclcLA1uJWthvXNASSOAP9jRa44GEVLMLB3NegT
-         WWM9ms1qNXvQsjA+a3EymFZHzL3XtdD0BDfEY6tE+PQBq87v1Su3Ezmn+iL9P4puDpVt
-         iTbw==
+        id S1726574AbfF1L6j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 07:58:39 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41799 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfF1L6j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 07:58:39 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o101so5376280ota.8
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2019 04:58:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2jERR1htLsj0259opQP6iZqdbvhKo7IE5BZi1R4vL58=;
-        b=l4f1EkJFJpszWHFnRe/baTHIM8DafS0oo+4p895t2YJrKbgNtxc83z8Cokgc9fG7l+
-         nchnKMAZc84g5LG9sa0bX75i7ANZbErVYTG8//WPJryRgQmsQvrCezNMi/rxuoHMqcLW
-         aEb07HhqQkIJ9C/1OoU+4oWDsV5KCwzQnGr7us6nKOW22UyFYUFkmiDPO6FpSA9Njlm0
-         pu1btAudGvUhAZICKOm36RZQNiUwEWBX7Qs9qQ6cT+mp63AjLbmpADw8CSoaeJ89gI81
-         O7IcdegMrtMGJbNTMLnaF285KITyoJvsaO5/3lsTylpp2R9U4WcxLBSHykG0Bc6bGGYe
-         tvEA==
-X-Gm-Message-State: APjAAAVUDVCmCn+5Ry1L7zz7HYJI0yWVBhuBxjGgOQjVqORW7SOKRunN
-        ObmQuvErPxUpUXmVQZcmnKlgKz/V
-X-Google-Smtp-Source: APXvYqzvuGSTQ6WiXnxDL1MTM1M3vj+OfNZ3xa6fZad2jOaM1HFKAVDMZ7x2HY050fVRVmMFO9sGYQ==
-X-Received: by 2002:a37:9c46:: with SMTP id f67mr8290537qke.455.1561722997649;
-        Fri, 28 Jun 2019 04:56:37 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id i48sm989609qte.93.2019.06.28.04.56.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Jun 2019 04:56:36 -0700 (PDT)
-Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
-Date:   Fri, 28 Jun 2019 14:56:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wjwJQWvjkPZB5+dI0ZXVDAKQLoC3P8jLetBVFWbvwO8=;
+        b=GubQv+VXfbJZtDIQEXBXseOMjR1dOuQtx1KAz2DqdHyM4WUBpO0H9tvEi2iwb8QF8K
+         7Yqmjlmt06UehRinQn5iNP/QKLYqh/dlB+dHJR0+s2PnaCQjQ7Bngu/P4j0t75xToep6
+         XWuf0m3sSdLXcbMnTnJBaGG0QRUT72+pLTcMSNLogEqMZLoaVb7yuNIyehMLp5etG0oD
+         u1p/pHx6qnEdT7ZWjnQgpSimWZfKNBAZxWlcZx83B4XUlVms8kHWEqBlqOlGjJ9+pcVv
+         mHvDD/2iCF42TWSzOXcYxDEJtjuPxtBKbxvbKTEQFLaXy31YQy6rTT0RwU2gzklIZFLt
+         PgJA==
+X-Gm-Message-State: APjAAAV79w/Y/cFET2sjBUUdn/fCzvIjTkrWSRKkN5exnb1GVVwoXq9v
+        kVDm/1Ex9/NGIe+Me1QaPOj307t0zN9bgNfTVVU=
+X-Google-Smtp-Source: APXvYqzp6jHaeNCs5Hjcl/XOjy/kK6sCjD6SeRPImxs4gU9dfYyFNwTdcdO6JwHVVamhG7ocnB+YrZfiAF79btrJ72U=
+X-Received: by 2002:a9d:704f:: with SMTP id x15mr7768914otj.297.1561723118484;
+ Fri, 28 Jun 2019 04:58:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <0c12208398cadb7450b6b7745e99c55770c0ccf8.1561709827.git.leonard.crestez@nxp.com>
+In-Reply-To: <0c12208398cadb7450b6b7745e99c55770c0ccf8.1561709827.git.leonard.crestez@nxp.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 28 Jun 2019 13:58:27 +0200
+Message-ID: <CAMuHMdWVoYPZFZPmfTWMU3pZc633uqkn70MyApcPhgUSgmCW-A@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: Add clk_min/max_rate entries in debugfs
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-28.06.2019 5:12, Sowjanya Komatineni пишет:
-> This patch adds support for Tegra pinctrl driver suspend and resume.
-> 
-> During suspend, context of all pinctrl registers are stored and
-> on resume they are all restored to have all the pinmux and pad
-> configuration for normal operation.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c    | 52 ++++++++++++++++++++++++++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
->  drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
->  3 files changed, 56 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 34596b246578..e7c0a1011cba 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -621,6 +621,43 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->  	}
->  }
->  
-> +static int tegra_pinctrl_suspend(struct device *dev)
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	unsigned int i, j;
+Hi Leonard,
 
-In general it's better not to use "j" in conjunction with "i" because they look
-similar and I seen quite a lot of bugs caused by unnoticed typos like that. So I'm
-suggesting to use "i, k" for clarity.
+On Fri, Jun 28, 2019 at 10:19 AM Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
+> Add two files to expose min/max clk rates as determined by
+> clk_core_get_boundaries, taking all consumer requests into account.
+>
+> This information does not appear to be otherwise exposed to userspace.
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];
-> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			*backup_regs++ = readl(regs++);
+> Changes since v1:
+> * Call clk_prepare_lock/clk_prepare_unlock (Geert)
+> * Also include in clk_dump, but only with non-default values
+> Link to v1: https://patchwork.kernel.org/patch/11019873/
 
-Please use readl_relaxed(), we don't need memory barriers here.
+Thanks for the update!
 
-> +	}
-> +
-> +	return pinctrl_force_sleep(pmx->pctl);
-> +}
-> +
-> +static int tegra_pinctrl_resume(struct device *dev)
-> +{
-> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	unsigned int i, j;
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			writel(*backup_regs++, regs++);
+> Didn't add to clk_summary because min/max rates are rarely used and
+> clk_summary already has too many columns.
 
-Same for writel_relaxed(), memory barrier is inserted *before* the write to ensure
-that all previous memory stores are completed. IOREMAP'ed memory is strongly-ordered,
-memory barriers are not needed here.
+Agreed.
 
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +const struct dev_pm_ops tegra_pinctrl_pm = {
-> +	.suspend = &tegra_pinctrl_suspend,
-> +	.resume = &tegra_pinctrl_resume
-> +};
-> +
->  static bool gpio_node_has_range(const char *compatible)
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -591,10 +591,12 @@ static void clk_core_get_boundaries(struct clk_core *core,
+>                                     unsigned long *min_rate,
+>                                     unsigned long *max_rate)
 >  {
->  	struct device_node *np;
-> @@ -645,6 +682,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  	int i;
->  	const char **group_pins;
->  	int fn, gn, gfn;
-> +	unsigned long backup_regs_size = 0;
->  
->  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
->  	if (!pmx)
-> @@ -697,6 +735,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		if (!res)
->  			break;
-> +		backup_regs_size += resource_size(res);
->  	}
->  	pmx->nbanks = i;
->  
-> @@ -705,11 +744,24 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->  	if (!pmx->regs)
->  		return -ENOMEM;
->  
-> +	pmx->reg_bank_size = devm_kcalloc(&pdev->dev, pmx->nbanks,
-> +					  sizeof(*pmx->reg_bank_size),
-> +					  GFP_KERNEL);
-> +	if (!pmx->reg_bank_size)
-> +		return -ENOMEM;
-
-It looks to me that we don't really need to churn with this allocation because the
-bank sizes are already a part of the platform driver's description.
-
-We could add a simple helper function that retrieves the bank sizes, like this:
-
-static unsigned int tegra_pinctrl_bank_size(struct device *dev,
-					    unsigned int bank_id)
-{
-	struct platform_device *pdev;
-	struct resource *res;
-
-	pdev = to_platform_device(dev);
-	res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
-
-	return resource_size(res) / 4;
-}
-
-> +	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
-> +					GFP_KERNEL);
-> +	if (!pmx->backup_regs)
-> +		return -ENOMEM;
+>         struct clk *clk_user;
+>
+> +       lockdep_assert_held(&prepare_lock);
 > +
->  	for (i = 0; i < pmx->nbanks; i++) {
->  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->  		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
->  		if (IS_ERR(pmx->regs[i]))
->  			return PTR_ERR(pmx->regs[i]);
+
+I guess the clock maintainers want to see the addition of this check
+spun off into a separate patch....
+
+> @@ -3062,10 +3071,38 @@ static int clk_duty_cycle_show(struct seq_file *s, void *data)
+>
+>         return 0;
+>  }
+>  DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
+>
+> +static int clk_min_rate_show(struct seq_file *s, void *data)
+> +{
+> +       struct clk_core *core = s->private;
+> +       unsigned long min_rate, max_rate;
 > +
-> +		pmx->reg_bank_size[i] = resource_size(res);
->  	}
->  
->  	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-> index 287702660783..55456f8d44cf 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-> @@ -17,6 +17,8 @@ struct tegra_pmx {
->  
->  	int nbanks;
->  	void __iomem **regs;
-> +	size_t *reg_bank_size;
-> +	u32 *backup_regs;
->  };
->  
->  enum tegra_pinconf_param {
-> @@ -193,6 +195,7 @@ struct tegra_pinctrl_soc_data {
->  	bool drvtype_in_mux;
->  };
->  
-> +extern const struct dev_pm_ops tegra_pinctrl_pm;
+> +       clk_prepare_lock();
+> +       clk_core_get_boundaries(core, &min_rate, &max_rate);
+> +       seq_printf(s, "%lu\n", min_rate);
+> +       clk_prepare_unlock();
 
-Please add a newline here.
+You can move the release of the lock one line up.
 
->  int tegra_pinctrl_probe(struct platform_device *pdev,
->  			const struct tegra_pinctrl_soc_data *soc_data);
->  #endif
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> index 0b56ad5c9c1c..edd3f4606cdb 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-> @@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
->  	.driver = {
->  		.name = "tegra210-pinctrl",
->  		.of_match_table = tegra210_pinctrl_of_match,
-> +		.pm = &tegra_pinctrl_pm,
->  	},
->  	.probe = tegra210_pinctrl_probe,
->  };
-> 
+> +
+> +       return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(clk_min_rate);
+> +
+> +static int clk_max_rate_show(struct seq_file *s, void *data)
+> +{
+> +       struct clk_core *core = s->private;
+> +       unsigned long min_rate, max_rate;
+> +
+> +       clk_prepare_lock();
+> +       clk_core_get_boundaries(core, &min_rate, &max_rate);
+> +       seq_printf(s, "%lu\n", max_rate);
+> +       clk_prepare_unlock();
 
-Could you please address my comments in the next revision if there will be one?
+You can move the release of the lock one line up.
+
+> +
+> +       return 0;
+> +}
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
