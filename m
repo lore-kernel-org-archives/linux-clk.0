@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596F9C5B576
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07885C5B576
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F39020656
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D175A20656
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:15:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Um3OwDcV"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ru2F0sXy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfF1COs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 22:14:48 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17594 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbfF1CNg (ORCPT
+        id S1726666AbfF1CO6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 22:14:58 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:19578 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfF1CNg (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 22:13:36 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d1577cd0000>; Thu, 27 Jun 2019 19:13:33 -0700
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d1577cc0001>; Thu, 27 Jun 2019 19:13:33 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 27 Jun 2019 19:13:34 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 27 Jun 2019 19:13:35 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 27 Jun 2019 19:13:34 -0700
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
- 2019 02:13:33 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
- 2019 02:13:33 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+        by hqpgpgate102.nvidia.com on Thu, 27 Jun 2019 19:13:35 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
+ 2019 02:13:34 +0000
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
+ 2019 02:13:34 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Fri, 28 Jun 2019 02:13:33 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.155]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d1577cd0002>; Thu, 27 Jun 2019 19:13:33 -0700
+        id <B5d1577ce0001>; Thu, 27 Jun 2019 19:13:34 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -51,9 +51,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
-Date:   Thu, 27 Jun 2019 19:12:36 -0700
-Message-ID: <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 07/18] clk: tegra: Support for saving and restoring OSC context
+Date:   Thu, 27 Jun 2019 19:12:41 -0700
+Message-ID: <1561687972-19319-8-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
@@ -61,157 +61,84 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561688013; bh=6XVtmPiEo6fFZCuCiwnb+UkS0vaYrf4FcEseKnc+izw=;
+        t=1561688013; bh=2YFtJYfYZEkx9Rsc+PePUh2qyM9iqhHjKzUjU/RdnjE=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=Um3OwDcVHDIRK3fw70C6JDSsK7KNL+Be94prmyNCuyuDnCI43A5Rh6oDEcTMG63Kz
-         TsOce2FU6YyUW0HAQ72qXwWXofnsNc98mbliOdeXwxxK2cfJ/cSMRV8bC+dvKt9nyu
-         Y89O0CS7G1QhcNjeQKLmh3NXruppoumz80bfrTZd6hBEvPtot2I1dwL9sHsmXEN3/v
-         0Wj1dw8+9Tleh12YGFBqelgsBrz6N8DBVtiaEOP29eshytynzSOIC91gvLv5+0Iju+
-         73jNbTW8/lVUHkuXG1JiywOxQFAG/cGqBTMnWCPqMtbm97ec9bvWBe1DI7HU/gAgZJ
-         wNhJLBAQhYNTg==
+        b=ru2F0sXyh8TG8aU8SgAnqEObkpZejB+BCea1b9og7ZdN4iE/v87ZYy5gSa1GIkXrz
+         9SKFvyCMUlfXiLyYKy3dJ1SftIWWlXbZWzLU7kzztUjJWIDPYAp6ay+Vbr/mHRTRiE
+         lRc/TAwSPEOvECwL4dajrFXcftD5b5jZ/5H2J5DcV0RnJcqXdQFNEMBO2YOTLpfYZX
+         fNoFb+n6exbQOwV+6/UEUOC+XdSMhwQ4FVLMoWA8dwYd0WtdN4kBNvzEVvdHOUzgSt
+         l0/Z2km643rWaGpb/T4ADmkS/+JQZPgYshOcPI6GLjaLZhcaaUtxFghVTvOMANbQc5
+         GdlQQ0TyT7K/Q==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds support for Tegra pinctrl driver suspend and resume.
+This patch adds support for storing OSC clock frequency and the
+drive-strength during OSC clock init and creates an API to restore
+OSC control register value from the saved context.
 
-During suspend, context of all pinctrl registers are stored and
-on resume they are all restored to have all the pinmux and pad
-configuration for normal operation.
+This API is invoked by Tegra210 clock driver during system resume
+to restore the  OSC clock settings.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c    | 52 ++++++++++++++++++++++++++++++++
- drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
- drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
- 3 files changed, 56 insertions(+)
+ drivers/clk/tegra/clk-tegra-fixed.c | 14 ++++++++++++++
+ drivers/clk/tegra/clk.h             |  1 +
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 34596b246578..e7c0a1011cba 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -621,6 +621,43 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 8d91b2b191cf..e8df0ccbffd0 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -17,7 +17,10 @@
+ #define OSC_CTRL			0x50
+ #define OSC_CTRL_OSC_FREQ_SHIFT		28
+ #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
++#define OSC_CTRL_MASK			(0x3f2 |	\
++					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
+ 
++static u32 osc_ctrl_ctx;
+ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 			      unsigned long *input_freqs, unsigned int num,
+ 			      unsigned int clk_m_div, unsigned long *osc_freq,
+@@ -29,6 +32,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 	unsigned osc_idx;
+ 
+ 	val = readl_relaxed(clk_base + OSC_CTRL);
++	osc_ctrl_ctx = val & OSC_CTRL_MASK;
+ 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
+ 
+ 	if (osc_idx < num)
+@@ -96,3 +100,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 		*dt_clk = clk;
  	}
  }
- 
-+static int tegra_pinctrl_suspend(struct device *dev)
++
++void tegra_clk_osc_resume(void __iomem *clk_base)
 +{
-+	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-+	u32 *backup_regs = pmx->backup_regs;
-+	u32 *regs;
-+	unsigned int i, j;
++	u32 val;
 +
-+	for (i = 0; i < pmx->nbanks; i++) {
-+		regs = pmx->regs[i];
-+		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-+			*backup_regs++ = readl(regs++);
-+	}
-+
-+	return pinctrl_force_sleep(pmx->pctl);
++	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
++	val |= osc_ctrl_ctx;
++	writel_relaxed(val, clk_base + OSC_CTRL);
++	fence_udelay(2, clk_base);
 +}
-+
-+static int tegra_pinctrl_resume(struct device *dev)
-+{
-+	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-+	u32 *backup_regs = pmx->backup_regs;
-+	u32 *regs;
-+	unsigned int i, j;
-+
-+	for (i = 0; i < pmx->nbanks; i++) {
-+		regs = pmx->regs[i];
-+		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-+			writel(*backup_regs++, regs++);
-+	}
-+
-+	return 0;
-+}
-+
-+const struct dev_pm_ops tegra_pinctrl_pm = {
-+	.suspend = &tegra_pinctrl_suspend,
-+	.resume = &tegra_pinctrl_resume
-+};
-+
- static bool gpio_node_has_range(const char *compatible)
- {
- 	struct device_node *np;
-@@ -645,6 +682,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 	int i;
- 	const char **group_pins;
- 	int fn, gn, gfn;
-+	unsigned long backup_regs_size = 0;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index c66b0a73bb01..a687ed6127b6 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -863,6 +863,7 @@ void tegra_cclkg_burst_policy_save_context(void);
+ void tegra_cclkg_burst_policy_restore_context(void);
+ void tegra_sclk_cclklp_burst_policy_save_context(void);
+ void tegra_sclk_cpulp_burst_policy_restore_context(void);
++void tegra_clk_osc_resume(void __iomem *clk_base);
  
- 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
- 	if (!pmx)
-@@ -697,6 +735,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
- 		if (!res)
- 			break;
-+		backup_regs_size += resource_size(res);
- 	}
- 	pmx->nbanks = i;
- 
-@@ -705,11 +744,24 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 	if (!pmx->regs)
- 		return -ENOMEM;
- 
-+	pmx->reg_bank_size = devm_kcalloc(&pdev->dev, pmx->nbanks,
-+					  sizeof(*pmx->reg_bank_size),
-+					  GFP_KERNEL);
-+	if (!pmx->reg_bank_size)
-+		return -ENOMEM;
-+
-+	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
-+					GFP_KERNEL);
-+	if (!pmx->backup_regs)
-+		return -ENOMEM;
-+
- 	for (i = 0; i < pmx->nbanks; i++) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
- 		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
- 		if (IS_ERR(pmx->regs[i]))
- 			return PTR_ERR(pmx->regs[i]);
-+
-+		pmx->reg_bank_size[i] = resource_size(res);
- 	}
- 
- 	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index 287702660783..55456f8d44cf 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -17,6 +17,8 @@ struct tegra_pmx {
- 
- 	int nbanks;
- 	void __iomem **regs;
-+	size_t *reg_bank_size;
-+	u32 *backup_regs;
- };
- 
- enum tegra_pinconf_param {
-@@ -193,6 +195,7 @@ struct tegra_pinctrl_soc_data {
- 	bool drvtype_in_mux;
- };
- 
-+extern const struct dev_pm_ops tegra_pinctrl_pm;
- int tegra_pinctrl_probe(struct platform_device *pdev,
- 			const struct tegra_pinctrl_soc_data *soc_data);
- #endif
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-index 0b56ad5c9c1c..edd3f4606cdb 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-@@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
- 	.driver = {
- 		.name = "tegra210-pinctrl",
- 		.of_match_table = tegra210_pinctrl_of_match,
-+		.pm = &tegra_pinctrl_pm,
- 	},
- 	.probe = tegra210_pinctrl_probe,
- };
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
 -- 
 2.7.4
 
