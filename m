@@ -1,78 +1,69 @@
-Return-Path: <SRS0=q34n=U2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DBDC4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 23:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFF2C4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 00:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945702133F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jun 2019 23:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AEAC2084B
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 00:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561679528;
-	bh=TLxkXBYcOQkQ2yiDZYNy+ckFRMqJ/xF6bF/ER5dH6oo=;
-	h=In-Reply-To:References:To:From:Subject:Cc:Date:List-ID:From;
-	b=BpQha6Rb+xhilANojCFF6RdNfPAFzd6H6ZSSo0YpWAy0iefjqmItlV4/+GYQjkFnT
-	 hhVpeSXntGpQpWM7gRSsVEhXW7CDCFsl3jZ0QK8KtCOuO7AdcTyL9vSBEFN9Yuvv2y
-	 JBGacXoigzjLN7rrZt0jJwq4mgFACXkc2J/cUAzE=
+	s=default; t=1561683312;
+	bh=o13rGM6vMulkP8kdptU6Ib8+Sz0AFNP2C5JcJSAx74k=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=uHghEP4IRmARIX2MwCy15/SvEJAIZXkFuy8eadyMHovAZRJOK+Br/lMnymYVa99b6
+	 67rMxUPzsLqTvuJq3SYyBYDXIx+IGmQlR3fFz4IwqWdHKM/cNHqNfdP8zlZoqkDNYa
+	 R3OhL0B3NA0UtVDFG/q+eTC8wBtImYrrSTvS2kfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbfF0XwI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 19:52:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36562 "EHLO mail.kernel.org"
+        id S1726658AbfF1AzI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 20:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbfF0XwI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:52:08 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E247D20815;
-        Thu, 27 Jun 2019 23:52:06 +0000 (UTC)
+        id S1726681AbfF1AzE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Jun 2019 20:55:04 -0400
+Subject: Re: [GIT PULL] clk fixes for v5.2-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561679527;
-        bh=TLxkXBYcOQkQ2yiDZYNy+ckFRMqJ/xF6bF/ER5dH6oo=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=brVVYSMICoK5hJs7dp/cs8rUY0QUpRVWtXg25ZwxXq52vfljx9TT0QgDsRoejgLlf
-         4QJuOH7kQ5OusWkYZryl5zcVBZmswpFhB4Unz5099QZkzeLozf+kVTfZJeVXqx0iIO
-         FFRAtvZJfHgfRH+t8U0NVC+bZMYFqGVF/oaItmBQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190627221507.83942-1-nhuck@google.com>
-References: <20190627221507.83942-1-nhuck@google.com>
-To:     Nathan Huckleberry <nhuck@google.com>, fparent@baylibre.com,
-        matthias.bgg@gmail.com, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: mediatek: Fix -Wunused-const-variable
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com
-User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 16:52:06 -0700
-Message-Id: <20190627235206.E247D20815@mail.kernel.org>
+        s=default; t=1561683304;
+        bh=o13rGM6vMulkP8kdptU6Ib8+Sz0AFNP2C5JcJSAx74k=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=MjYoVMLt6cZxv1Aw4RUNt0fES5yaD0W1sLgr3Z+2hU89dZ067vH/VuyHG6fXRCQ05
+         VsaDcH3faw8SBfR63eJIVDtCDf5AK1AaIyHjhI2zgRmM9kDhfuXIVTtnsrcobO2yMR
+         dF0YjkhvfkhbKOOaHF+LYGQFVl1ifgYNLBifpL94=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190627202549.45667-1-sboyd@kernel.org>
+References: <20190627202549.45667-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190627202549.45667-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 74684cce5ebd567b01e9bc0e9a1945c70a32f32f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 556e2f6020bf90f63c5dd65e9a2254be6db3185b
+Message-Id: <156168330422.8716.170645861291830293.pr-tracker-bot@kernel.org>
+Date:   Fri, 28 Jun 2019 00:55:04 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nathan Huckleberry (2019-06-27 15:15:07)
-> Clang produces the following warning
->=20
-> drivers/clk/mediatek/clk-mt8516.c:234:27: warning: unused variable
-> 'ddrphycfg_parents' [-Wunused-const-variable] static const char * const
-> ddrphycfg_parents[] __initconst =3D {
->=20
-> This variable has never been used. Deleting it to cleanup the warning.
->=20
-> Cc: clang-built-linux@googlegroups.com
-> Link: https://github.com/ClangBuiltLinux/linux/issues/523
-> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+The pull request you sent on Thu, 27 Jun 2019 13:25:49 -0700:
 
-This patch has already been applied. It would be great if you could try
-applying the patch to linux-next first before sending patches to make
-sure they're still relevant.
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/556e2f6020bf90f63c5dd65e9a2254be6db3185b
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
