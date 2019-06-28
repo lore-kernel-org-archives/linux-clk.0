@@ -2,128 +2,257 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45147C4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F63BC4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D06C206E0
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE7EF208C4
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:56:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="pPij8F0z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9F3lclH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfF1I4j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 04:56:39 -0400
-Received: from mail-eopbgr30083.outbound.protection.outlook.com ([40.107.3.83]:29508
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725873AbfF1I4j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:56:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yh6ZDgkmlXiASlzlGNuzTF2gRBpcrNdE7OKbE2xNDMQ=;
- b=pPij8F0zhyZ0XooiAfXqlNmNvDxDtuLuP5Sh8OKZo3/iVAkY9sZcsNumHMJd0RluFjBw48pcbNvhIpV9vPyHY56U+66xpyqZcsxJNHJY482D02vNsqiiNXwZQdbhvnv/WdWcmJU81YGOCS48xGGE/VCtsufx9KIpc4VssRqb3H0=
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
- VI1PR04MB5904.eurprd04.prod.outlook.com (20.178.205.78) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.18; Fri, 28 Jun 2019 08:56:36 +0000
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::d83:14c4:dedb:213b]) by VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::d83:14c4:dedb:213b%5]) with mapi id 15.20.2008.014; Fri, 28 Jun 2019
- 08:56:36 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>
-CC:     Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Saravana Kannan <saravanak@google.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFCv2 2/8] clk: imx8m-composite: Switch to determine_rate
-Thread-Topic: [RFCv2 2/8] clk: imx8m-composite: Switch to determine_rate
-Thread-Index: AQHVLYSz7P3EKbmmJkGmgseyFA+2Lg==
-Date:   Fri, 28 Jun 2019 08:56:35 +0000
-Message-ID: <VI1PR04MB50552AC6EAB0C145D638E618EEFC0@VI1PR04MB5055.eurprd04.prod.outlook.com>
-References: <cover.1561707104.git.leonard.crestez@nxp.com>
- <5d62b31309e6402bd9fa608730518b39af823fb3.1561707104.git.leonard.crestez@nxp.com>
- <20190628084521.d64d5g54zvxlsxsl@fsr-ub1664-175>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fba8cb19-8627-479b-a388-08d6fba6868f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5904;
-x-ms-traffictypediagnostic: VI1PR04MB5904:
-x-microsoft-antispam-prvs: <VI1PR04MB590424E23F540734F4D98106EEFC0@VI1PR04MB5904.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 00826B6158
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(376002)(136003)(346002)(396003)(199004)(189003)(316002)(5660300002)(6246003)(66946007)(73956011)(54906003)(66446008)(76116006)(66476007)(66556008)(64756008)(74316002)(6636002)(3846002)(6116002)(8936002)(52536014)(305945005)(8676002)(81166006)(81156014)(7736002)(86362001)(2906002)(25786009)(4326008)(71200400001)(71190400001)(6862004)(256004)(14444005)(446003)(7416002)(476003)(486006)(44832011)(26005)(14454004)(33656002)(478600001)(66066001)(68736007)(76176011)(7696005)(229853002)(6506007)(53546011)(6436002)(55016002)(102836004)(186003)(99286004)(4744005)(9686003)(53936002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5904;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: BYjYEax1jrqNb1U9U2ga45r1I7Ccj/wZ6TWsIqKDptIrLLr4UTV6d+E0trW4fh2HWCEj5XUITfhYAa12HiDTYj6beNNLwd3WsojUggUmZJnToWZ/iRDe01slEgnFMkYM1mCzcqAOU5v8EokzJDf/v6bZiCZj/a8WKEX/U3kgI8wuscxqVbgdMVGrpWMixelxEMP1uEWLzqcPFckS7yObracp3bRffWWJWASsigh8fQJRMyh3rrdH3CBo/xrFZf724u9NdewpRU4eDaAk0TkqcjO4AVW+W55BcXeqAaX0paorapmJ4QLbCQ61biqf/4VKHolXrzCkuRcKFQfh8IdmLnQU+JWhkO4dqxI1sFuTBvOMtcPaP4Y8O5tV7ZdxsCes7NGqbFw9LpEDdo8hbu7oopXcYB/Eht8ZUI1ti1WhzGo=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726650AbfF1L4j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 07:56:39 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44138 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfF1L4j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 07:56:39 -0400
+Received: by mail-qk1-f196.google.com with SMTP id p144so4494162qke.11;
+        Fri, 28 Jun 2019 04:56:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2jERR1htLsj0259opQP6iZqdbvhKo7IE5BZi1R4vL58=;
+        b=a9F3lclHUqf2w2vrqdAORV4XYJ3g9/cLzsfgk/JstGgHK33pSf9iEtBhoSDAILnNCb
+         lHMMWX5duZyOPY6YhTDMXXvfhUBM+xTLgIPxOvcGD74VpCCjlw1yZbAPAqdTUxKw/SHG
+         Zob6rus59DDu59lTgDDC4oDSpLYqDAb1hU2L3U6aEwH7QaF2kK2CfbrDT/uIsPjxl7To
+         TNVDN0lZNbTjufWiehayKvTMnVFzdgclcLA1uJWthvXNASSOAP9jRa44GEVLMLB3NegT
+         WWM9ms1qNXvQsjA+a3EymFZHzL3XtdD0BDfEY6tE+PQBq87v1Su3Ezmn+iL9P4puDpVt
+         iTbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2jERR1htLsj0259opQP6iZqdbvhKo7IE5BZi1R4vL58=;
+        b=l4f1EkJFJpszWHFnRe/baTHIM8DafS0oo+4p895t2YJrKbgNtxc83z8Cokgc9fG7l+
+         nchnKMAZc84g5LG9sa0bX75i7ANZbErVYTG8//WPJryRgQmsQvrCezNMi/rxuoHMqcLW
+         aEb07HhqQkIJ9C/1OoU+4oWDsV5KCwzQnGr7us6nKOW22UyFYUFkmiDPO6FpSA9Njlm0
+         pu1btAudGvUhAZICKOm36RZQNiUwEWBX7Qs9qQ6cT+mp63AjLbmpADw8CSoaeJ89gI81
+         O7IcdegMrtMGJbNTMLnaF285KITyoJvsaO5/3lsTylpp2R9U4WcxLBSHykG0Bc6bGGYe
+         tvEA==
+X-Gm-Message-State: APjAAAVUDVCmCn+5Ry1L7zz7HYJI0yWVBhuBxjGgOQjVqORW7SOKRunN
+        ObmQuvErPxUpUXmVQZcmnKlgKz/V
+X-Google-Smtp-Source: APXvYqzvuGSTQ6WiXnxDL1MTM1M3vj+OfNZ3xa6fZad2jOaM1HFKAVDMZ7x2HY050fVRVmMFO9sGYQ==
+X-Received: by 2002:a37:9c46:: with SMTP id f67mr8290537qke.455.1561722997649;
+        Fri, 28 Jun 2019 04:56:37 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id i48sm989609qte.93.2019.06.28.04.56.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 04:56:36 -0700 (PDT)
+Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+ <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
+Date:   Fri, 28 Jun 2019 14:56:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fba8cb19-8627-479b-a388-08d6fba6868f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 08:56:35.8798
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5904
+In-Reply-To: <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28.06.2019 11:45, Abel Vesa wrote:=0A=
-> On 19-06-28 10:39:50, Leonard Crestez wrote:=0A=
-=0A=
->> This allows consumers to use min_rate max_rate.=0A=
->>=0A=
->> @@ -45,10 +45,12 @@ static unsigned long imx8m_clk_composite_divider_rec=
-alc_rate(struct clk_hw *hw,=0A=
->>   				   divider->flags, PCG_DIV_WIDTH);=0A=
->>   }=0A=
->>   =0A=
->>   static int imx8m_clk_composite_compute_dividers(unsigned long rate,=0A=
->>   						unsigned long parent_rate,=0A=
->> +						unsigned long min_rate,=0A=
->> +						unsigned long max_rate,=0A=
-> =0A=
-> You should pass on the req instead of min_rate and max_rate here.=0A=
-=0A=
-Then I'd have to switch imx8m_clk_composite_divider_set_rate to allocate =
-=0A=
-a dummy struct clk_rate_request on the stack. It's clearer if I just =0A=
-pass the minimum parameters required.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+28.06.2019 5:12, Sowjanya Komatineni пишет:
+> This patch adds support for Tegra pinctrl driver suspend and resume.
+> 
+> During suspend, context of all pinctrl registers are stored and
+> on resume they are all restored to have all the pinmux and pad
+> configuration for normal operation.
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 52 ++++++++++++++++++++++++++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
+>  3 files changed, 56 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> index 34596b246578..e7c0a1011cba 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -621,6 +621,43 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>  	}
+>  }
+>  
+> +static int tegra_pinctrl_suspend(struct device *dev)
+> +{
+> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	unsigned int i, j;
+
+In general it's better not to use "j" in conjunction with "i" because they look
+similar and I seen quite a lot of bugs caused by unnoticed typos like that. So I'm
+suggesting to use "i, k" for clarity.
+
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		regs = pmx->regs[i];
+> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+> +			*backup_regs++ = readl(regs++);
+
+Please use readl_relaxed(), we don't need memory barriers here.
+
+> +	}
+> +
+> +	return pinctrl_force_sleep(pmx->pctl);
+> +}
+> +
+> +static int tegra_pinctrl_resume(struct device *dev)
+> +{
+> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
+> +	u32 *backup_regs = pmx->backup_regs;
+> +	u32 *regs;
+> +	unsigned int i, j;
+> +
+> +	for (i = 0; i < pmx->nbanks; i++) {
+> +		regs = pmx->regs[i];> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
+> +			writel(*backup_regs++, regs++);
+
+Same for writel_relaxed(), memory barrier is inserted *before* the write to ensure
+that all previous memory stores are completed. IOREMAP'ed memory is strongly-ordered,
+memory barriers are not needed here.
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +const struct dev_pm_ops tegra_pinctrl_pm = {
+> +	.suspend = &tegra_pinctrl_suspend,
+> +	.resume = &tegra_pinctrl_resume
+> +};
+> +
+>  static bool gpio_node_has_range(const char *compatible)
+>  {
+>  	struct device_node *np;
+> @@ -645,6 +682,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+>  	int i;
+>  	const char **group_pins;
+>  	int fn, gn, gfn;
+> +	unsigned long backup_regs_size = 0;
+>  
+>  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+>  	if (!pmx)
+> @@ -697,6 +735,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+>  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+>  		if (!res)
+>  			break;
+> +		backup_regs_size += resource_size(res);
+>  	}
+>  	pmx->nbanks = i;
+>  
+> @@ -705,11 +744,24 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+>  	if (!pmx->regs)
+>  		return -ENOMEM;
+>  
+> +	pmx->reg_bank_size = devm_kcalloc(&pdev->dev, pmx->nbanks,
+> +					  sizeof(*pmx->reg_bank_size),
+> +					  GFP_KERNEL);
+> +	if (!pmx->reg_bank_size)
+> +		return -ENOMEM;
+
+It looks to me that we don't really need to churn with this allocation because the
+bank sizes are already a part of the platform driver's description.
+
+We could add a simple helper function that retrieves the bank sizes, like this:
+
+static unsigned int tegra_pinctrl_bank_size(struct device *dev,
+					    unsigned int bank_id)
+{
+	struct platform_device *pdev;
+	struct resource *res;
+
+	pdev = to_platform_device(dev);
+	res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
+
+	return resource_size(res) / 4;
+}
+
+> +	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
+> +					GFP_KERNEL);
+> +	if (!pmx->backup_regs)
+> +		return -ENOMEM;
+> +
+>  	for (i = 0; i < pmx->nbanks; i++) {
+>  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+>  		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+>  		if (IS_ERR(pmx->regs[i]))
+>  			return PTR_ERR(pmx->regs[i]);
+> +
+> +		pmx->reg_bank_size[i] = resource_size(res);
+>  	}
+>  
+>  	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+> index 287702660783..55456f8d44cf 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+> @@ -17,6 +17,8 @@ struct tegra_pmx {
+>  
+>  	int nbanks;
+>  	void __iomem **regs;
+> +	size_t *reg_bank_size;
+> +	u32 *backup_regs;
+>  };
+>  
+>  enum tegra_pinconf_param {
+> @@ -193,6 +195,7 @@ struct tegra_pinctrl_soc_data {
+>  	bool drvtype_in_mux;
+>  };
+>  
+> +extern const struct dev_pm_ops tegra_pinctrl_pm;
+
+Please add a newline here.
+
+>  int tegra_pinctrl_probe(struct platform_device *pdev,
+>  			const struct tegra_pinctrl_soc_data *soc_data);
+>  #endif
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+> index 0b56ad5c9c1c..edd3f4606cdb 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+> @@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+>  	.driver = {
+>  		.name = "tegra210-pinctrl",
+>  		.of_match_table = tegra210_pinctrl_of_match,
+> +		.pm = &tegra_pinctrl_pm,
+>  	},
+>  	.probe = tegra210_pinctrl_probe,
+>  };
+> 
+
+Could you please address my comments in the next revision if there will be one?
