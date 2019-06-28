@@ -2,182 +2,75 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36D8C5B579
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 444C1C5B577
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 03:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA9412086D
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:15:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="O9eOYxdk"
+	by mail.kernel.org (Postfix) with ESMTP id 10E1921670
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 03:19:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfF1CNg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 22:13:36 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5480 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfF1CNg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 22:13:36 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d1577d00001>; Thu, 27 Jun 2019 19:13:36 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 27 Jun 2019 19:13:34 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 27 Jun 2019 19:13:34 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
- 2019 02:13:33 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 28 Jun 2019 02:13:33 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.155]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d1577cd0006>; Thu, 27 Jun 2019 19:13:33 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V5 04/18] clk: tegra: pllout: Save and restore pllout context
-Date:   Thu, 27 Jun 2019 19:12:38 -0700
-Message-ID: <1561687972-19319-5-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561688017; bh=TqspXxSUMOnx+v+IVW31w3ws6+ZGaWHJIhoopYd5LSU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=O9eOYxdk9m0jJ/CVgPsOnW0OnW938t2EQiT1151+6g3Lit9Z8gDyYPABNQTTy8Awu
-         YHHmI01jIgTFTk4hEKSZlP1zpK92A9m+90MolMu599U+WMvnoTb8X0XUOGiHfrXZZj
-         bM761ThcCSOp3tE3SYkCfCAAld4E/glVN5XlERjiRXRCdl8HnTbT4N0VvQt9xkVzNG
-         box83on4PX74XOKn1XcRAwl2KNaVCtHSSrIFkNIQPnAH7X7oXAgfB7VvU22F6K2eiY
-         yayQ/r3PRgApygMSu8WLDqfEZUsH18QoHgNw/wWIomuC3LKIeRo9ouRoU2ABqpTaFy
-         JZvXRq2rXZXfw==
+        id S1726883AbfF1DTQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 23:19:16 -0400
+Received: from anchovy1.45ru.net.au ([203.30.46.145]:60267 "EHLO
+        anchovy1.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726844AbfF1DTQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 23:19:16 -0400
+Received: (qmail 16939 invoked by uid 5089); 28 Jun 2019 03:19:13 -0000
+Received: by simscan 1.2.0 ppid: 16837, pid: 16839, t: 0.0327s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+X-RBL:  $rbltext
+Received: from unknown (HELO preid-c7.electromag.com.au) (preid@electromag.com.au@203.59.235.95)
+  by anchovy1.45ru.net.au with ESMTPA; 28 Jun 2019 03:19:13 -0000
+Received: by preid-c7.electromag.com.au (Postfix, from userid 1000)
+        id F303C2007789A; Fri, 28 Jun 2019 11:19:11 +0800 (AWST)
+From:   Phil Reid <preid@electromag.com.au>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, preid@electromag.com.au,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: clock: cdce925: Add regulator documentation
+Date:   Fri, 28 Jun 2019 11:19:09 +0800
+Message-Id: <1561691950-42154-2-git-send-email-preid@electromag.com.au>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1561691950-42154-1-git-send-email-preid@electromag.com.au>
+References: <1561691950-42154-1-git-send-email-preid@electromag.com.au>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch implements save and restore of pllout context.
+The cdce925 has two separate supply pins. Document the bindings
+for them.
 
-During system suspend, core power goes off and looses the settings
-of the Tegra CAR controller registers.
-
-So during suspend entry the state of pllout is saved and on resume
-it is restored back to have pllout in same state as before suspend.
-
-pllout rate is saved and restore in clock divider so it will be at
-same rate as before suspend when pllout state is restored.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Phil Reid <preid@electromag.com.au>
 ---
- drivers/clk/tegra/clk-pll-out.c  | 28 ++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra210.c |  3 ++-
- drivers/clk/tegra/clk.h          |  9 +++++++++
- 3 files changed, 39 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/ti,cdce925.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
-index 35f2bf00e1e6..8f26a7e3e579 100644
---- a/drivers/clk/tegra/clk-pll-out.c
-+++ b/drivers/clk/tegra/clk-pll-out.c
-@@ -69,10 +69,38 @@ static void clk_pll_out_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll_out->lock, flags);
- }
+diff --git a/Documentation/devicetree/bindings/clock/ti,cdce925.txt b/Documentation/devicetree/bindings/clock/ti,cdce925.txt
+index 0d01f2d..26544c8 100644
+--- a/Documentation/devicetree/bindings/clock/ti,cdce925.txt
++++ b/Documentation/devicetree/bindings/clock/ti,cdce925.txt
+@@ -24,6 +24,8 @@ Required properties:
+ Optional properties:
+  - xtal-load-pf: Crystal load-capacitor value to fine-tune performance on a
+                  board, or to compensate for external influences.
++- vdd-supply: A regulator node for Vdd
++- vddout-supply: A regulator node for Vddout
  
-+static int tegra_clk_pll_out_save_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
-+
-+	if (pll_out->flags & TEGRA_PLLRE_OUT)
-+		pll_out->pllout_ctx = readl_relaxed(pll_out->reg);
-+	else
-+		pll_out->pllout_ctx = clk_hw_get_rate(hw);
-+
-+	return 0;
-+}
-+
-+static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
-+
-+	if (pll_out->flags & TEGRA_PLLRE_OUT) {
-+		writel_relaxed(pll_out->pllout_ctx, pll_out->reg);
-+	} else {
-+		if (!__clk_get_enable_count(hw->clk))
-+			clk_pll_out_disable(hw);
-+		else
-+			clk_pll_out_enable(hw);
-+	}
-+}
-+
- const struct clk_ops tegra_clk_pll_out_ops = {
- 	.is_enabled = clk_pll_out_is_enabled,
- 	.enable = clk_pll_out_enable,
- 	.disable = clk_pll_out_disable,
-+	.save_context = tegra_clk_pll_out_save_context,
-+	.restore_context = tegra_clk_pll_out_restore_context,
- };
- 
- struct clk *tegra_clk_register_pll_out(const char *name,
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index ac1d27a8c650..cbd77658dcf7 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3195,7 +3195,8 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 					 8, 8, 1, NULL);
- 	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
- 					 clk_base + PLLRE_OUT1, 1, 0,
--					 CLK_SET_RATE_PARENT, 0, NULL);
-+					 CLK_SET_RATE_PARENT, TEGRA_PLLRE_OUT,
-+					 NULL);
- 	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
- 
- 	/* PLLE */
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 83623f5f55f3..fb29a8c27873 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -439,6 +439,12 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
-  * @rst_bit_idx:	bit to reset PLL divider
-  * @lock:		register lock
-  * @flags:		hardware-specific flags
-+ * @pllout_ctx:		pllout context to save and restore during suspend
-+ *			and resume
-+ *
-+ * Flags:
-+ * TEGRA_PLLRE_OUT - This flag indicates that it is PLLRE_OUT and is used to
-+ *		     identify PLLRE_OUT during clk_pll_out save and restore.
-  */
- struct tegra_clk_pll_out {
- 	struct clk_hw	hw;
-@@ -447,8 +453,11 @@ struct tegra_clk_pll_out {
- 	u8		rst_bit_idx;
- 	spinlock_t	*lock;
- 	u8		flags;
-+	unsigned int	pllout_ctx;
- };
- 
-+#define TEGRA_PLLRE_OUT BIT(0)
-+
- #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
- 
- extern const struct clk_ops tegra_clk_pll_out_ops;
+ For all PLL1, PLL2, ... an optional child node can be used to specify spread
+ spectrum clocking parameters for a board.
+@@ -41,6 +43,8 @@ Example:
+ 		clocks = <&xtal_27Mhz>;
+ 		#clock-cells = <1>;
+ 		xtal-load-pf = <5>;
++		vdd-supply = <&1v8-reg>;
++		vddout-supply = <&3v3-reg>;
+ 		/* PLL options to get SSC 1% centered */
+ 		PLL2 {
+ 			spread-spectrum = <4>;
 -- 
-2.7.4
+1.8.3.1
 
