@@ -5,40 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72325C4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C60C4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494D42086D
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10AF620656
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lV07bS1n"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rbiOVfdp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfF1CNv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jun 2019 22:13:51 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17643 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbfF1CNj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 22:13:39 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d1577d00000>; Thu, 27 Jun 2019 19:13:36 -0700
+        id S1726810AbfF1CN5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jun 2019 22:13:57 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5511 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbfF1CNi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jun 2019 22:13:38 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d1577d30000>; Thu, 27 Jun 2019 19:13:39 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 27 Jun 2019 19:13:37 -0700
+  Thu, 27 Jun 2019 19:13:36 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 27 Jun 2019 19:13:37 -0700
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL107.nvidia.com
+        by hqpgpgate101.nvidia.com on Thu, 27 Jun 2019 19:13:36 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
- 2019 02:13:37 +0000
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
  2019 02:13:36 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Fri, 28 Jun 2019 02:13:36 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.155]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d1577d00002>; Thu, 27 Jun 2019 19:13:36 -0700
+        id <B5d1577d00000>; Thu, 27 Jun 2019 19:13:36 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -51,9 +48,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V5 18/18] arm64: dts: tegra210-p3450: Jetson nano SC7 timings
-Date:   Thu, 27 Jun 2019 19:12:52 -0700
-Message-ID: <1561687972-19319-19-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 16/18] soc/tegra: pmc: Configure deep sleep control settings
+Date:   Thu, 27 Jun 2019 19:12:50 -0700
+Message-ID: <1561687972-19319-17-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
@@ -61,47 +58,84 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561688016; bh=nUcVR3aZhc7CmOqQ/Gf0Or0b77WEAikV513SetsAm3o=;
+        t=1561688019; bh=yMF0oM3+uebVoba25pi7TTeIEke1092zLym6YFQg1MQ=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=lV07bS1nw6Nyav+vjPMiy5zgQnmLOJyQ8iBL05bLAZxsqvAkPZm4pvjAu9G3/loHd
-         v39prKHsdCGeOTbBQBfiJfJHfX15MR373/8gVHDi07luwpwEfwNaNr9JghYaDUPvlt
-         eVhlsRK458IhZT6LIHRPHvUwNSbMx9xMFZb4TpPL/wL7v3rywlSQryJSAXW709u/Kz
-         8BN+icPwB73mJ/xSlwBc2chhvx2TzTETtNH53BS+cF/jMkJ8pOITVCHZvMgw0PhgEy
-         2rm6GIKIt7dCO/bj1VSmsxiCoOxXmuevPT23KfqCJOLwQAPfT7a7rLlkWD3SPYQpw+
-         7KQcNQ0s5s0lA==
+        b=rbiOVfdp9R58xH6NOj1wyxEfUXrvoVQ4oE+jg12coxJfKKYW7y4QI1YtDtA26wD4j
+         qQaaK/Cwx+YNLTCrd4NqzNXNPi0sk5mw63k9GVlBfbLBkvi4TIhW9h2ISuraD+UUxV
+         bj5ZuRoHsqaW1SBSru1aR1k+TGuzeCdRDF14JbhKiinI8XgbUCvhX7RC3kFzE16u5l
+         qPPxqB9B/dHcQyyG1Uj16Nibe77Ub54bOGAMo/IM4SkXH6NhQ+sbPu94b/JWpeaz6Y
+         Sy+M6V8aIH4u1MZw20+fHSdq+VQG6fO6Z6xnoL395IP4oHNzIe1MDbO8/SEk2IZgWQ
+         qsSpkg16ceA1A==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds Jetson nano platform specific SC7 timing configuration
-in the device tree.
+Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
+timings which are platform specific that should be configured before
+entering into deep sleep.
+
+Below are the timing specific configurations for deep sleep entry and
+wakeup.
+- Core rail power-on stabilization timer
+- OSC clock stabilization timer after SOC rail power is stabilized.
+- Core power off time is the minimum wake delay to keep the system
+  in deep sleep state irrespective of any quick wake event.
+
+These values depends on the discharge time of regulators and turn OFF
+time of the PMIC to allow the complete system to finish entering into
+deep sleep state.
+
+These values vary based on the platform design and are specified
+through the device tree.
+
+This patch has implementation to configure these timings which are must
+to have for proper deep sleep and wakeup operations.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/soc/tegra/pmc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 9d17ec707bce..b81bfdfbc115 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -382,6 +382,13 @@
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index ed83c0cd09a3..7e4a8f04f4c4 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -89,6 +89,8 @@
  
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
-++		nvidia,suspend-mode = <0>;
-+		nvidia,cpu-pwr-good-time = <0>;
-+		nvidia,cpu-pwr-off-time = <0>;
-+		nvidia,core-pwr-good-time = <4587 3876>;
-+		nvidia,core-pwr-off-time = <39065>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
- 	};
+ #define PMC_CPUPWRGOOD_TIMER		0xc8
+ #define PMC_CPUPWROFF_TIMER		0xcc
++#define PMC_COREPWRGOOD_TIMER		0x3c
++#define PMC_COREPWROFF_TIMER		0xe0
  
- 	hda@70030000 {
+ #define PMC_PWR_DET_VALUE		0xe4
+ 
+@@ -2291,6 +2293,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
+ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ {
+ 	u32 value;
++	unsigned long osc, pmu, off;
+ 
+ 	/* Always enable CPU power request */
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+@@ -2316,6 +2319,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+ 	value |= PMC_CNTRL_SYSCLK_OE;
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
++
++	osc = DIV_ROUND_UP_ULL(pmc->core_osc_time * 8192, 1000000);
++	pmu = DIV_ROUND_UP_ULL(pmc->core_pmu_time * 32768, 1000000);
++	off = DIV_ROUND_UP_ULL(pmc->core_off_time * 32768, 1000000);
++	if (osc && pmu)
++		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
++				 PMC_COREPWRGOOD_TIMER);
++	if (off)
++		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
+ }
+ 
+ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
 -- 
 2.7.4
 
