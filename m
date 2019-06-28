@@ -2,162 +2,168 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5228FC4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38996C46478
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D6F2070D
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5242214AF
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 08:31:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gU0nFtiv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbfF1ITV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 04:19:21 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:49448 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbfF1ITU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:19:20 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 23B76200373;
-        Fri, 28 Jun 2019 10:19:18 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1700520034C;
-        Fri, 28 Jun 2019 10:19:18 +0200 (CEST)
-Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C945A205D5;
-        Fri, 28 Jun 2019 10:19:17 +0200 (CEST)
+        id S1726520AbfF1IbD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 04:31:03 -0400
+Received: from mail-eopbgr60065.outbound.protection.outlook.com ([40.107.6.65]:12647
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726484AbfF1IbD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Jun 2019 04:31:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wf8QcMn7wuNGlQ7cO6ZNBj+vaqdkjVTG6vtYWclAlOk=;
+ b=gU0nFtivr+OwiVUNMbCQ0QaCU6Dcn67GblhD92sKGMuqPva9bk8vgvDcKk6rFmbVCX63Zhefz8GA9y118TDGHiStwW3kqPdWrBZBcNL8LhVvTJuCK5Ubqf0gXTIy7cKONNHm0fJZzdyQkCVAVnNyRB6P6CW6RUvjaSQbC8G3IGA=
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
+ VI1PR04MB3104.eurprd04.prod.outlook.com (10.170.229.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.18; Fri, 28 Jun 2019 08:30:59 +0000
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::d83:14c4:dedb:213b]) by VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::d83:14c4:dedb:213b%5]) with mapi id 15.20.2008.014; Fri, 28 Jun 2019
+ 08:30:59 +0000
 From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] clk: Add clk_min/max_rate entries in debugfs
-Date:   Fri, 28 Jun 2019 11:19:15 +0300
-Message-Id: <0c12208398cadb7450b6b7745e99c55770c0ccf8.1561709827.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Cedric Neveux <cedric.neveux@nxp.com>,
+        Silvano Di Ninno <silvano.dininno@nxp.com>,
+        Nitin Garg <nitin.garg@nxp.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC] clk: imx8mm: Add dram freq switch support
+Thread-Topic: [RFC] clk: imx8mm: Add dram freq switch support
+Thread-Index: AQHVFrc7ODGIzaJAMkqnt2iUWhij6w==
+Date:   Fri, 28 Jun 2019 08:30:59 +0000
+Message-ID: <VI1PR04MB50551B5AFFBF2C58D40D993FEEFC0@VI1PR04MB5055.eurprd04.prod.outlook.com>
+References: <475e0250b1e77a660c095749e78427fde318d5f6.1559200405.git.leonard.crestez@nxp.com>
+ <20190627211453.37FF4208CB@mail.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e1efd5c5-02d2-4e19-11e1-08d6fba2f2ba
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB3104;
+x-ms-traffictypediagnostic: VI1PR04MB3104:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VI1PR04MB310413E9E2C6F0ADC7B40F79EEFC0@VI1PR04MB3104.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 00826B6158
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(366004)(39860400002)(199004)(189003)(14454004)(966005)(33656002)(26005)(186003)(99286004)(102836004)(55016002)(6436002)(53936002)(9686003)(6306002)(68736007)(66066001)(478600001)(229853002)(53546011)(6506007)(7696005)(76176011)(74316002)(8676002)(305945005)(7736002)(81156014)(81166006)(6116002)(3846002)(8936002)(52536014)(6246003)(316002)(110136005)(5660300002)(54906003)(66446008)(64756008)(66556008)(66476007)(76116006)(73956011)(66946007)(7416002)(446003)(44832011)(476003)(486006)(4326008)(25786009)(2906002)(86362001)(14444005)(256004)(71190400001)(71200400001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3104;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: acQZ0q4jIdn/e4NEVEcQvAylbeRJonSgXqia/0QGGKgSQIzP6MTAvQGwPjsYg9TvbL/3mVSxVBC+KSwZR75FRwDuhKzN66dpZaguf4kYsbJsHMALQW8Ldr8fR2FmoF65bFDc0iqS7NUdL+Lz59TDZtrd+HAmMBRbHcL0prp1Vji67vmFEzdDcLn6zI7huCwKVgsTtLGmTuxfOSgV7aRIo2ldaogqbB9VT4dEW7mJifIAkKnxXp+FaRQMizIWs7VcznEDEZXz+VwbM6PlRdX8VqSzPOKlza2iA8MlYLBh0oMTShJFwSkEhWg8uFP1D/phwLWfLkkWktfxSWWZmdBCYYs+UL22rftlEsqs+xK/BMIyHmjCs0j3nv1nAykiosS8pfQkKG0YSATqovKmqlhZMNNkUMa2yGuy0gB/DIfhzxM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1efd5c5-02d2-4e19-11e1-08d6fba2f2ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 08:30:59.2859
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3104
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add two files to expose min/max clk rates as determined by
-clk_core_get_boundaries, taking all consumer requests into account.
-
-This information does not appear to be otherwise exposed to userspace.
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-
----
- drivers/clk/clk.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-Changes since v1:
-* Call clk_prepare_lock/clk_prepare_unlock (Geert)
-* Also include in clk_dump, but only with non-default values
-Link to v1: https://patchwork.kernel.org/patch/11019873/
-
-Didn't add to clk_summary because min/max rates are rarely used and
-clk_summary already has too many columns.
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index efa593ecbfa9..8cec1954580b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -591,10 +591,12 @@ static void clk_core_get_boundaries(struct clk_core *core,
- 				    unsigned long *min_rate,
- 				    unsigned long *max_rate)
- {
- 	struct clk *clk_user;
- 
-+	lockdep_assert_held(&prepare_lock);
-+
- 	*min_rate = core->min_rate;
- 	*max_rate = core->max_rate;
- 
- 	hlist_for_each_entry(clk_user, &core->clks, clks_node)
- 		*min_rate = max(*min_rate, clk_user->min_rate);
-@@ -2894,19 +2896,26 @@ static int clk_summary_show(struct seq_file *s, void *data)
- }
- DEFINE_SHOW_ATTRIBUTE(clk_summary);
- 
- static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- {
-+	unsigned long min_rate, max_rate;
-+
- 	if (!c)
- 		return;
- 
- 	/* This should be JSON format, i.e. elements separated with a comma */
- 	seq_printf(s, "\"%s\": { ", c->name);
- 	seq_printf(s, "\"enable_count\": %d,", c->enable_count);
- 	seq_printf(s, "\"prepare_count\": %d,", c->prepare_count);
- 	seq_printf(s, "\"protect_count\": %d,", c->protect_count);
- 	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
-+	clk_core_get_boundaries(c, &min_rate, &max_rate);
-+	if (min_rate != 0)
-+		seq_printf(s, "\"min_rate\": %lu,", min_rate);
-+	if (max_rate != ULONG_MAX)
-+		seq_printf(s, "\"max_rate\": %lu,", max_rate);
- 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
- 	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
- 	seq_printf(s, "\"duty_cycle\": %u",
- 		   clk_core_get_scaled_duty_cycle(c, 100000));
- }
-@@ -3062,10 +3071,38 @@ static int clk_duty_cycle_show(struct seq_file *s, void *data)
- 
- 	return 0;
- }
- DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
- 
-+static int clk_min_rate_show(struct seq_file *s, void *data)
-+{
-+	struct clk_core *core = s->private;
-+	unsigned long min_rate, max_rate;
-+
-+	clk_prepare_lock();
-+	clk_core_get_boundaries(core, &min_rate, &max_rate);
-+	seq_printf(s, "%lu\n", min_rate);
-+	clk_prepare_unlock();
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(clk_min_rate);
-+
-+static int clk_max_rate_show(struct seq_file *s, void *data)
-+{
-+	struct clk_core *core = s->private;
-+	unsigned long min_rate, max_rate;
-+
-+	clk_prepare_lock();
-+	clk_core_get_boundaries(core, &min_rate, &max_rate);
-+	seq_printf(s, "%lu\n", max_rate);
-+	clk_prepare_unlock();
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(clk_max_rate);
-+
- static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- {
- 	struct dentry *root;
- 
- 	if (!core || !pdentry)
-@@ -3073,10 +3110,12 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 
- 	root = debugfs_create_dir(core->name, pdentry);
- 	core->dentry = root;
- 
- 	debugfs_create_ulong("clk_rate", 0444, root, &core->rate);
-+	debugfs_create_file("clk_min_rate", 0444, root, core, &clk_min_rate_fops);
-+	debugfs_create_file("clk_max_rate", 0444, root, core, &clk_max_rate_fops);
- 	debugfs_create_ulong("clk_accuracy", 0444, root, &core->accuracy);
- 	debugfs_create_u32("clk_phase", 0444, root, &core->phase);
- 	debugfs_create_file("clk_flags", 0444, root, core, &clk_flags_fops);
- 	debugfs_create_u32("clk_prepare_count", 0444, root, &core->prepare_count);
- 	debugfs_create_u32("clk_enable_count", 0444, root, &core->enable_count);
--- 
-2.17.1
-
+On 28.06.2019 00:15, Stephen Boyd wrote:=0A=
+> Quoting Leonard Crestez (2019-05-30 00:13:51)=0A=
+=0A=
+>> Add a wrapper clock encapsulating dram frequency switch support for=0A=
+>> imx8m chips. This allows higher-level DVFS code to manipulate dram=0A=
+>> frequency using standard clock framework APIs.=0A=
+>>=0A=
+>> Linux-side implementation is similar in principle to imx_clk_cpu or a=0A=
+>> composite clock. Only some preparation is done inside the kernel, the=0A=
+>> actual freq switch is performed from TF-A code which runs from an SRAM=
+=0A=
+>> area. Cores other than the one performing the switch are also made to=0A=
+>> spin inside TF-A by sending each an IRQ.=0A=
+>>=0A=
+>> This is an early proof-of-concept which only support low/high mode on=0A=
+>> imx8mm but NXP has secure-world dram freq switching implementations for=
+=0A=
+>> multiple other chips and this approach can be extended.=0A=
+>>=0A=
+>> Many platforms handle this kind of stuff externally but cpufreq is quite=
+=0A=
+>> insistent that actual rates are set by clk code and that new platforms=
+=0A=
+>> use cpufreq-dt.=0A=
+>>=0A=
+>> Let me know if there are objections to handling dram freq via clk.=0A=
+> =0A=
+> Can it be an interconnect driver instead? I don't see how this is a clk=
+=0A=
+> driver. It looks more like a driver that itself manages a collection of=
+=0A=
+> clks, and you've put the coordination of those clks behind the clk_ops=0A=
+> interface. We don't want to have clk_ops calling clk consumer APIs in=0A=
+> general, so the whole approach doesn't seem correct.=0A=
+=0A=
+The imx8m dram clk structure is only slightly more complicated than that =
+=0A=
+for the cpu. It's not clear why mux manipulation should be pushed away =0A=
+from clk and onto consumers. Isn't it desirable for clk_set_rate to =0A=
+"just work"?=0A=
+=0A=
+Implementation uses consumer APIs because the constructor takes struct =0A=
+clk*. It could be modifed to take struct clk_hw*, but probably only with =
+=0A=
+larger changes to clk-imx8m.=0A=
+=0A=
+The interrupt handling should be moved to secure world.=0A=
+=0A=
+> Hopefully this can=0A=
+> work out as some other sort of driver that is used directly from devfreq=
+=0A=
+> or interconnect core instead and then have a different consumer driver=0A=
+> of devfreq or interconnect core that knows how to drive the clk tree.=0A=
+=0A=
+Hiding dram rate setting behind a clk rate makes it much easier to =0A=
+implement devfreq or interconnect, as in this series:=0A=
+=0A=
+https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=3D139367=
+=0A=
+=0A=
+I sent than RFC after you replied to this email, mostly because it's =0A=
+been pending for a while.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
