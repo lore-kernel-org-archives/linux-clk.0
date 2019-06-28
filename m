@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405C5C4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 17:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A77C5B57A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 17:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 206862083B
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 17:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BF11214AF
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 17:59:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="GiHzQpHE"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Hz0aXYf9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfF1R6f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 13:58:35 -0400
-Received: from mail-pg1-f177.google.com ([209.85.215.177]:46432 "EHLO
-        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbfF1R6f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 13:58:35 -0400
-Received: by mail-pg1-f177.google.com with SMTP id v9so2897732pgr.13
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2019 10:58:35 -0700 (PDT)
+        id S1726879AbfF1R7u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 13:59:50 -0400
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:45053 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726416AbfF1R7u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 13:59:50 -0400
+Received: by mail-pf1-f182.google.com with SMTP id t16so3354697pfe.11
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2019 10:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=Vl3V/b9d/YR3BoBzMucBuY8z9bflVwMcEzHAzE43M8M=;
-        b=GiHzQpHEBzX787s/X1QIF6dApBZZr+1I94MMXG75kyPqsnypZvvVmyPXmqQ4DDWDP1
-         BzcS004uag+6zBmiVow3iazQZwCovOnO+ZHlIt9I21QnI0F6Nflvj4dUWBUbhq7AbO/m
-         SynTdJ4H2/6gv6sVDQ/Y6+Xb3rJWkBq67DXPBHgz+cu1AXl9k8kEn7My8wk8Hf4WKSc2
-         DZFzfS/MxxvfSALWkxuMLiVFMJYmOEgRUhfPMprrAJXGAmg42GEl4SGnDGCvrnJcyTse
-         bBCzUsjp+9FQDvCouNixum4aYfj7dm7fTO1MgaM/A1Gdfa8Xw4iAsFFkjztnwVtxortw
-         zQDQ==
+        bh=Of1JaN7sHuZfD0NstaLTd2MzqkoQNU+dB9/U+AM5Bdc=;
+        b=Hz0aXYf9FNAepuCVFV167R3gAlxBZ41oQ5OOcua47PXfGIdizOWCfV7tUZJE3QgyE/
+         rQLoSx180BgnxwlNgVTpQ4Ig+1Xn1VJoIeTgLsNDp2QQxn6WDq1x+YB4YdmWR1WRSEYI
+         fWBIw7gApvr5ABgJvq1W+dx/05+xPrT5pRWc28UcKWjgAkPgDOoeyClRAvTuoAUW72Cf
+         3dQPhidbgh7UAQ/wW9+OU+yw0I4jRXfps1zfC6+2QY+vRwyd5O8DiX8senYHiYvw9jue
+         5l1RCL0un8DiyEfOgErem33EsWOke5gka4sQlT7+fIWwWP3Q/BbUKGSoQb7/N7qJTbea
+         brMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=Vl3V/b9d/YR3BoBzMucBuY8z9bflVwMcEzHAzE43M8M=;
-        b=bAS+z/FFbXcntk5jUWjd13PRLREIG47J1uvd7ewaHJfVMk/TUS0BohquBz1OAd7Tlt
-         Zvny3uV8nBidPcdJBDiPaWG6VVAtjSXH4zcPMQ1/09VgvZN+iYT8DN7rghv+3OSLPT2/
-         uWvSWzOdtuly6y0Ym5MSeUTt9IWeC3CVTOCr4GUtp2ec/WAm8/AHE0IQ1ug/s5ptyCPV
-         4CHQ0tFYngN7jV9MFbO/wVwKBy+P3AVluFnl8Cswi5axN6g+QzLpJS9PJIdHpE9HmXX5
-         MOwVJnc3Aj/duePeQwwKsZil9E0fYwj1tovt1kg0SlmdHwFZRF21OV4Hbyq29VMe6Mta
-         gOKA==
-X-Gm-Message-State: APjAAAWTO/8KKwQQryT4GED5ExgkuU6ZCKjiPT1EcS9//F9H/6i+qLVZ
-        fiDG/S8/cBZGu1ALiO3OV+POAQ==
-X-Google-Smtp-Source: APXvYqz3zRSNG8ksCoG/kgVrFj0M6c77+R2i6vSlgO/BJ1CePZMBP9OvFZEvXFjF5JaAwCqI6GsMBQ==
-X-Received: by 2002:a63:e057:: with SMTP id n23mr10491079pgj.228.1561744714489;
-        Fri, 28 Jun 2019 10:58:34 -0700 (PDT)
+        bh=Of1JaN7sHuZfD0NstaLTd2MzqkoQNU+dB9/U+AM5Bdc=;
+        b=J9/Web+u3gaZJiEC0gwar1Dt/ncF20vwPTmzS1UeoLwVuXhG+WB1V4JfpZkXloDX8F
+         uHxcEIPIviN4u7TFSov6XVOre8h1Qh9w6CKXojgxBvHSRx6LQmhYI/W6DUhU5J4vX1S1
+         nojQG1aD/LQW7DVEQc9nZfe44lNtvYIytjcRLXZHbiZH27MwwDQ6noBiwKyD3tUz8ppG
+         XGuV66xyAmazj8HV0OOPKs0PcNum+n4rfTvXcgJBLzS+g4lbScktJEh6/3Bl5SubLunh
+         nC/eh6tdvTGf5M/ByOT0zKtc1dc2XLtdNxvUXVFILjDXTEE3cVXHf1V9rjI2LE+AYl9y
+         6c3g==
+X-Gm-Message-State: APjAAAW5T4n1/ZbsaZY5F+nGb9MaczYFvK6pxfXU2NgUf/94PNnP6ACO
+        XyppAQRPU9GvEyuP8amIkpb1fA==
+X-Google-Smtp-Source: APXvYqzVm3ctFoObBMm0Kx/+AEZc0kKotlZRvKqXLokKmAqQl+Yz8kBBvBT8Pkq4aB9NKrit17xIEw==
+X-Received: by 2002:a63:3d8d:: with SMTP id k135mr10798175pga.23.1561744789355;
+        Fri, 28 Jun 2019 10:59:49 -0700 (PDT)
 Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id 3sm2963791pfp.114.2019.06.28.10.58.33
+        by smtp.googlemail.com with ESMTPSA id s66sm2933246pgs.39.2019.06.28.10.59.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Jun 2019 10:58:33 -0700 (PDT)
+        Fri, 28 Jun 2019 10:59:48 -0700 (PDT)
 From:   Kevin Hilman <khilman@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -60,11 +60,11 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         linux-gpio@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [RFC/RFT v2 06/14] soc: amlogic: meson-clk-measure: add G12B second cluster cpu clk
-In-Reply-To: <20190626090632.7540-7-narmstrong@baylibre.com>
-References: <20190626090632.7540-1-narmstrong@baylibre.com> <20190626090632.7540-7-narmstrong@baylibre.com>
-Date:   Fri, 28 Jun 2019 10:58:33 -0700
-Message-ID: <7hpnmxr3qu.fsf@baylibre.com>
+Subject: Re: [RFC/RFT v2 01/14] pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
+In-Reply-To: <20190626090632.7540-2-narmstrong@baylibre.com>
+References: <20190626090632.7540-1-narmstrong@baylibre.com> <20190626090632.7540-2-narmstrong@baylibre.com>
+Date:   Fri, 28 Jun 2019 10:59:48 -0700
+Message-ID: <7hmui1r3or.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -74,9 +74,7 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> Add the G12B second CPU cluster CPU and SYS_PLL measure IDs.
->
-> These IDs returns 0Hz on G12A.
+> Add the missing pinmux for the pwm_a function on the GPIOE_2 pin.
 >
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
