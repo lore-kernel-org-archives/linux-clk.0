@@ -2,145 +2,119 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6349C4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD9AC4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 12:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911AA2086D
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 11:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C81202086D
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 12:05:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="unBDizVA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfF1L6j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 07:58:39 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41799 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfF1L6j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 07:58:39 -0400
-Received: by mail-ot1-f66.google.com with SMTP id o101so5376280ota.8
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2019 04:58:38 -0700 (PDT)
+        id S1726689AbfF1MFw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 08:05:52 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33473 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbfF1MFv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 08:05:51 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y17so3835586lfe.0;
+        Fri, 28 Jun 2019 05:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HA/mPpQJOKYmVDyeCe0ETFHFBZHAQQF5tQSIphSoyfk=;
+        b=unBDizVA3kYuY0YF8aLYmRhRZrrqklXZDHk1SvjbwIEQuEmA87L1/au6QBeUR0gnNm
+         gKZfpFreasGnUWIuaFOpP8M6475t1ynfTv7VoOwWF7LjU84m5F2xONdilbuR256ErgcK
+         udQnRpeNuHB8WN8isFNQshf9NwXiK+iaLIhqQY8Em4os6fkb+nLL3lY98B+HkYmQrvlX
+         8vVi3ZYS9pKxz5bsYFgeyCKveeNnu8dp2NrDRpt3quWe5YnVz7UxrSlH4N9vD8JcKNj+
+         9qdFki+pvKdT6N7wjczDD04WMJZiHUAmtbEgOqExdqzcMUj8k136X6GGbsUMMCc6Hkxa
+         kutQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wjwJQWvjkPZB5+dI0ZXVDAKQLoC3P8jLetBVFWbvwO8=;
-        b=GubQv+VXfbJZtDIQEXBXseOMjR1dOuQtx1KAz2DqdHyM4WUBpO0H9tvEi2iwb8QF8K
-         7Yqmjlmt06UehRinQn5iNP/QKLYqh/dlB+dHJR0+s2PnaCQjQ7Bngu/P4j0t75xToep6
-         XWuf0m3sSdLXcbMnTnJBaGG0QRUT72+pLTcMSNLogEqMZLoaVb7yuNIyehMLp5etG0oD
-         u1p/pHx6qnEdT7ZWjnQgpSimWZfKNBAZxWlcZx83B4XUlVms8kHWEqBlqOlGjJ9+pcVv
-         mHvDD/2iCF42TWSzOXcYxDEJtjuPxtBKbxvbKTEQFLaXy31YQy6rTT0RwU2gzklIZFLt
-         PgJA==
-X-Gm-Message-State: APjAAAV79w/Y/cFET2sjBUUdn/fCzvIjTkrWSRKkN5exnb1GVVwoXq9v
-        kVDm/1Ex9/NGIe+Me1QaPOj307t0zN9bgNfTVVU=
-X-Google-Smtp-Source: APXvYqzp6jHaeNCs5Hjcl/XOjy/kK6sCjD6SeRPImxs4gU9dfYyFNwTdcdO6JwHVVamhG7ocnB+YrZfiAF79btrJ72U=
-X-Received: by 2002:a9d:704f:: with SMTP id x15mr7768914otj.297.1561723118484;
- Fri, 28 Jun 2019 04:58:38 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HA/mPpQJOKYmVDyeCe0ETFHFBZHAQQF5tQSIphSoyfk=;
+        b=tR4d2xI/K1zh2Oi5GqI4mB0s4nKAbwoJDwfr9GhMwKfTXoVw+TNulbzHJqDfxyCBdO
+         x1DpyiLr+VS6r+iIdmtm3+BA+RSh6jQYuRnaRmek1amB8y8sTl3/nwxAuxzt57nxHyxG
+         11HVhvFbi7hs+uakTQtD1yaW3eKDWa4LbiKE9zN4+2Rn4pX3XxlvpNjUvUJ9VB5Vp9WA
+         v6cd6Ovxqh08xsuxaRoe8vuDIML4/yT0ln8R44NQzD/IGzX79A8TacwYfj102s0rUPit
+         MYpcvqYDF0Qo8OJTLgeKE/izOr+xl6u3zmmujaJwEXjHJ/NG9GGdN5zIPN4KcBlXAFkY
+         YYTg==
+X-Gm-Message-State: APjAAAWVHFv3jvk78os1JrOc2N24zyRqveVsJP8lt1Te9rj714c7TBuC
+        WnEMPkY6uVb1U4r6FL3oTAAUs8ED
+X-Google-Smtp-Source: APXvYqxYiX9E8tGPpW2NlAcJ5oa6Bfp5m9cKFDQysAJTMIDvJhIFywx9lJeV13Ji3iPVX/JLRCw5QQ==
+X-Received: by 2002:ac2:5446:: with SMTP id d6mr4727924lfn.138.1561723548837;
+        Fri, 28 Jun 2019 05:05:48 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id a17sm561986lfk.0.2019.06.28.05.05.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 05:05:48 -0700 (PDT)
+Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+ <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+ <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
+Message-ID: <ca8199af-43db-c878-a93f-66c275acf864@gmail.com>
+Date:   Fri, 28 Jun 2019 15:05:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <0c12208398cadb7450b6b7745e99c55770c0ccf8.1561709827.git.leonard.crestez@nxp.com>
-In-Reply-To: <0c12208398cadb7450b6b7745e99c55770c0ccf8.1561709827.git.leonard.crestez@nxp.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 28 Jun 2019 13:58:27 +0200
-Message-ID: <CAMuHMdWVoYPZFZPmfTWMU3pZc633uqkn70MyApcPhgUSgmCW-A@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Add clk_min/max_rate entries in debugfs
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Leonard,
+28.06.2019 14:56, Dmitry Osipenko пишет:
+> 28.06.2019 5:12, Sowjanya Komatineni пишет:
+>> This patch adds support for Tegra pinctrl driver suspend and resume.
+>>
+>> During suspend, context of all pinctrl registers are stored and
+>> on resume they are all restored to have all the pinmux and pad
+>> configuration for normal operation.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
 
-On Fri, Jun 28, 2019 at 10:19 AM Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
-> Add two files to expose min/max clk rates as determined by
-> clk_core_get_boundaries, taking all consumer requests into account.
->
-> This information does not appear to be otherwise exposed to userspace.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+>>  int tegra_pinctrl_probe(struct platform_device *pdev,
+>>  			const struct tegra_pinctrl_soc_data *soc_data);
+>>  #endif
+>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>> index 0b56ad5c9c1c..edd3f4606cdb 100644
+>> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>> @@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+>>  	.driver = {
+>>  		.name = "tegra210-pinctrl",
+>>  		.of_match_table = tegra210_pinctrl_of_match,
+>> +		.pm = &tegra_pinctrl_pm,
+>>  	},
+>>  	.probe = tegra210_pinctrl_probe,
+>>  };
+>>
+> 
+> Could you please address my comments in the next revision if there will be one?
+> 
 
-> Changes since v1:
-> * Call clk_prepare_lock/clk_prepare_unlock (Geert)
-> * Also include in clk_dump, but only with non-default values
-> Link to v1: https://patchwork.kernel.org/patch/11019873/
-
-Thanks for the update!
-
-> Didn't add to clk_summary because min/max rates are rarely used and
-> clk_summary already has too many columns.
-
-Agreed.
-
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -591,10 +591,12 @@ static void clk_core_get_boundaries(struct clk_core *core,
->                                     unsigned long *min_rate,
->                                     unsigned long *max_rate)
->  {
->         struct clk *clk_user;
->
-> +       lockdep_assert_held(&prepare_lock);
-> +
-
-I guess the clock maintainers want to see the addition of this check
-spun off into a separate patch....
-
-> @@ -3062,10 +3071,38 @@ static int clk_duty_cycle_show(struct seq_file *s, void *data)
->
->         return 0;
->  }
->  DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
->
-> +static int clk_min_rate_show(struct seq_file *s, void *data)
-> +{
-> +       struct clk_core *core = s->private;
-> +       unsigned long min_rate, max_rate;
-> +
-> +       clk_prepare_lock();
-> +       clk_core_get_boundaries(core, &min_rate, &max_rate);
-> +       seq_printf(s, "%lu\n", min_rate);
-> +       clk_prepare_unlock();
-
-You can move the release of the lock one line up.
-
-> +
-> +       return 0;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(clk_min_rate);
-> +
-> +static int clk_max_rate_show(struct seq_file *s, void *data)
-> +{
-> +       struct clk_core *core = s->private;
-> +       unsigned long min_rate, max_rate;
-> +
-> +       clk_prepare_lock();
-> +       clk_core_get_boundaries(core, &min_rate, &max_rate);
-> +       seq_printf(s, "%lu\n", max_rate);
-> +       clk_prepare_unlock();
-
-You can move the release of the lock one line up.
-
-> +
-> +       return 0;
-> +}
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Also, what about adding ".pm' for other Tegras? I'm sure Jon could test them for you.
