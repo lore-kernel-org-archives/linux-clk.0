@@ -2,119 +2,81 @@ Return-Path: <SRS0=HIww=U3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD9AC4321A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 12:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A26C4321A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 17:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81202086D
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 12:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85D0D2083B
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jun 2019 17:57:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="unBDizVA"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QidYQZ1e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfF1MFw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jun 2019 08:05:52 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33473 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfF1MFv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 08:05:51 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y17so3835586lfe.0;
-        Fri, 28 Jun 2019 05:05:49 -0700 (PDT)
+        id S1726885AbfF1R56 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jun 2019 13:57:58 -0400
+Received: from mail-pl1-f171.google.com ([209.85.214.171]:38102 "EHLO
+        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbfF1R56 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jun 2019 13:57:58 -0400
+Received: by mail-pl1-f171.google.com with SMTP id 9so2874382ple.5
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2019 10:57:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HA/mPpQJOKYmVDyeCe0ETFHFBZHAQQF5tQSIphSoyfk=;
-        b=unBDizVA3kYuY0YF8aLYmRhRZrrqklXZDHk1SvjbwIEQuEmA87L1/au6QBeUR0gnNm
-         gKZfpFreasGnUWIuaFOpP8M6475t1ynfTv7VoOwWF7LjU84m5F2xONdilbuR256ErgcK
-         udQnRpeNuHB8WN8isFNQshf9NwXiK+iaLIhqQY8Em4os6fkb+nLL3lY98B+HkYmQrvlX
-         8vVi3ZYS9pKxz5bsYFgeyCKveeNnu8dp2NrDRpt3quWe5YnVz7UxrSlH4N9vD8JcKNj+
-         9qdFki+pvKdT6N7wjczDD04WMJZiHUAmtbEgOqExdqzcMUj8k136X6GGbsUMMCc6Hkxa
-         kutQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=JXDx5Of53xKpwKzie292LEzpOCIt7HdxAp/TZojOC98=;
+        b=QidYQZ1e5tVfpSNlbzJAwZ1PSEo4dbT1h4HX6qlUhaYy/0WDP2DbYNFPTucwsPtXtJ
+         P5Da3q4BSmLlg7YBmA0owHM1bUPrEb7BS8gzdHoNIWge3t/+SscDfMMBa3vx9swwjY5n
+         LFvDrn5pgiwG3LzawIGsvptYLxKuORQdAVK4jqhJjDPscsuEl0XBsIcIhtmOUiqLnY31
+         rl5J0Is/8LGOWfkwroXrx5lrTEZnf+8x1H9rCHGrYrmt0cwF3/5ZHvKqdnUE5x9l17cs
+         65Qi5bpDUOP3xQ2tieEt795doUy4MrobU1fhvRK9NMQeo5arbU4RPh5V9yXTVNhCQ2rL
+         ovHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HA/mPpQJOKYmVDyeCe0ETFHFBZHAQQF5tQSIphSoyfk=;
-        b=tR4d2xI/K1zh2Oi5GqI4mB0s4nKAbwoJDwfr9GhMwKfTXoVw+TNulbzHJqDfxyCBdO
-         x1DpyiLr+VS6r+iIdmtm3+BA+RSh6jQYuRnaRmek1amB8y8sTl3/nwxAuxzt57nxHyxG
-         11HVhvFbi7hs+uakTQtD1yaW3eKDWa4LbiKE9zN4+2Rn4pX3XxlvpNjUvUJ9VB5Vp9WA
-         v6cd6Ovxqh08xsuxaRoe8vuDIML4/yT0ln8R44NQzD/IGzX79A8TacwYfj102s0rUPit
-         MYpcvqYDF0Qo8OJTLgeKE/izOr+xl6u3zmmujaJwEXjHJ/NG9GGdN5zIPN4KcBlXAFkY
-         YYTg==
-X-Gm-Message-State: APjAAAWVHFv3jvk78os1JrOc2N24zyRqveVsJP8lt1Te9rj714c7TBuC
-        WnEMPkY6uVb1U4r6FL3oTAAUs8ED
-X-Google-Smtp-Source: APXvYqxYiX9E8tGPpW2NlAcJ5oa6Bfp5m9cKFDQysAJTMIDvJhIFywx9lJeV13Ji3iPVX/JLRCw5QQ==
-X-Received: by 2002:ac2:5446:: with SMTP id d6mr4727924lfn.138.1561723548837;
-        Fri, 28 Jun 2019 05:05:48 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id a17sm561986lfk.0.2019.06.28.05.05.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Jun 2019 05:05:48 -0700 (PDT)
-Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
- <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
-Message-ID: <ca8199af-43db-c878-a93f-66c275acf864@gmail.com>
-Date:   Fri, 28 Jun 2019 15:05:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=JXDx5Of53xKpwKzie292LEzpOCIt7HdxAp/TZojOC98=;
+        b=NTmU67Td1xpFowmHyxnLJfJ1w9eNvi0p6yS0/LaHt9pGB77Y/A3BAP10YOxErdljki
+         xylUvhT+LizYK1EUNpWk45Lqvusw69HOAF10nW0/kVq54be7IaodZk5Z20Ak4xcHFIG+
+         4G5AAoUHxCUXpzyQeIhpk21TEena/qbHPc5T3KLykiH0D2WqVbM60y2g6+FdkU6tXEiF
+         NrMLPHeuNGb35Gpz9ZJEehZH7m26KVL6z/MXYRnYPWZjphXionVD37boN7RL43Q8xf8F
+         jsF3qaUABh0LGjLRkbzV+DkEpUhlP2TUBDJQCpf4VHhxxxa+FQvZtTRumgSXC2Wf05Xd
+         hn2A==
+X-Gm-Message-State: APjAAAULWh7y0NTk/Ywdp5p5z1N3X5rvPysHbFGxUmPvbqeq8t1zv5Cl
+        ol5tnza0dTcZAPttWy6PvgQF/g==
+X-Google-Smtp-Source: APXvYqxBvlNYSLn6PRoeEXRuFeavrw3x9z3+yywP5RFfiMDYAfvzlGijWI2kL3fNFlbko9TEHruOVA==
+X-Received: by 2002:a17:902:3341:: with SMTP id a59mr12892929plc.186.1561744677360;
+        Fri, 28 Jun 2019 10:57:57 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id c26sm2814912pfr.172.2019.06.28.10.57.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Jun 2019 10:57:56 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
+        linux-gpio@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [RFC/RFT v2 05/14] soc: amlogic: meson-clk-measure: protect measure with a mutex
+In-Reply-To: <20190626090632.7540-6-narmstrong@baylibre.com>
+References: <20190626090632.7540-1-narmstrong@baylibre.com> <20190626090632.7540-6-narmstrong@baylibre.com>
+Date:   Fri, 28 Jun 2019 10:57:56 -0700
+Message-ID: <7hsgrtr3rv.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-28.06.2019 14:56, Dmitry Osipenko пишет:
-> 28.06.2019 5:12, Sowjanya Komatineni пишет:
->> This patch adds support for Tegra pinctrl driver suspend and resume.
->>
->> During suspend, context of all pinctrl registers are stored and
->> on resume they are all restored to have all the pinmux and pad
->> configuration for normal operation.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
->>  int tegra_pinctrl_probe(struct platform_device *pdev,
->>  			const struct tegra_pinctrl_soc_data *soc_data);
->>  #endif
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> index 0b56ad5c9c1c..edd3f4606cdb 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> @@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
->>  	.driver = {
->>  		.name = "tegra210-pinctrl",
->>  		.of_match_table = tegra210_pinctrl_of_match,
->> +		.pm = &tegra_pinctrl_pm,
->>  	},
->>  	.probe = tegra210_pinctrl_probe,
->>  };
->>
-> 
-> Could you please address my comments in the next revision if there will be one?
-> 
+> In order to protect clock measuring when multiple process asks for
+> a mesure, protect the main measure function with mutexes.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Also, what about adding ".pm' for other Tegras? I'm sure Jon could test them for you.
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
