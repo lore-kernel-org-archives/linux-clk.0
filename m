@@ -2,130 +2,132 @@ Return-Path: <SRS0=v4us=U4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F5AC4321A
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Jun 2019 12:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BAAC4321A
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Jun 2019 12:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EFD4214AF
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Jun 2019 12:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561811493;
-	bh=UutNK23f1qA5A/3q2Xw5HEUUXGymUirMrS/TYddBjqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EoVkwG3G9A5UG5foTGg/0DcdnOPW/JO5tbZE8yXyaIormI0lxtb3YDx5Qi4R3E8Z2
-	 zvLpKwE1kFNGEHL8qEvs3sSTOLEv6KeZcJaU5xfwbu3fc9OPl77lPDUnPDTEDcaaio
-	 SeFO5um+8fgGSGcOmpngbnTFZXrf18RixKMux2Pk=
+	by mail.kernel.org (Postfix) with ESMTP id DFEE5215EA
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Jun 2019 12:38:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoijBk+r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfF2Mbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 29 Jun 2019 08:31:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726906AbfF2Mbc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 29 Jun 2019 08:31:32 -0400
-Received: from localhost (unknown [106.51.109.168])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65733214AF;
-        Sat, 29 Jun 2019 12:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561811491;
-        bh=UutNK23f1qA5A/3q2Xw5HEUUXGymUirMrS/TYddBjqI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rpy6GKPzoOyVy5Zdz5BwpBiPHvlQMKaaUO7LJMYYbBFQ+Fl1uc416wy32r+VQQDAf
-         uJI4a1c7krbC1wyXsoe6yGljlhXxAGTBaEaUvln0lI0aWO3oo1xcxpgowgnveGrgU2
-         fZwg42TX1snYNdm+oCfUToUZoenws7rw9F7B7dmk=
-Date:   Sat, 29 Jun 2019 17:58:22 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 2/3] clk: qcom: clk-alpha-pll: Add support for Trion
- PLLs
-Message-ID: <20190629122822.GE2911@vkoul-mobl>
-References: <20190625063140.17106-1-vkoul@kernel.org>
- <20190625063140.17106-3-vkoul@kernel.org>
- <20190627215027.757982063F@mail.kernel.org>
+        id S1727023AbfF2Mi0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 29 Jun 2019 08:38:26 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41039 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbfF2Mi0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 Jun 2019 08:38:26 -0400
+Received: by mail-lf1-f68.google.com with SMTP id 136so5722119lfa.8;
+        Sat, 29 Jun 2019 05:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PxB3Diftculh9VRXp9qOsj2Wfuu0tHg69Smbkbmpvq8=;
+        b=MoijBk+rB6pc0O8vADSTYaf5vdNDqq1PKwA907cqdu6ACgVCscLMcBULehxqNnSGb+
+         1+tOLBFscFsF7Oz/lekwrsnKfQK/SfWqQ/of3/2+KSP/uNXsujm9zfQgwpkC0sP9Epaj
+         otgk8C9ffHOxbgKxzzrDsE+xXG1G/wThi0m1AZjWGZh+W6eYWabiUXuzfWJbNawI0E3p
+         D92y6kh5himm1HQdCFpoB+2ddFwJ/viMZWtHlZqItX20ygAeTbjD6nxJpufnhUzX2nxw
+         gLg6/4vcbI25DXgVIkLkiKpFW+2q4OwLAGQ3PcQ1tTyBeLNKw7K6iyceui/+aLIpkkDU
+         Q8sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PxB3Diftculh9VRXp9qOsj2Wfuu0tHg69Smbkbmpvq8=;
+        b=DkGSVEGHCKxdQYEmlHXXUtXRC05yl6RIm8KPltNyMpyrm3vgXbAtOfprugo8qqNrzS
+         4ynLVa4IbZkm+G/toGTnmv22cpC6mtrQOWOFcRdf+APHLjSYU0RPcBZtxg+UpnFhmw3m
+         UYDvl/VYOoMVXCU9DZmfBXCGCDJzm1zifg9LezLmp/qOY6996GTlWxjhb6S5nluywbDH
+         TUf6h0G1+CO6vHQH8kc9N2YeZoUDbNYL5TktJq+DgoEygXWue4hTCqXnsrpOGseMzDkg
+         3Gw056xdJkK1fxcMInoP7AiXoXmG+pz4Wls2PqvFFgS7SBjepQuYpxs8SayZnmgoWeJ6
+         SW0g==
+X-Gm-Message-State: APjAAAWBUTDQ0SgAxtkQb4QCuWy5TFt3SQFL0foziN5ma4hb2rsORAjD
+        LM1A+CLMmXPB/aJcMd4LjLZZH4NO
+X-Google-Smtp-Source: APXvYqz78bHqqcP8bJJmKNHs8RZazuz7Fr9E/6nX+Zc1vmRRrK0GetZI1zCxC7fhwxsNCvqFZgQlLQ==
+X-Received: by 2002:ac2:51ab:: with SMTP id f11mr2968217lfk.55.1561811903067;
+        Sat, 29 Jun 2019 05:38:23 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id o74sm1294461lff.46.2019.06.29.05.38.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Jun 2019 05:38:22 -0700 (PDT)
+Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+ <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+ <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
+ <ca8199af-43db-c878-a93f-66c275acf864@gmail.com>
+ <99403cb1-aaef-4dd4-68a0-67864ca7ce6c@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fbfb2167-d0b3-b66a-d1ba-378c877817ed@gmail.com>
+Date:   Sat, 29 Jun 2019 15:38:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627215027.757982063F@mail.kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <99403cb1-aaef-4dd4-68a0-67864ca7ce6c@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27-06-19, 14:50, Stephen Boyd wrote:
-> Quoting Vinod Koul (2019-06-24 23:31:39)
-> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> > index 2c6773188761..30210f5c6726 100644
-> > --- a/drivers/clk/qcom/clk-alpha-pll.c
-> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> > @@ -32,6 +32,7 @@
-> >  # define PLL_LOCK_DET          BIT(31)
-> >  
-> >  #define PLL_L_VAL(p)           ((p)->offset + (p)->regs[PLL_OFF_L_VAL])
-> > +#define PLL_CAL_L_VAL(p)       ((p)->offset + (p)->regs[PLL_OFF_CAL_L_VAL])
-> >  #define PLL_ALPHA_VAL(p)       ((p)->offset + (p)->regs[PLL_OFF_ALPHA_VAL])
-> >  #define PLL_ALPHA_VAL_U(p)     ((p)->offset + (p)->regs[PLL_OFF_ALPHA_VAL_U])
-> >  
-> > @@ -44,14 +45,17 @@
-> >  # define PLL_VCO_MASK          0x3
-> >  
-> >  #define PLL_USER_CTL_U(p)      ((p)->offset + (p)->regs[PLL_OFF_USER_CTL_U])
-> > +#define PLL_USER_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_USER_CTL_U1])
-> >  
-> >  #define PLL_CONFIG_CTL(p)      ((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL])
-> >  #define PLL_CONFIG_CTL_U(p)    ((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U])
-> > +#define PLL_CONFIG_CTL_U1(p)   ((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U11])
+29.06.2019 2:00, Sowjanya Komatineni пишет:
 > 
-> This looks like a typo, U11 vs U1. So I don't think this has been
-> compile tested....
-
-Not sure how this has happened, I have this in my test br too. Will fix
-this
-
-> >  #define PLL_TEST_CTL(p)                ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
-> >  #define PLL_TEST_CTL_U(p)      ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
-> >  #define PLL_STATUS(p)          ((p)->offset + (p)->regs[PLL_OFF_STATUS])
-> >  #define PLL_OPMODE(p)          ((p)->offset + (p)->regs[PLL_OFF_OPMODE])
-> >  #define PLL_FRAC(p)            ((p)->offset + (p)->regs[PLL_OFF_FRAC])
-> > +#define PLL_CAL_VAL(p)         ((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
-> >  
-> >  const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
-> >         [CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
-> >  const struct clk_ops clk_alpha_pll_ops = {
-> >         .enable = clk_alpha_pll_enable,
-> >         .disable = clk_alpha_pll_disable,
-> > @@ -1053,6 +1210,77 @@ static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
-> [...]
-> > +
-> > +static int
-> > +clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +                              unsigned long parent_rate)
-> > +{
-> > +       struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-> > +       struct regmap *regmap = pll->clkr.regmap;
-> > +       int i, val = 0, div, ret;
-> > +
-> > +       /*
-> > +        * If the PLL is in FSM mode, then treat the set_rate callback
-> > +        * as a no-operation.
+> On 6/28/19 5:05 AM, Dmitry Osipenko wrote:
+>> 28.06.2019 14:56, Dmitry Osipenko пишет:
+>>> 28.06.2019 5:12, Sowjanya Komatineni пишет:
+>>>> This patch adds support for Tegra pinctrl driver suspend and resume.
+>>>>
+>>>> During suspend, context of all pinctrl registers are stored and
+>>>> on resume they are all restored to have all the pinmux and pad
+>>>> configuration for normal operation.
+>>>>
+>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   int tegra_pinctrl_probe(struct platform_device *pdev,
+>>>>               const struct tegra_pinctrl_soc_data *soc_data);
+>>>>   #endif
+>>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>>>> b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>>>> index 0b56ad5c9c1c..edd3f4606cdb 100644
+>>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+>>>> @@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+>>>>       .driver = {
+>>>>           .name = "tegra210-pinctrl",
+>>>>           .of_match_table = tegra210_pinctrl_of_match,
+>>>> +        .pm = &tegra_pinctrl_pm,
+>>>>       },
+>>>>       .probe = tegra210_pinctrl_probe,
+>>>>   };
+>>>>
+>>> Could you please address my comments in the next revision if there will be one?
+>>>
+>> Also, what about adding ".pm' for other Tegras? I'm sure Jon could test them for you.
 > 
-> And this is OK? Shouldn't we fail because we can't change to the rate
-> that's desired?
+> This series is for Tegra210 SC7 entry/exit along with clocks and pinctrl suspend
+> resume needed for Tegra210 basic sc7 entry and exit.
+> 
+> This includes pinctrl, pmc changes, clock-tegra210 driver changes all w.r.t Tegra210
+> platforms specific.
+> 
+> Suspend/resume support for other Tegras will be in separate patch series.
 
-Agreed, we should error out.
-Also looking at other PLLs I see we check for FSM in clk enabled
-and I guess we should do it there for this as well, will move
-
--- 
-~Vinod
+Okay, fair enough.
