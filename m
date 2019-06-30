@@ -5,71 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F89C46478
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 15:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B2DC46479
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 21:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A0B204FD
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 15:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1352184E
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 21:04:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffrROOTr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDI+oZls"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfF3PDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Jun 2019 11:03:16 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33918 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbfF3PDQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Jun 2019 11:03:16 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m29so11928229qtu.1;
-        Sun, 30 Jun 2019 08:03:15 -0700 (PDT)
+        id S1727199AbfF3VEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Jun 2019 17:04:55 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45851 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbfF3VEz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Jun 2019 17:04:55 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m23so10894887lje.12;
+        Sun, 30 Jun 2019 14:04:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RWe1N3LG/0qF/4OtUPg5KudfEZRgRNv8F1jllSBzO58=;
-        b=ffrROOTrYan4x30i16kRzeRZh0cNY1tR6zoQHYUxePgn0RD9arBQo0wHXqQS24AEO6
-         z/yAVqI8q8G78Fg6d+1EUBN8UmExk2L1ugT6WNCVJALHVq01478i2+l1I2OsTqluOTvA
-         hnUGXEUyh87ggaQ3r/9ItW5b4I1Kwg9/BxMmb+QqZfOz9+FOqBAvZwzWf6ScwuaMYKAo
-         FQHpWCWZ8a8g/vHHXP38B6zewBop6StVjcS7RpIqxbEZlvtQHBQp0LLU8yWS7KWrdxue
-         /Be2CIgOEwZ7ZYds7RkxeMFKCKVGQlqgebZ+v8Fs5+o6G3Ci8sa/+d+uWVzXQkc8J1nt
-         D3Ww==
+        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
+        b=mDI+oZlsTjMZ011aaWfEOzGbNWiemzxQO7S1znKAjaG9I4rRDjx5EWabNeNZQ66jyC
+         row9h2FgywRmlwPif8BkAuj52pWOQ2xZqHeulXTwLSjxkzpwd93F92IHymOoVOKgZCxx
+         zU0DfjYHCkvy7Zn+iVoGseJDq3KZaLBlgXIuY/klh4dqhrOmwHs/OG2fPbISrt0lEUuW
+         Eg1OJxOEvOeTzGBwO+gDr74Zf1j9c0QlFormhMF8mxDFborDgdOzrKFx1NDPiox+pK1G
+         nF8dWqjO/jYtLPcZfM59nYrr08Kgs5bsTcBb78nx+9kZXvKXImhAZhGjaIwfPBhVsP7i
+         HfTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RWe1N3LG/0qF/4OtUPg5KudfEZRgRNv8F1jllSBzO58=;
-        b=C9fIaLsLPzbfWfK5B6MQY1WGvN2/N+OJcz/M5CGlikRXWXU3xHP1N/g2LDX1xdkj9O
-         7gcYBZiaGTAwK/wcIeQ6DGuV65EYCOUzG5mWYnpkr7yyxIM1o2GUcMM8uHUFyWodyw6I
-         E645DS+u/R5onaCi7n7vlEBfW6nJIZE6Dq3boIwr1+HzvtCCGvvJNCfX5A0+UDx5/9DZ
-         WwtBFnXk84rpjTtWaQdcQF8CsgobiGC6vEJzSMCdkpVlDt3pMCUmARhu1Fj8iAPbUR43
-         kU2otdPRs8iKETzxFdOOghRY74qN6iiW5PB9xgkX/XDY+Ju9zr+7tv28wFsMAKUf/DVn
-         GZlg==
-X-Gm-Message-State: APjAAAVLxdlcDVA47XlUiTXgg43NzN4ZuiQ/wtKXkzmnr2Kp3ftP7O3B
-        TZoEsaJqfiFSFFc47fd54L8=
-X-Google-Smtp-Source: APXvYqw+jlFz4lc9QWDni/7uD8aWjy+oIsfuvaIWeBwdqBoQFL00TSoQqCRML6G+VV/wap1Zdd6izw==
-X-Received: by 2002:ac8:2b51:: with SMTP id 17mr16313957qtv.206.1561906994849;
-        Sun, 30 Jun 2019 08:03:14 -0700 (PDT)
-Received: from localhost ([2601:184:4780:7861:5010:5849:d76d:b714])
-        by smtp.gmail.com with ESMTPSA id l40sm4242251qtc.51.2019.06.30.08.03.14
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 30 Jun 2019 08:03:14 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
-Cc:     freedreno@lists.freedesktop.org, aarch64-laptops@lists.linaro.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rob Clark <robdclark@chromium.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] drm/bridge: ti-sn65dsi86: support booloader enabled display
-Date:   Sun, 30 Jun 2019 08:01:43 -0700
-Message-Id: <20190630150230.7878-6-robdclark@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190630150230.7878-1-robdclark@gmail.com>
-References: <20190630150230.7878-1-robdclark@gmail.com>
+        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
+        b=uDiQKGrxb9eW5fr7ePOQz6sD2zf1LgZ3dz+vmF7qjTuJKSTUlJBXUpd1WqWJrpw30Y
+         nv2MZlBgIQFc4edb1girgABN3phn+xTktrZgXGLb/l42SdNLxj7oZ2PogAI/vsq2BlwR
+         RK3LyvIntmch4EKbgbZ5A7ozIRNyuV5hdLeXWbX/LWhQt1+e94aWSE5KbHNEatQJgx3f
+         s/uIQBr/ssyD4bYZud/Qz4lxdhbaC01q2z2de/WQHDFKzPc3ZIzWoQPNtPJAaOLTeanp
+         y+gHOMTX0fkTWY39N0UfV9QA9Lz3BoX+pHBHuPe0JM56Y4j+zD0F55MbHMtq9dYBv4vd
+         ncGg==
+X-Gm-Message-State: APjAAAUSPGKYN0587WTWhETYu7ahs1QLOD8KjT8xM551BuBd6HeDKiqu
+        d59fGDiKC7S+uk+4ayGvcl4=
+X-Google-Smtp-Source: APXvYqxMSOrFJP6zHqgaD4UXKs1yS4doambgrEVLaOY6bgg0oynk4XyWhKJMI02wb5r/vMxpeHVJFw==
+X-Received: by 2002:a2e:8847:: with SMTP id z7mr12128141ljj.51.1561928692491;
+        Sun, 30 Jun 2019 14:04:52 -0700 (PDT)
+Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id u9sm2221408lfb.38.2019.06.30.14.04.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 30 Jun 2019 14:04:51 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 15/15] ARM: dts: tegra30: Add External Memory Controller node
+Date:   Mon,  1 Jul 2019 00:00:19 +0300
+Message-Id: <20190630210019.26914-16-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190630210019.26914-1-digetx@gmail.com>
+References: <20190630210019.26914-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -77,60 +79,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+Add External Memory Controller node to the device-tree.
 
-Request the enable gpio ASIS to avoid disabling bridge during probe, if
-already enabled.  And if already enabled, defer enabling runpm until
-attach to avoid cutting off the power to the bridge.
-
-Once we get to attach, we know panel and drm driver are probed
-successfully, so at this point it i s safe to enable runpm and reset the
-bridge.  If we do it earlier, we kill efifb (in the case that panel or
-drm driver do not probe successfully, giving the user no way to see what
-is going on.
-
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index 7a046bcdd81b..8bdc33576992 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -257,6 +257,12 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge)
- 						   .node = NULL,
- 						 };
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index e074258d4518..8355264e2265 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -732,6 +732,15 @@
+ 		#reset-cells = <1>;
+ 	};
  
-+	if (gpiod_get_value(pdata->enable_gpio)) {
-+		pm_runtime_enable(pdata->dev);
-+		ti_sn_bridge_resume(pdata->dev);
-+		ti_sn_bridge_suspend(pdata->dev);
-+	}
++	memory-controller@7000f400 {
++		compatible = "nvidia,tegra30-emc";
++		reg = <0x7000f400 0x400>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA30_CLK_EMC>;
 +
- 	ret = drm_connector_init(bridge->dev, &pdata->connector,
- 				 &ti_sn_bridge_connector_funcs,
- 				 DRM_MODE_CONNECTOR_eDP);
-@@ -813,7 +819,7 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
- 	dev_set_drvdata(&client->dev, pdata);
- 
- 	pdata->enable_gpio = devm_gpiod_get(pdata->dev, "enable",
--					    GPIOD_OUT_LOW);
-+					    GPIOD_ASIS);
- 	if (IS_ERR(pdata->enable_gpio)) {
- 		DRM_ERROR("failed to get enable gpio from DT\n");
- 		ret = PTR_ERR(pdata->enable_gpio);
-@@ -843,7 +849,9 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
- 
--	pm_runtime_enable(pdata->dev);
-+	if (!gpiod_get_value(pdata->enable_gpio)) {
-+		pm_runtime_enable(pdata->dev);
-+	}
- 
- 	i2c_set_clientdata(client, pdata);
- 
++		nvidia,memory-controller = <&mc>;
++	};
++
+ 	fuse@7000f800 {
+ 		compatible = "nvidia,tegra30-efuse";
+ 		reg = <0x7000f800 0x400>;
 -- 
-2.20.1
+2.22.0
 
