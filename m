@@ -1,182 +1,153 @@
-Return-Path: <SRS0=v4us=U4=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=YTGP=U5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402ECC5B57B
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Jun 2019 21:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B87CC4646D
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 15:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07DD9215EA
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Jun 2019 21:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7CA920673
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 15:02:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ooD/XQQO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANB4+oPV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfF2Vpr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 29 Jun 2019 17:45:47 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38268 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbfF2Vpr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 Jun 2019 17:45:47 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n11so10429287qtl.5;
-        Sat, 29 Jun 2019 14:45:46 -0700 (PDT)
+        id S1726520AbfF3PCk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Jun 2019 11:02:40 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46369 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726500AbfF3PCk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Jun 2019 11:02:40 -0400
+Received: by mail-qk1-f194.google.com with SMTP id x18so9001857qkn.13;
+        Sun, 30 Jun 2019 08:02:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PydfWRx3VTHAN1rB2bk+LBoB6vW7pvGp02+1fwRJ1RE=;
-        b=ooD/XQQOQhvoEjTcZV6/wWStcuJOHhQMYnlsHrJ+EZACNHEgB+ETmYQVB1+KkPL0mv
-         +ZTWXmMYQ5LzQL2UNNw3atUoWU6DjrpOfQyyKTM20LU2WWtAyWtPW5H97uWBVF/0DOp8
-         p5QIBlCQ4WYMWAz35A5rnFrUOWaiDuWgPErcAS/bepzjkfr9c12dlMStrP3HOWV2d064
-         1VqsugQ4Ln8GmzJvaYBCvCCfmYUrY/Lt5yoJK0U9FOQ/nnADrqpcmdywc2e9nBGMFsKT
-         oKZ9M2SQbYZh5hUBDoSrwIHqYHRkK7vxqTYr0LhO4ztn4mGmpeZFshB23SjG9t6F2J8E
-         6G0A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5lx5bobu9/exdQA9ScehUUIHniGcpbQg/3rhLERFmFU=;
+        b=ANB4+oPVTXKbrn3gwLwrInQVorEEVfLz1AenzOULMh5ogimvvH9zfX7OdX182mzQ14
+         tzwUwmvm6i8aaFAGWYQALivl8JJagQhUD+79zEg01qNPAO+CP7qjaR77XAKnBDiYGuLi
+         9G9oxkOQqa2OELtJ/vkpKDlLCDmpdcuCLhLl4aPi5ilzmEVkoxLQZ02Q5jn5OehSfuBf
+         XHGvi1mOvTmCFWCWiXTqWluvIthT9jInjrzzVk6Fn4pp7cstTRq0oDod3kldzK/xoJer
+         OA+dHSMHIangPMRQabPVmwlVFpoSfRW1u2EFeeDdZ8jeFVRJqASdOE56yzeqJfF/cohL
+         naxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=PydfWRx3VTHAN1rB2bk+LBoB6vW7pvGp02+1fwRJ1RE=;
-        b=Q+txQT4l3rdGJlC9uEbLQy1lDjMqHoSpN24BNzCxYH6zamKDAXT0vOx8WfakHJOiF6
-         PsQX3dbEaOjq+j59vpbHv8Ei34iZGPI+yxcVT55WREvbVgd3eZZCwuHOJNzvjbNveMYJ
-         pSH4aHeEX/72cSPrBzFTzn6tjHzdBtod+kHyrRY/yB6eLL8CCKJG9UDiRJa/WLN+vZLe
-         PNfymA+cMI5evWQ8m/zyVXlnsZbvngAxwhwnA8Waroz8SPslQRqyKnRtnwhUESiPDkjl
-         LFe80Eda+KWGyeM0NK+r5vzNb9NpJQ1eTcYS9adhLoON21mZUxjnE3GW03gJgSWBOCfx
-         AitQ==
-X-Gm-Message-State: APjAAAWmspr7bnGsKbqikkWNXzifdo/R4IYiD8MGYJBn6UxKuCc+2Q2y
-        v/hjqFTz4URHp/x+PBpZQowsbQRJ
-X-Google-Smtp-Source: APXvYqxA4587hJlAfsh1OBgH3szPnO3jRvYdnE8AaoChTYYqPjyg0eVjEufh+AkrbjRBUIV36G6PTQ==
-X-Received: by 2002:ac8:30a7:: with SMTP id v36mr13504603qta.119.1561844745818;
-        Sat, 29 Jun 2019 14:45:45 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id k38sm3244931qtk.10.2019.06.29.14.45.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Jun 2019 14:45:45 -0700 (PDT)
-Subject: Re: [PATCH V5 08/18] clk: tegra: Add suspend resume support for DFLL
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-9-git-send-email-skomatineni@nvidia.com>
- <594adc1e-4345-33ae-c79f-ad6f00964587@gmail.com>
-Message-ID: <e641e95e-57e5-4654-c951-a3b63d3b37c4@gmail.com>
-Date:   Sun, 30 Jun 2019 00:45:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        bh=5lx5bobu9/exdQA9ScehUUIHniGcpbQg/3rhLERFmFU=;
+        b=hyBukGSpefq1C4EouOaKUL8yhhjSihegNn4Nit14u6jHnKCQKaa/lZAHA3mhJfYfgR
+         lAKuXGcqJ5kElGXN1oBEb6CzMtjHJNXPbGqVuB/eYUnKhdLkZ6nrH3sWQLCQglKcM+2s
+         buu7bkdzHQK0vDQb32jbsO38WOD9PKoZf1qTd9MNUapeYACI1QKjHsbzs3QG6dp4V9N9
+         mW7PmX0mu70bGxSLj/agAfTdEK4BmvInNZIyyoOLbioWxDz823PkRgYV5+O7x5tsVVd8
+         uI/8gkd4hSrJwTFDiglB4FE/iY/o5WnjK/TJatjRY998UmaGG13huOJCrQirUnUN2JLj
+         pM5A==
+X-Gm-Message-State: APjAAAWC7gOtIUsnRoJuGI1Q+cyVGvF2y3uEsr/nVIdZL7JULbuWJAXe
+        UA0N8TOPQw35qS9sBr3zs2U=
+X-Google-Smtp-Source: APXvYqwpXAyQFSxCpHHjU7XY2qL+Bo4Tffb/HW97wxtLTMlnaORSn5dfNhcRe9Ku9lyC4TNU2Y+Tng==
+X-Received: by 2002:a37:9cf:: with SMTP id 198mr16688485qkj.351.1561906959260;
+        Sun, 30 Jun 2019 08:02:39 -0700 (PDT)
+Received: from localhost ([2601:184:4780:7861:5010:5849:d76d:b714])
+        by smtp.gmail.com with ESMTPSA id y3sm3956962qtj.46.2019.06.30.08.02.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 30 Jun 2019 08:02:38 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
+Cc:     freedreno@lists.freedesktop.org, aarch64-laptops@lists.linaro.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Rob Clark <robdclark@chromium.org>
+Subject: [PATCH 0/5] drm+clk+genpd: support for bootloader enabled display
+Date:   Sun, 30 Jun 2019 08:01:38 -0700
+Message-Id: <20190630150230.7878-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <594adc1e-4345-33ae-c79f-ad6f00964587@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-29.06.2019 16:28, Dmitry Osipenko пишет:
-> 28.06.2019 5:12, Sowjanya Komatineni пишет:
->> This patch creates APIs for supporting Tegra210 clock driver to
->> perform DFLL suspend and resume operation.
->>
->> During suspend, DFLL mode is saved and on resume Tegra210 clock driver
->> invokes DFLL resume API to re-initialize DFLL to enable target device
->> clock in open loop mode or closed loop mode.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-dfll.c | 78 ++++++++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/tegra/clk-dfll.h |  2 ++
->>  2 files changed, 80 insertions(+)
->>
->> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
->> index f8688c2ddf1a..a1f37cf99b00 100644
->> --- a/drivers/clk/tegra/clk-dfll.c
->> +++ b/drivers/clk/tegra/clk-dfll.c
->> @@ -277,6 +277,7 @@ struct tegra_dfll {
->>  	unsigned long			dvco_rate_min;
->>  
->>  	enum dfll_ctrl_mode		mode;
->> +	enum dfll_ctrl_mode		resume_mode;
->>  	enum dfll_tune_range		tune_range;
->>  	struct dentry			*debugfs_dir;
->>  	struct clk_hw			dfll_clk_hw;
->> @@ -1864,6 +1865,83 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
->>  }
->>  
->>  /*
->> + * tegra_dfll_suspend
->> + * @pdev: DFLL instance
->> + *
->> + * dfll controls clock/voltage to other devices, including CPU. Therefore,
->> + * dfll driver pm suspend callback does not stop cl-dvfs operations.
->> + */
->> +void tegra_dfll_suspend(struct platform_device *pdev)
->> +{
->> +	struct tegra_dfll *td = dev_get_drvdata(&pdev->dev);
->> +
->> +	if (!td)
->> +		return;
->> +
->> +	if (td->mode <= DFLL_DISABLED)
->> +		return;
->> +
->> +	td->resume_mode = td->mode;
->> +	switch (td->mode) {
->> +	case DFLL_CLOSED_LOOP:
->> +		dfll_set_mode(td, DFLL_CLOSED_LOOP);
->> +		dfll_set_frequency_request(td, &td->last_req);
->> +
->> +		dfll_unlock(td);
->> +		break;
->> +	default:
->> +		break;
->> +	}
->> +}
->> +
->> +/**
->> + * tegra_dfll_resume - reprogram the DFLL after context-loss
->> + * @pdev: DFLL instance
->> + *
->> + * Re-initialize and enable target device clock in open loop mode. Called
->> + * directly from SoC clock resume syscore operation. Closed loop will be
->> + * re-entered in platform syscore ops as well after CPU clock source is
->> + * switched to DFLL in open loop.
->> + */
->> +void tegra_dfll_resume(struct platform_device *pdev, bool on_dfll)
->> +{
->> +	struct tegra_dfll *td = dev_get_drvdata(&pdev->dev);
->> +
->> +	if (!td)
->> +		return;
->> +
->> +	if (on_dfll) {
->> +		if (td->resume_mode == DFLL_CLOSED_LOOP)
->> +			dfll_lock(td);
->> +		td->resume_mode = DFLL_DISABLED;
->> +		return;
->> +	}
->> +
->> +	reset_control_deassert(td->dvco_rst);
->> +
->> +	pm_runtime_get(td->dev);
-> 
-> pm_runtime_get_sync()?
-> 
-> Otherwise looks like you're risking a lot here because pm_runtime_get() is an
-> asynchronous request.
+From: Rob Clark <robdclark@chromium.org>
 
-It looks like DFLL driver should be masked as IRQ-safe using pm_runtime_irq_safe()
-and then the synchronous resume could be used..
+The aarch64 laptops which ship with windows, have the display by the
+bootloader, and efifb (yah!).  But unlike x86 laptops, device power
+management isn't handled via ACPI[1].  Currently the CCF and genpd
+frameworks will turn off power domains and clocks that they think are
+unused.  This is rather unfortunate, as it kills efifb scanout before
+getting to userspace and getting to the point where we can try to
+probe the real display driver.
+
+Also it has a few side-effects in that we can't set rate on running
+clocks (in many cases).
+
+The first two patches let us flag clocks and power domains which
+might have been enabled by the bootloader, so we know not to disable
+them in late_initcall.
+
+The next two update drm/msm to cleanly shut down clocks which might
+already be running.  *Eventually* we'll want to detect that scanout
+is already running, and readback the hw state, to avoid briefly
+disabling the screen while the driver loads.  But that is a big pile
+of (mostly) drm/msm work.  (Windows also seems to have this problem,
+it appears to do a modeset during boot.. so I guess the first step
+is to at least not suck more than windows ;-))
+
+The last patch updates the bridge driver to handle the case where
+display is already active.  (AFAICT it is the same bridge chip used
+so far on all the aarch64 laptops.)  Because the bridge driver can
+be probed before the drm driver, and in fact you might end up with
+a bridge driver but no drm driver, care must be taken to not disable
+the bridge until the drm driver is ready to go, so:
+
+  * Request enable gpio ASIS to avoid pulling down the enable
+    gpio
+
+  * Defer enabling runpm in the case that the bridge is already
+    running until bridge->attach().  This is a point where we
+    know the drm driver is ready to do a modeset.
+
+(There are a couple related cleanups in drm/msm to avoid touching
+the hw until we are past the point where we might -EPROBE_DEFER[2]
+which I sent seperately as they are probably interesting to fewer
+people.)
+
+This has been tested on a lenovo yoga c630.  I've a wip/c630 branch[3]
+with this and various other work-in-progress stuff for this laptop.
+Next step, figuring out how to pick the proper panel driver, from
+the two or three possibilites that ship on this laptop ;-)
+
+[1] On windows, they use a "Platform Extension Plugin" (PEP) driver
+[2] https://patchwork.freedesktop.org/series/62999/
+[3] https://github.com/freedreno/kernel-msm/commits/wip/c630
+
+Rob Clark (5):
+  clk: inherit clocks enabled by bootloader
+  genpd/gdsc: inherit display powerdomain from bootloader
+  drm/msm/dsi: split clk rate setting and enable
+  drm/msm/dsi: get the clocks into OFF state at init
+  drm/bridge: ti-sn65dsi86: support booloader enabled display
+
+ drivers/base/power/domain.c                | 10 ++++
+ drivers/clk/clk.c                          | 48 +++++++++++++++++++
+ drivers/clk/qcom/common.c                  | 25 ++++++++++
+ drivers/clk/qcom/dispcc-sdm845.c           | 24 +++++-----
+ drivers/clk/qcom/gcc-sdm845.c              |  3 +-
+ drivers/clk/qcom/gdsc.c                    |  5 ++
+ drivers/clk/qcom/gdsc.h                    |  1 +
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c      | 12 ++++-
+ drivers/gpu/drm/msm/dsi/dsi.h              |  2 +
+ drivers/gpu/drm/msm/dsi/dsi_cfg.c          |  3 ++
+ drivers/gpu/drm/msm/dsi/dsi_cfg.h          |  1 +
+ drivers/gpu/drm/msm/dsi/dsi_host.c         | 56 +++++++++++++++++-----
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c |  1 +
+ include/linux/clk-provider.h               | 10 ++++
+ include/linux/pm_domain.h                  |  4 ++
+ 15 files changed, 178 insertions(+), 27 deletions(-)
+
+-- 
+2.20.1
+
