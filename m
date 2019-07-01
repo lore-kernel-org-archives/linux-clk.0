@@ -2,139 +2,253 @@ Return-Path: <SRS0=aD5i=U6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00387C06511
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A4AC0650E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D10BA2146F
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:07:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ck38QBfh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LU5l7gGr"
+	by mail.kernel.org (Postfix) with ESMTP id 1845021721
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562008288;
+	bh=M69bW3LLjAy9GRa5kws2W/TLGTCeIxO8p9s0yzUQV6M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=FUlejHSqnCVBNSxjAGKVeUsvsWAWMUW+aVHkzuIJAqPme3Sisr+WckoD79Im4i3Na
+	 KWoUU+nxy5jpcOMoJPnx2vzor+R1uTOTYvo7BAUCO2X9r87cztWll1rCPOD1n2oG7v
+	 iVZw7yRBadZ2WsmlOKJaMzDruewxwgNJe+Qm8f1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfGATHt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jul 2019 15:07:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36502 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfGATHs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 15:07:48 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 726AF60909; Mon,  1 Jul 2019 19:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562008067;
-        bh=JOuG+nTYGCjaeKzLDowBOJbURARYzc8K6dnbmDqxo5w=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ck38QBfhx0ASNbTLUs/P7hIZ/CHzVCxwrz+NbEpXD3OEIsHZe2T6LtR8briEtk0LK
-         GWqgTvbW+tP+p+Wwb7vlXbN2cYcPcppYPG6jK6ituM1S012ZCzq3dgQwy3BCYYW5Nf
-         KzSOwmJDz16LR+fzu6wOimuHBwIGOz3ZxAR8WRr4=
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        id S1726702AbfGATL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jul 2019 15:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726652AbfGATL1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 1 Jul 2019 15:11:27 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1039860159;
-        Mon,  1 Jul 2019 19:07:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562008066;
-        bh=JOuG+nTYGCjaeKzLDowBOJbURARYzc8K6dnbmDqxo5w=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LU5l7gGr1FEPmta4AJmGEQAPQFGo0rdKD+PFdW62YuNsghwk7IwzUe6tzRFn6F7js
-         PyWhjfYebOvd+IaTv+2fyeLFffPjkvQUKRJ/KTt/WY3HqzlSUUaWp1m3/ThDO3xO16
-         QU7nH04rCu8zINAGQPc/dTsdQoiuGfUSocRV9tp4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1039860159
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH 4/5] drm/msm/dsi: get the clocks into OFF state at init
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        aarch64-laptops@lists.linaro.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Chandan Uddaraju <chandanu@codeaurora.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190630150230.7878-1-robdclark@gmail.com>
- <20190630150230.7878-5-robdclark@gmail.com>
- <75a2921d-bf1a-c4c1-6d9a-122474eface4@codeaurora.org>
- <CAF6AEGufiSU_sFZFdLH=KT5iCQGwccszURqAQCHd=dhuZafvZg@mail.gmail.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <9fbf9226-578a-90aa-693d-9ea4fcda8281@codeaurora.org>
-Date:   Mon, 1 Jul 2019 13:07:44 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D5E42183F;
+        Mon,  1 Jul 2019 19:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562008286;
+        bh=M69bW3LLjAy9GRa5kws2W/TLGTCeIxO8p9s0yzUQV6M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Fw2v6uirjEIwW3zfhLjQ35yRI+0y4ld/Oc50hhARgaTB5gb29LplirkzCi769nRHA
+         9uDmkotdqbeKCANPmgKOYLaBXbwZdwU85hD/EcrSEJIPrcd8/oqmQdOtDhWp0nmhnW
+         DtD6ncuuRgjRRw34Jgw6RuE8tYHlWmxJlaXEOH5s=
+Received: by mail-qk1-f174.google.com with SMTP id r6so11975258qkc.0;
+        Mon, 01 Jul 2019 12:11:26 -0700 (PDT)
+X-Gm-Message-State: APjAAAUwtQGjijJizjwtPRmBhAvRiNY1jvlFi7Vlj90Awf6CKR23wMnv
+        SWmXfJP6gVbiFpCRHClvDAHqbeI34JBuFIOhkg==
+X-Google-Smtp-Source: APXvYqy7FNZ6+l5eVy5svcAAz6HHDiNQIVOJTM7lSZQktlB01iGiNfghocoJtgdl5EKMFj+EaLYQ+fikqa/RiR0JGWk=
+X-Received: by 2002:a37:6357:: with SMTP id x84mr21600084qkb.393.1562008285770;
+ Mon, 01 Jul 2019 12:11:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAF6AEGufiSU_sFZFdLH=KT5iCQGwccszURqAQCHd=dhuZafvZg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190630210019.26914-1-digetx@gmail.com> <20190630210019.26914-8-digetx@gmail.com>
+In-Reply-To: <20190630210019.26914-8-digetx@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 1 Jul 2019 13:11:13 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
+Message-ID: <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
+Subject: Re: [PATCH v6 07/15] dt-bindings: memory: tegra30: Convert to
+ Tegra124 YAML
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/1/2019 12:58 PM, Rob Clark wrote:
-> On Mon, Jul 1, 2019 at 11:37 AM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
->>
->> On 6/30/2019 9:01 AM, Rob Clark wrote:
->>> From: Rob Clark <robdclark@chromium.org>
->>>
->>> Do an extra enable/disable cycle at init, to get the clks into disabled
->>> state in case bootloader left them enabled.
->>>
->>> In case they were already enabled, the clk_prepare_enable() has no real
->>> effect, other than getting the enable_count/prepare_count into the right
->>> state so that we can disable clocks in the correct order.  This way we
->>> avoid having stuck clocks when we later want to do a modeset and set the
->>> clock rates.
->>>
->>> Signed-off-by: Rob Clark <robdclark@chromium.org>
->>> ---
->>>    drivers/gpu/drm/msm/dsi/dsi_host.c         | 18 +++++++++++++++---
->>>    drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c |  1 +
->>>    2 files changed, 16 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
->>> index aabab6311043..d0172d8db882 100644
->>> --- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
->>> +++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
->>> @@ -354,6 +354,7 @@ static int dsi_pll_10nm_lock_status(struct dsi_pll_10nm *pll)
->>>        if (rc)
->>>                pr_err("DSI PLL(%d) lock failed, status=0x%08x\n",
->>>                       pll->id, status);
->>> +rc = 0; // HACK, this will fail if PLL already running..
->>
->> Umm, why?  Is this intentional?
->>
-> 
-> I need to sort out a proper solution for this.. but PLL lock will fail
-> if the clk is already running (which, in that case, is fine since it
-> is already running and locked), which will cause the clk_enable to
-> fail..
-> 
-> I guess there is some way that I can check that clk is already running
-> and skip this check..
+On Sun, Jun 30, 2019 at 3:04 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
 
+"Convert" implies you delete the old binding doc.
 
-I'm sorry, but this makes no sense to me.  What clock are we talking 
-about here?
+> The Tegra30 binding will actually differ from the Tegra124 a tad, in
+> particular the EMEM configuration description. Hence rename the binding
+> to Tegra124 during of the conversion to YAML.
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../nvidia,tegra124-mc.yaml                   | 149 ++++++++++++++++++
+>  1 file changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> new file mode 100644
+> index 000000000000..d18242510295
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> @@ -0,0 +1,149 @@
+> +# SPDX-License-Identifier: (GPL-2.0)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title:
+> +  NVIDIA Tegra124 SoC Memory Controller
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +description: |
+> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
+> +  These are interleaved to provide high performance with the load shared across
+> +  two memory channels. The Tegra124 Memory Controller handles memory requests
+> +  from internal clients and arbitrates among them to allocate memory bandwidth
+> +  for DDR3L and LPDDR3 SDRAMs.
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra124-mc
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      Physical base address.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      Memory Controller clock.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mc
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description:
+> +      Memory Controller interrupt.
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  "#iommu-cells":
+> +    const: 1
+> +
+> +patternProperties:
+> +  ".*":
 
-If the pll is locked, the the lock check should just drop through.  If 
-the pll cannot lock, you have an issue.  I'm confused as to how any of 
-the downstream clocks can actually be running if the pll isn't locked.
+Please define a node name or pattern for node names.
 
-I feel like we are not yet on the same page about what situation you 
-seem to be in.  Can you describe in exacting detail?
+> +    properties:
+> +      nvidia,ram-code:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Value of RAM_CODE this timing set is used for.
+> +
+> +    patternProperties:
+> +      ".*":
 
+Same here.
+
+> +        properties:
+> +          clock-frequency:
+> +            description:
+> +              Memory clock rate in Hz.
+
+No constraints? Anything from 0 to 4GHz works?
+
+> +
+> +          nvidia,emem-configuration:
+> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+> +            description: |
+> +              Values to be written to the EMEM register block. See section
+> +              "15.6.1 MC Registers" in the TRM.
+> +            items:
+> +              - description: MC_EMEM_ARB_CFG
+> +              - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> +              - description: MC_EMEM_ARB_TIMING_RCD
+> +              - description: MC_EMEM_ARB_TIMING_RP
+> +              - description: MC_EMEM_ARB_TIMING_RC
+> +              - description: MC_EMEM_ARB_TIMING_RAS
+> +              - description: MC_EMEM_ARB_TIMING_FAW
+> +              - description: MC_EMEM_ARB_TIMING_RRD
+> +              - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> +              - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> +              - description: MC_EMEM_ARB_TIMING_R2R
+> +              - description: MC_EMEM_ARB_TIMING_W2W
+> +              - description: MC_EMEM_ARB_TIMING_R2W
+> +              - description: MC_EMEM_ARB_TIMING_W2R
+> +              - description: MC_EMEM_ARB_DA_TURNS
+> +              - description: MC_EMEM_ARB_DA_COVERS
+> +              - description: MC_EMEM_ARB_MISC0
+> +              - description: MC_EMEM_ARB_MISC1
+> +              - description: MC_EMEM_ARB_RING1_THROTTLE
+> +
+> +        required:
+> +          - clock-frequency
+> +          - nvidia,emem-configuration
+> +
+> +    required:
+> +      - nvidia,ram-code
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - "#reset-cells"
+> +  - "#iommu-cells"
+> +
+> +examples:
+> +  - |
+> +    memory-controller@70019000 {
+> +        compatible = "nvidia,tegra124-mc";
+> +        reg = <0x0 0x70019000 0x0 0x1000>;
+> +        clocks = <&tegra_car 32>;
+> +        clock-names = "mc";
+> +
+> +        interrupts = <0 77 4>;
+> +
+> +        #iommu-cells = <1>;
+> +        #reset-cells = <1>;
+> +
+> +        emc-timings-3 {
+> +            nvidia,ram-code = <3>;
+> +
+> +            timing-12750000 {
+> +                clock-frequency = <12750000>;
+> +
+> +                nvidia,emem-configuration = <
+> +                    0x40040001 /* MC_EMEM_ARB_CFG */
+> +                    0x8000000a /* MC_EMEM_ARB_OUTSTANDING_REQ */
+> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RCD */
+> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RP */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_RC */
+> +                    0x00000000 /* MC_EMEM_ARB_TIMING_RAS */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_FAW */
+> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RRD */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_RAP2PRE */
+> +                    0x00000008 /* MC_EMEM_ARB_TIMING_WAP2PRE */
+> +                    0x00000003 /* MC_EMEM_ARB_TIMING_R2R */
+> +                    0x00000002 /* MC_EMEM_ARB_TIMING_W2W */
+> +                    0x00000003 /* MC_EMEM_ARB_TIMING_R2W */
+> +                    0x00000006 /* MC_EMEM_ARB_TIMING_W2R */
+> +                    0x06030203 /* MC_EMEM_ARB_DA_TURNS */
+> +                    0x000a0402 /* MC_EMEM_ARB_DA_COVERS */
+> +                    0x77e30303 /* MC_EMEM_ARB_MISC0 */
+> +                    0x70000f03 /* MC_EMEM_ARB_MISC1 */
+> +                    0x001f0000 /* MC_EMEM_ARB_RING1_THROTTLE */
+> +                >;
+> +            };
+> +        };
+> +    };
+> --
+> 2.22.0
+>
