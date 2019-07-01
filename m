@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D979C0650F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35273C46478
 	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E572146E
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EBCE21851
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lIYZhQL3"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HsAPm2yL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbfGAJOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728246AbfGAJOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 1 Jul 2019 05:14:17 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34269 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbfGAJNP (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55796 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728360AbfGAJNP (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 05:13:15 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so14076679wmd.1
-        for <linux-clk@vger.kernel.org>; Mon, 01 Jul 2019 02:13:14 -0700 (PDT)
+Received: by mail-wm1-f67.google.com with SMTP id a15so15024944wmj.5
+        for <linux-clk@vger.kernel.org>; Mon, 01 Jul 2019 02:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QF6xtFv2zQ8ZUqjO9Cs7FIQcWQGqk9AuakROnInyaSE=;
-        b=lIYZhQL3jTzMkEXGBHTejQuEo2Wg6Z7RjfFgI4uYHafubWHGXRc6G+3127Ldq9Aj1b
-         DGM+VLYAo7oKAb+SM81qnIo8he0wpupHrxH+YJ1bu32D/udLAkQHUGXDCMKNkiwztdmr
-         UL1t/r1dxSb7cPCvGnE2yL3ZPEBPkcivM+DmX8myy2McJHzaa2T9Fm8m42TOt5j5q9/7
-         YKxjVrQD3XhAkTr+IXcWmgW+XxJR5OvgmBKrZnFG2XMJXkFXuuoZCsK9NAYps93yG8t8
-         nRDiYAz8hiTqPaDXGfSF6MXla2iU2+7NE4SbYalzr0mDioFbl9yyPpAcaN7IF16ReuVy
-         bcAg==
+        bh=3PBhHywaKoqeEXor4qGKKEbTn6ANfeSg4ls1LrAVLLs=;
+        b=HsAPm2yLJUTmVQ7VrhIS3c6633P/oVY1hyXWdRrTSY0DaJFH5bo3iwB4WDLzqoIjFb
+         +ofZX4UV7FR6yYxUXONipQWUjI3LKOc/TveJvoc3qP8bVzL0lMb2xqRjT3Aj98RxHlB+
+         GpNhcY2zmaGoJcTVbOliiJ6VXhUVfeSD7wO9C2/2prWgE9+Gdr833y2faMoNUxwUOhv4
+         Ty6IF1dEIyHgu4lzo46tWct6hPdW3k3KdsfcG0Wy5bOHVMxjZgNe2KVsQXBtDH5beIQX
+         zOrKkgH/T2TGdTUlj9ohM0pkt2w+MnhOGAblF+pefLHBIOfNrheg34r/1SMhDhjzwlLK
+         yNKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QF6xtFv2zQ8ZUqjO9Cs7FIQcWQGqk9AuakROnInyaSE=;
-        b=jWLbkxZ2Z5OGff1a/SaJ5LvYHEoDV/AxweCu4UFnJZEoP4WtN1wam9yV3pwg4/fyP9
-         ImLEZdvjSWKfuz062EaR78rl5P7P0jZIeeHIjgFoClpTKTT01Dh5MQSyoDoSnDKxfnm9
-         vdlVrIqBOzJSzTAbvl78HR/T+Olz9CdPwvluYzUE2xDL/WPTTglIPeVjTC/mmWGCvDth
-         pWQHKXZb3mkUrF4uKH57E8JPD1jsXRMh8LMK9OSPRnsGR6AKo/z3U1/3d7QkAJQaKfP6
-         uQyXwb3bXQNvvL5PNopo2DtGcMskvsj0quIzzTdaU8D09JZCMMLynzitybb5F3Hd3wY2
-         deLw==
-X-Gm-Message-State: APjAAAVI9pvbN+AFVY3CgOGk5TJ6vVINP+f7Xi5npFaEBFqSgfxl7mbg
-        pihWNrPEDdx/1NBX985lvxHb1A==
-X-Google-Smtp-Source: APXvYqz0R1Me131hk3YNR44WqrLF91l40/ePDko2bzhUb5OlZVcim0JviXo7HbsXJhGIuvbExPl9Cg==
-X-Received: by 2002:a05:600c:240e:: with SMTP id 14mr15893491wmp.30.1561972393857;
-        Mon, 01 Jul 2019 02:13:13 -0700 (PDT)
+        bh=3PBhHywaKoqeEXor4qGKKEbTn6ANfeSg4ls1LrAVLLs=;
+        b=gjO/9yh+U9GjANPlamEKE10qyIW9PwZIJfQiRFcTVds86MlbToXypZCCsKlKEut8de
+         KMtyaFEh3RXu3F8V3WerqAfm0jQgz8fmw872G8altwbcg5dcUsSmWINdZZFp2fKeKtsx
+         Yrsvddxw+9Km1Uim7hhpgwKGxHvauzR7ciTZRFDy2ROFFlIMSY8sb/tORiO2cqSGT1OZ
+         vmmobjBnf/m5VPlPDAws6CStaJnN9CEFyrTIokuUrCUPmRd2mPkBFfkcr3wlPOQWUf5z
+         6Zh8x0u8JqoQdZ5pc1pysBmQVpHhiDRC/GcYKmLJQd3YsZsh6UvR+1CjE4xUBSHDe/jT
+         QQOA==
+X-Gm-Message-State: APjAAAVcAOPkv6XT9X6HtW0XFjOUJXu4DDTL5PwDe3lNzuzu9MbjMrBg
+        fTLkHGpyYHlhBM4gD/c6K6oicA==
+X-Google-Smtp-Source: APXvYqwUZnbG+qavm8RsJY6F9HtxkvEbIBbdChezRZVD4NLmW5HAZs5R0eARFRcCFjxg92naHMdEkQ==
+X-Received: by 2002:a1c:c14b:: with SMTP id r72mr16534969wmf.166.1561972392885;
+        Mon, 01 Jul 2019 02:13:12 -0700 (PDT)
 Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.12
+        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 02:13:13 -0700 (PDT)
+        Mon, 01 Jul 2019 02:13:12 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com, khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -61,9 +61,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         linux-gpio@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v3 03/14] clk: meson: regmap: export regmap_div ops functions
-Date:   Mon,  1 Jul 2019 11:12:47 +0200
-Message-Id: <20190701091258.3870-4-narmstrong@baylibre.com>
+Subject: [RFC/RFT v3 02/14] clk: core: introduce clk_hw_set_parent()
+Date:   Mon,  1 Jul 2019 11:12:46 +0200
+Message-Id: <20190701091258.3870-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190701091258.3870-1-narmstrong@baylibre.com>
 References: <20190701091258.3870-1-narmstrong@baylibre.com>
@@ -74,69 +74,48 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The G12A CPU Clock Postmux divider needs a custom div_set_rate() call.
+Introduce the clk_hw_set_parent() provider call to change parent of
+a clock by using the clk_hw pointers.
 
-Export the clk_regmap_div_round_rate() and clk_regmap_div_recalc_rate()
-to be able to override the default clk_regmap_div_set_rate() callback.
+This eases the clock reparenting from clock rate notifiers and
+implementing DVFS with simpler code avoiding the boilerplates
+functions as __clk_lookup(clk_hw_get_name()) then clk_set_parent().
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/meson/clk-regmap.c | 10 ++++++----
- drivers/clk/meson/clk-regmap.h |  5 +++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ drivers/clk/clk.c            | 6 ++++++
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index dcd1757cc5df..26c8c74a8cf0 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -56,8 +56,8 @@ const struct clk_ops clk_regmap_gate_ro_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
- 
--static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
--						unsigned long prate)
-+unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-+					 unsigned long prate)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-@@ -74,9 +74,10 @@ static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
- 	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
- 				   div->width);
- }
-+EXPORT_SYMBOL_GPL(clk_regmap_div_recalc_rate);
- 
--static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
--				      unsigned long *prate)
-+long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-@@ -100,6 +101,7 @@ static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return divider_round_rate(hw, rate, prate, div->table, div->width,
- 				  div->flags);
- }
-+EXPORT_SYMBOL_GPL(clk_regmap_div_round_rate);
- 
- static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 				   unsigned long parent_rate)
-diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-index 1dd0abe3ba91..d22b83fb9bad 100644
---- a/drivers/clk/meson/clk-regmap.h
-+++ b/drivers/clk/meson/clk-regmap.h
-@@ -78,6 +78,11 @@ clk_get_regmap_div_data(struct clk_regmap *clk)
- 	return (struct clk_regmap_div_data *)clk->data;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index aa51756fd4d6..06e1abe3391c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2490,6 +2490,12 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 	return ret;
  }
  
-+unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-+					 unsigned long prate);
-+long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate);
++int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *parent)
++{
++	return clk_core_set_parent_nolock(hw->core, parent->core);
++}
++EXPORT_SYMBOL_GPL(clk_hw_set_parent);
 +
- extern const struct clk_ops clk_regmap_divider_ops;
- extern const struct clk_ops clk_regmap_divider_ro_ops;
- 
+ /**
+  * clk_set_parent - switch the parent of a mux clk
+  * @clk: the mux clk whose input we are switching
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index bb6118f79784..8a453380f9a4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -812,6 +812,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+ 					  unsigned int index);
++int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+ unsigned long __clk_get_flags(struct clk *clk);
 -- 
 2.21.0
 
