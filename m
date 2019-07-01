@@ -2,68 +2,98 @@ Return-Path: <SRS0=aD5i=U6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B09AC0650E
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 16:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86EC0C0650E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 18:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF6B21479
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 16:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68A40206A3
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 18:03:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wfo6MybS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbfGAQuW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jul 2019 12:50:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55145 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbfGAQuW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 12:50:22 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hhzVU-0005Xj-A3; Mon, 01 Jul 2019 16:50:20 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to n_den
-Date:   Mon,  1 Jul 2019 17:50:20 +0100
-Message-Id: <20190701165020.19840-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727047AbfGASDE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jul 2019 14:03:04 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35315 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbfGASDD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 14:03:03 -0400
+Received: by mail-io1-f67.google.com with SMTP id m24so30905452ioo.2;
+        Mon, 01 Jul 2019 11:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K2tpItKwuKZOogitEmK5udMyyQM1691xM5APcPto608=;
+        b=Wfo6MybS7hH5DKgNXldkNyj/G7ZcAkedgRpXC1z/5iSm+HK5Xk1PMACgeewleePYHB
+         MUxt71ZWh+8eRyEcTP5BZGIilgCuE5rPk/k6+4dUbg9Ob/3iTbU0/wnOsu7an/o1gSsK
+         DrvnCo3rOf8Sua0uIWAlO2+0FLa0Mjd/F3LoyD5yZpsal9sso2OMfFoPyFNBLIE1ZdmS
+         9Y4V7SpcZMDLudhphdChqGcObQvCtDqvkWvqtK4UkMGbO0EF29Bdf68FvhqRa/Hz2a/5
+         xR4qAZvsrEQFIt16yYWSXChJ4kLjyVUkf6kd0eSNBhf+Qq68hpHGQGx/N9hSlHbdMDi6
+         YRvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K2tpItKwuKZOogitEmK5udMyyQM1691xM5APcPto608=;
+        b=fHvo4ydlyBV+MIUkhqAltG0rFEPhzEXZNbsmyXRN1ndBUDxYyHkPpiXSJgPyCn3FL9
+         nqf0olVVPMEnexnKlG6rjJjgNFaDz4e4DFvn3q6ZNby3045CfhIgyYopBFsuFiEHE0gG
+         QTNs6NCVGW0BKXd4oWH4vVlwMmGKqpjIxJbXv5OztHIvA3sq6SDlNH9rDpocLbRL/NRL
+         +6WRc7fJe5mVGL/5+D0elCxq58v4sAkmB9yGZuQKLCW/oJ5o1XinMDt7OBFHMsbjCJFl
+         sg6xsPKWqF4DdhbK3kFvgFGfYPmyL1l5/Brt6nGrBjfgFELqCtx9NnVoUWvK6ybJqpmV
+         hwzQ==
+X-Gm-Message-State: APjAAAX3ohTcZo7T6413+l0MeTg5bmDVjWN5NiEuXR8MuJGmN7FSQAsv
+        93ICWwsEODu5CJEoHZ45GeVQi4iXMLuzyL0IZ/c=
+X-Google-Smtp-Source: APXvYqwzMbEiuqzBEGi8Ma814/2Wm8+1QLsd2TC+xpIY9gX5+hw7VVWydloLi3QoDkPpFr8OY2VVgWK6VjVIqQicj+g=
+X-Received: by 2002:a6b:f607:: with SMTP id n7mr548056ioh.263.1562004182900;
+ Mon, 01 Jul 2019 11:03:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20190630150230.7878-1-robdclark@gmail.com> <20190630150230.7878-2-robdclark@gmail.com>
+In-Reply-To: <20190630150230.7878-2-robdclark@gmail.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Mon, 1 Jul 2019 12:02:52 -0600
+Message-ID: <CAOCk7Np7jjdzbhX2qUf4h-JyLrqSwthX+=7Hd3vQETBtQDp9DQ@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH 1/5] clk: inherit clocks enabled by bootloader
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        aarch64-laptops@lists.linaro.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Jun 30, 2019 at 9:02 AM Rob Clark <robdclark@gmail.com> wrote:
+>
+> From: Rob Clark <robdclark@chromium.org>
+>
+> The goal here is to support inheriting a display setup by bootloader,
+> although there may also be some non-display related use-cases.
+>
+> Rough idea is to add a flag for clks and power domains that might
+> already be enabled when kernel starts, and which should not be
+> disabled at late_initcall if the kernel thinks they are "unused".
+>
+> If bootloader is enabling display, and kernel is using efifb before
+> real display driver is loaded (potentially from kernel module after
+> userspace starts, in a typical distro kernel), we don't want to kill
+> the clocks and power domains that are used by the display before
+> userspace starts.
+>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
 
-The variable n_den is initialized however that value is never read
-as n_den is re-assigned a little later in the two paths of a
-following if-statement.  Remove the redundant assignment.
+Seems sane to me.  I'm curious what Stephen Boyd thinks.
+I'll try to give it a spin on one of the 835 laptops.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/clk-si5341.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index 72424eb7e5f8..6e780c2a9e6b 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -547,7 +547,6 @@ static int si5341_synth_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	bool is_integer;
- 
- 	n_num = synth->data->freq_vco;
--	n_den = rate;
- 
- 	/* see if there's an integer solution */
- 	r = do_div(n_num, rate);
--- 
-2.20.1
-
+Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
