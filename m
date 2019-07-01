@@ -1,247 +1,186 @@
-Return-Path: <SRS0=YTGP=U5=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=aD5i=U6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D32C5B57E
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 21:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99169C4646D
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 04:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83BEE208C4
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Jun 2019 21:05:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNYBHukh"
+	by mail.kernel.org (Postfix) with ESMTP id 73DDD214AF
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 04:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfF3VEj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Jun 2019 17:04:39 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44097 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbfF3VEj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Jun 2019 17:04:39 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r15so7309646lfm.11;
-        Sun, 30 Jun 2019 14:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Phxn/tf35o4+tniCQy6FZM67N1Oc4r2SYyjkEAHWaK4=;
-        b=bNYBHukhr9kpdnYh9JoEaWzKPEw0H8FWM/BfLt6mgiuiZgV8qeAgGzoW6uwg5ksIK5
-         XQRzEzFue4YODU3ypR6ucgB/s/XxkIsUMyrU6iOTB9vfqZRGqkSRzgIPAIgHr3EE8uKP
-         FdsxeNrau0Y1Av6UbelwZ3w/ejdjY/7AunDJ8qFvpv9+eWAyFwgZdaW3/ZSCaSgbOs3m
-         tVZeYU9fchLHKpo+xIvHX3q+CF6Uz0Yyp3opYwas174RHpHettj/G6y6Em2Q7xNRUqjN
-         Vn72zqaYgdWpVMkTW0XF5HUqFrM7hAHtLNtASLkWYOWCnGENJyqAoCMQ8MHFnE89zBcA
-         aigQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Phxn/tf35o4+tniCQy6FZM67N1Oc4r2SYyjkEAHWaK4=;
-        b=PYbk1ekTWqdI4lJ2mF7yNELPpmO/9WYj6TFgeNaMtDqt0k7uLg6AV1mPE43K081GEK
-         Yxn1YTbZz9FUAXecUQtlWn8gcLqjKyj0KF/IKKLYbjDMcDT5ZfsG35qsiYQycPLTgflo
-         C730pyDfhwqO28Vw1YydZibTkr/8340pZnyxiCfDoLTC2MqVkjONtSrWsl1pDFr2Q+BS
-         q2/jlkpsMT5QTCz4HvH+cwkF0loeK9hJ1uk3ZQ1QRvYu9oTJ/zbtyYBQVxhIjo1cu55N
-         5umNe9uxV4XB29TaWSvQSxQGQOrCvm4apOV9aShNuZnECOr2FQVGnXJcq5A6/JJRLJkX
-         xOGA==
-X-Gm-Message-State: APjAAAVaX4OPJZbw2+vdW51fEattQF9PIDXKOH9G0Xz3474+nvH5V4TX
-        VTmysrqgldUiQLhx9pWM/TM=
-X-Google-Smtp-Source: APXvYqyqgn98TTvbaNDZMaXoixWumiKQSaXpIYs2iOKoWTNsIUuOWuCYFeyDda6HY+vHM6KXKmwKlQ==
-X-Received: by 2002:a19:d5:: with SMTP id 204mr10593188lfa.66.1561928676297;
-        Sun, 30 Jun 2019 14:04:36 -0700 (PDT)
-Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id u9sm2221408lfb.38.2019.06.30.14.04.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Jun 2019 14:04:35 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        id S1725777AbfGAEAk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jul 2019 00:00:40 -0400
+Received: from mailgw01.mediatek.com ([216.200.240.184]:53742 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfGAEAj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 00:00:39 -0400
+X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Mon, 01 Jul 2019 00:00:39 EDT
+X-UUID: e1d7852b40184f43b704b28d2b031933-20190630
+X-UUID: e1d7852b40184f43b704b28d2b031933-20190630
+Received: from mtkcas67.mediatek.inc [(172.29.193.45)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2113796546; Sun, 30 Jun 2019 19:55:34 -0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS62N2.mediatek.inc (172.29.193.42) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sun, 30 Jun 2019 20:55:31 -0700
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 1 Jul 2019 11:55:17 +0800
+Message-ID: <1561953318.25914.9.camel@mtksdaap41>
+Subject: Re: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
+ mmsys clocks
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Matthias Brugger <mbrugger@suse.com>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        "David Airlie" <airlied@linux.ie>,
         Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 00/15] memory: tegra: Introduce Tegra30 EMC driver
-Date:   Mon,  1 Jul 2019 00:00:04 +0300
-Message-Id: <20190630210019.26914-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "Randy Dunlap" <rdunlap@infradead.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "matthias.bgg@kernel.org" <matthias.bgg@kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Mon, 1 Jul 2019 11:55:18 +0800
+In-Reply-To: <a229bfc7-683f-5b0d-7b71-54f934de6214@suse.com>
+References: <20181116125449.23581-1-matthias.bgg@kernel.org>
+         <20181116125449.23581-9-matthias.bgg@kernel.org>
+         <20181116231522.GA18006@bogus>
+         <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
+         <CAL_JsqKJQwfDJbpmwW+oCxiDkSp5+6mG-uoURmCQVEMP_jFOEg@mail.gmail.com>
+         <154281878765.88331.10581984256202566195@swboyd.mtv.corp.google.com>
+         <458178ac-c0fc-9671-7fc8-ed2d6f61424c@suse.com>
+         <154356023767.88331.18401188808548429052@swboyd.mtv.corp.google.com>
+         <a229bfc7-683f-5b0d-7b71-54f934de6214@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Hi, Matthias:
 
-This series introduces driver for the External Memory Controller (EMC)
-found on Tegra30 chips, it controls the external DRAM on the board. The
-purpose of this driver is to program memory timing for external memory on
-the EMC clock rate change. The driver was tested using the ACTMON devfreq
-driver that performs memory frequency scaling based on memory-usage load.
+On Fri, 2018-11-30 at 16:59 +0800, Matthias Brugger wrote:
+> 
+> On 30/11/2018 07:43, Stephen Boyd wrote:
+> > Quoting Matthias Brugger (2018-11-21 09:09:52)
+> >>
+> >>
+> >> On 21/11/2018 17:46, Stephen Boyd wrote:
+> >>> Quoting Rob Herring (2018-11-19 11:15:16)
+> >>>> On Sun, Nov 18, 2018 at 11:12 AM Matthias Brugger
+> >>>> <matthias.bgg@gmail.com> wrote:
+> >>>>> On 11/17/18 12:15 AM, Rob Herring wrote:
+> >>>>>> On Fri, Nov 16, 2018 at 01:54:45PM +0100, matthias.bgg@kernel.org wrote:
+> >>>>>>> -    #clock-cells = <1>;
+> >>>>>>> +
+> >>>>>>> +    mmsys_clk: clock-controller@14000000 {
+> >>>>>>> +            compatible = "mediatek,mt2712-mmsys-clk";
+> >>>>>>> +            #clock-cells = <1>;
+> >>>>>>
+> >>>>>> This goes against the general direction of not defining separate nodes
+> >>>>>> for providers with no resources.
+> >>>>>>
+> >>>>>> Why do you need this and what does it buy if you have to continue to
+> >>>>>> support the existing chips?
+> >>>>>>
+> >>>>>
+> >>>>> It would show explicitly that the mmsys block is used to probe two
+> >>>>> drivers, one for the gpu and one for the clocks. Otherwise that is
+> >>>>> hidden in the drm driver code. I think it is cleaner to describe that in
+> >>>>> the device tree.
+> >>>>
+> >>>> No, that's maybe cleaner for the driver implementation in the Linux
+> >>>> kernel. What about other OS's or when Linux drivers and subsystems
+> >>>> needs change? Cleaner for DT is design bindings that reflect the h/w.
+> >>>> Hardware is sometimes just messy.
+> >>>>
+> >>>
+> >>> I agree. I fail to see what this patch series is doing besides changing
+> >>> driver probe and device creation methods and making a backwards
+> >>> incompatible change to DT. Is there any other benefit here?
+> >>>
+> >>
+> >> You are referring whole series?
+> >> Citing the cover letter:
+> >> "MMSYS in Mediatek SoCs has some registers to control clock gates (which is
+> >> used in the clk driver) and some registers to set the routing and enable
+> >> the differnet (sic!) blocks of the display subsystem.
+> >>
+> >> Up to now both drivers, clock and drm are probed with the same device tree
+> >> compatible. But only the first driver get probed, which in effect breaks
+> >> graphics on mt8173 and mt2701.
+> > 
+> > Ouch!
+> > 
+> 
+> Yes :)
+> 
+> >>
+> >> This patch uses a platform device registration in the DRM driver, which
+> >> will trigger the probe of the corresponding clock driver. It was tested on the
+> >> bananapi-r2 and the Acer R13 Chromebook."
+> > 
+> > Alright, please don't add nodes in DT just to make device drivers probe.
+> > Instead, register clks from the drm driver or create a child platform
+> > device for the clk bits purely in the drm driver and have that probe the
+> > associated clk driver from there.
+> > 
+> 
+> I'll make the other SoCs probe via a child platform device from the drm driver,
+> as already done in 2/12 and 3/12.
 
-Changelog:
+This series have been pending for half an year, would you keep going on
+this series? If you're busy, I could complete this series, but I need to
+know what you have plan to do.
 
-v6: - Tegra124 Memory Controller binding factored out into standalone
-      binding because it requires to specify MC_EMEM_ARB_MISC1 for EMEM
-      programming, which is not required for Tegra30. This makes the
-      upstream MC registers specification to match downstream exactly,
-      easing porting of boards memory timings configuration to upstream.
+I guess that 1/12 ~ 5/12 is for MT2701/MT8173 and that patches meet this
+discussion. 6/12 ~ 12/12 is for MT2712/MT6797 but that patches does not
+meet this discussion. So the unfinished work is to make MT2712/MT6797 to
+align MT2701/MT8173, is this right?
 
-    - Tegra30/124 Memory Controller binding converted to YAML.
+Regards,
+CK
 
-    - Tegra30 External Memory Controller binding now is in YAML format.
+> 
+> Regards,
+> Matthias
+> 
+> >>
+> >> DT is broken right now, because two drivers rely on the same node, which gets
+> >> consumed just once. The new DT introduced does not break anything because it is
+> >> only used for boards that: "[..] are not available to the general public
+> >> (mt2712e) or only have the mmsys clock driver part implemented (mt6797)."
+> > 
+> > Ok, so backwards compatibility is irrelevant then. Sounds fine to me.
+> > 
+> > 
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
-    - Added workaround for hanging during LP2 when EMC runs off PLLP on
-      Tegra30 in this new patches:
-
-        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
-        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
-
-    - Added info message to the Tegra20/30 EMC drivers, telling about
-      RAM code and a number of available timings:
-
-        memory: tegra20-emc: Print a brief info message about the timings
-
-v5: - Addressed review comments that were made by Thierry Reding to v4 by
-      adding appropriate copyrights to the source code headers and making
-      Tegra30 EMC driver to use common Tegra20 CLK API directly instead
-      of having a dummy-proxy functions specifically for Tegra30.
-
-    - Addressed review comments that were made by Stephen Boyd to v4 by
-      rewording commit message of the "Add custom EMC clock implementation"
-      patch and adding clarifying comment (to that patch as well) which
-      tells why EMC is a critical clock.
-
-    - Added suspend-resume to Tegra30 EMC driver to error out if EMC driver
-      is in a "bad state" as it will likely cause a hang on entering suspend.
-
-    - Dropped patch "tegra20-emc: Replace clk_get_sys with devm_clk_get"
-      because the replaced clocks are actually should be removed altogether
-      in the "Drop setting EMC rate to max on probe" patch and that was
-      missed by an accident.
-
-    - Added "tegra20-emc: Pre-configure debug register" patch which ensures
-      that inappropriate HW debug features are disabled at a probe time.
-      The same change is also made in the "Introduce Tegra30 EMC driver"
-      patch.
-
-    - Added ACKs to the patches from Peter De Schrijver that he gave to v4
-      since all of the v5 changes are actually very minor.
-
-v4: - Addressed review comments that were made by Peter De Schrijver to v3
-      by adding fence_udelay() after writes in the "Add custom EMC clock
-      implementation" patch.
-
-    - Added two new minor patches:
-
-        memory: tegra: Ensure timing control debug features are disabled
-        memory: tegra: Consolidate registers definition into one place
-
-      The first one is needed to ensure that EMC driver will work
-      properly regardless of hardware configuration left after boot.
-      The second patch is just a minor code cleanup.
-
-    - The "Introduce Tegra30 EMC driver" got also few very minor changes.
-      Now every possible error case is handled, nothing is ignored.
-      The EMC_DBG register is explicitly initialized during probe to be
-      on the safe side.
-
-v3: - Addressed review comments that were made by Stephen Boyd to v2 by
-      adding explicit typing for the callback variable, by including
-      "clk-provider.h" directly in the code and by dropping __clk_lookup
-      usage where possible.
-
-    - Added more patches into this series:
-
-        memory: tegra20-emc: Drop setting EMC rate to max on probe
-        memory: tegra20-emc: Adapt for clock driver changes
-        memory: tegra20-emc: Include io.h instead of iopoll.h
-        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
-
-      Initially I was going to include these patches into other patchset,
-      but changed my mind after rearranging things a tad. The "Adapt for
-      clock driver changes" patch is directly related to the clock changes
-      done in the first patch of this series, the rest are minor cleanups
-      that are fine to include here as well.
-
-    - Added some more words to the commit message of "Add binding for NVIDIA
-      Tegra30 External Memory Controller" patch, clarifying why common DDR
-      timing device-tree form isn't suitable for Tegra30.
-
-    - The Tegra30 EMC driver now explicitly selects the registers access
-      mode (EMC_DBG mux), not relying on the setting left from bootloader.
-
-v2: - Added support for changing MC clock diver configuration based on
-      Memory Controller (MC) configuration which is part of the memory
-      timing.
-
-    - Merged the "Add custom EMC clock implementation" patch into this
-      series because the "Introduce Tegra30 EMC driver" patch directly
-      depends on it. Please note that Tegra20 EMC driver will need to be
-      adapted for the clock changes as well, I'll send out the Tegra20
-      patches after this series will be applied because of some other
-      dependencies (devfreq) and because the temporary breakage won't
-      be critical (driver will just error out on probe).
-
-    - EMC driver now performs MC configuration validation by checking
-      that the number of MC / EMC timings matches and that the timings
-      rate is the same.
-
-    - EMC driver now supports timings that want to change the MC clock
-      configuration.
-
-    - Other minor prettifying changes of the code.
-
-Dmitry Osipenko (15):
-  clk: tegra20/30: Add custom EMC clock implementation
-  memory: tegra20-emc: Drop setting EMC rate to max on probe
-  memory: tegra20-emc: Adapt for clock driver changes
-  memory: tegra20-emc: Include io.h instead of iopoll.h
-  memory: tegra20-emc: Pre-configure debug register
-  memory: tegra20-emc: Print a brief info message about the timings
-  dt-bindings: memory: tegra30: Convert to Tegra124 YAML
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
-    Controller
-  memory: tegra: Introduce Tegra30 EMC driver
-  memory: tegra: Ensure timing control debug features are disabled
-  memory: tegra: Consolidate registers definition into common header
-  clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
-  ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
-  ARM: dts: tegra30: Add External Memory Controller node
-
- .../nvidia,tegra124-mc.yaml                   |  149 ++
- .../nvidia,tegra30-emc.yaml                   |  332 +++++
- .../memory-controllers/nvidia,tegra30-mc.yaml |  160 +++
- arch/arm/boot/dts/tegra30.dtsi                |    9 +
- arch/arm/mach-tegra/cpuidle-tegra30.c         |    9 +-
- drivers/clk/tegra/Makefile                    |    2 +
- drivers/clk/tegra/clk-tegra20-emc.c           |  307 ++++
- drivers/clk/tegra/clk-tegra20.c               |   55 +-
- drivers/clk/tegra/clk-tegra30.c               |   38 +-
- drivers/clk/tegra/clk.h                       |    3 +
- drivers/memory/tegra/Kconfig                  |   10 +
- drivers/memory/tegra/Makefile                 |    1 +
- drivers/memory/tegra/mc.c                     |   42 +-
- drivers/memory/tegra/mc.h                     |   74 +-
- drivers/memory/tegra/tegra124.c               |   20 -
- drivers/memory/tegra/tegra20-emc.c            |  126 +-
- drivers/memory/tegra/tegra30-emc.c            | 1234 +++++++++++++++++
- drivers/memory/tegra/tegra30.c                |   23 +
- include/linux/clk/tegra.h                     |   12 +
- include/soc/tegra/mc.h                        |    2 +-
- 20 files changed, 2422 insertions(+), 186 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
- create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
- create mode 100644 drivers/memory/tegra/tegra30-emc.c
-
--- 
-2.22.0
 
