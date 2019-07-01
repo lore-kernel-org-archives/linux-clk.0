@@ -2,58 +2,63 @@ Return-Path: <SRS0=aD5i=U6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A4AC0650E
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 126ABC0650E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1845021721
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562008288;
-	bh=M69bW3LLjAy9GRa5kws2W/TLGTCeIxO8p9s0yzUQV6M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=FUlejHSqnCVBNSxjAGKVeUsvsWAWMUW+aVHkzuIJAqPme3Sisr+WckoD79Im4i3Na
-	 KWoUU+nxy5jpcOMoJPnx2vzor+R1uTOTYvo7BAUCO2X9r87cztWll1rCPOD1n2oG7v
-	 iVZw7yRBadZ2WsmlOKJaMzDruewxwgNJe+Qm8f1U=
+	by mail.kernel.org (Postfix) with ESMTP id E22C9206A3
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 19:30:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="prz9JSr0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfGATL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jul 2019 15:11:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbfGATL1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 1 Jul 2019 15:11:27 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D5E42183F;
-        Mon,  1 Jul 2019 19:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562008286;
-        bh=M69bW3LLjAy9GRa5kws2W/TLGTCeIxO8p9s0yzUQV6M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Fw2v6uirjEIwW3zfhLjQ35yRI+0y4ld/Oc50hhARgaTB5gb29LplirkzCi769nRHA
-         9uDmkotdqbeKCANPmgKOYLaBXbwZdwU85hD/EcrSEJIPrcd8/oqmQdOtDhWp0nmhnW
-         DtD6ncuuRgjRRw34Jgw6RuE8tYHlWmxJlaXEOH5s=
-Received: by mail-qk1-f174.google.com with SMTP id r6so11975258qkc.0;
-        Mon, 01 Jul 2019 12:11:26 -0700 (PDT)
-X-Gm-Message-State: APjAAAUwtQGjijJizjwtPRmBhAvRiNY1jvlFi7Vlj90Awf6CKR23wMnv
-        SWmXfJP6gVbiFpCRHClvDAHqbeI34JBuFIOhkg==
-X-Google-Smtp-Source: APXvYqy7FNZ6+l5eVy5svcAAz6HHDiNQIVOJTM7lSZQktlB01iGiNfghocoJtgdl5EKMFj+EaLYQ+fikqa/RiR0JGWk=
-X-Received: by 2002:a37:6357:: with SMTP id x84mr21600084qkb.393.1562008285770;
- Mon, 01 Jul 2019 12:11:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190630210019.26914-1-digetx@gmail.com> <20190630210019.26914-8-digetx@gmail.com>
-In-Reply-To: <20190630210019.26914-8-digetx@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 1 Jul 2019 13:11:13 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
-Message-ID: <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
+        id S1726587AbfGATaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jul 2019 15:30:21 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39762 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfGATaV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 15:30:21 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v18so14400790ljh.6;
+        Mon, 01 Jul 2019 12:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=c2eFfHmfd9U9AMnKFnD7g9eg9q57yzBinw/q4+GoLBk=;
+        b=prz9JSr0Ix/WEdo4cL4SdYm7c5EuCT+Kyz0mYTOybz6lg9vOtPNg0KBN36C+D7A+95
+         pVxPfXyCS9zSpZ6W40JayIh0zBBAU4KZ5/P2M71D96mxyMyVnooItQXuadtMCJKUNf6q
+         9xVN9KI872oKfQyBGV2HpNrjMVnPCzfWNcixCp5s/42qk/AHIkBGxq77H8nBlpCeTcU6
+         kqeSOAjzzN9PSAddCq9fFyrLSNYhzFB+gUQT4aZqbln4aS2zOQ0EZNjcDuFlf5nOK1Sc
+         tA1fzcbbC12A3APOFXZDkPZR/V3023ZoVSgKHtlMaYNsc1Ye/qh+LCgtFS/cTdXnZVx2
+         S6Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c2eFfHmfd9U9AMnKFnD7g9eg9q57yzBinw/q4+GoLBk=;
+        b=HuZo0TIQc74oEbt3gVbMDmXYNV/j2knojVVhqEVt3Ezg8xcU+tRHf+0LTQ1qLLTos1
+         HW0W/rrntYXgFPocTl2G91/rtKjUhvZ+/3FyFjJ3OdnBDEz9p7XgLomAfUsH4ivTcGQq
+         oM+20H4MTeiHjirIgnjzJKQYwuCWkqtJmO8VCBDtKIWIAbZHbkDPhajdbh/9ORxK/dI7
+         Qm/Xqv2Rwe5pWYohbcIwOAdNN9cg+YCajl2BjKEQdstG89SmV8x29XhmTZKzH/TxHUwv
+         hgwx6KjJVQtfpF5fl5dhU4h4fIl1tAMVw1Z1eegofACny0gmGIgEzdnnqPTKsHIiymOt
+         DsGw==
+X-Gm-Message-State: APjAAAWh3dFBhF6qcjFQWsjpXmcN+hchnN8qMwTLl5z1e51OkFg5XPt9
+        kVbvDYjWcrPVX/U+Urd0Z8Ql13mP
+X-Google-Smtp-Source: APXvYqyt7pIhGs2lNgfb9Ej2qDR5BG2Vm8qXWoVDPEMZd8CXonitUT2Jb1OUibTRNSj7RCOuN90Yaw==
+X-Received: by 2002:a2e:96d5:: with SMTP id d21mr3513670ljj.170.1562009418517;
+        Mon, 01 Jul 2019 12:30:18 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id u18sm2582661lfe.65.2019.07.01.12.30.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 12:30:17 -0700 (PDT)
 Subject: Re: [PATCH v6 07/15] dt-bindings: memory: tegra30: Convert to
  Tegra124 YAML
-To:     Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Joseph Lo <josephl@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -64,191 +69,123 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         linux-tegra@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20190630210019.26914-1-digetx@gmail.com>
+ <20190630210019.26914-8-digetx@gmail.com>
+ <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ba299725-b65b-ce7d-6376-a26918cc985b@gmail.com>
+Date:   Mon, 1 Jul 2019 22:30:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqJq5iwQcbUixMWK819OTof8DzrZ3UMhByc1pTAFTdwnjg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jun 30, 2019 at 3:04 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->
+01.07.2019 22:11, Rob Herring пишет:
+> On Sun, Jun 30, 2019 at 3:04 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+> 
+> "Convert" implies you delete the old binding doc.
 
-"Convert" implies you delete the old binding doc.
+Yes, unfortunately the deletion got lost by accident after rebase and it was already
+too late when I noticed that. Will be fixed in the next revision.
 
-> The Tegra30 binding will actually differ from the Tegra124 a tad, in
-> particular the EMEM configuration description. Hence rename the binding
-> to Tegra124 during of the conversion to YAML.
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../nvidia,tegra124-mc.yaml                   | 149 ++++++++++++++++++
->  1 file changed, 149 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> new file mode 100644
-> index 000000000000..d18242510295
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> @@ -0,0 +1,149 @@
-> +# SPDX-License-Identifier: (GPL-2.0)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title:
-> +  NVIDIA Tegra124 SoC Memory Controller
-> +
-> +maintainers:
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +
-> +description: |
-> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
-> +  These are interleaved to provide high performance with the load shared across
-> +  two memory channels. The Tegra124 Memory Controller handles memory requests
-> +  from internal clients and arbitrates among them to allocate memory bandwidth
-> +  for DDR3L and LPDDR3 SDRAMs.
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra124-mc
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      Physical base address.
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description:
-> +      Memory Controller clock.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: mc
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description:
-> +      Memory Controller interrupt.
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  "#iommu-cells":
-> +    const: 1
-> +
-> +patternProperties:
-> +  ".*":
+>> The Tegra30 binding will actually differ from the Tegra124 a tad, in
+>> particular the EMEM configuration description. Hence rename the binding
+>> to Tegra124 during of the conversion to YAML.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../nvidia,tegra124-mc.yaml                   | 149 ++++++++++++++++++
+>>  1 file changed, 149 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>> new file mode 100644
+>> index 000000000000..d18242510295
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>> @@ -0,0 +1,149 @@
+>> +# SPDX-License-Identifier: (GPL-2.0)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra124-mc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title:
+>> +  NVIDIA Tegra124 SoC Memory Controller
+>> +
+>> +maintainers:
+>> +  - Jon Hunter <jonathanh@nvidia.com>
+>> +  - Thierry Reding <thierry.reding@gmail.com>
+>> +
+>> +description: |
+>> +  Tegra124 SoC features a hybrid 2x32-bit / 1x64-bit memory controller.
+>> +  These are interleaved to provide high performance with the load shared across
+>> +  two memory channels. The Tegra124 Memory Controller handles memory requests
+>> +  from internal clients and arbitrates among them to allocate memory bandwidth
+>> +  for DDR3L and LPDDR3 SDRAMs.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: nvidia,tegra124-mc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description:
+>> +      Physical base address.
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description:
+>> +      Memory Controller clock.
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: mc
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +    description:
+>> +      Memory Controller interrupt.
+>> +
+>> +  "#reset-cells":
+>> +    const: 1
+>> +
+>> +  "#iommu-cells":
+>> +    const: 1
+>> +
+>> +patternProperties:
+>> +  ".*":
+> 
+> Please define a node name or pattern for node names.
 
-Please define a node name or pattern for node names.
+There was no pattern specified in the original binding. But I guess the existing
+upstream device-trees could be used as the source for the pattern.
 
-> +    properties:
-> +      nvidia,ram-code:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          Value of RAM_CODE this timing set is used for.
-> +
-> +    patternProperties:
-> +      ".*":
+>> +    properties:
+>> +      nvidia,ram-code:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        description:
+>> +          Value of RAM_CODE this timing set is used for.
+>> +
+>> +    patternProperties:
+>> +      ".*":
+> 
+> Same here.
+> 
+>> +        properties:
+>> +          clock-frequency:
+>> +            description:
+>> +              Memory clock rate in Hz.
+> 
+> No constraints? Anything from 0 to 4GHz works?
 
-Same here.
-
-> +        properties:
-> +          clock-frequency:
-> +            description:
-> +              Memory clock rate in Hz.
-
-No constraints? Anything from 0 to 4GHz works?
-
-> +
-> +          nvidia,emem-configuration:
-> +            $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            description: |
-> +              Values to be written to the EMEM register block. See section
-> +              "15.6.1 MC Registers" in the TRM.
-> +            items:
-> +              - description: MC_EMEM_ARB_CFG
-> +              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> +              - description: MC_EMEM_ARB_TIMING_RCD
-> +              - description: MC_EMEM_ARB_TIMING_RP
-> +              - description: MC_EMEM_ARB_TIMING_RC
-> +              - description: MC_EMEM_ARB_TIMING_RAS
-> +              - description: MC_EMEM_ARB_TIMING_FAW
-> +              - description: MC_EMEM_ARB_TIMING_RRD
-> +              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> +              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> +              - description: MC_EMEM_ARB_TIMING_R2R
-> +              - description: MC_EMEM_ARB_TIMING_W2W
-> +              - description: MC_EMEM_ARB_TIMING_R2W
-> +              - description: MC_EMEM_ARB_TIMING_W2R
-> +              - description: MC_EMEM_ARB_DA_TURNS
-> +              - description: MC_EMEM_ARB_DA_COVERS
-> +              - description: MC_EMEM_ARB_MISC0
-> +              - description: MC_EMEM_ARB_MISC1
-> +              - description: MC_EMEM_ARB_RING1_THROTTLE
-> +
-> +        required:
-> +          - clock-frequency
-> +          - nvidia,emem-configuration
-> +
-> +    required:
-> +      - nvidia,ram-code
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - "#reset-cells"
-> +  - "#iommu-cells"
-> +
-> +examples:
-> +  - |
-> +    memory-controller@70019000 {
-> +        compatible = "nvidia,tegra124-mc";
-> +        reg = <0x0 0x70019000 0x0 0x1000>;
-> +        clocks = <&tegra_car 32>;
-> +        clock-names = "mc";
-> +
-> +        interrupts = <0 77 4>;
-> +
-> +        #iommu-cells = <1>;
-> +        #reset-cells = <1>;
-> +
-> +        emc-timings-3 {
-> +            nvidia,ram-code = <3>;
-> +
-> +            timing-12750000 {
-> +                clock-frequency = <12750000>;
-> +
-> +                nvidia,emem-configuration = <
-> +                    0x40040001 /* MC_EMEM_ARB_CFG */
-> +                    0x8000000a /* MC_EMEM_ARB_OUTSTANDING_REQ */
-> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RCD */
-> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RP */
-> +                    0x00000002 /* MC_EMEM_ARB_TIMING_RC */
-> +                    0x00000000 /* MC_EMEM_ARB_TIMING_RAS */
-> +                    0x00000002 /* MC_EMEM_ARB_TIMING_FAW */
-> +                    0x00000001 /* MC_EMEM_ARB_TIMING_RRD */
-> +                    0x00000002 /* MC_EMEM_ARB_TIMING_RAP2PRE */
-> +                    0x00000008 /* MC_EMEM_ARB_TIMING_WAP2PRE */
-> +                    0x00000003 /* MC_EMEM_ARB_TIMING_R2R */
-> +                    0x00000002 /* MC_EMEM_ARB_TIMING_W2W */
-> +                    0x00000003 /* MC_EMEM_ARB_TIMING_R2W */
-> +                    0x00000006 /* MC_EMEM_ARB_TIMING_W2R */
-> +                    0x06030203 /* MC_EMEM_ARB_DA_TURNS */
-> +                    0x000a0402 /* MC_EMEM_ARB_DA_COVERS */
-> +                    0x77e30303 /* MC_EMEM_ARB_MISC0 */
-> +                    0x70000f03 /* MC_EMEM_ARB_MISC1 */
-> +                    0x001f0000 /* MC_EMEM_ARB_RING1_THROTTLE */
-> +                >;
-> +            };
-> +        };
-> +    };
-> --
-> 2.22.0
->
+Okay, will add the min/max. I'm not sure what is the exact upper freq limit, probably
+~1GHz.
