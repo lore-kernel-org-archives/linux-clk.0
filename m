@@ -2,127 +2,99 @@ Return-Path: <SRS0=aD5i=U6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FF3C06510
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0F5C0650E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8FC2146E
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="r81XUdll"
+	by mail.kernel.org (Postfix) with ESMTP id 5B4D12089C
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:36:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfGAJNO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jul 2019 05:13:14 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50656 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728346AbfGAJNO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 05:13:14 -0400
-Received: by mail-wm1-f68.google.com with SMTP id n9so3133710wmi.0
-        for <linux-clk@vger.kernel.org>; Mon, 01 Jul 2019 02:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qYJwtVX2r7KnFTDIFCTGswCpHKhjGFZMmXuYYyexqis=;
-        b=r81XUdllxw5uXCyKEsvqIiwFjD4+Lrm0Imlfz2u7g/nBUVEQ/H/q2CcOkbeh1IoekK
-         XqmukpLUNFQgaTn4IzOvgmZdqpd98YvfrZ7VM1YVyM7O5eDofTXxiSS1mEh+NDA/Dbr/
-         Z3rI9N48FtEgbYu/2B2DhrOANpStsKc6vG9zfUvuIwAIhkKO792IlVEEN/ne/3TDpBV2
-         UMhi4YZeH4ltR34+Y1erlZG1nyZ5RNqBMezdYHN4zSt9QqeyPrjfBFHM9wEpAnv1QO1z
-         /3GabGCSPZoKQPdlx6VzaT707o+ONkoZ9Yy3YgxKcPSkOCS95zyEqQqYpKHXjSJMRrcy
-         iJ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qYJwtVX2r7KnFTDIFCTGswCpHKhjGFZMmXuYYyexqis=;
-        b=PoRjYZPiCZAt8tT25sVBHxLneKhJA4TSKacFdVWo4n8DgAEIb7Yzaoql02UG70s6Zx
-         pKy298qPRaGNQF/EUO3y1Wu6sxIWe0HizrNGyayOlYUV/iiF2iXAtweP7Pl34/gFp/+O
-         t2EAhv7GdXUxvk75b9/JHXIXGpkCf+SNsAd3Mo908rFjQqXKduRWo6s31bk2EVl5f1VR
-         s8cNuc9b0eiBCJjEn99YCGYMksMyoi7Gb20eQ6DooaRYBJ5wJb2UAhyho042gwsWD8u0
-         gLhvLVUbTXwDqI7uZs2Jh+3uYWVQRz9tOUlj0OOsAai3mdnVqy5RlOfzB5Rl4vRl34yR
-         eUUA==
-X-Gm-Message-State: APjAAAU2VFmRskIWmhfgubxCsiTdIUnPbUjZ/eoDapKItI18QxFBgDV8
-        OCXPL3b7NCy761eW4GYQMWQQKg==
-X-Google-Smtp-Source: APXvYqyKAKMyxCAc6vR2xD8svMCql407vi8e1s9D1IiPlHCg1OCzLfGcgLf5UyySc+lgVIZBWOUuTA==
-X-Received: by 2002:a05:600c:303:: with SMTP id q3mr16802095wmd.130.1561972391870;
-        Mon, 01 Jul 2019 02:13:11 -0700 (PDT)
-Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 02:13:11 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, khilman@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
-        linux-gpio@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v3 01/14] pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
-Date:   Mon,  1 Jul 2019 11:12:45 +0200
-Message-Id: <20190701091258.3870-2-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190701091258.3870-1-narmstrong@baylibre.com>
-References: <20190701091258.3870-1-narmstrong@baylibre.com>
+        id S1728334AbfGAJgU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jul 2019 05:36:20 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:38938 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728035AbfGAJgU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 1 Jul 2019 05:36:20 -0400
+Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hhsjS-0001pq-GI; Mon, 01 Jul 2019 11:36:18 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock updates for 5.3
+Date:   Mon, 01 Jul 2019 11:36:17 +0200
+Message-ID: <3855405.N158XnxgeL@phil>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the missing pinmux for the pwm_a function on the GPIOE_2 pin.
+Hi Mike, Stephen,
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-g12a.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+please find below rockchip clock changes for 5.3
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index d494492e98e9..f69af4fa7cf8 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -801,6 +801,9 @@ static const unsigned int remote_ao_input_pins[]	= { GPIOAO_5 };
- /* ir_out */
- static const unsigned int remote_ao_out_pins[]		= { GPIOAO_4 };
- 
-+/* pwm_a_e */
-+static const unsigned int pwm_a_e_pins[]		= { GPIOE_2 };
-+
- /* pwm_ao_a */
- static const unsigned int pwm_ao_a_pins[]		= { GPIOAO_11 };
- static const unsigned int pwm_ao_a_hiz_pins[]		= { GPIOAO_11 };
-@@ -888,6 +891,7 @@ static struct meson_pmx_group meson_g12a_aobus_groups[] = {
- 	GROUP(i2c_ao_slave_sda,		3),
- 	GROUP(remote_ao_input,		1),
- 	GROUP(remote_ao_out,		1),
-+	GROUP(pwm_a_e,			3),
- 	GROUP(pwm_ao_a,			3),
- 	GROUP(pwm_ao_a_hiz,		2),
- 	GROUP(pwm_ao_b,			3),
-@@ -1192,6 +1196,10 @@ static const char * const remote_ao_out_groups[] = {
- 	"remote_ao_out",
- };
- 
-+static const char * const pwm_a_e_groups[] = {
-+	"pwm_a_e",
-+};
-+
- static const char * const pwm_ao_a_groups[] = {
- 	"pwm_ao_a", "pwm_ao_a_hiz",
- };
-@@ -1290,6 +1298,7 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
- 	FUNCTION(i2c_ao_slave),
- 	FUNCTION(remote_ao_input),
- 	FUNCTION(remote_ao_out),
-+	FUNCTION(pwm_a_e),
- 	FUNCTION(pwm_ao_a),
- 	FUNCTION(pwm_ao_b),
- 	FUNCTION(pwm_ao_c),
--- 
-2.21.0
+Please pull
+
+Thanks
+Heiko
+
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.3-rockchip-clk1
+
+for you to fetch changes up to 794e94ca83450c436313df18291e139cf5f9121f:
+
+  clk: rockchip: export HDMIPHY clock on rk3228 (2019-06-27 11:02:28 +0200)
+
+----------------------------------------------------------------
+New clock-ids+exports for two clocks, cleanup for some boilerplate code
+for clocks we cannot really control from the kernel, but want to define
+separately to match the hardware-description (watchdog in secure-grf).
+Improvement in mmc phase calculation and cleanup of some rate defintions.
+
+----------------------------------------------------------------
+Douglas Anderson (4):
+      clk: rockchip: Use clk_hw_get_rate() in MMC phase calculation
+      clk: rockchip: Don't yell about bad mmc phases when getting
+      clk: rockchip: Slightly more accurate math in rockchip_mmc_get_phase()
+      clk: rockchip: Remove 48 MHz PLL rate from rk3288
+
+Heiko Stuebner (7):
+      clk: rockchip: add a type from SGRF-controlled gate clocks
+      clk: rockchip: convert pclk_wdt boilerplat to new SGRF_GATE macro
+      clk: rockchip: add clock id for watchdog pclk on rk3328
+      clk: rockchip: add clock id for hdmi_phy special clock on rk3228
+      Merge branch 'v5.3-shared/clk-ids' into v5.3-clk/next
+      clk: rockchip: add watchdog pclk on rk3328
+      clk: rockchip: export HDMIPHY clock on rk3228
+
+Justin Swartz (1):
+      clk: rockchip: add 1.464GHz cpu-clock rate to rk3228
+
+ drivers/clk/rockchip/clk-mmc-phase.c   | 14 ++++++--------
+ drivers/clk/rockchip/clk-px30.c        | 12 +++---------
+ drivers/clk/rockchip/clk-rk3228.c      |  3 ++-
+ drivers/clk/rockchip/clk-rk3288.c      | 13 +++----------
+ drivers/clk/rockchip/clk-rk3328.c      |  3 +++
+ drivers/clk/rockchip/clk-rk3368.c      | 12 +++---------
+ drivers/clk/rockchip/clk-rk3399.c      | 12 +++---------
+ drivers/clk/rockchip/clk.h             |  4 ++++
+ include/dt-bindings/clock/rk3228-cru.h |  1 +
+ include/dt-bindings/clock/rk3328-cru.h |  1 +
+ 10 files changed, 29 insertions(+), 46 deletions(-)
+
+
 
