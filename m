@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDA6C0650E
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37A6C0650E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F942146E
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA5F2146E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OBTityny"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="X3BPQb1o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbfGAJOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jul 2019 05:14:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46078 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728389AbfGAJNS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 05:13:18 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f9so12872276wre.12
-        for <linux-clk@vger.kernel.org>; Mon, 01 Jul 2019 02:13:16 -0700 (PDT)
+        id S1728393AbfGAJON (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jul 2019 05:14:13 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36060 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728376AbfGAJNQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 05:13:16 -0400
+Received: by mail-wm1-f68.google.com with SMTP id u8so15011229wmm.1
+        for <linux-clk@vger.kernel.org>; Mon, 01 Jul 2019 02:13:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UjWYkkIZxFPFv0EhClixGF6nOSS0O5IaIRSoIWr4uvE=;
-        b=OBTityny8NehxM86CMotZmVqU4h7f1j91UFQ3Ng4d88mxR7xGes+5JtDYbHuiXgfvl
-         tZ1DtseVHRrFkLhNeNfy84n1y/nWP6R+6KaQM/2rLaEHRMDMZEnBQkY/zmfBe/LqGEYU
-         KAjH1b00DjcrHy11zu847kt7uN4Y4cBTJ8jQLszkSYN02rJRdxFwV9w+S6G/WcKzAXwF
-         tKAa0iMJgcrApKQiymYS7qy8OQdrE1CnXCVg7F/I9U4gUIB92lFDzusgoPB7NBXqUaYC
-         DZAgRgksY81lE2PdxnTefmyUnGVTcPtiAnG/rQ3LZ7H4Jmzz1+49UQldqp4nmwCNvND0
-         4Mpw==
+        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
+        b=X3BPQb1oIV2x3Nt6jna67Clm8NfVyqvfwFA5grXCGNefyz+/yhFp29J7UxF350H1uB
+         2A/KSsEjBPVrHmtNTaeVwZfi+LVJYzfdusQbg1SMyERh2CMHUewA7njbMAKXXbEWXqnw
+         YIaqY4q70csEqv/5ucwnlOpRGHKzNggjQFQX+Ji4MMkG4ldiTmX1OrmmWnIQBZh5z6uT
+         B+9B133Dk9rtO6vSMAUSlpAOf/XFsJ3J6I1Y4ikwsbti/NHvU/FmVHpxXmSEQATSrXd7
+         9SiMeOTc34vpOtnfAoYiIJUANQXu3JyxsRXxVI3DG0fs4fqdic/CDqMSb3RxGpbKj8EQ
+         gElw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UjWYkkIZxFPFv0EhClixGF6nOSS0O5IaIRSoIWr4uvE=;
-        b=XZXXiQCL9MVQA5z040Jef3k8cS/yjTniWTaP9WmHYPpEwaHhv9zBaibGnEAoflDKpU
-         P7B5S7qgMU4Qw2WtfOsTOh+8ekzNxsQ6teVwJWzDWlvBCtdOeRdo7hocjfIukcmNGZ+P
-         umaMsCKC69LrT1iWFJr4HccATlaIaZbpq1HYxRcCupiEBHy0KdjhU2zy8VKkhSqze8i6
-         439dzHRtXWfl5LXE5H7cBF7pu5oj9Qpad/gUyC9K8xIDbfOFl4x9smir3djM0nIUIxl3
-         DZVCvy0XYhvj8K68epUYpk3VtLMdL0CwzR3j1n60MM/HoMsPD9/R9+36q/KmJzzdMXwJ
-         ZmNQ==
-X-Gm-Message-State: APjAAAVmU4U0Qdz+CXCX0j6NzJvwgebCq7Am2ttT1SZUuDKTWQR+Qi/g
-        qyozUss2KGBoO+KJ7LE24tFgHw==
-X-Google-Smtp-Source: APXvYqwBMTcbw5rlap0jViAbnSmrPSuRWsUL0g7rV9xchUwDtgLw5W194G1AFcFz013gxJR1rX643w==
-X-Received: by 2002:a5d:554b:: with SMTP id g11mr16183465wrw.10.1561972395925;
-        Mon, 01 Jul 2019 02:13:15 -0700 (PDT)
+        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
+        b=n/NJtmtCGU14u56ScsFIQaAiPJbrc7+ckG8zl1yRs2VhHhXiMTd6Ggid3txOS5FUUE
+         IVfi/rkVHsw8gCsrErBSUiVTJWmuRwW5vD2Gte76TmBhG5ueFbyksvOOmnwyjbgNqw9z
+         eJcOX8At6x47zImAzRQ75RMtRaUm28y/0BsrPtWfU0GDeG428dfB62ZT0UhtSD3zd84/
+         Zl/XtJMp3r3zKmdcFhqzoQs0h6X6/AyflEmRk74XocqlGV4mkrmIUFls8rNbyuzK8C48
+         YVriiNFc7UnPcK619guJj5jbh06AlSAH6CQUF3qrAXFryc4CGrii5iQ+J+QLaVEIGzaX
+         wMTg==
+X-Gm-Message-State: APjAAAWc0GlQkJBu15CW9WbSX6t83vPqapcNQ2OXDbh43k60LwbZOGnX
+        rPh4lpOWiG2iK+e2VdnK3X03UA==
+X-Google-Smtp-Source: APXvYqxo5Z8WiwiSIqfSVLsBg4/Fz465U9hGUrecgfM0bpcIhpYoQ8Z0JjUAK9SoDzeRMVjsViWAzA==
+X-Received: by 2002:a05:600c:254b:: with SMTP id e11mr15128659wma.171.1561972394998;
+        Mon, 01 Jul 2019 02:13:14 -0700 (PDT)
 Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.15
+        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 02:13:15 -0700 (PDT)
+        Mon, 01 Jul 2019 02:13:14 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com, khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -61,9 +61,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         linux-gpio@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v3 05/14] soc: amlogic: meson-clk-measure: protect measure with a mutex
-Date:   Mon,  1 Jul 2019 11:12:49 +0200
-Message-Id: <20190701091258.3870-6-narmstrong@baylibre.com>
+Subject: [RFC/RFT v3 04/14] clk: meson: eeclk: add setup callback
+Date:   Mon,  1 Jul 2019 11:12:48 +0200
+Message-Id: <20190701091258.3870-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190701091258.3870-1-narmstrong@baylibre.com>
 References: <20190701091258.3870-1-narmstrong@baylibre.com>
@@ -74,60 +74,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to protect clock measuring when multiple process asks for
-a measure, protect the main measure function with mutexes.
+Add a setup() callback in the eeclk structure, to call an optional
+call() function at end of eeclk probe to setup clocks.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+It's used for the G12A clock controller to setup the CPU clock notifiers.
+
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/clk/meson/meson-eeclk.c | 6 ++++++
+ drivers/clk/meson/meson-eeclk.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-index 19d4cbc93a17..c470e24f1dfa 100644
---- a/drivers/soc/amlogic/meson-clk-measure.c
-+++ b/drivers/soc/amlogic/meson-clk-measure.c
-@@ -11,6 +11,8 @@
- #include <linux/debugfs.h>
- #include <linux/regmap.h>
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 6ba2094be257..81fd2abcd173 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -61,6 +61,12 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
-+static DEFINE_MUTEX(measure_lock);
-+
- #define MSR_CLK_DUTY		0x0
- #define MSR_CLK_REG0		0x4
- #define MSR_CLK_REG1		0x8
-@@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 	unsigned int val;
- 	int ret;
- 
-+	ret = mutex_lock_interruptible(&measure_lock);
-+	if (ret)
-+		return ret;
-+
- 	regmap_write(priv->regmap, MSR_CLK_REG0, 0);
- 
- 	/* Set measurement duration */
-@@ -377,8 +383,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 
- 	ret = regmap_read_poll_timeout(priv->regmap, MSR_CLK_REG0,
- 				       val, !(val & MSR_BUSY), 10, 10000);
--	if (ret)
-+	if (ret) {
-+		mutex_unlock(&measure_lock);
- 		return ret;
++	if (data->setup) {
++		ret = data->setup(pdev);
++		if (ret)
++			return ret;
 +	}
- 
- 	/* Disable */
- 	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_ENABLE, 0);
-@@ -386,6 +394,8 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 	/* Get the value in multiple of gate time counts */
- 	regmap_read(priv->regmap, MSR_CLK_REG2, &val);
- 
-+	mutex_unlock(&measure_lock);
 +
- 	if (val >= MSR_VAL_MASK)
- 		return -EINVAL;
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+ 					   data->hw_onecell_data);
+ }
+diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+index 9ab5d6fa7ccb..7fdf424f71a6 100644
+--- a/drivers/clk/meson/meson-eeclk.h
++++ b/drivers/clk/meson/meson-eeclk.h
+@@ -20,6 +20,7 @@ struct meson_eeclkc_data {
+ 	const struct reg_sequence	*init_regs;
+ 	unsigned int			init_count;
+ 	struct clk_hw_onecell_data	*hw_onecell_data;
++	int				(*setup)(struct platform_device *pdev);
+ };
  
+ int meson_eeclkc_probe(struct platform_device *pdev);
 -- 
 2.21.0
 
