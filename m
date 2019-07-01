@@ -2,150 +2,120 @@ Return-Path: <SRS0=aD5i=U6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7776C06514
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 13:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8931EC0650E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 13:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5012173C
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 13:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 423A12089F
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jul 2019 13:13:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TEuLrMZe"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QVMHP+mT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbfGANMo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jul 2019 09:12:44 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57906 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728205AbfGANLx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jul 2019 09:11:53 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190701131152euoutp01295b49bf3af99e624955a1a0cd09ddbc~tSqOw6s-M2458724587euoutp01d
-        for <linux-clk@vger.kernel.org>; Mon,  1 Jul 2019 13:11:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190701131152euoutp01295b49bf3af99e624955a1a0cd09ddbc~tSqOw6s-M2458724587euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561986712;
-        bh=Q/+AVLIuT+hp4vYMuUP4aL41jpAGDZPWXeXLXgkKE2s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TEuLrMZel4VvlnGrt1JLBwfa7krJJd342Pu/75rNH4DjwesTzqnNakpl20SDpPpE1
-         rAYaNVdXZcjcYJj7iG70FLxBS/J0wxzuThr5y4K4J55ZzIV6XOKdtTYm5ViskeyHvd
-         xEc+IcKz15S5rxmOr5zgBFDp4AgWwTfGptO2U7BE=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190701131151eucas1p28ed18a39d8065f8aab98dcd658375aea~tSqNsjqsJ1085710857eucas1p2G;
-        Mon,  1 Jul 2019 13:11:51 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 8D.77.04325.7960A1D5; Mon,  1
-        Jul 2019 14:11:51 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190701131150eucas1p158e1d6065775d48edabfc360cbb882b1~tSqMsJyDm0999809998eucas1p1C;
-        Mon,  1 Jul 2019 13:11:50 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190701131150eusmtrp22346077023e68efa883c3408dd6acddc~tSqMdxWhR0782307823eusmtrp2Y;
-        Mon,  1 Jul 2019 13:11:50 +0000 (GMT)
-X-AuditID: cbfec7f5-b8fff700000010e5-d1-5d1a069753ef
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id DE.DA.04140.6960A1D5; Mon,  1
-        Jul 2019 14:11:50 +0100 (BST)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190701131149eusmtip14b432c187ab7cdb16bc5f22b19bb1418~tSqLhSnHk2637626376eusmtip1b;
-        Mon,  1 Jul 2019 13:11:49 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        cw00.choi@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-        myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com,
-        jroedel@suse.de, treding@nvidia.com, digetx@gmail.com,
-        gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v11 1/9] dt-bindings: ddr: rename lpddr2 directory
-Date:   Mon,  1 Jul 2019 15:11:30 +0200
-Message-Id: <20190701131138.22666-2-l.luba@partner.samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190701131138.22666-1-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSe0xNcRzvd889j66Ojhv6Spi72RTKa/Mzr5jHWWvLPGa0xqWzy+om9/RA
-        ZjcpSsliSmopo9xqvW5P0pOolBSaykx5RCLXbUsW3e7Bf5/f5/H7fPbbjyGUfaQTcyQwWNAF
-        qgNUlEJe+nC0dUkS5eS79KLJDhcm55P45Y8PJE5vaCVxznAfwpE38yl8uSlNhlsuaHFC32cC
-        t7UV0PjJmUEav9I74+G41yTuqEylsCm+AeHktvsynNfQS+P2pi24OyKbwvWD50g8/qJQjqs7
-        PXH32FQ88ugt8nDkR8yJcv5rVxTNX9e3y/mKlF6aLzLEUHx1Wi7Nx0cOUXzt0D0Zf9FoQHxx
-        czhvKpq7fco+xVo/IeBIqKBzX39AcdhQayCCzrLHc7NKCD2qmhKLbBngVoL5fRQZixSMkstG
-        UP/+FmU9/ECQaRySFBOC/pHHsr+R2yl3JSELQUlhp/xf5E7SOzoWMQzFuUG54ZglMJ1LRnD9
-        406Lh+DKCPjS3YMsggO3CRoGByaxnFsAmT0Rkw0stwE6mh5Q1rZ5kFNQQ1iwLecBz8y9k/uA
-        i2cg+kyLNGkzdEV3SAEH+NRopK3YGX5XpEseEfTxGciKT0FfQprkWQP1je2kZTTBuUB+pbuV
-        3ghZEdeQhQZuKnR9mWahiQmYWJpEWGkWzkcrre6FYIx7KhXNhKzcq9LlPPRkjEovehlBTP+A
-        7BKal/K/7AZCBuQohIhajSCuCBTC3ES1VgwJ1LgdOqotQhNfr3m80VyO7v86WIc4BqnsWH0P
-        +CpJdah4QluHgCFU09nq7Fm+StZPfeKkoDu6XxcSIIh1aDYjVzmy4TZvfJScRh0s+AtCkKD7
-        q8oYWyc9UhQrnFIDzDHerl6h4zXmtEe7ORefbwl7qnzveJvKF/sYNAmG8zVzSuy9y0572fuv
-        jvhQ4dm/a757qjebtzq4q1i3TQi6sKjt5ydjnCwqbK+yMHQj0vgl7nq5aUaMyWt0h50s7Ar7
-        3CZxzLnz+fJBel21zXciaeXWxQWlLrGrRqtWqeTiYfUyV0Inqv8AhDEx1XYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xu7rT2KRiDVpvsFlsnLGe1eL6l+es
-        FvOPnGO1WP3xMaNF8+L1bBaTT81lsjjTnWvR//g1s8X58xvYLc42vWG3uNUgY/Gx5x6rxeVd
-        c9gsPvceYbSYcX4fk8XaI3fZLS6ecrW43biCzeLwm3ZWi3/XNrJY7L/iZXH7N5/FtxOPGB3E
-        Pb59ncTi8f5GK7vH7IaLLB47Z91l99i0qpPNY//cNewevc3v2DwOvtvD5NG3ZRWjx+bT1R6f
-        N8kFcEfp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
-        Zaw6uIq5oIW3Ys3yrcwNjHu5uxg5OSQETCSWzdrN2sXIxSEksJRR4vzh7YwQCTGJSfu2s0PY
-        whJ/rnWxQRR9YpR49302UIKDg01AT2LHqkKQuIjAHEaJn13bGEEcZoGzzBK7V7xhAukWFnCS
-        OPLmJdhUFgFViUV3GsHivAL2EpdPHWWD2CAvsXrDAWYQm1PAQeLS17tgcSGgmnWLbzBOYORb
-        wMiwilEktbQ4Nz232EivODG3uDQvXS85P3cTIzAOtx37uWUHY9e74EOMAhyMSjy8GrckYoVY
-        E8uKK3MPMUpwMCuJ8O5fIRkrxJuSWFmVWpQfX1Sak1p8iNEU6KiJzFKiyfnAFJFXEm9oamhu
-        YWlobmxubGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoFxSmBForxVYdgi8edfoyczzlkp
-        lGMtn7T0zplnGa+9lmavaD8uu9tJafexRyWfltTLKPZPEoz6ItykqBBi/E/RKeDHoWmhylXT
-        whZuuMFs9Cvyd57D8bqT93YevBChznDosoXkouuTJ1nv2D3T9jXXo0XWp2YkyiUq//+0/HE/
-        w4Wgd+HnbrPVKLEUZyQaajEXFScCAPeoG9rZAgAA
-X-CMS-MailID: 20190701131150eucas1p158e1d6065775d48edabfc360cbb882b1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190701131150eucas1p158e1d6065775d48edabfc360cbb882b1
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190701131150eucas1p158e1d6065775d48edabfc360cbb882b1
-References: <20190701131138.22666-1-l.luba@partner.samsung.com>
-        <CGME20190701131150eucas1p158e1d6065775d48edabfc360cbb882b1@eucas1p1.samsung.com>
+        id S1728102AbfGANNz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jul 2019 09:13:55 -0400
+Received: from mail-eopbgr20082.outbound.protection.outlook.com ([40.107.2.82]:50663
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726329AbfGANNy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 1 Jul 2019 09:13:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2fueU2UwK+/gsfQtwExuuI6ZQTbXw3lV0Mpoy/e8Zu0=;
+ b=QVMHP+mTT55Z2ZJmvmEhaxijb34dupKo/QYFdN/WiSvYagsfXIyursqKP4BBJ5yIuGJwbk0egXfj9SOKNiom8qSQwuBm+9KOON4H0B9wX0Qy0lWrjwNYRp5MUOoyruvtUWrvaIgL6fqF6pyCWBMnDLAQ+5kRZc8i9/pb/GI4T2A=
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
+ VI1PR04MB5136.eurprd04.prod.outlook.com (20.177.50.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.20; Mon, 1 Jul 2019 13:13:52 +0000
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::d83:14c4:dedb:213b]) by VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::d83:14c4:dedb:213b%5]) with mapi id 15.20.2032.019; Mon, 1 Jul 2019
+ 13:13:52 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] clk: Add clk_min/max_rate entries in debugfs
+Thread-Topic: [PATCH v2] clk: Add clk_min/max_rate entries in debugfs
+Thread-Index: AQHVLajUq4SmNwzvekSbL/iOzo8zow==
+Date:   Mon, 1 Jul 2019 13:13:52 +0000
+Message-ID: <VI1PR04MB50555EBAFE8CF34189635B18EEF90@VI1PR04MB5055.eurprd04.prod.outlook.com>
+References: <0c12208398cadb7450b6b7745e99c55770c0ccf8.1561709827.git.leonard.crestez@nxp.com>
+ <CAMuHMdWVoYPZFZPmfTWMU3pZc633uqkn70MyApcPhgUSgmCW-A@mail.gmail.com>
+ <20190628193556.BC814208CB@mail.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [82.144.34.2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 40dd0c26-23db-427a-796e-08d6fe25f68f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5136;
+x-ms-traffictypediagnostic: VI1PR04MB5136:
+x-microsoft-antispam-prvs: <VI1PR04MB51362912B69052ABD788C92DEEF90@VI1PR04MB5136.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 00851CA28B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(396003)(376002)(366004)(136003)(199004)(189003)(102836004)(53936002)(8676002)(76176011)(55016002)(99286004)(5660300002)(3846002)(9686003)(54906003)(53546011)(71190400001)(6246003)(8936002)(186003)(81166006)(81156014)(6116002)(229853002)(316002)(14454004)(26005)(6436002)(7696005)(71200400001)(6506007)(25786009)(4326008)(110136005)(478600001)(446003)(256004)(66066001)(14444005)(476003)(74316002)(66556008)(44832011)(2906002)(86362001)(73956011)(66946007)(66476007)(486006)(66446008)(64756008)(68736007)(91956017)(76116006)(7736002)(33656002)(52536014)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5136;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: SBTYgtpRajBVQzl+AWbogus3M3DNdhvBh3J/bQZwdiitgKbs0XjirHGoqg3DDoIZ9k3mKT6LZjyXo00+GhYjDFTxwIV9ot7+ss70MtuPQs2jX6HKnOWBHlpH54qMYRzfQuxqAb+diCiYFKJzD3wSQznU0bf/x7rXG9wmg0zogO52LiXtMdQDEUT0GVK8UhpZQqf5Ux5/n4cg7hjht2jM1SpPxDESt1V98ssE45makkoznWAmKZuiZ0phHxasdVR5LOa2uTT5P+5DwYa5gw9f3QoOcU9L2vG0HVr56j7r6jelU310mjNXVpG6pZ+CxyAzqPZC9VMmqpqlPcJy/pPpkZgzH4eP9zHzV7WUZ64FjuDsi8dpIHQV92XgfVgpJ1JjSluy/uAf5e7b3vmpOXGRH3YPF+cSvnlkt929VZ64t4Y=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40dd0c26-23db-427a-796e-08d6fe25f68f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 13:13:52.1887
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5136
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Change directory name to be ready for new types of memories.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- .../devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt      | 0
- Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt    | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt (100%)
- rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt (96%)
-
-diff --git a/Documentation/devicetree/bindings/lpddr2/lpddr2-timings.txt b/Documentation/devicetree/bindings/ddr/lpddr2-timings.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/lpddr2/lpddr2-timings.txt
-rename to Documentation/devicetree/bindings/ddr/lpddr2-timings.txt
-diff --git a/Documentation/devicetree/bindings/lpddr2/lpddr2.txt b/Documentation/devicetree/bindings/ddr/lpddr2.txt
-similarity index 96%
-rename from Documentation/devicetree/bindings/lpddr2/lpddr2.txt
-rename to Documentation/devicetree/bindings/ddr/lpddr2.txt
-index 58354a075e13..ddd40121e6f6 100644
---- a/Documentation/devicetree/bindings/lpddr2/lpddr2.txt
-+++ b/Documentation/devicetree/bindings/ddr/lpddr2.txt
-@@ -36,7 +36,7 @@ Child nodes:
-   "lpddr2-timings" provides AC timing parameters of the device for
-   a given speed-bin. The user may provide the timings for as many
-   speed-bins as is required. Please see Documentation/devicetree/
--  bindings/lpddr2/lpddr2-timings.txt for more information on "lpddr2-timings"
-+  bindings/ddr/lpddr2-timings.txt for more information on "lpddr2-timings"
- 
- Example:
- 
--- 
-2.17.1
-
+On 6/28/2019 10:36 PM, Stephen Boyd wrote:=0A=
+> Quoting Geert Uytterhoeven (2019-06-28 04:58:27)=0A=
+>> On Fri, Jun 28, 2019 at 10:19 AM Leonard Crestez=0A=
+>>=0A=
+>>> --- a/drivers/clk/clk.c=0A=
+>>> +++ b/drivers/clk/clk.c=0A=
+>>> @@ -591,10 +591,12 @@ static void clk_core_get_boundaries(struct clk_co=
+re *core,=0A=
+>>>                                      unsigned long *min_rate,=0A=
+>>>                                      unsigned long *max_rate)=0A=
+>>>   {=0A=
+>>>          struct clk *clk_user;=0A=
+>>>=0A=
+>>> +       lockdep_assert_held(&prepare_lock);=0A=
+>>> +=0A=
+>>=0A=
+>> I guess the clock maintainers want to see the addition of this check=0A=
+>> spun off into a separate patch....=0A=
+> =0A=
+> Yes. I'm not sure we should have the assertion in there. I seem to=0A=
+> recall that we thought it might not always be necessary to have the=0A=
+> lock, but maybe that was wrong.=0A=
+=0A=
+The clk_core_get_boundaries function iterates consumers so locking is =0A=
+required. Looking at other functions manipulating clks_node (such as =0A=
+__clk_put, clk_core_link/unlink_consumer) this is always done under =0A=
+prepare_lock.=0A=
+=0A=
+In theory without locking debugfs could read freed memory if it happens =0A=
+at the same time as device removal.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
