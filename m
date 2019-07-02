@@ -2,154 +2,154 @@ Return-Path: <SRS0=SyXX=U7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8264C06513
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 13:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6499C06510
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 13:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA74206E0
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 13:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFCF9205F4
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 13:53:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rRQSPxyT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfGBN1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jul 2019 09:27:17 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:44594 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbfGBN1R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:27:17 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F022C1A0233;
-        Tue,  2 Jul 2019 15:27:14 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DA1471A0230;
-        Tue,  2 Jul 2019 15:27:14 +0200 (CEST)
-Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 984752061C;
-        Tue,  2 Jul 2019 15:27:14 +0200 (CEST)
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 1/2] clk: Add clk_min/max_rate entries in debugfs
-Date:   Tue,  2 Jul 2019 16:27:09 +0300
-Message-Id: <68e96af2df96512300604d797ade2088d7e6e496.1562073871.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726628AbfGBNxX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jul 2019 09:53:23 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38410 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGBNxX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jul 2019 09:53:23 -0400
+Received: by mail-ed1-f67.google.com with SMTP id r12so27372828edo.5;
+        Tue, 02 Jul 2019 06:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AoEb1XK5dWnAb/XBdu/lZ2XdsXhNA2v9oOFATUDjbD0=;
+        b=rRQSPxyTMuRnQn9dQ6uPjqvkwKpDvf2xgxGrMy0XuEWVzfk3IEvNkguAVRY9nRJYfo
+         gZah0iQhsaCPAwpjLSCemmq8gLLTpII+ti5c6I6TUMrtAzYuZhTP0K1rp+4RCDDgpWzE
+         bZc0osHIzLMqxhMLGZhWF899HZ4WnRIySFcnFDj5Ms0T0D+3dNcKCDkMzSF5SWga0uyP
+         VpYLcBDsXv2y3SSGlYyIshk4eC28J6M+XEqfASKd8VFtHF2FBaPTuCruVMppchbac3Ax
+         AEP45WNtQ+9COLmubIsqWyYzl1QLchUtPfD4LccbjDoAwgxuqOVjD3OBBIag2Lf/5D08
+         PWFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AoEb1XK5dWnAb/XBdu/lZ2XdsXhNA2v9oOFATUDjbD0=;
+        b=HqrLaYe8Yucz1MVcz6FqmiXKITW1gpkazj/Zj7QCXeT6Nhv7o6rRwjrNauI29r5Raf
+         3ELw65cDmgqOrA5m1D2nxitsTjz8OfpDWgTjeeh7n3mvzgQhZv+hap4QbeevCNFK1w4G
+         +Nu9zY6C0NRUPa1/0Gf7Q2z5B59KvYihJbiKr8yOPJrr/NH6zpGwn0M7VWhLqACcBwHF
+         hoEmJQ7XOKQZgSC8JXKVpJe/ePKKoYGAuvINMLiegbQhpraMSv7I1r6U/b+u4bjb7veI
+         vLsiJ9jh+l2VJWILap7NIW4SMWrbbG4YYCK28nelql0Q/eiwyGX/J6tktG61CeJlU94G
+         bD3Q==
+X-Gm-Message-State: APjAAAWFnA3qXjxhrPd2Jvdmwi/EZU52fg/09EfKIl2+KR9ugKwt2O3+
+        2nQDsiFuPeUU/qiv0tSOn0JG1GanxQCiIBMvuvbkDf9ZdWc=
+X-Google-Smtp-Source: APXvYqyI5MP1Q8XIiLRjo4pLVTzxgZBBN8zypGreqic/xheUF0/IxxIdEzjsWYjgmlEDl7MpPt0LDnPWwQX2r7zymnI=
+X-Received: by 2002:a17:906:3f87:: with SMTP id b7mr28163648ejj.164.1562075600813;
+ Tue, 02 Jul 2019 06:53:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190630150230.7878-1-robdclark@gmail.com> <20190630150230.7878-5-robdclark@gmail.com>
+ <75a2921d-bf1a-c4c1-6d9a-122474eface4@codeaurora.org> <CAF6AEGufiSU_sFZFdLH=KT5iCQGwccszURqAQCHd=dhuZafvZg@mail.gmail.com>
+ <9fbf9226-578a-90aa-693d-9ea4fcda8281@codeaurora.org>
+In-Reply-To: <9fbf9226-578a-90aa-693d-9ea4fcda8281@codeaurora.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Tue, 2 Jul 2019 06:53:05 -0700
+Message-ID: <CAF6AEGuze-mnUQy36UvB-JCp3KUASgTa+0dh4i_AFdmYX0tzuw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] drm/msm/dsi: get the clocks into OFF state at init
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        aarch64-laptops@lists.linaro.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Chandan Uddaraju <chandanu@codeaurora.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add two files to expose min/max clk rates as determined by
-clk_core_get_boundaries, taking all consumer requests into account.
+On Mon, Jul 1, 2019 at 12:07 PM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
+>
+> On 7/1/2019 12:58 PM, Rob Clark wrote:
+> > On Mon, Jul 1, 2019 at 11:37 AM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
+> >>
+> >> On 6/30/2019 9:01 AM, Rob Clark wrote:
+> >>> From: Rob Clark <robdclark@chromium.org>
+> >>>
+> >>> Do an extra enable/disable cycle at init, to get the clks into disabled
+> >>> state in case bootloader left them enabled.
+> >>>
+> >>> In case they were already enabled, the clk_prepare_enable() has no real
+> >>> effect, other than getting the enable_count/prepare_count into the right
+> >>> state so that we can disable clocks in the correct order.  This way we
+> >>> avoid having stuck clocks when we later want to do a modeset and set the
+> >>> clock rates.
+> >>>
+> >>> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> >>> ---
+> >>>    drivers/gpu/drm/msm/dsi/dsi_host.c         | 18 +++++++++++++++---
+> >>>    drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c |  1 +
+> >>>    2 files changed, 16 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
+> >>> index aabab6311043..d0172d8db882 100644
+> >>> --- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
+> >>> +++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
+> >>> @@ -354,6 +354,7 @@ static int dsi_pll_10nm_lock_status(struct dsi_pll_10nm *pll)
+> >>>        if (rc)
+> >>>                pr_err("DSI PLL(%d) lock failed, status=0x%08x\n",
+> >>>                       pll->id, status);
+> >>> +rc = 0; // HACK, this will fail if PLL already running..
+> >>
+> >> Umm, why?  Is this intentional?
+> >>
+> >
+> > I need to sort out a proper solution for this.. but PLL lock will fail
+> > if the clk is already running (which, in that case, is fine since it
+> > is already running and locked), which will cause the clk_enable to
+> > fail..
+> >
+> > I guess there is some way that I can check that clk is already running
+> > and skip this check..
+>
+>
+> I'm sorry, but this makes no sense to me.  What clock are we talking
+> about here?
+>
+> If the pll is locked, the the lock check should just drop through.  If
+> the pll cannot lock, you have an issue.  I'm confused as to how any of
+> the downstream clocks can actually be running if the pll isn't locked.
+>
+> I feel like we are not yet on the same page about what situation you
+> seem to be in.  Can you describe in exacting detail?
+>
 
-This information does not appear to be otherwise exposed to userspace.
+So, I went back to check some of the kernel logs, and actually the
+case where we were hitting the PLL lock fail was -EPROBE_DEFER cases,
+so what was happening is the enable/disable cycle would succeed the
+first time, but then we'd -EPROBE_DEFER.  Then after a suspend/resume
+cycle, we'd try again, but this time pll's were reset to power on
+state, and we weren't setting rate.
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+With the other patchset[1] I sent over the weekend, this should no
+longer be a problem so I can drop the hack.
 
----
- drivers/clk/clk.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+BR,
+-R
 
-Changes since v2:
-* Shrink clk_prepare_lock
-* Split lock assertion to separate patch
-Link to v2: https://patchwork.kernel.org/patch/11021609/
-
-Changes since v1:
-* Call clk_prepare_lock/clk_prepare_unlock (Geert)
-* Also include in clk_dump, but only with non-default values
-Link to v1: https://patchwork.kernel.org/patch/11019873/
-
-Don't add to clk_summary because min/max rates are rarely used and
-clk_summary already has too many columns.
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..e4e224982ae3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2894,19 +2894,26 @@ static int clk_summary_show(struct seq_file *s, void *data)
- }
- DEFINE_SHOW_ATTRIBUTE(clk_summary);
- 
- static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- {
-+	unsigned long min_rate, max_rate;
-+
- 	if (!c)
- 		return;
- 
- 	/* This should be JSON format, i.e. elements separated with a comma */
- 	seq_printf(s, "\"%s\": { ", c->name);
- 	seq_printf(s, "\"enable_count\": %d,", c->enable_count);
- 	seq_printf(s, "\"prepare_count\": %d,", c->prepare_count);
- 	seq_printf(s, "\"protect_count\": %d,", c->protect_count);
- 	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
-+	clk_core_get_boundaries(c, &min_rate, &max_rate);
-+	if (min_rate != 0)
-+		seq_printf(s, "\"min_rate\": %lu,", min_rate);
-+	if (max_rate != ULONG_MAX)
-+		seq_printf(s, "\"max_rate\": %lu,", max_rate);
- 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
- 	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
- 	seq_printf(s, "\"duty_cycle\": %u",
- 		   clk_core_get_scaled_duty_cycle(c, 100000));
- }
-@@ -3062,10 +3069,38 @@ static int clk_duty_cycle_show(struct seq_file *s, void *data)
- 
- 	return 0;
- }
- DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
- 
-+static int clk_min_rate_show(struct seq_file *s, void *data)
-+{
-+	struct clk_core *core = s->private;
-+	unsigned long min_rate, max_rate;
-+
-+	clk_prepare_lock();
-+	clk_core_get_boundaries(core, &min_rate, &max_rate);
-+	clk_prepare_unlock();
-+	seq_printf(s, "%lu\n", min_rate);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(clk_min_rate);
-+
-+static int clk_max_rate_show(struct seq_file *s, void *data)
-+{
-+	struct clk_core *core = s->private;
-+	unsigned long min_rate, max_rate;
-+
-+	clk_prepare_lock();
-+	clk_core_get_boundaries(core, &min_rate, &max_rate);
-+	clk_prepare_unlock();
-+	seq_printf(s, "%lu\n", max_rate);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(clk_max_rate);
-+
- static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- {
- 	struct dentry *root;
- 
- 	if (!core || !pdentry)
-@@ -3073,10 +3108,12 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 
- 	root = debugfs_create_dir(core->name, pdentry);
- 	core->dentry = root;
- 
- 	debugfs_create_ulong("clk_rate", 0444, root, &core->rate);
-+	debugfs_create_file("clk_min_rate", 0444, root, core, &clk_min_rate_fops);
-+	debugfs_create_file("clk_max_rate", 0444, root, core, &clk_max_rate_fops);
- 	debugfs_create_ulong("clk_accuracy", 0444, root, &core->accuracy);
- 	debugfs_create_u32("clk_phase", 0444, root, &core->phase);
- 	debugfs_create_file("clk_flags", 0444, root, core, &clk_flags_fops);
- 	debugfs_create_u32("clk_prepare_count", 0444, root, &core->prepare_count);
- 	debugfs_create_u32("clk_enable_count", 0444, root, &core->enable_count);
--- 
-2.17.1
-
+[1] https://patchwork.freedesktop.org/series/63000/
