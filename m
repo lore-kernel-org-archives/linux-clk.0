@@ -2,63 +2,63 @@ Return-Path: <SRS0=btre=VA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC761C5B57D
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 00:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147E0C5B57D
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 00:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7213C219BE
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 00:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D448320673
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 00:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aW71dvXz"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ZL/zgmk5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbfGCAax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jul 2019 20:30:53 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35051 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbfGCAaw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jul 2019 20:30:52 -0400
-Received: by mail-ot1-f65.google.com with SMTP id j19so489506otq.2;
-        Tue, 02 Jul 2019 17:30:52 -0700 (PDT)
+        id S1727036AbfGCAfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jul 2019 20:35:04 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46941 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCAfE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jul 2019 20:35:04 -0400
+Received: by mail-ot1-f68.google.com with SMTP id z23so431793ote.13;
+        Tue, 02 Jul 2019 17:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
-        b=aW71dvXzx3/OZ2dyur8K2R3t59hdwnCvtsuhJGdee/nm9r6PCmqTtx+JWgAIJLo2/d
-         Y21AhbIEphVmstcZOwfTGkQASbWx10y4fsfburjD7qorfBw7J73NAYnWdXDN5k5epES2
-         9xsxotFn9XmfaHw9GsQaebN96U6pHmRUkIvbu0rqpCA3ltYn9AaqBA81bvwfZWb2bRXK
-         PGExbAEeQJBbEYszopwMOpV+S9XN0z12R0Vy2r2L+ErpKfnQnxV/0MIwpTrNI/wPBJUQ
-         Q4OJpy3R867Yl9+XNBz9RWRkL9MFWnLifF6/SdKW9uCH6tpmnrx4YKPqcv3J2LmnI790
-         wFfg==
+        bh=6HvJuM18alyeMHoRBjFAJz8IVxm/LOrt6nImzFK3lsE=;
+        b=ZL/zgmk5C6P8mXBb7AQ7vp5C1Xz9VF3Onrg6rH+mPkYfq1bkn35Xn/20CUxdaHn/Ba
+         As8W8rj8MO2TPxJbLYAsV8Zr1JcXNxcB7S3nTswhG/q8JMEduSCQJcmZLLQ9zOQSQfyk
+         kx6R2lLIgaUoq7ViMRDuO36Wn2pKUGkrTuOcSp1cqtLZyOJUPgX447cc56NnfWuKJcvy
+         dk+DNAVbg9S/dYMV8QLSIJUIMiqtDPDb9aFykMXk/YpOwSbjg03XRU3rPcXWYsTdoOjF
+         TQXzWG83z4s362gpdu9ENdszdpz5ERCO3qPD4xQdAvzEluLxpKpd1AhOMkZ7qym/hOma
+         +DYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
-        b=JyqDon+pTlje8hOecDtTi3T1tCiHKDoBqevjUXlT0QD1tKYWqRkUhzQiOIu46AsPOC
-         7aEf+Xw9mBFZUaueoCQX03NjIg/mlgCQN66hA9SCfLWjrYM8QSL6IdNH75pkWwUq7ngY
-         d1S0PqqAoGWjWunvwVCQUeWOgO8l14EX9uVWxX8UK2Y+AysM+Gcvx5al4rBFhQSoYV0/
-         YMYyOcenwhKEv3jIepvyC7HlqUf5aNOSLmr6SJvJq3q9aGZs6m5Anom1Xh3RPtXWj34s
-         uo8X2+8vK5qH8FaxvIBvC3x3euBkezXX7O073ONwiEhwFWO026xvKCOecHHhB55A+8Wj
-         Yc1A==
-X-Gm-Message-State: APjAAAXy6O1lSAnOZ4zZQfXUjHvcjK0SaQK1tqhBtMl1fn73k6DskWNj
-        OlsdcuHptjogpcmfkBxc3T4yQWJMEOqtsOostw1gH1bH
-X-Google-Smtp-Source: APXvYqy/QQUN0J6b4O2bTl3SYceaajLNKXdMQ4/wzOnMkRg4M4DkLByhdEGK3wJrQJDIJWZll9ZaCAX1i1L6mFoN5Ec=
-X-Received: by 2002:a9d:39a6:: with SMTP id y35mr27395004otb.81.1562110146329;
- Tue, 02 Jul 2019 16:29:06 -0700 (PDT)
+        bh=6HvJuM18alyeMHoRBjFAJz8IVxm/LOrt6nImzFK3lsE=;
+        b=szqJMGikUpqhNZjWfnCCEG1CoZQnO2s9EhLAEYk9FYBMQQV80GY1Ucj7NvjP7lG9He
+         oCesTSL4qn0a5gDvzs2yGN2KRYUr5uAz6ONbjBO9CCVdFEDyvYK8sxwl6KLw9mP+1Rbk
+         3Kl1GK0nGeF8cpjN9SJYylPcVDxZhDj6Af+fFWpieWBuGSYaMGh4tIrhz/CCQfPk5Klo
+         kY+OEHwy4fxsAu34AcX9F0eX1ovnGALa/8I6iPlLWk5CbV1PKKA828fgELaWnI6AJ4p7
+         xkPUKUOVp9A9AUtIV4MIbDGUgbNuyV8HXwvj4485nF49mTSctM153f05tG84GogWyQTl
+         3xJw==
+X-Gm-Message-State: APjAAAVvuH0gniloCtMUxKFWHd4DBS+JGwp+3aSy9IBz4epPd+gRz8L0
+        iDltOaHOyUL+lOO36yqaL1Vz13O9hj6f+eeNykwgsG1F
+X-Google-Smtp-Source: APXvYqyZYeVdqlXDt36fdhfbAYHQ2O+BsFsPr+MyhLgpJe6VJlBkHeJ6Eta6tLBIetsFlmHLbT/xvN+x6/atColGNo0=
+X-Received: by 2002:a9d:23ca:: with SMTP id t68mr26108783otb.98.1562108343442;
+ Tue, 02 Jul 2019 15:59:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-8-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-8-narmstrong@baylibre.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-7-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-7-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:28:55 +0200
-Message-ID: <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 07/14] clk: meson: g12a: add notifiers to handle cpu
- clock change
-To:     sboyd@codeaurora.org, Neil Armstrong <narmstrong@baylibre.com>
+Date:   Wed, 3 Jul 2019 00:58:52 +0200
+Message-ID: <CAFBinCBdB96e4PzxNMbOhuiRrxGz-4vRXu3dOs7n86qoA8MDeQ@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 06/14] soc: amlogic: meson-clk-measure: add G12B
+ second cluster cpu clk
+To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -69,111 +69,12 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Hi Neil,
-
 On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> In order to implement clock switching for the CLKID_CPU_CLK and
-> CLKID_CPUB_CLK, notifiers are added on specific points of the
-> clock tree :
+> Add the G12B second CPU cluster CPU and SYS_PLL measure IDs.
 >
-> cpu_clk / cpub_clk
-> |   \- cpu_clk_dyn
-> |      |  \- cpu_clk_premux0
-> |      |        |- cpu_clk_postmux0
-> |      |        |    |- cpu_clk_dyn0_div
-> |      |        |    \- xtal/fclk_div2/fclk_div3
-> |      |        \- xtal/fclk_div2/fclk_div3
-> |      \- cpu_clk_premux1
-> |            |- cpu_clk_postmux1
-> |            |    |- cpu_clk_dyn1_div
-> |            |    \- xtal/fclk_div2/fclk_div3
-> |            \- xtal/fclk_div2/fclk_div3
-> \ sys_pll / sys1_pll
+> These IDs returns 0Hz on G12A.
 >
-> This for each cluster, a single one for G12A, two for G12B.
->
-> Each cpu_clk_premux1 tree is marked as read-only and CLK_SET_RATE_NO_REPARENT,
-> to be used as "parking" clock in a safe clock frequency.
-it seems that this is one case where the "coordinated clocks" feature
-would come handy: [0]
-Stephen, do you know if those patches stopped in March or if there's
-still some ongoing effort to get them ready?
-
-[...]
-> -/*
-> - * Internal sys pll emulation configuration parameters
-> - */
-> -static const struct reg_sequence g12a_sys_init_regs[] = {
-> -       { .reg = HHI_SYS_PLL_CNTL1,     .def = 0x00000000 },
-> -       { .reg = HHI_SYS_PLL_CNTL2,     .def = 0x00000000 },
-> -       { .reg = HHI_SYS_PLL_CNTL3,     .def = 0x48681c00 },
-> -       { .reg = HHI_SYS_PLL_CNTL4,     .def = 0x88770290 },
-> -       { .reg = HHI_SYS_PLL_CNTL5,     .def = 0x39272000 },
-> -       { .reg = HHI_SYS_PLL_CNTL6,     .def = 0x56540000 },
-> +static const struct pll_mult_range g12a_sys_pll_mult_range = {
-> +       .min = 128,
-> +       .max = 250,
->  };
->
->  static struct clk_regmap g12a_sys_pll_dco = {
-> @@ -124,14 +118,15 @@ static struct clk_regmap g12a_sys_pll_dco = {
->                         .shift   = 29,
->                         .width   = 1,
->                 },
-> -               .init_regs = g12a_sys_init_regs,
-> -               .init_count = ARRAY_SIZE(g12a_sys_init_regs),
-> +               .range = &g12a_sys_pll_mult_range,
-Neil, I believe that this should be a separate patch with a
-description which explains why we don't need the "init regs" anymore
-
->         },
->         .hw.init = &(struct clk_init_data){
->                 .name = "sys_pll_dco",
-> -               .ops = &meson_clk_pll_ro_ops,
-> +               .ops = &meson_clk_pll_ops,
->                 .parent_names = (const char *[]){ IN_PREFIX "xtal" },
->                 .num_parents = 1,
-> +               /* This clock feeds the CPU, avoid disabling it */
-> +               .flags = CLK_IS_CRITICAL,
-maybe we should have a separate patch for making the CPU clock tree
-mutable as well
-
-[...]
-> +/* This divider uses bit 26 to take change in account */
-> +static int g12b_cpub_clk_mux0_div_set_rate(struct clk_hw *hw,
-> +                                          unsigned long rate,
-> +                                          unsigned long parent_rate)
-> +{
-> +       struct clk_regmap *clk = to_clk_regmap(hw);
-> +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret = divider_get_val(rate, parent_rate, div->table, div->width,
-> +                             div->flags);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       val = (unsigned int)ret << div->shift;
-> +
-> +       regmap_update_bits(clk->map, HHI_SYS_CPUB_CLK_CNTL,
-> +                          SYS_CPU_DYN_ENABLE, SYS_CPU_DYN_ENABLE);
-> +
-> +       return regmap_update_bits(clk->map, div->offset,
-> +                                 clk_div_mask(div->width) << div->shift |
-> +                                 SYS_CPU_DYN_ENABLE, val);
-> +};
-the public S922X datasheet doesn't mention bit 26
-do I understand the semantics correctly?:
-- set SYS_CPU_DYN_ENABLE
-- update the divider
-- unset SYS_CPU_DYN_ENABLE
-
-too bad it's not a gate which we could model with
-CLK_SET_RATE_GATE/CLK_SET_RATE_UNGATE
-
-
-Martin
-
-[0] https://patchwork.kernel.org/patch/10838949/
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
