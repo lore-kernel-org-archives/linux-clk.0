@@ -2,136 +2,97 @@ Return-Path: <SRS0=SyXX=U7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 190CEC5B57D
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 07:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC73C06510
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 12:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6FD1216C8
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 07:14:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="pOOc1NS0"
+	by mail.kernel.org (Postfix) with ESMTP id 4E7F021721
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 12:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562069195;
+	bh=JMUvbK/LfOJhb6Ete6QNsOakQUnGfCiPzMOmNQ6+NCg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=dUBrk1UJ6qOg43MuF3FJUlg396tZnQpuX58HPx+k1j25LNESThsSD+TPh6ypnYvNw
+	 /zxKdxT0CMU0hA7VqMilhx0KHZ6X7Vr7h2iqdGhpJ1HZ8iMiEmiXN5C7LWNIWTOXo5
+	 dsJokcA7zFoGAQZGsUriyYe4BpTIxCZ3AsQ22NfA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725859AbfGBHOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jul 2019 03:14:00 -0400
-Received: from mail-eopbgr140083.outbound.protection.outlook.com ([40.107.14.83]:6184
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725802AbfGBHOA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:14:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NPxsmxOfL36rrzoAwvi4M3tNWKnJjVQKptP09mfuhTE=;
- b=pOOc1NS0Q0TKh4K3va0Dd3ozWST0cRPKRtHT8bfDWMHWNOjLZNmE10O9Eelj4Q0ECHoNSOSOeF5oawUkrLPzn32JI9sHqLcTu7h99hnD9q9z3x2qmkhl/wv1cG1ZBzJKQ8QmtgxJ4QreDFzKrbU9WNSlYBG0O1IZJeKlaxG+pCc=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB5251.eurprd04.prod.outlook.com (20.177.41.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Tue, 2 Jul 2019 07:13:56 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::a126:d121:200:367]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::a126:d121:200:367%7]) with mapi id 15.20.2032.019; Tue, 2 Jul 2019
- 07:13:56 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-CC:     Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Saravana Kannan <saravanak@google.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFCv2 2/8] clk: imx8m-composite: Switch to determine_rate
-Thread-Topic: [RFCv2 2/8] clk: imx8m-composite: Switch to determine_rate
-Thread-Index: AQHVLYSzFhiWj3SboUyyXoLKKvuOrKa28GGA
-Date:   Tue, 2 Jul 2019 07:13:56 +0000
-Message-ID: <20190702071355.gb5e5qxupojshgun@fsr-ub1664-175>
-References: <cover.1561707104.git.leonard.crestez@nxp.com>
- <5d62b31309e6402bd9fa608730518b39af823fb3.1561707104.git.leonard.crestez@nxp.com>
- <20190628084521.d64d5g54zvxlsxsl@fsr-ub1664-175>
- <VI1PR04MB50552AC6EAB0C145D638E618EEFC0@VI1PR04MB5055.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB50552AC6EAB0C145D638E618EEFC0@VI1PR04MB5055.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 17fa0e7d-f0a5-457a-7aa2-08d6febcd8ce
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5251;
-x-ms-traffictypediagnostic: AM0PR04MB5251:
-x-microsoft-antispam-prvs: <AM0PR04MB5251C4BE5C7E5BFAFA70FAF7F6F80@AM0PR04MB5251.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 008663486A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(376002)(396003)(39860400002)(136003)(366004)(346002)(199004)(189003)(76116006)(73956011)(7416002)(66946007)(1076003)(68736007)(33716001)(4326008)(2906002)(91956017)(6862004)(3846002)(486006)(44832011)(6116002)(5660300002)(64756008)(71200400001)(6636002)(66556008)(66476007)(71190400001)(66446008)(316002)(54906003)(11346002)(6512007)(26005)(6246003)(14454004)(53546011)(81156014)(81166006)(6506007)(86362001)(229853002)(53936002)(446003)(476003)(4744005)(305945005)(7736002)(8676002)(102836004)(186003)(99286004)(256004)(478600001)(6436002)(66066001)(14444005)(25786009)(8936002)(9686003)(6486002)(76176011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5251;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: D3+CJMiDAaG+AjtXEqGTnjfmEXOERY4ndRNUK/zj/+SjrZvyNua28FwbEMJxKHw0IZJ31qybuwjI8S6wca2AhOHePAkoe6vCXJJxScDI8QS5atWrs5xgzhqj/LEB8w3FkOIFh5wy0FfmOniBAbu4DCaT3FX2YYubiJIM55JCAvgW4uHBfx1bnSTxKNz0O2Vv+ebw2WgoMEXiF5oVTD9uBA8uSUxaZNowt252mL/g3e2wgob8aBbyqLUIf6BoFbhzwbV+UYz6NBC5y3x6/6CRo0nHMB/P7LEOO040s96QfvXE5xjfZqHREnj5lvXHBtnySOrZvVc0v9lWSUmN9BuEMSsDmcI4CC59vWSaOGJK3sM3ncgyJGH82RWRDhlZUMaftDeEI6WGurydpBYZqj7v18C+tPV7bPhNTW4dXDq11H4=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <B69BB4B1168AF5449762D788617CD65F@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726418AbfGBMGa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jul 2019 08:06:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725922AbfGBMGa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Jul 2019 08:06:30 -0400
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9660F21851;
+        Tue,  2 Jul 2019 12:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562069188;
+        bh=JMUvbK/LfOJhb6Ete6QNsOakQUnGfCiPzMOmNQ6+NCg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HwC20ALa2Bz/YOW4FKBF/0iy/VmbQeOGBkAAkPTbw4EE8VmR2fSspfXMqIqwBdVc/
+         zFjLG4As/+XHC/UKUp9UeDb1GP5DlrEAxFpWnUT/UA0QODaoSD5VDW5BRnZQkzNU7U
+         H+wq0YOGmgvMgbg3tmtNjBKsB7mFNNQ1FiH5MGuI=
+Received: by mail-lj1-f175.google.com with SMTP id p17so16648026ljg.1;
+        Tue, 02 Jul 2019 05:06:28 -0700 (PDT)
+X-Gm-Message-State: APjAAAUr1uZ4khOmwGJGEWjlGlNrEcklBi3a+VGqK2KhyTPKYszaSXmj
+        C89t7oVNmtl3OeBRKrhrPO0hMOEeXpNxT1jeg3Q=
+X-Google-Smtp-Source: APXvYqzUYFM/EIyZphFmV/SpQwmAz/C+DNi3kHPWXR6+ebp2/C/4bHX7aVTINZ72IbXpXBNvNjj3Ls2f2eDhzgGnXR8=
+X-Received: by 2002:a2e:8155:: with SMTP id t21mr16985058ljg.80.1562069186791;
+ Tue, 02 Jul 2019 05:06:26 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17fa0e7d-f0a5-457a-7aa2-08d6febcd8ce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2019 07:13:56.2182
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: abel.vesa@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5251
+References: <CGME20190701131152eucas1p2c5ac5f1611fd07e3b7a4ad289abe3e81@eucas1p2.samsung.com>
+ <20190701131138.22666-1-l.luba@partner.samsung.com> <20190701131138.22666-4-l.luba@partner.samsung.com>
+In-Reply-To: <20190701131138.22666-4-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 2 Jul 2019 14:06:15 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcc3q4_GLg21TL=xNO5U1Kp9ZHqpSERHFVCi8OLasgm3Q@mail.gmail.com>
+Message-ID: <CAJKOXPcc3q4_GLg21TL=xNO5U1Kp9ZHqpSERHFVCi8OLasgm3Q@mail.gmail.com>
+Subject: Re: [PATCH v11 3/9] drivers: memory: extend of_memory by LPDDR3 support
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-06-28 08:56:35, Leonard Crestez wrote:
-> On 28.06.2019 11:45, Abel Vesa wrote:
-> > On 19-06-28 10:39:50, Leonard Crestez wrote:
->=20
-> >> This allows consumers to use min_rate max_rate.
-> >>
-> >> @@ -45,10 +45,12 @@ static unsigned long imx8m_clk_composite_divider_r=
-ecalc_rate(struct clk_hw *hw,
-> >>   				   divider->flags, PCG_DIV_WIDTH);
-> >>   }
-> >>  =20
-> >>   static int imx8m_clk_composite_compute_dividers(unsigned long rate,
-> >>   						unsigned long parent_rate,
-> >> +						unsigned long min_rate,
-> >> +						unsigned long max_rate,
-> >=20
-> > You should pass on the req instead of min_rate and max_rate here.
->=20
-> Then I'd have to switch imx8m_clk_composite_divider_set_rate to allocate=
-=20
-> a dummy struct clk_rate_request on the stack. It's clearer if I just=20
-> pass the minimum parameters required.
->=20
+On Mon, 1 Jul 2019 at 15:11, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> The patch adds AC timings information needed to support LPDDR3 and memory
+> controllers. The structure is used in of_memory and currently in Exynos
+> 5422 DMC. Add parsing data needed for LPDDR3 support.
+> It is currently used in Exynos5422 Dynamic Memory Controller.
+>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/memory/of_memory.c | 149 +++++++++++++++++++++++++++++++++++++
+>  drivers/memory/of_memory.h |  18 +++++
+>  include/memory/jedec_ddr.h |  61 +++++++++++++++
+>  3 files changed, 228 insertions(+)
 
-That is correct. Nevermind my earlier comment then.
+Hi,
 
-> --
-> Regards,
-> Leonard
-> =
+As I mentioned before in v10, I can take entire patchset through
+samsung-soc but this one patch requires ack or at least reviews.
+
+Best regards,
+Krzysztof
