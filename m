@@ -2,97 +2,80 @@ Return-Path: <SRS0=SyXX=U7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC73C06510
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 12:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 733F6C06510
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 13:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E7F021721
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 12:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562069195;
-	bh=JMUvbK/LfOJhb6Ete6QNsOakQUnGfCiPzMOmNQ6+NCg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=dUBrk1UJ6qOg43MuF3FJUlg396tZnQpuX58HPx+k1j25LNESThsSD+TPh6ypnYvNw
-	 /zxKdxT0CMU0hA7VqMilhx0KHZ6X7Vr7h2iqdGhpJ1HZ8iMiEmiXN5C7LWNIWTOXo5
-	 dsJokcA7zFoGAQZGsUriyYe4BpTIxCZ3AsQ22NfA=
+	by mail.kernel.org (Postfix) with ESMTP id 539F2206E0
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jul 2019 13:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfGBMGa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jul 2019 08:06:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34794 "EHLO mail.kernel.org"
+        id S1726936AbfGBN1Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jul 2019 09:27:16 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:41896 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbfGBMGa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Jul 2019 08:06:30 -0400
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9660F21851;
-        Tue,  2 Jul 2019 12:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562069188;
-        bh=JMUvbK/LfOJhb6Ete6QNsOakQUnGfCiPzMOmNQ6+NCg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HwC20ALa2Bz/YOW4FKBF/0iy/VmbQeOGBkAAkPTbw4EE8VmR2fSspfXMqIqwBdVc/
-         zFjLG4As/+XHC/UKUp9UeDb1GP5DlrEAxFpWnUT/UA0QODaoSD5VDW5BRnZQkzNU7U
-         H+wq0YOGmgvMgbg3tmtNjBKsB7mFNNQ1FiH5MGuI=
-Received: by mail-lj1-f175.google.com with SMTP id p17so16648026ljg.1;
-        Tue, 02 Jul 2019 05:06:28 -0700 (PDT)
-X-Gm-Message-State: APjAAAUr1uZ4khOmwGJGEWjlGlNrEcklBi3a+VGqK2KhyTPKYszaSXmj
-        C89t7oVNmtl3OeBRKrhrPO0hMOEeXpNxT1jeg3Q=
-X-Google-Smtp-Source: APXvYqzUYFM/EIyZphFmV/SpQwmAz/C+DNi3kHPWXR6+ebp2/C/4bHX7aVTINZ72IbXpXBNvNjj3Ls2f2eDhzgGnXR8=
-X-Received: by 2002:a2e:8155:: with SMTP id t21mr16985058ljg.80.1562069186791;
- Tue, 02 Jul 2019 05:06:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20190701131152eucas1p2c5ac5f1611fd07e3b7a4ad289abe3e81@eucas1p2.samsung.com>
- <20190701131138.22666-1-l.luba@partner.samsung.com> <20190701131138.22666-4-l.luba@partner.samsung.com>
-In-Reply-To: <20190701131138.22666-4-l.luba@partner.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 2 Jul 2019 14:06:15 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcc3q4_GLg21TL=xNO5U1Kp9ZHqpSERHFVCi8OLasgm3Q@mail.gmail.com>
-Message-ID: <CAJKOXPcc3q4_GLg21TL=xNO5U1Kp9ZHqpSERHFVCi8OLasgm3Q@mail.gmail.com>
-Subject: Re: [PATCH v11 3/9] drivers: memory: extend of_memory by LPDDR3 support
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        kyungmin.park@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1726824AbfGBN1Q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Jul 2019 09:27:16 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4DD19200BE7;
+        Tue,  2 Jul 2019 15:27:15 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 410C72001FE;
+        Tue,  2 Jul 2019 15:27:15 +0200 (CEST)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id EA4DD205ED;
+        Tue,  2 Jul 2019 15:27:14 +0200 (CEST)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 2/2] clk: Assert prepare_lock in clk_core_get_boundaries
+Date:   Tue,  2 Jul 2019 16:27:10 +0300
+Message-Id: <29453ee8e820457d87a8faf9d496390e59c6826f.1562073871.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <68e96af2df96512300604d797ade2088d7e6e496.1562073871.git.leonard.crestez@nxp.com>
+References: <68e96af2df96512300604d797ade2088d7e6e496.1562073871.git.leonard.crestez@nxp.com>
+In-Reply-To: <68e96af2df96512300604d797ade2088d7e6e496.1562073871.git.leonard.crestez@nxp.com>
+References: <68e96af2df96512300604d797ade2088d7e6e496.1562073871.git.leonard.crestez@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 1 Jul 2019 at 15:11, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> The patch adds AC timings information needed to support LPDDR3 and memory
-> controllers. The structure is used in of_memory and currently in Exynos
-> 5422 DMC. Add parsing data needed for LPDDR3 support.
-> It is currently used in Exynos5422 Dynamic Memory Controller.
->
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  drivers/memory/of_memory.c | 149 +++++++++++++++++++++++++++++++++++++
->  drivers/memory/of_memory.h |  18 +++++
->  include/memory/jedec_ddr.h |  61 +++++++++++++++
->  3 files changed, 228 insertions(+)
+This function iterates the clk consumer list on clk_core so it must be
+called under prepare_lock. This is already done by all callers but add a
+lockdep assert to check anyway.
 
-Hi,
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-As I mentioned before in v10, I can take entire patchset through
-samsung-soc but this one patch requires ack or at least reviews.
+---
+ drivers/clk/clk.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+I wouldn't mind if this is dropped as unnecessary.
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e4e224982ae3..b1c79a58d734 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -591,10 +591,12 @@ static void clk_core_get_boundaries(struct clk_core *core,
+ 				    unsigned long *min_rate,
+ 				    unsigned long *max_rate)
+ {
+ 	struct clk *clk_user;
+ 
++	lockdep_assert_held(&prepare_lock);
++
+ 	*min_rate = core->min_rate;
+ 	*max_rate = core->max_rate;
+ 
+ 	hlist_for_each_entry(clk_user, &core->clks, clks_node)
+ 		*min_rate = max(*min_rate, clk_user->min_rate);
+-- 
+2.17.1
+
