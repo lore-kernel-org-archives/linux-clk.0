@@ -2,225 +2,189 @@ Return-Path: <SRS0=btre=VA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AE1C5B578
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 22:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014D0C5B578
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 23:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F86E21882
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 22:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3232218A0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 23:30:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LgzayCaK"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CJAVocrQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbfGCWUY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jul 2019 18:20:24 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36072 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfGCWUY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jul 2019 18:20:24 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w7so3396364oic.3
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2019 15:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O7/9B62uc/L5qzEpOlYgng1H+GtGyObr1QSwY1wY924=;
-        b=LgzayCaK4/bJPs+LnptjE/uYgOn0AYy9YP8QsFOXetvhFp6PktTBIYpERPnEMccqw/
-         F1fxlXEJal/rlaLngJpSEAH+OPk57egaRsUomkOujZB63fQgtbEVPjg1obnFPg5OmZkc
-         koYNaezbHytFC004biKiJPO7tmp6xlo+d6yf/TV3yivkVwAyWokHrYL0sWtFJI0UV1ma
-         2U2OXd7oY5NPFmqb2kDsGByO6gTTJuYdIKrYEFY1UuBLTppQ/7mpOvqrrP6KXyhaTJQS
-         itfNBIRCPl7CrxuBzPdbi/g05aoK7NqGLVSnyd/doGaAa1Xylr3e008FKvnyFP7ZVrAH
-         o7xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O7/9B62uc/L5qzEpOlYgng1H+GtGyObr1QSwY1wY924=;
-        b=ccyxDdX3LP2DsiOhSSM9/sJkSNv3XHGdojW6zwmcr1weG7QfRDz/cpNRNmfiOmj8uw
-         mAyw18pgOCWHckFEwsWzJ93Y5hdwKlLA5WNueVkas0xdwuFeQ0gvlERLZCGbBvgBm7Ay
-         Cn6y6pfgDTBDBd+k9HikLDDs1H2FaAUDe8RTZg++dJbWj1GkexB0oyMooFS8W7pDW2SR
-         FJ36wkEKTadp6pIbuFnstB6kiWWfpEFsoCdH485xu/1oRR8K+JpUqwlJK64dH+5ADBgC
-         Viri6I8x0BbujWee+PARzvjsBBz44khXzowDM/LFI+AT7EibJyASwDbGjbJQGZQgq6hr
-         aRuw==
-X-Gm-Message-State: APjAAAVUhV6AtrRc+mcC8FqZhA/tTkbZ6UVBEk7dh5QVvTgMagdu9TAi
-        dh9LqOU2z71ZssnuA3e7sEENFbxR0uOjJ8icLD5uqA==
-X-Google-Smtp-Source: APXvYqwtqi+7I3cUQZdtfk+VvNqZfrr4viWaCwyTmLtX0L7p8OC6XQF6CN592Tn8e3dkroxZHwBppYTQgEEUreRy63g=
-X-Received: by 2002:aca:6104:: with SMTP id v4mr499588oib.172.1562192423027;
- Wed, 03 Jul 2019 15:20:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1561707104.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1561707104.git.leonard.crestez@nxp.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 3 Jul 2019 15:19:46 -0700
-Message-ID: <CAGETcx_63KnP75qySbhX_P_=o4=ox9J8AsBqKsFHeQRjCpSeJA@mail.gmail.com>
-Subject: Re: [RFCv2 0/8] Add imx8mm bus frequency switching
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Alexandre Bailon <abailon@baylibre.com>,
+        id S1726988AbfGCXaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jul 2019 19:30:21 -0400
+Received: from mail-eopbgr00080.outbound.protection.outlook.com ([40.107.0.80]:35918
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726562AbfGCXaV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Jul 2019 19:30:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yus0hqsvB3SFyix89B/+/wzENC7tP6fQkHYE1CCPz/4=;
+ b=CJAVocrQMw8MKpTSmrKjZUINt9sF3CNwXb9V/Y7ZVxdL4rhkWvc2zfPj9Zr/DDv9MwMJC9nc8UK+rvmBJeA2x4hBQkKUJ1XrSzjQ4uw2X23eE20p2jUuycGlSI0Rd+PODt2Fy2biEb1QUp+05QU6RK46bkMlaw4ALAh/P0ZyZd0=
+Received: from DB7PR04MB5051.eurprd04.prod.outlook.com (20.176.234.223) by
+ DB7PR04MB4474.eurprd04.prod.outlook.com (52.135.138.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.15; Wed, 3 Jul 2019 23:30:16 +0000
+Received: from DB7PR04MB5051.eurprd04.prod.outlook.com
+ ([fe80::6c98:1416:8221:bdfc]) by DB7PR04MB5051.eurprd04.prod.outlook.com
+ ([fe80::6c98:1416:8221:bdfc%4]) with mapi id 15.20.2052.010; Wed, 3 Jul 2019
+ 23:30:16 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Saravana Kannan <saravanak@google.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+CC:     Alexandre Bailon <abailon@baylibre.com>,
         Georgi Djakov <georgi.djakov@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
         Abel Vesa <abel.vesa@nxp.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
-        linux-imx@nxp.com, Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [RFCv2 0/8] Add imx8mm bus frequency switching
+Thread-Topic: [RFCv2 0/8] Add imx8mm bus frequency switching
+Thread-Index: AQHVLYSy6nskEZuxAkK/D6W15Np9Kw==
+Date:   Wed, 3 Jul 2019 23:30:15 +0000
+Message-ID: <DB7PR04MB505163FDCAD7BE9A0C71A65EEEFB0@DB7PR04MB5051.eurprd04.prod.outlook.com>
+References: <cover.1561707104.git.leonard.crestez@nxp.com>
+ <CAGETcx_63KnP75qySbhX_P_=o4=ox9J8AsBqKsFHeQRjCpSeJA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [82.144.34.2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ab7d3c21-fcd0-4dec-f3d7-08d7000e677a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4474;
+x-ms-traffictypediagnostic: DB7PR04MB4474:
+x-microsoft-antispam-prvs: <DB7PR04MB44747D726410411C799F1058EEFB0@DB7PR04MB4474.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4303;
+x-forefront-prvs: 00872B689F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(396003)(346002)(39860400002)(376002)(199004)(189003)(316002)(33656002)(54906003)(6246003)(71200400001)(71190400001)(66066001)(110136005)(305945005)(6436002)(55016002)(74316002)(2906002)(229853002)(446003)(7736002)(44832011)(476003)(9686003)(486006)(4326008)(53936002)(66476007)(99286004)(91956017)(76116006)(52536014)(6116002)(3846002)(66446008)(66556008)(14444005)(5024004)(66946007)(256004)(26005)(478600001)(64756008)(68736007)(186003)(76176011)(73956011)(53546011)(6506007)(25786009)(102836004)(7696005)(5660300002)(14454004)(7416002)(86362001)(8936002)(8676002)(81166006)(81156014)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4474;H:DB7PR04MB5051.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YiEVzR6a2lUhBOTrgHR6PJn0o465+CX9X/KBA4qHirQVDW53vdX+jQp/SNRpHx+ETm8SQBJjh1xl0jrVoCFjIr1/1qWJie0Lm5+1GkC1Q3vY0M9YwYg5Aghj+7l4CaPGC+9qru6yogKlUqI+kr1FyH0PJzl6NDwHm8siN2aU9X2ahNFuNhkFQ6yXbbMeCRaNq7u7XqSDI7Bcjs0tE7dp0ytUwBnTWv5IutinGoFBDGTuejWZbS0wgUQg95dV5e0sNTOkMOSU5iaGXv5lGk8VvicQUy5j7xqGACwFvLMQeEdr8+GEYb75HFE4bRiieI9vL/lkSd2NrUtAfy6tu5XeBjNFRSlsQJ2aBTCxFapsxIHhDmOVbXB+hVsaLtInuzoBWrEGRfYp675WkbcArWERlmlCgK9FxpapT3rFONCkGzI=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab7d3c21-fcd0-4dec-f3d7-08d7000e677a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2019 23:30:15.9389
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4474
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Leonard,
-
-On Fri, Jun 28, 2019 at 12:40 AM Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
->
-> This series attempts to add upstream DVFS support for imx8mm, covering dynamic
-> scaling of internal buses and dram. It uses the interconnect framework for
-> proactive scaling (in response to explicit bandwidth requests from devices) and
-> devfreq in order expose the buses and eventually implement reactive scaling (in
-> response to measuredtraffic).
-
-I'm assuming you took a glance at my patch series [1] adding BW OPP
-tables and adding devfreq support for scaling interconnect paths.
-
-Based on looking at your patch series, I think [1] would allow you to
-use ICC framework for both proactive and reactive scaling. Proactive
-scaling would use the ICC framework directly. Reactive scaling would
-go through devfreq (so that you can use various governors/adjust
-policy) before it goes to ICC framework.
-
-> Actual scaling is performed through the clk framework: The NOC and main NICs
-> are driven by composite clks and a new 'imx8m-dram' clk is included for
-> scaling dram using firmware calls.
-
-Seems reasonable. All hardware block in the end run using a clock.
-
-> The interconnect and devfreq parts do not communicate explicitly: they both
-> just call clk_set_min_rate and the clk core picks the minimum value that can
-> satisfy both. They are thus completely independent.
-
-Two different parts not talking to each other and just setting min
-rate can cause problems for some concurrency use cases. ICC framework
-is explicitly designed to handle cases like this and aggregate the
-needs correctly. You might want to look into that more closely.
-
-> This is easily extensible to more members of the imx8m family, some of which
-> expose more detailed controls over interconnect fabric frequencies.
->
-> TODO:
-> * Clarify DT bindings
-> * Clarify interconnect OPP picking logic
-> * Implement devfreq_event for imx8m ddrc
-> * Expose more dram frequencies
->
-> The clk_set_min_rate approach does not mesh very well with the OPP framework.
-> Some of interconnect nodes on imx8m can run at different voltages: OPP can
-> handle this well but not in response to a clk_set_min_rate from an unrelated
-> subsystem. Maybe set voltage on a clk notifier?
-
-I think if you design it something like below, it might make your life
-a whole lot easier.
-Hopefully the formatting looks okay on your end. The arrow going up is
-just connecting devfreq to ICC.
-
-                        Proactive -> ICC -> clk/OPP API to set freq/volt
-                                      ^
-                                      |
-HW measure -> governor -> devfreq ----+
-
-That way, all voltage/frequency requirements are managed cleanly by
-clk/OPP frameworks. The ICC deals with aggregating all the
-requirements and devfreq lets you handle reactive scaling and policy.
-
-And in the beginning, while you get a governor going, you can use
-"performance" governor for the "reactive scaling" users. That way,
-your reactive paths will continue to have good performance while the
-rest of the "proactive" clients change to use ICC APIs.
-
-> Vendor tree does not support voltage switching, independent freqs for
-> different parts of the fabric or any reactive scaling. I think it's important
-> to pick an upstreaming approach which can support as much as possible.
->
-> Feedback welcome.
-
-If all of this makes sense, please take a look at [2] and provide your
-thoughts. I've dropped a few patches from [1] to avoid confusion (too
-much going on at once). I think BW OPP tables and having OPP tables
-for interconnect paths will be something you'll need (if not now,
-eventually) and something you can build on top of nicely.
-
-Thanks,
-Saravana
-
-[1] - https://lore.kernel.org/lkml/20190614041733.120807-1-saravanak@google.com/
-[2] - https://lore.kernel.org/lkml/20190703011020.151615-1-saravanak@google.com/
-
-
-
-> Some objections were apparently raised to doing DRAM switch inside CLK:
-> perhaps ICC should make min_freq requests to devfreq instead?
->
-> Link to v1 (multiple chunks):
->  * https://patchwork.kernel.org/patch/10976897/
->  * https://patchwork.kernel.org/patch/10968303/
->  * https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=91251
->
-> Also as a github branch (with few other changes):
->     https://github.com/cdleonard/linux/tree/next_imx8mm_busfreq
->
-> Alexandre Bailon (2):
->   interconnect: Add generic driver for imx
->   interconnect: imx: Add platform driver for imx8mm
->
-> Leonard Crestez (6):
->   clk: imx8mm: Add dram freq switch support
->   clk: imx8m-composite: Switch to determine_rate
->   arm64: dts: imx8mm: Add dram dvfs irqs to ccm node
->   devfreq: Add imx-devfreq driver
->   arm64: dts: imx8mm: Add interconnect node
->   arm64: dts: imx8mm: Add devfreq-imx nodes
->
->  arch/arm64/boot/dts/freescale/imx8mm.dtsi |  73 +++
->  drivers/clk/imx/Makefile                  |   1 +
->  drivers/clk/imx/clk-composite-8m.c        |  34 +-
->  drivers/clk/imx/clk-imx8m-dram.c          | 357 ++++++++++++
->  drivers/clk/imx/clk-imx8mm.c              |  12 +
->  drivers/clk/imx/clk.h                     |  13 +
->  drivers/devfreq/Kconfig                   |  10 +
->  drivers/devfreq/Makefile                  |   1 +
->  drivers/devfreq/imx-devfreq.c             | 142 +++++
->  drivers/interconnect/Kconfig              |   1 +
->  drivers/interconnect/Makefile             |   1 +
->  drivers/interconnect/imx/Kconfig          |  17 +
->  drivers/interconnect/imx/Makefile         |   2 +
->  drivers/interconnect/imx/busfreq-imx8mm.c | 151 ++++++
->  drivers/interconnect/imx/busfreq.c        | 628 ++++++++++++++++++++++
->  drivers/interconnect/imx/busfreq.h        | 123 +++++
->  include/dt-bindings/clock/imx8mm-clock.h  |   4 +-
->  include/dt-bindings/interconnect/imx8mm.h |  49 ++
->  18 files changed, 1606 insertions(+), 13 deletions(-)
->  create mode 100644 drivers/clk/imx/clk-imx8m-dram.c
->  create mode 100644 drivers/devfreq/imx-devfreq.c
->  create mode 100644 drivers/interconnect/imx/Kconfig
->  create mode 100644 drivers/interconnect/imx/Makefile
->  create mode 100644 drivers/interconnect/imx/busfreq-imx8mm.c
->  create mode 100644 drivers/interconnect/imx/busfreq.c
->  create mode 100644 drivers/interconnect/imx/busfreq.h
->  create mode 100644 include/dt-bindings/interconnect/imx8mm.h
->
-> --
-> 2.17.1
->
+On 7/4/2019 1:20 AM, Saravana Kannan wrote:=0A=
+=0A=
+>> The interconnect and devfreq parts do not communicate explicitly: they b=
+oth=0A=
+>> just call clk_set_min_rate and the clk core picks the minimum value that=
+ can=0A=
+>> satisfy both. They are thus completely independent.=0A=
+> =0A=
+> Two different parts not talking to each other and just setting min=0A=
+> rate can cause problems for some concurrency use cases. ICC framework=0A=
+> is explicitly designed to handle cases like this and aggregate the=0A=
+> needs correctly. You might want to look into that more closely.=0A=
+=0A=
+The clk framework aggregates the min_rate requests from multiple =0A=
+consumers under a big "prepare_lock" so I expect it will deal with =0A=
+concurrent requests correctly. As for performance: frequency switching =0A=
+shouldn't be a fast path.=0A=
+=0A=
+>> The clk_set_min_rate approach does not mesh very well with the OPP frame=
+work.=0A=
+>> Some of interconnect nodes on imx8m can run at different voltages: OPP c=
+an=0A=
+>> handle this well but not in response to a clk_set_min_rate from an unrel=
+ated=0A=
+>> subsystem. Maybe set voltage on a clk notifier?=0A=
+> =0A=
+> I think if you design it something like below, it might make your life=0A=
+> a whole lot easier.=0A=
+> Hopefully the formatting looks okay on your end. The arrow going up is=0A=
+> just connecting devfreq to ICC.=0A=
+> =0A=
+>                          Proactive -> ICC -> clk/OPP API to set freq/volt=
+=0A=
+>                                        ^=0A=
+>                                        |=0A=
+> HW measure -> governor -> devfreq ----+=0A=
+> =0A=
+> That way, all voltage/frequency requirements are managed cleanly by=0A=
+> clk/OPP frameworks. The ICC deals with aggregating all the=0A=
+> requirements and devfreq lets you handle reactive scaling and policy.=0A=
+=0A=
+If icc and devfreq are to directly communicate it makes more sense to do =
+=0A=
+it backwards: ICC should set a min_freq on nodes which have a devfreq =0A=
+instance attached and devfreq should implement actual freq switching.=0A=
+=0A=
+HW measurement is done on individual nodes while ICC deals with requests =
+=0A=
+along a path. In particular on imx we have a performance monitor =0A=
+attached to the ddr controller and I doubt it can distinguish between =0A=
+masters so how could this be mapped usefully to an interconnect request?=0A=
+=0A=
+As far as I understand with devfreq the ddrc node could use "ondemand" =0A=
+while the other nodes would default to the "passive" governor and run at =
+=0A=
+predefined default ratios relative to DDRC.=0A=
+=0A=
+> If all of this makes sense, please take a look at [2] and provide your=0A=
+> thoughts. I've dropped a few patches from [1] to avoid confusion (too=0A=
+> much going on at once). I think BW OPP tables and having OPP tables=0A=
+> for interconnect paths will be something you'll need (if not now,=0A=
+> eventually) and something you can build on top of nicely.=0A=
+=0A=
+I found it very confusing that you're assigning BW OPP tables to =0A=
+devices. My initial understanding was that BW OPP would map "bandwidth" =0A=
+to "frequency" so BW OPPs should be assigned to links along the =0A=
+interconnect graph. But maybe what you want is to have OPPs for the BW =0A=
+values requested by devices?=0A=
+=0A=
+Looking at the sdm845 icc provider source and it seems that those =0A=
+"peak/avg" values are actually parameters which go into a firmware =0A=
+command!? It makes sense that you want interconnect to be "below" =0A=
+devfreq since icc_provider.set maps very closely to what firmware exposes.=
+=0A=
+=0A=
+ > Interconnects and interconnect paths quantify their performance =0A=
+levels > in terms of bandwidth and not in terms of frequency.=0A=
+=0A=
+On i.MX we just have a bunch of interconnect IPs for which frequencies =0A=
+can be adjusted (in hz) so the above statement doesn't really hold. It =0A=
+is up to an icc provider to convert aggregate bandwidth values to =0A=
+frequencies along the path.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
