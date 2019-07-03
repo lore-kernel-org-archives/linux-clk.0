@@ -2,108 +2,104 @@ Return-Path: <SRS0=btre=VA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE753C0650E
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 12:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A60C06511
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 13:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7FAE218A4
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 12:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D72218A0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 13:14:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="YKHtBzDU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ez1oNv+w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbfGCM52 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jul 2019 08:57:28 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45914 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfGCM52 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jul 2019 08:57:28 -0400
-Received: by mail-ot1-f65.google.com with SMTP id x21so2187423otq.12;
-        Wed, 03 Jul 2019 05:57:28 -0700 (PDT)
+        id S1726900AbfGCNN5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jul 2019 09:13:57 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:32844 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfGCNN5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jul 2019 09:13:57 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c14so1254987plo.0;
+        Wed, 03 Jul 2019 06:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+Almj/mPu2GGnzdAauKcQzrTaJcvUxIHQhCGQ8lryKk=;
-        b=YKHtBzDUjhxaZ28aPgECznKWhEmMjsPYoA0rjIqlStH4xfxBMJSjkrVCLzE29wBoUh
-         /3YCQocdYjHDiFtyb0w0cxPatipE8ciQqO1uaVhuS4DJzbDM5O587UYoL0MLqkZgymGe
-         PRzf5+n0/5bVCBmQtEe2aaDVCej3UAoKuuar8f3MebbwiyOdjUwJFHWiE/B9hWPfY7B7
-         DTC7cbppK7jJTCYbCERDMBHTvJfgoV7/wHcTn8LP44lhNbwd4+kOgG2E+omW5B3hh0ic
-         e/tGwhZYLB0qP9Z7ZROtzzv8SXriY+sbCoBiObrpeBU0bJXIB4dbA2IJk+rfSFwgNH8x
-         wrlQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ItrCKk9rVMhc8Ni9vjTa7N99Q4LdwZTLTD5gVmBlIPs=;
+        b=Ez1oNv+wDub0prSXGNncUTQgBGmJFbEEoCAzvXWpRMAcWGBkagg7iRMgg1J8QGnOKK
+         AHdet5Y3osv4tB4+n+PupYUKDBBwyVoJCypi5dJqGu8FMnlR7A3wrNtOf8x5wkT1pEks
+         wzn6xGSw8FLUGX+0l9G3chBl9VAWUmMvQ4q/79JjlqwdU4fZzoS4Lo1FWJ4ig6XkMO+M
+         nTO4T9uvW3+CFC3edMr4HdOUAnZgOZKew59KgvsuzvBsLp6oL4TouKpaa1aQK5YdqIJC
+         v2IN0TvyZ+x0N7x24p3LbceBfSO4dj4gaQ4H6/btm4GseHmuObGNGbqk5t29xqx8L3cY
+         zUeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Almj/mPu2GGnzdAauKcQzrTaJcvUxIHQhCGQ8lryKk=;
-        b=KxTv0QS3JTlia2PjXRIKVuqhC6JsTVS1XBuenrCHi29pwpxiiYqk18ooFwJGBqmUie
-         0+yG4IwM6j7XSlQjzDHw0k/GFzXTlxcMohZ0YYS/pjwnOMR88oHtUVyQrZnQAqZDVrXN
-         wTIoxUWpdccCgSw48eAJGdi1V5BZL+gGSd3whjDj9MBfRMCj8qDIjUA4vtbYRjOfhuJL
-         RYzp7jNUQgfXY4cjCSgk40Nn4a1FFlfx2Y09gA5XYWvBoeq6wKWAmrOV9UBTI41C14ep
-         0hSY8f7xsMoL0RczeHjQJoENKb9FV5ednboBH1dKCx3OfhkxAVJdW7LkIAZJzU97hJOE
-         e6Rg==
-X-Gm-Message-State: APjAAAXEMAQ7ULNctcMI4KLfHPOP9GIBjlVkPbCCfLB6qE1kRSjwtR4j
-        TtygDLQ7nD1OjKtsU5PbR4rIsnfx2wV1Sd2rYQw=
-X-Google-Smtp-Source: APXvYqwx8FO+d2S1YP0ZeOa6b/jwOvDRoFFG8LiT5wh9lheOLPk0uLlsHBYrkyTFF84DqkcEiFFiIuupCEIeurWzIqw=
-X-Received: by 2002:a9d:226c:: with SMTP id o99mr27944279ota.42.1562158647652;
- Wed, 03 Jul 2019 05:57:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com>
- <20190701091258.3870-5-narmstrong@baylibre.com> <CAFBinCA1gUUbEj=++1rGcFQ1RdyxSheofAo=TKw3-UaenFAcug@mail.gmail.com>
- <301695b6-52ba-92b1-ca1a-d4d587b33eeb@baylibre.com> <1jo92b70ko.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jo92b70ko.fsf@starbuckisacylon.baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 14:57:16 +0200
-Message-ID: <CAFBinCA5RrTM8Ws_0goDqipi90KbhaXhwKGPVXj+dCoi7P-OFA@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 04/14] clk: meson: eeclk: add setup callback
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        amergnat@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ItrCKk9rVMhc8Ni9vjTa7N99Q4LdwZTLTD5gVmBlIPs=;
+        b=BZrj3kRGsPgz0ahzEu51hllJ+vDM3ldIbTlfcbv+khl0X5elIRf/zo86KWSsXwbq7m
+         D4IFZT5Sd+y5YKLUCA4JZ0qnpYl9icUOafiXcMI/iQQIgccwcqhBPipWhRLWzwUcPIB0
+         LFDtG1BKTdCb+pp0U5+9TrWssiwPXxg4Z3akJQAHpjc3MNQgo+3EGntyQeaFaM0F/2fn
+         MHKAqhSUpsA8irkmdnILnJoNMVP1mReDa8rK0ITSvhpmUXjbKCGsTMbypETOiJtstNwI
+         qS4eXwJ3qZVsHJJWkVOtUv9FmYOm05I3XJuX05yJhE+aUz7Q97R9/rj/RY4iLiuheWPr
+         tcNA==
+X-Gm-Message-State: APjAAAWCp4sO2ql2U4aGfOuVVngYUGWLb/7KVF/ZOxaQq02R3tpZ2lfs
+        tWmfJFlUtBp3DArM8Yru6Uk=
+X-Google-Smtp-Source: APXvYqwyQl6CFvsivbsqTq54NMvAuOhMKhm7N+xXTr2nAqP+P484bNjxXWzJt5MIVfaRjLXADdh3Ow==
+X-Received: by 2002:a17:902:d887:: with SMTP id b7mr42220562plz.28.1562159636378;
+        Wed, 03 Jul 2019 06:13:56 -0700 (PDT)
+Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.googlemail.com with ESMTPSA id 30sm4183150pjk.17.2019.07.03.06.13.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 06:13:55 -0700 (PDT)
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fuqian Huang <huangfq.daxian@gmail.com>
+Subject: [PATCH 04/30] clk/ti: Use kmemdup rather than duplicating its implementation
+Date:   Wed,  3 Jul 2019 21:13:46 +0800
+Message-Id: <20190703131346.24854-1-huangfq.daxian@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 2:40 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> On Wed 03 Jul 2019 at 13:45, Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> > On 03/07/2019 01:16, Martin Blumenstingl wrote:
-> >> +Cc Alexandre Mergnat
-> >>
-> >> On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >>>
-> >>> Add a setup() callback in the eeclk structure, to call an optional
-> >>> call() function at end of eeclk probe to setup clocks.
-> >>>
-> >>> It's used for the G12A clock controller to setup the CPU clock notifiers.
-> >>>
-> >>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> >> this will probably work fine, but I want do double check first
-> >>
-> >> are we planning to get rid of meson-eeclk (mid-term)?
-> >
-> > AFAIK no, but maybe I'm not aware of it !
-> >
-> > Neil
-> >
-> >> Alex has some patches to get rid of all these IN_PREFIX logic.
->
-> The prefix logic will go away with Alex's rework, so are the input clock
-> But meson-eeclk, which is just a common probe function do avoid
-> repeating the same things over and over, will stay
-OK, thank you for clarifying this
+kmemdup is introduced to duplicate a region of memory in a neat way.
+Rather than kmalloc/kzalloc + memset, which the programmer needs to
+write the size twice (sometimes lead to mistakes), kmemdup improves
+readability, leads to smaller code and also reduce the chances of mistakes.
+Suggestion to use kmemdup rather than using kmalloc/kzalloc + memset.
 
-> >> I'm asking because if we want to get rid of meson-eeclk it may be the
->
-> May I ask why ?
-I only remember that Stephen asked us to get rid of something in our clock code
-I was under the impression that it was meson-eeclk, but I cannot find
-it anymore (that means I'm mixing it up with some other topic)
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+---
+ drivers/clk/ti/dpll.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 659dadb23279..f728d987ebac 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -291,14 +291,12 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+ 	struct dpll_data *dd = NULL;
+ 	u8 dpll_mode = 0;
+ 
+-	dd = kzalloc(sizeof(*dd), GFP_KERNEL);
++	dd = kmemdup(ddt, sizeof(*dd), GFP_KERNEL);
+ 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+ 	init = kzalloc(sizeof(*init), GFP_KERNEL);
+ 	if (!dd || !clk_hw || !init)
+ 		goto cleanup;
+ 
+-	memcpy(dd, ddt, sizeof(*dd));
+-
+ 	clk_hw->dpll_data = dd;
+ 	clk_hw->ops = &clkhwops_omap3_dpll;
+ 	clk_hw->hw.init = init;
+-- 
+2.11.0
+
