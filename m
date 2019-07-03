@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A540DC06513
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 02:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42015C5B57D
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 02:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763B121874
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 02:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A72420673
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 02:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562120467;
-	bh=faa1a6s2txMEfksmcTfd11t6p3UsuBe9WIt3KIrJGSQ=;
+	s=default; t=1562120577;
+	bh=/cYx5cUz5hA102Q+olEMurcf0Hc50+refCvKyA+3QYo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gd8KWAaEBfet/rzEop4105nWEcGQxqq+yShaBQcyQtb3yQG3ZgHROi3s5rM92nLVM
-	 SqcoAYoYpE1n4SxjgZrJMSWTG/yDflllVwEzOfK8NwtdKfNk+6q6j5QHNc1j6nRdXO
-	 nsrvwy5K92BVJMfhnEC7KktEIHYcpRfJZaHZj2XI=
+	b=FkWZmyjnyGx0LDioTpthvKXxh9tKBT0yj/iBI+APnKUw0giWwAZYMPRdy3WeXFdXR
+	 jtw96M/RbcqqhPLBq3WXS5rjvbhqifU4TiZ1kNVjMcw4zm3wHEhZfbdu+dQHk/2x1y
+	 FRlwPPoJ3QVN0bradl4BdwsNRtsUMzCXpSqeFrQM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfGCCQa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jul 2019 22:16:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54812 "EHLO mail.kernel.org"
+        id S1727738AbfGCCWs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jul 2019 22:22:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727065AbfGCCQ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Jul 2019 22:16:29 -0400
+        id S1727539AbfGCCPW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Jul 2019 22:15:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94B8421882;
-        Wed,  3 Jul 2019 02:16:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C68EE21897;
+        Wed,  3 Jul 2019 02:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562120188;
-        bh=faa1a6s2txMEfksmcTfd11t6p3UsuBe9WIt3KIrJGSQ=;
+        s=default; t=1562120121;
+        bh=/cYx5cUz5hA102Q+olEMurcf0Hc50+refCvKyA+3QYo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZUP9blv3ZeWL6mosxocT6ZFYpqaxUbw8WlfPNVrROC6C7K0SRlO8TdVb43OvvA2pX
-         PLxVUTwV21X2Z8YoRT45KIxlGjRZ7U+0bonNlbSnAoKDV8GOKGWJRpZKaqEXUTXfTs
-         KoAFB5Pe8Q52N6xtJ2RLT04ZGx6qpN/YObLjv5pw=
+        b=ZSm84mIxTq+gslqVUS7V1cOY+jkbCYeTvD0Sf9k38hgr1dH/HkndWVdQhsHUobJH0
+         cunbopfyGtg+kdekNtfc+8PN8swrzmJVSVs7qqLNhVMsSSvVukXn8T0DEvspvoaJ5q
+         XZeiE1sn9KMJVBOhpxTWNXWICIisBVQOJNS8DYEU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tony Lindgren <tony@atomide.com>,
@@ -46,12 +46,12 @@ Cc:     Tony Lindgren <tony@atomide.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 02/26] clk: ti: clkctrl: Fix returning uninitialized data
-Date:   Tue,  2 Jul 2019 22:16:01 -0400
-Message-Id: <20190703021625.18116-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 06/39] clk: ti: clkctrl: Fix returning uninitialized data
+Date:   Tue,  2 Jul 2019 22:14:41 -0400
+Message-Id: <20190703021514.17727-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703021625.18116-1-sashal@kernel.org>
-References: <20190703021625.18116-1-sashal@kernel.org>
+In-Reply-To: <20190703021514.17727-1-sashal@kernel.org>
+References: <20190703021514.17727-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -91,7 +91,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index ca3218337fd7..dfaa5aad0692 100644
+index 3325ee43bcc1..626090b59cd7 100644
 --- a/drivers/clk/ti/clkctrl.c
 +++ b/drivers/clk/ti/clkctrl.c
 @@ -229,6 +229,7 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
