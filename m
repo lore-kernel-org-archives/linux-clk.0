@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-10.0 required=3.0
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FEBC5B578
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 07:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6E8C5B578
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 07:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD5F21881
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 07:32:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6288921881
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jul 2019 07:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfGCHcn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jul 2019 03:32:43 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:45458 "EHLO inva021.nxp.com"
+        id S1726327AbfGCHcp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jul 2019 03:32:45 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45510 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726327AbfGCHcn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:32:43 -0400
+        id S1727127AbfGCHcp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Jul 2019 03:32:45 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 986AE2000AF;
-        Wed,  3 Jul 2019 09:32:41 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6715E200359;
+        Wed,  3 Jul 2019 09:32:43 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B6B89200363;
-        Wed,  3 Jul 2019 09:32:31 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 85D3D20034D;
+        Wed,  3 Jul 2019 09:32:33 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2C486402EC;
-        Wed,  3 Jul 2019 15:32:20 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id ECDC3402C3;
+        Wed,  3 Jul 2019 15:32:21 +0800 (SGT)
 From:   jun.li@nxp.com
 To:     shawnguo@kernel.org, sboyd@kernel.org, robh+dt@kernel.org
 Cc:     mark.rutland@arm.com, s.hauer@pengutronix.de,
@@ -37,9 +37,9 @@ Cc:     mark.rutland@arm.com, s.hauer@pengutronix.de,
         Anson.Huang@nxp.com, aisheng.dong@nxp.com, peng.fan@nxp.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 4/5] arm64: dts: imx8mm: Remove setting for IMX8MM_CLK_USB_CORE_REF
-Date:   Wed,  3 Jul 2019 15:23:26 +0800
-Message-Id: <20190703072327.38165-2-jun.li@nxp.com>
+Subject: [PATCH 5/5] arm64: dts: imx8mm-evk: enable usb1 and typec support
+Date:   Wed,  3 Jul 2019 15:23:27 +0800
+Message-Id: <20190703072327.38165-3-jun.li@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20190703072327.38165-1-jun.li@nxp.com>
 References: <20190703072327.38165-1-jun.li@nxp.com>
@@ -51,44 +51,119 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Li Jun <jun.li@nxp.com>
 
-Since IMX8MM_CLK_USB_CORE_REF is not used at all, so remove the setting
-for it.
+USB1 port has typec connector with power delivery support:
+- Dual data role: host and device.
+- Dual power role: source and sink, prefer power sink.
 
 Signed-off-by: Li Jun <jun.li@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dts | 65 ++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 232a741..5d691a5 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -743,10 +743,8 @@
- 				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clk IMX8MM_CLK_USB1_CTRL_ROOT>;
- 				clock-names = "usb1_ctrl_root_clk";
--				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>,
--						  <&clk IMX8MM_CLK_USB_CORE_REF>;
--				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>,
--							 <&clk IMX8MM_SYS_PLL1_100M>;
-+				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>;
-+				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>;
- 				fsl,usbphy = <&usbphynop1>;
- 				fsl,usbmisc = <&usbmisc1 0>;
- 				status = "disabled";
-@@ -764,10 +762,8 @@
- 				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clk IMX8MM_CLK_USB1_CTRL_ROOT>;
- 				clock-names = "usb1_ctrl_root_clk";
--				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>,
--						  <&clk IMX8MM_CLK_USB_CORE_REF>;
--				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>,
--							 <&clk IMX8MM_SYS_PLL1_100M>;
-+				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>;
-+				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>;
- 				fsl,usbphy = <&usbphynop2>;
- 				fsl,usbmisc = <&usbmisc2 0>;
- 				status = "disabled";
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+index ee7f2b2..fcfee8b 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+@@ -5,6 +5,7 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/usb/pd.h>
+ #include "imx8mm.dtsi"
+ 
+ / {
+@@ -115,6 +116,21 @@
+ 	status = "okay";
+ };
+ 
++&usbotg1 {
++	dr_mode = "otg";
++	hnp-disable;
++	srp-disable;
++	adp-disable;
++	usb-role-switch;
++	status = "okay";
++
++	port {
++		usb1_drd_sw: endpoint {
++			remote-endpoint = <&typec1_dr_sw>;
++		};
++	};
++};
++
+ &usdhc2 {
+ 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+ 	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
+@@ -257,6 +273,42 @@
+ 	};
+ };
+ 
++&i2c2 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c2>;
++	status = "okay";
++
++	ptn5110: tcpc@50 {
++		compatible = "nxp,ptn5110";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_typec1>;
++		reg = <0x50>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <11 8>;
++		status = "okay";
++
++		port {
++			typec1_dr_sw: endpoint {
++				remote-endpoint = <&usb1_drd_sw>;
++			};
++		};
++
++		typec1_con: connector {
++			compatible = "usb-c-connector";
++			label = "USB-C";
++			power-role = "dual";
++			data-role = "dual";
++			try-power-role = "sink";
++			source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
++			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)
++				     PDO_VAR(5000, 20000, 3000)>;
++			op-sink-microwatt = <15000000>;
++			self-powered;
++		};
++	};
++};
++
+ &iomuxc {
+ 	pinctrl-names = "default";
+ 
+@@ -299,6 +351,13 @@
+ 		>;
+ 	};
+ 
++	pinctrl_i2c2: i2c2grp {
++		fsl,pins = <
++			MX8MM_IOMUXC_I2C2_SCL_I2C2_SCL			0x400001c3
++			MX8MM_IOMUXC_I2C2_SDA_I2C2_SDA			0x400001c3
++		>;
++	};
++
+ 	pinctrl_pmic: pmicirq {
+ 		fsl,pins = <
+ 			MX8MM_IOMUXC_GPIO1_IO03_GPIO1_IO3		0x41
+@@ -320,6 +379,12 @@
+ 		>;
+ 	};
+ 
++	pinctrl_typec1: typec1grp {
++		fsl,pins = <
++			MX8MM_IOMUXC_SD1_STROBE_GPIO2_IO11	0x159
++		>;
++	};
++
+ 	pinctrl_uart2: uart2grp {
+ 		fsl,pins = <
+ 			MX8MM_IOMUXC_UART2_RXD_UART2_DCE_RX	0x140
 -- 
 2.7.4
 
