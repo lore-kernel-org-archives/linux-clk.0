@@ -2,123 +2,103 @@ Return-Path: <SRS0=FlAG=VB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9857C06513
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 10:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF9DC0651F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 15:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABCCB218AD
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 10:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1520E218A0
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 15:39:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="svb8eN7z"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="OuyCIoqm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfGDKki (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Jul 2019 06:40:38 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35770 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727524AbfGDKkh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jul 2019 06:40:37 -0400
-Received: by mail-qt1-f195.google.com with SMTP id d23so7553015qto.2;
-        Thu, 04 Jul 2019 03:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=J75O2ZYm/AIRp38Aj0T7xtVwqkjaGCkxGvM6r7neVEo=;
-        b=svb8eN7znP/WGdtT3CrWT/7VclWevgOLXH+ZMAI+DC5wM3BXGnt/u6lc/RE+8iDWfw
-         liiW9ZYL607XBo6qnD1lpUXoPDUdioXWw/QKbHmoNOlVMnjHgEf/OR6/CNQFnchp65cI
-         JFhf5SKwp/K1XSyb+i76xI+4IWvnfjFE41buuQVjjfCguncDCNHAvrkZzQpLGiJT0kgb
-         JoK7NVI67JRxQFX3fxfRan0bcYG0bOy7TqDV+5zuDFAuy2AeT/9MXv9mR4K7iAxBp8kn
-         b3wSRfUEgsQlsZoVJ7Fsfno3dfay2OdhPT3OkFpDa9U+3h+PoPnKO2Q7RJPE3CTqI7Q4
-         Mpdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=J75O2ZYm/AIRp38Aj0T7xtVwqkjaGCkxGvM6r7neVEo=;
-        b=kB8Okg9geItCbpuDjE2ubpSUWnboA5Uk4fWU6OyQ/Qer94kWLp2S4vbXp4ypKrf34e
-         3h9YvbgFT/Cr+3NZ/5D9GROHwbizyXpPht618QWVsZGSDb2U0Yjkua9X2x3LNTqHfwmk
-         a3uwKZETgUjXOs1nvLhdP7iBgWjf44IIo1XzoCmJGJ1IsJo+AGj1ycZkBVwuc6jSEyd4
-         r6Kxxe/vBUBxyZ4UgfftFiDUkhqWQWoxIMaNl0gBRaJ2O8olPn5havmezPGWHur6akbb
-         ldTmnMpoGQlBEmpOmjmPZKG0lhbqL9+S9ft0HBCHMjK2A9oE5z9pr75WMGDku1IUuoXQ
-         Mngg==
-X-Gm-Message-State: APjAAAXwdh1AqRLjM+wSjesbzEYDFM1a9W7gfsZ3J5iqktuYXPddW3jU
-        1s8SR9b/8nnUfJpWAouXCLtatHOW
-X-Google-Smtp-Source: APXvYqz+yPk+2MUL4Psf0OlCLMqisNELh1oDhrrNJ46MfRnYY8Jr2unJvbo1n+PNfKtsECoRc7/Sdg==
-X-Received: by 2002:a0c:d1f0:: with SMTP id k45mr37041274qvh.69.1562236836520;
-        Thu, 04 Jul 2019 03:40:36 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id s7sm980077qtq.8.2019.07.04.03.40.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jul 2019 03:40:35 -0700 (PDT)
-Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stefan Agner <stefan@agner.ch>,
+        id S1727858AbfGDPj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Jul 2019 11:39:58 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:36435 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbfGDPj6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jul 2019 11:39:58 -0400
+X-Greylist: delayed 342 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Jul 2019 11:39:56 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1562254795;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=gou5Zh0HIbQCcM7c2CWEWnJ04+a+qFsD/mEWP+ODjjE=;
+        b=OuyCIoqmsQhbJTbv0dWCKhxJOxfFJ9CnNnTYIoPD7RabOLrTIPqiWSJu0WBN/RMvkI
+        LEQEVp4NzUIxfUl+igoTTETz555+ZoaMH2WyB6N7DtgzreFgvP6rqr7O9QVlOnjMq3tl
+        lAf/eCisAIGpPqaagIs9Br9pYJ+/qHBUDW4ASHlxE70wXSGvlQzZ+48AHbPplswVMnoQ
+        eMEOtd1S+eJcGhYCtgTlrnHI8GYqb1JG1q/K6pBckWwQRrSbevmuNMdgDI2VHzlrV8pV
+        mhYtSU1hjzLpjb2fEnxCfMFgik4rpr4bN60AWkYKbsQ7hFqlcwd45rTMiFA5MB6jx5+3
+        cPFA==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp01-01.back.ox.d0m.de
+        by smtp-ox.front (RZmta 44.24 AUTH)
+        with ESMTPSA id h0a328v64FXe11g
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Thu, 4 Jul 2019 17:33:40 +0200 (CEST)
+Date:   Thu, 4 Jul 2019 17:33:40 +0200 (CEST)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Matthias Brugger <mbrugger@suse.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        devicetree@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        matthias.bgg@kernel.org, linux-mediatek@lists.infradead.org,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
- <a262cbb3-845c-3ad1-16cc-375a24b9f7e9@gmail.com>
- <822867d6-4a4d-5f68-9b21-84a20d73c589@gmail.com>
- <CACRpkdYdCmT0ErTuewYbv7bPkjoFLrK9KSVuKVMkAXNQYAGV7g@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <66b5e81b-d468-e2aa-7336-3d4854c234ab@gmail.com>
-Date:   Thu, 4 Jul 2019 13:40:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Message-ID: <100944512.353257.1562254420397@webmail.strato.com>
+In-Reply-To: <84d1c444-d6cb-9537-1bf5-b4e736443239@gmail.com>
+References: <20181116125449.23581-1-matthias.bgg@kernel.org>
+ <20181116125449.23581-9-matthias.bgg@kernel.org>
+ <20181116231522.GA18006@bogus>
+ <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
+ <CAL_JsqKJQwfDJbpmwW+oCxiDkSp5+6mG-uoURmCQVEMP_jFOEg@mail.gmail.com>
+ <154281878765.88331.10581984256202566195@swboyd.mtv.corp.google.com>
+ <458178ac-c0fc-9671-7fc8-ed2d6f61424c@suse.com>
+ <154356023767.88331.18401188808548429052@swboyd.mtv.corp.google.com>
+ <a229bfc7-683f-5b0d-7b71-54f934de6214@suse.com>
+ <1561953318.25914.9.camel@mtksdaap41>
+ <84d1c444-d6cb-9537-1bf5-b4e736443239@gmail.com>
+Subject: Re: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
+ mmsys clocks
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYdCmT0ErTuewYbv7bPkjoFLrK9KSVuKVMkAXNQYAGV7g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev59
+X-Originating-IP: 85.212.144.69
+X-Originating-Client: open-xchange-appsuite
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-04.07.2019 10:31, Linus Walleij пишет:
-> On Sat, Jun 29, 2019 at 5:58 PM Dmitry Osipenko <digetx@gmail.com> wrote:
-> 
->> Oh, also what about GPIO-pinctrl suspend resume ordering .. is it okay that pinctrl
->> will be resumed after GPIO? Shouldn't a proper pin-muxing be selected at first?
-> 
-> Thierry sent some initial patches about this I think. We need to use
-> device links for this to work properly so he adds support for
-> linking the pinctrl and GPIO devices through the ranges.
-> 
-> For links between pin control handles and their consumers, see also:
-> 036f394dd77f pinctrl: Enable device link creation for pin control
-> c6045b4e3cad pinctrl: stmfx: enable links creations
-> 489b64d66325 pinctrl: stm32: Add links to consumers
-> 
-> I am using STM32 as guinea pig for this, consider adding links also
-> from the Tegra pinctrl. I might simply make these pinctrl consumer
-> to producer links default because I think it makes a lot sense.
 
-IIUC, currently the plan is to resume pinctrl *after* GPIO for Tegra210 [1]. But this
-contradicts to what was traditionally done for older Tegras where pinctrl was always
-resumed first and apparently it won't work well for the GPIO ranges as well. I think this
-and the other patchsets related to suspend-resume still need some more thought.
+> On July 4, 2019 at 11:08 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
+> You are right, it took far too long for me to respond with a new version of the
+> series. The problem I face is, that I use my mt8173 based chromebook for
+> testing. It needs some downstream patches and broke somewhere between my last
+> email and a few month ago.
 
-[1] https://patchwork.kernel.org/patch/11012077/
+If that Chromebook is an Acer R13 and you need a working kernel, you may want to have a look at https://github.com/uli/kernel/tree/elm-working-5.2 .
+
+CU
+Uli
