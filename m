@@ -2,273 +2,325 @@ Return-Path: <SRS0=FlAG=VB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E63C0650E
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 08:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E44C0650E
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 09:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22D7321882
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 08:32:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA8FC21882
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 09:08:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PiQqwfJu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="up7Bnca1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfGDIcW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Jul 2019 04:32:22 -0400
-Received: from mail-eopbgr60088.outbound.protection.outlook.com ([40.107.6.88]:56135
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726870AbfGDIcW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Jul 2019 04:32:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZCQRrydNyh3ccGGLjK11Ak+lAQqZN+VNWyfNvTvLHTo=;
- b=PiQqwfJum3yr4u0fErNqfidW1A/Onqi2x9f7Nto4K2PvFPJ3FMRqovPJj7bhUDZtnfQ1PHtNDGpXBSPS0fEOZxSezz7H3lb4uX4+8H1eAgSGDOmN4LdkZOlsZHeGfUJEHvh4sAnFUgkUpALStV7xcWWu/cXKI70CwZ4nPCe2MB4=
-Received: from DB7PR04MB5051.eurprd04.prod.outlook.com (20.176.234.223) by
- DB7PR04MB4009.eurprd04.prod.outlook.com (52.134.107.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.15; Thu, 4 Jul 2019 08:32:17 +0000
-Received: from DB7PR04MB5051.eurprd04.prod.outlook.com
- ([fe80::6c98:1416:8221:bdfc]) by DB7PR04MB5051.eurprd04.prod.outlook.com
- ([fe80::6c98:1416:8221:bdfc%4]) with mapi id 15.20.2052.010; Thu, 4 Jul 2019
- 08:32:17 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Saravana Kannan <saravanak@google.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-CC:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1727179AbfGDJIv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Jul 2019 05:08:51 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37534 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbfGDJIv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jul 2019 05:08:51 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w13so4743039eds.4;
+        Thu, 04 Jul 2019 02:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8q8DkGNrfD4Xi3IczgdLormMM6nLc6XqC3dSoMzfAWk=;
+        b=up7Bnca1rT3o22OHI2C2t52VCOIojXdPdRI219jXAZV4DaHZm1HeyrZB3WkGYjBJxl
+         U65+8Iw/occqMJ/27O6cZnsmKbajBt7bMZPbA3tx/GsJNzaLddo4OVStCRRpPJH0x5NJ
+         NUDqKHLCbRsqIce0PnKKiI9J7fhBiKP90N8cf7+3Vj+jC+FtqdWZUqx5ubu+Rg6od0g/
+         UuzRRTZN9ZUp3rWcyKs0UWiAVEf48pgc2Rp0tIR7ALFlOXEUaqjGrdYZfn48i7VOTsjD
+         eKHBDcJPAPSes7SIA8oAdR1Kned7LCdlI9QzR3l9r4XAcdTsMPdlGKkBlD2oFAMXdQxP
+         CK2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8q8DkGNrfD4Xi3IczgdLormMM6nLc6XqC3dSoMzfAWk=;
+        b=RfdiZQYsnB3OOyeN5EA7hkXZAvErLZbzlfsOSVsrgO3A4Ysw3kd5lwcG7DUKNCyYYj
+         Siy6rHIavc0G1x60AzrG7JMiyvGnCLoblxQUPqGzvsNz47ESol9mgUm5kZ1i/Dq7ADQ3
+         nm6+gdL06dYTc0rKx2sVYGXBmXg6KAcXVSjcI0J1ICQNEBSCxIq5EoDmOGbkBE5qW3wf
+         7qiM/95WaToJlpKBhOlXZiUdojB5kO7Ave4xEl9PJzwBfpfgAJv2fWlgdtHZrVIl7/YQ
+         EjqQNwdmyh8SxahMXORG9BZB/MFGjL6SghbLt4A9EnHaS0I/vYwWlRUB1i4Nfijpohbx
+         gc6A==
+X-Gm-Message-State: APjAAAUQsOxmvuufbeAohTdroj5Lt3/GxIMeo0wMbM656hmSH0Z3OGoK
+        kobjrTtwOP5/ga7/Sqp4aZU=
+X-Google-Smtp-Source: APXvYqw4GdkNSDA1K7C3X7bNZpgbd35nz1D+f/GWGJssYEK1POlniMr0ebfij+JXK78rmDJCmyQMnw==
+X-Received: by 2002:a17:906:6557:: with SMTP id u23mr22844136ejn.186.1562231328597;
+        Thu, 04 Jul 2019 02:08:48 -0700 (PDT)
+Received: from ziggy.stardust ([37.223.141.54])
+        by smtp.gmail.com with ESMTPSA id e43sm1497090ede.62.2019.07.04.02.08.46
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Jul 2019 02:08:48 -0700 (PDT)
+Subject: Re: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
+ mmsys clocks
+To:     CK Hu <ck.hu@mediatek.com>, Matthias Brugger <mbrugger@suse.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        David Airlie <airlied@linux.ie>,
         Michael Turquette <mturquette@baylibre.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [RFCv2 0/8] Add imx8mm bus frequency switching
-Thread-Topic: [RFCv2 0/8] Add imx8mm bus frequency switching
-Thread-Index: AQHVLYSy6nskEZuxAkK/D6W15Np9Kw==
-Date:   Thu, 4 Jul 2019 08:32:17 +0000
-Message-ID: <DB7PR04MB5051CA1EE62E3D8687352B05EEFA0@DB7PR04MB5051.eurprd04.prod.outlook.com>
-References: <cover.1561707104.git.leonard.crestez@nxp.com>
- <CAGETcx_63KnP75qySbhX_P_=o4=ox9J8AsBqKsFHeQRjCpSeJA@mail.gmail.com>
- <DB7PR04MB505163FDCAD7BE9A0C71A65EEEFB0@DB7PR04MB5051.eurprd04.prod.outlook.com>
- <CAGETcx-p4L3LBVpDBmBrPKXxMUtUXtsw-7AntpWs+AL3kaaP5Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [82.144.34.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6be4d8cf-bc69-4c84-f123-08d7005a1fe2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4009;
-x-ms-traffictypediagnostic: DB7PR04MB4009:
-x-microsoft-antispam-prvs: <DB7PR04MB4009C2E77B7FAEB3216B4A8DEEFA0@DB7PR04MB4009.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-forefront-prvs: 0088C92887
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(376002)(39860400002)(346002)(396003)(199004)(189003)(478600001)(26005)(256004)(76176011)(68736007)(3846002)(6116002)(52536014)(186003)(73956011)(76116006)(91956017)(99286004)(81156014)(86362001)(8936002)(81166006)(66556008)(8676002)(5660300002)(102836004)(66476007)(64756008)(25786009)(5024004)(66946007)(53546011)(7416002)(7696005)(14444005)(66446008)(14454004)(6506007)(6436002)(74316002)(66066001)(110136005)(229853002)(71190400001)(316002)(2906002)(33656002)(71200400001)(9686003)(55016002)(53936002)(6246003)(486006)(476003)(4326008)(7736002)(446003)(305945005)(54906003)(44832011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4009;H:DB7PR04MB5051.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NDkkiR+RAOxS8Ou7cqFAckIxeoQ+B9W0hFr25Pt3Mghp2GuwDooJRwLK4Nb7Lta5NEV5askCrg2KyZywnFlHAe9CYLAyKlcCWFJYPHIuDrF/m09p38bYvgvdjxkZvvJ22zVXabgUoTDd8zEC5P9jASQbfwFcCyhSW5RyB71Wv6Nv/UGgsbQaqACTkueV6Ct8UP0CurZcnPR08xNW0nn4iVcb0s3KpCmhaw9o5HTreHkhx6nAXxdqhIDd8UCjF88rX/b9npafwxpb4b95xYcrf8NSpzlkgPoJ78fyTT5HucR1Fm1QS1xC937ayyGZ0Z5SkzR+KK5gbTKqwhu17hgBWrEWIxKzBzlSiKG62jN6UkdsjcLAviaDDkGSiJ9KXr0YdHgjkyDs4E/eum7MvBiDKrDSz2jliAMzD2OCkvbl6Ak=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "matthias.bgg@kernel.org" <matthias.bgg@kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20181116125449.23581-1-matthias.bgg@kernel.org>
+ <20181116125449.23581-9-matthias.bgg@kernel.org>
+ <20181116231522.GA18006@bogus>
+ <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
+ <CAL_JsqKJQwfDJbpmwW+oCxiDkSp5+6mG-uoURmCQVEMP_jFOEg@mail.gmail.com>
+ <154281878765.88331.10581984256202566195@swboyd.mtv.corp.google.com>
+ <458178ac-c0fc-9671-7fc8-ed2d6f61424c@suse.com>
+ <154356023767.88331.18401188808548429052@swboyd.mtv.corp.google.com>
+ <a229bfc7-683f-5b0d-7b71-54f934de6214@suse.com>
+ <1561953318.25914.9.camel@mtksdaap41>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ jrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <84d1c444-d6cb-9537-1bf5-b4e736443239@gmail.com>
+Date:   Thu, 4 Jul 2019 11:08:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6be4d8cf-bc69-4c84-f123-08d7005a1fe2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 08:32:17.6468
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4009
+In-Reply-To: <1561953318.25914.9.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/4/2019 6:03 AM, Saravana Kannan wrote:=0A=
-> On Wed, Jul 3, 2019 at 4:30 PM Leonard Crestez <leonard.crestez@nxp.com> =
-wrote:=0A=
-=0A=
->> On 7/4/2019 1:20 AM, Saravana Kannan wrote:=0A=
->>=0A=
->>>> The interconnect and devfreq parts do not communicate explicitly: they=
- both=0A=
->>>> just call clk_set_min_rate and the clk core picks the minimum value th=
-at can=0A=
->>>> satisfy both. They are thus completely independent.=0A=
->>>=0A=
->>> Two different parts not talking to each other and just setting min=0A=
->>> rate can cause problems for some concurrency use cases. ICC framework=
-=0A=
->>> is explicitly designed to handle cases like this and aggregate the=0A=
->>> needs correctly. You might want to look into that more closely.=0A=
->>=0A=
->> The clk framework aggregates the min_rate requests from multiple=0A=
->> consumers under a big "prepare_lock" so I expect it will deal with=0A=
->> concurrent requests correctly. As for performance: frequency switching=
-=0A=
->> shouldn't be a fast path.=0A=
-> =0A=
-> Sorry I wasn't clear. I was not talking about locking issues or race=0A=
-> conditions when I said concurrency use cases. What I meant was if GPU=0A=
-> wants 5 GB/s and at the same time (concurrent) camera wants 5 GB/s=0A=
-> you'll need to configure the interconnect for 10 GB/s. If both of them=0A=
-> just try to set the min freq equivalent for 5 GB/s the performance=0A=
-> would be bad or functionality might break.=0A=
-=0A=
-I'm not calling clk_set_min_rate independently for each icc path, that =0A=
-would be obviously broken. The interconnect framework is still used to =0A=
-aggregate bandwith requests and in your scenario clk_set_min_rate for =0A=
-the main NOC would be called in a way that meets the combined 10 GB/s =0A=
-requests.=0A=
-=0A=
-It is devfreq which calls clk_set_min_rate independently of =0A=
-interconnect, this results in CLK performing the final aggregation =0A=
-between the "proactive" and "reactive" scaling.=0A=
-=0A=
->>>> The clk_set_min_rate approach does not mesh very well with the OPP fra=
-mework.=0A=
->>>> Some of interconnect nodes on imx8m can run at different voltages: OPP=
- can=0A=
->>>> handle this well but not in response to a clk_set_min_rate from an unr=
-elated=0A=
->>>> subsystem. Maybe set voltage on a clk notifier?=0A=
->>>=0A=
->>> I think if you design it something like below, it might make your life=
-=0A=
->>> a whole lot easier.=0A=
->>> Hopefully the formatting looks okay on your end. The arrow going up is=
-=0A=
->>> just connecting devfreq to ICC.=0A=
->>>=0A=
->>>                           Proactive -> ICC -> clk/OPP API to set freq/v=
-olt=0A=
->>>                                         ^=0A=
->>>                                         |=0A=
->>> HW measure -> governor -> devfreq ----+=0A=
->>>=0A=
->>> That way, all voltage/frequency requirements are managed cleanly by=0A=
->>> clk/OPP frameworks. The ICC deals with aggregating all the=0A=
->>> requirements and devfreq lets you handle reactive scaling and policy.=
-=0A=
->>=0A=
->> If icc and devfreq are to directly communicate it makes more sense to do=
-=0A=
->> it backwards: ICC should set a min_freq on nodes which have a devfreq=0A=
->> instance attached and devfreq should implement actual freq switching.=0A=
->>=0A=
->> HW measurement is done on individual nodes while ICC deals with requests=
-=0A=
->> along a path. In particular on imx we have a performance monitor=0A=
->> attached to the ddr controller and I doubt it can distinguish between=0A=
->> masters so how could this be mapped usefully to an interconnect request?=
-=0A=
-> =0A=
-> Ah, that was the missing piece for me -- you are trying to use a=0A=
-> central performance monitor. I see what you are trying to do.=0A=
-> =0A=
-> So you are looking at system wide traffic at DDR and then using that=0A=
-> to scale the interconnect/DDRC. I don't know how complicated or not=0A=
-> the IMX interconnect topology is, so please pardon my questions. If=0A=
-> you are using a performance monitor at the DDR controller, why do you=0A=
-> need the "proactive" requests from other clients? Wouldn't the=0A=
-> performance monitor account for all the traffic to DDR?=0A=
-=0A=
-Reactive scaling is too slow to ramp-up in media playback scenarios and =0A=
-first few frames would fail.=0A=
-=0A=
->> As far as I understand with devfreq the ddrc node could use "ondemand"=
-=0A=
->> while the other nodes would default to the "passive" governor and run at=
-=0A=
->> predefined default ratios relative to DDRC.=0A=
-> =0A=
-> Yes, that approach would also work but I'm not sure why you need the=0A=
-> ICC framework in that case.=0A=
-=0A=
-For proactive scaling: to ensure bandwidth *before* traffic starts. In =0A=
-imx vendor tree that's all that's implemented; for reactive scaling we =0A=
-just set busfreq to high as soon as cpu leaves min opp.=0A=
-=0A=
-IMX interconnect topology is not very complex so mechanisms other than =0A=
-interconnect could be used. But ICC is the most powerful and expressive =0A=
-subsystem for proactive requests.=0A=
-=0A=
->>> If all of this makes sense, please take a look at [2] and provide your=
-=0A=
->>> thoughts. I've dropped a few patches from [1] to avoid confusion (too=
-=0A=
->>> much going on at once). I think BW OPP tables and having OPP tables=0A=
->>> for interconnect paths will be something you'll need (if not now,=0A=
->>> eventually) and something you can build on top of nicely.=0A=
->>=0A=
->> I found it very confusing that you're assigning BW OPP tables to=0A=
->> devices. My initial understanding was that BW OPP would map "bandwidth"=
-=0A=
->> to "frequency" so BW OPPs should be assigned to links along the=0A=
->> interconnect graph. But maybe what you want is to have OPPs for the BW=
-=0A=
->> values requested by devices?=0A=
-> =0A=
-> I want to have OPPs for bandwidths requested for paths.=0A=
-=0A=
-Right, this was not very obvious.=0A=
-=0A=
-> Each interconnect node can also use BW OPPs if that makes sense for them,=
-=0A=
-> but I think they'd be better served by using frequency OPPs.=0A=
-=0A=
-Each interconnect node is asked by the framework to ensure a certain BW =0A=
-is available in "bytes". The nodes could use OPPs with BW values to map =0A=
-the icc request to a frequency in "hz".=0A=
-=0A=
->> Looking at the sdm845 icc provider source and it seems that those=0A=
->> "peak/avg" values are actually parameters which go into a firmware=0A=
->> command!? It makes sense that you want interconnect to be "below"=0A=
->> devfreq since icc_provider.set maps very closely to what firmware expose=
-s.=0A=
-> =0A=
-> Even without the firmware (it's mainly there to aggregate requests for=0A=
-> some system wide resources) or if interconnects are scaled directly=0A=
-> using clock APIs (older chips), sdm845 would still want ICC to be=0A=
-> below devfreq. It's because 845 doesn't try to do ICC scaling by=0A=
-> measuring at the DDR. Each master makes separate requests and then the=0A=
-> ICC aggregates and sets the frequency. They have their reasons (good=0A=
-> ones) for doing that.=0A=
-=0A=
-Maybe I'm confused about how devfreq is used in your scenario: you have =0A=
-devices which have their own OPPs (like a GPU) and expose this via =0A=
-devfreq. Then for each GPU OPP you want to pick a the BW value to =0A=
-request from interconnect, right?=0A=
-=0A=
-My idea was to use devfreq *after* icc so that you can do stuff like =0A=
-force a certain NOC to "max" via echo "performance" > $sysfs/governor. =0A=
-It also allows encapsulating complex freq switching (clk maintainers =0A=
-don't seem to like my dram clk).=0A=
-=0A=
-On a second examination there is no actual incompatibility here, devfreq =
-=0A=
-could be used both below and above ICC.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+Hi CK-Hu,
+
+On 01/07/2019 05:55, CK Hu wrote:
+> Hi, Matthias:
+> 
+> On Fri, 2018-11-30 at 16:59 +0800, Matthias Brugger wrote:
+>>
+>> On 30/11/2018 07:43, Stephen Boyd wrote:
+>>> Quoting Matthias Brugger (2018-11-21 09:09:52)
+>>>>
+>>>>
+>>>> On 21/11/2018 17:46, Stephen Boyd wrote:
+>>>>> Quoting Rob Herring (2018-11-19 11:15:16)
+>>>>>> On Sun, Nov 18, 2018 at 11:12 AM Matthias Brugger
+>>>>>> <matthias.bgg@gmail.com> wrote:
+>>>>>>> On 11/17/18 12:15 AM, Rob Herring wrote:
+>>>>>>>> On Fri, Nov 16, 2018 at 01:54:45PM +0100, matthias.bgg@kernel.org wrote:
+>>>>>>>>> -    #clock-cells = <1>;
+>>>>>>>>> +
+>>>>>>>>> +    mmsys_clk: clock-controller@14000000 {
+>>>>>>>>> +            compatible = "mediatek,mt2712-mmsys-clk";
+>>>>>>>>> +            #clock-cells = <1>;
+>>>>>>>>
+>>>>>>>> This goes against the general direction of not defining separate nodes
+>>>>>>>> for providers with no resources.
+>>>>>>>>
+>>>>>>>> Why do you need this and what does it buy if you have to continue to
+>>>>>>>> support the existing chips?
+>>>>>>>>
+>>>>>>>
+>>>>>>> It would show explicitly that the mmsys block is used to probe two
+>>>>>>> drivers, one for the gpu and one for the clocks. Otherwise that is
+>>>>>>> hidden in the drm driver code. I think it is cleaner to describe that in
+>>>>>>> the device tree.
+>>>>>>
+>>>>>> No, that's maybe cleaner for the driver implementation in the Linux
+>>>>>> kernel. What about other OS's or when Linux drivers and subsystems
+>>>>>> needs change? Cleaner for DT is design bindings that reflect the h/w.
+>>>>>> Hardware is sometimes just messy.
+>>>>>>
+>>>>>
+>>>>> I agree. I fail to see what this patch series is doing besides changing
+>>>>> driver probe and device creation methods and making a backwards
+>>>>> incompatible change to DT. Is there any other benefit here?
+>>>>>
+>>>>
+>>>> You are referring whole series?
+>>>> Citing the cover letter:
+>>>> "MMSYS in Mediatek SoCs has some registers to control clock gates (which is
+>>>> used in the clk driver) and some registers to set the routing and enable
+>>>> the differnet (sic!) blocks of the display subsystem.
+>>>>
+>>>> Up to now both drivers, clock and drm are probed with the same device tree
+>>>> compatible. But only the first driver get probed, which in effect breaks
+>>>> graphics on mt8173 and mt2701.
+>>>
+>>> Ouch!
+>>>
+>>
+>> Yes :)
+>>
+>>>>
+>>>> This patch uses a platform device registration in the DRM driver, which
+>>>> will trigger the probe of the corresponding clock driver. It was tested on the
+>>>> bananapi-r2 and the Acer R13 Chromebook."
+>>>
+>>> Alright, please don't add nodes in DT just to make device drivers probe.
+>>> Instead, register clks from the drm driver or create a child platform
+>>> device for the clk bits purely in the drm driver and have that probe the
+>>> associated clk driver from there.
+>>>
+>>
+>> I'll make the other SoCs probe via a child platform device from the drm driver,
+>> as already done in 2/12 and 3/12.
+> 
+> This series have been pending for half an year, would you keep going on
+> this series? If you're busy, I could complete this series, but I need to
+> know what you have plan to do.
+> 
+
+You are right, it took far too long for me to respond with a new version of the
+series. The problem I face is, that I use my mt8173 based chromebook for
+testing. It needs some downstream patches and broke somewhere between my last
+email and a few month ago. I wasn't able to get serial console to work, which
+made things even more complicated. Anyway, long story short, I got sidetracked
+with other stuff and didn't send a new version.
+
+If you have time to work on this, I'd happy to see things being pushed forward
+by you :)
+
+> I guess that 1/12 ~ 5/12 is for MT2701/MT8173 and that patches meet this
+> discussion. 6/12 ~ 12/12 is for MT2712/MT6797 but that patches does not
+> meet this discussion. So the unfinished work is to make MT2712/MT6797 to
+> align MT2701/MT8173, is this right?
+
+After re-reading the emails I think the missing part is, to probe the clocks
+from the DRM driver instead of adding a new devicetree binding for them.
+
+Regards,
+Matthias
+
+> 
+> Regards,
+> CK
+> 
+>>
+>> Regards,
+>> Matthias
+>>
+>>>>
+>>>> DT is broken right now, because two drivers rely on the same node, which gets
+>>>> consumed just once. The new DT introduced does not break anything because it is
+>>>> only used for boards that: "[..] are not available to the general public
+>>>> (mt2712e) or only have the mmsys clock driver part implemented (mt6797)."
+>>>
+>>> Ok, so backwards compatibility is irrelevant then. Sounds fine to me.
+>>>
+>>>
+>>
+>> _______________________________________________
+>> Linux-mediatek mailing list
+>> Linux-mediatek@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> 
+> 
