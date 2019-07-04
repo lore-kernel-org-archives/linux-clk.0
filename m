@@ -2,215 +2,103 @@ Return-Path: <SRS0=FlAG=VB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8740CC06511
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 03:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29954C0650E
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 07:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5829F218A6
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 03:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F267E216E3
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jul 2019 07:26:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hUVB9KGT"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhZ+K8Gh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfGDDDD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jul 2019 23:03:03 -0400
-Received: from mail-oi1-f175.google.com ([209.85.167.175]:46014 "EHLO
-        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbfGDDDC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jul 2019 23:03:02 -0400
-Received: by mail-oi1-f175.google.com with SMTP id m206so3778892oib.12
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2019 20:03:02 -0700 (PDT)
+        id S1727358AbfGDH06 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Jul 2019 03:26:58 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42732 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfGDH06 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jul 2019 03:26:58 -0400
+Received: by mail-lf1-f65.google.com with SMTP id s19so2796306lfb.9
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jul 2019 00:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=n1KdKTuWqrDXAP3v6txFR4h07qa+wUhZFnR5tE4YYSQ=;
-        b=hUVB9KGT+H7UQfNOUX3f8B4+lpC0WQ7jkigFqMapZ34Gc3QrlBEgVm05bX452lh2mK
-         5V8JABVi6UCATdXj0mw6GBIUkeEFZ7m6l9D8Ox7Y1BRx/3oLtliRfL0gOYrpwc3R2ud8
-         DfRRN4sSLGCAe3EpsWDgNHrHEOYoKdB/N42af6R9484GB8Q1zu1unU3LkYecOQ5cXBJI
-         Cu987fs1LoZ4TeAbolIrNTigcIHco5X8zZslJO/g5441i+XB0NKsXDf4FmdC5AftAAEP
-         Cj1Nvt3YZEZ47Go2FCo590RcvnQiv/OJEvK7wwXdsecvMhHo2vRyVbQMlyDkZNDiO+5d
-         Jt1g==
+        bh=J+Ba5vmuqSqIoQZUfrVFUAlnYym6OvIM55l/Sf2uuaQ=;
+        b=bhZ+K8GhK9VkN3k2GoJp7VboKKDOCk8N+9ilQC1UfpnTVZQU/M/q3ZV0uKtJMhzrLp
+         WR6N+xp8EdWHY5N8G/8c+dzXsqsPB2kGRDj8imJLl//BnAuQ1uqx8v1aiVk4g/jjUf5y
+         7wDs7m5sqPGqGItDDmsY+ZkZbaX6Qxjr32U4EyS938hj2LRPuQVFSq+iyPqP0CPpu9tF
+         c3YzO1fONoujRaSYnPaeiB5EM2eLuI5p1X0QincmyDYQLCCuvxzikG6GdRRAvYMmDEXg
+         MQB/FhlGlVNR+MMzKi/APvc581uXYARpuzFWoVZ62fMr4qsN//N6Rj+O00zFxm5rVUP2
+         /oYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=n1KdKTuWqrDXAP3v6txFR4h07qa+wUhZFnR5tE4YYSQ=;
-        b=sRIMfjm9rcCKHRNT6iGfk9/A3MXFPSq5taEPuGKaNm/tfeTeJUb08PhKX7VGpj75qo
-         U42WepH2l8dvNb7yTI4zJLQcCY3oAqPxFI5mN4nKUhG4jIixVj2T8dCoSE2z4U6qzV3+
-         lgdHvIloDORJJyKGYGUt7S5bOJO3Njcs6c5lxaZusjne52JwjEk34T3l2MCW3xB8zPEG
-         KCJijEo7nR4xVyjoiAq+rCaUhI6ieiPh7SHKNwv2R66gF+V1kMVMkw00EfGdyL+rNvk8
-         9BrNEy7Qj+e0xH6dvM+heck+JwaBIe+LnvvwYQ7dsoRtjpyqQFC39VRgjdbby67VcA9D
-         6pKg==
-X-Gm-Message-State: APjAAAXOwBmLn6gVxI4pbuuykmHjnG2JD5S+wxHdpPF28EO8+UH9Kath
-        65NMVyBpsxwv52wYY7nBp/UcFBao9B1gexdItJ51zA==
-X-Google-Smtp-Source: APXvYqx4t9TJb0zhKWKpXdp+t0vLDo8QxG63nb2zHZEbXWHngIo59Bx47QJ4iboxakD5apU1NVxAFcglkoqPsv9oBoM=
-X-Received: by 2002:aca:6104:: with SMTP id v4mr569905oib.172.1562209381525;
- Wed, 03 Jul 2019 20:03:01 -0700 (PDT)
+        bh=J+Ba5vmuqSqIoQZUfrVFUAlnYym6OvIM55l/Sf2uuaQ=;
+        b=ANXBoFHvqxw+3v/ktgr/j4aVE0DcmmjV42kF/GzbCkGrQ39RcDjv+Ww0+zeIpRovfz
+         5/7TzgncXTekj2DJm2gdQX+4WCJevTvfqblwEFkQNEdYCo8tZ37rctK6u9ahhi4wedhj
+         LARsnJcrEt4N9h/zM/qZWb+XKiAb8WDpTCOnngYkismM1h/8PQa0WSKbN0FAzVLeZ/Dv
+         p8TUugPKP7x5/l9agT+nKhpyDBS7q4c3N8/wIbggOx4Pt8AuQZmJ3XuFxvT9lTeOaoL5
+         4X7ja78tAW8HoUmOAJ8im1BNVMzaw5o0JWNawQXY4HGs1g/zZBaMicSqDPPhe3FUCghn
+         IE+Q==
+X-Gm-Message-State: APjAAAX9vhmV499/oB8liTMnvQH+cpkeMEa+PBOtUK2zt96+MrgWINO5
+        SVhLHQ1SNtw9vNUGrLvSgn+ZDxYJbNUdpPv+ittGjg==
+X-Google-Smtp-Source: APXvYqwNzEjm08f5v1JSveVg/JRpWRlOEA0F0/jHeUfvrHLnDXF0UuVE85NvMlSbzQ06gTd+F91sZZ7/wpwLHY8mq10=
+X-Received: by 2002:ac2:5c42:: with SMTP id s2mr4215393lfp.61.1562225216742;
+ Thu, 04 Jul 2019 00:26:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1561707104.git.leonard.crestez@nxp.com> <CAGETcx_63KnP75qySbhX_P_=o4=ox9J8AsBqKsFHeQRjCpSeJA@mail.gmail.com>
- <DB7PR04MB505163FDCAD7BE9A0C71A65EEEFB0@DB7PR04MB5051.eurprd04.prod.outlook.com>
-In-Reply-To: <DB7PR04MB505163FDCAD7BE9A0C71A65EEEFB0@DB7PR04MB5051.eurprd04.prod.outlook.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 3 Jul 2019 20:02:25 -0700
-Message-ID: <CAGETcx-p4L3LBVpDBmBrPKXxMUtUXtsw-7AntpWs+AL3kaaP5Q@mail.gmail.com>
-Subject: Re: [RFCv2 0/8] Add imx8mm bus frequency switching
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com> <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 4 Jul 2019 09:26:45 +0200
+Message-ID: <CACRpkdYfuNK4rShCqpf7hyKDzL_1JgiW=k8Y=CMs_Hx-+vnmVQ@mail.gmail.com>
+Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 4:30 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+On Fri, Jun 28, 2019 at 4:13 AM Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
+
+> This patch adds support for Tegra pinctrl driver suspend and resume.
 >
-> On 7/4/2019 1:20 AM, Saravana Kannan wrote:
+> During suspend, context of all pinctrl registers are stored and
+> on resume they are all restored to have all the pinmux and pad
+> configuration for normal operation.
 >
-> >> The interconnect and devfreq parts do not communicate explicitly: they both
-> >> just call clk_set_min_rate and the clk core picks the minimum value that can
-> >> satisfy both. They are thus completely independent.
-> >
-> > Two different parts not talking to each other and just setting min
-> > rate can cause problems for some concurrency use cases. ICC framework
-> > is explicitly designed to handle cases like this and aggregate the
-> > needs correctly. You might want to look into that more closely.
->
-> The clk framework aggregates the min_rate requests from multiple
-> consumers under a big "prepare_lock" so I expect it will deal with
-> concurrent requests correctly. As for performance: frequency switching
-> shouldn't be a fast path.
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Sorry I wasn't clear. I was not talking about locking issues or race
-conditions when I said concurrency use cases. What I meant was if GPU
-wants 5 GB/s and at the same time (concurrent) camera wants 5 GB/s
-you'll need to configure the interconnect for 10 GB/s. If both of them
-just try to set the min freq equivalent for 5 GB/s the performance
-would be bad or functionality might break.
+Looks good.
 
-> >> The clk_set_min_rate approach does not mesh very well with the OPP framework.
-> >> Some of interconnect nodes on imx8m can run at different voltages: OPP can
-> >> handle this well but not in response to a clk_set_min_rate from an unrelated
-> >> subsystem. Maybe set voltage on a clk notifier?
-> >
-> > I think if you design it something like below, it might make your life
-> > a whole lot easier.
-> > Hopefully the formatting looks okay on your end. The arrow going up is
-> > just connecting devfreq to ICC.
-> >
-> >                          Proactive -> ICC -> clk/OPP API to set freq/volt
-> >                                        ^
-> >                                        |
-> > HW measure -> governor -> devfreq ----+
-> >
-> > That way, all voltage/frequency requirements are managed cleanly by
-> > clk/OPP frameworks. The ICC deals with aggregating all the
-> > requirements and devfreq lets you handle reactive scaling and policy.
->
-> If icc and devfreq are to directly communicate it makes more sense to do
-> it backwards: ICC should set a min_freq on nodes which have a devfreq
-> instance attached and devfreq should implement actual freq switching.
->
-> HW measurement is done on individual nodes while ICC deals with requests
-> along a path. In particular on imx we have a performance monitor
-> attached to the ddr controller and I doubt it can distinguish between
-> masters so how could this be mapped usefully to an interconnect request?
+Can I just apply this patch or does it need to go in with
+the other (clk) changes?
 
-Ah, that was the missing piece for me -- you are trying to use a
-central performance monitor. I see what you are trying to do.
-
-So you are looking at system wide traffic at DDR and then using that
-to scale the interconnect/DDRC. I don't know how complicated or not
-the IMX interconnect topology is, so please pardon my questions. If
-you are using a performance monitor at the DDR controller, why do you
-need the "proactive" requests from other clients? Wouldn't the
-performance monitor account for all the traffic to DDR?
-
-> As far as I understand with devfreq the ddrc node could use "ondemand"
-> while the other nodes would default to the "passive" governor and run at
-> predefined default ratios relative to DDRC.
-
-Yes, that approach would also work but I'm not sure why you need the
-ICC framework in that case.
-
-> > If all of this makes sense, please take a look at [2] and provide your
-> > thoughts. I've dropped a few patches from [1] to avoid confusion (too
-> > much going on at once). I think BW OPP tables and having OPP tables
-> > for interconnect paths will be something you'll need (if not now,
-> > eventually) and something you can build on top of nicely.
->
-> I found it very confusing that you're assigning BW OPP tables to
-> devices. My initial understanding was that BW OPP would map "bandwidth"
-> to "frequency" so BW OPPs should be assigned to links along the
-> interconnect graph. But maybe what you want is to have OPPs for the BW
-> values requested by devices?
-
-I want to have OPPs for bandwidths requested for paths. Each
-interconnect node can also use BW OPPs if that makes sense for them,
-but I think they'd be better served by using frequency OPPs.
-
-> Looking at the sdm845 icc provider source and it seems that those
-> "peak/avg" values are actually parameters which go into a firmware
-> command!? It makes sense that you want interconnect to be "below"
-> devfreq since icc_provider.set maps very closely to what firmware exposes.
-
-Even without the firmware (it's mainly there to aggregate requests for
-some system wide resources) or if interconnects are scaled directly
-using clock APIs (older chips), sdm845 would still want ICC to be
-below devfreq. It's because 845 doesn't try to do ICC scaling by
-measuring at the DDR. Each master makes separate requests and then the
-ICC aggregates and sets the frequency. They have their reasons (good
-ones) for doing that.
-
->  > Interconnects and interconnect paths quantify their performance
-> levels > in terms of bandwidth and not in terms of frequency.
->
-> On i.MX we just have a bunch of interconnect IPs for which frequencies
-> can be adjusted (in hz)
-
-This is true for every chip. In the end, they all set the Hz of hardware IPs.
-
-> so the above statement doesn't really hold. It
-> is up to an icc provider to convert aggregate bandwidth values to
-> frequencies along the path.
-
-That's the job of every ICC provider. In the case of i.MX you use
-clock APIs and in the case of sdm845 they use some complicated
-firmware interface. But in both cases, when the system is tuned for
-performance/power everyone in the end cares about frequency and
-voltage. If the frequency goes too high, they might reduce the
-bandwidth to make sure the frequency remains reasonable for whatever
-use case they are profiling.
-
-I think the main difference is where the performance monitoring or
-performance decision is done. If you don't have a central performance
-monitor or don't want to use one, then the policy decision (which is
-where devfreq fits in) will have to happen at the bandwidth decision
-level.
-
--Saravana
+Yours,
+Linus Walleij
