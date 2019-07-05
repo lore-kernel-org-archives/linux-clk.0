@@ -4,72 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C05C5B57D
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 07:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7564EC5B57D
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 08:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16882218BC
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 07:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44D5F218BA
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 08:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="F3EJXJly"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QCBUwvdy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725862AbfGEHBN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jul 2019 03:01:13 -0400
-Received: from mail-eopbgr20078.outbound.protection.outlook.com ([40.107.2.78]:11654
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        id S1727462AbfGEIwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Jul 2019 04:52:23 -0400
+Received: from mail-eopbgr80075.outbound.protection.outlook.com ([40.107.8.75]:49479
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726012AbfGEHBN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jul 2019 03:01:13 -0400
+        id S1726427AbfGEIwW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Jul 2019 04:52:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s7Sb5iXnQeq6a4whQIZqloWLVF73UJr240vQ6vJkYPY=;
- b=F3EJXJly6N0kYOQvvHDl7H0nhoHJK0dMcCZMVg0jozw+OiLOonNPnxYqMTezEpJW70wtuMnGBDrCCUcxjreXrMcm1/3GdrpMYRnoHbfag4b/dpGkEz8ftZnn+RjClRXYAt28/54E40JRYzp2+1KYp/sAsNNfmnIIbfFgNQu3mNw=
+ bh=1fgAuLLLFfyUVk/o5jZw3vrfUXIp2EBF7mInEqJ7ne0=;
+ b=QCBUwvdyaFmjNuT7K285UCjZyE//6vRx/CWSiLsCVYh8QVwBzZObZWkMVnvdkJnfxE4anYvGwUjHAVNSzpFCbtqq7IM6HCLr3qm7GbaDF4/lB+SRrNB0ghpQDajPjNZ6hRjNM0pKw9+MTWbeZBbeQ/wpJ1s2B1LsxXLUpFronYs=
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB6467.eurprd04.prod.outlook.com (20.179.253.80) with Microsoft SMTP
+ AM0PR04MB4050.eurprd04.prod.outlook.com (52.134.91.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Fri, 5 Jul 2019 07:01:08 +0000
+ 15.20.2052.18; Fri, 5 Jul 2019 08:52:19 +0000
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::a126:d121:200:367]) by AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::a126:d121:200:367%7]) with mapi id 15.20.2032.019; Fri, 5 Jul 2019
- 07:01:08 +0000
+ 08:52:19 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>
-CC:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "edubezval@gmail.com" <edubezval@gmail.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "ccaione@baylibre.com" <ccaione@baylibre.com>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
- IMX8MQ_CLK_TMU_ROOT
-Thread-Topic: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
- IMX8MQ_CLK_TMU_ROOT
-Thread-Index: AQHVMu9QFutD3B96ckCJ5EoT7khMLqa7mPeA
-Date:   Fri, 5 Jul 2019 07:01:08 +0000
-Message-ID: <20190705070107.xsxvnh7b36w4q4c6@fsr-ub1664-175>
-References: <20190705045612.27665-1-Anson.Huang@nxp.com>
- <20190705045612.27665-5-Anson.Huang@nxp.com>
-In-Reply-To: <20190705045612.27665-5-Anson.Huang@nxp.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx8mq: Mark AHB clock as critical
+Thread-Topic: [PATCH] clk: imx8mq: Mark AHB clock as critical
+Thread-Index: AQHVKzSu7JwgQZ2S+Eecj9cXfCskNaas9UwAgA7SMQA=
+Date:   Fri, 5 Jul 2019 08:52:19 +0000
+Message-ID: <20190705085218.lvvqnqx6nfph2era@fsr-ub1664-175>
+References: <1561453316-11481-1-git-send-email-abel.vesa@nxp.com>
+ <20190625223223.3B8EC2053B@mail.kernel.org>
+In-Reply-To: <20190625223223.3B8EC2053B@mail.kernel.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -78,74 +62,73 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-originating-ip: [89.37.124.34]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7684758f-e8cb-482a-b8b0-08d701168e4d
+x-ms-office365-filtering-correlation-id: 371c65a2-b14a-4157-c108-08d701261696
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6467;
-x-ms-traffictypediagnostic: AM0PR04MB6467:
-x-microsoft-antispam-prvs: <AM0PR04MB646733A05AF6FEDFEC7A1F12F6F50@AM0PR04MB6467.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2150;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4050;
+x-ms-traffictypediagnostic: AM0PR04MB4050:
+x-microsoft-antispam-prvs: <AM0PR04MB405076CA7695BC3A4DF0223DF6F50@AM0PR04MB4050.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
 x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(376002)(396003)(366004)(346002)(136003)(39860400002)(189003)(199004)(6116002)(99286004)(14444005)(102836004)(256004)(5660300002)(6506007)(64756008)(66446008)(66556008)(6486002)(3846002)(2906002)(229853002)(6862004)(76176011)(6436002)(26005)(4326008)(71200400001)(86362001)(14454004)(6512007)(25786009)(71190400001)(9686003)(53546011)(186003)(66066001)(44832011)(54906003)(305945005)(476003)(11346002)(8936002)(1076003)(7736002)(486006)(478600001)(8676002)(81166006)(33716001)(81156014)(6636002)(68736007)(66946007)(6246003)(66476007)(316002)(73956011)(446003)(7416002)(91956017)(76116006)(53936002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6467;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(136003)(396003)(39860400002)(346002)(366004)(376002)(189003)(199004)(6512007)(68736007)(71190400001)(316002)(99286004)(476003)(9686003)(6506007)(478600001)(102836004)(76176011)(446003)(53546011)(8936002)(71200400001)(53936002)(186003)(54906003)(66066001)(44832011)(6916009)(7736002)(486006)(6246003)(305945005)(5660300002)(4326008)(6116002)(26005)(66946007)(76116006)(3846002)(14454004)(73956011)(66476007)(91956017)(66446008)(64756008)(11346002)(86362001)(66556008)(1076003)(6486002)(256004)(25786009)(229853002)(8676002)(2906002)(81156014)(33716001)(81166006)(14444005)(6436002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4050;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yRndkOOzP1IjQoa9e0O0lRa0djhHRhUDJq9EGcWsEGysrDhAt9g97LiiFDlaUTNV35w4x2m7hzeObgcG9fNNXRgKxEQmNTjGBja9Ep96602mspQ8bPCA7Xf+5pITd1YbQ4Ij6izQEFW1l3TpcJwCjYfMBZwLp134XRodxcXyQ9vpqFS52jqjcUF4+IahWizFAHvZrG4dTRxuybJtyyerT+Yl3AZUgTVengyOkMrVqprAv5Fm4O1RTEyGoVS6JpKyaaQHhals2BIO5e8skwACooRmsJPzENZ5fhM4n3TK1Vnjdib6EUxOiJmXlMxO6C00i70hIoD0c5SMXsdGc9ICgonlRc3/nopnYd+8ZU/VwthieYmp0REPkJEh5ciduW6EJwmMJUS4iiCTQcJ//TrpnZPYNygN0x0uDQAHjSCUNSk=
+x-microsoft-antispam-message-info: udm5GVIf1ptBRrhMoptsldP69SzdOKSceS9ONCPHnnsD2C17StC70B9y6Ty/01UXn+bkxp19IAr737+v4G3GCgynRv4s2ejtluw2gVVvD0pIjI8wb7j+8Zge6vYAcbc0SxqoYMb9AHQWryyJVDKtX5L3DQebPzDhNjeV0P1eMpwPpnQzTSEezglLq/DQ4Dqm42CdxtO/M4Wal1unObAEqVtXpaGe/zudOmItvv8FqTv8TM1u3OZvGBfaAHNTlxt0C0lfAfDOIoGo7JGkWHukl96soTvQTwrmtGN1wWeYDVd4SJwpcUNqHmQd+DiurH1NsWdPrBIv64ZNVwwFVe6uXdr79cf8kfIGIK/k+os5kda8aq6qz77WRolwjm8MUJsdXJUaWsNKJMf7RZ7DVmCpWPtc8JLa26VR40fpeBi++jU=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F7A714F4FD2FF54F9AF66368F4FEFA79@eurprd04.prod.outlook.com>
+Content-ID: <C7A1A9AF93997B4D8F832386EBDF5AA4@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7684758f-e8cb-482a-b8b0-08d701168e4d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 07:01:08.2502
+X-MS-Exchange-CrossTenant-Network-Message-Id: 371c65a2-b14a-4157-c108-08d701261696
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 08:52:19.4278
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: abel.vesa@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6467
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4050
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-07-05 12:56:11, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
+On 19-06-25 15:32:22, Stephen Boyd wrote:
+> Quoting Abel Vesa (2019-06-25 02:01:56)
+> > Keep the AHB clock always on since there is no driver to control it and
+> > all the other clocks that use it as parent rely on it being always enab=
+led.
+> >=20
+> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > ---
+> >  drivers/clk/imx/clk-imx8mq.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.=
+c
+> > index 5fbc2a7..b48268b 100644
+> > --- a/drivers/clk/imx/clk-imx8mq.c
+> > +++ b/drivers/clk/imx/clk-imx8mq.c
+> > @@ -398,7 +398,7 @@ static int imx8mq_clocks_probe(struct platform_devi=
+ce *pdev)
+> >         clks[IMX8MQ_CLK_NOC_APB] =3D imx8m_clk_composite_critical("noc_=
+apb", imx8mq_noc_apb_sels, base + 0x8d80);
+> > =20
+> >         /* AHB */
+> > -       clks[IMX8MQ_CLK_AHB] =3D imx8m_clk_composite("ahb", imx8mq_ahb_=
+sels, base + 0x9000);
+> > +       clks[IMX8MQ_CLK_AHB] =3D imx8m_clk_composite_critical("ahb", im=
+x8mq_ahb_sels, base + 0x9000);
 >=20
-> IMX8MQ_CLK_TMU_ROOT is ONLY used for thermal module, the driver
-> should manage this clock, so no need to have CLK_IS_CRITICAL flag
-> set.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Please add a comment into the code why it's critical.
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+Comment explaining why the AHB bus clock is critical ?
+Isn't that self-explanatory ?
 
-> ---
->  drivers/clk/imx/clk-imx8mq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> index d407a07..91de69a 100644
-> --- a/drivers/clk/imx/clk-imx8mq.c
-> +++ b/drivers/clk/imx/clk-imx8mq.c
-> @@ -539,7 +539,7 @@ static int imx8mq_clocks_probe(struct platform_device=
- *pdev)
->  	clks[IMX8MQ_CLK_DISP_AXI_ROOT]  =3D imx_clk_gate2_shared2("disp_axi_roo=
-t_clk", "disp_axi", base + 0x45d0, 0, &share_count_dcss);
->  	clks[IMX8MQ_CLK_DISP_APB_ROOT]  =3D imx_clk_gate2_shared2("disp_apb_roo=
-t_clk", "disp_apb", base + 0x45d0, 0, &share_count_dcss);
->  	clks[IMX8MQ_CLK_DISP_RTRM_ROOT] =3D imx_clk_gate2_shared2("disp_rtrm_ro=
-ot_clk", "disp_rtrm", base + 0x45d0, 0, &share_count_dcss);
-> -	clks[IMX8MQ_CLK_TMU_ROOT] =3D imx_clk_gate4_flags("tmu_root_clk", "ipg_=
-root", base + 0x4620, 0, CLK_IS_CRITICAL);
-> +	clks[IMX8MQ_CLK_TMU_ROOT] =3D imx_clk_gate4("tmu_root_clk", "ipg_root",=
- base + 0x4620, 0);
->  	clks[IMX8MQ_CLK_VPU_DEC_ROOT] =3D imx_clk_gate2_flags("vpu_dec_root_clk=
-", "vpu_bus", base + 0x4630, 0, CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE=
-);
->  	clks[IMX8MQ_CLK_CSI1_ROOT] =3D imx_clk_gate4("csi1_root_clk", "csi1_cor=
-e", base + 0x4650, 0);
->  	clks[IMX8MQ_CLK_CSI2_ROOT] =3D imx_clk_gate4("csi2_root_clk", "csi2_cor=
-e", base + 0x4660, 0);
-> --=20
-> 2.7.4
-> =
+> >         clks[IMX8MQ_CLK_AUDIO_AHB] =3D imx8m_clk_composite("audio_ahb",=
+ imx8mq_audio_ahb_sels, base + 0x9100);
+> > =20
+> >         /* IPG */
+> > --=20
+> > 2.7.4
+> > =
