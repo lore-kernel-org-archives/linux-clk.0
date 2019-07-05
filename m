@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-10.0 required=3.0
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AD7C5B57D
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 05:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CC3C4649A
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 05:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E8B621852
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 05:05:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B548B2189E
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 05:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725763AbfGEFFf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jul 2019 01:05:35 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:58100 "EHLO inva020.nxp.com"
+        id S1727153AbfGEFFk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Jul 2019 01:05:40 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:51412 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725681AbfGEFFf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jul 2019 01:05:35 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 71DA11A0E8E;
-        Fri,  5 Jul 2019 07:05:33 +0200 (CEST)
+        id S1727022AbfGEFFj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Jul 2019 01:05:39 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B19042002AA;
+        Fri,  5 Jul 2019 07:05:37 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 68F621A027F;
-        Fri,  5 Jul 2019 07:05:21 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 340CF20018A;
+        Fri,  5 Jul 2019 07:05:25 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9BF6E40297;
-        Fri,  5 Jul 2019 13:05:07 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CBCAC402C0;
+        Fri,  5 Jul 2019 13:05:11 +0800 (SGT)
 From:   Anson.Huang@nxp.com
 To:     rui.zhang@intel.com, edubezval@gmail.com,
         daniel.lezcano@linaro.org, robh+dt@kernel.org,
@@ -39,10 +39,12 @@ To:     rui.zhang@intel.com, edubezval@gmail.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH 1/6] thermal: qoriq: Use devm_platform_ioremap_resource() instead of of_iomap()
-Date:   Fri,  5 Jul 2019 12:56:07 +0800
-Message-Id: <20190705045612.27665-1-Anson.Huang@nxp.com>
+Subject: [PATCH 3/6] dt-bindings: thermal: qoriq: Add optional clocks property
+Date:   Fri,  5 Jul 2019 12:56:09 +0800
+Message-Id: <20190705045612.27665-3-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20190705045612.27665-1-Anson.Huang@nxp.com>
+References: <20190705045612.27665-1-Anson.Huang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -51,65 +53,26 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Anson Huang <Anson.Huang@nxp.com>
 
-Use devm_platform_ioremap_resource() instead of of_iomap() to
-save the iounmap() call in error handle path;
+Some platforms have clock control for TMU, add optional
+clocks property to the binding doc.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/thermal/qoriq_thermal.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ Documentation/devicetree/bindings/thermal/qoriq-thermal.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index 7b36493..c7c7de2 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -202,32 +202,27 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
+diff --git a/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt b/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt
+index 04cbb90..28f2cba 100644
+--- a/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt
+@@ -23,6 +23,7 @@ Required properties:
+ Optional property:
+ - little-endian : If present, the TMU registers are little endian. If absent,
+ 	the default is big endian.
++- clocks : the clock for clocking the TMU silicon.
  
- 	data->little_endian = of_property_read_bool(np, "little-endian");
+ Example:
  
--	data->regs = of_iomap(np, 0);
--	if (!data->regs) {
-+	data->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(data->regs)) {
- 		dev_err(&pdev->dev, "Failed to get memory region\n");
--		ret = -ENODEV;
--		goto err_iomap;
-+		return PTR_ERR(data->regs);
- 	}
- 
- 	qoriq_tmu_init_device(data);	/* TMU initialization */
- 
- 	ret = qoriq_tmu_calibration(pdev);	/* TMU calibration */
- 	if (ret < 0)
--		goto err_tmu;
-+		goto err;
- 
- 	ret = qoriq_tmu_register_tmu_zone(pdev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register sensors\n");
--		ret = -ENODEV;
--		goto err_iomap;
-+		goto err;
- 	}
- 
- 	return 0;
- 
--err_tmu:
--	iounmap(data->regs);
--
--err_iomap:
-+err:
- 	platform_set_drvdata(pdev, NULL);
- 
- 	return ret;
-@@ -240,7 +235,6 @@ static int qoriq_tmu_remove(struct platform_device *pdev)
- 	/* Disable monitoring */
- 	tmu_write(data, TMR_DISABLE, &data->regs->tmr);
- 
--	iounmap(data->regs);
- 	platform_set_drvdata(pdev, NULL);
- 
- 	return 0;
 -- 
 2.7.4
 
