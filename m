@@ -2,133 +2,105 @@ Return-Path: <SRS0=Ml9T=VC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7564EC5B57D
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 08:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC77CC46499
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 15:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D5F218BA
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 08:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91C74216E3
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 15:14:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QCBUwvdy"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fc5wkPe+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfGEIwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jul 2019 04:52:23 -0400
-Received: from mail-eopbgr80075.outbound.protection.outlook.com ([40.107.8.75]:49479
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726427AbfGEIwW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jul 2019 04:52:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1fgAuLLLFfyUVk/o5jZw3vrfUXIp2EBF7mInEqJ7ne0=;
- b=QCBUwvdyaFmjNuT7K285UCjZyE//6vRx/CWSiLsCVYh8QVwBzZObZWkMVnvdkJnfxE4anYvGwUjHAVNSzpFCbtqq7IM6HCLr3qm7GbaDF4/lB+SRrNB0ghpQDajPjNZ6hRjNM0pKw9+MTWbeZBbeQ/wpJ1s2B1LsxXLUpFronYs=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB4050.eurprd04.prod.outlook.com (52.134.91.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Fri, 5 Jul 2019 08:52:19 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::a126:d121:200:367]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::a126:d121:200:367%7]) with mapi id 15.20.2032.019; Fri, 5 Jul 2019
- 08:52:19 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx8mq: Mark AHB clock as critical
-Thread-Topic: [PATCH] clk: imx8mq: Mark AHB clock as critical
-Thread-Index: AQHVKzSu7JwgQZ2S+Eecj9cXfCskNaas9UwAgA7SMQA=
-Date:   Fri, 5 Jul 2019 08:52:19 +0000
-Message-ID: <20190705085218.lvvqnqx6nfph2era@fsr-ub1664-175>
-References: <1561453316-11481-1-git-send-email-abel.vesa@nxp.com>
- <20190625223223.3B8EC2053B@mail.kernel.org>
-In-Reply-To: <20190625223223.3B8EC2053B@mail.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 371c65a2-b14a-4157-c108-08d701261696
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4050;
-x-ms-traffictypediagnostic: AM0PR04MB4050:
-x-microsoft-antispam-prvs: <AM0PR04MB405076CA7695BC3A4DF0223DF6F50@AM0PR04MB4050.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3513;
-x-forefront-prvs: 008960E8EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(136003)(396003)(39860400002)(346002)(366004)(376002)(189003)(199004)(6512007)(68736007)(71190400001)(316002)(99286004)(476003)(9686003)(6506007)(478600001)(102836004)(76176011)(446003)(53546011)(8936002)(71200400001)(53936002)(186003)(54906003)(66066001)(44832011)(6916009)(7736002)(486006)(6246003)(305945005)(5660300002)(4326008)(6116002)(26005)(66946007)(76116006)(3846002)(14454004)(73956011)(66476007)(91956017)(66446008)(64756008)(11346002)(86362001)(66556008)(1076003)(6486002)(256004)(25786009)(229853002)(8676002)(2906002)(81156014)(33716001)(81166006)(14444005)(6436002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4050;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: udm5GVIf1ptBRrhMoptsldP69SzdOKSceS9ONCPHnnsD2C17StC70B9y6Ty/01UXn+bkxp19IAr737+v4G3GCgynRv4s2ejtluw2gVVvD0pIjI8wb7j+8Zge6vYAcbc0SxqoYMb9AHQWryyJVDKtX5L3DQebPzDhNjeV0P1eMpwPpnQzTSEezglLq/DQ4Dqm42CdxtO/M4Wal1unObAEqVtXpaGe/zudOmItvv8FqTv8TM1u3OZvGBfaAHNTlxt0C0lfAfDOIoGo7JGkWHukl96soTvQTwrmtGN1wWeYDVd4SJwpcUNqHmQd+DiurH1NsWdPrBIv64ZNVwwFVe6uXdr79cf8kfIGIK/k+os5kda8aq6qz77WRolwjm8MUJsdXJUaWsNKJMf7RZ7DVmCpWPtc8JLa26VR40fpeBi++jU=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C7A1A9AF93997B4D8F832386EBDF5AA4@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 371c65a2-b14a-4157-c108-08d701261696
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2019 08:52:19.4278
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: abel.vesa@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4050
+        id S1727841AbfGEPO7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Jul 2019 11:14:59 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43972 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727842AbfGEPOy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jul 2019 11:14:54 -0400
+Received: by mail-pl1-f196.google.com with SMTP id cl9so4727501plb.10
+        for <linux-clk@vger.kernel.org>; Fri, 05 Jul 2019 08:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LG/wQK5eDhZO2JkmChNMhmQOYOK1XGmyw1rFFuxqroU=;
+        b=fc5wkPe+dcpEqURdBxoMZHkCu7ruRwywX8u94KSlg4PtNUUKv1XNQ2h+hPrPex7hXK
+         VD2FrV3QrNPFHljlLp9iA3TAwyCJpbQfIZMu6IeYhFFbqVNCG+4dRcpTTex9MIDA8isg
+         MFmW4PlzYaU+rHd8q7Ml+nbonIDBGxC7smUnWlWgqx65ULvaH0VoOPEpDYz/AlfiLjSP
+         cas8EcLbYQ59WCanZWRNFY1apouJ4wbEn9R7Px2mQNL9hTgQbIqhPKx99nOoihYL2EXK
+         o64Bn2pewcsOvDIoscJDs8Pw2X+wWGYA4h5uX7U+sSA6S495hfr2tgBdrTazwNhv1WYd
+         NN9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LG/wQK5eDhZO2JkmChNMhmQOYOK1XGmyw1rFFuxqroU=;
+        b=CieCJpnXS6SHnrn16HLi9mVVidGFxIVC+nMi0DtLE4Mx6SKJyI+i5P5qChUB0e2HG7
+         s4SsFE191OLIWL1o8YV4vw1hQD7H72hJChj2bHwfIA7ONITcqKrTHD9DSEQkoHsrpyWo
+         CxafBXwu0sABOppoGkGj84KFL0Ce1aR3kpwX6Q5ihIXqOyEgr3E8W5UqCtP6oP1x4Z/n
+         zgD1B+Dhni+3IDc5VysWRgUmyKHV+4bJkXkA7R18D72g63Pyj/qfoIObRSdHkBHBZHNR
+         Uuq/YUU9+iuivdXbrNhCa15a1vMEo0GgsNogtXfHYDsLfmLEDxlev7zgJd/AIivi7ey7
+         ypbw==
+X-Gm-Message-State: APjAAAX/IHCNk+t+7nMlD6/kZ8O7g7O3zOsvA+406CqCCCS/fiqmfIe2
+        XapG9ybE6nqsutobINq++doi
+X-Google-Smtp-Source: APXvYqyuyWM051xgjkop2EkbkL9HbE7ns7a3MbZMkVaSgI+NVgtU3F46u+LXPNsBGqLnjeIMdq97bg==
+X-Received: by 2002:a17:902:16f:: with SMTP id 102mr6040122plb.94.1562339693237;
+        Fri, 05 Jul 2019 08:14:53 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:916:7317:a59d:72b6:ef7f:a938])
+        by smtp.gmail.com with ESMTPSA id w3sm8248778pgl.31.2019.07.05.08.14.46
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 05 Jul 2019 08:14:52 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
+        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/5] Add Bitmain BM1880 clock driver
+Date:   Fri,  5 Jul 2019 20:44:35 +0530
+Message-Id: <20190705151440.20844-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-06-25 15:32:22, Stephen Boyd wrote:
-> Quoting Abel Vesa (2019-06-25 02:01:56)
-> > Keep the AHB clock always on since there is no driver to control it and
-> > all the other clocks that use it as parent rely on it being always enab=
-led.
-> >=20
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk-imx8mq.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.=
-c
-> > index 5fbc2a7..b48268b 100644
-> > --- a/drivers/clk/imx/clk-imx8mq.c
-> > +++ b/drivers/clk/imx/clk-imx8mq.c
-> > @@ -398,7 +398,7 @@ static int imx8mq_clocks_probe(struct platform_devi=
-ce *pdev)
-> >         clks[IMX8MQ_CLK_NOC_APB] =3D imx8m_clk_composite_critical("noc_=
-apb", imx8mq_noc_apb_sels, base + 0x8d80);
-> > =20
-> >         /* AHB */
-> > -       clks[IMX8MQ_CLK_AHB] =3D imx8m_clk_composite("ahb", imx8mq_ahb_=
-sels, base + 0x9000);
-> > +       clks[IMX8MQ_CLK_AHB] =3D imx8m_clk_composite_critical("ahb", im=
-x8mq_ahb_sels, base + 0x9000);
->=20
-> Please add a comment into the code why it's critical.
+Hello,
 
-Comment explaining why the AHB bus clock is critical ?
-Isn't that self-explanatory ?
+This patchset adds common clock driver for Bitmain BM1880 SoC clock
+controller. The clock controller consists of gate, divider, mux
+and pll clocks with different compositions. Hence, the driver uses
+composite clock structure in place where multiple clocking units are
+combined together.
 
->=20
-> >         clks[IMX8MQ_CLK_AUDIO_AHB] =3D imx8m_clk_composite("audio_ahb",=
- imx8mq_audio_ahb_sels, base + 0x9100);
-> > =20
-> >         /* IPG */
-> > --=20
-> > 2.7.4
-> > =
+This patchset also removes UART fixed clock and sources clocks from clock
+controller for Sophon Edge board where the driver has been validated.
+
+Thanks,
+Mani
+
+Manivannan Sadhasivam (5):
+  dt-bindings: clock: Add Bitmain BM1880 SoC clock controller binding
+  arm64: dts: bitmain: Add clock controller support for BM1880 SoC
+  arm64: dts: bitmain: Source common clock for UART controllers
+  clk: Add driver for Bitmain BM1880 SoC clock controller
+  MAINTAINERS: Add entry for Bitmain BM1880 SoC clock driver
+
+ .../bindings/clock/bitmain,bm1880-clk.txt     |  47 +
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/bitmain/bm1880-sophon-edge.dts   |   9 -
+ arch/arm64/boot/dts/bitmain/bm1880.dtsi       |  27 +
+ drivers/clk/Kconfig                           |   6 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-bm1880.c                      | 947 ++++++++++++++++++
+ include/dt-bindings/clock/bm1880-clock.h      |  82 ++
+ 8 files changed, 1112 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.txt
+ create mode 100644 drivers/clk/clk-bm1880.c
+ create mode 100644 include/dt-bindings/clock/bm1880-clock.h
+
+-- 
+2.17.1
+
