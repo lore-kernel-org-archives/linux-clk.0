@@ -1,386 +1,262 @@
-Return-Path: <SRS0=Ml9T=VC=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=0zSV=VE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F193C468A7
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 17:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B39AC48BDB
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Jul 2019 22:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12DCF20989
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jul 2019 17:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2B972075B
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Jul 2019 22:54:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Iw7CCPG/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RTPl8YCq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfGERwm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jul 2019 13:52:42 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38609 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbfGERwm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jul 2019 13:52:42 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s15so10505169wmj.3
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jul 2019 10:52:39 -0700 (PDT)
+        id S1727481AbfGGWyt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Jul 2019 18:54:49 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40951 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbfGGWyt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Jul 2019 18:54:49 -0400
+Received: by mail-qt1-f194.google.com with SMTP id a15so16263155qtn.7;
+        Sun, 07 Jul 2019 15:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4qvmNsTrfm+DIHy812lex8ydu/1EoyqjceJtEuL3f0Q=;
-        b=Iw7CCPG/0epX+QDgbgTAqXK6vMTIzKi/jtmXGqJqmEiruLnFSMrVyiYlBCoWSr2SaX
-         WSTZSlnZRZxqvu/mrCTfOfhw+/a0+7KR7NE4vgJVVes4PkhxAEmy6mLOMLhjTU5gCrB4
-         epNua0H2BUNGcF0M3CjhNyh4yinu3yo7XNLCs=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tuOi/8r0NnDH+fqBMlSJg2pGRDBZ//kqhhMPZGnJ6wU=;
+        b=RTPl8YCqBakZ65Tjc7AziwFzT9I3XM9QZWRubsIWkZlc+wfwj7u6JhEg8s1xuvAVBt
+         ETHjo7xyqtTSrUY7FvVGVdCh/cgr6rYB5XNoenCpqrLGrHDcSGq8XyQh1L61Eal0PzWr
+         JAUISs93YAacs0gzGXA93e5uldpQsmVbFg7+pRx7q7wHFBC2m79qZTmjF1EoVcBCyaxU
+         ALHfqK1aBjeIDuxy7A48LRLZF9WuVewpRBggYlawsY8iVwctkyoZpNXRadnzXcYCqlOF
+         RkdyYi96Wiw7SExpmNA6KwpoJgEDlyRK5+RivI0S5TQXh7iIMKGFrg6LaBByagkoLoC/
+         2hDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4qvmNsTrfm+DIHy812lex8ydu/1EoyqjceJtEuL3f0Q=;
-        b=O4gBWcDyOtOQp86PfPebcmleiCChNYJ59Y8OlePgPGfgvcusPgf+oG+YTCQ9m+4QEu
-         FZWSFRV3JIi5ANp2JGbUsLhxtCrPxLmvwFNjRqDVLEYv9C4ir36UvRQLqC9KJcC5F9jC
-         OUkHJ3mbEKPmznEcvpf6IGA83VWSUpCcACqjmwDb6Ksx67cVFRKM0SNwRAX0jxsJelZr
-         MFzv1j+ITZgsjae5qQtJYX17Ct5e5m7gwY82ZDx/0K3r7NcDwF/E3AdVGebOV1Rgn1o8
-         BNLybccdTJbj8Hw8qrjLnMtibz4698KW12U3s38iB467XiVO/LeyWpPO+BeoeTmp08bj
-         gHog==
-X-Gm-Message-State: APjAAAXVpmKyV9ukbXt+CNjV3QriAtRZw4y/A+kUlRVglp47lYUwYS4M
-        uZ0MIoGZ9l28jYP3yp8ZcxzfwXhGdInziZtBx80Ehg==
-X-Google-Smtp-Source: APXvYqzC7tr8dllWGOTrNMk5IwLFkRa29q/rRk/HKXSw+ODZGVPP8JsZznM6X2CbMUuFMkJtDg2HhdiSX40j1wCjjCE=
-X-Received: by 2002:a7b:cf32:: with SMTP id m18mr4363410wmg.27.1562349158187;
- Fri, 05 Jul 2019 10:52:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190129151348.mh27btttsqcmeban@flea> <CAMty3ZAjAoti8Zu80c=OyCA+u-jtQnkidsKSNz_c2OaRswqc3w@mail.gmail.com>
- <20190201143102.rcvrxstc365mezvx@flea> <CAMty3ZC3_+z1upH4Y08R1z=Uq1C=OpWETNrBO8nGRoHhuNrHSA@mail.gmail.com>
- <20190605064933.6bmskkxzzgn35xz7@flea> <CAMty3ZCCP=oCqm5=49BsjwoxdDETgBfU_5g8fQ=bz=iWApV0tw@mail.gmail.com>
- <20190614142406.ybdiqfppo5mc5bgq@flea> <CAMty3ZB45cHx3WeXnywBh2_UA_bTmFs6yBTqLWA1BNf4fQtVvQ@mail.gmail.com>
- <20190625144930.5hegt6bkzqzykjid@flea> <CAMty3ZCmj0Rz7MMhLqihsvLQi+1CHf0fAoJQ4QN65xB-bwxaJw@mail.gmail.com>
- <20190703114933.u3x4ej3v7ocewvif@flea>
-In-Reply-To: <20190703114933.u3x4ej3v7ocewvif@flea>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Fri, 5 Jul 2019 19:52:27 +0200
-Message-ID: <CAOf5uw=ZEvMV1hFQE986rNG_ctpReGbjbZzv0m=OzKPdBh57uQ@mail.gmail.com>
-Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tuOi/8r0NnDH+fqBMlSJg2pGRDBZ//kqhhMPZGnJ6wU=;
+        b=LwtauXD9JT1+s2UpOiwUlVWcN0X+WwgYaSu0wSL3chg4+PiN5WxebUpEP5RDJSFEhP
+         tk3/5/8+p8V0yBH/zfaojco9CJXDiQILuFR7GvUtaGcxEgTpOwAhyJBvIpQUObZ8xh/N
+         +2OMMatwdcBFx3cLLk9tRxzBDHYsMNacji2jlYNbphwM4VVQqWp7JrVd1XnaFfol0Ww+
+         exsypQ5qTVCgPFpMoX+GS8uDfkfxgJApHNhyk16CJXsYCAIM7L6lNGC5038RQY7U9sfY
+         3W1mkVYJoGgFcThTd9d0kZvUije5wQuh0aU2JMcm3SfrxJbgoYuL8ncQpJg5bOCfxQFG
+         4DxA==
+X-Gm-Message-State: APjAAAXOMWS2F4Zitq6+33XTLW9MbajAdxpscb8pSM69WvJp6fnyAM8g
+        kumppNvoMQWTzg5ywZCCPAE=
+X-Google-Smtp-Source: APXvYqyD9jYNgUPEfedU95w6Z01GH7JuMVecqpDG1wzB1TPYkwemonyMPbW1yh2hca1A+ILvkc7oow==
+X-Received: by 2002:a0c:baa8:: with SMTP id x40mr12671071qvf.168.1562540087682;
+        Sun, 07 Jul 2019 15:54:47 -0700 (PDT)
+Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id t2sm8217556qth.33.2019.07.07.15.54.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Jul 2019 15:54:47 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 00/13] memory: tegra: Introduce Tegra30 EMC driver
+Date:   Mon,  8 Jul 2019 01:54:11 +0300
+Message-Id: <20190707225424.9562-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime
+Hello,
 
-On Wed, Jul 3, 2019 at 1:49 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Jun 25, 2019 at 09:00:36PM +0530, Jagan Teki wrote:
-> > On Tue, Jun 25, 2019 at 8:19 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Thu, Jun 20, 2019 at 11:57:44PM +0530, Jagan Teki wrote:
-> > > > On Fri, Jun 14, 2019 at 7:54 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > >
-> > > > > On Wed, Jun 05, 2019 at 01:03:16PM +0530, Jagan Teki wrote:
-> > > > > > On Wed, Jun 5, 2019 at 12:19 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > > > >
-> > > > > > > Hi,
-> > > > > > >
-> > > > > > > I've reordered the mail a bit to work on chunks
-> > > > > > >
-> > > > > > > On Fri, May 24, 2019 at 03:37:42PM +0530, Jagan Teki wrote:
-> > > > > > > > > I wish it was in your commit log in the first place, instead of having
-> > > > > > > > > to exchange multiple mails over this.
-> > > > > > > > >
-> > > > > > > > > However, I don't think that's quite true, and it might be a bug in
-> > > > > > > > > Allwinner's implementation (or rather something quite confusing).
-> > > > > > > > >
-> > > > > > > > > You're right that the lcd_rate and pll_rate seem to be generated from
-> > > > > > > > > the pixel clock, and it indeed looks like the ratio between the pixel
-> > > > > > > > > clock and the TCON dotclock is defined through the number of bits per
-> > > > > > > > > lanes.
-> > > > > > > > >
-> > > > > > > > > However, in this case, dsi_rate is actually the same than lcd_rate,
-> > > > > > > > > since pll_rate is going to be divided by dsi_div:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L791
-> > > > > > > > >
-> > > > > > > > > Since lcd_div is 1, it also means that in this case, dsi_rate ==
-> > > > > > > > > dclk_rate.
-> > > > > > > > >
-> > > > > > > > > The DSI module clock however, is always set to 148.5 MHz. Indeed, if
-> > > > > > > > > we look at:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L804
-> > > > > > > > >
-> > > > > > > > > We can see that the rate in clk_info is used if it's different than
-> > > > > > > > > 0. This is filled by disp_al_lcd_get_clk_info, which, in the case of a
-> > > > > > > > > DSI panel, will hardcode it to 148.5 MHz:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L164
-> > > > > > > >
-> > > > > > > > Let me explain, something more.
-> > > > > > > >
-> > > > > > > > According to bsp there are clk_info.tcon_div which I will explain below.
-> > > > > > > > clk_info.dsi_div which is dynamic and it depends on bpp/lanes, so it
-> > > > > > > > is 6 for 24bpp and 4 lanes devices.
-> > > > > > > >
-> > > > > > > > PLL rate here depends on dsi_div (not tcon_div)
-> > > > > > > >
-> > > > > > > > Code here
-> > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L784
-> > > > > > > >
-> > > > > > > > is computing the actual set rate, which depends on dsi_rate.
-> > > > > > > >
-> > > > > > > > lcd_rate = dclk_rate * clk_info.dsi_div;
-> > > > > > > > dsi_rate = pll_rate / clk_info.dsi_div;
-> > > > > > > >
-> > > > > > > > Say if the dclk_rate 148MHz then the dsi_rate is 888MHz which set rate
-> > > > > > > > for above link you mentioned.
-> > > > > > > >
-> > > > > > > > Here are the evidence with some prints.
-> > > > > > > >
-> > > > > > > > https://gist.github.com/openedev/9bae2d87d2fcc06b999fe48c998b7043
-> > > > > > > > https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
-> > > > > > >
-> > > > > > > Ok, so we agree up to this point, and the prints confirm that the
-> > > > > > > analysis above is the right one.
-> > > > > > >
-> > > > > > > > > So, the DSI clock is set to this here:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L805
-> > > > > > >
-> > > > > > > Your patch doesn't address that, so let's leave that one alone.
-> > > > > >
-> > > > > > Basically this is final pll set rate when sun4i_dotclock.c called the
-> > > > > > desired rate with ccu_nkm.c so it ended the final rate with parent as
-> > > > > > Line 8 of
-> > > > > > https://gist.github.com/openedev/700de2e3701b2bf3ad1aa0f0fa862c9a
-> > > > >
-> > > > > If that's important to the driver, it should be set explicitly then,
-> > > > > and not work by accident.
-> > > > >
-> > > > > > > > > The TCON *module* clock (the one in the clock controller) has been set
-> > > > > > > > > to lcd_rate (so the pixel clock times the number of bits per lane) here:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L800
-> > > > > > > > >
-> > > > > > > > > And the PLL has been set to the same rate here:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L794
-> > > > > > > > >
-> > > > > > > > > Let's take a step back now: that function we were looking at,
-> > > > > > > > > lcd_clk_config, is called by lcd_clk_enable, which is in turn called
-> > > > > > > > > by disp_lcd_enable here:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L1328
-> > > > > > > > >
-> > > > > > > > > The next function being called is disp_al_lcd_cfg, and that function
-> > > > > > > > > will hardcode the TCON dotclock divider to 4, here:
-> > > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L240
-> > > > > > > >
-> > > > > > > > tcon_div from BSP point-of-view of there are two variants
-> > > > > > > > 00) clk_info.tcon_div which is 4 and same is set the divider position
-> > > > > > > > in SUN4I_TCON0_DCLK_REG (like above link refer)
-> > > > > > > > 01) tcon_div which is 4 and used for edge timings computation
-> > > > > > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L12
-> > > > > > > >
-> > > > > > > > The real reason for 01) is again 4 is they set the divider to 4 in 00)
-> > > > > > > > which is technically wrong because the dividers which used during
-> > > > > > > > dotclock in above (dsi_div) should be used here as well. Since there
-> > > > > > > > is no dynamic way of doing this BSP hard-coding these values.
-> > > > > > > >
-> > > > > > > > Patches 5,6,7 on this series doing this
-> > > > > > > > https://patchwork.freedesktop.org/series/60847/
-> > > > > > > >
-> > > > > > > > Hope this explanation helps?
-> > > > > > >
-> > > > > > > It doesn't.
-> > > > > > >
-> > > > > > > The clock tree is this one:
-> > > > > > >
-> > > > > > > PLL(s) -> TCON module clock -> TCON dotclock.
-> > > > > > >
-> > > > > > > The links I mentioned above show that the clock set to lcd_rate is the
-> > > > > > > TCON module clocks (and it should be the one taking the bpp and lanes
-> > > > > > > into account), while the TCON dotclock uses a fixed divider of 4.
-> > > > > >
-> > > > > > Sorry, I can argue much other-than giving some code snips, according to [1]
-> > > > > >
-> > > > > > 00) Line 785, 786 with dclk_rate 148000000
-> > > > > >
-> > > > > > lcd_rate = dclk_rate * clk_info.dsi_div;
-> > > > > > pll_rate = lcd_rate * clk_info.lcd_div;
-> > > > > >
-> > > > > > Since dsi_div is 6 (bpp/lanes), lcd_div 1
-> > > > > >
-> > > > > > lcd_rate = 888000000, pll_rate = 888000000
-> > > > > >
-> > > > > > 01)  Line 801, 804 are final rates computed as per clock driver (say
-> > > > > > ccu_nkm in mainline)
-> > > > > >
-> > > > > > lcd_rate_set=891000000
-> > > > > >
-> > > > > > As per your comments if it would be 4 then the desired numbers are
-> > > > > > would be 592000000 not 888000000.
-> > > > > >
-> > > > > > This is what I'm trying to say in all mails, and same as verified with
-> > > > > > 2-lanes devices as well where the dsi_div is 12 so the final rate is
-> > > > > > 290MHz * 12
-> > > > >
-> > > > > In the code you sent, you're forcing a divider on the internal TCON
-> > > > > clock, while that one is fixed in the BSP.
-> > > > >
-> > > > > There's indeed the bpp / lanes divider, but it's used in the *parent*
-> > > > > clock of the one you're changing.
-> > > > >
-> > > > > And the dsi0_clk clock you pointed out in the code snippet is yet
-> > > > > another clock, the MIPI DSI module clock.
-> > > >
-> > > > Correct, look like I refereed wrong reference in the above mail. sorry
-> > > > for the noise.
-> > > >
-> > > > Actually I'm trying to explain about pll_rate here which indeed
-> > > > depends on dsi.div
-> > > > https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L786
-> > > >
-> > > > lcd_rate = dclk_rate * clk_info.dsi_div;
-> > > > pll_rate = lcd_rate * clk_info.lcd_div;
-> > > >
-> > > > Say
-> > > >
-> > > > 1) For 148MHz dclk_rate with dsi_div is 6 (24/4) lcd_div is 1 which
-> > > > resulting pll_rate is 888MHz.
-> > > >
-> > > > 2) For 30MHz dclk_rate with 4 lane and 24 RGB the resulting pll_rate is 180MHz
-> > > >
-> > > > 3) For 27.5MHz dclk_rate with 2 lane and 24 RGB the resulting pll_rate is 330MHz
-> > > >
-> > > > Here is the few more logs in code, for case 2)
-> > > >
-> > > > [    1.920441] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 30000000
-> > > > [    1.920505] ideal = 180000000, rounded = 178200000
-> > > > [    1.920509] sun4i_dclk_round_rate: div = 6 rate = 29700000
-> > > > [    1.920514] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 30000000
-> > > > [    1.920532] ideal = 1800ls and one DSI-RGB bridge. All of them do use
-> > PLL_MIPI (pll_rate) and it indeed depends on bpp/lanes
-> >00000, rounded = 178200000
-> > > > [    1.920535] sun4i_dclk_round_rate: div = 6 rate = 29700000
-> > > > [    1.920572] sun4i_dclk_recalc_rate: val = 1, rate = 178200000
-> > > > [    1.920576] sun4i_dclk_recalc_rate: val = 1, rate = 178200000
-> > > > [    1.920597] rate = 178200000
-> > > > [    1.920599] parent_rate = 297000000
-> > > > [    1.920602] reg = 0x90c00000
-> > > > [    1.920605] _nkm.n = 3, nkm->n.offset = 0x1, nkm->n.shift = 8
-> > > > [    1.920609] _nkm.k = 2, nkm->k.offset = 0x1, nkm->k.shift = 4
-> > > > [    1.920612] _nkm.m = 10, nkm->m.offset = 0x1, nkm->m.shift = 0
-> > > > [    1.920958] sun4i_dclk_set_rate div 6
-> > > > [    1.920966] sun4i_dclk_recalc_rate: val = 6, rate = 29700000
-> > > >
-> > > > and clk_summary:
-> > > >
-> > > >     pll-video0                        1        1        1   297000000
-> > > >         0     0  50000
-> > > >        hdmi                           0        0        0   297000000
-> > > >         0     0  50000
-> > > >        tcon1                          0        0        0   297000000
-> > > >         0     0  50000
-> > > >        pll-mipi                       1        1        1   178200000
-> > > >         0     0  50000
-> > > >           tcon0                       2        2        1   178200000
-> > > >         0     0  50000
-> > > >              tcon-pixel-clock         1        1        1    29700000
-> > > >         0     0  50000
-> > > >        pll-video0-2x                  0        0        0   594000000
-> > > >         0     0  50000
-> > >
-> > > This discussion is going nowhere. I'm telling you that your patch
-> > > doesn't apply the divider you want on the proper clock, and you're
-> > > replying that indeed, you're applying it on the wrong clock.
-> > >
-> > > It might work by accident in your case, but the board I have here
-> > > clearly indicates otherwise, so there's two possible way out here:
-> > >
-> > >   - Either you apply that divider to the TCON *module* clock, and not
-> > >     the dclk
-> > >
-> > >   - Or you point to somewhere in the allwinner code where the bpp /
-> > >     lanes divider is used for the dclk divider.
-> >
-> > I don't know how to proceed further on this, as you say it might work
-> > in accident but I have tested this in A33, A64 and R40 with 4
-> > different DSI panels and one DSI-RGB bridge. All of them do use
-> > PLL_MIPI (pll_rate) and it indeed depends on bpp/lanes
-> >
-> > 4-lane, 24-bit: Novatek NT35596 panel
-> > 4-lane, 24-bit: Feiyang, FY07024di26a30d panel
-> > 4-lane, 24-bit: Bananapi-s070wv20 panel
-> > 2-lane, 24-bit: Techstar,ts8550b panel
-> >
-> > and
-> >
-> > 4-lane, 24-bit, ICN6211 DSI-to-RGB bridge panel
-> >
-> > All above listed panels and bridges are working as per BSP and do
-> > follow bpp/lanes and for DIVIDER 4 no panel is working.
->
-> Look. I'm not saying that there's no issue, I'm saying that your
-> patch, applied to the clock you're applying it to, doesn't make sense
-> and isn't what the BSP does.
+This series introduces driver for the External Memory Controller (EMC)
+found on Tegra30 chips, it controls the external DRAM on the board. The
+purpose of this driver is to program memory timing for external memory on
+the EMC clock rate change. The driver was tested using the ACTMON devfreq
+driver that performs memory frequency scaling based on memory-usage load.
 
-tcon-pixel clock is the rate that you want to achive on display side and
-if you have 4 lanes 32bit or lanes and different bit number that you need
-to have a clock that is able to put outside bits and speed equal to
-pixel-clock * bits / lanes. so If you want a pixel-clock of 40 mhz
-and you have 32bits and 4 lanes you need to have a clock of
-40 * 32 / 4 in no-burst mode. I think that this is done but most of the display.
-Now in burst mode I don't know how should work the calculation of the
-clock for the
-require bandwidth and even I understand your comment I would like to have your
-clock tree after you boot on the display side and if it is possible I
-want to assemble a kit
-like you have.
+Changelog:
 
->
-> You can keep on arguing that your patch is perfect as is, but the fact
-> that there's regressions proves otherwise.
->
+v7: - Addressed review comments that were made by Rob Herring to v6 by
+      removing old Terga30 Memory Controller binding once it's converted
+      to YAML, by using explicit patterns for the sub-nodes and specifying
+      min/max clock rates in the YAML.
 
-Well when you push your code you said that you have tested on more
-then one display.
-Can I know where are the others?
+    - Two patches that were added in v6 are removed from the series:
 
-> > The panels/bridges I have has tested in BSP and as you mentioned in
+        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
 
-> > another mail, your panel is not tested in BSP - this is the only
-> > difference. I did much reverse-engineering on PLL_MIPI clocking in BSP
-> > so I'm afraid what can I do next on this, If you want to look further
-> > on BSP I would suggest to verify on pll_rate side. If you feel
-> > anything I'm missing please let me know.
->
-> I already told you how we can make some progress in the mail you
-> quoted, but you chose to ignore that.
->
+      Because the problem with the PLLP is resolved now, turned out it was
+      a bug in the CPU-suspend code.
 
-Yes, the idea is to make progress. Thank you about your helping
+    - The "Introduce Tegra30 EMC driver" patch got a fix for the "Same Freq"
+      bit typo, it's a bit 27 and not 16.
 
-Michael
+v6: - Tegra124 Memory Controller binding factored out into standalone
+      binding because it requires to specify MC_EMEM_ARB_MISC1 for EMEM
+      programming, which is not required for Tegra30. This makes the
+      upstream MC registers specification to match downstream exactly,
+      easing porting of boards memory timings configuration to upstream.
 
-> Until there's been some progress on either points mentionned above,
-> I'm just going to stop answering on this topic.
->
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+    - Tegra30/124 Memory Controller binding converted to YAML.
 
+    - Tegra30 External Memory Controller binding now is in YAML format.
 
+    - Added workaround for hanging during LP2 when EMC runs off PLLP on
+      Tegra30 in this new patches:
+
+        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
+
+    - Added info message to the Tegra20/30 EMC drivers, telling about
+      RAM code and a number of available timings:
+
+        memory: tegra20-emc: Print a brief info message about the timings
+
+v5: - Addressed review comments that were made by Thierry Reding to v4 by
+      adding appropriate copyrights to the source code headers and making
+      Tegra30 EMC driver to use common Tegra20 CLK API directly instead
+      of having a dummy-proxy functions specifically for Tegra30.
+
+    - Addressed review comments that were made by Stephen Boyd to v4 by
+      rewording commit message of the "Add custom EMC clock implementation"
+      patch and adding clarifying comment (to that patch as well) which
+      tells why EMC is a critical clock.
+
+    - Added suspend-resume to Tegra30 EMC driver to error out if EMC driver
+      is in a "bad state" as it will likely cause a hang on entering suspend.
+
+    - Dropped patch "tegra20-emc: Replace clk_get_sys with devm_clk_get"
+      because the replaced clocks are actually should be removed altogether
+      in the "Drop setting EMC rate to max on probe" patch and that was
+      missed by an accident.
+
+    - Added "tegra20-emc: Pre-configure debug register" patch which ensures
+      that inappropriate HW debug features are disabled at a probe time.
+      The same change is also made in the "Introduce Tegra30 EMC driver"
+      patch.
+
+    - Added ACKs to the patches from Peter De Schrijver that he gave to v4
+      since all of the v5 changes are actually very minor.
+
+v4: - Addressed review comments that were made by Peter De Schrijver to v3
+      by adding fence_udelay() after writes in the "Add custom EMC clock
+      implementation" patch.
+
+    - Added two new minor patches:
+
+        memory: tegra: Ensure timing control debug features are disabled
+        memory: tegra: Consolidate registers definition into one place
+
+      The first one is needed to ensure that EMC driver will work
+      properly regardless of hardware configuration left after boot.
+      The second patch is just a minor code cleanup.
+
+    - The "Introduce Tegra30 EMC driver" got also few very minor changes.
+      Now every possible error case is handled, nothing is ignored.
+      The EMC_DBG register is explicitly initialized during probe to be
+      on the safe side.
+
+v3: - Addressed review comments that were made by Stephen Boyd to v2 by
+      adding explicit typing for the callback variable, by including
+      "clk-provider.h" directly in the code and by dropping __clk_lookup
+      usage where possible.
+
+    - Added more patches into this series:
+
+        memory: tegra20-emc: Drop setting EMC rate to max on probe
+        memory: tegra20-emc: Adapt for clock driver changes
+        memory: tegra20-emc: Include io.h instead of iopoll.h
+        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
+
+      Initially I was going to include these patches into other patchset,
+      but changed my mind after rearranging things a tad. The "Adapt for
+      clock driver changes" patch is directly related to the clock changes
+      done in the first patch of this series, the rest are minor cleanups
+      that are fine to include here as well.
+
+    - Added some more words to the commit message of "Add binding for NVIDIA
+      Tegra30 External Memory Controller" patch, clarifying why common DDR
+      timing device-tree form isn't suitable for Tegra30.
+
+    - The Tegra30 EMC driver now explicitly selects the registers access
+      mode (EMC_DBG mux), not relying on the setting left from bootloader.
+
+v2: - Added support for changing MC clock diver configuration based on
+      Memory Controller (MC) configuration which is part of the memory
+      timing.
+
+    - Merged the "Add custom EMC clock implementation" patch into this
+      series because the "Introduce Tegra30 EMC driver" patch directly
+      depends on it. Please note that Tegra20 EMC driver will need to be
+      adapted for the clock changes as well, I'll send out the Tegra20
+      patches after this series will be applied because of some other
+      dependencies (devfreq) and because the temporary breakage won't
+      be critical (driver will just error out on probe).
+
+    - EMC driver now performs MC configuration validation by checking
+      that the number of MC / EMC timings matches and that the timings
+      rate is the same.
+
+    - EMC driver now supports timings that want to change the MC clock
+      configuration.
+
+    - Other minor prettifying changes of the code.
+
+Dmitry Osipenko (13):
+  clk: tegra20/30: Add custom EMC clock implementation
+  memory: tegra20-emc: Drop setting EMC rate to max on probe
+  memory: tegra20-emc: Adapt for clock driver changes
+  memory: tegra20-emc: Include io.h instead of iopoll.h
+  memory: tegra20-emc: Pre-configure debug register
+  memory: tegra20-emc: Print a brief info message about the timings
+  dt-bindings: memory: tegra30: Convert to Tegra124 YAML
+  dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
+  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
+    Controller
+  memory: tegra: Introduce Tegra30 EMC driver
+  memory: tegra: Ensure timing control debug features are disabled
+  memory: tegra: Consolidate registers definition into common header
+  ARM: dts: tegra30: Add External Memory Controller node
+
+ .../nvidia,tegra124-mc.yaml                   |  156 +++
+ .../nvidia,tegra30-emc.yaml                   |  339 +++++
+ .../memory-controllers/nvidia,tegra30-mc.txt  |  123 --
+ .../memory-controllers/nvidia,tegra30-mc.yaml |  171 +++
+ arch/arm/boot/dts/tegra30.dtsi                |    9 +
+ drivers/clk/tegra/Makefile                    |    2 +
+ drivers/clk/tegra/clk-tegra20-emc.c           |  293 ++++
+ drivers/clk/tegra/clk-tegra20.c               |   55 +-
+ drivers/clk/tegra/clk-tegra30.c               |   38 +-
+ drivers/clk/tegra/clk.h                       |    3 +
+ drivers/memory/tegra/Kconfig                  |   10 +
+ drivers/memory/tegra/Makefile                 |    1 +
+ drivers/memory/tegra/mc.c                     |   42 +-
+ drivers/memory/tegra/mc.h                     |   74 +-
+ drivers/memory/tegra/tegra124.c               |   20 -
+ drivers/memory/tegra/tegra20-emc.c            |  126 +-
+ drivers/memory/tegra/tegra30-emc.c            | 1234 +++++++++++++++++
+ drivers/memory/tegra/tegra30.c                |   23 +
+ include/linux/clk/tegra.h                     |   11 +
+ include/soc/tegra/mc.h                        |    2 +-
+ 20 files changed, 2425 insertions(+), 307 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
+ create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
+ create mode 100644 drivers/memory/tegra/tegra30-emc.c
 
 -- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+2.22.0
+
