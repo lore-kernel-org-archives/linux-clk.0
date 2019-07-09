@@ -2,129 +2,85 @@ Return-Path: <SRS0=Qrm9=VG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA829C73C53
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 20:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA39C73C53
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 20:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8268D2073D
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 20:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A35F214AF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 20:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562703052;
-	bh=6KeAg4M0ZNJdEfil41ivnYQhcpz7Cpb/a0UYFg5mDgU=;
+	s=default; t=1562703504;
+	bh=Zyh5r/5EBCY4ciidDmlCs4cfQlXb8Lq5dDHE2YULHMY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=r6M26j+lZD5XLsbrFN7ZHCw+ib9R8VEOVyQGe2TeH2lIF3ItYxESBXRVLXgWHSA1K
-	 5ck6jBU7VRPA4UKCHUz/Tw5B6u8hHcgG9T0xSi2T3KIRUAKC/+7saXOg/wLsuRF9+4
-	 VVeblN4J9Bpk8R1cvMj+Kub2nK4gmo2dz/0z/pZo=
+	b=fg6Y6dYI8kQy0U3kN0JjRkqIjrcSb+9s3lE3TELueQ6+pVDuHcDyE4+ApVKWljp4d
+	 U3Sw8Gh/22nNvlp/QTYfsMUN81Vs1iKT+yfQYEi9VVuV9DhxbsdAaK7ti/fPDc+10K
+	 MlyJrvShILuraHsJQ9VIdm1jCoSqff/T02qA/Ufk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfGIUKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jul 2019 16:10:52 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:32800 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfGIUKw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jul 2019 16:10:52 -0400
-Received: by mail-io1-f68.google.com with SMTP id z3so30950149iog.0;
-        Tue, 09 Jul 2019 13:10:51 -0700 (PDT)
+        id S1729681AbfGIUSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jul 2019 16:18:23 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35393 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbfGIUSX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jul 2019 16:18:23 -0400
+Received: by mail-io1-f66.google.com with SMTP id m24so36493160ioo.2;
+        Tue, 09 Jul 2019 13:18:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=luNJE8BvXARpab3XzCQ15FBQrWF1rNzC/iLJy1IUEEs=;
-        b=CV03TCigFfARpQ32DkdMLDr1idxPE5RkcSarymnNfE3qLbKKqRMi/NYyoUuVcLxbaJ
-         mUGV2jfzprgsYztZ6jc9ugja1Wr4SwnAYdbml6fQMBb46e5ed5N6BHQ6ndWUDbdzVABQ
-         666l2UasrXaiSFNQW4ujdJ3kp788vqvZRq0DXi9Ni8nevkKI8vIKWycefu/sysbFwZzi
-         QBw1Fa8zQZytfFSKnqnj0IPL1mXreA8JXOHzqVuSsNTALOcivGJHm17WO85XmO+ZQ/MP
-         2aJPyihiB0NiAaTDGFRZGDkG9J3ApzAgdppXrp3nWWYde7rEbtVN/LGVdbTEjxiSfiUN
-         H/Sw==
-X-Gm-Message-State: APjAAAVOeU4SDewD6/CuvG7Tgaz4p/0sXG7VshsyZ8q8jD9Ki+wOlrXD
-        EAL67yWrk6der2jPXeKI1Q==
-X-Google-Smtp-Source: APXvYqwF5+aQ/lNe/JZtahZEU+glNSOV421HouSJnPFiLSoCgOmuEapJp66+Clcdr1Iz0ijEWr4gKg==
-X-Received: by 2002:a5e:cb43:: with SMTP id h3mr5766700iok.252.1562703051005;
-        Tue, 09 Jul 2019 13:10:51 -0700 (PDT)
+        bh=6NbN5JKfhtthh8rHQeJ+/J+roRFzMU2Xl0uQ4XuNSKE=;
+        b=XUnw5odP/R3U8VGWVqf3R0JXkg14pbS+/woBtg1lNMjDxcNG8a4DEY81aAoK5+y5bo
+         NBZ9PWS2/9cTKHr9R9AIKItONBuPiTo1gN/GiCUDFsMWxhrHx5CKxi1FEaTBhZVAf4Iu
+         /WS97fzrBohss2VRA2tT8gclPYgrrJAe1jR5+koe2pT6IeQLfP8ApA4TZTUxFnNEobJv
+         NSCnGbGMUQyy1pYE1Pt8cnuTzJXjYkUireFLvh9eshW860MulRMtYPv3uGY61Iqx6uUj
+         H8kiRTj/8QxNMzthfnr9bPl3PorCRwHTSKPOkxpLWRjV11q+xchi6c75H63dhQ3EKvIu
+         7Dig==
+X-Gm-Message-State: APjAAAUFPux6KrjE/1xNCCbg7/oSZziFjCAIVHdUCTabAuoiZdQ5uzW2
+        C03+JxwhK4nJ8LO5NieCoA==
+X-Google-Smtp-Source: APXvYqw/ZIS8sL7/LEDguheL73Ps4hwNdYccJgnnmSIUOUBhRrcMKya7HG/yRUQA4qaafy1VzHHMLA==
+X-Received: by 2002:a5d:964d:: with SMTP id d13mr28379833ios.224.1562703502330;
+        Tue, 09 Jul 2019 13:18:22 -0700 (PDT)
 Received: from localhost ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id t4sm17166284iop.0.2019.07.09.13.10.50
+        by smtp.gmail.com with ESMTPSA id t4sm17179836iop.0.2019.07.09.13.18.21
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 13:10:50 -0700 (PDT)
-Date:   Tue, 9 Jul 2019 14:10:49 -0600
+        Tue, 09 Jul 2019 13:18:21 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 14:18:20 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH v6 1/6] dt-bindings: ap806: add the cluster clock node in
- the syscon file
-Message-ID: <20190709201049.GA8692@bogus>
-References: <20190619141539.16884-1-gregory.clement@bootlin.com>
- <20190619141539.16884-2-gregory.clement@bootlin.com>
+To:     Anson.Huang@nxp.com
+Cc:     catalin.marinas@arm.com, will@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, mturquette@baylibre.com,
+        sboyd@kernel.org, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
+        ping.bai@nxp.com, daniel.baluta@nxp.com, peng.fan@nxp.com,
+        abel.vesa@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH 2/4] dt-bindings: clock: imx8mm: Add system counter clock
+Message-ID: <20190709201820.GA25832@bogus>
+References: <20190621070720.12395-1-Anson.Huang@nxp.com>
+ <20190621070720.12395-2-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619141539.16884-2-gregory.clement@bootlin.com>
+In-Reply-To: <20190621070720.12395-2-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 04:15:34PM +0200, Gregory CLEMENT wrote:
-> Document the device tree binding for the cluster clock controllers found
-> in the Armada 7K/8K SoCs.
+On Fri, 21 Jun 2019 15:07:18 +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
 > 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> Add i.MX8MM system counter clock macro definition.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->  .../arm/marvell/ap806-system-controller.txt   | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
+>  include/dt-bindings/clock/imx8mm-clock.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> index 7b8b8eb0191f..4a3bb9c12312 100644
-> --- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> +++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> @@ -143,3 +143,28 @@ ap_syscon1: system-controller@6f8000 {
->  		#thermal-sensor-cells = <1>;
->  	};
->  };
-> +
-> +Cluster clocks:
-> +---------------
-> +
-> +Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
-> +cluster contain up to 2 CPUs running at the same frequency.
-> +
-> +Required properties:
-> +- compatible: must be  "marvell,ap806-cpu-clock";
-> +- #clock-cells : should be set to 1.
-> +- clocks : shall be the input parents clock phandle for the clock.
 
-How many clocks?
-
-> +- reg: register range associated with the cluster clocks
-> +
-> +
-> +ap_syscon1: system-controller@6f8000 {
-> +	compatible = "marvell,armada-ap806-syscon1", "syscon", "simple-mfd";
-> +	reg = <0x6f8000 0x1000>;
-> +
-> +	cpu_clk: clock-cpu@0 {
-
-Should be '...@274'
-
-> +		compatible = "marvell,ap806-cpu-clock";
-> +		clocks = <&ap_clk 0>, <&ap_clk 1>;
-> +		#clock-cells = <1>;
-> +		reg = <0x274 0xa30>;
-> +	};
-> +};
-> -- 
-> 2.20.1
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
