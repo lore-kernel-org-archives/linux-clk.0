@@ -2,96 +2,117 @@ Return-Path: <SRS0=Qrm9=VG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB8FC73C53
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 17:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93812C73C53
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 18:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EFF52082A
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 17:05:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562691935;
-	bh=zmH7Tla7rLJF/r5JnrAvdV887swl754fWwQFg7dwqmk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bqhRvww3+QADnZzlKBlhSCl0tRnlPVK8m6YqS+eHj2iEkrDq4OYVKEP4yw+VT3vjT
-	 KK1ArXwByc2bCEQSt6kDn4xTYZY+KkS22oDUuLDlK1JUBGDaEhpJ9SrjraNUE+Tkg1
-	 LuDNZF2onZ5gOqgC5YWqefYglsec32VfS5adexaU=
+	by mail.kernel.org (Postfix) with ESMTP id 71F922080C
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 18:22:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sOurpNYC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfGIRFe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jul 2019 13:05:34 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39973 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfGIRFe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jul 2019 13:05:34 -0400
-Received: by mail-io1-f67.google.com with SMTP id h6so36502634iom.7;
-        Tue, 09 Jul 2019 10:05:34 -0700 (PDT)
+        id S1726560AbfGISWA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jul 2019 14:22:00 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36498 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfGISWA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jul 2019 14:22:00 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k8so10529442plt.3;
+        Tue, 09 Jul 2019 11:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/7SeunipKTPZ/+kbJegCG+IF0p5px4U+K64a01qXtbE=;
+        b=sOurpNYCJgDeWdvGkMj8ayoABPRE6fc/4zOsZC7FyTAo8Tr+q1gjS4BcBv72AAs3a8
+         UtGvCQrz7Z8RYFwMSpWwIz0cfoq5O82WShkcOmdIWpkjsWgSpNcDvNEiafl7UO/6CfP1
+         W58CGB/DxmA52/5HglaJeRUzcXaCg231oj4dvcutHMlW+6WgWebC/cRRpE08FE0ChO2U
+         cQ3T/gEQtah4pCv/pmweD6I1gkA37bNO0Al1gScGvbVoqNkPtg2zCLOfeRsVUkf7a8xD
+         LkjUGWca7W4+mB9/BBjp/mdmeuf2ScqDH2yB96txiYab9HzIyqE+v9HhNcoFkntQkhvq
+         Tmow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TZVSdIReA1dub8lT+/BNLKNf7FMnmnulMnUfS3UgQmc=;
-        b=lIfPNS77oh6GZKTG8EW0DdN7iALgEHwzL89uHZYjO9TNjeVYtWTw3RXwvPGkQykOWD
-         bkcFa6UMXSOir8F2Egs7a83pgFrZXh9luUaKKGX0NHrjT8WPWAVQiQTZ1asixhuYCjMU
-         qfv/XWVZ+HtdE+jrHZs2rqi8A6xPSIJ5iX4HaZquBC8nq6jtFfKckNWe0PHhqAfUggRs
-         sfUxDQxENJN8guZ8F9zuUEV8XCdGwt5Xj+kD8SFfoxXNbirTAVuVXEXKyJsRKJnTwJhj
-         8xgHsr1BsJieTCqoxxDHfY9c77EEzZ0ukNGMoRds3N/524H0voPESCkSc6lGVa20wLy9
-         jarw==
-X-Gm-Message-State: APjAAAUMQxADasf2bNU4OOZrw9lnY6KU1cgYi5vYQ4DjdzamJ42LetXG
-        DfitaDmRY0efwF/s3ny8tw==
-X-Google-Smtp-Source: APXvYqy82rUB+PxD0GvIta+96cabnu3QalLm/IpoEAom3xpXM1tw/t9dcYtTv9yOKDIievsmVKm/tg==
-X-Received: by 2002:a5d:94d0:: with SMTP id y16mr24563041ior.123.1562691933479;
-        Tue, 09 Jul 2019 10:05:33 -0700 (PDT)
-Received: from localhost ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id f20sm19481160ioh.17.2019.07.09.10.05.32
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/7SeunipKTPZ/+kbJegCG+IF0p5px4U+K64a01qXtbE=;
+        b=qDprZY5/ehuPgkQIppB2ORnA0vCgiznjjyhrzzUgE1l2qd0XL6V2I1ffzXl3yNMP1x
+         +AlolWtUKVyWGOM35xt8B4Zv0iZywMrzpAw1qmrIRhN/mZ7AjpNgkIB6wnRcfgJXsx/H
+         EiZNaKvqo2v8l9j/H6VRPm7sRys6aV7Vr9RN4QTvrdda6hn1AQvbj756+Bf5pb+14kSl
+         pXS1aa8Y50XvSQxIXBeEa+jf19GM4qshNLIhE3geMG6s1ZvLnS1vcoqjAy86kHC1Gj+6
+         71+py1ICtGmVCf87Os+UNRxn+FQfsOgzK4b8vVdy8BFhx5TgiJYpTvpLs2+zgK8/Ak0z
+         1HKw==
+X-Gm-Message-State: APjAAAUWKU34bTrVXo6F3OYARaAIjNaSYs1Ogj3DYnu7th1v274gzbGp
+        85g2+a6LTxOs6NgQpdBTnPnidoWxvOee7A==
+X-Google-Smtp-Source: APXvYqypFlpEDviSy2ejpUywzPdVRNwYyo/yvYMiyCSTuDOWShCdGVsakrtlrPCv8wbj+TvDK+OTfA==
+X-Received: by 2002:a17:902:86:: with SMTP id a6mr34117842pla.244.1562696519377;
+        Tue, 09 Jul 2019 11:21:59 -0700 (PDT)
+Received: from localhost.localdomain ([2001:19f0:7001:2668:5400:1ff:fe62:2bbd])
+        by smtp.gmail.com with ESMTPSA id m69sm21008639pga.11.2019.07.09.11.21.52
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 10:05:32 -0700 (PDT)
-Date:   Tue, 9 Jul 2019 11:05:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson.Huang@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, maxime.ripard@bootlin.com, olof@lixom.net,
-        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
-        leonard.crestez@nxp.com, bjorn.andersson@linaro.org,
-        dinguyen@kernel.org, enric.balletbo@collabora.com,
-        aisheng.dong@nxp.com, ping.bai@nxp.com, abel.vesa@nxp.com,
-        l.stach@pengutronix.de, peng.fan@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V5 1/5] dt-bindings: imx: Add clock binding doc for
- i.MX8MN
-Message-ID: <20190709170531.GA19236@bogus>
-References: <20190619055247.35771-1-Anson.Huang@nxp.com>
+        Tue, 09 Jul 2019 11:21:58 -0700 (PDT)
+From:   Chuanhong Guo <gch981213@gmail.com>
+To:     linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
+        linux-mips@vger.kernel.org (open list:MIPS),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
+        Chuanhong Guo <gch981213@gmail.com>
+Subject: [PATCH 0/5] MIPS: ralink: add CPU clock detection for MT7621
+Date:   Wed, 10 Jul 2019 02:20:13 +0800
+Message-Id: <20190709182018.23193-1-gch981213@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619055247.35771-1-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 19 Jun 2019 13:52:43 +0800, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> Add the clock binding doc for i.MX8MN.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
-> No changes.
-> ---
->  .../devicetree/bindings/clock/imx8mn-clock.yaml    | 112 +++++++++++
->  include/dt-bindings/clock/imx8mn-clock.h           | 215 +++++++++++++++++++++
->  2 files changed, 327 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
->  create mode 100644 include/dt-bindings/clock/imx8mn-clock.h
-> 
+This patchset ports CPU clock detection for MT7621 from OpenWrt.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Last time I sent this, I forgot to add an binding include which
+caused a compile error and the patch doesn't stay in linux-next.
+
+This patchset resent the first two commits and also added binding
+documentation for mt7621-pll and used it in mt7621-dts at
+drivers/staging.
+
+BTW: What should I do with such a patchset that touches multiple
+parts in kernel?
+Is it correct to send the entire patchset to lists of all involved
+subsystems?
+
+Chuanhong Guo (5):
+  MIPS: ralink: add dt binding header for mt7621-pll
+  MIPS: ralink: fix cpu clock of mt7621 and add dt clk devices
+  dt: bindings: add mt7621-pll dt binding documentation
+  staging: mt7621-dts: add dt nodes for mt7621-pll
+  staging: mt7621-dts: fix register range of memc node in mt7621.dtsi
+
+ .../bindings/clock/mediatek,mt7621-pll.txt    |  19 ++++
+ arch/mips/include/asm/mach-ralink/mt7621.h    |  20 ++++
+ arch/mips/ralink/mt7621.c                     | 102 ++++++++++++------
+ arch/mips/ralink/timer-gic.c                  |   4 +-
+ drivers/staging/mt7621-dts/mt7621.dtsi        |  17 ++-
+ include/dt-bindings/clock/mt7621-clk.h        |  14 +++
+ 6 files changed, 134 insertions(+), 42 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
+ create mode 100644 include/dt-bindings/clock/mt7621-clk.h
+
+-- 
+2.21.0
+
