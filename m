@@ -2,111 +2,129 @@ Return-Path: <SRS0=Qrm9=VG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC9AC73C46
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 18:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA829C73C53
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 20:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC3172087F
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 18:22:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gW0wqqvy"
+	by mail.kernel.org (Postfix) with ESMTP id 8268D2073D
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 20:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562703052;
+	bh=6KeAg4M0ZNJdEfil41ivnYQhcpz7Cpb/a0UYFg5mDgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=r6M26j+lZD5XLsbrFN7ZHCw+ib9R8VEOVyQGe2TeH2lIF3ItYxESBXRVLXgWHSA1K
+	 5ck6jBU7VRPA4UKCHUz/Tw5B6u8hHcgG9T0xSi2T3KIRUAKC/+7saXOg/wLsuRF9+4
+	 VVeblN4J9Bpk8R1cvMj+Kub2nK4gmo2dz/0z/pZo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfGISWv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jul 2019 14:22:51 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33879 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727757AbfGISWv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jul 2019 14:22:51 -0400
-Received: by mail-pl1-f196.google.com with SMTP id i2so10526510plt.1;
-        Tue, 09 Jul 2019 11:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=14941MCmJea/f9nxksHUctUhT5FKLU9Frn5jof0WtuE=;
-        b=gW0wqqvyJ4Z2qq0g7t5KKKxsz5V/WKxx7dpvKM6qK/ERdWssQW4tFHYDQ+stV3w7P8
-         9SYfO4PVdHXhPcWe8w+0ApFXRcmBuPs4s4qOv4HwtRYjC4sDt/3xbkW2xeROdxSDqVpp
-         vZ4f9clunnn6X3lPL31hO3X8sBb9LJqInHb+xLBrM76SvI0jK5zmtU9s/T3D0JFqQN4a
-         M5kRmuAai0rSsvSsFWqp2GveygZr6k9aydXQNKa+dwlyYBccPjmq2bPftzwbR7isMmKO
-         7+eJtBiuOkhu7iPk3AShADa2bkFAFALllHAUF1Mug77rOFBCjQF0BaK2SGRYBCM2N+Uo
-         3byQ==
+        id S1729543AbfGIUKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jul 2019 16:10:52 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:32800 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbfGIUKw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jul 2019 16:10:52 -0400
+Received: by mail-io1-f68.google.com with SMTP id z3so30950149iog.0;
+        Tue, 09 Jul 2019 13:10:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=14941MCmJea/f9nxksHUctUhT5FKLU9Frn5jof0WtuE=;
-        b=jRIBKxl85Ea7Lj1ZK0lUr4jirKMMAdCpbSgcRT9vb6h1bJpVtV2GNmKJ8Qql2beu/J
-         h4klbhb/CkghRvr2DvR3EStPIyRxSfE61E3ZIBQTIAjX8pWN27kFML1u5/7uSnRPEzgw
-         4c6CTMBg+IB8eGY8+lXXyly6wUed/9X8gK/5KfjDXYsEWCRo+SI0eWlLFrKjoNfxTPyi
-         ppJkz2uxvCehj/mMU6RtPqypJ9zbH2FxEtruqF/fg5R2DrpwWOyLmMI6KpyQCm4yHQuk
-         fapLjKLdFb9SntQlZ+0fC6Kw6f67wnM4Pz/ea/ojg73ZTTNoIiqIyssZ/hj0YQJ6xBcc
-         RqdQ==
-X-Gm-Message-State: APjAAAWb6Ukq/Dd24hMxGRx4I2xQ6q+i22/BJN4wAaZsJrYbrsYnlGNd
-        7g5w08tsR6PlHp1SZBFVQzkUKmSC3V1zGA==
-X-Google-Smtp-Source: APXvYqzKj+Fqdp7qcv2pHkOixbAbKJ1ai7LV4ypDO5bRjcwYN89jpWEd4xaWf7wm4WdR3kzF7gzuWQ==
-X-Received: by 2002:a17:902:a40c:: with SMTP id p12mr33838928plq.146.1562696570189;
-        Tue, 09 Jul 2019 11:22:50 -0700 (PDT)
-Received: from localhost.localdomain ([2001:19f0:7001:2668:5400:1ff:fe62:2bbd])
-        by smtp.gmail.com with ESMTPSA id m69sm21008639pga.11.2019.07.09.11.22.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=luNJE8BvXARpab3XzCQ15FBQrWF1rNzC/iLJy1IUEEs=;
+        b=CV03TCigFfARpQ32DkdMLDr1idxPE5RkcSarymnNfE3qLbKKqRMi/NYyoUuVcLxbaJ
+         mUGV2jfzprgsYztZ6jc9ugja1Wr4SwnAYdbml6fQMBb46e5ed5N6BHQ6ndWUDbdzVABQ
+         666l2UasrXaiSFNQW4ujdJ3kp788vqvZRq0DXi9Ni8nevkKI8vIKWycefu/sysbFwZzi
+         QBw1Fa8zQZytfFSKnqnj0IPL1mXreA8JXOHzqVuSsNTALOcivGJHm17WO85XmO+ZQ/MP
+         2aJPyihiB0NiAaTDGFRZGDkG9J3ApzAgdppXrp3nWWYde7rEbtVN/LGVdbTEjxiSfiUN
+         H/Sw==
+X-Gm-Message-State: APjAAAVOeU4SDewD6/CuvG7Tgaz4p/0sXG7VshsyZ8q8jD9Ki+wOlrXD
+        EAL67yWrk6der2jPXeKI1Q==
+X-Google-Smtp-Source: APXvYqwF5+aQ/lNe/JZtahZEU+glNSOV421HouSJnPFiLSoCgOmuEapJp66+Clcdr1Iz0ijEWr4gKg==
+X-Received: by 2002:a5e:cb43:: with SMTP id h3mr5766700iok.252.1562703051005;
+        Tue, 09 Jul 2019 13:10:51 -0700 (PDT)
+Received: from localhost ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id t4sm17166284iop.0.2019.07.09.13.10.50
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 11:22:49 -0700 (PDT)
-From:   Chuanhong Guo <gch981213@gmail.com>
-To:     linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
-        linux-mips@vger.kernel.org (open list:MIPS),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
-        Chuanhong Guo <gch981213@gmail.com>
-Subject: [PATCH 5/5] staging: mt7621-dts: fix register range of memc node in mt7621.dtsi
-Date:   Wed, 10 Jul 2019 02:20:18 +0800
-Message-Id: <20190709182018.23193-6-gch981213@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190709182018.23193-1-gch981213@gmail.com>
-References: <20190709182018.23193-1-gch981213@gmail.com>
+        Tue, 09 Jul 2019 13:10:50 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 14:10:49 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v6 1/6] dt-bindings: ap806: add the cluster clock node in
+ the syscon file
+Message-ID: <20190709201049.GA8692@bogus>
+References: <20190619141539.16884-1-gregory.clement@bootlin.com>
+ <20190619141539.16884-2-gregory.clement@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619141539.16884-2-gregory.clement@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The memc node from mt7621.dtsi has incorrect register resource.
-Fix it according to the programming guide.
+On Wed, Jun 19, 2019 at 04:15:34PM +0200, Gregory CLEMENT wrote:
+> Document the device tree binding for the cluster clock controllers found
+> in the Armada 7K/8K SoCs.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+>  .../arm/marvell/ap806-system-controller.txt   | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+> index 7b8b8eb0191f..4a3bb9c12312 100644
+> --- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+> +++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+> @@ -143,3 +143,28 @@ ap_syscon1: system-controller@6f8000 {
+>  		#thermal-sensor-cells = <1>;
+>  	};
+>  };
+> +
+> +Cluster clocks:
+> +---------------
+> +
+> +Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
+> +cluster contain up to 2 CPUs running at the same frequency.
+> +
+> +Required properties:
+> +- compatible: must be  "marvell,ap806-cpu-clock";
+> +- #clock-cells : should be set to 1.
+> +- clocks : shall be the input parents clock phandle for the clock.
 
-Signed-off-by: Weijie Gao <hackpascal@gmail.com>
-Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
----
- drivers/staging/mt7621-dts/mt7621.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How many clocks?
 
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index 12717f570ceb..ac9189276590 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -138,7 +138,7 @@
- 
- 		memc: memc@5000 {
- 			compatible = "mtk,mt7621-memc";
--			reg = <0x300 0x100>;
-+			reg = <0x5000 0x1000>;
- 		};
- 
- 		cpc: cpc@1fbf0000 {
--- 
-2.21.0
+> +- reg: register range associated with the cluster clocks
+> +
+> +
+> +ap_syscon1: system-controller@6f8000 {
+> +	compatible = "marvell,armada-ap806-syscon1", "syscon", "simple-mfd";
+> +	reg = <0x6f8000 0x1000>;
+> +
+> +	cpu_clk: clock-cpu@0 {
 
+Should be '...@274'
+
+> +		compatible = "marvell,ap806-cpu-clock";
+> +		clocks = <&ap_clk 0>, <&ap_clk 1>;
+> +		#clock-cells = <1>;
+> +		reg = <0x274 0xa30>;
+> +	};
+> +};
+> -- 
+> 2.20.1
+> 
