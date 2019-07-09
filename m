@@ -4,85 +4,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FF9C606B0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 01:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 392CFC606CF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 01:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16982173E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 01:45:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 102E221707
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 01:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562636742;
-	bh=gyyT9AHO2Lh+2H9h3KmWxUVuzryt24GBK9hcPZvkc8I=;
+	s=default; t=1562637410;
+	bh=mjhJDhIJBM3Cl+/n7Mi3sDQBRNAtF0hP9l+u2jnJXIY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=irJCvLL9Gp/XvPeDAsJVgO5mgyTdNy4gLObEYZLgHXo1ndDd+v7Wx+LE7EHLKDvnI
-	 QDMJ6NuJH4J9sYsbsKSN0K/iEzBW6Ktdd82sJvSmPYiGiMauGmX/78fjkW3xbHiVRS
-	 TKJvsqVjNW6IXjIXHlFAEmT5krqs7n5Upsl3YNTk=
+	b=Fr3kS5Tmw+WcY5LYDFVFuDFnY7RDXlycNg4UznG8w3ZjWKtPMN/ds2NYVVR9vr6oS
+	 mDmmSPPJNlgSQnI0bC4D2/P70m33QnhlBAIl/oFhGwOv+p1UAqnMnmIXvi2gGNIgOK
+	 OsurUWvz1wSBaYUpeYLPw1LEaXgrWXRg9cj9WnVE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbfGIBpe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Jul 2019 21:45:34 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41819 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbfGIBpd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jul 2019 21:45:33 -0400
-Received: by mail-io1-f65.google.com with SMTP id j5so20326852ioj.8;
-        Mon, 08 Jul 2019 18:45:33 -0700 (PDT)
+        id S1726258AbfGIB4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Jul 2019 21:56:49 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37319 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfGIB4t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jul 2019 21:56:49 -0400
+Received: by mail-io1-f66.google.com with SMTP id q22so17924241iog.4;
+        Mon, 08 Jul 2019 18:56:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w0QazOGBd5y+/M3y1evVA30OJoEykK/Zg2Mf8gk+MiM=;
-        b=NIQ0udq9e6FEjtlrkE/9z4gjpmPjib93zW5QmNjzDIRXJenCLwSGWB1xcCb2nZ12jz
-         7xjnKuMck1Gm3KIPJFfZ00d6GK00smoZaH5vS6zC3GPrZUggioddhIiY8DYOv5+14SPJ
-         9GX4H4GX5B2suLDW1nEg8M9CC9BepdgyfFOAvJMdhuHUDn9RIMVCP04gvndbbgyTWzWB
-         DZ0oWHrUY4tMfnM3F/Kh+4WwFd67T7AQ3d4QbizoimArDBPiWbeqV6u2Q9dzUkKdQDOq
-         DUskFdiuLHQSgFDXhCiSwXQtoEve8aWoX2lZQQ+9q3kcsPtuXhGyiHU+V+0YQg1or2Tb
-         iILA==
-X-Gm-Message-State: APjAAAVEhthudhMZnDft58hci1SGHbruZEXaABbWIrVsTC/0hzy4grIU
-        SOXj/Hk740XWBKZ7dVAC9N66ElE=
-X-Google-Smtp-Source: APXvYqx2fM5NOGsxTULrx2iaKeFFnxMqvQIuY+JWFSB76mkEKidNVEFKEWSxH7TbP75NhzsZnufbXw==
-X-Received: by 2002:a02:c95a:: with SMTP id u26mr23408608jao.15.1562636732587;
-        Mon, 08 Jul 2019 18:45:32 -0700 (PDT)
+        bh=ebeYJSlqUBgPCFbuGYvtotmaCOfzw1YCdXQO1z6sNkM=;
+        b=pW+JlbAH4dmSMZSXgRbhJtvbzTQiwYJcb7NSdjDDyvAgC4AMD+t3RLkZnvuX6rRDdG
+         U1vMsVaDhqdWYt6hoCB2umvB+0jENcYumzJzWLnA+Jd0xAojmSbV+tgVnJHXTZo2y0P9
+         q9Z6/IeqUV+jTso6+zICn+0giunbexZ8nfMX58pizX9lToXkiaDmOsgvoXaMDFnmoq0t
+         n2mODSg8qmg4wCTvFMYsV680/ygw9ShZnVVgW/C2FPELpQCibnwfeIhMfh4EnESxjKDo
+         jyVLB1DAkAFPyhu7RkF2UiMxnUxhcVbLGCZgUVWxe4WZbYwj9oXXqFt86+tlg6hNyvqk
+         QE2A==
+X-Gm-Message-State: APjAAAXL8NPvM4I+EMQEnPdBUGIl4bKaigSsjqvce9tw8Hj1ZCFGx8FK
+        3m/dlkoqDDyKAsl/lWwQ/g==
+X-Google-Smtp-Source: APXvYqzYGb59v7P/HBfnpafzo0Ah8x4i4rjPYIpOBl9Ui5xNOrFY2JQOg2tlDNaf3+9rdP9YbcsWPA==
+X-Received: by 2002:a02:cc8f:: with SMTP id s15mr24386437jap.94.1562637408297;
+        Mon, 08 Jul 2019 18:56:48 -0700 (PDT)
 Received: from localhost ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id o7sm15792362ioo.81.2019.07.08.18.45.31
+        by smtp.gmail.com with ESMTPSA id e84sm19789686iof.39.2019.07.08.18.56.47
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 18:45:32 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 19:45:30 -0600
+        Mon, 08 Jul 2019 18:56:47 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 19:56:46 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     robh+dt@kernel.org, sboyd@kernel.org, linus.walleij@linaro.org,
-        agross@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/6] clk: qcom: Add DT bindings for ipq6018 gcc clock
- controller
-Message-ID: <20190709014530.GA12304@bogus>
-References: <1559755738-28643-1-git-send-email-sricharan@codeaurora.org>
- <1559755738-28643-4-git-send-email-sricharan@codeaurora.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver
+ for SM8150
+Message-ID: <20190709015646.GA30394@bogus>
+References: <20190607101234.30449-1-vkoul@kernel.org>
+ <20190607101234.30449-2-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1559755738-28643-4-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <20190607101234.30449-2-vkoul@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed,  5 Jun 2019 22:58:55 +0530, Sricharan R wrote:
-> Add the compatible strings and the include file for ipq6018
-> gcc clock controller.
+On Fri, Jun 07, 2019 at 03:42:34PM +0530, Vinod Koul wrote:
+> From: Deepak Katragadda <dkatraga@codeaurora.org>
 > 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: anusha <anusharao@codeaurora.org>
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Add the clocks supported in global clock controller which clock the
+> peripherals like BLSPs, SDCC, USB, MDSS etc. Register all the clocks
+> to the clock framework for the clients to be able to request for them.
+> 
+> Signed-off-by: Deepak Katragadda <dkatraga@codeaurora.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> [vkoul: port to upstream and tidy-up]
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
 > ---
->  .../devicetree/bindings/clock/qcom,gcc.txt         |   1 +
->  include/dt-bindings/clock/qcom,gcc-ipq6018.h       | 405 +++++++++++++++++++++
->  2 files changed, 406 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq6018.h
-> 
+>  .../devicetree/bindings/clock/qcom,gcc.txt    |    1 +
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>  drivers/clk/qcom/Kconfig                      |    7 +
+>  drivers/clk/qcom/Makefile                     |    1 +
+>  drivers/clk/qcom/gcc-sm8150.c                 | 3649 +++++++++++++++++
+
+>  include/dt-bindings/clock/qcom,gcc-sm8150.h   |  243 ++
+
+Next time, please split bindings to separate patch. 
+
+For the DT parts,
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  5 files changed, 3901 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-sm8150.c
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8150.h
