@@ -2,154 +2,199 @@ Return-Path: <SRS0=Qrm9=VG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E57C606D7
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 07:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F39C73C50
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 14:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733B1216FD
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 07:18:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="r/ezxFTH"
+	by mail.kernel.org (Postfix) with ESMTP id 9C46421743
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 14:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfGIHSG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jul 2019 03:18:06 -0400
-Received: from mail-eopbgr20047.outbound.protection.outlook.com ([40.107.2.47]:52707
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725886AbfGIHSF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:18:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cgc0G8QrBlss85FuBtnb8WhTAc34pLGCv84LZclZDUg=;
- b=r/ezxFTHKjR9SqI/K6me6Pt8HIWlH+9ypBNxYyFFIrMLF+IXZHEeZkMAQlFWB8HYWmA38MrOJK3Qml0IFD7lq83U9O4UAzTdGeInmletI4oqyQOvKVBo0DumJzXNGWEj4/zI6T+V4euU1KJ2nD4rgLOP5/jc3Vj/F9z5kM6RZ10=
-Received: from AM6PR04MB4936.eurprd04.prod.outlook.com (20.177.33.203) by
- AM6PR04MB5880.eurprd04.prod.outlook.com (20.179.3.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.17; Tue, 9 Jul 2019 07:18:01 +0000
-Received: from AM6PR04MB4936.eurprd04.prod.outlook.com
- ([fe80::cd8e:f990:731d:a5b2]) by AM6PR04MB4936.eurprd04.prod.outlook.com
- ([fe80::cd8e:f990:731d:a5b2%7]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
- 07:18:01 +0000
-From:   Fancy Fang <chen.fang@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH 2/2] clk: imx8mm: rename 'share_count_dcss' to
- 'share_count_disp'
-Thread-Topic: [PATCH 2/2] clk: imx8mm: rename 'share_count_dcss' to
- 'share_count_disp'
-Thread-Index: AQHVNiZx3m/xWD7vcEanwl+4j1yKZQ==
-Date:   Tue, 9 Jul 2019 07:18:01 +0000
-Message-ID: <20190709071942.18109-2-chen.fang@nxp.com>
-References: <20190709071942.18109-1-chen.fang@nxp.com>
-In-Reply-To: <20190709071942.18109-1-chen.fang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-clientproxiedby: HK0P153CA0007.APCP153.PROD.OUTLOOK.COM
- (2603:1096:203:18::19) To AM6PR04MB4936.eurprd04.prod.outlook.com
- (2603:10a6:20b:7::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=chen.fang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 14000bb7-ffe9-4ead-53e7-08d7043d933e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR04MB5880;
-x-ms-traffictypediagnostic: AM6PR04MB5880:
-x-microsoft-antispam-prvs: <AM6PR04MB588037609C11E0236B75EE49F3F10@AM6PR04MB5880.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1850;
-x-forefront-prvs: 0093C80C01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(4636009)(136003)(396003)(39860400002)(376002)(346002)(366004)(199004)(189003)(6506007)(14454004)(2501003)(486006)(476003)(2616005)(2201001)(26005)(52116002)(110136005)(54906003)(36756003)(86362001)(5660300002)(3846002)(478600001)(4326008)(66066001)(186003)(7736002)(305945005)(102836004)(81166006)(25786009)(1076003)(6116002)(71190400001)(53936002)(71200400001)(50226002)(6486002)(66476007)(66446008)(2906002)(66946007)(73956011)(8936002)(64756008)(66556008)(68736007)(316002)(11346002)(99286004)(446003)(76176011)(256004)(386003)(6436002)(81156014)(6512007)(8676002)(32563001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5880;H:AM6PR04MB4936.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: z93/b1lKyZ2iCw9jccRgqfOEXelVDbvN4ySRm9vKLbAAWMSP80W6qAJ2msnar/wAwXIQ6lpv47fVwIAjG+l2V1iQxC0XdCcrUPtWMGBq3HVJS/ZIeYV19q3JUp6WFYmndSe8d55jbUbVSLu7nUwQ1kfJiS+vVy+8oE8eapktLR1uK+/7Gis+PuSWIV5ca6j0ASeOUtOt2hVQJUwKA4+P6BmObOVcK8ulNObtvX7SA1tAa9q0zbLeFvyaVpHgpi+PADt2CZ6+i24wH4oXVq7B9/YrMwXPa1GS2/1NJl8x5nRzUNYrrH3rHwTgXoeosMkHBoxdEa4wMhanCVfC+clIA+4l1aRJlFIWR8fJBw1XJFHG2P8FWUQAvhDqyqqw2cJkWicYsJoUp5wsJ4ofgNtAihGPsnLkEtb8DreGSi1mmFo=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14000bb7-ffe9-4ead-53e7-08d7043d933e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 07:18:01.2832
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: chen.fang@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5880
+        id S1726760AbfGIOUP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jul 2019 10:20:15 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:45194 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbfGIOUP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Jul 2019 10:20:15 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 228EC1A05E2;
+        Tue,  9 Jul 2019 16:20:13 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 15F7A1A05DF;
+        Tue,  9 Jul 2019 16:20:13 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 89D9220630;
+        Tue,  9 Jul 2019 16:20:12 +0200 (CEST)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v2] clk: imx8mm: Switch to platform driver
+Date:   Tue,  9 Jul 2019 17:20:03 +0300
+Message-Id: <1562682003-20951-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rename 'share_count_dcss' to 'share_count_disp', since the
-DCSS module does not exist on imx8mm platform. So rename it
-to avoid any unnecessary confusion.
+There is no strong reason for this to use CLK_OF_DECLARE instead
+of being a platform driver. Plus, this will now be aligned with the
+other i.MX8M clock drivers which are platform drivers.
 
-Signed-off-by: Fancy Fang <chen.fang@nxp.com>
+In order to make the clock provider a platform driver
+all the data and code needs to be outside of .init section.
+
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+
+Changes since v1:
+ * Switched to platform driver memory mapping API
+ * Removed extra newline
+ * Added an explanation of why this change is done
+   in the commit message
+
+ drivers/clk/imx/clk-imx8mm.c | 57 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 36 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 42f1227a4952..42cb33edf8e5 100644
+index 6b8e75d..7a8e713 100644
 --- a/drivers/clk/imx/clk-imx8mm.c
 +++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -22,7 +22,7 @@ static u32 share_count_sai3;
- static u32 share_count_sai4;
- static u32 share_count_sai5;
- static u32 share_count_sai6;
--static u32 share_count_dcss;
-+static u32 share_count_disp;
- static u32 share_count_pdm;
- static u32 share_count_nand;
-=20
-@@ -644,10 +644,10 @@ static int __init imx8mm_clocks_init(struct device_no=
-de *ccm_node)
- 	clks[IMX8MM_CLK_VPU_G2_ROOT] =3D imx_clk_gate4("vpu_g2_root_clk", "vpu_g2=
-", base + 0x45a0, 0);
- 	clks[IMX8MM_CLK_PDM_ROOT] =3D imx_clk_gate2_shared2("pdm_root_clk", "pdm"=
-, base + 0x45b0, 0, &share_count_pdm);
- 	clks[IMX8MM_CLK_PDM_IPG]  =3D imx_clk_gate2_shared2("pdm_ipg_clk", "ipg_a=
-udio_root", base + 0x45b0, 0, &share_count_pdm);
--	clks[IMX8MM_CLK_DISP_ROOT] =3D imx_clk_gate2_shared2("disp_root_clk", "di=
-sp_dc8000", base + 0x45d0, 0, &share_count_dcss);
--	clks[IMX8MM_CLK_DISP_AXI_ROOT]  =3D imx_clk_gate2_shared2("disp_axi_root_=
-clk", "disp_axi", base + 0x45d0, 0, &share_count_dcss);
--	clks[IMX8MM_CLK_DISP_APB_ROOT]  =3D imx_clk_gate2_shared2("disp_apb_root_=
-clk", "disp_apb", base + 0x45d0, 0, &share_count_dcss);
--	clks[IMX8MM_CLK_DISP_RTRM_ROOT] =3D imx_clk_gate2_shared2("disp_rtrm_root=
-_clk", "disp_rtrm", base + 0x45d0, 0, &share_count_dcss);
-+	clks[IMX8MM_CLK_DISP_ROOT] =3D imx_clk_gate2_shared2("disp_root_clk", "di=
-sp_dc8000", base + 0x45d0, 0, &share_count_disp);
-+	clks[IMX8MM_CLK_DISP_AXI_ROOT]  =3D imx_clk_gate2_shared2("disp_axi_root_=
-clk", "disp_axi", base + 0x45d0, 0, &share_count_disp);
-+	clks[IMX8MM_CLK_DISP_APB_ROOT]  =3D imx_clk_gate2_shared2("disp_apb_root_=
-clk", "disp_apb", base + 0x45d0, 0, &share_count_disp);
-+	clks[IMX8MM_CLK_DISP_RTRM_ROOT] =3D imx_clk_gate2_shared2("disp_rtrm_root=
-_clk", "disp_rtrm", base + 0x45d0, 0, &share_count_disp);
- 	clks[IMX8MM_CLK_USDHC3_ROOT] =3D imx_clk_gate4("usdhc3_root_clk", "usdhc3=
-", base + 0x45e0, 0);
- 	clks[IMX8MM_CLK_TMU_ROOT] =3D imx_clk_gate4("tmu_root_clk", "ipg_root", b=
-ase + 0x4620, 0);
- 	clks[IMX8MM_CLK_VPU_DEC_ROOT] =3D imx_clk_gate4("vpu_dec_root_clk", "vpu_=
-bus", base + 0x4630, 0);
---=20
-2.17.1
+@@ -68,43 +68,43 @@ static const struct imx_pll14xx_rate_table imx8mm_drampll_tbl[] = {
+ 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_audio_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_audio_pll = {
+ 		.type = PLL_1443X,
+ 		.rate_table = imx8mm_audiopll_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_audiopll_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_video_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_video_pll = {
+ 		.type = PLL_1443X,
+ 		.rate_table = imx8mm_videopll_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_videopll_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_dram_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_dram_pll = {
+ 		.type = PLL_1443X,
+ 		.rate_table = imx8mm_drampll_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_drampll_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_arm_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_arm_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_gpu_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_gpu_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_vpu_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_vpu_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+ };
+ 
+-static struct imx_pll14xx_clk imx8mm_sys_pll __initdata = {
++static struct imx_pll14xx_clk imx8mm_sys_pll = {
+ 		.type = PLL_1416X,
+ 		.rate_table = imx8mm_pll1416x_tbl,
+ 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
+@@ -374,7 +374,7 @@ static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m",
+ static struct clk *clks[IMX8MM_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
+-static struct clk ** const uart_clks[] __initconst = {
++static struct clk ** const uart_clks[] = {
+ 	&clks[IMX8MM_CLK_UART1_ROOT],
+ 	&clks[IMX8MM_CLK_UART2_ROOT],
+ 	&clks[IMX8MM_CLK_UART3_ROOT],
+@@ -382,19 +382,20 @@ static struct clk ** const uart_clks[] __initconst = {
+ 	NULL
+ };
+ 
+-static int __init imx8mm_clocks_init(struct device_node *ccm_node)
++static int imx8mm_clocks_probe(struct platform_device *pdev)
+ {
+-	struct device_node *np;
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
+ 	void __iomem *base;
+ 	int ret;
+ 
+ 	clks[IMX8MM_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+-	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(ccm_node, "osc_24m");
+-	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(ccm_node, "osc_32k");
+-	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(ccm_node, "clk_ext1");
+-	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(ccm_node, "clk_ext2");
+-	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(ccm_node, "clk_ext3");
+-	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(ccm_node, "clk_ext4");
++	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(np, "osc_24m");
++	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(np, "osc_32k");
++	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(np, "clk_ext1");
++	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(np, "clk_ext2");
++	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(np, "clk_ext3");
++	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(np, "clk_ext4");
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
+ 	base = of_iomap(np, 0);
+@@ -480,10 +481,10 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX8MM_SYS_PLL2_500M] = imx_clk_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
+ 	clks[IMX8MM_SYS_PLL2_1000M] = imx_clk_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
+ 
+-	np = ccm_node;
+-	base = of_iomap(np, 0);
+-	if (WARN_ON(!base))
+-		return -ENOMEM;
++	np = dev->of_node;
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (WARN_ON(IS_ERR(base)))
++		return PTR_ERR(base);
+ 
+ 	/* Core Slice */
+ 	clks[IMX8MM_CLK_A53_SRC] = imx_clk_mux2("arm_a53_src", base + 0x8000, 24, 3, imx8mm_a53_sels, ARRAY_SIZE(imx8mm_a53_sels));
+@@ -682,4 +683,18 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
+ 
+ 	return 0;
+ }
+-CLK_OF_DECLARE_DRIVER(imx8mm, "fsl,imx8mm-ccm", imx8mm_clocks_init);
++
++static const struct of_device_id imx8mm_clk_of_match[] = {
++	{ .compatible = "fsl,imx8mm-ccm" },
++	{ /* Sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
++
++static struct platform_driver imx8mm_clk_driver = {
++	.probe = imx8mm_clocks_probe,
++	.driver = {
++		.name = "imx8mm-ccm",
++		.of_match_table = of_match_ptr(imx8mm_clk_of_match),
++	},
++};
++module_platform_driver(imx8mm_clk_driver);
+-- 
+2.7.4
 
