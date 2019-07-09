@@ -1,113 +1,90 @@
-Return-Path: <SRS0=PlaD=VF=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Qrm9=VG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCB9C606BD
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Jul 2019 15:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A01C606B0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 01:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA9020693
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Jul 2019 15:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A60FE2166E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 01:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562636679;
+	bh=U4cd/9T09Y4fMiBDTG5wta0ThpVi/JiVzM5ijhif+d4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=dWP3LUno+NzWWcMvTK247ReZQg5aGMc/Iqh+0UTi69B9CyHU6W2Zfy3UuoTkpMKcO
+	 cYaNrqBCe1WMqmXXMG9lTrDpLnABZcMYZUbqP346eCCRgfHC0oJ0AmQUWczGb0ChSv
+	 89i69kRe5qvSzfdYDN0hvfLllxAQtTV7qByAK18I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391387AbfGHPsC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Jul 2019 11:48:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:52420 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391341AbfGHPry (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:47:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C12B360;
-        Mon,  8 Jul 2019 08:47:54 -0700 (PDT)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C750F3F59C;
-        Mon,  8 Jul 2019 08:47:52 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        Bo Zhang <bozhang.zhang@broadcom.com>,
-        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH 10/11] firmware: arm_scmi: Drop config flag in clk_ops->rate_set
-Date:   Mon,  8 Jul 2019 16:47:29 +0100
-Message-Id: <20190708154730.16643-11-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190708154730.16643-1-sudeep.holla@arm.com>
-References: <20190708154730.16643-1-sudeep.holla@arm.com>
+        id S1726124AbfGIBoj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Jul 2019 21:44:39 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:46188 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfGIBoj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jul 2019 21:44:39 -0400
+Received: by mail-io1-f66.google.com with SMTP id i10so39615931iol.13;
+        Mon, 08 Jul 2019 18:44:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Kd+R8U7AeHQK+dVVAxxx/vKyVP0OoTL7mSnz079YKZg=;
+        b=dn9OahJKlFcsiA3jGkmkYcKpKDnDkMvKLYlpSYEpv3TtHv0CSSOgyAD5OLNGAbJZ8B
+         FgzLGGq5IC7y1mV2YpeeHTWG+mOENhtnoY/XNRX11He/UG4Ya9PSFT6Pze57DfA81LF5
+         BHjxaBpf3cZu9pnkXWVgszeaYmsTbVVWC9w9bvT08HjS/zSRAkb59dFX4eYnThOwfhDG
+         SNw70NHJLjDf3cFFmFztgOcQZB9L7CR0pOozFuMKErRF0JV6B2i6yI/H7/zIPYBirUJh
+         2jwL9r2Gcs43LojXymmXbikkEglKio32c1Qq5fG9FgxfT4jMcg49pJTaaMMdE1a6ZaK6
+         hb7A==
+X-Gm-Message-State: APjAAAVJWsEDG0Ho4Q4+mUyiukYwbpTmn7CWJqlVi7QEn7CYxinc5iP0
+        u1V7+TTMWzjWCSEclU+GoXovf4c=
+X-Google-Smtp-Source: APXvYqwUZNHjJqnSaa51TzsLuv0W/Pd+sulwtIXpORaf4ssy3jNRBSvXFrt+gjlJKE0rUraKSVmSEw==
+X-Received: by 2002:a6b:8bcb:: with SMTP id n194mr17670842iod.194.1562636677804;
+        Mon, 08 Jul 2019 18:44:37 -0700 (PDT)
+Received: from localhost ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id m4sm31452340iok.68.2019.07.08.18.44.36
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 18:44:37 -0700 (PDT)
+Date:   Mon, 8 Jul 2019 19:44:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sricharan R <sricharan@codeaurora.org>
+Cc:     sboyd@kernel.org, linus.walleij@linaro.org, agross@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/6] pinctrl: qcom: Add ipq6018 pinctrl driver
+Message-ID: <20190709014436.GA9055@bogus>
+References: <1559755738-28643-1-git-send-email-sricharan@codeaurora.org>
+ <1559755738-28643-2-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1559755738-28643-2-git-send-email-sricharan@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CLOCK_PROTOCOL_ATTRIBUTES provides attributes to indicate the maximum
-number of pending asynchronous clock rate changes supported by the
-platform. If it's non-zero, then we should be able to use asynchronous
-clock rate set for any clocks until the maximum limit is reached.
+On Wed, Jun 05, 2019 at 10:58:53PM +0530, Sricharan R wrote:
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for ipq6018.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
+> Signed-off-by: speriaka <speriaka@codeaurora.org>
+> ---
+>  .../bindings/pinctrl/qcom,ipq6018-pinctrl.txt      |  186 +++
 
-In order to add that support, let's drop the config flag passed to
-clk_ops->rate_set and handle the asynchronous requests dynamically.
+Please split bindings to separate patch. Using DT schema would be nice.
 
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/clk/clk-scmi.c            | 2 +-
- drivers/firmware/arm_scmi/clock.c | 4 ++--
- include/linux/scmi_protocol.h     | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index a2287c770d5c..886f7c5df51a 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -69,7 +69,7 @@ static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct scmi_clk *clk = to_scmi_clk(hw);
- 
--	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, 0, rate);
-+	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, rate);
- }
- 
- static int scmi_clk_enable(struct clk_hw *hw)
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index 0a194af92438..dd215bd11a58 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -218,7 +218,7 @@ scmi_clock_rate_get(const struct scmi_handle *handle, u32 clk_id, u64 *value)
- }
- 
- static int scmi_clock_rate_set(const struct scmi_handle *handle, u32 clk_id,
--			       u32 config, u64 rate)
-+			       u64 rate)
- {
- 	int ret;
- 	struct scmi_xfer *t;
-@@ -230,7 +230,7 @@ static int scmi_clock_rate_set(const struct scmi_handle *handle, u32 clk_id,
- 		return ret;
- 
- 	cfg = t->tx.buf;
--	cfg->flags = cpu_to_le32(config);
-+	cfg->flags = cpu_to_le32(0);
- 	cfg->id = cpu_to_le32(clk_id);
- 	cfg->value_low = cpu_to_le32(rate & 0xffffffff);
- 	cfg->value_high = cpu_to_le32(rate >> 32);
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index 1be16d7730e2..1694ee1b410e 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -71,7 +71,7 @@ struct scmi_clk_ops {
- 	int (*rate_get)(const struct scmi_handle *handle, u32 clk_id,
- 			u64 *rate);
- 	int (*rate_set)(const struct scmi_handle *handle, u32 clk_id,
--			u32 config, u64 rate);
-+			u64 rate);
- 	int (*enable)(const struct scmi_handle *handle, u32 clk_id);
- 	int (*disable)(const struct scmi_handle *handle, u32 clk_id);
- };
--- 
-2.17.1
-
+>  drivers/pinctrl/qcom/Kconfig                       |   10 +
+>  drivers/pinctrl/qcom/Makefile                      |    1 +
+>  drivers/pinctrl/qcom/pinctrl-ipq6018.c             | 1183 ++++++++++++++++++++
+>  4 files changed, 1380 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq6018.c
