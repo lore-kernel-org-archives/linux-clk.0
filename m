@@ -2,199 +2,96 @@ Return-Path: <SRS0=Qrm9=VG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F39C73C50
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 14:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB8FC73C53
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 17:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C46421743
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 14:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFF52082A
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jul 2019 17:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562691935;
+	bh=zmH7Tla7rLJF/r5JnrAvdV887swl754fWwQFg7dwqmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bqhRvww3+QADnZzlKBlhSCl0tRnlPVK8m6YqS+eHj2iEkrDq4OYVKEP4yw+VT3vjT
+	 KK1ArXwByc2bCEQSt6kDn4xTYZY+KkS22oDUuLDlK1JUBGDaEhpJ9SrjraNUE+Tkg1
+	 LuDNZF2onZ5gOqgC5YWqefYglsec32VfS5adexaU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbfGIOUP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jul 2019 10:20:15 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:45194 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbfGIOUP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Jul 2019 10:20:15 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 228EC1A05E2;
-        Tue,  9 Jul 2019 16:20:13 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 15F7A1A05DF;
-        Tue,  9 Jul 2019 16:20:13 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 89D9220630;
-        Tue,  9 Jul 2019 16:20:12 +0200 (CEST)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2] clk: imx8mm: Switch to platform driver
-Date:   Tue,  9 Jul 2019 17:20:03 +0300
-Message-Id: <1562682003-20951-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726238AbfGIRFe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jul 2019 13:05:34 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39973 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfGIRFe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jul 2019 13:05:34 -0400
+Received: by mail-io1-f67.google.com with SMTP id h6so36502634iom.7;
+        Tue, 09 Jul 2019 10:05:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TZVSdIReA1dub8lT+/BNLKNf7FMnmnulMnUfS3UgQmc=;
+        b=lIfPNS77oh6GZKTG8EW0DdN7iALgEHwzL89uHZYjO9TNjeVYtWTw3RXwvPGkQykOWD
+         bkcFa6UMXSOir8F2Egs7a83pgFrZXh9luUaKKGX0NHrjT8WPWAVQiQTZ1asixhuYCjMU
+         qfv/XWVZ+HtdE+jrHZs2rqi8A6xPSIJ5iX4HaZquBC8nq6jtFfKckNWe0PHhqAfUggRs
+         sfUxDQxENJN8guZ8F9zuUEV8XCdGwt5Xj+kD8SFfoxXNbirTAVuVXEXKyJsRKJnTwJhj
+         8xgHsr1BsJieTCqoxxDHfY9c77EEzZ0ukNGMoRds3N/524H0voPESCkSc6lGVa20wLy9
+         jarw==
+X-Gm-Message-State: APjAAAUMQxADasf2bNU4OOZrw9lnY6KU1cgYi5vYQ4DjdzamJ42LetXG
+        DfitaDmRY0efwF/s3ny8tw==
+X-Google-Smtp-Source: APXvYqy82rUB+PxD0GvIta+96cabnu3QalLm/IpoEAom3xpXM1tw/t9dcYtTv9yOKDIievsmVKm/tg==
+X-Received: by 2002:a5d:94d0:: with SMTP id y16mr24563041ior.123.1562691933479;
+        Tue, 09 Jul 2019 10:05:33 -0700 (PDT)
+Received: from localhost ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id f20sm19481160ioh.17.2019.07.09.10.05.32
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Jul 2019 10:05:32 -0700 (PDT)
+Date:   Tue, 9 Jul 2019 11:05:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, maxime.ripard@bootlin.com, olof@lixom.net,
+        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
+        leonard.crestez@nxp.com, bjorn.andersson@linaro.org,
+        dinguyen@kernel.org, enric.balletbo@collabora.com,
+        aisheng.dong@nxp.com, ping.bai@nxp.com, abel.vesa@nxp.com,
+        l.stach@pengutronix.de, peng.fan@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V5 1/5] dt-bindings: imx: Add clock binding doc for
+ i.MX8MN
+Message-ID: <20190709170531.GA19236@bogus>
+References: <20190619055247.35771-1-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619055247.35771-1-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no strong reason for this to use CLK_OF_DECLARE instead
-of being a platform driver. Plus, this will now be aligned with the
-other i.MX8M clock drivers which are platform drivers.
+On Wed, 19 Jun 2019 13:52:43 +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+> 
+> Add the clock binding doc for i.MX8MN.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+> No changes.
+> ---
+>  .../devicetree/bindings/clock/imx8mn-clock.yaml    | 112 +++++++++++
+>  include/dt-bindings/clock/imx8mn-clock.h           | 215 +++++++++++++++++++++
+>  2 files changed, 327 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/imx8mn-clock.h
+> 
 
-In order to make the clock provider a platform driver
-all the data and code needs to be outside of .init section.
-
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
-
-Changes since v1:
- * Switched to platform driver memory mapping API
- * Removed extra newline
- * Added an explanation of why this change is done
-   in the commit message
-
- drivers/clk/imx/clk-imx8mm.c | 57 ++++++++++++++++++++++++++++----------------
- 1 file changed, 36 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 6b8e75d..7a8e713 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -68,43 +68,43 @@ static const struct imx_pll14xx_rate_table imx8mm_drampll_tbl[] = {
- 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
- };
- 
--static struct imx_pll14xx_clk imx8mm_audio_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_audio_pll = {
- 		.type = PLL_1443X,
- 		.rate_table = imx8mm_audiopll_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_audiopll_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_video_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_video_pll = {
- 		.type = PLL_1443X,
- 		.rate_table = imx8mm_videopll_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_videopll_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_dram_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_dram_pll = {
- 		.type = PLL_1443X,
- 		.rate_table = imx8mm_drampll_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_drampll_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_arm_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_arm_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_gpu_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_gpu_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_vpu_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_vpu_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
- };
- 
--static struct imx_pll14xx_clk imx8mm_sys_pll __initdata = {
-+static struct imx_pll14xx_clk imx8mm_sys_pll = {
- 		.type = PLL_1416X,
- 		.rate_table = imx8mm_pll1416x_tbl,
- 		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
-@@ -374,7 +374,7 @@ static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m",
- static struct clk *clks[IMX8MM_CLK_END];
- static struct clk_onecell_data clk_data;
- 
--static struct clk ** const uart_clks[] __initconst = {
-+static struct clk ** const uart_clks[] = {
- 	&clks[IMX8MM_CLK_UART1_ROOT],
- 	&clks[IMX8MM_CLK_UART2_ROOT],
- 	&clks[IMX8MM_CLK_UART3_ROOT],
-@@ -382,19 +382,20 @@ static struct clk ** const uart_clks[] __initconst = {
- 	NULL
- };
- 
--static int __init imx8mm_clocks_init(struct device_node *ccm_node)
-+static int imx8mm_clocks_probe(struct platform_device *pdev)
- {
--	struct device_node *np;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
- 	void __iomem *base;
- 	int ret;
- 
- 	clks[IMX8MM_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
--	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(ccm_node, "osc_24m");
--	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(ccm_node, "osc_32k");
--	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(ccm_node, "clk_ext1");
--	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(ccm_node, "clk_ext2");
--	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(ccm_node, "clk_ext3");
--	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(ccm_node, "clk_ext4");
-+	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(np, "osc_24m");
-+	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(np, "osc_32k");
-+	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(np, "clk_ext1");
-+	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(np, "clk_ext2");
-+	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(np, "clk_ext3");
-+	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(np, "clk_ext4");
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
- 	base = of_iomap(np, 0);
-@@ -480,10 +481,10 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
- 	clks[IMX8MM_SYS_PLL2_500M] = imx_clk_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
- 	clks[IMX8MM_SYS_PLL2_1000M] = imx_clk_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
- 
--	np = ccm_node;
--	base = of_iomap(np, 0);
--	if (WARN_ON(!base))
--		return -ENOMEM;
-+	np = dev->of_node;
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (WARN_ON(IS_ERR(base)))
-+		return PTR_ERR(base);
- 
- 	/* Core Slice */
- 	clks[IMX8MM_CLK_A53_SRC] = imx_clk_mux2("arm_a53_src", base + 0x8000, 24, 3, imx8mm_a53_sels, ARRAY_SIZE(imx8mm_a53_sels));
-@@ -682,4 +683,18 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
- 
- 	return 0;
- }
--CLK_OF_DECLARE_DRIVER(imx8mm, "fsl,imx8mm-ccm", imx8mm_clocks_init);
-+
-+static const struct of_device_id imx8mm_clk_of_match[] = {
-+	{ .compatible = "fsl,imx8mm-ccm" },
-+	{ /* Sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
-+
-+static struct platform_driver imx8mm_clk_driver = {
-+	.probe = imx8mm_clocks_probe,
-+	.driver = {
-+		.name = "imx8mm-ccm",
-+		.of_match_table = of_match_ptr(imx8mm_clk_of_match),
-+	},
-+};
-+module_platform_driver(imx8mm_clk_driver);
--- 
-2.7.4
-
+Reviewed-by: Rob Herring <robh@kernel.org>
