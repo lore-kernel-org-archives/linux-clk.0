@@ -2,47 +2,76 @@ Return-Path: <SRS0=+/2J=VH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8EEC74A21
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jul 2019 13:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C10FC74A23
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jul 2019 14:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFE12084B
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jul 2019 13:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CD12064B
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jul 2019 14:10:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="Kz5a5tTx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sjRKgULh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfGJNqB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Jul 2019 09:46:01 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55673 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbfGJNqB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jul 2019 09:46:01 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 172E620008;
-        Wed, 10 Jul 2019 13:44:22 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        id S1727676AbfGJOKX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Jul 2019 10:10:23 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:36623 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727595AbfGJOKX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jul 2019 10:10:23 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id DE6A3220A3;
+        Wed, 10 Jul 2019 10:10:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 10 Jul 2019 10:10:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=oEpi+6+0w26RCxBP4UT6DzJfnA
+        X/f9uFoVKZM8Skn8A=; b=Kz5a5tTxNyorBcpc+UNoDcGZpcJKbJC4GIVEch3yMC
+        Rhi3ealHNcRancfrfjCRkHgsXQBmT1B55ANVKy9S0SYuEXYdroWXy0G07sMA8BBu
+        CNfXnuAcI29EpjBlakDLLMqJoDttEkzNecg47h2RUXU1qbU9dd8jxbmfMo8c6CCx
+        JWv0ZjpQM9BrCMhVMUC+TOrNNlvnMI4HmRrZGmFAAvXzPpaneWpaDx+DjaOshBYJ
+        +xeGhGESLn9jBWUshcUU4fISJVA1ndYMFre96rIbKJ1bUHoWzgQE+pPLAqV+Pcdm
+        s4I8NUEB/03sBb3bmRYxRqSPNvwouIcf98U1twAUiSFw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=oEpi+6+0w26RCxBP4
+        UT6DzJfnAX/f9uFoVKZM8Skn8A=; b=sjRKgULhpy0LQqshO1disWZtV/hBTF9wo
+        ZlAq/FM7O7aKxYNtCcqCk4YlTvJnGeahvgjtCzKNEG9HHZYqmo7YQrpDfR87kEel
+        cCu4WeDaL7nywSRsLUsOTMrGDmmZ7O9pOuEAw3Qfn5var7OQan+RAd5ysijMJHJX
+        2ljMxd/j3wTifFaNlE1OuYsNbaXSUhvuWwH/AeU8YncMNVDdFAYIl9LVCtcAD5QE
+        We94FlOQojDdQXn54u0ZVO5FMX6EkhRqePNBPDUZ/tzquYgK+gbEu8vkmte+kF4D
+        dFX0pYQuJyC2tUI+FMTn+3y8FdT1cDdSlJc1h2twwidxoLj3AGz5Q==
+X-ME-Sender: <xms:yvElXSJ4SG24WGntwpZq-QBpuocYYGJTvyrV03fgEaxsujcTvdUypQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrgeeigdejgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomheptehnughrvgifucfl
+    vghffhgvrhihuceorghnughrvgifsegrjhdrihgurdgruheqnecukfhppedugedrvddrke
+    ehrddvvdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgr
+    uhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:yvElXfIcN6wa89Aem-4o4cq38mA6Xrmkk5-Hb03MnH6UqQb-FaOebg>
+    <xmx:yvElXakMZ5-q5tbO8BrhEtIai9q7FXkPuMj5my6h0KhtqgbRPes0XA>
+    <xmx:yvElXVOODzsYKupGZl8u3YtjMfBeq7L7n73PZ5VZAYzn400fbDUcNA>
+    <xmx:y_ElXVuCWTBgi4BF9t9TP_KiIZHwFybqQBRRBBabXpVOomzIsQPZeg>
+Received: from localhost.localdomain (ppp14-2-85-22.adl-apt-pir-bras31.tpg.internode.on.net [14.2.85.22])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9E52780064;
+        Wed, 10 Jul 2019 10:10:14 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-clk@vger.kernel.org
+Cc:     Joel Stanley <joel@jms.id.au>, mturquette@baylibre.com,
+        sboyd@kernel.org, ryanchen.aspeed@gmail.com,
         linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v7 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
-Date:   Wed, 10 Jul 2019 15:43:46 +0200
-Message-Id: <20190710134346.30239-7-gregory.clement@bootlin.com>
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH] clk: aspeed: Add SDIO gate
+Date:   Wed, 10 Jul 2019 23:40:09 +0930
+Message-Id: <20190710141009.20651-1-andrew@aj.id.au>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190710134346.30239-1-gregory.clement@bootlin.com>
-References: <20190710134346.30239-1-gregory.clement@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -50,65 +79,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add cpu clock node on AP
+From: Joel Stanley <joel@jms.id.au>
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+The clock divisor comes with an enable bit (gate). This was not
+implemented as we didn't have access to SD hardware when writing the
+driver. Now that we can test it, add the gate as a parent to the
+divisor.
+
+There is no reason to expose the gate separately, so users will enable
+it by turning on the ASPEED_CLK_SDIO divisor.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+[aj: Minor style cleanup]
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 ---
- arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi | 4 ++++
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi      | 7 +++++++
- 2 files changed, 11 insertions(+)
+ drivers/clk/clk-aspeed.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-index 2baafe12ebd4..472211159979 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-@@ -20,24 +20,28 @@
- 			compatible = "arm,cortex-a72";
- 			reg = <0x000>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 0>;
- 		};
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a72";
- 			reg = <0x001>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 0>;
- 		};
- 		cpu2: cpu@100 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a72";
- 			reg = <0x100>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 1>;
- 		};
- 		cpu3: cpu@101 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a72";
- 			reg = <0x101>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 1>;
- 		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 91dad7e4ee59..fca6536494b3 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -280,6 +280,13 @@
- 				#address-cells = <1>;
- 				#size-cells = <1>;
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 42b4df6ba249..898291501f45 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -500,9 +500,14 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hw);
+ 	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	hw;
  
-+				cpu_clk: clock-cpu@278 {
-+					compatible = "marvell,ap806-cpu-clock";
-+					clocks = <&ap_clk 0>, <&ap_clk 1>;
-+					#clock-cells = <1>;
-+					reg = <0x278 0xa30>;
-+				};
-+
- 				ap_thermal: thermal-sensor@80 {
- 					compatible = "marvell,armada-ap806-thermal";
- 					reg = <0x80 0x10>;
+-	/* SD/SDIO clock divider (TODO: There's a gate too) */
+-	hw = clk_hw_register_divider_table(dev, "sdio", "hpll", 0,
+-			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
++	/* SD/SDIO clock divider and gate */
++	hw = clk_hw_register_gate(dev, "sd_extclk_gate", "hpll", 0,
++				  scu_base + ASPEED_CLK_SELECTION, 15, 0,
++				  &aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	hw = clk_hw_register_divider_table(dev, "sd_extclk", "sd_extclk_gate",
++			0, scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
+ 			soc_data->div_table,
+ 			&aspeed_clk_lock);
+ 	if (IS_ERR(hw))
 -- 
 2.20.1
 
