@@ -2,59 +2,59 @@ Return-Path: <SRS0=Aryr=VI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F149BC74A35
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jul 2019 15:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2A7C74A35
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jul 2019 15:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCFA521537
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jul 2019 15:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF50E21537
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jul 2019 15:06:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CWE8YcZB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yh1L7+Va"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbfGKPGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Jul 2019 11:06:14 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35017 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbfGKPGO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jul 2019 11:06:14 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u14so2907061pfn.2
-        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2019 08:06:13 -0700 (PDT)
+        id S1728903AbfGKPGq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Jul 2019 11:06:46 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45369 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728601AbfGKPGp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jul 2019 11:06:45 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o13so3067423pgp.12
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2019 08:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=4c2dc7FdeZlI40XoYW7oVDGG9akgiuTr8uhcWS8yCeY=;
-        b=CWE8YcZB0HKcuadLXbtPYj6kQ5wYic026seg1ZVQ3b+ApPmyoYWwNSd0mnKX9ohNXA
-         jpxMK9+dbpVEbUI8ATFDIvQDf0YLM4pcNS0tuYQfjyYMQ9NfKSEQb0kpeWX2PcE0azhP
-         egtlCiDuPqnWZQfcZmZw8J8u1YU62gkqkX+RoS1F5r5stTmEDfwxaEJUrA2j+shkdq7J
-         r1Zl9gWRixLrdySBL2nCQPmP0Yn4vXIIDqBK1U6Wt2gTvksAnTxve2JEFWdcui5vuI+t
-         56OIfwXw9RWrVLjsLcOJcFZOxIuRgyrOIDLi4Enun9yZVkuRjv1UVNzCypwA0pYfGrzv
-         s/HA==
+        bh=bReqO5jQsSZW0F1H8jewwqywC8kIWjwq+tdThkdVeG8=;
+        b=Yh1L7+VabKoUHQqB4kt31tOafvZr+g3eGc9hP5fd0NVfMPiLQYXaS94RiZbN4lfZiA
+         IaJicDs9h2XrbKFSTvjnJNG6WkpMjwFZUtk5s7CNpfZQFbGq5nfrz14zlB1/nwitf359
+         rCALpWMCR3WC+9zXqWiJFWkzbKgCryjCEiVRN5FmVrdbVDqHAlYZKJ82lmNgJ5hgXKZM
+         QgPnYyaEv76c2eIVIjoYsb8UbUHsF+85K01LmfXY7vnrT1TXTbxCr9ianxN/Da00Dmcf
+         SL2yoc4aNxBQhpKWjDZSpJAosQI+ee78EvxWZa1qmnJh57m7zH77y+eZ/cHTL83T2C1a
+         rIAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4c2dc7FdeZlI40XoYW7oVDGG9akgiuTr8uhcWS8yCeY=;
-        b=eGTVvA2B32WfgtxVsnxV6UGGD/5u+BxKZ5Hd08EX9Y3x2uT3q4OXGT7VLg1zTtXQ4W
-         ZSYZfc8GP3LCeK/lMAF0xqgQ1Njb040YgTekJsgWzKVWrA7dgfCGXxj68l9DoIzXanqS
-         oce8sOtqFznJovoXD6tuZ9ntIfq5n/VEAnjmHXQ1YcIkwD9aRZeQaUpzhHymnBXysQfv
-         veN0xGsYmE/BFlpcPSH3i50EyaS5xm2TGGZk888auTNqKH8+1k+B9w2zyB9N7dZHNls2
-         KiAFId4F5NYCWo3rl6eiuvXrUCnlC3xweLbdwBFVqUsH11EpX2NCPnrqyxnE5169QOU6
-         TsEw==
-X-Gm-Message-State: APjAAAUgl+b0aIEaqPAMxFqFpGtQtVIhAsHmQ3SytQpb5Ty5pmAR1iri
-        s7PMYDGOd8JuKQiC3NiQHch4wA==
-X-Google-Smtp-Source: APXvYqyTRN38u90ThnFEWr3vJtVT6c/7HeHr0dQPeDSpuUgsAlIZ8GEDPOCwlDn7VSwfNYWXYmf7JA==
-X-Received: by 2002:a17:90a:2008:: with SMTP id n8mr5346113pjc.4.1562857573492;
-        Thu, 11 Jul 2019 08:06:13 -0700 (PDT)
+        bh=bReqO5jQsSZW0F1H8jewwqywC8kIWjwq+tdThkdVeG8=;
+        b=nUhhjwMLkzGs6+VlshqaTTbDkCVRYPDnqp+SBsodIVZM1uDM8Tno7QmtCM2TP7f9y6
+         bO0dhwzyQBIXXuj/nl5TdsZNqtuic0D0cNKFKsWjTYCerrNT++hKJCqqLtgdrDR56Z3M
+         g2vt6K2cMAYHNqDS0ZMtkHz8CkvH4hASV6cqe7a3xhCnQELd7y0IBC7nd8XsLOeAFytq
+         SvODGAIe/P0TxQ4stVenQubdcinqxEP4+r4qcxL9mU8ZdS9RbRe3T8LGUHnOjZt9xTLd
+         1hK8mu5RqYP+7xDxfpKJm3Dp6vZDps5rNoNBWQdzY7pC4LoSieVjHM/bjbPFVeP+B4A2
+         XvXg==
+X-Gm-Message-State: APjAAAUOnXR2g3AiVcSQlvzXMyqClFbH3seaUQy0+Hm0PxDOdUo8a2cp
+        NrtpwOAL0MSBzSjfruVa54BzSA==
+X-Google-Smtp-Source: APXvYqwybLYOQpq3m9ZZk/ESBRLmFo1YB4gta01w60F59LdyqKZ9l3cDqUd7fLdFctGzmcEuIAr9ZQ==
+X-Received: by 2002:a17:90a:2343:: with SMTP id f61mr5470666pje.130.1562857605136;
+        Thu, 11 Jul 2019 08:06:45 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s6sm9401870pfs.122.2019.07.11.08.06.11
+        by smtp.gmail.com with ESMTPSA id l124sm5866595pgl.54.2019.07.11.08.06.43
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 08:06:12 -0700 (PDT)
-Date:   Thu, 11 Jul 2019 08:07:23 -0700
+        Thu, 11 Jul 2019 08:06:44 -0700 (PDT)
+Date:   Thu, 11 Jul 2019 08:07:54 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
@@ -67,14 +67,14 @@ Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: Re: [PATCH v3 06/14] clk: qcom: hfpll: get parent clock names from DT
-Message-ID: <20190711150723.GG7234@tuxbook-pro>
+Subject: Re: [PATCH v3 07/14] clk: qcom: hfpll: register as clock provider
+Message-ID: <20190711150754.GH7234@tuxbook-pro>
 References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
- <20190625164733.11091-7-jorge.ramirez-ortiz@linaro.org>
+ <20190625164733.11091-8-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190625164733.11091-7-jorge.ramirez-ortiz@linaro.org>
+In-Reply-To: <20190625164733.11091-8-jorge.ramirez-ortiz@linaro.org>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -83,53 +83,48 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
 
-> Allow accessing the parent clock name required for the driver
-> operation using the device tree node.
-> 
-> This permits extending the driver to other platforms without having to
-> modify its source code.
-> 
-> For backwards compatibility leave the previous value as default.
+> Make the output of the high frequency pll a clock provider.
+> On the QCS404 this PLL controls cpu frequency scaling.
 > 
 > Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-
-The driver should be updated to use parent_data instead, but I consider
-that's an independent change.
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 > ---
->  drivers/clk/qcom/hfpll.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  drivers/clk/qcom/hfpll.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-> index a6de7101430c..87b7f46d27e0 100644
+> index 87b7f46d27e0..0ffed0d41c50 100644
 > --- a/drivers/clk/qcom/hfpll.c
 > +++ b/drivers/clk/qcom/hfpll.c
-> @@ -52,6 +52,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->  	void __iomem *base;
+> @@ -53,6 +53,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
 >  	struct regmap *regmap;
 >  	struct clk_hfpll *h;
-> +	struct clk *pclk;
+>  	struct clk *pclk;
+> +	int ret;
 >  	struct clk_init_data init = {
 >  		.parent_names = (const char *[]){ "xo" },
 >  		.num_parents = 1,
-> @@ -75,6 +76,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->  					  0, &init.name))
->  		return -ENODEV;
->  
-> +	/* get parent clock from device tree (optional) */
-> +	pclk = devm_clk_get(dev, "xo");
-> +	if (!IS_ERR(pclk))
-> +		init.parent_names = (const char *[]){ __clk_get_name(pclk) };
-> +	else if (PTR_ERR(pclk) == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	h->d = &hdata;
+> @@ -87,7 +88,14 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
 >  	h->clkr.hw.init = &init;
 >  	spin_lock_init(&h->lock);
+>  
+> -	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
+> +	ret = devm_clk_register_regmap(dev, &h->clkr);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
+> +					   &h->clkr.hw);
+>  }
+>  
+>  static struct platform_driver qcom_hfpll_driver = {
 > -- 
 > 2.21.0
 > 
