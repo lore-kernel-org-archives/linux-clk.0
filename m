@@ -2,93 +2,65 @@ Return-Path: <SRS0=M83Q=VJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066FCC742B2
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 09:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC47C742D2
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 18:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDDDE2064B
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 09:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9068205ED
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 18:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562955209;
+	bh=vy70ZCADAa8XqPLpwqzkVYFPc3I5xkZ7yX6y1hoW1hA=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=AoFWRyYGaDtXX/Fv004AtHhWZjTsAzG0iQHiSb14yPpKnmNaWPcIgvXl8wcOJosDE
+	 PTLbbpFtNGr1OP/LD7qSqFWcgmbzTTu97GavZNShqBb6oBnTuBEBqs/W14kVcsROeG
+	 +q1P730P/ndt5s0qognQW02vyj4u8APQs+IXgOlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbfGLJsc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Jul 2019 05:48:32 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:20144 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725989AbfGLJsc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Jul 2019 05:48:32 -0400
-X-UUID: a182a2160ec84299a41d4d0c459d34e9-20190712
-X-UUID: a182a2160ec84299a41d4d0c459d34e9-20190712
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <macpaul.lin@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 900680360; Fri, 12 Jul 2019 17:48:25 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 12 Jul 2019 17:48:23 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 12 Jul 2019 17:48:23 +0800
-From:   Macpaul Lin <macpaul.lin@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <wsd_upstream@mediatek.com>, CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Macpaul Lin <macpaul.lin@mediatek.com>
-Subject: [PATCH v6 8/8] arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
-Date:   Fri, 12 Jul 2019 17:43:44 +0800
-Message-ID: <1562924653-10056-9-git-send-email-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1562924653-10056-1-git-send-email-macpaul.lin@mediatek.com>
-References: <1562924653-10056-1-git-send-email-macpaul.lin@mediatek.com>
+        id S1727031AbfGLSN3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Jul 2019 14:13:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727028AbfGLSN3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Jul 2019 14:13:29 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46C4B205C9;
+        Fri, 12 Jul 2019 18:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562955208;
+        bh=vy70ZCADAa8XqPLpwqzkVYFPc3I5xkZ7yX6y1hoW1hA=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=KSXgTFqlAJKChFysyzaafI5QOcT08gAcILu0tSKNujV+7YbVr3ODXyu+JA6GF8MsF
+         G7G+51uiIScsM6u42mHMjo5iap2eV0b0VeTy/bYcB3NR9Sf8KBmki2G6Gnmes8YkC5
+         9QK6YhVUR3CXeO9Wkvy8uzm1hJx3/xFKbuiphFIA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3855405.N158XnxgeL@phil>
+References: <3855405.N158XnxgeL@phil>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] Rockchip clock updates for 5.3
+User-Agent: alot/0.8.1
+Date:   Fri, 12 Jul 2019 11:13:27 -0700
+Message-Id: <20190712181328.46C4B205C9@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Owen Chen <owen.chen@mediatek.com>
+Quoting Heiko Stuebner (2019-07-01 02:36:17)
+> Hi Mike, Stephen,
+>=20
+> please find below rockchip clock changes for 5.3
+>=20
+> Please pull
+>=20
+> Thanks
 
-Enable MT6765 clock configs, include topckgen, apmixedsys,
-infracfg, and subsystem clocks.
-
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- arch/arm64/configs/defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..7ab4d09120bb 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -455,6 +455,12 @@ CONFIG_REGULATOR_QCOM_SMD_RPM=y
- CONFIG_REGULATOR_QCOM_SPMI=y
- CONFIG_REGULATOR_RK808=y
- CONFIG_REGULATOR_S2MPS11=y
-+CONFIG_COMMON_CLK_MT6765_AUDIOSYS=y
-+CONFIG_COMMON_CLK_MT6765_CAMSYS=y
-+CONFIG_COMMON_CLK_MT6765_MMSYS=y
-+CONFIG_COMMON_CLK_MT6765_IMGSYS=y
-+CONFIG_COMMON_CLK_MT6765_VCODECSYS=y
-+CONFIG_COMMON_CLK_MT6765_MIPI0ASYS=y
- CONFIG_REGULATOR_VCTRL=m
- CONFIG_RC_CORE=m
- CONFIG_RC_DECODERS=y
--- 
-2.18.0
-
+Ok. Pulled into clk-next for 5.3.
