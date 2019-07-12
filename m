@@ -2,221 +2,159 @@ Return-Path: <SRS0=M83Q=VJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92C8C742B1
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 09:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7773BC742B2
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 09:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84AE32166E
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 09:19:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Y8i5TYJQ"
+	by mail.kernel.org (Postfix) with ESMTP id 51FD32166E
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 09:44:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbfGLJT4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Jul 2019 05:19:56 -0400
-Received: from mail-eopbgr1410093.outbound.protection.outlook.com ([40.107.141.93]:6127
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725989AbfGLJTz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Jul 2019 05:19:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yswMiyVDYg/7G1Z1ALteY3F0ua6OvH2gZOSIdYt1HDM=;
- b=Y8i5TYJQwSSezVUHwdi15AiE13OnVc+UQz+D8xIz6JcgQ4wgLLxwCcXOEz25335Btmh2gWhA4zVRvBFkwZtXEOt2q+4yl5/+yCaGSf+ZgyWBMc+JSuqdSt8aVkyaLjbu2n3v5l16W18wlAbkaUuSg3oSRT50p9uocrTnxju3YzY=
-Received: from OSAPR01MB4529.jpnprd01.prod.outlook.com (20.179.176.20) by
- OSAPR01MB2226.jpnprd01.prod.outlook.com (52.134.235.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.20; Fri, 12 Jul 2019 09:19:48 +0000
-Received: from OSAPR01MB4529.jpnprd01.prod.outlook.com
- ([fe80::6c17:80bd:1713:5fcc]) by OSAPR01MB4529.jpnprd01.prod.outlook.com
- ([fe80::6c17:80bd:1713:5fcc%7]) with mapi id 15.20.2073.012; Fri, 12 Jul 2019
- 09:19:48 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Lihua Yao <Lihua.Yao@desay-svautomotive.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Linh Phung <linh.phung.jy@renesas.com>
-Subject: RE: [PATCH] clk: renesas: cpg-mssr: Fix reset control race condition
-Thread-Topic: [PATCH] clk: renesas: cpg-mssr: Fix reset control race condition
-Thread-Index: AQHVN+khR8N/7lmi1E2fDohgjmSMGabGsnwg
-Date:   Fri, 12 Jul 2019 09:19:47 +0000
-Message-ID: <OSAPR01MB452973ED58BF61D04962698ED8F20@OSAPR01MB4529.jpnprd01.prod.outlook.com>
-References: <20190711130359.1060-1-geert+renesas@glider.be>
-In-Reply-To: <20190711130359.1060-1-geert+renesas@glider.be>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [118.238.235.108]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 999a3003-9693-44ed-ca70-08d706aa1611
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:OSAPR01MB2226;
-x-ms-traffictypediagnostic: OSAPR01MB2226:
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-microsoft-antispam-prvs: <OSAPR01MB222673E41418805E0799CAE6D8F20@OSAPR01MB2226.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 00963989E5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(39860400002)(136003)(396003)(346002)(376002)(199004)(189003)(66946007)(53936002)(76116006)(4326008)(6436002)(54906003)(486006)(5660300002)(25786009)(6506007)(446003)(110136005)(3846002)(7736002)(9686003)(14454004)(55016002)(26005)(6116002)(186003)(102836004)(52536014)(6246003)(229853002)(66476007)(66556008)(64756008)(107886003)(86362001)(66446008)(71190400001)(8936002)(99286004)(7696005)(33656002)(476003)(71200400001)(74316002)(2906002)(8676002)(81156014)(81166006)(76176011)(66066001)(11346002)(14444005)(256004)(478600001)(305945005)(316002)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2226;H:OSAPR01MB4529.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: J4Gp3AD3VTukyMzdHhF8bLUJ64sS/rPtHOfjsnyZjhoyqXIu+jg4ZAkK6vnMkwDU6eeHavTzPk9YGdiNA/zIWPZJzSG7ZXOv2TV/HveZ7up3JXLabhR/iZk8obymG6nv0h1rlO/0Muj23brVEYncSWbupjztdW8dBL4PBNWPsGKc14UGm/HKR8u9AI5GbbHzCmVckTjUMDN3ysWpq4Xo49dnBAyaxMN89JxrP5J70EpYUD96utX4TmlxcO3GCpFL1RpFHoSGHHAx9fNLRsDi3EywnegCreXMHEL5IS7jOVob2m6BU2y90PcZIss1vWVU4l83O1gXNxA2Mmrv5Kc7kXV7IToNgMb2NWqQ5QrMOxwDaKFDztWLz6k2sBwS3F7wabmC8aOi4SLJOhg3BRtC+xeqEq2ojlV43p0PEPu7JNM=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726155AbfGLJod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Jul 2019 05:44:33 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56731 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726057AbfGLJoc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Jul 2019 05:44:32 -0400
+X-UUID: ac40bddd1b784772b1ed6f55dee99109-20190712
+X-UUID: ac40bddd1b784772b1ed6f55dee99109-20190712
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <macpaul.lin@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 201960188; Fri, 12 Jul 2019 17:44:27 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 12 Jul 2019 17:44:19 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 12 Jul 2019 17:44:19 +0800
+From:   Macpaul Lin <macpaul.lin@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <wsd_upstream@mediatek.com>, CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Macpaul Lin <macpaul.lin@mediatek.com>
+Subject: [PATCH v6 0/8] Add basic SoC support for mt6765
+Date:   Fri, 12 Jul 2019 17:43:36 +0800
+Message-ID: <1562924653-10056-1-git-send-email-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 999a3003-9693-44ed-ca70-08d706aa1611
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2019 09:19:47.8607
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yoshihiro.shimoda.uh@renesas.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2226
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 652D05AEE8BA6B315CF08EEE2E1D8453BBB4EB91AB589F2FB8116AA5BECD01822000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert-san,
+This patch adds basic SoC support for Mediatek's new 8-core SoC,
+MT6765, which is mainly for smartphone application.
 
-> From: Geert Uytterhoeven, Sent: Thursday, July 11, 2019 10:04 PM
->=20
-> The module reset code in the Renesas CPG/MSSR driver uses
-> read-modify-write (RMW) operations to write to a Software Reset Register
-> (SRCRn), and simple writes to write to a Software Reset Clearing
-> Register (SRSTCLRn), as was mandated by the R-Car Gen2 and Gen3 Hardware
-> User's Manuals.
->=20
-> However, this may cause a race condition when two devices are reset in
-> parallel: if the reset for device A completes in the middle of the RMW
-> operation for device B, device A may be reset again, causing subtle
-> failures (e.g. i2c timeouts):
->=20
-> 	thread A			thread B
-> 	--------			--------
->=20
-> 	val =3D SRCRn
-> 	val |=3D bit A
-> 	SRCRn =3D val
->=20
-> 	delay
->=20
-> 					val =3D SRCRn (bit A is set)
->=20
-> 	SRSTCLRn =3D bit A
-> 	(bit A in SRCRn is cleared)
->=20
-> 					val |=3D bit B
-> 					SRCRn =3D val (bit A and B are set)
->=20
-> This can be reproduced on e.g. Salvator-XS using:
->=20
->     $ while true; do i2cdump -f -y 4 0x6A b > /dev/null; done &
->     $ while true; do i2cdump -f -y 2 0x10 b > /dev/null; done &
->=20
->     i2c-rcar e6510000.i2c: error -110 : 40000002
->     i2c-rcar e66d8000.i2c: error -110 : 40000002
->=20
-> According to the R-Car Gen3 Hardware Manual Errata for Rev.
-> 0.80 of Feb 28, 2018, reflected in Rev. 1.00 of the R-Car Gen3 Hardware
-> User's Manual, writes to SRCRn do not require read-modify-write cycles.
->=20
-> Note that the R-Car Gen2 Hardware User's Manual has not been updated
-> yet, and still says a read-modify-write sequence is required.  According
-> to the hardware team, the reset hardware block is the same on both R-Car
-> Gen2 and Gen3, though.
->=20
-> Hence fix the issue by replacing the read-modify-write operations on
-> SRCRn by simple writes.
->=20
-> Reported-by: Yao Lihua <Lihua.Yao@desay-svautomotive.com>
-> Fixes: 6197aa65c4905532 ("clk: renesas: cpg-mssr: Add support for reset c=
-ontrol")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Changes in V6:
+1. Adapt V5's patchset to latest kernel tree.
+   Origin V5 patchset.
+   https://lore.kernel.org/patchwork/cover/963612/
+2. Due to clk's common code has been submit by other platform,
+   this patch set will have dependencies with the following patchsets
+   as the following orders.
+   2.a. [v8,00/21] MT8183 IOMMU SUPPORT
+        https://patchwork.kernel.org/cover/11023585/
+   2.b. [v11,0/6] Add basic node support for Mediatek MT8183 SoC
+        https://patchwork.kernel.org/cover/10962385/
+   2.c. [v6,00/14] Mediatek MT8183 scpsys support
+        https://patchwork.kernel.org/cover/11005751/
+3. Correct power related patches into dt-binding patches.
+4. Re-order V5's 4/11, 6/11, and 7/11 due clk common code change
+   and make dependencies in order.
+5. Update some commit message in clk related patches.
 
-Thank you for the patch! Our test team tested this patch, so
+Changes in V5:
+1. add clk support
 
-Tested-by: Linh Phung <linh.phung.jy@renesas.com>
+Changes in V4:
+1. add gic's settings in reg properties
+2. remove some patches about dt-bindings since GKH already took them
 
-> So far I haven't been able to reproduce the issue on R-Car Gen2 (after
-> forcing i2c reset on Gen2, too).  Perhaps my Koelsch doesn't have enough
-> CPU cores.  What about Lager?
+Changes in V3:
+1. split dt-binding document patchs
+2. fix mt6765.dtsi warnings with W=12
+3. remove uncessary PPI affinity for timer
+4. add gicc base for gic dt node
 
-According to the test team, Lager also could not reproduce this issue.
-Should we investigate it why?
+Changes in V2:
+1. fix clk properties in uart dts node
+2. fix typo in submit title
+3. add simple-bus in mt6765.dtsi
+4. use correct SPDX license format
 
-Best regards,
-Yoshihiro Shimoda
+Mars Cheng (6):
+  dt-bindings: clock: mediatek: document clk bindings for Mediatek
+    MT6765 SoC
+  dt-bindings: mediatek: Add smi dts binding for Mediatek MT6765 SoC
+  dt-bindings: mediatek: add MT6765 power dt-bindings
+  clk: mediatek: add mt6765 clock IDs
+  soc: mediatek: add MT6765 scpsys and subdomain support
+  arm64: dts: mediatek: add mt6765 support
 
-> Hi Mike, Stephen,
->=20
-> As this is a bugfix, can you please take this directly, if accepted?
->=20
-> Thanks!
-> ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas=
-/renesas-cpg-mssr.c
-> index 52bbb9ce3807db31..d4075b13067429cd 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -572,17 +572,11 @@ static int cpg_mssr_reset(struct reset_controller_d=
-ev *rcdev,
->  	unsigned int reg =3D id / 32;
->  	unsigned int bit =3D id % 32;
->  	u32 bitmask =3D BIT(bit);
-> -	unsigned long flags;
-> -	u32 value;
->=20
->  	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
->=20
->  	/* Reset module */
-> -	spin_lock_irqsave(&priv->rmw_lock, flags);
-> -	value =3D readl(priv->base + SRCR(reg));
-> -	value |=3D bitmask;
-> -	writel(value, priv->base + SRCR(reg));
-> -	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> +	writel(bitmask, priv->base + SRCR(reg));
->=20
->  	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
->  	udelay(35);
-> @@ -599,16 +593,10 @@ static int cpg_mssr_assert(struct reset_controller_=
-dev *rcdev, unsigned long id)
->  	unsigned int reg =3D id / 32;
->  	unsigned int bit =3D id % 32;
->  	u32 bitmask =3D BIT(bit);
-> -	unsigned long flags;
-> -	u32 value;
->=20
->  	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
->=20
-> -	spin_lock_irqsave(&priv->rmw_lock, flags);
-> -	value =3D readl(priv->base + SRCR(reg));
-> -	value |=3D bitmask;
-> -	writel(value, priv->base + SRCR(reg));
-> -	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> +	writel(bitmask, priv->base + SRCR(reg));
->  	return 0;
->  }
->=20
-> --
-> 2.17.1
+Owen Chen (2):
+  clk: mediatek: Add MT6765 clock support
+  arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
+
+ .../arm/mediatek/mediatek,apmixedsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt |   1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt |   1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt |   1 +
+ .../arm/mediatek/mediatek,infracfg.txt        |   1 +
+ .../bindings/arm/mediatek/mediatek,mipi0a.txt |  28 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  |   1 +
+ .../arm/mediatek/mediatek,pericfg.txt         |   1 +
+ .../arm/mediatek/mediatek,topckgen.txt        |   1 +
+ .../arm/mediatek/mediatek,vcodecsys.txt       |  27 +
+ .../mediatek,smi-common.txt                   |   1 +
+ .../bindings/soc/mediatek/scpsys.txt          |   6 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+ arch/arm64/boot/dts/mediatek/mt6765-evb.dts   |  33 +
+ arch/arm64/boot/dts/mediatek/mt6765.dtsi      | 253 +++++
+ arch/arm64/configs/defconfig                  |   6 +
+ drivers/clk/mediatek/Kconfig                  |  86 ++
+ drivers/clk/mediatek/Makefile                 |   7 +
+ drivers/clk/mediatek/clk-mt6765-audio.c       | 109 ++
+ drivers/clk/mediatek/clk-mt6765-cam.c         |  83 ++
+ drivers/clk/mediatek/clk-mt6765-img.c         |  79 ++
+ drivers/clk/mediatek/clk-mt6765-mipi0a.c      |  77 ++
+ drivers/clk/mediatek/clk-mt6765-mm.c          | 105 ++
+ drivers/clk/mediatek/clk-mt6765-vcodec.c      |  79 ++
+ drivers/clk/mediatek/clk-mt6765.c             | 961 ++++++++++++++++++
+ drivers/soc/mediatek/mtk-scpsys.c             | 130 +++
+ include/dt-bindings/clock/mt6765-clk.h        | 313 ++++++
+ include/dt-bindings/power/mt6765-power.h      |  14 +
+ 28 files changed, 2406 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-audio.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mipi0a.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-vcodec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765.c
+ create mode 100644 include/dt-bindings/clock/mt6765-clk.h
+ create mode 100644 include/dt-bindings/power/mt6765-power.h
+
+-- 
+2.18.0
 
