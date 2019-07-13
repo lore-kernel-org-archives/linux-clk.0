@@ -1,66 +1,91 @@
-Return-Path: <SRS0=M83Q=VJ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=wj/F=VK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC47C742D2
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 18:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1E2C742D7
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Jul 2019 03:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9068205ED
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Jul 2019 18:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562955209;
-	bh=vy70ZCADAa8XqPLpwqzkVYFPc3I5xkZ7yX6y1hoW1hA=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=AoFWRyYGaDtXX/Fv004AtHhWZjTsAzG0iQHiSb14yPpKnmNaWPcIgvXl8wcOJosDE
-	 PTLbbpFtNGr1OP/LD7qSqFWcgmbzTTu97GavZNShqBb6oBnTuBEBqs/W14kVcsROeG
-	 +q1P730P/ndt5s0qognQW02vyj4u8APQs+IXgOlQ=
+	by mail.kernel.org (Postfix) with ESMTP id BCBC420830
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Jul 2019 03:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfGLSN3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Jul 2019 14:13:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58752 "EHLO mail.kernel.org"
+        id S1727566AbfGMDrL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Jul 2019 23:47:11 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:42637 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727028AbfGLSN3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Jul 2019 14:13:29 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46C4B205C9;
-        Fri, 12 Jul 2019 18:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562955208;
-        bh=vy70ZCADAa8XqPLpwqzkVYFPc3I5xkZ7yX6y1hoW1hA=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=KSXgTFqlAJKChFysyzaafI5QOcT08gAcILu0tSKNujV+7YbVr3ODXyu+JA6GF8MsF
-         G7G+51uiIScsM6u42mHMjo5iap2eV0b0VeTy/bYcB3NR9Sf8KBmki2G6Gnmes8YkC5
-         9QK6YhVUR3CXeO9Wkvy8uzm1hJx3/xFKbuiphFIA=
-Content-Type: text/plain; charset="utf-8"
+        id S1727466AbfGMDrL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Jul 2019 23:47:11 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id E474F6EA60;
+        Sat, 13 Jul 2019 03:47:04 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 0/8] Support for Allwinner V3/S3L and Sochip S3
+Date:   Sat, 13 Jul 2019 11:46:26 +0800
+Message-Id: <20190713034634.44585-1-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3855405.N158XnxgeL@phil>
-References: <3855405.N158XnxgeL@phil>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] Rockchip clock updates for 5.3
-User-Agent: alot/0.8.1
-Date:   Fri, 12 Jul 2019 11:13:27 -0700
-Message-Id: <20190712181328.46C4B205C9@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko Stuebner (2019-07-01 02:36:17)
-> Hi Mike, Stephen,
->=20
-> please find below rockchip clock changes for 5.3
->=20
-> Please pull
->=20
-> Thanks
+This patchset tries to add support for Allwinner V3/S3L and Sochip S3.
 
-Ok. Pulled into clk-next for 5.3.
+Allwinner V3/V3s/S3L and Sochip S3 share the same die, but with
+different package. V3 is BGA w/o co-packaged DDR, V3s is QFP w/ DDR2,
+S3L is BGA w/ DDR2 and S3 is BGA w/ DDR3. (S3 and S3L is compatible
+for pinout, but because of different DDR, DDR voltage is different
+between the two variants). Because of the pin count of V3s is
+restricted due to the package, some pins are not bound on V3s, but
+they're bound on V3/S3/S3L.
+
+Currently the kernel is only prepared for the features available on V3s.
+This patchset adds the features missing on V3s for using them on
+V3/S3/S3L, and add bindings for V3/S3/S3L. It also adds a S3 SoM by
+Sipeed, called Lichee Zero Plus.
+
+Icenowy Zheng (8):
+  pinctrl: sunxi: v3s: introduce support for V3
+  clk: sunxi-ng: v3s: add the missing PLL_DDR1
+  dt-bindings: clk: sunxi-ccu: add compatible string for V3 CCU
+  clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
+  clk: sunxi-ng: v3s: add Allwinner V3 support
+  ARM: sunxi: dts: s3/s3l/v3: add DTSI files for S3/S3L/V3 SoCs
+  dt-bindings: arm: sunxi: add binding for Lichee Zero Plus core board
+  ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
+
+ .../devicetree/bindings/arm/sunxi.yaml        |   5 +
+ .../clock/allwinner,sun4i-a10-ccu.yaml        |   1 +
+ arch/arm/boot/dts/Makefile                    |   1 +
+ .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |   8 +
+ .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    |  46 +++
+ arch/arm/boot/dts/sun8i-s3.dtsi               |   6 +
+ arch/arm/boot/dts/sun8i-s3l.dtsi              |   6 +
+ arch/arm/boot/dts/sun8i-v3.dtsi               |  14 +
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c          | 250 ++++++++++++++++-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |   6 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c     | 265 +++++++++++++++++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h         |   2 +
+ include/dt-bindings/clock/sun8i-v3s-ccu.h     |   4 +
+ include/dt-bindings/reset/sun8i-v3s-ccu.h     |   3 +
+ 14 files changed, 604 insertions(+), 13 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-s3.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-s3l.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-v3.dtsi
+
+-- 
+2.21.0
+
