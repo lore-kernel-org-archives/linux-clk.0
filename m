@@ -8,61 +8,61 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 178A6C76191
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 20:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A350C7618F
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 20:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E10E921721
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 20:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1418C2173B
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 20:13:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rq4w0oXP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUUaPG5n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732345AbfGOUMx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jul 2019 16:12:53 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36381 "EHLO
+        id S1731368AbfGOUM7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jul 2019 16:12:59 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45009 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732287AbfGOUMu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jul 2019 16:12:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r7so7942640pfl.3;
-        Mon, 15 Jul 2019 13:12:49 -0700 (PDT)
+        with ESMTP id S1732359AbfGOUMy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jul 2019 16:12:54 -0400
+Received: by mail-pf1-f195.google.com with SMTP id t16so7923925pfe.11;
+        Mon, 15 Jul 2019 13:12:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0Ti3vKrPw6fMZdayISTTnJ8tLgl7jwdarVcpue/8npQ=;
-        b=rq4w0oXP0yilo69hxgkjEo84Ctc6II9yrsgPI6oFG8zrG0RyFQuADTqv/H1aREK5jX
-         ewXvO9Nz605E6mbqwD71eAawebV3RQ9brbNqGgmV5mEYAmJ/fEu37IAplbbtvQCxe/Tv
-         Hzw4DF4HLzlK+azqHA0ICpcGPk9gONGsagDRzJLlDeoO6zp8tIQZwdZBKO/zfxaHqBvH
-         /ce7tnN5Qu8YkbiMPQSZdZTjrkbrIxbGk6YqG5DjQB6+dC+bJysLYz665hHAy05ttYaR
-         VSYfazR2eDsw+u3y8+sPHPPlxdw+nORfUXZM5ZlaDU3nBpnMMg14+Rm+VoDEeQ3x4zSZ
-         /OcA==
+        bh=4AxHo20cpPm/W3wEm88+I5u1phSMUfiBcovFIe0miYs=;
+        b=XUUaPG5nxmt6MX9oO4OuNI7ZEmksD7SNdmudaVKnX9gtzsrAfvXOJ++XysB5veR5Z7
+         774wUO4X32g2WGY9TZbmLV2NU5qSuYbLZz2eEjZRNYFyZwdNx+Nicmu/KLEvRXa6NfjJ
+         UYsLordgh/KaPoxBAF4q745TnQukni134KSpZbYdp+rIvILlM6GP2pjBMEHl2JkAl/eN
+         6caSdHswVYlUcqstbM2CyySzgg6qNxAkBlu9hlU7lanUdh+7hCFhSQ887EWJfymxI9gV
+         wbKdzb10plrLqWYe4xYPUGipPPH/VNHYeo1AZI6R+MZaNG1/BHDnUU7nbhnO9Obc1fvp
+         TcAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0Ti3vKrPw6fMZdayISTTnJ8tLgl7jwdarVcpue/8npQ=;
-        b=Pvdu6Ptz8SqX24ZUVwGckK4IK/srZa6GxCygcpxeHnwr5Cj3h9zzdfw0FaCaRF1iH1
-         MG/aKN+pacT4tXIbitUurHH3B0JjOt/Z4mgHd5/H6kAkDI/RrolnGKzc+wp5Ub0F1mBw
-         AsrD0N/a7FSSBklWUAwRWns/5nz4L1Qy+BMPfCfPyUzKPEQus13WeZP4dHDKy9Ub+kye
-         U0ERGKhgj218GXXDiKPWnB6zewKytfn3vpS/UA8u7WwWKyMkczROseV+fcnkg1ER+rbU
-         Mca862VxYI0sYdMCOA7x+S1pEsZKmlc3LjVUZ369lxWHrqJ3zwkODbawnDcfYN0qFanJ
-         A0kA==
-X-Gm-Message-State: APjAAAVip75eMSIzHWYMzP/C/dvK3MBTAXxYEQzkm2BkJ0gSJoypjMWl
-        R1Pi2ppGgCTz0vKBU2Zn9MPn9a4o
-X-Google-Smtp-Source: APXvYqys2P9qBCvFBDT6gKiu05SBVldEmqbzM8SpppFTMP3Kp7DqVQP4w/V3EUWFGEp/pC7ikcuKoQ==
-X-Received: by 2002:a17:90a:b903:: with SMTP id p3mr30811850pjr.79.1563221569163;
-        Mon, 15 Jul 2019 13:12:49 -0700 (PDT)
+        bh=4AxHo20cpPm/W3wEm88+I5u1phSMUfiBcovFIe0miYs=;
+        b=rIc/YoglmjeCo9ID3p6/AjABuSMOJn4TlQvnc4mlqdgdqTdV/sYvWWVIGbENgd7qs9
+         baem9EXE9kLKztxInhvAvFT2+vQieJji8Dg6bCAoyKK7cKOTcObqB0Vid61zvm/uvxdY
+         TNrtSCAtLGX70w+SCRs1zdNDvqziO3ZL3JG+darrxJ92rhlQPjf8jh9MOzNXbEZGBj+k
+         mcFopoC8NT+utRpRH1NJ9bRLWdBZzteAaXpvTvmaaS86Q5Vl7aZmsHaF2LRsHd1XSz57
+         K4/Oz6xhCE4dWB7CRUnBKEWD8CB9hwo6dcTQsXYE/DwSw/qmgvcgUSSyY+wZ6iALxNIS
+         eijg==
+X-Gm-Message-State: APjAAAXwq8KMpOpqJVHJ5h/d+m5iF0dj5xNHVK7pg7Ml9MtC5VPVuV3A
+        1IQOpPCiUxDCOZvFC44xIq6MMObR
+X-Google-Smtp-Source: APXvYqwz7qi222kKr5U+GxET6ohcsuPcHHhRH2cnZi5gAEZU/EPVSTrv90JucGBWlPFi5pBHRep0wA==
+X-Received: by 2002:a63:dd4e:: with SMTP id g14mr18449598pgj.227.1563221573007;
+        Mon, 15 Jul 2019 13:12:53 -0700 (PDT)
 Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id d21sm7327783pgm.75.2019.07.15.13.12.47
+        by smtp.gmail.com with ESMTPSA id d21sm7327783pgm.75.2019.07.15.13.12.52
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 13:12:48 -0700 (PDT)
+        Mon, 15 Jul 2019 13:12:52 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] clk: Constify second argument of clk_bulk_prepare_enable()
-Date:   Mon, 15 Jul 2019 13:12:31 -0700
-Message-Id: <20190715201234.13556-3-andrew.smirnov@gmail.com>
+Subject: [PATCH 6/6] clk: Constify second argument of clk_bulk_disable_unprepare()
+Date:   Mon, 15 Jul 2019 13:12:34 -0700
+Message-Id: <20190715201234.13556-6-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190715201234.13556-1-andrew.smirnov@gmail.com>
 References: <20190715201234.13556-1-andrew.smirnov@gmail.com>
@@ -73,8 +73,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Both clk_bulk_prepare() and clk_bulk_enable() take const struct
-clk_bulk_data, so change clk_bulk_prepare_enable() to do so as
+Both clk_bulk_disable() and clk_bulk_unprepare() take const struct
+clk_bulk_data, so change clk_bulk_disable_unprepare() to do so as
 well. No functional change intended.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
@@ -83,24 +83,22 @@ Cc: Chris Healy <cphealy@gmail.com>
 Cc: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- include/linux/clk.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/clk.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 8af6b943bb9a..fafa63ea06b9 100644
+index 3956ae05b1cf..7a795fd6d141 100644
 --- a/include/linux/clk.h
 +++ b/include/linux/clk.h
-@@ -919,8 +919,8 @@ static inline void clk_disable_unprepare(struct clk *clk)
- 	clk_unprepare(clk);
+@@ -936,7 +936,7 @@ clk_bulk_prepare_enable(int num_clks, const struct clk_bulk_data *clks)
  }
  
--static inline int __must_check clk_bulk_prepare_enable(int num_clks,
--					struct clk_bulk_data *clks)
-+static inline int __must_check
-+clk_bulk_prepare_enable(int num_clks, const struct clk_bulk_data *clks)
+ static inline void clk_bulk_disable_unprepare(int num_clks,
+-					      struct clk_bulk_data *clks)
++					      const struct clk_bulk_data *clks)
  {
- 	int ret;
- 
+ 	clk_bulk_disable(num_clks, clks);
+ 	clk_bulk_unprepare(num_clks, clks);
 -- 
 2.21.0
 
