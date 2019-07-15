@@ -2,56 +2,57 @@ Return-Path: <SRS0=qVED=VM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C616C73C66
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 02:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E1FC7618E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 07:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D074520868
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 02:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEF67214DA
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 07:27:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DgR8Muus"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="o78l5pBP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfGOCzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Jul 2019 22:55:48 -0400
-Received: from mail-eopbgr50081.outbound.protection.outlook.com ([40.107.5.81]:15000
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S1726748AbfGOH1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jul 2019 03:27:53 -0400
+Received: from mail-eopbgr130071.outbound.protection.outlook.com ([40.107.13.71]:54366
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726025AbfGOCzs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 Jul 2019 22:55:48 -0400
+        id S1726170AbfGOH1x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Jul 2019 03:27:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NfSAbomGBhbPDUsGHK1oKeleeb0WsyVlThxvnjGtFt0az7yeXexqDEzdtfg7RImqGgFkdeX2XwOtP6szXZXk0cZxMRpLerGV6sfj5vjJQxGi3OgrqUuVe3vcddCCNRJVhYZ2kY7p5mGrBgW71hGsVglY9pM5BuOfVCF2j5TpAE38e+JMfJzWlgrCcgsyCxiRdcZAyZ4/uZmz90+FpXy+hUlorPIUbSsVl++bfmXV0PpNcXEovr7Uxczylqidbq31Doak+nCjfY9zZwVxFgzpImDir9yEa5R1X8vdpdGFtglmGp/ypvYhNrmY8wwU6KyjKfXdX4NXrd51j8rv+5ZChA==
+ b=a44a1+j7gjZETpmj5fXu98/O97TrrJ7MTpMidrQwjk+XfAzA0WVluof7pPM+TP8JaCQ2kZVEzX04niMH/llNKczaVtElHGKsIK3LV73BUenE7aW3JMf2wdnvHLkAmCZC0kQcB/IxyONyM82WQtt9lrG4a4d9Ls7e+WrRCWh5Il/WXvpTge0b04cLsZviIOfzG/FSUWGs5VmXTKheb8uLwmj7ZbNS1V01r3WzYZXNfmL7bOxglVIPpq0jubKdyqu02Qf+tXcayBgTJqWDX5A8UyHKze3gl/luSTlDkfz80vfjY+hnonqVmoypqMYLvGTJtx+ujqjgO+TLmD31fHieMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jQoQKyp9ZpO6n6q0pUNdmkgFUgmV18JgaRhoA7DI/B4=;
- b=nTv+ohY/DEUg8kRl39fWdoWhE1wpXUL8vtmNSOlHsMFB+TL0l/j2ZFhm1bD9yoFUu5r4vlNbNw1VIaCsadIg15CoFOa0YlISgdBpGh08LekUvHl26sTg/agmZg6cllji2E6tyImxlRq1LtX+7O9gBXTIWIFAAH1yC129+pOV7DQ0r24kAGl3nkxJFiJgiQviu6kXUW358zNz9JIUNc6pvDMZwljLihnDM5y7WSvCjYJbNvqKTwaVr8qP11OcPu/pHjDj2qt1RZcS/twxlMAr7zgb1PVcBHfEAHk6nbD62mLmDJFqJ28IlrMM+VOvQOG+VaZl9TsuArRCKcScDnXt0g==
+ bh=9wwGg6fZ7lyBlw1Tr3tETTaPUObcmmmYIE+KP3B1cgg=;
+ b=KTKAdq2r1xT64ujCagsyko/b/WNdkYV4i2OF7YuHBgfkS9EUvdYuO5/xVcqxmV5goyEUPexjmGMhdK9JHUYxcgHqAgWwJ+e6pdISpxZkEvr36ybfeBr1jf1n+lwDU+16KW63V6cRx7qMKMvBGpiONcEEH4zqu29AdAr1hBKDxzEH7mHdk1fqWF++X2lVllSE2xg2iTPVGBUKHNWSNtiLmcYkrtnFrQXKXkJiVxcacjRMbeFYGGLPdHV8evIytBO/a9L1KGblmqBQX8WbnmJOZZj+u0xYSQhOnAXFZG6m6yt3conB4itDycyPxFVsMGV2ibaFYboFrNxPLdDlW1aIfA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
  header.d=nxp.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jQoQKyp9ZpO6n6q0pUNdmkgFUgmV18JgaRhoA7DI/B4=;
- b=DgR8Muusg64+okD7qMR0FhWOJPiV1rl7+MCclTjEz4HKur3GLJlpC8P6c/eXY0OEZgu3GpK+Jk8c5iasgbRuU76hkkmVosh05wDavXzuyE4Jif52VqOMfBzI+YEgOyZnbXBBMRhba1AbnAqk1RUxgtB+YM95J11rHRze83byMIg=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4564.eurprd04.prod.outlook.com (52.135.149.14) with Microsoft SMTP
+ bh=9wwGg6fZ7lyBlw1Tr3tETTaPUObcmmmYIE+KP3B1cgg=;
+ b=o78l5pBPKm86fVrKkUCbbAjYYHcgHT3nec1cYIHAyHJ2sqWlHCfb7howkFho7F05BeGaDDx1sHCKW2I8iU1rRxH0t7IxPe8edQQwEH3Io0ByobbgRzRTHZBJyJJJeHl15/gXlukhpT07WUOKTYSC1fZPvdrez70HPmOp32yALbA=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB4065.eurprd04.prod.outlook.com (52.134.90.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Mon, 15 Jul 2019 02:55:43 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::2023:c0e5:8a63:2e47]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::2023:c0e5:8a63:2e47%5]) with mapi id 15.20.2052.020; Mon, 15 Jul 2019
- 02:55:43 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ 15.20.2073.10; Mon, 15 Jul 2019 07:27:48 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::a126:d121:200:367]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::a126:d121:200:367%7]) with mapi id 15.20.2073.012; Mon, 15 Jul 2019
+ 07:27:48 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>
+CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
         "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
         Leonard Crestez <leonard.crestez@nxp.com>,
         Anson Huang <anson.huang@nxp.com>,
         Jacky Bai <ping.bai@nxp.com>,
@@ -60,85 +61,86 @@ CC:     dl-linux-imx <linux-imx@nxp.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "van.freenix@gmail.com" <van.freenix@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: [PATCH] clk: imx: imx8mm: fix audio pll setting
+Subject: Re: [PATCH] clk: imx: imx8mm: fix audio pll setting
 Thread-Topic: [PATCH] clk: imx: imx8mm: fix audio pll setting
-Thread-Index: AQHVOrjKqRILo4kj1ESmmUTSG4SPJQ==
-Date:   Mon, 15 Jul 2019 02:55:43 +0000
-Message-ID: <1563157783-31846-1-git-send-email-peng.fan@nxp.com>
+Thread-Index: AQHVOrjKqRILo4kj1ESmmUTSG4SPJabLSCeA
+Date:   Mon, 15 Jul 2019 07:27:48 +0000
+Message-ID: <20190715072747.2743qdbk2umcpzgq@fsr-ub1664-175>
+References: <1563157783-31846-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1563157783-31846-1-git-send-email-peng.fan@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0P153CA0011.APCP153.PROD.OUTLOOK.COM
- (2603:1096:203:18::23) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-originating-ip: [89.37.124.34]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 90be77a5-80e8-46e5-3808-08d708cfed30
+x-ms-office365-filtering-correlation-id: e7ccfe50-32ca-4386-67e0-08d708f5f02e
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4564;
-x-ms-traffictypediagnostic: AM0PR04MB4564:
-x-microsoft-antispam-prvs: <AM0PR04MB4564B49C82BE0F3BEDD7621388CF0@AM0PR04MB4564.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4065;
+x-ms-traffictypediagnostic: AM0PR04MB4065:
+x-microsoft-antispam-prvs: <AM0PR04MB4065237A99D46EFD01EDD8C7F6CF0@AM0PR04MB4065.eurprd04.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:5797;
 x-forefront-prvs: 00997889E7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(2201001)(2501003)(68736007)(6506007)(26005)(386003)(6486002)(36756003)(86362001)(52116002)(316002)(54906003)(110136005)(6436002)(102836004)(7736002)(305945005)(14454004)(7416002)(64756008)(66476007)(71200400001)(71190400001)(66556008)(66446008)(50226002)(2906002)(25786009)(3846002)(66066001)(476003)(81166006)(99286004)(486006)(81156014)(8936002)(66946007)(2616005)(6116002)(8676002)(53936002)(256004)(5660300002)(478600001)(14444005)(186003)(4326008)(44832011)(6512007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4564;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(376002)(39860400002)(136003)(396003)(366004)(346002)(199004)(189003)(7736002)(5660300002)(229853002)(68736007)(4326008)(99286004)(66446008)(6636002)(64756008)(305945005)(66556008)(2906002)(316002)(86362001)(53936002)(53546011)(6246003)(6506007)(6862004)(76176011)(6116002)(1076003)(8936002)(8676002)(71190400001)(71200400001)(3846002)(478600001)(25786009)(66946007)(66476007)(76116006)(91956017)(14454004)(81156014)(81166006)(11346002)(446003)(186003)(7416002)(6486002)(26005)(54906003)(6436002)(33716001)(256004)(476003)(14444005)(102836004)(44832011)(66066001)(486006)(6512007)(9686003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4065;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: iGmtbuVmqbZwSo+3xdRAWGERNJlEMF4DsReAv1XgDb7R7PW+w64qLwOfNLc4EmFcR/+8kNViCp/U573YStXKw3yHvC6nfSHwliIuowWWCKi0Yvg5rfJCx2AgJ7CjPyn/JCSmFmXbLBFdeoF6Bghu5Ib3GLjylKLB+gDUOvHlyN3hg8Q+OP0dJi96ccT5Pmw6iU/M28h8epNsIM9SxxeVohxFl15QjXzIFGMdw+l4Pqi4OSTrlye3X+b0UDMZRjA+vRoQFuBMyIyF7XydlUFnWq3IUfztnj0SxVyDcgOqvo3fdPQy8M8y+G+7X8fvUaK/IpdN8aq0in5uqg79o0qLWomwGb0Nko5Uatm4LTrw+lFUTAqbDM5rUmQ90CeD9lCE1s6flTswwjA6wiON+/h97cXQ7EbV4JkTdGxsdPOeCJs=
-Content-Type: text/plain; charset="iso-8859-1"
+x-microsoft-antispam-message-info: /BMCIRXGqa5wWmHO37ODdRVw3aiyKQS/gtAPsegfKA5wR4ti/rhghQegLj0b+C9P7gbvCTVEYdNWdCTQ4dhJEmpENqypKYGxB1vOLXEfpMZc9mh9epNFi9AxcuCXESmMAqFbO0iKsKovvrtzBxAumgYJ0S4DAyA5Bpu2QiUZoZbGIrsXaBpnvtC3EAT+6UwRljbhDZMzn5YR77nLm3OA3GFKZvWmCJ4B3fDU3YZYj//vXx9CoiXNtwnFHpAcVz3lhHhrSFHOTNqN8+nfYv5H83texr4EQZceMlVrYRXe2bfsKiV/3ddrAVWBjBvAg7xNNawECaLgMX2JwJf3Kf4RKbD3n427GhUgTn2G0ikQ/yDmJhe+vmwaALqcmmUawDd9z2SYJvfhlL0EQH2ejYIllBvFUc5k7z9tQBXum0p4jJE=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F92EE601217D114A8D8E61B8B9DBA641@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90be77a5-80e8-46e5-3808-08d708cfed30
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2019 02:55:43.0365
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7ccfe50-32ca-4386-67e0-08d708f5f02e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2019 07:27:48.2978
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: peng.fan@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4564
+X-MS-Exchange-CrossTenant-userprincipalname: abel.vesa@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4065
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On 19-07-15 02:55:43, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> The AUDIO PLL max support 650M, so the original clk settings violate
+> spec. This patch makes the output 786432000 -> 393216000,
+> and 722534400 -> 361267200 to aligned with NXP vendor kernel without any
+> impact on audio functionality and go within 650MHz PLL limit.
+>=20
+> Cc: <stable@vger.kernel.org>
+> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-The AUDIO PLL max support 650M, so the original clk settings violate
-spec. This patch makes the output 786432000 -> 393216000,
-and 722534400 -> 361267200 to aligned with NXP vendor kernel without any
-impact on audio functionality and go within 650MHz PLL limit.
+Acked-by: Abel Vesa <abel.vesa@nxp.com>
 
-Cc: <stable@vger.kernel.org>
-Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx8mm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 3a873e0e278f..b72bad064d8d 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -55,8 +55,8 @@ static const struct imx_pll14xx_rate_table imx8mm_pll1416=
-x_tbl[] =3D {
- };
-=20
- static const struct imx_pll14xx_rate_table imx8mm_audiopll_tbl[] =3D {
--	PLL_1443X_RATE(786432000U, 655, 5, 2, 23593),
--	PLL_1443X_RATE(722534400U, 301, 5, 1, 3670),
-+	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
-+	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
- };
-=20
- static const struct imx_pll14xx_rate_table imx8mm_videopll_tbl[] =3D {
---=20
-2.16.4
-
+> ---
+>  drivers/clk/imx/clk-imx8mm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+> index 3a873e0e278f..b72bad064d8d 100644
+> --- a/drivers/clk/imx/clk-imx8mm.c
+> +++ b/drivers/clk/imx/clk-imx8mm.c
+> @@ -55,8 +55,8 @@ static const struct imx_pll14xx_rate_table imx8mm_pll14=
+16x_tbl[] =3D {
+>  };
+> =20
+>  static const struct imx_pll14xx_rate_table imx8mm_audiopll_tbl[] =3D {
+> -	PLL_1443X_RATE(786432000U, 655, 5, 2, 23593),
+> -	PLL_1443X_RATE(722534400U, 301, 5, 1, 3670),
+> +	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
+> +	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
+>  };
+> =20
+>  static const struct imx_pll14xx_rate_table imx8mm_videopll_tbl[] =3D {
+> --=20
+> 2.16.4
+> =
