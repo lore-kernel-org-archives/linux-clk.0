@@ -2,136 +2,95 @@ Return-Path: <SRS0=qVED=VM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E443C7618F
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 15:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C960C7618F
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 17:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E682080A
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 15:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E630D2080A
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 17:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563210226;
+	bh=rjrlrnQPDBPyEI2VvOI7m0hccqKp54THKXzQCNuj7e8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=AZTNZd1hngaumTI4CLSBtPSOQyBLPSU/Gh5t9vvHp/7bI+g54C/x5TsnZrp47mgmw
+	 9pBYjn0OsIRSFvGsnuk6JZx/V23nAK35oKUGm6+s5w5fSq/dmT5xZ8/Xg8VDzQ3bRm
+	 8/KXLOhZy6hgrRKyekFymalYzQOxNRvjnOj6S3iw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730305AbfGOPef (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jul 2019 11:34:35 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:57348 "EHLO ns.iliad.fr"
+        id S1731611AbfGORDp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jul 2019 13:03:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730296AbfGOPee (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 15 Jul 2019 11:34:34 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 5E0A5202B3;
-        Mon, 15 Jul 2019 17:34:32 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 441271FF44;
-        Mon, 15 Jul 2019 17:34:32 +0200 (CEST)
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v1] clk: Add devm_clk_{prepare,enable,prepare_enable}
-Message-ID: <1d7a1b3b-e9bf-1d80-609d-a9c0c932b15a@free.fr>
-Date:   Mon, 15 Jul 2019 17:34:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1730782AbfGORDp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Jul 2019 13:03:45 -0400
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 454392080A;
+        Mon, 15 Jul 2019 17:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563210224;
+        bh=rjrlrnQPDBPyEI2VvOI7m0hccqKp54THKXzQCNuj7e8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rD0dF+yCPBgLJ83N++laHPgUXgCYGAMz72tCRtdR8UGZKaN70hvg/XOtOAQglbDmg
+         G89e88qOwY2fe8WqBu5ApgXpAqOOVcczcWs2prqWcWewX7h8rF6gJN105q/T1aiRvU
+         USG4hd3jDr+PTIiK0elLNX7e1NozVpX8HYEvRdtA=
+Received: by mail-qt1-f181.google.com with SMTP id w17so16369330qto.10;
+        Mon, 15 Jul 2019 10:03:44 -0700 (PDT)
+X-Gm-Message-State: APjAAAX64xkwZdlrM4yLU4NvYSbGWek+DmWwPIoiRU2QI344R+MHMJ8w
+        Ibzodl8cqPpnLXXTnse2h/eJHJ+Sni+uGwKpJQ==
+X-Google-Smtp-Source: APXvYqwJvWYWvEZ7jhvuIO0kny3nJ2FG1ki4BA/d03vXMpzs2ob165VOtQejHnSTXliJm/t+yYCx8Ni0kj3f+zn0LUM=
+X-Received: by 2002:ac8:368a:: with SMTP id a10mr19043100qtc.143.1563210223567;
+ Mon, 15 Jul 2019 10:03:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Jul 15 17:34:32 2019 +0200 (CEST)
+References: <20190713034634.44585-1-icenowy@aosc.io> <20190713034634.44585-8-icenowy@aosc.io>
+In-Reply-To: <20190713034634.44585-8-icenowy@aosc.io>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 15 Jul 2019 11:03:32 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLk0EkF5YK6AvK0JFMH7JbdFvYK2XKh37rJv651DZ_M2g@mail.gmail.com>
+Message-ID: <CAL_JsqLk0EkF5YK6AvK0JFMH7JbdFvYK2XKh37rJv651DZ_M2g@mail.gmail.com>
+Subject: Re: [PATCH v4 7/8] dt-bindings: arm: sunxi: add binding for Lichee
+ Zero Plus core board
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Provide devm variants for automatic resource release on device removal.
-probe() error-handling is simpler, and remove is no longer required.
+On Fri, Jul 12, 2019 at 9:49 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+> The Lichee Zero Plus is a core board made by Sipeed, with a microUSB
+> connector on it, TF slot or WSON8 SD chip, optional eMMC or SPI Flash.
+> It has a gold finger connector for expansion, and UART is available from
+> reserved pins w/ 2.54mm pitch. The board can use either SoChip S3 or
+> Allwinner V3L SoCs.
+>
+> Add the device tree binding of the basic version of the core board --
+> w/o eMMC or SPI Flash, w/ TF slot or WSON8 SD, and use S3 SoC.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> No changes since v3.
+>
+> Patch introduced in v2.
+>
+>  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
- Documentation/driver-model/devres.rst |  3 +++
- drivers/clk/clk.c                     | 24 ++++++++++++++++++++++++
- include/linux/clk.h                   |  8 ++++++++
- 3 files changed, 35 insertions(+)
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/Documentation/driver-model/devres.rst b/Documentation/driver-model/devres.rst
-index 1b6ced8e4294..9357260576ef 100644
---- a/Documentation/driver-model/devres.rst
-+++ b/Documentation/driver-model/devres.rst
-@@ -253,6 +253,9 @@ CLOCK
-   devm_clk_hw_register()
-   devm_of_clk_add_hw_provider()
-   devm_clk_hw_register_clkdev()
-+  devm_clk_prepare()
-+  devm_clk_enable()
-+  devm_clk_prepare_enable()
- 
- DMA
-   dmaenginem_async_device_register()
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..5e85548357c0 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -914,6 +914,18 @@ int clk_prepare(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(clk_prepare);
- 
-+static void unprepare(void *clk)
-+{
-+	clk_unprepare(clk);
-+}
-+
-+int devm_clk_prepare(struct device *dev, struct clk *clk)
-+{
-+	int rc = clk_prepare(clk);
-+	return rc ? : devm_add_action_or_reset(dev, unprepare, clk);
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_prepare);
-+
- static void clk_core_disable(struct clk_core *core)
- {
- 	lockdep_assert_held(&enable_lock);
-@@ -1136,6 +1148,18 @@ int clk_enable(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(clk_enable);
- 
-+static void disable(void *clk)
-+{
-+	clk_disable(clk);
-+}
-+
-+int devm_clk_enable(struct device *dev, struct clk *clk)
-+{
-+	int rc = clk_enable(clk);
-+	return rc ? : devm_add_action_or_reset(dev, disable, clk);
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_enable);
-+
- static int clk_core_prepare_enable(struct clk_core *core)
- {
- 	int ret;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 3c096c7a51dc..d09b5207e3f1 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -895,6 +895,14 @@ static inline void clk_restore_context(void) {}
- 
- #endif
- 
-+int devm_clk_prepare(struct device *dev, struct clk *clk);
-+int devm_clk_enable(struct device *dev, struct clk *clk);
-+static inline int devm_clk_prepare_enable(struct device *dev, struct clk *clk)
-+{
-+	int rc = devm_clk_prepare(dev, clk);
-+	return rc ? : devm_clk_enable(dev, clk);
-+}
-+
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
- static inline int clk_prepare_enable(struct clk *clk)
- {
--- 
-2.17.1
+
+Rob
