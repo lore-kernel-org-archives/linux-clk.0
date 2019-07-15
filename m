@@ -2,67 +2,67 @@ Return-Path: <SRS0=qVED=VM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63830C76191
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD30C76195
 	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 20:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7342173B
+	by mail.kernel.org (Postfix) with ESMTP id 68EBD2171F
 	for <linux-clk@archiver.kernel.org>; Mon, 15 Jul 2019 20:13:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+N+PDtM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwr/TN3g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732359AbfGOUNF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jul 2019 16:13:05 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37638 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732344AbfGOUMx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jul 2019 16:12:53 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b3so8860374plr.4;
-        Mon, 15 Jul 2019 13:12:52 -0700 (PDT)
+        id S1732341AbfGOUMw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jul 2019 16:12:52 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39845 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732101AbfGOUMv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jul 2019 16:12:51 -0400
+Received: by mail-pg1-f196.google.com with SMTP id u17so8242360pgi.6;
+        Mon, 15 Jul 2019 13:12:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rliH8Z9/AMGeY4YMz60xVhAI42Yyu7aejFX+MviXFi8=;
-        b=e+N+PDtM5s802dekMVKshzBTu7UFxDCa82kuwmHHsWf/u1Fl+HHN1qJhJuuJWjNB98
-         dszTDxLAm8YyXwBg8oY3ocSC/eToE/O2TbY1vG9pJKWMdBzo550l/9DW1ZHOkesluyyz
-         EAFa6sS0OR7d4PBAQeQ/xgJdG+rAsGkSvN6e2QSYREeoG7NX7CHwyEsG2PKfEIrYpC2v
-         DxX2A/tRcF78VmqlB9y5mtBK7qs5tArHnFd76zqG4ekhsxh1IF9hiA4Inkfk2NczVPzW
-         3Wgc1Jotr9N3We4VY+s5J7TtV/YE0u23uoPcKZaEsS5ZQ7I6cqknT/Ss0yxh8VBtUlj1
-         UlNw==
+        bh=gD+CSHmbXTuo7zYwij9NuKnefs9nMb0BCJwuTq+GjOE=;
+        b=lwr/TN3g0mpILHpAXP2GhKXEBlNGyVTGRl0qbyiAtw+phokxusOHpSrZHt1ekrWxDw
+         BwIu6fqQMuufIPA+Plq9F8X65ZQq/wsdLZxgZ89PHK4xFiTJrJV60jT7ckWMsb6xFmHH
+         dK/OgTlWCT87D1BN7rPDjAx007MJ2ybgrLOQJCpU2SpCDemEBlO1Mh+n5LUndrjBuuJp
+         Opvk1klUdyYM0bCZ+1Wo+QU8WBgcedKwa3P2UHf00Ryy32h5unoVISU83ihBOvH7gyok
+         NSkxG437NZNPljX3h9M4Fdo8kknXqF3QlVayT6FSw2Tjz3WJjw8OZGe3PEYwnAoKyGip
+         2OXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rliH8Z9/AMGeY4YMz60xVhAI42Yyu7aejFX+MviXFi8=;
-        b=m3hg5G8PCJQAHGaphcknDraTizanj/CIxvP8r2jqcY4lSgGIdb/60LVikmAS+XylVy
-         RBYpnK8YrijgF7yH0yxQgE7kXcmeej0/SLavs64vgdGJB80IMBgWir+cnJi38Q1d55PX
-         4XARaIYloek7S3lr5azLqTQcTRzmpb3A3V0b0YnzXTyMUaWhtuuTmVD0KtSdFGAO/FVW
-         +w2ZALdKvcI5+47AlyZ57ew7Ihflm5rpt2zSFugKPu2cA5w1ObSRy0GQCtDria3PauzT
-         pL0J4RKoxrPhrw2lrQU3Ty6W3nuZWzwaBbIyYveETiTb5TdevYQc60vdSq0yROakhty5
-         AWbQ==
-X-Gm-Message-State: APjAAAV8puPOrrytdzLpJPTlwMYPy9RSO0A/V610j+89MWXPK3GMJOzu
-        TIsuW5lIUGQLJdwZQB+8ky6/qnua
-X-Google-Smtp-Source: APXvYqy8DRjK41Iu4VuR/EY0KSKX5Ch868kLyJrTD9sgAiG2KP6R4bqXde/c2NKif5JiNwcbPJlPqg==
-X-Received: by 2002:a17:902:6b07:: with SMTP id o7mr29667313plk.180.1563221572139;
-        Mon, 15 Jul 2019 13:12:52 -0700 (PDT)
+        bh=gD+CSHmbXTuo7zYwij9NuKnefs9nMb0BCJwuTq+GjOE=;
+        b=Qv7rPQk+HKuoCLwM2AYMqM9pnuoELDI5yVJlktc+wgqd5Wh87bQivMzKB80GeBO39p
+         sIzkK/Y2LvAjTyfNDJuVQ2mK+PlvL04tuUCmXnXzThOc1yYQ8K3ePk0ekrNYUA3s3BLC
+         XsqLKBv23p9SdpckJLFKRS/DgAB6ak9QIubjXd4LZySlisjllozWLvLWYYjc3iXnJMuC
+         mBdeRjYbv0aaJqUMeBXEgOJWec+W6Su1o991XWVruHGh4GYgVR81HKt7uZHIpDcRX1dM
+         uEod6iAaTMwW7z62avYqYAS3ha52MqipI32e+KTDfWvj9xrEHkmysOuBkrW+I1UIerrt
+         bWow==
+X-Gm-Message-State: APjAAAWrIWQ6E5MgE6WgCcarr2kZS2O15SwbU/tIK8zD7Lf3uZuSco6x
+        EIZuHfuREBbPFxhKCbXBZm225pqT
+X-Google-Smtp-Source: APXvYqyqsEXhuac6p4IjlkMf7qEFu3xC574kbkutAh6Kf1U57ZeBwPilQN2eikLmgfB5XgTfNwX3vg==
+X-Received: by 2002:a63:231c:: with SMTP id j28mr2119083pgj.430.1563221570614;
+        Mon, 15 Jul 2019 13:12:50 -0700 (PDT)
 Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id d21sm7327783pgm.75.2019.07.15.13.12.50
+        by smtp.gmail.com with ESMTPSA id d21sm7327783pgm.75.2019.07.15.13.12.49
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 13:12:51 -0700 (PDT)
+        Mon, 15 Jul 2019 13:12:49 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] clk: Sync prototypes for clk_bulk_unprepare()
-Date:   Mon, 15 Jul 2019 13:12:33 -0700
-Message-Id: <20190715201234.13556-5-andrew.smirnov@gmail.com>
+Subject: [PATCH 4/6] clk: Sync prototypes for clk_bulk_disable()
+Date:   Mon, 15 Jul 2019 13:12:32 -0700
+Message-Id: <20190715201234.13556-4-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190715201234.13556-1-andrew.smirnov@gmail.com>
 References: <20190715201234.13556-1-andrew.smirnov@gmail.com>
@@ -73,7 +73,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-No-op version of clk_bulk_unprepare() should have the same protoype as
+No-op version of clk_bulk_disable() should have the same protoype as
 the real implementation, so constify the last argument to make it so.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
@@ -82,23 +82,22 @@ Cc: Chris Healy <cphealy@gmail.com>
 Cc: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- include/linux/clk.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/clk.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 2d3f2a55795a..3956ae05b1cf 100644
+index fafa63ea06b9..2d3f2a55795a 100644
 --- a/include/linux/clk.h
 +++ b/include/linux/clk.h
-@@ -264,7 +264,8 @@ static inline void clk_unprepare(struct clk *clk)
+@@ -830,7 +830,7 @@ static inline void clk_disable(struct clk *clk) {}
+ 
+ 
+ static inline void clk_bulk_disable(int num_clks,
+-				    struct clk_bulk_data *clks) {}
++				    const struct clk_bulk_data *clks) {}
+ 
+ static inline unsigned long clk_get_rate(struct clk *clk)
  {
- 	might_sleep();
- }
--static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
-+static inline void clk_bulk_unprepare(int num_clks,
-+				      const struct clk_bulk_data *clks)
- {
- 	might_sleep();
- }
 -- 
 2.21.0
 
