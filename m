@@ -2,105 +2,70 @@ Return-Path: <SRS0=Gp7K=VN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18528C76192
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 17:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11C4C7618F
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 17:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E111420659
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 17:08:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="UWTC4U1V"
+	by mail.kernel.org (Postfix) with ESMTP id 8E49B20880
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 17:13:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563297238;
+	bh=OMDVh4bAc08rVB18Se9IY+Dgw/527+md7p/KtELkBvw=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=rMGH14QoMDzKqXqQ/FQtqqngIn76ReFZUI7arBV04vUrhd5yCqnOeo0cZSlAhzIH9
+	 ByuEg4LSZ+Rt/YyE4cpLuFLko5+yZ3dVluzKSOulR4tFfGMR3XX+oIqd/VvhQAAYA6
+	 itnAf1nz+TrYjbHBGZeELSO/obN4b6dDBj+1vsxw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfGPRIN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Jul 2019 13:08:13 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:42408 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbfGPRIN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jul 2019 13:08:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1563296891; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:references; bh=Au5wD0iSXHqvvfoteUAXzESR9OKNxOhCxGZ4sRNOnkY=;
-        b=UWTC4U1VfEsF9GJwvrnGMlLYM0sJaluIWWrpGtuS5pAl/9S1xFlFBPfh0yjoJpj5CF8O3D
-        wDG62y6HTr7Yr3P1gG2ob3zjyTX+kd2OWXMcyB/JcFU2M7wEeLCVPzKaj80+buwVCmsF7W
-        rs8GlqvGEsTmLslondiX+0Fe/gwih/g=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH] clk: ingenic: Use CLK_OF_DECLARE_DRIVER macro
-Date:   Tue, 16 Jul 2019 13:08:00 -0400
-Message-Id: <20190716170800.23668-1-paul@crapouillou.net>
+        id S1728573AbfGPRN6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Jul 2019 13:13:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728124AbfGPRN6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Jul 2019 13:13:58 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48DDB206C2;
+        Tue, 16 Jul 2019 17:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563297237;
+        bh=OMDVh4bAc08rVB18Se9IY+Dgw/527+md7p/KtELkBvw=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=xNnc4wQgQDZfQ+oxnkr6wJPXn1JgvSlYtW73olG09ASJEwRJEMNbufaEZIDbDWw21
+         vGqjr1LzxS9bVwRfcbxjohKBIY895PlLv7xtgOvBDmlQIdzrpYZ1aXOMPxgeNTI6Rw
+         uw3WOrWLLkL/Z8BcYEfHNvkd34PpQolp+FL0V1Hk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <VI1PR04MB5055F2D2C814BA8C83ACF273EECE0@VI1PR04MB5055.eurprd04.prod.outlook.com>
+References: <VI1PR04MB5055F2D2C814BA8C83ACF273EECE0@VI1PR04MB5055.eurprd04.prod.outlook.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/2] clk: Add clk_min/max_rate entries in debugfs
+User-Agent: alot/0.8.1
+Date:   Tue, 16 Jul 2019 10:13:56 -0700
+Message-Id: <20190716171357.48DDB206C2@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By using CLK_OF_DECLARE_DRIVER instead of the CLK_OF_DECLARE macro, we
-allow the driver to probe also as a platform driver.
+Quoting Leonard Crestez (2019-07-16 03:32:44)
+> Gentle ping.
+>=20
+> This patch shows up on patchwork but not in my inbox so maybe it was=20
+> lost in spam filters somehow?
+>=20
+> Geert offered a reviewed-by in v2 but I forgot to add it.
+>=20
 
-While this driver does not have code to probe as a platform driver, this
-is still useful for probing children devices in the case where the
-device node is compatible with "simple-mfd".
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/clk/ingenic/jz4725b-cgu.c | 2 +-
- drivers/clk/ingenic/jz4740-cgu.c  | 2 +-
- drivers/clk/ingenic/jz4770-cgu.c  | 2 +-
- drivers/clk/ingenic/jz4780-cgu.c  | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
-index 47287956824b..5fd2e4e6da2d 100644
---- a/drivers/clk/ingenic/jz4725b-cgu.c
-+++ b/drivers/clk/ingenic/jz4725b-cgu.c
-@@ -254,4 +254,4 @@ static void __init jz4725b_cgu_init(struct device_node *np)
- 	if (retval)
- 		pr_err("%s: failed to register CGU Clocks\n", __func__);
- }
--CLK_OF_DECLARE(jz4725b_cgu, "ingenic,jz4725b-cgu", jz4725b_cgu_init);
-+CLK_OF_DECLARE_DRIVER(jz4725b_cgu, "ingenic,jz4725b-cgu", jz4725b_cgu_init);
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 0957ba4a40a5..a002a2d8db6f 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -246,7 +246,7 @@ static void __init jz4740_cgu_init(struct device_node *np)
- 	if (retval)
- 		pr_err("%s: failed to register CGU Clocks\n", __func__);
- }
--CLK_OF_DECLARE(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
-+CLK_OF_DECLARE_DRIVER(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
- 
- void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
- {
-diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
-index 2a29da442a8e..e00d22b175ec 100644
---- a/drivers/clk/ingenic/jz4770-cgu.c
-+++ b/drivers/clk/ingenic/jz4770-cgu.c
-@@ -472,4 +472,4 @@ static void __init jz4770_cgu_init(struct device_node *np)
- }
- 
- /* We only probe via devicetree, no need for a platform driver */
--CLK_OF_DECLARE(jz4770_cgu, "ingenic,jz4770-cgu", jz4770_cgu_init);
-+CLK_OF_DECLARE_DRIVER(jz4770_cgu, "ingenic,jz4770-cgu", jz4770_cgu_init);
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index 2464fc4032af..f964c4aa6cac 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -722,4 +722,4 @@ static void __init jz4780_cgu_init(struct device_node *np)
- 		return;
- 	}
- }
--CLK_OF_DECLARE(jz4780_cgu, "ingenic,jz4780-cgu", jz4780_cgu_init);
-+CLK_OF_DECLARE_DRIVER(jz4780_cgu, "ingenic,jz4780-cgu", jz4780_cgu_init);
--- 
-2.21.0.593.g511ec345e18
+I see v3 on the list and in my inbox.
 
