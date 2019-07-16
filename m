@@ -5,61 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84120C76188
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 09:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4B1C76188
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 09:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50220217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 09:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11D9820665
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 09:46:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lD9Ldx/Y"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sln+luGg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbfGPJ2D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Jul 2019 05:28:03 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:57118 "EHLO
+        id S1732300AbfGPJqv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Jul 2019 05:46:51 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:10329 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728015AbfGPJ2D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jul 2019 05:28:03 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190716092801epoutp016a90c9968c316a3c85e4c42cbf854bcc~x2SDmvb1_3274432744epoutp011
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2019 09:28:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190716092801epoutp016a90c9968c316a3c85e4c42cbf854bcc~x2SDmvb1_3274432744epoutp011
+        with ESMTP id S1728004AbfGPJqv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jul 2019 05:46:51 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190716094648epoutp01cf46b22fc79f00c6a290779d063b442d~x2idsIXw21681316813epoutp01g
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2019 09:46:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190716094648epoutp01cf46b22fc79f00c6a290779d063b442d~x2idsIXw21681316813epoutp01g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563269281;
-        bh=Q5UakLD205wShaSTG+f5fz7cKkprRmkmPhAwjsEjUTQ=;
+        s=mail20170921; t=1563270408;
+        bh=4bfSgfYoCpxhiF8FXK5rSogZNO+K2iF9TeI2hAAgd80=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=lD9Ldx/Y/mMBR6ZW5ZHRuPU029wHqBo5B/Gl632i5MyX61PfexMubcmbwALkSoSXF
-         bMUaWrk6L5MI7X4zizajHkZaqJuc/lwWvz5AaitelfHSGjh3q9G18uBMSIboLgv8ri
-         AjvWAfk5SYzD9z6Ei09a+KshrpFR+GFr6o89xhPA=
-Received: from epsnrtp6.localdomain (unknown [182.195.42.167]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190716092800epcas1p10e3eab11167bd1f10ed9e92473413872~x2SDGgeD02702727027epcas1p1Q;
-        Tue, 16 Jul 2019 09:28:00 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp6.localdomain (Postfix) with ESMTP id 45nw6j5K5rzMqYkc; Tue, 16 Jul
-        2019 09:27:57 +0000 (GMT)
+        b=sln+luGgK+4yeGiHOrvaFfkvarEH2NYw8PG8OMNe1LtimLobdePJQ9wMdngD0vLta
+         uDk0Puvg0Xq0aODqdvmLvN7jZuZ5i1Ay9aVfIluAnkQ4BpOLma/6uGZFW+s9iMQTJc
+         Byl0+leQ1Qi9iXq4CBWqMQvLVWSFatLqd2yX7Ux8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190716094647epcas1p386efce8c9b0b24d25009925624c13438~x2idC4con0776707767epcas1p3T;
+        Tue, 16 Jul 2019 09:46:47 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 45nwXP3PtTzMqYln; Tue, 16 Jul
+        2019 09:46:45 +0000 (GMT)
 Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7C.09.04160.D989D2D5; Tue, 16 Jul 2019 18:27:57 +0900 (KST)
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A7.FA.04088.50D9D2D5; Tue, 16 Jul 2019 18:46:45 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190716092757epcas1p3f1040feadd8e767b7861cf8d6e95a9fe~x2SAMdMTR2981129811epcas1p3N;
-        Tue, 16 Jul 2019 09:27:57 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190716094644epcas1p2905f90d0067a302244b4cac39ca17cad~x2iaPB5AJ2000420004epcas1p27;
+        Tue, 16 Jul 2019 09:46:44 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190716092757epsmtrp2d3d0ada13ab4e98b5376d63895727349~x2SALa3b22184421844epsmtrp2k;
-        Tue, 16 Jul 2019 09:27:57 +0000 (GMT)
-X-AuditID: b6c32a38-b33ff70000001040-a1-5d2d989dcd69
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C6.B5.03638.D989D2D5; Tue, 16 Jul 2019 18:27:57 +0900 (KST)
+        20190716094644epsmtrp23e07c5c0a50a4932ff52915493bd109d~x2iaOEvCc0052500525epsmtrp2T;
+        Tue, 16 Jul 2019 09:46:44 +0000 (GMT)
+X-AuditID: b6c32a35-85dff70000000ff8-10-5d2d9d051238
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        54.96.03706.40D9D2D5; Tue, 16 Jul 2019 18:46:44 +0900 (KST)
 Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190716092756epsmtip14e25281fc922a010605e07c6c892694b~x2R-xBEP41188811888epsmtip1n;
-        Tue, 16 Jul 2019 09:27:56 +0000 (GMT)
-Subject: Re: [PATCH v1 13/50] clk: samsung: add DPLL rate table in
- Exynos5420
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190716094644epsmtip2758a371fe6a83b23d1b4692c4a1031ee~x2iZynVEa1526415264epsmtip2K;
+        Tue, 16 Jul 2019 09:46:44 +0000 (GMT)
+Subject: Re: [PATCH v1 01/50] clk: samsung: add new IDs for Exynos5420
+ clocks
 To:     Lukasz Luba <l.luba@partner.samsung.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -72,55 +72,55 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         myungjoo.ham@samsung.com
 From:   Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
-Message-ID: <9095a5be-3002-93c6-9d08-92eb84f5c103@samsung.com>
-Date:   Tue, 16 Jul 2019 18:31:03 +0900
+Message-ID: <f8ff72f9-4a55-40c6-fdb9-bb4cddd00cf9@samsung.com>
+Date:   Tue, 16 Jul 2019 18:49:50 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
         Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190715124417.4787-14-l.luba@partner.samsung.com>
+In-Reply-To: <20190715124417.4787-2-l.luba@partner.samsung.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEJsWRmVeSWpSXmKPExsWy7bCmnu7cGbqxBs+vq1ncWneO1WLjjPWs
-        FvOPAFn9j18zW5w/v4Hd4mzTG3aLWw0yFpseX2O1+Nhzj9Xi8q45bBYzzu9jslh75C67xdLr
-        F5ksLp5ytbjduILNonXvEXaLw2/aWS3+XdvI4iDksWbeGkaP9zda2T02repk89i8pN7j4Ls9
-        TB59W1YxenzeJBfAHpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr
-        5OIToOuWmQP0hJJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0L10v
-        OT/XytDAwMgUqDAhO2PJit+sBcuFKg4uaGJtYJzI38XIySEhYCKx71ojYxcjF4eQwA5GiXXT
-        LrJCOJ8YJWZPWwOV+cYo8fXsS/YuRg6wlgOXrSHie4Hij3+wQzjvGSWmvTvJDDJXWMBfYsHl
-        fYwgtojAOUaJjqfSIDazwDQmiVnzREFsNgEtif0vbrCB2PwCihJXfzwGq+cVsJM4sPAh2BwW
-        AVWJC99awGpEBSIkTh2ZxwJRIyhxcuYTFpCDOAUcJN6eEoAYLy5x68l8JghbXqJ562xmkNsk
-        BE6xS7SsfsIG8bOLxK+V/1kgbGGJV8e3sEPYUhKf3+2FqqmWWHnyCBtEcwejxJb9F1ghEsYS
-        +5dOZgJZzCygKbF+lz5EWFFi5++5jBCL+STefe1hhQQWr0RHmxBEibLE5Qd3mSBsSYnF7Z1s
-        ExiVZiH5ZhaSF2YheWEWwrIFjCyrGMVSC4pz01OLDQtMkCN7EyM4fWtZ7GDcc87nEKMAB6MS
-        D++JPTqxQqyJZcWVuYcYJTiYlUR4bb9qxwrxpiRWVqUW5ccXleakFh9iNAUG9kRmKdHkfGBu
-        ySuJNzQ1MjY2tjAxNDM1NFQS5533RzNWSCA9sSQ1OzW1ILUIpo+Jg1OqgdH4s3D9tuJtB1qv
-        R93Sd3zMyu76VLQn1SP9acF20/BL+juXuH94vSjoj+Ph6q/VIVqTfpmt6/7CszA52+rgrvQF
-        1Ybcp29vPX9rWkWGc9MfufCn4j2lVrW5Lf26rwL4Aqo+JuopG62ubF0nKq3GZGvde0B2wbwd
-        m0zn+roWtRlFdJ47pNdbrcRSnJFoqMVcVJwIABIUyHT1AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTUQDHOfexXafD22Z5fKC4iGLT5aIPJywRenAhgj5aMeySFzXdg101
-        jSKzNBJRM/AxSw2sRNS5aeJqpnMma+FjaiaTnpMIXxWyiB6S2wj27Qf/3++cA4fCJa+IWCpP
-        W8gZtGyBTCAiBh2yhJT7TSnq1KX+SOTpnSKRuclEorbxbar1ruJoerpPiCbL14TIUxaPLN4F
-        En2vfkeiuaf3BKhp+jmGesbfCtHDN24MuV3H0dL1TgGqGB4XIsfaLRJtLZiJDAnT3doNmK+L
-        FULG0nVbwPR3XGPsGzaMqRnoAsymJeG08KzocDZXkFfMGfannxfldnT+JvWPJSX29nKyDNyJ
-        rAIUBemDcHQurQqEURL6GYAt9n1+hnQMbHC/wIOKFDocfBUQbSvrALorTQK/I6VPwcHJ98A/
-        RNFTANb8nRT6B5xuwKDThAcPdQLY2XjIzwJaDke+LAbiSDoJvv7pBX4W0+lw9MHHgE/Qe+DM
-        j5sBZyedCesXrETQ2QFfNi8T/geF0Rlw3UUHr9oL/7TO4kGOhp7lNizIifDGkxa8DkiNIbUx
-        JDGGJMaQpB0QXSCG0/OaHA2v0h/QcpeUPKvhi7Q5ygs6jQUEvlguHwJOZ9YYoCkgixA7bclq
-        CckW86WaMQApXBYlPuJTqCXibLb0MmfQZRmKCjh+DMRRhCxanKibOCOhc9hCLp/j9Jzh/4pR
-        YbFlgBlumEnivFm9qQrz7jjTmqfomzJNcwK3dobXXe3ZtKrO/RqaT8ddZl1+ychK8tS8KyK8
-        /mj8AP6pBqu9i/s+9CtVmvoIpBY/Emdi1ZTONHtyKxe1snE2naLxmC/Rro3yWVfVldI+x/rE
-        Y5+CihY098pXFq/kf7Zd3LUhI/hcViXHDTz7D0D1eH7eAgAA
-X-CMS-MailID: 20190716092757epcas1p3f1040feadd8e767b7861cf8d6e95a9fe
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEJsWRmVeSWpSXmKPExsWy7bCmni7rXN1Yg+krBC1urTvHarFxxnpW
+        i/lHgKz+x6+ZLc6f38BucbbpDbvFrQYZi02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfdYun1
+        i0wWF0+5WtxuXMFm0br3CLvF4TftrBb/rm1kcRDyWDNvDaPH+xut7B6bVnWyeWxeUu9x8N0e
+        Jo++LasYPT5vkgtgj8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVV
+        cvEJ0HXLzAF6QkmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFmgV5yYW1yal66X
+        nJ9rZWhgYGQKVJiQndG4tZe94Ltyxe8evQbGjeJdjJwcEgImEi0Lm9i7GLk4hAR2MEpcXv2X
+        CSQhJPCJUaJzkRxE4hujRMuER8wwHWdvPGKCSOxllDh7bD+U8x6ofcp3sCphAX+Jx6v/soHY
+        IgLnGCU6nkqD2MwC05gkZs0TBbHZBLQk9r+4AVbDL6AocfXHY0YQm1fATuLYkrWsIDaLgKrE
+        r3kv2UFsUYEIiVNH5rFA1AhKnJz5BMzmFLCXuNV9nw1ivrjErSfzmSBseYnmrbOZQY6TEDjF
+        LnFkxy0miBdcJL7NesMKYQtLvDq+hR3ClpL4/G4vG4RdLbHy5BE2iOYORokt+y9ANRhL7F86
+        GWgQB9AGTYn1u/QhwooSO3/PZYRYzCfx7msPK0iJhACvREebEESJssTlB3ehTpCUWNzeyTaB
+        UWkWkndmIXlhFpIXZiEsW8DIsopRLLWgODc9tdiwwBA5sjcxgtO3lukOxinnfA4xCnAwKvHw
+        KuzXiRViTSwrrsw9xCjBwawkwmv7VTtWiDclsbIqtSg/vqg0J7X4EKMpMLQnMkuJJucDc0te
+        SbyhqZGxsbGFiaGZqaGhkjjvvD+asUIC6YklqdmpqQWpRTB9TBycUg2Mght88wqynh3fmb5Y
+        +ufWLYn8L0pOzapRYfn/9ryr7aHvkkKL33HI/RAWMrlyTcSj0/85q/A5LrOtszbpRL/dW6e7
+        wG6FziwXNyXLSLYWx9SbLFGS4fmiv7SLmJz0Ju789XeVWe6i5/+Nnk45HGyw89F3PxX2imhZ
+        hb8OzWI5NtsEzJ5p661VYinOSDTUYi4qTgQAzu9yMvUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsWy7bCSvC7LXN1Yg4d7NS1urTvHarFxxnpW
+        i/lHgKz+x6+ZLc6f38BucbbpDbvFrQYZi02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfdYun1
+        i0wWF0+5WtxuXMFm0br3CLvF4TftrBb/rm1kcRDyWDNvDaPH+xut7B6bVnWyeWxeUu9x8N0e
+        Jo++LasYPT5vkgtgj+KySUnNySxLLdK3S+DKaNzay17wXbnid49eA+NG8S5GTg4JAROJszce
+        MXUxcnEICexmlJh1bAojREJSYtrFo8xdjBxAtrDE4cPFEDVvGSU+bX3CAhIXFvCVeHXRHCQu
+        InCOUaLv71l2kF5mgWlMEifWM0M0HGeU+Lr1AthQNgEtif0vbrCB2PwCihJXfzwGi/MK2Ekc
+        W7KWFcRmEVCV+DXvJdggUYEIiUnXdrJA1AhKnJz5BMzmFLCXuNV9nw1imbrEn3mXmCFscYlb
+        T+YzQdjyEs1bZzNPYBSehaR9FpKWWUhaZiFpWcDIsopRMrWgODc9t9iwwDAvtVyvODG3uDQv
+        XS85P3cTIziStTR3MF5eEn+IUYCDUYmH98QenVgh1sSy4srcQ4wSHMxKIry2X7VjhXhTEiur
+        Uovy44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBaBJNl4uCUamAs3q0u9vXuht87Z8e7
+        Bbj+n1Qg80jKQ1iYdfKZjf0tNWuOFtj+ZhJYNnO25+a1rzabZN85bRbV9/Dqn616Riv1wh3q
+        M8Iqwxxv/qjcpGYx7buXRcepbzfmPilPv9117QBz7mr9jEiDw49WHJPzVgj4pfHbcNrBjyJd
+        prHz1siGyIim52vudHqsxFKckWioxVxUnAgAwMSwueACAAA=
+X-CMS-MailID: 20190716094644epcas1p2905f90d0067a302244b4cac39ca17cad
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea
+X-CMS-RootMailID: 20190715124434eucas1p273e2efaad8bc3904c6f76cc1671aeb6c
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea@eucas1p2.samsung.com>
-        <20190715124417.4787-14-l.luba@partner.samsung.com>
+        <CGME20190715124434eucas1p273e2efaad8bc3904c6f76cc1671aeb6c@eucas1p2.samsung.com>
+        <20190715124417.4787-2-l.luba@partner.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -128,51 +128,103 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-Also, you better to merge patch13/patch15/patch16 to one patch
-in order to add the PLL table for DPLL/MPLL/SPLL.
+Usually, when developing the clock controller driver,
+define the same sequence between the definition sequence in dt-bibing
+and clock driver. As I replied, if you squash patches, it is easy.
 
-And I have a question. Are there any use-case to change
-the PLL frequency for DPLL/MPLL/SPLL?
+For example,
+This series add clock id as following.
+                                                                             
+ 569         MUX(CLK_MOUT_ACLK400_ISP, "mout_aclk400_isp", mout_group1_p,            
+ 570                         SRC_TOP0, 0, 2),                                        
+ 571         MUX(CLK_MOUT_ACLK400_MSCL, "mout_aclk400_mscl", mout_group1_p,          
+ 572                         SRC_TOP0, 4, 2),                                        
+ 573         MUX(CLK_MOUT_ACLK400_WCORE, "mout_aclk400_wcore", mout_group1_p,        
+ 574                         SRC_TOP0, 16, 2),                                       
+ 575         MUX(CLK_MOUT_ACLK100_NOC, "mout_aclk100_noc", mout_group1_p,            
+ 576                         SRC_TOP0, 20, 2),          
+
+In case of this code, you can define the IDs as following sequentially:
+
+#define CLK_MOUT_ACLK400_ISP ...
+#define CLK_MOUT_ACLK400_MSCL ... 
+#define CLK_MOUT_ACLK400_WCORE ...
+#define CLK_MOUT_ACLK100_NOC ...
+
+
+But, this series define the ID as following:
+	#define CLK_MOUT_ACLK400_WCORE          662                                     
+#define CLK_MOUT_SCLK_DPLL      663                                             
+	#define CLK_MOUT_ACLK100_NOC    664                                             
+#define CLK_MOUT_ACLK200_FSYS2  665                                             
+#define CLK_MOUT_PCLK200_FSYS   666                                             
+#define CLK_MOUT_ACLK200_FSYS   667                                             
+	#define CLK_MOUT_ACLK400_ISP    668                                             
+	#define CLK_MOUT_ACLK400_MSCL   669                                             
+#define CLK_MOUT_SCLK_MPLL      700                                             
+#define CLK_MOUT_ACLK266        701                                             
+#define CLK_MOUT_UART0          702                                             
+#define CLK_MOUT_UART1          703                                             
+#define CLK_MOUT_UART2          704                                             
+#define CLK_MOUT_UART3          7
 
 On 19. 7. 15. 오후 9:43, Lukasz Luba wrote:
-> The DPLL has fixed frequency left by the bootloader and it is not possible
-> to change it. With this patch the DPLL gets rate table the same for the
-> whole  PLL family (similar as APLL, KPLL according to RM) so the frequency
-> might be changed to one of the values defined there.
-> It is needed for further patches which change the DPLL frequency to feed
-> the clocks with proper base.
-> It also sets CLK_IS_CRITICAL for SCLK_DPLL due to some drivers which could
-> disable master clock, which is then populated higher and tries to disable
-> PLL, which casues system crash. The flag is needed for this kind of use
-> cases.
+> There is a need of new IDs which will be used for modeling proper hierarchy
+> in the Exynos54xx SoCs. Previous implementation rely on bootloader
+> settings, which are not configuring properly some clocks.
+> These IDs provide interface to set proper parents.
 > 
 > Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos5420.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  include/dt-bindings/clock/exynos5420.h | 27 +++++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 7f8221527633..2395b02ce8c5 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -694,7 +694,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
->  	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
->  	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
->  			CLK_SET_RATE_PARENT, 0),
-> -	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
-> +	MUX_F(CLK_MOUT_SCLK_DPLL, "mout_sclk_dpll", mout_dpll_p,
-> +			SRC_TOP6, 24, 1, CLK_IS_CRITICAL, 0),
->  	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
+> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+> index 02d5ac469a3d..c37a28eeaf7e 100644
+> --- a/include/dt-bindings/clock/exynos5420.h
+> +++ b/include/dt-bindings/clock/exynos5420.h
+> @@ -230,6 +230,30 @@
+>  #define CLK_MOUT_USER_MAU_EPLL	659
+>  #define CLK_MOUT_SCLK_SPLL	660
+>  #define CLK_MOUT_MX_MSPLL_CCORE_PHY	661
+> +#define CLK_MOUT_ACLK400_WCORE		662
+> +#define CLK_MOUT_SCLK_DPLL	663
+> +#define CLK_MOUT_ACLK100_NOC	664
+> +#define CLK_MOUT_ACLK200_FSYS2	665
+> +#define CLK_MOUT_PCLK200_FSYS	666
+> +#define CLK_MOUT_ACLK200_FSYS	667
+> +#define CLK_MOUT_ACLK400_ISP	668
+> +#define CLK_MOUT_ACLK400_MSCL	669
+> +#define CLK_MOUT_SCLK_MPLL	700
+> +#define CLK_MOUT_ACLK266	701
+> +#define CLK_MOUT_UART0		702
+> +#define CLK_MOUT_UART1		703
+> +#define CLK_MOUT_UART2		704
+> +#define CLK_MOUT_UART3		705
+> +#define CLK_MOUT_SCLK_CPLL	706
+> +#define CLK_MOUT_PWM		707
+> +#define CLK_MOUT_ACLK266_G2D		708
+> +#define CLK_MOUT_SW_ACLK400_WCORE	709
+> +#define CLK_MOUT_SW_ACLK400_MSCL	710
+> +#define CLK_MOUT_SW_ACLK400_ISP		711
+> +#define CLK_MOUT_SW_ACLK266_ISP		712
+> +#define CLK_MOUT_USER_ACLK266_ISP	713
+> +#define CLK_MOUT_ACLK266_ISP	714
+> +#define CLK_MOUT_MMC0		715
 >  
->  	MUX(CLK_MOUT_SW_ACLK400_ISP, "mout_sw_aclk400_isp",
-> @@ -1514,6 +1515,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  /* divider clocks */
+>  #define CLK_DOUT_PIXEL		768
+> @@ -264,8 +288,9 @@
+>  #define CLK_FF_DOUT_SPLL2	797
+>  #define CLK_DOUT_PCLK_DREX0	798
+>  #define CLK_DOUT_PCLK_DREX1	799
+> +#define CLK_DOUT_ACLK266_ISP	800
 >  
->  	if (_get_rate("fin_pll") == 24 * MHZ) {
->  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-> +		exynos5x_plls[dpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->  		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
->  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->  	}
+>  /* must be greater than maximal clock id */
+> -#define CLK_NR_CLKS		800
+> +#define CLK_NR_CLKS		801
+>  
+>  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
 > 
 
 
