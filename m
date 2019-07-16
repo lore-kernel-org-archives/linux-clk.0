@@ -2,136 +2,180 @@ Return-Path: <SRS0=Gp7K=VN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA090C7618F
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 00:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0393EC7618F
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 00:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 755962171F
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 00:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAF7620693
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jul 2019 00:25:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xlCtHr7+"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pNhhCU0W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731855AbfGPAIu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jul 2019 20:08:50 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35000 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730888AbfGPAIt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jul 2019 20:08:49 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u14so8189782pfn.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jul 2019 17:08:49 -0700 (PDT)
+        id S1732557AbfGPAZY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jul 2019 20:25:24 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45095 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732200AbfGPAZY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jul 2019 20:25:24 -0400
+Received: by mail-pg1-f193.google.com with SMTP id o13so8483020pgp.12;
+        Mon, 15 Jul 2019 17:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Kk3hDSABrXyhJx+RdNn1+ivrgUHefpZGD1c1iLoa0N0=;
-        b=xlCtHr7+WOhi6zpv0qk1hlbCtEAcsLff6PlIV7Hgg1x3nX99k9m6kINeaLrh3G6WXm
-         RCGBjjJBeJP5FJBj0dQRSebDVJ1dfT2tA8UWCehnU+FDYu/oCl8q68U9+RbECeCJsRFv
-         UmDLN5tXD8p+7ytzu5Bh/TaUmhywBAQE39ysW/A7JTpxMdjhTIzKDaq5AbI9dnfAPqTo
-         MmveLbaO9wQpgTWVxxV845DuaDCVSckWQ+pdu0nxzG5qy8yem4LPGmI0cqOC2ckRDc22
-         l51WZ9B4xYiTYeHPnqX1bC9UMLv6Zc3aK3G6sK5kWVLoON4akqQ9F4n0CvXXZYMqq8J4
-         YL5A==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wziVWxT4jhj1YL8MMH30E+O5fO28fTjFNy0DUs9/y1M=;
+        b=pNhhCU0WdmDHPzkx3id10YV8KvhlTnul/T/fw1cvtTE+/KR/OemboYLXwHm+RntFYQ
+         8UPfv1y8j0/Vcnp+mXmyDsqydJMSCBwuxQJus+8rtmcmpI2b/0IRF7sSOP1OJm3rRyFh
+         Rf+WI3tWvQRi5scHRYvY4nlqf9JGpIXPbPrvJ3YrfJ3enb4nucOnh4ST6pIA7MaZ0W70
+         eL1msne9/MM1yL4r6lLsngthbyihpeI9wy7j5qD4FAlk5z41STRLQofweERKkxclfhlB
+         ZjD5kXOHZyLO3bsSgbCR1jVrn6VPs9EqWASM9K9H2Cf7g2Slau4KTDvFAxtJij47rUag
+         DKXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Kk3hDSABrXyhJx+RdNn1+ivrgUHefpZGD1c1iLoa0N0=;
-        b=sGAYlJCDxUoWNe47Q2WHxEwIvcmZj58NRJbsoZGQZqvgI8tjM7rwsg8WsKzrjWBmsf
-         WFFKSHEV+SKnps/QT5V1axUjF2qXkv2NxqhbMvYWQ77i5pI3lDNYbuFn9gFBGWgxX4GU
-         DOmE0ujdFB4Ust1uBqw5PoRcGrrxQePaIfRzQkI6c4qI68L/OUFNtYoSbSu0A0nJBrzf
-         qMmbSvbbQfLadwaWgSW+vveuNGBoVK66lF37KgGfw72pmPzwIv+kagjsHuDmRUEqaAHS
-         BDDVp10w+KFHgJZ+lYP16GKC1LSjpz1vh1PMDHUCwpFzR26dNGYGIJEaLQIXSOF1dG81
-         totg==
-X-Gm-Message-State: APjAAAWpE5I1Wgp2P7QKG3o3+yY2Rp36c+CaT0HwFvEXwU+wV8FDKRrc
-        DzZ93T8rdWl/Jm7bAG1fGbtnJA==
-X-Google-Smtp-Source: APXvYqxmRb5etB4ZLrSsh/m4KCj26VPMF/xZbe6AYHNcjVcNxM46c+cfVSVKO6XPvzqIr43bQjrWYw==
-X-Received: by 2002:a63:6904:: with SMTP id e4mr2421242pgc.321.1563235728962;
-        Mon, 15 Jul 2019 17:08:48 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q126sm19513616pfq.123.2019.07.15.17.08.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 17:08:48 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 17:08:46 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 1/3] clk: qcom: clk-alpha-pll: Remove post_div_table
- checks
-Message-ID: <20190716000846.GK30636@minitux>
-References: <20190625063140.17106-1-vkoul@kernel.org>
- <20190625063140.17106-2-vkoul@kernel.org>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wziVWxT4jhj1YL8MMH30E+O5fO28fTjFNy0DUs9/y1M=;
+        b=Hg+OI1EqW2+NgfdglgLIWdpcnD3aK0vACgP2j6ToP8GihJ28AcJmgoA295Mf0itkXp
+         ZFVi1nIh/qTqrtfmr8sr3JSLnHLLw5OZzRSuY+KZMKGmLUtL+eKFd3o7gVNMnP+A0EdB
+         3OGZo58lJhXWeYwtS3mRtKfW5dr8HkE+QUnq1UUqjvRodVAkVcsOw4PENk4oofk2407S
+         ZGRHzSJAUbmhs1GaecihpR8p45ekIB00ht9TNVShG9MTHgjLGM9Ytzbr4qS5jV+WKFzi
+         m5PNOc/VSj7Onwvwt7yOPJq37HHFIoYFK4fC1M8rM7imzKOwnt6E4QC3a43A4rQoeFVP
+         4pqg==
+X-Gm-Message-State: APjAAAXaxhAJeFFJSwFQjXlybSOYlk+8nb/S7QbAdd0jYW6y0q9K99yE
+        fmL3rr9DjgCJLJjpaDLE8tQ=
+X-Google-Smtp-Source: APXvYqyuHVbVfZ8StWX41YbbWpLtqcDnHpI5sEG4SXtKgAtUKZE/UTskQ6J871vMsOkwWeYlsWDETQ==
+X-Received: by 2002:a63:20a:: with SMTP id 10mr29639653pgc.226.1563236723240;
+        Mon, 15 Jul 2019 17:25:23 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a5sm17204256pjv.21.2019.07.15.17.25.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 17:25:21 -0700 (PDT)
+Subject: Re: [PATCH v1] clk: Add devm_clk_{prepare,enable,prepare_enable}
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+References: <1d7a1b3b-e9bf-1d80-609d-a9c0c932b15a@free.fr>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <ec00d8d0-6551-274c-8a8d-a9d4c5b45d7c@roeck-us.net>
+Date:   Mon, 15 Jul 2019 17:25:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625063140.17106-2-vkoul@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <1d7a1b3b-e9bf-1d80-609d-a9c0c932b15a@free.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 24 Jun 23:31 PDT 2019, Vinod Koul wrote:
-
-> We want users to code properly and fix the post_div_table missing and
-> not reply on core to check. So remove the post_div_table check.
-
-s/reply/rely/
-
+On 7/15/19 8:34 AM, Marc Gonzalez wrote:
+> Provide devm variants for automatic resource release on device removal.
+> probe() error-handling is simpler, and remove is no longer required.
 > 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+
+Again ?
+
+https://lore.kernel.org/patchwork/patch/755667/
+
+This must be at least the third time this is tried. I don't think anything changed
+since the previous submissions. I long since gave up and use devm_add_action_or_reset()
+in affected drivers instead.
+
+Guenter
+
 > ---
->  drivers/clk/qcom/clk-alpha-pll.c | 15 ---------------
->  1 file changed, 15 deletions(-)
+>   Documentation/driver-model/devres.rst |  3 +++
+>   drivers/clk/clk.c                     | 24 ++++++++++++++++++++++++
+>   include/linux/clk.h                   |  8 ++++++++
+>   3 files changed, 35 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index b48707693ffd..2c6773188761 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -1036,11 +1036,6 @@ static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
->  	u32 i, div = 1, val;
->  	int ret;
->  
-> -	if (!pll->post_div_table) {
-> -		pr_err("Missing the post_div_table for the PLL\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
->  	if (ret)
->  		return ret;
-> @@ -1063,11 +1058,6 @@ static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
->  {
->  	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
->  
-> -	if (!pll->post_div_table) {
-> -		pr_err("Missing the post_div_table for the PLL\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	return divider_round_rate(hw, rate, prate, pll->post_div_table,
->  				pll->width, CLK_DIVIDER_ROUND_CLOSEST);
->  }
-> @@ -1089,11 +1079,6 @@ static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
->  	if (val & PLL_VOTE_FSM_ENA)
->  		return 0;
->  
-> -	if (!pll->post_div_table) {
-> -		pr_err("Missing the post_div_table for the PLL\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	div = DIV_ROUND_UP_ULL(parent_rate, rate);
->  	for (i = 0; i < pll->num_post_div; i++) {
->  		if (pll->post_div_table[i].div == div) {
-> -- 
-> 2.20.1
+> diff --git a/Documentation/driver-model/devres.rst b/Documentation/driver-model/devres.rst
+> index 1b6ced8e4294..9357260576ef 100644
+> --- a/Documentation/driver-model/devres.rst
+> +++ b/Documentation/driver-model/devres.rst
+> @@ -253,6 +253,9 @@ CLOCK
+>     devm_clk_hw_register()
+>     devm_of_clk_add_hw_provider()
+>     devm_clk_hw_register_clkdev()
+> +  devm_clk_prepare()
+> +  devm_clk_enable()
+> +  devm_clk_prepare_enable()
+>   
+>   DMA
+>     dmaenginem_async_device_register()
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c0990703ce54..5e85548357c0 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -914,6 +914,18 @@ int clk_prepare(struct clk *clk)
+>   }
+>   EXPORT_SYMBOL_GPL(clk_prepare);
+>   
+> +static void unprepare(void *clk)
+> +{
+> +	clk_unprepare(clk);
+> +}
+> +
+> +int devm_clk_prepare(struct device *dev, struct clk *clk)
+> +{
+> +	int rc = clk_prepare(clk);
+> +	return rc ? : devm_add_action_or_reset(dev, unprepare, clk);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_prepare);
+> +
+>   static void clk_core_disable(struct clk_core *core)
+>   {
+>   	lockdep_assert_held(&enable_lock);
+> @@ -1136,6 +1148,18 @@ int clk_enable(struct clk *clk)
+>   }
+>   EXPORT_SYMBOL_GPL(clk_enable);
+>   
+> +static void disable(void *clk)
+> +{
+> +	clk_disable(clk);
+> +}
+> +
+> +int devm_clk_enable(struct device *dev, struct clk *clk)
+> +{
+> +	int rc = clk_enable(clk);
+> +	return rc ? : devm_add_action_or_reset(dev, disable, clk);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_enable);
+> +
+>   static int clk_core_prepare_enable(struct clk_core *core)
+>   {
+>   	int ret;
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 3c096c7a51dc..d09b5207e3f1 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -895,6 +895,14 @@ static inline void clk_restore_context(void) {}
+>   
+>   #endif
+>   
+> +int devm_clk_prepare(struct device *dev, struct clk *clk);
+> +int devm_clk_enable(struct device *dev, struct clk *clk);
+> +static inline int devm_clk_prepare_enable(struct device *dev, struct clk *clk)
+> +{
+> +	int rc = devm_clk_prepare(dev, clk);
+> +	return rc ? : devm_clk_enable(dev, clk);
+> +}
+> +
+>   /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+>   static inline int clk_prepare_enable(struct clk *clk)
+>   {
 > 
+
