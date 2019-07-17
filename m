@@ -2,157 +2,116 @@ Return-Path: <SRS0=TUvV=VO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C263C76186
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E42B0C76186
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 448C421841
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:41:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qnpMTFBH"
+	by mail.kernel.org (Postfix) with ESMTP id BC97A20880
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:45:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563360330;
+	bh=BV67gKZo3TGKl5Dyp0PiXOnjcwWPe3Mb76WeWSeK1Kk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=d2Gp7+GbmtjUttjppp8MNbqUi9D7isPWYaiA8cqDIcaUyRvdA5CH4npT/i96TsbiS
+	 Lm9oVN3JrpWR6YflA2tR38Bx+L6UXyuQD2csYLR4enm45dZxVq4aq+4XxksVDuq3IX
+	 eF0Wncue4Lko9q6n/pGOyYBqALOELjMa01Mn1kiI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfGQKli (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jul 2019 06:41:38 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34072 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbfGQKlh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Jul 2019 06:41:37 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190717104136euoutp0162877d4e9a368e0ef49fe9bd9da05e5b~yK7mQrfSF1312013120euoutp019
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2019 10:41:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190717104136euoutp0162877d4e9a368e0ef49fe9bd9da05e5b~yK7mQrfSF1312013120euoutp019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563360096;
-        bh=ur/U/d/s9uABMg5oCLoBp1Iq4clZ6MAMcHqjH8l6u6s=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=qnpMTFBHAVao6jDySlOJVnFWhaXTGAEV+OLXyzQ8mOXQ9YHa5IWkmLAuQPYGuNBkg
-         Rwi1CnCjIjwAqk4jbU23O2C86q0YQIWdk1z9Y9oyZ+7ELadGiBus6KChN5+PTfwZ0e
-         fNkH+eKntukB5pSXs7lyR4g6VPMgFEIR3uiwOGwk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190717104135eucas1p297d04249c9be595e1401ad7fa74cb6b3~yK7lQSJUE0829608296eucas1p2N;
-        Wed, 17 Jul 2019 10:41:35 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id AA.4D.04298.F5BFE2D5; Wed, 17
-        Jul 2019 11:41:35 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190717104134eucas1p2a35d37e96f71333e4be84bf4d5029aba~yK7kVMZ-P0935709357eucas1p22;
-        Wed, 17 Jul 2019 10:41:34 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190717104134eusmtrp109bcda1aa5e79d9e3e8b5a2ff38b64d8~yK7kG9JHQ0641306413eusmtrp1O;
-        Wed, 17 Jul 2019 10:41:34 +0000 (GMT)
-X-AuditID: cbfec7f2-f2dff700000010ca-20-5d2efb5f215f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 00.6D.04146.E5BFE2D5; Wed, 17
-        Jul 2019 11:41:34 +0100 (BST)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190717104133eusmtip1ad16838f92af42c0f3768a6473d18284~yK7jUx3Q72450824508eusmtip1Y;
-        Wed, 17 Jul 2019 10:41:33 +0000 (GMT)
-Subject: Re: [PATCH v1 26/50] ARM: dts: exynos: align NOC100 bus OPPs in
- Exynos5420
-To:     Krzysztof Kozlowski <krzk@kernel.org>
+        id S1726085AbfGQKp0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jul 2019 06:45:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725941AbfGQKp0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jul 2019 06:45:26 -0400
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69D1A21848;
+        Wed, 17 Jul 2019 10:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563360325;
+        bh=BV67gKZo3TGKl5Dyp0PiXOnjcwWPe3Mb76WeWSeK1Kk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sa8VZxLKaZ+t14tOXNmprtzrJLglCy1PsYbfA7DaZjZWLlWOGSE2XXPDiXWLjjJu3
+         VPJZky6Y3S2KNNFSXUQ3+8QTmYQK6LvWghSlFzaQox1pb08nQHZccweJymSuv2XWyh
+         Djc4YBEe9OaGYriJGMQORgbhm+bhtvGKGXQFhlPo=
+Received: by mail-lj1-f176.google.com with SMTP id m8so23103156lji.7;
+        Wed, 17 Jul 2019 03:45:25 -0700 (PDT)
+X-Gm-Message-State: APjAAAWgiUnLIR+hulklTJp+BRNVwkWztkGMypRbgT2IT8i7bmnT1jpN
+        nE/klcTiZCMy8skaXaDNh9afojUgxPaa4XIb2Zs=
+X-Google-Smtp-Source: APXvYqwlyzdnXsJBMRHPL0vNfSLDb9PnHTvcxtKUhMNdwslUbRE4WspET8zxNcy1qzE2312nOzDKyeMEQIBX887w5Xk=
+X-Received: by 2002:a2e:124b:: with SMTP id t72mr20810837lje.143.1563360323685;
+ Wed, 17 Jul 2019 03:45:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <CGME20190715124504eucas1p1afe0da2c6ac3a8b45d85017a77ba9edf@eucas1p1.samsung.com>
+ <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-38-l.luba@partner.samsung.com>
+ <CAJKOXPfrGgAczQ-=1aE453RpJ9BN10ZDmFcrEMPkNyF6GcGtNA@mail.gmail.com> <2fe2e840-f4b2-773b-7d92-4ffb8502d4e6@partner.samsung.com>
+In-Reply-To: <2fe2e840-f4b2-773b-7d92-4ffb8502d4e6@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 17 Jul 2019 12:45:12 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPd3gm7no-0TnPmgFg+X3FgdiM6ov5rtzFSM6hKEdEzRCg@mail.gmail.com>
+Message-ID: <CAJKOXPd3gm7no-0TnPmgFg+X3FgdiM6ov5rtzFSM6hKEdEzRCg@mail.gmail.com>
+Subject: Re: [PATCH v1 37/50] ARM: dts: exynos: change parent and rate of
+ bus_fsys in Exynos5422
+To:     Lukasz Luba <l.luba@partner.samsung.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= 
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
         <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com,
         robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
         kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         s.nawrocki@samsung.com, myungjoo.ham@samsung.com
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <4d91a2fd-b6cf-37cc-d453-eb147ea6a1da@partner.samsung.com>
-Date:   Wed, 17 Jul 2019 12:41:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <CAJKOXPdMUV6JP0R4kj=cFKd7QUdrtMXtSm4S9pfF77zvKu4v1g@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIKsWRmVeSWpSXmKPExsWy7djP87rxv/ViDY68FLS4te4cq8XGGetZ
-        La5/ec5qMf8IkNv/+DWzxfnzG9gtzja9YbfY9Pgaq8XHnnusFpd3zWGzmHF+H5PF2iN32S2W
-        Xr/IZHHxlKvF7cYVbBate4+wWxx+085q8e/aRhYHIY8189Ywery/0crusWlVJ5vH5iX1Hn1b
-        VjF6fN4kF8AWxWWTkpqTWZZapG+XwJVx8MFJloLDnBVXV61hbWDcxd7FyMkhIWAi8fZPNwuI
-        LSSwglHi1UqmLkYuIPsLo8SMs1PZIJzPjBKf5y1hgum43HSXFaJjOaPEriYpiKK3jBKH3t0E
-        GyssECoxYVYPmC0ioClx/e93VpAiZoGrLBI/7n8H2sfBwSagJ7FjVSFIDa+Am0TjpEawM1gE
-        VCWmXd8EtkxUIELi8pZdjBA1ghInZz4Bq+EUCJTYfnsWWJxZQFzi1pP5TBC2vMT2t3OYIQ7t
-        5JBo310OYbtIfOqYBfWAsMSr41ug3peROD25hwXCLpZo6F3ICGHXSDzunwtVYy1x+PhFVpCT
-        mYF+Wb9LHyLsKPH98F92kLCEAJ/EjbeCEBfwSUzaNp0ZIswr0dEmBFGtIbGl5wLUAWISy9dM
-        Y5/AqDQLyV+zkPwyC8kvsxD2LmBkWcUonlpanJueWmyYl1quV5yYW1yal66XnJ+7iRGY8E7/
-        O/5pB+PXS0mHGAU4GJV4eD0O68YKsSaWFVfmHmKU4GBWEuG1/aodK8SbklhZlVqUH19UmpNa
-        fIhRmoNFSZy3muFBtJBAemJJanZqakFqEUyWiYNTqoHRk8s09Yo1T4vQebYf7TXXNtZZ3Xsj
-        nr54nsyy6h3uNjb91RrP9Pk2bZrDnLWgyefUTNE9jTyFC93OzuxnMTr+xsHt58GFJspSve97
-        lket73mxZup+5S9aPBcFZswqd4y6Ja/Z4Hoydh5vdO7OWWIRu2fm/3i/oZIrIU6zOLLvYaLJ
-        Sv4fYqxKLMUZiYZazEXFiQDN73wsdAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsVy+t/xu7pxv/ViDZ4s5Le4te4cq8XGGetZ
-        La5/ec5qMf8IkNv/+DWzxfnzG9gtzja9YbfY9Pgaq8XHnnusFpd3zWGzmHF+H5PF2iN32S2W
-        Xr/IZHHxlKvF7cYVbBate4+wWxx+085q8e/aRhYHIY8189Ywery/0crusWlVJ5vH5iX1Hn1b
-        VjF6fN4kF8AWpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZa
-        pG+XoJdx8MFJloLDnBVXV61hbWDcxd7FyMkhIWAicbnpLiuILSSwlFFi/6IsiLiYxKR926Fq
-        hCX+XOtig6h5zSgxo80JxBYWCJWYMKsHrEZEQFPi+t/vQHO4OJgFrrJITHm1kR3EERKYzCwx
-        +8oC5i5GDg42AT2JHasKQRp4BdwkGic1soDYLAKqEtOub2ICsUUFIiT62mazQdQISpyc+QSs
-        hlMgUGL77VmMIDazgJnEvM0PmSFscYlbT+YzQdjyEtvfzmGewCg0C0n7LCQts5C0zELSsoCR
-        ZRWjSGppcW56brGhXnFibnFpXrpecn7uJkZgnG879nPzDsZLG4MPMQpwMCrx8Hoc1o0VYk0s
-        K67MPcQowcGsJMJr+1U7Vog3JbGyKrUoP76oNCe1+BCjKdBzE5mlRJPzgSkoryTe0NTQ3MLS
-        0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QDo8dqjkeJkYbLlxnLFn92XsTvz1u7
-        +myzgbfS6dkrr4nt7099dq+udud79YduFnea5sS264uJ7l68zIPtgNgDc8YyUd1GewkBl5/L
-        HpuqRXPPjgxN4TL9o6Q9+9nFR1uMuP6V59RGm/qpmM2I9fd7Zj7rmJnvDe80cfY/+418/ZZd
-        i5hxVadKiaU4I9FQi7moOBEAzmjlkQkDAAA=
-X-CMS-MailID: 20190717104134eucas1p2a35d37e96f71333e4be84bf4d5029aba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190715124455eucas1p13bfc0c1d113225db9607e4c0dbac353c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190715124455eucas1p13bfc0c1d113225db9607e4c0dbac353c
-References: <CGME20190715124455eucas1p13bfc0c1d113225db9607e4c0dbac353c@eucas1p1.samsung.com>
-        <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <20190715124417.4787-27-l.luba@partner.samsung.com>
-        <CAJKOXPc3qsM5Xe5JViDZXYfes+_veb-KX3fnZjpkUCrphBcu-Q@mail.gmail.com>
-        <8ed83c77-57f7-78a4-e437-714cfc7b5c58@partner.samsung.com>
-        <CAJKOXPdMUV6JP0R4kj=cFKd7QUdrtMXtSm4S9pfF77zvKu4v1g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 17 Jul 2019 at 12:39, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+> >>
+> >>   &bus_fsys {
+> >>          devfreq = <&bus_wcore>;
+> >> +       assigned-clocks = <&clock CLK_MOUT_ACLK200_FSYS>,
+> >> +                         <&clock CLK_DOUT_ACLK200_FSYS>,
+> >> +                         <&clock CLK_FOUT_DPLL>;
+> >> +       assigned-clock-parents = <&clock CLK_MOUT_SCLK_DPLL>;
+> >> +       assigned-clock-rates = <0>, <240000000>,<1200000000>;
+> >
+> > Here and in all other patches:
+> > I am not entirely sure that this should be here. It looks like
+> > property of the SoC. Do we expect that buses will be configured to
+> > different clock rates between different boards? Since the OPP tables
+> > are shared (they are property of the SoC, not board) then I would
+> > assume that default frequency is shared as well.
+> These clocks they all relay on some bootloader configuration. It depends
+> which version of the bootloader you have, then you might get different
+> default configuration in the clocks.
 
+I do not agree here. This configuration is not dependent on
+bootloader. Although one bootloader might set the clocks to X and
+other to Y, but still you provide here valid configuration setting
+them, e.g. to Y (or to Z). What bootloader set before does not matter
+because you always override it.
 
-On 7/17/19 12:38 PM, Krzysztof Kozlowski wrote:
-> On Wed, 17 Jul 2019 at 12:27, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->>
->> On 7/17/19 12:10 PM, Krzysztof Kozlowski wrote:
->>> On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>>>
->>>> The NOC100 has a parent which clock rate is set tot 400MHz. The OPPs which
->>>> are not possible to set are removed and new one is added.
->>>
->>> I think it is just NOC bus... or are there more of such and this is 100 MHz one?
->> Yes, there is a bus NOC100 with a dedicated clock tree in the HW (with
->> 3 muxes and one divider), which makes possible to take different PLL as
->> a source then WCORE have, divide the rate from it and even switch for a
->> while to alternative stable PLL (on the 2nd mux to SPLL (after a
->> divider)) to wait for main PLL rate change stability delay. Max rate is
->> limited to 100MHz for this NOC100 bus.
-> 
-> I think we misunderstood each other. I am saying, that the bus is
-> called "NOC" in the DTSI. Not NOC100. So unless there are more of
-> NOCs, stick to existing name NOC, even if it is not the most accurate.
-OK, got it, thanks!
+> The pattern of changing the parent
+> or even rate is known in the DT files (or I am missing something).
+> When you grep for it, you get 168 hits (38 for exynos*):
+> git grep -n "assigned-clock-rates" ./arch/arm/boot/dts/ | wc -l
 
-Lukasz
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+Yeah, and if you grep per type you got:
+DTSI: 114
+DTS: 54
+so what do you want to say?
+
+My thinking is that all the boards have buses configured to the same
+initial frequency. I am not questioning the use of
+assigned-clock-rates at all. Just the place...
+
+BR,
+Krzysztof
