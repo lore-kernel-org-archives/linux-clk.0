@@ -2,58 +2,58 @@ Return-Path: <SRS0=TUvV=VO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A635BC76195
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 09:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037C3C76186
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4DB2077C
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 09:08:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2BB3217F4
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:03:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563354510;
-	bh=4vu4Okxb5WZcflRFF6tQdhHwvtvePiCyc0cLWLfo7E0=;
+	s=default; t=1563357782;
+	bh=NCz+/qyUYefzxnwUGAYv3ttjqTH35P9ZY0JImQSzg+k=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=qcMXWIhJIOjRxmTp/lCPJIaumirZQ1r8e/V8ZDCXMSaZMeCkCxhweYyHKyzbFY8EZ
-	 2TnwakGwLndF8zp3hLvpAEdwfSJY4Eo7swICuwQR+Ech3nu6pcLMTZeRoP5k5OqRj6
-	 kSc+BOIY/SSO8oh06wpmbSBs3QvikDuJ2QD1At5M=
+	b=x4W7vx2AHQVdiXhgMqqxY8u+LzmMjnIrf8+Di/NlTXmJ6+CQgPx2zB7+uoeW+qyM6
+	 yz82qCqHzhmMFq1wCQWOgI8Ks1bzVxb00MkWEz5QcONvC87GWQWm+O/p+BE33OIW2h
+	 Zs/TkG5Ix9ePQPO7E6pGYTJ/+GlKTTZOtHUQkMhA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbfGQJI0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jul 2019 05:08:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45350 "EHLO mail.kernel.org"
+        id S1725907AbfGQKDC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jul 2019 06:03:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726380AbfGQJIZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jul 2019 05:08:25 -0400
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+        id S1725890AbfGQKDC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jul 2019 06:03:02 -0400
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51F502077C;
-        Wed, 17 Jul 2019 09:08:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE43421841;
+        Wed, 17 Jul 2019 10:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563354504;
-        bh=4vu4Okxb5WZcflRFF6tQdhHwvtvePiCyc0cLWLfo7E0=;
+        s=default; t=1563357781;
+        bh=NCz+/qyUYefzxnwUGAYv3ttjqTH35P9ZY0JImQSzg+k=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RALEPS5CHWpeiDfu+HsvmOaOtvbO5k1yXwr0S9XTymblJwDF6sHvV4gEFnM2bVK9j
-         yKQMewHedSijshe748912a1/XBQpOFpER3JlkGbAUAI0kxVSMiGP7AzuAWb+5Y5IyL
-         Qh+O+M84QxD+z/qPh2CYiANXO29KI04JSGWeFggE=
-Received: by mail-lf1-f54.google.com with SMTP id q26so15878610lfc.3;
-        Wed, 17 Jul 2019 02:08:24 -0700 (PDT)
-X-Gm-Message-State: APjAAAU0XUJ6xSvg4HhNSZVVu2G/t6K8+Up57poQKMjmikFKEf3A5q59
-        WHqBCXQ5ji9eJG/Rlpbv/ftQTuB+I+k6hS+pGNc=
-X-Google-Smtp-Source: APXvYqzPzGPDBYSh581qW48n1T0W9q70m0vdtu/7IVr2GTIxxD6DYirb0vG3PGSnLIb3eXrPmw69lCfnIFHh/iYbG8w=
-X-Received: by 2002:ac2:4d1c:: with SMTP id r28mr16685179lfi.159.1563354502661;
- Wed, 17 Jul 2019 02:08:22 -0700 (PDT)
+        b=sOofdmjAyc3VxH7un9C/GsVWaOAuRKhoZen/6U8N0nnxZcKOoQa7R8eX0+vRiTxTB
+         tXXHlEd9es9CZNRR7G3eSkRRnXbiOSWpNQJ49Sftyyh9PdcN9ivmwWP+lJTNJy7mtg
+         Qe40JNLJi0cJ4RvUdWSdBUkm82nwZxugeHZLcwOo=
+Received: by mail-lf1-f52.google.com with SMTP id h28so15967258lfj.5;
+        Wed, 17 Jul 2019 03:03:00 -0700 (PDT)
+X-Gm-Message-State: APjAAAU+xZbR3UzKAChNuBdWh+7GWqAW72Ee8QJzX1rdQW3ePUbZAfZT
+        oto7wnJ2S3W5HkBIlOkQjf+rH91W57lDefIU0M4=
+X-Google-Smtp-Source: APXvYqyfLXa1g6BfJ5mBA85Kb0T2X5T4F2Y48Ege4Izqj7dAHq+EW8Ogwx/5Kmpks+6IYktMG7J9ZoO5iZ63myk+05Q=
+X-Received: by 2002:ac2:4891:: with SMTP id x17mr17980541lfc.60.1563357779221;
+ Wed, 17 Jul 2019 03:02:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20190715124452eucas1p294d89255359b2036b19213427f558dbf@eucas1p2.samsung.com>
- <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-24-l.luba@partner.samsung.com>
-In-Reply-To: <20190715124417.4787-24-l.luba@partner.samsung.com>
+References: <CGME20190715124509eucas1p1f2e44af951158fbef1a245467956ef93@eucas1p1.samsung.com>
+ <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-44-l.luba@partner.samsung.com>
+In-Reply-To: <20190715124417.4787-44-l.luba@partner.samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 17 Jul 2019 11:08:11 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeTsS_4MGfgT6ZnP8PzeaaP7Du71TxD3cQZXougGgvKXw@mail.gmail.com>
-Message-ID: <CAJKOXPeTsS_4MGfgT6ZnP8PzeaaP7Du71TxD3cQZXougGgvKXw@mail.gmail.com>
-Subject: Re: [PATCH v1 23/50] ARM: dts: exynos: change lowest OPP in
- bus_disp1_fimd in Exynos5420
+Date:   Wed, 17 Jul 2019 12:02:47 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcsH9YRzLOA1P5xc0Y3Zqh9+5o0RSxP-JcYOVEm7eO0Sw@mail.gmail.com>
+Message-ID: <CAJKOXPcsH9YRzLOA1P5xc0Y3Zqh9+5o0RSxP-JcYOVEm7eO0Sw@mail.gmail.com>
+Subject: Re: [PATCH v1 43/50] ARM: dts: exynos: add bus_isp in Exynos5422
 To:     Lukasz Luba <l.luba@partner.samsung.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -72,22 +72,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+On Mon, 15 Jul 2019 at 14:45, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> The lowest OPP must be aligned to possible value after division of parent
-> clock rate. Thus, change it to the value which is true for clock 1200MHz.
+> Add bus_isp which changes ACLK400_ISP clock speed according to the bus
+> documentation in the documentation. The bus_isp OPP table has been
+> aligned to the new parent rate.
 
-I think this is getting slightly too granular. It seems you are
-solving the same problem (or very small subset of the same problem) as
-in patch 22:
-https://patchwork.kernel.org/patch/11043849/
+Title and msg needs fixing.
 
-Please combine such changes per IP block, unless you have really
-reproducible different issues (e.g. reproducible different performance
-problem or OOPS, but not just what clk_summary prints). I imagine that
-you align entire subsystem (DISP) buses to real clock frequencies (or
-to match real frequencies, or to achieve more granular scaling, or to
-get slightly better performance).
+Please squash it with patch 18.
 
 Best regards,
 Krzysztof
+
+> This patch sets the proper parent and
+> picks the init frequency before the devfreq governor starts working.
+> It sets also parent rate (DPLL to 1200MHz).
+>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> index 990fe03fce75..852cb3dd495d 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> @@ -166,6 +166,18 @@
+>         status = "okay";
+>  };
+>
+> +&bus_isp {
+> +       devfreq = <&bus_wcore>;
+> +       assigned-clocks = <&clock CLK_MOUT_ACLK400_ISP>,
+> +                         <&clock CLK_MOUT_SW_ACLK400_ISP>,
+> +                         <&clock CLK_DOUT_ACLK400_ISP>,
+> +                         <&clock CLK_FOUT_DPLL>;
+> +       assigned-clock-parents = <&clock CLK_MOUT_SCLK_DPLL>,
+> +                                <&clock CLK_DOUT_ACLK400_ISP>;
+> +       assigned-clock-rates = <0>, <0>, <400000000>, <1200000000>;
+> +       status = "okay";
+> +};
+> +
+>  &cpu0 {
+>         cpu-supply = <&buck6_reg>;
+>  };
+> --
+> 2.17.1
+>
