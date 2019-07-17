@@ -2,58 +2,57 @@ Return-Path: <SRS0=TUvV=VO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510E8C76186
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D4FC76186
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26F36217F9
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FCA9217F9
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:35:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563359622;
-	bh=jSaDID9hgYfnliGptlwXumcvM/zIQPwcjviS3KOK0iM=;
+	s=default; t=1563359716;
+	bh=PAR8mlSeTH/LoKAbJRleg47rsHfD34Q7KbIi612oSMQ=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=TuD+STHBwfozGuEsjRboW5DI47flDjuCwJiC3UScbFIpygjDv3FRQlRkhiIgv63ET
-	 tkbKlej19n52It+zp3CBq7Oq7BMRrFGIb8DifNhU8vKVNAMKB0ODfWLwChXwowX0Fn
-	 4nnbhq9mBc53cBIBTNSDvUsgptuCfp7WTfbpUozs=
+	b=ybdQnhuBqZDStLsHTctnCbZspNwuxjJfPTZUyOcGvi1rTVeoGX9BcGVb+mBT6pc5a
+	 9kbQvb24jGBPmNETeCL9ASHRV0WV0eMm8HAC6XaD3r73elPxh8BW9C+E0xJY5eoxIX
+	 V6l+J6WCNbmBC6sijOHO7HkLWiUoYj9W9vsUBmb4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfGQKdl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jul 2019 06:33:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45988 "EHLO mail.kernel.org"
+        id S1725906AbfGQKfP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jul 2019 06:35:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726309AbfGQKdl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jul 2019 06:33:41 -0400
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+        id S1725890AbfGQKfP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jul 2019 06:35:15 -0400
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D56E821848;
-        Wed, 17 Jul 2019 10:33:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E7D6217F9;
+        Wed, 17 Jul 2019 10:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563359621;
-        bh=jSaDID9hgYfnliGptlwXumcvM/zIQPwcjviS3KOK0iM=;
+        s=default; t=1563359714;
+        bh=PAR8mlSeTH/LoKAbJRleg47rsHfD34Q7KbIi612oSMQ=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EeA60zFQcj611TQd7C6MujlhxW6JLU1lGaIiFIcdmkRVWf+gZjyhg2nDEGKnNXenN
-         ym2YnxH4ohgCWo5ZO52McWzudtbRePzKY6mDN30ZEvgHneZ+VCs0p26Cu7I7Js2OyA
-         Nr24bdmBAm6J8u+tsgoe2kWlvRuvFSmKhGry5fH8=
-Received: by mail-lf1-f51.google.com with SMTP id q26so16069247lfc.3;
-        Wed, 17 Jul 2019 03:33:40 -0700 (PDT)
-X-Gm-Message-State: APjAAAUiE9/p0HIyhTUwW8AkzEe3FFtbTAr7P/dOEX1D9QAMjzGZPM9X
-        pjrF7x/If0CRdWvgEVGqOp8SdWnvNZX8a8XLDJk=
-X-Google-Smtp-Source: APXvYqzfd8qQfJ47ARKH7ZjU+7AbaDNvBG2A0KFFMMr0HRO82EOOxLdt1QfT4GOhtDlngwx+wXKbAfJRQeeskhxBGWA=
-X-Received: by 2002:ac2:514b:: with SMTP id q11mr17797614lfd.33.1563359619184;
- Wed, 17 Jul 2019 03:33:39 -0700 (PDT)
+        b=VCIOZcy1CV4tWdHH/3BIs9dheZFe8vV0t5YOXrH1sJJnkorvF2MJyjwUEDCL65VE2
+         DhIPh1nOMFsig8WauNI8BijQwjQCuc1he9TylXqL1HTJ5xME0oSZTsg7kMUJqivfXr
+         ChUGuW616fQwnqzU3MRjdhmALaE36CbMDa03uJYg=
+Received: by mail-lj1-f178.google.com with SMTP id p17so23128685ljg.1;
+        Wed, 17 Jul 2019 03:35:14 -0700 (PDT)
+X-Gm-Message-State: APjAAAXicdhNWbGqqZOlM/hU7NRgZYGTKy42nR8Y1+sOT0ZHbDL/OYec
+        9mluM2kpi9ImupCSovc5dJWP7mcSBdS/DdcX1I0=
+X-Google-Smtp-Source: APXvYqy8D0RzdrNvLB/ZkY5weYlQZqHp4mf5RPOqEq2VDNgO6QJkju5xmxTPy8R/KFmcpxCPgjfx7det/rdOuHGMZ1M=
+X-Received: by 2002:a2e:50e:: with SMTP id 14mr20723271ljf.5.1563359712606;
+ Wed, 17 Jul 2019 03:35:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20190715124458eucas1p2df56f2e0c7a1a0a9144a4d5fbdb471a9@eucas1p2.samsung.com>
- <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-31-l.luba@partner.samsung.com>
-In-Reply-To: <20190715124417.4787-31-l.luba@partner.samsung.com>
+References: <CGME20190715124501eucas1p17382ca9cead8bfe1dc938e6fb583b7c5@eucas1p1.samsung.com>
+ <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-34-l.luba@partner.samsung.com>
+In-Reply-To: <20190715124417.4787-34-l.luba@partner.samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 17 Jul 2019 12:33:27 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdD-g1A+LKp1Nmmho2MVRxERfXb+Q3WsBrN=7YbnVufMQ@mail.gmail.com>
-Message-ID: <CAJKOXPdD-g1A+LKp1Nmmho2MVRxERfXb+Q3WsBrN=7YbnVufMQ@mail.gmail.com>
-Subject: Re: [PATCH v1 30/50] ARM: dts: exynos: add bus_isp266 into Exynos5800
+Date:   Wed, 17 Jul 2019 12:35:01 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdGnyEayFBuNPgrdB-9oqdvxkRCLm93kDBVfHnmnAgc9g@mail.gmail.com>
+Message-ID: <CAJKOXPdGnyEayFBuNPgrdB-9oqdvxkRCLm93kDBVfHnmnAgc9g@mail.gmail.com>
+Subject: Re: [PATCH v1 33/50] ARM: dts: exynos: set parent clocks to UARTs in Exynos5420
 To:     Lukasz Luba <l.luba@partner.samsung.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -74,40 +73,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, 15 Jul 2019 at 14:45, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> The Exynos5420 SoC had one clock for two lines while Exynos5422/5800 have
-> dedicated clock tree for the ACLK266_ISP. The max frequency is 300MHz so
-> it shares the OPP table with bus_gen. The bus is added here and is enabled
-> in .dts file for proper board.
+> Change the parents of UART clocks to the CPLL which has 666MHz.
+> The UARTs' dividers use /10 rate so they would have 66.6MHz.
 
-Squash it with 48 please.
+Write also the state before to show what is being fixed (I assume
+previous frequency was not best choice).
 
 BR,
 Krzysztof
-
->
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5800.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-> index 57d3b319fd65..3b9200db43b6 100644
-> --- a/arch/arm/boot/dts/exynos5800.dtsi
-> +++ b/arch/arm/boot/dts/exynos5800.dtsi
-> @@ -131,3 +131,13 @@
->  &mfc {
->         compatible = "samsung,mfc-v8";
->  };
-> +
-> +&soc {
-> +               bus_isp266: bus_isp266 {
-> +                       compatible = "samsung,exynos-bus";
-> +                       clocks = <&clock CLK_DOUT_ACLK266_ISP>;
-> +                       clock-names = "bus";
-> +                       operating-points-v2 = <&bus_gen_opp_table>;
-> +                       status = "disabled";
-> +               };
-> +};
-> --
-> 2.17.1
->
