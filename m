@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D4FC76186
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E16C76192
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FCA9217F9
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C3242173B
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563359716;
-	bh=PAR8mlSeTH/LoKAbJRleg47rsHfD34Q7KbIi612oSMQ=;
+	s=default; t=1563359900;
+	bh=EM4gS8mAGQDedVZGGONZaY9+yCWKAtPAjdPsCsgwOjA=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ybdQnhuBqZDStLsHTctnCbZspNwuxjJfPTZUyOcGvi1rTVeoGX9BcGVb+mBT6pc5a
-	 9kbQvb24jGBPmNETeCL9ASHRV0WV0eMm8HAC6XaD3r73elPxh8BW9C+E0xJY5eoxIX
-	 V6l+J6WCNbmBC6sijOHO7HkLWiUoYj9W9vsUBmb4=
+	b=hR39AsPjnPECD9QRYCzHkqE3HkDw7Q6Hre/SQyuWMwTopPNqU/c0rL2zAj6vgXRl3
+	 hUTBK+NjVU0spt413jk+w9O/G9FDiA9EKsCkR6V0DEUn/V41ARuXEcvU4VNW2gAfTW
+	 ZNJPR6hvYJTjmNE8IYunB+u7u1/SBYAvXIpvtJok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725906AbfGQKfP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jul 2019 06:35:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47938 "EHLO mail.kernel.org"
+        id S1726326AbfGQKiU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jul 2019 06:38:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfGQKfP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jul 2019 06:35:15 -0400
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+        id S1725799AbfGQKiU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jul 2019 06:38:20 -0400
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E7D6217F9;
-        Wed, 17 Jul 2019 10:35:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD69D21841;
+        Wed, 17 Jul 2019 10:38:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563359714;
-        bh=PAR8mlSeTH/LoKAbJRleg47rsHfD34Q7KbIi612oSMQ=;
+        s=default; t=1563359899;
+        bh=EM4gS8mAGQDedVZGGONZaY9+yCWKAtPAjdPsCsgwOjA=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VCIOZcy1CV4tWdHH/3BIs9dheZFe8vV0t5YOXrH1sJJnkorvF2MJyjwUEDCL65VE2
-         DhIPh1nOMFsig8WauNI8BijQwjQCuc1he9TylXqL1HTJ5xME0oSZTsg7kMUJqivfXr
-         ChUGuW616fQwnqzU3MRjdhmALaE36CbMDa03uJYg=
-Received: by mail-lj1-f178.google.com with SMTP id p17so23128685ljg.1;
-        Wed, 17 Jul 2019 03:35:14 -0700 (PDT)
-X-Gm-Message-State: APjAAAXicdhNWbGqqZOlM/hU7NRgZYGTKy42nR8Y1+sOT0ZHbDL/OYec
-        9mluM2kpi9ImupCSovc5dJWP7mcSBdS/DdcX1I0=
-X-Google-Smtp-Source: APXvYqy8D0RzdrNvLB/ZkY5weYlQZqHp4mf5RPOqEq2VDNgO6QJkju5xmxTPy8R/KFmcpxCPgjfx7det/rdOuHGMZ1M=
-X-Received: by 2002:a2e:50e:: with SMTP id 14mr20723271ljf.5.1563359712606;
- Wed, 17 Jul 2019 03:35:12 -0700 (PDT)
+        b=iRsjFQQrjNmtgbLMWeCNYdP0HGgaJWhgSbmm4IFi1xfBbXDlGPTq0g1IbbV//YZKu
+         2b5cV+HpOsyjs4M/rtvOjKCAF7sKti/mkOhI72YCfT6DF9ts21rHt8wmUCeKSISB9X
+         mruzAs2Z53mWa/5mlIqXimCpnP8SxfjDE1XfYHiY=
+Received: by mail-lf1-f44.google.com with SMTP id 62so11179945lfa.8;
+        Wed, 17 Jul 2019 03:38:18 -0700 (PDT)
+X-Gm-Message-State: APjAAAUT+Pwyh6lpjziHjZ7JyPOqJ6i/B+nPGMJt2Nv1MAlK3ubxpo3T
+        o4afYfBP+WoJAgRe9m7nRcxUHJ7q1aE0M0czKm4=
+X-Google-Smtp-Source: APXvYqyz/tFKkDEsgYJcEhlF6kY6XpGjK9nVGrDgAi01UppvCkUTP4w/fba1Vfs3b/0mz9atjli4OodMVqblc2ZpNYI=
+X-Received: by 2002:ac2:4d1c:: with SMTP id r28mr16893853lfi.159.1563359896938;
+ Wed, 17 Jul 2019 03:38:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20190715124501eucas1p17382ca9cead8bfe1dc938e6fb583b7c5@eucas1p1.samsung.com>
- <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-34-l.luba@partner.samsung.com>
-In-Reply-To: <20190715124417.4787-34-l.luba@partner.samsung.com>
+References: <CGME20190715124455eucas1p13bfc0c1d113225db9607e4c0dbac353c@eucas1p1.samsung.com>
+ <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-27-l.luba@partner.samsung.com>
+ <CAJKOXPc3qsM5Xe5JViDZXYfes+_veb-KX3fnZjpkUCrphBcu-Q@mail.gmail.com> <8ed83c77-57f7-78a4-e437-714cfc7b5c58@partner.samsung.com>
+In-Reply-To: <8ed83c77-57f7-78a4-e437-714cfc7b5c58@partner.samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 17 Jul 2019 12:35:01 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdGnyEayFBuNPgrdB-9oqdvxkRCLm93kDBVfHnmnAgc9g@mail.gmail.com>
-Message-ID: <CAJKOXPdGnyEayFBuNPgrdB-9oqdvxkRCLm93kDBVfHnmnAgc9g@mail.gmail.com>
-Subject: Re: [PATCH v1 33/50] ARM: dts: exynos: set parent clocks to UARTs in Exynos5420
+Date:   Wed, 17 Jul 2019 12:38:05 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdMUV6JP0R4kj=cFKd7QUdrtMXtSm4S9pfF77zvKu4v1g@mail.gmail.com>
+Message-ID: <CAJKOXPdMUV6JP0R4kj=cFKd7QUdrtMXtSm4S9pfF77zvKu4v1g@mail.gmail.com>
+Subject: Re: [PATCH v1 26/50] ARM: dts: exynos: align NOC100 bus OPPs in Exynos5420
 To:     Lukasz Luba <l.luba@partner.samsung.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -71,13 +72,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 15 Jul 2019 at 14:45, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+On Wed, 17 Jul 2019 at 12:27, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> Change the parents of UART clocks to the CPLL which has 666MHz.
-> The UARTs' dividers use /10 rate so they would have 66.6MHz.
+>
+> On 7/17/19 12:10 PM, Krzysztof Kozlowski wrote:
+> > On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+> >>
+> >> The NOC100 has a parent which clock rate is set tot 400MHz. The OPPs which
+> >> are not possible to set are removed and new one is added.
+> >
+> > I think it is just NOC bus... or are there more of such and this is 100 MHz one?
+> Yes, there is a bus NOC100 with a dedicated clock tree in the HW (with
+> 3 muxes and one divider), which makes possible to take different PLL as
+> a source then WCORE have, divide the rate from it and even switch for a
+> while to alternative stable PLL (on the 2nd mux to SPLL (after a
+> divider)) to wait for main PLL rate change stability delay. Max rate is
+> limited to 100MHz for this NOC100 bus.
 
-Write also the state before to show what is being fixed (I assume
-previous frequency was not best choice).
+I think we misunderstood each other. I am saying, that the bus is
+called "NOC" in the DTSI. Not NOC100. So unless there are more of
+NOCs, stick to existing name NOC, even if it is not the most accurate.
 
-BR,
+Best regards,
 Krzysztof
