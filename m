@@ -6,54 +6,53 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01C0C76186
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F34C76186
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DD72077C
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F16FB21743
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jul 2019 10:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563357894;
-	bh=cxrHAxpbFgJEYGfTBwEGfvIpkQdM8v6E7N7v7YKfsyo=;
+	s=default; t=1563358234;
+	bh=B0vq7TI9wkTFGGzN7Fq0OAUyk2GFb1jaW2T4WnkVxnQ=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=vX1qZ36KTLYXsqY4q0srgN2SwpyaaV3n2GDy1KuTv5m7YcPsRvndRtGYkiwyk7od1
-	 VutPqfKGe24eMiy5ghZ//9VlKfuw7Gne4CS9UTsDBMtRC2JNWiFQHa7MMwyHfMPqss
-	 K0jicuNoGEmt+XVLP9JFq4S4aMUtFKilCdCsR7ng=
+	b=aHLSkneCrdpPvzFM0C8WIENjJV6mPjeZr1nQCUu137wer+Hq+GDOwT6o0mKL5xcnS
+	 asVz8FhVTkwrBGpts69kxMIgZHkirz8Z+YiEWIJzQOb2Rpu/mmSU4UrZCX9/R9Bt0e
+	 cBna56sgNq3q4Vtp4NLEdAri2OPFNu49W53wZtGY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfGQKEw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jul 2019 06:04:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57316 "EHLO mail.kernel.org"
+        id S1726063AbfGQKK3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jul 2019 06:10:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726326AbfGQKEv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jul 2019 06:04:51 -0400
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+        id S1725948AbfGQKK2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jul 2019 06:10:28 -0400
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 246D321848;
-        Wed, 17 Jul 2019 10:04:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F9FF217F9;
+        Wed, 17 Jul 2019 10:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563357890;
-        bh=cxrHAxpbFgJEYGfTBwEGfvIpkQdM8v6E7N7v7YKfsyo=;
+        s=default; t=1563358227;
+        bh=B0vq7TI9wkTFGGzN7Fq0OAUyk2GFb1jaW2T4WnkVxnQ=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ce0Djo5SGxrZvFuUFJCysw5byh7FkXoy/2aP1lYiuGvzZlM3HfFHuO+EnGWglmaTM
-         TyRksP1eePtU/ApVj16anmAtz6ktbuSQIUP/6H6yGnSCLYPq4Plw+1ZtRu41mCmGmT
-         TmBD/RuS/K79iuEnAsGLsyc+xslh5oFzU6sQsLpQ=
-Received: by mail-lj1-f181.google.com with SMTP id d24so23017211ljg.8;
-        Wed, 17 Jul 2019 03:04:50 -0700 (PDT)
-X-Gm-Message-State: APjAAAXv/OND3zOTYUVIcssgrqwp8O/h/Xe0QPCatSMtME8f+MrA7nzg
-        txcsvAiJdkbxfe7/uwzvU5Is03Yr1y8iwccr2OE=
-X-Google-Smtp-Source: APXvYqyUF6RwWmtpq2St1SUUGe05KtJonxRDAPvTHfsETJ19YFTa2yjFxeqxPAGfIR3HLu1rlVn3N4W4P43GH7prZcw=
-X-Received: by 2002:a2e:124b:: with SMTP id t72mr20711008lje.143.1563357888437;
- Wed, 17 Jul 2019 03:04:48 -0700 (PDT)
+        b=tp7xDM+4dkXRzBqwbE1lKYdrAdg5NwLhC8eFDtVrZvxXTDyL5dwf6v6gjNQxhDB0L
+         qRNRjh47HKL0vo/a/EUMT6J5yKajlEm5DvlZqm+AhrabbsKft7mjMXYziTteokCttO
+         rB0ATQ4npW3uhufNJFEKmz9CTP2zwVCOUG9wZzRg=
+Received: by mail-lj1-f180.google.com with SMTP id d24so23033423ljg.8;
+        Wed, 17 Jul 2019 03:10:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAUtUU+tqLdYmEAZVc/i8CB+qWuva48PryOQHWKKFt/dkDaSOBsn
+        5fjg0CI5awQ/XzJwyBSFuxn8plh/imWjnvlrUgY=
+X-Google-Smtp-Source: APXvYqzIxuLAR32Jvbkflkn1R9vuEUkDOd5VMPMZ6u/awTTp1I0u14ioknFtuK1fwk0oxvu4ENFvuA7wgfhcvBVlZh4=
+X-Received: by 2002:a2e:50e:: with SMTP id 14mr20662249ljf.5.1563358225560;
+ Wed, 17 Jul 2019 03:10:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20190715124454eucas1p1cd37552b222539b02629cb52e646ae29@eucas1p1.samsung.com>
- <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-26-l.luba@partner.samsung.com>
-In-Reply-To: <20190715124417.4787-26-l.luba@partner.samsung.com>
+References: <CGME20190715124455eucas1p13bfc0c1d113225db9607e4c0dbac353c@eucas1p1.samsung.com>
+ <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-27-l.luba@partner.samsung.com>
+In-Reply-To: <20190715124417.4787-27-l.luba@partner.samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 17 Jul 2019 12:04:36 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcfqp2mUXW70=puti7mf0S5LoXF4hFQt5-9tvCgLzjknQ@mail.gmail.com>
-Message-ID: <CAJKOXPcfqp2mUXW70=puti7mf0S5LoXF4hFQt5-9tvCgLzjknQ@mail.gmail.com>
-Subject: Re: [PATCH v1 25/50] ARM: dts: exynos: add 300MHz to bus_disp1_fimd
- in Exynos5420
+Date:   Wed, 17 Jul 2019 12:10:13 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPc3qsM5Xe5JViDZXYfes+_veb-KX3fnZjpkUCrphBcu-Q@mail.gmail.com>
+Message-ID: <CAJKOXPc3qsM5Xe5JViDZXYfes+_veb-KX3fnZjpkUCrphBcu-Q@mail.gmail.com>
+Subject: Re: [PATCH v1 26/50] ARM: dts: exynos: align NOC100 bus OPPs in Exynos5420
 To:     Lukasz Luba <l.luba@partner.samsung.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -74,10 +73,10 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> According to the documentation max frequency for ACLK300_DISP1 is 300MHz.
-> Add an OPP which makes it possible to use the full performance when needed.
+> The NOC100 has a parent which clock rate is set tot 400MHz. The OPPs which
+> are not possible to set are removed and new one is added.
 
-Squash it with #23.
+I think it is just NOC bus... or are there more of such and this is 100 MHz one?
 
-BR,
+Best regards,
 Krzysztof
