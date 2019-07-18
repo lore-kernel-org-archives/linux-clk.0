@@ -2,158 +2,217 @@ Return-Path: <SRS0=f356=VP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69282C7618F
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 17:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F4AC76195
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 17:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4132421019
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 17:42:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2284E2173B
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 17:49:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pqmyfLvx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="06E/D9xS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfGRRl7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jul 2019 13:41:59 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:14640 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728111AbfGRRl7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jul 2019 13:41:59 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d30af630001>; Thu, 18 Jul 2019 10:41:55 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 18 Jul 2019 10:41:57 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 18 Jul 2019 10:41:57 -0700
-Received: from [10.110.103.56] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
- 2019 17:41:56 +0000
-Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Joseph Lo <josephl@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <jckuo@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
- <16f8b146-2581-a842-4997-53ab05b62c70@gmail.com>
- <d7892bfc-2cbf-27af-518d-dc7e243815b8@nvidia.com>
- <71272e9a-0f2a-c20d-6532-7e9057ad985c@gmail.com>
- <78fd19b9-b652-8ac3-1f57-3b4adadee03f@nvidia.com>
- <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
- <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
- <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
- <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
- <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
- <46b55527-da5d-c0b7-1c14-43b5c6d49dfa@nvidia.com>
- <2de9a608-cf38-f56c-b192-7ffed65092f8@nvidia.com>
- <bff3e9c0-727d-9aef-a0e2-583e53c39afd@gmail.com>
- <5eedd224-77b0-1fc9-4e5e-d884b41a64ed@nvidia.com>
- <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
- <c759d71b-1549-2562-f0cf-db5f9e51329e@nvidia.com>
- <ef7928ad-239d-eca8-41bf-f76e72a9841d@nvidia.com>
- <4141181d-7162-0321-71b6-33abf11f631c@gmail.com>
- <ab8f2441-8f4b-3a2b-5bcd-1a889555176a@nvidia.com>
-Message-ID: <419e1b16-683e-1b56-7334-50d87368c1b9@nvidia.com>
-Date:   Thu, 18 Jul 2019 10:41:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727972AbfGRRtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Jul 2019 13:49:08 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:37270 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbfGRRtI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jul 2019 13:49:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=92pp11O0w/KygeJfU6KKGXI60apu6fEQZEzEHiKx8AI=; b=06E/D9xSxeTyEkX282S8AJCHr
+        jlsqmlbJjKEnRJO2K+WRb4bLh3dDu3Ysr85Nuu6aCgpOWauBUGRi/eeI1+SsoldJN3BnoGVeCFkLT
+        jglWEMcIJmSVzXjiDc5OyPGuU7w7HlSwwo3CcXNdq3f45tU5t6B1KvOt//kDuEs/vPkAKhqan8KZg
+        3JxUQKvhBvhw0iJmoM7Ls63K5LpHODzQ41UjKlnr4isPiD4I/xXLDckYUheivrj6jUC77FrdP+BHG
+        2AR2wK696zW+t+K2e0bxiNYaq5yGHQef3xXcqtQBw/AAeQ2ombwAHa3V6mxpbTQVd5sB9xnxTx/ai
+        R55qKMzwQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60468)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1hoAWd-0008Hp-Ri; Thu, 18 Jul 2019 18:49:04 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1hoAWb-0002kb-Qn; Thu, 18 Jul 2019 18:49:01 +0100
+Date:   Thu, 18 Jul 2019 18:49:01 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: sa1100: convert to common clock framework
+Message-ID: <20190718174901.t6hlrdq6h3xhzlbj@shell.armlinux.org.uk>
+References: <E1hhAN0-0007Jn-NP@rmk-PC.armlinux.org.uk>
+ <20190718163809.9D25D217F4@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ab8f2441-8f4b-3a2b-5bcd-1a889555176a@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563471715; bh=QDI5IqDp9suDRjNaAkUm8piJMHGnuMn5yRUtK5Yo2lI=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=pqmyfLvxFnfQ1aktHQK/J4AcWiSwU2R+a0KUdxArWu+4aFuEhJ0+cMjBL4vne6j7N
-         BruO6PUAtR/Coz64r22DvkTXeSDlJ9rySclJ/lWtpY+RTwKemflJv5YKTd3tooz10V
-         mkT49WPy0DlDRQiXX7Q7Sn7W4F/6VFLznxSc3yyektij5D6JVy/npmshn3kVId1LK4
-         8lQA7j6tOn/pL2oa6ZA/h2k/HPtWeHWXeb0cj12w+MK2AS/AG3iF63AVBx94tUX9az
-         h1JPxGQnub4ozmyGa3gdASyEeinSrJWBVPNlW1a/RKiqmrk0qxLmBDMpJmzQaSjZZI
-         b6TF+5P/SojHw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718163809.9D25D217F4@mail.kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jul 18, 2019 at 09:38:08AM -0700, Stephen Boyd wrote:
+> Quoting Russell King (2019-06-29 03:14:10)
+> > Convert sa1100 to use the common clock framework.
+> > 
+> > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> > ---
+> > Please ack; this is part of a larger series.  Thanks.
+> 
+> Just a few minor comments but otherwise looks good to me.
+> 
+> > diff --git a/arch/arm/mach-sa1100/clock.c b/arch/arm/mach-sa1100/clock.c
+> > index 6199e87447ca..523ef25618f7 100644
+> > --- a/arch/arm/mach-sa1100/clock.c
+> > +++ b/arch/arm/mach-sa1100/clock.c
+> > +static const char * const clk_tucr_parents[] = {
+> > +       "clk32768", "clk3686400",
+> >  };
+> 
+> It would be great if you used the new way of specifying clk parents with
+> direct pointers instead of strings. See commit fc0c209c147f ("clk: Allow
+> parents to be specified without string names") for some details.
 
-On 7/18/19 10:22 AM, Sowjanya Komatineni wrote:
->
-> On 7/18/19 9:34 AM, Dmitry Osipenko wrote:
->> 18.07.2019 4:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->> [snip]
->>
->>>>> Please try to fix all missing dependencies and orderings.
->>>> Peter,
->>>>
->>>> dfllCPU_OUT is the first one to go thru restore when
->>>> clk_restore_context traverses thru the list.
->>>>
->>>> dfllCPU_OUT has dependency on DFLL_ref and DFLL_SOC but this
->>>> dependency is unknown to clock-tree.
->>>>
->>>> We can add DFLL_REF and DFLL_SOC as parents to dfllCPU_OUT during
->>>> register so dfllCPU_OUT save/restore happens after their parents are
->>>> restored.
->>>>
->>>> But DFLL needs both of these to be restored before DFLLCPU_Out and as
->>>> DFLL_SOC restore always happens after the REF, thinking to add
->>>> DFLL_SOC as parent to dfllCPU_OUT so save/restore follows after their
->>>> dependencies.
->>>>
->>>> Please comment.
->>>>
->>> Did quick try and I see by adding dfll-soc as parent to dfllCPU_OUT,=20
->>> its
->>> in proper order after all its dependencies.
->>>
->>> Can now add dfll save/restore to do dfll reinit during restore..
->>>
->> If dfllCPU_OUT can work properly with dfll-soc being disabled, then this
->> kind of dependency isn't very correct and just papers over the real
->> problem, which is that there should be a way for CCF to specify multiple
->> dependencies for the clock or the reverse ordering should be used for
->> the restoring.
->
-> dfll will not work without dfll-soc enabled.
->
-> CLDVFS control logic is split into 2 clock domains. dvfs_ref_clk and=20
-> dvfs_soc_clk.
->
-> Majority of the control logic is clocked from dvfs_soc_clk for=20
-> interfacing control registers.
->
-Note on reverse ordering for restore. Currently restore order goes thru=20
-clock list and for each root goes thru parent -> child restore.
+I don't see at the moment how this is used with clk-mux.c - can you
+provide some hints?
 
-this order is correct and also all clocks are parented properly so they=20
-follow proper order.
+> 
+> >  
+> > -struct clk {
+> > -       const struct clkops     *ops;
+> > -       unsigned int            enabled;
+> > -};
+> > -
+> > -#define DEFINE_CLK(_name, _ops)                                \
+> > -struct clk clk_##_name = {                             \
+> > -               .ops    = _ops,                         \
+> > -       }
+> > -
+> > -static DEFINE_SPINLOCK(clocks_lock);
+> > -
+> > -/* Dummy clk routine to build generic kernel parts that may be using them */
+> > -long clk_round_rate(struct clk *clk, unsigned long rate)
+> > -{
+> > -       return clk_get_rate(clk);
+> > -}
+> > -EXPORT_SYMBOL(clk_round_rate);
+> > -
+> > -int clk_set_rate(struct clk *clk, unsigned long rate)
+> > -{
+> > -       return 0;
+> > -}
+> > -EXPORT_SYMBOL(clk_set_rate);
+> > -
+> > -int clk_set_parent(struct clk *clk, struct clk *parent)
+> > -{
+> > -       return 0;
+> > -}
+> > -EXPORT_SYMBOL(clk_set_parent);
+> > +static DEFINE_SPINLOCK(tucr_lock);
+> >  
+> > -struct clk *clk_get_parent(struct clk *clk)
+> > +static int clk_gpio27_enable(struct clk_hw *hw)
+> >  {
+> > -       return NULL;
+> > -}
+> > -EXPORT_SYMBOL(clk_get_parent);
+> > +       unsigned long flags;
+> >  
+> > -static void clk_gpio27_enable(struct clk *clk)
+> > -{
+> >         /*
+> >          * First, set up the 3.6864MHz clock on GPIO 27 for the SA-1111:
+> >          * (SA-1110 Developer's Manual, section 9.1.2.1)
+> >          */
+> > +       local_irq_save(flags);
+> >         GAFR |= GPIO_32_768kHz;
+> >         GPDR |= GPIO_32_768kHz;
+> > -       TUCR = TUCR_3_6864MHz;
+> > +       local_irq_restore(flags);
+> > +
+> > +       return 0;
+> >  }
+> >  
+> > -static void clk_gpio27_disable(struct clk *clk)
+> > +static void clk_gpio27_disable(struct clk_hw *hw)
+> >  {
+> > -       TUCR = 0;
+> > +       unsigned long flags;
+> > +
+> > +       local_irq_save(flags);
+> 
+> Why just disable irqs here?
 
-dfllCPU is the only one where current driver doesn't take care of=20
-dependency in dfll_soc which gets enabled only after dfll_ref.
+What do you mean?  Do you mean "why are you only disabling IRQs and not
+taking a spinlock" or do you mean "why are you disabling IRQs here" ?
 
+> 
+> >         GPDR &= ~GPIO_32_768kHz;
+> >         GAFR &= ~GPIO_32_768kHz;
+> > +       local_irq_restore(flags);
+> >  }
+> >  
+> > -static void clk_cpu_enable(struct clk *clk)
+> > -{
+> > -}
+> > +static const struct clk_ops clk_gpio27_ops = {
+> > +       .enable = clk_gpio27_enable,
+> > +       .disable = clk_gpio27_disable,
+> > +};
+> >  
+> > -static void clk_cpu_disable(struct clk *clk)
+> > -{
+> > -}
+> > +static const char * const clk_gpio27_parents[] = {
+> > +       "tucr-mux",
+> > +};
+> >  
+> > -static unsigned long clk_cpu_get_rate(struct clk *clk)
+> > +static const struct clk_init_data clk_gpio27_init_data __initconst = {
+> > +       .name = "gpio27",
+> > +       .ops = &clk_gpio27_ops,
+> > +       .parent_names = clk_gpio27_parents,
+> > +       .num_parents = ARRAY_SIZE(clk_gpio27_parents),
+> > +       .flags = CLK_IS_BASIC,
+> 
+> CLK_IS_BASIC is gone. Please don't use it.
 
-Based on dfllCPU control logic module design, dfll_ref and dfll_soc=20
-should be enabled prior to dfll init/enable.
+The patch is against 5.1, and you're right, so that was removed for the
+version that ended up going upstream.
 
-So parenting dfll_soc to dfllCPU keeps proper order.
+> 
+> > +};
+> > +
+> > +/*
+> > + * Derived from the table 8-1 in the SA1110 manual, the MPLL appears to
+> > + * multiply its input rate by 4 x (4 + PPCR).  This calculation gives
+> > + * the exact rate.  The figures given in the table are the rates rounded
+> > + * to 100kHz.  Stick with sa11x0_getspeed() for the time being.
+> [...]
+> > +static const struct clk_init_data clk_mpll_init_data __initconst = {
+> > +       .name = "mpll",
+> > +       .ops = &clk_mpll_ops,
+> > +       .parent_names = clk_mpll_parents,
+> > +       .num_parents = ARRAY_SIZE(clk_mpll_parents),
+> > +       .flags = CLK_IS_BASIC | CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL,
+> 
+> Please add a comment about these last two flags so we know why the rate
+> can't be cached and the clk is critical.
 
+Ok, I'll do that with a follow-up patch once the merge window is over.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
