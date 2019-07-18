@@ -2,492 +2,198 @@ Return-Path: <SRS0=f356=VP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2D0C7618F
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 19:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1C0C7618F
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 19:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7AE62173B
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 19:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B506A21019
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 19:11:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XuQfxovq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfGRTGG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jul 2019 15:06:06 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57578 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727687AbfGRTGG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:06:06 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EFDD62003A4;
-        Thu, 18 Jul 2019 21:06:02 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E163320011C;
-        Thu, 18 Jul 2019 21:06:02 +0200 (CEST)
-Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 560B3205C7;
-        Thu, 18 Jul 2019 21:06:02 +0200 (CEST)
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
+        id S2391001AbfGRTLH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Jul 2019 15:11:07 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7266 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbfGRTLH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jul 2019 15:11:07 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d30c44f0001>; Thu, 18 Jul 2019 12:11:11 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 18 Jul 2019 12:11:05 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 18 Jul 2019 12:11:05 -0700
+Received: from [10.110.103.56] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
+ 2019 19:11:04 +0000
+Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>, <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
-Cc:     Jacky Bai <ping.bai@nxp.com>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: [RFC v3] clk: imx8mm: Add dram freq switch support
-Date:   Thu, 18 Jul 2019 22:06:00 +0300
-Message-Id: <d2ff5121bced3e5632ff246a51e1f56ee3fe03f9.1563476560.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
+ <71272e9a-0f2a-c20d-6532-7e9057ad985c@gmail.com>
+ <78fd19b9-b652-8ac3-1f57-3b4adadee03f@nvidia.com>
+ <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
+ <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
+ <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
+ <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
+ <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
+ <46b55527-da5d-c0b7-1c14-43b5c6d49dfa@nvidia.com>
+ <2de9a608-cf38-f56c-b192-7ffed65092f8@nvidia.com>
+ <bff3e9c0-727d-9aef-a0e2-583e53c39afd@gmail.com>
+ <5eedd224-77b0-1fc9-4e5e-d884b41a64ed@nvidia.com>
+ <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
+ <c759d71b-1549-2562-f0cf-db5f9e51329e@nvidia.com>
+ <ef7928ad-239d-eca8-41bf-f76e72a9841d@nvidia.com>
+ <4141181d-7162-0321-71b6-33abf11f631c@gmail.com>
+ <ab8f2441-8f4b-3a2b-5bcd-1a889555176a@nvidia.com>
+ <419e1b16-683e-1b56-7334-50d87368c1b9@nvidia.com>
+ <8bca130c-c95c-591e-2f6e-f02538f8f8b8@nvidia.com>
+Message-ID: <7717c538-106e-743a-82be-feb627dfa12f@nvidia.com>
+Date:   Thu, 18 Jul 2019 12:11:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <8bca130c-c95c-591e-2f6e-f02538f8f8b8@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563477071; bh=xPwhZANULVIKddNH5CkI2wuBM0ppp91PoJZspyi/WJE=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=XuQfxovqwJkktmQkvhVF/YtdZ84NGAHWWJudNQWej5vdnsXVUlNxbffhRm7RuRQtj
+         0dIAbcDO8T3FAMxlV3CJf5Gg3Zh/zMjxWQ9zkJIMpUMx6FJIahon0R3v7qSh0RMy6c
+         9jdafi6kpRDJYDtM9+HuoOgaxjUvV98aLvrnWZys+G316kVlYPi7HpO2eEri8F4ugl
+         Lc9DRPfa162fIMRSTBgJUf5XYBw9eg0+uDN/V4WxVpG6EgVz2NoU6HUkp+U8Sr284Z
+         +4GkELbMaFvQWHoUnAXgnTptx/DwniBAutrD4pYDP0wyS1pKvC7oZqkpERrjZxP9XL
+         BJlzvVYvEf4YQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a compound clock encapsulating dram frequency switch support for
-imx8m chips. This allows higher-level DVFS code to manipulate dram
-frequency using standard clock framework APIs.
 
-Only some preparation is done inside the kernel, the actual freq switch
-is performed from TF-A code which runs from an SRAM area. After the freq
-is changed the rates and parents are refreshed on linux side.
+On 7/18/19 11:29 AM, Sowjanya Komatineni wrote:
+>
+> On 7/18/19 10:41 AM, Sowjanya Komatineni wrote:
+>>
+>> On 7/18/19 10:22 AM, Sowjanya Komatineni wrote:
+>>>
+>>> On 7/18/19 9:34 AM, Dmitry Osipenko wrote:
+>>>> 18.07.2019 4:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>
+>>>> [snip]
+>>>>
+>>>>>>> Please try to fix all missing dependencies and orderings.
+>>>>>> Peter,
+>>>>>>
+>>>>>> dfllCPU_OUT is the first one to go thru restore when
+>>>>>> clk_restore_context traverses thru the list.
+>>>>>>
+>>>>>> dfllCPU_OUT has dependency on DFLL_ref and DFLL_SOC but this
+>>>>>> dependency is unknown to clock-tree.
+>>>>>>
+>>>>>> We can add DFLL_REF and DFLL_SOC as parents to dfllCPU_OUT during
+>>>>>> register so dfllCPU_OUT save/restore happens after their parents are
+>>>>>> restored.
+>>>>>>
+>>>>>> But DFLL needs both of these to be restored before DFLLCPU_Out=20
+>>>>>> and as
+>>>>>> DFLL_SOC restore always happens after the REF, thinking to add
+>>>>>> DFLL_SOC as parent to dfllCPU_OUT so save/restore follows after=20
+>>>>>> their
+>>>>>> dependencies.
+>>>>>>
+>>>>>> Please comment.
+>>>>>>
+>>>>> Did quick try and I see by adding dfll-soc as parent to=20
+>>>>> dfllCPU_OUT, its
+>>>>> in proper order after all its dependencies.
+>>>>>
+>>>>> Can now add dfll save/restore to do dfll reinit during restore..
+>>>>>
+>>>> If dfllCPU_OUT can work properly with dfll-soc being disabled, then=20
+>>>> this
+>>>> kind of dependency isn't very correct and just papers over the real
+>>>> problem, which is that there should be a way for CCF to specify=20
+>>>> multiple
+>>>> dependencies for the clock or the reverse ordering should be used for
+>>>> the restoring.
+>>>
+>>> dfll will not work without dfll-soc enabled.
+>>>
+>>> CLDVFS control logic is split into 2 clock domains. dvfs_ref_clk and=20
+>>> dvfs_soc_clk.
+>>>
+>>> Majority of the control logic is clocked from dvfs_soc_clk for=20
+>>> interfacing control registers.
+>>>
+>> Note on reverse ordering for restore. Currently restore order goes=20
+>> thru clock list and for each root goes thru parent -> child restore.
+>>
+>> this order is correct and also all clocks are parented properly so=20
+>> they follow proper order.
+>>
+>> dfllCPU is the only one where current driver doesn't take care of=20
+>> dependency in dfll_soc which gets enabled only after dfll_ref.
+>>
+>>
+>> Based on dfllCPU control logic module design, dfll_ref and dfll_soc=20
+>> should be enabled prior to dfll init/enable.
+>>
+>> So parenting dfll_soc to dfllCPU keeps proper order.
+>>
+>
+> 1. With dfllCPU parenting to dfll_soc, its keeps it in expected order=20
+> and we don't define any parent clk_ops anyway for this, so should be OK?
+>
+> OR
+>
+> 2. Any suggestion on how to define/specify dependencies for clock=20
+> other than parenting to follow proper order in clock tree as=20
+> clk_save_context and clk_restore_context strictly goes thru clock tree=20
+> order and all other clocks are parented properly except for dfllCPU=20
+> where there is no parent. Techinically dfll_ref & dfll_soc are not=20
+> parents but they need to be configured prior to dfll reinit.
+>
+> OR
+>
+> 3. I don't see way to override clk_save_context/clk_restore_context=20
+> APIs to change the way of traversal so I can modify to traverse in=20
+> expected order without dfllCPU parenting.
 
-A "clk_hw_reinit_parent" function is added to deal with external
-reparenting. It's similar to CLK_GET_RATE_NOCACHE but for muxes (and
-needs to be called explicitly).
+instead of using core API of save/restore context, probably can change=20
+traversing to skip the 1st root in clock tree during initial traversing=20
+and at the end invoke restore for 1st node.
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+>
+> OR
+>
+> 4. dfll re-init can be done in dfll-fcpu driver pm_ops which actually=20
+> registers dfll or at the end of tegra210_clock resume
+>
+Please suggest if you agree with either 1/3/4.
 
----
-Objections were raised to earlier hacky versions that this doesn't
-really belong inside clk, however if we need to "refresh" clk tree after
-a complex frequency switch then it makes sense to do it inside a clk
-provider rather than some other random driver.
-
-There are other clk implementations which internally wrap multiple
-clocks or deal with DDR or are implemented via SMC: imx_clk_cpu,
-tegra/clk-emc and rockchip/clk-ddr.
-
-Out-of-tree ATF patches are required, this branch can be used for
-testing: https://github.com/cdleonard/arm-trusted-firmware/commits/imx_2.0.y_caf_busfreq
-
-Firmware API could be adjusted to make this more palatable for
-inclusion; for example maybe info about new parents could be provided so
-that CLK can enable them in advance? In pratice they're always on.
-
-Also a linux branch with extra patches for testing:
-https://github.com/cdleonard/linux/commits/next_imx8mm_busfreq
-
-Changes since v2:
-* Remove IRQ handling (thanks Jacky for ATF patch)
-* Fetch supported rates from firmware instead of hardcoding imx8mm-evk.
-Should now work for all imx8m chips/board/ddr types
-* Add clk_hw_reinit_parent instead of explicit set_parent
-* Use fewer consumer APIs in provider
-* Explicitly mark dram_alt/apb with GET_RATE_NOCACHE
-Link to v2: https://patchwork.kernel.org/patch/11021565/
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b1c79a58d734..be9663b1e254 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2388,10 +2388,35 @@ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
- 		return;
- 
- 	clk_core_reparent(hw->core, !new_parent ? NULL : new_parent->core);
- }
- 
-+/**
-+ * clk_hw_reinit_parent - update clock tree after reparent outside framework
-+ * @clk: clock source
-+ * @parent: parent clock source
-+ *
-+ * This function should be used after a clock is reparented externally (for
-+ * example with a firmware call or some ASM sequence).
-+ *
-+ * It will call clk_ops.get_parent again and reassign parents.
-+ */
-+void clk_hw_reinit_parent(struct clk_hw *hw)
-+{
-+	struct clk_core *new_parent, *old_parent;
-+
-+	lockdep_assert_held(&prepare_lock);
-+	if (!hw)
-+		return;
-+
-+	new_parent = __clk_init_parent(hw->core);
-+	old_parent = __clk_set_parent_before(hw->core, new_parent);
-+	clk_core_reparent(hw->core, new_parent);
-+	__clk_set_parent_after(hw->core, new_parent, old_parent);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_reinit_parent);
-+
- /**
-  * clk_has_parent - check if a clock is a possible parent for another
-  * @clk: clock source
-  * @parent: parent clock source
-  *
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 05641c64b317..0fc7195d6d3a 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -10,10 +10,11 @@ obj-$(CONFIG_MXC_CLK) += \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
- 	clk-frac-pll.o \
- 	clk-gate-exclusive.o \
- 	clk-gate2.o \
-+	clk-imx8m-dram.o \
- 	clk-pfd.o \
- 	clk-pfdv2.o \
- 	clk-pllv1.o \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
-diff --git a/drivers/clk/imx/clk-imx8m-dram.c b/drivers/clk/imx/clk-imx8m-dram.c
-new file mode 100644
-index 000000000000..d6971fe72cbe
---- /dev/null
-+++ b/drivers/clk/imx/clk-imx8m-dram.c
-@@ -0,0 +1,242 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019 NXP
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/interrupt.h>
-+#include <linux/slab.h>
-+#include "clk.h"
-+
-+#define IMX_SIP_DDR_DVFS                	0xc2000004
-+
-+/* Values starting from 0 switch to specific frequency */
-+#define IMX_SIP_DDR_FREQ_SET_HIGH		0x00
-+
-+/* Deprecated after moving IRQ handling to ATF */
-+#define IMX_SIP_DDR_DVFS_WAIT_CHANGE		0x0F
-+
-+/* Query available frequencies. */
-+#define IMX_SIP_DDR_DVFS_GET_FREQ_COUNT		0x10
-+#define IMX_SIP_DDR_DVFS_GET_FREQ_INFO		0x11
-+
-+/* Hardware limitation */
-+#define IMX8M_DRAM_MAX_OPP			4
-+
-+struct imx8m_dram_opp {
-+	unsigned long	rate;
-+	unsigned int	smcarg;
-+};
-+
-+/*
-+ * This clk wraps the following structure (abridged):
-+ *
-+ * +----------+       |\            +------+
-+ * | dram_pll |-------|M| dram_core |      |
-+ * +----------+       |U|---------->| D    |
-+ *                 /--|X|           |  D   |
-+ *   dram_alt_root |  |/            |   R  |
-+ *                 |                |    C |
-+ *            +---------+           |      |
-+ *            |FIX DIV/4|           |      |
-+ *            +---------+           |      |
-+ *  composite:     |                |      |
-+ * +----------+    |                |      |
-+ * | dram_alt |----/                |      |
-+ * +----------+                     |      |
-+ * | dram_apb |-------------------->|      |
-+ * +----------+                     +------+
-+ *
-+ * The DDR data rate is 4x dram_core
-+ *
-+ * The APB interface is only used for control registers and can otherwise
-+ * be shut off.
-+ *
-+ * The dram_pll is used for higher rates and dram_alt is used for lower rates.
-+ */
-+struct dram_clk {
-+	struct clk_hw	hw;
-+	struct clk_hw	*dram_core;
-+	struct clk_hw	*dram_apb;
-+	struct clk_hw	*dram_pll;
-+	struct clk_hw	*dram_alt;
-+	struct clk_hw	*dram_alt_root;
-+
-+	unsigned int		opp_count;
-+	struct imx8m_dram_opp	table[IMX8M_DRAM_MAX_OPP];
-+};
-+
-+static inline struct dram_clk *to_dram_clk(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct dram_clk, hw);
-+}
-+
-+static int update_bus_freq(int target_freq)
-+{
-+	struct arm_smccc_res res;
-+	u32 online_cpus = 0;
-+	int cpu = 0;
-+
-+	local_irq_disable();
-+
-+	for_each_online_cpu(cpu)
-+		online_cpus |= (1 << (cpu * 8));
-+
-+	/* change the ddr freqency */
-+	arm_smccc_smc(IMX_SIP_DDR_DVFS, target_freq, online_cpus,
-+		0, 0, 0, 0, 0, &res);
-+
-+	local_irq_enable();
-+
-+	return 0;
-+}
-+
-+/* Round UP */
-+static struct imx8m_dram_opp *dram_clk_find_rate(
-+		struct dram_clk *priv,
-+		unsigned long rate)
-+{
-+	int i;
-+
-+	for (i = priv->opp_count - 1; i >= 0; --i)
-+		if (priv->table[i].rate >= rate)
-+			return &priv->table[i];
-+
-+	return &priv->table[0];
-+}
-+
-+/* Round UP taking min and max into account */
-+static int dram_clk_determine_rate(
-+		struct clk_hw *hw,
-+		struct clk_rate_request *req)
-+{
-+	struct dram_clk *priv = to_dram_clk(hw);
-+	unsigned long tab_rate;
-+	int i;
-+
-+	for (i = priv->opp_count - 1; i >= 0; --i) {
-+		tab_rate = priv->table[i].rate;
-+		if (tab_rate >= req->rate &&
-+		    tab_rate >= req->min_rate &&
-+		    tab_rate <= req->max_rate)
-+		{
-+			req->rate = tab_rate;
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int dram_clk_set_rate(
-+		struct clk_hw *hw,
-+		unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct dram_clk *priv = to_dram_clk(hw);
-+	struct imx8m_dram_opp *opp = dram_clk_find_rate(priv, rate);
-+	int ret;
-+
-+	/*
-+	 * The actual switch is done inside ATF, here just reload parents.
-+	 * all we do here is reload parents
-+	 */
-+	clk_prepare_enable(priv->dram_alt_root->clk);
-+	clk_prepare_enable(priv->dram_pll->clk);
-+	ret = update_bus_freq(opp->smcarg);
-+	clk_hw_reinit_parent(priv->dram_alt);
-+	clk_hw_reinit_parent(priv->dram_apb);
-+	clk_hw_reinit_parent(priv->dram_core);
-+	clk_disable_unprepare(priv->dram_alt_root->clk);
-+	clk_disable_unprepare(priv->dram_pll->clk);
-+
-+	if (ret == 0)
-+		pr_debug("%s freq set to %lu\n", clk_hw_get_name(hw), opp->rate);
-+	else
-+		pr_err("%s freq set fail: %d\n", clk_hw_get_name(hw), ret);
-+
-+	return ret;
-+}
-+
-+static unsigned long dram_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct dram_clk *priv = to_dram_clk(hw);
-+
-+	return clk_hw_get_rate(priv->dram_core);
-+}
-+
-+static const struct clk_ops dram_clk_ops = {
-+	.determine_rate	= dram_clk_determine_rate,
-+	.recalc_rate	= dram_clk_recalc_rate,
-+	.set_rate	= dram_clk_set_rate,
-+};
-+
-+struct clk* imx8m_dram_clk(
-+		const char *name, const char* parent_name,
-+		struct clk_hw* dram_core,
-+		struct clk_hw* dram_apb,
-+		struct clk_hw* dram_pll,
-+		struct clk_hw* dram_alt,
-+		struct clk_hw* dram_alt_root)
-+{
-+	struct arm_smccc_res res;
-+	struct dram_clk *priv;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+	int opp_count, index;
-+	int err;
-+
-+	/*
-+	 * Count available frequencies
-+	 * An error here means DDR DVFS not supported by firmware
-+	 */
-+	arm_smccc_smc(IMX_SIP_DDR_DVFS, IMX_SIP_DDR_DVFS_GET_FREQ_COUNT,
-+			0, 0, 0, 0, 0, 0, &res);
-+	opp_count = res.a0;
-+	if (opp_count <= 0 || opp_count > IMX8M_DRAM_MAX_OPP)
-+		return ERR_PTR(-ENOSYS);
-+
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return ERR_PTR(-ENOMEM);
-+
-+	priv->dram_apb = dram_apb;
-+	priv->dram_core = dram_core;
-+	priv->dram_pll = dram_pll;
-+	priv->dram_alt = dram_alt;
-+	priv->dram_alt_root = dram_alt_root;
-+
-+	priv->opp_count = opp_count;
-+	for (index = 0; index < opp_count; ++index) {
-+		arm_smccc_smc(IMX_SIP_DDR_DVFS, IMX_SIP_DDR_DVFS_GET_FREQ_INFO,
-+				index, 0, 0, 0, 0, 0, &res);
-+		/* Results should be strictly positive */
-+		if ((long)res.a0 <= 0) {
-+			err = -ENOSYS;
-+			goto err_free_priv;
-+		}
-+		priv->table[index].smcarg = index;
-+		priv->table[index].rate = res.a0 * 250000;
-+	}
-+
-+	init.name = name;
-+	init.ops = &dram_clk_ops;
-+	init.flags = CLK_IS_CRITICAL;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	priv->hw.init = &init;
-+	clk = clk_register(NULL, &priv->hw);
-+	if (IS_ERR(clk)) {
-+		err = PTR_ERR(clk);
-+		goto err_free_priv;
-+	}
-+	return clk;
-+
-+err_free_priv:
-+	kfree(priv);
-+	return ERR_PTR(err);
-+}
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 6b8e75df994d..e37442a12fed 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -523,12 +523,14 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
- 	/* IPG */
- 	clks[IMX8MM_CLK_IPG_ROOT] = imx_clk_divider2("ipg_root", "ahb", base + 0x9080, 0, 1);
- 	clks[IMX8MM_CLK_IPG_AUDIO_ROOT] = imx_clk_divider2("ipg_audio_root", "audio_ahb", base + 0x9180, 0, 1);
- 
- 	/* IP */
--	clks[IMX8MM_CLK_DRAM_ALT] = imx8m_clk_composite("dram_alt", imx8mm_dram_alt_sels, base + 0xa000);
--	clks[IMX8MM_CLK_DRAM_APB] = imx8m_clk_composite_critical("dram_apb", imx8mm_dram_apb_sels, base + 0xa080);
-+	clks[IMX8MM_CLK_DRAM_ALT] = __imx8m_clk_composite("dram_alt", imx8mm_dram_alt_sels, base + 0xa000,
-+			CLK_GET_RATE_NOCACHE);
-+	clks[IMX8MM_CLK_DRAM_APB] = __imx8m_clk_composite("dram_apb", imx8mm_dram_apb_sels, base + 0xa080,
-+			CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL);
- 	clks[IMX8MM_CLK_VPU_G1] = imx8m_clk_composite("vpu_g1", imx8mm_vpu_g1_sels, base + 0xa100);
- 	clks[IMX8MM_CLK_VPU_G2] = imx8m_clk_composite("vpu_g2", imx8mm_vpu_g2_sels, base + 0xa180);
- 	clks[IMX8MM_CLK_DISP_DTRC] = imx8m_clk_composite("disp_dtrc", imx8mm_disp_dtrc_sels, base + 0xa200);
- 	clks[IMX8MM_CLK_DISP_DC8000] = imx8m_clk_composite("disp_dc8000", imx8mm_disp_dc8000_sels, base + 0xa280);
- 	clks[IMX8MM_CLK_PCIE1_CTRL] = imx8m_clk_composite("pcie1_ctrl", imx8mm_pcie1_ctrl_sels, base + 0xa300);
-@@ -660,10 +662,18 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
- 	clks[IMX8MM_CLK_GPT_3M] = imx_clk_fixed_factor("gpt_3m", "osc_24m", 1, 8);
- 
- 	clks[IMX8MM_CLK_DRAM_ALT_ROOT] = imx_clk_fixed_factor("dram_alt_root", "dram_alt", 1, 4);
- 	clks[IMX8MM_CLK_DRAM_CORE] = imx_clk_mux2_flags("dram_core_clk", base + 0x9800, 24, 1, imx8mm_dram_core_sels, ARRAY_SIZE(imx8mm_dram_core_sels), CLK_IS_CRITICAL);
- 
-+	clks[IMX8MM_CLK_DRAM] = imx8m_dram_clk(
-+			"dram", "dram_core_clk",
-+			__clk_get_hw(clks[IMX8MM_CLK_DRAM_CORE]),
-+			__clk_get_hw(clks[IMX8MM_CLK_DRAM_APB]),
-+			__clk_get_hw(clks[IMX8MM_DRAM_PLL_OUT]),
-+			__clk_get_hw(clks[IMX8MM_CLK_DRAM_ALT]),
-+			__clk_get_hw(clks[IMX8MM_CLK_DRAM_ALT_ROOT]));
-+
- 	clks[IMX8MM_CLK_ARM] = imx_clk_cpu("arm", "arm_a53_div",
- 					   clks[IMX8MM_CLK_A53_DIV],
- 					   clks[IMX8MM_CLK_A53_SRC],
- 					   clks[IMX8MM_ARM_PLL_OUT],
- 					   clks[IMX8MM_CLK_24M]);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index d94d9cb079d3..f0f42b3a5d8d 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -468,6 +468,15 @@ struct clk *imx8m_clk_composite_flags(const char *name,
- 
- struct clk_hw *imx_clk_divider_gate(const char *name, const char *parent_name,
- 		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_divider_flags, const struct clk_div_table *table,
- 		spinlock_t *lock);
-+
-+struct clk* imx8m_dram_clk(
-+		const char *name, const char* parent_name,
-+		struct clk_hw* dram_core,
-+		struct clk_hw* dram_apb,
-+		struct clk_hw* dram_pll,
-+		struct clk_hw* dram_alt,
-+		struct clk_hw* dram_alt_root);
-+
- #endif
-diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
-index 07e6c686f3ef..dde146b923a8 100644
---- a/include/dt-bindings/clock/imx8mm-clock.h
-+++ b/include/dt-bindings/clock/imx8mm-clock.h
-@@ -246,8 +246,10 @@
- #define IMX8MM_CLK_GPIO5_ROOT			227
- 
- #define IMX8MM_CLK_SNVS_ROOT			228
- #define IMX8MM_CLK_GIC				229
- 
--#define IMX8MM_CLK_END				230
-+#define IMX8MM_CLK_DRAM				230
-+
-+#define IMX8MM_CLK_END				231
- 
- #endif
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2ae7604783dd..f85f1fb8621b 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -836,10 +836,11 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
- 				     struct clk_rate_request *req);
- int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 				 struct clk_rate_request *req,
- 				 unsigned long flags);
- void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
-+void clk_hw_reinit_parent(struct clk_hw *hw);
- void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
- 			   unsigned long max_rate);
- 
- static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- {
--- 
-2.17.1
 
