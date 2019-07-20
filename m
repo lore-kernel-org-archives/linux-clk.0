@@ -1,205 +1,202 @@
-Return-Path: <SRS0=f356=VP=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=51W5=VR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11254C7618F
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 23:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AA8C76188
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jul 2019 06:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB3B2077C
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jul 2019 23:49:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ovX7OB4q"
+	by mail.kernel.org (Postfix) with ESMTP id 7EE492187F
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jul 2019 06:58:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbfGRXtL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jul 2019 19:49:11 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36269 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfGRXtL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jul 2019 19:49:11 -0400
-Received: by mail-lj1-f196.google.com with SMTP id i21so29039048ljj.3;
-        Thu, 18 Jul 2019 16:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=LfwfSaM/DkKEFavaXQu6tXhI5mw1k44jFL4SmIH5mFg=;
-        b=ovX7OB4q7JqOZksIbgc4HmQQiVh3TbYjW7/Y4qjHMeBy4Sg28by7oMeYHiaB1ImB55
-         ZFz14IdzFBnhL+4hVnnzMlbRNL91ge8jDdTuHOGWzFxgBDV4FOWLckJFCi2mS6rEF+lG
-         vB7jqJHY10wKWoUTaFzG0ltAKKa210kVGwyVrEgSCa/E3TQeiVMJepEnZeZHZXRuzzYH
-         LyuLHufQ6Mef3RPUtRp4vu2uxsKsCa/jbAb2B7rHerTvoQWEV+PdVFpu6mpGAw9zzYH+
-         BJX3FA1Lgi9A/O8VZ0AZEZlHq6ddPzHAjdudoIpTYMgCJZjBVKQL/IZOtEi1HUZuq34t
-         qibg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LfwfSaM/DkKEFavaXQu6tXhI5mw1k44jFL4SmIH5mFg=;
-        b=YHJDGPGDHPf0wf9W3xOEAkNsva6fRNtuGSC20wDSadL85LQmWwYhwM5UM0peW0s2HS
-         QzA3Av/XVH0HKSGhEAVAi+xad7kgU97fLzhIkZmj1YsfEsVtx/s9vUnXZvR+2mZ+clMN
-         Nsd2af44fPwES5f9JZyWuJL66hUM+oSf8C/TqwngMkYF+9VEDjujr04YVjb2zSjc9gGP
-         i3N5Tsj1keW1RZ5tSPbODjZrUuZes6z3Bxrl+JZWW4StyvtzjVjSvouw45DbnEV13nRQ
-         upIF/to0nVWMouNsOrhRqQt8L3fPKhnGA0OZdzL1pjVp2wkUkvjEEZbKRi7XjCH3SPbN
-         ok+w==
-X-Gm-Message-State: APjAAAU3wrLU605gNlEzcc/w6f4C6vaxRt7y0o49Pv0dRZ2bLiEbUW2z
-        7r+vyymRzCN/B/KAhvEtmRS5RX0Y
-X-Google-Smtp-Source: APXvYqyFsH258+vEgml49uVeZdZb7r8ZbKF3dkWxtj5sAZwOSJDshyS7Q1Rkq4eIXe3sxjgpbMPhAg==
-X-Received: by 2002:a2e:3a13:: with SMTP id h19mr9141684lja.220.1563493748290;
-        Thu, 18 Jul 2019 16:49:08 -0700 (PDT)
-Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id l23sm5360830lje.106.2019.07.18.16.49.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 16:49:07 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 02:52:41 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>, <sboyd@kernel.org>,
+        id S1726542AbfGTG6g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Jul 2019 02:58:36 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:42651 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbfGTG6g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jul 2019 02:58:36 -0400
+X-Originating-IP: 91.163.65.175
+Received: from localhost (91-163-65-175.subs.proxad.net [91.163.65.175])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 1F06B20008;
+        Sat, 20 Jul 2019 06:58:31 +0000 (UTC)
+Date:   Sat, 20 Jul 2019 08:58:30 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <jckuo@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-Message-ID: <20190719025241.28d03c57@dimatab>
-In-Reply-To: <f664f161-9b6b-6446-e2f9-6373e654dfc3@nvidia.com>
-References: <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
-        <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
-        <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
-        <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
-        <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
-        <46b55527-da5d-c0b7-1c14-43b5c6d49dfa@nvidia.com>
-        <2de9a608-cf38-f56c-b192-7ffed65092f8@nvidia.com>
-        <bff3e9c0-727d-9aef-a0e2-583e53c39afd@gmail.com>
-        <5eedd224-77b0-1fc9-4e5e-d884b41a64ed@nvidia.com>
-        <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
-        <20190718194222.GH12715@pdeschrijver-desktop.Nvidia.com>
-        <056496ed-9abf-6907-c61c-a99ccf23b834@gmail.com>
-        <1c85cb35-ce7c-1dd1-f637-0c91b2b36db3@nvidia.com>
-        <f664f161-9b6b-6446-e2f9-6373e654dfc3@nvidia.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for
+ PLL_MIPI
+Message-ID: <20190720065830.zn3txpyduakywcva@flea>
+References: <20190605064933.6bmskkxzzgn35xz7@flea>
+ <CAMty3ZCCP=oCqm5=49BsjwoxdDETgBfU_5g8fQ=bz=iWApV0tw@mail.gmail.com>
+ <20190614142406.ybdiqfppo5mc5bgq@flea>
+ <CAMty3ZB45cHx3WeXnywBh2_UA_bTmFs6yBTqLWA1BNf4fQtVvQ@mail.gmail.com>
+ <20190625144930.5hegt6bkzqzykjid@flea>
+ <CAMty3ZCmj0Rz7MMhLqihsvLQi+1CHf0fAoJQ4QN65xB-bwxaJw@mail.gmail.com>
+ <20190703114933.u3x4ej3v7ocewvif@flea>
+ <CAOf5uw=ZEvMV1hFQE986rNG_ctpReGbjbZzv0m=OzKPdBh57uQ@mail.gmail.com>
+ <20190711100100.cty3s6rs3w27low6@flea>
+ <CAOf5uw=3fiMuhcj3kDtCaGNTsxHKRrYb79MXZ+yUZtmf0jU10A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r4qilfqhu2adyooy"
+Content-Disposition: inline
+In-Reply-To: <CAOf5uw=3fiMuhcj3kDtCaGNTsxHKRrYb79MXZ+yUZtmf0jU10A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=D0=92 Thu, 18 Jul 2019 16:08:48 -0700
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-> On 7/18/19 1:36 PM, Sowjanya Komatineni wrote:
-> >
-> > On 7/18/19 1:26 PM, Dmitry Osipenko wrote: =20
-> >> 18.07.2019 22:42, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82: =
-=20
-> >>> On Thu, Jul 18, 2019 at 02:44:56AM +0300, Dmitry Osipenko wrote: =20
-> >>>>> dependencies I am referring are dfll_ref, dfll_soc, and DVFS=20
-> >>>>> peripheral
-> >>>>> clocks which need to be restored prior to DFLL reinit. =20
-> >>>> Okay, but that shouldn't be a problem if clock dependencies are
-> >>>> set up properly.
-> >>>> =20
-> >>>>>>> reverse list order during restore might not work as all other=20
-> >>>>>>> clocks are
-> >>>>>>> in proper order no with any ref clocks for plls getting
-> >>>>>>> restored prior
-> >>>>>>> to their clients =20
-> >>>>>> Why? The ref clocks should be registered first and be the
-> >>>>>> roots for PLLs
-> >>>>>> and the rest. If it's not currently the case, then this need
-> >>>>>> to be fixed. You need to ensure that each clock is modeled
-> >>>>>> properly. If some
-> >>>>>> child clock really depends on multiple parents, then the
-> >>>>>> parents need to
-> >>>>>> in the correct order or CCF need to be taught about such
-> >>>>>> multi-dependencies.
-> >>>>>>
-> >>>>>> If some required feature is missed, then you have to implement
-> >>>>>> it properly and for all, that's how things are done in
-> >>>>>> upstream. Sometimes
-> >>>>>> it's quite a lot of extra work that everyone are benefiting
-> >>>>>> from in the end.
-> >>>>>>
-> >>>>>> [snip] =20
-> >>>>> Yes, we should register ref/parents before their clients.
-> >>>>>
-> >>>>> cclk_g clk is registered last after all pll and peripheral
-> >>>>> clocks are registers during clock init.
-> >>>>>
-> >>>>> dfllCPU_out clk is registered later during dfll-fcpu driver
-> >>>>> probe and gets added to the clock list.
-> >>>>>
-> >>>>> Probably the issue seems to be not linking dfll_ref and dfll_soc
-> >>>>> dependencies for dfllCPU_out thru clock list.
-> >>>>>
-> >>>>> clk-dfll driver during dfll_init_clks gets ref_clk and soc_clk=20
-> >>>>> reference
-> >>>>> thru DT. =20
-> >>> The dfll does not have any parents. It has some clocks which are
-> >>> needed for the logic part of the dfll to function, but there's no
-> >>> parent clock as such unlike for peripheral clocks or PLLs where
-> >>> the parent is at least used as a reference. The I2C controller of
-> >>> the DFLL shares the lines with a normal I2C controller using some
-> >>> arbitration logic. That logic only works if the clock for the
-> >>> normal I2C controller is enabled. So you need probably 3 clocks
-> >>> enabled to initialize the dfll in that case. I don't think it
-> >>> makes sense to add complicated logic to the clock
-> >>> core to deal with this rather strange case. To me it makes more=20
-> >>> sense to
-> >>> use pmops and open code the sequence there. =20
-> >> It looks to me that dfllCPU is a PLL and dfll_ref is its reference
-> >> parent, while dfll_soc clocks the logic that dynamically
-> >> reconfigures dfllCPU in background. I see that PLLP is defined as
-> >> a parent for dfll_ref and dfll_soc in the code. Hence seems
-> >> dfll_ref should be set as a parent for dfllCPU, no? =20
-> >
-> > dfll_soc will not be restored by the time dfllCPU resume happens
-> > after dfll_ref.
-> >
-> > without dfll_soc, dfllCPU cannot be resumed either. So if we decide
-> > to use parent we should use dfll_soc.
-> > =20
-> >> Either way is good to me, given that DFLL will be disabled during
-> >> suspend. Resetting DFLL on DFLL's driver resume using PM ops
-> >> should be good. And then it also will be better to error out if
-> >> DFLL is active during suspend on the DFLL's driver suspend. =20
-> >
-> > Doing in dfll-fcpu pm_ops is much better as it happens right after
-> > all clocks are restored and unlike other clock enables, dfll need
-> > dfll controller programming as well and is actually registered in
-> > dfll-fcpu driver.
-> >
-> > With this, below is the sequence:
-> >
-> > CPUFreq suspend switches CPU to PLLP and disables dfll
-> >
-> > Will add dfll_suspend/resume in dfll-fcpu driver and in dfll
-> > suspend will check for dfll active and will error out suspend.
-> >
-> > dfll resume does dfll reinit.
-> >
-> > CPUFreq resume enables dfll and switches CPU to dfll.
-> >
-> >
-> > Will go with doing in dfll-fcpu pm_ops rather than parenting=20
-> > dfllCPU_OUT...
-> > =20
-> Does is make sense to return error EBUSY if dfll is not disabled by
-> the time dfll-fcpu suspend happens?
+--r4qilfqhu2adyooy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes
+On Thu, Jul 11, 2019 at 07:43:16PM +0200, Michael Nazzareno Trimarchi wrote:
+> > > tcon-pixel clock is the rate that you want to achive on display side
+> > > and if you have 4 lanes 32bit or lanes and different bit number that
+> > > you need to have a clock that is able to put outside bits and speed
+> > > equal to pixel-clock * bits / lanes. so If you want a pixel-clock of
+> > > 40 mhz and you have 32bits and 4 lanes you need to have a clock of
+> > > 40 * 32 / 4 in no-burst mode. I think that this is done but most of
+> > > the display.
+> >
+> > So this is what the issue is then?
+> >
+> > This one does make sense, and you should just change the rate in the
+> > call to clk_set_rate in sun4i_tcon0_mode_set_cpu.
+> >
+> > I'm still wondering why that hasn't been brought up in either the
+> > discussion or the commit log before though.
+> >
+> Something like this?
+>
+> drivers/gpu/drm/sun4i/sun4i_tcon.c     | 20 +++++++++++---------
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  2 --
+>  2 files changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index 64c43ee6bd92..42560d5c327c 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -263,10 +263,11 @@ static int sun4i_tcon_get_clk_delay(const struct
+> drm_display_mode *mode,
+>  }
+>
+>  static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
+> -                                       const struct drm_display_mode *mode)
+> +                                       const struct drm_display_mode *mode,
+> +                                       u32 tcon_mul)
+>  {
+>         /* Configure the dot clock */
+> -       clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
+> +       clk_set_rate(tcon->dclk, mode->crtc_clock * tcon_mul * 1000);
+>
+>         /* Set the resolution */
+>         regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
+> @@ -335,12 +336,13 @@ static void sun4i_tcon0_mode_set_cpu(struct
+> sun4i_tcon *tcon,
+>         u8 bpp = mipi_dsi_pixel_format_to_bpp(device->format);
+>         u8 lanes = device->lanes;
+>         u32 block_space, start_delay;
+> -       u32 tcon_div;
+> +       u32 tcon_div, tcon_mul;
+>
+> -       tcon->dclk_min_div = SUN6I_DSI_TCON_DIV;
+> -       tcon->dclk_max_div = SUN6I_DSI_TCON_DIV;
+> +       tcon->dclk_min_div = 4;
+> +       tcon->dclk_max_div = 127;
+>
+> -       sun4i_tcon0_mode_set_common(tcon, mode);
+> +       tcon_mul = bpp / lanes;
+> +       sun4i_tcon0_mode_set_common(tcon, mode, tcon_mul);
+>
+>         /* Set dithering if needed */
+>         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
+> @@ -366,7 +368,7 @@ static void sun4i_tcon0_mode_set_cpu(struct
+> sun4i_tcon *tcon,
+>          */
+>         regmap_read(tcon->regs, SUN4I_TCON0_DCLK_REG, &tcon_div);
+>         tcon_div &= GENMASK(6, 0);
+> -       block_space = mode->htotal * bpp / (tcon_div * lanes);
+> +       block_space = mode->htotal * tcon_div * tcon_mul;
+>         block_space -= mode->hdisplay + 40;
+>
+>         regmap_write(tcon->regs, SUN4I_TCON0_CPU_TRI0_REG,
+> @@ -408,7 +410,7 @@ static void sun4i_tcon0_mode_set_lvds(struct
+> sun4i_tcon *tcon,
+>
+>         tcon->dclk_min_div = 7;
+>         tcon->dclk_max_div = 7;
+> -       sun4i_tcon0_mode_set_common(tcon, mode);
+> +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
+>
+>         /* Set dithering if needed */
+>         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
+> @@ -487,7 +489,7 @@ static void sun4i_tcon0_mode_set_rgb(struct
+> sun4i_tcon *tcon,
+>
+>         tcon->dclk_min_div = 6;
+>         tcon->dclk_max_div = 127;
+> -       sun4i_tcon0_mode_set_common(tcon, mode);
+> +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
+>
+>         /* Set dithering if needed */
+>         sun4i_tcon0_mode_set_dithering(tcon, connector);
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> index 5c3ad5be0690..a07090579f84 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> @@ -13,8 +13,6 @@
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_mipi_dsi.h>
+>
+> -#define SUN6I_DSI_TCON_DIV     4
+> -
+>  struct sun6i_dsi {
+>         struct drm_connector    connector;
+>         struct drm_encoder      encoder;
 
-> Or should I use ETIMEOUT?
+I had more something like this in mind:
+http://code.bulix.org/nlp5a4-803511
 
-No
+You really don't need to change the divider range (or this is another
+issue that the one you mentionned).
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--r4qilfqhu2adyooy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXTK7lgAKCRDj7w1vZxhR
+xVa+AP0bfQya4jtzGyWV49lA0eZyoDZnw2AUlmXF1CQyK/h/ywD/TqhlriaoZJCZ
+lSmIH7BxD5GMElLjo35ndu9pK23JYwU=
+=dJ5o
+-----END PGP SIGNATURE-----
+
+--r4qilfqhu2adyooy--
