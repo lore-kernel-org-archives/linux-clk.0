@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969BBC76191
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62889C76195
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7017B208E4
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A2220823
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NME1X1iT"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ed1KIkJ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfGUTmF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Jul 2019 15:42:05 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15853 "EHLO
+        id S1727613AbfGUTlH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Jul 2019 15:41:07 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15833 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbfGUTlL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Jul 2019 15:41:11 -0400
+        with ESMTP id S1727437AbfGUTlG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Jul 2019 15:41:06 -0400
 Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d34bfdd0000>; Sun, 21 Jul 2019 12:41:17 -0700
+        id <B5d34bfd60000>; Sun, 21 Jul 2019 12:41:11 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 21 Jul 2019 12:41:10 -0700
+  Sun, 21 Jul 2019 12:41:03 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 21 Jul 2019 12:41:10 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
- 2019 19:41:09 +0000
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
- 2019 19:41:09 +0000
+        by hqpgpgate102.nvidia.com on Sun, 21 Jul 2019 12:41:03 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
+ 2019 19:41:03 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
+ 2019 19:41:03 +0000
 Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
  (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sun, 21 Jul 2019 19:41:09 +0000
+ Transport; Sun, 21 Jul 2019 19:41:03 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.164.85]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d34bfd40000>; Sun, 21 Jul 2019 12:41:09 -0700
+        id <B5d34bfcd0001>; Sun, 21 Jul 2019 12:41:03 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -51,9 +51,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V6 12/21] cpufreq: tegra124: Add suspend and resume support
-Date:   Sun, 21 Jul 2019 12:40:51 -0700
-Message-ID: <1563738060-30213-13-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 08/21] clk: tegra: clk-periph: Add save and restore support
+Date:   Sun, 21 Jul 2019 12:40:47 -0700
+Message-ID: <1563738060-30213-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
@@ -61,104 +61,317 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563738077; bh=ERM45gzILmBTa9m60jszJM5aBp4VqzLlD5QiVJxaQLQ=;
+        t=1563738071; bh=K4EMK7Ckti8Q7Dg4JGSGEsr+mR5YceM/9vT0vz2nTmA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=NME1X1iTJsBLu1Mi6wjnP50EmLtURbBbGNdHSSYOvhm7CBrXin0jYMspYYKTotsbY
-         medU6u9QbGFnlXNmisA3dDS//8X+mk0fWMc4DqS0teHcmTSBOtoLMURehnXI4TOOGK
-         SGKn5ddgTyxDXhBYigSHWVruen95P63hm53XQIcB9KZf5B/7qAIRC+sc2yKqNJWaXO
-         ylHtfRTr9hT7r9FyFf+h7flv0Bul0YuUQ0r9W5ez5/SSSW6rA87/SeeqBVhUF3gfq+
-         oAY15IrjQcqoCe2ydht2MykT9eRNvxikI8MaP+9w+ouq9vnS2Bezt9gVyTQBizWmKX
-         dygWqDFahnlbQ==
+        b=Ed1KIkJ3OkYSmHMKE5vh++DK0fVnQEMUzw1gRTxFObu8bhLy3TzeYcA/GV6QOdl9X
+         UuirkdciiirJlOJfb13cjx4gbuqXcd4whLP8CPsyIqbvGUno63mSi9K5ecBUI5a5Z2
+         OWPmPyt6p2aFbnnj+F8zfpgQ8J9VPe+149nwH5awHg9uc/JOeScG+r0nRXAPH4zClb
+         2zCiSSa5hdBzRWA6jyuP8eT+6a9Ofe096sb2dlznWEsuzeupc22dyIXpbd+AeMwAst
+         urDz5JZo1CJuhrIMYd7qikeVisFisknrwcSL6LCapX/kG0XAqyT136aUm4F3Gqv4FR
+         5j8Pl8BQ4TsRA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds suspend and resume pm ops for cpufreq driver.
+This patch implements save and restore context for peripheral fixed
+clock ops, peripheral gate clock ops, sdmmc mux clock ops, and
+peripheral clock ops.
 
-PLLP is the safe clock source for CPU during system suspend and
-resume as PLLP rate is below the CPU Fmax at Vmin.
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
 
-CPUFreq driver suspend switches the CPU clock source to PLLP and
-disables the DFLL clock.
+So during suspend entry clock and reset state of peripherals is saved
+and on resume they are restored to have clocks back to same rate and
+state as before suspend.
 
-During system resume, warmboot code powers up the CPU with PLLP
-clock source. So CPUFreq driver resume enabled DFLL clock and
-switches CPU back to DFLL clock source.
-
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/cpufreq/tegra124-cpufreq.c | 46 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/clk/tegra/clk-periph-fixed.c | 33 +++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-periph-gate.c  | 34 ++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-periph.c       | 43 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-sdmmc-mux.c    | 30 +++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h              |  8 +++++++
+ 5 files changed, 148 insertions(+)
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index 4f0c637b3b49..4eff63379b0f 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -6,6 +6,7 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <linux/clk.h>
-+#include <linux/cpufreq.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-@@ -128,8 +129,53 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 	return ret;
+diff --git a/drivers/clk/tegra/clk-periph-fixed.c b/drivers/clk/tegra/clk-periph-fixed.c
+index c088e7a280df..21b24530fa00 100644
+--- a/drivers/clk/tegra/clk-periph-fixed.c
++++ b/drivers/clk/tegra/clk-periph-fixed.c
+@@ -60,11 +60,44 @@ tegra_clk_periph_fixed_recalc_rate(struct clk_hw *hw,
+ 	return (unsigned long)rate;
  }
  
-+static int tegra124_cpufreq_suspend(struct device *dev)
++static int tegra_clk_periph_fixed_save_context(struct clk_hw *hw)
 +{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
++	struct tegra_clk_periph_fixed *fixed = to_tegra_clk_periph_fixed(hw);
++	u32 mask = 1 << (fixed->num % 32);
 +
-+	/*
-+	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
-+	 * use during suspend and resume. So, switch the CPU clock source
-+	 * to PLLP and disable DFLL.
-+	 */
-+	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-+
-+	/* disable DFLL clock */
-+	clk_disable_unprepare(priv->dfll_clk);
++	fixed->enb_ctx = readl_relaxed(fixed->base + fixed->regs->enb_reg) &
++			 mask;
++	fixed->rst_ctx = readl_relaxed(fixed->base + fixed->regs->rst_reg) &
++			 mask;
 +
 +	return 0;
 +}
 +
-+static int tegra124_cpufreq_resume(struct device *dev)
++static void tegra_clk_periph_fixed_restore_context(struct clk_hw *hw)
 +{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
-+	int ret = 0;
++	struct tegra_clk_periph_fixed *fixed = to_tegra_clk_periph_fixed(hw);
++	u32 mask = 1 << (fixed->num % 32);
 +
-+	/*
-+	 * Warmboot code powers up the CPU with PLLP clock source.
-+	 * Enable DFLL clock and switch CPU clock source back to DFLL.
-+	 */
-+	ret = clk_prepare_enable(priv->dfll_clk);
-+	if (ret) {
-+		dev_warn(dev, "failed to enable DFLL clock for CPU\n");
-+		clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-+		disable_cpufreq();
-+		return ret;
++	if (fixed->enb_ctx)
++		writel_relaxed(mask, fixed->base + fixed->regs->enb_set_reg);
++	else
++		writel_relaxed(mask, fixed->base + fixed->regs->enb_clr_reg);
++
++	udelay(2);
++
++	if (!fixed->rst_ctx) {
++		udelay(5); /* reset propogation delay */
++		writel_relaxed(mask, fixed->base + fixed->regs->rst_reg);
 +	}
-+
-+	clk_set_parent(priv->cpu_clk, priv->dfll_clk);
-+
-+	return ret;
 +}
 +
-+static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
-+				tegra124_cpufreq_resume)
-+};
-+
- static struct platform_driver tegra124_cpufreq_platdrv = {
- 	.driver.name	= "cpufreq-tegra124",
-+	.driver.pm	= &tegra124_cpufreq_pm_ops,
- 	.probe		= tegra124_cpufreq_probe,
+ static const struct clk_ops tegra_clk_periph_fixed_ops = {
+ 	.is_enabled = tegra_clk_periph_fixed_is_enabled,
+ 	.enable = tegra_clk_periph_fixed_enable,
+ 	.disable = tegra_clk_periph_fixed_disable,
+ 	.recalc_rate = tegra_clk_periph_fixed_recalc_rate,
++	.save_context = tegra_clk_periph_fixed_save_context,
++	.restore_context = tegra_clk_periph_fixed_restore_context,
  };
  
+ struct clk *tegra_clk_register_periph_fixed(const char *name,
+diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+index 4b31beefc9fc..6ba5b08e0787 100644
+--- a/drivers/clk/tegra/clk-periph-gate.c
++++ b/drivers/clk/tegra/clk-periph-gate.c
+@@ -25,6 +25,8 @@ static DEFINE_SPINLOCK(periph_ref_lock);
+ 
+ #define read_rst(gate) \
+ 	readl_relaxed(gate->clk_base + (gate->regs->rst_reg))
++#define write_rst_set(val, gate) \
++	writel_relaxed(val, gate->clk_base + (gate->regs->rst_set_reg))
+ #define write_rst_clr(val, gate) \
+ 	writel_relaxed(val, gate->clk_base + (gate->regs->rst_clr_reg))
+ 
+@@ -110,10 +112,42 @@ static void clk_periph_disable(struct clk_hw *hw)
+ 	spin_unlock_irqrestore(&periph_ref_lock, flags);
+ }
+ 
++static int clk_periph_gate_save_context(struct clk_hw *hw)
++{
++	struct tegra_clk_periph_gate *gate = to_clk_periph_gate(hw);
++
++	gate->clk_state_ctx = read_enb(gate) & periph_clk_to_bit(gate);
++	gate->rst_state_ctx = read_rst(gate) & periph_clk_to_bit(gate);
++
++	return 0;
++}
++
++static void clk_periph_gate_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_periph_gate *gate = to_clk_periph_gate(hw);
++
++	if (gate->clk_state_ctx)
++		write_enb_set(periph_clk_to_bit(gate), gate);
++	else
++		write_enb_clr(periph_clk_to_bit(gate), gate);
++
++	udelay(5);
++
++	if (!(gate->flags & TEGRA_PERIPH_NO_RESET) &&
++	    !(gate->flags & TEGRA_PERIPH_MANUAL_RESET)) {
++		if (gate->rst_state_ctx)
++			write_rst_set(periph_clk_to_bit(gate), gate);
++		else
++			write_rst_clr(periph_clk_to_bit(gate), gate);
++	}
++}
++
+ const struct clk_ops tegra_clk_periph_gate_ops = {
+ 	.is_enabled = clk_periph_is_enabled,
+ 	.enable = clk_periph_enable,
+ 	.disable = clk_periph_disable,
++	.save_context = clk_periph_gate_save_context,
++	.restore_context = clk_periph_gate_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_periph_gate(const char *name,
+diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
+index 58437da25156..b29a1ed2ec08 100644
+--- a/drivers/clk/tegra/clk-periph.c
++++ b/drivers/clk/tegra/clk-periph.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/export.h>
++#include <linux/io.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ 
+@@ -99,6 +100,42 @@ static void clk_periph_disable(struct clk_hw *hw)
+ 	gate_ops->disable(gate_hw);
+ }
+ 
++static int clk_periph_save_context(struct clk_hw *hw)
++{
++	struct tegra_clk_periph *periph = to_clk_periph(hw);
++	const struct clk_ops *gate_ops = periph->gate_ops;
++	struct clk_hw *gate_hw = &periph->gate.hw;
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++
++	if (!(periph->gate.flags & TEGRA_PERIPH_NO_GATE))
++		gate_ops->save_context(gate_hw);
++
++	if (!(periph->gate.flags & TEGRA_PERIPH_NO_DIV))
++		periph->rate_ctx = clk_periph_recalc_rate(hw, parent_rate);
++
++	periph->parent_ctx = clk_periph_get_parent(hw);
++
++	return 0;
++}
++
++static void clk_periph_restore_context(struct clk_hw *hw)
++{
++	struct tegra_clk_periph *periph = to_clk_periph(hw);
++	const struct clk_ops *gate_ops = periph->gate_ops;
++	struct clk_hw *gate_hw = &periph->gate.hw;
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++
++	clk_periph_set_parent(hw, periph->parent_ctx);
++
++	if (!(periph->gate.flags & TEGRA_PERIPH_NO_DIV))
++		clk_periph_set_rate(hw, periph->rate_ctx, parent_rate);
++
++	if (!(periph->gate.flags & TEGRA_PERIPH_NO_GATE))
++		gate_ops->restore_context(gate_hw);
++}
++
+ const struct clk_ops tegra_clk_periph_ops = {
+ 	.get_parent = clk_periph_get_parent,
+ 	.set_parent = clk_periph_set_parent,
+@@ -108,6 +145,8 @@ const struct clk_ops tegra_clk_periph_ops = {
+ 	.is_enabled = clk_periph_is_enabled,
+ 	.enable = clk_periph_enable,
+ 	.disable = clk_periph_disable,
++	.save_context = clk_periph_save_context,
++	.restore_context = clk_periph_restore_context,
+ };
+ 
+ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
+@@ -116,6 +155,8 @@ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
+ 	.is_enabled = clk_periph_is_enabled,
+ 	.enable = clk_periph_enable,
+ 	.disable = clk_periph_disable,
++	.save_context = clk_periph_save_context,
++	.restore_context = clk_periph_restore_context,
+ };
+ 
+ static const struct clk_ops tegra_clk_periph_no_gate_ops = {
+@@ -124,6 +165,8 @@ static const struct clk_ops tegra_clk_periph_no_gate_ops = {
+ 	.recalc_rate = clk_periph_recalc_rate,
+ 	.round_rate = clk_periph_round_rate,
+ 	.set_rate = clk_periph_set_rate,
++	.save_context = clk_periph_save_context,
++	.restore_context = clk_periph_restore_context,
+ };
+ 
+ static struct clk *_tegra_clk_register_periph(const char *name,
+diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
+index a5cd3e31dbae..fffe08e02c10 100644
+--- a/drivers/clk/tegra/clk-sdmmc-mux.c
++++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+@@ -194,6 +194,34 @@ static void clk_sdmmc_mux_disable(struct clk_hw *hw)
+ 	gate_ops->disable(gate_hw);
+ }
+ 
++static int clk_sdmmc_mux_save_context(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++
++	sdmmc_mux->rate_ctx = clk_sdmmc_mux_recalc_rate(hw, parent_rate);
++	sdmmc_mux->parent_ctx = clk_sdmmc_mux_get_parent(hw);
++	gate_ops->save_context(gate_hw);
++
++	return 0;
++}
++
++static void clk_sdmmc_mux_restore_context(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++
++	clk_sdmmc_mux_set_parent(hw, sdmmc_mux->parent_ctx);
++	clk_sdmmc_mux_set_rate(hw, sdmmc_mux->rate_ctx, parent_rate);
++	gate_ops->restore_context(gate_hw);
++}
++
+ static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
+ 	.get_parent = clk_sdmmc_mux_get_parent,
+ 	.set_parent = clk_sdmmc_mux_set_parent,
+@@ -203,6 +231,8 @@ static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
+ 	.is_enabled = clk_sdmmc_mux_is_enabled,
+ 	.enable = clk_sdmmc_mux_enable,
+ 	.disable = clk_sdmmc_mux_disable,
++	.save_context = clk_sdmmc_mux_save_context,
++	.restore_context = clk_sdmmc_mux_restore_context,
+ };
+ 
+ struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 3cd003b7512a..ac6de3a0b91f 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -523,6 +523,8 @@ struct tegra_clk_periph_gate {
+ 	int			clk_num;
+ 	int			*enable_refcnt;
+ 	const struct tegra_clk_periph_regs *regs;
++	bool			clk_state_ctx;
++	bool			rst_state_ctx;
+ };
+ 
+ #define to_clk_periph_gate(_hw)					\
+@@ -549,6 +551,8 @@ struct tegra_clk_periph_fixed {
+ 	unsigned int mul;
+ 	unsigned int div;
+ 	unsigned int num;
++	bool enb_ctx;
++	bool rst_ctx;
+ };
+ 
+ struct clk *tegra_clk_register_periph_fixed(const char *name,
+@@ -581,6 +585,8 @@ struct tegra_clk_periph {
+ 	const struct clk_ops	*mux_ops;
+ 	const struct clk_ops	*div_ops;
+ 	const struct clk_ops	*gate_ops;
++	unsigned long		rate_ctx;
++	u8			parent_ctx;
+ };
+ 
+ #define to_clk_periph(_hw) container_of(_hw, struct tegra_clk_periph, hw)
+@@ -732,6 +738,8 @@ struct tegra_sdmmc_mux {
+ 	const struct clk_ops	*gate_ops;
+ 	struct tegra_clk_periph_gate	gate;
+ 	u8			div_flags;
++	unsigned long		rate_ctx;
++	u8			parent_ctx;
+ };
+ 
+ #define to_clk_sdmmc_mux(_hw) container_of(_hw, struct tegra_sdmmc_mux, hw)
 -- 
 2.7.4
 
