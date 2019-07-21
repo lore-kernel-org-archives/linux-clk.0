@@ -1,102 +1,155 @@
-Return-Path: <SRS0=51W5=VR=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=4xko=VS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EC4C76195
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jul 2019 11:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08F7C76191
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jul 2019 19:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9FC2183E
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jul 2019 11:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D0B520823
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jul 2019 19:40:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mdxvnyLh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbfGTLjL convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Jul 2019 07:39:11 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:38469 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728078AbfGTLjL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 20 Jul 2019 07:39:11 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id E210C6F0CC;
-        Sat, 20 Jul 2019 11:39:00 +0000 (UTC)
-Date:   Sat, 20 Jul 2019 19:39:08 +0800
-In-Reply-To: <20190720101318.cwrvv5r42wxx5k4r@flea>
-References: <20190713034634.44585-1-icenowy@aosc.io> <20190713034634.44585-8-icenowy@aosc.io> <20190720101318.cwrvv5r42wxx5k4r@flea>
+        id S1726429AbfGUTkz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Jul 2019 15:40:55 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8980 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbfGUTky (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Jul 2019 15:40:54 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d34bfc20000>; Sun, 21 Jul 2019 12:40:50 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 21 Jul 2019 12:40:52 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 21 Jul 2019 12:40:52 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
+ 2019 19:40:52 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
+ 2019 19:40:51 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Sun, 21 Jul 2019 19:40:51 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.164.85]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d34bfc20000>; Sun, 21 Jul 2019 12:40:51 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during suspend
+Date:   Sun, 21 Jul 2019 12:40:40 -0700
+Message-ID: <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v4 7/8] dt-bindings: arm: sunxi: add binding for Lichee Zero Plus core board
-To:     linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <BDF0C9F6-DD0D-4343-8E24-06A07055004C@aosc.io>
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563738050; bh=s1XnuLcDk97/CuRHD9/IW+GAX3pxhADV42EQBIG7j4Y=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=mdxvnyLhSwkqXvEeRBRJCBab2gnmFHKfiZBKqodjHscL+sMBNf3UQgJbVdvV3j4y9
+         T0Zjz6UVUXEsnTRG7I0u+wI0hCcyiU+sYN9URPzsnvxDsVaU1COed2h+zpBQvfY6eV
+         emvwCRm8TkLR3xMZYzlnyUY108P/VhQB6KPS01QLUjX3+SC6aHBLM/S6lvz98j5Jcr
+         2iXsmyo+cv983GD5j1VJIiMXOjIdLT49xG6Hvq2aF1knKsRSd+zi9k9p85Lv6sLW58
+         eqyh7i38poPXl51BJlNaC1d7hzr37JKqsRSd7n8oaVI0ZxNwKYaWEwSkRFRU00WVvE
+         sZFGwUXCNIc8A==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
+sequence and sc7 entry firmware is run from COP/BPMP-Lite.
 
+So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
+for Tegra210.
 
-于 2019年7月20日 GMT+08:00 下午6:13:18, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Sat, Jul 13, 2019 at 11:46:33AM +0800, Icenowy Zheng wrote:
->> The Lichee Zero Plus is a core board made by Sipeed, with a microUSB
->> connector on it, TF slot or WSON8 SD chip, optional eMMC or SPI
->Flash.
->> It has a gold finger connector for expansion, and UART is available
->from
->> reserved pins w/ 2.54mm pitch. The board can use either SoChip S3 or
->> Allwinner V3L SoCs.
->>
->> Add the device tree binding of the basic version of the core board --
->> w/o eMMC or SPI Flash, w/ TF slot or WSON8 SD, and use S3 SoC.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> No changes since v3.
->>
->> Patch introduced in v2.
->>
->>  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
->b/Documentation/devicetree/bindings/arm/sunxi.yaml
->> index 000a00d12d6a..48c126a7a848 100644
->> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
->> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
->> @@ -353,6 +353,11 @@ properties:
->>            - const: licheepi,licheepi-zero
->>            - const: allwinner,sun8i-v3s
->>
->> +      - description: Lichee Zero Plus (with S3, without eMMC/SPI
->Flash)
->> +        items:
->> +          - const: sipeed,lichee-zero-plus
->> +          - const: allwinner,sun8i-s3
->
->If the S3 is just a rebranded V3, then we should have the v3 compatile
->in that list too.
+This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+interrupt controller suspend operation.
 
-S3 is V3 with copackaged DDR3 DRAM.
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-It's pin incompatible w/ V3.
-
->
->Maxime
->
->--
->Maxime Ripard, Bootlin
->Embedded Linux and Kernel engineering
->https://bootlin.com
-
+diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+index e1f771c72fc4..851f88cef508 100644
+--- a/drivers/irqchip/irq-tegra.c
++++ b/drivers/irqchip/irq-tegra.c
+@@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
+ 
+ struct tegra_ictlr_soc {
+ 	unsigned int num_ictlrs;
++	bool supports_sc7;
+ };
+ 
+ static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
+@@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
+ 
+ static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
+ 	.num_ictlrs = 6,
++	.supports_sc7 = true,
+ };
+ 
+ static const struct of_device_id ictlr_matches[] = {
+@@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] = {
+ 
+ struct tegra_ictlr_info {
+ 	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
++	const struct tegra_ictlr_soc *soc;
+ #ifdef CONFIG_PM_SLEEP
+ 	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
+ 	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
+@@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
+ 		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
+ 		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+ 
+-		/* Disable COP interrupts */
+-		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
++		/*
++		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
++		 *
++		 * Tegra210 system suspend flow uses sc7entry firmware which
++		 * is executed by COP/BPMP and it includes disabling COP IRQ,
++		 * clamping CPU rail, turning off VDD_CPU, and preparing the
++		 * system to go to SC7/LP0.
++		 *
++		 * COP/BPMP wakes up when COP IRQ is triggered and runs
++		 * sc7entry-firmware. So need to keep COP interrupt enabled.
++		 */
++		if (!lic->soc->supports_sc7)
++			/* Disable COP interrupts if SC7 is not supported */
++			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+ 
+ 		/* Disable CPU interrupts */
+ 		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
+@@ -339,6 +354,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
+ 		goto out_unmap;
+ 	}
+ 
++	lic->soc = soc;
+ 	tegra_ictlr_syscore_init();
+ 
+ 	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
 -- 
-使用 K-9 Mail 发送自我的Android设备。
+2.7.4
+
