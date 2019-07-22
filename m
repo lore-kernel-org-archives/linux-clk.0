@@ -2,98 +2,292 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07599C76191
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 03:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC0EC76196
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 06:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3A021953
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 03:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563766487;
-	bh=KOxZPjyK9INnzYcIKi8Kw5IoLDhXg2vltv5ZVrxbMxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kyRLHMuRTIqQ9jBCCWU0cwkYDFBgCBdy6OOtCIg9UkT/GczqoeCD+0gYx88uH67rM
-	 UVpdkcnKrAO5fXAlR1f2cU8xFjzNya1Qo5JwKEX2923n85RPhvggaXFvK1qNIfomCH
-	 p7d11ufPLXzQm7eyi+seBE/enUNtVH6pm5QcflK4=
+	by mail.kernel.org (Postfix) with ESMTP id 63F7F21BE6
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 06:10:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UE2rtg/B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbfGVDer (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Jul 2019 23:34:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbfGVDer (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 21 Jul 2019 23:34:47 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74CAB20821;
-        Mon, 22 Jul 2019 03:34:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563766486;
-        bh=KOxZPjyK9INnzYcIKi8Kw5IoLDhXg2vltv5ZVrxbMxM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XLWFiu9I+GRhAgwOajCy/jahWvlNp0VbvlmGCPVCn7KrwLgzbhPMYPctTP6ptiOU6
-         YvXZNLGgovVynGo5k2VM3qUA9/ZH6gJARzOjJ4L/9pr4J3jvUr/TrInrXBzj5bfq1I
-         8T4oWnuQoEtwoDtXutRtBgvxB+Cu1FP3HUrTWNMc=
-Date:   Mon, 22 Jul 2019 11:34:20 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     jun.li@nxp.com
-Cc:     sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, mturquette@baylibre.com, Peter.Chen@nxp.com,
-        ping.bai@nxp.com, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
-        Anson.Huang@nxp.com, aisheng.dong@nxp.com, peng.fan@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/5] clk: imx8mm: correct the usb1_ctrl parent to be
- usb_bus
-Message-ID: <20190722033418.GX3738@dragon>
-References: <20190703072327.38165-1-jun.li@nxp.com>
+        id S1726939AbfGVGKJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 02:10:09 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34600 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfGVGKJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 02:10:09 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p17so36352346ljg.1;
+        Sun, 21 Jul 2019 23:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=68NS5MbPNGx3oVlzPDafzy93b3e0AKuHa1JWZ/+s3eI=;
+        b=UE2rtg/BgoQ25KHxvLwe+9vZJ8jVjSjp7xm+yti7wvF2U3QGw8r0Sg0AEp1hv8Va9R
+         c1eIgbzT7QWxERbHgY+gRUwMNO5RZUhX7mp+5sXkgSYDW47J87qSu7qXzdNZyQF07dya
+         Sw+5ueLy8m4kBuZByZKpf8UwD5hhKZSnm/O37MQEp0pPLXjfv0WCng5cUwIk1nqQQJjY
+         W4xT8cVrTWtHKgVnbaZ67x8g+Rpt9DNaYVa1c06urHU1tkcYE9+8RfWgkKcVjaIKibJa
+         ZPwIF74TMQjjXcVKTFbbuwxA866AxBe6wkBRcRa8CkVqotCi8KNHEpG6mFsdb7AxR3VG
+         s6bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=68NS5MbPNGx3oVlzPDafzy93b3e0AKuHa1JWZ/+s3eI=;
+        b=NjAWGCP4Z0WqliGEYAOsuG8dub+kgThKLFwOMFPTlbKea914sYQq0MznNOcVN9DX7d
+         c4WcOwmSOsz/z0PI5ASxevIHHf2ogWjPtMmV0tJ+h0MA4w3yoRkfQnfGDboGekTeoilu
+         DOXVehR9/cbrDONz870xBKh7oFcGzeO+ZBefe5FoGU5OufpqM4NHH0iSIlk1WKl0R5MH
+         uhO8L0qAvBd0AxAz7Ziha5larTbmIJkrNMBFSK0ASrHtFMjVEaQiJHswE5NASXbmY3eL
+         OwU5LZShLH1vVNyvru9x+h3lWQty0sGJLc7v+W5UZVAS1rsnu6Rg/jWxmlN5UqHMDhcC
+         HGzA==
+X-Gm-Message-State: APjAAAWAt+BoNgKzj3iGwnbVFkUqEPKxv4K9OZ6CqdA+142olCWuVyhr
+        6f5uJX+AdLcMlgIBsNH1hqqZ+T1Q
+X-Google-Smtp-Source: APXvYqw1KkWjC+xvlA+ECAECuodIEg0Kh6r/WI/+a86Y4AW/YGn/6J3Bgd9ve7cDggr8cWSPIeIhwA==
+X-Received: by 2002:a2e:2bd3:: with SMTP id r80mr35916957ljr.23.1563775805562;
+        Sun, 21 Jul 2019 23:10:05 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id c19sm5809639lfi.39.2019.07.21.23.10.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 21 Jul 2019 23:10:04 -0700 (PDT)
+Subject: Re: [PATCH V6 14/21] clk: tegra210: Add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-15-git-send-email-skomatineni@nvidia.com>
+ <e683b417-66fb-38dc-c16b-dab616583a88@gmail.com>
+ <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ceedb802-7561-488f-3a89-67bee19f2fea@gmail.com>
+Date:   Mon, 22 Jul 2019 09:10:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190703072327.38165-1-jun.li@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 03:23:25PM +0800, jun.li@nxp.com wrote:
-> From: Li Jun <jun.li@nxp.com>
+22.07.2019 1:45, Sowjanya Komatineni пишет:
 > 
-> Per latest imx8mm datasheet of CCM, the parent of usb1_ctrl_root_clk
-> should be usb_bus.
+> On 7/21/19 2:38 PM, Dmitry Osipenko wrote:
+>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
+>>> This patch adds support for clk: tegra210: suspend-resume.
+>>>
+>>> All the CAR controller settings are lost on suspend when core
+>>> power goes off.
+>>>
+>>> This patch has implementation for saving and restoring all PLLs
+>>> and clocks context during system suspend and resume to have the
+>>> clocks back to same state for normal operation.
+>>>
+>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/clk/tegra/clk-tegra210.c | 68
+>>> ++++++++++++++++++++++++++++++++++++++--
+>>>   drivers/clk/tegra/clk.c          | 14 +++++++++
+>>>   drivers/clk/tegra/clk.h          |  1 +
+>>>   3 files changed, 80 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra210.c
+>>> b/drivers/clk/tegra/clk-tegra210.c
+>>> index 55a88c0824a5..68271873acc1 100644
+>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>> @@ -9,6 +9,7 @@
+>>>   #include <linux/clkdev.h>
+>>>   #include <linux/of.h>
+>>>   #include <linux/of_address.h>
+>>> +#include <linux/syscore_ops.h>
+>>>   #include <linux/delay.h>
+>>>   #include <linux/export.h>
+>>>   #include <linux/mutex.h>
+>>> @@ -220,11 +221,15 @@
+>>>   #define CLK_M_DIVISOR_SHIFT 2
+>>>   #define CLK_M_DIVISOR_MASK 0x3
+>>>   +#define CLK_MASK_ARM    0x44
+>>> +#define MISC_CLK_ENB    0x48
+>>> +
+>>>   #define RST_DFLL_DVCO 0x2f4
+>>>   #define DVFS_DFLL_RESET_SHIFT 0
+>>>     #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+>>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+>>> +#define CPU_SOFTRST_CTRL 0x380
+>>>     #define LVL2_CLK_GATE_OVRA 0xf8
+>>>   #define LVL2_CLK_GATE_OVRC 0x3a0
+>>> @@ -2825,6 +2830,7 @@ static int tegra210_enable_pllu(void)
+>>>       struct tegra_clk_pll_freq_table *fentry;
+>>>       struct tegra_clk_pll pllu;
+>>>       u32 reg;
+>>> +    int ret;
+>>>         for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
+>>>           if (fentry->input_rate == pll_ref_freq)
+>>> @@ -2853,9 +2859,8 @@ static int tegra210_enable_pllu(void)
+>>>       reg |= PLL_ENABLE;
+>>>       writel(reg, clk_base + PLLU_BASE);
+>>>   -    readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
+>>> -                      reg & PLL_BASE_LOCK, 2, 1000);
+>>> -    if (!(reg & PLL_BASE_LOCK)) {
+>>> +    ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
+>>> +    if (ret) {
+>> Why this is needed? Was there a bug?
+>>
+> during resume pllu init is needed and to use same terga210_init_pllu,
+> poll_timeout_atomic can't be used as its ony for atomic context.
 > 
-> Signed-off-by: Li Jun <jun.li@nxp.com>
+> So changed to use wait_for_mask which should work in both cases.
 
-I only received 3 patches as a series.  In that case, the patches should
-have subject prefix like '[PATCH 1/3]' ...
+Atomic variant could be used from any context, not sure what do you
+mean. The 'atomic' part only means that function won't cause scheduling
+and that's it.
 
-The patches look good to me.  Applied all 3, thanks.
+>>>           pr_err("Timed out waiting for PLL_U to lock\n");
+>>>           return -ETIMEDOUT;
+>>>       }
+>>> @@ -3288,6 +3293,56 @@ static void tegra210_disable_cpu_clock(u32 cpu)
+>>>   }
+>>>     #ifdef CONFIG_PM_SLEEP
+>>> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) +
+>>> ((_off) * 4))
+>>> +#define car_writel(_val, _base, _off) \
+>>> +        writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
+>>> +
+>>> +static u32 spare_reg_ctx, misc_clk_enb_ctx, clk_msk_arm_ctx;
+>>> +static u32 cpu_softrst_ctx[3];
+>>> +
+>>> +static int tegra210_clk_suspend(void)
+>>> +{
+>>> +    unsigned int i;
+>>> +
+>>> +    clk_save_context();
+>>> +
+>>> +    /*
+>>> +     * save the bootloader configured clock registers SPARE_REG0,
+>>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL
+>> Nit: Start all multi-line comments with a capital letter and put dot in
+>> the end of sentence.
+>>
+>>> +     */
+>>> +    spare_reg_ctx = readl_relaxed(clk_base + SPARE_REG0);
+>>> +    misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
+>>> +    clk_msk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
+>>> +
+>>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
+>>> +        cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static void tegra210_clk_resume(void)
+>>> +{
+>>> +    unsigned int i;
+>>> +
+>>> +    tegra_clk_osc_resume(clk_base);
+>>> +
+>>> +    /*
+>>> +     * restore the bootloader configured clock registers SPARE_REG0,
+>>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL from saved context.
+>> Same here.
+>>
+>>> +     */
+>>> +    writel_relaxed(spare_reg_ctx, clk_base + SPARE_REG0);
+>>> +    writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
+>>> +    writel_relaxed(clk_msk_arm_ctx, clk_base + CLK_MASK_ARM);
+>>> +
+>>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
+>>> +        car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
+>>> +
+>>> +    fence_udelay(5, clk_base);
+>>> +
+>>> +    tegra210_init_pllu();
+>>> +    clk_restore_context();
+>>> +}
+>>> +
+>>>   static void tegra210_cpu_clock_suspend(void)
+>>>   {
+>>>       /* switch coresite to clk_m, save off original source */
+>>> @@ -3303,6 +3358,11 @@ static void tegra210_cpu_clock_resume(void)
+>>>   }
+>>>   #endif
+>>>   +static struct syscore_ops tegra_clk_syscore_ops = {
+>>> +    .suspend = tegra210_clk_suspend,
+>>> +    .resume = tegra210_clk_resume,
+>>> +};
+>>> +
+>>>   static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
+>>>       .wait_for_reset    = tegra210_wait_cpu_in_reset,
+>>>       .disable_clock    = tegra210_disable_cpu_clock,
+>>> @@ -3587,5 +3647,7 @@ static void __init tegra210_clock_init(struct
+>>> device_node *np)
+>>>       tegra210_mbist_clk_init();
+>>>         tegra_cpu_car_ops = &tegra210_cpu_car_ops;
+>>> +
+>>> +    register_syscore_ops(&tegra_clk_syscore_ops);
+>>>   }
+>>>   CLK_OF_DECLARE(tegra210, "nvidia,tegra210-car", tegra210_clock_init);
+>>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+>>> index 573e3c967ae1..eb08047fd02f 100644
+>>> --- a/drivers/clk/tegra/clk.c
+>>> +++ b/drivers/clk/tegra/clk.c
+>>> @@ -23,6 +23,7 @@
+>>>   #define CLK_OUT_ENB_W            0x364
+>>>   #define CLK_OUT_ENB_X            0x280
+>>>   #define CLK_OUT_ENB_Y            0x298
+>>> +#define CLK_ENB_PLLP_OUT_CPU        BIT(31)
+>>>   #define CLK_OUT_ENB_SET_L        0x320
+>>>   #define CLK_OUT_ENB_CLR_L        0x324
+>>>   #define CLK_OUT_ENB_SET_H        0x328
+>>> @@ -199,6 +200,19 @@ const struct tegra_clk_periph_regs
+>>> *get_reg_bank(int clkid)
+>>>       }
+>>>   }
+>>>   +void tegra_clk_set_pllp_out_cpu(bool enable)
+>>> +{
+>>> +    u32 val;
+>>> +
+>>> +    val = readl_relaxed(clk_base + CLK_OUT_ENB_Y);
+>>> +    if (enable)
+>>> +        val |= CLK_ENB_PLLP_OUT_CPU;
+>>> +    else
+>>> +        val &= ~CLK_ENB_PLLP_OUT_CPU;
+>>> +
+>>> +    writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
+>>> +}
+>>> +
+>>>   struct clk ** __init tegra_clk_init(void __iomem *regs, int num,
+>>> int banks)
+>>>   {
+>>>       clk_base = regs;
+>>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+>>> index 562a3ee2d537..0ffa763c755b 100644
+>>> --- a/drivers/clk/tegra/clk.h
+>>> +++ b/drivers/clk/tegra/clk.h
+>>> @@ -863,6 +863,7 @@ int div_frac_get(unsigned long rate, unsigned
+>>> parent_rate, u8 width,
+>>>            u8 frac_width, u8 flags);
+>>>   void tegra_clk_sync_state_pll(struct clk_hw *hw);
+>>>   void tegra_clk_osc_resume(void __iomem *clk_base);
+>>> +void tegra_clk_set_pllp_out_cpu(bool enable);
+>>>     /* Combined read fence with delay */
+>>>   #define fence_udelay(delay, reg)    \
+>>>
 
-Shawn
-
-> ---
->  drivers/clk/imx/clk-imx8mm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 6b8e75d..735cf9d 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -631,7 +631,7 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
->  	clks[IMX8MM_CLK_UART2_ROOT] = imx_clk_gate4("uart2_root_clk", "uart2", base + 0x44a0, 0);
->  	clks[IMX8MM_CLK_UART3_ROOT] = imx_clk_gate4("uart3_root_clk", "uart3", base + 0x44b0, 0);
->  	clks[IMX8MM_CLK_UART4_ROOT] = imx_clk_gate4("uart4_root_clk", "uart4", base + 0x44c0, 0);
-> -	clks[IMX8MM_CLK_USB1_CTRL_ROOT] = imx_clk_gate4("usb1_ctrl_root_clk", "usb_core_ref", base + 0x44d0, 0);
-> +	clks[IMX8MM_CLK_USB1_CTRL_ROOT] = imx_clk_gate4("usb1_ctrl_root_clk", "usb_bus", base + 0x44d0, 0);
->  	clks[IMX8MM_CLK_GPU3D_ROOT] = imx_clk_gate4("gpu3d_root_clk", "gpu3d_div", base + 0x44f0, 0);
->  	clks[IMX8MM_CLK_USDHC1_ROOT] = imx_clk_gate4("usdhc1_root_clk", "usdhc1", base + 0x4510, 0);
->  	clks[IMX8MM_CLK_USDHC2_ROOT] = imx_clk_gate4("usdhc2_root_clk", "usdhc2", base + 0x4520, 0);
-> -- 
-> 2.7.4
-> 
