@@ -2,642 +2,173 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A36C76195
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 09:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA321C76196
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 09:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 427DB2229B
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 09:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83FD62199C
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 09:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EP7xmpwQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyEAdJ9u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbfGVJy7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 05:54:59 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37935 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729085AbfGVJyf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 05:54:35 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s15so13296353wmj.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2019 02:54:33 -0700 (PDT)
+        id S1729589AbfGVJy6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 05:54:58 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42193 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729327AbfGVJy5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 05:54:57 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t28so36969638lje.9;
+        Mon, 22 Jul 2019 02:54:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6R0NWQlnIAwKuRysvv9K9RxgnaCJkMi344ya2fVJ/bE=;
-        b=EP7xmpwQa+pMsg60cBfzQGZdkBSFE4e3VYfMX3Q0KjSFL37nrGw7C+h4EKhfka6ugX
-         bRqxKmDZk4inuzD+gytrSU718DMilO4jq6xL8EDDu+cZd2Ym6zh8au7n1OD5L/akx87P
-         VWp2mRSUvXT3joI73u6pTz5322LjhoH1eWIM9AjmzIAoZymIsGTiAb5wNauKCoY0b/Sq
-         MKTWkA6u5Lu0wsc5NxaTqcSozElZr807vvNhHVqLd9v66cp/gJwIT8TKBVL5zMJnQqWa
-         9gwXR1ODTxuCQWWFniHNHcFn5dU7+P7g1peCbyTiJWzPBQlX4EcI5ucfyfY3QaG0qvLm
-         0voA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0Bz0B3znRkzN1aaFEIYtkZkLNv7SC5uYBJx9GcgvIbo=;
+        b=VyEAdJ9u8WWneLydpX8Bd+0pO+roYUg07OcNb8qu5Sg4AabJ+sNVtDsHffSGPA3OYD
+         Gx95JME7Xf4Wx7Cz8UB1JwqqFAoPRdshuJwIAnHk/vFHgI3/1KYIJPRqRbHIffR4DlcO
+         Vm+T4KP2K1ZRuR3RWltbC53T0WbdxvZB5po7/FJ7HnWJX0b8Bgskb8ew4NimOJRndFmD
+         BrVygFj2+LSmBndycp1HRHUKjqyrhnnLLQnhG65IjxQE+vR5YnC5bNAql0iV6p/EnGNf
+         5qA22Yi4T+YoYLTiWXwhQc2fdbIk5Ti7wqXr1LpnVOWzSaq92Eyy/L7f4/ScdkJ7BrS/
+         T1SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6R0NWQlnIAwKuRysvv9K9RxgnaCJkMi344ya2fVJ/bE=;
-        b=axwK2K/E/dCehboqBTfvS9w62G5/7eeTQrv2rKjm5P5H+c0zXMhF4mk7/eNxBqKOuY
-         2X6rlN/CC7jWMI7I1gN5AtU81CPb9GMKTlfRw2c4uhuCNAnoR5cVs2sN1CLpjACfNMWd
-         GaKZSTCr8TG90jxJ4Qo8AXdRwnu9CEkCM/IhbSBvZ78HJtrUAN9TNBMtQUoi1/MJ/52w
-         7PKPSVVEC4+XaI5GL5MVlvtQ4bIFvSq+3QDvmfj1LpiSCkfkg5+oQ8rS9vKpuU8OF5z4
-         ZFMG6chCw2RxFQRnhMlnUT9TCo+oLL0rGsm4dPxejWX4D3fepIIpvLsP8nKq+SnLnXa4
-         dK4Q==
-X-Gm-Message-State: APjAAAXLIyJ0etFzhZ7cqpnTn/LA63xhM7tb28KdYTKOWSZCCMEqZyPx
-        uE8oOqfaV8xGZpFunbrbXerWmA==
-X-Google-Smtp-Source: APXvYqxL3STbC40DMe9t+4KCNQq9KW7UxaHv2lTgd+0ZzeAHSksvcDXsOVc7DbV3tAvrIZfo979exg==
-X-Received: by 2002:a1c:107:: with SMTP id 7mr63169406wmb.84.1563789272237;
-        Mon, 22 Jul 2019 02:54:32 -0700 (PDT)
-Received: from pop-os.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id 91sm83158469wrp.3.2019.07.22.02.54.31
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0Bz0B3znRkzN1aaFEIYtkZkLNv7SC5uYBJx9GcgvIbo=;
+        b=EljAupdm+n52dU8C6eIkdLs7ZEGZ38by46gfvYY6ArE3AqsbJc51AtYMYZdOWa38y5
+         5gAuzUXwwk/IazWHgltzMGreORWeoZ+uXMshqWeucLs6eF9J7y9m53ddZbLGn8lQn0yH
+         i37P4zqMBJI61uJv1IX4VkCElUim2m1oJy3cgBgtymWwuHi9XHgTwzRpn8sXW+CJVxjp
+         dXG8uZ1oAkB7+hHLr1jMdia2iFRCcAPrbfF02YIyNoVxgrBqD6NION4KOvYBg8+vfgCM
+         bVDlMVHeMYDawoBzC673Q2s1Ha6zfJyGyQq47XgakY4u99cfELzvoJbuiu6nP7JsYT0q
+         5k+Q==
+X-Gm-Message-State: APjAAAXbScJNNz6tsDcGp03rh4MoNO7I2jIuYg8aD+LQFn6S2jtnBFQA
+        O2BL/HXlztv54lN47QO93m9iIzTp
+X-Google-Smtp-Source: APXvYqxY/YvLFYLne+VP2QqRsaaLYHKAFFp28j2d6BRsG1OoG7yHU03akGcUAWdgtDmSUHqQXfPk3Q==
+X-Received: by 2002:a2e:8007:: with SMTP id j7mr35985709ljg.191.1563789294111;
+        Mon, 22 Jul 2019 02:54:54 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id c30sm5992003lfp.70.2019.07.22.02.54.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 02:54:31 -0700 (PDT)
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        baylibre-upstreaming@groups.io,
-        Alexandre Mergnat <amergnat@baylibre.com>
-Subject: [PATCH 4/8] clk: meson: axg: migrate to the new parent description method
-Date:   Mon, 22 Jul 2019 11:54:21 +0200
-Message-Id: <20190722095425.14193-5-amergnat@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190722095425.14193-1-amergnat@baylibre.com>
-References: <20190722095425.14193-1-amergnat@baylibre.com>
+        Mon, 22 Jul 2019 02:54:53 -0700 (PDT)
+Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
+ suspend
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
+Date:   Mon, 22 Jul 2019 12:54:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This clock controller use the string comparison method to describe parent
-relation between the clocks, which is not optimized.
+21.07.2019 22:40, Sowjanya Komatineni пишет:
+> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
+> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
+> 
+> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
+> for Tegra210.
+> 
+> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+> interrupt controller suspend operation.
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+> index e1f771c72fc4..851f88cef508 100644
+> --- a/drivers/irqchip/irq-tegra.c
+> +++ b/drivers/irqchip/irq-tegra.c
+> @@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
+>  
+>  struct tegra_ictlr_soc {
+>  	unsigned int num_ictlrs;
+> +	bool supports_sc7;
+>  };
+>  
+>  static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
+> @@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
+>  
+>  static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
+>  	.num_ictlrs = 6,
+> +	.supports_sc7 = true,
+>  };
+>  
+>  static const struct of_device_id ictlr_matches[] = {
+> @@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] = {
+>  
+>  struct tegra_ictlr_info {
+>  	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
+> +	const struct tegra_ictlr_soc *soc;
+>  #ifdef CONFIG_PM_SLEEP
+>  	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
+>  	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
+> @@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
+>  		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
+>  		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+>  
+> -		/* Disable COP interrupts */
+> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+> +		/*
+> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
+> +		 *
+> +		 * Tegra210 system suspend flow uses sc7entry firmware which
+> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
+> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
+> +		 * system to go to SC7/LP0.
+> +		 *
+> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
+> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
+> +		 */
+> +		if (!lic->soc->supports_sc7)
+> +			/* Disable COP interrupts if SC7 is not supported */
 
-Migrate to the new way by using .parent_hws where possible (ie. when
-all clocks are local to the controller) and use .parent_data otherwise.
+All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
+doesn't sound correct to me. Something like 'firmware_sc7' should suit
+better here.
 
-Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
----
- drivers/clk/meson/axg.c | 204 ++++++++++++++++++++++++++++------------
- 1 file changed, 144 insertions(+), 60 deletions(-)
+> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 3ddd0efc9ee0..7a3d795cc614 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -14,7 +14,6 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
--#include "clk-input.h"
- #include "clk-regmap.h"
- #include "clk-pll.h"
- #include "clk-mpll.h"
-@@ -59,7 +58,9 @@ static struct clk_regmap axg_fixed_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
--		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -74,7 +75,9 @@ static struct clk_regmap axg_fixed_pll = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
- 		.ops = &clk_regmap_divider_ro_ops,
--		.parent_names = (const char *[]){ "fixed_pll_dco" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fixed_pll_dco.hw
-+		},
- 		.num_parents = 1,
- 		/*
- 		 * This clock won't ever change at runtime so
-@@ -114,7 +117,9 @@ static struct clk_regmap axg_sys_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
--		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -129,7 +134,9 @@ static struct clk_regmap axg_sys_pll = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
- 		.ops = &clk_regmap_divider_ro_ops,
--		.parent_names = (const char *[]){ "sys_pll_dco" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_sys_pll_dco.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -215,7 +222,9 @@ static struct clk_regmap axg_gp0_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gp0_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -230,7 +239,9 @@ static struct clk_regmap axg_gp0_pll = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gp0_pll",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "gp0_pll_dco" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_gp0_pll_dco.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -284,7 +295,9 @@ static struct clk_regmap axg_hifi_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hifi_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -299,7 +312,9 @@ static struct clk_regmap axg_hifi_pll = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hifi_pll",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "hifi_pll_dco" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_hifi_pll_dco.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -311,7 +326,7 @@ static struct clk_fixed_factor axg_fclk_div2_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div2_div",
- 		.ops = &clk_fixed_factor_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_fixed_pll.hw },
- 		.num_parents = 1,
- 	},
- };
-@@ -324,7 +339,9 @@ static struct clk_regmap axg_fclk_div2 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div2",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "fclk_div2_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fclk_div2_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_IS_CRITICAL,
- 	},
-@@ -336,7 +353,7 @@ static struct clk_fixed_factor axg_fclk_div3_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div3_div",
- 		.ops = &clk_fixed_factor_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_fixed_pll.hw },
- 		.num_parents = 1,
- 	},
- };
-@@ -349,7 +366,9 @@ static struct clk_regmap axg_fclk_div3 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div3",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "fclk_div3_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fclk_div3_div.hw
-+		},
- 		.num_parents = 1,
- 		/*
- 		 * FIXME:
-@@ -372,7 +391,7 @@ static struct clk_fixed_factor axg_fclk_div4_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div4_div",
- 		.ops = &clk_fixed_factor_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_fixed_pll.hw },
- 		.num_parents = 1,
- 	},
- };
-@@ -385,7 +404,9 @@ static struct clk_regmap axg_fclk_div4 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div4",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "fclk_div4_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fclk_div4_div.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -396,7 +417,7 @@ static struct clk_fixed_factor axg_fclk_div5_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div5_div",
- 		.ops = &clk_fixed_factor_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_fixed_pll.hw },
- 		.num_parents = 1,
- 	},
- };
-@@ -409,7 +430,9 @@ static struct clk_regmap axg_fclk_div5 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div5",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "fclk_div5_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fclk_div5_div.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -420,7 +443,9 @@ static struct clk_fixed_factor axg_fclk_div7_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div7_div",
- 		.ops = &clk_fixed_factor_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fixed_pll.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -433,7 +458,9 @@ static struct clk_regmap axg_fclk_div7 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fclk_div7",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "fclk_div7_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fclk_div7_div.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -447,7 +474,9 @@ static struct clk_regmap axg_mpll_prediv = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll_prediv",
- 		.ops = &clk_regmap_divider_ro_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_fixed_pll.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -480,7 +509,9 @@ static struct clk_regmap axg_mpll0_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0_div",
- 		.ops = &meson_clk_mpll_ops,
--		.parent_names = (const char *[]){ "mpll_prediv" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll_prediv.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -493,7 +524,9 @@ static struct clk_regmap axg_mpll0 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "mpll0_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll0_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -527,7 +560,9 @@ static struct clk_regmap axg_mpll1_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1_div",
- 		.ops = &meson_clk_mpll_ops,
--		.parent_names = (const char *[]){ "mpll_prediv" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll_prediv.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -540,7 +575,9 @@ static struct clk_regmap axg_mpll1 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "mpll1_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll1_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -579,7 +616,9 @@ static struct clk_regmap axg_mpll2_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2_div",
- 		.ops = &meson_clk_mpll_ops,
--		.parent_names = (const char *[]){ "mpll_prediv" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll_prediv.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -592,7 +631,9 @@ static struct clk_regmap axg_mpll2 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "mpll2_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll2_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -626,7 +667,9 @@ static struct clk_regmap axg_mpll3_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll3_div",
- 		.ops = &meson_clk_mpll_ops,
--		.parent_names = (const char *[]){ "mpll_prediv" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll_prediv.hw
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -639,7 +682,9 @@ static struct clk_regmap axg_mpll3 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll3",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "mpll3_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpll3_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -702,7 +747,9 @@ static struct clk_regmap axg_pcie_pll_dco = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pcie_pll_dco",
- 		.ops = &meson_clk_pll_ops,
--		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
- 		.num_parents = 1,
- 	},
- };
-@@ -717,7 +764,9 @@ static struct clk_regmap axg_pcie_pll_od = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pcie_pll_od",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "pcie_pll_dco" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_pcie_pll_dco.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -733,7 +782,9 @@ static struct clk_regmap axg_pcie_pll = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pcie_pll",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "pcie_pll_od" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_pcie_pll_od.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -750,7 +801,7 @@ static struct clk_regmap axg_pcie_mux = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pcie_mux",
- 		.ops = &clk_regmap_mux_ops,
--		.parent_names = (const char *[]){ "pcie_pll" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_pcie_pll.hw },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -767,7 +818,7 @@ static struct clk_regmap axg_pcie_ref = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pcie_ref",
- 		.ops = &clk_regmap_mux_ops,
--		.parent_names = (const char *[]){ "pcie_mux" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_pcie_mux.hw },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -781,7 +832,7 @@ static struct clk_regmap axg_pcie_cml_en0 = {
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "pcie_cml_en0",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "pcie_ref" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_pcie_ref.hw },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 
-@@ -796,16 +847,21 @@ static struct clk_regmap axg_pcie_cml_en1 = {
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "pcie_cml_en1",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "pcie_ref" },
-+		.parent_hws = (const struct clk_hw *[]) { &axg_pcie_ref.hw },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
- static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
--static const char * const clk81_parent_names[] = {
--	IN_PREFIX "xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
--	"fclk_div3", "fclk_div5"
-+static const struct clk_parent_data clk81_parent_data[] = {
-+	{ .fw_name = "xtal", },
-+	{ .hw = &axg_fclk_div7.hw },
-+	{ .hw = &axg_mpll1.hw },
-+	{ .hw = &axg_mpll2.hw },
-+	{ .hw = &axg_fclk_div4.hw },
-+	{ .hw = &axg_fclk_div3.hw },
-+	{ .hw = &axg_fclk_div5.hw },
- };
- 
- static struct clk_regmap axg_mpeg_clk_sel = {
-@@ -818,8 +874,8 @@ static struct clk_regmap axg_mpeg_clk_sel = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_sel",
- 		.ops = &clk_regmap_mux_ro_ops,
--		.parent_names = clk81_parent_names,
--		.num_parents = ARRAY_SIZE(clk81_parent_names),
-+		.parent_data = clk81_parent_data,
-+		.num_parents = ARRAY_SIZE(clk81_parent_data),
- 	},
- };
- 
-@@ -832,7 +888,9 @@ static struct clk_regmap axg_mpeg_clk_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "mpeg_clk_sel" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpeg_clk_sel.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -846,15 +904,20 @@ static struct clk_regmap axg_clk81 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "clk81",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "mpeg_clk_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_mpeg_clk_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
- 	},
- };
- 
--static const char * const axg_sd_emmc_clk0_parent_names[] = {
--	IN_PREFIX "xtal", "fclk_div2", "fclk_div3", "fclk_div5", "fclk_div7",
--
-+static const struct clk_parent_data axg_sd_emmc_clk0_parent_data[] = {
-+	{ .fw_name = "xtal", },
-+	{ .hw = &axg_fclk_div2.hw },
-+	{ .hw = &axg_fclk_div3.hw },
-+	{ .hw = &axg_fclk_div5.hw },
-+	{ .hw = &axg_fclk_div7.hw },
- 	/*
- 	 * Following these parent clocks, we should also have had mpll2, mpll3
- 	 * and gp0_pll but these clocks are too precious to be used here. All
-@@ -873,8 +936,8 @@ static struct clk_regmap axg_sd_emmc_b_clk0_sel = {
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_b_clk0_sel",
- 		.ops = &clk_regmap_mux_ops,
--		.parent_names = axg_sd_emmc_clk0_parent_names,
--		.num_parents = ARRAY_SIZE(axg_sd_emmc_clk0_parent_names),
-+		.parent_data = axg_sd_emmc_clk0_parent_data,
-+		.num_parents = ARRAY_SIZE(axg_sd_emmc_clk0_parent_data),
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
-@@ -889,7 +952,9 @@ static struct clk_regmap axg_sd_emmc_b_clk0_div = {
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_b_clk0_div",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "sd_emmc_b_clk0_sel" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_sd_emmc_b_clk0_sel.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -903,7 +968,9 @@ static struct clk_regmap axg_sd_emmc_b_clk0 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_b_clk0",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "sd_emmc_b_clk0_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_sd_emmc_b_clk0_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -919,8 +986,8 @@ static struct clk_regmap axg_sd_emmc_c_clk0_sel = {
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_c_clk0_sel",
- 		.ops = &clk_regmap_mux_ops,
--		.parent_names = axg_sd_emmc_clk0_parent_names,
--		.num_parents = ARRAY_SIZE(axg_sd_emmc_clk0_parent_names),
-+		.parent_data = axg_sd_emmc_clk0_parent_data,
-+		.num_parents = ARRAY_SIZE(axg_sd_emmc_clk0_parent_data),
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
-@@ -935,7 +1002,9 @@ static struct clk_regmap axg_sd_emmc_c_clk0_div = {
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_c_clk0_div",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "sd_emmc_c_clk0_sel" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_sd_emmc_c_clk0_sel.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -949,7 +1018,9 @@ static struct clk_regmap axg_sd_emmc_c_clk0 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_c_clk0",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "sd_emmc_c_clk0_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_sd_emmc_c_clk0_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -957,9 +1028,18 @@ static struct clk_regmap axg_sd_emmc_c_clk0 = {
- 
- static u32 mux_table_gen_clk[]	= { 0, 4, 5, 6, 7, 8,
- 				    9, 10, 11, 13, 14, };
--static const char * const gen_clk_parent_names[] = {
--	IN_PREFIX "xtal", "hifi_pll", "mpll0", "mpll1", "mpll2", "mpll3",
--	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7", "gp0_pll",
-+static const struct clk_parent_data gen_clk_parent_data[] = {
-+	{ .fw_name = "xtal", },
-+	{ .hw = &axg_hifi_pll.hw },
-+	{ .hw = &axg_mpll0.hw },
-+	{ .hw = &axg_mpll1.hw },
-+	{ .hw = &axg_mpll2.hw },
-+	{ .hw = &axg_mpll3.hw },
-+	{ .hw = &axg_fclk_div4.hw },
-+	{ .hw = &axg_fclk_div3.hw },
-+	{ .hw = &axg_fclk_div5.hw },
-+	{ .hw = &axg_fclk_div7.hw },
-+	{ .hw = &axg_gp0_pll.hw },
- };
- 
- static struct clk_regmap axg_gen_clk_sel = {
-@@ -978,8 +1058,8 @@ static struct clk_regmap axg_gen_clk_sel = {
- 		 * hifi_pll, mpll0, mpll1, mpll2, mpll3, fdiv4,
- 		 * fdiv3, fdiv5, [cts_msr_clk], fdiv7, gp0_pll
- 		 */
--		.parent_names = gen_clk_parent_names,
--		.num_parents = ARRAY_SIZE(gen_clk_parent_names),
-+		.parent_data = gen_clk_parent_data,
-+		.num_parents = ARRAY_SIZE(gen_clk_parent_data),
- 	},
- };
- 
-@@ -992,7 +1072,9 @@ static struct clk_regmap axg_gen_clk_div = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gen_clk_div",
- 		.ops = &clk_regmap_divider_ops,
--		.parent_names = (const char *[]){ "gen_clk_sel" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_gen_clk_sel.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -1006,7 +1088,9 @@ static struct clk_regmap axg_gen_clk = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gen_clk",
- 		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "gen_clk_div" },
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&axg_gen_clk_div.hw
-+		},
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
--- 
-2.17.1
+Secondly, I'm also not sure why COP interrupts need to be disabled for
+pre-T210 at all, since COP is unused. This looks to me like it was
+cut-n-pasted from downstream kernel without a good reason and could be
+simply removed.
+
+>  		/* Disable CPU interrupts */
+>  		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
+> @@ -339,6 +354,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
+>  		goto out_unmap;
+>  	}
+>  
+> +	lic->soc = soc;
+>  	tegra_ictlr_syscore_init();
+>  
+>  	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
+> 
 
