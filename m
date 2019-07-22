@@ -2,106 +2,77 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C31FC7618F
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB437C7618F
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C0B42199C
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 876372199C
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:30:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563830739;
-	bh=NW7gQC4ICt0N9/M+RHMFx28ZJTSv9cMfIhpuZHQv35w=;
+	s=default; t=1563831012;
+	bh=F1h4fbko3GoKghOyB8V2PZNI7J3t6w8bvytUqOh9UCI=;
 	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
-	b=I5rSVlTlV75OCIUUjzbpU30knZHG2rCTVpYfrLAGalOMxwQiDgp/nPCZXxWbdDsyh
-	 0+QpuaEqBKb+HY5LzZfTIW4cShi+zHkENFhFpu/Zsux+LpIHQzQ1Hhou/h0V8SBcmq
-	 JTrLT4LiSrj2KLcEZPD6hYE+R/3luScjt0uoaefE=
+	b=wF/FvxMRFUA8IdW3zs7dAjr5O/vk2ZW3segfhyZgJVaCmHoZywBOG9LKqAzzhdS0b
+	 nygWyqF3ZI1G62XULURZ3gwtC0NV827DA50R9gU7bGUZpbB+zihVAS/v8KRYn4ZJgX
+	 3nP9sv2bk31kmoeXHS+FdZPqBU51tYT/ZSed4psw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730369AbfGVVZi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 17:25:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54362 "EHLO mail.kernel.org"
+        id S1726167AbfGVVaM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 17:30:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729059AbfGVVZi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:25:38 -0400
+        id S1731852AbfGVVaL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:30:11 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C9121900;
-        Mon, 22 Jul 2019 21:25:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C64421900;
+        Mon, 22 Jul 2019 21:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563830737;
-        bh=NW7gQC4ICt0N9/M+RHMFx28ZJTSv9cMfIhpuZHQv35w=;
+        s=default; t=1563831011;
+        bh=F1h4fbko3GoKghOyB8V2PZNI7J3t6w8bvytUqOh9UCI=;
         h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=hXFwaRQ7UUiTJbf90j7UD6moPpoc9yC4DZo44EfNqlULb8ETuD8ZbrBhKjcTRo9FH
-         WXY+++WosNX0wunwkISAfXn4J0IF5QHuIpIXi7rWY3UALHNiInmZCgheVowxDDs7NS
-         FFBRu3zwZacwUg8LwJmhzAGevALVAy9s1XutzI1M=
+        b=lKNFptlRtG+jdk5J6/RG/mxeYrChsOZgEG7uWSrdIecM4fgYTLnaNjW1FabV+PB3f
+         P/W2bulFx9XZidJ6MqJX97/eJGtsTM14z4p1kAQl0ptKDcUm133f0Ab+5tZe9QTIl3
+         vKUZtYRXL7ZiHsd17KAGufwcFQySmMVAk1SF1uQA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190705085218.lvvqnqx6nfph2era@fsr-ub1664-175>
-References: <1561453316-11481-1-git-send-email-abel.vesa@nxp.com> <20190625223223.3B8EC2053B@mail.kernel.org> <20190705085218.lvvqnqx6nfph2era@fsr-ub1664-175>
-Subject: Re: [PATCH] clk: imx8mq: Mark AHB clock as critical
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20190708154730.16643-11-sudeep.holla@arm.com>
+References: <20190708154730.16643-1-sudeep.holla@arm.com> <20190708154730.16643-11-sudeep.holla@arm.com>
+Subject: Re: [PATCH 10/11] firmware: arm_scmi: Drop config flag in clk_ops->rate_set
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        Bo Zhang <bozhang.zhang@broadcom.com>,
+        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
+        linux-clk@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Mon, 22 Jul 2019 14:25:36 -0700
-Message-Id: <20190722212537.41C9121900@mail.kernel.org>
+Date:   Mon, 22 Jul 2019 14:30:10 -0700
+Message-Id: <20190722213011.0C64421900@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2019-07-05 01:52:19)
-> On 19-06-25 15:32:22, Stephen Boyd wrote:
-> > Quoting Abel Vesa (2019-06-25 02:01:56)
-> > > Keep the AHB clock always on since there is no driver to control it a=
-nd
-> > > all the other clocks that use it as parent rely on it being always en=
-abled.
-> > >=20
-> > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > ---
-> > >  drivers/clk/imx/clk-imx8mq.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8m=
-q.c
-> > > index 5fbc2a7..b48268b 100644
-> > > --- a/drivers/clk/imx/clk-imx8mq.c
-> > > +++ b/drivers/clk/imx/clk-imx8mq.c
-> > > @@ -398,7 +398,7 @@ static int imx8mq_clocks_probe(struct platform_de=
-vice *pdev)
-> > >         clks[IMX8MQ_CLK_NOC_APB] =3D imx8m_clk_composite_critical("no=
-c_apb", imx8mq_noc_apb_sels, base + 0x8d80);
-> > > =20
-> > >         /* AHB */
-> > > -       clks[IMX8MQ_CLK_AHB] =3D imx8m_clk_composite("ahb", imx8mq_ah=
-b_sels, base + 0x9000);
-> > > +       clks[IMX8MQ_CLK_AHB] =3D imx8m_clk_composite_critical("ahb", =
-imx8mq_ahb_sels, base + 0x9000);
-> >=20
-> > Please add a comment into the code why it's critical.
+Quoting Sudeep Holla (2019-07-08 08:47:29)
+> CLOCK_PROTOCOL_ATTRIBUTES provides attributes to indicate the maximum
+> number of pending asynchronous clock rate changes supported by the
+> platform. If it's non-zero, then we should be able to use asynchronous
+> clock rate set for any clocks until the maximum limit is reached.
 >=20
-> Comment explaining why the AHB bus clock is critical ?
-> Isn't that self-explanatory ?
-
-Nope, it isn't self-explanatory, because nothing on this line says "bus"
-and it could be that someone reading this code isn't well versed in the
-concepts of ARM world AHB to connect the two.
-
+> In order to add that support, let's drop the config flag passed to
+> clk_ops->rate_set and handle the asynchronous requests dynamically.
 >=20
-> >=20
-> > >         clks[IMX8MQ_CLK_AUDIO_AHB] =3D imx8m_clk_composite("audio_ahb=
-", imx8mq_audio_ahb_sels, base + 0x9100);
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
