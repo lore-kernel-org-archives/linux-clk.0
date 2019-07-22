@@ -2,78 +2,86 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1E7C7618F
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 22:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4475EC76190
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 22:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE4721BE6
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 22:05:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B83E219BE
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 22:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563833120;
-	bh=6wCqVFLfAE5EJfHAjcadIprMjvR25gD3bmKgqCjUMOE=;
+	s=default; t=1563833215;
+	bh=ct5XMG5jd8SEOqNhHTmwrTDKIvFXpl4CC8wJlVMQuow=;
 	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
-	b=xoPOHqRleg+hBP+TnZxoDpqa9g+UXMbA9G6MQo3/B0zw9QvLHST3lr0wiYA2aQWGM
-	 wpO/XBXN7nCM07mJz5rEl+FtsNdFYgBiLWKkIhtKNS26u5y98EZ+SNpSJiUswjLnjJ
-	 lstmG5KDXz0fmfyQnkYRzSiO1nLiClGWpw8oysa0=
+	b=VnoCBtzrXYhmbqxyfJ42MGqeJoV/nWZ7i/ZqhTN0Vdnhqwa+/46P3IOyeEILDFVE1
+	 EKIonC85PVTA9Rd08upqYwQTyIOks+ZEZ14zFav2N+NJMlLc2UvsLbKrkEil/g6kxL
+	 71GyeAltYkkCYE7h6NFt2pDF4NS2ChZFAtK04ZE4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732680AbfGVWFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 18:05:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52266 "EHLO mail.kernel.org"
+        id S1728313AbfGVWGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 18:06:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727170AbfGVWFP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Jul 2019 18:05:15 -0400
+        id S1733025AbfGVWGq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Jul 2019 18:06:46 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C53FE21951;
-        Mon, 22 Jul 2019 22:05:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C51BC219BE;
+        Mon, 22 Jul 2019 22:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563833114;
-        bh=6wCqVFLfAE5EJfHAjcadIprMjvR25gD3bmKgqCjUMOE=;
+        s=default; t=1563833205;
+        bh=ct5XMG5jd8SEOqNhHTmwrTDKIvFXpl4CC8wJlVMQuow=;
         h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=CfO6y/van+mSGWSA1XbY6Gu0BXxfvN5weJjudshmWAPFMBcjyeDEfoDeRUQDY3D/z
-         qR3GIpxO0+H87UMITd3txerCPUlZuLa/VT+ODujO7vaZ4Ng+/ft7sV5ZfreEE3lPJE
-         2TPM3yNcT3yGlvGVuP8mrWFmocFgvriXO1gKdgJ4=
+        b=fKJ9hUVSZGiz0iODpcVGiw9VIVgyz32eLhKWS1N6bvVUOlzFe/rwEXimamHEaj+oa
+         QcADkjMe1jckx3IojJzEvbO8DlBeeGNb52J/HWfS85IDmIHL2wDiILqtx/Ue8xGDmg
+         +on2k8vM9n7KJOkBKk2nm7d2iEVtLyUL6I0NnylQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190711130359.1060-1-geert+renesas@glider.be>
-References: <20190711130359.1060-1-geert+renesas@glider.be>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Fix reset control race condition
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Yao Lihua <Lihua.Yao@desay-svautomotive.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+In-Reply-To: <1563157783-31846-1-git-send-email-peng.fan@nxp.com>
+References: <1563157783-31846-1-git-send-email-peng.fan@nxp.com>
+Subject: Re: [PATCH] clk: imx: imx8mm: fix audio pll setting
+To:     "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Mon, 22 Jul 2019 15:05:13 -0700
-Message-Id: <20190722220514.C53FE21951@mail.kernel.org>
+Date:   Mon, 22 Jul 2019 15:06:44 -0700
+Message-Id: <20190722220645.C51BC219BE@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-07-11 06:03:59)
-> The module reset code in the Renesas CPG/MSSR driver uses
-> read-modify-write (RMW) operations to write to a Software Reset Register
-> (SRCRn), and simple writes to write to a Software Reset Clearing
-> Register (SRSTCLRn), as was mandated by the R-Car Gen2 and Gen3 Hardware
-> User's Manuals.
+Quoting Peng Fan (2019-07-14 19:55:43)
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
-> However, this may cause a race condition when two devices are reset in
-> parallel: if the reset for device A completes in the middle of the RMW
-> operation for device B, device A may be reset again, causing subtle
-> failures (e.g. i2c timeouts):
+> The AUDIO PLL max support 650M, so the original clk settings violate
+> spec. This patch makes the output 786432000 -> 393216000,
+> and 722534400 -> 361267200 to aligned with NXP vendor kernel without any
+> impact on audio functionality and go within 650MHz PLL limit.
 >=20
->         thread A                        thread B
->         --------                        --------
+> Cc: <stable@vger.kernel.org>
+> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Applied to clk-fixes
+Is this a problem right now, i.e. should I apply this to clk-fixes? Or
+can this wait until next merge window?
 
