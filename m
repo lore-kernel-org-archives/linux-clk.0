@@ -2,190 +2,244 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73812C76190
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 10:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5598BC76190
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 10:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC34218BE
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 10:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07C0821900
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 10:21:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dYaKDwKp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbfGVKNX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 06:13:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:35016 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726846AbfGVKNX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Jul 2019 06:13:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 236F328;
-        Mon, 22 Jul 2019 03:13:22 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73BB73F71A;
-        Mon, 22 Jul 2019 03:13:17 -0700 (PDT)
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
- <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
- Z46HaNmN2hZS/oJ69c1DI5Rcww==
-Organization: ARM Ltd
-Message-ID: <20c1d733-60f5-6375-c03c-639de5e41739@arm.com>
-Date:   Mon, 22 Jul 2019 11:13:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729313AbfGVKVR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 06:21:17 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33625 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729101AbfGVKVR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 06:21:17 -0400
+Received: by mail-io1-f68.google.com with SMTP id z3so72762079iog.0
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2019 03:21:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hvUQ4MT20tKEnT2pMZ7Qie/6Rn5UWcYUzvG9+P0UE/8=;
+        b=dYaKDwKpIZsV5pduCcPqszK2xafHORORi23hMrluYgXxvXwZ6dZdVL7FOzeTDVydXl
+         1lvWYU8fD2tG8tIKqdZ+U3AsXVUw4FkNt9pJpT73MzVSEhP+LLbyzGIA59mvQS18tOzx
+         2Ib0UEcbutKUUKnU5bMNa8VwuD2MwQEk3XouU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hvUQ4MT20tKEnT2pMZ7Qie/6Rn5UWcYUzvG9+P0UE/8=;
+        b=mhXmXTGoL51evhw/Il2RUIIt6z5usOeKV9BXCcjixi905Q6GgPwbIBblV1ajLkxHv2
+         hG1NZe/tjGHniyH38Zh2bK1ij+ftGowLD1dBn+pMJsMqV88RLbQgvF+w+OJzrX5CZ1im
+         PzX4eHSHtxyhXpHc5p4WAGcBybXGQp7x/HZ1ayqjqXDNOUygStziHoVj9fL1UsEPShGx
+         C1hXkdj1tl2q6aIumP/RwL4phP7rEXFcjJv6s0G+KLemSCWPDC5+mYSkiAZtTNTw++C9
+         fQ/HTqqWjbzguPrHWqctVN5xVzzJGnqPwvsccerKnGHFkKRB4tF3CCk0vBlLfRknlXSl
+         JnGw==
+X-Gm-Message-State: APjAAAVdPJPt8SueAzg6PZF9+zqQw2mssHSuanmdBY7laljHrhqO6aZ1
+        sANCpZkfcSZryMD+IW2RO8EMwq/f9CZFzIcqfaTwTg==
+X-Google-Smtp-Source: APXvYqxcr8plycM4DHVSxsErfHeMyso29cxM4pZdp0Z267Iey9Jpyn2lpinXpTcfPjzlrWA66Rb2H/nzei83a0NrITY=
+X-Received: by 2002:a5d:83cd:: with SMTP id u13mr61250280ior.297.1563790876111;
+ Mon, 22 Jul 2019 03:21:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190614142406.ybdiqfppo5mc5bgq@flea> <CAMty3ZB45cHx3WeXnywBh2_UA_bTmFs6yBTqLWA1BNf4fQtVvQ@mail.gmail.com>
+ <20190625144930.5hegt6bkzqzykjid@flea> <CAMty3ZCmj0Rz7MMhLqihsvLQi+1CHf0fAoJQ4QN65xB-bwxaJw@mail.gmail.com>
+ <20190703114933.u3x4ej3v7ocewvif@flea> <CAOf5uw=ZEvMV1hFQE986rNG_ctpReGbjbZzv0m=OzKPdBh57uQ@mail.gmail.com>
+ <20190711100100.cty3s6rs3w27low6@flea> <CAOf5uw=3fiMuhcj3kDtCaGNTsxHKRrYb79MXZ+yUZtmf0jU10A@mail.gmail.com>
+ <20190720065830.zn3txpyduakywcva@flea> <CAMty3ZDE1xiNgHVLihH378dY5szzkr14V-fwLZdvPs12tY+G1A@mail.gmail.com>
+ <20190720093202.6fn6xmhvsgawscnu@flea>
+In-Reply-To: <20190720093202.6fn6xmhvsgawscnu@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 22 Jul 2019 15:51:04 +0530
+Message-ID: <CAMty3ZDpOA1mD77t3RB6hEG7o3+ws8y64m1DU8=3HdZ4zy4AUw@mail.gmail.com>
+Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/07/2019 10:54, Dmitry Osipenko wrote:
-> 21.07.2019 22:40, Sowjanya Komatineni пишет:
->> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
->> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
->>
->> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
->> for Tegra210.
->>
->> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
->> interrupt controller suspend operation.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
->>  1 file changed, 18 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
->> index e1f771c72fc4..851f88cef508 100644
->> --- a/drivers/irqchip/irq-tegra.c
->> +++ b/drivers/irqchip/irq-tegra.c
->> @@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
->>  
->>  struct tegra_ictlr_soc {
->>  	unsigned int num_ictlrs;
->> +	bool supports_sc7;
->>  };
->>  
->>  static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
->> @@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
->>  
->>  static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
->>  	.num_ictlrs = 6,
->> +	.supports_sc7 = true,
->>  };
->>  
->>  static const struct of_device_id ictlr_matches[] = {
->> @@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] = {
->>  
->>  struct tegra_ictlr_info {
->>  	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
->> +	const struct tegra_ictlr_soc *soc;
->>  #ifdef CONFIG_PM_SLEEP
->>  	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
->>  	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
->> @@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
->>  		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
->>  		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
->>  
->> -		/* Disable COP interrupts */
->> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
->> +		/*
->> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
->> +		 *
->> +		 * Tegra210 system suspend flow uses sc7entry firmware which
->> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
->> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
->> +		 * system to go to SC7/LP0.
->> +		 *
->> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
->> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
->> +		 */
->> +		if (!lic->soc->supports_sc7)
->> +			/* Disable COP interrupts if SC7 is not supported */
-> 
-> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
-> doesn't sound correct to me. Something like 'firmware_sc7' should suit
-> better here.
+Hi Maxime,
 
-If what you're saying is true, then the whole patch is wrong, and the
-SC7 property should come from DT.
+On Sat, Jul 20, 2019 at 3:02 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Sat, Jul 20, 2019 at 12:46:27PM +0530, Jagan Teki wrote:
+> > On Sat, Jul 20, 2019 at 12:28 PM Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Thu, Jul 11, 2019 at 07:43:16PM +0200, Michael Nazzareno Trimarchi wrote:
+> > > > > > tcon-pixel clock is the rate that you want to achive on display side
+> > > > > > and if you have 4 lanes 32bit or lanes and different bit number that
+> > > > > > you need to have a clock that is able to put outside bits and speed
+> > > > > > equal to pixel-clock * bits / lanes. so If you want a pixel-clock of
+> > > > > > 40 mhz and you have 32bits and 4 lanes you need to have a clock of
+> > > > > > 40 * 32 / 4 in no-burst mode. I think that this is done but most of
+> > > > > > the display.
+> > > > >
+> > > > > So this is what the issue is then?
+> > > > >
+> > > > > This one does make sense, and you should just change the rate in the
+> > > > > call to clk_set_rate in sun4i_tcon0_mode_set_cpu.
+> > > > >
+> > > > > I'm still wondering why that hasn't been brought up in either the
+> > > > > discussion or the commit log before though.
+> > > > >
+> > > > Something like this?
+> > > >
+> > > > drivers/gpu/drm/sun4i/sun4i_tcon.c     | 20 +++++++++++---------
+> > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  2 --
+> > > >  2 files changed, 11 insertions(+), 11 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > index 64c43ee6bd92..42560d5c327c 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > @@ -263,10 +263,11 @@ static int sun4i_tcon_get_clk_delay(const struct
+> > > > drm_display_mode *mode,
+> > > >  }
+> > > >
+> > > >  static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
+> > > > -                                       const struct drm_display_mode *mode)
+> > > > +                                       const struct drm_display_mode *mode,
+> > > > +                                       u32 tcon_mul)
+> > > >  {
+> > > >         /* Configure the dot clock */
+> > > > -       clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
+> > > > +       clk_set_rate(tcon->dclk, mode->crtc_clock * tcon_mul * 1000);
+> > > >
+> > > >         /* Set the resolution */
+> > > >         regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
+> > > > @@ -335,12 +336,13 @@ static void sun4i_tcon0_mode_set_cpu(struct
+> > > > sun4i_tcon *tcon,
+> > > >         u8 bpp = mipi_dsi_pixel_format_to_bpp(device->format);
+> > > >         u8 lanes = device->lanes;
+> > > >         u32 block_space, start_delay;
+> > > > -       u32 tcon_div;
+> > > > +       u32 tcon_div, tcon_mul;
+> > > >
+> > > > -       tcon->dclk_min_div = SUN6I_DSI_TCON_DIV;
+> > > > -       tcon->dclk_max_div = SUN6I_DSI_TCON_DIV;
+> > > > +       tcon->dclk_min_div = 4;
+> > > > +       tcon->dclk_max_div = 127;
+> > > >
+> > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
+> > > > +       tcon_mul = bpp / lanes;
+> > > > +       sun4i_tcon0_mode_set_common(tcon, mode, tcon_mul);
+> > > >
+> > > >         /* Set dithering if needed */
+> > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
+> > > > @@ -366,7 +368,7 @@ static void sun4i_tcon0_mode_set_cpu(struct
+> > > > sun4i_tcon *tcon,
+> > > >          */
+> > > >         regmap_read(tcon->regs, SUN4I_TCON0_DCLK_REG, &tcon_div);
+> > > >         tcon_div &= GENMASK(6, 0);
+> > > > -       block_space = mode->htotal * bpp / (tcon_div * lanes);
+> > > > +       block_space = mode->htotal * tcon_div * tcon_mul;
+> > > >         block_space -= mode->hdisplay + 40;
+> > > >
+> > > >         regmap_write(tcon->regs, SUN4I_TCON0_CPU_TRI0_REG,
+> > > > @@ -408,7 +410,7 @@ static void sun4i_tcon0_mode_set_lvds(struct
+> > > > sun4i_tcon *tcon,
+> > > >
+> > > >         tcon->dclk_min_div = 7;
+> > > >         tcon->dclk_max_div = 7;
+> > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
+> > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
+> > > >
+> > > >         /* Set dithering if needed */
+> > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
+> > > > @@ -487,7 +489,7 @@ static void sun4i_tcon0_mode_set_rgb(struct
+> > > > sun4i_tcon *tcon,
+> > > >
+> > > >         tcon->dclk_min_div = 6;
+> > > >         tcon->dclk_max_div = 127;
+> > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
+> > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
+> > > >
+> > > >         /* Set dithering if needed */
+> > > >         sun4i_tcon0_mode_set_dithering(tcon, connector);
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > index 5c3ad5be0690..a07090579f84 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > @@ -13,8 +13,6 @@
+> > > >  #include <drm/drm_encoder.h>
+> > > >  #include <drm/drm_mipi_dsi.h>
+> > > >
+> > > > -#define SUN6I_DSI_TCON_DIV     4
+> > > > -
+> > > >  struct sun6i_dsi {
+> > > >         struct drm_connector    connector;
+> > > >         struct drm_encoder      encoder;
+> > >
+> > > I had more something like this in mind:
+> > > http://code.bulix.org/nlp5a4-803511
+> >
+> > Worth to look at it. was it working on your panel? meanwhile I will check it.
+>
+> I haven't tested it.
+>
+> > We have updated with below change [1], seems working on but is
+> > actually checking the each divider as before start with 4... till 127.
+> >
+> > This new approach, is start looking the best divider from 4.. based on
+> > the idea vs rounded it will ended up best divider like [2]
+>
+> But why?
+>
+> I mean, it's not like it's the first time I'm asking this...
+>
+> If the issue is what Micheal described, then the divider has nothing
+> to do with it. We've had that discussion over and over again.
 
-> 
->> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-> 
-> Secondly, I'm also not sure why COP interrupts need to be disabled for
-> pre-T210 at all, since COP is unused. This looks to me like it was
-> cut-n-pasted from downstream kernel without a good reason and could be
-> simply removed.
+This is what Michael is mentioned in above mail
+"tcon-pixel clock is the rate that you want to achive on display side and
+if you have 4 lanes 32bit or lanes and different bit number that you need
+to have a clock that is able to put outside bits and speed equal to
+pixel-clock * bits / lanes. so If you want a pixel-clock of 40 mhz
+and you have 32bits and 4 lanes you need to have a clock of
+40 * 32 / 4 in no-burst mode. "
 
-Please verify that this is actually the case. Tegra-2 definitely needed
-some level of poking, and I'm not keen on changing anything there until
-you (or someone else) has verified it on actual HW (see e307cc8941fc).
+He is trying to manage the bpp/lanes into dclk_mul (in last mail) and
+it can multiply with pixel clock which is rate argument in
+sun4i_dclk_round_rate.
 
-Joseph, can you please shed some light here?
+The solution I have mentioned in dclk_min, max is bpp/lanes also
+multiple rate in dotclock sun4i_dclk_round_rate.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+In both cases the overall pll_rate depends on dividers, the one that I
+have on this patch is based on BSP and the Michael one is more generic
+way so-that it can not to touch other functionalities and looping
+dividers to find the best one.
+
+If dclk_min/max is bpp/lanes then dotclock directly using divider 6
+(assuming 24-bit and 4 lanes) and return the pll_rate and divider 6
+associated.
+
+if dclk_mul is bpp/lanes, on Michael new change, the dividers start
+with 4 and end with 127 but the constant ideal rate which rate *
+bpp/lanes but the loop from sun4i_dclk_round_rate computed the divider
+as 6 only, ie what I'm mentioned on the above mail.
+
+Jagan.
