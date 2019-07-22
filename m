@@ -2,845 +2,194 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 036E1C76190
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 13:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB493C7618F
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 16:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A937C21921
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 13:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7710621985
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 16:20:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BE1YhQLB"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZeKcmgRL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfGVNmh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 09:42:37 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41505 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730209AbfGVNmh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 09:42:37 -0400
-Received: by mail-vs1-f66.google.com with SMTP id 2so26088973vso.8
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2019 06:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JskzSaUvb2cPd+tAIc+w8FkZ6xzM86sEFY4iWL9c/5Q=;
-        b=BE1YhQLBm22iFbBkp4rpyrqpCqusHDIoV7HixDIfp0QOgxFPzl6dPF33iwIGOD4xI0
-         deQJFmTMdEP0ZVYiviMc2I0FojIbfxWY9OaMuEJFjElpPqxQlA5+fkQKsalGHm6VqGrK
-         inNjO7CSLpi/zerfxuPy9oTlmc3A1KmLaaKuuXsX5n7gPtHq0bcgGor2lQllQ5ey+qaZ
-         lYQoElsdLvIK9x0h8OqPmwakj6HJ3bL9s1J5ssahH7fSYELbKwWtkYhJS5IzR9wHG6Cs
-         Lx7h+OaxEHHBGHIjZ1k1KGbhKOiJWadx28y2PhTaPSoqAbSteh4UOajMPvKYfMR9j3Xd
-         qjrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JskzSaUvb2cPd+tAIc+w8FkZ6xzM86sEFY4iWL9c/5Q=;
-        b=GkpIqGv7yLjfsnUCJ3VEj0n3rz4XLL5zg2a+qtfCe14+Ng8wdILbv8+GIRdmDLT4ac
-         vghM+Bzjvgq4uiCgA/st5z9dr4m1FBdVkbD1hUVrQX+ZjURGv+FfUcBGN8/g3+ZdZSHH
-         X9ne6Dv+3wBgiwuK720+aUcVpXSxwACozX0orGmiwjkeoIP/uOvbiPe904w2+98vkKlN
-         eCIaahrRfU/bA1oO/FGhoaaeleJc4u4wb0uOUP/gJqqmGBaJvlHL+tItAcihE7o5upHY
-         IXtWj82uM9R1Lg3f8uSbHvNPD8UrVzXOOaaZaSNCCJwD0eDJ6bdiZrmwvZM/vEybRRQp
-         WfoQ==
-X-Gm-Message-State: APjAAAVvZfy6X/W7HXHt740GoDRQB7oRlKrR9B4dukm25BCrcbkJQDAh
-        v1j+AX8jfJX+CGx43EZ47Wx+/duSkFLa0R0Z+gz7Aw==
-X-Google-Smtp-Source: APXvYqw51QsvvDfdh5Ooi2NLR8ocRmbM7A1BPoTYPpGnFWqz21wMH4sDJfMUFV8vVjMd1wzqD8fahl3TYQs2zoGjz3U=
-X-Received: by 2002:a67:ee16:: with SMTP id f22mr41689095vsp.191.1563802955323;
- Mon, 22 Jul 2019 06:42:35 -0700 (PDT)
+        id S1729092AbfGVQUs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 12:20:48 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13460 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbfGVQUs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 12:20:48 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d35e25c0000>; Mon, 22 Jul 2019 09:20:44 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 22 Jul 2019 09:20:46 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 22 Jul 2019 09:20:46 -0700
+Received: from [10.2.164.85] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 22 Jul
+ 2019 16:20:44 +0000
+Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
+ suspend
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+ <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
+ <20c1d733-60f5-6375-c03c-639de5e41739@arm.com>
+ <0bee8775-756f-adad-4597-8cad53017718@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <a2ecc3ad-b7e9-9398-d59b-c7d3fbbd10bb@nvidia.com>
+Date:   Mon, 22 Jul 2019 09:21:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190608195317.6336-1-manivannan.sadhasivam@linaro.org> <20190608195317.6336-6-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20190608195317.6336-6-manivannan.sadhasivam@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 22 Jul 2019 15:41:59 +0200
-Message-ID: <CAPDyKFqE1Vnmq4yeoQxjgOZTTrA_k7jAZHwq5RExX4hS-rTftw@mail.gmail.com>
-Subject: Re: [PATCH 5/7] mmc: Add Actions Semi Owl SoCs SD/MMC driver
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, thomas.liau@actions-semi.com,
-        linux-actions@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0bee8775-756f-adad-4597-8cad53017718@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563812444; bh=KoPOkUCxjwGMbG3Gc8WkHlcbvUciHbZClFWJEPeqvKI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ZeKcmgRLqAEbKk/9mE2fo50mf6Mjn37p2pZwD5io4uj4T1brt7Eej/zHrd9sZDgTo
+         amTsFQ/aMMHwPtQQjnII++OF+hGNIwNn2FRRuZJ/Vf8AQ319NYmZbNNA6YGKIF7JhD
+         mm+Cn5O01FtI6GuCqCfVECWL0ds+VnuqIt+ukTiiC0qAU6lK1D6cXFSJn7fK81jICP
+         6k2XJqTj+VQEFI7x4F049l2w3z/2vv6h9ma4Zw6qh9fkkjrfVK/vtwQgvwSVToC1rg
+         avtfIzbPemIRLYP8bnEsT7Re6LOvJZcgdc0lj9GzWO0Mo3tAZOXgOZluQlI0WWDj/2
+         OKz3YiDwVLrCw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 8 Jun 2019 at 21:54, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+
+On 7/22/19 3:57 AM, Dmitry Osipenko wrote:
+> 22.07.2019 13:13, Marc Zyngier =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 22/07/2019 10:54, Dmitry Osipenko wrote:
+>>> 21.07.2019 22:40, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 ent=
+ry
+>>>> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
+>>>>
+>>>> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequen=
+ce
+>>>> for Tegra210.
+>>>>
+>>>> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+>>>> interrupt controller suspend operation.
+>>>>
+>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
+>>>>   1 file changed, 18 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+>>>> index e1f771c72fc4..851f88cef508 100644
+>>>> --- a/drivers/irqchip/irq-tegra.c
+>>>> +++ b/drivers/irqchip/irq-tegra.c
+>>>> @@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
+>>>>  =20
+>>>>   struct tegra_ictlr_soc {
+>>>>   	unsigned int num_ictlrs;
+>>>> +	bool supports_sc7;
+>>>>   };
+>>>>  =20
+>>>>   static const struct tegra_ictlr_soc tegra20_ictlr_soc =3D {
+>>>> @@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_so=
+c =3D {
+>>>>  =20
+>>>>   static const struct tegra_ictlr_soc tegra210_ictlr_soc =3D {
+>>>>   	.num_ictlrs =3D 6,
+>>>> +	.supports_sc7 =3D true,
+>>>>   };
+>>>>  =20
+>>>>   static const struct of_device_id ictlr_matches[] =3D {
+>>>> @@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] =3D=
+ {
+>>>>  =20
+>>>>   struct tegra_ictlr_info {
+>>>>   	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
+>>>> +	const struct tegra_ictlr_soc *soc;
+>>>>   #ifdef CONFIG_PM_SLEEP
+>>>>   	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
+>>>>   	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
+>>>> @@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
+>>>>   		lic->cop_ier[i] =3D readl_relaxed(ictlr + ICTLR_COP_IER);
+>>>>   		lic->cop_iep[i] =3D readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+>>>>  =20
+>>>> -		/* Disable COP interrupts */
+>>>> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+>>>> +		/*
+>>>> +		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
+>>>> +		 *
+>>>> +		 * Tegra210 system suspend flow uses sc7entry firmware which
+>>>> +		 * is executed by COP/BPMP and it includes disabling COP IRQ,
+>>>> +		 * clamping CPU rail, turning off VDD_CPU, and preparing the
+>>>> +		 * system to go to SC7/LP0.
+>>>> +		 *
+>>>> +		 * COP/BPMP wakes up when COP IRQ is triggered and runs
+>>>> +		 * sc7entry-firmware. So need to keep COP interrupt enabled.
+>>>> +		 */
+>>>> +		if (!lic->soc->supports_sc7)
+>>>> +			/* Disable COP interrupts if SC7 is not supported */
+>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
+>>> doesn't sound correct to me. Something like 'firmware_sc7' should suit
+>>> better here.
+>> If what you're saying is true, then the whole patch is wrong, and the
+>> SC7 property should come from DT.
+> It should be safe to assume that all of existing Tegra210 devices use
+> the firmware for SC7, hence I wouldn't say that the patch is entirely
+> wrong. To me it's not entirely correct.
+
+Yes, all existing Tegra210 platforms uses sc7 entry firmware for SC7 and=20
+AVP/COP IRQ need to be kept enabled as during suspend ATF triggers IRQ=20
+to COP for SC7 entry fw execution.
+
+
+>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+>>> Secondly, I'm also not sure why COP interrupts need to be disabled for
+>>> pre-T210 at all, since COP is unused. This looks to me like it was
+>>> cut-n-pasted from downstream kernel without a good reason and could be
+>>> simply removed.
+>> Please verify that this is actually the case. Tegra-2 definitely needed
+>> some level of poking, and I'm not keen on changing anything there until
+>> you (or someone else) has verified it on actual HW (see e307cc8941fc).
+> Tested on Tegra20 and Tegra30, LP1 suspend-resume works perfectly fine
+> with all COP bits removed from the driver.
 >
-> Add SD/MMC driver for Actions Semi Owl SoCs. This driver currently
-> supports standard, high speed, SDR12, SDR25 and SDR50. DDR50 mode is
-> supported but it is untested. There is no SDIO support for now.
+> AFAIK, the reason why downstream needed that disabling is that it uses
+> proprietary firmware which is running on the COP and that firmware is
+> usually a BLOB audio/video DEC-ENC driver which doesn't cleanup
+> interrupts after itself. That firmware is not applicable for the
+> upstream kernel, hence there is no need to care about it.
 >
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/mmc/host/Kconfig   |   8 +
->  drivers/mmc/host/Makefile  |   1 +
->  drivers/mmc/host/owl-mmc.c | 705 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 714 insertions(+)
->  create mode 100644 drivers/mmc/host/owl-mmc.c
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 931770f17087..7ae65eff26a4 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -1006,3 +1006,11 @@ config MMC_SDHCI_AM654
->           If you have a controller with this interface, say Y or M here.
->
->           If unsure, say N.
-> +
-> +config MMC_OWL
-> +       tristate "Actions Semi Owl SD/MMC Host Controller support"
-> +       depends on HAS_DMA
-> +       depends on ARCH_ACTIONS || COMPILE_TEST
-> +       help
-> +         This selects support for the SD/MMC Host Controller on
-> +         Actions Semi Owl SoCs.
-> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-> index 73578718f119..41a0b1728389 100644
-> --- a/drivers/mmc/host/Makefile
-> +++ b/drivers/mmc/host/Makefile
-> @@ -73,6 +73,7 @@ obj-$(CONFIG_MMC_SUNXI)               += sunxi-mmc.o
->  obj-$(CONFIG_MMC_USDHI6ROL0)   += usdhi6rol0.o
->  obj-$(CONFIG_MMC_TOSHIBA_PCI)  += toshsd.o
->  obj-$(CONFIG_MMC_BCM2835)      += bcm2835.o
-> +obj-$(CONFIG_MMC_OWL)          += owl-mmc.o
->
->  obj-$(CONFIG_MMC_REALTEK_PCI)  += rtsx_pci_sdmmc.o
->  obj-$(CONFIG_MMC_REALTEK_USB)  += rtsx_usb_sdmmc.o
-> diff --git a/drivers/mmc/host/owl-mmc.c b/drivers/mmc/host/owl-mmc.c
-> new file mode 100644
-> index 000000000000..8158ebedb2a4
-> --- /dev/null
-> +++ b/drivers/mmc/host/owl-mmc.c
-> @@ -0,0 +1,705 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Actions Semi Owl SoCs SD/MMC driver
-> + *
-> + * Copyright (c) 2014 Actions Semi Inc.
-> + * Copyright (c) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> + *
-> + * TODO: SDIO support
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/dmaengine.h>
-> +#include <linux/dma-direction.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mmc/host.h>
-> +#include <linux/mmc/slot-gpio.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/reset.h>
-> +#include <linux/spinlock.h>
-> +
-> +/*
-> + * SDC registers
-> + */
-> +#define OWL_REG_SD_EN                  0x0000
-> +#define OWL_REG_SD_CTL                 0x0004
-> +#define OWL_REG_SD_STATE               0x0008
-> +#define OWL_REG_SD_CMD                 0x000c
-> +#define OWL_REG_SD_ARG                 0x0010
-> +#define OWL_REG_SD_RSPBUF0             0x0014
-> +#define OWL_REG_SD_RSPBUF1             0x0018
-> +#define OWL_REG_SD_RSPBUF2             0x001c
-> +#define OWL_REG_SD_RSPBUF3             0x0020
-> +#define OWL_REG_SD_RSPBUF4             0x0024
-> +#define OWL_REG_SD_DAT                 0x0028
-> +#define OWL_REG_SD_BLK_SIZE            0x002c
-> +#define OWL_REG_SD_BLK_NUM             0x0030
-> +#define OWL_REG_SD_BUF_SIZE            0x0034
-> +
-> +/* SD_EN Bits */
-> +#define OWL_SD_EN_RANE                 BIT(31)
-> +#define OWL_SD_EN_RAN_SEED(x)          (((x) & 0x3f) << 24)
-> +#define OWL_SD_EN_S18EN                        BIT(12)
-> +#define OWL_SD_EN_RESE                 BIT(10)
-> +#define OWL_SD_EN_DAT1_S               BIT(9)
-> +#define OWL_SD_EN_CLK_S                        BIT(8)
-> +#define OWL_SD_ENABLE                  BIT(7)
-> +#define OWL_SD_EN_BSEL                 BIT(6)
-> +#define OWL_SD_EN_SDIOEN               BIT(3)
-> +#define OWL_SD_EN_DDREN                        BIT(2)
-> +#define OWL_SD_EN_DATAWID(x)           (((x) & 0x3) << 0)
-> +
-> +/* SD_CTL Bits */
-> +#define OWL_SD_CTL_TOUTEN              BIT(31)
-> +#define OWL_SD_CTL_TOUTCNT(x)          (((x) & 0x7f) << 24)
-> +#define OWL_SD_CTL_DELAY_MSK           GENMASK(23, 16)
-> +#define OWL_SD_CTL_RDELAY(x)           (((x) & 0xf) << 20)
-> +#define OWL_SD_CTL_WDELAY(x)           (((x) & 0xf) << 16)
-> +#define OWL_SD_CTL_CMDLEN              BIT(13)
-> +#define OWL_SD_CTL_SCC                 BIT(12)
-> +#define OWL_SD_CTL_TCN(x)              (((x) & 0xf) << 8)
-> +#define OWL_SD_CTL_TS                  BIT(7)
-> +#define OWL_SD_CTL_LBE                 BIT(6)
-> +#define OWL_SD_CTL_C7EN                        BIT(5)
-> +#define OWL_SD_CTL_TM(x)               (((x) & 0xf) << 0)
-> +
-> +#define OWL_SD_DELAY_LOW_CLK           0x0f
-> +#define OWL_SD_DELAY_MID_CLK           0x0a
-> +#define OWL_SD_DELAY_HIGH_CLK          0x09
-> +#define OWL_SD_RDELAY_DDR50            0x0a
-> +#define OWL_SD_WDELAY_DDR50            0x08
-> +
-> +/* SD_STATE Bits */
-> +#define OWL_SD_STATE_DAT1BS            BIT(18)
-> +#define OWL_SD_STATE_SDIOB_P           BIT(17)
-> +#define OWL_SD_STATE_SDIOB_EN          BIT(16)
-> +#define OWL_SD_STATE_TOUTE             BIT(15)
-> +#define OWL_SD_STATE_BAEP              BIT(14)
-> +#define OWL_SD_STATE_MEMRDY            BIT(12)
-> +#define OWL_SD_STATE_CMDS              BIT(11)
-> +#define OWL_SD_STATE_DAT1AS            BIT(10)
-> +#define OWL_SD_STATE_SDIOA_P           BIT(9)
-> +#define OWL_SD_STATE_SDIOA_EN          BIT(8)
-> +#define OWL_SD_STATE_DAT0S             BIT(7)
-> +#define OWL_SD_STATE_TEIE              BIT(6)
-> +#define OWL_SD_STATE_TEI               BIT(5)
-> +#define OWL_SD_STATE_CLNR              BIT(4)
-> +#define OWL_SD_STATE_CLC               BIT(3)
-> +#define OWL_SD_STATE_WC16ER            BIT(2)
-> +#define OWL_SD_STATE_RC16ER            BIT(1)
-> +#define OWL_SD_STATE_CRC7ER            BIT(0)
-> +
-> +struct owl_mmc_host {
-> +       struct device *dev;
-> +       struct reset_control *reset;
-> +       void __iomem *base;
-> +       struct clk *clk;
-> +       struct completion sdc_complete;
-> +       spinlock_t lock;
-> +       int irq;
-> +       u32 clock;
-> +       bool ddr_50;
-> +
-> +       enum dma_data_direction dma_dir;
-> +       struct dma_chan *dma;
-> +       struct dma_async_tx_descriptor *desc;
-> +       struct dma_slave_config dma_cfg;
-> +       struct completion dma_complete;
-> +
-> +       struct mmc_host *mmc;
-> +       struct mmc_request *mrq;
-> +       struct mmc_command *cmd;
-> +       struct mmc_data *data;
-> +};
-> +
-> +static inline void mmc_writel(struct owl_mmc_host *owl_host, u32 reg, u32 data)
-> +{
-> +       writel(data, owl_host->base + reg);
-> +}
-> +
-> +static inline u32 mmc_readl(struct owl_mmc_host *owl_host, u32 reg)
-> +{
-> +       return readl(owl_host->base + reg);
-> +}
+>> Joseph, can you please shed some light here?
 
-Please drop these wrappers, as they don't make the code more readable.
+SC7 entry flow uses 3rd party ATF (arm-trusted FW) blob which is the one th=
+at actually loads SC7 entry firmware and triggers IRQ to AVP/COP which caus=
+es COP to wakeup and run SC7 entry FW.
 
-> +
-> +static void mmc_update_reg(void __iomem *reg, unsigned int val, bool state)
-
-Please use the "owl" as prefix for function names, that makes it more
-consistent.
-
-> +{
-> +       unsigned int regval;
-> +
-> +       regval = readl(reg);
-
-Rather than reading the register here, perhaps you could use a
-variable for caching the register value. Thus avoiding to read the
-register for every update.
+So when SC7 support is enabled, IRQ need to be kept enabled and when SC7 FW=
+ starts execution, it will disable COP IRQ.
 
 
-> +
-> +       if (state)
-> +               regval |= val;
-> +       else
-> +               regval &= ~val;
-> +
-> +       writel(regval, reg);
-> +}
-> +
-> +static irqreturn_t owl_irq_handler(int irq, void *devid)
-> +{
-> +       struct owl_mmc_host *owl_host = devid;
-> +       unsigned long flags;
-> +       u32 state;
-> +
-> +       spin_lock_irqsave(&owl_host->lock, flags);
-> +
-> +       state = mmc_readl(owl_host, OWL_REG_SD_STATE);
-> +       if (state & OWL_SD_STATE_TEI) {
-> +               state = mmc_readl(owl_host, OWL_REG_SD_STATE);
-> +               state |= OWL_SD_STATE_TEI;
-> +               mmc_writel(owl_host, OWL_REG_SD_STATE, state);
-> +               complete(&owl_host->sdc_complete);
-> +       }
-> +
-> +       spin_unlock_irqrestore(&owl_host->lock, flags);
-> +
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +static void owl_mmc_finish_request(struct owl_mmc_host *owl_host)
-> +{
-> +       struct mmc_request *mrq = owl_host->mrq;
-> +       struct mmc_data *data = mrq->data;
-> +
-> +       /* Should never be NULL */
-> +       WARN_ON(!mrq);
-> +
-> +       owl_host->mrq = NULL;
-> +
-> +       if (data)
-> +               dma_unmap_sg(owl_host->dma->device->dev, data->sg, data->sg_len,
-> +                            owl_host->dma_dir);
-> +
-> +       /* Finally finish request */
-> +       mmc_request_done(owl_host->mmc, mrq);
-> +}
-> +
-> +static void owl_mmc_send_cmd(struct owl_mmc_host *owl_host,
-> +                            struct mmc_command *cmd,
-> +                            struct mmc_data *data)
-> +{
-> +       u32 mode, state, resp[2];
-> +       u32 cmd_rsp_mask = 0;
-> +
-> +       init_completion(&owl_host->sdc_complete);
-> +
-> +       switch (mmc_resp_type(cmd)) {
-> +       case MMC_RSP_NONE:
-> +               mode = OWL_SD_CTL_TM(0);
-> +               break;
-> +
-> +       case MMC_RSP_R1:
-> +               if (data) {
-> +                       if (data->flags & MMC_DATA_READ)
-> +                               mode = OWL_SD_CTL_TM(4);
-> +                       else
-> +                               mode = OWL_SD_CTL_TM(5);
-> +               } else {
-> +                       mode = OWL_SD_CTL_TM(1);
-> +               }
-> +               cmd_rsp_mask = OWL_SD_STATE_CLNR | OWL_SD_STATE_CRC7ER;
-> +
-> +               break;
-> +
-> +       case MMC_RSP_R1B:
-> +               mode = OWL_SD_CTL_TM(3);
-> +               cmd_rsp_mask = OWL_SD_STATE_CLNR | OWL_SD_STATE_CRC7ER;
-> +               break;
-> +
-> +       case MMC_RSP_R2:
-> +               mode = OWL_SD_CTL_TM(2);
-> +               cmd_rsp_mask = OWL_SD_STATE_CLNR | OWL_SD_STATE_CRC7ER;
-> +               break;
-> +
-> +       case MMC_RSP_R3:
-> +               mode = OWL_SD_CTL_TM(1);
-> +               cmd_rsp_mask = OWL_SD_STATE_CLNR;
-> +               break;
-> +
-> +       default:
-> +               dev_warn(owl_host->dev, "Unknown MMC command\n");
-> +               cmd->error = -EINVAL;
-> +               return;
-> +       }
-> +
-> +       /* Keep current WDELAY and RDELAY */
-> +       mode |= (mmc_readl(owl_host, OWL_REG_SD_CTL) & (0xff << 16));
-> +
-> +       /* Start to send corresponding command type */
-> +       mmc_writel(owl_host, OWL_REG_SD_ARG, cmd->arg);
-> +       mmc_writel(owl_host, OWL_REG_SD_CMD, cmd->opcode);
-> +
-> +       /* Set LBE to send clk at the end of last read block */
-> +       if (data) {
-> +               mode |= (OWL_SD_CTL_TS | OWL_SD_CTL_LBE | 0x64000000);
-> +       } else {
-> +               mode &= ~(OWL_SD_CTL_TOUTEN | OWL_SD_CTL_LBE);
-> +               mode |= OWL_SD_CTL_TS;
-> +       }
-> +
-> +       owl_host->cmd = cmd;
-> +
-> +       /* Start transfer */
-> +       mmc_writel(owl_host, OWL_REG_SD_CTL, mode);
-> +
-> +       if (data)
-> +               return;
-> +
-> +       if (!wait_for_completion_timeout(&owl_host->sdc_complete, 30 * HZ)) {
-> +               dev_err(owl_host->dev, "CMD interrupt timeout\n");
-> +               cmd->error = -ETIMEDOUT;
-> +               return;
-> +       }
-> +
-> +       state = mmc_readl(owl_host, OWL_REG_SD_STATE);
-> +       if (mmc_resp_type(cmd) & MMC_RSP_PRESENT) {
-> +               if (cmd_rsp_mask & state) {
-> +                       if (state & OWL_SD_STATE_CLNR) {
-> +                               dev_err(owl_host->dev, "Error CMD_NO_RSP\n");
-> +                               cmd->error = -EILSEQ;
-> +                               return;
-> +                       }
-> +
-> +                       if (state & OWL_SD_STATE_CRC7ER) {
-> +                               dev_err(owl_host->dev, "Error CMD_RSP_CRC\n");
-> +                               cmd->error = -EILSEQ;
-> +                               return;
-> +                       }
-> +               }
-> +
-> +               if (mmc_resp_type(cmd) & MMC_RSP_136) {
-> +                       cmd->resp[3] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF0);
-> +                       cmd->resp[2] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF1);
-> +                       cmd->resp[1] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF2);
-> +                       cmd->resp[0] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF3);
-> +               } else {
-> +                       resp[0] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF0);
-> +                       resp[1] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF1);
-> +                       cmd->resp[0] = resp[1] << 24 | resp[0] >> 8;
-> +                       cmd->resp[1] = resp[1] >> 8;
-> +               }
-> +       }
-> +}
-> +
-> +static void owl_mmc_dma_complete(void *param)
-> +{
-> +       struct owl_mmc_host *owl_host = param;
-> +       struct mmc_data *data = owl_host->data;
-> +
-> +       if (data)
-> +               complete(&owl_host->dma_complete);
-> +}
-> +
-> +static int owl_mmc_prepare_data(struct owl_mmc_host *owl_host,
-> +                               struct mmc_data *data)
-> +{
-> +       u32 total;
-> +
-> +       mmc_update_reg(owl_host->base + OWL_REG_SD_EN, OWL_SD_EN_BSEL, true);
-> +       mmc_writel(owl_host, OWL_REG_SD_BLK_NUM, data->blocks);
-> +       mmc_writel(owl_host, OWL_REG_SD_BLK_SIZE, data->blksz);
-> +       total = data->blksz * data->blocks;
-> +
-> +       if (total < 512)
-> +               mmc_writel(owl_host, OWL_REG_SD_BUF_SIZE, total);
-> +       else
-> +               mmc_writel(owl_host, OWL_REG_SD_BUF_SIZE, 512);
-> +
-> +       if (data->flags & MMC_DATA_WRITE) {
-> +               owl_host->dma_dir = DMA_TO_DEVICE;
-> +               owl_host->dma_cfg.direction = DMA_MEM_TO_DEV;
-> +       } else {
-> +               owl_host->dma_dir = DMA_FROM_DEVICE;
-> +               owl_host->dma_cfg.direction = DMA_DEV_TO_MEM;
-> +       }
-> +
-> +       dma_map_sg(owl_host->dma->device->dev, data->sg,
-> +                  data->sg_len, owl_host->dma_dir);
-> +
-> +       dmaengine_slave_config(owl_host->dma, &owl_host->dma_cfg);
-> +       owl_host->desc = dmaengine_prep_slave_sg(owl_host->dma, data->sg,
-> +                                                data->sg_len,
-> +                                                owl_host->dma_cfg.direction,
-> +                                                DMA_PREP_INTERRUPT |
-> +                                                DMA_CTRL_ACK);
-> +       if (!owl_host->desc) {
-> +               dev_err(owl_host->dev, "Can't prepare slave sg\n");
-> +               return -EBUSY;
-> +       }
-> +
-> +       owl_host->data = data;
-> +
-> +       owl_host->desc->callback = owl_mmc_dma_complete;
-> +       owl_host->desc->callback_param = (void *)owl_host;
-> +       data->error = 0;
-> +
-> +       return 0;
-> +}
-> +
-> +static void owl_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
-> +{
-> +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
-> +       struct mmc_data *data = mrq->data;
-> +       int ret;
-> +
-> +       owl_host->mrq = mrq;
-> +       if (mrq->data) {
-> +               ret = owl_mmc_prepare_data(owl_host, data);
-> +               if (ret < 0) {
-> +                       data->error = ret;
-> +                       goto err_out;
-> +               }
-> +
-> +               init_completion(&owl_host->dma_complete);
-> +               dmaengine_submit(owl_host->desc);
-> +               dma_async_issue_pending(owl_host->dma);
-> +       }
-> +
-> +       owl_mmc_send_cmd(owl_host, mrq->cmd, data);
-> +
-> +       if (data) {
-> +               if (!wait_for_completion_timeout(&owl_host->sdc_complete,
-> +                                                10 * HZ)) {
-> +                       dev_err(owl_host->dev, "CMD interrupt timeout\n");
-> +                       mrq->cmd->error = -ETIMEDOUT;
-> +                       dmaengine_terminate_all(owl_host->dma);
-> +                       goto err_out;
-> +               }
-> +
-> +               if (!wait_for_completion_timeout(&owl_host->dma_complete,
-> +                                                5 * HZ)) {
-> +                       dev_err(owl_host->dev, "DMA interrupt timeout\n");
-> +                       mrq->cmd->error = -ETIMEDOUT;
-> +                       dmaengine_terminate_all(owl_host->dma);
-> +                       goto err_out;
-> +               }
-> +
-> +               if (data->stop)
-> +                       owl_mmc_send_cmd(owl_host, data->stop, NULL);
-> +
-> +               data->bytes_xfered = data->blocks * data->blksz;
-> +       }
-> +
-> +err_out:
-> +       owl_mmc_finish_request(owl_host);
-> +}
-> +
-> +static int owl_mmc_set_clk_rate(struct owl_mmc_host *owl_host,
-> +                               unsigned int rate)
-> +{
-> +       unsigned long clk_rate;
-> +       int ret;
-> +       u32 reg;
-> +
-> +       reg = mmc_readl(owl_host, OWL_REG_SD_CTL);
-> +       reg &= ~OWL_SD_CTL_DELAY_MSK;
-> +
-> +       /* Set RDELAY and WDELAY based on the clock */
-> +       if (rate <= 1000000) {
-> +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
-> +                      OWL_SD_CTL_RDELAY(OWL_SD_DELAY_LOW_CLK) |
-> +                      OWL_SD_CTL_WDELAY(OWL_SD_DELAY_LOW_CLK));
-> +       } else if ((rate > 1000000) && (rate <= 26000000)) {
-> +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
-> +                      OWL_SD_CTL_RDELAY(OWL_SD_DELAY_MID_CLK) |
-> +                      OWL_SD_CTL_WDELAY(OWL_SD_DELAY_MID_CLK));
-> +       } else if ((rate > 26000000) && (rate <= 52000000) && !owl_host->ddr_50) {
-> +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
-> +                      OWL_SD_CTL_RDELAY(OWL_SD_DELAY_HIGH_CLK) |
-> +                      OWL_SD_CTL_WDELAY(OWL_SD_DELAY_HIGH_CLK));
-> +       /* DDR50 mode has special delay chain */
-> +       } else if ((rate > 26000000) && (rate <= 52000000) && owl_host->ddr_50) {
-> +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
-> +                      OWL_SD_CTL_RDELAY(OWL_SD_RDELAY_DDR50) |
-> +                      OWL_SD_CTL_WDELAY(OWL_SD_WDELAY_DDR50));
-> +       } else {
-> +               dev_err(owl_host->dev, "SD clock rate not supported\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       clk_rate = clk_round_rate(owl_host->clk, rate << 1);
-> +       ret = clk_set_rate(owl_host->clk, clk_rate);
-> +
-> +       return ret;
-> +}
-> +
-> +static void owl_mmc_set_clk(struct owl_mmc_host *owl_host, struct mmc_ios *ios)
-> +{
-> +       if (!ios->clock)
-> +               return;
-> +
-> +       owl_host->clock = ios->clock;
-> +       owl_mmc_set_clk_rate(owl_host, ios->clock);
-> +}
-> +
-> +static void owl_mmc_set_bus_width(struct owl_mmc_host *owl_host,
-> +                                 struct mmc_ios *ios)
-> +{
-> +       u32 reg;
-> +
-> +       reg = mmc_readl(owl_host, OWL_REG_SD_EN);
-> +       reg &= ~0x03;
-> +       switch (ios->bus_width) {
-> +       case MMC_BUS_WIDTH_1:
-> +               break;
-> +       case MMC_BUS_WIDTH_4:
-> +               reg |= OWL_SD_EN_DATAWID(1);
-> +               break;
-> +       case MMC_BUS_WIDTH_8:
-> +               reg |= OWL_SD_EN_DATAWID(2);
-> +               break;
-> +       }
-> +
-> +       mmc_writel(owl_host, OWL_REG_SD_EN, reg);
-> +}
-> +
-> +static void owl_mmc_ctr_reset(struct owl_mmc_host *owl_host)
-> +{
-> +       reset_control_assert(owl_host->reset);
-> +       udelay(20);
-> +       reset_control_deassert(owl_host->reset);
-> +}
-> +
-> +static void owl_mmc_power_on(struct owl_mmc_host *owl_host)
-> +{
-> +       u32 mode;
-> +
-> +       init_completion(&owl_host->sdc_complete);
-> +
-> +       /* Enable transfer end IRQ */
-> +       mmc_update_reg(owl_host->base + OWL_REG_SD_STATE,
-> +                      OWL_SD_STATE_TEIE, true);
-> +
-> +       /* Send init clk */
-> +       mode = (mmc_readl(owl_host, OWL_REG_SD_CTL) & (0xff << 16));
-> +       mode |= OWL_SD_CTL_TS | OWL_SD_CTL_TCN(5) | OWL_SD_CTL_TM(8);
-> +       mmc_writel(owl_host, OWL_REG_SD_CTL, mode);
-> +
-> +       if (!wait_for_completion_timeout(&owl_host->sdc_complete, HZ)) {
-> +               dev_err(owl_host->dev, "CMD interrupt timeout\n");
-> +               return;
-> +       }
-> +}
-> +
-> +static void owl_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> +{
-> +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
-> +
-> +       switch (ios->power_mode) {
-> +       case MMC_POWER_UP:
-> +               dev_dbg(owl_host->dev, "Powering card up\n");
-> +
-> +               /* Reset the SDC controller to clear all previous states */
-> +               owl_mmc_ctr_reset(owl_host);
-> +               clk_prepare_enable(owl_host->clk);
-> +               mmc_writel(owl_host, OWL_REG_SD_EN, OWL_SD_ENABLE |
-> +                          OWL_SD_EN_RESE);
-> +
-> +               break;
-> +
-> +       case MMC_POWER_ON:
-> +               dev_dbg(owl_host->dev, "Powering card on\n");
-> +               owl_mmc_power_on(owl_host);
-> +
-> +               break;
-> +
-> +       case MMC_POWER_OFF:
-> +               dev_dbg(owl_host->dev, "Powering card off\n");
-> +               clk_disable_unprepare(owl_host->clk);
-> +
-> +               return;
-> +
-> +       default:
-> +               dev_dbg(owl_host->dev, "Ignoring unknown card power state\n");
-> +               break;
-> +       }
-> +
-> +       if (ios->clock != owl_host->clock)
-> +               owl_mmc_set_clk(owl_host, ios);
-> +
-> +       owl_mmc_set_bus_width(owl_host, ios);
-> +
-> +       /* Enable DDR mode if requested */
-> +       if (ios->timing == MMC_TIMING_UHS_DDR50) {
-> +               owl_host->ddr_50 = 1;
-> +               mmc_update_reg(owl_host->base + OWL_REG_SD_EN,
-> +                              OWL_SD_EN_DDREN, true);
-> +       } else {
-> +               owl_host->ddr_50 = 0;
-> +       }
-> +}
-> +
-> +static int owl_mmc_start_signal_voltage_switch(struct mmc_host *mmc,
-> +                                              struct mmc_ios *ios)
-> +{
-> +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
-> +
-> +       /* It is enough to change the pad ctrl bit for voltage switch */
-> +       switch (ios->signal_voltage) {
-> +       case MMC_SIGNAL_VOLTAGE_330:
-> +               mmc_update_reg(owl_host->base + OWL_REG_SD_EN,
-> +                              OWL_SD_EN_S18EN, false);
-> +               break;
-> +       case MMC_SIGNAL_VOLTAGE_180:
-> +               mmc_update_reg(owl_host->base + OWL_REG_SD_EN,
-> +                              OWL_SD_EN_S18EN, true);
-> +               break;
-> +       default:
-> +               return -ENOTSUPP;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct mmc_host_ops owl_mmc_ops = {
-> +       .request        = owl_mmc_request,
-> +       .set_ios        = owl_mmc_set_ios,
-> +       .get_ro         = mmc_gpio_get_ro,
-> +       .get_cd         = mmc_gpio_get_cd,
-> +       .start_signal_voltage_switch = owl_mmc_start_signal_voltage_switch,
-> +};
-> +
-> +static int owl_mmc_probe(struct platform_device *pdev)
-> +{
-> +       struct owl_mmc_host *owl_host;
-> +       struct mmc_host *mmc;
-> +       struct resource *res;
-> +       int ret;
-> +
-> +       mmc = mmc_alloc_host(sizeof(struct owl_mmc_host), &pdev->dev);
-> +       if (!mmc) {
-> +               dev_err(&pdev->dev, "mmc alloc host failed\n");
-> +               return -ENOMEM;
-> +       }
-> +       platform_set_drvdata(pdev, mmc);
-> +
-> +       owl_host = mmc_priv(mmc);
-> +       owl_host->dev = &pdev->dev;
-> +       owl_host->mmc = mmc;
-> +       spin_lock_init(&owl_host->lock);
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       owl_host->base = devm_ioremap_resource(&pdev->dev, res);
-> +       if (IS_ERR(owl_host->base)) {
-> +               dev_err(&pdev->dev, "Failed to remap registers\n");
-> +               ret = PTR_ERR(owl_host->base);
-> +               goto err_free_host;
-> +       }
-> +
-> +       owl_host->clk = devm_clk_get(&pdev->dev, NULL);
-> +       if (IS_ERR(owl_host->clk)) {
-> +               dev_err(&pdev->dev, "No clock defined\n");
-> +               ret = PTR_ERR(owl_host->clk);
-> +               goto err_free_host;
-> +       }
-> +
-> +       owl_host->reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> +       if (IS_ERR(owl_host->reset)) {
-> +               dev_err(&pdev->dev, "Could not get reset control\n");
-> +               ret = PTR_ERR(owl_host->reset);
-> +               goto err_free_host;
-> +       }
-> +
-> +       mmc->ops                = &owl_mmc_ops;
-> +       mmc->max_blk_count      = 512;
-> +       mmc->max_blk_size       = 512;
-> +       mmc->max_segs           = 256;
-> +       mmc->max_seg_size       = 262144;
-> +       mmc->max_req_size       = 262144;
-> +       /* 100kHz ~ 52MHz */
-> +       mmc->f_min              = 100000;
-> +       mmc->f_max              = 52000000;
-> +       mmc->caps              |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
-> +                                 MMC_CAP_4_BIT_DATA;
-> +       mmc->caps2              = (MMC_CAP2_BOOTPART_NOACC | MMC_CAP2_NO_SDIO);
-> +       mmc->ocr_avail          = MMC_VDD_32_33 | MMC_VDD_33_34 |
-> +                                 MMC_VDD_165_195;
-> +
-> +       ret = mmc_of_parse(mmc);
-> +       if (ret)
-> +               goto err_free_host;
-> +
-> +       pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> +       pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-> +       owl_host->dma = dma_request_slave_channel(&pdev->dev, "mmc");
-> +       if (!owl_host->dma) {
-> +               dev_err(owl_host->dev, "Failed to get external DMA channel.\n");
-> +               ret = -ENXIO;
-> +               goto err_free_host;
-> +       }
-> +
-> +       dev_info(&pdev->dev, "Using %s for DMA transfers\n",
-> +                dma_chan_name(owl_host->dma));
-> +
-> +       owl_host->dma_cfg.src_addr = res->start + OWL_REG_SD_DAT;
-> +       owl_host->dma_cfg.dst_addr = res->start + OWL_REG_SD_DAT;
-> +       owl_host->dma_cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +       owl_host->dma_cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +       owl_host->dma_cfg.device_fc = false;
-> +
-> +       owl_host->irq = platform_get_irq(pdev, 0);
-> +       if (owl_host->irq < 0) {
-> +               ret = -EINVAL;
-> +               goto err_free_host;
-> +       }
-> +
-> +       ret = devm_request_irq(&pdev->dev, owl_host->irq, owl_irq_handler,
-> +                              0, dev_name(&pdev->dev), owl_host);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "Failed to request irq %d\n",
-> +                       owl_host->irq);
-> +               goto err_free_host;
-> +       }
-> +
-> +       ret = mmc_add_host(mmc);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "Failed to add host\n");
-> +               goto err_free_host;
-> +       }
-> +
-> +       dev_dbg(&pdev->dev, "Owl MMC Controller Initialized\n");
-> +
-> +       return 0;
-> +
-> +err_free_host:
-> +       mmc_free_host(mmc);
-> +
-> +       return ret;
-> +}
-> +
-> +static int owl_mmc_remove(struct platform_device *pdev)
-> +{
-> +       struct mmc_host *mmc = platform_get_drvdata(pdev);
-> +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
-> +
-> +       mmc_remove_host(mmc);
-> +       disable_irq(owl_host->irq);
-> +       mmc_free_host(mmc);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id owl_mmc_of_match[] = {
-> +       {.compatible = "actions,owl-mmc",},
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, owl_mmc_of_match);
-> +
-> +static struct platform_driver owl_mmc_driver = {
-> +       .driver = {
-> +               .name   = "owl_mmc",
-> +               .of_match_table = of_match_ptr(owl_mmc_of_match),
-> +       },
-> +       .probe          = owl_mmc_probe,
-> +       .remove         = owl_mmc_remove,
-> +};
-> +module_platform_driver(owl_mmc_driver);
-> +
-> +MODULE_DESCRIPTION("Actions Semi Owl SoCs SD/MMC Driver");
-> +MODULE_AUTHOR("Actions Semi");
-> +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.17.1
->
