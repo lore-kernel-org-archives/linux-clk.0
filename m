@@ -2,42 +2,41 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427CEC76198
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 07:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4024C76198
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 07:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15066222FA
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 07:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 752DB222F9
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 07:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563781524;
-	bh=ThDUQGLkiZFV8s3UVa/+fp6cv15nSVozJaEPWJMXkoY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VFGg371ShUKHOR8+uHSFpwJzP+d2pqjKQN0ari+JEYlEsjToEI6iXgheM/Z++UiWA
-	 Aw4dEFMN4fawLgmeQtbinr6l18jo8TayB5TpH6dkw79J6CUDn0LHiyEB+C0pstiojc
-	 8Pwo2I9G7SPDX1bFewuyvFJo29xRzIJo8eWypS8w=
+	s=default; t=1563781528;
+	bh=blJZQnL3zjC/Ylyb1/4CK7suE2Mz1qqUTcC8Wp+F2bE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=H2Xrd3iVfvFM82Hdbf3GuUAo+29zzgIfzYImU+e7+zbeDgQvjMLb9dYckja8/YrOx
+	 FIQ9Je2xDvWT7ExvGvp621VwXe/UDMyjcqz7qIYSquhjHHedHfZJ1QWuaY0gjj5KNQ
+	 1+tA32rg14IW6Sz4nE4kZV22RETZqXAzdkVEFHrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfGVHpX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 03:45:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59890 "EHLO mail.kernel.org"
+        id S1727892AbfGVHpQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 03:45:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725773AbfGVHpX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Jul 2019 03:45:23 -0400
+        id S1725773AbfGVHpQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Jul 2019 03:45:16 -0400
 Received: from localhost.localdomain (unknown [223.226.98.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3595B206DD;
-        Mon, 22 Jul 2019 07:45:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B1EF206DD;
+        Mon, 22 Jul 2019 07:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563781522;
-        bh=ThDUQGLkiZFV8s3UVa/+fp6cv15nSVozJaEPWJMXkoY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wtPz2KmqJvU/00CEKi/a4YS9fiaWcViqBxFcIpD0N7q6aoDzdpijCr+x7KsVoNqVE
-         5GXeYWXDAEnbGXoiF+9Ri9TuM3hELC+HQRFBnTPl0jxEHWvU+s9mLomIexsDvOkWhy
-         suRPuOdIFZTiNwoIxOPH2wh7F4o2L6u0d5s9UwpQ=
+        s=default; t=1563781514;
+        bh=blJZQnL3zjC/Ylyb1/4CK7suE2Mz1qqUTcC8Wp+F2bE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jzW54M8jMZijPJ6Kxa47FE3bmTaj2/GsS0bX70oQ508RXtB+EmLzgxWhnY1YrDJdq
+         1mnh3E40LScJJw7gBDUb8f3nMSF7mYhAdNd7dDQIbWyDI38StxszeCV89eE5gRKND0
+         MLXfO6NNoSWk6S7DN+XXdWKQJTeHYK27kap+BBk8=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -48,13 +47,12 @@ Cc:     linux-arm-msm@vger.kernel.org,
         David Brown <david.brown@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/5] clk: qcom: clk-alpha-pll: Remove post_div_table checks
-Date:   Mon, 22 Jul 2019 13:13:45 +0530
-Message-Id: <20190722074348.29582-3-vkoul@kernel.org>
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 0/5] clk: qcom: Add support for SM8150 GCC
+Date:   Mon, 22 Jul 2019 13:13:43 +0530
+Message-Id: <20190722074348.29582-1-vkoul@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190722074348.29582-1-vkoul@kernel.org>
-References: <20190722074348.29582-1-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -62,55 +60,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We want users to code properly and fix the post_div_table missing and
-not rely on core to check. So remove the post_div_table check.
+This series adds suport for SM8150 GCC which requires Trion PLLs and adds
+that as well.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+Also fixed some minor nits seen in clk-alpha-pll code
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index b48707693ffd..2c6773188761 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1036,11 +1036,6 @@ static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
- 	u32 i, div = 1, val;
- 	int ret;
- 
--	if (!pll->post_div_table) {
--		pr_err("Missing the post_div_table for the PLL\n");
--		return -EINVAL;
--	}
--
- 	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
- 	if (ret)
- 		return ret;
-@@ -1063,11 +1058,6 @@ static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
- {
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 
--	if (!pll->post_div_table) {
--		pr_err("Missing the post_div_table for the PLL\n");
--		return -EINVAL;
--	}
--
- 	return divider_round_rate(hw, rate, prate, pll->post_div_table,
- 				pll->width, CLK_DIVIDER_ROUND_CLOSEST);
- }
-@@ -1089,11 +1079,6 @@ static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
- 	if (val & PLL_VOTE_FSM_ENA)
- 		return 0;
- 
--	if (!pll->post_div_table) {
--		pr_err("Missing the post_div_table for the PLL\n");
--		return -EINVAL;
--	}
--
- 	div = DIV_ROUND_UP_ULL(parent_rate, rate);
- 	for (i = 0; i < pll->num_post_div; i++) {
- 		if (pll->post_div_table[i].div == div) {
+Changes in v4:
+	- Bring back DIV_ROUND_UP_ULL patch as fix in merged upstream
+	- Split binding to separate patch and add the gcc parent clock to it
+	  (Didn't add Rob's ack as new clocks are added to patch, so need
+	  review)
+	- Fix the parent pointers for clock driver and add comments for
+	  critical clocks and halt delay
+	- Fix the trion pll enable and typo in patch
+	- tested on v5.3-rc1
+
+Changes in v3:
+	- Drop the cast for DIV_ROUND_UP_ULL as that need s afix in macro,
+	  so patch it up once core change in merged
+	- Drop module alias patch and drop it from sm8150 driver
+	- Add review tag by Bjorn
+
+Deepak Katragadda (3):
+  clk: qcom: clk-alpha-pll: Add support for Trion PLLs
+  dt-bindings: clock: Document gcc bindings for SM8150
+  clk: qcom: gcc: Add global clock controller driver for SM8150
+
+Vinod Koul (2):
+  clk: qcom: clk-alpha-pll: Remove unnecessary cast
+  clk: qcom: clk-alpha-pll: Remove post_div_table checks
+
+ .../devicetree/bindings/clock/qcom,gcc.txt    |   21 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |  236 +-
+ drivers/clk/qcom/clk-alpha-pll.h              |    7 +
+ drivers/clk/qcom/gcc-sm8150.c                 | 3588 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8150.h   |  243 ++
+ 7 files changed, 4086 insertions(+), 17 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sm8150.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8150.h
+
+
+base-commit: 5f9e832c137075045d15cd6899ab0505cfb2ca4b
 -- 
 2.20.1
 
