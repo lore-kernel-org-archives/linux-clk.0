@@ -2,129 +2,126 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75947C7618F
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 19:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76217C76194
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC6621955
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 19:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CA2F21900
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:22:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=wavecomp.com header.i=@wavecomp.com header.b="BQ9dbArH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfGVT3k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 15:29:40 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:42793 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbfGVT3j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 15:29:39 -0400
-X-Originating-IP: 90.89.68.76
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id DA05DC0008;
-        Mon, 22 Jul 2019 19:29:36 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 21:29:34 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 7/8] dt-bindings: arm: sunxi: add binding for Lichee
- Zero Plus core board
-Message-ID: <20190722192934.3jaf3r4rnyeslqyw@flea>
-References: <20190713034634.44585-1-icenowy@aosc.io>
- <20190713034634.44585-8-icenowy@aosc.io>
- <20190720101318.cwrvv5r42wxx5k4r@flea>
- <BDF0C9F6-DD0D-4343-8E24-06A07055004C@aosc.io>
+        id S1731343AbfGVVWP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 17:22:15 -0400
+Received: from mail-eopbgr730119.outbound.protection.outlook.com ([40.107.73.119]:16697
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731324AbfGVVWO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:22:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kjegWhG2ncYu1b5d8tJ5Q+RfWkF5LDHDubnrHniRv3wRGyk9JH0Us4p2ty9yvZlIf3CZyohu4WE/4dKbWvMXYh+GZUyZ/PZE9fnCDbtZvfv3eONS9KBE9+lJSvt0BeKZUUpOe+rCvnKl4PGdJekwnMJI96aDbvKSx8eN+Pjh7It3DUR6QZjK6/qhCoHm2BBdOKRz6Ihu8WJcNk1dW0Fef6QqjXfEI/zRuYxXU5cjE60FRGEwytj9QWF529qDiISVFIN6Lb0udQMgX3s2Qs7zIpExunx+8VJNlsrPd7NvzKtrAKvfnWpEZq3xL40BD7UKxM75COzispcujfwhkzS/qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qPjeK+PW/nLpr/ex7ijuVDzDhLKziMWvA/4j/ArcaeU=;
+ b=mRm/hMXW3EB6i76gjJBsyEXftUHv2PPwV5fckOysXiNiF6aMOJq2scqb/nrjecaz+6y07+0eG+7w5wDLffmKc+Y7R3M5z4WSPjaaoMr72wQI5JiTnjJCb1Nu1uYJBjw5E/M6z8hIN/4bBy7ul5VB6BPHQroy4fz1MYkfkb8h8eu73RMLA68fU4/F0e3EtnPSK/EIBjWFimDLOMSdk5AGdeRNaBLii9gJcE6dmj90zT5FJeJAqkPRTZzpR/Q+PvIkU90UHEe3Sf+YUIlMcVSCefpJnWAC4UhYUjv0FTCzt+QMeH2/S1LrNSmTSC0rkqJR+PodK6zDzdYFY5WW53C+lA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=wavecomp.com;dmarc=pass action=none
+ header.from=mips.com;dkim=pass header.d=mips.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qPjeK+PW/nLpr/ex7ijuVDzDhLKziMWvA/4j/ArcaeU=;
+ b=BQ9dbArHo+Pis+8+Cigt4Hf8YZJZQpXu/wPOYgUtPIE49r/mp/9FFxFLC4/AKSTJK6VBg0mMMr9QnaPiPbT7L/hDcMrG/eiwki5ZopwJbhYWI13jptmENroLQRRYxbOHniHq+El5mNICVFrNFu3LgVPItqnlSAU0tf0k3aq4KR4=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
+ MWHPR2201MB1757.namprd22.prod.outlook.com (10.164.133.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2094.11; Mon, 22 Jul 2019 21:22:09 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::49d3:37f8:217:c83]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::49d3:37f8:217:c83%6]) with mapi id 15.20.2094.017; Mon, 22 Jul 2019
+ 21:22:09 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Jonas Gorski <jonas.gorski@gmail.com>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH 3/3] MIPS: BMIPS: add clock controller nodes
+Thread-Topic: [PATCH 3/3] MIPS: BMIPS: add clock controller nodes
+Thread-Index: AQHVAOJ07NmoWXat5kax173VTxnICKbXpUMA
+Date:   Mon, 22 Jul 2019 21:22:09 +0000
+Message-ID: <MWHPR2201MB12779902806554FC4416BEF3C1C40@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <20190502122657.15577-4-jonas.gorski@gmail.com>
+In-Reply-To: <20190502122657.15577-4-jonas.gorski@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR08CA0006.namprd08.prod.outlook.com
+ (2603:10b6:a03:100::19) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:18::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [12.94.197.246]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 07302cc8-cb02-4834-202c-08d70eeaa7b4
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1757;
+x-ms-traffictypediagnostic: MWHPR2201MB1757:
+x-microsoft-antispam-prvs: <MWHPR2201MB1757D08656F678BC0BB8E67BC1C40@MWHPR2201MB1757.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 01068D0A20
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39850400004)(346002)(136003)(366004)(199004)(189003)(66446008)(66476007)(3846002)(6116002)(4744005)(66556008)(66066001)(6436002)(64756008)(66946007)(52536014)(25786009)(14454004)(476003)(7416002)(8676002)(6916009)(9686003)(305945005)(74316002)(7736002)(99286004)(71190400001)(52116002)(256004)(71200400001)(4326008)(6246003)(26005)(81156014)(68736007)(186003)(8936002)(81166006)(2906002)(478600001)(486006)(11346002)(446003)(5660300002)(55016002)(53936002)(316002)(54906003)(42882007)(33656002)(386003)(7696005)(6506007)(102836004)(76176011)(229853002)(44832011);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1757;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: W/BBXIENidYUuk/9xdRd65NfbEBumjR/RPJvSV24cM/RtcIVTfj63dnpQItZEmD0gaMYgY/KPeEXxFwRpZa6SM1ysvUA6MDS5H6+oR+oewHt7cnPJvr24ywuTIpavU8GdtgtQpEViRnUabG/brsl/JX+Nz1R3JxMNw+oUgwOguKhYjTcJt58RFQUP38qt8emtkUcuPPrjVc5XrelyTAQOMdpoxc7igEDckzQIgYEiMxvuD3XRLQG2iOfWeoR3uwtuRODnM6hQGpkaiwo5MS1hx91KB1nSDOKQNqLlm4cFCTC7YKUaWfGCDQy6lpOhFB9VJze5OfKBJJUbRtoJ5Ep3jZQZBrLC7bXp2qoQioJbnuSQxshgf1BsxXKYu2Gfvcwey6rT2ySsv89HZ5OVV6Ma/F+zDF8UoEIL6n38iLr2mI=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vn42k7mlndfzfvev"
-Content-Disposition: inline
-In-Reply-To: <BDF0C9F6-DD0D-4343-8E24-06A07055004C@aosc.io>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07302cc8-cb02-4834-202c-08d70eeaa7b4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2019 21:22:09.7872
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1757
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello,
 
---vn42k7mlndfzfvev
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Jonas Gorski wrote:
+> Now that we have a driver for the clock controller, add nodes to allow
+> devices to make use of it.
+>=20
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> Reviewed-by: Philippe Mathieu-Daud=C3=A9 <f4bug@amsat.org>
 
-On Sat, Jul 20, 2019 at 07:39:08PM +0800, Icenowy Zheng wrote:
->
->
-> =E4=BA=8E 2019=E5=B9=B47=E6=9C=8820=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
-6:13:18, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
-> >On Sat, Jul 13, 2019 at 11:46:33AM +0800, Icenowy Zheng wrote:
-> >> The Lichee Zero Plus is a core board made by Sipeed, with a microUSB
-> >> connector on it, TF slot or WSON8 SD chip, optional eMMC or SPI
-> >Flash.
-> >> It has a gold finger connector for expansion, and UART is available
-> >from
-> >> reserved pins w/ 2.54mm pitch. The board can use either SoChip S3 or
-> >> Allwinner V3L SoCs.
-> >>
-> >> Add the device tree binding of the basic version of the core board --
-> >> w/o eMMC or SPI Flash, w/ TF slot or WSON8 SD, and use S3 SoC.
-> >>
-> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >> ---
-> >> No changes since v3.
-> >>
-> >> Patch introduced in v2.
-> >>
-> >>  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
-> >>  1 file changed, 5 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >> index 000a00d12d6a..48c126a7a848 100644
-> >> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >> @@ -353,6 +353,11 @@ properties:
-> >>            - const: licheepi,licheepi-zero
-> >>            - const: allwinner,sun8i-v3s
-> >>
-> >> +      - description: Lichee Zero Plus (with S3, without eMMC/SPI
-> >Flash)
-> >> +        items:
-> >> +          - const: sipeed,lichee-zero-plus
-> >> +          - const: allwinner,sun8i-s3
-> >
-> >If the S3 is just a rebranded V3, then we should have the v3 compatile
-> >in that list too.
->
-> S3 is V3 with copackaged DDR3 DRAM.
->
-> It's pin incompatible w/ V3.
+Applied to mips-next.
 
-Does it matter though?
+Thanks,
+    Paul
 
-If the only thing that changes is the package, we're not manipulating
-that, and any software that deals with the v3 can deal with the
-s3. Which is what the compatible is about.
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---vn42k7mlndfzfvev
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXTYOngAKCRDj7w1vZxhR
-xd77AP9kxx/qXPETcP3fumpzmXSQrjjY9A81+Czl0ZPvauA4VQEA2qZwJBFD+6ml
-86ahAeLa2qt1k3eZZlcXhgNVqkXxygs=
-=9EZ6
------END PGP SIGNATURE-----
-
---vn42k7mlndfzfvev--
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paul.burton@mips.com to report it. ]
