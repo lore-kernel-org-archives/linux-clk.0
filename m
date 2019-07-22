@@ -4,74 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB437C7618F
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE8EC76190
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 876372199C
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C4121900
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563831012;
-	bh=F1h4fbko3GoKghOyB8V2PZNI7J3t6w8bvytUqOh9UCI=;
+	s=default; t=1563831068;
+	bh=xJwOs8eh6wnbncGoeTw21vj4R8KhLdFsORfmYU7Lf3I=;
 	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
-	b=wF/FvxMRFUA8IdW3zs7dAjr5O/vk2ZW3segfhyZgJVaCmHoZywBOG9LKqAzzhdS0b
-	 nygWyqF3ZI1G62XULURZ3gwtC0NV827DA50R9gU7bGUZpbB+zihVAS/v8KRYn4ZJgX
-	 3nP9sv2bk31kmoeXHS+FdZPqBU51tYT/ZSed4psw=
+	b=LdAN60ZPGpo4cLqNpXbP5GDSZL2HllsSInRzQg4x9vmLXSXJzfeXEqBiUXNcSsSth
+	 Uyt18wuy0307aLtE/kTBBHF18TgmzsdqK0/xAMCDeMDGxn7lJNbz7x0u1xFTTW6tbL
+	 hEGv6BYylnysQtXSWQmyhjgN01B68NKCDQOorZGQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfGVVaM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 17:30:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34630 "EHLO mail.kernel.org"
+        id S1732639AbfGVVbD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 17:31:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731852AbfGVVaL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:30:11 -0400
+        id S1728016AbfGVVbC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:31:02 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C64421900;
-        Mon, 22 Jul 2019 21:30:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADF8821900;
+        Mon, 22 Jul 2019 21:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563831011;
-        bh=F1h4fbko3GoKghOyB8V2PZNI7J3t6w8bvytUqOh9UCI=;
+        s=default; t=1563831061;
+        bh=xJwOs8eh6wnbncGoeTw21vj4R8KhLdFsORfmYU7Lf3I=;
         h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=lKNFptlRtG+jdk5J6/RG/mxeYrChsOZgEG7uWSrdIecM4fgYTLnaNjW1FabV+PB3f
-         P/W2bulFx9XZidJ6MqJX97/eJGtsTM14z4p1kAQl0ptKDcUm133f0Ab+5tZe9QTIl3
-         vKUZtYRXL7ZiHsd17KAGufwcFQySmMVAk1SF1uQA=
+        b=kpTa1yt4tICwzZeizjpF+rNU5ZHlEd3hIlkvTx1ZNFktON55CgJqXfZNpayZordNk
+         0f0ThtuDVcxi9Q1qoh6BQ/PakL8QUg2aHzgwfmgP1Fe9jvEYYyOFf4RImt37Rh5/fJ
+         XRrUy30G71WYl4dtSBHyIQuswTqvNUcSuskK3NbU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190708154730.16643-11-sudeep.holla@arm.com>
-References: <20190708154730.16643-1-sudeep.holla@arm.com> <20190708154730.16643-11-sudeep.holla@arm.com>
-Subject: Re: [PATCH 10/11] firmware: arm_scmi: Drop config flag in clk_ops->rate_set
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        Bo Zhang <bozhang.zhang@broadcom.com>,
-        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
-        linux-clk@vger.kernel.org
+In-Reply-To: <20190705045612.27665-5-Anson.Huang@nxp.com>
+References: <20190705045612.27665-1-Anson.Huang@nxp.com> <20190705045612.27665-5-Anson.Huang@nxp.com>
+Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT
+To:     Anson.Huang@nxp.com, abel.vesa@nxp.com, agx@sigxcpu.org,
+        andrew.smirnov@gmail.com, angus@akkea.ca, ccaione@baylibre.com,
+        daniel.lezcano@linaro.org, devicetree@vger.kernel.org,
+        edubezval@gmail.com, festevam@gmail.com, kernel@pengutronix.de,
+        l.stach@pengutronix.de, leonard.crestez@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        rui.zhang@intel.com, s.hauer@pengutronix.de, shawnguo@kernel.org
+Cc:     Linux-imx@nxp.com
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Mon, 22 Jul 2019 14:30:10 -0700
-Message-Id: <20190722213011.0C64421900@mail.kernel.org>
+Date:   Mon, 22 Jul 2019 14:31:00 -0700
+Message-Id: <20190722213101.ADF8821900@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sudeep Holla (2019-07-08 08:47:29)
-> CLOCK_PROTOCOL_ATTRIBUTES provides attributes to indicate the maximum
-> number of pending asynchronous clock rate changes supported by the
-> platform. If it's non-zero, then we should be able to use asynchronous
-> clock rate set for any clocks until the maximum limit is reached.
+Quoting Anson.Huang@nxp.com (2019-07-04 21:56:11)
+> From: Anson Huang <Anson.Huang@nxp.com>
 >=20
-> In order to add that support, let's drop the config flag passed to
-> clk_ops->rate_set and handle the asynchronous requests dynamically.
+> IMX8MQ_CLK_TMU_ROOT is ONLY used for thermal module, the driver
+> should manage this clock, so no need to have CLK_IS_CRITICAL flag
+> set.
 >=20
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
