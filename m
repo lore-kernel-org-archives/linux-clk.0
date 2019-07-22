@@ -2,89 +2,93 @@ Return-Path: <SRS0=ECv2=VT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3457C76194
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9748AC7618F
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DDE2199C
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563831642;
-	bh=y0mcCIsdo0FcATXDcOqG1yEJ21Gs2qykOfjRdssCnxw=;
-	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
-	b=QZVutvq7teGroLqf97aOVt2rSbiCPRybk6gZdh26ZrcfpLWTw9lAzKZl1g1GjXuKM
-	 tyo1/fDlBRy/gG407zQTb0Fa68hDw03CN+XwhHTQxOFPYrHjXtL7gKI6ReYvzYjdFn
-	 gunO7gLn2OQ9S/fbsJXie3NDlETD1ZIEGxdCsVo4=
+	by mail.kernel.org (Postfix) with ESMTP id 7243C21951
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jul 2019 21:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbfGVVkm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jul 2019 17:40:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732789AbfGVVkk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:40:40 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9D9F21951;
-        Mon, 22 Jul 2019 21:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563831640;
-        bh=y0mcCIsdo0FcATXDcOqG1yEJ21Gs2qykOfjRdssCnxw=;
-        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=LlEINdah35joUMLAd7h7JkAX4r+iajAkvWTpl0RJK1BI/wTmyCqxiaVOpZR6MmL5C
-         tShW8EN8CPJ5jy8e+ctwKH1V6MC+kxBVXl/FZNH8197I1dU170tYoYePP+4OsklIyt
-         GVBnYiV2pgosObI4Xw/E4i54QatiK2/6phwyLAlY=
-Content-Type: text/plain; charset="utf-8"
+        id S1728233AbfGVVnh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jul 2019 17:43:37 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:26912 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732871AbfGVVng (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jul 2019 17:43:36 -0400
+Received: from [192.168.1.41] ([92.140.204.221])
+        by mwinf5d78 with ME
+        id fxjb200034n7eLC03xjbvD; Mon, 22 Jul 2019 23:43:35 +0200
+X-ME-Helo: [192.168.1.41]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 22 Jul 2019 23:43:35 +0200
+X-ME-IP: 92.140.204.221
+Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to
+ n_den
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Colin King <colin.king@canonical.com>,
+        linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.clk,gmane.linux.kernel.janitors
+References: <20190701165020.19840-1-colin.king@canonical.com>
+ <20190722212414.6EF8D21900@mail.kernel.org>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <d1cd2b10-8fd4-f224-3bcd-5b938f72d249@wanadoo.fr>
+Date:   Mon, 22 Jul 2019 23:43:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190709182018.23193-2-gch981213@gmail.com>
-References: <20190709182018.23193-1-gch981213@gmail.com> <20190709182018.23193-2-gch981213@gmail.com>
-Subject: Re: [PATCH 1/5] MIPS: ralink: add dt binding header for mt7621-pll
-To:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Rob Herring <robh@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 22 Jul 2019 14:40:39 -0700
-Message-Id: <20190722214039.E9D9F21951@mail.kernel.org>
+In-Reply-To: <20190722212414.6EF8D21900@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The subject of this patch is confusing. Not sure what it has to do with
-"MIPS:" so maybe remove that and prefix it "dt-bindings: clock:"
-instead.
+Le 22/07/2019 à 23:24, Stephen Boyd a écrit :
+> Please Cc authors of drivers so they can ack/review.
+>
+> Adding Mike to take a look.
+>
+> Quoting Colin King (2019-07-01 09:50:20)
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The variable n_den is initialized however that value is never read
+>> as n_den is re-assigned a little later in the two paths of a
+>> following if-statement.  Remove the redundant assignment.
+>>
+>> Addresses-Coverity: ("Unused value")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>   drivers/clk/clk-si5341.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+>> index 72424eb7e5f8..6e780c2a9e6b 100644
+>> --- a/drivers/clk/clk-si5341.c
+>> +++ b/drivers/clk/clk-si5341.c
+>> @@ -547,7 +547,6 @@ static int si5341_synth_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>>          bool is_integer;
+>>   
+>>          n_num = synth->data->freq_vco;
+>> -       n_den = rate;
+>>   
+>>          /* see if there's an integer solution */
+>>          r = do_div(n_num, rate);
+>
+Hi,
 
-Quoting Chuanhong Guo (2019-07-09 11:20:14)
-> This patch adds dt binding header for mediatek,mt7621-pll
->=20
-> Signed-off-by: Weijie Gao <hackpascal@gmail.com>
-> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
+I got the same advise from some else no later than yesterday (i.e. email 
+the author...)
+Maybe 'get_maintainer.pl' could be improved to search for it and propose 
+the mail automatically?
 
-Otherwise looks ok to me. Should I apply it to clk tree?
+just my 2c.
 
->  include/dt-bindings/clock/mt7621-clk.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 include/dt-bindings/clock/mt7621-clk.h
->=20
+
+CJ
+
