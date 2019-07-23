@@ -2,142 +2,127 @@ Return-Path: <SRS0=wHDH=VU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F78C76188
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 05:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BF2C76188
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 05:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8857A2238E
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 05:14:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PjeA4UGX"
+	by mail.kernel.org (Postfix) with ESMTP id 14FFC223A1
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 05:50:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563861032;
+	bh=X9bwV9KQ0C2xh1Si9PIyaiK/1l55d3v6Empbinif5Zo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xeJNPNxl7l7CdmGvF2e7M4o0ABANVPLELyZ8fNJyiLMAaNqc4uBQpuqAi80hmblpH
+	 sNSXljuYQ0PF6Y0RcytEM3a2f2313Zf6BzYcWnC/cYD5S/sRJdDFtDV3iXX9d1KoZB
+	 TDVIr3mF8L4mIUNJ1SiGBGLK2FTVfblNosdrpinw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbfGWFOv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jul 2019 01:14:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40713 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfGWFOv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jul 2019 01:14:51 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p184so18489331pfp.7
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2019 22:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=g82NP5kE6vDBcz0wRx3HQUPY+qpp2eV2hYfp3Uv8Vuo=;
-        b=PjeA4UGXWrX7eWxBKCqRGmYrPvlnc4Bc0zcv0AXulqxA13EAD5I6W1Ktegac4R8rd6
-         nqTUr59Y1cBaq2k5PsjAGgvvnd8+z2GDbhDRnvz0yhIpwiR10yY3ZczBOANft1O02EI3
-         YyMt9iV7PaFFWCcnbU3kl+A9jkJk3y6kjqTFTswd0Y0P3Rr5yCHC+VtY99tR+fmQfkQ8
-         QYz5Dqpan8whgAnXJmUkWJTHKQs2U6j2zK9U7z+zl1Q/ZklGFxcRNLmsRkSQ8XWpbRS+
-         psQHHJC3x4F8OqHl+YpZv32+3kFNTljWvL6+wz8F5UkLYDWdsj7FYp0gzepeFDhRxpuI
-         qADg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=g82NP5kE6vDBcz0wRx3HQUPY+qpp2eV2hYfp3Uv8Vuo=;
-        b=Rz3nlT/0lh0A601Pec4QcVrs/tT2TRkOwo711szBn/dNYM6+feZ0RR9Z8/zkf7GsrS
-         xcWtq7CM+HmUrp2PACwjSucLLefv2gT3jetbcLg8wpHucHvQ9TjokdKIKxuTCWViDAPT
-         z/az/TyLQ+HbfvJQUCMZLeQdkuDxD2b4HeVw6HPHaiIISojDT4qpDZDCPIVIQToPJRkM
-         FuwXp7gkQOUshWYtTUmWgF1kLdWElRRBHq5pFXELKl3fZvaR0CNwx0lUntVlDiMsvxXK
-         /marja/JooSCyKIIp/di2biGhw8yaRE8wUPmfHQoWcrJlIXreACCH95SURp/+dufTYaW
-         oQMw==
-X-Gm-Message-State: APjAAAVi972hqs+QHFDI4VLknox0u3d9YndS/K3xZ1+aJj8ZmyuD1uQT
-        1qqeGPjC7nKJ/p3M8bdEIJmy+g==
-X-Google-Smtp-Source: APXvYqzkV5mF55GBnujgmB5DhZBig4ykpvvwizIq6zr0p86mQc67qRs9Si4/HU58xo1Fk2BC6VTxTw==
-X-Received: by 2002:a62:834d:: with SMTP id h74mr4077651pfe.254.1563858890244;
-        Mon, 22 Jul 2019 22:14:50 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a3sm33729999pfc.70.2019.07.22.22.14.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 22:14:49 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Rob Clark <robclark@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: [RFC] clk: Remove cached cores in parent map during unregister
-Date:   Mon, 22 Jul 2019 22:14:46 -0700
-Message-Id: <20190723051446.20013-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        id S1727398AbfGWFub (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Jul 2019 01:50:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725788AbfGWFub (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Jul 2019 01:50:31 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 672BC2229A;
+        Tue, 23 Jul 2019 05:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563861030;
+        bh=X9bwV9KQ0C2xh1Si9PIyaiK/1l55d3v6Empbinif5Zo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C3w7CafeqVLS3SThwm3ee45OdUjeJps03yo9EBaoC7uPaZH+8gINJE2AZGjA8TGus
+         fdTyIyyPvOeXIFKeWqZulPXfmqP8bQGAGKl2+M3VYe2PCz9XoS9/zEOmbdm2ixriHc
+         RoGwTCrjL+Aoyo5DiqMa4TfmOtBXp+YrbONRbn4E=
+Date:   Tue, 23 Jul 2019 13:49:58 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Fancy Fang <chen.fang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [RESEND PATCH 1/2] clk: imx8mm: rename lcdif pixel clock
+Message-ID: <20190723054957.GO3738@dragon>
+References: <20190710041546.23422-1-chen.fang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710041546.23422-1-chen.fang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As clocks are registered their parents are resolved and the parent_map
-is updated to cache the clk_core objects of each existing parent.
-But in the event of a clock being unregistered this cache will carry
-dangling pointers if not invalidated, so do this for all children of the
-clock being unregistered.
+On Wed, Jul 10, 2019 at 04:13:37AM +0000, Fancy Fang wrote:
+> Rename 'lcdif' pixel clock related names to 'disp' names, since:
+> 
+> First, the lcdif pixel clock is not supplied to LCDIF controller
+> directly, but to some LPCG clock in display mix. So rename it to
+> 'disp' pixel clock is more accurate.
+> 
+> Second, in the imx8mn CCM specification which is designed after
+> imx8mm, this same pixel root clock name has been modified from
+> 'LCDIF_PIXEL_CLK_ROOT' to 'DISPLAY_PIXEL_CLK_ROOT'.
+> 
+> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
+> ---
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+When you resend patches, please state the reason for resending.
 
-This resolves the issue seen where the DSI PLL (and it's provided clocks) is
-being registered and unregistered multiple times due to probe deferral.
+Shawn
 
-Marking it RFC because I don't fully understand the life of the clock yet.
-
- drivers/clk/clk.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..8cd1ad977c50 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2423,11 +2423,14 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
- EXPORT_SYMBOL_GPL(clk_has_parent);
- 
- static int clk_core_set_parent_nolock(struct clk_core *core,
--				      struct clk_core *parent)
-+				      struct clk_core *parent,
-+				      bool invalidate_parent)
- {
-+	struct clk_core *old_parent = core->parent;
- 	int ret = 0;
- 	int p_index = 0;
- 	unsigned long p_rate = 0;
-+	int i;
- 
- 	lockdep_assert_held(&prepare_lock);
- 
-@@ -2481,6 +2484,14 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 		__clk_recalc_accuracies(core);
- 	}
- 
-+	/* invalidate the parent cache */
-+	if (!parent && invalidate_parent) {
-+		for (i = 0; i < core->num_parents; i++) {
-+			if (core->parents[i].core == old_parent)
-+				core->parents[i].core = NULL;
-+		}
-+	}
-+
- runtime_put:
- 	clk_pm_runtime_put(core);
- 
-@@ -2517,7 +2528,8 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- 		clk_core_rate_unprotect(clk->core);
- 
- 	ret = clk_core_set_parent_nolock(clk->core,
--					 parent ? parent->core : NULL);
-+					 parent ? parent->core : NULL,
-+					 false);
- 
- 	if (clk->exclusive_count)
- 		clk_core_rate_protect(clk->core);
-@@ -3772,7 +3784,7 @@ void clk_unregister(struct clk *clk)
- 		/* Reparent all children to the orphan list. */
- 		hlist_for_each_entry_safe(child, t, &clk->core->children,
- 					  child_node)
--			clk_core_set_parent_nolock(child, NULL);
-+			clk_core_set_parent_nolock(child, NULL, true);
- 	}
- 
- 	hlist_del_init(&clk->core->child_node);
--- 
-2.18.0
-
+>  drivers/clk/imx/clk-imx8mm.c             | 4 ++--
+>  include/dt-bindings/clock/imx8mm-clock.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+> index 6b8e75df994d..42f1227a4952 100644
+> --- a/drivers/clk/imx/clk-imx8mm.c
+> +++ b/drivers/clk/imx/clk-imx8mm.c
+> @@ -210,7 +210,7 @@ static const char *imx8mm_pcie1_aux_sels[] = {"osc_24m", "sys_pll2_200m", "sys_p
+>  static const char *imx8mm_dc_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
+>  					     "sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
+>  
+> -static const char *imx8mm_lcdif_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
+> +static const char *imx8mm_disp_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
+>  						"sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
+>  
+>  static const char *imx8mm_sai1_sels[] = {"osc_24m", "audio_pll1_out", "audio_pll2_out", "video_pll1_out",
+> @@ -535,7 +535,7 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX8MM_CLK_PCIE1_PHY] = imx8m_clk_composite("pcie1_phy", imx8mm_pcie1_phy_sels, base + 0xa380);
+>  	clks[IMX8MM_CLK_PCIE1_AUX] = imx8m_clk_composite("pcie1_aux", imx8mm_pcie1_aux_sels, base + 0xa400);
+>  	clks[IMX8MM_CLK_DC_PIXEL] = imx8m_clk_composite("dc_pixel", imx8mm_dc_pixel_sels, base + 0xa480);
+> -	clks[IMX8MM_CLK_LCDIF_PIXEL] = imx8m_clk_composite("lcdif_pixel", imx8mm_lcdif_pixel_sels, base + 0xa500);
+> +	clks[IMX8MM_CLK_DISP_PIXEL] = imx8m_clk_composite("disp_pixel", imx8mm_disp_pixel_sels, base + 0xa500);
+>  	clks[IMX8MM_CLK_SAI1] = imx8m_clk_composite("sai1", imx8mm_sai1_sels, base + 0xa580);
+>  	clks[IMX8MM_CLK_SAI2] = imx8m_clk_composite("sai2", imx8mm_sai2_sels, base + 0xa600);
+>  	clks[IMX8MM_CLK_SAI3] = imx8m_clk_composite("sai3", imx8mm_sai3_sels, base + 0xa680);
+> diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
+> index 07e6c686f3ef..91ef77efebd9 100644
+> --- a/include/dt-bindings/clock/imx8mm-clock.h
+> +++ b/include/dt-bindings/clock/imx8mm-clock.h
+> @@ -119,7 +119,7 @@
+>  #define IMX8MM_CLK_PCIE1_PHY			104
+>  #define IMX8MM_CLK_PCIE1_AUX			105
+>  #define IMX8MM_CLK_DC_PIXEL			106
+> -#define IMX8MM_CLK_LCDIF_PIXEL			107
+> +#define IMX8MM_CLK_DISP_PIXEL			107
+>  #define IMX8MM_CLK_SAI1				108
+>  #define IMX8MM_CLK_SAI2				109
+>  #define IMX8MM_CLK_SAI3				110
+> -- 
+> 2.17.1
+> 
