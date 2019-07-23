@@ -2,261 +2,100 @@ Return-Path: <SRS0=wHDH=VU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B47EC7618B
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 14:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A1CC76186
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 21:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C8B5218A6
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 14:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEE44218F0
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 21:34:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsIIDR4Q"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="Yh80Mbgs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390557AbfGWO2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jul 2019 10:28:16 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35581 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729666AbfGWO2Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jul 2019 10:28:16 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x25so41308810ljh.2;
-        Tue, 23 Jul 2019 07:28:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vTUZb1HVyFeOzdcGn9tmvtpOZ/RDE9iJ1j6AeqrbJII=;
-        b=EsIIDR4Q55vebn5XqOuiTRlSfDa8o1eFxchIDuCp8CfNRtqFY1DGVkFrF5J4deHOzm
-         ob4huwssyJHxU+xKcHlpk3QnQG89sPtgxVpd2FnAGZ+QFQj96y3S8PB0JYAMxyHDk0Tt
-         PKu2UJhgmj3Jvkbzi3fznPf9xyXz/gvFWsnAgwHG3TQwg2zlshPrK7JNITMvSilyPWUp
-         cqzPzQRON4qSWSvuDT5qRahE8ojKZbmWm+JKQG0nBjz8JV+P4DiSRqoWdI9AiBeGZySm
-         lh8lxPAPksvt1+JU4YeFN5Ug87jFpEZ1z4ZV1A/radye+pr8q+S6k+K/Yx9b/PiZ6ce5
-         c+8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vTUZb1HVyFeOzdcGn9tmvtpOZ/RDE9iJ1j6AeqrbJII=;
-        b=eodMQTelBZCueHBXtNfmHI26Kwto2A6oFxuQWkvv+v+oTo5Gf6ql0TEzrRmnNKe0eG
-         ASljlNHK6YMaB0BbIeLNq0lN/sObTy4mxFvgTyIjLTHCODI1J7w6hs2QxGOTpbS2q+d/
-         qfNVfmd0DZxGatc5UeEw/5P7OGB5RwSKaDIH5cRkBCwsLBKKrDNAGdT5Dmwc4hY91TMm
-         tzoU3Y1+0hC7haSxZEY8+tSf8xdDOLv8TGNnktjy0qfu32y3K1as4OdSzNAgq8Z68/8S
-         XagvEMYMK7dDH4INppIsLWS4lf1CsyZ9iBWTD21s3pNPgAFiI7D+F+0POoAXjIfhcioj
-         Hx6g==
-X-Gm-Message-State: APjAAAWrEoK2GB/EjSBP/1iYPdQXL99fiVtxHmoKxzYYGitzSTCCOLjc
-        UHJYv0IhFaVCDxqW5pM7yRzqrLK+
-X-Google-Smtp-Source: APXvYqzdzLKFwuZZl6Aqc9eGI486jK2DbGDTVDQO3OCW3ZBU7v9/TLNB50FglJh4eytnBlftgn05uQ==
-X-Received: by 2002:a2e:9a96:: with SMTP id p22mr39358762lji.57.1563892092497;
-        Tue, 23 Jul 2019 07:28:12 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id t23sm8011143ljd.98.2019.07.23.07.27.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 07:28:11 -0700 (PDT)
-Subject: Re: [PATCH V6 16/21] soc/tegra: pmc: Add pmc wake support for
- tegra210
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-17-git-send-email-skomatineni@nvidia.com>
- <0b3d08ea-4633-8a54-ba66-c3f3146a1ece@gmail.com>
- <ca32c2d8-d752-3ecd-3a3f-232366730c7b@gmail.com>
- <b575ca93-9f34-b07a-1234-ef1ea2a6ddee@gmail.com>
- <71a88a9c-a542-557a-0eaa-3c90112dee0e@nvidia.com>
- <70ad28cb-c268-cbbe-36f5-39df26617d8e@gmail.com>
- <629826f9-c453-386a-9e88-bd64d23b8eab@nvidia.com>
- <71c8cab1-bf72-c073-be30-4263c6b7c871@gmail.com>
- <97096b6c-f2f5-b82a-b172-802f4a06d1af@nvidia.com>
- <a58de350-f6ce-9308-1ae0-885e732b575d@gmail.com>
-Message-ID: <a545cc66-45cd-504a-4390-8274b8b79540@gmail.com>
-Date:   Tue, 23 Jul 2019 17:27:46 +0300
+        id S2389342AbfGWVeO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Jul 2019 17:34:14 -0400
+Received: from mout.gmx.net ([212.227.15.18]:40683 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731019AbfGWVeO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Jul 2019 17:34:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1563917612;
+        bh=r+mxvsFxNstnBrZNL57AG/IrXnf6gomR1qRVuNahHzo=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=Yh80MbgsKfdmjhFjME/W4KIBmH0Fsdc7F8lX5rj9MAoVt6LG9JiieQCpzTncbUj43
+         aTZVKtv2+Hk/gIoOpNBRYSv3vmdsBeJfOAQ5QfTshzJoVrh00xPApQsSTER9wuRyNz
+         Gmi/FA+35aOipFtmc2mBjFtngveAFPkApYrj6Vzo=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.162] ([37.4.249.115]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0M5dMm-1ieg7w08a0-00xZLC; Tue, 23
+ Jul 2019 23:33:32 +0200
+Subject: Re: [PATCH v4 6/7] ARM: defconfig: enable cpufreq driver for RPi
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        stefan.wahren@i2se.com, Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-arm-kernel@lists.infradead.org, ptesarik@suse.com,
+        sboyd@kernel.org, viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mbrugger@suse.de, ssuloev@orpaltech.com
+References: <20190612182500.4097-1-nsaenzjulienne@suse.de>
+ <20190612182500.4097-7-nsaenzjulienne@suse.de>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <70aba40f-2c63-95b1-166e-f0125ef6372e@gmx.net>
+Date:   Tue, 23 Jul 2019 23:33:29 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <a58de350-f6ce-9308-1ae0-885e732b575d@gmail.com>
+In-Reply-To: <20190612182500.4097-7-nsaenzjulienne@suse.de>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:rDzAHccUgFdH0JEJ207RLkE8pdTRG0kdDOUgfbsFrN46gUX06Vr
+ PlAADTyGQ/dLXbEId3Rq+XYUwHDp2s/U/C+JA4dbj8DtYHdSt+m5hJpaJwktTkP6Hi1gR0j
+ yYK3DcLigDT0ZiTf0qyzX4zzouCmnDQrjtafqmh00aHBzsrBtabjK2rEXX7oDUI5B43x6RU
+ QOHjQw+gImibix94sLgOA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9/p9q6LWFcs=:9RKTowjQ+a+DBLNWoimTtr
+ k9xUCiF5Q942VNmSxUbXTwoIyjoCBHwJ1XgoMIYF7KXUzNx7P2iCXJW5qq7L1yn+RcmmFweJr
+ dHclwAJVuM46kxBQtXVoaezLMAbXPISVmAupKkDifkxo2Wtq6vfbNTzbYkabzuiDEweUg9bcV
+ ZBHo8a8Tgj4rOwBrtdblkSyKVUHBvz/ylyqEV7I90r44LtPpk2ZJkTe3TaaBcYDIfkwuUf6PG
+ P1c5GN4s4/j75500k2JFpmkGUQl6D8hZO86SRPsF+QKUaYMDR0+oNAicEyjHnt5Jn0kyYBCkd
+ os3lRIm2kKnAHuk0jf9RiCQWLb/zyM240qFCGcgcF1W20PYYqpFPUdLL01uXRbmko6mUJeTqC
+ 7a6vmua5thSw4rOvCmzyLnHNzhJGOuoZmSwHvsxfhqIEKihupiBPPbR1rSndmUTkYf2gv3W1m
+ abC87nuMv/GGMGtA5ESmeSH8XmNVsprjgwZvvHECjXX5Fm0tUa0ud/UHnY2Vvwg1DNdSGwb8+
+ /A4E3B/sqtOGbcbiaRzhAIvTysyUuWX4vftUwt+BtmHkrskJssjiS2O756ei+YkLsxAD2+o5a
+ Gb2jCVkvyyCfb5oC3ayFjZdHS8Mao7DPnL191nZ69vHVhGdI5Yzf9k9kmd2Tg/YBYbb/ZA7sJ
+ 95S2i7zm2ONxwSbdAtf+SizF5LMZ00WnKle7TDsgfSXG5eCNJfhHyEmnXWuTqzafCYdUfkJcS
+ ubF4NvuFCcTj4gVIF2oxjZqttNRGOg8Sx3aFDQl2//m849qbAhLN17TTYrxN8g9B5JLrUEeQE
+ OovMZxd+Gpz6t4X8cewEJLeigSrDF6u9jSZv4yGpT306F0Ck7TOZ9IzZeWimmbzoXZ98bpfnQ
+ 8SlG5fk5zHHRt2ycdwure78iF76bpGhuRWi4CoDmC9ZYvEZph+k19tbexiRPodDUbwCONzLs6
+ KnHWXJ14Gets4bp1P6cUQIcQv534C12LyGEmEkD+XdDDhGeXxGRFF8p1frF1nk3Ior5sTfDun
+ kI9WX58Kz1q14FEKrirRjQ2JcQmVyE6HAhTtiryTQEfPkRQb2dcajKqcWmDohRP+aO/tx9hSl
+ tTV7F8407OaEP0=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-23.07.2019 6:43, Dmitry Osipenko пишет:
-> 23.07.2019 6:31, Sowjanya Komatineni пишет:
->>
->> On 7/22/19 8:25 PM, Dmitry Osipenko wrote:
->>> 23.07.2019 6:09, Sowjanya Komatineni пишет:
->>>> On 7/22/19 8:03 PM, Dmitry Osipenko wrote:
->>>>> 23.07.2019 4:52, Sowjanya Komatineni пишет:
->>>>>> On 7/22/19 6:41 PM, Dmitry Osipenko wrote:
->>>>>>> 23.07.2019 4:08, Dmitry Osipenko пишет:
->>>>>>>> 23.07.2019 3:58, Dmitry Osipenko пишет:
->>>>>>>>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
->>>>>>>>>> This patch implements PMC wakeup sequence for Tegra210 and defines
->>>>>>>>>> common used RTC alarm wake event.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>>> ---
->>>>>>>>>>    drivers/soc/tegra/pmc.c | 111
->>>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>>>    1 file changed, 111 insertions(+)
->>>>>>>>>>
->>>>>>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>>>>>>>> index 91c84d0e66ae..c556f38874e1 100644
->>>>>>>>>> --- a/drivers/soc/tegra/pmc.c
->>>>>>>>>> +++ b/drivers/soc/tegra/pmc.c
->>>>>>>>>> @@ -57,6 +57,12 @@
->>>>>>>>>>    #define  PMC_CNTRL_SYSCLK_OE        BIT(11) /* system clock
->>>>>>>>>> enable */
->>>>>>>>>>    #define  PMC_CNTRL_SYSCLK_POLARITY    BIT(10) /* sys clk
->>>>>>>>>> polarity */
->>>>>>>>>>    #define  PMC_CNTRL_MAIN_RST        BIT(4)
->>>>>>>>>> +#define  PMC_CNTRL_LATCH_WAKEUPS    BIT(5)
->>>>>>>> Please follow the TRM's bits naming.
->>>>>>>>
->>>>>>>> PMC_CNTRL_LATCHWAKE_EN
->>>>>>>>
->>>>>>>>>> +#define PMC_WAKE_MASK            0x0c
->>>>>>>>>> +#define PMC_WAKE_LEVEL            0x10
->>>>>>>>>> +#define PMC_WAKE_STATUS            0x14
->>>>>>>>>> +#define PMC_SW_WAKE_STATUS        0x18
->>>>>>>>>>      #define DPD_SAMPLE            0x020
->>>>>>>>>>    #define  DPD_SAMPLE_ENABLE        BIT(0)
->>>>>>>>>> @@ -87,6 +93,11 @@
->>>>>>>>>>      #define PMC_SCRATCH41            0x140
->>>>>>>>>>    +#define PMC_WAKE2_MASK            0x160
->>>>>>>>>> +#define PMC_WAKE2_LEVEL            0x164
->>>>>>>>>> +#define PMC_WAKE2_STATUS        0x168
->>>>>>>>>> +#define PMC_SW_WAKE2_STATUS        0x16c
->>>>>>>>>> +
->>>>>>>>>>    #define PMC_SENSOR_CTRL            0x1b0
->>>>>>>>>>    #define  PMC_SENSOR_CTRL_SCRATCH_WRITE    BIT(2)
->>>>>>>>>>    #define  PMC_SENSOR_CTRL_ENABLE_RST    BIT(1)
->>>>>>>>>> @@ -1922,6 +1933,55 @@ static const struct irq_domain_ops
->>>>>>>>>> tegra_pmc_irq_domain_ops = {
->>>>>>>>>>        .alloc = tegra_pmc_irq_alloc,
->>>>>>>>>>    };
->>>>>>>>>>    +static int tegra210_pmc_irq_set_wake(struct irq_data *data,
->>>>>>>>>> unsigned int on)
->>>>>>>>>> +{
->>>>>>>>>> +    struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->>>>>>>>>> +    unsigned int offset, bit;
->>>>>>>>>> +    u32 value;
->>>>>>>>>> +
->>>>>>>>>> +    if (data->hwirq == ULONG_MAX)
->>>>>>>>>> +        return 0;
->>>>>>>>>> +
->>>>>>>>>> +    offset = data->hwirq / 32;
->>>>>>>>>> +    bit = data->hwirq % 32;
->>>>>>>>>> +
->>>>>>>>>> +    /*
->>>>>>>>>> +     * Latch wakeups to SW_WAKE_STATUS register to capture events
->>>>>>>>>> +     * that would not make it into wakeup event register during
->>>>>>>>>> LP0 exit.
->>>>>>>>>> +     */
->>>>>>>>>> +    value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>>>>>>>> +    value |= PMC_CNTRL_LATCH_WAKEUPS;
->>>>>>>>>> +    tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>>>>>>>>> +    udelay(120);
->>>>>>>>> Why it takes so much time to latch the values? Shouldn't some
->>>>>>>>> status-bit
->>>>>>>>> be polled for the completion of latching?
->>>>>>>>>
->>>>>>>>> Is this register-write really getting buffered in the PMC?
->>>>>>>>>
->>>>>>>>>> +    value &= ~PMC_CNTRL_LATCH_WAKEUPS;
->>>>>>>>>> +    tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>>>>>>>>> +    udelay(120);
->>>>>>>>> 120 usecs to remove latching, really?
->>>>>>>>>
->>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
->>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
->>>>>>>>>> +
->>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
->>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
->>>>>>>>>> +
->>>>>>>>>> +    /* enable PMC wake */
->>>>>>>>>> +    if (data->hwirq >= 32)
->>>>>>>>>> +        offset = PMC_WAKE2_MASK;
->>>>>>>>>> +    else
->>>>>>>>>> +        offset = PMC_WAKE_MASK;
->>>>>>>>>> +
->>>>>>>>>> +    value = tegra_pmc_readl(pmc, offset);
->>>>>>>>>> +
->>>>>>>>>> +    if (on)
->>>>>>>>>> +        value |= 1 << bit;
->>>>>>>>>> +    else
->>>>>>>>>> +        value &= ~(1 << bit);
->>>>>>>>>> +
->>>>>>>>>> +    tegra_pmc_writel(pmc, value, offset);
->>>>>>>>> Why the latching is done *before* writing into the WAKE registers?
->>>>>>>>> What
->>>>>>>>> it is latching then?
->>>>>>>> I'm looking at the TRM doc and it says that latching should be done
->>>>>>>> *after* writing to the WAKE_MASK / LEVEL registers.
->>>>>>>>
->>>>>>>> Secondly it says that it's enough to do:
->>>>>>>>
->>>>>>>> value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>>>>>> value |= PMC_CNTRL_LATCH_WAKEUPS;
->>>>>>>> tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>>>>>>>
->>>>>>>> in order to latch. There is no need for the delay and to remove the
->>>>>>>> "LATCHWAKE_EN" bit, it should be a oneshot action.
->>>>>>> Although, no. TRM says "stops latching on transition from 1
->>>>>>> to 0 (sequence - set to 1,set to 0)", so it's not a oneshot action.
->>>>>>>
->>>>>>> Have you tested this code at all? I'm wondering how it happens to
->>>>>>> work
->>>>>>> without a proper latching.
->>>>>> Yes, ofcourse its tested and this sequence to do transition is
->>>>>> recommendation from Tegra designer.
->>>>>> Will check if TRM doesn't have update properly or will re-confirm
->>>>>> internally on delay time...
->>>>>>
->>>>>> On any of the wake event PMC wakeup happens and WAKE_STATUS register
->>>>>> will have bits set for all events that triggered wake.
->>>>>> After wakeup PMC doesn't update SW_WAKE_STATUS register as per PMC
->>>>>> design.
->>>>>> SW latch register added in design helps to provide a way to capture
->>>>>> those events that happen right during wakeup time and didnt make it to
->>>>>> SW_WAKE_STATUS register.
->>>>>> So before next suspend entry, latching all prior wake events into SW
->>>>>> WAKE_STATUS and then clearing them.
->>>>> I'm now wondering whether the latching cold be turned ON permanently
->>>>> during of the PMC's probe, for simplicity.
->>>> latching should be done on suspend-resume cycle as wake events gets
->>>> generates on every suspend-resume cycle.
->>> You're saying that PMC "doesn't update SW_WAKE_STATUS" after wake-up,
->>> then I don't quite understand what's the point of disabling the latching
->>> at all.
->> When latch wake enable is set, events are latched and during 1 to 0
->> transition latching is disabled.
->>
->> This is to avoid sw_wake_status and wake_status showing diff events.
-> 
-> Okay.
-> 
->> Currently driver is not relying on SW_WAKE_STATUS but its good to latch
->> and clear so even at some point for some reason when SW_WAKE_STATUS is
->> used, this wlil not cause mismatch with wake_status.
-> 
-> Then the latching need to be enabled on suspend and disabled early on
-> resume to get a proper WAKE status.
+Am 12.06.19 um 20:24 schrieb Nicolas Saenz Julienne:
+> This enables on both multi_v7_defconfig and bcm2835_defconfig the new
+> firmware based clock and cpufreq drivers for the Raspberry Pi platform.
+>
+> In the case of bcm2835_defconfig, as the cpufreq subsystem was disabled,
+> the conservative governor was selected as default since it better
+> handles the high frequency transition latency.
+>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-Actually, it will be better to simply not implement the latching until
-it will become really needed. In general you shouldn't add into the
-patchset anything that is unused.
+Applied to bcm2835-defconfig-next
+
+Thanks
+
