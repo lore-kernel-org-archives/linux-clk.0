@@ -2,122 +2,99 @@ Return-Path: <SRS0=wHDH=VU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5B8C76186
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 21:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29353C76186
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 23:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D97E218D4
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 21:34:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="Jq8Vzi93"
+	by mail.kernel.org (Postfix) with ESMTP id F1ABE2238C
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 23:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563923328;
+	bh=ro60aqcoN/HEeMfesa8DIpoEOUVJjBlt3XKw/YMUVfo=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=CGrdj/f2v5DW0W5RFBfQnjz2WOJKhmS7hCdKeDBumr3YUDpOwg4U0fxfS/RF8pNFb
+	 ElKPTuLp/Xy+9TC0PjMV5HQN7I2YzsoSvUgB2oqe61disMB2Jj6XfSpquHS60hDqwZ
+	 qgYOMjKvxXZJh+nksgDmHPfen/HVMpimNeDQ+AzY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392109AbfGWVe3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jul 2019 17:34:29 -0400
-Received: from mout.gmx.net ([212.227.15.18]:56799 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731019AbfGWVe3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:34:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1563917650;
-        bh=qgUZqMvf9CDgIeP64ai2WtrFeE/F4JInROCU4QA90us=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=Jq8Vzi93QsM0GOvk8S6IRQWD8YncdKgxoyQKOPJysWeKwghvIqEUDfJlEE/k2mCLN
-         vlo3j9sM41UrgCryrL1bKbNRL+g2Qsudv1ZbWtXgUDi5HY5VlLkE3Terx5YY1U/Zjk
-         4u53L15HcmbCNb0mHASCROmOPEJUyYnLZGlUVrQE=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.1.162] ([37.4.249.115]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0LuP5z-1iW8rV0G6p-011n66; Tue, 23
- Jul 2019 23:34:10 +0200
-Subject: Re: [PATCH v4 7/7] arm64: defconfig: enable cpufreq support for RPi3
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        stefan.wahren@i2se.com, linux-kernel@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
-        Catalin Marinas <catalin.marinas@arm.com>, ptesarik@suse.com,
-        sboyd@kernel.org, viresh.kumar@linaro.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        Will Deacon <will.deacon@arm.com>, eric@anholt.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        mbrugger@suse.de, ssuloev@orpaltech.com
-References: <20190612182500.4097-1-nsaenzjulienne@suse.de>
- <20190612182500.4097-8-nsaenzjulienne@suse.de>
-From:   Stefan Wahren <wahrenst@gmx.net>
-Message-ID: <98a6dccd-b834-3596-cc4a-e97ebc9b01cb@gmx.net>
-Date:   Tue, 23 Jul 2019 23:34:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726214AbfGWXIr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Jul 2019 19:08:47 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36834 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfGWXIr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jul 2019 19:08:47 -0400
+Received: by mail-io1-f68.google.com with SMTP id o9so85572338iom.3;
+        Tue, 23 Jul 2019 16:08:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HYo2fuuuneL5Fo4jEfaXQ1heuCdpTzyb5jPxys5e614=;
+        b=XqrUQvJsO8a513YfCVItM3DPGoIq0nNeSWhSSyHpcgcM0DnRkPnSJdwNY/VOAPWv+2
+         pVNW0br8EpuHQbksC+rANl14jitpRST2PW29udEeUs7teJfYqxLLsH51fU5+V4QaJLBw
+         xcp77p3ibUEP+SYgJWpUoCpIEEr5xy1b9uUeOai07NFXS6AajVCsWz/E+hMYativ+mng
+         ms/O2WwF0HZehpRe8jTF3Un8h3ZaFAqpL0GaynZeM0POCIegU7SSQL521qx++LyH4dl2
+         B42jqOhlvwIZTQylxXvmVzkEjzAxabC0ewmXBiKHscCHnl3TRWfMBI6yUg+JV3mDZx2b
+         mBAA==
+X-Gm-Message-State: APjAAAUJat9UTR9X+I+DIsWO2W/hTKRNuPffuuJOnKU79PSsJdIe0scg
+        nTdTOfZc4uO9gazdSjh9acJ4LHQ=
+X-Google-Smtp-Source: APXvYqwlJV09K4RP12HY5SbNeA4DQYH2eq1IjJhUlDTm+CQ6P0v68r2Ic4RqfVM0mf7j+OEb3QNpiw==
+X-Received: by 2002:a5e:8210:: with SMTP id l16mr47099097iom.240.1563923325720;
+        Tue, 23 Jul 2019 16:08:45 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.254])
+        by smtp.googlemail.com with ESMTPSA id b14sm48025590iod.33.2019.07.23.16.08.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 16:08:44 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+Subject: [PATCH] dt-bindings: clk: allwinner,sun4i-a10-ccu: Correct path in $id
+Date:   Tue, 23 Jul 2019 17:08:43 -0600
+Message-Id: <20190723230843.19922-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190612182500.4097-8-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:N3LqJoGUpptYNWRuJlS5DD9eWKeIqYHeFd/EMl9rCmCiDKtzLpx
- //855m3bntUOdB0/cZOBDSX4i4ubIEVPPWa+qMQGV2jRUPAZ2Gi2j7ja9rSqfVQbdA52r41
- YUPsgu3fQ5FFvUhzp8d/LqGMOv2i+VtAnWyoDsiC40arjmmFwW/SmyZJYnu0jxKI0hUghrq
- YU7RDm7dg3Hk/VTcCwvMA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3DbHgGNVAlY=:3Fr6YLvCxR1vG+tDZUofNV
- Zvz0ywwaj1vMIeNiio2oorANWuTQGi/LnrwlYKLD8l+2b7jv49lU+pYOtf/hcOhH66bXzLoG8
- KczZSzN8EwNrUqyyZJWtpzip3Ct+q+WHLQ6hRnbcBDaq2c8TLprDFC0yGNWrBooTJ38NAKEVD
- hPsTk6DmMIVzVW+ZvxiO1E4PKiZwHDCGbenZjvKMJLLFZd9AfWs5NvBn0LgmEbHRJST3moXyS
- KBMFAeDh7fNhopRfPI6ha1bGYhH/wydlgEHyHoB2bObAFuw98m66eWT+HgeP6au2eLvH0JRgM
- 3HoL8twG+thkckIFHvigdWmZnt6u6Hv/ZfLGeIg8RC3qPkqfsFQu69mzfcFcfRnfg8xmc5DPj
- QO+8CIU/BiAYZ/3e6slmOEUcuU+9VG896hiDpgDQhN6iaUkPPhR/QiSKI2KUQG32bdb9ugWPV
- zk2N+CKqPkQEpawLV1RpfVATMRgMrh26lYnB45cWH/x+Wq9YkuzgwpNCYzMqkgT8CYn/Gchrl
- 1LpKDBRPhZMXaEJDcjpLhA8I4721UA1mgbHMk5CC4sLWSRtRfUxoqZ6xtTW2lpHw99fjl/ix5
- wPSQFMJt1SbNJXqDaIOqSL8d9b+q11vKNTpgQHBh78dg/fUapfZPBxJFydogyNJAlZ6nFsaXg
- /KxBCkVF8LU2a2hbP3jWHVnlzp2uQAjiVNPJFqL7ZHIxUciPKCHdX89M7EtNc5CMB4/Yo+tL0
- gpsw0X0fC7Z/mJAIRoqsMkcgc2xgxBpd4dHKZEi1PYhHUcsy3tSNQCZllxHC1XHWYJ/d9w9bS
- u94G3LkEDfjS8c3WTU3bpuQLEk3K/61iU4n6UFC4yxm6fikboMUf4F0OAAm7KZ+b0tLSROmbJ
- g6dggzlaqucuBOM+dXzjAaFJnnQxWQLgJYugxMnOCI6iFTfV8qJUddHkcyewjk6Eu0VrD6mhI
- re2qXMNEhvSwsHj7twmxwKivHO8RleJZ03E5CLe9WlZy87D9oGLHi5vWbrk/i2RJ7FWcOJEby
- lpMlR6xU6hrE7+ckmzaLdzVaHk+2fyoYg5QSUKKTm62XYwIJpyEtFSDmFEu7KN08m7W8vgMTx
- sjCdFNQnalq4uw=
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 12.06.19 um 20:24 schrieb Nicolas Saenz Julienne:
-> This enables both the new firmware clock driver and cpufreq driver
-> available for the RPi3 family of boards.
->
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-> ---
->
-> Changes since v2:
->   - Build both drivers as modules
->
->  arch/arm64/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 5a8e853833cf..5e322e61b101 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -83,6 +83,7 @@ CONFIG_ACPI_CPPC_CPUFREQ=m
->  CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
->  CONFIG_ARM_SCPI_CPUFREQ=y
->  CONFIG_ARM_IMX_CPUFREQ_DT=m
-> +CONFIG_ARM_RASPBERRYPI_CPUFREQ=m
->  CONFIG_ARM_TEGRA186_CPUFREQ=y
->  CONFIG_ARM_SCPI_PROTOCOL=y
->  CONFIG_RASPBERRYPI_FIRMWARE=y
-> @@ -653,6 +654,7 @@ CONFIG_COMMON_CLK_CS2000_CP=y
->  CONFIG_COMMON_CLK_S2MPS11=y
->  CONFIG_CLK_QORIQ=y
->  CONFIG_COMMON_CLK_PWM=y
-> +CONFIG_CLK_RASPBERRYPI=m
->  CONFIG_CLK_IMX8MM=y
->  CONFIG_CLK_IMX8MQ=y
->  CONFIG_CLK_IMX8QXP=y
+The path in the schema '$id' value is wrong. Fix it.
 
-Applied to bcm2835-defconfig-64-next
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+I can take this via the DT tree.
 
-Thanks
+Rob
+
+ .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
+index c935405458fe..fa4d143a73de 100644
+--- a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/phy/allwinner,sun4i-a10-ccu.yaml#
++$id: http://devicetree.org/schemas/clock/allwinner,sun4i-a10-ccu.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Allwinner Clock Control Unit Device Tree Bindings
+-- 
+2.20.1
 
