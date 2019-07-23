@@ -2,166 +2,261 @@ Return-Path: <SRS0=wHDH=VU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E03C7618B
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 12:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B47EC7618B
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 14:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84442223A1
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 12:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C8B5218A6
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jul 2019 14:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=topicbv.onmicrosoft.com header.i=@topicbv.onmicrosoft.com header.b="KsUmPHBM";
-	dkim=pass (1024-bit key) header.d=topicbv.onmicrosoft.com header.i=@topicbv.onmicrosoft.com header.b="KsUmPHBM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsIIDR4Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfGWM3o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jul 2019 08:29:44 -0400
-Received: from mail-eopbgr140048.outbound.protection.outlook.com ([40.107.14.48]:40746
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726438AbfGWM3n (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:29:43 -0400
+        id S2390557AbfGWO2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Jul 2019 10:28:16 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35581 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729666AbfGWO2Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jul 2019 10:28:16 -0400
+Received: by mail-lj1-f193.google.com with SMTP id x25so41308810ljh.2;
+        Tue, 23 Jul 2019 07:28:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=topicbv.onmicrosoft.com; s=selector1-topicbv-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dyRMl0twNYCRtYudFG5qAq9Fr4a/+veQrIq9JHt7WcI=;
- b=KsUmPHBMCaANkXGgoB2Hqzsti0rJbGBEjVO+vFQtEEkvraFbheUdeiMxVVW1sE9QfjJgQsSACk3b2FVLtQNP1Rp7viLg+5Vc9X8pMxSZHsiMTbPr+qQMk1aIOws5HqcAm1IcyA2xgDEC77YO3IH6tx/xfyUbvrmG18gbyJhdk+U=
-Received: from VI1PR04CA0086.eurprd04.prod.outlook.com (2603:10a6:803:64::21)
- by AM0PR04MB5475.eurprd04.prod.outlook.com (2603:10a6:208:115::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2094.16; Tue, 23 Jul
- 2019 12:29:38 +0000
-Received: from HE1EUR01FT008.eop-EUR01.prod.protection.outlook.com
- (2a01:111:f400:7e1f::202) by VI1PR04CA0086.outlook.office365.com
- (2603:10a6:803:64::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2094.12 via Frontend
- Transport; Tue, 23 Jul 2019 12:29:37 +0000
-Authentication-Results: spf=pass (sender IP is 52.166.56.231)
- smtp.mailfrom=topicproducts.com; vger.kernel.org; dkim=pass (signature was
- verified) header.d=topicbv.onmicrosoft.com;vger.kernel.org; dmarc=none
- action=none header.from=topic.nl;
-Received-SPF: Pass (protection.outlook.com: domain of topicproducts.com
- designates 52.166.56.231 as permitted sender)
- receiver=protection.outlook.com; client-ip=52.166.56.231;
- helo=westeu11-emailsignatures-cloud.codetwo.com;
-Received: from westeu11-emailsignatures-cloud.codetwo.com (52.166.56.231) by
- HE1EUR01FT008.mail.protection.outlook.com (10.152.1.250) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2052.18 via Frontend Transport; Tue, 23 Jul 2019 12:29:36 +0000
-Received: from EUR02-HE1-obe.outbound.protection.outlook.com (104.47.5.54) by westeu11-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Tue, 23 Jul 2019 12:29:35 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JII0r/EDLOQtWSkfujC/16GfbWrYbKHPrAQzv5t/sLo+D57UY7IhznIDMgx9UAuHd/dSRoap7mpOcBZ0+21C7s4LsMqrGapXPPqmm6MhCQs6/douJgTAtuSelApW8GjJOvxTGSWTkb6+clYq59zRTXESj5okhpVCHzVth89gcsgfujH97bBo0llS6uhQu2zDsPeFm3X43A0KkozGmzg65kuwa7OGaplbmuPCLj+Rtgl+utJlAe3iwbVdxImg/9xA2asybGrh+F9x3tn2Fsy1suNaboOX8GV6r5FrgPttZv7Xe5T57F5gLGPQF8JbRhBZVnfJ8ywZF9Ze/Sty0drLdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dyRMl0twNYCRtYudFG5qAq9Fr4a/+veQrIq9JHt7WcI=;
- b=ABoq8qmg2YHKdqx4OnXBgJUDX+8sb+i9iS2I8Aq76FbZPKzCk1ORcMwXaLynvX8nRWAB75OzcxS1aDNbvz8y8n34k3r4jsVRtcRE2GTEuM/H4Dv/05IeSH+xtn8yJhoMb90yi1g0zvqJhU+dXAva3TuVW8qcfTlGzfAVQLRKJsinc9H39P0wmwsmGX3X7fDMZLuiQrFtaF5X5EOjt4p20hCF9DOpBLfG+j7cXK6v2oECteBrHtU39mNKq2+HiDx+2J0Axmz1JTnqeQqPt+NIXeRMgD+UZafvnQ30dM2QjSalRiNtYBhf5ZigIjAAAbhvZ9z5SXpMyalCCFv7FUpU7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=topicproducts.com;dmarc=pass action=none
- header.from=topic.nl;dkim=pass header.d=topic.nl;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=topicbv.onmicrosoft.com; s=selector1-topicbv-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dyRMl0twNYCRtYudFG5qAq9Fr4a/+veQrIq9JHt7WcI=;
- b=KsUmPHBMCaANkXGgoB2Hqzsti0rJbGBEjVO+vFQtEEkvraFbheUdeiMxVVW1sE9QfjJgQsSACk3b2FVLtQNP1Rp7viLg+5Vc9X8pMxSZHsiMTbPr+qQMk1aIOws5HqcAm1IcyA2xgDEC77YO3IH6tx/xfyUbvrmG18gbyJhdk+U=
-Received: from AM7PR04MB6934.eurprd04.prod.outlook.com (10.141.174.88) by
- AM7PR04MB7093.eurprd04.prod.outlook.com (52.135.58.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.17; Tue, 23 Jul 2019 12:29:32 +0000
-Received: from AM7PR04MB6934.eurprd04.prod.outlook.com
- ([fe80::b9ee:2fbb:bd36:514c]) by AM7PR04MB6934.eurprd04.prod.outlook.com
- ([fe80::b9ee:2fbb:bd36:514c%3]) with mapi id 15.20.2073.012; Tue, 23 Jul 2019
- 12:29:32 +0000
-From:   Mike Looijmans <mike.looijmans@topic.nl>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to
- n_den
-Thread-Topic: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to
- n_den
-Thread-Index: AQHVQNPSw/wTnsVmPkq/mc8Kw4mkpabYIuaA
-Date:   Tue, 23 Jul 2019 12:29:32 +0000
-Message-ID: <e7bb11ba-c79d-3c2c-aebe-67796d518e63@topic.nl>
-References: <20190701165020.19840-1-colin.king@canonical.com>
- <20190722212414.6EF8D21900@mail.kernel.org>
-In-Reply-To: <20190722212414.6EF8D21900@mail.kernel.org>
-Accept-Language: nl-NL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-x-clientproxiedby: AM5PR0102CA0012.eurprd01.prod.exchangelabs.com
- (2603:10a6:206::25) To AM7PR04MB6934.eurprd04.prod.outlook.com
- (2603:10a6:20b:10d::24)
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=mike.looijmans@topicproducts.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [85.150.144.104]
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: 0bc19bd8-990c-489b-2b22-08d70f696d13
-X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM7PR04MB7093;
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7093:|AM0PR04MB5475:
-X-Microsoft-Antispam-PRVS: <AM0PR04MB547542D8BC95D52AB7FA721896C70@AM0PR04MB5475.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;OLM:4125;
-x-forefront-prvs: 0107098B6C
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(376002)(39840400004)(396003)(199004)(189003)(8936002)(11346002)(256004)(65806001)(102836004)(65956001)(14444005)(66066001)(5660300002)(42882007)(186003)(2616005)(446003)(476003)(66556008)(66446008)(6506007)(31686004)(64756008)(26005)(66946007)(229853002)(66476007)(2906002)(4326008)(36756003)(44832011)(71190400001)(71200400001)(53546011)(52116002)(2501003)(486006)(68736007)(76176011)(386003)(316002)(6436002)(6512007)(14454004)(3846002)(6246003)(64126003)(6486002)(6116002)(53936002)(81156014)(81166006)(65826007)(54906003)(8676002)(7736002)(25786009)(99286004)(508600001)(305945005)(110136005)(31696002)(58126008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM7PR04MB7093;H:AM7PR04MB6934.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: topicproducts.com does not
- designate permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info-Original: lZvQZWvKI4xfndx3J5hocix0CC9vxpU5XVTT0bgTVdnlsHTxfijddYGCTCDGbYstRkKlSRHGZTatRsF8THsZCjy6nJZh0kzjlCaLC7IJLTpCmDv0KwVl5dIz+BRxct8ey4aUndTHz68k+EH2rT2zpnwhkEnT9ardBdhI69lmhoRHRt1TefygopntxsukvW3zjKKU6UMz3GH9UaPi1/TOROOfX5L0ZmP6mQi8McRB2wxSfHWgfWp8uqgJqT72sGsyA01K0JX5f/2sBN3Lg9miD1A7jmpDnGm4JzmsgGX195k4TUDrWHtkwDA5yz4QQ2i6HFU/Mgg1zk1KuIcBz1CZmcYRTnPSG0l419LOu4w7QcX+pRrfacNhvQBCgfFGZ0UHhcj/rFBGF8TiLAEynj6hf/Ta4c8AMCRwgXcMF5BeQk0=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1ACA19DDCAA21E419339604A56D75438@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vTUZb1HVyFeOzdcGn9tmvtpOZ/RDE9iJ1j6AeqrbJII=;
+        b=EsIIDR4Q55vebn5XqOuiTRlSfDa8o1eFxchIDuCp8CfNRtqFY1DGVkFrF5J4deHOzm
+         ob4huwssyJHxU+xKcHlpk3QnQG89sPtgxVpd2FnAGZ+QFQj96y3S8PB0JYAMxyHDk0Tt
+         PKu2UJhgmj3Jvkbzi3fznPf9xyXz/gvFWsnAgwHG3TQwg2zlshPrK7JNITMvSilyPWUp
+         cqzPzQRON4qSWSvuDT5qRahE8ojKZbmWm+JKQG0nBjz8JV+P4DiSRqoWdI9AiBeGZySm
+         lh8lxPAPksvt1+JU4YeFN5Ug87jFpEZ1z4ZV1A/radye+pr8q+S6k+K/Yx9b/PiZ6ce5
+         c+8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vTUZb1HVyFeOzdcGn9tmvtpOZ/RDE9iJ1j6AeqrbJII=;
+        b=eodMQTelBZCueHBXtNfmHI26Kwto2A6oFxuQWkvv+v+oTo5Gf6ql0TEzrRmnNKe0eG
+         ASljlNHK6YMaB0BbIeLNq0lN/sObTy4mxFvgTyIjLTHCODI1J7w6hs2QxGOTpbS2q+d/
+         qfNVfmd0DZxGatc5UeEw/5P7OGB5RwSKaDIH5cRkBCwsLBKKrDNAGdT5Dmwc4hY91TMm
+         tzoU3Y1+0hC7haSxZEY8+tSf8xdDOLv8TGNnktjy0qfu32y3K1as4OdSzNAgq8Z68/8S
+         XagvEMYMK7dDH4INppIsLWS4lf1CsyZ9iBWTD21s3pNPgAFiI7D+F+0POoAXjIfhcioj
+         Hx6g==
+X-Gm-Message-State: APjAAAWrEoK2GB/EjSBP/1iYPdQXL99fiVtxHmoKxzYYGitzSTCCOLjc
+        UHJYv0IhFaVCDxqW5pM7yRzqrLK+
+X-Google-Smtp-Source: APXvYqzdzLKFwuZZl6Aqc9eGI486jK2DbGDTVDQO3OCW3ZBU7v9/TLNB50FglJh4eytnBlftgn05uQ==
+X-Received: by 2002:a2e:9a96:: with SMTP id p22mr39358762lji.57.1563892092497;
+        Tue, 23 Jul 2019 07:28:12 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id t23sm8011143ljd.98.2019.07.23.07.27.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 07:28:11 -0700 (PDT)
+Subject: Re: [PATCH V6 16/21] soc/tegra: pmc: Add pmc wake support for
+ tegra210
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-17-git-send-email-skomatineni@nvidia.com>
+ <0b3d08ea-4633-8a54-ba66-c3f3146a1ece@gmail.com>
+ <ca32c2d8-d752-3ecd-3a3f-232366730c7b@gmail.com>
+ <b575ca93-9f34-b07a-1234-ef1ea2a6ddee@gmail.com>
+ <71a88a9c-a542-557a-0eaa-3c90112dee0e@nvidia.com>
+ <70ad28cb-c268-cbbe-36f5-39df26617d8e@gmail.com>
+ <629826f9-c453-386a-9e88-bd64d23b8eab@nvidia.com>
+ <71c8cab1-bf72-c073-be30-4263c6b7c871@gmail.com>
+ <97096b6c-f2f5-b82a-b172-802f4a06d1af@nvidia.com>
+ <a58de350-f6ce-9308-1ae0-885e732b575d@gmail.com>
+Message-ID: <a545cc66-45cd-504a-4390-8274b8b79540@gmail.com>
+Date:   Tue, 23 Jul 2019 17:27:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7093
-X-CodeTwo-MessageID: e2de85f9-336a-41cc-875c-30e6611d8e8a.20190723122934@westeu11-emailsignatures-cloud.codetwo.com
-X-CodeTwoProcessed: true
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: HE1EUR01FT008.eop-EUR01.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:52.166.56.231;IPV:NLI;CTRY:NL;EFV:NLI;SFV:NSPM;SFS:(10009020)(39840400004)(396003)(136003)(346002)(376002)(2980300002)(189003)(199004)(6506007)(102836004)(186003)(53546011)(386003)(305945005)(36756003)(106002)(99286004)(7736002)(7636002)(7596002)(2486003)(508600001)(23676004)(25786009)(8676002)(2501003)(246002)(356004)(229853002)(31686004)(6246003)(50466002)(76176011)(65826007)(4326008)(6512007)(64126003)(446003)(6116002)(31696002)(336012)(6486002)(66066001)(8936002)(65956001)(14454004)(70206006)(11346002)(44832011)(2616005)(476003)(47776003)(42882007)(126002)(2906002)(26005)(316002)(5660300002)(58126008)(65806001)(14444005)(436003)(70586007)(110136005)(54906003)(3846002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5475;H:westeu11-emailsignatures-cloud.codetwo.com;FPR:;SPF:Pass;LANG:en;PTR:westeu11-emailsignatures-cloud.codetwo.com;MX:1;A:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 2998b801-3c13-45d1-1978-08d70f696a2c
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(710020)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM0PR04MB5475;
-X-Forefront-PRVS: 0107098B6C
-X-Microsoft-Antispam-Message-Info: kjKRdTqZmaNQ8KrjFj2+tNR6hKDT/3NFn3ryPJqwzkqJ2ZtGAXEMgH/7kYVRMeO5ZLccMKlaxdImkbWI16zLGApXfbE8Y02Bru9+xpCMlfJ7HsWTFdK6k8qwExD18+RLrbvzAuPWIXQL6HV2RlWIxu1+mWwQ1G91ZgR9QxODySYBmJuuiW94cyjyAO+khEovKCbWD4uYJiiuuqp+s0HKppKtUJ+8AuMP7sMw+TUXX7vNXlYdD+ybdxDl/uSF2Ty7p2D1oBAYVEz745MpT3Ue53dsPvB35VW/X/rLsGlDz4Q36tg9GssJi9FCkjUn2iUcuZrJiHURPlK7/lyWbSOdjMDRZi81d56hwOoOR9TjMjfW3L4d83s8cg59AxGHsG1agzFBTT7VBQdUNDES1LYsQqW0//bXVvb+H2pGirHGr6M=
-X-OriginatorOrg: topic.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2019 12:29:36.6315
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bc19bd8-990c-489b-2b22-08d70f696d13
-X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[52.166.56.231];Helo=[westeu11-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5475
+In-Reply-To: <a58de350-f6ce-9308-1ae0-885e732b575d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-R29vZCBjYXRjaCwgdGhhbmtzLiBZb3UgaGF2ZSBteQ0KDQpBY2tlZC1ieTogTWlrZSBMb29pam1h
-bnMgPG1pa2UubG9vaWptYW5zQHRvcGljLm5sPg0KDQoNCk9uIDIyLTA3LTE5IDIzOjI0LCBTdGVw
-aGVuIEJveWQgd3JvdGU6DQo+IFBsZWFzZSBDYyBhdXRob3JzIG9mIGRyaXZlcnMgc28gdGhleSBj
-YW4gYWNrL3Jldmlldy4NCj4gDQo+IEFkZGluZyBNaWtlIHRvIHRha2UgYSBsb29rLg0KPiANCj4g
-UXVvdGluZyBDb2xpbiBLaW5nICgyMDE5LTA3LTAxIDA5OjUwOjIwKQ0KPj4gRnJvbTogQ29saW4g
-SWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4+DQo+PiBUaGUgdmFyaWFibGUg
-bl9kZW4gaXMgaW5pdGlhbGl6ZWQgaG93ZXZlciB0aGF0IHZhbHVlIGlzIG5ldmVyIHJlYWQNCj4+
-IGFzIG5fZGVuIGlzIHJlLWFzc2lnbmVkIGEgbGl0dGxlIGxhdGVyIGluIHRoZSB0d28gcGF0aHMg
-b2YgYQ0KPj4gZm9sbG93aW5nIGlmLXN0YXRlbWVudC4gIFJlbW92ZSB0aGUgcmVkdW5kYW50IGFz
-c2lnbm1lbnQuDQo+Pg0KPj4gQWRkcmVzc2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2YWx1ZSIpDQo+
-PiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
-Pg0KPj4gLS0tDQo+PiAgIGRyaXZlcnMvY2xrL2Nsay1zaTUzNDEuYyB8IDEgLQ0KPj4gICAxIGZp
-bGUgY2hhbmdlZCwgMSBkZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Ns
-ay9jbGstc2k1MzQxLmMgYi9kcml2ZXJzL2Nsay9jbGstc2k1MzQxLmMNCj4+IGluZGV4IDcyNDI0
-ZWI3ZTVmOC4uNmU3ODBjMmE5ZTZiIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXNp
-NTM0MS5jDQo+PiArKysgYi9kcml2ZXJzL2Nsay9jbGstc2k1MzQxLmMNCj4+IEBAIC01NDcsNyAr
-NTQ3LDYgQEAgc3RhdGljIGludCBzaTUzNDFfc3ludGhfY2xrX3NldF9yYXRlKHN0cnVjdCBjbGtf
-aHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQo+PiAgICAgICAgICBib29sIGlzX2ludGVnZXI7
-DQo+PiAgIA0KPj4gICAgICAgICAgbl9udW0gPSBzeW50aC0+ZGF0YS0+ZnJlcV92Y287DQo+PiAt
-ICAgICAgIG5fZGVuID0gcmF0ZTsNCj4+ICAgDQo+PiAgICAgICAgICAvKiBzZWUgaWYgdGhlcmUn
-cyBhbiBpbnRlZ2VyIHNvbHV0aW9uICovDQo+PiAgICAgICAgICByID0gZG9fZGl2KG5fbnVtLCBy
-YXRlKTsNCg0KDQotLSANCk1pa2UgTG9vaWptYW5zDQo=
+23.07.2019 6:43, Dmitry Osipenko пишет:
+> 23.07.2019 6:31, Sowjanya Komatineni пишет:
+>>
+>> On 7/22/19 8:25 PM, Dmitry Osipenko wrote:
+>>> 23.07.2019 6:09, Sowjanya Komatineni пишет:
+>>>> On 7/22/19 8:03 PM, Dmitry Osipenko wrote:
+>>>>> 23.07.2019 4:52, Sowjanya Komatineni пишет:
+>>>>>> On 7/22/19 6:41 PM, Dmitry Osipenko wrote:
+>>>>>>> 23.07.2019 4:08, Dmitry Osipenko пишет:
+>>>>>>>> 23.07.2019 3:58, Dmitry Osipenko пишет:
+>>>>>>>>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
+>>>>>>>>>> This patch implements PMC wakeup sequence for Tegra210 and defines
+>>>>>>>>>> common used RTC alarm wake event.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>>>> ---
+>>>>>>>>>>    drivers/soc/tegra/pmc.c | 111
+>>>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>    1 file changed, 111 insertions(+)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>>>>>>>> index 91c84d0e66ae..c556f38874e1 100644
+>>>>>>>>>> --- a/drivers/soc/tegra/pmc.c
+>>>>>>>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>>>>>>>> @@ -57,6 +57,12 @@
+>>>>>>>>>>    #define  PMC_CNTRL_SYSCLK_OE        BIT(11) /* system clock
+>>>>>>>>>> enable */
+>>>>>>>>>>    #define  PMC_CNTRL_SYSCLK_POLARITY    BIT(10) /* sys clk
+>>>>>>>>>> polarity */
+>>>>>>>>>>    #define  PMC_CNTRL_MAIN_RST        BIT(4)
+>>>>>>>>>> +#define  PMC_CNTRL_LATCH_WAKEUPS    BIT(5)
+>>>>>>>> Please follow the TRM's bits naming.
+>>>>>>>>
+>>>>>>>> PMC_CNTRL_LATCHWAKE_EN
+>>>>>>>>
+>>>>>>>>>> +#define PMC_WAKE_MASK            0x0c
+>>>>>>>>>> +#define PMC_WAKE_LEVEL            0x10
+>>>>>>>>>> +#define PMC_WAKE_STATUS            0x14
+>>>>>>>>>> +#define PMC_SW_WAKE_STATUS        0x18
+>>>>>>>>>>      #define DPD_SAMPLE            0x020
+>>>>>>>>>>    #define  DPD_SAMPLE_ENABLE        BIT(0)
+>>>>>>>>>> @@ -87,6 +93,11 @@
+>>>>>>>>>>      #define PMC_SCRATCH41            0x140
+>>>>>>>>>>    +#define PMC_WAKE2_MASK            0x160
+>>>>>>>>>> +#define PMC_WAKE2_LEVEL            0x164
+>>>>>>>>>> +#define PMC_WAKE2_STATUS        0x168
+>>>>>>>>>> +#define PMC_SW_WAKE2_STATUS        0x16c
+>>>>>>>>>> +
+>>>>>>>>>>    #define PMC_SENSOR_CTRL            0x1b0
+>>>>>>>>>>    #define  PMC_SENSOR_CTRL_SCRATCH_WRITE    BIT(2)
+>>>>>>>>>>    #define  PMC_SENSOR_CTRL_ENABLE_RST    BIT(1)
+>>>>>>>>>> @@ -1922,6 +1933,55 @@ static const struct irq_domain_ops
+>>>>>>>>>> tegra_pmc_irq_domain_ops = {
+>>>>>>>>>>        .alloc = tegra_pmc_irq_alloc,
+>>>>>>>>>>    };
+>>>>>>>>>>    +static int tegra210_pmc_irq_set_wake(struct irq_data *data,
+>>>>>>>>>> unsigned int on)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>>>>>>>>> +    unsigned int offset, bit;
+>>>>>>>>>> +    u32 value;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (data->hwirq == ULONG_MAX)
+>>>>>>>>>> +        return 0;
+>>>>>>>>>> +
+>>>>>>>>>> +    offset = data->hwirq / 32;
+>>>>>>>>>> +    bit = data->hwirq % 32;
+>>>>>>>>>> +
+>>>>>>>>>> +    /*
+>>>>>>>>>> +     * Latch wakeups to SW_WAKE_STATUS register to capture events
+>>>>>>>>>> +     * that would not make it into wakeup event register during
+>>>>>>>>>> LP0 exit.
+>>>>>>>>>> +     */
+>>>>>>>>>> +    value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>>>>>>>>>> +    value |= PMC_CNTRL_LATCH_WAKEUPS;
+>>>>>>>>>> +    tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>>>>>>>>> +    udelay(120);
+>>>>>>>>> Why it takes so much time to latch the values? Shouldn't some
+>>>>>>>>> status-bit
+>>>>>>>>> be polled for the completion of latching?
+>>>>>>>>>
+>>>>>>>>> Is this register-write really getting buffered in the PMC?
+>>>>>>>>>
+>>>>>>>>>> +    value &= ~PMC_CNTRL_LATCH_WAKEUPS;
+>>>>>>>>>> +    tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>>>>>>>>> +    udelay(120);
+>>>>>>>>> 120 usecs to remove latching, really?
+>>>>>>>>>
+>>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
+>>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
+>>>>>>>>>> +
+>>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
+>>>>>>>>>> +    tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
+>>>>>>>>>> +
+>>>>>>>>>> +    /* enable PMC wake */
+>>>>>>>>>> +    if (data->hwirq >= 32)
+>>>>>>>>>> +        offset = PMC_WAKE2_MASK;
+>>>>>>>>>> +    else
+>>>>>>>>>> +        offset = PMC_WAKE_MASK;
+>>>>>>>>>> +
+>>>>>>>>>> +    value = tegra_pmc_readl(pmc, offset);
+>>>>>>>>>> +
+>>>>>>>>>> +    if (on)
+>>>>>>>>>> +        value |= 1 << bit;
+>>>>>>>>>> +    else
+>>>>>>>>>> +        value &= ~(1 << bit);
+>>>>>>>>>> +
+>>>>>>>>>> +    tegra_pmc_writel(pmc, value, offset);
+>>>>>>>>> Why the latching is done *before* writing into the WAKE registers?
+>>>>>>>>> What
+>>>>>>>>> it is latching then?
+>>>>>>>> I'm looking at the TRM doc and it says that latching should be done
+>>>>>>>> *after* writing to the WAKE_MASK / LEVEL registers.
+>>>>>>>>
+>>>>>>>> Secondly it says that it's enough to do:
+>>>>>>>>
+>>>>>>>> value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>>>>>>>> value |= PMC_CNTRL_LATCH_WAKEUPS;
+>>>>>>>> tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>>>>>>>
+>>>>>>>> in order to latch. There is no need for the delay and to remove the
+>>>>>>>> "LATCHWAKE_EN" bit, it should be a oneshot action.
+>>>>>>> Although, no. TRM says "stops latching on transition from 1
+>>>>>>> to 0 (sequence - set to 1,set to 0)", so it's not a oneshot action.
+>>>>>>>
+>>>>>>> Have you tested this code at all? I'm wondering how it happens to
+>>>>>>> work
+>>>>>>> without a proper latching.
+>>>>>> Yes, ofcourse its tested and this sequence to do transition is
+>>>>>> recommendation from Tegra designer.
+>>>>>> Will check if TRM doesn't have update properly or will re-confirm
+>>>>>> internally on delay time...
+>>>>>>
+>>>>>> On any of the wake event PMC wakeup happens and WAKE_STATUS register
+>>>>>> will have bits set for all events that triggered wake.
+>>>>>> After wakeup PMC doesn't update SW_WAKE_STATUS register as per PMC
+>>>>>> design.
+>>>>>> SW latch register added in design helps to provide a way to capture
+>>>>>> those events that happen right during wakeup time and didnt make it to
+>>>>>> SW_WAKE_STATUS register.
+>>>>>> So before next suspend entry, latching all prior wake events into SW
+>>>>>> WAKE_STATUS and then clearing them.
+>>>>> I'm now wondering whether the latching cold be turned ON permanently
+>>>>> during of the PMC's probe, for simplicity.
+>>>> latching should be done on suspend-resume cycle as wake events gets
+>>>> generates on every suspend-resume cycle.
+>>> You're saying that PMC "doesn't update SW_WAKE_STATUS" after wake-up,
+>>> then I don't quite understand what's the point of disabling the latching
+>>> at all.
+>> When latch wake enable is set, events are latched and during 1 to 0
+>> transition latching is disabled.
+>>
+>> This is to avoid sw_wake_status and wake_status showing diff events.
+> 
+> Okay.
+> 
+>> Currently driver is not relying on SW_WAKE_STATUS but its good to latch
+>> and clear so even at some point for some reason when SW_WAKE_STATUS is
+>> used, this wlil not cause mismatch with wake_status.
+> 
+> Then the latching need to be enabled on suspend and disabled early on
+> resume to get a proper WAKE status.
+
+Actually, it will be better to simply not implement the latching until
+it will become really needed. In general you shouldn't add into the
+patchset anything that is unused.
