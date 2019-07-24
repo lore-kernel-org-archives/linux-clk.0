@@ -2,77 +2,85 @@ Return-Path: <SRS0=VuHU=VV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E18EC7618B
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 07:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91764C7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 07:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56E7D2182B
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 07:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 613642173E
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 07:59:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbfGXHFN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jul 2019 03:05:13 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41747 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfGXHFM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 03:05:12 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hqBKn-0008V9-0K; Wed, 24 Jul 2019 09:05:09 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hqBKl-0005TO-Ct; Wed, 24 Jul 2019 09:05:07 +0200
-Date:   Wed, 24 Jul 2019 09:05:07 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Anson.Huang@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        id S1726139AbfGXH7p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 03:59:45 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54610 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbfGXH7p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jul 2019 03:59:45 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 13FCA1A0240;
+        Wed, 24 Jul 2019 09:59:44 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C7C801A031A;
+        Wed, 24 Jul 2019 09:59:38 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 17F27402F6;
+        Wed, 24 Jul 2019 15:59:32 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, aisheng.dong@nxp.com, l.stach@pengutronix.de,
-        ping.bai@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH] clk: imx: Remove unused function statement
-Message-ID: <20190724070507.nh2wtayid2or3bi5@pengutronix.de>
-References: <20190724062435.28074-1-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190724062435.28074-1-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx8mn: Keep uart clocks on for early console
+Date:   Wed, 24 Jul 2019 15:50:17 +0800
+Message-Id: <20190724075017.11003-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+From: Anson Huang <Anson.Huang@nxp.com>
 
-On Wed, Jul 24, 2019 at 02:24:35PM +0800, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> imx_register_uart_clocks_hws() function is NOT implemented
-> at all, remove it.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Call imx_register_uart_clocks() API to keep uart clocks enabled
+when earlyprintk or earlycon is active.
 
-Looks right. This function never existed, the prototype was introduced
-in commit dd1a6c0d339b ("clk: imx: clk-busy: Switch to clk_hw based
-API") in the 5.3-rc1 cycle.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mn.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
-Best regards
-Uwe
-
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index 07481a5..ecd1062 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -355,6 +355,14 @@ static const char * const imx8mn_clko2_sels[] = {"osc_24m", "sys_pll2_200m", "sy
+ static struct clk *clks[IMX8MN_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
++static struct clk ** const uart_clks[] = {
++	&clks[IMX8MN_CLK_UART1_ROOT],
++	&clks[IMX8MN_CLK_UART2_ROOT],
++	&clks[IMX8MN_CLK_UART3_ROOT],
++	&clks[IMX8MN_CLK_UART4_ROOT],
++	NULL
++};
++
+ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -612,6 +620,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 		goto unregister_clks;
+ 	}
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	return 0;
+ 
+ unregister_clks:
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.7.4
+
