@@ -2,85 +2,85 @@ Return-Path: <SRS0=VuHU=VV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91764C7618B
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 07:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FF1C7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 08:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613642173E
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 07:59:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EB3D206B8
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 08:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfGXH7p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jul 2019 03:59:45 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:54610 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725851AbfGXH7p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:59:45 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 13FCA1A0240;
-        Wed, 24 Jul 2019 09:59:44 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C7C801A031A;
-        Wed, 24 Jul 2019 09:59:38 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 17F27402F6;
-        Wed, 24 Jul 2019 15:59:32 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx8mn: Keep uart clocks on for early console
-Date:   Wed, 24 Jul 2019 15:50:17 +0800
-Message-Id: <20190724075017.11003-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726190AbfGXI0n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 04:26:43 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:49289 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbfGXI0n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 04:26:43 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 1F660FF818;
+        Wed, 24 Jul 2019 08:26:41 +0000 (UTC)
+Date:   Wed, 24 Jul 2019 10:26:40 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clk: allwinner,sun4i-a10-ccu: Correct path
+ in $id
+Message-ID: <20190724082640.kbatvyod7fomtjjb@flea>
+References: <20190723230843.19922-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="k6js6jw2qocctjxy"
+Content-Disposition: inline
+In-Reply-To: <20190723230843.19922-1-robh@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
 
-Call imx_register_uart_clocks() API to keep uart clocks enabled
-when earlyprintk or earlycon is active.
+--k6js6jw2qocctjxy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx8mn.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Tue, Jul 23, 2019 at 05:08:43PM -0600, Rob Herring wrote:
+> The path in the schema '$id' value is wrong. Fix it.
+>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> I can take this via the DT tree.
 
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 07481a5..ecd1062 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -355,6 +355,14 @@ static const char * const imx8mn_clko2_sels[] = {"osc_24m", "sys_pll2_200m", "sy
- static struct clk *clks[IMX8MN_CLK_END];
- static struct clk_onecell_data clk_data;
- 
-+static struct clk ** const uart_clks[] = {
-+	&clks[IMX8MN_CLK_UART1_ROOT],
-+	&clks[IMX8MN_CLK_UART2_ROOT],
-+	&clks[IMX8MN_CLK_UART3_ROOT],
-+	&clks[IMX8MN_CLK_UART4_ROOT],
-+	NULL
-+};
-+
- static int imx8mn_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -612,6 +620,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 		goto unregister_clks;
- 	}
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- 	return 0;
- 
- unregister_clks:
--- 
-2.7.4
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
+Thanks!
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--k6js6jw2qocctjxy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXTgWQAAKCRDj7w1vZxhR
+xU0HAPwM3SDx3ldBvoCozBAZ1NumH/ldcZOZQoJtTthE2ZQvmAEAqfa1zInByXpy
+SnIuXS+wwroOPUQduzdYTLxHczD18gE=
+=PFP8
+-----END PGP SIGNATURE-----
+
+--k6js6jw2qocctjxy--
