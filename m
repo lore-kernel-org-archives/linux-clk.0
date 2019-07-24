@@ -2,113 +2,84 @@ Return-Path: <SRS0=VuHU=VV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BBAC76191
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84211C41514
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3BB22ADF
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:10:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563988258;
-	bh=vdkk2/b0N62X+tTd6omCicQmUyxpTs+pH9nOGJLx+MA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gtfeB4a7Z37nNIyuNIrER8QwP7wW8DmL0Iz7VJueV0ItsstqItMdUFPZacdk3VD2g
-	 ZP9jEx0mrcm5DXaKI3QFUKSoMWDIkNXacnwmqe+sY1+D1NNQl8v2hQFSS4/5K7xKVS
-	 OEJavlrOiGCSBLHaftveZeHXX7SnhfqTPwpe8rU0=
+	by mail.kernel.org (Postfix) with ESMTP id 500B720840
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:16:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="nxW5tHtl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfGXRKy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jul 2019 13:10:54 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35967 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfGXRKy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 13:10:54 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so47882748wrs.3;
-        Wed, 24 Jul 2019 10:10:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WXZ1g7GkxFmyDSWuDgpIVN7PNvx6qdlx90diYuseAHM=;
-        b=OxcpcrsB+Nh2xELyiA1Yv99FUMYEvIzlG+yG6yit/9f+ygFbVXl643sfdbjfTELuxq
-         idsz3sFggjLg/Gg6NF+dJf2rjjIRxeqPZ5MDsKX1ZrRlC4uObhXX86heyKh95Wkodj1v
-         U4WUJ7pn/cEGUy5B5uC2ApCHw4MAEq+lXuXA+rMOTNcVtDEAwKk6NUb1f1FN3r/AIsc8
-         ydWZ8mnHClDLJXGMtD/8V6agsp4T0+iwtYvMAjPnf2irlIjEZitUM59y9ZDzfCsL2+Qn
-         OPFMhSkgXvUBr7kctdng2R97yfAlcf3Qmp7mL9KGMN6Xx8w/c8vAMK5xFNQHkZNZVGJh
-         eLWw==
-X-Gm-Message-State: APjAAAVD+MFvB6sQcMX6EAM6DmggUnFOkh3csKTByiHJ7qYFVClzvfqa
-        1NesBTuV8WdHIkf0Yv4Ae+k=
-X-Google-Smtp-Source: APXvYqw3AXAnk2BJ//1eeyPDtP4kO0/8LrlqA6LpAN1k2ctyqioKAHYzmf7hgtsMo7drCGHj11qc2Q==
-X-Received: by 2002:adf:da4d:: with SMTP id r13mr57744544wrl.281.1563988252192;
-        Wed, 24 Jul 2019 10:10:52 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.239])
-        by smtp.googlemail.com with ESMTPSA id n9sm88609422wrp.54.2019.07.24.10.10.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Jul 2019 10:10:51 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 19:10:49 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
+        id S1726941AbfGXRQa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 13:16:30 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:49052 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbfGXRQa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 13:16:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1563988587; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=UW636SR0a7qD89QcgE1WVfQ4riiw9zkKPDE/geWRRwA=;
+        b=nxW5tHtlL48qn0CJvoOYTB5ipynVqOTPhNS8uAwZzHV3oZNeVHN1GwUruUAe9UCkJzPuS9
+        QN4Z7HEHp1uXSA7BMBADjafwYs1M2L/x+JNUk/lmPeNtfednz3mHuf7ukaQlBtljCq7YXV
+        MGjoC8NuegF6bNEsT9MwPWEJgPYzwpM=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v12 6/9] ARM: dts: exynos: add chipid label and syscon
- compatible
-Message-ID: <20190724171049.GA11333@kozik-lap>
-References: <20190722094646.13342-1-l.luba@partner.samsung.com>
- <CGME20190722094730eucas1p2f3f8298c43c8bf0d96135bca9a9e753b@eucas1p2.samsung.com>
- <20190722094646.13342-7-l.luba@partner.samsung.com>
+        linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me,
+        Mathieu Malaterre <malat@debian.org>
+Subject: [PATCH v15 00/13] TCU patchset v15
+Date:   Wed, 24 Jul 2019 13:16:02 -0400
+Message-Id: <20190724171615.20774-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190722094646.13342-7-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 11:46:43AM +0200, Lukasz Luba wrote:
-> Add the chipid label which allows to use it in phandle from other device.
-> Use syscon in compatible to get the regmap of the device register set.
-> The chipid is used in DMC during initialization to compare compatibility.
-> 
+Hi,
 
-I cannot find its usage in DMC driver.
+This is the V15 of my Ingenic TCU patchet.
 
-Best regards,
-Krzysztof
+The big change since V14 is that the custom MFD driver
+(ex patch 04/13) was dropped in favor of a small patch to syscon
+and a "simple-mfd" compatible.
+
+The patchset was based on mips/mips-next, but all of them minus
+the last one will apply cleanly on v5.3-rc1.
+
+Changelog:
+
+* [02/13]: Remove info about MFD driver
+* [03/13]: Add "simple-mfd" compatible string
+* [04/13]: New patch
+* [05/13]: - Use CLK_OF_DECLARE_DRIVER since we use "simple-mfd"
+           - Use device_node_to_regmap()
+* [06/13]: Use device_node_to_regmap()
+* [07/13]: Use device_node_to_regmap()
+* [09/13]: Add "simple-mfd" compatible string
+
+Cheers,
+-Paul
 
 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-> index 67f9b4504a42..4801ca759feb 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -35,8 +35,8 @@
->  		#size-cells = <1>;
->  		ranges;
->  
-> -		chipid@10000000 {
-> -			compatible = "samsung,exynos4210-chipid";
-> +		chipid: chipid@10000000 {
-> +			compatible = "samsung,exynos4210-chipid", "syscon";
->  			reg = <0x10000000 0x100>;
->  		};
->  
-> -- 
-> 2.17.1
-> 
