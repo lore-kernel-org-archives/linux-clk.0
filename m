@@ -2,132 +2,123 @@ Return-Path: <SRS0=7G01=VW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E875C7618B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 10:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB426C7618B
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 11:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D57D229F3
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 10:59:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/fnwdgM"
+	by mail.kernel.org (Postfix) with ESMTP id AC01F22BF5
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 11:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388493AbfGYK7O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jul 2019 06:59:14 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40162 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388173AbfGYK7N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 06:59:13 -0400
-Received: by mail-lf1-f66.google.com with SMTP id b17so34226213lff.7;
-        Thu, 25 Jul 2019 03:59:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=in+uhLNoAVMX7g79xLZTX1hc7a9qUD9IZCQozQ9Y+QM=;
-        b=h/fnwdgM/220zVB3iVelIJjx6IfbhzI3JKZGW+HdHH1HXvGy5/6qo+t2togqzGfAcw
-         vaRtd6wTOcBONySmiCFIzwY5x4GZ8D4Hd0G164kj11Z1U/NPSfq118CV6YdPvk+JmhD9
-         u5/F14d/Go01/WZMsKxpDL3zWLx8gKifY+rUrzD+NBiHATXPEi1rc9Id9GZTjPSrs7Bu
-         DNrXATsNkSATg5TzNYX7KkZfpnvL4+5jy2wKYO0f+GyAxNrPlDRgSCcbPesuU7JZ/JZo
-         FnZnIUa6WYDEdiy6MPacp0vdv6Ie/r2i7Ek4gxrbU02P9XmGSVvJs4e4x87YK9byli2A
-         EkHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=in+uhLNoAVMX7g79xLZTX1hc7a9qUD9IZCQozQ9Y+QM=;
-        b=ItCU/QpDXcmLJGkUTAaTPTC3af/rdUWv5MiwXzBfuBe+mkK58YxC0bcplV3naUT/aF
-         yNawcxxIeHPamZGqDtzCDmNsK7YvAo96wZ5trDKbukRmFoATAfS+dnxhiB3DDGUDtAij
-         i30oYWhBSUx8Kaljz0/aHLDOgoCcMURU3tvrBKYszCaFlWUD0DzUHTwEqjw1j+a2x+v1
-         0Vlii2cPQSpkfQ917xMB2OVCWxW9hTfMQO8Sx7RqfZMX8E+GBAAtkU0djWz6/v83ngtN
-         fFCwsYH0q1aFfdRXcVvShz/kbTp3Uh/g8g+VkSAv2MUePLVQoe74/dc+cv7elgQyBo9J
-         XqGw==
-X-Gm-Message-State: APjAAAXBxZsdJslqiQQUlFzDA+5P/FFKzHQMezJb8gzFUPecYQNzmSaL
-        fIKWmuCeY3evdGYsB1SC50MoBoHO
-X-Google-Smtp-Source: APXvYqzTPtFFXfWIzfb8qOb6LwXtn6YVcFl8mbh6BLqKCdfKlz5e8OtxTj+NXVey3Hju5TT7JNKf+g==
-X-Received: by 2002:ac2:5a01:: with SMTP id q1mr27672447lfn.46.1564052351219;
-        Thu, 25 Jul 2019 03:59:11 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id i17sm7483217lfp.94.2019.07.25.03.59.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 03:59:10 -0700 (PDT)
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
-        pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
- <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
- <20190725095502.GM12715@pdeschrijver-desktop.Nvidia.com>
- <dd01be5d-bab9-1329-c7ac-c3c893d49dd1@gmail.com>
- <20190725103348.GN12715@pdeschrijver-desktop.Nvidia.com>
- <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
-Date:   Thu, 25 Jul 2019 13:59:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2391894AbfGYLcn convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jul 2019 07:32:43 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:49517 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391826AbfGYLcn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 07:32:43 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 9B61F20009;
+        Thu, 25 Jul 2019 11:32:39 +0000 (UTC)
+Date:   Wed, 24 Jul 2019 16:14:25 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 7/8] dt-bindings: arm: sunxi: add binding for Lichee
+ Zero Plus core board
+Message-ID: <20190724141425.aycdkdwlgmljwpgr@flea>
+References: <20190713034634.44585-1-icenowy@aosc.io>
+ <20190713034634.44585-8-icenowy@aosc.io>
+ <20190720101318.cwrvv5r42wxx5k4r@flea>
+ <BDF0C9F6-DD0D-4343-8E24-06A07055004C@aosc.io>
+ <20190722192934.3jaf3r4rnyeslqyw@flea>
+ <7d24576697521f4985617113dbc4cc41@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <7d24576697521f4985617113dbc4cc41@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-25.07.2019 13:38, Peter De Schrijver пишет:
-> On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
->> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
->>> 25.07.2019 12:55, Peter De Schrijver пишет:
->>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
->>>>>
->>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
->>>>> doesn't sound correct to me. Something like 'firmware_sc7' should suit
->>>>> better here.
->>>>>
->>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
->>>>>
->>>>> Secondly, I'm also not sure why COP interrupts need to be disabled for
->>>>> pre-T210 at all, since COP is unused. This looks to me like it was
->>>>> cut-n-pasted from downstream kernel without a good reason and could be
->>>>> simply removed.
->>>>
->>>> I don't think we can rely on the fact that COP is unused. People can
->>>> write their own code to run on COP.
->>>
->>> 1. Not upstream - doesn't matter.
->>>
->>
->> The code is not part of the kernel, so obviously it's not upstream?
->>
->>> 2. That's not very good if something unknown is running on COP and then
->>> kernel suddenly intervenes, don't you think so?
->>
->> Unless the code was written with this in mind.
->>
+On Wed, Jul 24, 2019 at 09:09:01PM +0800, Icenowy Zheng wrote:
+> 在 2019-07-23 03:29，Maxime Ripard 写道：
+> > On Sat, Jul 20, 2019 at 07:39:08PM +0800, Icenowy Zheng wrote:
+> > >
+> > >
+> > > 于 2019年7月20日 GMT+08:00 下午6:13:18, Maxime Ripard
+> > > <maxime.ripard@bootlin.com> 写到:
+> > > >On Sat, Jul 13, 2019 at 11:46:33AM +0800, Icenowy Zheng wrote:
+> > > >> The Lichee Zero Plus is a core board made by Sipeed, with a microUSB
+> > > >> connector on it, TF slot or WSON8 SD chip, optional eMMC or SPI
+> > > >Flash.
+> > > >> It has a gold finger connector for expansion, and UART is available
+> > > >from
+> > > >> reserved pins w/ 2.54mm pitch. The board can use either SoChip S3 or
+> > > >> Allwinner V3L SoCs.
+> > > >>
+> > > >> Add the device tree binding of the basic version of the core board --
+> > > >> w/o eMMC or SPI Flash, w/ TF slot or WSON8 SD, and use S3 SoC.
+> > > >>
+> > > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > >> ---
+> > > >> No changes since v3.
+> > > >>
+> > > >> Patch introduced in v2.
+> > > >>
+> > > >>  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
+> > > >>  1 file changed, 5 insertions(+)
+> > > >>
+> > > >> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
+> > > >b/Documentation/devicetree/bindings/arm/sunxi.yaml
+> > > >> index 000a00d12d6a..48c126a7a848 100644
+> > > >> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
+> > > >> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+> > > >> @@ -353,6 +353,11 @@ properties:
+> > > >>            - const: licheepi,licheepi-zero
+> > > >>            - const: allwinner,sun8i-v3s
+> > > >>
+> > > >> +      - description: Lichee Zero Plus (with S3, without eMMC/SPI
+> > > >Flash)
+> > > >> +        items:
+> > > >> +          - const: sipeed,lichee-zero-plus
+> > > >> +          - const: allwinner,sun8i-s3
+> > > >
+> > > >If the S3 is just a rebranded V3, then we should have the v3 compatile
+> > > >in that list too.
+> > >
+> > > S3 is V3 with copackaged DDR3 DRAM.
+> > >
+> > > It's pin incompatible w/ V3.
+> >
+> > Does it matter though?
+> >
+> > If the only thing that changes is the package, we're not manipulating
+> > that, and any software that deals with the v3 can deal with the
+> > s3. Which is what the compatible is about.
+>
+> Okay. Should the S3 compatible be kept befoer the V3 one?
 
-In that case, please see 1. ;)
+Yep, something like (in the DT)
 
-> 
-> Looking at this again, I don't think we need to enable the IRQ at all.
+compatible = "sipeed,lichee-zero-plus", "allwinner,sun8i-s3", "allwinner,sun8i-v3"
 
-Could you please clarify? The code only saves/restores COP's interrupts
-context across suspend-resume.
+Maxime
 
-Again, that's absolutely useless code for the upstream kernel which
-could be removed safely to avoid the confusion, IMHO. I can type a patch
-if you're agreeing.
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
