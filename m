@@ -2,172 +2,130 @@ Return-Path: <SRS0=VuHU=VV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389CAC76194
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 02:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA90C76186
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 03:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD7A229F3
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 02:24:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uakhSOoJ"
+	by mail.kernel.org (Postfix) with ESMTP id A7C692253D
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 03:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387451AbfGXCYp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jul 2019 22:24:45 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42509 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbfGXCYo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jul 2019 22:24:44 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so20080018pff.9;
-        Tue, 23 Jul 2019 19:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qRMlM2gUSInEC6RWWvSWyihO1TIAbroHme9s+jonTRc=;
-        b=uakhSOoJr7OLv33vGsuhtq2Ax1mkcbw1w3DshzvnsB11Jgvts/botujxNjtMMGf3BD
-         nPjs20j2kLIW8b0TVsHSLGyqAF50zmL2OPm53LfVnH6zm4hr6Zyw6s2Rcd7dPU9gG3gC
-         NPTyac0LdjUbzZ9uc+UhlJ8OughYsGXd6wMtLurs588+3WrMHwS1KYYz30r2BHvqI5Mn
-         do9Wm3Mx0W4fSY77x8zmGEC1S2ppgFhZR8fUmDjkIsOpA4xDs8H0mFf6zR6uFnKShxYE
-         oWAtVJA6PO5CLbreAX4+kIV1V1lFNrZL+qYwabWMZaZLCOUkfCzTPpuGNWvemLxQ3srs
-         MfPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qRMlM2gUSInEC6RWWvSWyihO1TIAbroHme9s+jonTRc=;
-        b=X1nVb8gPML/72wDKEZkOHwpkop83FjvcsgZSnrwXGmzys+Y7vDCleKtISXnx2IW6gS
-         D2RWg47pFJjWUhtGGBO9+oz750dCmLRr2U/bqUukeNQsRSqUQJt1rLrS5SaqBR6q8Hn/
-         2JUCpYIhvbby1dCKlMnxZe2pCW3dOKiF6orSurco1BmTPQZr7Vh/QBjp12etdyqphYzS
-         axAPvkbcD3WWPlPR1C8kBGssNXNSmq8gA9lzzA6kom0s/MUlmgMhcaWF0GF0vewb7cRi
-         gEEqQBQZ6ynp+tJCgBCe2ZIbC2obtTseIFfX9ttYU61BIqqprnoIESBGBGxDbMErJF6R
-         Wn8w==
-X-Gm-Message-State: APjAAAV2z+zSpTs7YIfTHMEEfv2WIhhUGbTvj49X5SmKSV//sV2iQOXe
-        ExASFXPVmAclNwV/AVqq0NAr4T6DSjk=
-X-Google-Smtp-Source: APXvYqwtiFH8QItK41hVwAREdYVTax52z066QYfEO1VzBIZM5BscyljFyb1qFWp/q4lLGfqmyg7yww==
-X-Received: by 2002:aa7:81d9:: with SMTP id c25mr8963389pfn.255.1563935083841;
-        Tue, 23 Jul 2019 19:24:43 -0700 (PDT)
-Received: from guoguo-omen-lan.lan ([107.151.139.128])
-        by smtp.gmail.com with ESMTPSA id s185sm63468029pgs.67.2019.07.23.19.24.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 19:24:43 -0700 (PDT)
-From:   Chuanhong Guo <gch981213@gmail.com>
-To:     linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
-        linux-mips@vger.kernel.org (open list:MIPS),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
-        Chuanhong Guo <gch981213@gmail.com>
-Subject: [PATCH v2 6/6] staging: mt7621-dts: add dt nodes for mt7621-pll
-Date:   Wed, 24 Jul 2019 10:23:10 +0800
-Message-Id: <20190724022310.28010-7-gch981213@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190724022310.28010-1-gch981213@gmail.com>
-References: <20190724022310.28010-1-gch981213@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1725827AbfGXDPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Jul 2019 23:15:36 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53972 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfGXDPg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Jul 2019 23:15:36 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B31402000E2;
+        Wed, 24 Jul 2019 05:15:31 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 88AE7200034;
+        Wed, 24 Jul 2019 05:15:25 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CA888402F6;
+        Wed, 24 Jul 2019 11:15:17 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, gustavo@embeddedor.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx7ulp: Make sure earlycon's clock is enabled
+Date:   Wed, 24 Jul 2019 11:06:00 +0800
+Message-Id: <20190724030600.17839-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This commit adds device-tree node for mt7621-pll and use its clocks
-accordingly.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+Earlycon's clock could be disabled during kernel boot up,
+if earlycon is enabled and its clock is gated, then kernel
+boot up will fail. Make sure earlycon's clock is enabled
+during kernel boot up.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
+ drivers/clk/imx/clk-imx7ulp.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-Changes since v1:
-1. drop cpuclock node in gbpc1.dts
-2. drop syscon in mt7621-pll node
-
- drivers/staging/mt7621-dts/gbpc1.dts   |  5 -----
- drivers/staging/mt7621-dts/mt7621.dtsi | 15 +++++++--------
- 2 files changed, 7 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/staging/mt7621-dts/gbpc1.dts b/drivers/staging/mt7621-dts/gbpc1.dts
-index 1fb560ff059c..d94b73243268 100644
---- a/drivers/staging/mt7621-dts/gbpc1.dts
-+++ b/drivers/staging/mt7621-dts/gbpc1.dts
-@@ -106,11 +106,6 @@
- 			clock-frequency = <225000000>;
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index 42e4667..2022d9b 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -42,6 +42,19 @@ static const struct clk_div_table ulp_div_table[] = {
+ 	{ .val = 7, .div = 64, },
  };
  
--&cpuclock {
--			compatible = "fixed-clock";
--			clock-frequency = <900000000>;
--};
--
- &pcie {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pcie_pins>;
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index d89d68ffa7bc..7b82f7f70404 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -1,4 +1,5 @@
- #include <dt-bindings/interrupt-controller/mips-gic.h>
-+#include <dt-bindings/clock/mt7621-clk.h>
- #include <dt-bindings/gpio/gpio.h>
++static const int pcc2_uart_clk_ids[] __initconst = {
++	IMX7ULP_CLK_LPUART4,
++	IMX7ULP_CLK_LPUART5,
++};
++
++static const int pcc3_uart_clk_ids[] __initconst = {
++	IMX7ULP_CLK_LPUART6,
++	IMX7ULP_CLK_LPUART7,
++};
++
++static struct clk **pcc2_uart_clks[ARRAY_SIZE(pcc2_uart_clk_ids) + 1] __initdata;
++static struct clk **pcc3_uart_clks[ARRAY_SIZE(pcc3_uart_clk_ids) + 1] __initdata;
++
+ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+ {
+ 	struct clk_hw_onecell_data *clk_data;
+@@ -135,6 +148,7 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
++	int i;
  
- / {
-@@ -27,12 +28,11 @@
- 		serial0 = &uartlite;
- 	};
+ 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC2_END),
+ 			   GFP_KERNEL);
+@@ -173,6 +187,14 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
+ 	imx_check_clk_hws(clks, clk_data->num);
  
--	cpuclock: cpuclock@0 {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
-+	pll: pll {
-+		compatible = "mediatek,mt7621-pll";
+ 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++
++	for (i = 0; i < ARRAY_SIZE(pcc2_uart_clk_ids); i++) {
++		int index = pcc2_uart_clk_ids[i];
++
++		pcc2_uart_clks[i] = &clks[index]->clk;
++	}
++
++	imx_register_uart_clocks(pcc2_uart_clks);
+ }
+ CLK_OF_DECLARE(imx7ulp_clk_pcc2, "fsl,imx7ulp-pcc2", imx7ulp_clk_pcc2_init);
  
--		/* FIXME: there should be way to detect this */
--		clock-frequency = <880000000>;
-+		#clock-cells = <1>;
-+		clock-output-names = "cpu", "bus";
- 	};
+@@ -181,6 +203,7 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
++	int i;
  
- 	sysclock: sysclock@0 {
-@@ -155,7 +155,6 @@
- 			compatible = "ns16550a";
- 			reg = <0xc00 0x100>;
+ 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC3_END),
+ 			   GFP_KERNEL);
+@@ -218,6 +241,14 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
+ 	imx_check_clk_hws(clks, clk_data->num);
  
--			clocks = <&sysclock>;
- 			clock-frequency = <50000000>;
- 
- 			interrupt-parent = <&gic>;
-@@ -172,7 +171,7 @@
- 			compatible = "ralink,mt7621-spi";
- 			reg = <0xb00 0x100>;
- 
--			clocks = <&sysclock>;
-+			clocks = <&pll MT7621_CLK_BUS>;
- 
- 			resets = <&rstctrl 18>;
- 			reset-names = "spi";
-@@ -372,7 +371,7 @@
- 		timer {
- 			compatible = "mti,gic-timer";
- 			interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
--			clocks = <&cpuclock>;
-+			clocks = <&pll MT7621_CLK_CPU>;
- 		};
- 	};
+ 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++
++	for (i = 0; i < ARRAY_SIZE(pcc3_uart_clk_ids); i++) {
++		int index = pcc3_uart_clk_ids[i];
++
++		pcc3_uart_clks[i] = &clks[index]->clk;
++	}
++
++	imx_register_uart_clocks(pcc3_uart_clks);
+ }
+ CLK_OF_DECLARE(imx7ulp_clk_pcc3, "fsl,imx7ulp-pcc3", imx7ulp_clk_pcc3_init);
  
 -- 
-2.21.0
+2.7.4
 
