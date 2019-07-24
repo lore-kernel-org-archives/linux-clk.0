@@ -2,158 +2,252 @@ Return-Path: <SRS0=VuHU=VV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 149CAC7618B
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 11:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF34C7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 11:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11B72190F
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 11:09:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Th1o3fB2"
+	by mail.kernel.org (Postfix) with ESMTP id 35E112190F
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 11:31:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563967887;
+	bh=gfIL8bDOerniMLTjoBQgfStiVE5avoo5zJE4+oSl/Xg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=pYDlrnRs1qOC96nKm87eqiv1C/0qZ4UpjzfJwHZSXYhK7eq4tHv2vMZNktHY1F067
+	 0llWrEj315LdBnyYAfaUwq4mND5WdSMmeCByiVoPBIiVo+AtBRr2jl5BOQ/hLUUB2W
+	 aJuvJXrQq2zbkaHLZvpB7Q2vknKO4s+UdaF7RMX0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfGXLJw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jul 2019 07:09:52 -0400
-Received: from mail-eopbgr00048.outbound.protection.outlook.com ([40.107.0.48]:38535
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727375AbfGXLJw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:09:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Io3hPBwjFtQUoXk8cWntN48JYeszE6YG7cfxiHrwqVtzxLBoHM1VWPgx8YGLBra3heMpfx1xA+DSyMUxn0jezyST7vM6kLjNlYM0fQCQW5a88ap6csPJ4/bEo23q35O4YqJApX77bdufFZcet8yjFVsu3OdipIsifK+XlmGv8fL53oSPB1vNrVZSkdGCqktCeW9uPpKItY3ON7jYKcR6T/sn6GgihENgvy78HzsRRiT8e7GONmpFI5gUb8c0dffau0kJv2nNSfaJQAlh2SUUECVqe9P1/kuBDzm6gMAlR4vWka3fe+FAW081vqhwXfW0cbPBMixbNM3YqLBukomMWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fe4VSA36KjWBpSSQi2hGjzLcmNYLfi3ZsvwlP1segrs=;
- b=n4mOPSvaOBjNPE8W4ycScehYcbdA/uTTmfclMJ7I49U688TUKSiOPXBVVJamjvr51AS3eIlxUf9li9JVVIPIwcOi04qNzXwh/PcmyoW7tJHgEBOVUM5VnhD4Cn/yg2Ox6gJU+kUkU6W1g1b/e2oEdu18/A6xCJxqDhe8mL+XL3Ran9RKrOJILiWtgvNgLrjSciRFnW+/9YfuEKRs4ckFlzDXbcz32rrc1Pn1wpclUMoI+oViQ/ddhRlmgGOImRdM45p9QHIpTEnx06GzrLEQFAE83hv4RI5Aqi7LYEVa2bEtgS+S5FmZK0CnckZ0czPF7S1Daw7w3KfnbISliOuGnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fe4VSA36KjWBpSSQi2hGjzLcmNYLfi3ZsvwlP1segrs=;
- b=Th1o3fB2t5h53qSvUtW2W2Jky1sqbidkHDltBwgW+KWDa6JwuYhD583Uaexr/Vzo8+Igs2/V4R3yja01tIf12aiqRSKcsUeadFyLyYquCTUGJP+uS6ONxfeOzE7M3latBfsmPkiGGBZx0ur5nh6mKypV89p6i7zLyamZtYQfwpI=
-Received: from DB8PR04MB6523.eurprd04.prod.outlook.com (20.179.251.154) by
- DB8PR04MB6777.eurprd04.prod.outlook.com (52.133.243.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Wed, 24 Jul 2019 11:09:46 +0000
-Received: from DB8PR04MB6523.eurprd04.prod.outlook.com
- ([fe80::306a:ab72:69cb:4491]) by DB8PR04MB6523.eurprd04.prod.outlook.com
- ([fe80::306a:ab72:69cb:4491%3]) with mapi id 15.20.2094.013; Wed, 24 Jul 2019
- 11:09:46 +0000
-From:   Jun Li <jun.li@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        Peter Chen <peter.chen@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 3/5] clk: imx8mm: correct the usb1_ctrl parent to be
- usb_bus
-Thread-Topic: [PATCH 3/5] clk: imx8mm: correct the usb1_ctrl parent to be
- usb_bus
-Thread-Index: AQHVMXGCJ4zxIYFU1UunW5a5NZs68abWGc4AgAOiMTA=
-Date:   Wed, 24 Jul 2019 11:09:45 +0000
-Message-ID: <DB8PR04MB6523F8278C875D79DE5DC61689C60@DB8PR04MB6523.eurprd04.prod.outlook.com>
-References: <20190703072327.38165-1-jun.li@nxp.com>
- <20190722033418.GX3738@dragon>
-In-Reply-To: <20190722033418.GX3738@dragon>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=jun.li@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 12ee887e-679f-4b2c-1d6d-08d710276fb7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB8PR04MB6777;
-x-ms-traffictypediagnostic: DB8PR04MB6777:
-x-microsoft-antispam-prvs: <DB8PR04MB6777D96E70CDCCE4E16177BE89C60@DB8PR04MB6777.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0108A997B2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(376002)(39860400002)(136003)(346002)(189003)(199004)(13464003)(71200400001)(71190400001)(6436002)(53936002)(55016002)(99286004)(54906003)(316002)(478600001)(9686003)(186003)(26005)(25786009)(8936002)(4326008)(68736007)(14444005)(256004)(8676002)(229853002)(81156014)(81166006)(6246003)(6916009)(14454004)(74316002)(5660300002)(7736002)(2906002)(11346002)(44832011)(476003)(66446008)(66946007)(76116006)(446003)(66476007)(66556008)(64756008)(486006)(52536014)(305945005)(53546011)(6506007)(76176011)(6116002)(3846002)(86362001)(7696005)(102836004)(66066001)(7416002)(33656002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB8PR04MB6777;H:DB8PR04MB6523.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: S3/KUDNDRe4RiRQqO6922Kxs2Gcto0InBcFACbR04mmx4mC4zTLvJj9LVeVhXvXSqj8Mq1xbHPZx1XKTdPraW00wY6aaDuZ7DZDg8LwDmh7VZR791TXOILeKJGr/yTn+BktxlfjR1rgIhrwoJh7CH0HHKXcRBujMODhQFfW6Rq7N4FuzjKxqZtBeOvw0VrOzK0GEMpFCXJdKFObDlzb+TSkgiczzAcSMpr+ZtlGtZTGeDOvlT4V2wj34ZDMbQH2xE9LRaj7Cviom/iP3JSd75g5o/PDFWFNHu7N23+Mj4jvuiiMhOHx/6MQNnilwoNWq3iHCuZLI9QHH7lAc74bQYuHWGCbgmscMXf06hulDYqiw6C8rYl7J80ifjZw1+wBX5NrGH7aZU0ITG4WOpWcX9bJ+ejFUYw35Do7Rf6v/5W0=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1727390AbfGXLb0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 07:31:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727365AbfGXLb0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jul 2019 07:31:26 -0400
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7D8322ADF;
+        Wed, 24 Jul 2019 11:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563967885;
+        bh=gfIL8bDOerniMLTjoBQgfStiVE5avoo5zJE4+oSl/Xg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LLAUo5IlXo7iOvU1R9iDk5o9oAkcQRztoxvR4TjpNmsAQ1X3f5UfxIEtucTUvSNxW
+         QBpoXwSJI/IF7aDT2K+DRwyRgTCe2Lz1tSmIIrJdUWYUxMu3uQLFiTQrvWneZl9j0j
+         mWxpKGmLakVqlZX+ltZRpdwGoo5YWdcxxB+hQZnQ=
+Received: by mail-lj1-f171.google.com with SMTP id r9so44147785ljg.5;
+        Wed, 24 Jul 2019 04:31:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAVczsUPRYykC6Ddu8TiNVjKIfyTKmJL1xBt8+6qmOzXCXotHFyM
+        aliVVnfKOua5WDs05Zy83xO+HYWTaA+4klERHfM=
+X-Google-Smtp-Source: APXvYqwVZ0v5NoytspFUxCleMPfAfFqneEmr3GUNPhJ2AwALmaOWrWUIkhHCaB/fZ1wmSKcbQJxcpnLoU4i89LeTVRc=
+X-Received: by 2002:a2e:980a:: with SMTP id a10mr43119196ljj.40.1563967882920;
+ Wed, 24 Jul 2019 04:31:22 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12ee887e-679f-4b2c-1d6d-08d710276fb7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2019 11:09:45.9315
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jun.li@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6777
+References: <CGME20190722094727eucas1p10041ba25819e6e62d639423a97435f2d@eucas1p1.samsung.com>
+ <20190722094646.13342-1-l.luba@partner.samsung.com> <20190722094646.13342-4-l.luba@partner.samsung.com>
+In-Reply-To: <20190722094646.13342-4-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 24 Jul 2019 13:31:11 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPd96ExoCR-SiJfRqTbwO+_aQ6LSDVOQcrrt8JQHsoZBEw@mail.gmail.com>
+Message-ID: <CAJKOXPd96ExoCR-SiJfRqTbwO+_aQ6LSDVOQcrrt8JQHsoZBEw@mail.gmail.com>
+Subject: Re: [PATCH v12 3/9] drivers: memory: extend of_memory by LPDDR3 support
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24gR3VvIDxzaGF3
-bmd1b0BrZXJuZWwub3JnPg0KPiBTZW50OiAyMDE5xOo31MIyMsjVIDExOjM0DQo+IFRvOiBKdW4g
-TGkgPGp1bi5saUBueHAuY29tPg0KPiBDYzogc2JveWRAa2VybmVsLm9yZzsgcm9iaCtkdEBrZXJu
-ZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gcy5oYXVlckBwZW5ndXRyb25peC5kZTsg
-a2VybmVsQHBlbmd1dHJvbml4LmRlOyBmZXN0ZXZhbUBnbWFpbC5jb207IGRsLWxpbnV4LWlteA0K
-PiA8bGludXgtaW14QG54cC5jb20+OyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgUGV0ZXIgQ2hl
-biA8cGV0ZXIuY2hlbkBueHAuY29tPjsNCj4gSmFja3kgQmFpIDxwaW5nLmJhaUBueHAuY29tPjsg
-TGVvbmFyZCBDcmVzdGV6IDxsZW9uYXJkLmNyZXN0ZXpAbnhwLmNvbT47IERhbmllbA0KPiBCYWx1
-dGEgPGRhbmllbC5iYWx1dGFAbnhwLmNvbT47IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAu
-Y29tPjsgQWlzaGVuZw0KPiBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT47IFBlbmcgRmFuIDxw
-ZW5nLmZhbkBueHAuY29tPjsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgtY2xrQHZnZXIua2VybmVsLm9y
-Zw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDMvNV0gY2xrOiBpbXg4bW06IGNvcnJlY3QgdGhlIHVz
-YjFfY3RybCBwYXJlbnQgdG8gYmUgdXNiX2J1cw0KPiANCj4gT24gV2VkLCBKdWwgMDMsIDIwMTkg
-YXQgMDM6MjM6MjVQTSArMDgwMCwganVuLmxpQG54cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogTGkg
-SnVuIDxqdW4ubGlAbnhwLmNvbT4NCj4gPg0KPiA+IFBlciBsYXRlc3QgaW14OG1tIGRhdGFzaGVl
-dCBvZiBDQ00sIHRoZSBwYXJlbnQgb2YgdXNiMV9jdHJsX3Jvb3RfY2xrDQo+ID4gc2hvdWxkIGJl
-IHVzYl9idXMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMaSBKdW4gPGp1bi5saUBueHAuY29t
-Pg0KPiANCj4gSSBvbmx5IHJlY2VpdmVkIDMgcGF0Y2hlcyBhcyBhIHNlcmllcy4gIEluIHRoYXQg
-Y2FzZSwgdGhlIHBhdGNoZXMgc2hvdWxkIGhhdmUgc3ViamVjdCBwcmVmaXgNCj4gbGlrZSAnW1BB
-VENIIDEvM10nIC4uLg0KDQpBbm90aGVyIDIgcGF0Y2hlcyBhcmUgZm9yIGRyaXZlciwgc28gSSBk
-aWRuJ3Qgc2VuZCB0aGVtIHRvIHlvdSwgeWVzLCBJIHNob3VsZCB1c2UNCnRoZSBzdWJqZWN0IHBy
-ZWZpeCBsaWtlICdbUEFUQ0ggMS8zXScgdG8gYXZvaWQgY29uZnVzaW5nLCB3aWxsIHBheSBhdHRl
-bnRpb24gdGhpcy4NCg0KVGhhbmtzDQpMaSBKdW4NCj4gDQo+IFRoZSBwYXRjaGVzIGxvb2sgZ29v
-ZCB0byBtZS4gIEFwcGxpZWQgYWxsIDMsIHRoYW5rcy4NCj4gDQo+IFNoYXduDQo+IA0KPiA+IC0t
-LQ0KPiA+ICBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtbS5jIHwgMiArLQ0KPiA+ICAxIGZpbGUg
-Y2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtbS5jDQo+ID4gYi9kcml2ZXJzL2Nsay9pbXgv
-Y2xrLWlteDhtbS5jIGluZGV4IDZiOGU3NWQuLjczNWNmOWQgMTAwNjQ0DQo+ID4gLS0tIGEvZHJp
-dmVycy9jbGsvaW14L2Nsay1pbXg4bW0uYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGst
-aW14OG1tLmMNCj4gPiBAQCAtNjMxLDcgKzYzMSw3IEBAIHN0YXRpYyBpbnQgX19pbml0IGlteDht
-bV9jbG9ja3NfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUNCj4gKmNjbV9ub2RlKQ0KPiA+ICAJY2xr
-c1tJTVg4TU1fQ0xLX1VBUlQyX1JPT1RdID0gaW14X2Nsa19nYXRlNCgidWFydDJfcm9vdF9jbGsi
-LCAidWFydDIiLA0KPiBiYXNlICsgMHg0NGEwLCAwKTsNCj4gPiAgCWNsa3NbSU1YOE1NX0NMS19V
-QVJUM19ST09UXSA9IGlteF9jbGtfZ2F0ZTQoInVhcnQzX3Jvb3RfY2xrIiwgInVhcnQzIiwNCj4g
-YmFzZSArIDB4NDRiMCwgMCk7DQo+ID4gIAljbGtzW0lNWDhNTV9DTEtfVUFSVDRfUk9PVF0gPSBp
-bXhfY2xrX2dhdGU0KCJ1YXJ0NF9yb290X2NsayIsICJ1YXJ0NCIsDQo+IGJhc2UgKyAweDQ0YzAs
-IDApOw0KPiA+IC0JY2xrc1tJTVg4TU1fQ0xLX1VTQjFfQ1RSTF9ST09UXSA9IGlteF9jbGtfZ2F0
-ZTQoInVzYjFfY3RybF9yb290X2NsayIsDQo+ICJ1c2JfY29yZV9yZWYiLCBiYXNlICsgMHg0NGQw
-LCAwKTsNCj4gPiArCWNsa3NbSU1YOE1NX0NMS19VU0IxX0NUUkxfUk9PVF0gPQ0KPiA+ICtpbXhf
-Y2xrX2dhdGU0KCJ1c2IxX2N0cmxfcm9vdF9jbGsiLCAidXNiX2J1cyIsIGJhc2UgKyAweDQ0ZDAs
-IDApOw0KPiA+ICAJY2xrc1tJTVg4TU1fQ0xLX0dQVTNEX1JPT1RdID0gaW14X2Nsa19nYXRlNCgi
-Z3B1M2Rfcm9vdF9jbGsiLA0KPiAiZ3B1M2RfZGl2IiwgYmFzZSArIDB4NDRmMCwgMCk7DQo+ID4g
-IAljbGtzW0lNWDhNTV9DTEtfVVNESEMxX1JPT1RdID0gaW14X2Nsa19nYXRlNCgidXNkaGMxX3Jv
-b3RfY2xrIiwNCj4gInVzZGhjMSIsIGJhc2UgKyAweDQ1MTAsIDApOw0KPiA+ICAJY2xrc1tJTVg4
-TU1fQ0xLX1VTREhDMl9ST09UXSA9IGlteF9jbGtfZ2F0ZTQoInVzZGhjMl9yb290X2NsayIsDQo+
-ID4gInVzZGhjMiIsIGJhc2UgKyAweDQ1MjAsIDApOw0KPiA+IC0tDQo+ID4gMi43LjQNCj4gPg0K
+On Mon, 22 Jul 2019 at 11:47, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> The patch adds AC timings information needed to support LPDDR3 and memory
+> controllers. The structure is used in of_memory and currently in Exynos
+> 5422 DMC. Add parsing data needed for LPDDR3 support.
+> It is currently used in Exynos5422 Dynamic Memory Controller.
+>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/memory/jedec_ddr.h |  61 +++++++++++++++
+>  drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
+>  drivers/memory/of_memory.h |  18 +++++
+>  3 files changed, 233 insertions(+)
+>
+> diff --git a/drivers/memory/jedec_ddr.h b/drivers/memory/jedec_ddr.h
+> index 4a21b5044ff8..38e26d461bdb 100644
+> --- a/drivers/memory/jedec_ddr.h
+> +++ b/drivers/memory/jedec_ddr.h
+> @@ -29,6 +29,7 @@
+>  #define DDR_TYPE_LPDDR2_S4     3
+>  #define DDR_TYPE_LPDDR2_S2     4
+>  #define DDR_TYPE_LPDDR2_NVM    5
+> +#define DDR_TYPE_LPDDR3                6
+>
+>  /* DDR IO width */
+>  #define DDR_IO_WIDTH_4         1
+> @@ -169,4 +170,64 @@ extern const struct lpddr2_timings
+>         lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
+>  extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
+>
+> +/*
+> + * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
+> + * All parameters are in pico seconds(ps) unless explicitly indicated
+> + * with a suffix like tRAS_max_ns below
+
+To which tRAS_max_ns are you referring?
+
+> + */
+> +struct lpddr3_timings {
+> +       u32 max_freq;
+> +       u32 min_freq;
+> +       u32 tRFC;
+> +       u32 tRRD;
+> +       u32 tRPab;
+> +       u32 tRPpb;
+> +       u32 tRCD;
+> +       u32 tRC;
+> +       u32 tRAS;
+> +       u32 tWTR;
+> +       u32 tWR;
+> +       u32 tRTP;
+> +       u32 tW2W_C2C;
+> +       u32 tR2R_C2C;
+> +       u32 tWL;
+> +       u32 tDQSCK;
+> +       u32 tRL;
+> +       u32 tFAW;
+> +       u32 tXSR;
+> +       u32 tXP;
+> +       u32 tCKE;
+> +       u32 tCKESR;
+> +       u32 tMRD;
+> +};
+> +
+> +/*
+> + * Min value for some parameters in terms of number of tCK cycles(nCK)
+> + * Please set to zero parameters that are not valid for a given memory
+> + * type
+> + */
+> +struct lpddr3_min_tck {
+> +       u32 tRFC;
+> +       u32 tRRD;
+> +       u32 tRPab;
+> +       u32 tRPpb;
+> +       u32 tRCD;
+> +       u32 tRC;
+> +       u32 tRAS;
+> +       u32 tWTR;
+> +       u32 tWR;
+> +       u32 tRTP;
+> +       u32 tW2W_C2C;
+> +       u32 tR2R_C2C;
+> +       u32 tWL;
+> +       u32 tDQSCK;
+> +       u32 tRL;
+> +       u32 tFAW;
+> +       u32 tXSR;
+> +       u32 tXP;
+> +       u32 tCKE;
+> +       u32 tCKESR;
+> +       u32 tMRD;
+> +};
+> +
+>  #endif /* __JEDEC_DDR_H */
+> diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+> index 46539b27a3fb..4f5b8c81669f 100644
+> --- a/drivers/memory/of_memory.c
+> +++ b/drivers/memory/of_memory.c
+> @@ -3,6 +3,12 @@
+>   * OpenFirmware helpers for memory drivers
+>   *
+>   * Copyright (C) 2012 Texas Instruments, Inc.
+> + * Copyright (C) 2019 Samsung Electronics Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+>   */
+>
+>  #include <linux/device.h>
+> @@ -149,3 +155,151 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
+>         return lpddr2_jedec_timings;
+>  }
+>  EXPORT_SYMBOL(of_get_ddr_timings);
+> +
+> +/**
+> + * of_lpddr3_get_min_tck() - extract min timing values for lpddr3
+> + * @np: pointer to ddr device tree node
+> + * @device: device requesting for min timing values
+> + *
+> + * Populates the lpddr3_min_tck structure by extracting data
+> + * from device tree node. Returns a pointer to the populated
+> + * structure. If any error in populating the structure, returns NULL.
+> + */
+> +const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
+> +                                                  struct device *dev)
+> +{
+> +       int                     ret = 0;
+> +       struct lpddr3_min_tck   *min;
+> +
+> +       min = devm_kzalloc(dev, sizeof(*min), GFP_KERNEL);
+> +       if (!min)
+> +               goto default_min_tck;
+> +
+> +       ret |= of_property_read_u32(np, "tRFC-min-tck", &min->tRFC);
+> +       ret |= of_property_read_u32(np, "tRRD-min-tck", &min->tRRD);
+> +       ret |= of_property_read_u32(np, "tRPab-min-tck", &min->tRPab);
+> +       ret |= of_property_read_u32(np, "tRPpb-min-tck", &min->tRPpb);
+> +       ret |= of_property_read_u32(np, "tRCD-min-tck", &min->tRCD);
+> +       ret |= of_property_read_u32(np, "tRC-min-tck", &min->tRC);
+> +       ret |= of_property_read_u32(np, "tRAS-min-tck", &min->tRAS);
+> +       ret |= of_property_read_u32(np, "tWTR-min-tck", &min->tWTR);
+> +       ret |= of_property_read_u32(np, "tWR-min-tck", &min->tWR);
+> +       ret |= of_property_read_u32(np, "tRTP-min-tck", &min->tRTP);
+> +       ret |= of_property_read_u32(np, "tW2W-C2C-min-tck", &min->tW2W_C2C);
+> +       ret |= of_property_read_u32(np, "tR2R-C2C-min-tck", &min->tR2R_C2C);
+> +       ret |= of_property_read_u32(np, "tWL-min-tck", &min->tWL);
+> +       ret |= of_property_read_u32(np, "tDQSCK-min-tck", &min->tDQSCK);
+> +       ret |= of_property_read_u32(np, "tRL-min-tck", &min->tRL);
+> +       ret |= of_property_read_u32(np, "tFAW-min-tck", &min->tFAW);
+> +       ret |= of_property_read_u32(np, "tXSR-min-tck", &min->tXSR);
+> +       ret |= of_property_read_u32(np, "tXP-min-tck", &min->tXP);
+> +       ret |= of_property_read_u32(np, "tCKE-min-tck", &min->tCKE);
+> +       ret |= of_property_read_u32(np, "tCKESR-min-tck", &min->tCKESR);
+> +       ret |= of_property_read_u32(np, "tMRD-min-tck", &min->tMRD);
+> +
+> +       if (ret) {
+> +               dev_warn(dev, "%s: errors while parsing min-tck values\n",
+> +                        __func__);
+> +               devm_kfree(dev, min);
+> +               goto default_min_tck;
+> +       }
+> +
+> +       return min;
+> +
+> +default_min_tck:
+> +       dev_warn(dev, "%s: using default min-tck values\n", __func__);
+
+Here and later - you return NULL, not default values. Your driver -
+consumer - also behaves like with error condition, not like with
+default values. Print just that you cannot get timings, I guess.
+
+Best regards,
+Krzysztof
